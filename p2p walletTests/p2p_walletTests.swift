@@ -26,8 +26,8 @@ class p2p_walletTests: XCTestCase {
             print(exception!.toString())
         }
         context?.evaluateScript(string)
-//        let value = context?.evaluateScript("this")
-//        print(value?.toDictionary())
+        let value = context?.evaluateScript("const account = new solanaWeb3.Account();let url = 'http://devnet.solana.com';const connection = new solanaWeb3.Connection(url);connection.getBalance(account.publicKey);")
+        print(value as? JSPromise)
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }

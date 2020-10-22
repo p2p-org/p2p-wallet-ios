@@ -19,7 +19,7 @@ extension SolanaSDK {
     #endif
 }
 
-struct SolanaSDKJS {
+struct SolanaSDKJS: SolanaSDK {
     // MARK: - Singleton
     static let shared = SolanaSDKJS()
     private init() {}
