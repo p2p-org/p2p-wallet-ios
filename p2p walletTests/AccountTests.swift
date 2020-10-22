@@ -6,21 +6,24 @@
 //
 
 import XCTest
-@testable import p2p_wallet
 
-class p2p_walletTests: XCTestCase {
+class AccountTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
     override func tearDownWithError() throws {
+        
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
+    func testCreateAccount() throws {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let account = try Account(phrase: "ordinary cover language pole achieve pause focus core sing lady zoo fix".components(separatedBy: " "))
+        print(account.publicKey)
+        XCTAssertEqual(account.publicKey, "C7PLa6JhGaqFwuhtMXxtjYiV1CkzVrTvqusQ12D1cY4F")
     }
 
     func testPerformanceExample() throws {
