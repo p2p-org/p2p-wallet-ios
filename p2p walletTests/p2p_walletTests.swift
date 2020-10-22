@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import p2p_wallet
+import JavaScriptCore
 
 class p2p_walletTests: XCTestCase {
 
@@ -19,6 +19,15 @@ class p2p_walletTests: XCTestCase {
     }
 
     func testExample() throws {
+        let jsPath = Bundle.main.path(forResource: "solana", ofType: "js")!
+        let string = try String(contentsOfFile: jsPath, encoding: String.Encoding.utf8)
+        let context = JSContext.plus
+        context?.exceptionHandler = { context, exception in
+            print(exception!.toString())
+        }
+        context?.evaluateScript(string)
+//        let value = context?.evaluateScript("this")
+//        print(value?.toDictionary())
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
