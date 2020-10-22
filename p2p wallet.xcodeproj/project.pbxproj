@@ -20,10 +20,11 @@
 		BCB22618254147CF002D997F /* config.gypi in Resources */ = {isa = PBXBuildFile; fileRef = BCB22593254147CE002D997F /* config.gypi */; };
 		BCB22619254147CF002D997F /* common.gypi in Resources */ = {isa = PBXBuildFile; fileRef = BCB22596254147CE002D997F /* common.gypi */; };
 		BCB2261A254147CF002D997F /* common.gypi in Resources */ = {isa = PBXBuildFile; fileRef = BCB22596254147CE002D997F /* common.gypi */; };
-		BCB2263425414AA3002D997F /* NodeMobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB2263325414AA3002D997F /* NodeMobile.framework */; };
 		BCB2263525414AA3002D997F /* NodeMobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB2263325414AA3002D997F /* NodeMobile.framework */; };
 		BCB2264825414BBC002D997F /* NodeRunner.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCB2264725414BBC002D997F /* NodeRunner.mm */; };
 		BCB2264925414BBC002D997F /* NodeRunner.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCB2264725414BBC002D997F /* NodeRunner.mm */; };
+		BCB2266325414DFF002D997F /* NodeMobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB2263325414AA3002D997F /* NodeMobile.framework */; };
+		BCB2266425414DFF002D997F /* NodeMobile.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BCB2263325414AA3002D997F /* NodeMobile.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C1BC9C27F85EDDFE51E0FDB8 /* Pods_p2p_walletTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A342CCD45E7CDE0BA60EFBB2 /* Pods_p2p_walletTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -43,6 +44,20 @@
 			remoteInfo = "p2p wallet";
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BCB2266525414DFF002D997F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				BCB2266425414DFF002D997F /* NodeMobile.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1B5A5C216DC945B1D5206FAB /* Pods-p2p walletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p walletTests.debug.xcconfig"; path = "Target Support Files/Pods-p2p walletTests/Pods-p2p walletTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -249,7 +264,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCB2263425414AA3002D997F /* NodeMobile.framework in Frameworks */,
+				BCB2266325414DFF002D997F /* NodeMobile.framework in Frameworks */,
 				123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -778,6 +793,7 @@
 				BCB2231225412AF8002D997F /* Frameworks */,
 				BCB2231325412AF8002D997F /* Resources */,
 				78311C6F52E6F43FD0DAC80A /* [CP] Embed Pods Frameworks */,
+				BCB2266525414DFF002D997F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

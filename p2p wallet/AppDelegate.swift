@@ -18,6 +18,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = window
         self.window?.rootViewController = UINavigationController(rootViewController: ViewController())
         self.window?.makeKeyAndVisible()
+        
+        DispatchQueue.global(qos: .background).async {
+            NodeRunner.startEngine(withArguments: ["node", "-e", "require('http').createServer((req, res) => res.end('alive!')).listen(3000);"])
+        }
+        
         return true
     }
 

@@ -1,12 +1,5 @@
 //
-//  p2p_wallet-Bridging-Header.h
-//  p2p wallet
-//
-//  Created by Chung Tran on 10/22/20.
+//  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 
-#ifndef p2p_wallet_Bridging_Header_h
-#define p2p_wallet_Bridging_Header_h
-
-
-#endif /* p2p_wallet_Bridging_Header_h */
+#import "NodeRunner.h"
