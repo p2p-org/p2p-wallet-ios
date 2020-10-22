@@ -32,7 +32,6 @@ class JSConsole: NSObject, JSConsoleExports {
 @objc protocol JSPromiseExports: JSExport {
     func then(_ resolve: JSValue) -> JSPromise?
     func `catch`(_ reject: JSValue) -> JSPromise?
-    func doResolve() -> JSPromise?
 }
 
 class JSPromise: NSObject, JSPromiseExports {
@@ -94,11 +93,6 @@ class JSPromise: NSObject, JSPromiseExports {
         }
         
         next.success(value: result)
-    }
-    
-    func doResolve() -> JSPromise? {
-        self.next = nil
-        return self.next
     }
 }
 
