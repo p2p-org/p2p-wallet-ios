@@ -7,16 +7,21 @@
 
 import Foundation
 
-struct SolanaSDK {
-    // MARK: - Properties
+protocol SolanaSDK {
+    static var shared: Self {get}
+}
+
+extension SolanaSDK {
     #if DEBUG
-    let endpoint = "http://localhost:8899/"
+    var endpoint: String { "http://localhost:8899/" }
     #else
-    let endpoint = ""
+    var endpoint: String { "" }
     #endif
-    
+}
+
+struct SolanaSDKJS {
     // MARK: - Singleton
-    static var shared = SolanaSDK()
+    static let shared = SolanaSDKJS()
     private init() {}
     
     // MARK: - Methods
