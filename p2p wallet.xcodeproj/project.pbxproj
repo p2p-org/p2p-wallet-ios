@@ -15,6 +15,7 @@
 		BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232325412AF9002D997F /* LaunchScreen.storyboard */; };
 		BCB2233025412AF9002D997F /* p2p_walletTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2232F25412AF9002D997F /* p2p_walletTests.swift */; };
 		BCB2233B25412AF9002D997F /* p2p_walletUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */; };
+		BCB22372254137D7002D997F /* SolanaSDK.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB22371254137D7002D997F /* SolanaSDK.swift */; };
 		C1BC9C27F85EDDFE51E0FDB8 /* Pods_p2p_walletTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A342CCD45E7CDE0BA60EFBB2 /* Pods_p2p_walletTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +57,7 @@
 		BCB2233625412AF9002D997F /* p2p walletUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "p2p walletUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = p2p_walletUITests.swift; sourceTree = "<group>"; };
 		BCB2233C25412AF9002D997F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BCB22371254137D7002D997F /* SolanaSDK.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolanaSDK.swift; sourceTree = "<group>"; };
 		E65B1C647C0DE910BEFF2221 /* Pods-p2p wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p wallet/Pods-p2p wallet.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -135,6 +137,7 @@
 		BCB2231725412AF8002D997F /* p2p wallet */ = {
 			isa = PBXGroup;
 			children = (
+				BCB22370254137C2002D997F /* Services */,
 				BCB2231825412AF8002D997F /* AppDelegate.swift */,
 				BCB2231C25412AF8002D997F /* ViewController.swift */,
 				BCB2232125412AF8002D997F /* Assets.xcassets */,
@@ -160,6 +163,14 @@
 				BCB2233C25412AF9002D997F /* Info.plist */,
 			);
 			path = "p2p walletUITests";
+			sourceTree = "<group>";
+		};
+		BCB22370254137C2002D997F /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				BCB22371254137D7002D997F /* SolanaSDK.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -192,6 +203,7 @@
 				BCB2232725412AF9002D997F /* Sources */,
 				BCB2232825412AF9002D997F /* Frameworks */,
 				BCB2232925412AF9002D997F /* Resources */,
+				F9656498A37B977ADD443F2E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -392,6 +404,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p wallet-p2p walletUITests/Pods-p2p wallet-p2p walletUITests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		F9656498A37B977ADD443F2E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-p2p walletTests/Pods-p2p walletTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-p2p walletTests/Pods-p2p walletTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p walletTests/Pods-p2p walletTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -401,6 +430,7 @@
 			files = (
 				BCB2231D25412AF8002D997F /* ViewController.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
+				BCB22372254137D7002D997F /* SolanaSDK.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
