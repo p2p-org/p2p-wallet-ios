@@ -122,9 +122,10 @@ public class Mnemonic {
     }
     
     public var seed: [UInt8] {
-        let mnemonic = self.phrase.joined(separator: " ")
-        let salt = ("mnemonic" + self.passphrase)
-        return try! PKCS5.PBKDF2SHA512(password: mnemonic, salt: salt)
+        let mnemonic = (self.phrase.joined(separator: " ") as NSString).decomposedStringWithCompatibilityMapping
+        let salt = (("mnemonic" + passphrase) as NSString).decomposedStringWithCompatibilityMapping
+        let pbkdf2 = try! PKCS5.PBKDF2(password: mnemonic.bytes, salt: salt.bytes, iterations: 2048, keyLength: 64, variant: .sha512)
+        return try! pbkdf2.calculate()
     }
 }
 

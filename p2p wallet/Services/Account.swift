@@ -7,7 +7,7 @@
 
 import Foundation
 import TweetNacl
-import CryptoSwift
+import Base58Swift
 
 class Account {
     let phrase: [String]
@@ -23,10 +23,10 @@ class Account {
         }
         self.phrase = mnemonic.phrase
         
-        let seed = mnemonic.seed
-        let keys = try NaclSign.KeyPair.keyPair(fromSecretKey: Data(seed))
+        let seed = mnemonic.seed[0..<32]
+        let keys = try NaclSign.KeyPair.keyPair(fromSeed: Data(seed))
         
-        self.publicKey = keys.publicKey.base64EncodedString()
-        self.secretKey = keys.secretKey.base64EncodedString()
+        self.publicKey = Base58.base58Encode([UInt8](keys.publicKey))
+        self.secretKey = Base58.base58Encode([UInt8](keys.secretKey))
     }
 }

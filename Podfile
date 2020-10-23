@@ -2,6 +2,7 @@
 # platform :ios, '9.0'
 def common_pods
   pod 'Alamofire', '~> 5.2'
+  pod "Base58Swift"
 end
 
 target 'p2p wallet' do
