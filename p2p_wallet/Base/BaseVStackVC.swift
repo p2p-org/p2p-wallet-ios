@@ -7,7 +7,7 @@
 
 import Foundation
 
-class BaseVerticalStackVC: BaseVC {
+class BaseVStackVC: BaseVC {
     lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical)
     lazy var stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
     
