@@ -1,0 +1,54 @@
+warning_threshold: 1000
+
+excluded:
+ - Pods
+
+disabled_rules:
+  - variable_name
+  - cyclomatic_complexity
+  - large_tuple
+  - trailing_whitespace
+  - force_try
+  - force_cast
+  - function_body_length
+  - line_length
+  - type_body_lengt10
+  - multiple_closures_with_trailing_closure
+  - redundant_string_enum_value
+  - inert_defer
+  - nesting
+  - type_name
+  - file_length
+  - opening_brace
+  - shorthand_operator
+
+line_length:
+  warning: 250
+  error: 500
+
+function_parameter_count:
+  warning: 8
+  error: 15
+
+file_length:
+  warning: 500
+
+type_body_length:
+  warning: 400
+  
+custom_rules:
+  swiftgen_assets:
+    name: "SwiftGen Assets"
+    regex: '(UIImage|UIColor)(\.init)?\(named: ?"?.+"?(, ?in:.+?, ?compatibleWith:.+?)?\)|#imageLiteral\(resourceName: ?".+"\)'
+    message: "Use Asset.<asset> instead"
+    severity: error
+  swiftgen_colors:
+    name: "SwiftGen Colors"
+    regex: '(UIColor(\.init)?|#colorLiteral)\(((red|displayP3Red):.+?,green:.+?,blue:.+?,alpha:.+?)|(white:.+?,alpha:.+?)|(hue:.+?,saturation:.+?,brightness:.+?,alpha:.+?)\)'
+    message: "Use ColorName.<color> instead"
+    severity: error
+  swiftgen_fonts:
+    name: "SwiftGen Fonts"
+    regex: 'UIFont(\.init)?\(name: ?"?.+"?, ?size:.+?\)'
+    message: "Use FontFamily.<family>.<variant>.size(<size>) instead"
+    severity: error

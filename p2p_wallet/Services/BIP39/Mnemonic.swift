@@ -28,7 +28,7 @@ public class Mnemonic {
         _ = SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes)
         
         // 2.Entropy -> Mnemonic
-        let entropyBits = String(bytes.flatMap { ("00000000" + String($0, radix:2)).suffix(8) })
+        let entropyBits = String(bytes.flatMap { ("00000000" + String($0, radix: 2)).suffix(8) })
         let checksumBits = Mnemonic.deriveChecksumBits(bytes)
         let bits = entropyBits + checksumBits
         
@@ -43,7 +43,7 @@ public class Mnemonic {
     }
     
     public init(phrase: [String], passphrase: String = "") throws {
-        if (!Mnemonic.isValid(phrase: phrase)) {
+        if !Mnemonic.isValid(phrase: phrase) {
             throw Error.invalidMnemonic
         }
         self.phrase = phrase
@@ -57,7 +57,7 @@ public class Mnemonic {
     
     // Entropy -> Mnemonic
     public static func toMnemonic(_ bytes: [UInt8], wordlist: [String] = Wordlists.english) throws -> [String] {
-        let entropyBits = String(bytes.flatMap { ("00000000" + String($0, radix:2)).suffix(8) })
+        let entropyBits = String(bytes.flatMap { ("00000000" + String($0, radix: 2)).suffix(8) })
         let checksumBits = Mnemonic.deriveChecksumBits(bytes)
         let bits = entropyBits + checksumBits
         
@@ -73,7 +73,7 @@ public class Mnemonic {
     public static func toEntropy(_ phrase: [String], wordlist: [String] = Wordlists.english) throws -> [UInt8] {
         let bits = phrase.map { (word) -> String in
             let index = wordlist.firstIndex(of: word)!
-            var str = String(index, radix:2)
+            var str = String(index, radix: 2)
             while str.count < 11 {
                 str = "0" + str
             }
@@ -88,7 +88,7 @@ public class Mnemonic {
         let entropyBytes = regex.matches(in: entropyBits, options: [], range: NSRange(location: 0, length: entropyBits.count)).map {
             UInt8(strtoul(String(entropyBits[Range($0.range, in: entropyBits)!]), nil, 2))
         }
-        if (checksumBits != Mnemonic.deriveChecksumBits(entropyBytes)) {
+        if checksumBits != Mnemonic.deriveChecksumBits(entropyBytes) {
             throw Error.invalidMnemonic
         }
         return entropyBytes
@@ -113,11 +113,11 @@ public class Mnemonic {
     }
     
     public static func deriveChecksumBits(_ bytes: [UInt8]) -> String {
-        let ENT = bytes.count * 8;
+        let ENT = bytes.count * 8
         let CS = ENT / 32
         
         let hash = bytes.sha256()
-        let hashbits = String(hash.flatMap { ("00000000" + String($0, radix:2)).suffix(8) })
+        let hashbits = String(hash.flatMap { ("00000000" + String($0, radix: 2)).suffix(8) })
         return String(hashbits.prefix(CS))
     }
     
