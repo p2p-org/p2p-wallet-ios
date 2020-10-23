@@ -17,6 +17,7 @@
 		BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9E22542BE43005F50CE /* String+Extensions.swift */; };
 		BC65E9F92542C181005F50CE /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC65E9F82542C181005F50CE /* Colors.xcassets */; };
 		BC65EA082542C3A5005F50CE /* swiftgen.yml in Resources */ = {isa = PBXBuildFile; fileRef = BC65EA072542C3A5005F50CE /* swiftgen.yml */; };
+		BC6EBDF62542C9BB00C0B1F9 /* XCAssets+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EBDF52542C9BB00C0B1F9 /* XCAssets+Generated.swift */; };
 		BC9DFA352541F949009DB93E /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = BC9DFA342541F949009DB93E /* CryptoSwift */; };
 		BC9DFA422541F9EA009DB93E /* Wordlists.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */; };
 		BC9DFA432541F9EA009DB93E /* Wordlists.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */; };
@@ -67,6 +68,7 @@
 		BC65E9E22542BE43005F50CE /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		BC65E9F82542C181005F50CE /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		BC65EA072542C3A5005F50CE /* swiftgen.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = swiftgen.yml; sourceTree = "<group>"; };
+		BC6EBDF52542C9BB00C0B1F9 /* XCAssets+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCAssets+Generated.swift"; sourceTree = "<group>"; };
 		BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Wordlists.swift; sourceTree = "<group>"; };
 		BC9DFA3F2541F9EA009DB93E /* Mnemonic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mnemonic.swift; sourceTree = "<group>"; };
 		BCB2231525412AF8002D997F /* p2p_wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = p2p_wallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -160,6 +162,7 @@
 			isa = PBXGroup;
 			children = (
 				BC65E9E22542BE43005F50CE /* String+Extensions.swift */,
+				BC6EBDF52542C9BB00C0B1F9 /* XCAssets+Generated.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -537,6 +540,7 @@
 				BC65E9D72542BD3C005F50CE /* WelcomeVC.swift in Sources */,
 				BCB22372254137D7002D997F /* SolanaSDK.swift in Sources */,
 				BC9DFA422541F9EA009DB93E /* Wordlists.swift in Sources */,
+				BC6EBDF62542C9BB00C0B1F9 /* XCAssets+Generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
