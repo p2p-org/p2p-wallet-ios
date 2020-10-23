@@ -22,15 +22,25 @@ output_dir: p2p_wallet/Extensions/
 ##   This example also shows how to provide additional parameters to your template to customize the output.
 ##   - Especially the `forceProvidesNamespaces: true` param forces to create sub-namespace for each folder/group used in your Asset Catalogs, even the ones without "Provides Namespace". Without this param, SwiftGen only generates sub-namespaces for folders/groups which have the "Provides Namespace" box checked in the Inspector pane.
 ##   - To know which params are supported for a template, use `swiftgen template doc xcassets swift5` to open the template documentation on GitHub.
+#xcassets:
+#    inputs:
+#        - Assets.xcassets
+#    outputs:
+#        - templateName: swift5
+#          params:
+#          forceProvidesNamespaces: true
+#          output: XCAssets+Generated.swift]
+
 xcassets:
-   inputs:
-     - Assets.xcassets
-     - Colors.xcassets
-   outputs:
-     - templateName: swift5
-       params:
-         forceProvidesNamespaces: true
-       output: XCAssets+Generated.swift
+  inputs:
+    - Assets.xcassets
+    - Colors.xcassets
+  outputs:
+    - templatePath: asset_extensions.stencil
+      output: Asset+Generated.swift
+      params:
+        publicAccess: true
+        allValues: true
 
 
 ## Generate constants for your storyboards and XIBs.
