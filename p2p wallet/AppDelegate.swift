@@ -6,6 +6,7 @@
 //
 
 import UIKit
+@_exported import BEPureLayout
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
