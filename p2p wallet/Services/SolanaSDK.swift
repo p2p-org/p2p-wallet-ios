@@ -10,7 +10,7 @@ import Foundation
 struct SolanaSDK {
     // MARK: - Properties
     #if DEBUG
-    let endpoint = "http://localhost:8899/"
+    let endpoint = "https://testnet.solana.com"
     #else
     let endpoint = ""
     #endif
