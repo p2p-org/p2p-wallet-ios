@@ -10,6 +10,7 @@ target 'p2p wallet' do
   use_frameworks!
   common_pods
   pod 'BEPureLayout', :git => "https://github.com/bigearsenal/BEPureLayout.git"
+  pod 'SwiftGen', '~> 6.0'
 
   # Pods for p2p wallet
 

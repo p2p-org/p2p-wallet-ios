@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "Localize_Swift",
+        "repositoryURL": "https://github.com/marmelroy/Localize-Swift.git",
+        "state": {
+          "branch": null,
+          "revision": "0aa221fed0512772eaad04171d966b8d77b15212",
+          "version": "3.2.0"
+        }
+      },
+      {
         "package": "TweetNacl",
         "repositoryURL": "https://github.com/bitmark-inc/tweetnacl-swiftwrap.git",
         "state": {
