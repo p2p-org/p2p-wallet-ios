@@ -19,8 +19,6 @@ class AccountTests: XCTestCase {
     }
 
     func testSeed() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
         let mnemonic = try Mnemonic(phrase: "ordinary cover language pole achieve pause focus core sing lady zoo fix".components(separatedBy: " "))
         let seed = mnemonic.seed
         XCTAssertEqual(seed.toHexString(), "95b0b004517ede8c3bd09659b5767045086d421f16874db281a4e068f510e3f85d23e92b1d9d748bdb8cebeb06f64f72dae6fc750c15a8e6c7fa7e67165ef9bb")

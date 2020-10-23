@@ -15,5 +15,4 @@ class WelcomeVC: BaseVC {
     var currentPage = 0
     
     // MARK: - Subviews
-//    lazy var topSignInButton = UIButton(label: "sign in".localized().uppercaseFirst, labelFont: .systemFont(ofSize: 15, weight: .medium), textColor: .appBlackColor)
 }
