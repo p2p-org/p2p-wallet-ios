@@ -11,8 +11,6 @@
 		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
 		BC15BDD52541B90800FF1527 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC15BDD42541B90800FF1527 /* Account.swift */; };
 		BC9DFA352541F949009DB93E /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = BC9DFA342541F949009DB93E /* CryptoSwift */; };
-		BC9DFA402541F9EA009DB93E /* PKCS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DFA3D2541F9EA009DB93E /* PKCS5.swift */; };
-		BC9DFA412541F9EA009DB93E /* PKCS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DFA3D2541F9EA009DB93E /* PKCS5.swift */; };
 		BC9DFA422541F9EA009DB93E /* Wordlists.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */; };
 		BC9DFA432541F9EA009DB93E /* Wordlists.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */; };
 		BC9DFA442541F9EA009DB93E /* Mnemonic.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DFA3F2541F9EA009DB93E /* Mnemonic.swift */; };
@@ -56,7 +54,6 @@
 		8EA884C9D04024132EED10F8 /* Pods-p2p wallet-p2p walletUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet-p2p walletUITests.release.xcconfig"; path = "Target Support Files/Pods-p2p wallet-p2p walletUITests/Pods-p2p wallet-p2p walletUITests.release.xcconfig"; sourceTree = "<group>"; };
 		A342CCD45E7CDE0BA60EFBB2 /* Pods_p2p_walletTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_walletTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC15BDD42541B90800FF1527 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
-		BC9DFA3D2541F9EA009DB93E /* PKCS5.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PKCS5.swift; sourceTree = "<group>"; };
 		BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Wordlists.swift; sourceTree = "<group>"; };
 		BC9DFA3F2541F9EA009DB93E /* Mnemonic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mnemonic.swift; sourceTree = "<group>"; };
 		BCB2231525412AF8002D997F /* p2p wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "p2p wallet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -138,7 +135,6 @@
 		BC9DFA3C2541F9EA009DB93E /* BIP39 */ = {
 			isa = PBXGroup;
 			children = (
-				BC9DFA3D2541F9EA009DB93E /* PKCS5.swift */,
 				BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */,
 				BC9DFA3F2541F9EA009DB93E /* Mnemonic.swift */,
 			);
@@ -475,7 +471,6 @@
 				BCB2231D25412AF8002D997F /* ViewController.swift in Sources */,
 				BC15BDD52541B90800FF1527 /* Account.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
-				BC9DFA402541F9EA009DB93E /* PKCS5.swift in Sources */,
 				BC9DFA442541F9EA009DB93E /* Mnemonic.swift in Sources */,
 				BCB22372254137D7002D997F /* SolanaSDK.swift in Sources */,
 				BC9DFA422541F9EA009DB93E /* Wordlists.swift in Sources */,
@@ -487,7 +482,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BCF3D5BE2541FDD5002A5255 /* Account.swift in Sources */,
-				BC9DFA412541F9EA009DB93E /* PKCS5.swift in Sources */,
 				BCB2233025412AF9002D997F /* AccountTests.swift in Sources */,
 				BC9DFA432541F9EA009DB93E /* Wordlists.swift in Sources */,
 				BC9DFA452541F9EA009DB93E /* Mnemonic.swift in Sources */,
