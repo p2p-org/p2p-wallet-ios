@@ -52,3 +52,8 @@ custom_rules:
     regex: 'UIFont(\.init)?\(name: ?"?.+"?, ?size:.+?\)'
     message: "Use FontFamily.<family>.<variant>.size(<size>) instead"
     severity: error
+  swiftgen_strings:
+    name: "SwiftGen Strings"
+    regex: 'NSLocalizedString'
+    message: "Use L10n.key instead"
+    severity: error

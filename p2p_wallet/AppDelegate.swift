@@ -7,7 +7,6 @@
 
 import UIKit
 @_exported import BEPureLayout
-@_exported import Localize_Swift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

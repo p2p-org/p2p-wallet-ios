@@ -15,4 +15,5 @@ class WelcomeVC: BaseVC {
     var currentPage = 0
     
     // MARK: - Subviews
+    lazy var nextButton = UIButton(label: L10n.next)
 }
