@@ -13,3 +13,10 @@ extension Data {
         Base58.base58Encode([UInt8](self))
     }
 }
+
+extension Encodable {
+    var jsonString: String? {
+        guard let data = try? JSONEncoder().encode(self) else {return nil}
+        return String(data: data, encoding: .utf8)
+    }
+}
