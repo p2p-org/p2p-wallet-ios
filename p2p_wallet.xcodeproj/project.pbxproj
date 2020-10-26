@@ -19,6 +19,7 @@
 		BC846CFB2546939F00CABFE0 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC846CFA2546939F00CABFE0 /* Data+Extensions.swift */; };
 		BC846D1425469ADB00CABFE0 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC846D1325469ADB00CABFE0 /* Error.swift */; };
 		BC846D4B2546A0EE00CABFE0 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC846D4A2546A0EE00CABFE0 /* Logger.swift */; };
+		BC846D682546A43A00CABFE0 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC846D672546A43A00CABFE0 /* Response.swift */; };
 		BC9DFA352541F949009DB93E /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = BC9DFA342541F949009DB93E /* CryptoSwift */; };
 		BC9DFA422541F9EA009DB93E /* Wordlists.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */; };
 		BC9DFA432541F9EA009DB93E /* Wordlists.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */; };
@@ -83,6 +84,7 @@
 		BC846CFA2546939F00CABFE0 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		BC846D1325469ADB00CABFE0 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		BC846D4A2546A0EE00CABFE0 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		BC846D672546A43A00CABFE0 /* Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
 		BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Wordlists.swift; sourceTree = "<group>"; };
 		BC9DFA3F2541F9EA009DB93E /* Mnemonic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mnemonic.swift; sourceTree = "<group>"; };
 		BCB2231525412AF8002D997F /* p2p_wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = p2p_wallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -180,6 +182,14 @@
 			path = Scenes;
 			sourceTree = "<group>";
 		};
+		BC846D662546A41A00CABFE0 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BC846D672546A43A00CABFE0 /* Response.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		BC9DFA152541F777009DB93E /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -261,6 +271,7 @@
 			children = (
 				BC846D4A2546A0EE00CABFE0 /* Logger.swift */,
 				BC9DFA3C2541F9EA009DB93E /* BIP39 */,
+				BC846D662546A41A00CABFE0 /* Models */,
 				BCB22371254137D7002D997F /* SolanaSDK.swift */,
 				BC15BDD42541B90800FF1527 /* Account.swift */,
 				BC846D1325469ADB00CABFE0 /* Error.swift */,
@@ -579,6 +590,7 @@
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
 				BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */,
 				BC846D1425469ADB00CABFE0 /* Error.swift in Sources */,
+				BC846D682546A43A00CABFE0 /* Response.swift in Sources */,
 				BC15BDD52541B90800FF1527 /* Account.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */,
