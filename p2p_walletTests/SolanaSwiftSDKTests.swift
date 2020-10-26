@@ -21,10 +21,13 @@ class SolanaSwiftSDKTests: XCTestCase {
     }
     
     var solanaSDK: SolanaSDK!
+    var storage = InMemoryStorage()
 
     override func setUpWithError() throws {
-        solanaSDK = SolanaSDK(accountStorage: InMemoryStorage())
-        try solanaSDK.createAccount()
+        if storage.account == nil {
+            solanaSDK = SolanaSDK(accountStorage: storage)
+            try solanaSDK.createAccount()
+        }
     }
 
     override func tearDownWithError() throws {
@@ -34,13 +37,6 @@ class SolanaSwiftSDKTests: XCTestCase {
     func testGetBalance() throws {
         let balance = try solanaSDK.getBalance().toBlocking().first()
         XCTAssertEqual(balance?.value, 0)
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
     }
 
 }
