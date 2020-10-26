@@ -2,6 +2,7 @@ warning_threshold: 1000
 
 excluded:
  - Pods
+ - SolanaSwift
 
 disabled_rules:
   - variable_name
