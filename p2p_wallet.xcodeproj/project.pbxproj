@@ -18,7 +18,6 @@
 		BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2231825412AF8002D997F /* AppDelegate.swift */; };
 		BCB2232225412AF8002D997F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232125412AF8002D997F /* Assets.xcassets */; };
 		BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232325412AF9002D997F /* LaunchScreen.storyboard */; };
-		BCB2233025412AF9002D997F /* AccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2232F25412AF9002D997F /* AccountTests.swift */; };
 		BCB2233B25412AF9002D997F /* p2p_walletUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */; };
 		BCEA06BE2542FD3F0006E4C3 /* Asset+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */; };
 		BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */; };
@@ -73,7 +72,6 @@
 		BCB2232425412AF9002D997F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BCB2232625412AF9002D997F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCB2232B25412AF9002D997F /* p2p_walletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = p2p_walletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BCB2232F25412AF9002D997F /* AccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountTests.swift; sourceTree = "<group>"; };
 		BCB2233125412AF9002D997F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCB2233625412AF9002D997F /* p2p_walletUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = p2p_walletUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = p2p_walletUITests.swift; sourceTree = "<group>"; };
@@ -211,7 +209,6 @@
 		BCB2232E25412AF9002D997F /* p2p_walletTests */ = {
 			isa = PBXGroup;
 			children = (
-				BCB2232F25412AF9002D997F /* AccountTests.swift */,
 				BCB2233125412AF9002D997F /* Info.plist */,
 			);
 			path = p2p_walletTests;
@@ -549,7 +546,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCB2233025412AF9002D997F /* AccountTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
