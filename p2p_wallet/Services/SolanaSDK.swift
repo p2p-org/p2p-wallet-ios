@@ -54,6 +54,9 @@ public class SolanaSDK {
         var parameters = parameters
         parameters.append([account.publicKey.base58EncodedString])
         id += 1
+        
+        Logger.log(message: "\(method.rawValue) \(String(describing: (parameters as? Encodable)?.jsonString))", event: .request, apiMethod: bcMethod)
+        
         return RxAlamofire.request(method, url, parameters: [
             "jsonrpc": "2.0",
             "id": id,
