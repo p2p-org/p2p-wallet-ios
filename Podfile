@@ -1,8 +1,10 @@
 # Uncomment the next line to define a global platform for your project
- platform :ios, '11.0'
+platform :ios, '11.0'
+# ignore all warnings from all pods
+inhibit_all_warnings!
 def common_pods
-  pod 'SwiftLint'
   pod 'RxCocoa'
+  pod 'SolanaSwift', :path => 'SolanaSwift'
 end
 
 target 'p2p_wallet' do
@@ -11,7 +13,7 @@ target 'p2p_wallet' do
   common_pods
   pod 'BEPureLayout', :git => "https://github.com/bigearsenal/BEPureLayout.git"
   pod 'SwiftGen', '~> 6.0'
-  pod 'SolanaSwift', :path => 'SolanaSwift'
+  pod 'SwiftLint'
 
   # Pods for p2p wallet
 
@@ -19,6 +21,7 @@ target 'p2p_wallet' do
     inherit! :search_paths
     common_pods
     # Pods for testing
+    pod 'RxBlocking'
   end
 
   target 'p2p_walletUITests' do
