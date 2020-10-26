@@ -10,18 +10,30 @@ import SolanaSwift
 import RxBlocking
 
 class SolanaSwiftSDKTests: XCTestCase {
+    class InMemoryStorage: SolanaSDKAccountStorage {
+        private var _account: SolanaSDK.Account?
+        func save(_ account: SolanaSDK.Account) throws {
+            _account = account
+        }
+        var account: SolanaSDK.Account? {
+            _account
+        }
+    }
+    
     var solanaSDK: SolanaSDK!
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        solanaSDK = SolanaSDK(accountStorage: InMemoryStorage())
+        try solanaSDK.createAccount()
     }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        
+    func testGetBalance() throws {
+        let balance = try solanaSDK.getBalance().toBlocking().first()
+        XCTAssertEqual(balance?.value, 0)
     }
 
     func testPerformanceExample() throws {
