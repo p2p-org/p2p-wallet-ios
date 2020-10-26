@@ -16,6 +16,9 @@
 		BC65E9D72542BD3C005F50CE /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9D62542BD3C005F50CE /* WelcomeVC.swift */; };
 		BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9E22542BE43005F50CE /* String+Extensions.swift */; };
 		BC65E9F92542C181005F50CE /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC65E9F82542C181005F50CE /* Colors.xcassets */; };
+		BC846CFB2546939F00CABFE0 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC846CFA2546939F00CABFE0 /* Data+Extensions.swift */; };
+		BC846D1425469ADB00CABFE0 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC846D1325469ADB00CABFE0 /* Error.swift */; };
+		BC846D4B2546A0EE00CABFE0 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC846D4A2546A0EE00CABFE0 /* Logger.swift */; };
 		BC9DFA352541F949009DB93E /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = BC9DFA342541F949009DB93E /* CryptoSwift */; };
 		BC9DFA422541F9EA009DB93E /* Wordlists.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */; };
 		BC9DFA432541F9EA009DB93E /* Wordlists.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */; };
@@ -77,6 +80,9 @@
 		BC65E9D62542BD3C005F50CE /* WelcomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
 		BC65E9E22542BE43005F50CE /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		BC65E9F82542C181005F50CE /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		BC846CFA2546939F00CABFE0 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
+		BC846D1325469ADB00CABFE0 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
+		BC846D4A2546A0EE00CABFE0 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		BC9DFA3E2541F9EA009DB93E /* Wordlists.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Wordlists.swift; sourceTree = "<group>"; };
 		BC9DFA3F2541F9EA009DB93E /* Mnemonic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mnemonic.swift; sourceTree = "<group>"; };
 		BCB2231525412AF8002D997F /* p2p_wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = p2p_wallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -253,9 +259,12 @@
 		BCB22370254137C2002D997F /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				BC846D4A2546A0EE00CABFE0 /* Logger.swift */,
 				BC9DFA3C2541F9EA009DB93E /* BIP39 */,
 				BCB22371254137D7002D997F /* SolanaSDK.swift */,
 				BC15BDD42541B90800FF1527 /* Account.swift */,
+				BC846D1325469ADB00CABFE0 /* Error.swift */,
+				BC846CFA2546939F00CABFE0 /* Data+Extensions.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -569,12 +578,15 @@
 				BCEA06BE2542FD3F0006E4C3 /* Asset+Generated.swift in Sources */,
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
 				BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */,
+				BC846D1425469ADB00CABFE0 /* Error.swift in Sources */,
 				BC15BDD52541B90800FF1527 /* Account.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */,
 				BC9DFA442541F9EA009DB93E /* Mnemonic.swift in Sources */,
 				BC65E9D72542BD3C005F50CE /* WelcomeVC.swift in Sources */,
 				BCB22372254137D7002D997F /* SolanaSDK.swift in Sources */,
+				BC846CFB2546939F00CABFE0 /* Data+Extensions.swift in Sources */,
+				BC846D4B2546A0EE00CABFE0 /* Logger.swift in Sources */,
 				BC9DFA422541F9EA009DB93E /* Wordlists.swift in Sources */,
 				BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */,
 			);

@@ -4,6 +4,8 @@ def common_pods
   pod 'Alamofire', '~> 5.2'
   pod "Base58Swift"
   pod 'SwiftLint'
+  pod 'RxAlamofire'
+  pod 'RxCocoa'
 end
 
 target 'p2p_wallet' do
