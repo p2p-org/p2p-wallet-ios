@@ -54,6 +54,7 @@ public class SolanaSDK {
         var parameters = parameters
         parameters.append([account.publicKey.base58EncodedString])
         id += 1
+        if id > 1000 {id=1}
         
         Logger.log(message: "\(method.rawValue) \(String(describing: (parameters as? Encodable)?.jsonString))", event: .request, apiMethod: bcMethod)
         
