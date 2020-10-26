@@ -37,12 +37,16 @@ public class SolanaSDK {
         return account
     }
     
+    public func getBalance() -> Single<Balance> {
+        request(bcMethod: "getBalance", decodedTo: Balance.self)
+    }
+    
     // MARK: - Helper
     func request<T: Decodable>(
-        method: HTTPMethod,
-        path: String,
+        method: HTTPMethod = .post,
+        path: String = "",
         bcMethod: String,
-        parameters: [Any],
+        parameters: [Any] = [],
         decodedTo: T.Type
     ) -> Single<T>{
         guard let url = URL(string: endpoint + path) else {
@@ -65,7 +69,7 @@ public class SolanaSDK {
             "params": parameters
         ])
         .responseData()
-        .map {(response, data) -> T in
+        .map {(response, data) -> Response<T> in
             // Print
             Logger.log(message: String(data: data, encoding: .utf8) ?? "", event: .response, apiMethod: bcMethod)
             
@@ -74,9 +78,10 @@ public class SolanaSDK {
                 // Decode errror
                 throw Error.invalidStatusCode(code: response.statusCode)
             }
-            return try JSONDecoder().decode(T.self, from: data)
+            return try JSONDecoder().decode(Response<T>.self, from: data)
         }
         .take(1)
         .asSingle()
+        .map {$0.result}
     }
 }
