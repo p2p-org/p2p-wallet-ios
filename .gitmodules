@@ -1,0 +1,3 @@
+[submodule "SolanaSwift"]
+	path = SolanaSwift
+	url = git@github.com:p2p-org/solana-swift.git
