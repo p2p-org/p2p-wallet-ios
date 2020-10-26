@@ -33,10 +33,19 @@ class SolanaSwiftSDKTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
+    
+    func testGetAccountInfo() throws {
+        let accountInfo = try solanaSDK.getAccountInfo().toBlocking().first()
+        XCTAssertNotNil(accountInfo)
+    }
 
     func testGetBalance() throws {
         let balance = try solanaSDK.getBalance().toBlocking().first()
         XCTAssertEqual(balance?.value, 0)
     }
-
+    
+    func testRequestAirDrop() throws {
+        let response = try solanaSDK.requestAirdrop().toBlocking().first()
+        XCTAssertNotNil(response)
+    }
 }
