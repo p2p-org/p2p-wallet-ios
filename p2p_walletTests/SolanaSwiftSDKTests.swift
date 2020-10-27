@@ -34,18 +34,27 @@ class SolanaSwiftSDKTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    func testGetAccountInfo() throws {
-        let accountInfo = try solanaSDK.getAccountInfo().toBlocking().first()
-        XCTAssertNotNil(accountInfo)
-    }
-
     func testGetBalance() throws {
-        let balance = try solanaSDK.getBalance().toBlocking().first()
-        XCTAssertEqual(balance?.value, 0)
+        guard let account = storage.account?.publicKey.base58EncodedString else {
+            throw SolanaSDK.Error.accountNotFound
+        }
+        let balance = try solanaSDK.getBalance(account: account).toBlocking().first()
+        XCTAssertEqual(balance, 0)
+    }
+    
+    func testGetAccountInfo() throws {
+        guard let account = storage.account?.publicKey.base58EncodedString else {
+            throw SolanaSDK.Error.accountNotFound
+        }
+        let accountInfo = try solanaSDK.getAccountInfo(account: account).toBlocking().first()
+        XCTAssertNotNil(accountInfo)
     }
     
     func testRequestAirDrop() throws {
-        let response = try solanaSDK.requestAirdrop().toBlocking().first()
+        guard let account = storage.account?.publicKey.base58EncodedString else {
+            throw SolanaSDK.Error.accountNotFound
+        }
+        let response = try solanaSDK.requestAirdrop(account: account, lamports: 89588000).toBlocking().first()
         XCTAssertNotNil(response)
     }
 }
