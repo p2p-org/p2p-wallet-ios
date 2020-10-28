@@ -29,7 +29,7 @@ class AccountTests: XCTestCase {
         guard let account = storage.account?.publicKey.base58EncodedString else {
             throw SolanaSDK.Error.accountNotFound
         }
-        let balance = try solanaSDK.getBalance(account: account).toBlocking().first()
+        let balance = try solanaSDK.getBalance(account: account, commitment: "recent").toBlocking().first()
         XCTAssertEqual(balance, 0)
     }
     
@@ -45,7 +45,10 @@ class AccountTests: XCTestCase {
         guard let account = storage.account?.publicKey.base58EncodedString else {
             throw SolanaSDK.Error.accountNotFound
         }
-        let response = try solanaSDK.requestAirdrop(account: account, lamports: 89588000).toBlocking().first()
-        XCTAssertNotNil(response)
+        let balance = try solanaSDK.requestAirdrop(account: account, lamports: 89588000)
+            .flatMap{_ in Single<Int>.timer(.seconds(10), scheduler: MainScheduler.instance)}
+            .flatMap{_ in self.solanaSDK.getBalance(account: account, commitment: "recent")}
+            .toBlocking().first()
+        XCTAssertNotEqual(balance, 0)
     }
 }
