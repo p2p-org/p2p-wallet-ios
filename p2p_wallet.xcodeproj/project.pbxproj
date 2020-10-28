@@ -740,23 +740,13 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					"\"Alamofire\"",
-					"-framework",
 					"\"BEPureLayout\"",
 					"-framework",
-					"\"Base58Swift\"",
-					"-framework",
-					"\"BigInt\"",
-					"-framework",
 					"\"CFNetwork\"",
-					"-framework",
-					"\"CryptoSwift\"",
 					"-framework",
 					"\"Foundation\"",
 					"-framework",
 					"\"PureLayout\"",
-					"-framework",
-					"\"RxAlamofire\"",
 					"-framework",
 					"\"RxCocoa\"",
 					"-framework",
@@ -765,8 +755,6 @@
 					"\"RxSwift\"",
 					"-framework",
 					"\"SolanaSwift\"",
-					"-framework",
-					"\"TweetNacl\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-wallet";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -792,23 +780,13 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					"\"Alamofire\"",
-					"-framework",
 					"\"BEPureLayout\"",
 					"-framework",
-					"\"Base58Swift\"",
-					"-framework",
-					"\"BigInt\"",
-					"-framework",
 					"\"CFNetwork\"",
-					"-framework",
-					"\"CryptoSwift\"",
 					"-framework",
 					"\"Foundation\"",
 					"-framework",
 					"\"PureLayout\"",
-					"-framework",
-					"\"RxAlamofire\"",
 					"-framework",
 					"\"RxCocoa\"",
 					"-framework",
@@ -817,8 +795,6 @@
 					"\"RxSwift\"",
 					"-framework",
 					"\"SolanaSwift\"",
-					"-framework",
-					"\"TweetNacl\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-wallet";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -842,6 +818,23 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"CFNetwork\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"RxBlocking\"",
+					"-framework",
+					"\"RxCocoa\"",
+					"-framework",
+					"\"RxRelay\"",
+					"-framework",
+					"\"RxSwift\"",
+					"-framework",
+					"\"SolanaSwift\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-walletTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -869,6 +862,23 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"CFNetwork\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"RxBlocking\"",
+					"-framework",
+					"\"RxCocoa\"",
+					"-framework",
+					"\"RxRelay\"",
+					"-framework",
+					"\"RxSwift\"",
+					"-framework",
+					"\"SolanaSwift\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-walletTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -891,6 +901,25 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"BEPureLayout\"",
+					"-framework",
+					"\"CFNetwork\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"PureLayout\"",
+					"-framework",
+					"\"RxCocoa\"",
+					"-framework",
+					"\"RxRelay\"",
+					"-framework",
+					"\"RxSwift\"",
+					"-framework",
+					"\"SolanaSwift\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-walletUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -911,6 +940,25 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"BEPureLayout\"",
+					"-framework",
+					"\"CFNetwork\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"PureLayout\"",
+					"-framework",
+					"\"RxCocoa\"",
+					"-framework",
+					"\"RxRelay\"",
+					"-framework",
+					"\"RxSwift\"",
+					"-framework",
+					"\"SolanaSwift\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-walletUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
