@@ -8,19 +8,19 @@
 import XCTest
 import SolanaSwift
 
-class SendTransactionTests: XCTestCase {
-    var solanaSDK: SolanaSDK!
-    let storage = InMemoryAccountStorage()
-
+class SendTransactionTests: SolanaSDKTests {
+    
     override func setUpWithError() throws {
-        if storage.account == nil {
-            solanaSDK = SolanaSDK(accountStorage: storage)
-            try solanaSDK.createAccount()
-        }
+        try super.setUpWithError()
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        
+    }
+    
+    func testGetBalance() throws {
+        let balance = try solanaSDK.getBalance(account: account, commitment: "recent").toBlocking().first()
+        XCTAssertNotEqual(balance, 0)
     }
 
     func testSendingTransaction() throws {

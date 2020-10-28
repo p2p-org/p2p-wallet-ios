@@ -12,6 +12,7 @@
 		BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC2288022542E1CC0028CE8F /* Localizable.strings */; };
 		BC23AD7A254908ED0029FF0B /* SendTransactionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23AD79254908ED0029FF0B /* SendTransactionTests.swift */; };
 		BC23AD7F254909C60029FF0B /* InMemoryAccountStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23AD7E254909C60029FF0B /* InMemoryAccountStorage.swift */; };
+		BC23AD9925491E370029FF0B /* SolanaSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23AD9825491E370029FF0B /* SolanaSDKTests.swift */; };
 		BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9B82542B98D005F50CE /* BaseVC.swift */; };
 		BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */; };
 		BC65E9D72542BD3C005F50CE /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9D62542BD3C005F50CE /* WelcomeVC.swift */; };
@@ -66,6 +67,7 @@
 		BC2288082542E1D10028CE8F /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		BC23AD79254908ED0029FF0B /* SendTransactionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTransactionTests.swift; sourceTree = "<group>"; };
 		BC23AD7E254909C60029FF0B /* InMemoryAccountStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryAccountStorage.swift; sourceTree = "<group>"; };
+		BC23AD9825491E370029FF0B /* SolanaSDKTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolanaSDKTests.swift; sourceTree = "<group>"; };
 		BC65E9B82542B98D005F50CE /* BaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVC.swift; sourceTree = "<group>"; };
 		BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVStackVC.swift; sourceTree = "<group>"; };
 		BC65E9D62542BD3C005F50CE /* WelcomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
@@ -149,9 +151,10 @@
 		BC23AD75254908C30029FF0B /* SolanaSDKTests */ = {
 			isa = PBXGroup;
 			children = (
+				BC23AD7E254909C60029FF0B /* InMemoryAccountStorage.swift */,
+				BC23AD9825491E370029FF0B /* SolanaSDKTests.swift */,
 				BCD9EED62546C3D400ADB69B /* AccountTests.swift */,
 				BC23AD79254908ED0029FF0B /* SendTransactionTests.swift */,
-				BC23AD7E254909C60029FF0B /* InMemoryAccountStorage.swift */,
 			);
 			path = SolanaSDKTests;
 			sourceTree = "<group>";
@@ -566,6 +569,7 @@
 			files = (
 				BC23AD7F254909C60029FF0B /* InMemoryAccountStorage.swift in Sources */,
 				BC23AD7A254908ED0029FF0B /* SendTransactionTests.swift in Sources */,
+				BC23AD9925491E370029FF0B /* SolanaSDKTests.swift in Sources */,
 				BCD9EED72546C3D400ADB69B /* AccountTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
