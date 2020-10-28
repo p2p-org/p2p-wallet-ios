@@ -11,18 +11,8 @@ import RxBlocking
 import RxSwift
 
 class AccountTests: XCTestCase {
-    class InMemoryStorage: SolanaSDKAccountStorage {
-        private var _account: SolanaSDK.Account?
-        func save(_ account: SolanaSDK.Account) throws {
-            _account = account
-        }
-        var account: SolanaSDK.Account? {
-            _account
-        }
-    }
-    
     var solanaSDK: SolanaSDK!
-    var storage = InMemoryStorage()
+    let storage = InMemoryAccountStorage()
 
     override func setUpWithError() throws {
         if storage.account == nil {
@@ -32,7 +22,7 @@ class AccountTests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        
     }
     
     func testGetBalance() throws {
