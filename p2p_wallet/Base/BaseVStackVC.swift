@@ -8,6 +8,7 @@
 import Foundation
 
 class BaseVStackVC: BaseVC {
+    var padding: UIEdgeInsets { UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10) }
     lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical)
     lazy var stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
     

@@ -8,10 +8,18 @@
 import Foundation
 
 class BaseVC: BEViewController {
-    var padding: UIEdgeInsets { UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10) }
-    
     override func setUp() {
         super.setUp()
         view.backgroundColor = .white
     }
+    
+    #if DEBUG //1
+    @objc func injected() { //2
+        for subview in self.view.subviews {
+            subview.removeFromSuperview()
+        }
+        
+        viewDidLoad() //4
+    }
+    #endif
 }
