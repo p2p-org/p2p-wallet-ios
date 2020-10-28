@@ -10,15 +10,9 @@ import SolanaSwift
 import RxBlocking
 import RxSwift
 
-class AccountTests: XCTestCase {
-    var solanaSDK: SolanaSDK!
-    let storage = InMemoryAccountStorage()
-
+class AccountTests: SolanaSDKTests {
     override func setUpWithError() throws {
-        if storage.account == nil {
-            solanaSDK = SolanaSDK(accountStorage: storage)
-            try solanaSDK.createAccount()
-        }
+        try super.setUpWithError()
     }
 
     override func tearDownWithError() throws {
@@ -26,28 +20,19 @@ class AccountTests: XCTestCase {
     }
     
     func testGetBalance() throws {
-        guard let account = storage.account?.publicKey.base58EncodedString else {
-            throw SolanaSDK.Error.accountNotFound
-        }
         let balance = try solanaSDK.getBalance(account: account, commitment: "recent").toBlocking().first()
-        XCTAssertEqual(balance, 0)
+        XCTAssertNotEqual(balance, 0)
     }
     
     func testGetAccountInfo() throws {
-        guard let account = storage.account?.publicKey.base58EncodedString else {
-            throw SolanaSDK.Error.accountNotFound
-        }
         let accountInfo = try solanaSDK.getAccountInfo(account: account).toBlocking().first()
-        XCTAssertNotNil(accountInfo)
+        XCTAssertNotNil(accountInfo as? SolanaSDK.AccountInfo)
     }
     
     func testRequestAirDrop() throws {
-        guard let account = storage.account?.publicKey.base58EncodedString else {
-            throw SolanaSDK.Error.accountNotFound
-        }
         let balance = try solanaSDK.requestAirdrop(account: account, lamports: 89588000)
             .flatMap{_ in Single<Int>.timer(.seconds(10), scheduler: MainScheduler.instance)}
-            .flatMap{_ in self.solanaSDK.getBalance(account: account, commitment: "recent")}
+            .flatMap{_ in self.solanaSDK.getBalance(account: self.account, commitment: "recent")}
             .toBlocking().first()
         XCTAssertNotEqual(balance, 0)
     }
