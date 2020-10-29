@@ -118,7 +118,7 @@ class PhrasesVC: BaseVStackVC {
         DispatchQueue.global().async {
             do {
                 let account = try SolanaSDK.Account(phrase: self.phrases.value)
-                try APIManager.shared.accountStorage.save(account)
+                try KeychainStorage.shared.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.keyWindow?.hideHud()
                     self.show(CreateWalletCompletedVC(), sender: nil)

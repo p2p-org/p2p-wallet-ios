@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = window
         
         let rootVC: UIViewController
-        if APIManager.keychainStorage.account == nil {
+        if KeychainStorage.shared.account == nil {
             rootVC = WelcomeVC()
         } else {
             rootVC = BENavigationController(rootViewController: PinCodeVC())
