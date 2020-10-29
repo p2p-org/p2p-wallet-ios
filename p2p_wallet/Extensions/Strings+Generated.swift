@@ -16,6 +16,8 @@ internal enum L10n {
   internal static let byTappingAcceptYouAgreeToP2PWalletSTermsOfUseAndPrivacyPolicy = L10n.tr("Localizable", "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "Cancel")
+  /// Congratulations!
+  internal static let congratulations = L10n.tr("Localizable", "Congratulations!")
   /// create new wallet
   internal static let createNewWallet = L10n.tr("Localizable", "create new wallet")
   /// i've already had a wallet
@@ -26,6 +28,8 @@ internal enum L10n {
   internal static let termsAndConditions = L10n.tr("Localizable", "Terms and conditions")
   /// Wowlet for people, not for tokens
   internal static let wowletForPeopleNotForTokens = L10n.tr("Localizable", "Wowlet for people, not for tokens")
+  /// Your wallet has been successfully created!
+  internal static let yourWalletHasBeenSuccessfullyCreated = L10n.tr("Localizable", "Your wallet has been successfully created!")
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces

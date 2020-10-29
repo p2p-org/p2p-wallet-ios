@@ -8,7 +8,7 @@
 import Foundation
 import Action
 
-class CreateWalletVC: IntroVC {
+class CreateOrRestoreWalletVC: IntroVC {
     override var index: Int {1}
     
     lazy var createWalletButton = WLButton.stepButton(type: .main, label: L10n.createNewWallet.uppercaseFirst)
@@ -52,7 +52,7 @@ class CreateWalletVC: IntroVC {
                 highlightedButtonIndex: 1,
                 completion: { index in
                     if index == 1 {
-                        
+                        UIApplication.shared.keyWindow?.rootViewController = CreateWalletVC()
                     }
                 }
             )
