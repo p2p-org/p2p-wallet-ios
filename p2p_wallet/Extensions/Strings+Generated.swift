@@ -10,6 +10,10 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
+  /// create new wallet
+  internal static let createNewWallet = L10n.tr("Localizable", "create new wallet")
+  /// i've already had a wallet
+  internal static let iVeAlreadyHadAWallet = L10n.tr("Localizable", "i've already had a wallet")
   /// next
   internal static let next = L10n.tr("Localizable", "next")
   /// Wowlet for people, not for tokens
