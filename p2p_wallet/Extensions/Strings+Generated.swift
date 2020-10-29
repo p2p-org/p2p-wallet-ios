@@ -34,6 +34,8 @@ internal enum L10n {
   internal static let ok = L10n.tr("Localizable", "OK")
   /// please try again later!
   internal static let pleaseTryAgainLater = L10n.tr("Localizable", "please try again later!")
+  /// save to Keychain
+  internal static let saveToKeychain = L10n.tr("Localizable", "save to Keychain")
   /// security keys
   internal static let securityKeys = L10n.tr("Localizable", "security keys")
   /// tap refresh button to retry

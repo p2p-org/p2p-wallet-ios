@@ -24,3 +24,4 @@
 "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future." = "ВНИМАНИЕ: начальная фраза больше не будет отображаться, скопируйте ее или сохраните в диспетчере паролей, чтобы восстановить этот кошелек в будущем.";
 "tap refresh button to retry" = "нажмите кнопку обновления, чтобы повторить попытку";
 "we've created some security keywords for you." = "мы создали для вас несколько ключевых слов безопасности.";
+"save to Keychain" = "сохранить в кейчейн";

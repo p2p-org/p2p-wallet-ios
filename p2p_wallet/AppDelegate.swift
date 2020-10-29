@@ -26,6 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // BEPureLayoutConfiguration
         BEPureLayoutConfigs.defaultTextColor = .textBlack
         BEPureLayoutConfigs.defaultNavigationBarColor = .background
+        BEPureLayoutConfigs.defaultNavigationBarTextFont = .systemFont(ofSize: 17, weight: .semibold)
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         self.window = window
