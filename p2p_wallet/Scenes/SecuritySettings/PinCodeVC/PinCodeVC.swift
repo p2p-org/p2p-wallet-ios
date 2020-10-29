@@ -20,6 +20,8 @@ class PinCodeVC: BaseVStackVC {
     
     let numberOfDigits = 6
     
+    lazy var label = UILabel(text: L10n.createAPINCodeToProtectYourWallet, textSize: 21, weight: .semibold, numberOfLines: 2, textAlignment: .center)
+    
     lazy var pinCodeTextField: PinCodeTextField = {
         let tf = PinCodeTextField(forAutoLayout: ())
         tf.numberOfDigits = numberOfDigits
@@ -27,10 +29,10 @@ class PinCodeVC: BaseVStackVC {
     }()
     
     lazy var nextButton = WLButton.stepButton(type: .main, label: L10n.next.uppercaseFirst)
+        .onTap(self, action: #selector(buttonNextDidTouch))
     
     override func setUp() {
         super.setUp()
-        let label = UILabel(text: L10n.createAPINCodeToProtectYourWallet, textSize: 21, weight: .semibold, numberOfLines: 2, textAlignment: .center)
         
         stackView.spacing = 60
         stackView.alignment = .center
@@ -51,5 +53,10 @@ class PinCodeVC: BaseVStackVC {
             .asDriver(onErrorJustReturn: false)
             .drive(nextButton.rx.isEnabled)
             .disposed(by: disposeBag)
+    }
+    
+    @objc func buttonNextDidTouch() {
+        let vc = ConfirmPinCodeVC(currentPinCode: pinCodeTextField.text.value)
+        show(vc, sender: nil)
     }
 }
