@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import RxCocoa
+import RxSwift
 
 class PinCodeTextField: BEView, UITextFieldDelegate {
     class ElementView: BEView {
-        lazy var label = UILabel(textSize: 40, weight: .bold, textAlignment: .center)
+        lazy var label = UILabel(textSize: 20, weight: .bold, textAlignment: .center)
         override func commonInit() {
             super.commonInit()
             addSubview(label)
@@ -33,14 +35,22 @@ class PinCodeTextField: BEView, UITextFieldDelegate {
         override func caretRect(for position: UITextPosition) -> CGRect {
             .zero
         }
+        
+        override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+            if action == #selector(UIResponderStandardEditActions.paste(_:)) {
+                return true
+            }
+            return false
+        }
     }
     
     private lazy var hiddenTextField = TextField(forAutoLayout: ())
-    var text = "" { didSet { updateText() } }
+    let text = BehaviorRelay<String>(value: "")
     var numberOfDigits = 0 { didSet { updateStackView() } }
     
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 20, alignment: .fill, distribution: .fillEqually)
     
+    let disposeBag = DisposeBag()
     override func commonInit() {
         super.commonInit()
         addSubview(stackView)
@@ -51,6 +61,11 @@ class PinCodeTextField: BEView, UITextFieldDelegate {
         hiddenTextField.autoPinEdge(.left, to: .left, of: stackView)
         hiddenTextField.autoPinEdge(.right, to: .right, of: stackView)
         hiddenTextField.delegate = self
+        
+        text.subscribe(onNext: { _ in
+            self.updateText()
+        })
+            .disposed(by: disposeBag)
     }
     
     func updateStackView() {
@@ -58,15 +73,15 @@ class PinCodeTextField: BEView, UITextFieldDelegate {
         for _ in 0..<numberOfDigits {
             stackView.addArrangedSubview(ElementView(width: 37, height: 50))
         }
-        text = ""
+        text.accept("")
     }
     
     func updateText() {
-        let digits = String(text.suffix(numberOfDigits))
+        let digits = String(text.value.suffix(numberOfDigits))
         let elementViews = stackView.arrangedSubviews.compactMap {$0 as? ElementView}
         for (index, view) in elementViews.enumerated() {
             if index < digits.count {
-                view.label.text = "\(digits[index..<index+1])"
+                view.label.text = "●" /*"\(digits[index..<index+1])"*/
             } else {
                 view.label.text = nil
             }
@@ -75,11 +90,12 @@ class PinCodeTextField: BEView, UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if string == "" {
-            if text.count > 0 {
-                text = String(text.prefix(text.count-1))
+            if text.value.count > 0 {
+                text.accept(String(text.value.prefix(text.value.count-1)))
             }
-        } else if let number = Int(string.prefix(numberOfDigits-text.count)) {
-            text += "\(number)"
+        } else if let number = Int(string.prefix(numberOfDigits-text.value.count)) {
+            text.accept(text.value + "\(number)")
+            
         }
         return true
     }
