@@ -24,3 +24,4 @@
 "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future." = "AVERTISSEMENT: la phrase de départ ne sera plus affichée, copiez-la ou enregistrez-la dans votre gestionnaire de mots de passe pour récupérer ce portefeuille à l'avenir.";
 "tap refresh button to retry" = "appuyez sur le bouton d'actualisation pour réessayer";
 "we've created some security keywords for you." = "nous avons créé des mots clés de sécurité pour vous.";
+"save to Keychain" = "enregistrer dans le trousseau";

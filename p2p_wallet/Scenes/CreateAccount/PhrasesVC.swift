@@ -30,6 +30,9 @@ class PhrasesVC: BaseVStackVC {
     
     lazy var bottomPhrasesListView = createTagListView()
     
+    lazy var saveToKeychainButton = WLButton.stepButton(type: .main, label: L10n.saveToKeychain.uppercaseFirst)
+        .onTap(self, action: #selector(buttonSaveToKeychainDidTouch))
+    
     init(phrases: [String] = []) {
         self.phrases.accept(phrases)
         super.init(nibName: nil, bundle: nil)
@@ -67,6 +70,9 @@ class PhrasesVC: BaseVStackVC {
                 .isActive = true
         bottomPhrasesListView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -120).isActive = true
         
+        view.addSubview(saveToKeychainButton)
+        saveToKeychainButton.autoPinEdgesToSuperviewSafeArea(with: UIEdgeInsets(top: 0, left: 20, bottom: 16, right: 20), excludingEdge: .top)
+        
         if phrases.value.isEmpty {
             createAccount()
         }
@@ -86,21 +92,8 @@ class PhrasesVC: BaseVStackVC {
     }
     
     func createAccount() {
-        UIApplication.shared.keyWindow?.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
-        DispatchQueue.global().async {
-            do {
-                let account = try SolanaSDK.Account()
-                DispatchQueue.main.async {
-                    UIApplication.shared.keyWindow?.hideHud()
-                    self.phrases.accept(account.phrase)
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    UIApplication.shared.keyWindow?.hideHud()
-                    self.showError(error, additionalMessage: L10n.tapRefreshButtonToRetry)
-                }
-            }
-        }
+        let mnemonic = Mnemonic()
+        self.phrases.accept(mnemonic.phrase)
     }
     
     // MARK: - Helpers
@@ -117,5 +110,26 @@ class PhrasesVC: BaseVStackVC {
         tagListView.borderColor = .textBlack
         tagListView.cornerRadius = 5
         return tagListView
+    }
+    
+    // MARK: - Actions
+    @objc func buttonSaveToKeychainDidTouch() {
+        UIApplication.shared.keyWindow?.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
+        DispatchQueue.global().async {
+            do {
+                let account = try SolanaSDK.Account(phrase: self.phrases.value)
+                try APIManager.shared.accountStorage.save(account)
+                DispatchQueue.main.async {
+                    UIApplication.shared.keyWindow?.hideHud()
+                    let nc = BENavigationController(rootViewController: PinCodeVC())
+                    UIApplication.shared.keyWindow?.rootViewController = nc
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    UIApplication.shared.keyWindow?.hideHud()
+                    self.showError(error, additionalMessage: L10n.tapRefreshButtonToRetry)
+                }
+            }
+        }
     }
 }
