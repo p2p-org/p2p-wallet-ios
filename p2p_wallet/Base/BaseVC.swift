@@ -10,7 +10,7 @@ import Foundation
 class BaseVC: BEViewController {
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .white
+        view.backgroundColor = .background
     }
     
     #if DEBUG //1
