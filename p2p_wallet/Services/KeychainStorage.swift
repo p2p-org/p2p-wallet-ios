@@ -21,6 +21,10 @@ struct KeychainStorage: SolanaSDKAccountStorage {
         guard let data = keychain.getData(tokenKey) else {return nil}
         return try? JSONDecoder().decode(SolanaSDK.Account.self, from: data)
     }
+    
+    func clear() {
+        keychain.clear()
+    }
 }
 
 struct APIManager {
