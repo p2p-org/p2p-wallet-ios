@@ -9,3 +9,7 @@
 "Wowlet for people, not for tokens" = "Ваулет для людей, а не для токенов";
 "create new wallet" = "создать новый кошелек";
 "i've already had a wallet" = "у меня уже был кошелек";
+"Terms and conditions" = "Условия и положения";
+"By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy" = "Нажимая \"Принять\", вы соглашаетесь с Условиями использования и Политикой конфиденциальности P2PWallet.";
+"Cancel" = "Отмена";
+"Accept" = "Принять";
