@@ -7,6 +7,7 @@
 
 import UIKit
 @_exported import BEPureLayout
+@_exported import SolanaSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -27,7 +28,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         self.window = window
-        self.window?.rootViewController = WelcomeVC()
+        
+        let rootVC: UIViewController
+        if APIManager.keychainStorage.account == nil {
+            rootVC = WelcomeVC()
+        } else {
+            rootVC = BaseVC()
+        }
+        
+        self.window?.rootViewController = rootVC
         self.window?.makeKeyAndVisible()
         return true
     }
