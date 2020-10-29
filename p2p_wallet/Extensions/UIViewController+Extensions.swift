@@ -32,4 +32,13 @@ extension UIViewController {
         present(alertController, animated: true, completion: nil)
         return alertController
     }
+    
+    func showError(_ error: Error, showPleaseTryAgain: Bool = false, additionalMessage: String? = nil, completion: (() -> Void)? = nil) {
+        let message = error.localizedDescription
+        let vc = tabBarController ?? navigationController ?? parent ?? self
+        
+        vc.showAlert(title: L10n.error, message: message + (additionalMessage != nil ? "\n" + additionalMessage! : "") + (showPleaseTryAgain ? "\n" + L10n.pleaseTryAgainLater : ""), buttonTitles: [L10n.ok]) { (_) in
+            completion?()
+        }
+    }
 }
