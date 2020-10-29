@@ -28,6 +28,8 @@ class PinCodeVC: BaseVStackVC {
         return tf
     }()
     
+    var completion: ((String) -> Void)?
+    
     lazy var nextButton = WLButton.stepButton(type: .main, label: L10n.next.uppercaseFirst)
         .onTap(self, action: #selector(buttonNextDidTouch))
     
@@ -57,6 +59,7 @@ class PinCodeVC: BaseVStackVC {
     
     @objc func buttonNextDidTouch() {
         let vc = ConfirmPinCodeVC(currentPinCode: pinCodeTextField.text.value)
+        vc.completion = completion
         show(vc, sender: nil)
     }
 }

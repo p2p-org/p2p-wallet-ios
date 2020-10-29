@@ -35,7 +35,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if KeychainStorage.shared.account == nil {
             rootVC = WelcomeVC()
         } else {
-            rootVC = BENavigationController(rootViewController: PinCodeVC())
+            if KeychainStorage.shared.pinCode == nil {
+                rootVC = BENavigationController(rootViewController: PinCodeVC())
+            } else {
+                rootVC = EnableBiometryVC()
+            }
         }
         
         self.window?.rootViewController = rootVC

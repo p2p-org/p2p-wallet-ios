@@ -10,6 +10,7 @@ import KeychainSwift
 
 struct KeychainStorage: SolanaSDKAccountStorage {
     let tokenKey = "Keychain.Token"
+    let pincodeKey = "Keychain.Pincode"
     let keychain = KeychainSwift()
     
     static let shared = KeychainStorage()
@@ -23,6 +24,14 @@ struct KeychainStorage: SolanaSDKAccountStorage {
     var account: SolanaSDK.Account? {
         guard let data = keychain.getData(tokenKey) else {return nil}
         return try? JSONDecoder().decode(SolanaSDK.Account.self, from: data)
+    }
+    
+    func save(_ pinCode: String) {
+        keychain.set(pinCode, forKey: pincodeKey)
+    }
+    
+    var pinCode: String? {
+        keychain.get(pincodeKey)
     }
     
     func clear() {

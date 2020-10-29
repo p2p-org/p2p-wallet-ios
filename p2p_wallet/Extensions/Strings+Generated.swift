@@ -36,6 +36,8 @@ internal enum L10n {
   internal static let next = L10n.tr("Localizable", "next")
   /// OK
   internal static let ok = L10n.tr("Localizable", "OK")
+  /// passcodes do not match
+  internal static let passcodesDoNotMatch = L10n.tr("Localizable", "passcodes do not match")
   /// please try again later!
   internal static let pleaseTryAgainLater = L10n.tr("Localizable", "please try again later!")
   /// save to Keychain

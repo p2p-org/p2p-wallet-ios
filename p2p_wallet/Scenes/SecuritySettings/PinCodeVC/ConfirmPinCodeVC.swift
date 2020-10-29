@@ -26,6 +26,11 @@ class ConfirmPinCodeVC: PinCodeVC {
     }
     
     override func buttonNextDidTouch() {
-        
+        if pinCodeTextField.text.value != currentPinCode {
+            showAlert(title: L10n.error, message: L10n.passcodesDoNotMatch)
+            return
+        }
+        KeychainStorage.shared.save(currentPinCode)
+        completion?(currentPinCode)
     }
 }
