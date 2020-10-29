@@ -48,8 +48,10 @@ class WelcomeVC: BaseVC {
         pageControl.currentPageIndicatorTintColor = .black
     }
     
+    #if DEBUG
     override func injected() {
         stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
         super.injected()
     }
+    #endif
 }
