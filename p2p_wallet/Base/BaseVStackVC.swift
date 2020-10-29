@@ -14,7 +14,6 @@ class BaseVStackVC: BaseVC {
     
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .white
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewDidTouch))
         view.addGestureRecognizer(tapGesture)
@@ -31,4 +30,11 @@ class BaseVStackVC: BaseVC {
     @objc func viewDidTouch() {
         view.endEditing(true)
     }
+    
+    #if DEBUG //1
+    @objc override func injected() { //2
+        super.injected()
+        stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
+    }
+    #endif
 }

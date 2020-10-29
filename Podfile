@@ -17,6 +17,7 @@ target 'p2p_wallet' do
   pod 'Action'
   pod 'KeychainSwift', '~> 19.0'
   pod 'MBProgressHUD', '~> 1.2.0'
+  pod 'TagListView', '~> 1.0'
 
   # Pods for p2p wallet
 

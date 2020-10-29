@@ -6,13 +6,111 @@
 //
 
 import Foundation
+import TagListView
+import RxCocoa
 
 class PhrasesVC: BaseVStackVC {
-    init(account: SolanaSDK.Account) {
+    let phrases = BehaviorRelay<[String]>(value: [])
+    
+    lazy var topPhrasesListViews = createTagListView()
+    
+    lazy var label = UILabel(
+        text: L10n.weVeCreatedSomeSecurityKeywordsForYou.uppercaseFirst + "\n" + L10n.warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture,
+        textSize: 15,
+        weight: .medium,
+        textColor: UIColor.textBlack.withAlphaComponent(0.5),
+        numberOfLines: 0,
+        textAlignment: .center
+    )
+    
+    lazy var bottomPhrasesListView = createTagListView()
+    
+    init(phrases: [String] = []) {
+        self.phrases.accept(phrases)
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func setUp() {
+        super.setUp()
+        title = L10n.securityKeys.uppercaseFirst
+        
+        stackView.alignment = .center
+        
+        let firstKeysBackgroundView: UIView = {
+            let view = UIView(height: 176, backgroundColor: .lightGrayBackground, cornerRadius: 16)
+            view.addSubview(topPhrasesListViews)
+            topPhrasesListViews.autoPinEdge(toSuperviewEdge: .top, withInset: 20)
+            topPhrasesListViews.autoPinEdge(toSuperviewEdge: .leading, withInset: 40)
+            topPhrasesListViews.autoPinEdge(toSuperviewEdge: .trailing, withInset: 40)
+            return view
+        }()
+        
+        stackView.addArrangedSubview(firstKeysBackgroundView)
+        stackView.addArrangedSubview(label)
+        stackView.addArrangedSubview(bottomPhrasesListView)
+        
+        stackView.setCustomSpacing(30, after: firstKeysBackgroundView)
+        stackView.setCustomSpacing(40, after: label)
+        
+        firstKeysBackgroundView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40)
+            .isActive = true
+        label.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40)
+                .isActive = true
+        bottomPhrasesListView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -120).isActive = true
+        
+        if phrases.value.isEmpty {
+            createAccount()
+        }
+    }
+    
+    override func bind() {
+        super.bind()
+        phrases.subscribe(onNext: { phrases in
+            self.label.isHidden = phrases.isEmpty
+            self.topPhrasesListViews.removeAllTags()
+            let phrases = phrases.shuffled()
+            self.topPhrasesListViews.addTags(Array(phrases.prefix(6)))
+            self.bottomPhrasesListView.removeAllTags()
+            if phrases.count > 6 {self.bottomPhrasesListView.addTags(Array(phrases[6..<phrases.count]))}
+        })
+            .disposed(by: disposeBag)
+    }
+    
+    func createAccount() {
+        UIApplication.shared.keyWindow?.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
+        DispatchQueue.global().async {
+            do {
+                let account = try SolanaSDK.Account()
+                DispatchQueue.main.async {
+                    UIApplication.shared.keyWindow?.hideHud()
+                    self.phrases.accept(account.phrase)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    UIApplication.shared.keyWindow?.hideHud()
+                    self.showError(error, additionalMessage: L10n.tapRefreshButtonToRetry)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Helpers
+    private func createTagListView() -> TagListView {
+        let tagListView = TagListView(forAutoLayout: ())
+        tagListView.tagBackgroundColor = .textWhite
+        tagListView.textFont = .systemFont(ofSize: 18)
+        tagListView.textColor = .textBlack
+        tagListView.marginX = 5
+        tagListView.marginY = 5
+        tagListView.paddingX = 10
+        tagListView.paddingY = 6
+        tagListView.borderWidth = 1
+        tagListView.borderColor = .textBlack
+        tagListView.cornerRadius = 5
+        return tagListView
     }
 }

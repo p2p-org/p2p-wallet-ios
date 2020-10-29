@@ -34,8 +34,16 @@ internal enum L10n {
   internal static let ok = L10n.tr("Localizable", "OK")
   /// please try again later!
   internal static let pleaseTryAgainLater = L10n.tr("Localizable", "please try again later!")
+  /// security keys
+  internal static let securityKeys = L10n.tr("Localizable", "security keys")
+  /// tap refresh button to retry
+  internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
   /// Terms and conditions
   internal static let termsAndConditions = L10n.tr("Localizable", "Terms and conditions")
+  /// WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.
+  internal static let warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture = L10n.tr("Localizable", "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.")
+  /// we've created some security keywords for you.
+  internal static let weVeCreatedSomeSecurityKeywordsForYou = L10n.tr("Localizable", "we've created some security keywords for you.")
   /// Wowlet for people, not for tokens
   internal static let wowletForPeopleNotForTokens = L10n.tr("Localizable", "Wowlet for people, not for tokens")
   /// Your wallet has been successfully created!

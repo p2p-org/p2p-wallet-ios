@@ -31,22 +31,8 @@ class CreateOrRestoreWalletVC: IntroVC {
             highlightedButtonIndex: 1,
             completion: { index in
                 if index == 1 {
-                    UIApplication.shared.keyWindow?.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
-                    DispatchQueue.global().async {
-                        do {
-                            let account = try SolanaSDK.Account()
-                            DispatchQueue.main.async {
-                                UIApplication.shared.keyWindow?.hideHud()
-                                let nc = BENavigationController(rootViewController: CreateWalletVC(account: account))
-                                UIApplication.shared.keyWindow?.rootViewController = nc
-                            }
-                        } catch {
-                            DispatchQueue.main.async {
-                                UIApplication.shared.keyWindow?.hideHud()
-                                self.showError(error, showPleaseTryAgain: true, additionalMessage: "test")
-                            }
-                        }
-                    }
+                    let nc = BENavigationController(rootViewController: PhrasesVC())
+                    UIApplication.shared.keyWindow?.rootViewController = nc
                 }
             }
         )
