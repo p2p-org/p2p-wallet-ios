@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
         
         // BEPureLayoutConfiguration
-        BEPureLayoutConfigs.shared.defaultTextColor = .appBlack
+        BEPureLayoutConfigs.shared.defaultTextColor = .textBlack
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         self.window = window
