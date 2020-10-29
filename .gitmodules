@@ -1,3 +1,6 @@
 [submodule "SolanaSwift"]
 	path = SolanaSwift
 	url = git@github.com:p2p-org/solana-swift.git
+[submodule "BEPureLayout"]
+	path = BEPureLayout
+	url = https://github.com/bigearsenal/BEPureLayout.git
