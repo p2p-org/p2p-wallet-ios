@@ -12,6 +12,8 @@ import Foundation
 internal enum L10n {
   /// next
   internal static let next = L10n.tr("Localizable", "next")
+  /// Wowlet for people, not for tokens
+  internal static let wowletForPeopleNotForTokens = L10n.tr("Localizable", "Wowlet for people, not for tokens")
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces
