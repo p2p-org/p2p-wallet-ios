@@ -22,8 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/macOSInjection.bundle")?.load()
         #endif
         
-        // Override point for customization after application launch.
-        // Override point for customization after application launch.
+        // BEPureLayoutConfiguration
+        BEPureLayoutConfigs.shared.defaultTextColor = .appBlack
+        
         let window = UIWindow(frame: UIScreen.main.bounds)
         self.window = window
         self.window?.rootViewController = WelcomeVC()

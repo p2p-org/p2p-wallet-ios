@@ -11,7 +11,7 @@ target 'p2p_wallet' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   common_pods
-  pod 'BEPureLayout', :git => "https://github.com/bigearsenal/BEPureLayout.git"
+  pod 'BEPureLayout', :path => 'BEPureLayout'
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
 

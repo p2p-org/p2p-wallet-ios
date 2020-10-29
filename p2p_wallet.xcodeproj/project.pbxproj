@@ -807,7 +807,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FBFCA911E1A96478DD7C04ED /* Pods-p2p_walletTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -850,7 +849,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BB7CFE6A2633569A3CAC841A /* Pods-p2p_walletTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -892,7 +890,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3F4012EDABF9EA99EA5E792B /* Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = QPW4XRTF2N;
 				INFOPLIST_FILE = p2p_walletUITests/Info.plist;
@@ -932,7 +929,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CCD9F8F81880F7B23634EBE4 /* Pods-p2p_wallet-p2p_walletUITests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = QPW4XRTF2N;
 				INFOPLIST_FILE = p2p_walletUITests/Info.plist;

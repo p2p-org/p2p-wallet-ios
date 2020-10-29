@@ -3,6 +3,7 @@ warning_threshold: 1000
 excluded:
  - Pods
  - SolanaSwift
+ - BEPureLayout
 
 disabled_rules:
   - variable_name
