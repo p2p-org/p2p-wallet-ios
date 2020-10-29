@@ -38,7 +38,7 @@ class CreateWalletVC: IntroVC {
     
     // MARK: - Actions
     @objc func buttonBackUpDidTouch() {
-        let vc = PhrasesVC(account: account)
-        show(vc, sender: nil)
+//        let vc = PhrasesVC()
+//        show(vc, sender: nil)
     }
 }

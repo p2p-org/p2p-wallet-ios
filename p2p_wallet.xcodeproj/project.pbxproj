@@ -171,8 +171,8 @@
 		BC32A3D3254A8F66002156F0 /* CreateAccount */ = {
 			isa = PBXGroup;
 			children = (
-				BC32A3A6254A7B5B002156F0 /* CreateWalletVC.swift */,
 				BC32A3D4254A8F7F002156F0 /* PhrasesVC.swift */,
+				BC32A3A6254A7B5B002156F0 /* CreateWalletVC.swift */,
 			);
 			path = CreateAccount;
 			sourceTree = "<group>";

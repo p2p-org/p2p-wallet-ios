@@ -24,7 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
         
         // BEPureLayoutConfiguration
-        BEPureLayoutConfigs.shared.defaultTextColor = .textBlack
+        BEPureLayoutConfigs.defaultTextColor = .textBlack
+        BEPureLayoutConfigs.defaultNavigationBarColor = .background
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         self.window = window
