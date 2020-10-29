@@ -13,12 +13,13 @@ private let bundle = Bundle(for: BundleToken.self)
 // MARK: - Colors -
 
 extension UIColor {
-    static let accentColor = UIColor(named: "AccentColor", in: bundle, compatibleWith: nil)!
+    static let a4a4a4 = UIColor(named: "a4a4a4", in: bundle, compatibleWith: nil)!
     static let appBlack = UIColor(named: "appBlack", in: bundle, compatibleWith: nil)!
 }
 
 // MARK: - Images -
 
 extension UIImage {
+    static let walletIntro = UIImage(named: "wallet-intro", in: bundle, compatibleWith: nil)!
 }
 
