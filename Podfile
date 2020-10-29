@@ -14,6 +14,7 @@ target 'p2p_wallet' do
   pod 'BEPureLayout', :path => 'BEPureLayout'
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
+  pod 'Action'
 
   # Pods for p2p wallet
 
