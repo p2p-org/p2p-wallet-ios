@@ -12,6 +12,9 @@ struct KeychainStorage: SolanaSDKAccountStorage {
     let tokenKey = "Keychain.Token"
     let keychain = KeychainSwift()
     
+    static let shared = KeychainStorage()
+    private init() {}
+    
     func save(_ account: SolanaSDK.Account) throws {
         let data = try JSONEncoder().encode(account)
         keychain.set(data, forKey: tokenKey)
@@ -25,9 +28,4 @@ struct KeychainStorage: SolanaSDKAccountStorage {
     func clear() {
         keychain.clear()
     }
-}
-
-struct APIManager {
-    static let keychainStorage = KeychainStorage()
-    static let shared = SolanaSDK(accountStorage: keychainStorage)
 }
