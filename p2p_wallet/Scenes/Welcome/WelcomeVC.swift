@@ -9,7 +9,7 @@ import Foundation
 class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
     override func setUp() {
         super.setUp()
-        viewControllers = [IntroVC(), CreateWalletVC()]
+        viewControllers = [IntroVC(), CreateOrRestoreWalletVC()]
         currentPageIndicatorTintColor = .textBlack
         pageIndicatorTintColor = .a4a4a4
         
