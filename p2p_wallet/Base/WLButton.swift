@@ -13,7 +13,7 @@ class WLButton: UIButton {
     }
     
     static func stepButton(type: StepButtonType, label: String?) -> WLButton {
-        WLButton(height: 56, backgroundColor: type == .main ? .textBlack : .textWhite, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: type == .main ? .textWhite : .textBlack)
+        WLButton(height: 56, backgroundColor: type == .main ? .textBlack : .buttonSub, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: type == .main ? .textWhite : .textBlack)
     }
     
     override var isEnabled: Bool {
