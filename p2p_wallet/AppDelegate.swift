@@ -35,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if APIManager.keychainStorage.account == nil {
             rootVC = WelcomeVC()
         } else {
-            rootVC = BaseVC()
+            rootVC = PinCodeVC()
         }
         
         self.window?.rootViewController = rootVC
