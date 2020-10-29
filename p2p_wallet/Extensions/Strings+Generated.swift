@@ -18,6 +18,8 @@ internal enum L10n {
   internal static let byTappingAcceptYouAgreeToP2PWalletSTermsOfUseAndPrivacyPolicy = L10n.tr("Localizable", "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "Cancel")
+  /// confirm PIN code
+  internal static let confirmPINCode = L10n.tr("Localizable", "confirm PIN code")
   /// Congratulations!
   internal static let congratulations = L10n.tr("Localizable", "Congratulations!")
   /// Create a PIN-code to protect your wallet
