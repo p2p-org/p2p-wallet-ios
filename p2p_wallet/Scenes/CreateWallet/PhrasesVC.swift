@@ -121,8 +121,7 @@ class PhrasesVC: BaseVStackVC {
                 try APIManager.shared.accountStorage.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.keyWindow?.hideHud()
-                    let nc = BENavigationController(rootViewController: PinCodeVC())
-                    UIApplication.shared.keyWindow?.rootViewController = nc
+                    self.show(CreateWalletCompletedVC(), sender: nil)
                 }
             } catch {
                 DispatchQueue.main.async {

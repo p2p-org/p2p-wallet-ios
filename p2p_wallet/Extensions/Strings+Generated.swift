@@ -20,6 +20,8 @@ internal enum L10n {
   internal static let cancel = L10n.tr("Localizable", "Cancel")
   /// Congratulations!
   internal static let congratulations = L10n.tr("Localizable", "Congratulations!")
+  /// Create a PIN-code to protect your wallet
+  internal static let createAPINCodeToProtectYourWallet = L10n.tr("Localizable", "Create a PIN-code to protect your wallet")
   /// create new wallet
   internal static let createNewWallet = L10n.tr("Localizable", "create new wallet")
   /// creating an account
