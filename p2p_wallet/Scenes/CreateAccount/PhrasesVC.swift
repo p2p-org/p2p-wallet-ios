@@ -10,6 +10,11 @@ import TagListView
 import RxCocoa
 
 class PhrasesVC: BaseVStackVC {
+    override var padding: UIEdgeInsets {
+        var padding = super.padding
+        padding.top += 16
+        return padding
+    }
     let phrases = BehaviorRelay<[String]>(value: [])
     
     lazy var topPhrasesListViews = createTagListView()
@@ -72,7 +77,7 @@ class PhrasesVC: BaseVStackVC {
         phrases.subscribe(onNext: { phrases in
             self.label.isHidden = phrases.isEmpty
             self.topPhrasesListViews.removeAllTags()
-            let phrases = phrases.shuffled()
+            let phrases = phrases.enumerated().map {"\($0.offset) \($0.element)"}.shuffled()
             self.topPhrasesListViews.addTags(Array(phrases.prefix(6)))
             self.bottomPhrasesListView.removeAllTags()
             if phrases.count > 6 {self.bottomPhrasesListView.addTags(Array(phrases[6..<phrases.count]))}
