@@ -27,3 +27,4 @@
 "save to Keychain" = "сохранить в кейчейн";
 "Create a PIN-code to protect your wallet" = "Создайте PIN-код для защиты вашего кошелька";
 "confirm PIN code" = "подтвердить PIN-код";
+"passcodes do not match" = "коды доступа не совпадают";

@@ -25,7 +25,13 @@ class CreateWalletCompletedVC: IntroVC {
     
     // MARK: - Actions
     @objc func buttonNextDidTouch() {
-        let nc = BENavigationController(rootViewController: PinCodeVC())
+        let vc = PinCodeVC()
+        vc.completion = {_ in
+            let vc = EnableBiometryVC()
+            let nc = BENavigationController(rootViewController: vc)
+            UIApplication.shared.keyWindow?.rootViewController = nc
+        }
+        let nc = BENavigationController(rootViewController: vc)
         UIApplication.shared.keyWindow?.rootViewController = nc
     }
 }

@@ -26,6 +26,7 @@
 		BC6EE74A254AB3AD00FE1025 /* PinCodeTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE749254AB3AD00FE1025 /* PinCodeTextField.swift */; };
 		BC6EE76D254ABEDE00FE1025 /* ConfirmPinCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE76C254ABEDE00FE1025 /* ConfirmPinCodeVC.swift */; };
 		BC6EE772254AEEB300FE1025 /* SolanaSDK+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE771254AEEB300FE1025 /* SolanaSDK+Extensions.swift */; };
+		BC6EE777254AF6E600FE1025 /* EnableBiometryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE776254AF6E600FE1025 /* EnableBiometryVC.swift */; };
 		BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7AD0E7254A540700B4A070 /* WLButton.swift */; };
 		BC7AD1D6254A608800B4A070 /* IntroVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7AD1D5254A608800B4A070 /* IntroVC.swift */; };
 		BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2231825412AF8002D997F /* AppDelegate.swift */; };
@@ -90,6 +91,7 @@
 		BC6EE749254AB3AD00FE1025 /* PinCodeTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinCodeTextField.swift; sourceTree = "<group>"; };
 		BC6EE76C254ABEDE00FE1025 /* ConfirmPinCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmPinCodeVC.swift; sourceTree = "<group>"; };
 		BC6EE771254AEEB300FE1025 /* SolanaSDK+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK+Extensions.swift"; sourceTree = "<group>"; };
+		BC6EE776254AF6E600FE1025 /* EnableBiometryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableBiometryVC.swift; sourceTree = "<group>"; };
 		BC7AD0E7254A540700B4A070 /* WLButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLButton.swift; sourceTree = "<group>"; };
 		BC7AD1D5254A608800B4A070 /* IntroVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroVC.swift; sourceTree = "<group>"; };
 		BCB2231525412AF8002D997F /* p2p_wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = p2p_wallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -189,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				BC6EE768254ABEC700FE1025 /* PinCodeVC */,
+				BC6EE776254AF6E600FE1025 /* EnableBiometryVC.swift */,
 			);
 			path = SecuritySettings;
 			sourceTree = "<group>";
@@ -621,6 +624,7 @@
 				BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */,
 				BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* KeychainStorage.swift in Sources */,
+				BC6EE777254AF6E600FE1025 /* EnableBiometryVC.swift in Sources */,
 				BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */,
 				BC6EE74A254AB3AD00FE1025 /* PinCodeTextField.swift in Sources */,
 				BC7AD1D6254A608800B4A070 /* IntroVC.swift in Sources */,

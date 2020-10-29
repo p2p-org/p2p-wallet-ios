@@ -27,3 +27,4 @@
 "save to Keychain" = "lưu vào Keychain";
 "Create a PIN-code to protect your wallet" = "Tạo mã PIN để bảo vệ ví của bạn";
 "confirm PIN code" = "xác nhận mã PIN";
+"passcodes do not match" = "mật mã không khớp";
