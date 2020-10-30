@@ -15,12 +15,13 @@ class CreateWalletCompletedVC: IntroVC {
         let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
         return stackView
     }()
-    lazy var nextButton = WLButton.stepButton(type: .main, label: L10n.next)
+    lazy var nextButton = WLButton.stepButton(type: .main, label: L10n.next.uppercaseFirst)
         .onTap(self, action: #selector(buttonNextDidTouch))
     
     // MARK: - Methods
     override func setUp() {
         super.setUp()
+        descriptionLabel.isHidden = false
         titleLabel.text = L10n.congratulations
         descriptionLabel.text = L10n.yourWalletHasBeenSuccessfullyCreated
         
