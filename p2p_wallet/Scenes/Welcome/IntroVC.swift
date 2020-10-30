@@ -30,7 +30,7 @@ class IntroVC: BaseVC, BEPageVCType {
         let spacer1 = UIView.spacer
         stackView.addArrangedSubview(spacer1)
         
-        let imageView = UIImageView(width: 220, height: 220, cornerRadius: 110)
+        let imageView = UIImageView(width: 219, height: 209)
         imageView.image = .walletIntro
         
         stackView.addArrangedSubview(imageView)
