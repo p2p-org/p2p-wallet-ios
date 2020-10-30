@@ -7,6 +7,8 @@
 
 import UIKit
 @_exported import BEPureLayout
+@_exported import SolanaSwift
+@_exported import SwiftyUserDefaults
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,6 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         #if DEBUG
+//        KeychainStorage.shared.clear()
+        
         Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/iOSInjection.bundle")!.load()
 //        //for tvOS:
 //        Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/tvOSInjection.bundle")?.load()
@@ -23,13 +27,48 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
         
         // BEPureLayoutConfiguration
-        BEPureLayoutConfigs.shared.defaultTextColor = .appBlack
+        BEPureLayoutConfigs.defaultBackgroundColor = .background
+        BEPureLayoutConfigs.defaultTextColor = .textBlack
+        BEPureLayoutConfigs.defaultNavigationBarColor = .background
+        BEPureLayoutConfigs.defaultNavigationBarTextFont = .systemFont(ofSize: 17, weight: .semibold)
+        BEPureLayoutConfigs.defaultShadowColor = .textBlack
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         self.window = window
-        self.window?.rootViewController = WelcomeVC()
+        
+        let rootVC: UIViewController
+        if KeychainStorage.shared.account == nil {
+            rootVC = WelcomeVC()
+        } else {
+            if KeychainStorage.shared.pinCode == nil {
+                rootVC = BENavigationController(rootViewController: SSPinCodeVC())
+            } else if !Defaults.didSetEnableBiometry {
+                rootVC = BENavigationController(rootViewController: EnableBiometryVC())
+            } else if !Defaults.didSetEnableNotifications {
+                rootVC = BENavigationController(rootViewController: EnableNotificationsVC())
+            } else {
+                rootVC = TabBarVC()
+            }
+        }
+        
+        self.window?.rootViewController = rootVC
         self.window?.makeKeyAndVisible()
         return true
     }
-
+    
+    func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
+        let token = tokenParts.joined()
+        print("Device Token: \(token)")
+    }
+    
+    func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        print("Failed to register: \(error)")
+    }
 }

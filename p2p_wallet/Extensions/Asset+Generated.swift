@@ -13,12 +13,23 @@ private let bundle = Bundle(for: BundleToken.self)
 // MARK: - Colors -
 
 extension UIColor {
-    static let accentColor = UIColor(named: "AccentColor", in: bundle, compatibleWith: nil)!
-    static let appBlack = UIColor(named: "appBlack", in: bundle, compatibleWith: nil)!
+    static let a4a4a4 = UIColor(named: "a4a4a4", in: bundle, compatibleWith: nil)!
+    static let background = UIColor(named: "background", in: bundle, compatibleWith: nil)!
+    static let buttonSub = UIColor(named: "buttonSub", in: bundle, compatibleWith: nil)!
+    static let lightGrayBackground = UIColor(named: "lightGrayBackground", in: bundle, compatibleWith: nil)!
+    static let textBlack = UIColor(named: "textBlack", in: bundle, compatibleWith: nil)!
+    static let textWhite = UIColor(named: "textWhite", in: bundle, compatibleWith: nil)!
 }
 
 // MARK: - Images -
 
 extension UIImage {
+    static let faceId = UIImage(named: "faceId", in: bundle, compatibleWith: nil)!
+    static let tabbarProfile = UIImage(named: "tabbar-profile", in: bundle, compatibleWith: nil)!
+    static let tabbarSearch = UIImage(named: "tabbar-search", in: bundle, compatibleWith: nil)!
+    static let tabbarThunderbolt = UIImage(named: "tabbar-thunderbolt", in: bundle, compatibleWith: nil)!
+    static let tabbarWallet = UIImage(named: "tabbar-wallet", in: bundle, compatibleWith: nil)!
+    static let touchId = UIImage(named: "touchId", in: bundle, compatibleWith: nil)!
+    static let walletIntro = UIImage(named: "wallet-intro", in: bundle, compatibleWith: nil)!
 }
 
