@@ -30,4 +30,12 @@ extension UIApplication {
         guard let keyWindow = keyWindow else {return}
         MBProgressHUD.hide(for: keyWindow, animated: false)
     }
+    
+    func openAppSettings() {
+        if let bundleIdentifier = Bundle.main.bundleIdentifier, let appSettings = URL(string: UIApplication.openSettingsURLString + bundleIdentifier) {
+            if canOpenURL(appSettings) {
+                open(appSettings)
+            }
+        }
+    }
 }
