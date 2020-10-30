@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CreateOrRestoreWalletVC: IntroVC {
+class CreateOrRestoreWalletVC: IntroVCWithButtons {
     override var index: Int {1}
     
     lazy var createWalletButton = WLButton.stepButton(type: .main, label: L10n.createNewWallet.uppercaseFirst)
@@ -15,18 +15,9 @@ class CreateOrRestoreWalletVC: IntroVC {
     lazy var restoreWalletButton = WLButton.stepButton(type: .sub, label: L10n.iVeAlreadyHadAWallet.uppercaseFirst)
         .onTap(self, action: #selector(buttonRestoreWalletDidTouch))
     
-    lazy var buttonStackView: UIStackView = {
-        let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
-        return stackView
-    }()
-    
     override func setUp() {
         super.setUp()
         descriptionLabel.isHidden = true
-        
-        stackView.addArrangedSubview(buttonStackView)
-        buttonStackView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -60)
-            .isActive = true
         
         buttonStackView.addArrangedSubview(createWalletButton)
         buttonStackView.addArrangedSubview(restoreWalletButton)
@@ -58,7 +49,7 @@ class CreateOrRestoreWalletVC: IntroVC {
             do {
                 let phrases = text.components(separatedBy: " ")
                 _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
-                let nc = BENavigationController(rootViewController: PhrasesVC(phrases: phrases))
+                let nc = BENavigationController(rootViewController: WelcomeBackVC(phrases: phrases))
                 UIApplication.shared.changeRootVC(to: nc)
             } catch {
                 self.showError(error)

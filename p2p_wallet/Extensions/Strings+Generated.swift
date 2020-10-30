@@ -42,6 +42,8 @@ internal enum L10n {
   internal static let exploreWowletAndDepositFundsWhenYouReReady = L10n.tr("Localizable", "Explore Wowlet and deposit funds when you’re ready")
   /// Finish setup
   internal static let finishSetup = L10n.tr("Localizable", "Finish setup")
+  /// Go to wallet
+  internal static let goToWallet = L10n.tr("Localizable", "Go to wallet")
   /// i've already had a wallet
   internal static let iVeAlreadyHadAWallet = L10n.tr("Localizable", "i've already had a wallet")
   /// Identify yourself!
@@ -54,6 +56,8 @@ internal enum L10n {
   internal static let passcodesDoNotMatch = L10n.tr("Localizable", "passcodes do not match")
   /// please try again later!
   internal static let pleaseTryAgainLater = L10n.tr("Localizable", "please try again later!")
+  /// Restoring wallet
+  internal static let restoringWallet = L10n.tr("Localizable", "Restoring wallet")
   /// save to Keychain
   internal static let saveToKeychain = L10n.tr("Localizable", "save to Keychain")
   /// security keys
@@ -82,6 +86,8 @@ internal enum L10n {
   internal static let weUseFaceIDToSecureYourTransactions = L10n.tr("Localizable", "We use FaceID to secure your transactions")
   /// we've created some security keywords for you.
   internal static let weVeCreatedSomeSecurityKeywordsForYou = L10n.tr("Localizable", "we've created some security keywords for you.")
+  /// Welcome back to the Wowlet space!
+  internal static let welcomeBackToTheWowletSpace = L10n.tr("Localizable", "Welcome back to the Wowlet space!")
   /// Well done!
   internal static let wellDone = L10n.tr("Localizable", "Well done!")
   /// Wowlet for people, not for tokens

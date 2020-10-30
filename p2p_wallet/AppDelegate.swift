@@ -17,6 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         #if DEBUG
+        KeychainStorage.shared.clear()
+        
         Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/iOSInjection.bundle")!.load()
 //        //for tvOS:
 //        Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/tvOSInjection.bundle")?.load()
@@ -37,13 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             rootVC = WelcomeVC()
         } else {
             if KeychainStorage.shared.pinCode == nil {
-                let vc = PinCodeVC()
-                vc.completion = {_ in
-                    let vc = EnableBiometryVC()
-                    let nc = BENavigationController(rootViewController: vc)
-                    UIApplication.shared.keyWindow?.rootViewController = nc
-                }
-                rootVC = BENavigationController(rootViewController: vc)
+                rootVC = BENavigationController(rootViewController: SSPinCodeVC())
             } else if !Defaults.didSetEnableBiometry {
                 rootVC = BENavigationController(rootViewController: EnableBiometryVC())
             } else if !Defaults.didSetEnableNotifications {
@@ -66,7 +62,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let token = tokenParts.joined()
         print("Device Token: \(token)")
     }
-    
     
     func application(
         _ application: UIApplication,
