@@ -10,9 +10,7 @@ import Foundation
 class EnableNotificationsVC: SecuritySettingVC {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
-    override var nextVC: UIViewController {
-        BaseVC()
-    }
+    override var nextVC: UIViewController { WellDoneVC() }
     
     override func setUp() {
         super.setUp()
@@ -29,6 +27,5 @@ class EnableNotificationsVC: SecuritySettingVC {
         stackView.insertArrangedSubview(spacer3, at: 2)
         stackView.insertArrangedSubview(titleLabel, at: 3)
 //        stackView.insertArrangedSubview(UILabel(text: "For athletes, high altitude produces two contradictory effects on performance. For explosive events (sprints up to 400 metres, long jump, triple jump) the reduction in atmospheric pressure means there is", numberOfLines: 0), at: 4)
-        
     }
 }
