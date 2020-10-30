@@ -12,7 +12,8 @@ extension TabBarVC {
         override func commonInit() {
             super.commonInit()
             stackView.spacing = 0
-            stackView.distribution = .fillEqually
+            stackView.alignment = .center
+            stackView.distribution = .equalSpacing
         }
         
         override func layoutStackView() {

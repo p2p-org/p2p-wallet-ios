@@ -27,9 +27,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
         
         // BEPureLayoutConfiguration
+        BEPureLayoutConfigs.defaultBackgroundColor = .background
         BEPureLayoutConfigs.defaultTextColor = .textBlack
         BEPureLayoutConfigs.defaultNavigationBarColor = .background
         BEPureLayoutConfigs.defaultNavigationBarTextFont = .systemFont(ofSize: 17, weight: .semibold)
+        BEPureLayoutConfigs.defaultShadowColor = .textBlack
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         self.window = window
@@ -45,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } else if !Defaults.didSetEnableNotifications {
                 rootVC = BENavigationController(rootViewController: EnableNotificationsVC())
             } else {
-                rootVC = BaseVC()
+                rootVC = TabBarVC()
             }
         }
         
