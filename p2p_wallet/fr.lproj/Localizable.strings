@@ -31,3 +31,5 @@
 "Use your FaceID for quick access?" = "Utilisez votre FaceID pour un accès rapide?";
 "Use FaceId" = "Utiliser FaceId";
 "Do this later" = "Faites cela plus tard";
+"unsupported" = "non pris en charge";
+"Your device does not support biometrics authentication" = "Votre appareil ne prend pas en charge l'authentification biométrique";

@@ -31,3 +31,5 @@
 "Use your FaceID for quick access?" = "Использовать FaceID для быстрого доступа?";
 "Use FaceId" = "Использовать FaceId";
 "Do this later" = "Позже";
+"unsupported" = "неподдерживаемый";
+"Your device does not support biometrics authentication" = "Ваше устройство не поддерживает биометрическую аутентификацию";

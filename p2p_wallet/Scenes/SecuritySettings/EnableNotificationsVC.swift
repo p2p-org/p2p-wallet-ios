@@ -7,6 +7,10 @@
 
 import Foundation
 
-class EnableNotificationsVC: BaseVC {
+class EnableNotificationsVC: SecuritySettingVC {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
+    override var nextVC: UIViewController {
+        BaseVC()
+    }
 }
