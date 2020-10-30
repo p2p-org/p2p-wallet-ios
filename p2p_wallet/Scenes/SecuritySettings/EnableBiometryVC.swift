@@ -55,14 +55,13 @@ class EnableBiometryVC: BaseVC {
         if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
             let reason = "Identify yourself!"
 
-            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) {
-                [weak self] success, authenticationError in
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { [weak self] (success, authenticationError) in
 
                 DispatchQueue.main.async {
                     if success {
                         self?.handleIsBiometryEnabled(true)
                     } else {
-                        self?.showError(error ?? Error.unknown)
+                        self?.showError(error ?? authenticationError ?? Error.unknown)
                     }
                 }
             }
@@ -78,6 +77,7 @@ class EnableBiometryVC: BaseVC {
     func handleIsBiometryEnabled(_ enabled: Bool) {
         Defaults.isBiometryEnabled = enabled
         Defaults.didSetEnableBiometry = true
-        
+        let nc = BENavigationController(rootViewController: EnableNotificationsVC())
+        UIApplication.shared.changeRootVC(to: nc)
     }
 }
