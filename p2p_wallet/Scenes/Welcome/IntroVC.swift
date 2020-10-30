@@ -17,8 +17,6 @@ class IntroVC: BaseVC, BEPageVCType {
     
     lazy var descriptionLabel = UILabel(textSize: 17, weight: .medium, textColor: UIColor.textBlack.withAlphaComponent(0.6), numberOfLines: 0, textAlignment: .center)
     
-    
-    
     // MARK: - Methods
     override func setUp() {
         super.setUp()

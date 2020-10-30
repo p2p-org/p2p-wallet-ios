@@ -182,6 +182,7 @@
 			children = (
 				BC32A355254A69EA002156F0 /* WelcomeVC.swift */,
 				BC7AD1D5254A608800B4A070 /* IntroVC.swift */,
+				BC32A31B254A630B002156F0 /* CreateOrRestoreWalletVC.swift */,
 			);
 			path = Welcome;
 			sourceTree = "<group>";
@@ -189,7 +190,6 @@
 		BC32A3D3254A8F66002156F0 /* CreateWallet */ = {
 			isa = PBXGroup;
 			children = (
-				BC32A31B254A630B002156F0 /* CreateOrRestoreWalletVC.swift */,
 				BC32A3D4254A8F7F002156F0 /* PhrasesVC.swift */,
 				BC32A3A6254A7B5B002156F0 /* CreateWalletCompletedVC.swift */,
 			);

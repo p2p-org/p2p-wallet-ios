@@ -34,6 +34,8 @@ internal enum L10n {
   internal static let doThisLater = L10n.tr("Localizable", "Do this later")
   /// Enable now
   internal static let enableNow = L10n.tr("Localizable", "Enable now")
+  /// Enter security keys
+  internal static let enterSecurityKeys = L10n.tr("Localizable", "Enter security keys")
   /// error
   internal static let error = L10n.tr("Localizable", "error")
   /// Explore Wowlet and deposit funds when you’re ready
