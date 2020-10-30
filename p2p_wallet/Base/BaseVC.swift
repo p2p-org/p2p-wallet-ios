@@ -6,11 +6,14 @@
 //
 
 import Foundation
+import RxSwift
 
 class BaseVC: BEViewController {
+    let disposeBag = DisposeBag()
+    
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .white
+        view.backgroundColor = .background
     }
     
     #if DEBUG //1
