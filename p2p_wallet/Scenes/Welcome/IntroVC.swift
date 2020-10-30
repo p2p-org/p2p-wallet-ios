@@ -7,9 +7,7 @@
 
 import Foundation
 
-class IntroVC: BaseVC, BEPageVCType {
-    var index: Int {0}
-    
+class IntroVC: BaseVC {
     // MARK: - Subviews
     lazy var stackView = UIStackView(axis: .vertical, spacing: 31, alignment: .center, distribution: .fill)
     
