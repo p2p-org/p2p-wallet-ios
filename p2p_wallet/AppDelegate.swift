@@ -8,6 +8,7 @@
 import UIKit
 @_exported import BEPureLayout
 @_exported import SolanaSwift
+@_exported import SwiftyUserDefaults
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -43,8 +44,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     UIApplication.shared.keyWindow?.rootViewController = nc
                 }
                 rootVC = BENavigationController(rootViewController: vc)
-            } else {
+            } else if !Defaults.didSetEnableBiometry {
                 rootVC = EnableBiometryVC()
+            } else {
+                rootVC = BaseVC()
             }
         }
         

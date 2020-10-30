@@ -6,15 +6,22 @@
 //
 
 import Foundation
+import LocalAuthentication
 
 class EnableBiometryVC: BaseVC {
+    enum Error: Swift.Error {
+        case unknown
+    }
+    
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
     lazy var stackView = UIStackView(axis: .vertical, spacing: 36, alignment: .center, distribution: .fill)
     
     lazy var useFaceIdButton = WLButton.stepButton(type: .main, label: L10n.useFaceId)
+        .onTap(self, action: #selector(buttonUseFaceIdDidTouch))
     
     lazy var doThisLaterButton = WLButton.stepButton(type: .sub, label: L10n.doThisLater)
+        .onTap(self, action: #selector(buttonDoThisLaterDidTouch))
     
     override func setUp() {
         super.setUp()
@@ -39,5 +46,38 @@ class EnableBiometryVC: BaseVC {
         stackView.addArrangedSubview(buttonStackView)
         buttonStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor, constant: -40)
             .isActive = true
+    }
+    
+    @objc func buttonUseFaceIdDidTouch() {
+        let context = LAContext()
+        var error: NSError?
+
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            let reason = "Identify yourself!"
+
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) {
+                [weak self] success, authenticationError in
+
+                DispatchQueue.main.async {
+                    if success {
+                        self?.handleIsBiometryEnabled(true)
+                    } else {
+                        self?.showError(error ?? Error.unknown)
+                    }
+                }
+            }
+        } else {
+            // no biometry
+        }
+    }
+    
+    @objc func buttonDoThisLaterDidTouch() {
+        handleIsBiometryEnabled(false)
+    }
+    
+    func handleIsBiometryEnabled(_ enabled: Bool) {
+        Defaults.isBiometryEnabled = enabled
+        Defaults.didSetEnableBiometry = true
+        
     }
 }

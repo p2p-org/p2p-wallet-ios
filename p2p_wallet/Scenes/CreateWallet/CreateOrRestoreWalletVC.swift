@@ -32,7 +32,7 @@ class CreateOrRestoreWalletVC: IntroVC {
             completion: { index in
                 if index == 1 {
                     let nc = BENavigationController(rootViewController: PhrasesVC())
-                    UIApplication.shared.keyWindow?.rootViewController = nc
+                    UIApplication.shared.changeRootVC(to: nc)
                 }
             }
         )
