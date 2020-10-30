@@ -28,3 +28,6 @@
 "Create a PIN-code to protect your wallet" = "Tạo mã PIN để bảo vệ ví của bạn";
 "confirm PIN code" = "xác nhận mã PIN";
 "passcodes do not match" = "mật mã không khớp";
+"Use your FaceID for quick access?" = "Sử dụng FaceID của bạn để truy cập nhanh?";
+"Use FaceId" = "Sử dụng FaceId";
+"Do this later" = "Để sau";

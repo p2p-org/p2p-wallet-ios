@@ -28,6 +28,8 @@ internal enum L10n {
   internal static let createNewWallet = L10n.tr("Localizable", "create new wallet")
   /// creating an account
   internal static let creatingAnAccount = L10n.tr("Localizable", "creating an account")
+  /// Do this later
+  internal static let doThisLater = L10n.tr("Localizable", "Do this later")
   /// error
   internal static let error = L10n.tr("Localizable", "error")
   /// i've already had a wallet
@@ -48,6 +50,10 @@ internal enum L10n {
   internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
   /// Terms and conditions
   internal static let termsAndConditions = L10n.tr("Localizable", "Terms and conditions")
+  /// Use FaceId
+  internal static let useFaceId = L10n.tr("Localizable", "Use FaceId")
+  /// Use your FaceID for quick access?
+  internal static let useYourFaceIDForQuickAccess = L10n.tr("Localizable", "Use your FaceID for quick access?")
   /// WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.
   internal static let warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture = L10n.tr("Localizable", "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.")
   /// we've created some security keywords for you.

@@ -28,3 +28,6 @@
 "Create a PIN-code to protect your wallet" = "Créez un code PIN pour protéger votre portefeuille";
 "confirm PIN code" = "confirmer le code PIN";
 "passcodes do not match" = "les codes d'accès ne correspondent pas";
+"Use your FaceID for quick access?" = "Utilisez votre FaceID pour un accès rapide?";
+"Use FaceId" = "Utiliser FaceId";
+"Do this later" = "Faites cela plus tard";
