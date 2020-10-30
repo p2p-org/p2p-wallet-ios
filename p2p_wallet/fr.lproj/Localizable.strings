@@ -33,3 +33,8 @@
 "Do this later" = "Faites cela plus tard";
 "unsupported" = "non pris en charge";
 "Your device does not support biometrics authentication" = "Votre appareil ne prend pas en charge l'authentification biométrique";
+"We use FaceID to secure your transactions" = "Nous utilisons FaceID pour sécuriser vos transactions";
+"Identify yourself!" = "Identifiez-vous!";
+"We have not supported this type of biometry authentication yet" = "Nous n'avons pas encore pris en charge ce type d'authentification biométrique";
+"Use TouchId" = "Utilisez TouchId";
+"Use your TouchID for quick access?" = "Utilisez votre TouchID pour un accès rapide?";

@@ -33,3 +33,8 @@
 "Do this later" = "Để sau";
 "unsupported" = "không hỗ trợ";
 "Your device does not support biometrics authentication" = "Thiết bị của bạn không hỗ trợ xác thực sinh trắc học";
+"We use FaceID to secure your transactions" = "Chúng tôi sử dụng FaceID để bảo mật các giao dịch của bạn";
+"Identify yourself!" = "Xác định danh tính của bạn!";
+"We have not supported this type of biometry authentication yet" = "Chúng tôi chưa hỗ trợ loại xác thực sinh trắc học này";
+"Use TouchId" = "Sử dụng TouchId";
+"Use your TouchID for quick access?" = "Sử dụng TouchID của bạn để truy cập nhanh?";

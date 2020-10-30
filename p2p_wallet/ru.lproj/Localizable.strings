@@ -33,3 +33,8 @@
 "Do this later" = "Позже";
 "unsupported" = "неподдерживаемый";
 "Your device does not support biometrics authentication" = "Ваше устройство не поддерживает биометрическую аутентификацию";
+"We use FaceID to secure your transactions" = "Мы используем FaceID для защиты ваших транзакций";
+"Identify yourself!" = "Назовите себя!";
+"We have not supported this type of biometry authentication yet" = "Мы пока не поддерживаем этот тип биометрической аутентификации.";
+"Use TouchId" = "Использовать TouchId";
+"Use your TouchID for quick access?" = "Использовать TouchID для быстрого доступа?";

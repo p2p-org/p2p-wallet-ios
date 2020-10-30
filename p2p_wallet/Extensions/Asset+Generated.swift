@@ -25,6 +25,7 @@ extension UIColor {
 
 extension UIImage {
     static let faceId = UIImage(named: "faceId", in: bundle, compatibleWith: nil)!
+    static let touchId = UIImage(named: "touchId", in: bundle, compatibleWith: nil)!
     static let walletIntro = UIImage(named: "wallet-intro", in: bundle, compatibleWith: nil)!
 }
 

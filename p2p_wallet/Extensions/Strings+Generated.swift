@@ -34,6 +34,8 @@ internal enum L10n {
   internal static let error = L10n.tr("Localizable", "error")
   /// i've already had a wallet
   internal static let iVeAlreadyHadAWallet = L10n.tr("Localizable", "i've already had a wallet")
+  /// Identify yourself!
+  internal static let identifyYourself = L10n.tr("Localizable", "Identify yourself!")
   /// next
   internal static let next = L10n.tr("Localizable", "next")
   /// OK
@@ -54,10 +56,18 @@ internal enum L10n {
   internal static let unsupported = L10n.tr("Localizable", "unsupported")
   /// Use FaceId
   internal static let useFaceId = L10n.tr("Localizable", "Use FaceId")
+  /// Use TouchId
+  internal static let useTouchId = L10n.tr("Localizable", "Use TouchId")
   /// Use your FaceID for quick access?
   internal static let useYourFaceIDForQuickAccess = L10n.tr("Localizable", "Use your FaceID for quick access?")
+  /// Use your TouchID for quick access?
+  internal static let useYourTouchIDForQuickAccess = L10n.tr("Localizable", "Use your TouchID for quick access?")
   /// WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.
   internal static let warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture = L10n.tr("Localizable", "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.")
+  /// We have not supported this type of biometry authentication yet
+  internal static let weHaveNotSupportedThisTypeOfBiometryAuthenticationYet = L10n.tr("Localizable", "We have not supported this type of biometry authentication yet")
+  /// We use FaceID to secure your transactions
+  internal static let weUseFaceIDToSecureYourTransactions = L10n.tr("Localizable", "We use FaceID to secure your transactions")
   /// we've created some security keywords for you.
   internal static let weVeCreatedSomeSecurityKeywordsForYou = L10n.tr("Localizable", "we've created some security keywords for you.")
   /// Wowlet for people, not for tokens

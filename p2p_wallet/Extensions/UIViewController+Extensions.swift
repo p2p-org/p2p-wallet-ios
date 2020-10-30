@@ -37,7 +37,7 @@ extension UIViewController {
         let message = error.localizedDescription
         let vc = tabBarController ?? navigationController ?? parent ?? self
         
-        vc.showAlert(title: L10n.error, message: message + (additionalMessage != nil ? "\n" + additionalMessage! : "") + (showPleaseTryAgain ? "\n" + L10n.pleaseTryAgainLater : ""), buttonTitles: [L10n.ok]) { (_) in
+        vc.showAlert(title: L10n.error.uppercaseFirst, message: message + (additionalMessage != nil ? "\n" + additionalMessage! : "") + (showPleaseTryAgain ? "\n" + L10n.pleaseTryAgainLater : ""), buttonTitles: [L10n.ok]) { (_) in
             completion?()
         }
     }
