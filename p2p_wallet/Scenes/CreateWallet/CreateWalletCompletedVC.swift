@@ -29,9 +29,9 @@ class CreateWalletCompletedVC: IntroVC {
         vc.completion = {_ in
             let vc = EnableBiometryVC()
             let nc = BENavigationController(rootViewController: vc)
-            UIApplication.shared.keyWindow?.rootViewController = nc
+            UIApplication.shared.changeRootVC(to: nc)
         }
         let nc = BENavigationController(rootViewController: vc)
-        UIApplication.shared.keyWindow?.rootViewController = nc
+        UIApplication.shared.changeRootVC(to: nc)
     }
 }

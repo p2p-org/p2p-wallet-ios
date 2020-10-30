@@ -114,18 +114,18 @@ class PhrasesVC: BaseVStackVC {
     
     // MARK: - Actions
     @objc func buttonSaveToKeychainDidTouch() {
-        UIApplication.shared.keyWindow?.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
+        UIApplication.shared.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
         DispatchQueue.global().async {
             do {
                 let account = try SolanaSDK.Account(phrase: self.phrases.value)
                 try KeychainStorage.shared.save(account)
                 DispatchQueue.main.async {
-                    UIApplication.shared.keyWindow?.hideHud()
+                    UIApplication.shared.hideHud()
                     self.show(CreateWalletCompletedVC(), sender: nil)
                 }
             } catch {
                 DispatchQueue.main.async {
-                    UIApplication.shared.keyWindow?.hideHud()
+                    UIApplication.shared.hideHud()
                     self.showError(error, additionalMessage: L10n.tapRefreshButtonToRetry)
                 }
             }
