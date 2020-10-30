@@ -20,6 +20,8 @@
 		BC32A3D5254A8F7F002156F0 /* PhrasesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A3D4254A8F7F002156F0 /* PhrasesVC.swift */; };
 		BC32A44E254AAC1A002156F0 /* PinCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A44D254AAC1A002156F0 /* PinCodeVC.swift */; };
 		BC55B882254BEBAC0032C355 /* SSPinCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B881254BEBAC0032C355 /* SSPinCodeVC.swift */; };
+		BC55B88E254BFBDC0032C355 /* TabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B88D254BFBDC0032C355 /* TabBarVC.swift */; };
+		BC55B8C8254C03700032C355 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B8C7254C03700032C355 /* TabBar.swift */; };
 		BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9B82542B98D005F50CE /* BaseVC.swift */; };
 		BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */; };
 		BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9E22542BE43005F50CE /* String+Extensions.swift */; };
@@ -91,6 +93,8 @@
 		BC32A3D4254A8F7F002156F0 /* PhrasesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhrasesVC.swift; sourceTree = "<group>"; };
 		BC32A44D254AAC1A002156F0 /* PinCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinCodeVC.swift; sourceTree = "<group>"; };
 		BC55B881254BEBAC0032C355 /* SSPinCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSPinCodeVC.swift; sourceTree = "<group>"; };
+		BC55B88D254BFBDC0032C355 /* TabBarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarVC.swift; sourceTree = "<group>"; };
+		BC55B8C7254C03700032C355 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		BC65E9B82542B98D005F50CE /* BaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVC.swift; sourceTree = "<group>"; };
 		BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVStackVC.swift; sourceTree = "<group>"; };
 		BC65E9E22542BE43005F50CE /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
@@ -213,6 +217,23 @@
 			path = SecuritySettings;
 			sourceTree = "<group>";
 		};
+		BC55B88C254BFBB20032C355 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				BC55B8C3254C03660032C355 /* TabBarVC */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		BC55B8C3254C03660032C355 /* TabBarVC */ = {
+			isa = PBXGroup;
+			children = (
+				BC55B8C7254C03700032C355 /* TabBar.swift */,
+				BC55B88D254BFBDC0032C355 /* TabBarVC.swift */,
+			);
+			path = TabBarVC;
+			sourceTree = "<group>";
+		};
 		BC65E9B72542B983005F50CE /* Base */ = {
 			isa = PBXGroup;
 			children = (
@@ -230,6 +251,7 @@
 				BC32A39F254A7B37002156F0 /* Welcome */,
 				BC32A3D3254A8F66002156F0 /* CreateWallet */,
 				BC32A46F254AAE96002156F0 /* SecuritySettings */,
+				BC55B88C254BFBB20032C355 /* Main */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -640,7 +662,9 @@
 				BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */,
 				BC32A31C254A630B002156F0 /* CreateOrRestoreWalletVC.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WellDoneVC.swift in Sources */,
+				BC55B8C8254C03700032C355 /* TabBar.swift in Sources */,
 				BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */,
+				BC55B88E254BFBDC0032C355 /* TabBarVC.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				BC32A44E254AAC1A002156F0 /* PinCodeVC.swift in Sources */,
 				BC6EE7CA254BBF8900FE1025 /* UIApplication+Extensions.swift in Sources */,
