@@ -25,6 +25,10 @@ extension UIColor {
 
 extension UIImage {
     static let faceId = UIImage(named: "faceId", in: bundle, compatibleWith: nil)!
+    static let tabbarProfile = UIImage(named: "tabbar-profile", in: bundle, compatibleWith: nil)!
+    static let tabbarSearch = UIImage(named: "tabbar-search", in: bundle, compatibleWith: nil)!
+    static let tabbarThunderbolt = UIImage(named: "tabbar-thunderbolt", in: bundle, compatibleWith: nil)!
+    static let tabbarWallet = UIImage(named: "tabbar-wallet", in: bundle, compatibleWith: nil)!
     static let touchId = UIImage(named: "touchId", in: bundle, compatibleWith: nil)!
     static let walletIntro = UIImage(named: "wallet-intro", in: bundle, compatibleWith: nil)!
 }
