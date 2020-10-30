@@ -17,10 +17,7 @@ class IntroVC: BaseVC, BEPageVCType {
     
     lazy var descriptionLabel = UILabel(textSize: 17, weight: .medium, textColor: UIColor.textBlack.withAlphaComponent(0.6), numberOfLines: 0, textAlignment: .center)
     
-    lazy var buttonStackView: UIStackView = {
-        let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
-        return stackView
-    }()
+    
     
     // MARK: - Methods
     override func setUp() {
@@ -32,10 +29,8 @@ class IntroVC: BaseVC, BEPageVCType {
         stackView.autoPinEdge(toSuperviewSafeArea: .top)
         stackView.autoPinEdge(toSuperviewSafeArea: .bottom, withInset: 16)
         
-        let topSpacingView = UIView(forAutoLayout: ())
-        topSpacingView.heightAnchor.constraint(lessThanOrEqualToConstant: 100)
-            .isActive = true
-        stackView.addArrangedSubview(topSpacingView)
+        let spacer1 = UIView.spacer
+        stackView.addArrangedSubview(spacer1)
         
         let imageView = UIImageView(width: 220, height: 220, cornerRadius: 110)
         imageView.image = .walletIntro
@@ -46,11 +41,10 @@ class IntroVC: BaseVC, BEPageVCType {
 //        descriptionLabel.text = "For athletes, high altitude produces two contradictory effects on performance. For explosive events (sprints up to 400 metres, long jump, triple jump) the reduction in atmospheric pressure means there is"
 //        stackView.addArrangedSubview(descriptionLabel)
         
-        stackView.addArrangedSubview(UIView(forAutoLayout: ()))
+        let spacer2 = UIView.spacer
+        stackView.addArrangedSubview(spacer2)
         
-        stackView.addArrangedSubview(buttonStackView)
-        buttonStackView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -60)
-            .isActive = true
+        spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor).isActive = true
     }
     
     #if DEBUG

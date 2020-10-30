@@ -6,9 +6,9 @@
   
 */
 "next" = "kế tiếp";
-"Wowlet for people, not for tokens" = "Wowlet cho mọi người, không phải cho token";
-"create new wallet" = "tạo ví mới";
-"i've already had a wallet" = "tôi đã có một chiếc ví";
+"Wowlet for people, not for tokens" = "Wowlet cho mọi người, không phải vì token";
+"create new wallet" = "tạo ví Wowlet mới";
+"i've already had a wallet" = "tôi đã có ví Wowlet";
 "Terms and conditions" = "Các điều khoản và điều kiện";
 "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy" = "Bằng cách nhấn vào chấp nhận, bạn đồng ý với Điều khoản sử dụng và Chính sách quyền riêng tư của P2PWallet";
 "Cancel" = "Huỷ bỏ";
