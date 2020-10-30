@@ -31,3 +31,5 @@
 "Use your FaceID for quick access?" = "Sử dụng FaceID của bạn để truy cập nhanh?";
 "Use FaceId" = "Sử dụng FaceId";
 "Do this later" = "Để sau";
+"unsupported" = "không hỗ trợ";
+"Your device does not support biometrics authentication" = "Thiết bị của bạn không hỗ trợ xác thực sinh trắc học";

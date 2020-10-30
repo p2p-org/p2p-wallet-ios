@@ -31,3 +31,5 @@
 "Use your FaceID for quick access?" = "Use your FaceID for quick access?";
 "Use FaceId" = "Use FaceId";
 "Do this later" = "Do this later";
+"unsupported" = "unsupported";
+"Your device does not support biometrics authentication" = "Your device does not support biometrics authentication";

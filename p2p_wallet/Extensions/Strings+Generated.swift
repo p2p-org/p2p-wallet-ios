@@ -50,6 +50,8 @@ internal enum L10n {
   internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
   /// Terms and conditions
   internal static let termsAndConditions = L10n.tr("Localizable", "Terms and conditions")
+  /// unsupported
+  internal static let unsupported = L10n.tr("Localizable", "unsupported")
   /// Use FaceId
   internal static let useFaceId = L10n.tr("Localizable", "Use FaceId")
   /// Use your FaceID for quick access?
@@ -60,6 +62,8 @@ internal enum L10n {
   internal static let weVeCreatedSomeSecurityKeywordsForYou = L10n.tr("Localizable", "we've created some security keywords for you.")
   /// Wowlet for people, not for tokens
   internal static let wowletForPeopleNotForTokens = L10n.tr("Localizable", "Wowlet for people, not for tokens")
+  /// Your device does not support biometrics authentication
+  internal static let yourDeviceDoesNotSupportBiometricsAuthentication = L10n.tr("Localizable", "Your device does not support biometrics authentication")
   /// Your wallet has been successfully created!
   internal static let yourWalletHasBeenSuccessfullyCreated = L10n.tr("Localizable", "Your wallet has been successfully created!")
 }
