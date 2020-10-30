@@ -11,6 +11,8 @@ class TabBarVC: BaseVC {
     let selectedColor: UIColor = .textBlack
     let unselectedColor: UIColor = .a4a4a4
     
+    var selectedIndex = -1
+    
     lazy var tabBar = TabBar(cornerRadius: 20)
     
     override func setUp() {
@@ -39,16 +41,39 @@ class TabBarVC: BaseVC {
             forthTabItem,
             .spacer
         ])
-        tabBar.layoutSubviews()
     }
     
     private func buttonTabBarItem(image: UIImage, tag: Int) -> UIView {
         let button = UIImageView(width: 24, height: 24)
         button.image = image
         button.tintColor = unselectedColor
-        button.tag = tag
 //        button.touchAreaEdgeInsets = UIEdgeInsets(inset: -10)
 //        button.addTarget(self, action: #selector(switchTab(button:)), for: .touchUpInside)
-        return button.padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16))
+        let view = button.padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16))
+        view.tag = tag
+        return view.onTap(self, action: #selector(switchTab(_:)))
+    }
+    
+    @objc func switchTab(_ gesture: UIGestureRecognizer) {
+        switchTab(index: gesture.view!.tag)
+    }
+
+    func switchTab(index: Int) {
+        // scroll to top if index is selected
+        if selectedIndex == index {
+            return
+        }
+        
+        let items = tabBar.stackView.arrangedSubviews[1..<tabBar.stackView.arrangedSubviews.count - 1]
+        
+        guard index < items.count else {return}
+        
+        // change selected index
+        selectedIndex = index
+        
+        // change tabs' color
+        items.first {$0.tag == selectedIndex}?.subviews.first?.tintColor = selectedColor
+        
+        items.filter {$0.tag != selectedIndex}.forEach {$0.subviews.first?.tintColor = unselectedColor}
     }
 }
