@@ -45,9 +45,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 rootVC = BENavigationController(rootViewController: vc)
             } else if !Defaults.didSetEnableBiometry {
-                rootVC = EnableBiometryVC()
+                rootVC = BENavigationController(rootViewController: EnableBiometryVC())
             } else {
-                rootVC = BaseVC()
+                rootVC = BENavigationController(rootViewController: EnableBiometryVC()) 
             }
         }
         
