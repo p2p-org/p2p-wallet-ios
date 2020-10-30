@@ -23,4 +23,8 @@ class WellDoneVC: SecuritySettingVC {
         stackView.insertArrangedSubview(titleLabel, at: 2)
         stackView.insertArrangedSubview(descriptionLabel, at: 3)
     }
+    
+    override func buttonAcceptDidTouch() {
+        UIApplication.shared.changeRootVC(to: TabBarVC())
+    }
 }
