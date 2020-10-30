@@ -9,8 +9,8 @@ import Foundation
 import MBProgressHUD
 
 extension UIApplication {
-    func changeRootVC(to rootVC: UIViewController) {
-        keyWindow?.rootViewController = rootVC
+    func changeRootVC(to rootVC: UIViewController, withNaviationController: Bool = false) {
+        keyWindow?.rootViewController = withNaviationController ? BENavigationController(rootViewController: rootVC) : rootVC
     }
     
     func showIndetermineHudWithMessage(_ message: String?) {

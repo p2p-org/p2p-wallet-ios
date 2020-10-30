@@ -37,7 +37,7 @@ class IntroVC: BaseVC, BEPageVCType {
         stackView.addArrangedSubview(titleLabel)
         
 //        descriptionLabel.text = "For athletes, high altitude produces two contradictory effects on performance. For explosive events (sprints up to 400 metres, long jump, triple jump) the reduction in atmospheric pressure means there is"
-//        stackView.addArrangedSubview(descriptionLabel)
+        stackView.addArrangedSubview(descriptionLabel)
         
         let spacer2 = UIView.spacer
         stackView.addArrangedSubview(spacer2)
@@ -51,4 +51,19 @@ class IntroVC: BaseVC, BEPageVCType {
         super.injected()
     }
     #endif
+}
+
+class IntroVCWithButtons: IntroVC {
+    lazy var buttonStackView: UIStackView = {
+        let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
+        return stackView
+    }()
+    
+    override func setUp() {
+        super.setUp()
+        descriptionLabel.isHidden = false
+        stackView.addArrangedSubview(buttonStackView)
+        buttonStackView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -60)
+            .isActive = true
+    }
 }
