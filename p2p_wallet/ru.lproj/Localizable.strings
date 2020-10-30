@@ -38,3 +38,6 @@
 "We have not supported this type of biometry authentication yet" = "Мы пока не поддерживаем этот тип биометрической аутентификации.";
 "Use TouchId" = "Использовать TouchId";
 "Use your TouchID for quick access?" = "Использовать TouchID для быстрого доступа?";
+"Almost done!" = "Почти сделано!";
+"We suggest you also to enable push notifications" = "Предлагаем вам также включить push-уведомления";
+"Enable now" = "Включить сейчас";

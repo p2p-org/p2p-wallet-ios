@@ -15,7 +15,7 @@ class IntroVC: BaseVC, BEPageVCType {
     
     lazy var titleLabel = UILabel(text: L10n.wowletForPeopleNotForTokens, textSize: 32, weight: .bold, numberOfLines: 0, textAlignment: .center)
     
-    lazy var descriptionLabel = UILabel(text: "For athletes, high altitude produces two contradictory effects on performance. For explosive events (sprints up to 400 metres, long jump, triple jump) the reduction in atmospheric pressure means there is", textSize: 17, weight: .medium, textColor: UIColor.textBlack.withAlphaComponent(0.6), numberOfLines: 0, textAlignment: .center)
+    lazy var descriptionLabel = UILabel(textSize: 17, weight: .medium, textColor: UIColor.textBlack.withAlphaComponent(0.6), numberOfLines: 0, textAlignment: .center)
     
     lazy var buttonStackView: UIStackView = {
         let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
@@ -43,8 +43,8 @@ class IntroVC: BaseVC, BEPageVCType {
         stackView.addArrangedSubview(imageView)
         stackView.addArrangedSubview(titleLabel)
         
-        // FIXME: - Change text
-        stackView.addArrangedSubview(descriptionLabel)
+//        descriptionLabel.text = "For athletes, high altitude produces two contradictory effects on performance. For explosive events (sprints up to 400 metres, long jump, triple jump) the reduction in atmospheric pressure means there is"
+//        stackView.addArrangedSubview(descriptionLabel)
         
         stackView.addArrangedSubview(UIView(forAutoLayout: ()))
         

@@ -12,6 +12,8 @@ import Foundation
 internal enum L10n {
   /// Accept
   internal static let accept = L10n.tr("Localizable", "Accept")
+  /// Almost done!
+  internal static let almostDone = L10n.tr("Localizable", "Almost done!")
   /// Backup
   internal static let backup = L10n.tr("Localizable", "Backup")
   /// By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy
@@ -30,6 +32,8 @@ internal enum L10n {
   internal static let creatingAnAccount = L10n.tr("Localizable", "creating an account")
   /// Do this later
   internal static let doThisLater = L10n.tr("Localizable", "Do this later")
+  /// Enable now
+  internal static let enableNow = L10n.tr("Localizable", "Enable now")
   /// error
   internal static let error = L10n.tr("Localizable", "error")
   /// i've already had a wallet
@@ -66,6 +70,8 @@ internal enum L10n {
   internal static let warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture = L10n.tr("Localizable", "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.")
   /// We have not supported this type of biometry authentication yet
   internal static let weHaveNotSupportedThisTypeOfBiometryAuthenticationYet = L10n.tr("Localizable", "We have not supported this type of biometry authentication yet")
+  /// We suggest you also to enable push notifications
+  internal static let weSuggestYouAlsoToEnablePushNotifications = L10n.tr("Localizable", "We suggest you also to enable push notifications")
   /// We use FaceID to secure your transactions
   internal static let weUseFaceIDToSecureYourTransactions = L10n.tr("Localizable", "We use FaceID to secure your transactions")
   /// we've created some security keywords for you.
