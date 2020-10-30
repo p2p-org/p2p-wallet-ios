@@ -7,19 +7,6 @@
 
 import Foundation
 
-class TestVC: IntroVC {
-    override var index: Int {0 }
-}
-class TestVC1: IntroVC {
-    override var index: Int {1 }
-}
-class TestVC2: IntroVC {
-    override var index: Int {2 }
-}
-class TestVC3: IntroVC {
-    override var index: Int {3 }
-}
-
 class TabBarVC: BEPagesVC {
     let selectedColor: UIColor = .textBlack
     let unselectedColor: UIColor = .a4a4a4
@@ -31,7 +18,7 @@ class TabBarVC: BEPagesVC {
     override func setUp() {
         super.setUp()
         // pages
-        viewControllers = [TestVC(), TestVC1(), TestVC2(), TestVC3()]
+        viewControllers = [IntroVC(), IntroVC(), IntroVC(), IntroVC()]
         
         // disable scrolling
         for view in pageVC.view.subviews where view is UIScrollView {

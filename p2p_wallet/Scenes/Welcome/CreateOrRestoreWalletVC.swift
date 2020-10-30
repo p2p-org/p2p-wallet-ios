@@ -8,7 +8,6 @@
 import Foundation
 
 class CreateOrRestoreWalletVC: IntroVCWithButtons {
-    override var index: Int {1}
     
     lazy var createWalletButton = WLButton.stepButton(type: .main, label: L10n.createNewWallet.uppercaseFirst)
         .onTap(self, action: #selector(buttonCreateWalletDidTouch))
