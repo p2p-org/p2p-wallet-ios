@@ -14,9 +14,18 @@ class CreateOrRestoreWalletVC: IntroVC {
         .onTap(self, action: #selector(buttonCreateWalletDidTouch))
     lazy var restoreWalletButton = WLButton.stepButton(type: .sub, label: L10n.iVeAlreadyHadAWallet.uppercaseFirst)
     
+    lazy var buttonStackView: UIStackView = {
+        let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
+        return stackView
+    }()
+    
     override func setUp() {
         super.setUp()
         descriptionLabel.isHidden = true
+        
+        stackView.addArrangedSubview(buttonStackView)
+        buttonStackView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -60)
+            .isActive = true
         
         buttonStackView.addArrangedSubview(createWalletButton)
         buttonStackView.addArrangedSubview(restoreWalletButton)

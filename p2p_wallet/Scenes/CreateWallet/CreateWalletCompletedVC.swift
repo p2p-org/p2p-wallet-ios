@@ -11,6 +11,10 @@ class CreateWalletCompletedVC: IntroVC {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
     // MARK: - Subviews
+    lazy var buttonStackView: UIStackView = {
+        let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
+        return stackView
+    }()
     lazy var nextButton = WLButton.stepButton(type: .main, label: L10n.next)
         .onTap(self, action: #selector(buttonNextDidTouch))
     
@@ -19,6 +23,10 @@ class CreateWalletCompletedVC: IntroVC {
         super.setUp()
         titleLabel.text = L10n.congratulations
         descriptionLabel.text = L10n.yourWalletHasBeenSuccessfullyCreated
+        
+        stackView.addArrangedSubview(buttonStackView)
+        buttonStackView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -60)
+            .isActive = true
         
         buttonStackView.addArrangedSubview(nextButton)
     }
