@@ -31,6 +31,13 @@ class TabBarVC: BEPagesVC {
         
         // configure tabBar
         configureTabBar()
+        
+        // fix constraint
+        containerView.constraintToSuperviewWithAttribute(.bottom)?
+            .isActive = false
+        containerView.autoPinEdge(.bottom, to: .top, of: tabBar, withOffset: 20)
+        
+        pageControl.isHidden = true
     }
     
     // MARK: - Helpers
