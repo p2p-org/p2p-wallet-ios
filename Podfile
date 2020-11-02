@@ -20,6 +20,7 @@ target 'p2p_wallet' do
   pod 'TagListView', '~> 1.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
   pod 'IBPCollectionViewCompositionalLayout'
+  pod 'DiffableDataSources'
   # Pods for p2p wallet
 
   target 'p2p_walletTests' do
