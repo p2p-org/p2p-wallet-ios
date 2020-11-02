@@ -7,13 +7,17 @@
 
 import Foundation
 
+protocol TabBarItemVC: UIViewController {
+    var scrollView: UIScrollView {get}
+}
+
 class TabBarVC: BEPagesVC {
+    
     let selectedColor: UIColor = .textBlack
     let unselectedColor: UIColor = .a4a4a4
     
-    var selectedIndex = -1
-    
     lazy var tabBar = TabBar(cornerRadius: 20)
+    private var adjustedContentInsetScrollViews = [UIScrollView]()
     
     override func setUp() {
         super.setUp()
@@ -40,6 +44,7 @@ class TabBarVC: BEPagesVC {
         pageControl.isHidden = true
         
         // action
+        currentPage = -1
         moveToPage(0)
     }
     
@@ -76,22 +81,30 @@ class TabBarVC: BEPagesVC {
     }
     
     override func moveToPage(_ index: Int) {
-        super.moveToPage(index)
         // scroll to top if index is selected
-        if selectedIndex == index {
+        if currentPage == index {
             return
         }
+        super.moveToPage(index)
         
         let items = tabBar.stackView.arrangedSubviews[1..<tabBar.stackView.arrangedSubviews.count - 1]
         
         guard index < items.count else {return}
         
-        // change selected index
-        selectedIndex = index
-        
         // change tabs' color
-        items.first {$0.tag == selectedIndex}?.subviews.first?.tintColor = selectedColor
+        items.first {$0.tag == currentPage}?.subviews.first?.tintColor = selectedColor
         
-        items.filter {$0.tag != selectedIndex}.forEach {$0.subviews.first?.tintColor = unselectedColor}
+        items.filter {$0.tag != currentPage}.forEach {$0.subviews.first?.tintColor = unselectedColor}
+        
+        // add 20px behind tabBar
+        if index < viewControllers.count,
+           let vc = viewControllers[index] as? TabBarItemVC,
+           !adjustedContentInsetScrollViews.contains(vc.scrollView)
+        {
+            var inset = vc.scrollView.contentInset
+            inset.bottom += 20
+            vc.scrollView.contentInset = inset
+            adjustedContentInsetScrollViews.append(vc.scrollView)
+        }
     }
 }
