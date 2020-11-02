@@ -30,7 +30,7 @@ class WalletCollectionView: BaseCollectionView {
     
     static var layout: UICollectionViewLayout {
         UICollectionViewCompositionalLayout { (_ : Int, _ : NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(20))
+            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             
             let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
@@ -40,11 +40,10 @@ class WalletCollectionView: BaseCollectionView {
             
             let section = NSCollectionLayoutSection(group: group)
             
-            let headerFooterSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                                                  heightDimension: .estimated(44))
+            let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
             
             let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: headerFooterSize,
+                layoutSize: headerSize,
                 elementKind: WalletCollectionView.sectionHeaderElementKind,
                 alignment: .top
             )

@@ -69,6 +69,14 @@ class WalletVC: BaseVC, UICollectionViewDelegate {
         snapshot.appendSections([section])
         snapshot.appendItems(items, toSection: section)
         
+        let section2 = Section.savings
+        snapshot.appendSections([section2])
+        items = []
+        for i in 6..<10 {
+            items.append("\(i)")
+        }
+        snapshot.appendItems(items, toSection: section2)
+        
         dataSource.apply(snapshot)
     }
     
@@ -91,8 +99,8 @@ class WalletVC: BaseVC, UICollectionViewDelegate {
             }
             let view = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
-                withReuseIdentifier: "WCVFirstSectionHeaderView",
-                for: indexPath) as? WCVFirstSectionHeaderView
+                withReuseIdentifier: "WCVSectionHeaderView",
+                for: indexPath) as? WCVSectionHeaderView
             return view
         }
     }
