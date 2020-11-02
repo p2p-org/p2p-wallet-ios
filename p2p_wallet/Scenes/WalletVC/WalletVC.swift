@@ -16,7 +16,7 @@ class WalletVC: BaseVC, UICollectionViewDelegate {
         case wallets
         case savings
         
-        var rawValue: String {
+        var localizedString: String {
             switch self {
             case .wallets:
                 return L10n.wallets
@@ -56,7 +56,7 @@ class WalletVC: BaseVC, UICollectionViewDelegate {
         configureDataSource()
         
         view.addSubview(collectionView)
-        collectionView.autoPinEdgesToSuperviewEdges()
+        collectionView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16))
         
         collectionView.delegate = self
         
@@ -79,12 +79,8 @@ class WalletVC: BaseVC, UICollectionViewDelegate {
             cell.coinNameLabel.text = item
             return cell
         }
-        
-        
-        dataSource.supplementaryViewProvider = { (
-            collectionView: UICollectionView,
-            kind: String,
-            indexPath: IndexPath) -> UICollectionReusableView? in
+                
+        dataSource.supplementaryViewProvider = { (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
             
             if indexPath.section == 0 {
                 let view = collectionView.dequeueReusableSupplementaryView(

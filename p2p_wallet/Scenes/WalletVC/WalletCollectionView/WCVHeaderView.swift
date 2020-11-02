@@ -23,7 +23,8 @@ class WCVSectionHeaderView: UICollectionReusableView {
     
     func commonInit() {
         addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges()
+        stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
+        stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 16)
         
         stackView.addArrangedSubview(headerLabel)
         headerLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor)
@@ -55,13 +56,11 @@ class WCVFirstSectionHeaderView: WCVSectionHeaderView {
         headerLabel.removeFromSuperview()
         
         let spacer1 = UIView.spacer
-        let spacer2 = UIView.spacer
         stackView.addArrangedSubviews([
             spacer1,
             priceLabel,
             priceChangeLabel,
             buttonsView,
-            spacer2,
             headerLabel
         ])
         
