@@ -38,6 +38,9 @@ class TabBarVC: BEPagesVC {
         containerView.autoPinEdge(.bottom, to: .top, of: tabBar, withOffset: 20)
         
         pageControl.isHidden = true
+        
+        // action
+        moveToPage(0)
     }
     
     // MARK: - Helpers
