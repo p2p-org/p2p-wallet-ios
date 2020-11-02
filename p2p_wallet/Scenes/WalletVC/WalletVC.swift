@@ -62,7 +62,7 @@ class WalletVC: BaseVC, UICollectionViewDelegate {
         
         var snapshot = DiffableDataSourceSnapshot<Section, ItemType>()
         var items = [String]()
-        for i in 0..<100 {
+        for i in 0..<5 {
             items.append("\(i)")
         }
         let section = Section.wallets
@@ -76,7 +76,7 @@ class WalletVC: BaseVC, UICollectionViewDelegate {
         dataSource = CollectionViewDiffableDataSource<Section, String>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell? in
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PriceCell", for: indexPath) as! PriceCell
-            cell.coinNameLabel.text = item
+//            cell.coinNameLabel.text = item
             return cell
         }
                 
