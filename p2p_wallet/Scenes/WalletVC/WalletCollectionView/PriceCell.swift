@@ -12,6 +12,10 @@ class PriceCell: BaseCollectionViewCell {
     lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold, numberOfLines: 0)
     override func commonInit() {
         super.commonInit()
+        contentView.backgroundColor = .background
+        contentView.layer.cornerRadius = 12
+        contentView.layer.masksToBounds = true
+        
         contentView.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16))
         
