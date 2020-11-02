@@ -26,6 +26,7 @@ extension UIColor {
 
 extension UIImage {
     static let faceId = UIImage(named: "faceId", in: bundle, compatibleWith: nil)!
+    static let scanQr = UIImage(named: "scan-qr", in: bundle, compatibleWith: nil)!
     static let tabbarProfile = UIImage(named: "tabbar-profile", in: bundle, compatibleWith: nil)!
     static let tabbarSearch = UIImage(named: "tabbar-search", in: bundle, compatibleWith: nil)!
     static let tabbarThunderbolt = UIImage(named: "tabbar-thunderbolt", in: bundle, compatibleWith: nil)!

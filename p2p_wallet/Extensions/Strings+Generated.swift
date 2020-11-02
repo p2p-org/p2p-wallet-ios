@@ -56,12 +56,22 @@ internal enum L10n {
   internal static let passcodesDoNotMatch = L10n.tr("Localizable", "passcodes do not match")
   /// please try again later!
   internal static let pleaseTryAgainLater = L10n.tr("Localizable", "please try again later!")
+  /// Receive
+  internal static let receive = L10n.tr("Localizable", "Receive")
   /// Restoring wallet
   internal static let restoringWallet = L10n.tr("Localizable", "Restoring wallet")
   /// save to Keychain
   internal static let saveToKeychain = L10n.tr("Localizable", "save to Keychain")
+  /// Savings
+  internal static let savings = L10n.tr("Localizable", "Savings")
   /// security keys
   internal static let securityKeys = L10n.tr("Localizable", "security keys")
+  /// Send
+  internal static let send = L10n.tr("Localizable", "Send")
+  /// Slide to scan
+  internal static let slideToScan = L10n.tr("Localizable", "Slide to scan")
+  /// Swap
+  internal static let swap = L10n.tr("Localizable", "Swap")
   /// tap refresh button to retry
   internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
   /// Terms and conditions
@@ -76,6 +86,8 @@ internal enum L10n {
   internal static let useYourFaceIDForQuickAccess = L10n.tr("Localizable", "Use your FaceID for quick access?")
   /// Use your TouchID for quick access?
   internal static let useYourTouchIDForQuickAccess = L10n.tr("Localizable", "Use your TouchID for quick access?")
+  /// Wallets
+  internal static let wallets = L10n.tr("Localizable", "Wallets")
   /// WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.
   internal static let warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture = L10n.tr("Localizable", "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.")
   /// We have not supported this type of biometry authentication yet

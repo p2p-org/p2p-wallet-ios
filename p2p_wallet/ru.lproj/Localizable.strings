@@ -48,3 +48,9 @@
 "Welcome back to the Wowlet space!" = "С возвращением в пространство Wowlet!";
 "Go to wallet" = "Перейти в кошелек";
 "Restoring wallet" = "Восстановление кошелька";
+"Send" = "Отправить";
+"Receive" = "Получить";
+"Swap" = "Замена";
+"Slide to scan" = "Проведите для сканирования";
+"Wallets" = "Кошельки";
+"Savings" = "Экономия";
