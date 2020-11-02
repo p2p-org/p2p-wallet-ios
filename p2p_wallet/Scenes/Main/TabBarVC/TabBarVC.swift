@@ -7,7 +7,7 @@
 
 import Foundation
 
-class TabBarVC: BaseVC {
+class TabBarVC: BEPagesVC {
     let selectedColor: UIColor = .textBlack
     let unselectedColor: UIColor = .a4a4a4
     
@@ -17,13 +17,27 @@ class TabBarVC: BaseVC {
     
     override func setUp() {
         super.setUp()
+        // pages
+        viewControllers = [IntroVC(), IntroVC(), IntroVC(), IntroVC()]
+        
+        // disable scrolling
+        for view in pageVC.view.subviews where view is UIScrollView {
+            (view as! UIScrollView).isScrollEnabled = false
+        }
+        
+        // tabBar
         view.addSubview(tabBar)
         tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         
-//        tabBar.autoSetDimension(.height, toSize: 60)
-        
         // configure tabBar
         configureTabBar()
+        
+        // fix constraint
+        containerView.constraintToSuperviewWithAttribute(.bottom)?
+            .isActive = false
+        containerView.autoPinEdge(.bottom, to: .top, of: tabBar, withOffset: 20)
+        
+        pageControl.isHidden = true
     }
     
     // MARK: - Helpers
@@ -55,10 +69,11 @@ class TabBarVC: BaseVC {
     }
     
     @objc func switchTab(_ gesture: UIGestureRecognizer) {
-        switchTab(index: gesture.view!.tag)
+        moveToPage(gesture.view!.tag)
     }
-
-    func switchTab(index: Int) {
+    
+    override func moveToPage(_ index: Int) {
+        super.moveToPage(index)
         // scroll to top if index is selected
         if selectedIndex == index {
             return
