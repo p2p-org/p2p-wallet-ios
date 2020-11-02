@@ -8,7 +8,7 @@
 import Foundation
 
 class WCVSectionHeaderView: UICollectionReusableView {
-    lazy var stackView = UIStackView(axis: .vertical, spacing: 30, alignment: .center, distribution: .fill)
+    lazy var stackView = UIStackView(axis: .vertical, spacing: 60, alignment: .center, distribution: .fill)
     
     lazy var headerLabel = UILabel(text: "Wallets", textSize: 17, weight: .bold)
     
@@ -40,40 +40,37 @@ class WCVFirstSectionHeaderView: WCVSectionHeaderView {
     lazy var swapButton = createButton(title: L10n.swap)
     
     override func commonInit() {
-        let qrStackView: UIStackView = {
-            let stackView = UIStackView(axis: .horizontal, spacing: 25, alignment: .center, distribution: .fill)
-            stackView.addArrangedSubview(
-                UIImageView(
-                    width: 25,
-                    height: 25,
-                    backgroundColor: UIColor.textBlack.withAlphaComponent(0.5),
-                    image: .scanQr
-                )
-            )
-            stackView.addArrangedSubview(
-                UILabel(
-                    text: L10n.slideToScan,
-                    textSize: 13,
-                    weight: .semibold,
-                    textColor: UIColor.textBlack.withAlphaComponent(0.5)
-                )
-            )
-            stackView.addArrangedSubview(.spacer)
-            return stackView
+        super.commonInit()
+        let buttonsView: UIView = {
+            let view = UIView(forAutoLayout: ())
+            view.layer.cornerRadius = 16
+            view.layer.masksToBounds = true
+            let buttonsStackView = UIStackView(axis: .horizontal, spacing: 2, alignment: .fill, distribution: .fill)
+            buttonsStackView.addArrangedSubviews([sendButton, receiveButton, swapButton])
+            view.addSubview(buttonsStackView)
+            buttonsStackView.autoPinEdgesToSuperviewEdges()
+            return view
         }()
-        
-        let buttonsStackView = UIStackView(axis: .horizontal, spacing: 2, alignment: .fill, distribution: .fill)
-        buttonsStackView.addArrangedSubviews([sendButton, receiveButton, swapButton])
         
         headerLabel.removeFromSuperview()
         
+        let spacer1 = UIView.spacer
+        let spacer2 = UIView.spacer
         stackView.addArrangedSubviews([
-            qrStackView,
+            spacer1,
             priceLabel,
             priceChangeLabel,
-            buttonsStackView,
+            buttonsView,
+            spacer2,
             headerLabel
         ])
+        
+        headerLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor)
+            .isActive = true
+        
+        stackView.setCustomSpacing(5, after: priceLabel)
+        stackView.setCustomSpacing(30, after: priceChangeLabel)
+        stackView.setCustomSpacing(30, after: buttonsView)
     }
     
     // MARK: - Helpers
