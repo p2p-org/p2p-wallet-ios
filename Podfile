@@ -19,7 +19,7 @@ target 'p2p_wallet' do
   pod 'MBProgressHUD', '~> 1.2.0'
   pod 'TagListView', '~> 1.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
-
+  pod 'IBPCollectionViewCompositionalLayout'
   # Pods for p2p wallet
 
   target 'p2p_walletTests' do

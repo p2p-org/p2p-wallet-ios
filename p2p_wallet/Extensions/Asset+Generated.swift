@@ -19,6 +19,7 @@ extension UIColor {
     static let lightGrayBackground = UIColor(named: "lightGrayBackground", in: bundle, compatibleWith: nil)!
     static let textBlack = UIColor(named: "textBlack", in: bundle, compatibleWith: nil)!
     static let textWhite = UIColor(named: "textWhite", in: bundle, compatibleWith: nil)!
+    static let vcBackground = UIColor(named: "vcBackground", in: bundle, compatibleWith: nil)!
 }
 
 // MARK: - Images -
