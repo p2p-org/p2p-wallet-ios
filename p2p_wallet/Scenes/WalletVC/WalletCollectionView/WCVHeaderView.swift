@@ -23,8 +23,10 @@ class WCVSectionHeaderView: UICollectionReusableView {
     
     func commonInit() {
         addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
+        stackView.autoPinEdge(toSuperviewEdge: .top, withInset: 16)
         stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 16)
+        stackView.autoPinEdge(toSuperviewEdge: .leading)
+        stackView.autoPinEdge(toSuperviewEdge: .trailing)
         
         stackView.addArrangedSubview(headerLabel)
         headerLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor)

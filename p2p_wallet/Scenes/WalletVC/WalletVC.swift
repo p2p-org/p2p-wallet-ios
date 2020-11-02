@@ -9,7 +9,7 @@ import Foundation
 import IBPCollectionViewCompositionalLayout
 import DiffableDataSources
 
-class WalletVC: BaseVC, UICollectionViewDelegate {
+class WalletVC: BaseVC, TabBarItemVC, UICollectionViewDelegate {
     typealias ItemType = String
     
     enum Section: String, CaseIterable {
@@ -49,6 +49,7 @@ class WalletVC: BaseVC, UICollectionViewDelegate {
         return stackView
     }()
     lazy var collectionView = WalletCollectionView()
+    var scrollView: UIScrollView {collectionView}
     
     override func setUp() {
         super.setUp()
