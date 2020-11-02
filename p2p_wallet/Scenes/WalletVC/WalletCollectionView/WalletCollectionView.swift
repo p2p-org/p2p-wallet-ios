@@ -37,6 +37,15 @@ class WalletCollectionView: BaseCollectionView {
             let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
             
             let section = NSCollectionLayoutSection(group: group)
+            
+            let headerFooterSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                                  heightDimension: .estimated(44))
+            
+            let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+                        layoutSize: headerFooterSize,
+                        elementKind:  WalletCollectionView.sectionHeaderElementKind, alignment: .top)
+                    section.boundarySupplementaryItems = [sectionHeader]
+            
             return section
         }
     }

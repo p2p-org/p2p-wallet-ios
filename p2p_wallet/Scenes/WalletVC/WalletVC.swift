@@ -27,7 +27,27 @@ class WalletVC: BaseVC, UICollectionViewDelegate {
     }
     
     var dataSource: CollectionViewDiffableDataSource<Section, ItemType>!
-    
+    lazy var qrStackView: UIStackView = {
+        let stackView = UIStackView(axis: .horizontal, spacing: 25, alignment: .center, distribution: .fill)
+        stackView.addArrangedSubview(
+            UIImageView(
+                width: 25,
+                height: 25,
+                backgroundColor: UIColor.textBlack.withAlphaComponent(0.5),
+                image: .scanQr
+            )
+        )
+        stackView.addArrangedSubview(
+            UILabel(
+                text: L10n.slideToScan,
+                textSize: 13,
+                weight: .semibold,
+                textColor: UIColor.textBlack.withAlphaComponent(0.5)
+            )
+        )
+        stackView.addArrangedSubview(.spacer)
+        return stackView
+    }()
     lazy var collectionView = WalletCollectionView()
     
     override func setUp() {
