@@ -58,8 +58,6 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
             group = createLayoutForGroupOnLargeScreen(sectionIndex: sectionIndex, env: env)
         }
         
-        group.interItemSpacing = .fixed(16)
-        
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 16
         return section
@@ -75,20 +73,24 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
     }
     
     func createLayoutForGroupOnLargeScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .estimated(100))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1))
+        let leadingItem = NSCollectionLayoutItem(layoutSize: itemSize)
+        leadingItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)
         
-        let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+        let trailingItem = NSCollectionLayoutItem(layoutSize: itemSize)
+        trailingItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 0)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .estimated(300))
+        
+        let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [leadingItem])
         leadingGroup.interItemSpacing = .fixed(16)
         
-        let trailingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+        let trailingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [trailingItem])
         trailingGroup.interItemSpacing = .fixed(16)
         
         let combinedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
-        return NSCollectionLayoutGroup.horizontal(layoutSize: combinedGroupSize, subitems: [item])
+        return NSCollectionLayoutGroup.horizontal(layoutSize: combinedGroupSize, subitems: [leadingGroup, trailingGroup])
     }
     
     // MARK: - Datasource
