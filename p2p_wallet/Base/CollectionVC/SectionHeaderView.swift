@@ -23,10 +23,7 @@ class SectionHeaderView: UICollectionReusableView {
     
     func commonInit() {
         addSubview(stackView)
-        stackView.autoPinEdge(toSuperviewEdge: .top, withInset: 16)
-        stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 16)
-        stackView.autoPinEdge(toSuperviewEdge: .leading)
-        stackView.autoPinEdge(toSuperviewEdge: .trailing)
+        stackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 16))
         
         stackView.addArrangedSubview(headerLabel)
         headerLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor)

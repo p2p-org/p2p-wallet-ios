@@ -31,7 +31,7 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
     override func setUp() {
         super.setUp()
         view.addSubview(collectionView)
-        collectionView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 16))
+        collectionView.autoPinEdgesToSuperviewEdges()
         
         registerCellAndSupplementaryViews()
         configureDataSource()
@@ -76,18 +76,14 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
         
         let leadingItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        leadingItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)
         
         let trailingItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        trailingItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 0)
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .estimated(300))
         
         let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [leadingItem])
-        leadingGroup.interItemSpacing = .fixed(16)
         
         let trailingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [trailingItem])
-        trailingGroup.interItemSpacing = .fixed(16)
         
         let combinedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
         return NSCollectionLayoutGroup.horizontal(layoutSize: combinedGroupSize, subitems: [leadingGroup, trailingGroup])
