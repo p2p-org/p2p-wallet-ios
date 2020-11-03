@@ -7,34 +7,9 @@
 
 import Foundation
 
-class WCVSectionHeaderView: UICollectionReusableView {
-    lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .center, distribution: .fill)
-    
-    lazy var headerLabel = UILabel(text: "Wallets", textSize: 17, weight: .bold)
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        commonInit()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func commonInit() {
-        addSubview(stackView)
-        stackView.autoPinEdge(toSuperviewEdge: .top, withInset: 16)
-        stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 16)
-        stackView.autoPinEdge(toSuperviewEdge: .leading)
-        stackView.autoPinEdge(toSuperviewEdge: .trailing)
-        
-        stackView.addArrangedSubview(headerLabel)
-        headerLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor)
-            .isActive = true
-    }
-}
 
-class WCVFirstSectionHeaderView: WCVSectionHeaderView {
+
+class WCVFirstSectionHeaderView: SectionHeaderView {
     lazy var priceLabel = UILabel(text: "$120,00", textSize: 36, weight: .semibold, textAlignment: .center)
     lazy var priceChangeLabel = UILabel(text: "+ 0,16 US$ (0,01%) 24 hrs", textSize: 15, textColor: UIColor.textBlack.withAlphaComponent(0.5), numberOfLines: 0, textAlignment: .center)
     
