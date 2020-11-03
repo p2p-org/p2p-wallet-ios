@@ -55,19 +55,11 @@ class WCVFirstSectionHeaderView: WCVSectionHeaderView {
             return view
         }()
         
-        headerLabel.removeFromSuperview()
-        
         let spacer1 = UIView.spacer
-        stackView.addArrangedSubviews([
-            spacer1,
-            priceLabel,
-            priceChangeLabel,
-            buttonsView,
-            headerLabel
-        ])
-        
-        headerLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor)
-            .isActive = true
+        stackView.insertArrangedSubview(spacer1, at: 0)
+        stackView.insertArrangedSubview(priceLabel, at: 1)
+        stackView.insertArrangedSubview(priceChangeLabel, at: 2)
+        stackView.insertArrangedSubview(buttonsView, at: 3)
         
         stackView.setCustomSpacing(5, after: priceLabel)
         stackView.setCustomSpacing(30, after: priceChangeLabel)
