@@ -85,37 +85,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     }
     
     override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
-        let group: NSCollectionLayoutGroup
-        // 1 columns
-        if env.container.contentSize.width < 536 {
-            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            
-            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
-            
-            group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-        // 2 columns
-        } else {
-            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .estimated(100))
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)
-            
-            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1))
-            
-            let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-            leadingGroup.interItemSpacing = .fixed(16)
-            
-            let trailingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-            trailingGroup.interItemSpacing = .fixed(16)
-            
-            let combinedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
-            group = NSCollectionLayoutGroup.horizontal(layoutSize: combinedGroupSize, subitems: [item])
-        }
-        
-        group.interItemSpacing = .fixed(16)
-        
-        let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 16
+        let section = super.createLayoutForSection(sectionIndex, environment: env)
         
         // Header
         let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
@@ -125,7 +95,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top
         )
-        section.boundarySupplementaryItems = [sectionHeader]
+        section?.boundarySupplementaryItems = [sectionHeader]
         return section
     }
     
