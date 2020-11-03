@@ -6,13 +6,10 @@
 //
 
 import Foundation
-import IBPCollectionViewCompositionalLayout
 import DiffableDataSources
 
-class WalletVC: BaseVC, TabBarItemVC, UICollectionViewDelegate {
+class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell>, TabBarItemVC, UICollectionViewDelegate {
     // MARK: - Nested type
-    typealias ItemType = String
-    
     enum Section: String, CaseIterable {
         case wallets
         case savings
@@ -28,7 +25,6 @@ class WalletVC: BaseVC, TabBarItemVC, UICollectionViewDelegate {
     }
     
     // MARK: - Properties
-    var dataSource: CollectionViewDiffableDataSource<Section, ItemType>!
     
     // MARK: - Subviews
     lazy var qrStackView: UIStackView = {
@@ -43,15 +39,18 @@ class WalletVC: BaseVC, TabBarItemVC, UICollectionViewDelegate {
         stackView.addArrangedSubview(.spacer)
         return stackView
     }()
-    lazy var collectionView = WalletCollectionView()
     var scrollView: UIScrollView {collectionView}
     
     // MARK: - Methods
     override func setUp() {
         super.setUp()
         view.backgroundColor = .vcBackground
-        configureDataSource()
         
+        // modify collectionView
+        collectionView.contentInset = collectionView.contentInset.modifying(dTop: 10+25+10)
+        collectionView.delegate = self
+        
+        // header view
         let headerView = UIView(backgroundColor: view.backgroundColor)
         view.addSubview(headerView)
         headerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
@@ -60,15 +59,8 @@ class WalletVC: BaseVC, TabBarItemVC, UICollectionViewDelegate {
         qrStackView.autoPinToTopLeftCornerOfSuperviewSafeArea(xInset: 16, yInset: 10)
         qrStackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 10)
         
-        view.addSubview(collectionView)
-        collectionView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 16))
-        collectionView.contentInset = collectionView.contentInset.modifying(dTop: 10+25+10)
-        
-        collectionView.delegate = self
-        
-        view.bringSubviewToFront(headerView)
-        
-        var snapshot = DiffableDataSourceSnapshot<Section, ItemType>()
+        // initial snapshot
+        var snapshot = DiffableDataSourceSnapshot<Section, String>()
         var items = [String]()
         for i in 0..<5 {
             items.append("\(i)")
@@ -88,31 +80,27 @@ class WalletVC: BaseVC, TabBarItemVC, UICollectionViewDelegate {
         dataSource.apply(snapshot)
     }
     
-    // MARK: - Helpers
-    private func configureDataSource() {
-        dataSource = CollectionViewDiffableDataSource<Section, String>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell? in
-            
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PriceCell", for: indexPath) as! PriceCell
-//            cell.coinNameLabel.text = item
-            return cell
-        }
-                
-        dataSource.supplementaryViewProvider = { (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
-            
-            if indexPath.section == 0 {
-                let view = collectionView.dequeueReusableSupplementaryView(
-                    ofKind: kind,
-                    withReuseIdentifier: "WCVFirstSectionHeaderView",
-                    for: indexPath) as? WCVFirstSectionHeaderView
-                view?.headerLabel.text = Section.wallets.localizedString
-                return view
-            }
+    override func registerCellAndSupplementaryViews() {
+        super.registerCellAndSupplementaryViews()
+        collectionView.register(WCVSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "WCVSectionHeaderView")
+        collectionView.register(WCVFirstSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "WCVFirstSectionHeaderView")
+    }
+    
+    override func configureSupplementaryView(collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? {
+        if indexPath.section == 0 {
             let view = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
-                withReuseIdentifier: "WCVSectionHeaderView",
-                for: indexPath) as? WCVSectionHeaderView
-            view?.headerLabel.text = Section.savings.localizedString
+                withReuseIdentifier: "WCVFirstSectionHeaderView",
+                for: indexPath) as? WCVFirstSectionHeaderView
+            view?.headerLabel.text = Section.wallets.localizedString
             return view
         }
+        let view = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: "WCVSectionHeaderView",
+            for: indexPath) as? WCVSectionHeaderView
+        view?.headerLabel.text = Section.savings.localizedString
+        return view
+
     }
 }
