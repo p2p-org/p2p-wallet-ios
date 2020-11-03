@@ -48,7 +48,7 @@ class WCVFirstSectionHeaderView: WCVSectionHeaderView {
             let view = UIView(forAutoLayout: ())
             view.layer.cornerRadius = 16
             view.layer.masksToBounds = true
-            let buttonsStackView = UIStackView(axis: .horizontal, spacing: 2, alignment: .fill, distribution: .fill)
+            let buttonsStackView = UIStackView(axis: .horizontal, spacing: 2, alignment: .fill, distribution: .fillEqually)
             buttonsStackView.addArrangedSubviews([sendButton, receiveButton, swapButton])
             view.addSubview(buttonsStackView)
             buttonsStackView.autoPinEdgesToSuperviewEdges()
@@ -77,9 +77,12 @@ class WCVFirstSectionHeaderView: WCVSectionHeaderView {
     // MARK: - Helpers
     func createButton(title: String) -> UIView {
         let view = UIView(height: 56, backgroundColor: .textBlack)
-        let label = UILabel(text: title, textSize: 15, weight: .semibold, textColor: .textWhite, textAlignment: .center)
+        let label = UILabel(text: title, textSize: 15, weight: .semibold, textColor: .textWhite, numberOfLines: 0, textAlignment: .center)
         view.addSubview(label)
-        label.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20))
+        label.autoPinEdge(toSuperviewEdge: .top)
+        label.autoPinEdge(toSuperviewEdge: .bottom)
+        label.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
+        label.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
         return view
     }
 }

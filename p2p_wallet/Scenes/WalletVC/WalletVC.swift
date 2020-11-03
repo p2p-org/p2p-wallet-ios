@@ -93,12 +93,14 @@ class WalletVC: BaseVC, TabBarItemVC, UICollectionViewDelegate {
                     ofKind: kind,
                     withReuseIdentifier: "WCVFirstSectionHeaderView",
                     for: indexPath) as? WCVFirstSectionHeaderView
+                view?.headerLabel.text = Section.wallets.localizedString
                 return view
             }
             let view = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
                 withReuseIdentifier: "WCVSectionHeaderView",
                 for: indexPath) as? WCVSectionHeaderView
+            view?.headerLabel.text = Section.savings.localizedString
             return view
         }
     }
