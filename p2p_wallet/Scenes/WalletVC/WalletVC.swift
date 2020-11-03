@@ -8,7 +8,7 @@
 import Foundation
 import DiffableDataSources
 
-class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell>, TabBarItemVC, UICollectionViewDelegate {
+class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     // MARK: - Nested type
     enum Section: String, CaseIterable {
         case wallets
@@ -39,7 +39,6 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell>, TabBarItemVC,
         stackView.addArrangedSubview(.spacer)
         return stackView
     }()
-    var scrollView: UIScrollView {collectionView}
     
     // MARK: - Methods
     override func setUp() {
@@ -48,7 +47,6 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell>, TabBarItemVC,
         
         // modify collectionView
         collectionView.contentInset = collectionView.contentInset.modifying(dTop: 10+25+10)
-        collectionView.delegate = self
         
         // header view
         let headerView = UIView(backgroundColor: view.backgroundColor)
@@ -103,4 +101,8 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell>, TabBarItemVC,
         return view
 
     }
+}
+
+extension WalletVC: TabBarItemVC {
+    var scrollView: UIScrollView {collectionView}
 }

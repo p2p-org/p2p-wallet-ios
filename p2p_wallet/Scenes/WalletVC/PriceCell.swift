@@ -7,7 +7,7 @@
 
 import Foundation
 
-class PriceCell: CollectionCell<String> {
+class PriceCell: BaseCollectionViewCell, CollectionCell {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .equalSpacing)
     lazy var coinLogoImageView = UIImageView(width: 32, height: 32, backgroundColor: .gray, cornerRadius: 32 / 2)
     lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold, numberOfLines: 0)
@@ -53,7 +53,7 @@ class PriceCell: CollectionCell<String> {
         stackView.addArrangedSubview(priceInfoView)
     }
     
-    override func setUp(with item: String) {
+    func setUp(with item: String) {
         
     }
 }

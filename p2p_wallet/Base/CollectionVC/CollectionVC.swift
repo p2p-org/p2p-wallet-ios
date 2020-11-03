@@ -9,11 +9,12 @@ import Foundation
 import IBPCollectionViewCompositionalLayout
 import DiffableDataSources
 
-class CollectionCell<ItemType: Hashable>: BaseCollectionViewCell {
-    func setUp(with item: ItemType) {}
+protocol CollectionCell: BaseCollectionViewCell {
+    associatedtype T: Hashable
+    func setUp(with item: T)
 }
 
-class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell<ItemType>>: BaseVC {
+class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>: BaseVC {
     enum State {
         case reloading
         case loading
@@ -104,9 +105,9 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell<I
     }
     
     func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: Cell.self), for: indexPath) as! CollectionCell<ItemType>
-        cell.setUp(with: item)
-        return cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: Cell.self), for: indexPath) as? Cell
+        cell?.setUp(with: item as! Cell.T)
+        return cell ?? UICollectionViewCell()
     }
     
     func configureSupplementaryView(collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? {

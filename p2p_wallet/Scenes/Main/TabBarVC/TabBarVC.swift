@@ -22,7 +22,7 @@ class TabBarVC: BEPagesVC {
     override func setUp() {
         super.setUp()
         // pages
-        viewControllers = [WalletVC(), IntroVC(), IntroVC(), IntroVC()]
+        viewControllers = [WalletVC(), InvestmentsVC(), IntroVC(), IntroVC()]
         
         // disable scrolling
         for view in pageVC.view.subviews where view is UIScrollView {
