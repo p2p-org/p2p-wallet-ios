@@ -69,6 +69,43 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
     override func registerCellAndSupplementaryViews() {
         super.registerCellAndSupplementaryViews()
         collectionView.registerCells([DefiCell.self])
+        collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView")
+        collectionView.register(WCVFirstSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "WCVFirstSectionHeaderView")
+    }
+    
+    // MARK: - Layout
+    override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
+        let section = super.createLayoutForSection(sectionIndex, environment: env)
+        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
+        
+        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+        section?.boundarySupplementaryItems = [sectionHeader]
+        return section
+    }
+    
+    // MARK: - Datasource
+    override func configureSupplementaryView(collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? {
+        let view = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: "SectionHeaderView",
+            for: indexPath) as? SectionHeaderView
+        let text: String
+        switch indexPath.section {
+        case 0:
+            text = Section.news.localizedString
+            view?.headerLabel.font = .systemFont(ofSize: 28, weight: .semibold)
+        case 1:
+            text = Section.exploreDefi.localizedString
+            view?.headerLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+        default:
+            fatalError()
+        }
+        view?.headerLabel.text = text
+        return view
     }
     
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell {
