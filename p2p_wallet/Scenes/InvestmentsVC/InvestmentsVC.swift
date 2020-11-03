@@ -75,7 +75,24 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
     
     // MARK: - Layout
     override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
-        let section = super.createLayoutForSection(sectionIndex, environment: env)
+        let section: NSCollectionLayoutSection?
+        switch sectionIndex {
+        case 0:
+            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+            
+            let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(env.container.contentSize.width * 0.9), heightDimension: .absolute(env.container.contentSize.width * 0.9 * 259 / 335))
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+            
+            section = NSCollectionLayoutSection(group: group)
+            section?.interGroupSpacing = 16
+            section?.orthogonalScrollingBehavior = .groupPaging
+        case 1:
+            section = super.createLayoutForSection(sectionIndex, environment: env)
+        default:
+            fatalError()
+        }
+        
         let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
         
         let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(

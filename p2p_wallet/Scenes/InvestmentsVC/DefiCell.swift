@@ -17,7 +17,7 @@ class DefiCell: BaseCollectionViewCell, CollectionCell {
         super.commonInit()
         backgroundColor = .textWhite
         contentView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges()
+        stackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 16))
         
         stackView.addArrangedSubviews([imageView, titleLabel])
     }
