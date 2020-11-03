@@ -10,6 +10,7 @@ import IBPCollectionViewCompositionalLayout
 import DiffableDataSources
 
 class WalletVC: BaseVC, TabBarItemVC, UICollectionViewDelegate {
+    // MARK: - Nested type
     typealias ItemType = String
     
     enum Section: String, CaseIterable {
@@ -26,31 +27,26 @@ class WalletVC: BaseVC, TabBarItemVC, UICollectionViewDelegate {
         }
     }
     
+    // MARK: - Properties
     var dataSource: CollectionViewDiffableDataSource<Section, ItemType>!
+    
+    // MARK: - Subviews
     lazy var qrStackView: UIStackView = {
         let stackView = UIStackView(axis: .horizontal, spacing: 25, alignment: .center, distribution: .fill)
-        stackView.addArrangedSubview(
-            UIImageView(
-                width: 25,
-                height: 25,
-                backgroundColor: UIColor.textBlack.withAlphaComponent(0.5),
-                image: .scanQr
-            )
-        )
-        stackView.addArrangedSubview(
-            UILabel(
-                text: L10n.slideToScan,
-                textSize: 13,
-                weight: .semibold,
-                textColor: UIColor.textBlack.withAlphaComponent(0.5)
-            )
-        )
+        let imageView = UIImageView(width: 25, height: 25, image: .scanQr)
+        imageView.tintColor = UIColor.textBlack.withAlphaComponent(0.5)
+         
+        stackView.addArrangedSubviews([
+            imageView,
+            UILabel(text: L10n.slideToScan, textSize: 13, weight: .semibold, textColor: UIColor.textBlack.withAlphaComponent(0.5))
+        ])
         stackView.addArrangedSubview(.spacer)
         return stackView
     }()
     lazy var collectionView = WalletCollectionView()
     var scrollView: UIScrollView {collectionView}
     
+    // MARK: - Methods
     override func setUp() {
         super.setUp()
         view.backgroundColor = .vcBackground
@@ -81,7 +77,8 @@ class WalletVC: BaseVC, TabBarItemVC, UICollectionViewDelegate {
         dataSource.apply(snapshot)
     }
     
-    func configureDataSource() {
+    // MARK: - Helpers
+    private func configureDataSource() {
         dataSource = CollectionViewDiffableDataSource<Section, String>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell? in
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PriceCell", for: indexPath) as! PriceCell
