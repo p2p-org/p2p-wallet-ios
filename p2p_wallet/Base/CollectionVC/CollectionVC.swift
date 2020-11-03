@@ -44,11 +44,11 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
     // MARK: - Layout
     func createLayout() -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout { (sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            self.configureSection(sectionIndex, environment: env)
+            self.createLayoutForSection(sectionIndex, environment: env)
         }
     }
     
-    func configureSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
+    func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
         // 1 columns
         let group: NSCollectionLayoutGroup
         
@@ -80,15 +80,6 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
         
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 16
-        
-        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
-        
-        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerSize,
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
-        section.boundarySupplementaryItems = [sectionHeader]
         
         return section
     }

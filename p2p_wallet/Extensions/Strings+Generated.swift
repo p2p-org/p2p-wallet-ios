@@ -38,6 +38,8 @@ internal enum L10n {
   internal static let enterSecurityKeys = L10n.tr("Localizable", "Enter security keys")
   /// error
   internal static let error = L10n.tr("Localizable", "error")
+  /// Explore  DeFi
+  internal static let exploreDeFi = L10n.tr("Localizable", "Explore  DeFi")
   /// Explore Wowlet and deposit funds when you’re ready
   internal static let exploreWowletAndDepositFundsWhenYouReReady = L10n.tr("Localizable", "Explore Wowlet and deposit funds when you’re ready")
   /// Finish setup
@@ -48,6 +50,8 @@ internal enum L10n {
   internal static let iVeAlreadyHadAWallet = L10n.tr("Localizable", "i've already had a wallet")
   /// Identify yourself!
   internal static let identifyYourself = L10n.tr("Localizable", "Identify yourself!")
+  /// Make your crypto working on you
+  internal static let makeYourCryptoWorkingOnYou = L10n.tr("Localizable", "Make your crypto working on you")
   /// next
   internal static let next = L10n.tr("Localizable", "next")
   /// OK

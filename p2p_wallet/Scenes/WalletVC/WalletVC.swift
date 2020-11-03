@@ -78,6 +78,19 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         dataSource.apply(snapshot)
     }
     
+    override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
+        let section = super.createLayoutForSection(sectionIndex, environment: env)
+        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
+        
+        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+        section?.boundarySupplementaryItems = [sectionHeader]
+        return section
+    }
+    
     override func registerCellAndSupplementaryViews() {
         super.registerCellAndSupplementaryViews()
         collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView")
