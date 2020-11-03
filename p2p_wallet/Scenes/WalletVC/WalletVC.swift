@@ -52,10 +52,21 @@ class WalletVC: BaseVC, TabBarItemVC, UICollectionViewDelegate {
         view.backgroundColor = .vcBackground
         configureDataSource()
         
+        let headerView = UIView(backgroundColor: view.backgroundColor)
+        view.addSubview(headerView)
+        headerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
+        
+        headerView.addSubview(qrStackView)
+        qrStackView.autoPinToTopLeftCornerOfSuperviewSafeArea(xInset: 16, yInset: 10)
+        qrStackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 10)
+        
         view.addSubview(collectionView)
-        collectionView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16))
+        collectionView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 16))
+        collectionView.contentInset = collectionView.contentInset.modifying(dTop: 10+25+10)
         
         collectionView.delegate = self
+        
+        view.bringSubviewToFront(headerView)
         
         var snapshot = DiffableDataSourceSnapshot<Section, ItemType>()
         var items = [String]()
