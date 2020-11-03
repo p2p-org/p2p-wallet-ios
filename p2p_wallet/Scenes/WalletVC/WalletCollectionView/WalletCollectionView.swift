@@ -29,12 +29,33 @@ class WalletCollectionView: BaseCollectionView {
     }
     
     static var layout: UICollectionViewLayout {
-        UICollectionViewCompositionalLayout { (_ : Int, _ : NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        UICollectionViewCompositionalLayout { (_ : Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            // 1 columns
+            let group: NSCollectionLayoutGroup
             
-            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(500))
-            let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+            if env.container.contentSize.width < 536 {
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
+                
+                group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+            } else {
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .estimated(100))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1))
+                
+                let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+                leadingGroup.interItemSpacing = .fixed(16)
+                
+                let trailingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+                trailingGroup.interItemSpacing = .fixed(16)
+                
+                let combinedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
+                group = NSCollectionLayoutGroup.horizontal(layoutSize: combinedGroupSize, subitems: [item])
+            }
             
             group.interItemSpacing = .fixed(16)
             
