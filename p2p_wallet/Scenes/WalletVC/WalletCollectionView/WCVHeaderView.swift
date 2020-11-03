@@ -8,7 +8,7 @@
 import Foundation
 
 class WCVSectionHeaderView: UICollectionReusableView {
-    lazy var stackView = UIStackView(axis: .vertical, spacing: 60, alignment: .center, distribution: .fill)
+    lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .center, distribution: .fill)
     
     lazy var headerLabel = UILabel(text: "Wallets", textSize: 17, weight: .bold)
     
