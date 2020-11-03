@@ -52,28 +52,10 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
         let group: NSCollectionLayoutGroup
         // 1 columns
         if env.container.contentSize.width < 536 {
-            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            
-            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
-            
-            group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+            group = createLayoutForGroupOnSmallScreen(sectionIndex: sectionIndex, env: env)
         // 2 columns
         } else {
-            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .estimated(100))
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)
-            
-            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1))
-            
-            let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-            leadingGroup.interItemSpacing = .fixed(16)
-            
-            let trailingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-            trailingGroup.interItemSpacing = .fixed(16)
-            
-            let combinedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
-            group = NSCollectionLayoutGroup.horizontal(layoutSize: combinedGroupSize, subitems: [item])
+            group = createLayoutForGroupOnLargeScreen(sectionIndex: sectionIndex, env: env)
         }
         
         group.interItemSpacing = .fixed(16)
@@ -81,6 +63,32 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 16
         return section
+    }
+    
+    func createLayoutForGroupOnSmallScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
+        
+        return NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+    }
+    
+    func createLayoutForGroupOnLargeScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .estimated(100))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1))
+        
+        let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+        leadingGroup.interItemSpacing = .fixed(16)
+        
+        let trailingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+        trailingGroup.interItemSpacing = .fixed(16)
+        
+        let combinedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
+        return NSCollectionLayoutGroup.horizontal(layoutSize: combinedGroupSize, subitems: [item])
     }
     
     // MARK: - Datasource

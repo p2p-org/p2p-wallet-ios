@@ -75,20 +75,13 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
     
     // MARK: - Layout
     override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
-        let section: NSCollectionLayoutSection?
+        let section = super.createLayoutForSection(sectionIndex, environment: env)
         switch sectionIndex {
         case 0:
-            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            
-            let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(env.container.contentSize.width * 0.9), heightDimension: .absolute(env.container.contentSize.width * 0.9 * 259 / 335))
-            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-            
-            section = NSCollectionLayoutSection(group: group)
             section?.interGroupSpacing = 16
             section?.orthogonalScrollingBehavior = .groupPaging
         case 1:
-            section = super.createLayoutForSection(sectionIndex, environment: env)
+            break
         default:
             fatalError()
         }
@@ -102,6 +95,28 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
         )
         section?.boundarySupplementaryItems = [sectionHeader]
         return section
+    }
+    
+    override func createLayoutForGroupOnSmallScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
+        if sectionIndex == 0 {
+            return groupLayoutForFirstSection(width: env.container.contentSize.width * 0.9, height: env.container.contentSize.width * 0.9 * 259 / 335)
+        }
+        return super.createLayoutForGroupOnSmallScreen(sectionIndex: sectionIndex, env: env)
+    }
+    
+    override func createLayoutForGroupOnLargeScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
+        if sectionIndex == 0 {
+            return groupLayoutForFirstSection(width: 335, height: 259)
+        }
+        return super.createLayoutForGroupOnLargeScreen(sectionIndex: sectionIndex, env: env)
+    }
+    
+    private func groupLayoutForFirstSection(width: CGFloat, height: CGFloat) -> NSCollectionLayoutGroup {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(width), heightDimension: .absolute(height))
+        return NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
     }
     
     // MARK: - Datasource
