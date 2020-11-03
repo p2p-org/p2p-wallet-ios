@@ -14,6 +14,12 @@ class CollectionCell<ItemType: Hashable>: BaseCollectionViewCell {
 }
 
 class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell<ItemType>>: BaseVC {
+    enum State {
+        case reloading
+        case loading
+        case loaded([ItemType])
+    }
+    
     var dataSource: CollectionViewDiffableDataSource<Section, ItemType>!
     
     lazy var collectionView: BaseCollectionView = {

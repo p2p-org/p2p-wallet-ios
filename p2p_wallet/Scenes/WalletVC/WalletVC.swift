@@ -82,7 +82,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell>, TabBarItemVC,
     
     override func registerCellAndSupplementaryViews() {
         super.registerCellAndSupplementaryViews()
-        collectionView.register(WCVSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "WCVSectionHeaderView")
+        collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView")
         collectionView.register(WCVFirstSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "WCVFirstSectionHeaderView")
     }
     
@@ -97,8 +97,8 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell>, TabBarItemVC,
         }
         let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
-            withReuseIdentifier: "WCVSectionHeaderView",
-            for: indexPath) as? WCVSectionHeaderView
+            withReuseIdentifier: "SectionHeaderView",
+            for: indexPath) as? SectionHeaderView
         view?.headerLabel.text = Section.savings.localizedString
         return view
 
