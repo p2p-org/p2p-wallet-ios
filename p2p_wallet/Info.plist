@@ -43,5 +43,7 @@
 	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>We use FaceID to secure your transactions</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera is used for scanning Qr Code</string>
 </dict>
 </plist>
