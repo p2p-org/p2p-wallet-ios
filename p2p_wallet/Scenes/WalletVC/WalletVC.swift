@@ -25,6 +25,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     }
     
     // MARK: - Properties
+    var headerView: WCVFirstSectionHeaderView?
     
     // MARK: - Subviews
     lazy var qrStackView: UIStackView = {
@@ -47,6 +48,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         
         // modify collectionView
         collectionView.contentInset = collectionView.contentInset.modifying(dTop: 10+25+10)
+        collectionView.delegate = self
         
         // header view
         let headerView = UIView(backgroundColor: view.backgroundColor)
@@ -59,22 +61,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         
         // initial snapshot
         var snapshot = DiffableDataSourceSnapshot<Section, String>()
-        var items = [String]()
-        for i in 0..<5 {
-            items.append("\(i)")
-        }
-        let section = Section.wallets
-        snapshot.appendSections([section])
-        snapshot.appendItems(items, toSection: section)
-        
-        let section2 = Section.savings
-        snapshot.appendSections([section2])
-        items = []
-        for i in 6..<10 {
-            items.append("\(i)")
-        }
-        snapshot.appendItems(items, toSection: section2)
-        
+        snapshot.appendSections([Section.wallets])
         dataSource.apply(snapshot)
     }
     
@@ -107,6 +94,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
                 withReuseIdentifier: "WCVFirstSectionHeaderView",
                 for: indexPath) as? WCVFirstSectionHeaderView
             view?.headerLabel.text = Section.wallets.localizedString
+            headerView = view
             return view
         }
         let view = collectionView.dequeueReusableSupplementaryView(
@@ -115,10 +103,19 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
             for: indexPath) as? SectionHeaderView
         view?.headerLabel.text = Section.savings.localizedString
         return view
-
     }
 }
 
 extension WalletVC: TabBarItemVC {
     var scrollView: UIScrollView {collectionView}
+}
+
+extension WalletVC: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
+        if elementKind == UICollectionView.elementKindSectionHeader,
+           indexPath.section == 0
+        {
+            headerView = nil
+        }
+    }
 }
