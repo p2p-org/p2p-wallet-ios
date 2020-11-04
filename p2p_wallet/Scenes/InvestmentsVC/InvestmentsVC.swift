@@ -99,7 +99,7 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
     
     override func createLayoutForGroupOnSmallScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
         if sectionIndex == 0 {
-            let width = env.container.contentSize.width - 32 - 8
+            let width = env.container.contentSize.width - 32 - 16
             return groupLayoutForFirstSection(width: width, height: width * 259 / 335)
         }
         return super.createLayoutForGroupOnSmallScreen(sectionIndex: sectionIndex, env: env)
