@@ -14,6 +14,6 @@ class BalancesVM {
     let balance = BehaviorRelay<Double>(value: 0)
 }
 
-class WalletVM {
+class WalletVM: ListViewModel<String> {
     let balanceVM = BalancesVM.shared
 }

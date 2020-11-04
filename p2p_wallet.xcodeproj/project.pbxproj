@@ -11,6 +11,7 @@
 		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
 		BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */; };
 		BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC2288022542E1CC0028CE8F /* Localizable.strings */; };
+		BC22AA3425527F190071C69F /* InvestmentsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22AA3325527F190071C69F /* InvestmentsVM.swift */; };
 		BC23B574254FBB7F00886C9C /* WalletVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B573254FBB7F00886C9C /* WalletVC.swift */; };
 		BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */; };
 		BC23B5AA254FBF6200886C9C /* WCVHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A9254FBF6200886C9C /* WCVHeaderView.swift */; };
@@ -99,6 +100,7 @@
 		BC2288062542E1CF0028CE8F /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		BC2288072542E1D00028CE8F /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		BC2288082542E1D10028CE8F /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BC22AA3325527F190071C69F /* InvestmentsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsVM.swift; sourceTree = "<group>"; };
 		BC23B573254FBB7F00886C9C /* WalletVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletVC.swift; sourceTree = "<group>"; };
 		BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionView.swift; sourceTree = "<group>"; };
 		BC23B5A9254FBF6200886C9C /* WCVHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WCVHeaderView.swift; sourceTree = "<group>"; };
@@ -403,6 +405,7 @@
 				BCD5E76425512EDC00F51299 /* NewsCell.swift */,
 				BCD5E7952551332200F51299 /* DefiCell.swift */,
 				BCD5E74D25512DA500F51299 /* InvestmentsVC.swift */,
+				BC22AA3325527F190071C69F /* InvestmentsVM.swift */,
 			);
 			path = InvestmentsVC;
 			sourceTree = "<group>";
@@ -766,6 +769,7 @@
 				BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */,
 				BC23B5AA254FBF6200886C9C /* WCVHeaderView.swift in Sources */,
 				BCD5E82925525D3D00F51299 /* ListViewModel.swift in Sources */,
+				BC22AA3425527F190071C69F /* InvestmentsVM.swift in Sources */,
 				BCD5E82425525C6E00F51299 /* WalletVM.swift in Sources */,
 				BC6EE74A254AB3AD00FE1025 /* PinCodeTextField.swift in Sources */,
 				BC6EE77D254BB8F400FE1025 /* Settings.swift in Sources */,

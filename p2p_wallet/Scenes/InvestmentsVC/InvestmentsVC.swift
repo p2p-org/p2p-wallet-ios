@@ -29,6 +29,15 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
         case defi(String)
     }
     
+    init() {
+        let viewModel = InvestmentsVM()
+        super.init(viewModel: viewModel)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func setUp() {
         super.setUp()
         view.backgroundColor = .vcBackground
