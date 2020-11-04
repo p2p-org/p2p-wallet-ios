@@ -81,7 +81,7 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
             section?.interGroupSpacing = 16
             section?.orthogonalScrollingBehavior = .groupPaging
         case 1:
-            break
+            section?.interGroupSpacing = 2
         default:
             fatalError()
         }

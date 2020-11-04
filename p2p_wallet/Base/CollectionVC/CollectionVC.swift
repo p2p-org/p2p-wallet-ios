@@ -59,14 +59,13 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
         }
         
         let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 16
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
         return section
     }
     
     func createLayoutForGroupOnSmallScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.edgeSpacing = NSCollectionLayoutEdgeSpacing(leading: .fixed(16), top: .fixed(0), trailing: .fixed(16), bottom: .fixed(0))
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(env.container.contentSize.width - 32), heightDimension: .estimated(200))
         
@@ -77,10 +76,8 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
         
         let leadingItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        leadingItem.edgeSpacing = NSCollectionLayoutEdgeSpacing(leading: .fixed(16), top: .fixed(0), trailing: .fixed(16), bottom: .fixed(0))
         
         let trailingItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        leadingItem.edgeSpacing = NSCollectionLayoutEdgeSpacing(leading: .fixed(16), top: .fixed(0), trailing: .fixed(16), bottom: .fixed(0))
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .absolute((env.container.contentSize.width - 32 - 16)/2), heightDimension: .estimated(300))
         
@@ -90,7 +87,7 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
         
         let combinedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: combinedGroupSize, subitems: [leadingGroup, trailingGroup])
-        group.interItemSpacing = .fixed(32)
+        group.interItemSpacing = .fixed(16)
         return group
     }
     

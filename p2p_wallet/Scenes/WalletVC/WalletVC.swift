@@ -86,6 +86,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     
     override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
         let section = super.createLayoutForSection(sectionIndex, environment: env)
+        section?.interGroupSpacing = 16
         
         // Header
         let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
