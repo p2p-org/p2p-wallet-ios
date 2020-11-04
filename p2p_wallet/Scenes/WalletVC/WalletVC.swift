@@ -154,9 +154,9 @@ extension WalletVC: UIViewControllerTransitioningDelegate {
         PresentMenuAnimator()
     }
     
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        DismissMenuAnimator()
-    }
+//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        DismissMenuAnimator()
+//    }
     
     func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         return interactor.hasStarted ? interactor : nil
