@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         #if DEBUG
-//        KeychainStorage.shared.clear()
+        KeychainStorage.shared.clear()
         
         Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/iOSInjection.bundle")?.load()
 //        //for tvOS:
@@ -32,6 +32,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BEPureLayoutConfigs.defaultNavigationBarColor = .background
         BEPureLayoutConfigs.defaultNavigationBarTextFont = .systemFont(ofSize: 17, weight: .semibold)
         BEPureLayoutConfigs.defaultShadowColor = .textBlack
+        let image = UIImage.backButton.withRenderingMode(.alwaysOriginal)
+        BEPureLayoutConfigs.defaultBackButton = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         self.window = window

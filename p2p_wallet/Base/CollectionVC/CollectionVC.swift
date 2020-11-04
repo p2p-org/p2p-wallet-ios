@@ -15,12 +15,23 @@ protocol CollectionCell: BaseCollectionViewCell {
 }
 
 class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>: BaseVC {
+    // MARK: - Properties
     var dataSource: CollectionViewDiffableDataSource<Section, ItemType>!
+    let viewModel: ListViewModel<ItemType>
     
     lazy var collectionView: BaseCollectionView = {
         let collectionView = BaseCollectionView(frame: .zero, collectionViewLayout: createLayout())
         return collectionView
     }()
+    
+    init(viewModel: ListViewModel<ItemType>) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func setUp() {
         super.setUp()

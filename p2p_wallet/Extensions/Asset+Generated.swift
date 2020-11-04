@@ -25,6 +25,7 @@ extension UIColor {
 // MARK: - Images -
 
 extension UIImage {
+    static let backButton = UIImage(named: "back-button", in: bundle, compatibleWith: nil)!
     static let faceId = UIImage(named: "faceId", in: bundle, compatibleWith: nil)!
     static let graphDemo = UIImage(named: "graph-demo", in: bundle, compatibleWith: nil)!
     static let scanQr = UIImage(named: "scan-qr", in: bundle, compatibleWith: nil)!
