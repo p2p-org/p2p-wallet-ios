@@ -25,6 +25,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     }
     
     // MARK: - Properties
+    let interactor = MenuInteractor()
     
     // MARK: - Subviews
     lazy var qrStackView: UIStackView = {
@@ -67,6 +68,8 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         headerView.addSubview(qrStackView)
         qrStackView.autoPinToTopLeftCornerOfSuperviewSafeArea(xInset: 16, yInset: 10)
         qrStackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 10)
+        
+        qrStackView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
         
         // initial snapshot
         var snapshot = DiffableDataSourceSnapshot<Section, String>()
@@ -127,6 +130,36 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
             for: indexPath) as? SectionHeaderView
         view?.headerLabel.text = Section.savings.localizedString
         return view
+    }
+    
+    @objc func qrScannerDidSwipe(sender: UIPanGestureRecognizer) {
+        let translation = sender.translation(in: view)
+        let progress = MenuHelper.calculateProgress(translationInView: translation, viewBounds: view.bounds, direction: .right
+        )
+        MenuHelper.mapGestureStateToInteractor(
+            gestureState: sender.state,
+            progress: progress,
+            interactor: interactor)
+        {
+            let vc = QrCodeScannerVC()
+            vc.transitioningDelegate = self
+            vc.modalPresentationStyle = .custom
+            self.present(vc, animated: true, completion: nil)
+        }
+    }
+}
+
+extension WalletVC: UIViewControllerTransitioningDelegate {
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        PresentMenuAnimator()
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        DismissMenuAnimator()
+    }
+    
+    func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        return interactor.hasStarted ? interactor : nil
     }
 }
 
