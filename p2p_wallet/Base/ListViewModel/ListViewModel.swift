@@ -46,7 +46,7 @@ class ListViewModel<T: Hashable> {
             .subscribe { (items) in
                 self.handleNewData(items)
             } onError: { (error) in
-                
+                self.state.accept(.error(error: error))
             }
             .disposed(by: disposeBag)
     }
