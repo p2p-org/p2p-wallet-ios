@@ -15,12 +15,6 @@ protocol CollectionCell: BaseCollectionViewCell {
 }
 
 class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>: BaseVC {
-    enum State {
-        case reloading
-        case loading
-        case loaded([ItemType])
-    }
-    
     var dataSource: CollectionViewDiffableDataSource<Section, ItemType>!
     
     lazy var collectionView: BaseCollectionView = {

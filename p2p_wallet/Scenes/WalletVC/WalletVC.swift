@@ -25,7 +25,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     }
     
     // MARK: - Properties
-    var headerView: WCVFirstSectionHeaderView?
+    let viewModel = WalletVM()
     
     // MARK: - Subviews
     lazy var qrStackView: UIStackView = {
@@ -40,6 +40,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         stackView.addArrangedSubview(.spacer)
         return stackView
     }()
+    var headerView: WCVFirstSectionHeaderView?
     
     // MARK: - Methods
     override func setUp() {
