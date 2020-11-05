@@ -33,6 +33,8 @@ class BottomFlexibleHeightVC: BaseVStackVC, UIViewControllerTransitioningDelegat
         return height
     }
     
+    override var padding: UIEdgeInsets {UIEdgeInsets(all: 20)}
+    
     lazy var headerStackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill)
     lazy var titleLabel = UILabel(textSize: 17, weight: .semibold)
     lazy var closeButton = UIButton.close()
@@ -60,7 +62,7 @@ class BottomFlexibleHeightVC: BaseVStackVC, UIViewControllerTransitioningDelegat
         headerStackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 20), excludingEdge: .bottom)
         
         scrollView.constraintToSuperviewWithAttribute(.top)?.isActive = false
-        scrollView.autoPinEdge(.top, to: .bottom, of: headerStackView, withOffset: 20)
+        scrollView.autoPinEdge(.top, to: .bottom, of: headerStackView)
     }
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {

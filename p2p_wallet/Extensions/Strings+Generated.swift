@@ -66,6 +66,8 @@ internal enum L10n {
   internal static let pleaseTryAgainLater = L10n.tr("Localizable", "please try again later!")
   /// Receive
   internal static let receive = L10n.tr("Localizable", "Receive")
+  /// Receive token
+  internal static let receiveToken = L10n.tr("Localizable", "Receive token")
   /// Restoring wallet
   internal static let restoringWallet = L10n.tr("Localizable", "Restoring wallet")
   /// save to Keychain
