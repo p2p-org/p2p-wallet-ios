@@ -12,10 +12,10 @@ class PriceCell: BaseCollectionViewCell, CollectionCell {
     lazy var coinLogoImageView = UIImageView(width: 32, height: 32, backgroundColor: .gray, cornerRadius: 32 / 2)
     lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold, numberOfLines: 0)
     lazy var equityValueLabel = UILabel(text: "44,33 USD", textSize: 13)
-    lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: UIColor.textBlack.withAlphaComponent(0.5), numberOfLines: 0)
+    lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: .secondary, numberOfLines: 0)
     lazy var graphView = UIImageView(width: 49, height: 15, image: .graphDemo)
     lazy var coinPriceLabel = UILabel(text: "12 800,99 US$", textSize: 13)
-    lazy var coinChangeLabel = UILabel(text: "0.35% 24 hrs", textSize: 13, textColor: UIColor.textBlack.withAlphaComponent(0.5), numberOfLines: 0)
+    lazy var coinChangeLabel = UILabel(text: "0.35% 24 hrs", textSize: 13, textColor: .secondary, numberOfLines: 0)
     
     override func commonInit() {
         super.commonInit()

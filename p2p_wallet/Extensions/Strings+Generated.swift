@@ -12,6 +12,8 @@ import Foundation
 internal enum L10n {
   /// Accept
   internal static let accept = L10n.tr("Localizable", "Accept")
+  /// Add coin
+  internal static let addCoin = L10n.tr("Localizable", "Add coin")
   /// Almost done!
   internal static let almostDone = L10n.tr("Localizable", "Almost done!")
   /// Backup

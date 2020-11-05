@@ -31,11 +31,11 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     lazy var qrStackView: UIStackView = {
         let stackView = UIStackView(axis: .horizontal, spacing: 25, alignment: .center, distribution: .fill)
         let imageView = UIImageView(width: 25, height: 25, image: .scanQr)
-        imageView.tintColor = UIColor.textBlack.withAlphaComponent(0.5)
+        imageView.tintColor = .secondary
          
         stackView.addArrangedSubviews([
             imageView,
-            UILabel(text: L10n.slideToScan, textSize: 13, weight: .semibold, textColor: UIColor.textBlack.withAlphaComponent(0.5))
+            UILabel(text: L10n.slideToScan, textSize: 13, weight: .semibold, textColor: .secondary)
         ])
         stackView.addArrangedSubview(.spacer)
         return stackView
@@ -96,6 +96,8 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         super.registerCellAndSupplementaryViews()
         collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView")
         collectionView.register(WCVFirstSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "WCVFirstSectionHeaderView")
+        collectionView.register(WCVFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "WCVFooterView")
+        collectionView.register(EmptySectionFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "EmptySectionFooterView")
     }
     
     override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
@@ -110,26 +112,40 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top
         )
-        section?.boundarySupplementaryItems = [sectionHeader]
+        let sectionFooter = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
+        
+        section?.boundarySupplementaryItems = [sectionHeader, sectionFooter]
         return section
     }
     
     override func configureSupplementaryView(collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? {
-        if indexPath.section == 0 {
+        if kind == UICollectionView.elementKindSectionHeader {
+            if indexPath.section == 0 {
+                let view = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: "WCVFirstSectionHeaderView",
+                    for: indexPath) as? WCVFirstSectionHeaderView
+                view?.headerLabel.text = Section.wallets.localizedString
+                headerView = view
+                return view
+            }
             let view = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
-                withReuseIdentifier: "WCVFirstSectionHeaderView",
-                for: indexPath) as? WCVFirstSectionHeaderView
-            view?.headerLabel.text = Section.wallets.localizedString
-            headerView = view
+                withReuseIdentifier: "SectionHeaderView",
+                for: indexPath) as? SectionHeaderView
+            view?.headerLabel.text = Section.savings.localizedString
             return view
         }
-        let view = collectionView.dequeueReusableSupplementaryView(
-            ofKind: kind,
-            withReuseIdentifier: "SectionHeaderView",
-            for: indexPath) as? SectionHeaderView
-        view?.headerLabel.text = Section.savings.localizedString
-        return view
+        if kind == UICollectionView.elementKindSectionFooter {
+            if indexPath.section == 0 {
+                let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "WCVFooterView", for: indexPath) as? WCVFooterView
+                return view
+            } else {
+                let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "EmptySectionFooterView", for: indexPath) as? EmptySectionFooterView
+                return view
+            }
+        }
+        return UICollectionReusableView()
     }
     
     @objc func qrScannerDidSwipe(sender: UIPanGestureRecognizer) {
