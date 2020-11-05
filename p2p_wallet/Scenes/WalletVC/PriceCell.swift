@@ -8,14 +8,14 @@
 import Foundation
 
 class PriceCell: BaseCollectionViewCell, CollectionCell {
-    lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .equalSpacing)
+    lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
     lazy var coinLogoImageView = UIImageView(width: 32, height: 32, backgroundColor: .gray, cornerRadius: 32 / 2)
-    lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold, numberOfLines: 0)
+    lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold)
     lazy var equityValueLabel = UILabel(text: "44,33 USD", textSize: 13)
-    lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: .secondary, numberOfLines: 0)
+    lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: .secondary)
     lazy var graphView = UIImageView(width: 49, height: 15, image: .graphDemo)
     lazy var coinPriceLabel = UILabel(text: "12 800,99 US$", textSize: 13)
-    lazy var coinChangeLabel = UILabel(text: "0.35% 24 hrs", textSize: 13, textColor: .secondary, numberOfLines: 0)
+    lazy var coinChangeLabel = UILabel(text: "0.35% 24 hrs", textSize: 13, textColor: .secondary)
     
     override func commonInit() {
         super.commonInit()
@@ -48,9 +48,12 @@ class PriceCell: BaseCollectionViewCell, CollectionCell {
             return stackView
         }()
         
-        stackView.addArrangedSubview(coinLogoImageView)
-        stackView.addArrangedSubview(coinInfoView)
-        stackView.addArrangedSubview(priceInfoView)
+        stackView.addArrangedSubviews([
+            coinLogoImageView,
+            coinInfoView,
+            .spacer,
+            priceInfoView
+        ])
     }
     
     func setUp(with item: String) {
