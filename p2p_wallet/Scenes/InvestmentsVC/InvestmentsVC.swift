@@ -164,7 +164,3 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
         }
     }
 }
-
-extension InvestmentsVC: TabBarItemVC {
-    var scrollView: UIScrollView {collectionView}
-}

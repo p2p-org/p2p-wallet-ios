@@ -10,10 +10,16 @@ import RxSwift
 
 class BaseVC: BEViewController {
     let disposeBag = DisposeBag()
+    var scrollViewAvoidingTabBar: UIScrollView? {nil}
     
     override func setUp() {
         super.setUp()
         view.backgroundColor = .background
+        adjustContentInsetToFitTabBar()
+    }
+    
+    func adjustContentInsetToFitTabBar() {
+        scrollViewAvoidingTabBar?.contentInset = scrollViewAvoidingTabBar?.contentInset.modifying(dBottom: 20) ?? .zero
     }
     
     #if DEBUG //1

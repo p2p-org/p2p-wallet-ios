@@ -19,6 +19,8 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
     var dataSource: CollectionViewDiffableDataSource<Section, ItemType>!
     let viewModel: ListViewModel<ItemType>
     
+    override var scrollViewAvoidingTabBar: UIScrollView? {collectionView}
+    
     lazy var collectionView: BaseCollectionView = {
         let collectionView = BaseCollectionView(frame: .zero, collectionViewLayout: createLayout())
         return collectionView
