@@ -7,6 +7,7 @@
 
 import Foundation
 import DiffableDataSources
+import Action
 
 class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
@@ -127,6 +128,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
                     withReuseIdentifier: "WCVFirstSectionHeaderView",
                     for: indexPath) as? WCVFirstSectionHeaderView
                 view?.headerLabel.text = Section.wallets.localizedString
+                view?.receiveAction = self.receiveAction
                 headerView = view
                 return view
             }
@@ -149,6 +151,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         return UICollectionReusableView()
     }
     
+    // MARK: - Actions
     @objc func qrScannerDidSwipe(sender: UIPanGestureRecognizer) {
         let translation = sender.translation(in: view)
         let progress = MenuHelper.calculateProgress(translationInView: translation, viewBounds: view.bounds, direction: .right
@@ -162,6 +165,15 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
             vc.transitioningDelegate = self
             vc.modalPresentationStyle = .custom
             self.present(vc, animated: true, completion: nil)
+        }
+    }
+    
+    var receiveAction: CocoaAction {
+        CocoaAction { _ in
+            let vc = WLBottomSheet()
+            vc.title = "Ether wallet"
+            self.present(vc, animated: true, completion: nil)
+            return .just(())
         }
     }
 }
