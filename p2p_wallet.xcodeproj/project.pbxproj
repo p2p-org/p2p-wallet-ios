@@ -35,6 +35,7 @@
 		BC2EC1D52553ED1B006EEDA5 /* CustomHeightPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1CC2553ED1B006EEDA5 /* CustomHeightPresentationController.swift */; };
 		BC2EC1DE2553EFC6006EEDA5 /* SwipeDownInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1DB2553EFC6006EEDA5 /* SwipeDownInteractor.swift */; };
 		BC2EC1DF2553EFC6006EEDA5 /* BottomFlexibleHeightVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1DC2553EFC6006EEDA5 /* BottomFlexibleHeightVC.swift */; };
+		BC2EC1F12553F60C006EEDA5 /* ReceiveTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1F02553F60C006EEDA5 /* ReceiveTokenVC.swift */; };
 		BC32A31C254A630B002156F0 /* CreateOrRestoreWalletVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A31B254A630B002156F0 /* CreateOrRestoreWalletVC.swift */; };
 		BC32A356254A69EA002156F0 /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A355254A69EA002156F0 /* WelcomeVC.swift */; };
 		BC32A361254A761B002156F0 /* Button+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A360254A761B002156F0 /* Button+Extensions.swift */; };
@@ -144,6 +145,7 @@
 		BC2EC1CC2553ED1B006EEDA5 /* CustomHeightPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomHeightPresentationController.swift; sourceTree = "<group>"; };
 		BC2EC1DB2553EFC6006EEDA5 /* SwipeDownInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeDownInteractor.swift; sourceTree = "<group>"; };
 		BC2EC1DC2553EFC6006EEDA5 /* BottomFlexibleHeightVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomFlexibleHeightVC.swift; sourceTree = "<group>"; };
+		BC2EC1F02553F60C006EEDA5 /* ReceiveTokenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveTokenVC.swift; sourceTree = "<group>"; };
 		BC32A31B254A630B002156F0 /* CreateOrRestoreWalletVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreWalletVC.swift; sourceTree = "<group>"; };
 		BC32A355254A69EA002156F0 /* WelcomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
 		BC32A360254A761B002156F0 /* Button+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Button+Extensions.swift"; sourceTree = "<group>"; };
@@ -274,6 +276,7 @@
 			children = (
 				BC22ABBA2552A1010071C69F /* QrCodeScanner */,
 				BC2EC1892553B6EE006EEDA5 /* CoinDetailVC */,
+				BC2EC1F02553F60C006EEDA5 /* ReceiveTokenVC.swift */,
 				BC23B5A9254FBF6200886C9C /* WCVHeaderView.swift */,
 				BC2EC1772553ABD2006EEDA5 /* WCVFooterView.swift */,
 				BC3EA485254FD44700FB1FEA /* PriceCell.swift */,
@@ -844,6 +847,7 @@
 				BC2EC1DF2553EFC6006EEDA5 /* BottomFlexibleHeightVC.swift in Sources */,
 				BC32A393254A77A9002156F0 /* UIViewController+Extensions.swift in Sources */,
 				BC2EC1D02553ED1B006EEDA5 /* DimmingPresentationController.swift in Sources */,
+				BC2EC1F12553F60C006EEDA5 /* ReceiveTokenVC.swift in Sources */,
 				BC32A356254A69EA002156F0 /* WelcomeVC.swift in Sources */,
 				BC2EC1CE2553ED1B006EEDA5 /* CardPresentationController.swift in Sources */,
 				BC22ABD22552A2FC0071C69F /* MenuInteractor.swift in Sources */,
