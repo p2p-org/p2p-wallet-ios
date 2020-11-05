@@ -6,14 +6,22 @@
 //
 
 import Foundation
+import Action
 
 class WCVFirstSectionHeaderView: SectionHeaderView {
     lazy var priceLabel = UILabel(text: "$120,00", textSize: 36, weight: .semibold, textAlignment: .center)
     lazy var priceChangeLabel = UILabel(text: "+ 0,16 US$ (0,01%) 24 hrs", textSize: 15, textColor: .secondary, numberOfLines: 0, textAlignment: .center)
     
     lazy var sendButton = createButton(title: L10n.send)
+        .onTap(self, action: #selector(buttonSendDidTouch))
     lazy var receiveButton = createButton(title: L10n.receive)
+        .onTap(self, action: #selector(buttonReceiveDidTouch))
     lazy var swapButton = createButton(title: L10n.swap)
+        .onTap(self, action: #selector(buttonSwapDidTouch))
+    
+    var sendAction: CocoaAction?
+    var receiveAction: CocoaAction?
+    var swapAction: CocoaAction?
     
     override func commonInit() {
         super.commonInit()
@@ -49,5 +57,18 @@ class WCVFirstSectionHeaderView: SectionHeaderView {
         label.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
         label.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
         return view
+    }
+    
+    // MARK: - Actions
+    @objc func buttonSendDidTouch() {
+        sendAction?.execute()
+    }
+    
+    @objc func buttonReceiveDidTouch() {
+        receiveAction?.execute()
+    }
+    
+    @objc func buttonSwapDidTouch() {
+        swapAction?.execute()
     }
 }
