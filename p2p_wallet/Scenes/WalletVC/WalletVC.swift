@@ -180,10 +180,6 @@ extension WalletVC: UIViewControllerTransitioningDelegate {
     }
 }
 
-extension WalletVC: TabBarItemVC {
-    var scrollView: UIScrollView {collectionView}
-}
-
 extension WalletVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
         if elementKind == UICollectionView.elementKindSectionHeader,

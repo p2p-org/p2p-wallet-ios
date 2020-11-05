@@ -7,17 +7,12 @@
 
 import Foundation
 
-protocol TabBarItemVC: UIViewController {
-    var scrollView: UIScrollView {get}
-}
-
 class TabBarVC: BEPagesVC {
     
     let selectedColor: UIColor = .textBlack
     let unselectedColor: UIColor = .a4a4a4
     
     lazy var tabBar = TabBar(cornerRadius: 20)
-    private var adjustedContentInsetScrollViews = [UIScrollView]()
     
     override func setUp() {
         super.setUp()
@@ -100,16 +95,5 @@ class TabBarVC: BEPagesVC {
         items.first {$0.tag == currentPage}?.subviews.first?.tintColor = selectedColor
         
         items.filter {$0.tag != currentPage}.forEach {$0.subviews.first?.tintColor = unselectedColor}
-        
-        // add 20px behind tabBar
-        if index < viewControllers.count,
-           let vc = viewControllers[index] as? TabBarItemVC,
-           !adjustedContentInsetScrollViews.contains(vc.scrollView)
-        {
-            var inset = vc.scrollView.contentInset
-            inset.bottom += 20
-            vc.scrollView.contentInset = inset
-            adjustedContentInsetScrollViews.append(vc.scrollView)
-        }
     }
 }

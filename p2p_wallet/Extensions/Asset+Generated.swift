@@ -29,6 +29,7 @@ extension UIImage {
     static let close = UIImage(named: "close", in: bundle, compatibleWith: nil)!
     static let faceId = UIImage(named: "faceId", in: bundle, compatibleWith: nil)!
     static let graphDemo = UIImage(named: "graph-demo", in: bundle, compatibleWith: nil)!
+    static let graphDetailDemo = UIImage(named: "graph-detail-demo", in: bundle, compatibleWith: nil)!
     static let scanQr = UIImage(named: "scan-qr", in: bundle, compatibleWith: nil)!
     static let tabbarProfile = UIImage(named: "tabbar-profile", in: bundle, compatibleWith: nil)!
     static let tabbarSearch = UIImage(named: "tabbar-search", in: bundle, compatibleWith: nil)!
