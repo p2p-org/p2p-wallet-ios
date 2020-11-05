@@ -8,7 +8,7 @@
 import Foundation
 import Action
 
-extension Button {
+extension UIButton {
     @discardableResult
     func withAction(_ cocoaAction: CocoaAction) -> Self {
         var button = self
@@ -16,10 +16,10 @@ extension Button {
         return button
     }
     
-    var close: Button {
-        let button = Button(width: 43, height: 43)
+    static func close(tintColor: UIColor = .textBlack) -> UIButton {
+        let button = UIButton(width: 43, height: 43)
         button.setImage(.close, for: .normal)
-        button.tintColor = .textBlack
+        button.tintColor = tintColor
         return button
     }
 }
