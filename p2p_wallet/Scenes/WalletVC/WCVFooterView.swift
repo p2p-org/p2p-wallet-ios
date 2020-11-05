@@ -8,25 +8,7 @@
 import Foundation
 
 class WCVFooterView: SectionFooterView {
-    lazy var addCoinButton: UIButton = {
-        let button = UIButton(height: 36, label: "+ \(L10n.addCoin)", labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .secondary, contentInsets: UIEdgeInsets(x: 28, y: 0))
-        button.layer.addSublayer(borderLayer)
-        return button
-    }()
-    
-    lazy var borderLayer: CAShapeLayer = {
-        let layer = CAShapeLayer()
-        layer.strokeColor = UIColor.secondary.cgColor
-        layer.lineDashPattern = [2, 2]
-        layer.fillColor = nil
-        return layer
-    }()
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        borderLayer.frame = addCoinButton.bounds
-        borderLayer.path = UIBezierPath(roundedRect: addCoinButton.bounds, cornerRadius: 18).cgPath
-    }
+    lazy var addCoinButton = DashedButton(title: "+ \(L10n.addCoin)")
     
     override func commonInit() {
         addSubview(addCoinButton)
