@@ -171,7 +171,6 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     var receiveAction: CocoaAction {
         CocoaAction { _ in
             let vc = ReceiveTokenVC()
-            vc.title = "Ether wallet"
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }

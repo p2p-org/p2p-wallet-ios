@@ -10,6 +10,8 @@ import Foundation
 class ReceiveTokenVC: WLBottomSheet {
     override func setUp() {
         super.setUp()
-        stackView.addArrangedSubview(UIView(height: 315, backgroundColor: .buttonSub))
+        title = L10n.receiveToken
+        let qrWrapperView = UIView(height: 315, backgroundColor: .buttonSub, cornerRadius: 15)
+        stackView.addArrangedSubview(qrWrapperView)
     }
 }
