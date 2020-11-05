@@ -9,6 +9,7 @@ import Foundation
 import DiffableDataSources
 
 class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType, NewsCell> {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     // MARK: - Nested type
     enum Section: String, CaseIterable {
         case news

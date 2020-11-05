@@ -9,6 +9,7 @@ import Foundation
 import DiffableDataSources
 
 class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     // MARK: - Nested type
     enum Section: String, CaseIterable {
         case wallets
@@ -190,5 +191,9 @@ extension WalletVC: UICollectionViewDelegate {
         {
             headerView = nil
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        show(CoinDetailVC(), sender: nil)
     }
 }
