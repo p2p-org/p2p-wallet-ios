@@ -15,4 +15,11 @@ extension Button {
         button.rx.action = cocoaAction
         return button
     }
+    
+    var close: Button {
+        let button = Button(width: 43, height: 43)
+        button.setImage(.close, for: .normal)
+        button.tintColor = .textBlack
+        return button
+    }
 }

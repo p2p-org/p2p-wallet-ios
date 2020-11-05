@@ -23,7 +23,7 @@ class PhrasesVC: BaseVStackVC {
         text: L10n.weVeCreatedSomeSecurityKeywordsForYou.uppercaseFirst + "\n" + L10n.warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture,
         textSize: 15,
         weight: .medium,
-        textColor: UIColor.textBlack.withAlphaComponent(0.5),
+        textColor: .secondary,
         numberOfLines: 0,
         textAlignment: .center
     )
