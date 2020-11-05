@@ -21,6 +21,19 @@ class QrCodeScannerVC: BaseVC, AVCaptureMetadataOutputObjectsDelegate {
         view.addSubview(cameraContainerView)
         cameraContainerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
         
+        let rangeImageView = UIImageView(width: 200, height: 200, image: .qrCodeRange)
+        cameraContainerView.addSubview(rangeImageView)
+        rangeImageView.autoCenterInSuperview()
+        
+        let rangeLabel = UILabel(text: L10n.scanQRCode, textSize: 15, weight: .medium, textColor: .white, textAlignment: .center)
+        cameraContainerView.addSubview(rangeLabel)
+        rangeLabel.autoCenterInSuperview()
+        
+        let closeButton = UIButton.close(tintColor: .white)
+            .onTap(self, action: #selector(back))
+        view.addSubview(closeButton)
+        closeButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 20)
+        
         let bottomView = UIView(backgroundColor: .background, cornerRadius: 16)
         view.addSubview(bottomView)
         bottomView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
@@ -29,6 +42,8 @@ class QrCodeScannerVC: BaseVC, AVCaptureMetadataOutputObjectsDelegate {
         let stackView = UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill)
         bottomView.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(x: 16, y: 34))
+        
+        stackView.addArrangedSubview(UILabel(text: L10n.scanAnP2PAddress, textSize: 15, weight: .medium))
         
         view.layoutIfNeeded()
         
@@ -63,11 +78,19 @@ class QrCodeScannerVC: BaseVC, AVCaptureMetadataOutputObjectsDelegate {
         }
 
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        previewLayer.frame = cameraContainerView.layer.bounds
         previewLayer.videoGravity = .resizeAspectFill
         cameraContainerView.layer.addSublayer(previewLayer)
 
         captureSession.startRunning()
+        
+        cameraContainerView.bringSubviewToFront(rangeImageView)
+        cameraContainerView.bringSubviewToFront(rangeLabel)
+        
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        previewLayer?.frame = cameraContainerView.layer.bounds
     }
 
     func failed() {
@@ -116,5 +139,10 @@ class QrCodeScannerVC: BaseVC, AVCaptureMetadataOutputObjectsDelegate {
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
+    }
+    
+    override func back() {
+        captureSession.stopRunning()
+        super.back()
     }
 }

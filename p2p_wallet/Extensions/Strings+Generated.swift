@@ -72,6 +72,10 @@ internal enum L10n {
   internal static let saveToKeychain = L10n.tr("Localizable", "save to Keychain")
   /// Savings
   internal static let savings = L10n.tr("Localizable", "Savings")
+  /// Scan an P2P address
+  internal static let scanAnP2PAddress = L10n.tr("Localizable", "Scan an P2P address")
+  /// Scan QR Code
+  internal static let scanQRCode = L10n.tr("Localizable", "Scan QR Code")
   /// security keys
   internal static let securityKeys = L10n.tr("Localizable", "security keys")
   /// Send
