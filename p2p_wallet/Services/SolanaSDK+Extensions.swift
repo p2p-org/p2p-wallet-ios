@@ -8,5 +8,10 @@
 import Foundation
 
 extension SolanaSDK {
-    static let shared = SolanaSDK(accountStorage: KeychainStorage.shared)
+    #if DEBUG
+    static let endpoint = "https://devnet.solana.com"
+    #else
+    static let endpoint = "https://devnet.solana.com"
+    #endif
+    static let shared = SolanaSDK(endpoint: endpoint, accountStorage: KeychainStorage.shared)
 }
