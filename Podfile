@@ -22,7 +22,10 @@ target 'p2p_wallet' do
   pod 'IBPCollectionViewCompositionalLayout'
   pod 'DiffableDataSources'
   pod 'ListPlaceholder'
-  # Pods for p2p wallet
+  
+  # Firebase
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Crashlytics'
 
   target 'p2p_walletTests' do
     inherit! :search_paths

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Firebase
 @_exported import BEPureLayout
 @_exported import SolanaSwift
 @_exported import SwiftyUserDefaults
@@ -35,6 +36,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BEPureLayoutConfigs.defaultShadowColor = .textBlack
         let image = UIImage.backButton.withRenderingMode(.alwaysOriginal)
         BEPureLayoutConfigs.defaultBackButton = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
+        
+        // Use Firebase library to configure APIs
+        FirebaseApp.configure()
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         self.window = window
