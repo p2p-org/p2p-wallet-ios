@@ -79,22 +79,8 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         
         // initial snapshot
         var snapshot = DiffableDataSourceSnapshot<Section, String>()
-        var items = [String]()
-        for i in 0..<5 {
-            items.append("\(i)")
-        }
         let section = Section.wallets
         snapshot.appendSections([section])
-        snapshot.appendItems(items, toSection: section)
-        
-        let section2 = Section.savings
-        snapshot.appendSections([section2])
-        items = []
-        for i in 6..<10 {
-            items.append("\(i)")
-        }
-        snapshot.appendItems(items, toSection: section2)
-        
         dataSource.apply(snapshot)
     }
     

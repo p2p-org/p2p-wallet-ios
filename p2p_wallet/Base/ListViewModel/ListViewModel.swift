@@ -12,35 +12,33 @@ import RxCocoa
 class ListViewModel<T: Hashable> {
     // MARK: - Subjects
     let items = BehaviorRelay<[T]>(value: [])
-    let state = BehaviorRelay<ListFetcherState>(value: .loading(false))
+    let state = BehaviorRelay<FetcherState>(value: .loading)
     
     // MARK: - Properties
     let disposeBag = DisposeBag()
     var limit = 10
     var offset = 0
     var isPaginationEnabled: Bool {true}
+    var isLastPageLoaded = false
+    var isListEmpty: Bool {isLastPageLoaded && items.value.count == 0}
     
-    var request: Single<[T]> { fatalError("Must override") }
+    var request: Single<[T]> { Single<[T]>.just([]).delay(.seconds(2), scheduler: MainScheduler.instance) // delay for simulating loading
+    }
     
     func reload() {
         items.accept([])
         offset = 0
+        isLastPageLoaded = false
         fetchNext()
     }
     
     func fetchNext() {
         // prevent dupplicate
-        switch state.value {
-        case .loading(let isLoading):
-            if isLoading {return}
-        case .listEnded, .listEmpty:
-            return
-        case .error:
-            break
-        }
+        if state.value == .loading || isLastPageLoaded {return}
         
         // assign loading state
-        state.accept(.loading(true))
+        
+        state.accept(.loading)
         
         request
             .subscribe { (items) in
@@ -55,7 +53,11 @@ class ListViewModel<T: Hashable> {
         items.accept(self.join(newItems))
         
         // resign state
-        modifyStateAfterRequest(itemsCount: newItems.count)
+        if !isPaginationEnabled || newItems.count < limit {
+            isLastPageLoaded = true
+        }
+        
+        state.accept(.loaded)
         
         // get next offset
         offset += limit
@@ -63,27 +65,5 @@ class ListViewModel<T: Hashable> {
     
     func join(_ newItems: [T]) -> [T] {
         items.value + newItems.filter {!items.value.contains($0)}
-    }
-    
-    func modifyStateAfterRequest(itemsCount: Int) {
-        if self.isPaginationEnabled {
-            if itemsCount == 0 {
-                if self.offset == 0 {
-                    self.state.accept(.listEmpty)
-                } else {
-                    if self.items.value.count > 0 {
-                        self.state.accept(.listEnded)
-                    }
-                }
-            } else if itemsCount < self.limit {
-                self.state.accept(.listEnded)
-            } else if itemsCount > self.limit {
-                self.state.accept(.listEnded)
-            } else {
-                self.state.accept(.loading(false))
-            }
-        } else {
-            self.state.accept(itemsCount == 0 ? .listEmpty: .listEnded)
-        }
     }
 }
