@@ -20,7 +20,7 @@ enum FetcherState: Equatable {
     
     case loading
     case loaded
-    case error(error: Error)
+    case error(Error)
     
     var lastError: Error? {
         switch self {
