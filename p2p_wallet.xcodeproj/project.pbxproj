@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
+		BC1ABC39255BD0DB002FCE65 /* BalancesVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1ABC38255BD0DB002FCE65 /* BalancesVM.swift */; };
 		BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */; };
 		BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC2288022542E1CC0028CE8F /* Localizable.strings */; };
 		BC22AA3425527F190071C69F /* InvestmentsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22AA3325527F190071C69F /* InvestmentsVM.swift */; };
@@ -115,6 +116,7 @@
 		A342CCD45E7CDE0BA60EFBB2 /* Pods_p2p_walletTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_walletTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB6790432D1A5F53BBDB3162 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		BB7CFE6A2633569A3CAC841A /* Pods-p2p_walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.release.xcconfig"; sourceTree = "<group>"; };
+		BC1ABC38255BD0DB002FCE65 /* BalancesVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalancesVM.swift; sourceTree = "<group>"; };
 		BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeBackVC.swift; sourceTree = "<group>"; };
 		BC2287FA2542E1A30028CE8F /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		BC2287FE2542E1B90028CE8F /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
@@ -263,6 +265,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		BC1ABC37255BD0B8002FCE65 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				BC1ABC38255BD0DB002FCE65 /* BalancesVM.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		BC22ABBA2552A1010071C69F /* QrCodeScanner */ = {
 			isa = PBXGroup;
 			children = (
@@ -376,6 +386,7 @@
 		BC65E9B72542B983005F50CE /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				BC1ABC37255BD0B8002FCE65 /* ViewModels */,
 				BC7A8EB1255BCE360023C918 /* Models */,
 				BC2EC1C12553ED1B006EEDA5 /* UIPresentationControllers */,
 				BC65E9B82542B98D005F50CE /* BaseVC.swift */,
@@ -889,6 +900,7 @@
 				BC6EE76D254ABEDE00FE1025 /* ConfirmPinCodeVC.swift in Sources */,
 				BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */,
 				BC32A31C254A630B002156F0 /* CreateOrRestoreWalletVC.swift in Sources */,
+				BC1ABC39255BD0DB002FCE65 /* BalancesVM.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WellDoneVC.swift in Sources */,
 				BC55B8C8254C03700032C355 /* TabBar.swift in Sources */,
 				BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */,
