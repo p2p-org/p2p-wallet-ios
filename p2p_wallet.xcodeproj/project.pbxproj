@@ -79,7 +79,7 @@
 		BCD5E7962551332200F51299 /* DefiCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E7952551332200F51299 /* DefiCell.swift */; };
 		BCD5E82425525C6E00F51299 /* WalletVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E82325525C6E00F51299 /* WalletVM.swift */; };
 		BCD5E82925525D3D00F51299 /* ListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E82825525D3D00F51299 /* ListViewModel.swift */; };
-		BCD5E82F25525DE600F51299 /* ListFetcherState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E82E25525DE600F51299 /* ListFetcherState.swift */; };
+		BCD5E82F25525DE600F51299 /* FetcherState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E82E25525DE600F51299 /* FetcherState.swift */; };
 		BCEA06BE2542FD3F0006E4C3 /* Asset+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */; };
 		BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */; };
 		C1BC9C27F85EDDFE51E0FDB8 /* Pods_p2p_walletTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A342CCD45E7CDE0BA60EFBB2 /* Pods_p2p_walletTests.framework */; };
@@ -198,7 +198,7 @@
 		BCD5E7952551332200F51299 /* DefiCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefiCell.swift; sourceTree = "<group>"; };
 		BCD5E82325525C6E00F51299 /* WalletVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletVM.swift; sourceTree = "<group>"; };
 		BCD5E82825525D3D00F51299 /* ListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewModel.swift; sourceTree = "<group>"; };
-		BCD5E82E25525DE600F51299 /* ListFetcherState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListFetcherState.swift; sourceTree = "<group>"; };
+		BCD5E82E25525DE600F51299 /* FetcherState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherState.swift; sourceTree = "<group>"; };
 		BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Asset+Generated.swift"; sourceTree = "<group>"; };
 		BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
 		CCD9F8F81880F7B23634EBE4 /* Pods-p2p_wallet-p2p_walletUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -376,6 +376,7 @@
 		BC65E9B72542B983005F50CE /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				BC7A8EB1255BCE360023C918 /* Models */,
 				BC2EC1C12553ED1B006EEDA5 /* UIPresentationControllers */,
 				BC65E9B82542B98D005F50CE /* BaseVC.swift */,
 				BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */,
@@ -411,6 +412,14 @@
 				BC6EE76C254ABEDE00FE1025 /* ConfirmPinCodeVC.swift */,
 			);
 			path = PinCodeVC;
+			sourceTree = "<group>";
+		};
+		BC7A8EB1255BCE360023C918 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BCD5E82E25525DE600F51299 /* FetcherState.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		BC9DFA152541F777009DB93E /* Extensions */ = {
@@ -530,7 +539,6 @@
 		BCD5E82D25525DD800F51299 /* ListViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				BCD5E82E25525DE600F51299 /* ListFetcherState.swift */,
 				BCD5E82825525D3D00F51299 /* ListViewModel.swift */,
 			);
 			path = ListViewModel;
@@ -909,7 +917,7 @@
 				BCD5E73A2551265300F51299 /* CollectionVC.swift in Sources */,
 				BC6EE7C5254BBEC000FE1025 /* EnableNotificationsVC.swift in Sources */,
 				BCD5E7962551332200F51299 /* DefiCell.swift in Sources */,
-				BCD5E82F25525DE600F51299 /* ListFetcherState.swift in Sources */,
+				BCD5E82F25525DE600F51299 /* FetcherState.swift in Sources */,
 				BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */,
 				BC23B5AA254FBF6200886C9C /* WCVHeaderView.swift in Sources */,
 				BCD5E82925525D3D00F51299 /* ListViewModel.swift in Sources */,
