@@ -92,6 +92,20 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         collectionView.register(EmptySectionFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "EmptySectionFooterView")
     }
     
+    // MARK: - Binding
+    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, String> {
+        var snapshot = DiffableDataSourceSnapshot<Section, String>()
+        var items = [String]()
+        for i in 0..<100 {
+            items.append("\(i)")
+        }
+        let section = Section.wallets
+        snapshot.appendSections([section])
+        snapshot.appendItems(items, toSection: section)
+        return snapshot
+    }
+    
+    // MARK: - Layout
     override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
         let section = super.createLayoutForSection(sectionIndex, environment: env)
         section?.interGroupSpacing = 16
