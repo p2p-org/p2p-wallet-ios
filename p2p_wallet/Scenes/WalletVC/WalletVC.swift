@@ -63,13 +63,17 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         collectionView.delegate = self
         
         // header view
-        let headerView = UIView(backgroundColor: view.backgroundColor)
-        view.addSubview(headerView)
-        headerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
+        let statusBarBgView = UIView(backgroundColor: view.backgroundColor)
+        view.addSubview(statusBarBgView)
+        statusBarBgView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
         
-        headerView.addSubview(qrStackView)
-        qrStackView.autoPinToTopLeftCornerOfSuperviewSafeArea(xInset: 16, yInset: 10)
-        qrStackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 10)
+        let qrView = UIView(backgroundColor: view.backgroundColor)
+        qrView.addSubview(qrStackView)
+        qrStackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(x: 16, y: 10))
+        
+        view.addSubview(qrView)
+        qrView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+        qrView.autoPinEdge(.top, to: .bottom, of: statusBarBgView)
         
         qrStackView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
         
