@@ -8,6 +8,8 @@
 import Foundation
 import DiffableDataSources
 import Action
+import RxSwift
+import ListPlaceholder
 
 class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
@@ -93,6 +95,15 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     }
     
     // MARK: - Binding
+    override var combinedObservable: Observable<Void> {
+        let viewModel = self.viewModel as! WalletVM
+        return Observable.combineLatest(
+            viewModel.state,
+            viewModel.balanceVM.state
+        )
+        .map {_ in ()}
+    }
+    
     override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, String> {
         var snapshot = DiffableDataSourceSnapshot<Section, String>()
         var items = [String]()
@@ -103,6 +114,20 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         snapshot.appendSections([section])
         snapshot.appendItems(items, toSection: section)
         return snapshot
+    }
+    
+    override func dataDidLoad() {
+        super.dataDidLoad()
+        // fix header
+        let viewModel = self.viewModel as! WalletVM
+        switch viewModel.balanceVM.state.value {
+        case .loading:
+            headerView?.priceLabel.text = "Loading..."
+        case .loaded:
+            headerView?.priceLabel.text = "\(viewModel.balanceVM.balance.value)"
+        case .error(let error):
+            headerView?.priceLabel.text = "\(error.localizedDescription)"
+        }
     }
     
     // MARK: - Layout

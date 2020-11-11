@@ -61,23 +61,29 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
         bindList()
     }
     
+    var combinedObservable: Observable<Void> {
+        viewModel.state.distinctUntilChanged()
+            .map {_ in ()}
+    }
+    
     func bindList() {
-        Observable.combineLatest(
-            viewModel.items,
-            viewModel.state
-        )
-        .distinctUntilChanged { (lhs, rhs) -> Bool in
-            lhs.0 == rhs.0 && lhs.1 == rhs.1
-        }
-        .subscribe(onNext: { (_) in
-            let snapshot = self.mapDataToSnapshot()
-            self.dataSource.apply(snapshot)
-        })
-        .disposed(by: disposeBag)
+        combinedObservable
+            .subscribe(onNext: { (_) in
+                let snapshot = self.mapDataToSnapshot()
+                self.dataSource.apply(snapshot)
+                DispatchQueue.main.async {
+                    self.dataDidLoad()
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, ItemType> {
         DiffableDataSourceSnapshot<Section, ItemType>()
+    }
+    
+    func dataDidLoad() {
+        
     }
     
     // MARK: - Layout
