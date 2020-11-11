@@ -42,7 +42,17 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
     override func setUp() {
         super.setUp()
         view.backgroundColor = .vcBackground
-        
+    }
+    
+    override func registerCellAndSupplementaryViews() {
+        super.registerCellAndSupplementaryViews()
+        collectionView.registerCells([DefiCell.self])
+        collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView")
+        collectionView.register(WCVFirstSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "WCVFirstSectionHeaderView")
+    }
+    
+    // MARK: - Binding
+    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, ItemType> {
         // initial snapshot
         var snapshot = DiffableDataSourceSnapshot<Section, ItemType>()
         let section = Section.news
@@ -72,15 +82,7 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
             ],
             toSection: section2
         )
-        
-        dataSource.apply(snapshot)
-    }
-    
-    override func registerCellAndSupplementaryViews() {
-        super.registerCellAndSupplementaryViews()
-        collectionView.registerCells([DefiCell.self])
-        collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView")
-        collectionView.register(WCVFirstSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "WCVFirstSectionHeaderView")
+        return snapshot
     }
     
     // MARK: - Layout
