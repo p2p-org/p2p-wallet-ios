@@ -38,8 +38,15 @@ class CoinDetailVC: CollectionVC<CoinDetailVC.Section, String, PriceCell> {
     override func setUp() {
         super.setUp()
         title = "Coin name"
-        
-        // initial snapshot
+    }
+    
+    override func registerCellAndSupplementaryViews() {
+        super.registerCellAndSupplementaryViews()
+        collectionView.register(CoinDetailSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "CoinDetailSectionHeaderView")
+    }
+    
+    // MARK: - Binding
+    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, String> {
         var snapshot = DiffableDataSourceSnapshot<Section, String>()
         var items = [String]()
         for i in 0..<5 {
@@ -48,13 +55,7 @@ class CoinDetailVC: CollectionVC<CoinDetailVC.Section, String, PriceCell> {
         let section = Section.activities
         snapshot.appendSections([section])
         snapshot.appendItems(items, toSection: section)
-        
-        dataSource.apply(snapshot)
-    }
-    
-    override func registerCellAndSupplementaryViews() {
-        super.registerCellAndSupplementaryViews()
-        collectionView.register(CoinDetailSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "CoinDetailSectionHeaderView")
+        return snapshot
     }
     
     override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {

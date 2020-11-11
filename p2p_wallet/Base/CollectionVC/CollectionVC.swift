@@ -8,6 +8,7 @@
 import Foundation
 import IBPCollectionViewCompositionalLayout
 import DiffableDataSources
+import RxSwift
 
 protocol CollectionCell: BaseCollectionViewCell {
     associatedtype T: Hashable
@@ -40,6 +41,7 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
         viewModel.reload()
     }
     
+    // MARK: - Setup
     override func setUp() {
         super.setUp()
         view.addSubview(collectionView)
@@ -49,33 +51,34 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
         configureDataSource()
     }
     
-    override func bind() {
-        super.bind()
-        bindState()
-    }
-    
-    func bindState() {
-        viewModel.state
-            .subscribe(onNext: { (state) in
-                switch state {
-                case .loading:
-                    self.handleListLoading()
-                case .loaded:
-                    self.handleListLoaded()
-                case .error(let error):
-                    self.handleListError(error)
-                }
-            })
-            .disposed(by: disposeBag)
-    }
-    
     func registerCellAndSupplementaryViews() {
         collectionView.registerCells([Cell.self])
     }
     
-    func handleListLoading() {}
-    func handleListLoaded() {}
-    func handleListError(_ error: Error) {}
+    // MARK: - Binding
+    override func bind() {
+        super.bind()
+        bindList()
+    }
+    
+    func bindList() {
+        Observable.combineLatest(
+            viewModel.items,
+            viewModel.state
+        )
+        .distinctUntilChanged { (lhs, rhs) -> Bool in
+            lhs.0 == rhs.0 && lhs.1 == rhs.1
+        }
+        .subscribe(onNext: { (_) in
+            let snapshot = self.mapDataToSnapshot()
+            self.dataSource.apply(snapshot)
+        })
+        .disposed(by: disposeBag)
+    }
+    
+    func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, ItemType> {
+        DiffableDataSourceSnapshot<Section, ItemType>()
+    }
     
     // MARK: - Layout
     func createLayout() -> UICollectionViewLayout {
