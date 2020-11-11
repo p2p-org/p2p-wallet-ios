@@ -35,6 +35,11 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.reload()
+    }
+    
     override func setUp() {
         super.setUp()
         view.addSubview(collectionView)
@@ -44,9 +49,33 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
         configureDataSource()
     }
     
+    override func bind() {
+        super.bind()
+        bindState()
+    }
+    
+    func bindState() {
+        viewModel.state
+            .subscribe(onNext: { (state) in
+                switch state {
+                case .loading:
+                    self.handleListLoading()
+                case .loaded:
+                    self.handleListLoaded()
+                case .error(let error):
+                    self.handleListError(error)
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
     func registerCellAndSupplementaryViews() {
         collectionView.registerCells([Cell.self])
     }
+    
+    func handleListLoading() {}
+    func handleListLoaded() {}
+    func handleListError(_ error: Error) {}
     
     // MARK: - Layout
     func createLayout() -> UICollectionViewLayout {
