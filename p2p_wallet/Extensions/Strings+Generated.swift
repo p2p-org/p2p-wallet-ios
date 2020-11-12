@@ -104,6 +104,8 @@ internal enum L10n {
   internal static let useYourFaceIDForQuickAccess = L10n.tr("Localizable", "Use your FaceID for quick access?")
   /// Use your TouchID for quick access?
   internal static let useYourTouchIDForQuickAccess = L10n.tr("Localizable", "Use your TouchID for quick access?")
+  /// Wallet address
+  internal static let walletAddress = L10n.tr("Localizable", "Wallet address")
   /// Wallets
   internal static let wallets = L10n.tr("Localizable", "Wallets")
   /// WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.

@@ -16,6 +16,7 @@ extension UIColor {
     static let a4a4a4 = UIColor(named: "a4a4a4", in: bundle, compatibleWith: nil)!
     static let background = UIColor(named: "background", in: bundle, compatibleWith: nil)!
     static let buttonSub = UIColor(named: "buttonSub", in: bundle, compatibleWith: nil)!
+    static let c4c4c4 = UIColor(named: "c4c4c4", in: bundle, compatibleWith: nil)!
     static let lightGrayBackground = UIColor(named: "lightGrayBackground", in: bundle, compatibleWith: nil)!
     static let textBlack = UIColor(named: "textBlack", in: bundle, compatibleWith: nil)!
     static let textWhite = UIColor(named: "textWhite", in: bundle, compatibleWith: nil)!
