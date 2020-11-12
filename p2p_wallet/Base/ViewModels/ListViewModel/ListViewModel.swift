@@ -9,13 +9,11 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-class ListViewModel<T: Hashable> {
+class ListViewModel<T: Hashable>: BaseVM<[T]> {
     // MARK: - Subjects
-    let items = BehaviorRelay<[T]>(value: [])
-    let state = BehaviorRelay<FetcherState>(value: .loading)
+    var items: BehaviorRelay<[T]> {data}
     
     // MARK: - Properties
-    let disposeBag = DisposeBag()
     var limit = 10
     var offset = 0
     var isPaginationEnabled: Bool {true}
@@ -23,6 +21,10 @@ class ListViewModel<T: Hashable> {
     var isListEmpty: Bool {isLastPageLoaded && items.value.count == 0}
     
     var request: Single<[T]> { Single<[T]>.just([]).delay(.seconds(2), scheduler: MainScheduler.instance) // delay for simulating loading
+    }
+    
+    init() {
+        super.init(initialData: [])
     }
     
     func reload() {

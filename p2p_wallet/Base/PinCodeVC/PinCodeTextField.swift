@@ -103,4 +103,8 @@ class PinCodeTextField: BEView, UITextFieldDelegate {
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
         return true
     }
+    
+    func activate() {
+        hiddenTextField.becomeFirstResponder()
+    }
 }

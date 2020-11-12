@@ -102,7 +102,7 @@ PODS:
   - RxRelay (5.1.1):
     - RxSwift (~> 5)
   - RxSwift (5.1.1)
-  - SolanaSwift (0.1.1):
+  - SolanaSwift (0.1.2):
     - CryptoSwift
     - RxAlamofire
     - TweetNacl
@@ -198,7 +198,7 @@ SPEC CHECKSUMS:
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
-  SolanaSwift: 7182750957ecf66e41306b650fdcf569c8508df5
+  SolanaSwift: d606d9e34797dd594de0ecc2e27d2325fb22fc08
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftLint: dfd554ff0dff17288ee574814ccdd5cea85d76f7
   SwiftyUserDefaults: 33fcb42bd1feb53a37d873feb62c82967db5f7f6
