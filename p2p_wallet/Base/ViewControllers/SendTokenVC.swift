@@ -31,15 +31,19 @@ class SendTokenVC: BaseVStackVC {
             let downArrowImage = UIImageView(width: 11, height: 8, image: .downArrow)
             downArrowImage.tintColor = .textBlack
             stackView.addArrangedSubviews([
+                .spacer,
                 coinImageView,
                 downArrowImage,
-                amountTextField
+                amountTextField,
+                .spacer
             ])
             return stackView
         }()
         
         stackView.addArrangedSubviews([
-            amountView
+            .spacer,
+            amountView,
+            .spacer
         ])
     }
 }
