@@ -9,13 +9,8 @@ import Foundation
 import RxSwift
 
 class WalletVM: ListViewModel<String> {
-    let balanceVM: BalancesVM
-    
-    override init() {
-        BalancesVM.ofCurrentUser = BalancesVM()
-        balanceVM = BalancesVM.ofCurrentUser
-        super.init()
-    }
+    let balanceVM = BalancesVM.ofCurrentUser
+    static var ofCurrentUser = WalletVM()
     
     override func reload() {
         super.reload()

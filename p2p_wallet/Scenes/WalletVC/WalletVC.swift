@@ -47,7 +47,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     var headerView: WCVFirstSectionHeaderView?
     
     init() {
-        let viewModel = WalletVM()
+        let viewModel = WalletVM.ofCurrentUser
         super.init(viewModel: viewModel)
     }
     
