@@ -45,7 +45,9 @@ class SecuritySettingVC: BaseVC {
         buttonStackView.addArrangedSubview(doThisLaterButton)
     }
     
-    @objc func buttonDoThisLaterDidTouch() {}
+    @objc func buttonDoThisLaterDidTouch() {
+        next()
+    }
     
     @objc func buttonAcceptDidTouch() {}
     
