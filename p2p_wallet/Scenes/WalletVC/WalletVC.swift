@@ -112,16 +112,10 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     
     override func dataDidLoad() {
         super.dataDidLoad()
-        // fix header
         let viewModel = self.viewModel as! WalletVM
-        switch viewModel.balanceVM.state.value {
-        case .loading:
-            headerView?.priceLabel.text = "Loading..."
-        case .loaded:
-            headerView?.priceLabel.text = "\(viewModel.balanceVM.balance.value) SOL"
-        case .error(let error):
-            headerView?.priceLabel.text = "\(error.localizedDescription)"
-        }
+        
+        // fix header
+        headerView?.setUp(balanceVM: viewModel.balanceVM)
     }
     
     // MARK: - Layout

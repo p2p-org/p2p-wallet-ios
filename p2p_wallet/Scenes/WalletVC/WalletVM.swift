@@ -8,5 +8,16 @@
 import Foundation
 
 class WalletVM: ListViewModel<String> {
-    let balanceVM = BalancesVM.ofCurrentUser
+    let balanceVM: BalancesVM
+    
+    override init() {
+        BalancesVM.ofCurrentUser = BalancesVM()
+        balanceVM = BalancesVM.ofCurrentUser
+        super.init()
+    }
+    
+    override func reload() {
+        super.reload()
+        balanceVM.reload()
+    }
 }

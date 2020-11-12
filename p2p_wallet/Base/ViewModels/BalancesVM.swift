@@ -10,12 +10,11 @@ import RxCocoa
 import RxSwift
 
 class BalancesVM {
-    static let ofCurrentUser = BalancesVM()
+    static var ofCurrentUser = BalancesVM()
     
     let accountPublicKey: String?
     init(accountPublicKey: String? = nil) {
         self.accountPublicKey = accountPublicKey ?? SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString
-        reload()
     }
     
     let disposeBag = DisposeBag()
