@@ -47,6 +47,17 @@ class WCVFirstSectionHeaderView: SectionHeaderView {
         stackView.setCustomSpacing(30, after: buttonsView)
     }
     
+    func setUp(balanceVM: BalancesVM) {
+        switch balanceVM.state.value {
+        case .loading:
+            priceLabel.text = "Loading..."
+        case .loaded:
+            priceLabel.text = "\(balanceVM.balance.value) SOL"
+        case .error(let error):
+            priceLabel.text = "\(error.localizedDescription)"
+        }
+    }
+    
     // MARK: - Helpers
     func createButton(title: String) -> UIView {
         let view = UIView(height: 56, backgroundColor: .textBlack)
