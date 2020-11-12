@@ -23,7 +23,7 @@ platform :ios do
     firebase_app_distribution(
       app: "1:553127941597:ios:c96032731a2f28562c5234",
       groups: "dev_team",
-      firebase_cli_token: "4/1AY0e-g5OsjL4xNSuJoIHvfCymjCVIExjC-09Qw6Xk6vw3kIwuUfqIF8byb4"
+      firebase_cli_token: "1//0e7sQVYQPvT2vCgYIARAAGA4SNwF-L9Irle7o4pw3SQrwWwwUdjFi_z8Jl3NI3fj3h9EOn6zjPX-_nBHtRKn9gNoHoY9HaUR7Wnw"
     )    
     # upload_to_testflight
   end
