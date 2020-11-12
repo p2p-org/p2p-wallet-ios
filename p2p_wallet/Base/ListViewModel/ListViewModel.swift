@@ -12,7 +12,7 @@ import RxCocoa
 class ListViewModel<T: Hashable> {
     // MARK: - Subjects
     let items = BehaviorRelay<[T]>(value: [])
-    let state = BehaviorRelay<FetcherState>(value: .loading)
+    let state = BehaviorRelay<FetcherState>(value: .initializing)
     
     // MARK: - Properties
     let disposeBag = DisposeBag()

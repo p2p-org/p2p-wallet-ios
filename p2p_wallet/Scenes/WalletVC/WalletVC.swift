@@ -100,12 +100,9 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
     
     override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, String> {
         var snapshot = DiffableDataSourceSnapshot<Section, String>()
-        var items = [String]()
-        for i in 0..<100 {
-            items.append("\(i)")
-        }
         let section = Section.wallets
         snapshot.appendSections([section])
+        let items = viewModel.items.value
         snapshot.appendItems(items, toSection: section)
         return snapshot
     }
