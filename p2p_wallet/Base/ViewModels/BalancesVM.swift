@@ -19,7 +19,7 @@ class BalancesVM {
     
     let disposeBag = DisposeBag()
     let balance = BehaviorRelay<UInt64>(value: 0)
-    let state = BehaviorRelay<FetcherState>(value: .loading)
+    let state = BehaviorRelay<FetcherState>(value: .initializing)
 
     func reload() {
         guard let publicKey = accountPublicKey else {
