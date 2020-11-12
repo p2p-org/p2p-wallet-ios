@@ -78,12 +78,6 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         qrView.autoPinEdge(.top, to: .bottom, of: statusBarBgView)
         
         qrStackView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
-        
-        // initial snapshot
-        var snapshot = DiffableDataSourceSnapshot<Section, String>()
-        let section = Section.wallets
-        snapshot.appendSections([section])
-        dataSource.apply(snapshot)
     }
     
     override func registerCellAndSupplementaryViews() {
@@ -124,7 +118,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         case .loading:
             headerView?.priceLabel.text = "Loading..."
         case .loaded:
-            headerView?.priceLabel.text = "\(viewModel.balanceVM.balance.value)"
+            headerView?.priceLabel.text = "\(viewModel.balanceVM.balance.value) SOL"
         case .error(let error):
             headerView?.priceLabel.text = "\(error.localizedDescription)"
         }

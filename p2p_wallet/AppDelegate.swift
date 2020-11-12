@@ -19,8 +19,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         
         #if DEBUG
-//        KeychainStorage.shared.clear()
-        
         Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/iOSInjection.bundle")?.load()
 //        //for tvOS:
 //        Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/tvOSInjection.bundle")?.load()
@@ -40,9 +38,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use Firebase library to configure APIs
         FirebaseApp.configure()
         
-        let window = UIWindow(frame: UIScreen.main.bounds)
-        self.window = window
-        
+        // set window
+        window = UIWindow(frame: UIScreen.main.bounds)
+        reloadRootVC()
+        window?.makeKeyAndVisible()
+        return true
+    }
+    
+    func reloadRootVC() {
         let rootVC: UIViewController
         if KeychainStorage.shared.account == nil {
             rootVC = WelcomeVC()
@@ -58,9 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
-        self.window?.rootViewController = rootVC
-        self.window?.makeKeyAndVisible()
-        return true
+        window?.rootViewController = rootVC
     }
     
     func application(
