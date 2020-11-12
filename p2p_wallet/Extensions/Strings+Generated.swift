@@ -18,6 +18,8 @@ internal enum L10n {
   internal static let addCoin = L10n.tr("Localizable", "Add coin")
   /// Almost done!
   internal static let almostDone = L10n.tr("Localizable", "Almost done!")
+  /// amount
+  internal static let amount = L10n.tr("Localizable", "amount")
   /// Backup
   internal static let backup = L10n.tr("Localizable", "Backup")
   /// By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy

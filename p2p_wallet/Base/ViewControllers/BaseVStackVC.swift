@@ -9,7 +9,7 @@ import Foundation
 
 class BaseVStackVC: BaseVC {
     var padding: UIEdgeInsets { UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10) }
-    lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical)
+    lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: padding)
     lazy var stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
     
     override func setUp() {
@@ -24,7 +24,7 @@ class BaseVStackVC: BaseVC {
         
         // stackView
         scrollView.contentView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: padding)
+        stackView.autoPinEdgesToSuperviewEdges()
     }
     
     @objc func viewDidTouch() {
