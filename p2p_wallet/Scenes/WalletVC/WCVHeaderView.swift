@@ -45,6 +45,20 @@ class WCVFirstSectionHeaderView: SectionHeaderView {
         stackView.setCustomSpacing(5, after: priceLabel)
         stackView.setCustomSpacing(30, after: priceChangeLabel)
         stackView.setCustomSpacing(30, after: buttonsView)
+        
+        // FIXME: - Remove later
+        priceChangeLabel.text = ""
+    }
+    
+    func setUp(balanceVM: BalancesVM) {
+        switch balanceVM.state.value {
+        case .initializing, .loading:
+            priceLabel.text = "Loading..."
+        case .loaded:
+            priceLabel.text = "\(balanceVM.balance) SOL"
+        case .error(let error):
+            priceLabel.text = "\(error.localizedDescription)"
+        }
     }
     
     // MARK: - Helpers

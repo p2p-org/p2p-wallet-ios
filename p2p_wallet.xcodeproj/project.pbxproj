@@ -72,6 +72,8 @@
 		BCB2232225412AF8002D997F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232125412AF8002D997F /* Assets.xcassets */; };
 		BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232325412AF9002D997F /* LaunchScreen.storyboard */; };
 		BCB2233B25412AF9002D997F /* p2p_walletUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */; };
+		BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58359255CE96B00B10F65 /* ProfileVC.swift */; };
+		BCB58360255D231400B10F65 /* BaseVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB5835F255D231400B10F65 /* BaseVM.swift */; };
 		BCD5E73A2551265300F51299 /* CollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E7392551265300F51299 /* CollectionVC.swift */; };
 		BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74825512D2500F51299 /* SectionHeaderView.swift */; };
 		BCD5E74E25512DA500F51299 /* InvestmentsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74D25512DA500F51299 /* InvestmentsVC.swift */; };
@@ -192,6 +194,8 @@
 		BCB2233625412AF9002D997F /* p2p_walletUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = p2p_walletUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = p2p_walletUITests.swift; sourceTree = "<group>"; };
 		BCB2233C25412AF9002D997F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BCB58359255CE96B00B10F65 /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
+		BCB5835F255D231400B10F65 /* BaseVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVM.swift; sourceTree = "<group>"; };
 		BCD5E7392551265300F51299 /* CollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionVC.swift; sourceTree = "<group>"; };
 		BCD5E74825512D2500F51299 /* SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		BCD5E74D25512DA500F51299 /* InvestmentsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsVC.swift; sourceTree = "<group>"; };
@@ -268,7 +272,9 @@
 		BC1ABC37255BD0B8002FCE65 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				BCB5835F255D231400B10F65 /* BaseVM.swift */,
 				BC1ABC38255BD0DB002FCE65 /* BalancesVM.swift */,
+				BCD5E82D25525DD800F51299 /* ListViewModel */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -397,7 +403,6 @@
 				BC2EC1F82553FF6A006EEDA5 /* DashedButton.swift */,
 				BC6EE768254ABEC700FE1025 /* PinCodeVC */,
 				BCD5E74425512D1500F51299 /* CollectionVC */,
-				BCD5E82D25525DD800F51299 /* ListViewModel */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -411,6 +416,7 @@
 				BC55B8C3254C03660032C355 /* TabBarVC */,
 				BC23B572254FBB6300886C9C /* WalletVC */,
 				BCD5E75225512DA800F51299 /* InvestmentsVC */,
+				BCB58359255CE96B00B10F65 /* ProfileVC.swift */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -901,6 +907,7 @@
 				BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */,
 				BC32A31C254A630B002156F0 /* CreateOrRestoreWalletVC.swift in Sources */,
 				BC1ABC39255BD0DB002FCE65 /* BalancesVM.swift in Sources */,
+				BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WellDoneVC.swift in Sources */,
 				BC55B8C8254C03700032C355 /* TabBar.swift in Sources */,
 				BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */,
@@ -945,6 +952,7 @@
 				BC2EC1CF2553ED1B006EEDA5 /* HalfSizePresentationController.swift in Sources */,
 				BCD5E76525512EDC00F51299 /* NewsCell.swift in Sources */,
 				BC7AD1D6254A608800B4A070 /* IntroVC.swift in Sources */,
+				BCB58360255D231400B10F65 /* BaseVM.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
