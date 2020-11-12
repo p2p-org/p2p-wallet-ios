@@ -42,6 +42,11 @@ class EnableNotificationsVC: SecuritySettingVC {
             }
     }
     
+    override func buttonDoThisLaterDidTouch() {
+        Defaults.didSetEnableNotifications = true
+        super.buttonDoThisLaterDidTouch()
+    }
+    
     func getNotificationSettings() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             print("Notification settings: \(settings)")
