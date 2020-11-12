@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 class WalletVM: ListViewModel<String> {
     let balanceVM: BalancesVM
@@ -19,5 +20,10 @@ class WalletVM: ListViewModel<String> {
     override func reload() {
         super.reload()
         balanceVM.reload()
+    }
+    
+    override var request: Single<[String]> {
+        SolanaSDK.shared.getProgramAccounts()
+            .map {$0.map{$0.pubkey}}
     }
 }
