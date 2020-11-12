@@ -19,7 +19,7 @@ class ProfileVC: BaseVC {
     
     @objc func buttonLogoutButton() {
         KeychainStorage.shared.clear()
-        BalancesVM.ofCurrentUser.balance.accept(0)
+        BalancesVM.ofCurrentUser.data.accept(0)
         BalancesVM.ofCurrentUser.state.accept(.loading)
         (UIApplication.shared.delegate as? AppDelegate)?.reloadRootVC()
     }
