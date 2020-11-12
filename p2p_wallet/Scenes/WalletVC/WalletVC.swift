@@ -143,6 +143,7 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
                     for: indexPath) as? WCVFirstSectionHeaderView
                 view?.headerLabel.text = Section.wallets.localizedString
                 view?.receiveAction = self.receiveAction
+                view?.sendAction = self.sendAction
                 headerView = view
                 return view
             }
@@ -186,6 +187,14 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         CocoaAction { _ in
             let vc = ReceiveTokenVC()
             self.present(vc, animated: true, completion: nil)
+            return .just(())
+        }
+    }
+    
+    var sendAction: CocoaAction {
+        CocoaAction { _ in
+            let vc = SendTokenVC()
+            self.show(vc, sender: nil)
             return .just(())
         }
     }
