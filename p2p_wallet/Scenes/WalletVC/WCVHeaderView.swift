@@ -55,7 +55,7 @@ class WCVFirstSectionHeaderView: SectionHeaderView {
         case .initializing, .loading:
             priceLabel.text = "Loading..."
         case .loaded:
-            priceLabel.text = "\(balanceVM.balance.value) SOL"
+            priceLabel.text = "\(balanceVM.balance) SOL"
         case .error(let error):
             priceLabel.text = "\(error.localizedDescription)"
         }
