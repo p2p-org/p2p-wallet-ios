@@ -33,6 +33,11 @@ class PinCodeVC: BaseVStackVC {
     lazy var nextButton = WLButton.stepButton(type: .main, label: L10n.next.uppercaseFirst)
         .onTap(self, action: #selector(buttonNextDidTouch))
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        pinCodeTextField.activate()
+    }
+    
     override func setUp() {
         super.setUp()
         
