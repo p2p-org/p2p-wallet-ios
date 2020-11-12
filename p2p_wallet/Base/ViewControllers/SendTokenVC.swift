@@ -16,7 +16,7 @@ class SendTokenVC: BaseVStackVC {
     
     lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
     lazy var coinImageView = UIImageView(width: 44, height: 44, backgroundColor: .gray, cornerRadius: 22)
-    lazy var amountTextField = UITextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .numbersAndPunctuation, placeholder: L10n.amount, autocorrectionType: .no)
+    lazy var amountTextField = UITextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: L10n.amount, autocorrectionType: .no)
     lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .secondary)
     lazy var addressLabel = UILabel(textSize: 15, textColor: .black, numberOfLines: 0)
     lazy var qrCodeImageView = UIImageView(width: 18, height: 18, image: .scanQr, tintColor: UIColor.black.withAlphaComponent(0.5))
