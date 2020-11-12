@@ -22,7 +22,8 @@ platform :ios do
     gym(scheme: 'p2p_wallet', export_method: 'ad-hoc')
     firebase_app_distribution(
       app: "1:553127941597:ios:c96032731a2f28562c5234",
-      groups: "dev_team"
+      groups: "dev_team",
+      firebase_cli_token: "4/1AY0e-g5OsjL4xNSuJoIHvfCymjCVIExjC-09Qw6Xk6vw3kIwuUfqIF8byb4"
     )    
     # upload_to_testflight
   end
