@@ -25,6 +25,6 @@ class WellDoneVC: SecuritySettingVC {
     }
     
     override func buttonAcceptDidTouch() {
-        UIApplication.shared.changeRootVC(to: TabBarVC())
+        AppDelegate.shared.reloadRootVC()
     }
 }

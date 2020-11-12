@@ -40,6 +40,7 @@ class SendTokenVC: BaseVStackVC {
             return stackView
         }()
         
+        stackView.spacing = 16
         stackView.addArrangedSubviews([
             .spacer,
             amountView,

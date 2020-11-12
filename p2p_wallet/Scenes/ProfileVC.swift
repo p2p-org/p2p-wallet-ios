@@ -21,6 +21,6 @@ class ProfileVC: BaseVC {
         KeychainStorage.shared.clear()
         BalancesVM.ofCurrentUser.data.accept(0)
         BalancesVM.ofCurrentUser.state.accept(.loading)
-        (UIApplication.shared.delegate as? AppDelegate)?.reloadRootVC()
+        AppDelegate.shared.reloadRootVC()
     }
 }
