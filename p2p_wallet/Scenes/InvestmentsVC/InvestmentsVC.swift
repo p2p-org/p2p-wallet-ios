@@ -10,12 +10,6 @@ import DiffableDataSources
 
 class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
-    override var sections: [Section] {
-        [
-            Section(headerTitle: L10n.makeYourCryptoWorkingOnYou, headerFont: .systemFont(ofSize: 28, weight: .semibold)),
-            Section(headerTitle: L10n.exploreDeFi)
-        ]
-    }
     
     enum ItemType: Hashable, Equatable {
         case news(News)
@@ -76,6 +70,13 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
     }
     
     // MARK: - Layout
+    override var sections: [Section] {
+        [
+            Section(headerTitle: L10n.makeYourCryptoWorkingOnYou, headerFont: .systemFont(ofSize: 28, weight: .semibold)),
+            Section(headerTitle: L10n.exploreDeFi)
+        ]
+    }
+    
     override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
         let section = super.createLayoutForSection(sectionIndex, environment: env)
         switch sectionIndex {
