@@ -10,25 +10,17 @@ import DiffableDataSources
 import Action
 import RxSwift
 
-class WalletVC: CollectionVC<WalletVC.Section, SolanaSDK.Token, TokenCell> {
+class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
-    // MARK: - Nested type
-    enum Section: String, CaseIterable {
-        case wallets
-        case savings
-        
-        var localizedString: String {
-            switch self {
-            case .wallets:
-                return L10n.wallets
-            case .savings:
-                return L10n.savings
-            }
-        }
-    }
     
     // MARK: - Properties
     let interactor = MenuInteractor()
+    override var sectionHeaders: [SectionHeader] {
+        [
+            SectionHeader(headerTitle: L10n.wallets),
+            SectionHeader(headerTitle: L10n.savings)
+        ]
+    }
     
     // MARK: - Subviews
     lazy var qrStackView: UIStackView = {
@@ -97,9 +89,9 @@ class WalletVC: CollectionVC<WalletVC.Section, SolanaSDK.Token, TokenCell> {
         .map {_ in ()}
     }
     
-    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, SolanaSDK.Token> {
-        var snapshot = DiffableDataSourceSnapshot<Section, SolanaSDK.Token>()
-        let section = Section.wallets
+    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, SolanaSDK.Token> {
+        var snapshot = DiffableDataSourceSnapshot<String, SolanaSDK.Token>()
+        let section = L10n.wallets
         snapshot.appendSections([section])
         let items = viewModel.items.value
         snapshot.appendItems(items, toSection: section)
@@ -133,36 +125,29 @@ class WalletVC: CollectionVC<WalletVC.Section, SolanaSDK.Token, TokenCell> {
         return section
     }
     
-    override func configureSupplementaryView(collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? {
-        if kind == UICollectionView.elementKindSectionHeader {
-            if indexPath.section == 0 {
-                let view = collectionView.dequeueReusableSupplementaryView(
-                    ofKind: kind,
-                    withReuseIdentifier: "WCVFirstSectionHeaderView",
-                    for: indexPath) as? WCVFirstSectionHeaderView
-                view?.headerLabel.text = Section.wallets.localizedString
-                view?.receiveAction = self.receiveAction
-                view?.sendAction = self.sendAction
-                headerView = view
-                return view
-            }
+    override func configureHeaderForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
+        if indexPath.section == 0 {
             let view = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                withReuseIdentifier: "SectionHeaderView",
-                for: indexPath) as? SectionHeaderView
-            view?.headerLabel.text = Section.savings.localizedString
+                ofKind: UICollectionView.elementKindSectionHeader,
+                withReuseIdentifier: "WCVFirstSectionHeaderView",
+                for: indexPath) as? WCVFirstSectionHeaderView
+            view?.setUp(headerTitle: L10n.wallets)
+            view?.receiveAction = self.receiveAction
+            view?.sendAction = self.sendAction
+            headerView = view
             return view
         }
-        if kind == UICollectionView.elementKindSectionFooter {
-            if indexPath.section == 0 {
-                let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "WCVFooterView", for: indexPath) as? WCVFooterView
-                return view
-            } else {
-                let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "EmptySectionFooterView", for: indexPath) as? EmptySectionFooterView
-                return view
-            }
+        return super.configureFooterForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
+    }
+    
+    override func configureFooterForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
+        if indexPath.section == 0 {
+            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "WCVFooterView", for: indexPath) as? WCVFooterView
+            return view
+        } else {
+            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "EmptySectionFooterView", for: indexPath) as? EmptySectionFooterView
+            return view
         }
-        return UICollectionReusableView()
     }
     
     // MARK: - Actions

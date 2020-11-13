@@ -32,4 +32,9 @@ class SectionHeaderView: UICollectionReusableView {
         headerLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor)
             .isActive = true
     }
+    
+    func setUp(headerTitle: String, headerFont: UIFont = .systemFont(ofSize: 17, weight: .bold)) {
+        headerLabel.text = headerTitle
+        headerLabel.font = headerFont
+    }
 }

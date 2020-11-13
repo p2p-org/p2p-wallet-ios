@@ -15,10 +15,17 @@ protocol CollectionCell: BaseCollectionViewCell {
     func setUp(with item: T)
 }
 
-class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>: BaseVC {
+class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
+    // MARK: - Nested type
+    struct SectionHeader {
+        let headerTitle: String
+        var headerFont: UIFont = .systemFont(ofSize: 17, weight: .semibold)
+    }
+    
     // MARK: - Properties
-    var dataSource: CollectionViewDiffableDataSource<Section, ItemType>!
+    var dataSource: CollectionViewDiffableDataSource<String, ItemType>!
     let viewModel: ListViewModel<ItemType>
+    var sectionHeaders: [SectionHeader] { [] }
     
     override var scrollViewAvoidingTabBar: UIScrollView? {collectionView}
     
@@ -78,8 +85,8 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
             .disposed(by: disposeBag)
     }
     
-    func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, ItemType> {
-        DiffableDataSourceSnapshot<Section, ItemType>()
+    func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, ItemType> {
+        DiffableDataSourceSnapshot<String, ItemType>()
     }
     
     func dataDidLoad() {
@@ -138,7 +145,7 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
     
     // MARK: - Datasource
     private func configureDataSource() {
-        dataSource = CollectionViewDiffableDataSource<Section, ItemType>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell? in
+        dataSource = CollectionViewDiffableDataSource<String, ItemType>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell? in
             self.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         }
                 
@@ -154,6 +161,30 @@ class CollectionVC<Section: Hashable, ItemType: Hashable, Cell: CollectionCell>:
     }
     
     func configureSupplementaryView(collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? {
+        if kind == UICollectionView.elementKindSectionHeader {
+            return configureHeaderForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
+        }
+        if kind == UICollectionView.elementKindSectionFooter {
+            return configureFooterForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
+        }
         return nil
+    }
+    
+    func configureHeaderForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
+        guard sectionHeaders.count > indexPath.section else {
+            return nil
+        }
+        
+        let view = collectionView.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SectionHeaderView",
+            for: indexPath) as? SectionHeaderView
+        
+        view?.setUp(headerTitle: sectionHeaders[indexPath.section].headerTitle, headerFont: sectionHeaders[indexPath.section].headerFont)
+        return view
+    }
+    
+    func configureFooterForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
+        nil
     }
 }
