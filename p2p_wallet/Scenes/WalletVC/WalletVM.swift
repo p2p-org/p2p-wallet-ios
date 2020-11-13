@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-class WalletVM: ListViewModel<String> {
+class WalletVM: ListViewModel<SolanaSDK.Token> {
     let balanceVM = BalancesVM.ofCurrentUser
     static var ofCurrentUser = WalletVM()
     
@@ -17,8 +17,7 @@ class WalletVM: ListViewModel<String> {
         balanceVM.reload()
     }
     
-    override var request: Single<[String]> {
-        SolanaSDK.shared.getProgramAccounts()
-            .map {$0.map{$0.pubkey}}
+    override var request: Single<[SolanaSDK.Token]> {
+        SolanaSDK.shared.getProgramAccounts(in: SolanaSDK.cluster)
     }
 }

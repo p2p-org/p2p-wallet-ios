@@ -9,9 +9,8 @@ import Foundation
 import DiffableDataSources
 import Action
 import RxSwift
-import ListPlaceholder
 
-class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
+class WalletVC: CollectionVC<WalletVC.Section, SolanaSDK.Token, TokenCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     // MARK: - Nested type
     enum Section: String, CaseIterable {
@@ -98,8 +97,8 @@ class WalletVC: CollectionVC<WalletVC.Section, String, PriceCell> {
         .map {_ in ()}
     }
     
-    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, String> {
-        var snapshot = DiffableDataSourceSnapshot<Section, String>()
+    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, SolanaSDK.Token> {
+        var snapshot = DiffableDataSourceSnapshot<Section, SolanaSDK.Token>()
         let section = Section.wallets
         snapshot.appendSections([section])
         let items = viewModel.items.value

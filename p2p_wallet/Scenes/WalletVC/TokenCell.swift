@@ -7,7 +7,7 @@
 
 import Foundation
 
-class PriceCell: BaseCollectionViewCell, CollectionCell {
+class TokenCell: BaseCollectionViewCell, CollectionCell {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
     lazy var coinLogoImageView = UIImageView(width: 32, height: 32, backgroundColor: .gray, cornerRadius: 32 / 2)
     lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold)
@@ -56,7 +56,9 @@ class PriceCell: BaseCollectionViewCell, CollectionCell {
         ])
     }
     
-    func setUp(with item: String) {
-        
+    func setUp(with item: SolanaSDK.Token) {
+        coinLogoImageView.setImage(urlString: item.icon)
+        coinNameLabel.text = item.name
+        tokenCountLabel.text = "\(item.amount ?? 0) \(item.symbol)"
     }
 }

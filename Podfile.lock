@@ -80,7 +80,6 @@ PODS:
     - GoogleUtilities/Logger
   - IBPCollectionViewCompositionalLayout (0.6.7)
   - KeychainSwift (19.0.0)
-  - ListPlaceholder (1.4)
   - MBProgressHUD (1.2.0)
   - nanopb (2.30906.0):
     - nanopb/decode (= 2.30906.0)
@@ -102,6 +101,9 @@ PODS:
   - RxRelay (5.1.1):
     - RxSwift (~> 5)
   - RxSwift (5.1.1)
+  - SDWebImage (5.9.4):
+    - SDWebImage/Core (= 5.9.4)
+  - SDWebImage/Core (5.9.4)
   - SolanaSwift (0.1.2):
     - CryptoSwift
     - RxAlamofire
@@ -120,10 +122,10 @@ DEPENDENCIES:
   - Firebase/Crashlytics
   - IBPCollectionViewCompositionalLayout
   - KeychainSwift (~> 19.0)
-  - ListPlaceholder
   - MBProgressHUD (~> 1.2.0)
   - RxBlocking
   - RxCocoa
+  - SDWebImage
   - SolanaSwift (from `SolanaSwift`)
   - SwiftGen (~> 6.0)
   - SwiftLint
@@ -148,7 +150,6 @@ SPEC REPOS:
     - GoogleUtilities
     - IBPCollectionViewCompositionalLayout
     - KeychainSwift
-    - ListPlaceholder
     - MBProgressHUD
     - nanopb
     - PromisesObjC
@@ -158,6 +159,7 @@ SPEC REPOS:
     - RxCocoa
     - RxRelay
     - RxSwift
+    - SDWebImage
     - SwiftGen
     - SwiftLint
     - SwiftyUserDefaults
@@ -188,7 +190,6 @@ SPEC CHECKSUMS:
   GoogleUtilities: ffb2f4159f2c897c6e8992bd7fbcdef8a300589c
   IBPCollectionViewCompositionalLayout: 06cf9aa021fd80807385d5c49ece4364609a0c97
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
-  ListPlaceholder: 08ddaddf67520a20fc52cf37160fb56aa64d071d
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
@@ -198,6 +199,7 @@ SPEC CHECKSUMS:
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
+  SDWebImage: b69257f4ab14e9b6a2ef53e910fdf914d8f757c1
   SolanaSwift: d606d9e34797dd594de0ecc2e27d2325fb22fc08
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftLint: dfd554ff0dff17288ee574814ccdd5cea85d76f7
@@ -205,6 +207,6 @@ SPEC CHECKSUMS:
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: e188dc0ac76fcb4c55842edbba2ad394a3b60b2a
+PODFILE CHECKSUM: 022d6a8939db8c4ad4a0ec9b1cb87fb11b8f299b
 
 COCOAPODS: 1.10.0
