@@ -31,24 +31,4 @@ class CoinDetailVC: CollectionVC<SolanaSDK.Token, TokenCell> {
         super.setUp()
         title = "Coin name"
     }
-    
-    // MARK: - Binding
-    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, SolanaSDK.Token> {
-        var snapshot = DiffableDataSourceSnapshot<String, SolanaSDK.Token>()
-        let section = L10n.activities
-        snapshot.appendSections([section])
-        return snapshot
-    }
-    
-    override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
-        let section = super.createLayoutForSection(sectionIndex, environment: env)
-        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
-        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerSize,
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
-        section?.boundarySupplementaryItems = [sectionHeader]
-        return section
-    }
 }
