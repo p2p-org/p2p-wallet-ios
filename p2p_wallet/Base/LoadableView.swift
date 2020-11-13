@@ -9,7 +9,7 @@ import Foundation
 
 private var loadingHandle: UInt8 = 0
 
-protocol LoadableView: UIView {
+protocol LoadableView {
     var loadingViews: [UIView] {get}
 }
 
