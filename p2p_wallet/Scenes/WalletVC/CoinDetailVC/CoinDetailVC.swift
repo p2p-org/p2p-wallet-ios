@@ -13,10 +13,6 @@ class CoinDetailVC: CollectionVC<SolanaSDK.Token, TokenCell> {
         .normal()
     }
     
-    override var sections: [Section] {
-        [Section(headerViewClass: CoinDetailSectionHeaderView.self, headerTitle: L10n.activities)]
-    }
-    
     // MARK: - Initializer
     init() {
         super.init(viewModel: ListViewModel<SolanaSDK.Token>())
@@ -30,5 +26,10 @@ class CoinDetailVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     override func setUp() {
         super.setUp()
         title = "Coin name"
+    }
+    
+    // MARK: - Layout
+    override var sections: [Section] {
+        [Section(headerViewClass: CoinDetailSectionHeaderView.self, headerTitle: L10n.activities)]
     }
 }

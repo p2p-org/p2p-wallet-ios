@@ -15,20 +15,6 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     
     // MARK: - Properties
     let interactor = MenuInteractor()
-    override var sections: [Section] {
-        [
-            Section(
-                headerViewClass: WCVFirstSectionHeaderView.self,
-                headerTitle: L10n.wallets,
-                footerViewClass: WCVFooterView.self,
-                footerLayout: {
-                    let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
-                    return NSCollectionLayoutBoundarySupplementaryItem(layoutSize: size, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
-                }()
-            ),
-            Section(headerTitle: L10n.savings)
-        ]
-    }
     
     // MARK: - Subviews
     lazy var qrStackView: UIStackView = {
@@ -98,6 +84,21 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     }
     
     // MARK: - Layout
+    override var sections: [Section] {
+        [
+            Section(
+                headerViewClass: WCVFirstSectionHeaderView.self,
+                headerTitle: L10n.wallets,
+                footerViewClass: WCVFooterView.self,
+                footerLayout: {
+                    let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
+                    return NSCollectionLayoutBoundarySupplementaryItem(layoutSize: size, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
+                }()
+            ),
+            Section(headerTitle: L10n.savings)
+        ]
+    }
+    
     override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
         let section = super.createLayoutForSection(sectionIndex, environment: env)
         section?.interGroupSpacing = 16
