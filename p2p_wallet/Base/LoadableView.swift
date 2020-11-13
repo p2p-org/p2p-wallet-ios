@@ -52,11 +52,11 @@ extension LoadableView {
         loaderLayer.endPoint = CGPoint(x: 1.0 + CGFloat(gradientWidth), y: 0)
         
         loaderLayer.colors = [
-            UIColor(red: 1, green: 1, blue: 1, alpha: 0.12).cgColor,
-            UIColor(red: 1, green: 1, blue: 1, alpha: 0.24).cgColor,
-            UIColor(red: 1, green: 1, blue: 1, alpha: 0.48).cgColor,
-            UIColor(red: 1, green: 1, blue: 1, alpha: 0.24).cgColor,
-            UIColor(red: 1, green: 1, blue: 1, alpha: 0.12).cgColor
+            UIColor.textBlack.withAlphaComponent(0.12).cgColor,
+            UIColor.textBlack.withAlphaComponent(0.24).cgColor,
+            UIColor.textBlack.withAlphaComponent(0.48).cgColor,
+            UIColor.textBlack.withAlphaComponent(0.24).cgColor,
+            UIColor.textBlack.withAlphaComponent(0.12).cgColor
         ]
         
         let startLocations = [
