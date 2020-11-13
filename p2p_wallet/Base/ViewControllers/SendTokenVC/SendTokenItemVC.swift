@@ -75,4 +75,10 @@ class SendTokenItemVC: BaseVC {
         stackView.setCustomSpacing(0, after: tokenNameLabel.wrapper!)
         stackView.setCustomSpacing(30, after: separator)
     }
+    
+    func setUp(token: SolanaSDK.Token) {
+        tokenNameLabel.text = token.name
+        coinImageView.setImage(urlString: token.icon)
+        addressLabel.text = token.mintAddress
+    }
 }

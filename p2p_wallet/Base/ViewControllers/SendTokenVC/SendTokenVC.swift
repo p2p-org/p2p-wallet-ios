@@ -6,15 +6,22 @@
 //
 
 import Foundation
+import RxSwift
 
-class SendTokenVC: BEPagesVC {
+class SendTokenVC: BEPagesVC, LoadableView {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
         .normal(backgroundColor: .vcBackground)
     }
+    var loadingViews: [UIView] { [containerView, sendButton] }
     
     lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: UIEdgeInsets(top: 44, left: 16, bottom: 0, right: 16))
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     lazy var sendButton = WLButton.stepButton(type: .main, label: L10n.sendNow)
+    
+    lazy var errorLabel = UILabel(textSize: 17, weight: .semibold, textColor: .textBlack, numberOfLines: 0, textAlignment: .center)
+    
+    lazy var viewModel = WalletVM.ofCurrentUser
+    let disposeBag = DisposeBag()
     
     override func setUp() {
         super.setUp()
@@ -42,15 +49,8 @@ class SendTokenVC: BEPagesVC {
         ])
         
         viewControllers = [
-            SendTokenItemVC(),
-            SendTokenItemVC(),
-            SendTokenItemVC(),
             SendTokenItemVC()
         ]
-        
-        // action
-        currentPage = -1
-        moveToPage(0)
         
         view.layoutIfNeeded()
         
@@ -58,8 +58,52 @@ class SendTokenVC: BEPagesVC {
         let height = (viewControllers[currentPage] as! SendTokenItemVC).stackView.fittingHeight(targetWidth: stackView.frame.size.width)
         containerView.autoSetDimension(.height, toSize: height)
         
+        // fix pageControl colors
         currentPageIndicatorTintColor = .textBlack
         pageIndicatorTintColor = .a4a4a4
+        
+        // error label
+        view.addSubview(errorLabel)
+        errorLabel.autoCenterInSuperview()
+        errorLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
+        errorLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
+        
+        errorLabel.isHidden = true
+    }
+    
+    override func bind() {
+        super.bind()
+        viewModel.state
+            .subscribe(onNext: { [weak self] state in
+                switch state {
+                case .initializing, .loading:
+                    self?.showLoading()
+                    self?.scrollView.isHidden = false
+                    self?.errorLabel.isHidden = true
+                case .loaded:
+                    self?.hideLoading()
+                    self?.scrollView.isHidden = false
+                    self?.errorLabel.isHidden = true
+                case .error(let error):
+                    self?.hideLoading()
+                    self?.scrollView.isHidden = true
+                    self?.errorLabel.isHidden = false
+                    #if DEBUG
+                    self?.showError(error)
+                    #endif
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.items
+            .subscribe(onNext: {[weak self] items in
+                self?.viewControllers = items.map {item in
+                    let vc = SendTokenItemVC()
+                    vc.setUp(token: item)
+                    return vc
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     override func setUpContainerView() {
