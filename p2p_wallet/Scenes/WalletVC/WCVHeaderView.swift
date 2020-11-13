@@ -8,7 +8,7 @@
 import Foundation
 import Action
 
-class WCVFirstSectionHeaderView: SectionHeaderView {
+class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
     lazy var priceLabel = UILabel(text: "$120,00", textSize: 36, weight: .semibold, textAlignment: .center)
     lazy var priceChangeLabel = UILabel(text: "+ 0,16 US$ (0,01%) 24 hrs", textSize: 15, textColor: .secondary, numberOfLines: 0, textAlignment: .center)
     
@@ -22,6 +22,8 @@ class WCVFirstSectionHeaderView: SectionHeaderView {
     var sendAction: CocoaAction?
     var receiveAction: CocoaAction?
     var swapAction: CocoaAction?
+    
+    var loadingViews: [UIView] { [priceLabel, priceChangeLabel, sendButton.superview!, headerLabel] }
     
     override func commonInit() {
         super.commonInit()
@@ -52,12 +54,18 @@ class WCVFirstSectionHeaderView: SectionHeaderView {
     
     func setUp(balanceVM: BalancesVM) {
         switch balanceVM.state.value {
-        case .initializing, .loading:
+        case .initializing:
+            priceLabel.text = ""
+            hideLoading()
+        case .loading:
             priceLabel.text = "Loading..."
+            showLoading()
         case .loaded:
             priceLabel.text = "\(balanceVM.balance) SOL"
+            hideLoading()
         case .error(let error):
             priceLabel.text = "\(error.localizedDescription)"
+            hideLoading()
         }
     }
     
