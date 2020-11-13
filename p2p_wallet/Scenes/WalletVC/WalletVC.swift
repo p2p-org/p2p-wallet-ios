@@ -17,7 +17,15 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     let interactor = MenuInteractor()
     override var sections: [Section] {
         [
-            Section(headerViewClass: WCVFirstSectionHeaderView.self, headerTitle: L10n.wallets, footerViewClass: WCVFooterView.self),
+            Section(
+                headerViewClass: WCVFirstSectionHeaderView.self,
+                headerTitle: L10n.wallets,
+                footerViewClass: WCVFooterView.self,
+                footerLayout: {
+                    let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
+                    return NSCollectionLayoutBoundarySupplementaryItem(layoutSize: size, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
+                }()
+            ),
             Section(headerTitle: L10n.savings)
         ]
     }
@@ -81,15 +89,6 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
         .map {_ in ()}
     }
     
-    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, SolanaSDK.Token> {
-        var snapshot = DiffableDataSourceSnapshot<String, SolanaSDK.Token>()
-        let section = L10n.wallets
-        snapshot.appendSections([section])
-        let items = viewModel.items.value
-        snapshot.appendItems(items, toSection: section)
-        return snapshot
-    }
-    
     override func dataDidLoad() {
         super.dataDidLoad()
         let viewModel = self.viewModel as! WalletVM
@@ -102,18 +101,6 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
         let section = super.createLayoutForSection(sectionIndex, environment: env)
         section?.interGroupSpacing = 16
-        
-        // Header
-        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
-        
-        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerSize,
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
-        let sectionFooter = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
-        
-        section?.boundarySupplementaryItems = [sectionHeader, sectionFooter]
         return section
     }
     

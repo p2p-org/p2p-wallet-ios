@@ -87,15 +87,6 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
         default:
             fatalError()
         }
-        
-        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
-        
-        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerSize,
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
-        section?.boundarySupplementaryItems = [sectionHeader]
         return section
     }
     

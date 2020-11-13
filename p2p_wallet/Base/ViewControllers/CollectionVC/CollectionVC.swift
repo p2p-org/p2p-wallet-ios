@@ -21,7 +21,16 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
         var headerViewClass: SectionHeaderView.Type = SectionHeaderView.self
         let headerTitle: String
         var headerFont: UIFont = .systemFont(ofSize: 17, weight: .semibold)
+        var headerLayout: NSCollectionLayoutBoundarySupplementaryItem? = {
+            let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
+            return NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: headerSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top
+            )
+        }()
         var footerViewClass: SectionFooterView.Type = EmptySectionFooterView.self
+        var footerLayout: NSCollectionLayoutBoundarySupplementaryItem?
     }
     
     // MARK: - Properties
@@ -105,7 +114,14 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
     }
     
     func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, ItemType> {
-        DiffableDataSourceSnapshot<String, ItemType>()
+        var snapshot = DiffableDataSourceSnapshot<String, ItemType>()
+        guard let section = sections.first?.headerTitle else {
+            return snapshot
+        }
+        snapshot.appendSections([section])
+        let items = viewModel.items.value
+        snapshot.appendItems(items, toSection: section)
+        return snapshot
     }
     
     func dataDidLoad() {
@@ -131,6 +147,20 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
         
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+        
+        var supplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
+        if let headerLayout = sections[sectionIndex].headerLayout {
+            supplementaryItems.append(headerLayout)
+        }
+        
+        if let footerLayout = sections[sectionIndex].footerLayout {
+            supplementaryItems.append(footerLayout)
+        }
+        
+        if !supplementaryItems.isEmpty {
+            section.boundarySupplementaryItems = supplementaryItems
+        }
+        
         return section
     }
     
