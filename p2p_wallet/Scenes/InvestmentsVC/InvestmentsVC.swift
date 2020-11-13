@@ -10,10 +10,10 @@ import DiffableDataSources
 
 class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
-    override var sectionHeaders: [SectionHeader] {
+    override var sections: [Section] {
         [
-            SectionHeader(headerTitle: L10n.makeYourCryptoWorkingOnYou, headerFont: .systemFont(ofSize: 28, weight: .semibold)),
-            SectionHeader(headerTitle: L10n.exploreDeFi)
+            Section(headerTitle: L10n.makeYourCryptoWorkingOnYou, headerFont: .systemFont(ofSize: 28, weight: .semibold)),
+            Section(headerTitle: L10n.exploreDeFi)
         ]
     }
     

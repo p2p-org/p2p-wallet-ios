@@ -17,16 +17,17 @@ protocol CollectionCell: BaseCollectionViewCell {
 
 class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
     // MARK: - Nested type
-    struct SectionHeader {
-        var viewClass: SectionHeaderView.Type = SectionHeaderView.self
+    struct Section {
+        var headerViewClass: SectionHeaderView.Type = SectionHeaderView.self
         let headerTitle: String
         var headerFont: UIFont = .systemFont(ofSize: 17, weight: .semibold)
+        var footerViewClass: SectionFooterView.Type = EmptySectionFooterView.self
     }
     
     // MARK: - Properties
     var dataSource: CollectionViewDiffableDataSource<String, ItemType>!
     let viewModel: ListViewModel<ItemType>
-    var sectionHeaders: [SectionHeader] { [] }
+    var sections: [Section] { [] }
     
     override var scrollViewAvoidingTabBar: UIScrollView? {collectionView}
     
@@ -61,13 +62,22 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
     
     func registerCellAndSupplementaryViews() {
         collectionView.registerCells([Cell.self])
-        let viewClasses = sectionHeaders.reduce([SectionHeaderView.Type]()) { (result, header) in
-            if result.contains(where: {$0 == header.viewClass}) {return result}
-            return result + [header.viewClass]
+        let headerViewClasses = sections.reduce([SectionHeaderView.Type]()) { (result, header) in
+            if result.contains(where: {$0 == header.headerViewClass}) {return result}
+            return result + [header.headerViewClass]
         }
         
-        for viewClass in viewClasses {
+        for viewClass in headerViewClasses {
             collectionView.register(viewClass.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: viewClass))
+        }
+        
+        let footerViewClasses = sections.reduce([SectionFooterView.Type]()) { (result, header) in
+            if result.contains(where: {$0 == header.footerViewClass}) {return result}
+            return result + [header.footerViewClass]
+        }
+        
+        for viewClass in footerViewClasses {
+            collectionView.register(viewClass.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: String(describing: viewClass))
         }
     }
     
@@ -180,20 +190,29 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
     }
     
     func configureHeaderForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
-        guard sectionHeaders.count > indexPath.section else {
+        guard sections.count > indexPath.section else {
             return nil
         }
         
         let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: String(describing: sectionHeaders[indexPath.section].viewClass),
+            withReuseIdentifier: String(describing: sections[indexPath.section].headerViewClass),
             for: indexPath) as? SectionHeaderView
         
-        view?.setUp(headerTitle: sectionHeaders[indexPath.section].headerTitle, headerFont: sectionHeaders[indexPath.section].headerFont)
+        view?.setUp(headerTitle: sections[indexPath.section].headerTitle, headerFont: sections[indexPath.section].headerFont)
         return view
     }
     
     func configureFooterForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
-        nil
+        guard sections.count > indexPath.section else {
+            return nil
+        }
+        
+        let view = collectionView.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: String(describing: sections[indexPath.section].footerViewClass),
+            for: indexPath) as? SectionFooterView
+        
+        return view
     }
 }
