@@ -8,14 +8,18 @@
 import Foundation
 import DiffableDataSources
 
-class CoinDetailVC: CollectionVC<String, TokenCell> {
+class CoinDetailVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
         .normal()
     }
     
+    override var sections: [Section] {
+        [Section(headerViewClass: CoinDetailSectionHeaderView.self, headerTitle: L10n.activities)]
+    }
+    
     // MARK: - Initializer
     init() {
-        super.init(viewModel: ListViewModel<String>())
+        super.init(viewModel: ListViewModel<SolanaSDK.Token>())
     }
     
     required init?(coder: NSCoder) {
@@ -28,21 +32,11 @@ class CoinDetailVC: CollectionVC<String, TokenCell> {
         title = "Coin name"
     }
     
-    override func registerCellAndSupplementaryViews() {
-        super.registerCellAndSupplementaryViews()
-        collectionView.register(CoinDetailSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "CoinDetailSectionHeaderView")
-    }
-    
     // MARK: - Binding
-    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, String> {
-        var snapshot = DiffableDataSourceSnapshot<String, String>()
-        var items = [String]()
-        for i in 0..<5 {
-            items.append("\(i)")
-        }
+    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, SolanaSDK.Token> {
+        var snapshot = DiffableDataSourceSnapshot<String, SolanaSDK.Token>()
         let section = L10n.activities
         snapshot.appendSections([section])
-        snapshot.appendItems(items, toSection: section)
         return snapshot
     }
     
@@ -56,14 +50,5 @@ class CoinDetailVC: CollectionVC<String, TokenCell> {
         )
         section?.boundarySupplementaryItems = [sectionHeader]
         return section
-    }
-    
-    override func configureSupplementaryView(collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? {
-        let view = collectionView.dequeueReusableSupplementaryView(
-            ofKind: kind,
-            withReuseIdentifier: "CoinDetailSectionHeaderView",
-            for: indexPath) as? CoinDetailSectionHeaderView
-        view?.headerLabel.text = L10n.activities
-        return view
     }
 }
