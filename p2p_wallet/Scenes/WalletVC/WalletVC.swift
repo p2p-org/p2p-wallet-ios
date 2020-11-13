@@ -15,10 +15,10 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     
     // MARK: - Properties
     let interactor = MenuInteractor()
-    override var sectionHeaders: [SectionHeader] {
+    override var sections: [Section] {
         [
-            SectionHeader(viewClass: WCVFirstSectionHeaderView.self, headerTitle: L10n.wallets),
-            SectionHeader(headerTitle: L10n.savings)
+            Section(headerViewClass: WCVFirstSectionHeaderView.self, headerTitle: L10n.wallets, footerViewClass: WCVFooterView.self),
+            Section(headerTitle: L10n.savings)
         ]
     }
     
@@ -69,12 +69,6 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
         qrView.autoPinEdge(.top, to: .bottom, of: statusBarBgView)
         
         qrStackView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
-    }
-    
-    override func registerCellAndSupplementaryViews() {
-        super.registerCellAndSupplementaryViews()
-        collectionView.register(WCVFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "WCVFooterView")
-        collectionView.register(EmptySectionFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "EmptySectionFooterView")
     }
     
     // MARK: - Binding
@@ -135,16 +129,6 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
         }
         
         return header
-    }
-    
-    override func configureFooterForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
-        if indexPath.section == 0 {
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "WCVFooterView", for: indexPath) as? WCVFooterView
-            return view
-        } else {
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "EmptySectionFooterView", for: indexPath) as? EmptySectionFooterView
-            return view
-        }
     }
     
     // MARK: - Actions
