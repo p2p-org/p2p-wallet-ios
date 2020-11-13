@@ -69,6 +69,7 @@
 		BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7AD0E7254A540700B4A070 /* WLButton.swift */; };
 		BC7AD1D6254A608800B4A070 /* IntroVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7AD1D5254A608800B4A070 /* IntroVC.swift */; };
 		BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */; };
+		BCA0CFD8255E78D400CD0F8D /* SendTokenItemVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA0CFD7255E78D400CD0F8D /* SendTokenItemVC.swift */; };
 		BCAEF2C4255E159200F3491F /* LoadableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAEF2C3255E159200F3491F /* LoadableView.swift */; };
 		BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2231825412AF8002D997F /* AppDelegate.swift */; };
 		BCB2232225412AF8002D997F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232125412AF8002D997F /* Assets.xcassets */; };
@@ -189,6 +190,7 @@
 		BC7AD0E7254A540700B4A070 /* WLButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLButton.swift; sourceTree = "<group>"; };
 		BC7AD1D5254A608800B4A070 /* IntroVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroVC.swift; sourceTree = "<group>"; };
 		BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
+		BCA0CFD7255E78D400CD0F8D /* SendTokenItemVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenItemVC.swift; sourceTree = "<group>"; };
 		BCAEF2C3255E159200F3491F /* LoadableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadableView.swift; sourceTree = "<group>"; };
 		BCB2231525412AF8002D997F /* p2p_wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = p2p_wallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB2231825412AF8002D997F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -461,6 +463,15 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		BCA0CFD6255E78C000CD0F8D /* SendTokenVC */ = {
+			isa = PBXGroup;
+			children = (
+				BCB58374255D299700B10F65 /* SendTokenVC.swift */,
+				BCA0CFD7255E78D400CD0F8D /* SendTokenItemVC.swift */,
+			);
+			path = SendTokenVC;
+			sourceTree = "<group>";
+		};
 		BCB2230C25412AF8002D997F = {
 			isa = PBXGroup;
 			children = (
@@ -538,7 +549,7 @@
 				BC6EE768254ABEC700FE1025 /* PinCodeVC */,
 				BCD5E74425512D1500F51299 /* CollectionVC */,
 				BC2EC1F02553F60C006EEDA5 /* ReceiveTokenVC.swift */,
-				BCB58374255D299700B10F65 /* SendTokenVC.swift */,
+				BCA0CFD6255E78C000CD0F8D /* SendTokenVC */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -918,6 +929,7 @@
 				BC32A393254A77A9002156F0 /* UIViewController+Extensions.swift in Sources */,
 				BC2EC1D02553ED1B006EEDA5 /* DimmingPresentationController.swift in Sources */,
 				BC2EC1F12553F60C006EEDA5 /* ReceiveTokenVC.swift in Sources */,
+				BCA0CFD8255E78D400CD0F8D /* SendTokenItemVC.swift in Sources */,
 				BC32A356254A69EA002156F0 /* WelcomeVC.swift in Sources */,
 				BC2EC1CE2553ED1B006EEDA5 /* CardPresentationController.swift in Sources */,
 				BC22ABD22552A2FC0071C69F /* MenuInteractor.swift in Sources */,
