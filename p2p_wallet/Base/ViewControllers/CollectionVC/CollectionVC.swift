@@ -18,6 +18,7 @@ protocol CollectionCell: BaseCollectionViewCell {
 class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
     // MARK: - Nested type
     struct SectionHeader {
+        var viewClass: SectionHeaderView.Type = SectionHeaderView.self
         let headerTitle: String
         var headerFont: UIFont = .systemFont(ofSize: 17, weight: .semibold)
     }
@@ -60,6 +61,14 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
     
     func registerCellAndSupplementaryViews() {
         collectionView.registerCells([Cell.self])
+        let viewClasses = sectionHeaders.reduce([SectionHeaderView.Type]()) { (result, header) in
+            if result.contains(where: {$0 == header.viewClass}) {return result}
+            return result + [header.viewClass]
+        }
+        
+        for viewClass in viewClasses {
+            collectionView.register(viewClass.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: viewClass))
+        }
     }
     
     // MARK: - Binding
@@ -177,7 +186,7 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
         
         let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "SectionHeaderView",
+            withReuseIdentifier: String(describing: sectionHeaders[indexPath.section].viewClass),
             for: indexPath) as? SectionHeaderView
         
         view?.setUp(headerTitle: sectionHeaders[indexPath.section].headerTitle, headerFont: sectionHeaders[indexPath.section].headerFont)

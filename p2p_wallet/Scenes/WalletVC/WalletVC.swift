@@ -17,7 +17,7 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     let interactor = MenuInteractor()
     override var sectionHeaders: [SectionHeader] {
         [
-            SectionHeader(headerTitle: L10n.wallets),
+            SectionHeader(viewClass: WCVFirstSectionHeaderView.self, headerTitle: L10n.wallets),
             SectionHeader(headerTitle: L10n.savings)
         ]
     }
@@ -73,8 +73,6 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     
     override func registerCellAndSupplementaryViews() {
         super.registerCellAndSupplementaryViews()
-        collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView")
-        collectionView.register(WCVFirstSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "WCVFirstSectionHeaderView")
         collectionView.register(WCVFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "WCVFooterView")
         collectionView.register(EmptySectionFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "EmptySectionFooterView")
     }
@@ -126,18 +124,17 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     }
     
     override func configureHeaderForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
-        if indexPath.section == 0 {
-            let view = collectionView.dequeueReusableSupplementaryView(
-                ofKind: UICollectionView.elementKindSectionHeader,
-                withReuseIdentifier: "WCVFirstSectionHeaderView",
-                for: indexPath) as? WCVFirstSectionHeaderView
-            view?.setUp(headerTitle: L10n.wallets)
-            view?.receiveAction = self.receiveAction
-            view?.sendAction = self.sendAction
+        let header = super.configureHeaderForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
+        
+        if indexPath.section == 0,
+           let view = header as? WCVFirstSectionHeaderView
+        {
+            view.receiveAction = self.receiveAction
+            view.sendAction = self.sendAction
             headerView = view
-            return view
         }
-        return super.configureFooterForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
+        
+        return header
     }
     
     override func configureFooterForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
