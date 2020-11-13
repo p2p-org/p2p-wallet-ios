@@ -1,19 +1,13 @@
 //
-//  SendTokenVC.swift
+//  SendTokenItemVC.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 11/12/20.
+//  Created by Chung Tran on 13/11/2020.
 //
 
 import Foundation
 
-class SendTokenVC: BaseVStackVC {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-        .normal(backgroundColor: .vcBackground)
-    }
-    
-    override var padding: UIEdgeInsets {UIEdgeInsets(top: 44, left: 16, bottom: 0, right: 16)}
-    
+class SendTokenItemVC: BaseVC {
     lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
     lazy var coinImageView = UIImageView(width: 44, height: 44, backgroundColor: .gray, cornerRadius: 22)
     lazy var amountTextField = UITextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0.0", autocorrectionType: .no)
@@ -21,14 +15,13 @@ class SendTokenVC: BaseVStackVC {
     lazy var addressLabel = UILabel(textSize: 15, textColor: .black, numberOfLines: 0)
     lazy var qrCodeImageView = UIImageView(width: 18, height: 18, image: .scanQr, tintColor: UIColor.black.withAlphaComponent(0.5))
     
+    lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
+    
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .vcBackground
-        title = L10n.sendCoins
-        
-        scrollView.contentView.backgroundColor = .textWhite
-        scrollView.contentView.layer.cornerRadius = 16
-        scrollView.contentView.layer.masksToBounds = true
+        view.backgroundColor = .clear
+        view.addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges()
         
         let amountView: UIStackView = {
             let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
@@ -71,7 +64,6 @@ class SendTokenVC: BaseVStackVC {
             return stackView
         }()
         
-        stackView.spacing = 16
         stackView.addArrangedSubviews([
             .spacer,
             tokenNameLabel.padding(UIEdgeInsets(x: 16, y: 0)),

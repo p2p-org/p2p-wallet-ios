@@ -86,6 +86,8 @@ internal enum L10n {
   internal static let send = L10n.tr("Localizable", "Send")
   /// Send coins
   internal static let sendCoins = L10n.tr("Localizable", "Send coins")
+  /// Send Now
+  internal static let sendNow = L10n.tr("Localizable", "Send Now")
   /// Slide to scan
   internal static let slideToScan = L10n.tr("Localizable", "Slide to scan")
   /// Swap
