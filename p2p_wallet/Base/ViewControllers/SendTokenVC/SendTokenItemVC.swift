@@ -35,11 +35,9 @@ class SendTokenItemVC: BaseVC {
             }()
             
             stackView.addArrangedSubviews([
-                .spacer,
                 coinImageView,
                 downArrowImage,
                 amountVStack,
-                .spacer
             ])
             amountTextField.autoAlignAxis(.horizontal, toSameAxisOf: coinImageView)
             return stackView
@@ -67,12 +65,12 @@ class SendTokenItemVC: BaseVC {
         stackView.addArrangedSubviews([
             .spacer,
             tokenNameLabel.padding(UIEdgeInsets(x: 16, y: 0)),
-            amountView,
+            amountView.padding(UIEdgeInsets(x: 16, y: 0)),
             separator,
             addressView.padding(UIEdgeInsets(x: 16, y: 0)),
             .spacer
         ])
-        stackView.setCustomSpacing(0, after: tokenNameLabel.wrapper!)
+        stackView.setCustomSpacing(16, after: tokenNameLabel.wrapper!)
         stackView.setCustomSpacing(30, after: separator)
     }
     
