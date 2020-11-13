@@ -8,21 +8,13 @@
 import Foundation
 import DiffableDataSources
 
-class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType, NewsCell> {
+class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
-    // MARK: - Nested type
-    enum Section: String, CaseIterable {
-        case news
-        case exploreDefi
-        
-        var localizedString: String {
-            switch self {
-            case .news:
-                return L10n.makeYourCryptoWorkingOnYou
-            case .exploreDefi:
-                return L10n.exploreDeFi
-            }
-        }
+    override var sectionHeaders: [SectionHeader] {
+        [
+            SectionHeader(headerTitle: L10n.makeYourCryptoWorkingOnYou, headerFont: .systemFont(ofSize: 28, weight: .semibold)),
+            SectionHeader(headerTitle: L10n.exploreDeFi)
+        ]
     }
     
     enum ItemType: Hashable, Equatable {
@@ -52,10 +44,10 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
     }
     
     // MARK: - Binding
-    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, ItemType> {
+    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, ItemType> {
         // initial snapshot
-        var snapshot = DiffableDataSourceSnapshot<Section, ItemType>()
-        let section = Section.news
+        var snapshot = DiffableDataSourceSnapshot<String, ItemType>()
+        let section = L10n.makeYourCryptoWorkingOnYou
         snapshot.appendSections([section])
         snapshot.appendItems(
             [
@@ -72,7 +64,7 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
             toSection: section
         )
         
-        let section2 = Section.exploreDefi
+        let section2 = L10n.exploreDeFi
         snapshot.appendSections([section2])
         snapshot.appendItems(
             [
@@ -133,26 +125,6 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.Section, InvestmentsVC.ItemType,
     }
     
     // MARK: - Datasource
-    override func configureSupplementaryView(collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? {
-        let view = collectionView.dequeueReusableSupplementaryView(
-            ofKind: kind,
-            withReuseIdentifier: "SectionHeaderView",
-            for: indexPath) as? SectionHeaderView
-        let text: String
-        switch indexPath.section {
-        case 0:
-            text = Section.news.localizedString
-            view?.headerLabel.font = .systemFont(ofSize: 28, weight: .semibold)
-        case 1:
-            text = Section.exploreDefi.localizedString
-            view?.headerLabel.font = .systemFont(ofSize: 17, weight: .semibold)
-        default:
-            fatalError()
-        }
-        view?.headerLabel.text = text
-        return view
-    }
-    
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell {
         switch item {
         case .news(let news):
