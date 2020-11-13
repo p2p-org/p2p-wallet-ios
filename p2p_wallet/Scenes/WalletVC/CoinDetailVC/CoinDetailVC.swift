@@ -8,21 +8,9 @@
 import Foundation
 import DiffableDataSources
 
-class CoinDetailVC: CollectionVC<CoinDetailVC.Section, String, TokenCell> {
+class CoinDetailVC: CollectionVC<String, TokenCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
         .normal()
-    }
-    
-    // MARK: - Nested type
-    enum Section: String, CaseIterable {
-        case activities
-        
-        var localizedString: String {
-            switch self {
-            case .activities:
-                return L10n.activities
-            }
-        }
     }
     
     // MARK: - Initializer
@@ -46,13 +34,13 @@ class CoinDetailVC: CollectionVC<CoinDetailVC.Section, String, TokenCell> {
     }
     
     // MARK: - Binding
-    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<Section, String> {
-        var snapshot = DiffableDataSourceSnapshot<Section, String>()
+    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, String> {
+        var snapshot = DiffableDataSourceSnapshot<String, String>()
         var items = [String]()
         for i in 0..<5 {
             items.append("\(i)")
         }
-        let section = Section.activities
+        let section = L10n.activities
         snapshot.appendSections([section])
         snapshot.appendItems(items, toSection: section)
         return snapshot
@@ -75,7 +63,7 @@ class CoinDetailVC: CollectionVC<CoinDetailVC.Section, String, TokenCell> {
             ofKind: kind,
             withReuseIdentifier: "CoinDetailSectionHeaderView",
             for: indexPath) as? CoinDetailSectionHeaderView
-        view?.headerLabel.text = Section.activities.localizedString
+        view?.headerLabel.text = L10n.activities
         return view
     }
 }
