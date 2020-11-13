@@ -39,8 +39,6 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
     override func registerCellAndSupplementaryViews() {
         super.registerCellAndSupplementaryViews()
         collectionView.registerCells([DefiCell.self])
-        collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView")
-        collectionView.register(WCVFirstSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "WCVFirstSectionHeaderView")
     }
     
     // MARK: - Binding
