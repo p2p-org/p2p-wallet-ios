@@ -23,4 +23,8 @@ class BaseVM<T: Hashable> {
         if state.value == .loading {return false}
         return true
     }
+    
+    var dataDidChange: Observable<Void> {
+        state.map {_ in ()}
+    }
 }

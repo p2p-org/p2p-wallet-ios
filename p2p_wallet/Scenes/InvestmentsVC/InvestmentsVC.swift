@@ -72,23 +72,9 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
     // MARK: - Layout
     override var sections: [Section] {
         [
-            Section(headerTitle: L10n.makeYourCryptoWorkingOnYou, headerFont: .systemFont(ofSize: 28, weight: .semibold)),
-            Section(headerTitle: L10n.exploreDeFi)
+            Section(headerTitle: L10n.makeYourCryptoWorkingOnYou, headerFont: .systemFont(ofSize: 28, weight: .semibold), interGroupSpacing: 16, orthogonalScrollingBehavior: .groupPaging),
+            Section(headerTitle: L10n.exploreDeFi, interGroupSpacing: 2)
         ]
-    }
-    
-    override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
-        let section = super.createLayoutForSection(sectionIndex, environment: env)
-        switch sectionIndex {
-        case 0:
-            section?.interGroupSpacing = 16
-            section?.orthogonalScrollingBehavior = .groupPaging
-        case 1:
-            section?.interGroupSpacing = 2
-        default:
-            fatalError()
-        }
-        return section
     }
     
     override func createLayoutForGroupOnSmallScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
