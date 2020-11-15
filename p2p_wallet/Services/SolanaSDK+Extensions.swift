@@ -10,10 +10,11 @@ import RxSwift
 
 extension SolanaSDK {
     #if DEBUG
-    static let cluster = "devnet"
+    static let cluster = "mainnet-beta"
+    static let endpoint = "https://api.\(cluster).solana.com"
     #else
-    static let cluster = "devnet"
+    static let cluster = "mainnet-beta"
+    static let endpoint = "https://api.\(cluster).solana.com"
     #endif
-    static let endpoint = "https://\(cluster).solana.com"
     static let shared = SolanaSDK(endpoint: endpoint, accountStorage: KeychainStorage.shared)
 }
