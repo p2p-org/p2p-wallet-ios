@@ -50,6 +50,7 @@ $ cd p2p_wallet && pod install
 - UI/UX: Using [BEPureLayout](https://github.com/bigearsenal/bepurelayout), which depends on PureLayout, which does NOT use any InterfaceBuilder (Storyboard, Xib)...
     - Every new `UIViewController` must inherit from `BaseVC` or `BaseVStackVC` (a predefined `UIViewController` that have ready-to-use vertical `UIStackView` that can add as many arrangedSubviews as needed and flexibly grows height inside a `ContentHuggingScrollView` (inherited from `UIScrollView`)
     - `UIViewController` that contains a list can inherit from predefined `UICollectionView`-based `CollectionView<ItemType: Hasable, CellType>`, see the implementation of [WalletVC](https://github.com/p2p-org/p2p-wallet-ios/blob/main/p2p_wallet/Scenes/WalletVC/WalletVC.swift) for more details.
+    - Use `SwiftGen` for automatic assets variables generation.
 - MVVM: The MVVM (Model-View-ViewModel) pattern helps to completely separate the business and presentation logic from the UI, and the business logic and UI can be clearly separated for easier testing and easier maintenance.
     - Any `ViewModel` must inherit from `BaseVM<ItemType>`, `ListViewModel` must inherit from `ListViewModel<Element>`
 
