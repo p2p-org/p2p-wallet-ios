@@ -18,7 +18,7 @@ class WalletVM: ListViewModel<SolanaSDK.Token> {
     }
     
     override var request: Single<[SolanaSDK.Token]> {
-        SolanaSDK.shared.getProgramAccounts(in: SolanaSDK.cluster)
+        SolanaSDK.shared.getProgramAccounts(in: SolanaSDK.network)
     }
     
     override var dataDidChange: Observable<Void> {
