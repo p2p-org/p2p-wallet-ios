@@ -116,7 +116,7 @@ PODS:
 
 DEPENDENCIES:
   - Action
-  - BEPureLayout (from `https://github.com/bigearsenal/BEPureLayout.git`)
+  - BEPureLayout (from `BEPureLayout`)
   - DiffableDataSources
   - Firebase/Analytics
   - Firebase/Crashlytics
@@ -126,7 +126,7 @@ DEPENDENCIES:
   - RxBlocking
   - RxCocoa
   - SDWebImage
-  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`)
+  - SolanaSwift (from `SolanaSwift`)
   - SwiftGen (~> 6.0)
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
@@ -168,17 +168,9 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   BEPureLayout:
-    :git: https://github.com/bigearsenal/BEPureLayout.git
+    :path: BEPureLayout
   SolanaSwift:
-    :git: https://github.com/p2p-org/solana-swift.git
-
-CHECKOUT OPTIONS:
-  BEPureLayout:
-    :commit: db8f2c8b936b6fba136edd4c20884c68fd9f2182
-    :git: https://github.com/bigearsenal/BEPureLayout.git
-  SolanaSwift:
-    :commit: 825eecd617ddf2e389ecf9b3132b6df7a7dd5735
-    :git: https://github.com/p2p-org/solana-swift.git
+    :path: SolanaSwift
 
 SPEC CHECKSUMS:
   Action: 5dc2194f7a0b77857c82a677b0da655f197c005f
@@ -215,6 +207,6 @@ SPEC CHECKSUMS:
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: fd3bf7301dd3179e3f17ad8c4b3e40bd518b12b7
+PODFILE CHECKSUM: 022d6a8939db8c4ad4a0ec9b1cb87fb11b8f299b
 
 COCOAPODS: 1.10.0
