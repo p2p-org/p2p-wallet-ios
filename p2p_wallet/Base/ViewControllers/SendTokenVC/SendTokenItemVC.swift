@@ -37,7 +37,7 @@ class SendTokenItemVC: BaseVC {
             stackView.addArrangedSubviews([
                 coinImageView,
                 downArrowImage,
-                amountVStack,
+                amountVStack
             ])
             amountTextField.autoAlignAxis(.horizontal, toSameAxisOf: coinImageView)
             return stackView
