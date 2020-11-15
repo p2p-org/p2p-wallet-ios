@@ -30,6 +30,6 @@ class CoinDetailVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     
     // MARK: - Layout
     override var sections: [Section] {
-        [Section(headerViewClass: CoinDetailSectionHeaderView.self, headerTitle: L10n.activities)]
+        [Section(headerViewClass: CoinDetailSectionHeaderView.self, headerTitle: L10n.activities, interGroupSpacing: 16)]
     }
 }

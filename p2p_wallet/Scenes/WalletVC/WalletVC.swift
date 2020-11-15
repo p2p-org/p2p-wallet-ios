@@ -66,15 +66,6 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
     }
     
     // MARK: - Binding
-    override var combinedObservable: Observable<Void> {
-        let viewModel = self.viewModel as! WalletVM
-        return Observable.combineLatest(
-            viewModel.state,
-            viewModel.balanceVM.state
-        )
-        .map {_ in ()}
-    }
-    
     override func dataDidLoad() {
         super.dataDidLoad()
         let viewModel = self.viewModel as! WalletVM
@@ -93,16 +84,11 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
                 footerLayout: {
                     let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
                     return NSCollectionLayoutBoundarySupplementaryItem(layoutSize: size, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
-                }()
+                }(),
+                interGroupSpacing: 16
             ),
-            Section(headerTitle: L10n.savings)
+            Section(headerTitle: L10n.savings, interGroupSpacing: 16)
         ]
-    }
-    
-    override func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
-        let section = super.createLayoutForSection(sectionIndex, environment: env)
-        section?.interGroupSpacing = 16
-        return section
     }
     
     override func configureHeaderForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {

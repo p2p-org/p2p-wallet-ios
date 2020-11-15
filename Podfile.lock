@@ -2,7 +2,7 @@ PODS:
   - Action (4.2.0):
     - RxCocoa (< 7.0, >= 5.0)
     - RxSwift (< 7.0, >= 5.0)
-  - Alamofire (5.3.0)
+  - Alamofire (5.4.0)
   - BEPureLayout (0.1.9):
     - PureLayout
   - CryptoSwift (1.3.2)
@@ -116,7 +116,7 @@ PODS:
 
 DEPENDENCIES:
   - Action
-  - BEPureLayout (from `BEPureLayout`)
+  - BEPureLayout (from `https://github.com/bigearsenal/BEPureLayout.git`)
   - DiffableDataSources
   - Firebase/Analytics
   - Firebase/Crashlytics
@@ -126,7 +126,7 @@ DEPENDENCIES:
   - RxBlocking
   - RxCocoa
   - SDWebImage
-  - SolanaSwift (from `SolanaSwift`)
+  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`)
   - SwiftGen (~> 6.0)
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
@@ -168,13 +168,21 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   BEPureLayout:
-    :path: BEPureLayout
+    :git: https://github.com/bigearsenal/BEPureLayout.git
   SolanaSwift:
-    :path: SolanaSwift
+    :git: https://github.com/p2p-org/solana-swift.git
+
+CHECKOUT OPTIONS:
+  BEPureLayout:
+    :commit: db8f2c8b936b6fba136edd4c20884c68fd9f2182
+    :git: https://github.com/bigearsenal/BEPureLayout.git
+  SolanaSwift:
+    :commit: 825eecd617ddf2e389ecf9b3132b6df7a7dd5735
+    :git: https://github.com/p2p-org/solana-swift.git
 
 SPEC CHECKSUMS:
   Action: 5dc2194f7a0b77857c82a677b0da655f197c005f
-  Alamofire: 2c792affbdc2f18016e08fdbcacd60aebe1ba593
+  Alamofire: 3b6a534a3df22db367e4dedeeca73d1ddfcf0e2f
   BEPureLayout: f7359ceb98902514e00b4b15c8dbcfaf08a52d43
   CryptoSwift: 093499be1a94b0cae36e6c26b70870668cb56060
   DiffableDataSources: 80396cec405c9b29e1e07b55c9be7d11b46c8741
@@ -207,6 +215,6 @@ SPEC CHECKSUMS:
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 022d6a8939db8c4ad4a0ec9b1cb87fb11b8f299b
+PODFILE CHECKSUM: fd3bf7301dd3179e3f17ad8c4b3e40bd518b12b7
 
 COCOAPODS: 1.10.0
