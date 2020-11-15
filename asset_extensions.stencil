@@ -1,0 +1,42 @@
+// swiftlint:disable all
+/// Attention: Changes made to this file will not have any effect and will be reverted 
+/// when building the project. Please adjust the Stencil template `asset_extensions.stencil` instead.
+/// See https://github.com/SwiftGen/SwiftGen#bundled-templates-vs-custom-ones for more information.
+
+import UIKit
+
+// MARK: - Private Helper -
+
+private final class BundleToken {}
+private let bundle = Bundle(for: BundleToken.self)
+
+{# Macro to create a static property for a given asset and class type #}
+{% macro staticAsset type asset %}
+static let {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = {{type}}(named: "{{asset.value}}", in: bundle, compatibleWith: nil)!
+{% endmacro %}
+{# Create an UIColor extension for all color assets in asset catalogs #}
+// MARK: - Colors -
+
+extension UIColor {
+    {% for catalog in catalogs %}
+        {% for asset in catalog.assets %}
+            {% if asset.type == "color" %}
+                {% filter indent:4 %}{% call staticAsset "UIColor" asset %}{% endfilter %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+}
+
+{# Create an UIImage extension for all image assets in asset catalogs #}
+// MARK: - Images -
+
+extension UIImage {
+    {% for catalog in catalogs %}
+        {% for asset in catalog.assets %}
+            {% if asset.type == "image" %}
+                {% filter indent:4 %}{% call staticAsset "UIImage" asset %}{% endfilter %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+}
+
