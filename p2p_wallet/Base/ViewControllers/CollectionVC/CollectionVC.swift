@@ -31,6 +31,8 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
         }()
         var footerViewClass: SectionFooterView.Type = EmptySectionFooterView.self
         var footerLayout: NSCollectionLayoutBoundarySupplementaryItem?
+        var interGroupSpacing: CGFloat?
+        var orthogonalScrollingBehavior: UICollectionLayoutSectionOrthogonalScrollingBehavior?
     }
     
     // MARK: - Properties
@@ -93,16 +95,7 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
     // MARK: - Binding
     override func bind() {
         super.bind()
-        bindList()
-    }
-    
-    var combinedObservable: Observable<Void> {
-        viewModel.state.distinctUntilChanged()
-            .map {_ in ()}
-    }
-    
-    func bindList() {
-        combinedObservable
+        viewModel.dataDidChange
             .subscribe(onNext: { (_) in
                 let snapshot = self.mapDataToSnapshot()
                 self.dataSource.apply(snapshot)
@@ -159,6 +152,14 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
         
         if !supplementaryItems.isEmpty {
             section.boundarySupplementaryItems = supplementaryItems
+        }
+        
+        if let interGroupSpacing = sections[sectionIndex].interGroupSpacing {
+            section.interGroupSpacing = interGroupSpacing
+        }
+        
+        if let orthogonalScrollingBehavior = sections[sectionIndex].orthogonalScrollingBehavior {
+            section.orthogonalScrollingBehavior = orthogonalScrollingBehavior
         }
         
         return section

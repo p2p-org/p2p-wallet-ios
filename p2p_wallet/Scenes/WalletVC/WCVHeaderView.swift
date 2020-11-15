@@ -72,7 +72,7 @@ class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
     // MARK: - Helpers
     func createButton(title: String) -> UIView {
         let view = UIView(height: 56, backgroundColor: .textBlack)
-        let label = UILabel(text: title, textSize: 15, weight: .semibold, textColor: .textWhite, numberOfLines: 0, textAlignment: .center)
+        let label = UILabel(text: title, textSize: 15.adaptiveWidth, weight: .semibold, textColor: .textWhite, numberOfLines: 0, textAlignment: .center)
         view.addSubview(label)
         label.autoPinEdge(toSuperviewEdge: .top)
         label.autoPinEdge(toSuperviewEdge: .bottom)
