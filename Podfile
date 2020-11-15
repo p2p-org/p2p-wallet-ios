@@ -4,14 +4,14 @@ platform :ios, '12.0'
 inhibit_all_warnings!
 def common_pods
   pod 'RxCocoa'
-  pod 'SolanaSwift', :path => 'SolanaSwift'
+  pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git'
 end
 
 target 'p2p_wallet' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   common_pods
-  pod 'BEPureLayout', :path => 'BEPureLayout'
+  pod 'BEPureLayout', :git => 'https://github.com/bigearsenal/BEPureLayout.git'
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
   pod 'Action'
