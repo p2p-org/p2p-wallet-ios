@@ -1,0 +1,67 @@
+/* 
+  Localizable.strings
+  p2p_wallet
+
+  Created by Chung Tran on 10/23/20.
+  
+*/
+"next" = "kế tiếp";
+"Wowlet for people, not for tokens" = "Wowlet cho mọi người, không phải vì token";
+"create new wallet" = "tạo ví Wowlet mới";
+"i've already had a wallet" = "tôi đã có ví Wowlet";
+"Terms and conditions" = "Các điều khoản và điều kiện";
+"By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy" = "Bằng cách nhấn vào chấp nhận, bạn đồng ý với Điều khoản sử dụng và Chính sách quyền riêng tư của P2PWallet";
+"Cancel" = "Huỷ bỏ";
+"Accept" = "Chấp nhận";
+"Congratulations!" = "Xin chúc mừng!";
+"Your wallet has been successfully created!" = "Ví của bạn đã được tạo thành công!";
+"Backup" = "Sao lưu";
+"error" = "lỗi";
+"OK" = "OK";
+"please try again later!" = "vui lòng thử lại sau!";
+"creating an account" = "tạo một tài khoản";
+"security keys" = "khóa bảo mật";
+"WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future." = "CẢNH BÁO: Những cụm từ bảo mật này sẽ không được hiển thị lại, hãy sao chép nó xuống hoặc lưu trong trình quản lý mật khẩu của bạn để khôi phục ví này trong tương lai.";
+"tap refresh button to retry" = "chạm vào nút làm mới để thử lại";
+"we've created some security keywords for you." = "chúng tôi đã tạo một số từ khóa bảo mật cho bạn.";
+"save to Keychain" = "lưu vào Keychain";
+"Create a PIN-code to protect your wallet" = "Tạo mã PIN để bảo vệ ví của bạn";
+"confirm PIN code" = "xác nhận mã PIN";
+"passcodes do not match" = "mật mã không khớp";
+"Use your FaceID for quick access?" = "Sử dụng FaceID của bạn để truy cập nhanh?";
+"Use FaceId" = "Sử dụng FaceId";
+"Do this later" = "Để sau";
+"unsupported" = "không hỗ trợ";
+"Your device does not support biometrics authentication" = "Thiết bị của bạn không hỗ trợ xác thực sinh trắc học";
+"We use FaceID to secure your transactions" = "Chúng tôi sử dụng FaceID để bảo mật các giao dịch của bạn";
+"Identify yourself!" = "Xác định danh tính của bạn!";
+"We have not supported this type of biometry authentication yet" = "Chúng tôi chưa hỗ trợ loại xác thực sinh trắc học này";
+"Use TouchId" = "Sử dụng TouchId";
+"Use your TouchID for quick access?" = "Sử dụng TouchID của bạn để truy cập nhanh?";
+"Almost done!" = "Sắp xong!";
+"We suggest you also to enable push notifications" = "Chúng tôi đề xuất bạn hãy bật Thông báo";
+"Enable now" = "Kích hoạt ngay bây giờ";
+"Well done!" = "Hoàn thành!";
+"Explore Wowlet and deposit funds when you’re ready" = "Khám phá Wowlet và gửi tiền khi bạn đã sẵn sàng";
+"Finish setup" = "Hoàn tất thiết lập";
+"Enter security keys" = "Nhập khóa bảo mật";
+"Welcome back to the Wowlet space!" = "Chào mừng bạn trở lại với Wowlet!";
+"Go to wallet" = "Chuyển tới Ví";
+"Restoring wallet" = "Khôi phục ví";
+"Send" = "Gửi";
+"Receive" = "Nhận";
+"Swap" = "Chuyển đổi";
+"Slide to scan" = "Trượt để quét";
+"Wallets" = "Ví";
+"Savings" = "Tiết kiệm";
+"Make your crypto working on you" = "Cách để ví điện tử của bạn hoạt động theo ý muốn của bạn";
+"Explore  DeFi" = "Khám phá DeFi";
+"Add coin" = "Thêm coin";
+"Activities" = "Hoạt động";
+"Scan QR Code" = "Quét mã QR";
+"Scan an P2P address" = "Quét địa chỉ P2P";
+"Receive token" = "Nhận token";
+"Send coins" = "Gửi tiền";
+"amount" = "số lượng";
+"Wallet address" = "Địa chỉ ví";
+"Send Now" = "Gửi ngay";

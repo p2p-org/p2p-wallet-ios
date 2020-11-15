@@ -1,0 +1,67 @@
+/* 
+  Localizable.strings
+  p2p_wallet
+
+  Created by Chung Tran on 10/23/20.
+  
+*/
+"next" = "next";
+"Wowlet for people, not for tokens" = "Wowlet for people, not for tokens";
+"create new wallet" = "create new wallet";
+"i've already had a wallet" = "i've already had a wallet";
+"Terms and conditions" = "Terms and conditions";
+"By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy" = "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy";
+"Cancel" = "Cancel";
+"Accept" = "Accept";
+"Congratulations!" = "Congratulations!";
+"Your wallet has been successfully created!" = "Your wallet has been successfully created!";
+"Backup" = "Backup";
+"error" = "error";
+"OK" = "OK";
+"please try again later!" = "please try again later!";
+"creating an account" = "creating an account";
+"security keys" = "security keys";
+"WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future." = "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.";
+"tap refresh button to retry" = "tap refresh button to retry";
+"we've created some security keywords for you." = "we've created some security keywords for you.";
+"save to Keychain" = "save to Keychain";
+"Create a PIN-code to protect your wallet" = "Create a PIN-code to protect your wallet";
+"confirm PIN code" = "confirm PIN code";
+"passcodes do not match" = "passcodes do not match";
+"Use your FaceID for quick access?" = "Use your FaceID for quick access?";
+"Use FaceId" = "Use FaceId";
+"Do this later" = "Do this later";
+"unsupported" = "unsupported";
+"Your device does not support biometrics authentication" = "Your device does not support biometrics authentication";
+"We use FaceID to secure your transactions" = "We use FaceID to secure your transactions";
+"Identify yourself!" = "Identify yourself!";
+"We have not supported this type of biometry authentication yet" = "We have not supported this type of biometry authentication yet";
+"Use TouchId" = "Use TouchId";
+"Use your TouchID for quick access?" = "Use your TouchID for quick access?";
+"Almost done!" = "Almost done!";
+"We suggest you also to enable push notifications" = "We suggest you also to enable push notifications";
+"Enable now" = "Enable now";
+"Well done!" = "Well done!";
+"Explore Wowlet and deposit funds when you’re ready" = "Explore Wowlet and deposit funds when you’re ready";
+"Finish setup" = "Finish setup";
+"Enter security keys" = "Enter security keys";
+"Welcome back to the Wowlet space!" = "Welcome back to the Wowlet space!";
+"Go to wallet" = "Go to wallet";
+"Restoring wallet" = "Restoring wallet";
+"Send" = "Send";
+"Receive" = "Receive";
+"Swap" = "Swap";
+"Slide to scan" = "Slide to scan";
+"Wallets" = "Wallets";
+"Savings" = "Savings";
+"Make your crypto working on you" = "Make your crypto working on you";
+"Explore  DeFi" = "Explore  DeFi";
+"Add coin" = "Add coin";
+"Activities" = "Activities";
+"Scan QR Code" = "Scan QR Code";
+"Scan an P2P address" = "Scan an P2P address";
+"Receive token" = "Receive token";
+"Send coins" = "Send coins";
+"amount" = "amount";
+"Wallet address" = "Wallet address";
+"Send Now" = "Send Now";
