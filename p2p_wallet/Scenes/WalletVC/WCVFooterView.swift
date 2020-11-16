@@ -12,6 +12,6 @@ class WCVFooterView: SectionFooterView {
     
     override func commonInit() {
         super.commonInit()
-        stackView.addArrangedSubview(addCoinButton)
+        stackView.addArrangedSubview(addCoinButton.padding(UIEdgeInsets(x: 0, y: 16)))
     }
 }
