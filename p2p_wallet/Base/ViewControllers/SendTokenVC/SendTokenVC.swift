@@ -80,10 +80,15 @@ class SendTokenVC: BEPagesVC, LoadableView {
                     self?.showLoading()
                     self?.scrollView.isHidden = false
                     self?.errorLabel.isHidden = true
-                case .loaded:
+                case .loaded(let items):
                     self?.hideLoading()
                     self?.scrollView.isHidden = false
                     self?.errorLabel.isHidden = true
+                    self?.viewControllers = items.map {item in
+                        let vc = SendTokenItemVC()
+                        vc.setUp(token: item)
+                        return vc
+                    }
                 case .error(let error):
                     self?.hideLoading()
                     self?.scrollView.isHidden = true
@@ -91,16 +96,6 @@ class SendTokenVC: BEPagesVC, LoadableView {
                     #if DEBUG
                     self?.showError(error)
                     #endif
-                }
-            })
-            .disposed(by: disposeBag)
-        
-        viewModel.items
-            .subscribe(onNext: {[weak self] items in
-                self?.viewControllers = items.map {item in
-                    let vc = SendTokenItemVC()
-                    vc.setUp(token: item)
-                    return vc
                 }
             })
             .disposed(by: disposeBag)
