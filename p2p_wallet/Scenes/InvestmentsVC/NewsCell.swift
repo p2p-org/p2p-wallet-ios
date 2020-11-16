@@ -12,6 +12,8 @@ class NewsCell: BaseCollectionViewCell, CollectionCell {
     lazy var titleLabel = UILabel(text: "How it works", textSize: 21, weight: .semibold, textColor: .textWhite, numberOfLines: 0)
     lazy var descriptionLabel = UILabel(text: "The most important info you should know before investing", textSize: 17, textColor: .textWhite, numberOfLines: 0)
     
+    var loadingViews: [UIView] {[imageView, titleLabel, descriptionLabel]}
+    
     override func commonInit() {
         super.commonInit()
         contentView.layer.cornerRadius = 10
