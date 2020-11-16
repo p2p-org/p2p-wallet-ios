@@ -25,4 +25,8 @@ class DefiCell: BaseCollectionViewCell, CollectionCell {
     func setUp(with item: String) {
         
     }
+    
+    var loadingViews: [UIView] {
+        [imageView, titleLabel]
+    }
 }

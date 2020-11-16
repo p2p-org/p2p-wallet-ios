@@ -17,6 +17,8 @@ class TokenCell: BaseCollectionViewCell, CollectionCell {
     lazy var coinPriceLabel = UILabel(text: "12 800,99 US$", textSize: 13)
     lazy var coinChangeLabel = UILabel(text: "0.35% 24 hrs", textSize: 13, textColor: .secondary)
     
+    var loadingViews: [UIView] {[coinLogoImageView, coinNameLabel, equityValueLabel, tokenCountLabel, graphView, coinPriceLabel, coinChangeLabel]}
+    
     override func commonInit() {
         super.commonInit()
         contentView.backgroundColor = .textWhite

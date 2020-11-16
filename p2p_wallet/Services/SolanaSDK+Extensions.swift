@@ -18,3 +18,15 @@ extension SolanaSDK {
     #endif
     static let shared = SolanaSDK(endpoint: endpoint, accountStorage: KeychainStorage.shared)
 }
+
+extension SolanaSDK.Token: ListItemType {
+    static func placeholder(at index: Int) -> SolanaSDK.Token {
+        SolanaSDK.Token(name: "placeholder", mintAddress: "placeholder-mintaddress", symbol: "PLHD\(index)", icon: nil, amount: nil)
+    }
+}
+
+extension String: ListItemType {
+    static func placeholder(at index: Int) -> String {
+        "\(index)"
+    }
+}
