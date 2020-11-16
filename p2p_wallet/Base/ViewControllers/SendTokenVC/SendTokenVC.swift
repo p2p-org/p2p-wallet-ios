@@ -86,7 +86,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
                     self?.errorLabel.isHidden = true
                     self?.viewControllers = items.map {item in
                         let vc = SendTokenItemVC()
-                        vc.setUp(token: item)
+                        vc.setUp(wallet: item)
                         return vc
                     }
                 case .error(let error):

@@ -74,9 +74,9 @@ class SendTokenItemVC: BaseVC {
         stackView.setCustomSpacing(30, after: separator)
     }
     
-    func setUp(token: SolanaSDK.Token) {
-        tokenNameLabel.text = token.name
-        coinImageView.setImage(urlString: token.icon)
-        addressLabel.text = token.mintAddress
+    func setUp(wallet: Wallet) {
+        tokenNameLabel.text = wallet.name
+        coinImageView.setImage(urlString: wallet.icon)
+        addressLabel.text = wallet.mintAddress
     }
 }
