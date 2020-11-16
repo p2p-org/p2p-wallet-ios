@@ -131,10 +131,13 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         }
         snapshot.appendSections([section])
         var items = [ItemType]()
-        if viewModel.state.value == .loading {
+        switch viewModel.state.value {
+        case .loading:
             items = [ItemType.placeholder(at: 0), ItemType.placeholder(at: 1)]
-        } else if viewModel.state.value == .loaded {
-            items = viewModel.items.value
+        case .loaded:
+            items = viewModel.items
+        case .error, .initializing:
+            break
         }
         snapshot.appendItems(items, toSection: section)
         return snapshot

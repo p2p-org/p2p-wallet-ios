@@ -36,7 +36,7 @@ class SectionFooterView: UICollectionReusableView {
         emptyView.wrapper?.isHidden = true
     }
     
-    func setUp(state: FetcherState, isListEmpty: Bool) {
+    func setUp<T: Hashable>(state: FetcherState<T>, isListEmpty: Bool) {
         switch state {
         case .loading, .initializing:
             stackView.arrangedSubviews.forEach { ($0.wrapper ?? $0).isHidden = true}
