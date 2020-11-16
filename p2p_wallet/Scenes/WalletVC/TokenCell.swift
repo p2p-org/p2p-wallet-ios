@@ -9,7 +9,7 @@ import Foundation
 
 class TokenCell: BaseCollectionViewCell, CollectionCell {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
-    lazy var coinLogoImageView = UIImageView(width: 32, height: 32, backgroundColor: .gray, cornerRadius: 32 / 2)
+    lazy var coinLogoImageView = UIImageView(width: 32, height: 32, cornerRadius: 32 / 2)
     lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold)
     lazy var equityValueLabel = UILabel(text: "44,33 USD", textSize: 13)
     lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: .secondary)
