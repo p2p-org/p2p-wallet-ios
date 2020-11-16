@@ -98,6 +98,8 @@ internal enum L10n {
   internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
   /// Terms and conditions
   internal static let termsAndConditions = L10n.tr("Localizable", "Terms and conditions")
+  /// There is nothing in here!
+  internal static let thereIsNothingInHere = L10n.tr("Localizable", "There is nothing in here!")
   /// Try again
   internal static let tryAgain = L10n.tr("Localizable", "Try again")
   /// unsupported
