@@ -52,6 +52,7 @@
 		BC55B882254BEBAC0032C355 /* SSPinCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B881254BEBAC0032C355 /* SSPinCodeVC.swift */; };
 		BC55B88E254BFBDC0032C355 /* TabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B88D254BFBDC0032C355 /* TabBarVC.swift */; };
 		BC55B8C8254C03700032C355 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B8C7254C03700032C355 /* TabBar.swift */; };
+		BC5ED749256237AB0030572D /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED748256237AB0030572D /* EmptyView.swift */; };
 		BC6366DB255A8D8300D585FD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC6366DA255A8D8300D585FD /* GoogleService-Info.plist */; };
 		BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9B82542B98D005F50CE /* BaseVC.swift */; };
 		BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */; };
@@ -173,6 +174,7 @@
 		BC55B881254BEBAC0032C355 /* SSPinCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSPinCodeVC.swift; sourceTree = "<group>"; };
 		BC55B88D254BFBDC0032C355 /* TabBarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarVC.swift; sourceTree = "<group>"; };
 		BC55B8C7254C03700032C355 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
+		BC5ED748256237AB0030572D /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		BC6366DA255A8D8300D585FD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BC65E9B82542B98D005F50CE /* BaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVC.swift; sourceTree = "<group>"; };
 		BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVStackVC.swift; sourceTree = "<group>"; };
@@ -413,6 +415,7 @@
 				BC7AD0E7254A540700B4A070 /* WLButton.swift */,
 				BC2EC1F82553FF6A006EEDA5 /* DashedButton.swift */,
 				BCF7D952256220F100961D31 /* ErrorView.swift */,
+				BC5ED748256237AB0030572D /* EmptyView.swift */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -985,6 +988,7 @@
 				BCD5E82425525C6E00F51299 /* WalletVM.swift in Sources */,
 				BC6EE74A254AB3AD00FE1025 /* PinCodeTextField.swift in Sources */,
 				BC2EC1D52553ED1B006EEDA5 /* CustomHeightPresentationController.swift in Sources */,
+				BC5ED749256237AB0030572D /* EmptyView.swift in Sources */,
 				BC6EE77D254BB8F400FE1025 /* Settings.swift in Sources */,
 				BC2EC1D12553ED1B006EEDA5 /* FittingSizePresentationController.swift in Sources */,
 				BC2EC1802553B1F7006EEDA5 /* SectionFooterView.swift in Sources */,

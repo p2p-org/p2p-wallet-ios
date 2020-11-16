@@ -33,8 +33,15 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
                 alignment: .top
             )
         }()
-        var footerViewClass: SectionFooterView.Type = EmptySectionFooterView.self
-        var footerLayout: NSCollectionLayoutBoundarySupplementaryItem?
+        var footerViewClass: SectionFooterView.Type = SectionFooterView.self
+        var footerLayout: NSCollectionLayoutBoundarySupplementaryItem? = {
+            let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
+            return NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: size,
+                elementKind: UICollectionView.elementKindSectionFooter,
+                alignment: .bottom
+            )
+        }()
         var interGroupSpacing: CGFloat?
         var orthogonalScrollingBehavior: UICollectionLayoutSectionOrthogonalScrollingBehavior?
     }
@@ -68,7 +75,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.reload()
+        viewModel.refresh()
     }
     
     // MARK: - Setup
@@ -141,41 +148,9 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
             return
         }
         
-        var layoutHasChanged = false
-        switch viewModel.state.value {
-        case .loading, .initializing:
-            if footer.stackView.isHidden == false {
-                layoutHasChanged = true
-                footer.stackView.isHidden = true
-            }
-        case .loaded:
-            if footer.stackView.isHidden == true {
-                layoutHasChanged = true
-                footer.stackView.isHidden = false
-            }
-            if footer.errorView.isHidden == false {
-                layoutHasChanged = true
-                footer.errorView.isHidden = true
-                footer.stackView.arrangedSubviews.filter {$0 != footer.errorView}.forEach {$0.isHidden = false}
-            }
-            
-        case .error(let error):
-            if footer.stackView.isHidden == true {
-                layoutHasChanged = true
-                footer.stackView.isHidden = false
-            }
-            if footer.errorView.isHidden == true {
-                layoutHasChanged = true
-                footer.errorView.isHidden = false
-                footer.stackView.arrangedSubviews.filter {$0 != footer.errorView}.forEach {$0.isHidden = true}
-            }
-            footer.errorView.setUpWithError(error)
-        }
-        if layoutHasChanged {
-            collectionView.collectionViewLayout.invalidateLayout()
-        } else {
-            footer.setNeedsDisplay()
-        }
+        footer.setUp(state: viewModel.state.value, isListEmpty: viewModel.isListEmpty)
+        collectionView.collectionViewLayout.invalidateLayout()
+        footer.setNeedsDisplay()
     }
     
     // MARK: - Layout
