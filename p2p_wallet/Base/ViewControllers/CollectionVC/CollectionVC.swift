@@ -51,6 +51,12 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         return collectionView
     }()
     
+    lazy var refreshControl: UIRefreshControl = {
+        let control = UIRefreshControl()
+        control.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        return control
+    }()
+    
     init(viewModel: ListViewModel<ItemType>) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -70,6 +76,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         super.setUp()
         view.addSubview(collectionView)
         collectionView.autoPinEdgesToSuperviewEdges()
+        collectionView.refreshControl = refreshControl
         
         registerCellAndSupplementaryViews()
         configureDataSource()
@@ -259,5 +266,11 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
             for: indexPath) as? SectionFooterView
         
         return view
+    }
+    
+    // MARK: - Actions
+    @objc func refresh(_ sender: Any) {
+        refreshControl.endRefreshing()
+        viewModel.reload()
     }
 }
