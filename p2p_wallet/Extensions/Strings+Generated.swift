@@ -90,12 +90,16 @@ internal enum L10n {
   internal static let sendNow = L10n.tr("Localizable", "Send Now")
   /// Slide to scan
   internal static let slideToScan = L10n.tr("Localizable", "Slide to scan")
+  /// Something went wrong!\nPlease try again later
+  internal static let somethingWentWrongPleaseTryAgainLater = L10n.tr("Localizable", "Something went wrong!\nPlease try again later")
   /// Swap
   internal static let swap = L10n.tr("Localizable", "Swap")
   /// tap refresh button to retry
   internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
   /// Terms and conditions
   internal static let termsAndConditions = L10n.tr("Localizable", "Terms and conditions")
+  /// Try again
+  internal static let tryAgain = L10n.tr("Localizable", "Try again")
   /// unsupported
   internal static let unsupported = L10n.tr("Localizable", "unsupported")
   /// Use FaceId

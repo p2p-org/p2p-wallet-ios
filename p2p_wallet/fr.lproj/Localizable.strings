@@ -65,3 +65,5 @@
 "amount" = "montant";
 "Wallet address" = "Adresse du portefeuille";
 "Send Now" = "Envoyer maintenant";
+"Something went wrong!\nPlease try again later" = "Une erreur s'est produite!\nVeuillez réessayer plus tard";
+"Try again" = "Réessayer";
