@@ -39,7 +39,7 @@ class FlexibleHeightPresentationController: DimmingPresentationController {
         
         frame.origin.y += frame.size.height - targetHeight
         frame.size.width = targetWidth
-        frame.size.height = targetHeight
+        frame.size.height = targetHeight + (containerView?.safeAreaInsets.bottom ?? 0)
         return frame
     }
     
