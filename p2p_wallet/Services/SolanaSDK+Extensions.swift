@@ -18,3 +18,9 @@ extension SolanaSDK {
     #endif
     static let shared = SolanaSDK(endpoint: endpoint, accountStorage: KeychainStorage.shared)
 }
+
+extension String: ListItemType {
+    static func placeholder(at index: Int) -> String {
+        "\(index)"
+    }
+}

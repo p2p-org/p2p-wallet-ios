@@ -11,14 +11,17 @@ import RxCocoa
 
 class ListViewModel<T: Hashable>: BaseVM<[T]> {
     // MARK: - Subjects
-    var items: BehaviorRelay<[T]> {data}
+    var items: [T] {
+        get {data}
+        set {data = newValue}
+    }
     
     // MARK: - Properties
     var limit = 10
     var offset = 0
     var isPaginationEnabled: Bool {true}
     var isLastPageLoaded = false
-    var isListEmpty: Bool {isLastPageLoaded && items.value.count == 0}
+    var isListEmpty: Bool {isLastPageLoaded && items.count == 0}
     
     var request: Single<[T]> { Single<[T]>.just([]).delay(.seconds(2), scheduler: MainScheduler.instance) // delay for simulating loading
     }
@@ -28,10 +31,14 @@ class ListViewModel<T: Hashable>: BaseVM<[T]> {
     }
     
     func reload() {
-        items.accept([])
+        data = []
         offset = 0
         isLastPageLoaded = false
         fetchNext()
+    }
+    
+    func refresh() {
+        reload()
     }
     
     func fetchNext() {
@@ -52,20 +59,20 @@ class ListViewModel<T: Hashable>: BaseVM<[T]> {
     }
     
     func handleNewData(_ newItems: [T]) {
-        items.accept(self.join(newItems))
+        data = self.join(newItems)
         
         // resign state
         if !isPaginationEnabled || newItems.count < limit {
             isLastPageLoaded = true
         }
         
-        state.accept(.loaded)
+        state.accept(.loaded(items))
         
         // get next offset
         offset += limit
     }
     
     func join(_ newItems: [T]) -> [T] {
-        items.value + newItems.filter {!items.value.contains($0)}
+        items + newItems.filter {!items.contains($0)}
     }
 }

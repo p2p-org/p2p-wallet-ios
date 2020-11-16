@@ -10,12 +10,16 @@ import IBPCollectionViewCompositionalLayout
 import DiffableDataSources
 import RxSwift
 
-protocol CollectionCell: BaseCollectionViewCell {
-    associatedtype T: Hashable
+protocol CollectionCell: BaseCollectionViewCell, LoadableView {
+    associatedtype T: ListItemType
     func setUp(with item: T)
 }
 
-class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
+protocol ListItemType: Hashable {
+    static func placeholder(at index: Int) -> Self
+}
+
+class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
     // MARK: - Nested type
     struct Section {
         var headerViewClass: SectionHeaderView.Type = SectionHeaderView.self
@@ -29,8 +33,15 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
                 alignment: .top
             )
         }()
-        var footerViewClass: SectionFooterView.Type = EmptySectionFooterView.self
-        var footerLayout: NSCollectionLayoutBoundarySupplementaryItem?
+        var footerViewClass: SectionFooterView.Type = SectionFooterView.self
+        var footerLayout: NSCollectionLayoutBoundarySupplementaryItem? = {
+            let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
+            return NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: size,
+                elementKind: UICollectionView.elementKindSectionFooter,
+                alignment: .bottom
+            )
+        }()
         var interGroupSpacing: CGFloat?
         var orthogonalScrollingBehavior: UICollectionLayoutSectionOrthogonalScrollingBehavior?
     }
@@ -47,6 +58,12 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
         return collectionView
     }()
     
+    lazy var refreshControl: UIRefreshControl = {
+        let control = UIRefreshControl()
+        control.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        return control
+    }()
+    
     init(viewModel: ListViewModel<ItemType>) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -58,7 +75,7 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.reload()
+        viewModel.refresh()
     }
     
     // MARK: - Setup
@@ -66,6 +83,7 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
         super.setUp()
         view.addSubview(collectionView)
         collectionView.autoPinEdgesToSuperviewEdges()
+        collectionView.refreshControl = refreshControl
         
         registerCellAndSupplementaryViews()
         configureDataSource()
@@ -112,13 +130,30 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
             return snapshot
         }
         snapshot.appendSections([section])
-        let items = viewModel.items.value
+        var items = [ItemType]()
+        switch viewModel.state.value {
+        case .loading:
+            items = [ItemType.placeholder(at: 0), ItemType.placeholder(at: 1)]
+        case .loaded:
+            items = viewModel.items
+        case .error, .initializing:
+            break
+        }
         snapshot.appendItems(items, toSection: section)
         return snapshot
     }
     
     func dataDidLoad() {
+        let numberOfSections = dataSource.numberOfSections(in: collectionView)
+        guard numberOfSections > 0,
+              let footer = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: IndexPath(row: 0, section: numberOfSections - 1)) as? SectionFooterView
+        else {
+            return
+        }
         
+        footer.setUp(state: viewModel.state.value, isListEmpty: viewModel.isListEmpty)
+        collectionView.collectionViewLayout.invalidateLayout()
+        footer.setNeedsDisplay()
     }
     
     // MARK: - Layout
@@ -206,7 +241,12 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
     
     func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: Cell.self), for: indexPath) as? Cell
-        cell?.setUp(with: item as! Cell.T)
+        if viewModel.state.value == .loading {
+            cell?.showLoading()
+        } else {
+            cell?.hideLoading()
+            cell?.setUp(with: item as! Cell.T)
+        }
         return cell ?? UICollectionViewCell()
     }
     
@@ -245,5 +285,11 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
             for: indexPath) as? SectionFooterView
         
         return view
+    }
+    
+    // MARK: - Actions
+    @objc func refresh(_ sender: Any) {
+        refreshControl.endRefreshing()
+        viewModel.refresh()
     }
 }

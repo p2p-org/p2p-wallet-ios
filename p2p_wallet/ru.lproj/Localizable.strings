@@ -65,3 +65,6 @@
 "amount" = "количество";
 "Wallet address" = "Адрес кошелька";
 "Send Now" = "Отправить сейчас";
+"Something went wrong!\nPlease try again later" = "Что-то пошло не так!\nПовторите попытку позже";
+"Try again" = "Попробуй еще раз";
+"There is nothing in here!" = "Здесь ничего нет!";

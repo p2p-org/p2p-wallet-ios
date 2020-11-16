@@ -10,7 +10,7 @@ import DiffableDataSources
 import Action
 import RxSwift
 
-class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
+class WalletVC: CollectionVC<Wallet, TokenCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
     // MARK: - Properties
@@ -81,10 +81,6 @@ class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
                 headerViewClass: WCVFirstSectionHeaderView.self,
                 headerTitle: L10n.wallets,
                 footerViewClass: WCVFooterView.self,
-                footerLayout: {
-                    let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
-                    return NSCollectionLayoutBoundarySupplementaryItem(layoutSize: size, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
-                }(),
                 interGroupSpacing: 16
             ),
             Section(headerTitle: L10n.savings, interGroupSpacing: 16)
