@@ -58,9 +58,16 @@ class TokenCell: BaseCollectionViewCell, CollectionCell {
         ])
     }
     
-    func setUp(with item: SolanaSDK.Token) {
+    func setUp(with item: Wallet) {
         coinLogoImageView.setImage(urlString: item.icon)
         coinNameLabel.text = item.name
         tokenCountLabel.text = "\(item.amount ?? 0) \(item.symbol)"
+        
+        if let price = item.price {
+            equityValueLabel.isHidden = false
+            equityValueLabel.text = "\(price) USD"
+        } else {
+            equityValueLabel.isHidden = true
+        }
     }
 }

@@ -10,7 +10,7 @@ import DiffableDataSources
 import Action
 import RxSwift
 
-class WalletVC: CollectionVC<SolanaSDK.Token, TokenCell> {
+class WalletVC: CollectionVC<Wallet, TokenCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
     // MARK: - Properties
