@@ -11,14 +11,12 @@ import SDWebImage
 extension UIImageView {
     func setImage(urlString: String?) {
         guard let urlString = urlString, let url = URL(string: urlString) else {
-            backgroundColor = .gray
+            image = UIColor.gray.image(frame.size)
             return
         }
         sd_setImage(with: url) { [weak self] (image, _, _, _) in
             if image == nil {
-                self?.backgroundColor = .gray
-            } else {
-                self?.backgroundColor = .clear
+                self?.image = UIColor.gray.image(self?.frame.size ?? .zero)
             }
         }
     }
