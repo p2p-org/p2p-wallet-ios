@@ -10,12 +10,16 @@ import IBPCollectionViewCompositionalLayout
 import DiffableDataSources
 import RxSwift
 
-protocol CollectionCell: BaseCollectionViewCell {
-    associatedtype T: Hashable
+protocol CollectionCell: BaseCollectionViewCell, LoadableView {
+    associatedtype T: ListItemType
     func setUp(with item: T)
 }
 
-class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
+protocol ListItemType: Hashable {
+    static func placeholder(at index: Int) -> Self
+}
+
+class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
     // MARK: - Nested type
     struct Section {
         var headerViewClass: SectionHeaderView.Type = SectionHeaderView.self
@@ -112,7 +116,12 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
             return snapshot
         }
         snapshot.appendSections([section])
-        let items = viewModel.items.value
+        var items = [ItemType]()
+        if viewModel.state.value == .loading {
+            items = [ItemType.placeholder(at: 0), ItemType.placeholder(at: 1)]
+        } else {
+            items = viewModel.items.value
+        }
         snapshot.appendItems(items, toSection: section)
         return snapshot
     }
@@ -206,7 +215,12 @@ class CollectionVC<ItemType: Hashable, Cell: CollectionCell>: BaseVC {
     
     func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: Cell.self), for: indexPath) as? Cell
-        cell?.setUp(with: item as! Cell.T)
+        if viewModel.state.value == .loading {
+            cell?.showLoading()
+        } else {
+            cell?.hideLoading()
+            cell?.setUp(with: item as! Cell.T)
+        }
         return cell ?? UICollectionViewCell()
     }
     
