@@ -312,6 +312,6 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
     // MARK: - Actions
     @objc func refresh(_ sender: Any) {
         refreshControl.endRefreshing()
-        viewModel.reload()
+        viewModel.refresh()
     }
 }
