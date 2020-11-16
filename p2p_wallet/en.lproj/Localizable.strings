@@ -65,3 +65,5 @@
 "amount" = "amount";
 "Wallet address" = "Wallet address";
 "Send Now" = "Send Now";
+"Something went wrong!\nPlease try again later" = "Something went wrong!\nPlease try again later";
+"Try again" = "Try again";

@@ -65,3 +65,5 @@
 "amount" = "số lượng";
 "Wallet address" = "Địa chỉ ví";
 "Send Now" = "Gửi ngay";
+"Something went wrong!\nPlease try again later" = "Đã xảy ra lỗi!\nVui lòng thử lại sau";
+"Try again" = "Thử lại";
