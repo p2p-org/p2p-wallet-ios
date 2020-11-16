@@ -9,7 +9,7 @@ import Foundation
 
 class SendTokenItemVC: BaseVC {
     lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
-    lazy var coinImageView = UIImageView(width: 44, height: 44, backgroundColor: .gray, cornerRadius: 22)
+    lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
     lazy var amountTextField = UITextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0.0", autocorrectionType: .no)
     lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .secondary)
     lazy var addressLabel = UILabel(textSize: 15, textColor: .black, numberOfLines: 0)
