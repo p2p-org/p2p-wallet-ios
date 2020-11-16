@@ -126,7 +126,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         var items = [ItemType]()
         if viewModel.state.value == .loading {
             items = [ItemType.placeholder(at: 0), ItemType.placeholder(at: 1)]
-        } else {
+        } else if viewModel.state.value == .loaded {
             items = viewModel.items.value
         }
         snapshot.appendItems(items, toSection: section)
@@ -134,7 +134,48 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
     }
     
     func dataDidLoad() {
+        let numberOfSections = dataSource.numberOfSections(in: collectionView)
+        guard numberOfSections > 0,
+              let footer = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: IndexPath(row: 0, section: numberOfSections - 1)) as? SectionFooterView
+        else {
+            return
+        }
         
+        var layoutHasChanged = false
+        switch viewModel.state.value {
+        case .loading, .initializing:
+            if footer.stackView.isHidden == false {
+                layoutHasChanged = true
+                footer.stackView.isHidden = true
+            }
+        case .loaded:
+            if footer.stackView.isHidden == true {
+                layoutHasChanged = true
+                footer.stackView.isHidden = false
+            }
+            if footer.errorView.isHidden == false {
+                layoutHasChanged = true
+                footer.errorView.isHidden = true
+                footer.stackView.arrangedSubviews.filter {$0 != footer.errorView}.forEach {$0.isHidden = false}
+            }
+            
+        case .error(let error):
+            if footer.stackView.isHidden == true {
+                layoutHasChanged = true
+                footer.stackView.isHidden = false
+            }
+            if footer.errorView.isHidden == true {
+                layoutHasChanged = true
+                footer.errorView.isHidden = false
+                footer.stackView.arrangedSubviews.filter {$0 != footer.errorView}.forEach {$0.isHidden = true}
+            }
+            footer.errorView.setUpWithError(error)
+        }
+        if layoutHasChanged {
+            collectionView.collectionViewLayout.invalidateLayout()
+        } else {
+            footer.setNeedsDisplay()
+        }
     }
     
     // MARK: - Layout
