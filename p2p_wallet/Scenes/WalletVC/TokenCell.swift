@@ -65,9 +65,12 @@ class TokenCell: BaseCollectionViewCell, CollectionCell {
         
         if let price = item.price {
             equityValueLabel.isHidden = false
-            equityValueLabel.text = "\(price) USD"
+            coinPriceLabel.isHidden = false
+            equityValueLabel.text = "\((price*Double(item.amount ?? 0)).currencyValueFormatted) USD"
+            coinPriceLabel.text = "\(price.currencyValueFormatted) US$"
         } else {
             equityValueLabel.isHidden = true
+            coinPriceLabel.isHidden = true
         }
     }
 }

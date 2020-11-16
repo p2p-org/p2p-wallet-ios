@@ -17,6 +17,7 @@ class WalletVM: ListViewModel<Wallet> {
         super.init()
         PricesManager.bonfida.prices
             .subscribe(onNext: {prices in
+                if self.items.count == 0 {return}
                 var wallets = self.items
                 for i in 0..<wallets.count {
                     if let price = prices.first(where: {$0.from == wallets[i].symbol}) {
