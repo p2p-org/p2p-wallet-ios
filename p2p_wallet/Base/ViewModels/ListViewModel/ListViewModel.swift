@@ -34,6 +34,10 @@ class ListViewModel<T: Hashable>: BaseVM<[T]> {
         fetchNext()
     }
     
+    func refresh() {
+        reload()
+    }
+    
     func fetchNext() {
         // prevent dupplicate
         if state.value == .loading || isLastPageLoaded {return}

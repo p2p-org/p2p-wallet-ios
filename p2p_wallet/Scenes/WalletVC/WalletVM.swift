@@ -12,7 +12,7 @@ class WalletVM: ListViewModel<SolanaSDK.Token> {
     let balanceVM = BalancesVM.ofCurrentUser
     static var ofCurrentUser = WalletVM()
     
-    override func reload() {
+    override func refresh() {
         super.reload()
         balanceVM.reload()
     }
