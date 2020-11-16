@@ -6,7 +6,7 @@ PODS:
   - ASKSecp256k1 (0.0.6)
   - BEPureLayout (0.1.9):
     - PureLayout
-  - CryptoSwift (1.3.4)
+  - CryptoSwift (1.3.5)
   - DiffableDataSources (0.4.0):
     - DifferenceKit/AppKitExtension (~> 1.1)
     - DifferenceKit/UIKitExtension (~> 1.1)
@@ -180,7 +180,7 @@ CHECKOUT OPTIONS:
     :commit: db8f2c8b936b6fba136edd4c20884c68fd9f2182
     :git: https://github.com/bigearsenal/BEPureLayout.git
   SolanaSwift:
-    :commit: 2c1298588fdc57911029b38ce2fc1886a39fc4ac
+    :commit: aa7b98533bdb759d2908154b53d39752ef7e0bd8
     :git: https://github.com/p2p-org/solana-swift.git
 
 SPEC CHECKSUMS:
@@ -188,7 +188,7 @@ SPEC CHECKSUMS:
   Alamofire: 3b6a534a3df22db367e4dedeeca73d1ddfcf0e2f
   ASKSecp256k1: 58eb44dfa57f9d29ac0b02fe5de5a312064517f2
   BEPureLayout: f7359ceb98902514e00b4b15c8dbcfaf08a52d43
-  CryptoSwift: 9ee2fbfa819b4217b9b697afba1c29c6ba41b5c3
+  CryptoSwift: 82a5798c280a72ec105e2392d607a456e8ae63b6
   DiffableDataSources: 80396cec405c9b29e1e07b55c9be7d11b46c8741
   DifferenceKit: 516f12e336ed65a3a0665847b5c3cb5cad4bd4ea
   Firebase: 78e8dd2e39d653de6270432ad84fe8b59f7bf4e8

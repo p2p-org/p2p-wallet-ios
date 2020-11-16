@@ -12,7 +12,7 @@ class BalancesVM: BaseVM<UInt64> {
     static var ofCurrentUser = BalancesVM()
     
     let accountPublicKey: String?
-    var balance: UInt64 {data.value}
+    var balance: UInt64 {data}
     
     init(accountPublicKey: String? = nil) {
         self.accountPublicKey = accountPublicKey ?? SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString
@@ -28,8 +28,8 @@ class BalancesVM: BaseVM<UInt64> {
         state.accept(.loading)
         SolanaSDK.shared.getBalance(account: publicKey)
             .subscribe { (balance) in
-                self.data.accept(balance)
-                self.state.accept(.loaded)
+                self.data = balance
+                self.state.accept(.loaded(self.data))
             } onError: { (error) in
                 self.state.accept(.error(error))
             }

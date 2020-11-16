@@ -9,13 +9,15 @@ import Foundation
 
 class TokenCell: BaseCollectionViewCell, CollectionCell {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
-    lazy var coinLogoImageView = UIImageView(width: 32, height: 32, backgroundColor: .gray, cornerRadius: 32 / 2)
+    lazy var coinLogoImageView = UIImageView(width: 32, height: 32, cornerRadius: 32 / 2)
     lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold)
     lazy var equityValueLabel = UILabel(text: "44,33 USD", textSize: 13)
     lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: .secondary)
     lazy var graphView = UIImageView(width: 49, height: 15, image: .graphDemo)
     lazy var coinPriceLabel = UILabel(text: "12 800,99 US$", textSize: 13)
     lazy var coinChangeLabel = UILabel(text: "0.35% 24 hrs", textSize: 13, textColor: .secondary)
+    
+    var loadingViews: [UIView] {[coinLogoImageView, coinNameLabel, equityValueLabel, tokenCountLabel, graphView, coinPriceLabel, coinChangeLabel]}
     
     override func commonInit() {
         super.commonInit()
@@ -56,9 +58,19 @@ class TokenCell: BaseCollectionViewCell, CollectionCell {
         ])
     }
     
-    func setUp(with item: SolanaSDK.Token) {
+    func setUp(with item: Wallet) {
         coinLogoImageView.setImage(urlString: item.icon)
         coinNameLabel.text = item.name
         tokenCountLabel.text = "\(item.amount ?? 0) \(item.symbol)"
+        
+        if let price = item.price {
+            equityValueLabel.isHidden = false
+            coinPriceLabel.isHidden = false
+            equityValueLabel.text = "\((price*Double(item.amount ?? 0)).currencyValueFormatted) USD"
+            coinPriceLabel.text = "\(price.currencyValueFormatted) US$"
+        } else {
+            equityValueLabel.isHidden = true
+            coinPriceLabel.isHidden = true
+        }
     }
 }

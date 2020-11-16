@@ -8,14 +8,14 @@
 import Foundation
 import DiffableDataSources
 
-class CoinDetailVC: CollectionVC<SolanaSDK.Token, TokenCell> {
+class CoinDetailVC: CollectionVC<Wallet, TokenCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
         .normal()
     }
     
     // MARK: - Initializer
     init() {
-        super.init(viewModel: ListViewModel<SolanaSDK.Token>())
+        super.init(viewModel: ListViewModel<Wallet>())
     }
     
     required init?(coder: NSCoder) {

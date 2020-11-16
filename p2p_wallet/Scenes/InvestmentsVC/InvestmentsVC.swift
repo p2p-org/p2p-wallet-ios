@@ -11,7 +11,11 @@ import DiffableDataSources
 class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
-    enum ItemType: Hashable, Equatable {
+    enum ItemType: ListItemType, Equatable {
+        static func placeholder(at index: Int) -> InvestmentsVC.ItemType {
+            ItemType.defi("Defi#\(index)")
+        }
+        
         case news(News)
         case defi(String)
     }

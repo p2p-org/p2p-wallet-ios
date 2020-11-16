@@ -11,11 +11,11 @@ import RxCocoa
 
 class BaseVM<T: Hashable> {
     let disposeBag = DisposeBag()
-    let data: BehaviorRelay<T>
-    let state = BehaviorRelay<FetcherState>(value: .initializing)
+    var data: T
+    let state = BehaviorRelay<FetcherState<T>>(value: .initializing)
     
     init(initialData: T) {
-        data = BehaviorRelay<T>(value: initialData)
+        data = initialData
     }
     
     @discardableResult
@@ -25,6 +25,6 @@ class BaseVM<T: Hashable> {
     }
     
     var dataDidChange: Observable<Void> {
-        state.map {_ in ()}
+        state.distinctUntilChanged().map {_ in ()}
     }
 }

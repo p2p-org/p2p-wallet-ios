@@ -11,9 +11,7 @@ class WCVFooterView: SectionFooterView {
     lazy var addCoinButton = DashedButton(title: "+ \(L10n.addCoin)")
     
     override func commonInit() {
-        addSubview(addCoinButton)
-        addCoinButton.autoPinEdge(toSuperviewEdge: .top, withInset: 20)
-        addCoinButton.autoPinEdge(toSuperviewEdge: .bottom, withInset: 20)
-        addCoinButton.autoAlignAxis(toSuperviewAxis: .vertical)
+        super.commonInit()
+        stackView.addArrangedSubview(addCoinButton.padding(UIEdgeInsets(x: 0, y: 16)))
     }
 }
