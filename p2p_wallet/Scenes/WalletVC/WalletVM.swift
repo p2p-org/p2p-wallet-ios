@@ -22,6 +22,6 @@ class WalletVM: ListViewModel<SolanaSDK.Token> {
     }
     
     override var dataDidChange: Observable<Void> {
-        Observable<FetcherState>.merge(balanceVM.state.asObservable(), state.asObservable()).map {_ in ()}
+        Observable<Void>.merge(balanceVM.state.map {_ in ()}, state.map {_ in ()})
     }
 }

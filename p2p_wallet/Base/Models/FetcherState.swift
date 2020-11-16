@@ -6,13 +6,15 @@
 //
 
 import Foundation
-enum FetcherState: Equatable {
+enum FetcherState<T: Hashable>: Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
-        case (.initializing, .initializing), (.loading, .loading), (.loaded, .loaded):
+        case (.initializing, .initializing), (.loading, .loading):
             return true
         case (.error(let error1), .error(let error2)):
             return error1.localizedDescription == error2.localizedDescription
+        case (.loaded(let data1), .loaded(let data2)):
+            return data1 == data2
         default:
             return false
         }
@@ -20,7 +22,7 @@ enum FetcherState: Equatable {
     
     case initializing
     case loading
-    case loaded
+    case loaded(T)
     case error(Error)
     
     var lastError: Error? {
