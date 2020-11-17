@@ -9,7 +9,6 @@ import Foundation
 import RxSwift
 
 class WalletVM: ListViewModel<Wallet> {
-    let solBalanceVM = SolBalanceVM.ofCurrentUser
     static var ofCurrentUser = WalletVM()
     var prices: [Price] { PricesManager.bonfida.prices.value }
     
@@ -30,26 +29,35 @@ class WalletVM: ListViewModel<Wallet> {
             .disposed(by: disposeBag)
     }
     
-    override func refresh() {
-        super.reload()
-        solBalanceVM.reload()
-    }
-    
     override var request: Single<[Wallet]> {
-        SolanaSDK.shared.getProgramAccounts(in: SolanaSDK.network)
-            .map {$0.map {Wallet(programAccount: $0)}}
-            .map {wallets in
-                var wallets = wallets
-                for i in 0..<wallets.count {
-                    if let price = self.prices.first(where: {$0.from == wallets[i].symbol}) {
-                        wallets[i].price = price
+        guard let account = SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString else {
+            return .error(SolanaSDK.Error.publicKeyNotFound)
+        }
+        return SolanaSDK.shared.getBalance(account: account)
+            .flatMap {balance in
+                SolanaSDK.shared.getProgramAccounts(in: SolanaSDK.network)
+                    .map {$0.map {Wallet(programAccount: $0)}}
+                    .map {wallets in
+                        var wallets = wallets
+                        for i in 0..<wallets.count {
+                            if let price = self.prices.first(where: {$0.from == wallets[i].symbol}) {
+                                wallets[i].price = price
+                            }
+                        }
+                        
+                        let solWallet = Wallet(
+                            name: "Solana",
+                            mintAddress: "",
+                            symbol: "SOL",
+                            icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png",
+                            amount: balance,
+                            price: Price(from: "SOL", to: "USDT", value: Double(balance) * 0.000000001, change24h: nil)
+                        )
+                        wallets.insert(solWallet, at: 0)
+                        return wallets
                     }
-                }
-                return wallets
             }
-    }
-    
-    override var dataDidChange: Observable<Void> {
-        Observable<Void>.merge(solBalanceVM.state.map {_ in ()}, state.map {_ in ()})
+        
+        
     }
 }
