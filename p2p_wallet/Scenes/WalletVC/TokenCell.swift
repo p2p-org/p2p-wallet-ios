@@ -56,21 +56,27 @@ class TokenCell: BaseCollectionViewCell, CollectionCell {
             .spacer,
             priceInfoView
         ])
+        
+        // TODO: - update graph
+        graphView.isHidden = true
     }
     
     func setUp(with item: Wallet) {
         coinLogoImageView.setImage(urlString: item.icon)
         coinNameLabel.text = item.name
-        tokenCountLabel.text = "\((item.amount ?? 0).currencyValueFormatted(maximumFractionDigits: 9)) SOL"
+        tokenCountLabel.text = "\(item.amount.currencyValueFormatted(maximumFractionDigits: 9)) SOL"
         
         if let price = item.price {
             equityValueLabel.isHidden = false
             coinPriceLabel.isHidden = false
-            equityValueLabel.text = "\(((PricesManager.bonfida.solPrice?.value ?? 0)*Double(item.amount ?? 0)).currencyValueFormatted(maximumFractionDigits: 9)) US$"
-            coinPriceLabel.text = "\((price.value ?? 0).currencyValueFormatted()) US$"
+            coinChangeLabel.isHidden = false
+            equityValueLabel.text = "\((PricesManager.bonfida.solPrice?.value * item.amount).currencyValueFormatted(maximumFractionDigits: 9)) US$"
+            coinPriceLabel.text = "\(price.value.currencyValueFormatted()) US$"
+            coinChangeLabel.text = "\((price.change24h?.percentage * 100).currencyValueFormatted(maximumFractionDigits: 2))% 24 hrs"
         } else {
             equityValueLabel.isHidden = true
             coinPriceLabel.isHidden = true
+            coinChangeLabel.isHidden = true
         }
     }
 }
