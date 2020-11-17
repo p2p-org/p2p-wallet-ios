@@ -32,15 +32,15 @@ struct BonfidaPricesFetcher: PricesFetcher {
     func fetchAll() {
         for pair in pairs {
             fetch(pair: pair)
-                .subscribe(onSuccess: { value in
-                    self.updatePair(pair, value: value)
+                .subscribe(onSuccess: { newPrice in
+                    self.updatePair(pair, newPrice: newPrice)
                 })
                 .disposed(by: disposeBag)
         }
     }
     
-    func fetch(pair: Pair) -> Single<Double> {
-        request(.get, "https://serum-api.bonfida.com/candles/\(pair.from)\(pair.to)?limit=1&resolution=60")
+    func fetch(pair: Pair) -> Single<Price> {
+        request(.get, "https://serum-api.bonfida.com/candles/\(pair.from)\(pair.to)?limit=1&resolution=86400")
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .responseData()
@@ -48,7 +48,11 @@ struct BonfidaPricesFetcher: PricesFetcher {
             .asSingle()
             .map {try JSONDecoder().decode(Response.self, from: $0.1)}
             .map {
-                $0.data?.first?.close ?? 0
+                let open: Double = $0.data?.first?.open ?? 0
+                let close: Double = $0.data?.first?.close ?? 0
+                let change24h = close - open
+                let change24hInPercentages = change24h / (open == 0 ? 1: open)
+                return Price(from: pair.from, to: pair.to, value: close, change24h: Price.Change24h(value: change24h, percentage: change24hInPercentages))
             }
             .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
             .observeOn(MainScheduler.instance)

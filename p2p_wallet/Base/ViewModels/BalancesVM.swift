@@ -8,15 +8,32 @@
 import Foundation
 import RxSwift
 
-class BalancesVM: BaseVM<UInt64> {
-    static var ofCurrentUser = BalancesVM()
+class SolBalanceVM: BaseVM<Price> {
+    static var ofCurrentUser = SolBalanceVM()
     
     let accountPublicKey: String?
-    var balance: UInt64 {data}
+    var balance: Price {data}
     
     init(accountPublicKey: String? = nil) {
         self.accountPublicKey = accountPublicKey ?? SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString
-        super.init(initialData: 0)
+        super.init(initialData: Price(from: "SOL", to: "USDT", value: 0, change24h: nil))
+    }
+    
+    override func bind() {
+        super.bind()
+        PricesManager.bonfida.prices
+            .filter {$0.contains(where: {$0.from == "SOL"})}
+            .map {$0.first(where: {$0.from == "SOL"})!}
+            .subscribe(onNext: {solPrice in
+                switch self.state.value {
+                case .loaded:
+                    self.data = solPrice
+                    self.state.accept(.loaded(solPrice))
+                default:
+                    break
+                }
+            })
+            .disposed(by: disposeBag)
     }
 
     @discardableResult
@@ -28,7 +45,8 @@ class BalancesVM: BaseVM<UInt64> {
         state.accept(.loading)
         SolanaSDK.shared.getBalance(account: publicKey)
             .subscribe { (balance) in
-                self.data = balance
+                var data = self.data
+                data.value = Double(balance) * 0.000000001
                 self.state.accept(.loaded(self.data))
             } onError: { (error) in
                 self.state.accept(.error(error))

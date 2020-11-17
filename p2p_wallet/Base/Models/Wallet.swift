@@ -14,7 +14,7 @@ struct Wallet: ListItemType {
     let symbol: String
     let icon: String?
     var amount: UInt64?
-    var price: Double?
+    var price: Price?
     
     static func placeholder(at index: Int) -> Wallet {
         Wallet(name: "placeholder", mintAddress: "placeholder-mintaddress", symbol: "PLHD\(index)", icon: nil, amount: nil)

@@ -52,8 +52,8 @@ class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
         priceChangeLabel.text = ""
     }
     
-    func setUp(balanceVM: BalancesVM) {
-        switch balanceVM.state.value {
+    func setUp(solBalanceVM: SolBalanceVM) {
+        switch solBalanceVM.state.value {
         case .initializing:
             priceLabel.text = ""
             hideLoading()
@@ -61,7 +61,7 @@ class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
             priceLabel.text = "Loading..."
             showLoading()
         case .loaded:
-            priceLabel.text = "\(balanceVM.balance) SOL"
+            priceLabel.text = "\((solBalanceVM.balance.value ?? 0).currencyValueFormatted) SOL"
             hideLoading()
         case .error(let error):
             priceLabel.text = "\(error.localizedDescription)"
