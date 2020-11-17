@@ -7,6 +7,20 @@
 
 import Foundation
 
+extension Optional where Wrapped == Double {
+    public func currencyValueFormatted(maximumFractionDigits: Int = 3) -> String {
+        orZero.currencyValueFormatted(maximumFractionDigits: maximumFractionDigits)
+    }
+    
+    public var orZero: Double {
+        self ?? 0
+    }
+    
+    static func * (left: Double?, right: Double?) -> Double {
+        left.orZero * right.orZero
+    }
+}
+
 extension Double {
     public var readableString: String {
         let formatter = NumberFormatter()
