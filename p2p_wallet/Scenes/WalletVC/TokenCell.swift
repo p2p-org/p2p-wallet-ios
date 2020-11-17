@@ -56,9 +56,6 @@ class TokenCell: BaseCollectionViewCell, CollectionCell {
             .spacer,
             priceInfoView
         ])
-        
-        // TODO: - update graph
-        graphView.isHidden = true
     }
     
     func setUp(with item: Wallet) {

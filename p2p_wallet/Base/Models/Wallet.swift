@@ -11,13 +11,14 @@ import Foundation
 struct Wallet: ListItemType {
     let name: String
     let mintAddress: String
+    let owner: String?
     let symbol: String
     let icon: String?
     var amount: Double? // In SOL
     var price: Price?
     
     static func placeholder(at index: Int) -> Wallet {
-        Wallet(name: "placeholder", mintAddress: "placeholder-mintaddress", symbol: "PLHD\(index)", icon: nil, amount: nil)
+        Wallet(name: "placeholder", mintAddress: "placeholder-mintaddress", owner: "", symbol: "PLHD\(index)", icon: nil, amount: nil)
     }
 }
 
@@ -28,5 +29,6 @@ extension Wallet {
         self.symbol = programAccount.symbol
         self.icon = programAccount.icon
         self.amount = Double(programAccount.amount ?? 0) * 0.000000001
+        self.owner = programAccount.owner
     }
 }

@@ -48,6 +48,7 @@ class WalletVM: ListViewModel<Wallet> {
                         let solWallet = Wallet(
                             name: "Solana",
                             mintAddress: "",
+                            owner: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString,
                             symbol: "SOL",
                             icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png",
                             amount: Double(balance) * 0.000000001,
