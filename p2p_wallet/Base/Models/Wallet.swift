@@ -13,7 +13,7 @@ struct Wallet: ListItemType {
     let mintAddress: String
     let symbol: String
     let icon: String?
-    var amount: UInt64?
+    var amount: Double? // In SOL
     var price: Price?
     
     static func placeholder(at index: Int) -> Wallet {
@@ -27,6 +27,6 @@ extension Wallet {
         self.mintAddress = programAccount.mintAddress
         self.symbol = programAccount.symbol
         self.icon = programAccount.icon
-        self.amount = programAccount.amount
+        self.amount = Double(programAccount.amount ?? 0) * 0.000000001
     }
 }
