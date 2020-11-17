@@ -9,19 +9,18 @@ import Foundation
 import RxSwift
 
 class WalletVM: ListViewModel<Wallet> {
-    let balanceVM = BalancesVM.ofCurrentUser
     static var ofCurrentUser = WalletVM()
     var prices: [Price] { PricesManager.bonfida.prices.value }
     
-    override init() {
-        super.init()
+    override func bind() {
+        super.bind()
         PricesManager.bonfida.prices
             .subscribe(onNext: {prices in
                 if self.items.count == 0 {return}
                 var wallets = self.items
                 for i in 0..<wallets.count {
                     if let price = prices.first(where: {$0.from == wallets[i].symbol}) {
-                        wallets[i].price = price.value
+                        wallets[i].price = price
                     }
                 }
                 self.items = wallets
@@ -30,29 +29,34 @@ class WalletVM: ListViewModel<Wallet> {
             .disposed(by: disposeBag)
     }
     
-    override func refresh() {
-        super.reload()
-        balanceVM.reload()
-    }
-    
     override var request: Single<[Wallet]> {
-        SolanaSDK.shared.getProgramAccounts(in: SolanaSDK.network)
-            .map {$0.map {Wallet(programAccount: $0)}}
-            .map {wallets in
-                var wallets = wallets
-                for i in 0..<wallets.count {
-                    if let price = self.prices.first(where: {$0.from == wallets[i].symbol}) {
-                        wallets[i].price = price.value
+        guard let account = SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString else {
+            return .error(SolanaSDK.Error.publicKeyNotFound)
+        }
+        return SolanaSDK.shared.getBalance(account: account)
+            .flatMap {balance in
+                SolanaSDK.shared.getProgramAccounts(in: SolanaSDK.network)
+                    .map {$0.map {Wallet(programAccount: $0)}}
+                    .map {wallets in
+                        var wallets = wallets
+                        for i in 0..<wallets.count {
+                            if let price = self.prices.first(where: {$0.from == wallets[i].symbol}) {
+                                wallets[i].price = price
+                            }
+                        }
+                        
+                        let solWallet = Wallet(
+                            name: "Solana",
+                            mintAddress: "",
+                            owner: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString,
+                            symbol: "SOL",
+                            icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png",
+                            amount: Double(balance) * 0.000000001,
+                            price: self.prices.first(where: {$0.from == "SOL"})
+                        )
+                        wallets.insert(solWallet, at: 0)
+                        return wallets
                     }
-                }
-                return wallets
             }
-            .do(onSuccess: {_ in
-                PricesManager.bonfida.fetcher.fetchAll()
-            })
-    }
-    
-    override var dataDidChange: Observable<Void> {
-        Observable<Void>.merge(balanceVM.state.map {_ in ()}, state.map {_ in ()})
     }
 }

@@ -73,6 +73,9 @@ class ListViewModel<T: Hashable>: BaseVM<[T]> {
     }
     
     func join(_ newItems: [T]) -> [T] {
-        items + newItems.filter {!items.contains($0)}
+        if !isPaginationEnabled {
+            return newItems
+        }
+        return items + newItems.filter {!items.contains($0)}
     }
 }

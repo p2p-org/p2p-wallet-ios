@@ -177,10 +177,10 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   BEPureLayout:
-    :commit: db8f2c8b936b6fba136edd4c20884c68fd9f2182
+    :commit: bbd32dc5322924f8ebda81ab4f83bff1a556413d
     :git: https://github.com/bigearsenal/BEPureLayout.git
   SolanaSwift:
-    :commit: aa7b98533bdb759d2908154b53d39752ef7e0bd8
+    :commit: bab840869e129ac89cd7b78dfc44577e9f239464
     :git: https://github.com/p2p-org/solana-swift.git
 
 SPEC CHECKSUMS:

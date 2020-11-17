@@ -71,7 +71,7 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
         let viewModel = self.viewModel as! WalletVM
         
         // fix header
-        headerView?.setUp(balanceVM: viewModel.balanceVM)
+        headerView?.setUp(state: viewModel.state.value)
     }
     
     // MARK: - Layout
@@ -159,6 +159,6 @@ extension WalletVC: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        show(CoinDetailVC(), sender: nil)
+//        show(CoinDetailVC(), sender: nil)
     }
 }
