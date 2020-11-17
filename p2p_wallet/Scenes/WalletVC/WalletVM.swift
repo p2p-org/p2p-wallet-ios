@@ -47,9 +47,6 @@ class WalletVM: ListViewModel<Wallet> {
                 }
                 return wallets
             }
-            .do(onSuccess: {_ in
-                PricesManager.bonfida.fetcher.fetchAll()
-            })
     }
     
     override var dataDidChange: Observable<Void> {
