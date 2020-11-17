@@ -17,6 +17,8 @@ class SendTokenItemVC: BaseVC {
     
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
+    var wallet: Wallet?
+    
     override func setUp() {
         super.setUp()
         view.backgroundColor = .clear
@@ -75,8 +77,20 @@ class SendTokenItemVC: BaseVC {
     }
     
     func setUp(wallet: Wallet) {
+        self.wallet = wallet
         tokenNameLabel.text = wallet.name
         coinImageView.setImage(urlString: wallet.icon)
         addressLabel.text = wallet.mintAddress
+    }
+    
+    override func bind() {
+        super.bind()
+        amountTextField.rx.text.orEmpty
+            .map {Double($0) ?? 0}
+            .map {$0 * self.wallet?.price?.value}
+            .map {"= " + $0.currencyValueFormatted(maximumFractionDigits: 9) + " US$"}
+            .asDriver(onErrorJustReturn: "")
+            .drive(equityValueLabel.rx.text)
+            .disposed(by: disposeBag)
     }
 }

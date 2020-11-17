@@ -159,6 +159,6 @@ extension WalletVC: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        show(CoinDetailVC(), sender: nil)
+//        show(CoinDetailVC(), sender: nil)
     }
 }
