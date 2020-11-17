@@ -9,19 +9,19 @@ import Foundation
 import RxSwift
 
 class WalletVM: ListViewModel<Wallet> {
-    let balanceVM = BalancesVM.ofCurrentUser
+    let solBalanceVM = SolBalanceVM.ofCurrentUser
     static var ofCurrentUser = WalletVM()
     var prices: [Price] { PricesManager.bonfida.prices.value }
     
-    override init() {
-        super.init()
+    override func bind() {
+        super.bind()
         PricesManager.bonfida.prices
             .subscribe(onNext: {prices in
                 if self.items.count == 0 {return}
                 var wallets = self.items
                 for i in 0..<wallets.count {
                     if let price = prices.first(where: {$0.from == wallets[i].symbol}) {
-                        wallets[i].price = price.value
+                        wallets[i].price = price
                     }
                 }
                 self.items = wallets
@@ -32,7 +32,7 @@ class WalletVM: ListViewModel<Wallet> {
     
     override func refresh() {
         super.reload()
-        balanceVM.reload()
+        solBalanceVM.reload()
     }
     
     override var request: Single<[Wallet]> {
@@ -42,7 +42,7 @@ class WalletVM: ListViewModel<Wallet> {
                 var wallets = wallets
                 for i in 0..<wallets.count {
                     if let price = self.prices.first(where: {$0.from == wallets[i].symbol}) {
-                        wallets[i].price = price.value
+                        wallets[i].price = price
                     }
                 }
                 return wallets
@@ -50,6 +50,6 @@ class WalletVM: ListViewModel<Wallet> {
     }
     
     override var dataDidChange: Observable<Void> {
-        Observable<Void>.merge(balanceVM.state.map {_ in ()}, state.map {_ in ()})
+        Observable<Void>.merge(solBalanceVM.state.map {_ in ()}, state.map {_ in ()})
     }
 }

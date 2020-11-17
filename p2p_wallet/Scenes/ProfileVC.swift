@@ -19,8 +19,8 @@ class ProfileVC: BaseVC {
     
     @objc func buttonLogoutButton() {
         KeychainStorage.shared.clear()
-        BalancesVM.ofCurrentUser.data = 0
-        BalancesVM.ofCurrentUser.state.accept(.loading)
+        SolBalanceVM.ofCurrentUser.data = Price(from: "SOL", to: "USDT", value: 0, change24h: nil)
+        SolBalanceVM.ofCurrentUser.state.accept(.initializing)
         AppDelegate.shared.reloadRootVC()
     }
 }

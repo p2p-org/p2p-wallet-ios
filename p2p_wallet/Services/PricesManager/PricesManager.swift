@@ -34,7 +34,9 @@ class PricesManager {
     }
     
     func getPairs() -> [PricesFetcher.Pair] {
-        SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.network)?.map {$0.symbol}.map {(from: $0, to: "USDT")}.filter {$0.from != "USDT" && $0.from != "USDC" && $0.from != "WUSDC"} ?? []
+        var pairs = SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.network)?.map {$0.symbol}.map {(from: $0, to: "USDT")}.filter {$0.from != "USDT" && $0.from != "USDC" && $0.from != "WUSDC"} ?? [PricesFetcher.Pair]()
+        pairs.append((from: "SOL", to: "USDT"))
+        return pairs
     }
     
     @objc func refresh() {

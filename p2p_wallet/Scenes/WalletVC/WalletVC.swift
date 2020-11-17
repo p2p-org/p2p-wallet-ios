@@ -71,7 +71,7 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
         let viewModel = self.viewModel as! WalletVM
         
         // fix header
-        headerView?.setUp(balanceVM: viewModel.balanceVM)
+        headerView?.setUp(solBalanceVM: viewModel.solBalanceVM)
     }
     
     // MARK: - Layout
