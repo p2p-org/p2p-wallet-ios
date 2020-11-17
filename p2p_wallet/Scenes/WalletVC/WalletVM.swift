@@ -50,14 +50,12 @@ class WalletVM: ListViewModel<Wallet> {
                             mintAddress: "",
                             symbol: "SOL",
                             icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png",
-                            amount: balance,
-                            price: Price(from: "SOL", to: "USDT", value: Double(balance) * 0.000000001, change24h: nil)
+                            amount: Double(balance) * 0.000000001,
+                            price: self.prices.first(where: {$0.from == "SOL"})
                         )
                         wallets.insert(solWallet, at: 0)
                         return wallets
                     }
             }
-        
-        
     }
 }

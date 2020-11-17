@@ -14,6 +14,8 @@ class PricesManager {
     var prices: BehaviorRelay<[Price]> {fetcher.prices}
     var refreshInterval: TimeInterval // Refresh
     
+    var solPrice: Price? {prices.value.first(where: {$0.from == "SOL"})}
+    
     private var timer: Timer?
     
     init(fetcher: PricesFetcher, refreshAfter seconds: TimeInterval = 30) {

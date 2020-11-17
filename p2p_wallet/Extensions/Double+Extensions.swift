@@ -16,7 +16,7 @@ extension Double {
         return formatter.string(from: self as NSNumber) ?? "0"
     }
     
-    public var currencyValueFormatted: String {
+    public func currencyValueFormatted(maximumFractionDigits: Int = 3) -> String {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
@@ -26,7 +26,7 @@ extension Double {
         if self > 1000 {
             formatter.maximumFractionDigits = 2
         } else if self < 100 {
-            formatter.maximumFractionDigits = 3
+            formatter.maximumFractionDigits = maximumFractionDigits
         } else {
             formatter.maximumFractionDigits = 2
         }
