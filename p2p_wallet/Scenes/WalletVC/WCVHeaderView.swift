@@ -64,7 +64,7 @@ class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
                 result + (wallet.amount ?? 0) * (PricesManager.bonfida.solPrice?.value ?? 0)
             }
             priceLabel.text = "\(equityValue.currencyValueFormatted(maximumFractionDigits: 9)) US$"
-            priceChangeLabel.text = "\((PricesManager.bonfida.solPrice?.change24h?.value ?? 0).currencyValueFormatted()) US$ (\(((PricesManager.bonfida.solPrice?.change24h?.percentage ?? 0) * 100).currencyValueFormatted(maximumFractionDigits: 2)) %) 24 hrs"
+            priceChangeLabel.text = "\(PricesManager.bonfida.solPrice?.change24h?.value.currencyValueFormatted() ?? "") US$ (\((PricesManager.bonfida.solPrice?.change24h?.percentage * 100).currencyValueFormatted(maximumFractionDigits: 2)) %) 24 hrs"
             hideLoading()
         case .error(let error):
             debugPrint(error)
