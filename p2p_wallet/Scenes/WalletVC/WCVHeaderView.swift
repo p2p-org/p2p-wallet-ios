@@ -47,25 +47,28 @@ class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
         stackView.setCustomSpacing(5, after: priceLabel)
         stackView.setCustomSpacing(30, after: priceChangeLabel)
         stackView.setCustomSpacing(30, after: buttonsView)
-        
-        // FIXME: - Remove later
-        priceChangeLabel.text = ""
     }
     
     func setUp(state: FetcherState<[Wallet]>) {
         switch state {
         case .initializing:
             priceLabel.text = ""
+            priceChangeLabel.text = ""
             hideLoading()
         case .loading:
             priceLabel.text = "Loading..."
+            priceChangeLabel.text = "loading..."
             showLoading()
         case .loaded(let wallets):
-            let solWallet = wallets.first(where: {$0.symbol == "SOL"})
-            priceLabel.text = "\(Double(solWallet?.amount ?? 0).currencyValueFormatted) SOL"
+            let equityValue = wallets.reduce(0) { (result, wallet) -> Double in
+                result + (wallet.amount ?? 0) * (PricesManager.bonfida.solPrice?.value ?? 0)
+            }
+            priceLabel.text = "\(equityValue.currencyValueFormatted(maximumFractionDigits: 9)) US$"
+            priceChangeLabel.text = "\((PricesManager.bonfida.solPrice?.change24h?.value ?? 0).currencyValueFormatted()) US$ (\(((PricesManager.bonfida.solPrice?.change24h?.percentage ?? 0) * 100).currencyValueFormatted(maximumFractionDigits: 2)) %) 24 hrs"
             hideLoading()
         case .error(let error):
-            priceLabel.text = "\(error.localizedDescription)"
+            debugPrint(error)
+            priceLabel.text = L10n.error.uppercaseFirst
             hideLoading()
         }
     }
