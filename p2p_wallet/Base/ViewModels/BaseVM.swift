@@ -16,7 +16,10 @@ class BaseVM<T: Hashable> {
     
     init(initialData: T) {
         data = initialData
+        bind()
     }
+    
+    func bind() {}
     
     @discardableResult
     func reload() -> Bool {
