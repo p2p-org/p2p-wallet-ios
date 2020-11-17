@@ -28,7 +28,7 @@ class BottomFlexibleHeightVC: BaseVStackVC, UIViewControllerTransitioningDelegat
         
         height += 20 // headerStackView-20
         
-        height += scrollView.contentView.fittingHeight(targetWidth: safeAreaFrame.width - padding.left - padding.right)
+        height += scrollView.contentView.fittingHeight(targetWidth: safeAreaFrame.width - padding.left - padding.right) /*+ scrollView.contentInset.top*/ + scrollView.contentInset.bottom
 
         return height
     }

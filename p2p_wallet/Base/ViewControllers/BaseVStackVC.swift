@@ -20,7 +20,7 @@ class BaseVStackVC: BaseVC {
         // scroll view for flexible height
         view.addSubview(scrollView)
         scrollView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-        scrollView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 16)
+        scrollView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
         
         // stackView
         scrollView.contentView.addSubview(stackView)
