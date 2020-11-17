@@ -15,5 +15,11 @@ struct PricesManager {
     
     init(fetcher: PricesFetcher) {
         self.fetcher = fetcher
+        self.fetcher.updatePriceForUSDType()
+        self.fetcher.pairs = getPairs()
+    }
+    
+    func getPairs() -> [PricesFetcher.Pair] {
+        SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.network)?.map {$0.symbol}.map {(from: $0, to: "USDT")}.filter {$0.from != "USDT" && $0.from != "USDC" && $0.from != "WUSDC"} ?? []
     }
 }
