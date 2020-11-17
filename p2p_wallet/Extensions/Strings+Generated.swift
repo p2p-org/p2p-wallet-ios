@@ -30,6 +30,8 @@ internal enum L10n {
   internal static let confirmPINCode = L10n.tr("Localizable", "confirm PIN code")
   /// Congratulations!
   internal static let congratulations = L10n.tr("Localizable", "Congratulations!")
+  /// Copy
+  internal static let copy = L10n.tr("Localizable", "Copy")
   /// Create a PIN-code to protect your wallet
   internal static let createAPINCodeToProtectYourWallet = L10n.tr("Localizable", "Create a PIN-code to protect your wallet")
   /// create new wallet
@@ -88,6 +90,8 @@ internal enum L10n {
   internal static let sendCoins = L10n.tr("Localizable", "Send coins")
   /// Send Now
   internal static let sendNow = L10n.tr("Localizable", "Send Now")
+  /// Share
+  internal static let share = L10n.tr("Localizable", "Share")
   /// Slide to scan
   internal static let slideToScan = L10n.tr("Localizable", "Slide to scan")
   /// Something went wrong!\nPlease try again later

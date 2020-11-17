@@ -86,6 +86,7 @@
 		BCB58375255D299700B10F65 /* SendTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58374255D299700B10F65 /* SendTokenVC.swift */; };
 		BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58379255D29C500B10F65 /* WLBottomSheet.swift */; };
 		BCBBE17A2563BB4100533F6B /* NSRegularExpression+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBBE1792563BB4100533F6B /* NSRegularExpression+Extensions.swift */; };
+		BCBBE1872563C2D300533F6B /* ReceiveTokenCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBBE1862563C2D300533F6B /* ReceiveTokenCell.swift */; };
 		BCD5E73A2551265300F51299 /* CollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E7392551265300F51299 /* CollectionVC.swift */; };
 		BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74825512D2500F51299 /* SectionHeaderView.swift */; };
 		BCD5E74E25512DA500F51299 /* InvestmentsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74D25512DA500F51299 /* InvestmentsVC.swift */; };
@@ -221,6 +222,7 @@
 		BCB58374255D299700B10F65 /* SendTokenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenVC.swift; sourceTree = "<group>"; };
 		BCB58379255D29C500B10F65 /* WLBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBottomSheet.swift; sourceTree = "<group>"; };
 		BCBBE1792563BB4100533F6B /* NSRegularExpression+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSRegularExpression+Extensions.swift"; sourceTree = "<group>"; };
+		BCBBE1862563C2D300533F6B /* ReceiveTokenCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveTokenCell.swift; sourceTree = "<group>"; };
 		BCD5E7392551265300F51299 /* CollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionVC.swift; sourceTree = "<group>"; };
 		BCD5E74825512D2500F51299 /* SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		BCD5E74D25512DA500F51299 /* InvestmentsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsVC.swift; sourceTree = "<group>"; };
@@ -588,10 +590,19 @@
 				BCB58379255D29C500B10F65 /* WLBottomSheet.swift */,
 				BC6EE768254ABEC700FE1025 /* PinCodeVC */,
 				BCD5E74425512D1500F51299 /* CollectionVC */,
-				BC2EC1F02553F60C006EEDA5 /* ReceiveTokenVC.swift */,
+				BCBBE1822563C0F400533F6B /* ReceiveTokenVC */,
 				BCA0CFD6255E78C000CD0F8D /* SendTokenVC */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		BCBBE1822563C0F400533F6B /* ReceiveTokenVC */ = {
+			isa = PBXGroup;
+			children = (
+				BC2EC1F02553F60C006EEDA5 /* ReceiveTokenVC.swift */,
+				BCBBE1862563C2D300533F6B /* ReceiveTokenCell.swift */,
+			);
+			path = ReceiveTokenVC;
 			sourceTree = "<group>";
 		};
 		BCD5E74425512D1500F51299 /* CollectionVC */ = {
@@ -995,6 +1006,7 @@
 				BC2EC1902553BA2C006EEDA5 /* CoinDetailSectionHeaderView.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
 				BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */,
+				BCBBE1872563C2D300533F6B /* ReceiveTokenCell.swift in Sources */,
 				BC32A44E254AAC1A002156F0 /* PinCodeVC.swift in Sources */,
 				BC6EE7CA254BBF8900FE1025 /* UIApplication+Extensions.swift in Sources */,
 				BC23B574254FBB7F00886C9C /* WalletVC.swift in Sources */,
