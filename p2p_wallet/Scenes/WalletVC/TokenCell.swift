@@ -40,7 +40,7 @@ class TokenCell: BaseCollectionViewCell, CollectionCell {
         }()
         
         let priceInfoView: UIStackView = {
-            let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .leading, distribution: .fill)
+            let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .trailing, distribution: .fill)
             stackView.addArrangedSubviews([
                 graphView,
                 coinPriceLabel,
