@@ -50,5 +50,7 @@ struct BonfidaPricesFetcher: PricesFetcher {
             .map {
                 $0.data?.first?.close ?? 0
             }
+            .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
+            .observeOn(MainScheduler.instance)
     }
 }
