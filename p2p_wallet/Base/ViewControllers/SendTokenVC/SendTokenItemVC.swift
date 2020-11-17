@@ -12,7 +12,13 @@ class SendTokenItemVC: BaseVC {
     lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
     lazy var amountTextField = UITextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0.0", autocorrectionType: .no)
     lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .secondary)
-    lazy var addressLabel = UILabel(textSize: 15, textColor: .black, numberOfLines: 0)
+    lazy var addressTextView: UITextView = {
+        let textView = UITextView(forExpandable: ())
+        textView.backgroundColor = .clear
+        textView.font = .systemFont(ofSize: 15)
+        textView.autoSetDimension(.height, toSize: 52)
+        return textView
+    }()
     lazy var qrCodeImageView = UIImageView(width: 18, height: 18, image: .scanQr, tintColor: UIColor.black.withAlphaComponent(0.5))
     
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
@@ -54,7 +60,7 @@ class SendTokenItemVC: BaseVC {
                 let stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill)
                 view.addSubview(stackView)
                 stackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 20))
-                stackView.addArrangedSubviews([addressLabel, qrCodeImageView])
+                stackView.addArrangedSubviews([addressTextView, qrCodeImageView])
                 return view
             }()
             stackView.addArrangedSubviews([
@@ -80,7 +86,6 @@ class SendTokenItemVC: BaseVC {
         self.wallet = wallet
         tokenNameLabel.text = wallet.name
         coinImageView.setImage(urlString: wallet.icon)
-        addressLabel.text = wallet.mintAddress
     }
     
     override func bind() {
