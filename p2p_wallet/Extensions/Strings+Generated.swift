@@ -26,6 +26,8 @@ internal enum L10n {
   internal static let byTappingAcceptYouAgreeToP2PWalletSTermsOfUseAndPrivacyPolicy = L10n.tr("Localizable", "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "Cancel")
+  /// Change your settings to use camera for scanning Qr Code
+  internal static let changeYourSettingsToUseCameraForScanningQrCode = L10n.tr("Localizable", "Change your settings to use camera for scanning Qr Code")
   /// confirm PIN code
   internal static let confirmPINCode = L10n.tr("Localizable", "confirm PIN code")
   /// Congratulations!
@@ -84,6 +86,8 @@ internal enum L10n {
   internal static let scanAnP2PAddress = L10n.tr("Localizable", "Scan an P2P address")
   /// Scan QR Code
   internal static let scanQRCode = L10n.tr("Localizable", "Scan QR Code")
+  /// Scanning QrCode not supported
+  internal static let scanningQrCodeNotSupported = L10n.tr("Localizable", "Scanning QrCode not supported")
   /// security keys
   internal static let securityKeys = L10n.tr("Localizable", "security keys")
   /// Send
@@ -142,6 +146,16 @@ internal enum L10n {
   internal static let yourDeviceDoesNotSupportBiometricsAuthentication = L10n.tr("Localizable", "Your device does not support biometrics authentication")
   /// Your wallet has been successfully created!
   internal static let yourWalletHasBeenSuccessfullyCreated = L10n.tr("Localizable", "Your wallet has been successfully created!")
+
+  internal enum ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode {
+    /// This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!
+    internal static let pleaseEnableItInSettings = L10n.tr("Localizable", "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!")
+  }
+
+  internal enum YourDeviceDoesNotSupportScanningACodeFromAnItem {
+    /// Your device does not support scanning a code from an item. Please use a device with a camera.
+    internal static let pleaseUseADeviceWithACamera = L10n.tr("Localizable", "Your device does not support scanning a code from an item. Please use a device with a camera.")
+  }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces
