@@ -60,6 +60,11 @@ class ReceiveTokenVC: WLBottomSheet {
                 UIApplication.shared.showDone(L10n.copiedToClipboard)
                 return .just(())
             }
+            cell?.shareButton.rx.action = CocoaAction {
+                let vc = UIActivityViewController(activityItems: [item.pubkey!], applicationActivities: nil)
+                self.present(vc, animated: true, completion: nil)
+                return .just(())
+            }
             return cell ?? UICollectionViewCell()
         }
     }
