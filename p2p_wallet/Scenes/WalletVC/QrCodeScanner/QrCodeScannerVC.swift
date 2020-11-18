@@ -12,6 +12,7 @@ import UIKit
 class QrCodeScannerVC: BaseVC, AVCaptureMetadataOutputObjectsDelegate {
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
+    let scanSize = CGSize(width: 200.0, height: 200.0)
     
     lazy var cameraContainerView = UIView(backgroundColor: .black)
 
@@ -21,7 +22,7 @@ class QrCodeScannerVC: BaseVC, AVCaptureMetadataOutputObjectsDelegate {
         view.addSubview(cameraContainerView)
         cameraContainerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
         
-        let rangeImageView = UIImageView(width: 200, height: 200, image: .qrCodeRange)
+        let rangeImageView = UIImageView(width: scanSize.width, height: scanSize.height, image: .qrCodeRange)
         cameraContainerView.addSubview(rangeImageView)
         rangeImageView.autoCenterInSuperview()
         
@@ -66,6 +67,12 @@ class QrCodeScannerVC: BaseVC, AVCaptureMetadataOutputObjectsDelegate {
         }
 
         let metadataOutput = AVCaptureMetadataOutput()
+        let screenSize = UIScreen.main.bounds.size
+        var scanRect = CGRect(x: (screenSize.width-scanSize.width)/2.0, y: (screenSize.height-scanSize.height)/2.0, width: scanSize.width, height: scanSize.height)
+        
+        scanRect = CGRect(x: scanRect.origin.y/screenSize.height, y: scanRect.origin.x/screenSize.width, width: scanRect.size.height/screenSize.height, height: scanRect.size.width/screenSize.width)
+        
+        metadataOutput.rectOfInterest = scanRect
 
         if captureSession.canAddOutput(metadataOutput) {
             captureSession.addOutput(metadataOutput)
