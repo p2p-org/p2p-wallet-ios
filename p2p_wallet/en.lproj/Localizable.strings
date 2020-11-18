@@ -71,3 +71,7 @@
 "Copy" = "Copy";
 "Share" = "Share";
 "Copied to clipboard" = "Copied to clipboard";
+"Scanning QrCode not supported" = "Scanning QrCode not supported";
+"Your device does not support scanning a code from an item. Please use a device with a camera." = "Your device does not support scanning a code from an item. Please use a device with a camera.";
+"Change your settings to use camera for scanning Qr Code" = "Change your settings to use camera for scanning Qr Code";
+"This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!" = "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!";
