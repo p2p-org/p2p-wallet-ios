@@ -36,8 +36,8 @@ class ReceiveTokenCell: BaseCollectionViewCell {
     }
     
     func setUp(wallet: Wallet) {
-        // TODO: qrcode
+        qrCodeView.setQrCode(string: wallet.pubkey)
         walletNameLabel.text = wallet.name
-        addressLabel.text = wallet.owner
+        addressLabel.text = wallet.pubkey
     }
 }
