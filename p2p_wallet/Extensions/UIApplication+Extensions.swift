@@ -36,6 +36,31 @@ extension UIApplication {
         MBProgressHUD.hide(for: keyWindow, animated: false)
     }
     
+    func showDone(_ message: String, completion: (() -> Void)? = nil) {
+        guard let keyWindow = keyWindow else {return}
+        
+        // Hide all previous hud
+        hideHud()
+        
+        // show new hud
+        let hud = MBProgressHUD.showAdded(to: keyWindow, animated: false)
+        hud.mode = .customView
+        let image: UIImage
+        if #available(iOS 13.0, *) {
+            image = UIImage.checkmark
+        } else {
+            image = UIImage.checkMark
+        }
+        let imageView = UIImageView(image: image)
+        imageView.tintColor = .textBlack
+        hud.customView = imageView
+        hud.label.text = message
+        hud.hide(animated: true, afterDelay: 1)
+        if let completion = completion {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: completion)
+        }
+    }
+    
     func openAppSettings() {
         if let bundleIdentifier = Bundle.main.bundleIdentifier, let appSettings = URL(string: UIApplication.openSettingsURLString + bundleIdentifier) {
             if canOpenURL(appSettings) {
