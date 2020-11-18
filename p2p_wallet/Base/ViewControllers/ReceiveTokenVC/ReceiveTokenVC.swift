@@ -7,6 +7,7 @@
 
 import Foundation
 import DiffableDataSources
+import Action
 import IBPCollectionViewCompositionalLayout
 
 class ReceiveTokenVC: WLBottomSheet {
@@ -54,6 +55,11 @@ class ReceiveTokenVC: WLBottomSheet {
         dataSource = CollectionViewDiffableDataSource<String, Wallet>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: Wallet) -> UICollectionViewCell? in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ReceiveTokenCell.self), for: indexPath) as? ReceiveTokenCell
             cell?.setUp(wallet: item)
+            cell?.copyButton.rx.action = CocoaAction {
+                UIPasteboard.general.string = item.pubkey
+                UIApplication.shared.showDone(L10n.copiedToClipboard)
+                return .just(())
+            }
             return cell ?? UICollectionViewCell()
         }
     }

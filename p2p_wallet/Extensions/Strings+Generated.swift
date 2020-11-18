@@ -30,6 +30,8 @@ internal enum L10n {
   internal static let confirmPINCode = L10n.tr("Localizable", "confirm PIN code")
   /// Congratulations!
   internal static let congratulations = L10n.tr("Localizable", "Congratulations!")
+  /// Copied to clipboard
+  internal static let copiedToClipboard = L10n.tr("Localizable", "Copied to clipboard")
   /// Copy
   internal static let copy = L10n.tr("Localizable", "Copy")
   /// Create a PIN-code to protect your wallet
