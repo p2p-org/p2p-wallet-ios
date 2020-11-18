@@ -27,6 +27,7 @@ extension UIColor {
 
 extension UIImage {
     static let backButton = UIImage(named: "back-button", in: bundle, compatibleWith: nil)!
+    static let checkMark = UIImage(named: "check-mark", in: bundle, compatibleWith: nil)!
     static let close = UIImage(named: "close", in: bundle, compatibleWith: nil)!
     static let downArrow = UIImage(named: "down-arrow", in: bundle, compatibleWith: nil)!
     static let emptyPlaceholder = UIImage(named: "empty-placeholder", in: bundle, compatibleWith: nil)!
