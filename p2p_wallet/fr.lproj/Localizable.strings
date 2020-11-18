@@ -71,3 +71,7 @@
 "Copy" = "Copie";
 "Share" = "Partager";
 "Copied to clipboard" = "Copié dans le presse-papier";
+"Scanning QrCode not supported" = "Analyse QrCode non prise en charge";
+"Your device does not support scanning a code from an item. Please use a device with a camera." = "Votre appareil ne prend pas en charge la numérisation d'un code à partir d'un élément.  Veuillez utiliser un appareil avec une caméra.";
+"Change your settings to use camera for scanning Qr Code" = "Modifiez vos paramètres pour utiliser l'appareil photo pour scanner le code Qr";
+"This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!" = "Cette application n'a pas l'autorisation d'utiliser votre appareil photo pour scanner le code Qr.  Veuillez l'activer dans les paramètres!";
