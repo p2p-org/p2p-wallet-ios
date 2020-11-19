@@ -179,7 +179,7 @@ SPEC CHECKSUMS:
   Action: 5dc2194f7a0b77857c82a677b0da655f197c005f
   Alamofire: 3b6a534a3df22db367e4dedeeca73d1ddfcf0e2f
   ASKSecp256k1: 58eb44dfa57f9d29ac0b02fe5de5a312064517f2
-  BEPureLayout: f7359ceb98902514e00b4b15c8dbcfaf08a52d43
+  BEPureLayout: c85d1ffb49e8940ecf6da9cc78b7e4f919e72c2c
   CryptoSwift: 9ee2fbfa819b4217b9b697afba1c29c6ba41b5c3
   DiffableDataSources: 80396cec405c9b29e1e07b55c9be7d11b46c8741
   DifferenceKit: 516f12e336ed65a3a0665847b5c3cb5cad4bd4ea
