@@ -14,7 +14,7 @@ struct Wallet: ListItemType {
     let pubkey: String?
     let symbol: String
     let icon: String?
-    var amount: Double? // In SOL
+    var amount: Double?
     var price: Price?
     
     static func placeholder(at index: Int) -> Wallet {
@@ -28,7 +28,7 @@ extension Wallet {
         self.mintAddress = programAccount.mintAddress
         self.symbol = programAccount.symbol
         self.icon = programAccount.icon
-        self.amount = Double(programAccount.amount ?? 0) * 0.000000001
+        self.amount = Double(programAccount.amount ?? 0) * pow(10, -Double(programAccount.decimals ?? 0))
         self.pubkey = programAccount.pubkey
     }
 }

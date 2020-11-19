@@ -61,7 +61,7 @@ class TokenCell: BaseCollectionViewCell, CollectionCell {
     func setUp(with item: Wallet) {
         coinLogoImageView.setImage(urlString: item.icon)
         coinNameLabel.text = item.name
-        tokenCountLabel.text = "\(item.amount.currencyValueFormatted(maximumFractionDigits: 9)) SOL"
+        tokenCountLabel.text = "\(item.amount.currencyValueFormatted(maximumFractionDigits: 9)) \(item.symbol)"
         
         if let price = item.price {
             equityValueLabel.isHidden = false
