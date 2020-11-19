@@ -52,23 +52,40 @@ class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
     func setUp(state: FetcherState<[Wallet]>) {
         switch state {
         case .initializing:
+            sendButton.isUserInteractionEnabled = false
+            receiveButton.isUserInteractionEnabled = false
+            swapButton.isUserInteractionEnabled = false
+            
             priceLabel.text = ""
             priceChangeLabel.text = ""
             hideLoading()
         case .loading:
+            sendButton.isUserInteractionEnabled = false
+            receiveButton.isUserInteractionEnabled = false
+            swapButton.isUserInteractionEnabled = false
+            
             priceLabel.text = "Loading..."
             priceChangeLabel.text = "loading..."
             showLoading()
         case .loaded(let wallets):
+            sendButton.isUserInteractionEnabled = true
+            receiveButton.isUserInteractionEnabled = true
+            swapButton.isUserInteractionEnabled = true
+            
             let equityValue = wallets.reduce(0) { (result, wallet) -> Double in
                 result + (wallet.amount ?? 0) * (PricesManager.bonfida.solPrice?.value ?? 0)
             }
-            priceLabel.text = "\(equityValue.currencyValueFormatted(maximumFractionDigits: 9)) US$"
+            priceLabel.text = "\(equityValue.currencyValueFormatted(maximumFractionDigits: 2)) US$"
             priceChangeLabel.text = "\(PricesManager.bonfida.solPrice?.change24h?.value.currencyValueFormatted() ?? "") US$ (\((PricesManager.bonfida.solPrice?.change24h?.percentage * 100).currencyValueFormatted(maximumFractionDigits: 2)) %) 24 hrs"
             hideLoading()
         case .error(let error):
+            sendButton.isUserInteractionEnabled = false
+            receiveButton.isUserInteractionEnabled = false
+            swapButton.isUserInteractionEnabled = false
+            
             debugPrint(error)
             priceLabel.text = L10n.error.uppercaseFirst
+            priceChangeLabel.text = L10n.error.uppercaseFirst
             hideLoading()
         }
     }
