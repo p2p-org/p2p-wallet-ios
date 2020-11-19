@@ -30,6 +30,10 @@ class PhrasesVC: BaseVStackVC {
     
     lazy var bottomPhrasesListView = createTagListView()
     
+    lazy var buttonStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
+    lazy var copyToClipboardButton = WLButton.stepButton(type: .sub, label: L10n.copyToClipboard)
+        .onTap(self, action: #selector(buttonCopyToClipboardDidTouch))
+    lazy var savedCheckBox = BECheckbox(width: 20, height: 20, cornerRadius: 6)
     lazy var saveToKeychainButton = WLButton.stepButton(type: .main, label: L10n.saveToKeychain.uppercaseFirst)
         .onTap(self, action: #selector(buttonSaveToKeychainDidTouch))
     
@@ -70,8 +74,33 @@ class PhrasesVC: BaseVStackVC {
                 .isActive = true
         bottomPhrasesListView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -120).isActive = true
         
-        view.addSubview(saveToKeychainButton)
-        saveToKeychainButton.autoPinEdgesToSuperviewSafeArea(with: UIEdgeInsets(top: 0, left: 20, bottom: 16, right: 20), excludingEdge: .top)
+        scrollView.constraintToSuperviewWithAttribute(.bottom)?.isActive = false
+        
+        view.addSubview(buttonStackView)
+        buttonStackView.autoPinEdgesToSuperviewSafeArea(with: UIEdgeInsets(top: 0, left: 20, bottom: 16, right: 20), excludingEdge: .top)
+        buttonStackView.autoPinEdge(.top, to: .bottom, of: scrollView)
+        
+        let savedConfirmView: UIStackView = {
+            let stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill)
+            let spacer1 = UIView.spacer
+            let spacer2 = UIView.spacer
+            let label = UILabel(text: L10n.iHaveSavedTheseWordsInASafePlace, weight: .medium)
+            label.adjustsFontSizeToFitWidth = true
+            stackView.addArrangedSubviews([
+                spacer1,
+                savedCheckBox,
+                label,
+                spacer2
+            ])
+            spacer1.widthAnchor.constraint(equalTo: spacer2.widthAnchor).isActive = true
+            return stackView
+        }()
+        
+        buttonStackView.addArrangedSubviews([
+            copyToClipboardButton,
+            savedConfirmView,
+            saveToKeychainButton
+        ])
         
         if phrases.value.isEmpty {
             createAccount()
@@ -83,11 +112,18 @@ class PhrasesVC: BaseVStackVC {
         phrases.subscribe(onNext: { phrases in
             self.label.isHidden = phrases.isEmpty
             self.topPhrasesListViews.removeAllTags()
-            let phrases = phrases.enumerated().map {"\($0.offset) \($0.element)"}.shuffled()
+            let phrases = phrases.enumerated().map {"\($0.offset + 1) \($0.element)"}.shuffled()
             self.topPhrasesListViews.addTags(Array(phrases.prefix(6)))
             self.bottomPhrasesListView.removeAllTags()
             if phrases.count > 6 {self.bottomPhrasesListView.addTags(Array(phrases[6..<phrases.count]))}
         })
+            .disposed(by: disposeBag)
+        
+        saveToKeychainButton.isEnabled = false
+        savedCheckBox.rx.tap
+            .map {_ in self.savedCheckBox.isSelected}
+            .asDriver(onErrorJustReturn: false)
+            .drive(saveToKeychainButton.rx.isEnabled)
             .disposed(by: disposeBag)
     }
     
@@ -113,6 +149,11 @@ class PhrasesVC: BaseVStackVC {
     }
     
     // MARK: - Actions
+    @objc func buttonCopyToClipboardDidTouch() {
+        UIPasteboard.general.string = phrases.value.joined(separator: " ")
+        UIApplication.shared.showDone(L10n.copiedToClipboard)
+    }
+    
     @objc func buttonSaveToKeychainDidTouch() {
         UIApplication.shared.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
         DispatchQueue.global().async {

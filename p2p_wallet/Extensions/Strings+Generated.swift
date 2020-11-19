@@ -36,6 +36,8 @@ internal enum L10n {
   internal static let copiedToClipboard = L10n.tr("Localizable", "Copied to clipboard")
   /// Copy
   internal static let copy = L10n.tr("Localizable", "Copy")
+  /// Copy to clipboard
+  internal static let copyToClipboard = L10n.tr("Localizable", "Copy to clipboard")
   /// Create a PIN-code to protect your wallet
   internal static let createAPINCodeToProtectYourWallet = L10n.tr("Localizable", "Create a PIN-code to protect your wallet")
   /// create new wallet
@@ -58,6 +60,8 @@ internal enum L10n {
   internal static let finishSetup = L10n.tr("Localizable", "Finish setup")
   /// Go to wallet
   internal static let goToWallet = L10n.tr("Localizable", "Go to wallet")
+  /// I have saved these words in a safe place
+  internal static let iHaveSavedTheseWordsInASafePlace = L10n.tr("Localizable", "I have saved these words in a safe place")
   /// i've already had a wallet
   internal static let iVeAlreadyHadAWallet = L10n.tr("Localizable", "i've already had a wallet")
   /// Identify yourself!
