@@ -35,7 +35,7 @@ class WalletVM: ListViewModel<Wallet> {
         }
         return SolanaSDK.shared.getBalance(account: account)
             .flatMap {balance in
-                SolanaSDK.shared.getProgramAccounts(in: SolanaSDK.network)
+                SolanaSDK.shared.getProgramAccounts(programPubkey: SolanaSDK.programPubkey, in: SolanaSDK.network)
                     .map {$0.map {Wallet(programAccount: $0)}}
                     .map {wallets in
                         var wallets = wallets
