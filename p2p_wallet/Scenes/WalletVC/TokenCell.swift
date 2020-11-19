@@ -69,7 +69,7 @@ class TokenCell: BaseCollectionViewCell, CollectionCell {
             coinChangeLabel.isHidden = false
             equityValueLabel.text = "\((PricesManager.bonfida.solPrice?.value * item.amount).currencyValueFormatted(maximumFractionDigits: 9)) US$"
             coinPriceLabel.text = "\(price.value.currencyValueFormatted()) US$"
-            coinChangeLabel.text = "\((price.change24h?.percentage * 100).currencyValueFormatted(maximumFractionDigits: 2))% 24 hrs"
+            coinChangeLabel.text = "\((price.change24h?.percentage * 100).currencyValueFormatted(maximumFractionDigits: 2, showPlus: true))% 24 hrs"
         } else {
             equityValueLabel.isHidden = true
             coinPriceLabel.isHidden = true
