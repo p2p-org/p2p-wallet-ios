@@ -40,6 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BEPureLayoutConfigs.defaultShadowColor = .textBlack
         let image = UIImage.backButton.withRenderingMode(.alwaysOriginal)
         BEPureLayoutConfigs.defaultBackButton = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
+        BEPureLayoutConfigs.defaultCheckBoxActiveColor = .textBlack
         
         // Use Firebase library to configure APIs
         FirebaseApp.configure()

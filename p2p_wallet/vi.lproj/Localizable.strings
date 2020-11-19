@@ -75,3 +75,5 @@
 "Your device does not support scanning a code from an item. Please use a device with a camera." = "Thiết bị của bạn không hỗ trợ quét mã Qr. Vui lòng sử dụng thiết bị có camera.";
 "Change your settings to use camera for scanning Qr Code" = "Thay đổi cài đặt của bạn để sử dụng máy ảnh quét Mã Qr";
 "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!" = "Ứng dụng này không được phép sử dụng máy ảnh của bạn để quét Mã Qr.  Vui lòng kích hoạt nó trong cài đặt!";
+"Copy to clipboard" = "Sao chép vào clipboard";
+"I have saved these words in a safe place" = "Tôi đã lưu những từ này ở một nơi an toàn";
