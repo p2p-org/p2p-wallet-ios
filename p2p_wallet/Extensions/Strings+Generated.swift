@@ -20,6 +20,8 @@ internal enum L10n {
   internal static let almostDone = L10n.tr("Localizable", "Almost done!")
   /// amount
   internal static let amount = L10n.tr("Localizable", "amount")
+  /// Amount is not valid
+  internal static let amountIsNotValid = L10n.tr("Localizable", "Amount is not valid")
   /// Backup
   internal static let backup = L10n.tr("Localizable", "Backup")
   /// By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy
@@ -66,6 +68,8 @@ internal enum L10n {
   internal static let iVeAlreadyHadAWallet = L10n.tr("Localizable", "i've already had a wallet")
   /// Identify yourself!
   internal static let identifyYourself = L10n.tr("Localizable", "Identify yourself!")
+  /// Insufficient funds
+  internal static let insufficientFunds = L10n.tr("Localizable", "Insufficient funds")
   /// Make your crypto working on you
   internal static let makeYourCryptoWorkingOnYou = L10n.tr("Localizable", "Make your crypto working on you")
   /// Max
@@ -114,6 +118,8 @@ internal enum L10n {
   internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
   /// Terms and conditions
   internal static let termsAndConditions = L10n.tr("Localizable", "Terms and conditions")
+  /// The address is not valid
+  internal static let theAddressIsNotValid = L10n.tr("Localizable", "The address is not valid")
   /// There is nothing in here!
   internal static let thereIsNothingInHere = L10n.tr("Localizable", "There is nothing in here!")
   /// Try again

@@ -78,3 +78,6 @@
 "Copy to clipboard" = "Sao chép vào clipboard";
 "I have saved these words in a safe place" = "Tôi đã lưu những từ này ở một nơi an toàn";
 "Max" = "Tất cả";
+"Amount is not valid" = "Số tiền không hợp lệ";
+"Insufficient funds" = "Không đủ tiền";
+"The address is not valid" = "Địa chỉ không hợp lệ";
