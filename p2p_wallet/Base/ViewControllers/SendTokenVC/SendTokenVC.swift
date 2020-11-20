@@ -66,7 +66,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
         view.layoutIfNeeded()
         
         // fix container's height
-        let height = (viewControllers[currentPage] as! SendTokenItemVC).stackView.fittingHeight(targetWidth: stackView.frame.size.width)
+        let height = (viewControllers[currentPage] as! SendTokenItemVC).stackView.fittingHeight(targetWidth: stackView.frame.size.width + 30)
         containerView.autoSetDimension(.height, toSize: height)
         
         // fix pageControl colors
@@ -90,14 +90,10 @@ class SendTokenVC: BEPagesVC, LoadableView {
         let vcs = viewControllers.map {$0 as! SendTokenItemVC}.enumerated()
         
         Observable.merge(vcs.map { (index, vc) in
-            Observable.combineLatest(
-                vc.amountTextField.rx.text.orEmpty,
-                vc.addressTextView.rx.text.orEmpty
-            ).filter {_ in index == self.currentPage}
+            vc.dataObservable
+                .map {_ in vc.isDataValid}
+                .filter {_ in index == self.currentPage}
         })
-            .map({ (amount, address) -> Bool in
-                !amount.isEmpty && !address.isEmpty
-            })
             .asDriver(onErrorJustReturn: false)
             .drive(sendButton.rx.isEnabled)
             .disposed(by: disposeBag)

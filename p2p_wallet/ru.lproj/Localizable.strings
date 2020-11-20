@@ -78,3 +78,6 @@
 "Copy to clipboard" = "Скопировать в буфер обмена";
 "I have saved these words in a safe place" = "Я сохранил эти слова в надежном месте";
 "Max" = "Всё";
+"Amount is not valid" = "Сумма недействительна";
+"Insufficient funds" = "Недостаточно средств";
+"The address is not valid" = "Адрес недействителен";

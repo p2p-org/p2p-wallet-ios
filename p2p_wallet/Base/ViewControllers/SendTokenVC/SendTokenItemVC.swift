@@ -6,8 +6,17 @@
 //
 
 import Foundation
+import RxSwift
 
 class SendTokenItemVC: BaseVC {
+    // MARK: - Properties
+    var wallet: Wallet?
+    lazy var dataObservable = Observable.combineLatest(
+        amountTextField.rx.text.orEmpty.map {Double($0) ?? 0},
+        addressTextView.rx.text.orEmpty
+    ).share()
+    
+    // MARK: - Subviews
     lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
     lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .secondary)
     lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
@@ -23,11 +32,11 @@ class SendTokenItemVC: BaseVC {
     }()
     lazy var qrCodeImageView = UIImageView(width: 18, height: 18, image: .scanQr, tintColor: UIColor.black.withAlphaComponent(0.5))
         .onTap(self, action: #selector(buttonScanQrCodeDidTouch))
+    lazy var errorLabel = UILabel(text: "Error: ", textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
     
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
-    var wallet: Wallet?
-    
+    // MARK: - Methods
     override func setUp() {
         super.setUp()
         view.backgroundColor = .clear
@@ -86,10 +95,14 @@ class SendTokenItemVC: BaseVC {
             amountView.padding(UIEdgeInsets(x: 16, y: 0)),
             separator,
             addressView.padding(UIEdgeInsets(x: 16, y: 0)),
+            errorLabel.padding(UIEdgeInsets(x: 16, y: 0)),
             .spacer
         ])
         stackView.setCustomSpacing(16, after: tokenInfoView.wrapper!)
         stackView.setCustomSpacing(30, after: separator)
+        stackView.setCustomSpacing(16, after: addressView)
+        
+        errorLabel.isHidden = true
     }
     
     func setUp(wallet: Wallet) {
@@ -108,8 +121,40 @@ class SendTokenItemVC: BaseVC {
             .asDriver(onErrorJustReturn: "")
             .drive(equityValueLabel.rx.text)
             .disposed(by: disposeBag)
+        
+        dataObservable
+            .skip(1)
+            .subscribe(onNext: {(amount, address) in
+                self.validate(amount: amount, address: address)
+            })
+            .disposed(by: disposeBag)
     }
     
+    private func validate(amount: Double, address: String) {
+        var errorMessage: String?
+        if amount <= 0 {
+            errorMessage = L10n.amountIsNotValid
+        } else if amount > (wallet?.amount ?? Double.greatestFiniteMagnitude) {
+            errorMessage = L10n.insufficientFunds
+        } else if !NSRegularExpression.publicKey.matches(address) {
+            errorMessage = L10n.theAddressIsNotValid
+        }
+        
+        if let errorMessage = errorMessage {
+            errorLabel.text = errorMessage
+            errorLabel.isHidden = false
+        } else {
+            errorLabel.text = nil
+            errorLabel.isHidden = true
+        }
+    }
+    
+    var isDataValid: Bool {
+        let amount = Double(amountTextField.text ?? "0") ?? 0
+        return amount > 0 && amount <= (wallet?.amount ?? 0) && NSRegularExpression.publicKey.matches(addressTextView.text ?? "")
+    }
+    
+    // MARK: - Actions
     @objc func buttonScanQrCodeDidTouch() {
         let vc = QrCodeScannerVC()
         vc.modalPresentationStyle = .custom
