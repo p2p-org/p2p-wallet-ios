@@ -87,7 +87,7 @@ class QrCodeScannerVC: BaseVC {
     }
     
     override func back() {
-        captureSession.stopRunning()
+        captureSession?.stopRunning()
         super.back()
     }
 }
