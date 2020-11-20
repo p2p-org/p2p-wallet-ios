@@ -20,8 +20,17 @@ class SendTokenVC: BEPagesVC, LoadableView {
     
     lazy var errorLabel = UILabel(textSize: 17, weight: .semibold, textColor: .textBlack, numberOfLines: 0, textAlignment: .center)
     
-    lazy var viewModel = WalletVM.ofCurrentUser
     let disposeBag = DisposeBag()
+    var wallets: [Wallet]
+    
+    init(wallets: [Wallet]) {
+        self.wallets = wallets
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func setUp() {
         super.setUp()
@@ -48,9 +57,11 @@ class SendTokenVC: BEPagesVC, LoadableView {
             .spacer
         ])
         
-        viewControllers = [
-            SendTokenItemVC()
-        ]
+        viewControllers = wallets.map {item in
+            let vc = SendTokenItemVC()
+            vc.setUp(wallet: item)
+            return vc
+        }
         
         view.layoutIfNeeded()
         
@@ -69,40 +80,26 @@ class SendTokenVC: BEPagesVC, LoadableView {
         errorLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
         
         errorLabel.isHidden = true
+        
+        // delegate
+        self.delegate = self
     }
     
     override func bind() {
         super.bind()
-        viewModel.state
-            .subscribe(onNext: { [weak self] state in
-                switch state {
-                case .initializing, .loading:
-                    self?.showLoading()
-                    self?.scrollView.isHidden = false
-                    self?.errorLabel.isHidden = true
-                case .loaded(let items):
-                    self?.hideLoading()
-                    self?.scrollView.isHidden = false
-                    self?.errorLabel.isHidden = true
-                    self?.viewControllers = items.map {item in
-                        let vc: SendTokenItemVC
-                        if let sendTokenVC = self?.viewControllers.first(where: {($0 as? SendTokenItemVC)?.wallet?.mintAddress == item.mintAddress}) as? SendTokenItemVC {
-                            vc = sendTokenVC
-                        } else {
-                            vc = SendTokenItemVC()
-                        }
-                        vc.setUp(wallet: item)
-                        return vc
-                    }
-                case .error(let error):
-                    self?.hideLoading()
-                    self?.scrollView.isHidden = true
-                    self?.errorLabel.isHidden = false
-                    #if DEBUG
-                    self?.showError(error)
-                    #endif
-                }
+        let vcs = viewControllers.map {$0 as! SendTokenItemVC}.enumerated()
+        
+        Observable.merge(vcs.map { (index, vc) in
+            Observable.combineLatest(
+                vc.amountTextField.rx.text.orEmpty,
+                vc.addressTextView.rx.text.orEmpty
+            ).filter {_ in index == self.currentPage}
+        })
+            .map({ (amount, address) -> Bool in
+                !amount.isEmpty && !address.isEmpty
             })
+            .asDriver(onErrorJustReturn: false)
+            .drive(sendButton.rx.isEnabled)
             .disposed(by: disposeBag)
     }
     
@@ -116,5 +113,12 @@ class SendTokenVC: BEPagesVC, LoadableView {
     
     @objc func viewDidTouch() {
         view.endEditing(true)
+    }
+}
+
+extension SendTokenVC: BEPagesVCDelegate {
+    func bePagesVC(_ pagesVC: BEPagesVC, currentPageDidChangeTo currentPage: Int) {
+        // trigger observable
+        (viewControllers[currentPage] as! SendTokenItemVC).amountTextField.sendActions(for: .valueChanged)
     }
 }
