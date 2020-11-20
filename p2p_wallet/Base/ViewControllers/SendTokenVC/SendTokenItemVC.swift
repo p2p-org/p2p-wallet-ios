@@ -9,8 +9,11 @@ import Foundation
 
 class SendTokenItemVC: BaseVC {
     lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
+    lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .secondary)
     lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
-    lazy var amountTextField = UITextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0.0", autocorrectionType: .no)
+    lazy var amountTextField = UITextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0.0", autocorrectionType: .no, rightView: useAllBalanceButton, rightViewMode: .always)
+    lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .secondary)
+        .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
     lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .secondary)
     lazy var addressTextView: UITextView = {
         let textView = UITextView(forExpandable: ())
@@ -19,6 +22,7 @@ class SendTokenItemVC: BaseVC {
         return textView
     }()
     lazy var qrCodeImageView = UIImageView(width: 18, height: 18, image: .scanQr, tintColor: UIColor.black.withAlphaComponent(0.5))
+        .onTap(self, action: #selector(buttonScanQrCodeDidTouch))
     
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
@@ -29,6 +33,13 @@ class SendTokenItemVC: BaseVC {
         view.backgroundColor = .clear
         view.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
+        
+        let tokenInfoView: UIStackView = {
+            let stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing)
+            stackView.addArrangedSubview(tokenNameLabel)
+            stackView.addArrangedSubview(balanceLabel)
+            return stackView
+        }()
         
         let amountView: UIStackView = {
             let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
@@ -50,7 +61,7 @@ class SendTokenItemVC: BaseVC {
             return stackView
         }()
         
-        let separator = UIView.separator(height: 2, color: view.backgroundColor!)
+        let separator = UIView.separator(height: 2, color: .vcBackground)
         
         let addressView: UIStackView = {
             let stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
@@ -71,19 +82,20 @@ class SendTokenItemVC: BaseVC {
         
         stackView.addArrangedSubviews([
             .spacer,
-            tokenNameLabel.padding(UIEdgeInsets(x: 16, y: 0)),
+            tokenInfoView.padding(UIEdgeInsets(x: 16, y: 0)),
             amountView.padding(UIEdgeInsets(x: 16, y: 0)),
             separator,
             addressView.padding(UIEdgeInsets(x: 16, y: 0)),
             .spacer
         ])
-        stackView.setCustomSpacing(16, after: tokenNameLabel.wrapper!)
+        stackView.setCustomSpacing(16, after: tokenInfoView.wrapper!)
         stackView.setCustomSpacing(30, after: separator)
     }
     
     func setUp(wallet: Wallet) {
         self.wallet = wallet
         tokenNameLabel.text = wallet.name
+        balanceLabel.text = "\(wallet.amount ?? 0) \(wallet.symbol)"
         coinImageView.setImage(urlString: wallet.icon)
     }
     
@@ -96,5 +108,16 @@ class SendTokenItemVC: BaseVC {
             .asDriver(onErrorJustReturn: "")
             .drive(equityValueLabel.rx.text)
             .disposed(by: disposeBag)
+    }
+    
+    @objc func buttonScanQrCodeDidTouch() {
+        let vc = QrCodeScannerVC()
+        vc.modalPresentationStyle = .custom
+        parent?.present(vc, animated: true, completion: nil)
+    }
+    
+    @objc func buttonUseAllBalanceDidTouch() {
+        amountTextField.text = "\(wallet?.amount ?? 0)"
+        amountTextField.sendActions(for: .valueChanged)
     }
 }

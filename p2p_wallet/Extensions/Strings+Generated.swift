@@ -68,6 +68,8 @@ internal enum L10n {
   internal static let identifyYourself = L10n.tr("Localizable", "Identify yourself!")
   /// Make your crypto working on you
   internal static let makeYourCryptoWorkingOnYou = L10n.tr("Localizable", "Make your crypto working on you")
+  /// Max
+  internal static let max = L10n.tr("Localizable", "Max")
   /// next
   internal static let next = L10n.tr("Localizable", "next")
   /// OK
