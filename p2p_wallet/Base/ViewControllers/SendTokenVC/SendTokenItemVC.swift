@@ -20,7 +20,7 @@ class SendTokenItemVC: BaseVC {
     lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
     lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .secondary)
     lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
-    lazy var amountTextField = UITextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0\(Locale.current.decimalSeparator ?? ".")0", autocorrectionType: .no, rightView: useAllBalanceButton, rightViewMode: .always)
+    lazy var amountTextField = BEDecimalTextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0\(Locale.current.decimalSeparator ?? ".")0", autocorrectionType: .no, rightView: useAllBalanceButton, rightViewMode: .always)
     lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .secondary)
         .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
     lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .secondary)
@@ -103,6 +103,8 @@ class SendTokenItemVC: BaseVC {
         stackView.setCustomSpacing(16, after: addressView)
         
         errorLabel.isHidden = true
+        
+        amountTextField.delegate = self
     }
     
     func setUp(wallet: Wallet) {
@@ -170,5 +172,14 @@ class SendTokenItemVC: BaseVC {
     @objc func buttonUseAllBalanceDidTouch() {
         amountTextField.text = wallet?.amount?.toString(maximumFractionDigits: 9)
         amountTextField.sendActions(for: .valueChanged)
+    }
+}
+
+extension SendTokenItemVC: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if let textField = textField as? BEDecimalTextField {
+            return textField.shouldChangeCharactersInRange(range, replacementString: string)
+        }
+        return true
     }
 }
