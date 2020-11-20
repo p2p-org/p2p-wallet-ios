@@ -128,7 +128,7 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
     
     var sendAction: CocoaAction {
         CocoaAction { _ in
-            let vc = SendTokenVC()
+            let vc = SendTokenVC(wallets: self.viewModel.items)
             self.show(vc, sender: nil)
             return .just(())
         }
