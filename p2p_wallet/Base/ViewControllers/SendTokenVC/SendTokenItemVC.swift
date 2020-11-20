@@ -16,7 +16,6 @@ class SendTokenItemVC: BaseVC {
         let textView = UITextView(forExpandable: ())
         textView.backgroundColor = .clear
         textView.font = .systemFont(ofSize: 15)
-        textView.autoSetDimension(.height, toSize: 52)
         return textView
     }()
     lazy var qrCodeImageView = UIImageView(width: 18, height: 18, image: .scanQr, tintColor: UIColor.black.withAlphaComponent(0.5))
