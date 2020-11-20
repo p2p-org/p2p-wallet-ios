@@ -75,8 +75,8 @@ class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
             let equityValue = wallets.reduce(0) { (result, wallet) -> Double in
                 result + (wallet.amount ?? 0) * (PricesManager.bonfida.solPrice?.value ?? 0)
             }
-            priceLabel.text = "\(equityValue.currencyValueFormatted(maximumFractionDigits: 2)) US$"
-            priceChangeLabel.text = "\(PricesManager.bonfida.solPrice?.change24h?.value.currencyValueFormatted(showPlus: true) ?? "") US$ (\((PricesManager.bonfida.solPrice?.change24h?.percentage * 100).currencyValueFormatted(maximumFractionDigits: 2, showPlus: true)) %) 24 hrs"
+            priceLabel.text = "\(equityValue.toString(maximumFractionDigits: 2)) US$"
+            priceChangeLabel.text = "\(PricesManager.bonfida.solPrice?.change24h?.value.toString(showPlus: true) ?? "") US$ (\((PricesManager.bonfida.solPrice?.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true)) %) 24 hrs"
             hideLoading()
         case .error(let error):
             sendButton.isUserInteractionEnabled = false
@@ -97,8 +97,8 @@ class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
         view.addSubview(label)
         label.autoPinEdge(toSuperviewEdge: .top)
         label.autoPinEdge(toSuperviewEdge: .bottom)
-        label.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
-        label.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
+        label.autoPinEdge(toSuperviewEdge: .leading, withInset: 16.adaptiveWidth)
+        label.autoPinEdge(toSuperviewEdge: .trailing, withInset: 16.adaptiveWidth)
         return view
     }
     

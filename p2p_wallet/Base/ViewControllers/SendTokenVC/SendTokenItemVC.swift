@@ -20,7 +20,7 @@ class SendTokenItemVC: BaseVC {
     lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
     lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .secondary)
     lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
-    lazy var amountTextField = UITextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0.0", autocorrectionType: .no, rightView: useAllBalanceButton, rightViewMode: .always)
+    lazy var amountTextField = UITextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0\(Locale.current.decimalSeparator ?? ".")0", autocorrectionType: .no, rightView: useAllBalanceButton, rightViewMode: .always)
     lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .secondary)
         .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
     lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .secondary)
@@ -108,7 +108,7 @@ class SendTokenItemVC: BaseVC {
     func setUp(wallet: Wallet) {
         self.wallet = wallet
         tokenNameLabel.text = wallet.name
-        balanceLabel.text = "\(wallet.amount ?? 0) \(wallet.symbol)"
+        balanceLabel.text = "\(wallet.amount?.toString(maximumFractionDigits: 9) ?? "") \(wallet.symbol)"
         coinImageView.setImage(urlString: wallet.icon)
     }
     
@@ -117,7 +117,7 @@ class SendTokenItemVC: BaseVC {
         amountTextField.rx.text.orEmpty
             .map {Double($0) ?? 0}
             .map {$0 * self.wallet?.price?.value}
-            .map {"= " + $0.currencyValueFormatted(maximumFractionDigits: 9) + " US$"}
+            .map {"= " + $0.toString(maximumFractionDigits: 9) + " US$"}
             .asDriver(onErrorJustReturn: "")
             .drive(equityValueLabel.rx.text)
             .disposed(by: disposeBag)

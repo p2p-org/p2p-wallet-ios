@@ -66,7 +66,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
         view.layoutIfNeeded()
         
         // fix container's height
-        let height = (viewControllers[currentPage] as! SendTokenItemVC).stackView.fittingHeight(targetWidth: stackView.frame.size.width + 30)
+        let height = (viewControllers[currentPage] as! SendTokenItemVC).stackView.fittingHeight(targetWidth: stackView.frame.size.width)
         containerView.autoSetDimension(.height, toSize: height)
         
         // fix pageControl colors
