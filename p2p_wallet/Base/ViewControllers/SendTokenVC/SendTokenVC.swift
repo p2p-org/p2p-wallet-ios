@@ -85,7 +85,12 @@ class SendTokenVC: BEPagesVC, LoadableView {
                     self?.scrollView.isHidden = false
                     self?.errorLabel.isHidden = true
                     self?.viewControllers = items.map {item in
-                        let vc = SendTokenItemVC() 
+                        let vc: SendTokenItemVC
+                        if let sendTokenVC = self?.viewControllers.first(where: {($0 as? SendTokenItemVC)?.wallet?.mintAddress == item.mintAddress}) as? SendTokenItemVC {
+                            vc = sendTokenVC
+                        } else {
+                            vc = SendTokenItemVC()
+                        }
                         vc.setUp(wallet: item)
                         return vc
                     }
