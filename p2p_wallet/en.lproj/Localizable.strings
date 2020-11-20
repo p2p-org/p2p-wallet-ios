@@ -78,3 +78,6 @@
 "Copy to clipboard" = "Copy to clipboard";
 "I have saved these words in a safe place" = "I have saved these words in a safe place";
 "Max" = "Max";
+"Amount is not valid" = "Amount is not valid";
+"Insufficient funds" = "Insufficient funds";
+"The address is not valid" = "The address is not valid";

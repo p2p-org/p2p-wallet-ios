@@ -78,3 +78,6 @@
 "Copy to clipboard" = "Copier dans le presse-papier";
 "I have saved these words in a safe place" = "J'ai gardé ces mots dans un endroit sûr";
 "Max" = "Max";
+"Amount is not valid" = "Le montant n'est pas valide";
+"Insufficient funds" = "Fonds insuffisants";
+"The address is not valid" = "L'adresse n'est pas valide";
