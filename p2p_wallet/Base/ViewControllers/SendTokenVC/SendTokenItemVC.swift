@@ -157,6 +157,12 @@ class SendTokenItemVC: BaseVC {
     // MARK: - Actions
     @objc func buttonScanQrCodeDidTouch() {
         let vc = QrCodeScannerVC()
+        vc.validate = { code in
+            NSRegularExpression.publicKey.matches(code)
+        }
+        vc.completion = { code in
+            self.addressTextView.text = code
+        }
         vc.modalPresentationStyle = .custom
         parent?.present(vc, animated: true, completion: nil)
     }
