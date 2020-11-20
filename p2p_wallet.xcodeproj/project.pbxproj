@@ -304,23 +304,9 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		BC22ABBA2552A1010071C69F /* QrCodeScanner */ = {
-			isa = PBXGroup;
-			children = (
-				BC22ABD12552A2FC0071C69F /* MenuInteractor.swift */,
-				BC22ABD62552A30B0071C69F /* MenuHelper.swift */,
-				BC22ABDB2552A3CC0071C69F /* PresentMenuAnimator.swift */,
-				BC22ABE02552A4B70071C69F /* DismissMenuAnimator.swift */,
-				BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */,
-			);
-			path = QrCodeScanner;
-			sourceTree = "<group>";
-		};
 		BC23B572254FBB6300886C9C /* WalletVC */ = {
 			isa = PBXGroup;
 			children = (
-				BC22ABBA2552A1010071C69F /* QrCodeScanner */,
-				BC2EC1892553B6EE006EEDA5 /* CoinDetailVC */,
 				BC23B5A9254FBF6200886C9C /* WCVHeaderView.swift */,
 				BC2EC1772553ABD2006EEDA5 /* WCVFooterView.swift */,
 				BC3EA485254FD44700FB1FEA /* TokenCell.swift */,
@@ -420,6 +406,7 @@
 				BC1ABC37255BD0B8002FCE65 /* ViewModels */,
 				BCB58370255D28E100B10F65 /* ViewControllers */,
 				BC2EC1C12553ED1B006EEDA5 /* UIPresentationControllers */,
+				BCD83E7D25677673006DD29F /* UIViewControllerAnimatedTransitioning */,
 				BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */,
 				BCAEF2C3255E159200F3491F /* LoadableView.swift */,
 				BC3EA480254FD3CE00FB1FEA /* BaseCollectionViewCell.swift */,
@@ -440,6 +427,7 @@
 				BC55B8C3254C03660032C355 /* TabBarVC */,
 				BC23B572254FBB6300886C9C /* WalletVC */,
 				BCD5E75225512DA800F51299 /* InvestmentsVC */,
+				BC2EC1892553B6EE006EEDA5 /* CoinDetailVC */,
 				BCB58359255CE96B00B10F65 /* ProfileVC.swift */,
 			);
 			path = Scenes;
@@ -585,6 +573,7 @@
 				BC65E9B82542B98D005F50CE /* BaseVC.swift */,
 				BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */,
 				BCB58379255D29C500B10F65 /* WLBottomSheet.swift */,
+				BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */,
 				BC6EE768254ABEC700FE1025 /* PinCodeVC */,
 				BCD5E74425512D1500F51299 /* CollectionVC */,
 				BCBBE1822563C0F400533F6B /* ReceiveTokenVC */,
@@ -638,6 +627,25 @@
 				BCD5E82825525D3D00F51299 /* ListViewModel.swift */,
 			);
 			path = ListViewModel;
+			sourceTree = "<group>";
+		};
+		BCD83E7D25677673006DD29F /* UIViewControllerAnimatedTransitioning */ = {
+			isa = PBXGroup;
+			children = (
+				BCD83E8C2567769A006DD29F /* LeftSwipeMenu */,
+			);
+			path = UIViewControllerAnimatedTransitioning;
+			sourceTree = "<group>";
+		};
+		BCD83E8C2567769A006DD29F /* LeftSwipeMenu */ = {
+			isa = PBXGroup;
+			children = (
+				BC22ABD12552A2FC0071C69F /* MenuInteractor.swift */,
+				BC22ABD62552A30B0071C69F /* MenuHelper.swift */,
+				BC22ABDB2552A3CC0071C69F /* PresentMenuAnimator.swift */,
+				BC22ABE02552A4B70071C69F /* DismissMenuAnimator.swift */,
+			);
+			path = LeftSwipeMenu;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
