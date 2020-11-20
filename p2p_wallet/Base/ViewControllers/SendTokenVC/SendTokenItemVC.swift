@@ -12,7 +12,7 @@ class SendTokenItemVC: BaseVC {
     // MARK: - Properties
     var wallet: Wallet?
     lazy var dataObservable = Observable.combineLatest(
-        amountTextField.rx.text.orEmpty.map {Double($0) ?? 0},
+        amountTextField.rx.text.orEmpty.map {$0.double ?? 0},
         addressTextView.rx.text.orEmpty
     ).share()
     
@@ -115,7 +115,7 @@ class SendTokenItemVC: BaseVC {
     override func bind() {
         super.bind()
         amountTextField.rx.text.orEmpty
-            .map {Double($0) ?? 0}
+            .map {$0.double ?? 0}
             .map {$0 * self.wallet?.price?.value}
             .map {"= " + $0.toString(maximumFractionDigits: 9) + " US$"}
             .asDriver(onErrorJustReturn: "")
@@ -150,7 +150,7 @@ class SendTokenItemVC: BaseVC {
     }
     
     var isDataValid: Bool {
-        let amount = Double(amountTextField.text ?? "0") ?? 0
+        let amount = amountTextField.text?.double ?? 0
         return amount > 0 && amount <= (wallet?.amount ?? 0) && NSRegularExpression.publicKey.matches(addressTextView.text ?? "")
     }
     
@@ -168,7 +168,7 @@ class SendTokenItemVC: BaseVC {
     }
     
     @objc func buttonUseAllBalanceDidTouch() {
-        amountTextField.text = "\(wallet?.amount ?? 0)"
+        amountTextField.text = wallet?.amount?.toString(maximumFractionDigits: 9)
         amountTextField.sendActions(for: .valueChanged)
     }
 }
