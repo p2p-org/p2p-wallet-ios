@@ -61,15 +61,15 @@ class TokenCell: BaseCollectionViewCell, CollectionCell {
     func setUp(with item: Wallet) {
         coinLogoImageView.setImage(urlString: item.icon)
         coinNameLabel.text = item.name
-        tokenCountLabel.text = "\(item.amount.currencyValueFormatted(maximumFractionDigits: 9)) \(item.symbol)"
+        tokenCountLabel.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.symbol)"
         
         if let price = item.price {
             equityValueLabel.isHidden = false
             coinPriceLabel.isHidden = false
             coinChangeLabel.isHidden = false
-            equityValueLabel.text = "\((PricesManager.bonfida.solPrice?.value * item.amount).currencyValueFormatted(maximumFractionDigits: 9)) US$"
-            coinPriceLabel.text = "\(price.value.currencyValueFormatted()) US$"
-            coinChangeLabel.text = "\((price.change24h?.percentage * 100).currencyValueFormatted(maximumFractionDigits: 2, showPlus: true))% 24 hrs"
+            equityValueLabel.text = "\((PricesManager.bonfida.solPrice?.value * item.amount).toString(maximumFractionDigits: 9)) US$"
+            coinPriceLabel.text = "\(price.value.toString()) US$"
+            coinChangeLabel.text = "\((price.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true))% 24 hrs"
         } else {
             equityValueLabel.isHidden = true
             coinPriceLabel.isHidden = true
