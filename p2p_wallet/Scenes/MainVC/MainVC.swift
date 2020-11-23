@@ -10,7 +10,7 @@ import DiffableDataSources
 import Action
 import RxSwift
 
-class MainVC: CollectionVC<Wallet, TokenCell> {
+class MainVC: WalletsVC<MainWalletCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
     // MARK: - Properties
@@ -30,15 +30,6 @@ class MainVC: CollectionVC<Wallet, TokenCell> {
         return stackView
     }()
     var headerView: WCVFirstSectionHeaderView?
-    
-    init() {
-        let viewModel = WalletVM.ofCurrentUser
-        super.init(viewModel: viewModel)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     // MARK: - Methods
     override func setUp() {

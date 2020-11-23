@@ -8,7 +8,7 @@
 import Foundation
 import DiffableDataSources
 
-class CoinDetailVC: CollectionVC<Wallet, TokenCell> {
+class CoinDetailVC: CollectionVC<Wallet, MainWalletCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
         .normal()
     }
