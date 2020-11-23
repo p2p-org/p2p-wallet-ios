@@ -26,3 +26,13 @@ extension String {
         return String(self[start..<end])
     }
 }
+
+extension String {
+    var double: Double? {
+        let formatter = NumberFormatter()
+        formatter.locale = Locale.current // USA: Locale(identifier: "en_US")
+        formatter.numberStyle = .decimal
+        formatter.locale = Locale.current
+        return formatter.number(from: self)?.doubleValue
+    }
+}

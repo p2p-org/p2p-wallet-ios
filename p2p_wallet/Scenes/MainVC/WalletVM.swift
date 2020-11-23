@@ -35,7 +35,7 @@ class WalletVM: ListViewModel<Wallet> {
         }
         return SolanaSDK.shared.getBalance(account: account)
             .flatMap {balance in
-                SolanaSDK.shared.getProgramAccounts(in: SolanaSDK.network)
+                SolanaSDK.shared.getProgramAccounts(programPubkey: SolanaSDK.programPubkey, in: SolanaSDK.network)
                     .map {$0.map {Wallet(programAccount: $0)}}
                     .map {wallets in
                         var wallets = wallets
@@ -48,15 +48,27 @@ class WalletVM: ListViewModel<Wallet> {
                         let solWallet = Wallet(
                             name: "Solana",
                             mintAddress: "",
-                            owner: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString,
+                            pubkey: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString,
                             symbol: "SOL",
                             icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png",
                             amount: Double(balance) * 0.000000001,
-                            price: self.prices.first(where: {$0.from == "SOL"})
+                            price: self.prices.first(where: {$0.from == "SOL"}),
+                            decimals: 9
                         )
                         wallets.insert(solWallet, at: 0)
                         return wallets
                     }
             }
+    }
+    
+    func updateAmountChange(_ change: Double, forWallet pubkey: String) {
+        var items = self.items
+        if let index = items.firstIndex(where: {$0.pubkey == pubkey}) {
+            items[index].amount = items[index].amount + change
+        } else {
+            return
+        }
+        self.items = items
+        self.state.accept(.loaded(items))
     }
 }

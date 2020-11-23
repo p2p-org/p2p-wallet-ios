@@ -27,6 +27,7 @@ extension UIColor {
 
 extension UIImage {
     static let backButton = UIImage(named: "back-button", in: bundle, compatibleWith: nil)!
+    static let checkMark = UIImage(named: "check-mark", in: bundle, compatibleWith: nil)!
     static let close = UIImage(named: "close", in: bundle, compatibleWith: nil)!
     static let downArrow = UIImage(named: "down-arrow", in: bundle, compatibleWith: nil)!
     static let emptyPlaceholder = UIImage(named: "empty-placeholder", in: bundle, compatibleWith: nil)!
@@ -34,6 +35,7 @@ extension UIImage {
     static let graphDemo = UIImage(named: "graph-demo", in: bundle, compatibleWith: nil)!
     static let graphDetailDemo = UIImage(named: "graph-detail-demo", in: bundle, compatibleWith: nil)!
     static let qrCodeRange = UIImage(named: "qr-code-range", in: bundle, compatibleWith: nil)!
+    static let reverseButton = UIImage(named: "reverse-button", in: bundle, compatibleWith: nil)!
     static let scanQr = UIImage(named: "scan-qr", in: bundle, compatibleWith: nil)!
     static let tabbarProfile = UIImage(named: "tabbar-profile", in: bundle, compatibleWith: nil)!
     static let tabbarSearch = UIImage(named: "tabbar-search", in: bundle, compatibleWith: nil)!

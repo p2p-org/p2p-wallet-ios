@@ -17,11 +17,21 @@ class SendTokenVC: BEPagesVC, LoadableView {
     lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: UIEdgeInsets(top: 44, left: 16, bottom: 0, right: 16))
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     lazy var sendButton = WLButton.stepButton(type: .main, label: L10n.sendNow)
+        .onTap(self, action: #selector(buttonSendDidTouch))
     
     lazy var errorLabel = UILabel(textSize: 17, weight: .semibold, textColor: .textBlack, numberOfLines: 0, textAlignment: .center)
     
-    lazy var viewModel = WalletVM.ofCurrentUser
     let disposeBag = DisposeBag()
+    var wallets: [Wallet]
+    
+    init(wallets: [Wallet]) {
+        self.wallets = wallets
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func setUp() {
         super.setUp()
@@ -48,9 +58,11 @@ class SendTokenVC: BEPagesVC, LoadableView {
             .spacer
         ])
         
-        viewControllers = [
-            SendTokenItemVC()
-        ]
+        viewControllers = wallets.map {item in
+            let vc = SendTokenItemVC()
+            vc.setUp(wallet: item)
+            return vc
+        }
         
         view.layoutIfNeeded()
         
@@ -69,35 +81,22 @@ class SendTokenVC: BEPagesVC, LoadableView {
         errorLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
         
         errorLabel.isHidden = true
+        
+        // delegate
+        self.delegate = self
     }
     
     override func bind() {
         super.bind()
-        viewModel.state
-            .subscribe(onNext: { [weak self] state in
-                switch state {
-                case .initializing, .loading:
-                    self?.showLoading()
-                    self?.scrollView.isHidden = false
-                    self?.errorLabel.isHidden = true
-                case .loaded(let items):
-                    self?.hideLoading()
-                    self?.scrollView.isHidden = false
-                    self?.errorLabel.isHidden = true
-                    self?.viewControllers = items.map {item in
-                        let vc = SendTokenItemVC() 
-                        vc.setUp(wallet: item)
-                        return vc
-                    }
-                case .error(let error):
-                    self?.hideLoading()
-                    self?.scrollView.isHidden = true
-                    self?.errorLabel.isHidden = false
-                    #if DEBUG
-                    self?.showError(error)
-                    #endif
-                }
-            })
+        let vcs = viewControllers.map {$0 as! SendTokenItemVC}.enumerated()
+        
+        Observable.merge(vcs.map { (index, vc) in
+            vc.dataObservable
+                .map {_ in vc.isDataValid}
+                .filter {_ in index == self.currentPage}
+        })
+            .asDriver(onErrorJustReturn: false)
+            .drive(sendButton.rx.isEnabled)
             .disposed(by: disposeBag)
     }
     
@@ -111,5 +110,38 @@ class SendTokenVC: BEPagesVC, LoadableView {
     
     @objc func viewDidTouch() {
         view.endEditing(true)
+    }
+    
+    @objc func buttonSendDidTouch() {
+        guard currentPage < viewControllers.count,
+              let vc = viewControllers[currentPage] as? SendTokenItemVC,
+              let sender = vc.wallet?.pubkey,
+              let receiver = vc.addressTextView.text,
+              let amount = vc.amountTextField.text?.double
+        else {
+            return
+        }
+        
+        UIApplication.shared.showIndetermineHudWithMessage(L10n.sendingToken)
+        let amountToSend = amount * pow(10, Double(vc.wallet?.decimals ?? 0))
+        
+        SolanaSDK.shared.send(from: sender, to: receiver, amount: Int64(amountToSend))
+            .subscribe(onSuccess: { _ in
+                UIApplication.shared.hideHud()
+                UIApplication.shared.showDone(L10n.tokenSent)
+                WalletVM.ofCurrentUser.updateAmountChange(-amount, forWallet: sender)
+                self.back()
+            }, onError: {error in
+                UIApplication.shared.hideHud()
+                self.showError(error)
+            })
+            .disposed(by: disposeBag)
+    }
+}
+
+extension SendTokenVC: BEPagesVCDelegate {
+    func bePagesVC(_ pagesVC: BEPagesVC, currentPageDidChangeTo currentPage: Int) {
+        // trigger observable
+        (viewControllers[currentPage] as! SendTokenItemVC).amountTextField.sendActions(for: .valueChanged)
     }
 }

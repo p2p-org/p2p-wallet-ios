@@ -10,7 +10,7 @@ import DiffableDataSources
 import Action
 import RxSwift
 
-class WalletVC: CollectionVC<Wallet, TokenCell> {
+class MainVC: WalletsVC<MainWalletCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
     // MARK: - Properties
@@ -30,15 +30,6 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
         return stackView
     }()
     var headerView: WCVFirstSectionHeaderView?
-    
-    init() {
-        let viewModel = WalletVM.ofCurrentUser
-        super.init(viewModel: viewModel)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     // MARK: - Methods
     override func setUp() {
@@ -63,6 +54,9 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
         qrView.autoPinEdge(.top, to: .bottom, of: statusBarBgView)
         
         qrStackView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
+        
+        // FIXME: - Show qrView later
+        qrView.isHidden = true
     }
     
     // MARK: - Binding
@@ -95,6 +89,7 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
         {
             view.receiveAction = self.receiveAction
             view.sendAction = self.sendAction
+            view.swapAction = self.swapAction
             headerView = view
         }
         
@@ -128,14 +123,22 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
     
     var sendAction: CocoaAction {
         CocoaAction { _ in
-            let vc = SendTokenVC()
+            let vc = SendTokenVC(wallets: self.viewModel.items)
+            self.show(vc, sender: nil)
+            return .just(())
+        }
+    }
+    
+    var swapAction: CocoaAction {
+        CocoaAction { _ in
+            let vc = SwapTokenVC(wallets: self.viewModel.items)
             self.show(vc, sender: nil)
             return .just(())
         }
     }
 }
 
-extension WalletVC: UIViewControllerTransitioningDelegate {
+extension MainVC: UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         PresentMenuAnimator()
     }
@@ -149,7 +152,7 @@ extension WalletVC: UIViewControllerTransitioningDelegate {
     }
 }
 
-extension WalletVC: UICollectionViewDelegate {
+extension MainVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
         if elementKind == UICollectionView.elementKindSectionHeader,
            indexPath.section == 0
