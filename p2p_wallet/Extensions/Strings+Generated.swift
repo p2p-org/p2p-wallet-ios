@@ -124,6 +124,8 @@ internal enum L10n {
   internal static let theAddressIsNotValid = L10n.tr("Localizable", "The address is not valid")
   /// There is nothing in here!
   internal static let thereIsNothingInHere = L10n.tr("Localizable", "There is nothing in here!")
+  /// Token sent!
+  internal static let tokenSent = L10n.tr("Localizable", "Token sent!")
   /// Try again
   internal static let tryAgain = L10n.tr("Localizable", "Try again")
   /// unsupported

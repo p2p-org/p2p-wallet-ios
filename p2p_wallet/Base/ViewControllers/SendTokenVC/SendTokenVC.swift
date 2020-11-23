@@ -127,7 +127,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
         SolanaSDK.shared.send(to: receiver, amount: Int64(amountToSend))
             .subscribe(onSuccess: { string in
                 UIApplication.shared.hideHud()
-                print(string)
+                UIApplication.shared.showDone(L10n.tokenSent)
             }, onError: {error in
                 UIApplication.shared.hideHud()
                 self.showError(error)

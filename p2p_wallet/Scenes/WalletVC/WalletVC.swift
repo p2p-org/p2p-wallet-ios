@@ -63,6 +63,9 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
         qrView.autoPinEdge(.top, to: .bottom, of: statusBarBgView)
         
         qrStackView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
+        
+        // FIXME: - Show qrView later
+        qrView.isHidden = true
     }
     
     // MARK: - Binding
