@@ -6,10 +6,15 @@
 //
 
 import Foundation
+import RxCocoa
 
 class SwapTokenVC: BaseVStackVC {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(backgroundColor: .vcBackground) }
     override var padding: UIEdgeInsets { UIEdgeInsets(top: 44, left: 16, bottom: 0, right: 16) }
+    
+    var wallets: [Wallet]
+    var fromWallet = BehaviorRelay<Wallet?>(value: nil)
+    var toWallet = BehaviorRelay<Wallet?>(value: nil)
     
     lazy var fromWalletView = SwapTokenItemView(forAutoLayout: ())
     lazy var toWalletView = SwapTokenItemView(forAutoLayout: ())
@@ -19,6 +24,15 @@ class SwapTokenVC: BaseVStackVC {
     
     lazy var swapButton = WLButton.stepButton(type: .main, label: L10n.swapNow)
         .onTap(self, action: #selector(buttonSwapDidTouch))
+    
+    init(wallets: [Wallet]) {
+        self.wallets = wallets
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func setUp() {
         super.setUp()
@@ -62,6 +76,21 @@ class SwapTokenVC: BaseVStackVC {
         fromWalletView.amountTextField.delegate = self
         toWalletView.amountTextField.isUserInteractionEnabled = false
         
+    }
+    
+    override func bind() {
+        super.bind()
+        fromWallet.skip(1)
+            .subscribe(onNext: { wallet in
+                self.fromWalletView.setUp(wallet: wallet)
+            })
+            .disposed(by: disposeBag)
+        
+        toWallet.skip(1)
+            .subscribe(onNext: { wallet in
+                self.toWalletView.setUp(wallet: wallet)
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Actions

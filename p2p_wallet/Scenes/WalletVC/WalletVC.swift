@@ -140,7 +140,7 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
     
     var swapAction: CocoaAction {
         CocoaAction { _ in
-            let vc = SwapTokenVC()
+            let vc = SwapTokenVC(wallets: self.viewModel.items)
             self.show(vc, sender: nil)
             return .just(())
         }
