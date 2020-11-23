@@ -20,7 +20,7 @@ class SendTokenItemVC: BaseVC {
     lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
     lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .secondary)
     lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
-    lazy var amountTextField = BEDecimalTextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0\(Locale.current.decimalSeparator ?? ".")0", autocorrectionType: .no, rightView: useAllBalanceButton, rightViewMode: .always)
+    lazy var amountTextField = TokenAmountTextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0\(Locale.current.decimalSeparator ?? ".")0", autocorrectionType: .no, rightView: useAllBalanceButton, rightViewMode: .always)
     lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .secondary)
         .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
     lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .secondary)
@@ -177,29 +177,8 @@ class SendTokenItemVC: BaseVC {
 
 extension SendTokenItemVC: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if let textField = textField as? BEDecimalTextField {
-            // get the current text, or use an empty string if that failed
-            let currentText = textField.text ?? ""
-            
-            guard textField.shouldChangeCharactersInRange(range, replacementString: string),
-                  let stringRange = Range(range, in: currentText)
-            else {
-                return false
-            }
-            // add their new text to the existing text
-            var updatedText = currentText.replacingCharacters(in: stringRange, with: string)
-            if let dotIndex = updatedText.firstIndex(of: Locale.current.decimalSeparator?.first ?? ".") {
-                let offset = updatedText.distance(from: dotIndex, to: updatedText.endIndex) - 1
-                let decimals = wallet?.decimals ?? 0
-                if offset > decimals {
-                    let endIndex = updatedText.index(dotIndex, offsetBy: decimals)
-                    updatedText = String(updatedText[updatedText.startIndex...endIndex])
-                    textField.text = updatedText
-                    return false
-                }
-            }
-            
-            return true
+        if let textField = textField as? TokenAmountTextField {
+            return textField.shouldChangeCharactersInRange(range, replacementString: string)
         }
         return true
     }
