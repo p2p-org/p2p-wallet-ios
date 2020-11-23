@@ -7,7 +7,7 @@
 
 import Foundation
 
-class TokenCell: BaseCollectionViewCell, CollectionCell {
+class MainWalletCell: BaseCollectionViewCell, WalletCellType {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
     lazy var coinLogoImageView = UIImageView(width: 32, height: 32, cornerRadius: 32 / 2)
     lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold)
