@@ -60,7 +60,8 @@ class SwapTokenVC: BaseVStackVC {
         stackView.setCustomSpacing(35, after: toWalletView.wrapper!)
         
         fromWalletView.amountTextField.delegate = self
-        toWalletView.amountTextField.delegate = self
+        toWalletView.amountTextField.isUserInteractionEnabled = false
+        
     }
     
     // MARK: - Actions
