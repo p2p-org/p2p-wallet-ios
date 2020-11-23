@@ -17,6 +17,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
     lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: UIEdgeInsets(top: 44, left: 16, bottom: 0, right: 16))
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     lazy var sendButton = WLButton.stepButton(type: .main, label: L10n.sendNow)
+        .onTap(self, action: #selector(buttonSendDidTouch))
     
     lazy var errorLabel = UILabel(textSize: 17, weight: .semibold, textColor: .textBlack, numberOfLines: 0, textAlignment: .center)
     
@@ -109,6 +110,29 @@ class SendTokenVC: BEPagesVC, LoadableView {
     
     @objc func viewDidTouch() {
         view.endEditing(true)
+    }
+    
+    @objc func buttonSendDidTouch() {
+        guard currentPage < viewControllers.count,
+              let vc = viewControllers[currentPage] as? SendTokenItemVC,
+              let receiver = vc.addressTextView.text,
+              let amount = vc.amountTextField.text?.double
+        else {
+            return
+        }
+        
+        UIApplication.shared.showIndetermineHudWithMessage(L10n.sendingToken)
+        let amountToSend = amount * Double(vc.wallet?.decimals ?? 0)
+        
+        SolanaSDK.shared.send(to: receiver, amount: Int64(amountToSend))
+            .subscribe(onSuccess: { string in
+                UIApplication.shared.hideHud()
+                print(string)
+            }, onError: {error in
+                UIApplication.shared.hideHud()
+                self.showError(error)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
