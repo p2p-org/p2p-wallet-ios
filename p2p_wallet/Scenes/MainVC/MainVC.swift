@@ -10,7 +10,7 @@ import DiffableDataSources
 import Action
 import RxSwift
 
-class WalletVC: CollectionVC<Wallet, TokenCell> {
+class MainVC: CollectionVC<Wallet, TokenCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
     // MARK: - Properties
@@ -147,7 +147,7 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
     }
 }
 
-extension WalletVC: UIViewControllerTransitioningDelegate {
+extension MainVC: UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         PresentMenuAnimator()
     }
@@ -161,7 +161,7 @@ extension WalletVC: UIViewControllerTransitioningDelegate {
     }
 }
 
-extension WalletVC: UICollectionViewDelegate {
+extension MainVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
         if elementKind == UICollectionView.elementKindSectionHeader,
            indexPath.section == 0
