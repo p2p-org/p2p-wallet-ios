@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
+		BC1D2ACC256B6EA40064E595 /* SwapTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */; };
 		BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */; };
 		BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC2288022542E1CC0028CE8F /* Localizable.strings */; };
 		BC22AA3425527F190071C69F /* InvestmentsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22AA3325527F190071C69F /* InvestmentsVM.swift */; };
@@ -131,6 +132,7 @@
 		A342CCD45E7CDE0BA60EFBB2 /* Pods_p2p_walletTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_walletTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB6790432D1A5F53BBDB3162 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		BB7CFE6A2633569A3CAC841A /* Pods-p2p_walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.release.xcconfig"; sourceTree = "<group>"; };
+		BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenVC.swift; sourceTree = "<group>"; };
 		BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeBackVC.swift; sourceTree = "<group>"; };
 		BC2287FA2542E1A30028CE8F /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		BC2287FE2542E1B90028CE8F /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
@@ -302,6 +304,14 @@
 				BCD5E82D25525DD800F51299 /* ListViewModel */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		BC1D2ACA256B6E7A0064E595 /* SwapTokenVC */ = {
+			isa = PBXGroup;
+			children = (
+				BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */,
+			);
+			path = SwapTokenVC;
 			sourceTree = "<group>";
 		};
 		BC23B572254FBB6300886C9C /* WalletVC */ = {
@@ -578,6 +588,7 @@
 				BCD5E74425512D1500F51299 /* CollectionVC */,
 				BCBBE1822563C0F400533F6B /* ReceiveTokenVC */,
 				BCA0CFD6255E78C000CD0F8D /* SendTokenVC */,
+				BC1D2ACA256B6E7A0064E595 /* SwapTokenVC */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -1039,6 +1050,7 @@
 				BC2EC1D22553ED1B006EEDA5 /* FlexibleHeightPresentationController.swift in Sources */,
 				BC2EC1BA2553EC7D006EEDA5 /* UIView+Extensions.swift in Sources */,
 				BC22AA3425527F190071C69F /* InvestmentsVM.swift in Sources */,
+				BC1D2ACC256B6EA40064E595 /* SwapTokenVC.swift in Sources */,
 				BC5ED7532562687F0030572D /* PricesManager.swift in Sources */,
 				BCD5E82425525C6E00F51299 /* WalletVM.swift in Sources */,
 				BC6EE74A254AB3AD00FE1025 /* PinCodeTextField.swift in Sources */,
