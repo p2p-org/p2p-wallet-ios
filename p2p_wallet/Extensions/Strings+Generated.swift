@@ -20,18 +20,26 @@ internal enum L10n {
   internal static let almostDone = L10n.tr("Localizable", "Almost done!")
   /// amount
   internal static let amount = L10n.tr("Localizable", "amount")
+  /// Amount is not valid
+  internal static let amountIsNotValid = L10n.tr("Localizable", "Amount is not valid")
   /// Backup
   internal static let backup = L10n.tr("Localizable", "Backup")
   /// By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy
   internal static let byTappingAcceptYouAgreeToP2PWalletSTermsOfUseAndPrivacyPolicy = L10n.tr("Localizable", "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "Cancel")
+  /// Change your settings to use camera for scanning Qr Code
+  internal static let changeYourSettingsToUseCameraForScanningQrCode = L10n.tr("Localizable", "Change your settings to use camera for scanning Qr Code")
   /// confirm PIN code
   internal static let confirmPINCode = L10n.tr("Localizable", "confirm PIN code")
   /// Congratulations!
   internal static let congratulations = L10n.tr("Localizable", "Congratulations!")
+  /// Copied to clipboard
+  internal static let copiedToClipboard = L10n.tr("Localizable", "Copied to clipboard")
   /// Copy
   internal static let copy = L10n.tr("Localizable", "Copy")
+  /// Copy to clipboard
+  internal static let copyToClipboard = L10n.tr("Localizable", "Copy to clipboard")
   /// Create a PIN-code to protect your wallet
   internal static let createAPINCodeToProtectYourWallet = L10n.tr("Localizable", "Create a PIN-code to protect your wallet")
   /// create new wallet
@@ -52,14 +60,22 @@ internal enum L10n {
   internal static let exploreWowletAndDepositFundsWhenYouReReady = L10n.tr("Localizable", "Explore Wowlet and deposit funds when you’re ready")
   /// Finish setup
   internal static let finishSetup = L10n.tr("Localizable", "Finish setup")
+  /// From
+  internal static let from = L10n.tr("Localizable", "From")
   /// Go to wallet
   internal static let goToWallet = L10n.tr("Localizable", "Go to wallet")
+  /// I have saved these words in a safe place
+  internal static let iHaveSavedTheseWordsInASafePlace = L10n.tr("Localizable", "I have saved these words in a safe place")
   /// i've already had a wallet
   internal static let iVeAlreadyHadAWallet = L10n.tr("Localizable", "i've already had a wallet")
   /// Identify yourself!
   internal static let identifyYourself = L10n.tr("Localizable", "Identify yourself!")
+  /// Insufficient funds
+  internal static let insufficientFunds = L10n.tr("Localizable", "Insufficient funds")
   /// Make your crypto working on you
   internal static let makeYourCryptoWorkingOnYou = L10n.tr("Localizable", "Make your crypto working on you")
+  /// Max
+  internal static let max = L10n.tr("Localizable", "Max")
   /// next
   internal static let next = L10n.tr("Localizable", "next")
   /// OK
@@ -82,6 +98,8 @@ internal enum L10n {
   internal static let scanAnP2PAddress = L10n.tr("Localizable", "Scan an P2P address")
   /// Scan QR Code
   internal static let scanQRCode = L10n.tr("Localizable", "Scan QR Code")
+  /// Scanning QrCode not supported
+  internal static let scanningQrCodeNotSupported = L10n.tr("Localizable", "Scanning QrCode not supported")
   /// security keys
   internal static let securityKeys = L10n.tr("Localizable", "security keys")
   /// Send
@@ -90,6 +108,8 @@ internal enum L10n {
   internal static let sendCoins = L10n.tr("Localizable", "Send coins")
   /// Send Now
   internal static let sendNow = L10n.tr("Localizable", "Send Now")
+  /// Sending token...
+  internal static let sendingToken = L10n.tr("Localizable", "Sending token...")
   /// Share
   internal static let share = L10n.tr("Localizable", "Share")
   /// Slide to scan
@@ -98,12 +118,20 @@ internal enum L10n {
   internal static let somethingWentWrongPleaseTryAgainLater = L10n.tr("Localizable", "Something went wrong!\nPlease try again later")
   /// Swap
   internal static let swap = L10n.tr("Localizable", "Swap")
+  /// Swap now
+  internal static let swapNow = L10n.tr("Localizable", "Swap now")
   /// tap refresh button to retry
   internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
   /// Terms and conditions
   internal static let termsAndConditions = L10n.tr("Localizable", "Terms and conditions")
+  /// The address is not valid
+  internal static let theAddressIsNotValid = L10n.tr("Localizable", "The address is not valid")
   /// There is nothing in here!
   internal static let thereIsNothingInHere = L10n.tr("Localizable", "There is nothing in here!")
+  /// To
+  internal static let to = L10n.tr("Localizable", "To")
+  /// Token sent!
+  internal static let tokenSent = L10n.tr("Localizable", "Token sent!")
   /// Try again
   internal static let tryAgain = L10n.tr("Localizable", "Try again")
   /// unsupported
@@ -140,6 +168,16 @@ internal enum L10n {
   internal static let yourDeviceDoesNotSupportBiometricsAuthentication = L10n.tr("Localizable", "Your device does not support biometrics authentication")
   /// Your wallet has been successfully created!
   internal static let yourWalletHasBeenSuccessfullyCreated = L10n.tr("Localizable", "Your wallet has been successfully created!")
+
+  internal enum ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode {
+    /// This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!
+    internal static let pleaseEnableItInSettings = L10n.tr("Localizable", "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!")
+  }
+
+  internal enum YourDeviceDoesNotSupportScanningACodeFromAnItem {
+    /// Your device does not support scanning a code from an item. Please use a device with a camera.
+    internal static let pleaseUseADeviceWithACamera = L10n.tr("Localizable", "Your device does not support scanning a code from an item. Please use a device with a camera.")
+  }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces

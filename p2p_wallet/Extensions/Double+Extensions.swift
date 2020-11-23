@@ -8,8 +8,8 @@
 import Foundation
 
 extension Optional where Wrapped == Double {
-    public func currencyValueFormatted(maximumFractionDigits: Int = 3) -> String {
-        orZero.currencyValueFormatted(maximumFractionDigits: maximumFractionDigits)
+    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false) -> String {
+        orZero.toString(maximumFractionDigits: maximumFractionDigits, showPlus: showPlus)
     }
     
     public var orZero: Double {
@@ -18,6 +18,10 @@ extension Optional where Wrapped == Double {
     
     static func * (left: Double?, right: Double?) -> Double {
         left.orZero * right.orZero
+    }
+    
+    static func + (left: Double?, right: Double?) -> Double {
+        left.orZero + right.orZero
     }
 }
 
@@ -30,12 +34,15 @@ extension Double {
         return formatter.string(from: self as NSNumber) ?? "0"
     }
     
-    public func currencyValueFormatted(maximumFractionDigits: Int = 3) -> String {
+    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false) -> String {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
-        formatter.usesGroupingSeparator = true
-        formatter.locale = Locale(identifier: "en")
+        formatter.groupingSeparator = " "
+        formatter.locale = Locale.current
+        if showPlus {
+            formatter.positivePrefix = formatter.plusSign
+        }
 
         if self > 1000 {
             formatter.maximumFractionDigits = 2
@@ -45,6 +52,6 @@ extension Double {
             formatter.maximumFractionDigits = 2
         }
         
-        return (formatter.string(from: self as NSNumber) ?? "0").replacingOccurrences(of: ",", with: " ")
+        return (formatter.string(from: self as NSNumber) ?? "0")
     }
 }
