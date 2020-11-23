@@ -18,7 +18,7 @@
 		BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABDB2552A3CC0071C69F /* PresentMenuAnimator.swift */; };
 		BC22ABE12552A4B70071C69F /* DismissMenuAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABE02552A4B70071C69F /* DismissMenuAnimator.swift */; };
 		BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */; };
-		BC23B574254FBB7F00886C9C /* WalletVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B573254FBB7F00886C9C /* WalletVC.swift */; };
+		BC23B574254FBB7F00886C9C /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B573254FBB7F00886C9C /* MainVC.swift */; };
 		BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */; };
 		BC23B5AA254FBF6200886C9C /* WCVHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A9254FBF6200886C9C /* WCVHeaderView.swift */; };
 		BC290A00256B9C95002A727C /* SwapTokenItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */; };
@@ -149,7 +149,7 @@
 		BC22ABDB2552A3CC0071C69F /* PresentMenuAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentMenuAnimator.swift; sourceTree = "<group>"; };
 		BC22ABE02552A4B70071C69F /* DismissMenuAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissMenuAnimator.swift; sourceTree = "<group>"; };
 		BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeScannerVC.swift; sourceTree = "<group>"; };
-		BC23B573254FBB7F00886C9C /* WalletVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletVC.swift; sourceTree = "<group>"; };
+		BC23B573254FBB7F00886C9C /* MainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVC.swift; sourceTree = "<group>"; };
 		BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionView.swift; sourceTree = "<group>"; };
 		BC23B5A9254FBF6200886C9C /* WCVHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WCVHeaderView.swift; sourceTree = "<group>"; };
 		BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenItemView.swift; sourceTree = "<group>"; };
@@ -319,16 +319,16 @@
 			path = SwapTokenVC;
 			sourceTree = "<group>";
 		};
-		BC23B572254FBB6300886C9C /* WalletVC */ = {
+		BC23B572254FBB6300886C9C /* MainVC */ = {
 			isa = PBXGroup;
 			children = (
 				BC23B5A9254FBF6200886C9C /* WCVHeaderView.swift */,
 				BC2EC1772553ABD2006EEDA5 /* WCVFooterView.swift */,
 				BC3EA485254FD44700FB1FEA /* TokenCell.swift */,
-				BC23B573254FBB7F00886C9C /* WalletVC.swift */,
+				BC23B573254FBB7F00886C9C /* MainVC.swift */,
 				BCD5E82325525C6E00F51299 /* WalletVM.swift */,
 			);
-			path = WalletVC;
+			path = MainVC;
 			sourceTree = "<group>";
 		};
 		BC2EC1892553B6EE006EEDA5 /* CoinDetailVC */ = {
@@ -441,7 +441,7 @@
 				BC32A3D3254A8F66002156F0 /* CreateWallet */,
 				BC32A46F254AAE96002156F0 /* SecuritySettings */,
 				BC55B8C3254C03660032C355 /* TabBarVC */,
-				BC23B572254FBB6300886C9C /* WalletVC */,
+				BC23B572254FBB6300886C9C /* MainVC */,
 				BCD5E75225512DA800F51299 /* InvestmentsVC */,
 				BC2EC1892553B6EE006EEDA5 /* CoinDetailVC */,
 				BCB58359255CE96B00B10F65 /* ProfileVC.swift */,
@@ -1032,7 +1032,7 @@
 				BC290A00256B9C95002A727C /* SwapTokenItemView.swift in Sources */,
 				BC32A44E254AAC1A002156F0 /* PinCodeVC.swift in Sources */,
 				BC6EE7CA254BBF8900FE1025 /* UIApplication+Extensions.swift in Sources */,
-				BC23B574254FBB7F00886C9C /* WalletVC.swift in Sources */,
+				BC23B574254FBB7F00886C9C /* MainVC.swift in Sources */,
 				BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */,
 				BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */,
 				BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */,
