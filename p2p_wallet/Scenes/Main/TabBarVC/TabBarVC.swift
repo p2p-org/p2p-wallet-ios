@@ -18,7 +18,7 @@ class TabBarVC: BEPagesVC {
         super.setUp()
         // pages
         viewControllers = [
-            BENavigationController(rootViewController: WalletVC()),
+            BENavigationController(rootViewController: MainVC()),
             BENavigationController(rootViewController: InvestmentsVC()),
             BENavigationController(rootViewController: IntroVC()),
             BENavigationController(rootViewController: ProfileVC())
