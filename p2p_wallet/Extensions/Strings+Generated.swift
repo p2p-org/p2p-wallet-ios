@@ -60,6 +60,8 @@ internal enum L10n {
   internal static let exploreWowletAndDepositFundsWhenYouReReady = L10n.tr("Localizable", "Explore Wowlet and deposit funds when you’re ready")
   /// Finish setup
   internal static let finishSetup = L10n.tr("Localizable", "Finish setup")
+  /// From
+  internal static let from = L10n.tr("Localizable", "From")
   /// Go to wallet
   internal static let goToWallet = L10n.tr("Localizable", "Go to wallet")
   /// I have saved these words in a safe place
@@ -116,6 +118,8 @@ internal enum L10n {
   internal static let somethingWentWrongPleaseTryAgainLater = L10n.tr("Localizable", "Something went wrong!\nPlease try again later")
   /// Swap
   internal static let swap = L10n.tr("Localizable", "Swap")
+  /// Swap now
+  internal static let swapNow = L10n.tr("Localizable", "Swap now")
   /// tap refresh button to retry
   internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
   /// Terms and conditions
@@ -124,6 +128,8 @@ internal enum L10n {
   internal static let theAddressIsNotValid = L10n.tr("Localizable", "The address is not valid")
   /// There is nothing in here!
   internal static let thereIsNothingInHere = L10n.tr("Localizable", "There is nothing in here!")
+  /// To
+  internal static let to = L10n.tr("Localizable", "To")
   /// Token sent!
   internal static let tokenSent = L10n.tr("Localizable", "Token sent!")
   /// Try again

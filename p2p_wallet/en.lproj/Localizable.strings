@@ -83,3 +83,6 @@
 "The address is not valid" = "The address is not valid";
 "Sending token..." = "Sending token...";
 "Token sent!" = "Token sent!";
+"From" = "From";
+"To" = "To";
+"Swap now" = "Swap now";
