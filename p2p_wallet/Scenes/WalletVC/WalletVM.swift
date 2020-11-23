@@ -52,7 +52,8 @@ class WalletVM: ListViewModel<Wallet> {
                             symbol: "SOL",
                             icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png",
                             amount: Double(balance) * 0.000000001,
-                            price: self.prices.first(where: {$0.from == "SOL"})
+                            price: self.prices.first(where: {$0.from == "SOL"}),
+                            decimals: 9
                         )
                         wallets.insert(solWallet, at: 0)
                         return wallets

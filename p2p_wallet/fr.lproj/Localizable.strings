@@ -81,3 +81,4 @@
 "Amount is not valid" = "Le montant n'est pas valide";
 "Insufficient funds" = "Fonds insuffisants";
 "The address is not valid" = "L'adresse n'est pas valide";
+"Sending token..." = "Envoi du jeton ...";

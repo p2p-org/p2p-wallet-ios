@@ -178,7 +178,28 @@ class SendTokenItemVC: BaseVC {
 extension SendTokenItemVC: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let textField = textField as? BEDecimalTextField {
-            return textField.shouldChangeCharactersInRange(range, replacementString: string)
+            // get the current text, or use an empty string if that failed
+            let currentText = textField.text ?? ""
+            
+            guard textField.shouldChangeCharactersInRange(range, replacementString: string),
+                  let stringRange = Range(range, in: currentText)
+            else {
+                return false
+            }
+            // add their new text to the existing text
+            var updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+            if let dotIndex = updatedText.firstIndex(of: Locale.current.decimalSeparator?.first ?? ".") {
+                let offset = updatedText.distance(from: dotIndex, to: updatedText.endIndex) - 1
+                let decimals = wallet?.decimals ?? 0
+                if offset > decimals {
+                    let endIndex = updatedText.index(dotIndex, offsetBy: decimals)
+                    updatedText = String(updatedText[updatedText.startIndex...endIndex])
+                    textField.text = updatedText
+                    return false
+                }
+            }
+            
+            return true
         }
         return true
     }

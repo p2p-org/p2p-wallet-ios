@@ -81,3 +81,4 @@
 "Amount is not valid" = "Số tiền không hợp lệ";
 "Insufficient funds" = "Không đủ tiền";
 "The address is not valid" = "Địa chỉ không hợp lệ";
+"Sending token..." = "Đang gửi token...";
