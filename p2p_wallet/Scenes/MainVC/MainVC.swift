@@ -10,7 +10,7 @@ import DiffableDataSources
 import Action
 import RxSwift
 
-class WalletVC: CollectionVC<Wallet, TokenCell> {
+class MainVC: WalletsVC<MainWalletCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
     // MARK: - Properties
@@ -30,15 +30,6 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
         return stackView
     }()
     var headerView: WCVFirstSectionHeaderView?
-    
-    init() {
-        let viewModel = WalletVM.ofCurrentUser
-        super.init(viewModel: viewModel)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     // MARK: - Methods
     override func setUp() {
@@ -147,7 +138,7 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
     }
 }
 
-extension WalletVC: UIViewControllerTransitioningDelegate {
+extension MainVC: UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         PresentMenuAnimator()
     }
@@ -161,7 +152,7 @@ extension WalletVC: UIViewControllerTransitioningDelegate {
     }
 }
 
-extension WalletVC: UICollectionViewDelegate {
+extension MainVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
         if elementKind == UICollectionView.elementKindSectionHeader,
            indexPath.section == 0
