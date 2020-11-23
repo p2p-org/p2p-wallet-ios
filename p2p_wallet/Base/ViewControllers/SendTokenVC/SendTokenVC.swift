@@ -122,7 +122,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
         }
         
         UIApplication.shared.showIndetermineHudWithMessage(L10n.sendingToken)
-        let amountToSend = amount * Double(vc.wallet?.decimals ?? 0)
+        let amountToSend = amount * pow(10, Double(vc.wallet?.decimals ?? 0))
         
         SolanaSDK.shared.send(to: receiver, amount: Int64(amountToSend))
             .subscribe(onSuccess: { string in
