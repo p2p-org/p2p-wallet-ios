@@ -98,6 +98,7 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
         {
             view.receiveAction = self.receiveAction
             view.sendAction = self.sendAction
+            view.swapAction = self.swapAction
             headerView = view
         }
         
@@ -132,6 +133,14 @@ class WalletVC: CollectionVC<Wallet, TokenCell> {
     var sendAction: CocoaAction {
         CocoaAction { _ in
             let vc = SendTokenVC(wallets: self.viewModel.items)
+            self.show(vc, sender: nil)
+            return .just(())
+        }
+    }
+    
+    var swapAction: CocoaAction {
+        CocoaAction { _ in
+            let vc = SwapTokenVC()
             self.show(vc, sender: nil)
             return .just(())
         }
