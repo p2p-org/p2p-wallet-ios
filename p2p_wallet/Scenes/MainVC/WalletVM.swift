@@ -60,4 +60,15 @@ class WalletVM: ListViewModel<Wallet> {
                     }
             }
     }
+    
+    func updateAmountChange(_ change: Double, forWallet pubkey: String) {
+        var items = self.items
+        if let index = items.firstIndex(where: {$0.pubkey == pubkey}) {
+            items[index].amount = items[index].amount + change
+        } else {
+            return
+        }
+        self.items = items
+        self.state.accept(.loaded(items))
+    }
 }

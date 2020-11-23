@@ -115,6 +115,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
     @objc func buttonSendDidTouch() {
         guard currentPage < viewControllers.count,
               let vc = viewControllers[currentPage] as? SendTokenItemVC,
+              let sender = vc.wallet?.pubkey,
               let receiver = vc.addressTextView.text,
               let amount = vc.amountTextField.text?.double
         else {
@@ -124,10 +125,12 @@ class SendTokenVC: BEPagesVC, LoadableView {
         UIApplication.shared.showIndetermineHudWithMessage(L10n.sendingToken)
         let amountToSend = amount * pow(10, Double(vc.wallet?.decimals ?? 0))
         
-        SolanaSDK.shared.send(to: receiver, amount: Int64(amountToSend))
-            .subscribe(onSuccess: { string in
+        SolanaSDK.shared.send(from: sender, to: receiver, amount: Int64(amountToSend))
+            .subscribe(onSuccess: { _ in
                 UIApplication.shared.hideHud()
                 UIApplication.shared.showDone(L10n.tokenSent)
+                WalletVM.ofCurrentUser.updateAmountChange(-amount, forWallet: sender)
+                self.back()
             }, onError: {error in
                 UIApplication.shared.hideHud()
                 self.showError(error)
