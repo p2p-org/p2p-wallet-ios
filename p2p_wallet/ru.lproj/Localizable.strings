@@ -82,3 +82,4 @@
 "Insufficient funds" = "Недостаточно средств";
 "The address is not valid" = "Адрес недействителен";
 "Sending token..." = "Отправка токена...";
+"Token sent!" = "Токен отправлен!";

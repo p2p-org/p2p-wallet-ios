@@ -45,13 +45,7 @@ extension UIApplication {
         // show new hud
         let hud = MBProgressHUD.showAdded(to: keyWindow, animated: false)
         hud.mode = .customView
-        let image: UIImage
-        if #available(iOS 13.0, *) {
-            image = UIImage.checkmark
-        } else {
-            image = UIImage.checkMark
-        }
-        let imageView = UIImageView(image: image)
+        let imageView = UIImageView(width: 100, height: 100, image: .checkMark)
         imageView.tintColor = .textBlack
         hud.customView = imageView
         hud.label.text = message
