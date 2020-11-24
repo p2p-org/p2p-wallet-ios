@@ -129,7 +129,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
             .subscribe(onSuccess: { _ in
                 UIApplication.shared.hideHud()
                 UIApplication.shared.showDone(L10n.tokenSent)
-                WalletVM.ofCurrentUser.updateAmountChange(-amount, forWallet: sender)
+                WalletsVM.ofCurrentUser.updateAmountChange(-amount, forWallet: sender)
                 self.back()
             }, onError: {error in
                 UIApplication.shared.hideHud()

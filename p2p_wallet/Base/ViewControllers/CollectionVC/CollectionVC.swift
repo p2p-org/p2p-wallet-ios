@@ -73,11 +73,6 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        viewModel.refresh()
-    }
-    
     // MARK: - Setup
     override func setUp() {
         super.setUp()

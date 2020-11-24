@@ -20,6 +20,7 @@ class SendTokenItemVC: BaseVC {
     lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
     lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .secondary)
     lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
+        .onTap(self, action: #selector(buttonChooseWalletDidTouch))
     lazy var amountTextField = TokenAmountTextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0\(Locale.current.decimalSeparator ?? ".")0", autocorrectionType: .no, rightView: useAllBalanceButton, rightViewMode: .always)
     lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .secondary)
         .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
@@ -53,6 +54,7 @@ class SendTokenItemVC: BaseVC {
         let amountView: UIStackView = {
             let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
             let downArrowImage = UIImageView(width: 11, height: 8, image: .downArrow)
+                .onTap(self, action: #selector(buttonChooseWalletDidTouch))
             downArrowImage.tintColor = .textBlack
             
             let amountVStack: UIStackView = {
@@ -172,6 +174,11 @@ class SendTokenItemVC: BaseVC {
     @objc func buttonUseAllBalanceDidTouch() {
         amountTextField.text = wallet?.amount?.toString(maximumFractionDigits: 9)
         amountTextField.sendActions(for: .valueChanged)
+    }
+    
+    @objc func buttonChooseWalletDidTouch() {
+        let vc = ChooseWalletVC()
+        present(vc, animated: true, completion: nil)
     }
 }
 

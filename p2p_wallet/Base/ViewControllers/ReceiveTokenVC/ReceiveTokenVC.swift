@@ -71,7 +71,7 @@ class ReceiveTokenVC: WLBottomSheet {
     
     override func bind() {
         super.bind()
-        WalletVM.ofCurrentUser.state
+        WalletsVM.ofCurrentUser.state
             .subscribe(onNext: {state in
                 switch state {
                 case .loaded(let wallets):

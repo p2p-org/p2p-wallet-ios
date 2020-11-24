@@ -64,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } else if !Defaults.didSetEnableNotifications {
                 rootVC = BENavigationController(rootViewController: EnableNotificationsVC())
             } else {
-                WalletVM.ofCurrentUser = WalletVM()
+                WalletsVM.ofCurrentUser = WalletsVM()
                 rootVC = TabBarVC()
             }
         }
