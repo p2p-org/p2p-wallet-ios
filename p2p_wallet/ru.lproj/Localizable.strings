@@ -87,4 +87,6 @@
 "To" = "К";
 "Swap now" = "Заменить сейчас";
 "Your wallets" = "Ваши кошельки";
-"Add a token to your wallet.\nThis will cost 0.002039 SOL." = "Добавьте токен в свой кошелек.\nЭто будет стоить 0,002039 СОЛ.";
+"Add a token to your wallet.\nThis will cost" = "Добавьте токен в свой кошелек.\nЭто будет стоить";
+"Getting creation fee" = "Получение платы за создание";
+"Error when retrieving creation fee.\nTap to try again" = "Ошибка при получении платы за создание.\nНажмите, чтобы повторить попытку.";

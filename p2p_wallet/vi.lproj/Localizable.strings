@@ -87,4 +87,6 @@
 "To" = "Đến";
 "Swap now" = "Đổi ngay bây giờ";
 "Your wallets" = "Ví của bạn";
-"Add a token to your wallet.\nThis will cost 0.002039 SOL." = "Thêm token vào ví của bạn.\nPhí giao dịch: 0,002039 SOL.";
+"Add a token to your wallet.\nThis will cost" = "Thêm token vào ví của bạn.\nPhí giao dịch:";
+"Getting creation fee" = "Tải phí khởi tạo";
+"Error when retrieving creation fee.\nTap to try again" = "Lỗi tải phí khởi tạo.\nNhấn để thử lại";
