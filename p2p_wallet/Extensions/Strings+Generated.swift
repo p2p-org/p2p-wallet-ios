@@ -62,6 +62,8 @@ internal enum L10n {
   internal static let finishSetup = L10n.tr("Localizable", "Finish setup")
   /// From
   internal static let from = L10n.tr("Localizable", "From")
+  /// Getting creation fee
+  internal static let gettingCreationFee = L10n.tr("Localizable", "Getting creation fee")
   /// Go to wallet
   internal static let goToWallet = L10n.tr("Localizable", "Go to wallet")
   /// I have saved these words in a safe place
@@ -172,10 +174,13 @@ internal enum L10n {
   internal static let yourWallets = L10n.tr("Localizable", "Your wallets")
 
   internal enum AddATokenToYourWallet {
-    internal enum ThisWillCost0 {
-      /// Add a token to your wallet.\nThis will cost 0.002039 SOL.
-      internal static let _002039Sol = L10n.tr("Localizable", "Add a token to your wallet.\nThis will cost 0.002039 SOL.")
-    }
+    /// Add a token to your wallet.\nThis will cost
+    internal static let thisWillCost = L10n.tr("Localizable", "Add a token to your wallet.\nThis will cost")
+  }
+
+  internal enum ErrorWhenRetrievingCreationFee {
+    /// Error when retrieving creation fee.\nTap to try again
+    internal static let tapToTryAgain = L10n.tr("Localizable", "Error when retrieving creation fee.\nTap to try again")
   }
 
   internal enum ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode {

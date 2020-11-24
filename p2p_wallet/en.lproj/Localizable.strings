@@ -87,4 +87,6 @@
 "To" = "To";
 "Swap now" = "Swap now";
 "Your wallets" = "Your wallets";
-"Add a token to your wallet.\nThis will cost 0.002039 SOL." = "Add a token to your wallet.\nThis will cost 0.002039 SOL.";
+"Add a token to your wallet.\nThis will cost" = "Add a token to your wallet.\nThis will cost";
+"Getting creation fee" = "Getting creation fee";
+"Error when retrieving creation fee.\nTap to try again" = "Error when retrieving creation fee.\nTap to try again";
