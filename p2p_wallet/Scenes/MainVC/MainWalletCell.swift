@@ -28,33 +28,15 @@ class MainWalletCell: BaseCollectionViewCell, WalletCellType {
         contentView.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 16.adaptiveWidth, left: 16.adaptiveWidth, bottom: 16.adaptiveWidth, right: 16.adaptiveWidth))
         
-        let coinInfoView: UIStackView = {
-            let stackView = UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill)
-            stackView.addArrangedSubviews([
-                coinNameLabel,
-                equityValueLabel,
-                tokenCountLabel
-            ])
-            stackView.setCustomSpacing(10, after: equityValueLabel)
-            return stackView
-        }()
-        
-        let priceInfoView: UIStackView = {
-            let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .trailing, distribution: .fill)
-            stackView.addArrangedSubviews([
-                graphView,
-                coinPriceLabel,
-                coinChangeLabel
-            ])
-            stackView.setCustomSpacing(10, after: coinPriceLabel)
-            return stackView
-        }()
+        let vStackView = UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
+            row(arrangedSubviews: [coinNameLabel, graphView]),
+            row(arrangedSubviews: [equityValueLabel, coinPriceLabel]),
+            row(arrangedSubviews: [tokenCountLabel, coinChangeLabel])
+        ])
         
         stackView.addArrangedSubviews([
             coinLogoImageView,
-            coinInfoView,
-            .spacer,
-            priceInfoView
+            vStackView
         ])
     }
     
@@ -75,5 +57,11 @@ class MainWalletCell: BaseCollectionViewCell, WalletCellType {
             coinPriceLabel.isHidden = true
             coinChangeLabel.isHidden = true
         }
+    }
+    
+    private func row(arrangedSubviews: [UIView]) -> UIStackView {
+        let stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing)
+        stackView.addArrangedSubviews(arrangedSubviews)
+        return stackView
     }
 }
