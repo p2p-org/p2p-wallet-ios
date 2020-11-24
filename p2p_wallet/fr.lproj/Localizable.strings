@@ -87,4 +87,6 @@
 "To" = "À";
 "Swap now" = "Échangez maintenant";
 "Your wallets" = "Vos portefeuilles";
-"Add a token to your wallet.\nThis will cost 0.002039 SOL." = "Ajoutez un jeton à votre portefeuille.\nCela coûtera 0,002039 SOL.";
+"Add a token to your wallet.\nThis will cost" = "Ajoutez un jeton à votre portefeuille.\nCela coûtera";
+"Getting creation fee" = "Obtenir des frais de création";
+"Error when retrieving creation fee.\nTap to try again" = "Erreur lors de la récupération des frais de création.\nTapez pour réessayer";
