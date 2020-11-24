@@ -8,6 +8,7 @@
 import Foundation
 
 class ChooseWalletVC: MyWalletsVC<ChooseWalletVC.Cell> {
+    let titleLabel = UILabel(text: L10n.yourWallets, textSize: 17, weight: .semibold)
     let closeButton = UIButton.close(tintColor: .textBlack)
         .onTap(self, action: #selector(back))
     
@@ -27,13 +28,20 @@ class ChooseWalletVC: MyWalletsVC<ChooseWalletVC.Cell> {
     
     override func setUp() {
         super.setUp()
-        collectionView.addSubview(closeButton)
-        closeButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 16, yInset: 8)
+        let headerStackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
+            titleLabel,
+            closeButton
+        ])
+        view.addSubview(headerStackView)
+        headerStackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16), excludingEdge: .bottom)
+        
+        collectionView.constraintToSuperviewWithAttribute(.top)?.isActive = false
+        collectionView.autoPinEdge(.top, to: .bottom, of: headerStackView, withOffset: 8)
     }
     
     // MARK: - Layouts
     override var sections: [Section] {
-        [Section(headerTitle: L10n.yourWallets)]
+        [Section(headerTitle: "")]
     }
     
     // MARK: - Delegate
