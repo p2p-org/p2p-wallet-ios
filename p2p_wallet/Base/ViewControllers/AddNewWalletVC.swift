@@ -13,9 +13,13 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
         .onTap(self, action: #selector(back))
     lazy var descriptionLabel = UILabel(text: L10n.AddATokenToYourWallet.ThisWillCost0._002039Sol, textSize: 15, textColor: .secondary, numberOfLines: 0)
     
-    init() {
+    init(showInFullScreen: Bool = false) {
         let viewModel = ViewModel()
         super.init(viewModel: viewModel)
+        if !showInFullScreen {
+            modalPresentationStyle = .custom
+            transitioningDelegate = self
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -49,6 +53,12 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     
     override var sections: [Section] {
         [Section(headerTitle: "")]
+    }
+}
+
+extension AddNewWalletVC: UIViewControllerTransitioningDelegate {
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        HalfSizePresentationController(presentedViewController: presented, presenting: presenting)
     }
 }
 
@@ -89,6 +99,7 @@ extension AddNewWalletVC {
             
             let button = UIButton(width: 32, height: 32, backgroundColor: .ededed, cornerRadius: 16, label: "+", labelFont: .systemFont(ofSize: 20), textColor: UIColor.textBlack.withAlphaComponent(0.5))
             
+            stackView.alignment = .center
             stackView.addArrangedSubviews([
                 coinLogoImageView,
                 UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
@@ -103,6 +114,12 @@ extension AddNewWalletVC {
                 ]),
                 button
             ])
+            
+            stackView.constraintToSuperviewWithAttribute(.bottom)?.isActive = false
+            let separator = UIView.separator(height: 2, color: .vcBackground)
+            stackView.superview?.addSubview(separator)
+            separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            separator.autoPinEdge(.top, to: .bottom, of: stackView, withOffset: 20)
         }
         
         override func setUp(with item: Wallet) {
