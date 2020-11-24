@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import Action
 
 class SendTokenVC: BEPagesVC, LoadableView {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
@@ -60,6 +61,16 @@ class SendTokenVC: BEPagesVC, LoadableView {
         
         viewControllers = wallets.map {item in
             let vc = SendTokenItemVC()
+            vc.chooseWalletAction = CocoaAction {
+                let vc = ChooseWalletVC()
+                vc.completion = {wallet in
+                    guard let index = self.wallets.firstIndex(where: {$0.mintAddress == wallet.mintAddress}) else {return}
+                    self.moveToPage(index)
+                    vc.back()
+                }
+                self.present(vc, animated: true, completion: nil)
+                return .just(())
+            }
             vc.setUp(wallet: item)
             return vc
         }

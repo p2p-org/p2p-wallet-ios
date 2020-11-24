@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import Action
 
 class SendTokenItemVC: BaseVC {
     // MARK: - Properties
@@ -15,6 +16,7 @@ class SendTokenItemVC: BaseVC {
         amountTextField.rx.text.orEmpty.map {$0.double ?? 0},
         addressTextView.rx.text.orEmpty
     ).share()
+    var chooseWalletAction: CocoaAction?
     
     // MARK: - Subviews
     lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
@@ -177,8 +179,7 @@ class SendTokenItemVC: BaseVC {
     }
     
     @objc func buttonChooseWalletDidTouch() {
-        let vc = ChooseWalletVC()
-        parent?.present(vc, animated: true, completion: nil)
+        chooseWalletAction?.execute()
     }
 }
 
