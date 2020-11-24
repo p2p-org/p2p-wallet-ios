@@ -8,8 +8,8 @@
 import Foundation
 import RxSwift
 
-class WalletVM: ListViewModel<Wallet> {
-    static var ofCurrentUser = WalletVM()
+class WalletsVM: ListViewModel<Wallet> {
+    static var ofCurrentUser = WalletsVM()
     var prices: [Price] { PricesManager.bonfida.prices.value }
     
     override func bind() {

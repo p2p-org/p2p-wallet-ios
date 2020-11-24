@@ -10,7 +10,7 @@ import DiffableDataSources
 import Action
 import RxSwift
 
-class MainVC: WalletsVC<MainWalletCell> {
+class MainVC: MyWalletsVC<MainWalletCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
     // MARK: - Properties
@@ -62,7 +62,7 @@ class MainVC: WalletsVC<MainWalletCell> {
     // MARK: - Binding
     override func dataDidLoad() {
         super.dataDidLoad()
-        let viewModel = self.viewModel as! WalletVM
+        let viewModel = self.viewModel as! WalletsVM
         
         // fix header
         headerView?.setUp(state: viewModel.state.value)

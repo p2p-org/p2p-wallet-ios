@@ -11,8 +11,12 @@ protocol WalletCellType: CollectionCell {
     func setUp(with item: Wallet)
 }
 class WalletsVC<WalletCell: WalletCellType>: CollectionVC<Wallet, WalletCell> {
+    
+}
+
+class MyWalletsVC<WalletCell: WalletCellType>: WalletsVC<WalletCell> {
     init() {
-        let viewModel = WalletVM.ofCurrentUser
+        let viewModel = WalletsVM.ofCurrentUser
         super.init(viewModel: viewModel)
     }
     

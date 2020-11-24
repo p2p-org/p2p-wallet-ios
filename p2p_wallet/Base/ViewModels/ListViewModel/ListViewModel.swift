@@ -28,6 +28,7 @@ class ListViewModel<T: Hashable>: BaseVM<[T]> {
     
     init() {
         super.init(initialData: [])
+        reload()
     }
     
     func reload() {
