@@ -1,5 +1,5 @@
 //
-//  WCVFooterView.swift
+//  MainFooterView.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 11/5/20.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class WCVFooterView: SectionFooterView {
+class MainFooterView: SectionFooterView {
     lazy var addCoinButton = DashedButton(title: "+ \(L10n.addCoin)")
     
     override func commonInit() {
