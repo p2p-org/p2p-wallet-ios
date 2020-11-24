@@ -95,9 +95,24 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         return header
     }
     
+    override func configureFooterForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
+        let footer = super.configureFooterForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
+        
+        if indexPath.section == 0,
+           let view = footer as? MainFooterView
+        {
+            view.addCoinButton.rx.action = CocoaAction {
+                let vc = ChooseWalletVC()
+                self.present(vc, animated: true, completion: nil)
+                return .just(())
+            }
+        }
+        return footer
+    }
+    
     // MARK: - Delegate
     override func itemDidSelect(_ item: Wallet) {
-        show(CoinDetailVC(), sender: nil)
+//        show(CoinDetailVC(), sender: nil)
     }
     
     // MARK: - Actions
@@ -158,10 +173,11 @@ extension MainVC: UIViewControllerTransitioningDelegate {
 
 extension MainVC {
     func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
-        if elementKind == UICollectionView.elementKindSectionHeader,
-           indexPath.section == 0
+        if indexPath.section == 0
         {
-            headerView = nil
+            if elementKind == UICollectionView.elementKindSectionHeader {
+                headerView = nil
+            }
         }
     }
 }
