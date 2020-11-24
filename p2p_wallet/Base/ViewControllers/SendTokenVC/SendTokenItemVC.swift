@@ -178,7 +178,7 @@ class SendTokenItemVC: BaseVC {
     
     @objc func buttonChooseWalletDidTouch() {
         let vc = ChooseWalletVC()
-        present(vc, animated: true, completion: nil)
+        parent?.present(vc, animated: true, completion: nil)
     }
 }
 
