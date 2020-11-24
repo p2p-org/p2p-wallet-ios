@@ -14,7 +14,9 @@ class WalletCell: BaseCollectionViewCell, WalletCellType {
     lazy var coinPriceLabel = UILabel(text: "12 800,99 US$", textSize: 13)
     lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: .secondary)
     lazy var equityValueLabel = UILabel(text: "44,33 USD", textSize: 13)
-    var loadingViews: [UIView] {[coinLogoImageView, coinNameLabel, tokenCountLabel, coinPriceLabel, equityValueLabel]}
+    
+    lazy var coinChangeLabel = UILabel(text: "0.35% 24 hrs", textSize: 13, textColor: .secondary)
+    var loadingViews: [UIView] {[coinLogoImageView, coinNameLabel, tokenCountLabel, coinPriceLabel, equityValueLabel, coinChangeLabel]}
     
     override func commonInit() {
         super.commonInit()
@@ -32,11 +34,15 @@ class WalletCell: BaseCollectionViewCell, WalletCellType {
         if let price = item.price {
             equityValueLabel.isHidden = false
             coinPriceLabel.isHidden = false
+            coinChangeLabel.isHidden = false
+            
             equityValueLabel.text = "\((PricesManager.bonfida.solPrice?.value * item.amount).toString(maximumFractionDigits: 9)) US$"
             coinPriceLabel.text = "\(price.value.toString()) US$"
+            coinChangeLabel.text = "\((price.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true))% 24 hrs"
         } else {
             equityValueLabel.isHidden = true
             coinPriceLabel.isHidden = true
+            coinChangeLabel.isHidden = true
         }
     }
 }

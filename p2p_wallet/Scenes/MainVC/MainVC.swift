@@ -102,7 +102,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
            let view = footer as? MainFooterView
         {
             view.addCoinButton.rx.action = CocoaAction {
-                let vc = ChooseWalletVC()
+                let vc = AddNewWalletVC()
                 self.present(vc, animated: true, completion: nil)
                 return .just(())
             }
