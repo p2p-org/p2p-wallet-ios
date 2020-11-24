@@ -11,6 +11,8 @@ class ChooseWalletVC: MyWalletsVC<ChooseWalletVC.Cell> {
     let closeButton = UIButton.close(tintColor: .textBlack)
         .onTap(self, action: #selector(back))
     
+    var completion: ((Wallet) -> Void)?
+    
     init(showInFullScreen: Bool = false) {
         super.init()
         if !showInFullScreen {
@@ -32,6 +34,11 @@ class ChooseWalletVC: MyWalletsVC<ChooseWalletVC.Cell> {
     // MARK: - Layouts
     override var sections: [Section] {
         [Section(headerTitle: L10n.yourWallets)]
+    }
+    
+    // MARK: - Delegate
+    override func itemDidSelect(_ item: Wallet) {
+        completion?(item)
     }
 }
 

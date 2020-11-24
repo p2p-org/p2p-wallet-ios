@@ -38,7 +38,6 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         
         // modify collectionView
         collectionView.contentInset = collectionView.contentInset.modifying(dTop: 10+25+10)
-        collectionView.delegate = self
         
         // header view
         let statusBarBgView = UIView(backgroundColor: view.backgroundColor)
@@ -94,6 +93,11 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         }
         
         return header
+    }
+    
+    // MARK: - Delegate
+    override func itemDidSelect(_ item: Wallet) {
+        show(CoinDetailVC(), sender: nil)
     }
     
     // MARK: - Actions
@@ -152,16 +156,12 @@ extension MainVC: UIViewControllerTransitioningDelegate {
     }
 }
 
-extension MainVC: UICollectionViewDelegate {
+extension MainVC {
     func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
         if elementKind == UICollectionView.elementKindSectionHeader,
            indexPath.section == 0
         {
             headerView = nil
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        show(CoinDetailVC(), sender: nil)
     }
 }
