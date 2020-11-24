@@ -8,6 +8,11 @@
 import Foundation
 
 class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
+    lazy var titleLabel = UILabel(text: L10n.addCoin, textSize: 17, weight: .semibold)
+    lazy var closeButton = UIButton.close(tintColor: .textBlack)
+        .onTap(self, action: #selector(back))
+    lazy var descriptionLabel = UILabel(text: L10n.AddATokenToYourWallet.ThisWillCost0._002039Sol, textSize: 15, textColor: .secondary, numberOfLines: 0)
+    
     init() {
         let viewModel = ViewModel()
         super.init(viewModel: viewModel)
@@ -19,8 +24,27 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     
     override func setUp() {
         super.setUp()
+        let headerStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
+                titleLabel,
+                closeButton
+            ]),
+            descriptionLabel
+        ])
+        
+        view.addSubview(headerStackView)
+        headerStackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 25, left: 20, bottom: 0, right: 16), excludingEdge: .bottom)
+        
+        let separator = UIView.separator(height: 2, color: .vcBackground)
+        view.addSubview(separator)
+        separator.autoPinEdge(.top, to: .bottom, of: headerStackView, withOffset: 25)
+        separator.autoPinEdge(toSuperviewEdge: .leading)
+        separator.autoPinEdge(toSuperviewEdge: .trailing)
+        
         // disable refreshing
         collectionView.refreshControl = nil
+        collectionView.constraintToSuperviewWithAttribute(.top)?.isActive = false
+        collectionView.autoPinEdge(.top, to: .bottom, of: separator)
     }
     
     override var sections: [Section] {

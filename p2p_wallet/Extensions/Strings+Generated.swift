@@ -171,6 +171,13 @@ internal enum L10n {
   /// Your wallets
   internal static let yourWallets = L10n.tr("Localizable", "Your wallets")
 
+  internal enum AddATokenToYourWallet {
+    internal enum ThisWillCost0 {
+      /// Add a token to your wallet.\nThis will cost 0.002039 SOL.
+      internal static let _002039Sol = L10n.tr("Localizable", "Add a token to your wallet.\nThis will cost 0.002039 SOL.")
+    }
+  }
+
   internal enum ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode {
     /// This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!
     internal static let pleaseEnableItInSettings = L10n.tr("Localizable", "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!")
