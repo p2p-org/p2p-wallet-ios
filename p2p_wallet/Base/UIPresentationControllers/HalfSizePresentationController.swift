@@ -26,4 +26,9 @@ class HalfSizePresentationController: DimmingPresentationController {
                        withParentContainerSize parentSize: CGSize) -> CGSize {
         return CGSize(width: parentSize.width, height: parentSize.height*(2.0/3.0))
     }
+    
+    override func containerViewDidLayoutSubviews() {
+        super.containerViewDidLayoutSubviews()
+        presentedView?.roundCorners([.topLeft, .topRight], radius: 20)
+    }
 }

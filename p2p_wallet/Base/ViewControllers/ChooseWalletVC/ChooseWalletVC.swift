@@ -11,6 +11,18 @@ class ChooseWalletVC: MyWalletsVC<ChooseWalletVC.Cell> {
     let closeButton = UIButton.close(tintColor: .textBlack)
         .onTap(self, action: #selector(back))
     
+    init(showInFullScreen: Bool = false) {
+        super.init()
+        if !showInFullScreen {
+            modalPresentationStyle = .custom
+            transitioningDelegate = self
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func setUp() {
         super.setUp()
         collectionView.addSubview(closeButton)
@@ -20,6 +32,12 @@ class ChooseWalletVC: MyWalletsVC<ChooseWalletVC.Cell> {
     // MARK: - Layouts
     override var sections: [Section] {
         [Section(headerTitle: L10n.yourWallets)]
+    }
+}
+
+extension ChooseWalletVC: UIViewControllerTransitioningDelegate {
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        HalfSizePresentationController(presentedViewController: presented, presenting: presenting)
     }
 }
 
