@@ -29,7 +29,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         stackView.addArrangedSubview(.spacer)
         return stackView
     }()
-    var headerView: WCVFirstSectionHeaderView?
+    var headerView: MainFirstSectionHeaderView?
     
     // MARK: - Methods
     override func setUp() {
@@ -71,9 +71,9 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     override var sections: [Section] {
         [
             Section(
-                headerViewClass: WCVFirstSectionHeaderView.self,
+                headerViewClass: MainFirstSectionHeaderView.self,
                 headerTitle: L10n.wallets,
-                footerViewClass: WCVFooterView.self,
+                footerViewClass: MainFooterView.self,
                 interGroupSpacing: 16
             ),
             Section(headerTitle: L10n.savings, interGroupSpacing: 16)
@@ -84,7 +84,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         let header = super.configureHeaderForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
         
         if indexPath.section == 0,
-           let view = header as? WCVFirstSectionHeaderView
+           let view = header as? MainFirstSectionHeaderView
         {
             view.receiveAction = self.receiveAction
             view.sendAction = self.sendAction
