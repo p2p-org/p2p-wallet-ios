@@ -17,13 +17,18 @@ class HalfSizePresentationController: DimmingPresentationController {
                           withParentContainerSize: containerView!.bounds.size)
         
         // 2
-        frame.origin.y = containerView!.frame.height*(1.0/3.0)
+        frame.origin.y = containerView!.frame.size.height - frame.size.height
         
         return frame
     }
     
     override func size(forChildContentContainer container: UIContentContainer,
                        withParentContainerSize parentSize: CGSize) -> CGSize {
+        if UIDevice.current.userInterfaceIdiom == .phone, UIDevice.current.orientation == .landscapeLeft ||
+            UIDevice.current.orientation == .landscapeRight
+        {
+            return CGSize(width: parentSize.width, height: parentSize.height)
+        }
         return CGSize(width: parentSize.width, height: parentSize.height*(2.0/3.0))
     }
     
