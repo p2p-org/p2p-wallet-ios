@@ -19,7 +19,7 @@ protocol ListItemType: Hashable {
     static func placeholder(at index: Int) -> Self
 }
 
-class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
+class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UICollectionViewDelegate {
     // MARK: - Nested type
     struct Section {
         var headerViewClass: SectionHeaderView.Type = SectionHeaderView.self
@@ -117,6 +117,8 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
                 }
             })
             .disposed(by: disposeBag)
+        
+        collectionView.delegate = self
     }
     
     func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, ItemType> {
@@ -149,6 +151,10 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         footer.setUp(state: viewModel.state.value, isListEmpty: viewModel.isListEmpty)
         collectionView.collectionViewLayout.invalidateLayout()
         footer.setNeedsDisplay()
+    }
+    
+    func itemDidSelect(_ item: ItemType) {
+        
     }
     
     // MARK: - Layout
@@ -280,6 +286,12 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
             for: indexPath) as? SectionFooterView
         
         return view
+    }
+    
+    // MARK: - Delegate
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = dataSource.itemIdentifier(for: indexPath) else {return}
+        itemDidSelect(item)
     }
     
     // MARK: - Actions
