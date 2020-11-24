@@ -178,7 +178,8 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
         
         var supplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
-        if let headerLayout = sections[sectionIndex].headerLayout {
+        if !sections[sectionIndex].headerTitle.isEmpty,
+           let headerLayout = sections[sectionIndex].headerLayout {
             supplementaryItems.append(headerLayout)
         }
         

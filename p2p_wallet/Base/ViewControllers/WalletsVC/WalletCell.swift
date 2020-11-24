@@ -14,7 +14,7 @@ class WalletCell: BaseCollectionViewCell, WalletCellType {
     lazy var coinPriceLabel = UILabel(text: "12 800,99 US$", textSize: 13)
     lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: .secondary)
     lazy var equityValueLabel = UILabel(text: "44,33 USD", textSize: 13)
-    var loadingViews: [UIView] {[coinLogoImageView, coinNameLabel, tokenCountLabel, coinPriceLabel]}
+    var loadingViews: [UIView] {[coinLogoImageView, coinNameLabel, tokenCountLabel, coinPriceLabel, equityValueLabel]}
     
     override func commonInit() {
         super.commonInit()
