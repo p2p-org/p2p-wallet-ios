@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Action
 
 class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     lazy var titleLabel = UILabel(text: L10n.addCoin, textSize: 17, weight: .semibold)
@@ -80,9 +81,27 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
         [Section(headerTitle: "")]
     }
     
+    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: Wallet) -> UICollectionViewCell {
+        let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
+        if let cell = cell as? Cell {
+            cell.addButton.rx.action = self.createTokenAccountAction(newWallet: item)
+        }
+        return cell
+    }
+    
     @objc func labelDescriptionDidTouch() {
         let viewModel = self.viewModel as! ViewModel
         viewModel.feeVM.reload()
+    }
+    
+    func createTokenAccountAction(newWallet: Wallet) -> CocoaAction {
+        CocoaAction {
+            SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, programPubkey: SolanaSDK.programPubkey, in: SolanaSDK.network)
+                .do(afterError: { (error) in
+                    print(error)
+                })
+                .map {_ in ()}
+        }
     }
 }
 
@@ -131,6 +150,7 @@ extension AddNewWalletVC {
     }
     
     class Cell: WalletCell {
+        lazy var addButton = UIButton(width: 32, height: 32, backgroundColor: .ededed, cornerRadius: 16, label: "+", labelFont: .systemFont(ofSize: 20), textColor: UIColor.textBlack.withAlphaComponent(0.5))
         lazy var symbolLabel = UILabel(text: "SER", textSize: 17, weight: .bold)
         
         override func commonInit() {
@@ -147,8 +167,6 @@ extension AddNewWalletVC {
             
             coinChangeLabel.font = .systemFont(ofSize: 12, weight: .medium)
             
-            let button = UIButton(width: 32, height: 32, backgroundColor: .ededed, cornerRadius: 16, label: "+", labelFont: .systemFont(ofSize: 20), textColor: UIColor.textBlack.withAlphaComponent(0.5))
-            
             stackView.alignment = .center
             stackView.addArrangedSubviews([
                 coinLogoImageView,
@@ -162,7 +180,7 @@ extension AddNewWalletVC {
                         coinChangeLabel
                     ])
                 ]),
-                button
+                addButton
             ])
             
             stackView.constraintToSuperviewWithAttribute(.bottom)?.isActive = false
