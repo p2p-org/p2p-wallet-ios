@@ -22,6 +22,8 @@ internal enum L10n {
   internal static let amount = L10n.tr("Localizable", "amount")
   /// Amount is not valid
   internal static let amountIsNotValid = L10n.tr("Localizable", "Amount is not valid")
+  /// Authentication failed
+  internal static let authenticationFailed = L10n.tr("Localizable", "Authentication failed")
   /// Backup
   internal static let backup = L10n.tr("Localizable", "Backup")
   /// By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy
@@ -98,6 +100,8 @@ internal enum L10n {
   internal static let receiveToken = L10n.tr("Localizable", "Receive token")
   /// Restoring wallet
   internal static let restoringWallet = L10n.tr("Localizable", "Restoring wallet")
+  /// Retry after
+  internal static let retryAfter = L10n.tr("Localizable", "Retry after")
   /// save to Keychain
   internal static let saveToKeychain = L10n.tr("Localizable", "save to Keychain")
   /// Savings
@@ -108,6 +112,8 @@ internal enum L10n {
   internal static let scanQRCode = L10n.tr("Localizable", "Scan QR Code")
   /// Scanning QrCode not supported
   internal static let scanningQrCodeNotSupported = L10n.tr("Localizable", "Scanning QrCode not supported")
+  /// seconds
+  internal static let seconds = L10n.tr("Localizable", "seconds")
   /// security keys
   internal static let securityKeys = L10n.tr("Localizable", "security keys")
   /// Send
@@ -128,6 +134,8 @@ internal enum L10n {
   internal static let swap = L10n.tr("Localizable", "Swap")
   /// Swap now
   internal static let swapNow = L10n.tr("Localizable", "Swap now")
+  /// Tap button to retry!
+  internal static let tapButtonToRetry = L10n.tr("Localizable", "Tap button to retry!")
   /// tap refresh button to retry
   internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
   /// Terms and conditions
