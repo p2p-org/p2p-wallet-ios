@@ -34,16 +34,18 @@ class LocalAuthVC: THPinViewController {
         promptTitle = L10n.enterPasscode
         
         // face id, touch id button
-//        if LABiometryType.isEnabled {
-//            let button = UIButton(frame: .zero)
-//            let biometryType = LABiometryType.current
-//            button.setImage(biometryType.icon, for: .normal)
-//            leftBottomButton = button
-//            leftBottomButton?.widthAnchor.constraint(equalToConstant: 50).isActive = true
-//            leftBottomButton?.widthAnchor.constraint(equalTo: leftBottomButton!.heightAnchor).isActive = true
-//            leftBottomButton?.addTarget(self, action: #selector(authWithBiometric), for: .touchUpInside)
-//            authWithBiometric(isAuto: true)
-//        }
+        if LABiometryType.isEnabled {
+            let button = UIButton(frame: .zero)
+            let biometryType = LABiometryType.current
+            let icon = biometryType.icon?.withRenderingMode(.alwaysTemplate)
+            button.tintColor = .textBlack
+            button.setImage(icon, for: .normal)
+            leftBottomButton = button
+            leftBottomButton?.widthAnchor.constraint(equalToConstant: 50).isActive = true
+            leftBottomButton?.widthAnchor.constraint(equalTo: leftBottomButton!.heightAnchor).isActive = true
+            leftBottomButton?.addTarget(self, action: #selector(authWithBiometric), for: .touchUpInside)
+            authWithBiometric(isAuto: true)
+        }
         
         // Add cancel button on bottom
         if !canIgnore {
