@@ -97,11 +97,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             timestamp = newTimestamp
             
-            // show localAuthVC
+            // prepare errorView
+            let topVC = self.window?.rootViewController?.topViewController()
             let localAuthVC = LocalAuthVC()
-            localAuthVC.completion = { [self] in
-                localAuthVC.dismiss(animated: true) {
-                    localAuthVCShown = false
+            localAuthVC.completion = { [self] didSuccess in
+                localAuthVCShown = false
+                if !didSuccess {
+                    topVC?.showErrorView()
+                } else {
+                    topVC?.removeErrorView()
                 }
             }
             localAuthVC.modalPresentationStyle = .fullScreen

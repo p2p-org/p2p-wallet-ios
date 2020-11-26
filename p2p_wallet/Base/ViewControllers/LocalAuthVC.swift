@@ -13,7 +13,7 @@ import LocalAuthentication
 class LocalAuthVC: THPinViewController {
     var canIgnore = false
     var remainingPinEntries = 3
-    var completion: (() -> Void)?
+    var completion: ((Bool) -> Void)?
     var reason: String?
     
     init() {
@@ -67,7 +67,7 @@ class LocalAuthVC: THPinViewController {
             myContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: myReason) { (success, _) in
                 DispatchQueue.main.sync {
                     if success {
-                        self.completion?()
+                        self.completion?(true)
                         self.dismiss(animated: true, completion: nil)
                     }
                 }
@@ -114,11 +114,11 @@ extension LocalAuthVC: THPinViewControllerDelegate {
         return remainingPinEntries > 0
     }
     
-    func pinViewControllerDidDismiss(afterPinEntryWasSuccessful pinViewController: THPinViewController) {
-        completion?()
+    func pinViewControllerWillDismiss(afterPinEntryWasSuccessful pinViewController: THPinViewController) {
+        completion?(true)
     }
     
-    func pinViewControllerDidDismiss(afterPinEntryWasUnsuccessful pinViewController: THPinViewController) {
-        
+    func pinViewControllerWillDismiss(afterPinEntryWasUnsuccessful pinViewController: THPinViewController) {
+        completion?(false)
     }
 }
