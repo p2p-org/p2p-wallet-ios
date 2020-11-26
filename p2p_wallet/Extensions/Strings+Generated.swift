@@ -30,6 +30,10 @@ internal enum L10n {
   internal static let cancel = L10n.tr("Localizable", "Cancel")
   /// Change your settings to use camera for scanning Qr Code
   internal static let changeYourSettingsToUseCameraForScanningQrCode = L10n.tr("Localizable", "Change your settings to use camera for scanning Qr Code")
+  /// Close
+  internal static let close = L10n.tr("Localizable", "Close")
+  /// Confirm it's you
+  internal static let confirmItSYou = L10n.tr("Localizable", "Confirm it's you")
   /// confirm PIN code
   internal static let confirmPINCode = L10n.tr("Localizable", "confirm PIN code")
   /// Congratulations!
@@ -50,6 +54,8 @@ internal enum L10n {
   internal static let doThisLater = L10n.tr("Localizable", "Do this later")
   /// Enable now
   internal static let enableNow = L10n.tr("Localizable", "Enable now")
+  /// Enter passcode
+  internal static let enterPasscode = L10n.tr("Localizable", "Enter passcode")
   /// Enter security keys
   internal static let enterSecurityKeys = L10n.tr("Localizable", "Enter security keys")
   /// error
@@ -136,6 +142,8 @@ internal enum L10n {
   internal static let tokenSent = L10n.tr("Localizable", "Token sent!")
   /// Try again
   internal static let tryAgain = L10n.tr("Localizable", "Try again")
+  /// Turn on
+  internal static let turnOn = L10n.tr("Localizable", "Turn on")
   /// unsupported
   internal static let unsupported = L10n.tr("Localizable", "unsupported")
   /// Use FaceId
@@ -150,6 +158,8 @@ internal enum L10n {
   internal static let walletAddress = L10n.tr("Localizable", "Wallet address")
   /// Wallets
   internal static let wallets = L10n.tr("Localizable", "Wallets")
+  /// Warning
+  internal static let warning = L10n.tr("Localizable", "Warning")
   /// WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.
   internal static let warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture = L10n.tr("Localizable", "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.")
   /// We have not supported this type of biometry authentication yet
@@ -191,6 +201,11 @@ internal enum L10n {
   internal enum YourDeviceDoesNotSupportScanningACodeFromAnItem {
     /// Your device does not support scanning a code from an item. Please use a device with a camera.
     internal static let pleaseUseADeviceWithACamera = L10n.tr("Localizable", "Your device does not support scanning a code from an item. Please use a device with a camera.")
+  }
+
+  internal enum WasTurnedOff {
+    /// was turned off.\nDo you want to turn it on?
+    internal static let doYouWantToTurnItOn = L10n.tr("Localizable", "was turned off.\nDo you want to turn it on?")
   }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length

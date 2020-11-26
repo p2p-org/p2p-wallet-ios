@@ -10,10 +10,13 @@ import Firebase
 @_exported import BEPureLayout
 @_exported import SolanaSwift
 @_exported import SwiftyUserDefaults
+import THPinViewController
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    var shouldShowLocalAuth = true
+    
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
     }
@@ -42,6 +45,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BEPureLayoutConfigs.defaultBackButton = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
         BEPureLayoutConfigs.defaultCheckBoxActiveColor = .textBlack
         
+        // THPinViewController
+        THPinInputCircleView.fillColor = .textBlack
+        THPinNumButton.textColor = .textBlack
+        
         // Use Firebase library to configure APIs
         FirebaseApp.configure()
         
@@ -56,16 +63,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rootVC: UIViewController
         if KeychainStorage.shared.account == nil {
             rootVC = WelcomeVC()
+            shouldShowLocalAuth = false
         } else {
             if KeychainStorage.shared.pinCode == nil {
                 rootVC = BENavigationController(rootViewController: SSPinCodeVC())
+                shouldShowLocalAuth = false
             } else if !Defaults.didSetEnableBiometry {
                 rootVC = BENavigationController(rootViewController: EnableBiometryVC())
+                shouldShowLocalAuth = false
             } else if !Defaults.didSetEnableNotifications {
                 rootVC = BENavigationController(rootViewController: EnableNotificationsVC())
+                shouldShowLocalAuth = false
             } else {
-                WalletsVM.ofCurrentUser = WalletsVM()
-                rootVC = TabBarVC()
+                if shouldShowLocalAuth {
+                    let localAuthVC = LocalAuthVC()
+                    localAuthVC.completion = { [self] in
+                        WalletsVM.ofCurrentUser = WalletsVM()
+                        self.window?.rootViewController = TabBarVC()
+                    }
+                    rootVC = localAuthVC
+                } else {
+                    WalletsVM.ofCurrentUser = WalletsVM()
+                    rootVC = TabBarVC()
+                }
             }
         }
         

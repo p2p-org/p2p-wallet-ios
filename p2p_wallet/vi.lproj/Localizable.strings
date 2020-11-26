@@ -90,3 +90,9 @@
 "Add a token to your wallet.\nThis will cost" = "Thêm token vào ví của bạn.\nPhí giao dịch:";
 "Getting creation fee" = "Tải phí khởi tạo";
 "Error when retrieving creation fee.\nTap to try again" = "Lỗi tải phí khởi tạo.\nNhấn để thử lại";
+"Enter passcode" = "Nhập mật mã";
+"Close" = "Đóng";
+"Confirm it's you" = "Xác nhận đó là bạn";
+"Warning" = "Cảnh báo";
+"was turned off.\nDo you want to turn it on?" = "đã bị tắt.\nBạn có muốn bật tính năng này không?";
+"Turn on" = "Bật";

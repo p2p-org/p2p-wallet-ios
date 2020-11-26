@@ -90,3 +90,9 @@
 "Add a token to your wallet.\nThis will cost" = "Добавьте токен в свой кошелек.\nЭто будет стоить";
 "Getting creation fee" = "Получение платы за создание";
 "Error when retrieving creation fee.\nTap to try again" = "Ошибка при получении платы за создание.\nНажмите, чтобы повторить попытку.";
+"Enter passcode" = "Введите пароль";
+"Close" = "близко";
+"Confirm it's you" = "Подтвердите, что это вы";
+"Warning" = "Предупреждение";
+"was turned off.\nDo you want to turn it on?" = "был выключен.\nВключить?";
+"Turn on" = "Включить";
