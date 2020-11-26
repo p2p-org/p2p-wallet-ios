@@ -66,6 +66,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func reloadRootVC() {
         let rootVC: UIViewController
         if KeychainStorage.shared.account == nil {
+            try? KeychainStorage.shared.retrieveAccountFromICloud()
+        }
+        if KeychainStorage.shared.account == nil {
             rootVC = WelcomeVC()
             shouldShowLocalAuth = false
         } else {
