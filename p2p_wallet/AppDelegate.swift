@@ -10,10 +10,16 @@ import Firebase
 @_exported import BEPureLayout
 @_exported import SolanaSwift
 @_exported import SwiftyUserDefaults
+import THPinViewController
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    var shouldShowLocalAuth = true
+    var localAuthVCShown = false
+    let timeRequiredForAuthentication: Double = 10 // in seconds
+    var timestamp: TimeInterval!
+    
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
     }
@@ -42,6 +48,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BEPureLayoutConfigs.defaultBackButton = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
         BEPureLayoutConfigs.defaultCheckBoxActiveColor = .textBlack
         
+        // THPinViewController
+        THPinInputCircleView.fillColor = .textBlack
+        THPinNumButton.textColor = .textBlack
+        
         // Use Firebase library to configure APIs
         FirebaseApp.configure()
         
@@ -56,20 +66,49 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rootVC: UIViewController
         if KeychainStorage.shared.account == nil {
             rootVC = WelcomeVC()
+            shouldShowLocalAuth = false
         } else {
             if KeychainStorage.shared.pinCode == nil {
                 rootVC = BENavigationController(rootViewController: SSPinCodeVC())
+                shouldShowLocalAuth = false
             } else if !Defaults.didSetEnableBiometry {
                 rootVC = BENavigationController(rootViewController: EnableBiometryVC())
+                shouldShowLocalAuth = false
             } else if !Defaults.didSetEnableNotifications {
                 rootVC = BENavigationController(rootViewController: EnableNotificationsVC())
+                shouldShowLocalAuth = false
             } else {
+                shouldShowLocalAuth = true
                 WalletsVM.ofCurrentUser = WalletsVM()
                 rootVC = TabBarVC()
             }
         }
         
         window?.rootViewController = rootVC
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        let newTimestamp = Date().timeIntervalSince1970
+        if timestamp == nil {
+            timestamp = newTimestamp - timeRequiredForAuthentication
+        }
+        if shouldShowLocalAuth && !localAuthVCShown && timestamp + timeRequiredForAuthentication <= newTimestamp
+        {
+            
+            timestamp = newTimestamp
+            
+            // show localAuthVC
+            let localAuthVC = LocalAuthVC()
+            localAuthVC.completion = { [self] in
+                localAuthVC.dismiss(animated: true) {
+                    localAuthVCShown = false
+                }
+            }
+            localAuthVC.modalPresentationStyle = .fullScreen
+            self.window?.rootViewController?.topViewController()
+                .present(localAuthVC, animated: true, completion: nil)
+            localAuthVCShown = true
+        }
     }
     
     func application(
