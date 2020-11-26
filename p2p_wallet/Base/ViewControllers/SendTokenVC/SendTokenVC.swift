@@ -24,9 +24,11 @@ class SendTokenVC: BEPagesVC, LoadableView {
     
     let disposeBag = DisposeBag()
     var wallets: [Wallet]
+    var initialAddress: String?
     
-    init(wallets: [Wallet]) {
+    init(wallets: [Wallet], address: String? = nil) {
         self.wallets = wallets
+        self.initialAddress = address
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -95,6 +97,13 @@ class SendTokenVC: BEPagesVC, LoadableView {
         
         // delegate
         self.delegate = self
+        
+        // if address was passed
+        if let address = initialAddress,
+            let textView = (viewControllers.first as? SendTokenItemVC)?.addressTextView
+        {
+            textView.text = address
+        }
     }
     
     override func bind() {
