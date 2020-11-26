@@ -96,3 +96,7 @@
 "Warning" = "Warning";
 "was turned off.\nDo you want to turn it on?" = "was turned off.\nDo you want to turn it on?";
 "Turn on" = "Turn on";
+"Authentication failed" = "Authentication failed";
+"Retry after" = "Retry after";
+"seconds" = "seconds";
+"Tap button to retry!" = "Tap button to retry!";
