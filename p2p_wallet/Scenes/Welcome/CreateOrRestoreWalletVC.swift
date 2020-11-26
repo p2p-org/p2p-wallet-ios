@@ -31,7 +31,7 @@ class CreateOrRestoreWalletVC: IntroVCWithButtons {
             highlightedButtonIndex: 1,
             completion: { index in
                 if index == 1 {
-                    let nc = BENavigationController(rootViewController: PhrasesVC())
+                    let nc = BENavigationController(rootViewController: CreatePhrasesVC())
                     UIApplication.shared.changeRootVC(to: nc)
                 }
             }

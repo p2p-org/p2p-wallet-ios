@@ -40,6 +40,8 @@ internal enum L10n {
   internal static let confirmPINCode = L10n.tr("Localizable", "confirm PIN code")
   /// Congratulations!
   internal static let congratulations = L10n.tr("Localizable", "Congratulations!")
+  /// Continue
+  internal static let `continue` = L10n.tr("Localizable", "Continue")
   /// Copied to clipboard
   internal static let copiedToClipboard = L10n.tr("Localizable", "Copied to clipboard")
   /// Copy
@@ -90,6 +92,8 @@ internal enum L10n {
   internal static let next = L10n.tr("Localizable", "next")
   /// OK
   internal static let ok = L10n.tr("Localizable", "OK")
+  /// Or saving into Keychain
+  internal static let orSavingIntoKeychain = L10n.tr("Localizable", "Or saving into Keychain")
   /// passcodes do not match
   internal static let passcodesDoNotMatch = L10n.tr("Localizable", "passcodes do not match")
   /// please try again later!
@@ -104,6 +108,10 @@ internal enum L10n {
   internal static let retryAfter = L10n.tr("Localizable", "Retry after")
   /// save to Keychain
   internal static let saveToKeychain = L10n.tr("Localizable", "save to Keychain")
+  /// Saved to Keychain
+  internal static let savedToKeychain = L10n.tr("Localizable", "Saved to Keychain")
+  /// Saving to Keychain
+  internal static let savingToKeychain = L10n.tr("Localizable", "Saving to Keychain")
   /// Savings
   internal static let savings = L10n.tr("Localizable", "Savings")
   /// Scan an P2P address
