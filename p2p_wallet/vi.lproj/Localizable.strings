@@ -96,3 +96,7 @@
 "Warning" = "Cảnh báo";
 "was turned off.\nDo you want to turn it on?" = "đã bị tắt.\nBạn có muốn bật tính năng này không?";
 "Turn on" = "Bật";
+"Authentication failed" = "Quá trình xác thực đã thất bại";
+"Retry after" = "Thử lại sau";
+"seconds" = "giây";
+"Tap button to retry!" = "Nhấn vào nút để thử lại!";

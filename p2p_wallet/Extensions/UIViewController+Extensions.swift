@@ -42,9 +42,19 @@ extension UIViewController {
         }
     }
     
-    func showErrorView() {
+    var errorView: ErrorView? {
+        view.subviews.first(where: {$0 is ErrorView}) as? ErrorView
+    }
+    
+    func showErrorView(title: String? = nil, description: String? = nil) {
         removeErrorView()
         let errorView = ErrorView(backgroundColor: .textWhite)
+        if let title = title {
+            errorView.titleLabel.text = title
+        }
+        if let description = description {
+            errorView.descriptionLabel.text = description
+        }
         let spacer1 = UIView.spacer
         let spacer2 = UIView.spacer
         errorView.stackView.insertArrangedSubview(spacer1, at: 0)
@@ -62,10 +72,10 @@ extension UIViewController {
         if self.isKind(of: UITabBarController.self) {
             let tabbarController =  self as! UITabBarController
             return tabbarController.selectedViewController!.topViewController()
-        } else if (self.isKind(of: UINavigationController.self)) {
+        } else if self.isKind(of: UINavigationController.self) {
             let navigationController = self as! UINavigationController
             return navigationController.visibleViewController!.topViewController()
-        } else if ((self.presentedViewController) != nil){
+        } else if self.presentedViewController != nil {
             let controller = self.presentedViewController
             return controller!.topViewController()
         } else {

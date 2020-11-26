@@ -11,6 +11,7 @@ import Firebase
 @_exported import SolanaSwift
 @_exported import SwiftyUserDefaults
 import THPinViewController
+import Action
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -97,22 +98,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             timestamp = newTimestamp
             
-            // prepare errorView
-            let topVC = self.window?.rootViewController?.topViewController()
-            let localAuthVC = LocalAuthVC()
-            localAuthVC.completion = { [self] didSuccess in
-                localAuthVCShown = false
-                if !didSuccess {
-                    topVC?.showErrorView()
-                } else {
-                    topVC?.removeErrorView()
-                }
-            }
-            localAuthVC.modalPresentationStyle = .fullScreen
-            self.window?.rootViewController?.topViewController()
-                .present(localAuthVC, animated: true, completion: nil)
-            localAuthVCShown = true
+            showAuthentication()
         }
+    }
+    
+    fileprivate func showAuthentication() {
+        let topVC = self.window?.rootViewController?.topViewController()
+        let localAuthVC = LocalAuthVC()
+        localAuthVC.completion = { [self] didSuccess in
+            if !didSuccess {
+                topVC?.showErrorView()
+                // reset timestamp
+                timestamp = Date().timeIntervalSince1970
+                
+                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+                    topVC?.errorView?.descriptionLabel.text = L10n.authenticationFailed + "\n" + L10n.retryAfter + " \(Int(10 - Date().timeIntervalSince1970 + timestamp)) " + L10n.seconds
+
+                    if Int(Date().timeIntervalSince1970) == Int(timestamp + timeRequiredForAuthentication) {
+                        topVC?.errorView?.descriptionLabel.text = L10n.tapButtonToRetry
+                        topVC?.errorView?.buttonAction = CocoaAction {
+                            showAuthentication()
+                            return .just(())
+                        }
+                        timer.invalidate()
+                    }
+                }
+            } else {
+                localAuthVCShown = false
+                topVC?.removeErrorView()
+            }
+        }
+        localAuthVC.modalPresentationStyle = .fullScreen
+        self.window?.rootViewController?.topViewController()
+            .present(localAuthVC, animated: true, completion: nil)
+        localAuthVCShown = true
     }
     
     func application(
