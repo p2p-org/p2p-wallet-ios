@@ -114,7 +114,7 @@ PODS:
   - SwiftLint (0.41.0)
   - SwiftyUserDefaults (5.0.0)
   - TagListView (1.4.1)
-  - THPinViewController (1.2.6)
+  - THPinViewController (1.2.8)
   - TweetNacl (1.0.2)
 
 DEPENDENCIES:
@@ -181,7 +181,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   THPinViewController:
-    :commit: e57ddc6a7280f692dafd17e81b7700746944a882
+    :commit: 0bce9ed2dbd3142717bd903c49ae657d1e74ba8e
     :git: https://github.com/p2p-org/THPinViewController.git
 
 SPEC CHECKSUMS:
@@ -218,7 +218,7 @@ SPEC CHECKSUMS:
   SwiftLint: c585ebd615d9520d7fbdbe151f527977b0534f1e
   SwiftyUserDefaults: 33fcb42bd1feb53a37d873feb62c82967db5f7f6
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
-  THPinViewController: e0dc717a61c8a0a0f251764da26b9ca8a4fd2ec1
+  THPinViewController: 7c8df68f412ca0b3fa42a84848c382bc343372f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
 PODFILE CHECKSUM: 42e26dd4183df787ecdb0164dd297927439dc2cb
