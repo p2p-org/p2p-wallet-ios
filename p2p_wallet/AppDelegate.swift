@@ -112,7 +112,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 timestamp = Date().timeIntervalSince1970
                 
                 Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-                    topVC?.errorView?.descriptionLabel.text = L10n.authenticationFailed + "\n" + L10n.retryAfter + " \(Int(10 - Date().timeIntervalSince1970 + timestamp)) " + L10n.seconds
+                    topVC?.errorView?.descriptionLabel.text = L10n.authenticationFailed + "\n" + L10n.retryAfter + " \(Int(10 - Date().timeIntervalSince1970 + timestamp) + 1) " + L10n.seconds
 
                     if Int(Date().timeIntervalSince1970) == Int(timestamp + timeRequiredForAuthentication) {
                         topVC?.errorView?.descriptionLabel.text = L10n.tapButtonToRetry
