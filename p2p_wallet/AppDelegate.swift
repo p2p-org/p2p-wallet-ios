@@ -16,6 +16,9 @@ import THPinViewController
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var shouldShowLocalAuth = true
+    var localAuthVCShown = false
+    let timeRequiredForAuthentication: Double = 10 // in seconds
+    var timestamp: TimeInterval!
     
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -75,21 +78,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 rootVC = BENavigationController(rootViewController: EnableNotificationsVC())
                 shouldShowLocalAuth = false
             } else {
-                if shouldShowLocalAuth {
-                    let localAuthVC = LocalAuthVC()
-                    localAuthVC.completion = { [self] in
-                        WalletsVM.ofCurrentUser = WalletsVM()
-                        self.window?.rootViewController = TabBarVC()
-                    }
-                    rootVC = localAuthVC
-                } else {
-                    WalletsVM.ofCurrentUser = WalletsVM()
-                    rootVC = TabBarVC()
-                }
+                shouldShowLocalAuth = true
+                WalletsVM.ofCurrentUser = WalletsVM()
+                rootVC = TabBarVC()
             }
         }
         
         window?.rootViewController = rootVC
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        let newTimestamp = Date().timeIntervalSince1970
+        if timestamp == nil {
+            timestamp = newTimestamp - timeRequiredForAuthentication
+        }
+        if shouldShowLocalAuth && !localAuthVCShown && timestamp + timeRequiredForAuthentication <= newTimestamp
+        {
+            
+            timestamp = newTimestamp
+            
+            // show localAuthVC
+            let localAuthVC = LocalAuthVC()
+            localAuthVC.completion = { [self] in
+                localAuthVC.dismiss(animated: true) {
+                    localAuthVCShown = false
+                }
+            }
+            localAuthVC.modalPresentationStyle = .fullScreen
+            self.window?.rootViewController?.topViewController()
+                .present(localAuthVC, animated: true, completion: nil)
+            localAuthVCShown = true
+        }
     }
     
     func application(
