@@ -100,3 +100,7 @@
 "Retry after" = "Thử lại sau";
 "seconds" = "giây";
 "Tap button to retry!" = "Nhấn vào nút để thử lại!";
+"Or saving into Keychain" = "Hoặc lưu vào Keychain";
+"Continue" = "Tiếp tục";
+"Saved to Keychain" = "Đã lưu vào Keychain";
+"Saving to Keychain" = "Lưu vào Keychain";

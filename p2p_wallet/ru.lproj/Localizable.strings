@@ -100,3 +100,7 @@
 "Retry after" = "Повторить после";
 "seconds" = "секунды";
 "Tap button to retry!" = "Нажмите кнопку, чтобы повторить попытку!";
+"Or saving into Keychain" = "Или сохранение в Связке ключей";
+"Continue" = "Продолжать";
+"Saved to Keychain" = "Сохранено в Связке ключей";
+"Saving to Keychain" = "Сохранение в Связку ключей";

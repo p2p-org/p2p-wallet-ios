@@ -100,3 +100,7 @@
 "Retry after" = "Réessayer après";
 "seconds" = "secondes";
 "Tap button to retry!" = "Appuyez sur le bouton pour réessayer!";
+"Or saving into Keychain" = "Ou enregistrer dans le trousseau";
+"Continue" = "Continuer";
+"Saved to Keychain" = "Enregistré dans le trousseau";
+"Saving to Keychain" = "Enregistrement sur le trousseau";
