@@ -90,3 +90,9 @@
 "Add a token to your wallet.\nThis will cost" = "Ajoutez un jeton à votre portefeuille.\nCela coûtera";
 "Getting creation fee" = "Obtenir des frais de création";
 "Error when retrieving creation fee.\nTap to try again" = "Erreur lors de la récupération des frais de création.\nTapez pour réessayer";
+"Enter passcode" = "Entrer le mot de passe";
+"Close" = "proche";
+"Confirm it's you" = "Confirmez que c'est vous";
+"Warning" = "Attention";
+"was turned off.\nDo you want to turn it on?" = "a été désactivé.\nVoulez-vous l'activer?";
+"Turn on" = "Allumer";
