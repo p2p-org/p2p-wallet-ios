@@ -37,6 +37,14 @@ class PhrasesVC: BaseVStackVC {
     lazy var saveToKeychainButton = WLButton.stepButton(type: .main, label: L10n.saveToKeychain.uppercaseFirst)
         .onTap(self, action: #selector(buttonSaveToKeychainDidTouch))
     
+    lazy var regenerateButton: UIBarButtonItem = {
+        let image = UIImage.regenerateButton.withRenderingMode(.alwaysOriginal)
+        let button = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
+        button.target = self
+        button.action = #selector(buttonRegenerateDidTouch)
+        return button
+    }()
+    
     init(phrases: [String] = []) {
         self.phrases.accept(phrases)
         super.init(nibName: nil, bundle: nil)
@@ -49,6 +57,7 @@ class PhrasesVC: BaseVStackVC {
     override func setUp() {
         super.setUp()
         title = L10n.securityKeys.uppercaseFirst
+        navigationItem.rightBarButtonItem = regenerateButton
         
         stackView.alignment = .center
         
@@ -171,5 +180,9 @@ class PhrasesVC: BaseVStackVC {
                 }
             }
         }
+    }
+    
+    @objc func buttonRegenerateDidTouch() {
+        createAccount()
     }
 }
