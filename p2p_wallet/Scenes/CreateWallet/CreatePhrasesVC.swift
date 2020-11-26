@@ -59,7 +59,7 @@ class CreatePhrasesVC: PhrasesVC {
         ])
             .onTap(self, action: #selector(buttonCopyToClipboardDidTouch))
     lazy var savedCheckBox = BECheckbox(width: 20, height: 20, cornerRadius: 6)
-    lazy var saveToKeychainButton = WLButton.stepButton(type: .main, label: L10n.saveToKeychain.uppercaseFirst)
+    lazy var saveToICloudButton = WLButton.stepButton(type: .main, label: L10n.saveToICloud.uppercaseFirst)
         .onTap(self, action: #selector(buttonSaveToKeychainDidTouch))
     
     lazy var regenerateButton: UIBarButtonItem = {
@@ -95,7 +95,7 @@ class CreatePhrasesVC: PhrasesVC {
         
         stackView.addArrangedSubview(keysContainerView)
         stackView.addArrangedSubview(UILabel(text: L10n.orSavingIntoKeychain, textColor: .secondary, textAlignment: .center))
-        stackView.addArrangedSubview(saveToKeychainButton)
+        stackView.addArrangedSubview(saveToICloudButton)
         
         let label = UILabel(
             text: L10n.weVeCreatedSomeSecurityKeywordsForYou.uppercaseFirst + "\n" + L10n.warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture,
@@ -107,7 +107,7 @@ class CreatePhrasesVC: PhrasesVC {
         )
         stackView.addArrangedSubview(label)
         
-        saveToKeychainButton.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40)
+        saveToICloudButton.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40)
             .isActive = true
         keysContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40)
             .isActive = true
@@ -175,33 +175,27 @@ class CreatePhrasesVC: PhrasesVC {
     }
     
     @objc func buttonSaveToKeychainDidTouch() {
-        saveToKeychain()
+        KeychainStorage.shared.saveICloud(phrases: phrases.value.joined(separator: " "))
+        UIApplication.shared.showDone(L10n.savedToICloud)
     }
     
     @objc func buttonRegenerateDidTouch() {
         createAccount()
+        // clear
         savedCheckBox.isSelected = false
         continueButton.isEnabled = false
+        KeychainStorage.shared.clear()
     }
     
     @objc func buttonContinueDidTouch() {
-        if KeychainStorage.shared.account == nil {
-            saveToKeychain()
-            return
-        }
-        UIApplication.shared.hideHud()
-        self.show(CreateWalletCompletedVC(), sender: nil)
-    }
-    
-    // MARK: - Helper
-    private func saveToKeychain() {
-        UIApplication.shared.showIndetermineHudWithMessage(L10n.savingToKeychain.uppercaseFirst)
+        UIApplication.shared.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
         DispatchQueue.global().async {
             do {
                 let account = try SolanaSDK.Account(phrase: self.phrases.value, network: SolanaSDK.network)
                 try KeychainStorage.shared.save(account)
                 DispatchQueue.main.async {
-                    UIApplication.shared.showDone(L10n.savedToKeychain)
+                    UIApplication.shared.hideHud()
+                    self.show(CreateWalletCompletedVC(), sender: nil)
                 }
             } catch {
                 DispatchQueue.main.async {
