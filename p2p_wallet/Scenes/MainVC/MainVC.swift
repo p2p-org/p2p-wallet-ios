@@ -82,7 +82,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
            let view = header as? MainFirstSectionHeaderView
         {
             view.receiveAction = self.receiveAction
-            view.sendAction = self.sendAction
+            view.sendAction = self.sendAction()
             view.swapAction = self.swapAction
             view.addCoinButton.rx.action = self.addCoinAction
             collectionViewHeaderView = view
@@ -93,7 +93,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     
     // MARK: - Delegate
     override func itemDidSelect(_ item: Wallet) {
-//        show(CoinDetailVC(), sender: nil)
+        show(CoinDetailVC(), sender: nil)
     }
     
     // MARK: - Actions
@@ -110,7 +110,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
             vc.callback = { code in
                 if NSRegularExpression.publicKey.matches(code) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.sendAction.execute()
+                        self.sendAction(address: code).execute()
                     }
                     return true
                 }
@@ -130,9 +130,10 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         }
     }
     
-    var sendAction: CocoaAction {
+    func sendAction(address: String? = nil) -> CocoaAction {
         CocoaAction { _ in
-            let vc = SendTokenVC(wallets: self.viewModel.items)
+            let vc = SendTokenVC(wallets: self.viewModel.items, address: address)
+            
             self.show(vc, sender: nil)
             return .just(())
         }
