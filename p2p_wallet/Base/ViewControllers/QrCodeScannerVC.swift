@@ -13,8 +13,9 @@ class QrCodeScannerVC: BaseVC {
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     let scanSize = CGSize(width: 200.0, height: 200.0)
-    var validate: ((String) -> Bool)?
-    var completion: ((String) -> Void)?
+    
+    /// The callback for qr code recognizer, do any validation and return true if qr code valid
+    var callback: ((String) -> Bool)?
     
     lazy var cameraContainerView = UIView(backgroundColor: .black)
 
@@ -73,10 +74,9 @@ class QrCodeScannerVC: BaseVC {
     }
 
     func found(code: String) {
-        if validate?(code) == true {
+        if callback?(code) == true {
             captureSession.stopRunning()
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
-            completion?(code)
             dismiss(animated: true)
         }
         print(code)
