@@ -106,6 +106,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let topVC = self.window?.rootViewController?.topViewController()
         let localAuthVC = LocalAuthVC()
         localAuthVC.completion = { [self] didSuccess in
+            localAuthVCShown = false
             if !didSuccess {
                 topVC?.showErrorView()
                 // reset timestamp
@@ -124,7 +125,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     }
                 }
             } else {
-                localAuthVCShown = false
                 topVC?.removeErrorView()
             }
         }
