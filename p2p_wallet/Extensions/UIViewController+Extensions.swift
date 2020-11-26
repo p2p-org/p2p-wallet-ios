@@ -42,6 +42,22 @@ extension UIViewController {
         }
     }
     
+    func showErrorView() {
+        removeErrorView()
+        let errorView = ErrorView(backgroundColor: .textWhite)
+        let spacer1 = UIView.spacer
+        let spacer2 = UIView.spacer
+        errorView.stackView.insertArrangedSubview(spacer1, at: 0)
+        errorView.stackView.addArrangedSubview(spacer2)
+        spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor).isActive = true
+        view.addSubview(errorView)
+        errorView.autoPinEdgesToSuperviewEdges()
+    }
+    
+    func removeErrorView() {
+        view.subviews.filter {$0 is ErrorView}.forEach {$0.removeFromSuperview()}
+    }
+    
     func topViewController() -> UIViewController {
         if self.isKind(of: UITabBarController.self) {
             let tabbarController =  self as! UITabBarController
