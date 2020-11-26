@@ -33,7 +33,6 @@ extension UIImage {
     static let downArrow = UIImage(named: "down-arrow", in: bundle, compatibleWith: nil)!
     static let emptyPlaceholder = UIImage(named: "empty-placeholder", in: bundle, compatibleWith: nil)!
     static let faceId = UIImage(named: "faceId", in: bundle, compatibleWith: nil)!
-    static let graphDemo = UIImage(named: "graph-demo", in: bundle, compatibleWith: nil)!
     static let graphDetailDemo = UIImage(named: "graph-detail-demo", in: bundle, compatibleWith: nil)!
     static let qrCodeRange = UIImage(named: "qr-code-range", in: bundle, compatibleWith: nil)!
     static let reverseButton = UIImage(named: "reverse-button", in: bundle, compatibleWith: nil)!
