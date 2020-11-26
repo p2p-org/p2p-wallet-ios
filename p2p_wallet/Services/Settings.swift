@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftyUserDefaults
 
 extension DefaultsKeys {
     var didSetEnableBiometry: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
