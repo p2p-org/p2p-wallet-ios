@@ -53,9 +53,6 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         qrView.autoPinEdge(.top, to: .bottom, of: statusBarBgView)
         
         qrStackView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
-        
-        // FIXME: - Show qrView later
-        qrView.isHidden = true
     }
     
     // MARK: - Binding
@@ -126,6 +123,15 @@ class MainVC: MyWalletsVC<MainWalletCell> {
             interactor: interactor)
         {
             let vc = QrCodeScannerVC()
+            vc.callback = { code in
+                if NSRegularExpression.publicKey.matches(code) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        self.sendAction.execute()
+                    }
+                    return true
+                }
+                return false
+            }
             vc.transitioningDelegate = self
             vc.modalPresentationStyle = .custom
             self.present(vc, animated: true, completion: nil)
