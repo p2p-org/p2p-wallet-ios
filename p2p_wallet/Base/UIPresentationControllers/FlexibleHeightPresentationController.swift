@@ -45,4 +45,12 @@ class FlexibleHeightPresentationController: DimmingPresentationController {
     func calculateFittingHeightOfPresentedView(targetWidth: CGFloat) -> CGFloat {
         presentedView!.fittingHeight(targetWidth: targetWidth)
     }
+    
+    override func preferredContentSizeDidChange(forChildContentContainer container: UIContentContainer) {
+        super.preferredContentSizeDidChange(forChildContentContainer: container)
+        UIView.animate(withDuration: 0.3) {
+            self.containerView?.setNeedsLayout()
+            self.containerView?.layoutIfNeeded()
+        }
+    }
 }
