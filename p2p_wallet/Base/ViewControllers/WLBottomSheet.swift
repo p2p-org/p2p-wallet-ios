@@ -103,6 +103,12 @@ class WLBottomSheet: FlexibleHeightVC {
 
         return height
     }
+    
+    override func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        let pc = super.presentationController(forPresented: presented, presenting: presenting, source: source) as! PresentationController
+        pc.roundedCorner = [.topLeft, .topRight]
+        return pc
+    }
 }
 
 extension WLBottomSheet {

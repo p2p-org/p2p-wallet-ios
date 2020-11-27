@@ -11,10 +11,21 @@ import UIKit
 class FlexibleHeightVC: BaseVStackVC, UIViewControllerTransitioningDelegate {
     // MARK: - Nested type
     class PresentationController: FlexibleHeightPresentationController {
+        var roundedCorner: UIRectCorner?
+        var cornerRadius: CGFloat = 20
+        
         override func calculateFittingHeightOfPresentedView(targetWidth: CGFloat) -> CGFloat {
             let vc = presentedViewController as! FlexibleHeightVC
             return vc.fittingHeightInContainer(safeAreaFrame: safeAreaFrame!)
         }
+        
+        override func containerViewDidLayoutSubviews() {
+            super.containerViewDidLayoutSubviews()
+            if let roundedCorner = roundedCorner {
+                presentedView?.roundCorners(roundedCorner, radius: cornerRadius)
+            }
+        }
+
     }
     
     let position: FlexibleHeightPresentationController.Position
