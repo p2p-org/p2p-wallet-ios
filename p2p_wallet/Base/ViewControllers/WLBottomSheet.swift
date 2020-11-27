@@ -91,17 +91,17 @@ class WLBottomSheet: FlexibleHeightVC {
         view.removeGestureRecognizer(gesture)
     }
     
-    override func fittingHeightInContainer(safeAreaFrame: CGRect) -> CGFloat {
-        var height = super.fittingHeightInContainer(safeAreaFrame: safeAreaFrame)
+    override func fittingHeightInContainer(frame: CGRect) -> CGFloat {
+        var height = super.fittingHeightInContainer(frame: frame)
         
         // calculate header
         height += 20 // 20-headerStackView
         
-        height += headerStackView.fittingHeight(targetWidth: safeAreaFrame.width - 20 - 20)
+        height += headerStackView.fittingHeight(targetWidth: frame.width - 20 - 20)
         
         height += 20 // headerStackView-20
 
-        return height
+        return height + view.safeAreaInsets.bottom + padding.bottom
     }
     
     override func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {

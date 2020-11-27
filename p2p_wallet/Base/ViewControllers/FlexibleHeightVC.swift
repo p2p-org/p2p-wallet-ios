@@ -17,7 +17,7 @@ class FlexibleHeightVC: BaseVStackVC, UIViewControllerTransitioningDelegate {
         
         override func calculateFittingHeightOfPresentedView(targetWidth: CGFloat) -> CGFloat {
             let vc = presentedViewController as! FlexibleHeightVC
-            return vc.fittingHeightInContainer(safeAreaFrame: safeAreaFrame!)
+            return vc.fittingHeightInContainer(frame: containerView!.frame)
         }
         
         override var frameOfPresentedViewInContainerView: CGRect {
@@ -50,9 +50,9 @@ class FlexibleHeightVC: BaseVStackVC, UIViewControllerTransitioningDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func fittingHeightInContainer(safeAreaFrame: CGRect) -> CGFloat {
-        scrollView.contentView.fittingHeight(targetWidth: safeAreaFrame.width - margin.left - margin.right - padding.left - padding.right)/*+
-        scrollView.contentInset.top*/ +
+    func fittingHeightInContainer(frame: CGRect) -> CGFloat {
+        scrollView.contentView.fittingHeight(targetWidth: frame.width - margin.left - margin.right - padding.left - padding.right) +
+        scrollView.contentInset.top +
         scrollView.contentInset.bottom +
         margin.top +
         margin.bottom
