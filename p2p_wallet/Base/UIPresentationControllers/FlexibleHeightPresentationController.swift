@@ -8,6 +8,17 @@
 
 import Foundation
 class FlexibleHeightPresentationController: DimmingPresentationController {
+    // MARK: - Nested type
+    enum Position {
+        case bottom, center
+    }
+    
+    let position: Position
+    init(position: Position, presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
+        self.position = position
+        super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
+    }
+    
     lazy var backingView = UIView(backgroundColor: .a4a4a4)
     
     override func presentationTransitionWillBegin() {
@@ -37,7 +48,13 @@ class FlexibleHeightPresentationController: DimmingPresentationController {
             return frame
         }
         
-        frame.origin.y += frame.size.height - targetHeight
+        switch position {
+        case .bottom:
+            frame.origin.y += frame.size.height - targetHeight
+        case .center:
+            frame.origin.y += (frame.size.height - targetHeight) / 2
+        }
+        
         frame.size.width = targetWidth
         frame.size.height = targetHeight + (containerView?.safeAreaInsets.bottom ?? 0)
         return frame
