@@ -61,4 +61,8 @@ class FlexibleHeightVC: BaseVStackVC, UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         return PresentationController(position: position, presentedViewController: presented, presenting: presenting)
     }
+    
+    func forceRelayout() {
+        preferredContentSize.height += 1
+    }
 }
