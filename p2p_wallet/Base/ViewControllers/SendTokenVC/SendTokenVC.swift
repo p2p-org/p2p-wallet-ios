@@ -142,18 +142,44 @@ class SendTokenVC: BEPagesVC, LoadableView {
             return
         }
         
-        UIApplication.shared.showIndetermineHudWithMessage(L10n.sendingToken)
+        // show TransactionVC
+        let transactionVC = TransactionVC()
+        transactionVC.processing()
+        
+        present(transactionVC, animated: true, completion: nil)
+        
+        // prepare amount
         let amountToSend = amount * pow(10, Double(vc.wallet?.decimals ?? 0))
         
         SolanaSDK.shared.send(from: sender, to: receiver, amount: Int64(amountToSend))
-            .subscribe(onSuccess: { _ in
-                UIApplication.shared.hideHud()
-                UIApplication.shared.showDone(L10n.tokenSent)
-                WalletsVM.ofCurrentUser.updateAmountChange(-amount, forWallet: sender)
-                self.back()
+            .subscribe(onSuccess: { id in
+                transactionVC.showTransactionDetail(
+                    Transaction(
+                        id: id,
+                        amount: -amount,
+                        symbol: vc.wallet?.symbol ?? "",
+                        status: .processing
+                    ),
+                    viewInExplorerAction: CocoaAction {
+                        transactionVC.dismiss(animated: true) {
+                            let nc = self.navigationController
+                            self.back()
+                            nc?.showWebsite(url: "https://explorer.solana.com/tx/" + id)
+                        }
+                        
+                        return .just(())
+                    },
+                    goBackToWalletAction: CocoaAction {
+                        transactionVC.dismiss(animated: true) {
+                            self.back()
+                        }
+                        return .just(())
+                    }
+                )
             }, onError: {error in
-                UIApplication.shared.hideHud()
-                self.showError(error)
+                transactionVC.dismiss(animated: true) {
+                    self.showError(error)
+                }
             })
             .disposed(by: disposeBag)
     }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SafariServices
 
 extension UIViewController {
     @discardableResult
@@ -80,6 +81,17 @@ extension UIViewController {
             return controller!.topViewController()
         } else {
             return self.parent ?? self
+        }
+    }
+    
+    func showWebsite(url: String) {
+        if let url = URL(string: url) {
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = true
+
+            let safariVC = SFSafariViewController(url: url, configuration: config)
+
+            present(safariVC, animated: true)
         }
     }
 }

@@ -56,6 +56,8 @@ internal enum L10n {
   internal static let creatingAnAccount = L10n.tr("Localizable", "creating an account")
   /// Do this later
   internal static let doThisLater = L10n.tr("Localizable", "Do this later")
+  /// Done
+  internal static let done = L10n.tr("Localizable", "Done")
   /// Enable now
   internal static let enableNow = L10n.tr("Localizable", "Enable now")
   /// Enter passcode
@@ -74,6 +76,8 @@ internal enum L10n {
   internal static let from = L10n.tr("Localizable", "From")
   /// Getting creation fee
   internal static let gettingCreationFee = L10n.tr("Localizable", "Getting creation fee")
+  /// Go back to wallet
+  internal static let goBackToWallet = L10n.tr("Localizable", "Go back to wallet")
   /// Go to wallet
   internal static let goToWallet = L10n.tr("Localizable", "Go to wallet")
   /// I have saved these words in a safe place
@@ -174,6 +178,8 @@ internal enum L10n {
   internal static let to = L10n.tr("Localizable", "To")
   /// Token sent!
   internal static let tokenSent = L10n.tr("Localizable", "Token sent!")
+  /// Transaction ID
+  internal static let transactionID = L10n.tr("Localizable", "Transaction ID")
   /// Try again
   internal static let tryAgain = L10n.tr("Localizable", "Try again")
   /// Turn on
@@ -188,6 +194,8 @@ internal enum L10n {
   internal static let useYourFaceIDForQuickAccess = L10n.tr("Localizable", "Use your FaceID for quick access?")
   /// Use your TouchID for quick access?
   internal static let useYourTouchIDForQuickAccess = L10n.tr("Localizable", "Use your TouchID for quick access?")
+  /// View in blockchain explorer
+  internal static let viewInBlockchainExplorer = L10n.tr("Localizable", "View in blockchain explorer")
   /// Wallet address
   internal static let walletAddress = L10n.tr("Localizable", "Wallet address")
   /// Wallets
