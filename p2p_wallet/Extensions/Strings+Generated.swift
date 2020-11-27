@@ -100,6 +100,8 @@ internal enum L10n {
   internal static let passcodesDoNotMatch = L10n.tr("Localizable", "passcodes do not match")
   /// please try again later!
   internal static let pleaseTryAgainLater = L10n.tr("Localizable", "please try again later!")
+  /// Processing
+  internal static let processing = L10n.tr("Localizable", "Processing")
   /// Receive
   internal static let receive = L10n.tr("Localizable", "Receive")
   /// Receive token
