@@ -114,3 +114,7 @@
 "There is no Wowlet saved in your iCloud" = "Không có Wowlet nào được lưu trong iCloud của bạn";
 "No account" = "Không có tài khoản";
 "Processing" = "Đang xử lý";
+"Done" = "Hoàn tất";
+"Transaction ID" = "ID giao dịch";
+"View in blockchain explorer" = "Xem trong Blockchain explorer";
+"Go back to wallet" = "Quay lại ví";

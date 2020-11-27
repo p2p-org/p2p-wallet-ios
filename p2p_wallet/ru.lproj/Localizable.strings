@@ -114,3 +114,7 @@
 "There is no Wowlet saved in your iCloud" = "В вашем iCloud нет сохраненного Wowlet";
 "No account" = "Нет аккаунта";
 "Processing" = "Обработка";
+"Done" = "Выполнено";
+"Transaction ID" = "номер транзакции";
+"View in blockchain explorer" = "Посмотреть в проводнике блокчейна";
+"Go back to wallet" = "Вернуться в кошелек";
