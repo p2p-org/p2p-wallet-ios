@@ -48,8 +48,9 @@ class FlexibleHeightPresentationController: DimmingPresentationController {
     
     override func preferredContentSizeDidChange(forChildContentContainer container: UIContentContainer) {
         super.preferredContentSizeDidChange(forChildContentContainer: container)
+        self.containerView?.setNeedsLayout()
+        self.containerView?.subviews.forEach {$0.layoutIfNeeded()}
         UIView.animate(withDuration: 0.3) {
-            self.containerView?.setNeedsLayout()
             self.containerView?.layoutIfNeeded()
         }
     }
