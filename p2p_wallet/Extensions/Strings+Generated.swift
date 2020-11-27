@@ -90,6 +90,8 @@ internal enum L10n {
   internal static let max = L10n.tr("Localizable", "Max")
   /// next
   internal static let next = L10n.tr("Localizable", "next")
+  /// No account
+  internal static let noAccount = L10n.tr("Localizable", "No account")
   /// OK
   internal static let ok = L10n.tr("Localizable", "OK")
   /// Or saving into Keychain
@@ -102,6 +104,12 @@ internal enum L10n {
   internal static let receive = L10n.tr("Localizable", "Receive")
   /// Receive token
   internal static let receiveToken = L10n.tr("Localizable", "Receive token")
+  /// Recover your Wowlet using cloud services, or recover manually
+  internal static let recoverYourWowletUsingCloudServicesOrRecoverManually = L10n.tr("Localizable", "Recover your Wowlet using cloud services or recover manually")
+  /// Restore manually
+  internal static let restoreManually = L10n.tr("Localizable", "Restore manually")
+  /// Restore using iCloud
+  internal static let restoreUsingICloud = L10n.tr("Localizable", "Restore using iCloud")
   /// Restoring wallet
   internal static let restoringWallet = L10n.tr("Localizable", "Restoring wallet")
   /// Retry after
@@ -156,6 +164,8 @@ internal enum L10n {
   internal static let termsAndConditions = L10n.tr("Localizable", "Terms and conditions")
   /// The address is not valid
   internal static let theAddressIsNotValid = L10n.tr("Localizable", "The address is not valid")
+  /// There is no Wowlet saved in your iCloud
+  internal static let thereIsNoWowletSavedInYourICloud = L10n.tr("Localizable", "There is no Wowlet saved in your iCloud")
   /// There is nothing in here!
   internal static let thereIsNothingInHere = L10n.tr("Localizable", "There is nothing in here!")
   /// To
@@ -198,6 +208,8 @@ internal enum L10n {
   internal static let wellDone = L10n.tr("Localizable", "Well done!")
   /// Wowlet for people, not for tokens
   internal static let wowletForPeopleNotForTokens = L10n.tr("Localizable", "Wowlet for people, not for tokens")
+  /// Wowlet recovery
+  internal static let wowletRecovery = L10n.tr("Localizable", "Wowlet recovery")
   /// Your device does not support biometrics authentication
   internal static let yourDeviceDoesNotSupportBiometricsAuthentication = L10n.tr("Localizable", "Your device does not support biometrics authentication")
   /// Your wallet has been successfully created!
