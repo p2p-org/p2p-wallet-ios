@@ -68,10 +68,4 @@ class FlexibleHeightPresentationController: DimmingPresentationController {
     func calculateFittingHeightOfPresentedView(targetWidth: CGFloat) -> CGFloat {
         presentedView!.fittingHeight(targetWidth: targetWidth)
     }
-    
-    override func containerViewDidLayoutSubviews() {
-        super.containerViewDidLayoutSubviews()
-        presentedView?.frame = frameOfPresentedViewInContainerView
-        presentedView?.roundCorners([.topLeft, .topRight], radius: 20)
-    }
 }
