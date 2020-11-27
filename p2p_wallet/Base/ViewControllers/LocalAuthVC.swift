@@ -103,7 +103,7 @@ extension LocalAuthVC: THPinViewControllerDelegate {
     }
     
     func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
-        guard let correctPin = KeychainStorage.shared.pinCode else {return false}
+        guard let correctPin = AccountStorage.shared.pinCode else {return false}
         if pin == correctPin {return true} else {
             remainingPinEntries -= 1
             return false
