@@ -8,7 +8,7 @@
 import Foundation
 import KeychainSwift
 
-struct KeychainStorage: SolanaSDKAccountStorage {
+struct AccountStorage: SolanaSDKAccountStorage {
     let tokenKey = "Keychain.Token"
     let pincodeKey = "Keychain.Pincode"
     let phrasesKey = "Keychain.Phrases"
@@ -16,7 +16,7 @@ struct KeychainStorage: SolanaSDKAccountStorage {
     let keychain = KeychainSwift()
     let iCloudStore = NSUbiquitousKeyValueStore()
     
-    static let shared = KeychainStorage()
+    static let shared = AccountStorage()
     private init() {}
     
     // MARK: - Account
@@ -44,17 +44,12 @@ struct KeychainStorage: SolanaSDKAccountStorage {
         iCloudStore.set(phrases, forKey: phrasesKey)
     }
     
-    func retrieveAccountFromICloud() throws {
-        // retrieve from iCloud
-        if let phrases = iCloudStore.string(forKey: phrasesKey) {
-            let account = try SolanaSDK.Account(phrase: phrases.components(separatedBy: " "), network: SolanaSDK.network)
-            try KeychainStorage.shared.save(account)
-        }
+    func phrasesFromICloud() -> String? {
+        iCloudStore.string(forKey: phrasesKey)
     }
     
     // MARK: - Clearance
     func clear() {
-        iCloudStore.removeObject(forKey: phrasesKey)
         keychain.clear()
     }
 }

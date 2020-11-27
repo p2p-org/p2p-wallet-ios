@@ -175,7 +175,7 @@ class CreatePhrasesVC: PhrasesVC {
     }
     
     @objc func buttonSaveToKeychainDidTouch() {
-        KeychainStorage.shared.saveICloud(phrases: phrases.value.joined(separator: " "))
+        AccountStorage.shared.saveICloud(phrases: phrases.value.joined(separator: " "))
         UIApplication.shared.showDone(L10n.savedToICloud)
     }
     
@@ -184,7 +184,7 @@ class CreatePhrasesVC: PhrasesVC {
         // clear
         savedCheckBox.isSelected = false
         continueButton.isEnabled = false
-        KeychainStorage.shared.clear()
+        AccountStorage.shared.clear()
     }
     
     @objc func buttonContinueDidTouch() {
@@ -192,7 +192,7 @@ class CreatePhrasesVC: PhrasesVC {
         DispatchQueue.global().async {
             do {
                 let account = try SolanaSDK.Account(phrase: self.phrases.value, network: SolanaSDK.network)
-                try KeychainStorage.shared.save(account)
+                try AccountStorage.shared.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
                     self.show(CreateWalletCompletedVC(), sender: nil)
