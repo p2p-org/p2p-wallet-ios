@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 class FlexibleHeightVC: BaseVStackVC, UIViewControllerTransitioningDelegate {
+    var margin: UIEdgeInsets { .zero }
     // MARK: - Nested type
     class PresentationController: FlexibleHeightPresentationController {
         var roundedCorner: UIRectCorner?
@@ -17,6 +18,14 @@ class FlexibleHeightVC: BaseVStackVC, UIViewControllerTransitioningDelegate {
         override func calculateFittingHeightOfPresentedView(targetWidth: CGFloat) -> CGFloat {
             let vc = presentedViewController as! FlexibleHeightVC
             return vc.fittingHeightInContainer(safeAreaFrame: safeAreaFrame!)
+        }
+        
+        override var frameOfPresentedViewInContainerView: CGRect {
+            let vc = presentedViewController as! FlexibleHeightVC
+            var frame = super.frameOfPresentedViewInContainerView
+            frame.origin.x += vc.margin.left
+            frame.size.width -= (vc.margin.left + vc.margin.right)
+            return frame
         }
         
         override func containerViewDidLayoutSubviews() {
@@ -42,8 +51,11 @@ class FlexibleHeightVC: BaseVStackVC, UIViewControllerTransitioningDelegate {
     }
     
     func fittingHeightInContainer(safeAreaFrame: CGRect) -> CGFloat {
-        scrollView.contentView.fittingHeight(
-            targetWidth: safeAreaFrame.width - padding.left - padding.right) /*+ scrollView.contentInset.top*/ + scrollView.contentInset.bottom
+        scrollView.contentView.fittingHeight(targetWidth: safeAreaFrame.width - margin.left - margin.right - padding.left - padding.right)/*+
+        scrollView.contentInset.top*/ +
+        scrollView.contentInset.bottom +
+        margin.top +
+        margin.bottom
     }
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
