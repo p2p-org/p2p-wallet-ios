@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SafariServices
 
 extension UIViewController {
     @discardableResult
@@ -39,6 +40,58 @@ extension UIViewController {
         
         vc.showAlert(title: L10n.error.uppercaseFirst, message: message + (additionalMessage != nil ? "\n" + additionalMessage! : "") + (showPleaseTryAgain ? "\n" + L10n.pleaseTryAgainLater : ""), buttonTitles: [L10n.ok]) { (_) in
             completion?()
+        }
+    }
+    
+    var errorView: ErrorView? {
+        view.subviews.first(where: {$0 is ErrorView}) as? ErrorView
+    }
+    
+    func showErrorView(title: String? = nil, description: String? = nil) {
+        removeErrorView()
+        let errorView = ErrorView(backgroundColor: .textWhite)
+        if let title = title {
+            errorView.titleLabel.text = title
+        }
+        if let description = description {
+            errorView.descriptionLabel.text = description
+        }
+        let spacer1 = UIView.spacer
+        let spacer2 = UIView.spacer
+        errorView.stackView.insertArrangedSubview(spacer1, at: 0)
+        errorView.stackView.addArrangedSubview(spacer2)
+        spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor).isActive = true
+        view.addSubview(errorView)
+        errorView.autoPinEdgesToSuperviewEdges()
+    }
+    
+    func removeErrorView() {
+        view.subviews.filter {$0 is ErrorView}.forEach {$0.removeFromSuperview()}
+    }
+    
+    func topViewController() -> UIViewController {
+        if self.isKind(of: UITabBarController.self) {
+            let tabbarController =  self as! UITabBarController
+            return tabbarController.selectedViewController!.topViewController()
+        } else if self.isKind(of: UINavigationController.self) {
+            let navigationController = self as! UINavigationController
+            return navigationController.visibleViewController!.topViewController()
+        } else if self.presentedViewController != nil {
+            let controller = self.presentedViewController
+            return controller!.topViewController()
+        } else {
+            return self.parent ?? self
+        }
+    }
+    
+    func showWebsite(url: String) {
+        if let url = URL(string: url) {
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = true
+
+            let safariVC = SFSafariViewController(url: url, configuration: config)
+
+            present(safariVC, animated: true)
         }
     }
 }

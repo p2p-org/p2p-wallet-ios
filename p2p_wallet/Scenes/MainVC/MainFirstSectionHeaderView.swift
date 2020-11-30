@@ -19,11 +19,13 @@ class MainFirstSectionHeaderView: SectionHeaderView, LoadableView {
     lazy var swapButton = createButton(title: L10n.swap)
         .onTap(self, action: #selector(buttonSwapDidTouch))
     
+    lazy var addCoinButton = UIButton(label: "+ " + L10n.addCoin, labelFont: .systemFont(ofSize: 15, weight: .medium), textColor: .textBlack)
+    
     var sendAction: CocoaAction?
     var receiveAction: CocoaAction?
     var swapAction: CocoaAction?
     
-    var loadingViews: [UIView] { [priceLabel, priceChangeLabel, sendButton.superview!, headerLabel] }
+    var loadingViews: [UIView] { [priceLabel, priceChangeLabel, sendButton.superview!, headerLabel, addCoinButton] }
     
     override func commonInit() {
         super.commonInit()
@@ -43,6 +45,16 @@ class MainFirstSectionHeaderView: SectionHeaderView, LoadableView {
         stackView.insertArrangedSubview(priceLabel, at: 1)
         stackView.insertArrangedSubview(priceChangeLabel, at: 2)
         stackView.insertArrangedSubview(buttonsView, at: 3)
+        
+        // modify header
+        headerLabel.removeFromSuperview()
+        let headerStackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
+            headerLabel,
+            addCoinButton
+        ])
+        stackView.insertArrangedSubview(headerStackView, at: 4)
+        headerStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor)
+            .isActive = true
         
         stackView.setCustomSpacing(5, after: priceLabel)
         stackView.setCustomSpacing(30, after: priceChangeLabel)
