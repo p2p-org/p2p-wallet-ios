@@ -1,5 +1,5 @@
 //
-//  CoinDetailVC.swift
+//  ActivitiesVC.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 11/5/20.
@@ -8,14 +8,12 @@
 import Foundation
 import DiffableDataSources
 
-class CoinDetailVC: CollectionVC<Wallet, MainWalletCell> {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-        .normal()
-    }
+class ActivitiesVC: CollectionVC<Activity, ActivityCell> {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(backgroundColor: .vcBackground) }
     
     // MARK: - Initializer
     init() {
-        super.init(viewModel: ListViewModel<Wallet>())
+        super.init(viewModel: ListViewModel<Activity>())
     }
     
     required init?(coder: NSCoder) {
@@ -26,10 +24,11 @@ class CoinDetailVC: CollectionVC<Wallet, MainWalletCell> {
     override func setUp() {
         super.setUp()
         title = "Coin name"
+        view.backgroundColor = .vcBackground
     }
     
     // MARK: - Layout
     override var sections: [Section] {
-        [Section(headerViewClass: CoinDetailSectionHeaderView.self, headerTitle: L10n.activities, interGroupSpacing: 16)]
+        [Section(headerViewClass: AVCSectionHeaderView.self, headerTitle: L10n.activities, interGroupSpacing: 16)]
     }
 }

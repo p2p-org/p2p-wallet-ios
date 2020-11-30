@@ -28,8 +28,8 @@
 		BC2EC1782553ABD2006EEDA5 /* MainFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1772553ABD2006EEDA5 /* MainFooterView.swift */; };
 		BC2EC1802553B1F7006EEDA5 /* SectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */; };
 		BC2EC1852553B326006EEDA5 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */; };
-		BC2EC18B2553B700006EEDA5 /* CoinDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC18A2553B700006EEDA5 /* CoinDetailVC.swift */; };
-		BC2EC1902553BA2C006EEDA5 /* CoinDetailSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC18F2553BA2C006EEDA5 /* CoinDetailSectionHeaderView.swift */; };
+		BC2EC18B2553B700006EEDA5 /* ActivitiesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC18A2553B700006EEDA5 /* ActivitiesVC.swift */; };
+		BC2EC1902553BA2C006EEDA5 /* AVCSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC18F2553BA2C006EEDA5 /* AVCSectionHeaderView.swift */; };
 		BC2EC1BA2553EC7D006EEDA5 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1B92553EC7D006EEDA5 /* UIView+Extensions.swift */; };
 		BC2EC1CD2553ED1B006EEDA5 /* CardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1C32553ED1B006EEDA5 /* CardViewController.swift */; };
 		BC2EC1CE2553ED1B006EEDA5 /* CardPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1C42553ED1B006EEDA5 /* CardPresentationController.swift */; };
@@ -54,6 +54,8 @@
 		BC3ADE8D2570B832002B3B16 /* WLCenterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE8C2570B832002B3B16 /* WLCenterSheet.swift */; };
 		BC3ADE982570C292002B3B16 /* TransactionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE972570C292002B3B16 /* TransactionVC.swift */; };
 		BC3ADEA02570E1B9002B3B16 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE9F2570E1B9002B3B16 /* Transaction.swift */; };
+		BC3ADEC32574D4CC002B3B16 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADEC22574D4CC002B3B16 /* Activity.swift */; };
+		BC3ADEC82574D84C002B3B16 /* ActivityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADEC72574D84C002B3B16 /* ActivityCell.swift */; };
 		BC3EA47C254FCE9200FB1FEA /* IBPCollectionViewCompositionalLayoutInteroperability.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3EA47B254FCE9200FB1FEA /* IBPCollectionViewCompositionalLayoutInteroperability.swift */; };
 		BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3EA480254FD3CE00FB1FEA /* BaseCollectionViewCell.swift */; };
 		BC3EA486254FD44700FB1FEA /* MainWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3EA485254FD44700FB1FEA /* MainWalletCell.swift */; };
@@ -169,8 +171,8 @@
 		BC2EC1772553ABD2006EEDA5 /* MainFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFooterView.swift; sourceTree = "<group>"; };
 		BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFooterView.swift; sourceTree = "<group>"; };
 		BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
-		BC2EC18A2553B700006EEDA5 /* CoinDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinDetailVC.swift; sourceTree = "<group>"; };
-		BC2EC18F2553BA2C006EEDA5 /* CoinDetailSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinDetailSectionHeaderView.swift; sourceTree = "<group>"; };
+		BC2EC18A2553B700006EEDA5 /* ActivitiesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesVC.swift; sourceTree = "<group>"; };
+		BC2EC18F2553BA2C006EEDA5 /* AVCSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCSectionHeaderView.swift; sourceTree = "<group>"; };
 		BC2EC1B92553EC7D006EEDA5 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		BC2EC1C32553ED1B006EEDA5 /* CardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardViewController.swift; sourceTree = "<group>"; };
 		BC2EC1C42553ED1B006EEDA5 /* CardPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardPresentationController.swift; sourceTree = "<group>"; };
@@ -195,6 +197,8 @@
 		BC3ADE8C2570B832002B3B16 /* WLCenterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLCenterSheet.swift; sourceTree = "<group>"; };
 		BC3ADE972570C292002B3B16 /* TransactionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionVC.swift; sourceTree = "<group>"; };
 		BC3ADE9F2570E1B9002B3B16 /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
+		BC3ADEC22574D4CC002B3B16 /* Activity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
+		BC3ADEC72574D84C002B3B16 /* ActivityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCell.swift; sourceTree = "<group>"; };
 		BC3EA47B254FCE9200FB1FEA /* IBPCollectionViewCompositionalLayoutInteroperability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IBPCollectionViewCompositionalLayoutInteroperability.swift; sourceTree = "<group>"; };
 		BC3EA480254FD3CE00FB1FEA /* BaseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionViewCell.swift; sourceTree = "<group>"; };
 		BC3EA485254FD44700FB1FEA /* MainWalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWalletCell.swift; sourceTree = "<group>"; };
@@ -350,13 +354,14 @@
 			path = MainVC;
 			sourceTree = "<group>";
 		};
-		BC2EC1892553B6EE006EEDA5 /* CoinDetailVC */ = {
+		BC2EC1892553B6EE006EEDA5 /* ActivitiesVC */ = {
 			isa = PBXGroup;
 			children = (
-				BC2EC18F2553BA2C006EEDA5 /* CoinDetailSectionHeaderView.swift */,
-				BC2EC18A2553B700006EEDA5 /* CoinDetailVC.swift */,
+				BC2EC18F2553BA2C006EEDA5 /* AVCSectionHeaderView.swift */,
+				BC3ADEC72574D84C002B3B16 /* ActivityCell.swift */,
+				BC2EC18A2553B700006EEDA5 /* ActivitiesVC.swift */,
 			);
-			path = CoinDetailVC;
+			path = ActivitiesVC;
 			sourceTree = "<group>";
 		};
 		BC2EC1C12553ED1B006EEDA5 /* UIPresentationControllers */ = {
@@ -480,7 +485,7 @@
 				BC55B8C3254C03660032C355 /* TabBarVC */,
 				BC23B572254FBB6300886C9C /* MainVC */,
 				BCD5E75225512DA800F51299 /* InvestmentsVC */,
-				BC2EC1892553B6EE006EEDA5 /* CoinDetailVC */,
+				BC2EC1892553B6EE006EEDA5 /* ActivitiesVC */,
 				BCB58359255CE96B00B10F65 /* ProfileVC.swift */,
 			);
 			path = Scenes;
@@ -502,6 +507,7 @@
 				BCD5E82E25525DE600F51299 /* FetcherState.swift */,
 				BC5ED74D256265700030572D /* Wallet.swift */,
 				BC3ADE9F2570E1B9002B3B16 /* Transaction.swift */,
+				BC3ADEC22574D4CC002B3B16 /* Activity.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1038,6 +1044,7 @@
 				BC490CB0256CB1B0006E7AC9 /* ChooseWalletVC.swift in Sources */,
 				BC3EA486254FD44700FB1FEA /* MainWalletCell.swift in Sources */,
 				BC32A3D5254A8F7F002156F0 /* CreatePhrasesVC.swift in Sources */,
+				BC3ADEC32574D4CC002B3B16 /* Activity.swift in Sources */,
 				BC22ABE12552A4B70071C69F /* DismissMenuAnimator.swift in Sources */,
 				BC2EC1852553B326006EEDA5 /* UIColor+Extensions.swift in Sources */,
 				BC2EC1DE2553EFC6006EEDA5 /* SwipeDownInteractor.swift in Sources */,
@@ -1064,6 +1071,7 @@
 				BC6EE76D254ABEDE00FE1025 /* ConfirmPinCodeVC.swift in Sources */,
 				BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */,
 				BC32A31C254A630B002156F0 /* CreateOrRestoreWalletVC.swift in Sources */,
+				BC3ADEC82574D84C002B3B16 /* ActivityCell.swift in Sources */,
 				BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WellDoneVC.swift in Sources */,
 				BC55B8C8254C03700032C355 /* TabBar.swift in Sources */,
@@ -1077,7 +1085,7 @@
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,
 				BC55B88E254BFBDC0032C355 /* TabBarVC.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
-				BC2EC1902553BA2C006EEDA5 /* CoinDetailSectionHeaderView.swift in Sources */,
+				BC2EC1902553BA2C006EEDA5 /* AVCSectionHeaderView.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
 				BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */,
 				BCBBE1872563C2D300533F6B /* ReceiveTokenCell.swift in Sources */,
@@ -1096,7 +1104,7 @@
 				BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */,
 				BC6EE7DA254BC1A800FE1025 /* SecuritySettingVC.swift in Sources */,
 				BC7BCB75256274E10018DECA /* PricesManager+Extensions.swift in Sources */,
-				BC2EC18B2553B700006EEDA5 /* CoinDetailVC.swift in Sources */,
+				BC2EC18B2553B700006EEDA5 /* ActivitiesVC.swift in Sources */,
 				BC6EE777254AF6E600FE1025 /* EnableBiometryVC.swift in Sources */,
 				BC2EC1CD2553ED1B006EEDA5 /* CardViewController.swift in Sources */,
 				BCD5E73A2551265300F51299 /* CollectionVC.swift in Sources */,

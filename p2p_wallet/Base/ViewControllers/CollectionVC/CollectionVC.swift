@@ -243,11 +243,11 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
     
     func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: Cell.self), for: indexPath) as? Cell
+        cell?.setUp(with: item as! Cell.T)
         if viewModel.state.value == .loading {
             cell?.showLoading()
         } else {
             cell?.hideLoading()
-            cell?.setUp(with: item as! Cell.T)
         }
         return cell ?? UICollectionViewCell()
     }
