@@ -93,7 +93,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     
     // MARK: - Delegate
     override func itemDidSelect(_ item: Wallet) {
-        show(ActivitiesVC(), sender: nil)
+        show(ActivitiesVC(wallet: item), sender: nil)
     }
     
     // MARK: - Actions
