@@ -1,0 +1,111 @@
+//
+//  TransactionVC.swift
+//  p2p_wallet
+//
+//  Created by Chung Tran on 27/11/2020.
+//
+
+import Foundation
+import Action
+
+class TransactionVC: WLCenterSheet {
+    override var padding: UIEdgeInsets {UIEdgeInsets(top: 30, left: 20, bottom: 30, right: 20)}
+    
+    lazy var imageView = UIImageView(width: 143, height: 137, image: .walletIntro)
+    lazy var titleLabel = UILabel(text: L10n.processing + "...", textSize: 17, weight: .semibold)
+    
+    override func setUp() {
+        super.setUp()
+        stackView.alignment = .center
+    }
+    
+    func processing() {
+        stackView.spacing = 48
+        stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
+        stackView.addArrangedSubviews([
+            .separator(height: 20),
+            imageView.padding(UIEdgeInsets(x: 30, y: 0)),
+            titleLabel.padding(UIEdgeInsets(x: 30, y: 0)),
+            .separator(height: 20)
+        ])
+        forceRelayout()
+    }
+    
+    func showTransactionDetail(_ transaction: Transaction, viewInExplorerAction: CocoaAction, goBackToWalletAction: CocoaAction)
+    {
+        stackView.spacing = 0
+        stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
+        
+        titleLabel.text = transaction.amount.toString(maximumFractionDigits: 9, showPlus: true) + " " + transaction.symbol
+        
+        let statusLabel = UILabel(text: transaction.status.localizedString, textSize: 12, weight: .bold, textColor: .secondary
+        )
+        
+        let separator = UIView.separator(height: 1, color: .c4c4c4)
+        
+        let transactionIdLabel = UILabel(text: L10n.transactionID, textSize: 12, weight: .medium, textColor: .secondary)
+        
+        let transactionIdRow = UIView.row([
+            UILabel(text: transaction.id, textSize: 15, weight: .medium),
+            {
+                var copyToClipboardButton = UIButton(width: 24, height: 24)
+                copyToClipboardButton.setImage(.copyToClipboard, for: .normal)
+                copyToClipboardButton.tintColor = .textBlack
+                copyToClipboardButton.rx.action = CocoaAction {
+                    UIPasteboard.general.string = transaction.id
+                    UIApplication.shared.showDone(L10n.copiedToClipboard)
+                    return .just(())
+                }
+                return copyToClipboardButton
+            }()
+        ])
+        
+        let separator2 = UIView.separator(height: 1, color: .c4c4c4)
+        
+        let viewInExplorerButton = WLButton.stepButton(type: .sub, label: L10n.viewInBlockchainExplorer)
+            .withAction(viewInExplorerAction)
+        
+        let goBackToWallet = WLButton.stepButton(type: .main, label: L10n.goBackToWallet)
+            .withAction(goBackToWalletAction)
+        
+        stackView.addArrangedSubviews([
+            .separator(height: 20),
+            imageView,
+            titleLabel,
+            statusLabel.padding(UIEdgeInsets(x: 16, y: 5), backgroundColor: .c4c4c4, cornerRadius: 8),
+            separator,
+            transactionIdLabel,
+            transactionIdRow,
+            separator2,
+            viewInExplorerButton,
+            goBackToWallet
+        ])
+        
+        stackView.stretchArrangedSubviews([
+            separator,
+            transactionIdLabel,
+            transactionIdRow,
+            separator2,
+            viewInExplorerButton,
+            goBackToWallet
+        ])
+        
+        stackView.setCustomSpacing(30, after: imageView)
+        stackView.setCustomSpacing(20, after: titleLabel)
+        stackView.setCustomSpacing(16, after: statusLabel.wrapper!)
+        stackView.setCustomSpacing(20, after: separator)
+        stackView.setCustomSpacing(5, after: transactionIdLabel)
+        stackView.setCustomSpacing(20, after: transactionIdRow)
+        stackView.setCustomSpacing(20, after: separator2)
+        stackView.setCustomSpacing(10, after: viewInExplorerButton)
+        
+        forceRelayout()
+    }
+    
+    override func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        let pc = super.presentationController(forPresented: presented, presenting: presenting, source: source) as! DimmingPresentationController
+        // disable dismissing on dimmingView
+        pc.dimmingView.gestureRecognizers?.forEach {pc.dimmingView.removeGestureRecognizer($0)}
+        return pc
+    }
+}

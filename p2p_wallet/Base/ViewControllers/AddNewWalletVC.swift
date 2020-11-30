@@ -106,8 +106,22 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
 }
 
 extension AddNewWalletVC: UIViewControllerTransitioningDelegate {
+    class PresentationController: CustomHeightPresentationController {
+        override func containerViewDidLayoutSubviews() {
+            super.containerViewDidLayoutSubviews()
+            presentedView?.roundCorners([.topLeft, .topRight], radius: 20)
+        }
+    }
+    
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        HalfSizePresentationController(presentedViewController: presented, presenting: presenting)
+        PresentationController(height: {
+            if UIDevice.current.userInterfaceIdiom == .phone, UIDevice.current.orientation == .landscapeLeft ||
+                UIDevice.current.orientation == .landscapeRight
+            {
+                return UIScreen.main.bounds.height
+            }
+            return UIScreen.main.bounds.height - 85.adaptiveHeight
+        }, presentedViewController: presented, presenting: presenting)
     }
 }
 

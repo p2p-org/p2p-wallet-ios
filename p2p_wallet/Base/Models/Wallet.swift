@@ -19,7 +19,7 @@ struct Wallet: ListItemType {
     var decimals: Int?
     
     static func placeholder(at index: Int) -> Wallet {
-        Wallet(name: "placeholder", mintAddress: "placeholder-mintaddress", pubkey: "", symbol: "PLHD\(index)", icon: nil, amount: nil, decimals: nil)
+        Wallet(name: "placeholder", mintAddress: "placeholder-mintaddress", pubkey: "pubkey", symbol: "PLHD\(index)", icon: nil, amount: nil, decimals: nil)
     }
 }
 

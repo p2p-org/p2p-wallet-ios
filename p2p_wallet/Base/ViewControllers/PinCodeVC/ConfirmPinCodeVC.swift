@@ -30,7 +30,7 @@ class ConfirmPinCodeVC: PinCodeVC {
             showAlert(title: L10n.error, message: L10n.passcodesDoNotMatch)
             return
         }
-        KeychainStorage.shared.save(currentPinCode)
+        AccountStorage.shared.save(currentPinCode)
         completion?(currentPinCode)
     }
 }
