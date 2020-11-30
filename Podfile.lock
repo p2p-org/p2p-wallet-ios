@@ -114,6 +114,7 @@ PODS:
   - SwiftLint (0.41.0)
   - SwiftyUserDefaults (5.0.0)
   - TagListView (1.4.1)
+  - THPinViewController (1.2.8)
   - TweetNacl (1.0.2)
 
 DEPENDENCIES:
@@ -133,6 +134,7 @@ DEPENDENCIES:
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
+  - THPinViewController (from `https://github.com/p2p-org/THPinViewController.git`)
 
 SPEC REPOS:
   trunk:
@@ -174,6 +176,13 @@ EXTERNAL SOURCES:
     :path: BEPureLayout
   SolanaSwift:
     :path: SolanaSwift
+  THPinViewController:
+    :git: https://github.com/p2p-org/THPinViewController.git
+
+CHECKOUT OPTIONS:
+  THPinViewController:
+    :commit: 0bce9ed2dbd3142717bd903c49ae657d1e74ba8e
+    :git: https://github.com/p2p-org/THPinViewController.git
 
 SPEC CHECKSUMS:
   Action: 5dc2194f7a0b77857c82a677b0da655f197c005f
@@ -209,8 +218,9 @@ SPEC CHECKSUMS:
   SwiftLint: c585ebd615d9520d7fbdbe151f527977b0534f1e
   SwiftyUserDefaults: 33fcb42bd1feb53a37d873feb62c82967db5f7f6
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
+  THPinViewController: 7c8df68f412ca0b3fa42a84848c382bc343372f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 022d6a8939db8c4ad4a0ec9b1cb87fb11b8f299b
+PODFILE CHECKSUM: 42e26dd4183df787ecdb0164dd297927439dc2cb
 
 COCOAPODS: 1.10.0

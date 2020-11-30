@@ -8,10 +8,10 @@
 import Foundation
 
 class MainWalletCell: WalletCell {
-    lazy var graphView = UIImageView(width: 49, height: 15, image: .graphDemo)
+    lazy var addressLabel = UILabel(text: "public key", textSize: 13, textColor: .secondary, numberOfLines: 1)
     
     override var loadingViews: [UIView] {
-        super.loadingViews + [equityValueLabel, graphView]
+        super.loadingViews + [addressLabel]
     }
     
     override func commonInit() {
@@ -20,12 +20,13 @@ class MainWalletCell: WalletCell {
         contentView.layer.cornerRadius = 12
         contentView.layer.masksToBounds = true
         
-        let vStackView = UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            row(arrangedSubviews: [coinNameLabel, graphView]),
-            row(arrangedSubviews: [equityValueLabel, coinPriceLabel]),
-            row(arrangedSubviews: [tokenCountLabel, coinChangeLabel])
+        coinPriceLabel.font = .boldSystemFont(ofSize: 15)
+        let vStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
+            row(arrangedSubviews: [coinNameLabel, coinPriceLabel]),
+            row(arrangedSubviews: [addressLabel, tokenCountLabel])
         ])
         
+        stackView.alignment = .center
         stackView.addArrangedSubviews([
             coinLogoImageView,
             vStackView
@@ -34,7 +35,11 @@ class MainWalletCell: WalletCell {
     
     override func setUp(with item: Wallet) {
         super.setUp(with: item)
-        // TODO: Graph
+        if let pubkey = item.pubkey {
+            addressLabel.text = pubkey.prefix(6) + "..." + pubkey.suffix(4)
+        } else {
+            addressLabel.text = nil
+        }
     }
     
     private func row(arrangedSubviews: [UIView]) -> UIStackView {

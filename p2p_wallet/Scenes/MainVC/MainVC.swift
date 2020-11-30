@@ -17,45 +17,41 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     let interactor = MenuInteractor()
     
     // MARK: - Subviews
-    lazy var qrStackView: UIStackView = {
-        let stackView = UIStackView(axis: .horizontal, spacing: 25, alignment: .center, distribution: .fill)
-        let imageView = UIImageView(width: 25, height: 25, image: .scanQr)
-        imageView.tintColor = .secondary
-         
-        stackView.addArrangedSubviews([
-            imageView,
-            UILabel(text: L10n.slideToScan, textSize: 13, weight: .semibold, textColor: .secondary)
-        ])
-        stackView.addArrangedSubview(.spacer)
-        return stackView
-    }()
-    var headerView: MainFirstSectionHeaderView?
+    var qrStackView: UIStackView!
+    var avatarImageView = UIImageView(width: 44, height: 44, backgroundColor: .c4c4c4, cornerRadius: 22)
+    var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .textBlack, cornerRadius: 4)
+    var collectionViewHeaderView: MainFirstSectionHeaderView?
     
     // MARK: - Methods
     override func setUp() {
         super.setUp()
         view.backgroundColor = .vcBackground
         
+        // headerView
+        configureHeaderView()
+        
         // modify collectionView
         collectionView.contentInset = collectionView.contentInset.modifying(dTop: 10+25+10)
-        
-        // header view
-        let statusBarBgView = UIView(backgroundColor: view.backgroundColor)
-        view.addSubview(statusBarBgView)
-        statusBarBgView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
-        
-        let qrView = UIView(backgroundColor: view.backgroundColor)
-        qrView.addSubview(qrStackView)
-        qrStackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(x: 16, y: 10))
-        
-        view.addSubview(qrView)
-        qrView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-        qrView.autoPinEdge(.top, to: .bottom, of: statusBarBgView)
-        
-        qrStackView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
-        
-        // FIXME: - Show qrView later
-        qrView.isHidden = true
+    }
+    
+    override func bind() {
+        super.bind()
+        collectionView.rx.contentOffset
+            .map {$0.y}
+            .subscribe(onNext: {y in
+                let shouldMinimizeHeader = y > -45
+                self.qrStackView.isHidden = shouldMinimizeHeader
+                
+                let avatarImageViewHeight: CGFloat = shouldMinimizeHeader ? 22: 44
+                self.avatarImageView.heightConstraint?.constant = avatarImageViewHeight
+                self.avatarImageView.widthConstraint?.constant = avatarImageViewHeight
+                self.avatarImageView.layer.cornerRadius = avatarImageViewHeight / 2
+                let activeStatusPosition: CGFloat = shouldMinimizeHeader ? 0: 2
+                self.activeStatusView.constraint(toRelativeView: self.avatarImageView, withAttribute: .top)?.constant = activeStatusPosition
+                self.activeStatusView.constraint(toRelativeView: self.avatarImageView, withAttribute: .trailing)?.constant = -activeStatusPosition
+                self.view.layoutIfNeeded()
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Binding
@@ -64,7 +60,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         let viewModel = self.viewModel as! WalletsVM
         
         // fix header
-        headerView?.setUp(state: viewModel.state.value)
+        collectionViewHeaderView?.setUp(state: viewModel.state.value)
     }
     
     // MARK: - Layout
@@ -73,7 +69,6 @@ class MainVC: MyWalletsVC<MainWalletCell> {
             Section(
                 headerViewClass: MainFirstSectionHeaderView.self,
                 headerTitle: L10n.wallets,
-                footerViewClass: MainFooterView.self,
                 interGroupSpacing: 16
             ),
             Section(headerTitle: L10n.savings, interGroupSpacing: 16)
@@ -87,32 +82,18 @@ class MainVC: MyWalletsVC<MainWalletCell> {
            let view = header as? MainFirstSectionHeaderView
         {
             view.receiveAction = self.receiveAction
-            view.sendAction = self.sendAction
+            view.sendAction = self.sendAction()
             view.swapAction = self.swapAction
-            headerView = view
+            view.addCoinButton.rx.action = self.addCoinAction
+            collectionViewHeaderView = view
         }
         
         return header
     }
     
-    override func configureFooterForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
-        let footer = super.configureFooterForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
-        
-        if indexPath.section == 0,
-           let view = footer as? MainFooterView
-        {
-            view.addCoinButton.rx.action = CocoaAction {
-                let vc = AddNewWalletVC()
-                self.present(vc, animated: true, completion: nil)
-                return .just(())
-            }
-        }
-        return footer
-    }
-    
     // MARK: - Delegate
     override func itemDidSelect(_ item: Wallet) {
-//        show(CoinDetailVC(), sender: nil)
+        show(CoinDetailVC(), sender: nil)
     }
     
     // MARK: - Actions
@@ -126,6 +107,15 @@ class MainVC: MyWalletsVC<MainWalletCell> {
             interactor: interactor)
         {
             let vc = QrCodeScannerVC()
+            vc.callback = { code in
+                if NSRegularExpression.publicKey.matches(code) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        self.sendAction(address: code).execute()
+                    }
+                    return true
+                }
+                return false
+            }
             vc.transitioningDelegate = self
             vc.modalPresentationStyle = .custom
             self.present(vc, animated: true, completion: nil)
@@ -140,9 +130,10 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         }
     }
     
-    var sendAction: CocoaAction {
+    func sendAction(address: String? = nil) -> CocoaAction {
         CocoaAction { _ in
-            let vc = SendTokenVC(wallets: self.viewModel.items)
+            let vc = SendTokenVC(wallets: self.viewModel.items, address: address)
+            
             self.show(vc, sender: nil)
             return .just(())
         }
@@ -154,6 +145,51 @@ class MainVC: MyWalletsVC<MainWalletCell> {
             self.show(vc, sender: nil)
             return .just(())
         }
+    }
+    
+    var addCoinAction: CocoaAction {
+        CocoaAction { _ in
+            let vc = AddNewWalletVC()
+            self.present(vc, animated: true, completion: nil)
+            return .just(())
+        }
+    }
+    
+    // MARK: - Private
+    private func configureHeaderView() {
+        let statusBarBgView = UIView(backgroundColor: view.backgroundColor)
+        view.addSubview(statusBarBgView)
+        statusBarBgView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
+        
+        let headerView = UIView(forAutoLayout: ())
+        qrStackView = {
+            let stackView = UIStackView(axis: .horizontal, spacing: 25, alignment: .center, distribution: .fill)
+            let imageView = UIImageView(width: 25, height: 25, image: .scanQr)
+            imageView.tintColor = .secondary
+             
+            stackView.addArrangedSubviews([
+                imageView,
+                UILabel(text: L10n.slideToScan, textSize: 13, weight: .semibold, textColor: .secondary)
+            ])
+            stackView.addArrangedSubview(.spacer)
+            return stackView
+        }()
+        headerView.addSubview(qrStackView)
+        qrStackView.autoPinEdge(toSuperviewEdge: .leading, withInset: 16)
+        qrStackView.autoAlignAxis(toSuperviewAxis: .horizontal)
+        
+        headerView.addSubview(avatarImageView)
+        avatarImageView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 16), excludingEdge: .leading)
+        
+        headerView.addSubview(activeStatusView)
+        activeStatusView.autoPinEdge(.top, to: .top, of: avatarImageView, withOffset: 2)
+        activeStatusView.autoPinEdge(.trailing, to: .trailing, of: avatarImageView, withOffset: -2)
+        
+        view.addSubview(headerView)
+        headerView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+        headerView.autoPinEdge(.top, to: .bottom, of: statusBarBgView)
+        
+        qrStackView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
     }
 }
 
@@ -176,7 +212,7 @@ extension MainVC {
         if indexPath.section == 0
         {
             if elementKind == UICollectionView.elementKindSectionHeader {
-                headerView = nil
+                collectionViewHeaderView = nil
             }
         }
     }

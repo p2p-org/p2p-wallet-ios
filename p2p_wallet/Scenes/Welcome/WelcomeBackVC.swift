@@ -34,7 +34,7 @@ class WelcomeBackVC: IntroVCWithButtons {
         DispatchQueue.global().async {
             do {
                 let account = try SolanaSDK.Account(phrase: self.phrases, network: SolanaSDK.network)
-                try KeychainStorage.shared.save(account)
+                try AccountStorage.shared.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
                     UIApplication.shared.changeRootVC(to: SSPinCodeVC(), withNaviationController: true)
