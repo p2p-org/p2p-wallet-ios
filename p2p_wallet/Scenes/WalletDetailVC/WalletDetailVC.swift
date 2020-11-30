@@ -1,5 +1,5 @@
 //
-//  ActivitiesVC.swift
+//  WalletDetailVC.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 11/5/20.
@@ -8,7 +8,7 @@
 import Foundation
 import DiffableDataSources
 
-class ActivitiesVC: CollectionVC<Activity, ActivityCell> {
+class WalletDetailVC: CollectionVC<Activity, ActivityCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(backgroundColor: .vcBackground) }
     let wallet: Wallet
     
@@ -31,6 +31,6 @@ class ActivitiesVC: CollectionVC<Activity, ActivityCell> {
     
     // MARK: - Layout
     override var sections: [Section] {
-        [Section(headerViewClass: AVCSectionHeaderView.self, headerTitle: L10n.activities, interGroupSpacing: 16)]
+        [Section(headerViewClass: WDVCSectionHeaderView.self, headerTitle: L10n.activities, interGroupSpacing: 16)]
     }
 }
