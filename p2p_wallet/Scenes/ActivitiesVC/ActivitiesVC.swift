@@ -10,9 +10,11 @@ import DiffableDataSources
 
 class ActivitiesVC: CollectionVC<Activity, ActivityCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(backgroundColor: .vcBackground) }
+    let wallet: Wallet
     
     // MARK: - Initializer
-    init() {
+    init(wallet: Wallet) {
+        self.wallet = wallet
         super.init(viewModel: ListViewModel<Activity>())
     }
     
@@ -23,7 +25,7 @@ class ActivitiesVC: CollectionVC<Activity, ActivityCell> {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        title = "Coin name"
+        title = wallet.name
         view.backgroundColor = .vcBackground
     }
     
