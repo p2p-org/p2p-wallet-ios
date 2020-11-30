@@ -66,7 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func reloadRootVC() {
         let rootVC: UIViewController
         if AccountStorage.shared.account == nil {
-            rootVC = WelcomeVC()
+            rootVC = BENavigationController(rootViewController: WelcomeVC())
             shouldShowLocalAuth = false
         } else {
             if AccountStorage.shared.pinCode == nil {

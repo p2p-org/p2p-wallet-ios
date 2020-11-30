@@ -31,15 +31,13 @@ class CreateOrRestoreWalletVC: IntroVCWithButtons {
             highlightedButtonIndex: 1,
             completion: { index in
                 if index == 1 {
-                    let nc = BENavigationController(rootViewController: CreatePhrasesVC())
-                    UIApplication.shared.changeRootVC(to: nc)
+                    self.parent?.show(CreatePhrasesVC(), sender: nil)
                 }
             }
         )
     }
     
     @objc func buttonRestoreWalletDidTouch() {
-        let nc = BENavigationController(rootViewController: RestoreWalletVC())
-        UIApplication.shared.changeRootVC(to: nc)
+        self.parent?.show(RestoreWalletVC(), sender: nil)
     }
 }
