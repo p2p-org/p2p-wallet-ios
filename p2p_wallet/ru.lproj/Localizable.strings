@@ -118,3 +118,5 @@
 "Transaction ID" = "номер транзакции";
 "View in blockchain explorer" = "Посмотреть в проводнике блокчейна";
 "Go back to wallet" = "Вернуться в кошелек";
+"Send tokens" = "Отправить токены";
+"Receive tokens" = "Получить токены";

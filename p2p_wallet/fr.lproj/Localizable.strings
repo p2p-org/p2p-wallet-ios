@@ -118,3 +118,5 @@
 "Transaction ID" = "identifiant de transaction";
 "View in blockchain explorer" = "Afficher dans l'explorateur de blockchain";
 "Go back to wallet" = "Revenir au portefeuille";
+"Send tokens" = "Envoyer des jetons";
+"Receive tokens" = "Recevoir des jetons";

@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CoinDetailSectionHeaderView: SectionHeaderView {
+class AVCSectionHeaderView: SectionHeaderView {
     lazy var amountLabel = UILabel(text: "$120,00", textSize: 25, weight: .semibold, textColor: .textBlack, textAlignment: .center)
     lazy var changeLabel = UILabel(text: "+ 0,16 US$ (0,01%) 24 hrs", textSize: 15, textColor: .secondary, textAlignment: .center)
     override func commonInit() {
