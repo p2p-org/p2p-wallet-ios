@@ -8,11 +8,12 @@
 import Foundation
 
 struct Activity {
-    let type: ActivityType
-    let amount: Double
-    let tokens: Double
+    let type: ActivityType?
+    let amount: Double?
+    let tokens: Double?
     let symbol: String
-    let timestamp: Date
+    let timestamp: Date?
+    let info: SolanaSDK.Transaction.SignatureInfo?
 }
 
 extension Activity {
@@ -33,6 +34,6 @@ extension Activity {
 
 extension Activity: ListItemType {
     static func placeholder(at index: Int) -> Activity {
-        Activity(type: .receive, amount: 0.12, tokens: 0.12, symbol: "SOL#\(index)", timestamp: Date())
+        Activity(type: .receive, amount: 0.12, tokens: 0.12, symbol: "SOL#\(index)", timestamp: Date(), info: nil)
     }
 }
