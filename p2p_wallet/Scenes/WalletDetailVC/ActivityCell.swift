@@ -32,9 +32,14 @@ class ActivityCell: BaseCollectionViewCell, CollectionCell {
     }
     
     func setUp(with item: Activity) {
-        typeLabel.text = item.type.localizedString
+        typeLabel.text = item.type?.localizedString
         amountLabel.text = item.amount.toString(maximumFractionDigits: 9, showPlus: true)
-        dateLabel.text = dateFormatter.string(from: item.timestamp)
+        if let timestamp = item.timestamp {
+            dateLabel.text = dateFormatter.string(from: timestamp)
+        } else {
+            dateLabel.text = nil
+        }
+        
         tokensLabel.text = item.tokens.toString(maximumFractionDigits: 9, showPlus: true) + " " + item.symbol
     }
     

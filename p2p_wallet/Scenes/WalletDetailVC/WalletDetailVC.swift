@@ -15,7 +15,7 @@ class WalletDetailVC: CollectionVC<Activity, ActivityCell> {
     // MARK: - Initializer
     init(wallet: Wallet) {
         self.wallet = wallet
-        super.init(viewModel: ListViewModel<Activity>())
+        super.init(viewModel: ActivitiesVM(wallet: wallet))
     }
     
     required init?(coder: NSCoder) {
@@ -31,6 +31,6 @@ class WalletDetailVC: CollectionVC<Activity, ActivityCell> {
     
     // MARK: - Layout
     override var sections: [Section] {
-        [Section(headerViewClass: WDVCSectionHeaderView.self, headerTitle: L10n.activities, interGroupSpacing: 16)]
+        [Section(headerViewClass: WDVCSectionHeaderView.self, headerTitle: L10n.activities, interGroupSpacing: 2)]
     }
 }
