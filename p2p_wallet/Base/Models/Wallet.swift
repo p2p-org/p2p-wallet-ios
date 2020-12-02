@@ -9,6 +9,7 @@ import Foundation
 
 // wrapper of 
 struct Wallet {
+    let id: String
     let name: String
     let mintAddress: String
     let pubkey: String?
@@ -25,6 +26,7 @@ struct Wallet {
 
 extension Wallet: ListItemType {
     init(programAccount: SolanaSDK.Token) {
+        self.id = programAccount.pubkey ?? ""
         self.name = programAccount.name
         self.mintAddress = programAccount.mintAddress
         self.symbol = programAccount.symbol
@@ -35,6 +37,6 @@ extension Wallet: ListItemType {
     }
     
     static func placeholder(at index: Int) -> Wallet {
-        Wallet(name: "placeholder", mintAddress: "placeholder-mintaddress", pubkey: "pubkey", symbol: "PLHD\(index)", icon: nil, amount: nil, decimals: nil)
+        Wallet(id: placeholderId(at: index), name: "placeholder", mintAddress: "placeholder-mintaddress", pubkey: "pubkey", symbol: "PLHD\(index)", icon: nil, amount: nil, decimals: nil)
     }
 }

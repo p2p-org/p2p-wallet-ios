@@ -31,7 +31,9 @@ class ActivitiesVM: ListViewModel<Activity> {
                     .subscribe(onSuccess: {[weak self] transaction in
                         guard let self = self else {return}
                         self.updateItem(where: {$0.info?.signature == signature}, transform: {
-                            Activity(symbol: self.wallet.symbol, confirmedTransaction: transaction, signatureInfo: $0.info, timestamp: $0.timestamp)
+                            var newItem = $0
+                            newItem.withConfirmedTransaction(transaction)
+                            return newItem
                         })
                         if let slot = transaction.slot {
                             SolanaSDK.shared.getBlockTime(block: slot)
@@ -56,7 +58,7 @@ class ActivitiesVM: ListViewModel<Activity> {
             
         })
         .map {
-            $0.compactMap {Activity(type: nil, amount: nil, tokens: nil, symbol: self.wallet.symbol, timestamp: nil, info: $0)}
+            $0.compactMap {Activity(id: $0.signature, type: nil, amount: nil, tokens: nil, symbol: self.wallet.symbol, timestamp: nil, info: $0)}
         }
     }
 }
