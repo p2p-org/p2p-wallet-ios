@@ -151,7 +151,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
         // prepare amount
         let amountToSend = amount * pow(10, Double(vc.wallet?.decimals ?? 0))
         
-        SolanaSDK.shared.send(from: sender, to: receiver, amount: Int64(amountToSend))
+        SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: Int64(amountToSend))
             .subscribe(onSuccess: { id in
                 transactionVC.showTransactionDetail(
                     Transaction(
