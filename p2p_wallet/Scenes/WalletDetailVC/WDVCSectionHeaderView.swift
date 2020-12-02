@@ -14,6 +14,13 @@ class WDVCSectionHeaderView: SectionHeaderView {
         super.commonInit()
         stackView.insertArrangedSubview(amountLabel, at: 0)
         stackView.insertArrangedSubview(changeLabel, at: 1)
-        stackView.insertArrangedSubview(UIImageView(width: 374, height: 256, image: .graphDetailDemo), at: 2)
+        
+        // TODO: - GraphView
+//        stackView.insertArrangedSubview(UIImageView(width: 374, height: 256, image: .graphDetailDemo), at: 2)
+    }
+    
+    func setUp(wallet: Wallet) {
+        amountLabel.text = wallet.amountInUSD.toString(maximumFractionDigits: 2) + " US$"
+        changeLabel.text = "\(wallet.price?.change24h?.value.toString(showPlus: true) ?? "") US$ (\((wallet.price?.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true)) %) 24 hrs"
     }
 }
