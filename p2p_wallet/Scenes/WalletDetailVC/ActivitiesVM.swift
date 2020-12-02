@@ -11,6 +11,7 @@ import RxSwift
 class ActivitiesVM: ListViewModel<Activity> {
     
     let wallet: Wallet
+    var before: String?
     
     init(wallet: Wallet) {
         self.wallet = wallet
@@ -21,9 +22,10 @@ class ActivitiesVM: ListViewModel<Activity> {
         guard let pubkey = wallet.pubkey else {
             return .error(SolanaSDK.Error.accountNotFound)
         }
-        return SolanaSDK.shared.getConfirmedSignaturesForAddress2(account: pubkey, configs: SolanaSDK.RequestConfiguration(limit: 10)
+        return SolanaSDK.shared.getConfirmedSignaturesForAddress2(account: pubkey, configs: SolanaSDK.RequestConfiguration(limit: limit, before: before)
         )
         .do(onSuccess: {[weak self] activities in
+            self?.before = activities.last?.signature
             guard let self = self else {return}
             let signatures = activities.map {$0.signature}
             signatures.forEach { signature in
