@@ -33,4 +33,13 @@ class WalletDetailVC: CollectionVC<Activity, ActivityCell> {
     override var sections: [Section] {
         [Section(headerViewClass: WDVCSectionHeaderView.self, headerTitle: L10n.activities, interGroupSpacing: 2)]
     }
+    
+    override func configureHeaderForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
+        let header = super.configureHeaderForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
+        if indexPath.section == 0 {
+            let header = header as! WDVCSectionHeaderView
+            header.setUp(wallet: wallet)
+        }
+        return header
+    }
 }
