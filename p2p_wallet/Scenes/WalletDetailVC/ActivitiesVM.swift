@@ -33,6 +33,21 @@ class ActivitiesVM: ListViewModel<Activity> {
                         self.updateItem(where: {$0.info?.signature == signature}, transform: {
                             Activity(symbol: self.wallet.symbol, confirmedTransaction: transaction, signatureInfo: $0.info, timestamp: $0.timestamp)
                         })
+                        if let slot = transaction.slot {
+                            SolanaSDK.shared.getBlockTime(block: slot)
+                                .subscribe(onSuccess: {[weak self] timestamp in
+                                    guard let self = self else {return}
+                                    self.updateItem(where: {$0.info?.signature == signature}, transform: {
+                                        var activity = $0
+                                        activity.timestamp = timestamp
+                                        return activity
+                                    })
+                                }, onError: {error in
+                                    // TODO: Handle error
+                                })
+                                .disposed(by: self.disposeBag)
+                        }
+                        
                     }, onError: {error in
                         // TODO: Handle error
                     })

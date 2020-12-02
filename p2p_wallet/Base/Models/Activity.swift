@@ -12,7 +12,7 @@ struct Activity {
     let amount: Double?
     let tokens: Double?
     let symbol: String
-    let timestamp: Date?
+    var timestamp: Date?
     let info: SolanaSDK.Transaction.SignatureInfo?
 }
 
