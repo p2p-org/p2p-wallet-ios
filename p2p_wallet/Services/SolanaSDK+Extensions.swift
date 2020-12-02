@@ -25,4 +25,5 @@ extension String: ListItemType {
     static func placeholder(at index: Int) -> String {
         "\(index)"
     }
+    var id: String {self}
 }

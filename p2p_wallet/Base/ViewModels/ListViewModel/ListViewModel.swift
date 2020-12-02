@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-class ListViewModel<T: Hashable>: BaseVM<[T]> {
+class ListViewModel<T: ListItemType>: BaseVM<[T]> {
     // MARK: - Subjects
     var items: [T] {
         get {data}
@@ -77,6 +77,22 @@ class ListViewModel<T: Hashable>: BaseVM<[T]> {
         if !isPaginationEnabled {
             return newItems
         }
-        return items + newItems.filter {!items.contains($0)}
+        return items + newItems.filter {!items.map{$0.id}.contains($0.id)}
+    }
+    
+    // MARK: - Helper
+    @discardableResult
+    func updateItem(where predicate: (T) -> Bool, transform: (T) -> T?) -> Bool {
+        guard let index = items.firstIndex(where: predicate),
+              let item = transform(items[index])
+        else {
+            return false
+        }
+        if items[index] != item {
+            items[index] = item
+            state.accept(.loaded(items))
+            return true
+        }
+        return false
     }
 }

@@ -84,9 +84,7 @@ class MainFirstSectionHeaderView: SectionHeaderView, LoadableView {
             receiveButton.isUserInteractionEnabled = true
             swapButton.isUserInteractionEnabled = true
             
-            let equityValue = wallets.reduce(0) { (result, wallet) -> Double in
-                result + (wallet.amount ?? 0) * (PricesManager.bonfida.solPrice?.value ?? 0)
-            }
+            let equityValue = wallets.reduce(0) { $0 + $1.amountInUSD }
             priceLabel.text = "\(equityValue.toString(maximumFractionDigits: 2)) US$"
             priceChangeLabel.text = "\(PricesManager.bonfida.solPrice?.change24h?.value.toString(showPlus: true) ?? "") US$ (\((PricesManager.bonfida.solPrice?.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true)) %) 24 hrs"
             hideLoading()
