@@ -33,7 +33,7 @@ class ActivityCell: BaseCollectionViewCell, CollectionCell {
     
     func setUp(with item: Activity) {
         typeLabel.text = item.type?.localizedString
-        amountLabel.text = item.amount.toString(maximumFractionDigits: 9, showPlus: true)
+        amountLabel.text = item.amount.toString(maximumFractionDigits: 4, showPlus: true) + " US$"
         if let timestamp = item.timestamp {
             dateLabel.text = dateFormatter.string(from: timestamp)
         } else {

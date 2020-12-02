@@ -31,7 +31,7 @@ class ActivitiesVM: ListViewModel<Activity> {
                     .subscribe(onSuccess: {[weak self] transaction in
                         guard let self = self else {return}
                         self.updateItem(where: {$0.info?.signature == signature}, transform: {
-                            Activity(type: nil, amount: nil, tokens: nil, symbol: self.wallet.symbol, timestamp: nil, info: $0.info)
+                            Activity(symbol: self.wallet.symbol, confirmedTransaction: transaction, signatureInfo: $0.info, timestamp: $0.timestamp)
                         })
                     }, onError: {error in
                         // TODO: Handle error

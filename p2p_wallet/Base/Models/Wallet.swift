@@ -17,6 +17,10 @@ struct Wallet {
     var amount: Double?
     var price: Price?
     var decimals: Int?
+
+    var amountInUSD: Double {
+        amount * PricesManager.bonfida.prices.value.first(where: {$0.from == symbol})?.value
+    }
 }
 
 extension Wallet: ListItemType {
