@@ -11,6 +11,7 @@ import RxSwift
 class ActivitiesVM: ListViewModel<Activity> {
     
     let wallet: Wallet
+    var before: String?
     
     init(wallet: Wallet) {
         self.wallet = wallet
@@ -21,9 +22,10 @@ class ActivitiesVM: ListViewModel<Activity> {
         guard let pubkey = wallet.pubkey else {
             return .error(SolanaSDK.Error.accountNotFound)
         }
-        return SolanaSDK.shared.getConfirmedSignaturesForAddress2(account: pubkey, configs: SolanaSDK.RequestConfiguration(limit: 10)
+        return SolanaSDK.shared.getConfirmedSignaturesForAddress2(account: pubkey, configs: SolanaSDK.RequestConfiguration(limit: limit, before: before)
         )
         .do(onSuccess: {[weak self] activities in
+            self?.before = activities.last?.signature
             guard let self = self else {return}
             let signatures = activities.map {$0.signature}
             signatures.forEach { signature in
@@ -31,7 +33,9 @@ class ActivitiesVM: ListViewModel<Activity> {
                     .subscribe(onSuccess: {[weak self] transaction in
                         guard let self = self else {return}
                         self.updateItem(where: {$0.info?.signature == signature}, transform: {
-                            Activity(symbol: self.wallet.symbol, confirmedTransaction: transaction, signatureInfo: $0.info, timestamp: $0.timestamp)
+                            var newItem = $0
+                            newItem.withConfirmedTransaction(transaction)
+                            return newItem
                         })
                         if let slot = transaction.slot {
                             SolanaSDK.shared.getBlockTime(block: slot)
@@ -56,7 +60,7 @@ class ActivitiesVM: ListViewModel<Activity> {
             
         })
         .map {
-            $0.compactMap {Activity(type: nil, amount: nil, tokens: nil, symbol: self.wallet.symbol, timestamp: nil, info: $0)}
+            $0.compactMap {Activity(id: $0.signature, type: nil, amount: nil, tokens: nil, symbol: self.wallet.symbol, timestamp: nil, info: $0)}
         }
     }
 }
