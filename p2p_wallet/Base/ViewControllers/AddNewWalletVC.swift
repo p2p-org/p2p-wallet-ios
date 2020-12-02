@@ -96,7 +96,7 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     
     func createTokenAccountAction(newWallet: Wallet) -> CocoaAction {
         CocoaAction {
-            SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, programPubkey: SolanaSDK.programPubkey, in: SolanaSDK.network)
+            SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: SolanaSDK.network)
                 .do(afterError: { (error) in
                     print(error)
                 })
