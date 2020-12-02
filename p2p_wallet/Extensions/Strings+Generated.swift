@@ -110,6 +110,8 @@ internal enum L10n {
   internal static let receive = L10n.tr("Localizable", "Receive")
   /// Receive token
   internal static let receiveToken = L10n.tr("Localizable", "Receive token")
+  /// Receive tokens
+  internal static let receiveTokens = L10n.tr("Localizable", "Receive tokens")
   /// Recover your Wowlet using cloud services, or recover manually
   internal static let recoverYourWowletUsingCloudServicesOrRecoverManually = L10n.tr("Localizable", "Recover your Wowlet using cloud services or recover manually")
   /// Restore manually
@@ -150,6 +152,8 @@ internal enum L10n {
   internal static let sendCoins = L10n.tr("Localizable", "Send coins")
   /// Send Now
   internal static let sendNow = L10n.tr("Localizable", "Send Now")
+  /// Send tokens
+  internal static let sendTokens = L10n.tr("Localizable", "Send tokens")
   /// Sending token...
   internal static let sendingToken = L10n.tr("Localizable", "Sending token...")
   /// Share
