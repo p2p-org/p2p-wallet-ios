@@ -154,7 +154,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         }
         
         footer.setUp(state: viewModel.state.value, isListEmpty: viewModel.isListEmpty)
-        collectionView.collectionViewLayout.invalidateLayout()
+//        collectionView.collectionViewLayout.invalidateLayout()
         footer.setNeedsDisplay()
     }
     
