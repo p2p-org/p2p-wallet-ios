@@ -9,6 +9,8 @@ import Foundation
 import RxSwift
 
 class WalletsVM: ListViewModel<Wallet> {
+    override var isPaginationEnabled: Bool {false}
+    
     static var ofCurrentUser = WalletsVM()
     var prices: [Price] { PricesManager.bonfida.prices.value }
     
@@ -46,6 +48,7 @@ class WalletsVM: ListViewModel<Wallet> {
                         }
                         
                         let solWallet = Wallet(
+                            id: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString ?? "Solana",
                             name: "Solana",
                             mintAddress: "",
                             pubkey: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString,
