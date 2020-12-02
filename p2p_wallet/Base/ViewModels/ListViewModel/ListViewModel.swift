@@ -82,11 +82,13 @@ class ListViewModel<T: Hashable>: BaseVM<[T]> {
     
     // MARK: - Helper
     @discardableResult
-    func updateItem(where predicate: (T) -> Bool, transform: (T) -> T) -> Bool {
-        guard let index = items.firstIndex(where: predicate) else {
+    func updateItem(where predicate: (T) -> Bool, transform: (T) -> T?) -> Bool {
+        guard let index = items.firstIndex(where: predicate),
+              let item = transform(items[index])
+        else {
             return false
         }
-        items[index] = transform(items[index])
+        items[index] = item
         state.accept(.loaded(items))
         return true
     }
