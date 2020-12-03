@@ -38,6 +38,8 @@ internal enum L10n {
   internal static let confirmItSYou = L10n.tr("Localizable", "Confirm it's you")
   /// confirm PIN code
   internal static let confirmPINCode = L10n.tr("Localizable", "confirm PIN code")
+  /// Confirmed
+  internal static let confirmed = L10n.tr("Localizable", "Confirmed")
   /// Congratulations!
   internal static let congratulations = L10n.tr("Localizable", "Congratulations!")
   /// Continue
