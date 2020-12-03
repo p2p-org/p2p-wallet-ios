@@ -1,5 +1,5 @@
 //
-//  WCVHeaderView.swift
+//  MainFirstSectionHeaderView.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 11/2/20.
@@ -8,7 +8,7 @@
 import Foundation
 import Action
 
-class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
+class MainFirstSectionHeaderView: SectionHeaderView, LoadableView {
     lazy var priceLabel = UILabel(text: "$120,00", textSize: 36, weight: .semibold, textAlignment: .center)
     lazy var priceChangeLabel = UILabel(text: "+ 0,16 US$ (0,01%) 24 hrs", textSize: 15, textColor: .secondary, numberOfLines: 0, textAlignment: .center)
     
@@ -19,11 +19,13 @@ class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
     lazy var swapButton = createButton(title: L10n.swap)
         .onTap(self, action: #selector(buttonSwapDidTouch))
     
+    lazy var addCoinButton = UIButton(label: "+ " + L10n.addWallet, labelFont: .systemFont(ofSize: 15, weight: .medium), textColor: .textBlack)
+    
     var sendAction: CocoaAction?
     var receiveAction: CocoaAction?
     var swapAction: CocoaAction?
     
-    var loadingViews: [UIView] { [priceLabel, priceChangeLabel, sendButton.superview!, headerLabel] }
+    var loadingViews: [UIView] { [priceLabel, priceChangeLabel, sendButton.superview!, headerLabel, addCoinButton] }
     
     override func commonInit() {
         super.commonInit()
@@ -43,6 +45,16 @@ class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
         stackView.insertArrangedSubview(priceLabel, at: 1)
         stackView.insertArrangedSubview(priceChangeLabel, at: 2)
         stackView.insertArrangedSubview(buttonsView, at: 3)
+        
+        // modify header
+        headerLabel.removeFromSuperview()
+        let headerStackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
+            headerLabel,
+            addCoinButton
+        ])
+        stackView.insertArrangedSubview(headerStackView, at: 4)
+        headerStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor)
+            .isActive = true
         
         stackView.setCustomSpacing(5, after: priceLabel)
         stackView.setCustomSpacing(30, after: priceChangeLabel)
@@ -72,9 +84,7 @@ class WCVFirstSectionHeaderView: SectionHeaderView, LoadableView {
             receiveButton.isUserInteractionEnabled = true
             swapButton.isUserInteractionEnabled = true
             
-            let equityValue = wallets.reduce(0) { (result, wallet) -> Double in
-                result + (wallet.amount ?? 0) * (PricesManager.bonfida.solPrice?.value ?? 0)
-            }
+            let equityValue = wallets.reduce(0) { $0 + $1.amountInUSD }
             priceLabel.text = "\(equityValue.toString(maximumFractionDigits: 2)) US$"
             priceChangeLabel.text = "\(PricesManager.bonfida.solPrice?.change24h?.value.toString(showPlus: true) ?? "") US$ (\((PricesManager.bonfida.solPrice?.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true)) %) 24 hrs"
             hideLoading()

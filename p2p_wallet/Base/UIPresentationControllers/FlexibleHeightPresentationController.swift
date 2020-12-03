@@ -8,53 +8,50 @@
 
 import Foundation
 class FlexibleHeightPresentationController: DimmingPresentationController {
-    lazy var backingView = UIView(backgroundColor: .a4a4a4)
-    
-    override func presentationTransitionWillBegin() {
-        guard let containerView = containerView else {return}
-        containerView.addSubview(backingView)
-        backingView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-        backingView.topAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.bottomAnchor)
-            .isActive = true
-        super.presentationTransitionWillBegin()
+    // MARK: - Nested type
+    enum Position {
+        case bottom, center
     }
     
-    override func dismissalTransitionWillBegin() {
-        super.dismissalTransitionWillBegin()
-        backingView.isHidden = true
+    let position: Position
+    init(position: Position, presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
+        self.position = position
+        super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
     }
     
     override var frameOfPresentedViewInContainerView: CGRect {
-        guard let safeAreaFrame = safeAreaFrame else { return .zero }
+        guard var frame = containerView?.bounds else { return .zero }
         
-        let targetWidth = safeAreaFrame.width
+        let targetWidth = frame.width
         
         let targetHeight = calculateFittingHeightOfPresentedView(targetWidth: targetWidth)
-        
-        var frame = safeAreaFrame
         
         if targetHeight > frame.size.height {
             return frame
         }
         
-        frame.origin.y += frame.size.height - targetHeight
+        switch position {
+        case .bottom:
+            frame.origin.y += frame.size.height - targetHeight
+        case .center:
+            frame.origin.y += (frame.size.height - targetHeight) / 2
+        }
+        
         frame.size.width = targetWidth
-        frame.size.height = targetHeight + (containerView?.safeAreaInsets.bottom ?? 0)
+        frame.size.height = targetHeight
         return frame
-    }
-    
-    var safeAreaFrame: CGRect? {
-        guard let containerView = containerView else { return nil }
-        return containerView.bounds.inset(by: containerView.safeAreaInsets)
     }
     
     func calculateFittingHeightOfPresentedView(targetWidth: CGFloat) -> CGFloat {
         presentedView!.fittingHeight(targetWidth: targetWidth)
     }
     
-    override func containerViewDidLayoutSubviews() {
-        super.containerViewDidLayoutSubviews()
-        presentedView?.frame = frameOfPresentedViewInContainerView
-        presentedView?.roundCorners([.topLeft, .topRight], radius: 20)
+    override func preferredContentSizeDidChange(forChildContentContainer container: UIContentContainer) {
+        super.preferredContentSizeDidChange(forChildContentContainer: container)
+        self.containerView?.setNeedsLayout()
+        self.containerView?.subviews.forEach {$0.layoutIfNeeded()}
+        UIView.animate(withDuration: 0.3) {
+            self.containerView?.layoutIfNeeded()
+        }
     }
 }

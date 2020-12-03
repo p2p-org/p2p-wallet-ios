@@ -14,14 +14,16 @@ internal enum L10n {
   internal static let accept = L10n.tr("Localizable", "Accept")
   /// Activities
   internal static let activities = L10n.tr("Localizable", "Activities")
-  /// Add coin
-  internal static let addCoin = L10n.tr("Localizable", "Add coin")
+  /// Add wallet
+  internal static let addWallet = L10n.tr("Localizable", "Add wallet")
   /// Almost done!
   internal static let almostDone = L10n.tr("Localizable", "Almost done!")
   /// amount
   internal static let amount = L10n.tr("Localizable", "amount")
   /// Amount is not valid
   internal static let amountIsNotValid = L10n.tr("Localizable", "Amount is not valid")
+  /// Authentication failed
+  internal static let authenticationFailed = L10n.tr("Localizable", "Authentication failed")
   /// Backup
   internal static let backup = L10n.tr("Localizable", "Backup")
   /// By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy
@@ -30,10 +32,18 @@ internal enum L10n {
   internal static let cancel = L10n.tr("Localizable", "Cancel")
   /// Change your settings to use camera for scanning Qr Code
   internal static let changeYourSettingsToUseCameraForScanningQrCode = L10n.tr("Localizable", "Change your settings to use camera for scanning Qr Code")
+  /// Close
+  internal static let close = L10n.tr("Localizable", "Close")
+  /// Confirm it's you
+  internal static let confirmItSYou = L10n.tr("Localizable", "Confirm it's you")
   /// confirm PIN code
   internal static let confirmPINCode = L10n.tr("Localizable", "confirm PIN code")
+  /// Confirmed
+  internal static let confirmed = L10n.tr("Localizable", "Confirmed")
   /// Congratulations!
   internal static let congratulations = L10n.tr("Localizable", "Congratulations!")
+  /// Continue
+  internal static let `continue` = L10n.tr("Localizable", "Continue")
   /// Copied to clipboard
   internal static let copiedToClipboard = L10n.tr("Localizable", "Copied to clipboard")
   /// Copy
@@ -48,8 +58,12 @@ internal enum L10n {
   internal static let creatingAnAccount = L10n.tr("Localizable", "creating an account")
   /// Do this later
   internal static let doThisLater = L10n.tr("Localizable", "Do this later")
+  /// Done
+  internal static let done = L10n.tr("Localizable", "Done")
   /// Enable now
   internal static let enableNow = L10n.tr("Localizable", "Enable now")
+  /// Enter passcode
+  internal static let enterPasscode = L10n.tr("Localizable", "Enter passcode")
   /// Enter security keys
   internal static let enterSecurityKeys = L10n.tr("Localizable", "Enter security keys")
   /// error
@@ -62,6 +76,10 @@ internal enum L10n {
   internal static let finishSetup = L10n.tr("Localizable", "Finish setup")
   /// From
   internal static let from = L10n.tr("Localizable", "From")
+  /// Getting creation fee
+  internal static let gettingCreationFee = L10n.tr("Localizable", "Getting creation fee")
+  /// Go back to wallet
+  internal static let goBackToWallet = L10n.tr("Localizable", "Go back to wallet")
   /// Go to wallet
   internal static let goToWallet = L10n.tr("Localizable", "Go to wallet")
   /// I have saved these words in a safe place
@@ -78,20 +96,46 @@ internal enum L10n {
   internal static let max = L10n.tr("Localizable", "Max")
   /// next
   internal static let next = L10n.tr("Localizable", "next")
+  /// No account
+  internal static let noAccount = L10n.tr("Localizable", "No account")
   /// OK
   internal static let ok = L10n.tr("Localizable", "OK")
+  /// Or saving into Keychain
+  internal static let orSavingIntoKeychain = L10n.tr("Localizable", "Or saving into Keychain")
   /// passcodes do not match
   internal static let passcodesDoNotMatch = L10n.tr("Localizable", "passcodes do not match")
   /// please try again later!
   internal static let pleaseTryAgainLater = L10n.tr("Localizable", "please try again later!")
+  /// Processing
+  internal static let processing = L10n.tr("Localizable", "Processing")
   /// Receive
   internal static let receive = L10n.tr("Localizable", "Receive")
   /// Receive token
   internal static let receiveToken = L10n.tr("Localizable", "Receive token")
+  /// Receive tokens
+  internal static let receiveTokens = L10n.tr("Localizable", "Receive tokens")
+  /// Recover your Wowlet using cloud services, or recover manually
+  internal static let recoverYourWowletUsingCloudServicesOrRecoverManually = L10n.tr("Localizable", "Recover your Wowlet using cloud services or recover manually")
+  /// Restore manually
+  internal static let restoreManually = L10n.tr("Localizable", "Restore manually")
+  /// Restore using iCloud
+  internal static let restoreUsingICloud = L10n.tr("Localizable", "Restore using iCloud")
   /// Restoring wallet
   internal static let restoringWallet = L10n.tr("Localizable", "Restoring wallet")
+  /// Retry after
+  internal static let retryAfter = L10n.tr("Localizable", "Retry after")
+  /// Save to iCloud
+  internal static let saveToICloud = L10n.tr("Localizable", "Save to iCloud")
   /// save to Keychain
   internal static let saveToKeychain = L10n.tr("Localizable", "save to Keychain")
+  /// Saved to iCloud
+  internal static let savedToICloud = L10n.tr("Localizable", "Saved to iCloud")
+  /// Saved to Keychain
+  internal static let savedToKeychain = L10n.tr("Localizable", "Saved to Keychain")
+  /// Saving to iCloud
+  internal static let savingToICloud = L10n.tr("Localizable", "Saving to iCloud")
+  /// Saving to Keychain
+  internal static let savingToKeychain = L10n.tr("Localizable", "Saving to Keychain")
   /// Savings
   internal static let savings = L10n.tr("Localizable", "Savings")
   /// Scan an P2P address
@@ -100,6 +144,8 @@ internal enum L10n {
   internal static let scanQRCode = L10n.tr("Localizable", "Scan QR Code")
   /// Scanning QrCode not supported
   internal static let scanningQrCodeNotSupported = L10n.tr("Localizable", "Scanning QrCode not supported")
+  /// seconds
+  internal static let seconds = L10n.tr("Localizable", "seconds")
   /// security keys
   internal static let securityKeys = L10n.tr("Localizable", "security keys")
   /// Send
@@ -108,6 +154,8 @@ internal enum L10n {
   internal static let sendCoins = L10n.tr("Localizable", "Send coins")
   /// Send Now
   internal static let sendNow = L10n.tr("Localizable", "Send Now")
+  /// Send tokens
+  internal static let sendTokens = L10n.tr("Localizable", "Send tokens")
   /// Sending token...
   internal static let sendingToken = L10n.tr("Localizable", "Sending token...")
   /// Share
@@ -120,20 +168,28 @@ internal enum L10n {
   internal static let swap = L10n.tr("Localizable", "Swap")
   /// Swap now
   internal static let swapNow = L10n.tr("Localizable", "Swap now")
+  /// Tap button to retry!
+  internal static let tapButtonToRetry = L10n.tr("Localizable", "Tap button to retry!")
   /// tap refresh button to retry
   internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
   /// Terms and conditions
   internal static let termsAndConditions = L10n.tr("Localizable", "Terms and conditions")
   /// The address is not valid
   internal static let theAddressIsNotValid = L10n.tr("Localizable", "The address is not valid")
+  /// There is no Wowlet saved in your iCloud
+  internal static let thereIsNoWowletSavedInYourICloud = L10n.tr("Localizable", "There is no Wowlet saved in your iCloud")
   /// There is nothing in here!
   internal static let thereIsNothingInHere = L10n.tr("Localizable", "There is nothing in here!")
   /// To
   internal static let to = L10n.tr("Localizable", "To")
   /// Token sent!
   internal static let tokenSent = L10n.tr("Localizable", "Token sent!")
+  /// Transaction ID
+  internal static let transactionID = L10n.tr("Localizable", "Transaction ID")
   /// Try again
   internal static let tryAgain = L10n.tr("Localizable", "Try again")
+  /// Turn on
+  internal static let turnOn = L10n.tr("Localizable", "Turn on")
   /// unsupported
   internal static let unsupported = L10n.tr("Localizable", "unsupported")
   /// Use FaceId
@@ -144,10 +200,14 @@ internal enum L10n {
   internal static let useYourFaceIDForQuickAccess = L10n.tr("Localizable", "Use your FaceID for quick access?")
   /// Use your TouchID for quick access?
   internal static let useYourTouchIDForQuickAccess = L10n.tr("Localizable", "Use your TouchID for quick access?")
+  /// View in blockchain explorer
+  internal static let viewInBlockchainExplorer = L10n.tr("Localizable", "View in blockchain explorer")
   /// Wallet address
   internal static let walletAddress = L10n.tr("Localizable", "Wallet address")
   /// Wallets
   internal static let wallets = L10n.tr("Localizable", "Wallets")
+  /// Warning
+  internal static let warning = L10n.tr("Localizable", "Warning")
   /// WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.
   internal static let warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture = L10n.tr("Localizable", "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.")
   /// We have not supported this type of biometry authentication yet
@@ -164,10 +224,24 @@ internal enum L10n {
   internal static let wellDone = L10n.tr("Localizable", "Well done!")
   /// Wowlet for people, not for tokens
   internal static let wowletForPeopleNotForTokens = L10n.tr("Localizable", "Wowlet for people, not for tokens")
+  /// Wowlet recovery
+  internal static let wowletRecovery = L10n.tr("Localizable", "Wowlet recovery")
   /// Your device does not support biometrics authentication
   internal static let yourDeviceDoesNotSupportBiometricsAuthentication = L10n.tr("Localizable", "Your device does not support biometrics authentication")
   /// Your wallet has been successfully created!
   internal static let yourWalletHasBeenSuccessfullyCreated = L10n.tr("Localizable", "Your wallet has been successfully created!")
+  /// Your wallets
+  internal static let yourWallets = L10n.tr("Localizable", "Your wallets")
+
+  internal enum AddATokenToYourWallet {
+    /// Add a token to your wallet.\nThis will cost
+    internal static let thisWillCost = L10n.tr("Localizable", "Add a token to your wallet.\nThis will cost")
+  }
+
+  internal enum ErrorWhenRetrievingCreationFee {
+    /// Error when retrieving creation fee.\nTap to try again
+    internal static let tapToTryAgain = L10n.tr("Localizable", "Error when retrieving creation fee.\nTap to try again")
+  }
 
   internal enum ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode {
     /// This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!
@@ -177,6 +251,11 @@ internal enum L10n {
   internal enum YourDeviceDoesNotSupportScanningACodeFromAnItem {
     /// Your device does not support scanning a code from an item. Please use a device with a camera.
     internal static let pleaseUseADeviceWithACamera = L10n.tr("Localizable", "Your device does not support scanning a code from an item. Please use a device with a camera.")
+  }
+
+  internal enum WasTurnedOff {
+    /// was turned off.\nDo you want to turn it on?
+    internal static let doYouWantToTurnItOn = L10n.tr("Localizable", "was turned off.\nDo you want to turn it on?")
   }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length

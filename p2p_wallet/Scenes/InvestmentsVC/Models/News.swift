@@ -9,9 +9,9 @@ import Foundation
 
 struct News: ListItemType {
     static func placeholder(at index: Int) -> News {
-        News(title: "News #\(index)", subtitle: nil, imageUrl: nil)
+        News(id: placeholderId(at: index), title: "News #\(index)", subtitle: nil, imageUrl: nil)
     }
-    
+    let id: String
     let title: String
     let subtitle: String?
     let imageUrl: String?

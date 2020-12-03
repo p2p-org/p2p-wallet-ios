@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import Action
 
 class SendTokenItemVC: BaseVC {
     // MARK: - Properties
@@ -15,11 +16,13 @@ class SendTokenItemVC: BaseVC {
         amountTextField.rx.text.orEmpty.map {$0.double ?? 0},
         addressTextView.rx.text.orEmpty
     ).share()
+    var chooseWalletAction: CocoaAction?
     
     // MARK: - Subviews
     lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
     lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .secondary)
     lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
+        .onTap(self, action: #selector(buttonChooseWalletDidTouch))
     lazy var amountTextField = TokenAmountTextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0\(Locale.current.decimalSeparator ?? ".")0", autocorrectionType: .no, rightView: useAllBalanceButton, rightViewMode: .always)
     lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .secondary)
         .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
@@ -53,6 +56,7 @@ class SendTokenItemVC: BaseVC {
         let amountView: UIStackView = {
             let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
             let downArrowImage = UIImageView(width: 11, height: 8, image: .downArrow)
+                .onTap(self, action: #selector(buttonChooseWalletDidTouch))
             downArrowImage.tintColor = .textBlack
             
             let amountVStack: UIStackView = {
@@ -159,11 +163,12 @@ class SendTokenItemVC: BaseVC {
     // MARK: - Actions
     @objc func buttonScanQrCodeDidTouch() {
         let vc = QrCodeScannerVC()
-        vc.validate = { code in
-            NSRegularExpression.publicKey.matches(code)
-        }
-        vc.completion = { code in
-            self.addressTextView.text = code
+        vc.callback = { code in
+            if NSRegularExpression.publicKey.matches(code) {
+                self.addressTextView.text = code
+                return true
+            }
+            return false
         }
         vc.modalPresentationStyle = .custom
         parent?.present(vc, animated: true, completion: nil)
@@ -172,6 +177,10 @@ class SendTokenItemVC: BaseVC {
     @objc func buttonUseAllBalanceDidTouch() {
         amountTextField.text = wallet?.amount?.toString(maximumFractionDigits: 9)
         amountTextField.sendActions(for: .valueChanged)
+    }
+    
+    @objc func buttonChooseWalletDidTouch() {
+        chooseWalletAction?.execute()
     }
 }
 

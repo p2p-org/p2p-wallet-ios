@@ -17,9 +17,16 @@ protocol CollectionCell: BaseCollectionViewCell, LoadableView {
 
 protocol ListItemType: Hashable {
     static func placeholder(at index: Int) -> Self
+    var id: String {get}
 }
 
-class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
+extension ListItemType {
+    static func placeholderId(at index: Int) -> String {
+        "placeholder#\(index)"
+    }
+}
+
+class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UICollectionViewDelegate {
     // MARK: - Nested type
     struct Section {
         var headerViewClass: SectionHeaderView.Type = SectionHeaderView.self
@@ -73,11 +80,6 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        viewModel.refresh()
-    }
-    
     // MARK: - Setup
     override func setUp() {
         super.setUp()
@@ -122,6 +124,8 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
                 }
             })
             .disposed(by: disposeBag)
+        
+        collectionView.delegate = self
     }
     
     func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, ItemType> {
@@ -130,13 +134,11 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
             return snapshot
         }
         snapshot.appendSections([section])
-        var items = [ItemType]()
+        var items = viewModel.items
         switch viewModel.state.value {
         case .loading:
-            items = [ItemType.placeholder(at: 0), ItemType.placeholder(at: 1)]
-        case .loaded:
-            items = viewModel.items
-        case .error, .initializing:
+            items += [ItemType.placeholder(at: 0), ItemType.placeholder(at: 1)]
+        case .loaded, .error, .initializing:
             break
         }
         snapshot.appendItems(items, toSection: section)
@@ -152,8 +154,12 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         }
         
         footer.setUp(state: viewModel.state.value, isListEmpty: viewModel.isListEmpty)
-        collectionView.collectionViewLayout.invalidateLayout()
+//        collectionView.collectionViewLayout.invalidateLayout()
         footer.setNeedsDisplay()
+    }
+    
+    func itemDidSelect(_ item: ItemType) {
+        
     }
     
     // MARK: - Layout
@@ -177,7 +183,8 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
         
         var supplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
-        if let headerLayout = sections[sectionIndex].headerLayout {
+        if !sections[sectionIndex].headerTitle.isEmpty,
+           let headerLayout = sections[sectionIndex].headerLayout {
             supplementaryItems.append(headerLayout)
         }
         
@@ -241,11 +248,11 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
     
     func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: Cell.self), for: indexPath) as? Cell
-        if viewModel.state.value == .loading {
+        cell?.setUp(with: item as! Cell.T)
+        if item.id.starts(with: "placeholder") {
             cell?.showLoading()
         } else {
             cell?.hideLoading()
-            cell?.setUp(with: item as! Cell.T)
         }
         return cell ?? UICollectionViewCell()
     }
@@ -285,6 +292,34 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
             for: indexPath) as? SectionFooterView
         
         return view
+    }
+    
+    // MARK: - Delegate
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = dataSource.itemIdentifier(for: indexPath) else {return}
+        itemDidSelect(item)
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if scrollView == collectionView {
+            // Load more
+            if viewModel.isPaginationEnabled {
+                if self.collectionView.contentOffset.y > 0 {
+                    let numberOfSections = collectionView.numberOfSections
+                    guard numberOfSections > 0 else {return}
+                    
+                    guard let indexPath = collectionView.indexPathsForVisibleItems.filter({$0.section == numberOfSections - 1}).max(by: {$0.row < $1.row})
+                    else {
+                        return
+                    }
+                    
+                    if indexPath.row >= collectionView.numberOfItems(inSection: collectionView.numberOfSections - 1) - 5 {
+                        viewModel.fetchNext()
+                    }
+                }
+            }
+        }
+        
     }
     
     // MARK: - Actions

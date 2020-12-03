@@ -10,10 +10,17 @@ import Firebase
 @_exported import BEPureLayout
 @_exported import SolanaSwift
 @_exported import SwiftyUserDefaults
+import THPinViewController
+import Action
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    var shouldShowLocalAuth = true
+    var localAuthVCShown = false
+    let timeRequiredForAuthentication: Double = 10 // in seconds
+    var timestamp: TimeInterval!
+    
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
     }
@@ -42,6 +49,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BEPureLayoutConfigs.defaultBackButton = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
         BEPureLayoutConfigs.defaultCheckBoxActiveColor = .textBlack
         
+        // THPinViewController
+        THPinInputCircleView.fillColor = .textBlack
+        THPinNumButton.textColor = .textBlack
+        
         // Use Firebase library to configure APIs
         FirebaseApp.configure()
         
@@ -54,22 +65,73 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func reloadRootVC() {
         let rootVC: UIViewController
-        if KeychainStorage.shared.account == nil {
-            rootVC = WelcomeVC()
+        if AccountStorage.shared.account == nil {
+            rootVC = BENavigationController(rootViewController: WelcomeVC())
+            shouldShowLocalAuth = false
         } else {
-            if KeychainStorage.shared.pinCode == nil {
+            if AccountStorage.shared.pinCode == nil {
                 rootVC = BENavigationController(rootViewController: SSPinCodeVC())
+                shouldShowLocalAuth = false
             } else if !Defaults.didSetEnableBiometry {
                 rootVC = BENavigationController(rootViewController: EnableBiometryVC())
+                shouldShowLocalAuth = false
             } else if !Defaults.didSetEnableNotifications {
                 rootVC = BENavigationController(rootViewController: EnableNotificationsVC())
+                shouldShowLocalAuth = false
             } else {
-                WalletVM.ofCurrentUser = WalletVM()
+                shouldShowLocalAuth = true
+                WalletsVM.ofCurrentUser = WalletsVM()
                 rootVC = TabBarVC()
             }
         }
         
         window?.rootViewController = rootVC
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        let newTimestamp = Date().timeIntervalSince1970
+        if timestamp == nil {
+            timestamp = newTimestamp - timeRequiredForAuthentication
+        }
+        if shouldShowLocalAuth && !localAuthVCShown && timestamp + timeRequiredForAuthentication <= newTimestamp
+        {
+            
+            timestamp = newTimestamp
+            
+            showAuthentication()
+        }
+    }
+    
+    fileprivate func showAuthentication() {
+        let topVC = self.window?.rootViewController?.topViewController()
+        let localAuthVC = LocalAuthVC()
+        localAuthVC.completion = { [self] didSuccess in
+            localAuthVCShown = false
+            if !didSuccess {
+                topVC?.showErrorView()
+                // reset timestamp
+                timestamp = Date().timeIntervalSince1970
+                
+                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+                    topVC?.errorView?.descriptionLabel.text = L10n.authenticationFailed + "\n" + L10n.retryAfter + " \(Int(10 - Date().timeIntervalSince1970 + timestamp) + 1) " + L10n.seconds
+
+                    if Int(Date().timeIntervalSince1970) == Int(timestamp + timeRequiredForAuthentication) {
+                        topVC?.errorView?.descriptionLabel.text = L10n.tapButtonToRetry
+                        topVC?.errorView?.buttonAction = CocoaAction {
+                            showAuthentication()
+                            return .just(())
+                        }
+                        timer.invalidate()
+                    }
+                }
+            } else {
+                topVC?.removeErrorView()
+            }
+        }
+        localAuthVC.modalPresentationStyle = .fullScreen
+        self.window?.rootViewController?.topViewController()
+            .present(localAuthVC, animated: true, completion: nil)
+        localAuthVCShown = true
     }
     
     func application(

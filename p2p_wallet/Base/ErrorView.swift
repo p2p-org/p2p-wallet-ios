@@ -24,6 +24,7 @@ class MessageView: BEView {
             descriptionLabel,
             actionButton
         ])
+        actionButton.contentEdgeInsets = actionButton.contentEdgeInsets.modifying(dLeft: 16, dRight: 16)
         actionButton.isHidden = true
     }
     
