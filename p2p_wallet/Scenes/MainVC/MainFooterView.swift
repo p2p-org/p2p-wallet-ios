@@ -8,7 +8,7 @@
 import Foundation
 
 class MainFooterView: SectionFooterView {
-    lazy var addCoinButton = DashedButton(title: "+ \(L10n.addCoin)")
+    lazy var addCoinButton = DashedButton(title: "+ \(L10n.addWallet)")
     
     override func commonInit() {
         super.commonInit()

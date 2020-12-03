@@ -56,7 +56,6 @@
 "Savings" = "Экономия";
 "Make your crypto working on you" = "Заставьте криптовалюту работать на вас";
 "Explore  DeFi" = "Исследуйте DeFi";
-"Add coin" = "Добавить монету";
 "Activities" = "Мероприятия";
 "Scan QR Code" = "Сканировать QR-код";
 "Scan an P2P address" = "Сканирование P2P-адреса";
@@ -120,3 +119,4 @@
 "Go back to wallet" = "Вернуться в кошелек";
 "Send tokens" = "Отправить токены";
 "Receive tokens" = "Получить токены";
+"Add wallet" = "Добавить кошелек";
