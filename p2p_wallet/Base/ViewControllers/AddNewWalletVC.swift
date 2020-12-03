@@ -102,8 +102,8 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
             return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: SolanaSDK.network)
                 .do(
                     afterSuccess: { signature in
-                        transactionVC.showTransactionDetail(
-                            Transaction(
+                        transactionVC.setUp(
+                            transaction: Transaction(
                                 id: signature,
                                 amount: -viewModel.feeVM.data,
                                 symbol: "SOL",

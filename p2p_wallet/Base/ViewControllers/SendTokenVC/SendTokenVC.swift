@@ -149,8 +149,8 @@ class SendTokenVC: BEPagesVC, LoadableView {
         
         SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: Int64(amountToSend))
             .subscribe(onSuccess: { id in
-                transactionVC.showTransactionDetail(
-                    Transaction(
+                transactionVC.setUp(
+                    transaction: Transaction(
                         id: id,
                         amount: -amount,
                         symbol: vc.wallet?.symbol ?? "",
