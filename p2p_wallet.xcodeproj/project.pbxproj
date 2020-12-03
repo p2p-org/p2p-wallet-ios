@@ -11,6 +11,7 @@
 		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
 		BC03EC8E256F591F00A68D18 /* LocalAuthVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03EC8D256F591F00A68D18 /* LocalAuthVC.swift */; };
 		BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */; };
+		BC17577A25788DD200049667 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC17577925788DD200049667 /* Socket.swift */; };
 		BC1D2ACC256B6EA40064E595 /* SwapTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */; };
 		BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */; };
 		BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC2288022542E1CC0028CE8F /* Localizable.strings */; };
@@ -149,6 +150,7 @@
 		BB7CFE6A2633569A3CAC841A /* Pods-p2p_walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.release.xcconfig"; sourceTree = "<group>"; };
 		BC03EC8D256F591F00A68D18 /* LocalAuthVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthVC.swift; sourceTree = "<group>"; };
 		BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LABiometryType+Extensions.swift"; sourceTree = "<group>"; };
+		BC17577925788DD200049667 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenVC.swift; sourceTree = "<group>"; };
 		BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeBackVC.swift; sourceTree = "<group>"; };
 		BC2287FA2542E1A30028CE8F /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
@@ -625,6 +627,7 @@
 				BC32A3AB254A8884002156F0 /* AccountStorage.swift */,
 				BC6EE771254AEEB300FE1025 /* SolanaSDK+Extensions.swift */,
 				BC6EE77C254BB8F400FE1025 /* Settings.swift */,
+				BC17577925788DD200049667 /* Socket.swift */,
 				BC7BCB6F256274B90018DECA /* PricesManager */,
 				BC7BCB73256274C40018DECA /* BonfidaServices */,
 			);
@@ -1054,6 +1057,7 @@
 				BC32A361254A761B002156F0 /* Button+Extensions.swift in Sources */,
 				BC55B882254BEBAC0032C355 /* SSPinCodeVC.swift in Sources */,
 				BC3EA47C254FCE9200FB1FEA /* IBPCollectionViewCompositionalLayoutInteroperability.swift in Sources */,
+				BC17577A25788DD200049667 /* Socket.swift in Sources */,
 				BCEA06BE2542FD3F0006E4C3 /* Asset+Generated.swift in Sources */,
 				BC3ADE772570A2F8002B3B16 /* RestoreWalletVC.swift in Sources */,
 				BC3ADE8D2570B832002B3B16 /* WLCenterSheet.swift in Sources */,

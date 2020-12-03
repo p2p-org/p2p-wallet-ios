@@ -11,15 +11,70 @@ import Action
 class TransactionVC: WLCenterSheet {
     override var padding: UIEdgeInsets {UIEdgeInsets(top: 30, left: 20, bottom: 30, right: 20)}
     
+    // MARK: - Properties
+    var transaction: Transaction?
+    
+    // MARK: - Subviews
     lazy var imageView = UIImageView(width: 143, height: 137, image: .walletIntro)
     lazy var titleLabel = UILabel(text: L10n.processing + "...", textSize: 17, weight: .semibold)
+    lazy var viewInExplorerButton = WLButton.stepButton(type: .sub, label: L10n.viewInBlockchainExplorer)
     
+    lazy var goBackToWalletButton = WLButton.stepButton(type: .main, label: L10n.goBackToWallet)
+    
+    // MARK: - Methods
     override func setUp() {
         super.setUp()
         stackView.alignment = .center
     }
     
-    func processing() {
+    private func signatureSubsribe(_ signature: String) {
+        let socket = SolanaSDK.Socket.shared
+        socket.signatureWaitForConfirming(signature: signature)
+            .subscribe(onCompleted: { [weak self] in
+                guard var transaction = self?.transaction else {return}
+                transaction.status = .confirmed
+                self?.setUp(transaction: transaction)
+//                transaction.
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func setUp(transaction: Transaction?, viewInExplorerAction: CocoaAction? = nil, goBackToWalletAction: CocoaAction? = nil) {
+        // subscribe to transaction's signature
+        if let signature = transaction?.id, self.transaction?.id != transaction?.id {
+            // subscribe
+            signatureSubsribe(signature)
+        }
+        
+        // assign new value
+        self.transaction = transaction
+        
+        // set up UI
+        if let transaction = transaction {
+            // transaction is not nil
+            showTransactionDetail(transaction)
+            if let action = viewInExplorerAction {
+                viewInExplorerButton.rx.action = action
+            }
+            
+            if let action = goBackToWalletAction {
+                goBackToWalletButton.rx.action = action
+            }
+            
+            if transaction.status != .confirmed {
+                viewInExplorerButton.isEnabled = false
+            } else {
+                viewInExplorerButton.isEnabled = true
+            }
+            
+        } else {
+            // processing
+            processing()
+        }
+    }
+    
+    // MARK: - Modifiers
+    private func processing() {
         stackView.spacing = 48
         stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
         stackView.addArrangedSubviews([
@@ -31,14 +86,14 @@ class TransactionVC: WLCenterSheet {
         forceRelayout()
     }
     
-    func showTransactionDetail(_ transaction: Transaction, viewInExplorerAction: CocoaAction, goBackToWalletAction: CocoaAction)
+    private func showTransactionDetail(_ transaction: Transaction)
     {
         stackView.spacing = 0
         stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
         
         titleLabel.text = transaction.amount.toString(maximumFractionDigits: 9, showPlus: true) + " " + transaction.symbol
         
-        let statusLabel = UILabel(text: transaction.status.localizedString, textSize: 12, weight: .bold, textColor: .secondary
+        let statusLabel = UILabel(text: transaction.status.localizedString, textSize: 12, weight: .bold, textColor: UIColor.black.withAlphaComponent(0.5)
         )
         
         let separator = UIView.separator(height: 1, color: .c4c4c4)
@@ -62,12 +117,6 @@ class TransactionVC: WLCenterSheet {
         
         let separator2 = UIView.separator(height: 1, color: .c4c4c4)
         
-        let viewInExplorerButton = WLButton.stepButton(type: .sub, label: L10n.viewInBlockchainExplorer)
-            .withAction(viewInExplorerAction)
-        
-        let goBackToWallet = WLButton.stepButton(type: .main, label: L10n.goBackToWallet)
-            .withAction(goBackToWalletAction)
-        
         stackView.addArrangedSubviews([
             .separator(height: 20),
             imageView,
@@ -78,7 +127,7 @@ class TransactionVC: WLCenterSheet {
             transactionIdRow,
             separator2,
             viewInExplorerButton,
-            goBackToWallet
+            goBackToWalletButton
         ])
         
         stackView.stretchArrangedSubviews([
@@ -87,7 +136,7 @@ class TransactionVC: WLCenterSheet {
             transactionIdRow,
             separator2,
             viewInExplorerButton,
-            goBackToWallet
+            goBackToWalletButton
         ])
         
         stackView.setCustomSpacing(30, after: imageView)
@@ -102,6 +151,7 @@ class TransactionVC: WLCenterSheet {
         forceRelayout()
     }
     
+    // MARK: - PresentationControllerDelegate
     override func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         let pc = super.presentationController(forPresented: presented, presenting: presenting, source: source) as! DimmingPresentationController
         // disable dismissing on dimmingView
