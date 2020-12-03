@@ -9,7 +9,7 @@ import Foundation
 import Action
 
 class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
-    lazy var titleLabel = UILabel(text: L10n.addCoin, textSize: 17, weight: .semibold)
+    lazy var titleLabel = UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
     lazy var closeButton = UIButton.close(tintColor: .textBlack)
         .onTap(self, action: #selector(back))
     lazy var descriptionLabel = UILabel(textSize: 15, textColor: .secondary, numberOfLines: 0)
@@ -96,11 +96,39 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     
     func createTokenAccountAction(newWallet: Wallet) -> CocoaAction {
         CocoaAction {
-            SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: SolanaSDK.network)
-                .do(afterError: { (error) in
-                    print(error)
-                })
+            let transactionVC = self.presentTransactionVC()
+            let viewModel = self.viewModel as! ViewModel
+            
+            return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: SolanaSDK.network)
+                .do(
+                    afterSuccess: { signature in
+                        transactionVC.showTransactionDetail(
+                            Transaction(
+                                id: signature,
+                                amount: -viewModel.feeVM.data,
+                                symbol: "SOL",
+                                status: .processing
+                            ),
+                            viewInExplorerAction: CocoaAction {
+                                transactionVC.dismiss(animated: true) {
+                                    let vc = self.presentingViewController
+                                    self.dismiss(animated: true) {
+                                        vc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
+                                    }
+                                }
+                                return .just(())
+                            },
+                            goBackToWalletAction: CocoaAction {
+                                transactionVC.dismiss(animated: true, completion: nil)
+                                return .just(())
+                            })
+                    },
+                    afterError: { (error) in
+                        print(error)
+                    }
+                )
                 .map {_ in ()}
+                .asObservable()
         }
     }
 }
@@ -164,7 +192,7 @@ extension AddNewWalletVC {
     }
     
     class Cell: WalletCell {
-        lazy var addButton = UIButton(width: 32, height: 32, backgroundColor: .ededed, cornerRadius: 16, label: "+", labelFont: .systemFont(ofSize: 20), textColor: UIColor.textBlack.withAlphaComponent(0.5))
+        lazy var addButton = UIButton(width: 32, height: 32, backgroundColor: .ededed, cornerRadius: 16, label: "+", labelFont: .systemFont(ofSize: 20), textColor: UIColor.black.withAlphaComponent(0.5))
         lazy var symbolLabel = UILabel(text: "SER", textSize: 17, weight: .bold)
         
         override func commonInit() {

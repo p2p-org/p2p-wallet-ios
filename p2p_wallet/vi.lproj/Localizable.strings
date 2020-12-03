@@ -56,7 +56,6 @@
 "Savings" = "Tiết kiệm";
 "Make your crypto working on you" = "Cách để ví điện tử của bạn hoạt động theo ý muốn của bạn";
 "Explore  DeFi" = "Khám phá DeFi";
-"Add coin" = "Thêm coin";
 "Activities" = "Hoạt động";
 "Scan QR Code" = "Quét mã QR";
 "Scan an P2P address" = "Quét địa chỉ P2P";
@@ -120,3 +119,4 @@
 "Go back to wallet" = "Quay lại ví";
 "Send tokens" = "Gửi tokens";
 "Receive tokens" = "Nhận tokens";
+"Add wallet" = "Thêm ví";
