@@ -27,10 +27,29 @@ class TransactionVC: WLCenterSheet {
         stackView.alignment = .center
     }
     
+    private func signatureSubsribe(_ signature: String) {
+        let socket = SolanaSDK.Socket.shared
+        socket.signatureWaitForConfirming(signature: signature)
+            .subscribe(onCompleted: { [weak self] in
+                guard var transaction = self?.transaction else {return}
+                transaction.status = .confirmed
+                self?.setUp(transaction: transaction)
+//                transaction.
+            })
+            .disposed(by: disposeBag)
+    }
+    
     func setUp(transaction: Transaction?, viewInExplorerAction: CocoaAction? = nil, goBackToWalletAction: CocoaAction? = nil) {
-        // assign transaction
+        // subscribe to transaction's signature
+        if let signature = transaction?.id, self.transaction?.id != transaction?.id {
+            // subscribe
+            signatureSubsribe(signature)
+        }
+        
+        // assign new value
         self.transaction = transaction
         
+        // set up UI
         if let transaction = transaction {
             // transaction is not nil
             showTransactionDetail(transaction)
@@ -41,6 +60,13 @@ class TransactionVC: WLCenterSheet {
             if let action = goBackToWalletAction {
                 goBackToWalletButton.rx.action = action
             }
+            
+            if transaction.status != .confirmed {
+                viewInExplorerButton.isEnabled = false
+            } else {
+                viewInExplorerButton.isEnabled = true
+            }
+            
         } else {
             // processing
             processing()
@@ -67,7 +93,7 @@ class TransactionVC: WLCenterSheet {
         
         titleLabel.text = transaction.amount.toString(maximumFractionDigits: 9, showPlus: true) + " " + transaction.symbol
         
-        let statusLabel = UILabel(text: transaction.status.localizedString, textSize: 12, weight: .bold, textColor: .secondary
+        let statusLabel = UILabel(text: transaction.status.localizedString, textSize: 12, weight: .bold, textColor: UIColor.black.withAlphaComponent(0.5)
         )
         
         let separator = UIView.separator(height: 1, color: .c4c4c4)
