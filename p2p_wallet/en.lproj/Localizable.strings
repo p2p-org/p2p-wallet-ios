@@ -56,7 +56,6 @@
 "Savings" = "Savings";
 "Make your crypto working on you" = "Make your crypto working on you";
 "Explore  DeFi" = "Explore  DeFi";
-"Add coin" = "Add coin";
 "Activities" = "Activities";
 "Scan QR Code" = "Scan QR Code";
 "Scan an P2P address" = "Scan an P2P address";
@@ -120,3 +119,4 @@
 "Go back to wallet" = "Go back to wallet";
 "Send tokens" = "Send tokens";
 "Receive tokens" = "Receive tokens";
+"Add wallet" = "Add wallet";

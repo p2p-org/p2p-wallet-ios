@@ -14,8 +14,8 @@ internal enum L10n {
   internal static let accept = L10n.tr("Localizable", "Accept")
   /// Activities
   internal static let activities = L10n.tr("Localizable", "Activities")
-  /// Add coin
-  internal static let addCoin = L10n.tr("Localizable", "Add coin")
+  /// Add wallet
+  internal static let addWallet = L10n.tr("Localizable", "Add wallet")
   /// Almost done!
   internal static let almostDone = L10n.tr("Localizable", "Almost done!")
   /// amount

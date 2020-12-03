@@ -19,7 +19,7 @@ class MainFirstSectionHeaderView: SectionHeaderView, LoadableView {
     lazy var swapButton = createButton(title: L10n.swap)
         .onTap(self, action: #selector(buttonSwapDidTouch))
     
-    lazy var addCoinButton = UIButton(label: "+ " + L10n.addCoin, labelFont: .systemFont(ofSize: 15, weight: .medium), textColor: .textBlack)
+    lazy var addCoinButton = UIButton(label: "+ " + L10n.addWallet, labelFont: .systemFont(ofSize: 15, weight: .medium), textColor: .textBlack)
     
     var sendAction: CocoaAction?
     var receiveAction: CocoaAction?

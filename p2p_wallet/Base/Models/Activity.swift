@@ -27,7 +27,7 @@ extension Activity {
             case .receive:
                 return L10n.receiveTokens
             case .createAccount:
-                return L10n.addCoin
+                return L10n.addWallet
             }
         }
     }

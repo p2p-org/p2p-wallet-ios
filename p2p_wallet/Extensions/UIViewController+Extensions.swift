@@ -94,4 +94,11 @@ extension UIViewController {
             present(safariVC, animated: true)
         }
     }
+    
+    func presentTransactionVC() -> TransactionVC {
+        let transactionVC = TransactionVC()
+        transactionVC.processing()
+        present(transactionVC, animated: true, completion: nil)
+        return transactionVC
+    }
 }
