@@ -48,6 +48,12 @@ class TabBarVC: BEPagesVC {
         moveToPage(0)
     }
     
+    override func bind() {
+        super.bind()
+        // connect websocket
+        SolanaSDK.Socket.shared.connect()
+    }
+    
     // MARK: - Helpers
     private func configureTabBar() {
         let firstTabItem = buttonTabBarItem(image: .tabbarWallet, tag: 0)

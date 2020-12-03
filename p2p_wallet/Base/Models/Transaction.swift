@@ -9,13 +9,13 @@ import Foundation
 
 struct Transaction {
     enum Status {
-        case processing, done
+        case processing, confirmed
         var localizedString: String {
             switch self {
             case .processing:
                 return L10n.processing
-            case .done:
-                return L10n.done
+            case .confirmed:
+                return L10n.confirmed
             }
         }
     }
@@ -23,5 +23,5 @@ struct Transaction {
     let id: String
     let amount: Double
     let symbol: String
-    let status: Status
+    var status: Status
 }
