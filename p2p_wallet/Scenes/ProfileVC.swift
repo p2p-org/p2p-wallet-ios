@@ -18,7 +18,7 @@ class ProfileVC: BaseVC {
     }
     
     @objc func buttonLogoutButton() {
-        KeychainStorage.shared.clear()
+        AccountStorage.shared.clear()
         AppDelegate.shared.reloadRootVC()
     }
 }

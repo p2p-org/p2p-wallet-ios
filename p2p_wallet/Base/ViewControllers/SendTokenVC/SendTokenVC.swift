@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import Action
 
 class SendTokenVC: BEPagesVC, LoadableView {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
@@ -23,9 +24,11 @@ class SendTokenVC: BEPagesVC, LoadableView {
     
     let disposeBag = DisposeBag()
     var wallets: [Wallet]
+    var initialAddress: String?
     
-    init(wallets: [Wallet]) {
+    init(wallets: [Wallet], address: String? = nil) {
         self.wallets = wallets
+        self.initialAddress = address
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -60,6 +63,16 @@ class SendTokenVC: BEPagesVC, LoadableView {
         
         viewControllers = wallets.map {item in
             let vc = SendTokenItemVC()
+            vc.chooseWalletAction = CocoaAction {
+                let vc = ChooseWalletVC()
+                vc.completion = {wallet in
+                    guard let index = self.wallets.firstIndex(where: {$0.mintAddress == wallet.mintAddress}) else {return}
+                    self.moveToPage(index)
+                    vc.back()
+                }
+                self.present(vc, animated: true, completion: nil)
+                return .just(())
+            }
             vc.setUp(wallet: item)
             return vc
         }
@@ -84,6 +97,13 @@ class SendTokenVC: BEPagesVC, LoadableView {
         
         // delegate
         self.delegate = self
+        
+        // if address was passed
+        if let address = initialAddress,
+            let textView = (viewControllers.first as? SendTokenItemVC)?.addressTextView
+        {
+            textView.text = address
+        }
     }
     
     override func bind() {
@@ -122,18 +142,40 @@ class SendTokenVC: BEPagesVC, LoadableView {
             return
         }
         
-        UIApplication.shared.showIndetermineHudWithMessage(L10n.sendingToken)
+        let transactionVC = presentTransactionVC()
+        
+        // prepare amount
         let amountToSend = amount * pow(10, Double(vc.wallet?.decimals ?? 0))
         
-        SolanaSDK.shared.send(from: sender, to: receiver, amount: Int64(amountToSend))
-            .subscribe(onSuccess: { _ in
-                UIApplication.shared.hideHud()
-                UIApplication.shared.showDone(L10n.tokenSent)
-                WalletVM.ofCurrentUser.updateAmountChange(-amount, forWallet: sender)
-                self.back()
+        SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: Int64(amountToSend))
+            .subscribe(onSuccess: { id in
+                transactionVC.setUp(
+                    transaction: Transaction(
+                        id: id,
+                        amount: -amount,
+                        symbol: vc.wallet?.symbol ?? "",
+                        status: .processing
+                    ),
+                    viewInExplorerAction: CocoaAction {
+                        transactionVC.dismiss(animated: true) {
+                            let nc = self.navigationController
+                            self.back()
+                            nc?.showWebsite(url: "https://explorer.solana.com/tx/" + id)
+                        }
+                        
+                        return .just(())
+                    },
+                    goBackToWalletAction: CocoaAction {
+                        transactionVC.dismiss(animated: true) {
+                            self.back()
+                        }
+                        return .just(())
+                    }
+                )
             }, onError: {error in
-                UIApplication.shared.hideHud()
-                self.showError(error)
+                transactionVC.dismiss(animated: true) {
+                    self.showError(error)
+                }
             })
             .disposed(by: disposeBag)
     }

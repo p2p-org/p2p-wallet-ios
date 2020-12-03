@@ -9,18 +9,21 @@
 import Foundation
 
 class CustomHeightPresentationController: DimmingPresentationController {
-    var height: CGFloat
+    /// height must be calculated base on device's orientation
+    var height: () -> CGFloat
     
-    init?(height: CGFloat, presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
-        if UIScreen.main.bounds.height <= height {
-            return nil
-        }
+    /**
+        Custom height PresentationController.
+
+        - height: closure for calculating height base on environment, for example, deviceOrientation.
+    */
+    init?(height: @escaping () -> CGFloat, presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
         self.height = height
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
     }
     
     override func size(forChildContentContainer container: UIContentContainer, withParentContainerSize parentSize: CGSize) -> CGSize {
-        return CGSize(width: parentSize.width, height: height + 16)
+        return CGSize(width: parentSize.width, height: height() + 16)
     }
     
     override var frameOfPresentedViewInContainerView: CGRect {
@@ -31,7 +34,7 @@ class CustomHeightPresentationController: DimmingPresentationController {
         
         //2
         
-        frame.origin.y = containerView!.frame.height - height - 16
+        frame.origin.y = containerView!.frame.height - height() - 16
         
         return frame
     }

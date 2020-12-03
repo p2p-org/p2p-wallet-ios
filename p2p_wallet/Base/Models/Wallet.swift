@@ -8,7 +8,8 @@
 import Foundation
 
 // wrapper of 
-struct Wallet: ListItemType {
+struct Wallet {
+    let id: String
     let name: String
     let mintAddress: String
     let pubkey: String?
@@ -17,14 +18,15 @@ struct Wallet: ListItemType {
     var amount: Double?
     var price: Price?
     var decimals: Int?
-    
-    static func placeholder(at index: Int) -> Wallet {
-        Wallet(name: "placeholder", mintAddress: "placeholder-mintaddress", pubkey: "", symbol: "PLHD\(index)", icon: nil, amount: nil, decimals: nil)
+
+    var amountInUSD: Double {
+        amount * PricesManager.bonfida.prices.value.first(where: {$0.from == symbol})?.value
     }
 }
 
-extension Wallet {
+extension Wallet: ListItemType {
     init(programAccount: SolanaSDK.Token) {
+        self.id = programAccount.pubkey ?? ""
         self.name = programAccount.name
         self.mintAddress = programAccount.mintAddress
         self.symbol = programAccount.symbol
@@ -32,5 +34,9 @@ extension Wallet {
         self.amount = Double(programAccount.amount ?? 0) * pow(10, -Double(programAccount.decimals ?? 0))
         self.pubkey = programAccount.pubkey
         self.decimals = programAccount.decimals
+    }
+    
+    static func placeholder(at index: Int) -> Wallet {
+        Wallet(id: placeholderId(at: index), name: "placeholder", mintAddress: "placeholder-mintaddress", pubkey: "pubkey", symbol: "PLHD\(index)", icon: nil, amount: nil, decimals: nil)
     }
 }

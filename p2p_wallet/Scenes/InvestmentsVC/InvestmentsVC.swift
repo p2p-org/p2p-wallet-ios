@@ -15,6 +15,14 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
         static func placeholder(at index: Int) -> InvestmentsVC.ItemType {
             ItemType.defi("Defi#\(index)")
         }
+        var id: String {
+            switch self {
+            case .news(let news):
+                return "news/\(news.id)"
+            case .defi(let defi):
+                return "defi/\(defi)"
+            }
+        }
         
         case news(News)
         case defi(String)
@@ -48,13 +56,13 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
         snapshot.appendItems(
             [
                 ItemType.news(
-                    News(title: "How it works", subtitle: "The most important info you should know before investing", imageUrl: nil)
+                    News(id: "1", title: "How it works", subtitle: "The most important info you should know before investing", imageUrl: nil)
                 ),
                 ItemType.news(
-                    News(title: "How it works2", subtitle: "The most important info you should know before investing2", imageUrl: nil)
+                    News(id: "2", title: "How it works2", subtitle: "The most important info you should know before investing2", imageUrl: nil)
                 ),
                 ItemType.news(
-                    News(title: "How it works2", subtitle: "The most important info you should know before investing2", imageUrl: nil)
+                    News(id: "3", title: "How it works2", subtitle: "The most important info you should know before investing2", imageUrl: nil)
                 )
             ],
             toSection: section

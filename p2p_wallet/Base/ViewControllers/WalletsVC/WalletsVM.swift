@@ -8,8 +8,10 @@
 import Foundation
 import RxSwift
 
-class WalletVM: ListViewModel<Wallet> {
-    static var ofCurrentUser = WalletVM()
+class WalletsVM: ListViewModel<Wallet> {
+    override var isPaginationEnabled: Bool {false}
+    
+    static var ofCurrentUser = WalletsVM()
     var prices: [Price] { PricesManager.bonfida.prices.value }
     
     override func bind() {
@@ -35,7 +37,7 @@ class WalletVM: ListViewModel<Wallet> {
         }
         return SolanaSDK.shared.getBalance(account: account)
             .flatMap {balance in
-                SolanaSDK.shared.getProgramAccounts(programPubkey: SolanaSDK.programPubkey, in: SolanaSDK.network)
+                SolanaSDK.shared.getProgramAccounts(in: SolanaSDK.network)
                     .map {$0.map {Wallet(programAccount: $0)}}
                     .map {wallets in
                         var wallets = wallets
@@ -46,6 +48,7 @@ class WalletVM: ListViewModel<Wallet> {
                         }
                         
                         let solWallet = Wallet(
+                            id: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString ?? "Solana",
                             name: "Solana",
                             mintAddress: "",
                             pubkey: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString,
