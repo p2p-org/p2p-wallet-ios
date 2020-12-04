@@ -114,7 +114,7 @@ class SendTokenItemVC: BaseVC {
     func setUp(wallet: Wallet) {
         self.wallet = wallet
         tokenNameLabel.text = wallet.name
-        balanceLabel.text = "\(wallet.amount?.toString(maximumFractionDigits: 9) ?? "") \(wallet.symbol)"
+        balanceLabel.text = "\(wallet.amount.toString(maximumFractionDigits: 9) ?? "") \(wallet.symbol)"
         coinImageView.setImage(urlString: wallet.icon)
     }
     
@@ -175,7 +175,7 @@ class SendTokenItemVC: BaseVC {
     }
     
     @objc func buttonUseAllBalanceDidTouch() {
-        amountTextField.text = wallet?.amount?.toString(maximumFractionDigits: 9)
+        amountTextField.text = wallet?.amount.toString(maximumFractionDigits: 9)
         amountTextField.sendActions(for: .valueChanged)
     }
     
