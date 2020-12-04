@@ -126,6 +126,7 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
                         
                         var newWallet = newWallet
                         newWallet.pubkey = newPubkey
+                        newWallet.isProcessing = true
                         let transaction = Transaction(
                             type: .createAccount,
                             signature: signature,
