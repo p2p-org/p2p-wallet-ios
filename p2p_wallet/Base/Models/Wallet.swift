@@ -12,7 +12,7 @@ struct Wallet {
     let id: String
     let name: String
     let mintAddress: String
-    let pubkey: String?
+    var pubkey: String?
     let symbol: String
     let icon: String?
     var lamports: UInt64?
