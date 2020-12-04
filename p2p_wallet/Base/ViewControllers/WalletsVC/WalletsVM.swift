@@ -14,6 +14,8 @@ class WalletsVM: ListViewModel<Wallet> {
     static var ofCurrentUser = WalletsVM()
     var prices: [Price] { PricesManager.bonfida.prices.value }
     
+    var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
+    
     override func bind() {
         super.bind()
         PricesManager.bonfida.prices
