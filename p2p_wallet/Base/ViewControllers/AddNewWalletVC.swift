@@ -111,7 +111,7 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
                     afterSuccess: { signature in
                         transactionVC.setUp(
                             transaction: Transaction(
-                                id: signature,
+                                signature: signature,
                                 amount: -viewModel.feeVM.data,
                                 symbol: "SOL",
                                 status: .processing

@@ -148,10 +148,10 @@ class SendTokenVC: BEPagesVC, LoadableView {
         let amountToSend = amount * pow(10, Double(vc.wallet?.decimals ?? 0))
         
         SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: Int64(amountToSend))
-            .subscribe(onSuccess: { id in
+            .subscribe(onSuccess: { signature in
                 transactionVC.setUp(
                     transaction: Transaction(
-                        id: id,
+                        signature: signature,
                         amount: -amount,
                         symbol: vc.wallet?.symbol ?? "",
                         status: .processing
@@ -160,7 +160,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
                         transactionVC.dismiss(animated: true) {
                             let nc = self.navigationController
                             self.back()
-                            nc?.showWebsite(url: "https://explorer.solana.com/tx/" + id)
+                            nc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
                         }
                         
                         return .just(())

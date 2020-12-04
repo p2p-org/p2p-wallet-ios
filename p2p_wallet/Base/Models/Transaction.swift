@@ -8,6 +8,14 @@
 import Foundation
 
 struct Transaction {
+    let signature: String // signature
+    let amount: Double
+    let symbol: String
+    var status: Status
+    var subscription: UInt64?
+}
+
+extension Transaction {
     enum Status {
         case processing, confirmed
         var localizedString: String {
@@ -19,9 +27,4 @@ struct Transaction {
             }
         }
     }
-    
-    let id: String
-    let amount: Double
-    let symbol: String
-    var status: Status
 }
