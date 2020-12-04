@@ -167,6 +167,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
                 }
                 
                 let transaction = Transaction(
+                    type: .send,
                     signature: signature,
                     amount: -amount,
                     symbol: vc.wallet?.symbol ?? "",
