@@ -334,6 +334,7 @@
 			children = (
 				BCB5835F255D231400B10F65 /* BaseVM.swift */,
 				BCD5E82D25525DD800F51299 /* ListViewModel */,
+				BCD5E82325525C6E00F51299 /* WalletsVM.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -435,7 +436,6 @@
 			isa = PBXGroup;
 			children = (
 				BC490C1F256BAE17006E7AC9 /* WalletsVC.swift */,
-				BCD5E82325525C6E00F51299 /* WalletsVM.swift */,
 				BC490CBD256CB796006E7AC9 /* WalletCell.swift */,
 			);
 			path = WalletsVC;

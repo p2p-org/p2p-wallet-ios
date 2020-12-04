@@ -31,6 +31,12 @@ class WalletsVM: ListViewModel<Wallet> {
                 self.state.accept(.loaded(wallets))
             })
             .disposed(by: disposeBag)
+        
+        SolanaSDK.Socket.shared.observe(method: "accountNotification", decodedTo: SolanaSDK.Notification.Account.self)
+            .subscribe(onNext: {notification in
+                
+            })
+            .disposed(by: disposeBag)
     }
     
     override var request: Single<[Wallet]> {
