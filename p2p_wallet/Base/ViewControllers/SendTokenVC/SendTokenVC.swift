@@ -149,29 +149,31 @@ class SendTokenVC: BEPagesVC, LoadableView {
         
         SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: Int64(amountToSend))
             .subscribe(onSuccess: { signature in
-                transactionVC.setUp(
-                    transaction: Transaction(
-                        signature: signature,
-                        amount: -amount,
-                        symbol: vc.wallet?.symbol ?? "",
-                        status: .processing
-                    ),
-                    viewInExplorerAction: CocoaAction {
-                        transactionVC.dismiss(animated: true) {
-                            let nc = self.navigationController
-                            self.back()
-                            nc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
-                        }
-                        
-                        return .just(())
-                    },
-                    goBackToWalletAction: CocoaAction {
-                        transactionVC.dismiss(animated: true) {
-                            self.back()
-                        }
-                        return .just(())
+                transactionVC.signature = signature
+                transactionVC.viewInExplorerButton.rx.action = CocoaAction {
+                    transactionVC.dismiss(animated: true) {
+                        let nc = self.navigationController
+                        self.back()
+                        nc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
                     }
+                    
+                    return .just(())
+                }
+                transactionVC.goBackToWalletButton.rx.action = CocoaAction {
+                    transactionVC.dismiss(animated: true) {
+                        self.back()
+                    }
+                    return .just(())
+                }
+                
+                let transaction = Transaction(
+                    type: .send,
+                    signature: signature,
+                    amount: -amount,
+                    symbol: vc.wallet?.symbol ?? "",
+                    status: .processing
                 )
+                TransactionsManager.shared.process(transaction)
             }, onError: {error in
                 transactionVC.dismiss(animated: true) {
                     self.showError(error)
