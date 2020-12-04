@@ -41,7 +41,7 @@ class TransactionVC: WLCenterSheet {
     
     func setUp(transaction: Transaction?, viewInExplorerAction: CocoaAction? = nil, goBackToWalletAction: CocoaAction? = nil) {
         // subscribe to transaction's signature
-        if let signature = transaction?.id, self.transaction?.id != transaction?.id {
+        if let signature = transaction?.signature, self.transaction?.signature != transaction?.signature {
             // subscribe
             signatureSubsribe(signature)
         }
@@ -101,13 +101,13 @@ class TransactionVC: WLCenterSheet {
         let transactionIdLabel = UILabel(text: L10n.transactionID, textSize: 12, weight: .medium, textColor: .secondary)
         
         let transactionIdRow = UIView.row([
-            UILabel(text: transaction.id, textSize: 15, weight: .medium),
+            UILabel(text: transaction.signature, textSize: 15, weight: .medium),
             {
                 var copyToClipboardButton = UIButton(width: 24, height: 24)
                 copyToClipboardButton.setImage(.copyToClipboard, for: .normal)
                 copyToClipboardButton.tintColor = .textBlack
                 copyToClipboardButton.rx.action = CocoaAction {
-                    UIPasteboard.general.string = transaction.id
+                    UIPasteboard.general.string = transaction.signature
                     UIApplication.shared.showDone(L10n.copiedToClipboard)
                     return .just(())
                 }
