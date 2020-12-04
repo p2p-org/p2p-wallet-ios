@@ -18,6 +18,7 @@ struct Wallet {
     var lamports: UInt64?
     var price: Price?
     var decimals: Int?
+    var isProcessing: Bool?
     var amount: Double {
         Double(lamports ?? 0) * pow(10, -Double(decimals ?? 0))
     }
