@@ -32,7 +32,7 @@ class WalletsVM: ListViewModel<Wallet> {
             })
             .disposed(by: disposeBag)
         
-        SolanaSDK.Socket.shared.observe(method: "accountNotification", decodedTo: SolanaSDK.Notification.Account.self)
+        SolanaSDK.Socket.shared.observeAccountNotification()
             .subscribe(onNext: {notification in
                 self.updateItem(where: {$0.symbol == "SOL"}) { wallet in
                     var wallet = wallet
