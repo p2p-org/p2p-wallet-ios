@@ -54,6 +54,8 @@ internal enum L10n {
   internal static let createAPINCodeToProtectYourWallet = L10n.tr("Localizable", "Create a PIN-code to protect your wallet")
   /// create new wallet
   internal static let createNewWallet = L10n.tr("Localizable", "create new wallet")
+  /// Creating
+  internal static let creating = L10n.tr("Localizable", "Creating")
   /// creating an account
   internal static let creatingAnAccount = L10n.tr("Localizable", "creating an account")
   /// Do this later

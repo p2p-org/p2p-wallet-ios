@@ -10,7 +10,7 @@ import Foundation
 class WalletCell: BaseCollectionViewCell, WalletCellType {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
     lazy var coinLogoImageView = UIImageView(width: 32, height: 32, cornerRadius: 32 / 2)
-    lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold)
+    lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold, numberOfLines: 0)
     lazy var coinPriceLabel = UILabel(text: "12 800,99 US$", textSize: 13)
     lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: .secondary)
     lazy var equityValueLabel = UILabel(text: "44,33 USD", textSize: 13)
@@ -28,7 +28,7 @@ class WalletCell: BaseCollectionViewCell, WalletCellType {
     
     func setUp(with item: Wallet) {
         coinLogoImageView.setImage(urlString: item.icon)
-        coinNameLabel.text = item.name
+        coinNameLabel.text = item.name + (item.isProcessing == true ? " (\(L10n.creating))" : "")
         tokenCountLabel.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.symbol)"
         
         if let price = item.price {

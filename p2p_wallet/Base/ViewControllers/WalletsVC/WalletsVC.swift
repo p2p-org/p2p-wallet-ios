@@ -31,6 +31,12 @@ class MyWalletsVC<WalletCell: WalletCellType>: WalletsVC<WalletCell> {
                 for wallet in newWallets {
                     if !wallets.contains(where: {$0.pubkey == wallet.pubkey}) {
                         wallets.append(wallet)
+                    } else {
+                        self.viewModel.updateItem(where: {$0.pubkey == wallet.pubkey}) { oldWallet in
+                            var newWallet = oldWallet
+                            newWallet.isProcessing = wallet.isProcessing
+                            return newWallet
+                        }
                     }
                 }
                 

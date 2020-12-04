@@ -24,6 +24,7 @@ struct TransactionsManager {
             .subscribe(onCompleted: {
                 var transaction = transaction
                 transaction.status = .confirmed
+                transaction.newWallet?.isProcessing = nil
                 self.transactions.insert(transaction, where: {$0.signature == transaction.signature}, shouldUpdate: true)
             })
             .disposed(by: disposeBag)
