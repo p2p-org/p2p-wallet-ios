@@ -15,10 +15,13 @@ struct Wallet {
     let pubkey: String?
     let symbol: String
     let icon: String?
-    var amount: Double?
+    var lamports: UInt64?
     var price: Price?
     var decimals: Int?
-
+    var amount: Double {
+        Double(lamports ?? 0) * pow(10, -Double(decimals ?? 0))
+    }
+    
     var amountInUSD: Double {
         amount * PricesManager.bonfida.prices.value.first(where: {$0.from == symbol})?.value
     }
@@ -31,12 +34,12 @@ extension Wallet: ListItemType {
         self.mintAddress = programAccount.mintAddress
         self.symbol = programAccount.symbol
         self.icon = programAccount.icon
-        self.amount = Double(programAccount.amount ?? 0) * pow(10, -Double(programAccount.decimals ?? 0))
+        self.lamports = programAccount.amount
         self.pubkey = programAccount.pubkey
         self.decimals = programAccount.decimals
     }
     
     static func placeholder(at index: Int) -> Wallet {
-        Wallet(id: placeholderId(at: index), name: "placeholder", mintAddress: "placeholder-mintaddress", pubkey: "pubkey", symbol: "PLHD\(index)", icon: nil, amount: nil, decimals: nil)
+        Wallet(id: placeholderId(at: index), name: "placeholder", mintAddress: "placeholder-mintaddress", pubkey: "pubkey", symbol: "PLHD\(index)", icon: nil, lamports: nil, decimals: nil)
     }
 }
