@@ -20,6 +20,28 @@ class MyWalletsVC<WalletCell: WalletCellType>: WalletsVC<WalletCell> {
         super.init(viewModel: viewModel)
     }
     
+    override func bind() {
+        super.bind()
+        TransactionsManager.shared.transactions
+            .map {$0.filter {$0.type == .createAccount && $0.newWallet != nil}}
+            .filter {$0.count > 0}
+            .subscribe(onNext: { transactions in
+                let newWallets = transactions.compactMap({$0.newWallet})
+                var wallets = self.viewModel.items
+                for wallet in newWallets {
+                    if !wallets.contains(where: {$0.pubkey == wallet.pubkey}) {
+                        wallets.append(wallet)
+                    }
+                }
+                
+                if wallets.count > 0 {
+                    self.viewModel.items = wallets
+                    self.viewModel.state.accept(.loaded(wallets))
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
