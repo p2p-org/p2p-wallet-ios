@@ -12,7 +12,7 @@ class TransactionVC: WLCenterSheet {
     override var padding: UIEdgeInsets {UIEdgeInsets(top: 30, left: 20, bottom: 30, right: 20)}
     
     // MARK: - Properties
-    var transaction: Transaction?
+    var signature: String?
     
     // MARK: - Subviews
     lazy var imageView = UIImageView(width: 143, height: 137, image: .walletIntro)
@@ -25,51 +25,18 @@ class TransactionVC: WLCenterSheet {
     override func setUp() {
         super.setUp()
         stackView.alignment = .center
+        processing()
     }
     
-    private func signatureSubsribe(_ signature: String) {
-        let socket = SolanaSDK.Socket.shared
-        socket.observeSignatureNotification(signature: signature)
-            .subscribe(onCompleted: { [weak self] in
-                guard var transaction = self?.transaction else {return}
-                transaction.status = .confirmed
-                self?.setUp(transaction: transaction)
+    override func bind() {
+        super.bind()
+        TransactionsManager.shared.transactions
+            .map {$0.first(where: {$0.signature == self.signature})}
+            .filter {$0 != nil}
+            .subscribe(onNext: {[weak self] transaction in
+                self?.showTransactionDetail(transaction!)
             })
             .disposed(by: disposeBag)
-    }
-    
-    func setUp(transaction: Transaction?, viewInExplorerAction: CocoaAction? = nil, goBackToWalletAction: CocoaAction? = nil) {
-        // subscribe to transaction's signature
-        if let signature = transaction?.signature, self.transaction?.signature != transaction?.signature {
-            // subscribe
-            signatureSubsribe(signature)
-        }
-        
-        // assign new value
-        self.transaction = transaction
-        
-        // set up UI
-        if let transaction = transaction {
-            // transaction is not nil
-            showTransactionDetail(transaction)
-            if let action = viewInExplorerAction {
-                viewInExplorerButton.rx.action = action
-            }
-            
-            if let action = goBackToWalletAction {
-                goBackToWalletButton.rx.action = action
-            }
-            
-            if transaction.status != .confirmed {
-                viewInExplorerButton.isEnabled = false
-            } else {
-                viewInExplorerButton.isEnabled = true
-            }
-            
-        } else {
-            // processing
-            processing()
-        }
     }
     
     // MARK: - Modifiers
@@ -148,6 +115,9 @@ class TransactionVC: WLCenterSheet {
         stackView.setCustomSpacing(10, after: viewInExplorerButton)
         
         forceRelayout()
+        
+        // button's state
+        viewInExplorerButton.isEnabled = transaction.status == .confirmed
     }
     
     // MARK: - PresentationControllerDelegate

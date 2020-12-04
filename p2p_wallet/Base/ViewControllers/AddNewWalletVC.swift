@@ -109,26 +109,28 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
             return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: SolanaSDK.network)
                 .do(
                     afterSuccess: { signature in
-                        transactionVC.setUp(
-                            transaction: Transaction(
-                                signature: signature,
-                                amount: -viewModel.feeVM.data,
-                                symbol: "SOL",
-                                status: .processing
-                            ),
-                            viewInExplorerAction: CocoaAction {
-                                transactionVC.dismiss(animated: true) {
-                                    let vc = self.presentingViewController
-                                    self.dismiss(animated: true) {
-                                        vc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
-                                    }
+                        transactionVC.signature = signature
+                        transactionVC.viewInExplorerButton.rx.action = CocoaAction {
+                            transactionVC.dismiss(animated: true) {
+                                let vc = self.presentingViewController
+                                self.dismiss(animated: true) {
+                                    vc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
                                 }
-                                return .just(())
-                            },
-                            goBackToWalletAction: CocoaAction {
-                                transactionVC.dismiss(animated: true, completion: nil)
-                                return .just(())
-                            })
+                            }
+                            return .just(())
+                        }
+                        transactionVC.goBackToWalletButton.rx.action = CocoaAction {
+                            transactionVC.dismiss(animated: true, completion: nil)
+                            return .just(())
+                        }
+                        
+                        let transaction = Transaction(
+                            signature: signature,
+                            amount: -viewModel.feeVM.data,
+                            symbol: "SOL",
+                            status: .processing
+                        )
+                        TransactionsManager.shared.process(transaction)
                     },
                     afterError: { (error) in
                         transactionVC.dismiss(animated: true) {
