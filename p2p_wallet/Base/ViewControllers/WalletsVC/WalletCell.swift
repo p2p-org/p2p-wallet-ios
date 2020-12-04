@@ -28,7 +28,7 @@ class WalletCell: BaseCollectionViewCell, WalletCellType {
     
     func setUp(with item: Wallet) {
         coinLogoImageView.setImage(urlString: item.icon)
-        coinNameLabel.text = item.name + (item.isProcessing == true ? " (\(L10n.creating))" : "")
+        coinNameLabel.text = item.name /*+ (item.isProcessing == true ? " (\(L10n.creating))" : "")*/
         tokenCountLabel.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.symbol)"
         
         if let price = item.price {
