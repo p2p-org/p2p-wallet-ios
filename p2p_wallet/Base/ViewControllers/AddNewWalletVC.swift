@@ -96,8 +96,15 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     
     func createTokenAccountAction(newWallet: Wallet) -> CocoaAction {
         CocoaAction {
-            let transactionVC = self.presentTransactionVC()
             let viewModel = self.viewModel as! ViewModel
+            
+            if viewModel.feeVM.data > (WalletsVM.ofCurrentUser.solWallet?.amount ?? 0)
+            {
+                self.showAlert(title: L10n.error.uppercaseFirst, message: L10n.insufficientFunds)
+                return .just(())
+            }
+            
+            let transactionVC = self.presentTransactionVC()
             
             return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: SolanaSDK.network)
                 .do(
@@ -124,7 +131,9 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
                             })
                     },
                     afterError: { (error) in
-                        print(error)
+                        transactionVC.dismiss(animated: true) {
+                            self.showError(error)
+                        }
                     }
                 )
                 .map {_ in ()}
