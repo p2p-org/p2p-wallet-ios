@@ -34,7 +34,11 @@ class WalletsVM: ListViewModel<Wallet> {
         
         SolanaSDK.Socket.shared.observe(method: "accountNotification", decodedTo: SolanaSDK.Notification.Account.self)
             .subscribe(onNext: {notification in
-                
+                self.updateItem(where: {$0.symbol == "SOL"}) { wallet in
+                    var wallet = wallet
+                    wallet.lamports = notification.value.lamports
+                    return wallet
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -62,7 +66,7 @@ class WalletsVM: ListViewModel<Wallet> {
                             pubkey: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString,
                             symbol: "SOL",
                             icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png",
-                            amount: Double(balance) * 0.000000001,
+                            lamports: balance,
                             price: self.prices.first(where: {$0.from == "SOL"}),
                             decimals: 9
                         )
@@ -70,16 +74,5 @@ class WalletsVM: ListViewModel<Wallet> {
                         return wallets
                     }
             }
-    }
-    
-    func updateAmountChange(_ change: Double, forWallet pubkey: String) {
-        var items = self.items
-        if let index = items.firstIndex(where: {$0.pubkey == pubkey}) {
-            items[index].amount = items[index].amount + change
-        } else {
-            return
-        }
-        self.items = items
-        self.state.accept(.loaded(items))
     }
 }
