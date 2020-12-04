@@ -90,6 +90,8 @@ internal enum L10n {
   internal static let identifyYourself = L10n.tr("Localizable", "Identify yourself!")
   /// Insufficient funds
   internal static let insufficientFunds = L10n.tr("Localizable", "Insufficient funds")
+  /// Loading
+  internal static let loading = L10n.tr("Localizable", "Loading")
   /// Make your crypto working on you
   internal static let makeYourCryptoWorkingOnYou = L10n.tr("Localizable", "Make your crypto working on you")
   /// Max

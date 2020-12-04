@@ -32,15 +32,30 @@ class ActivityCell: BaseCollectionViewCell, CollectionCell {
     }
     
     func setUp(with item: Activity) {
-        typeLabel.text = item.type?.localizedString
-        amountLabel.text = item.amount.toString(maximumFractionDigits: 4, showPlus: true) + " US$"
+        typeLabel.text = item.type?.localizedString ?? L10n.loading + "..."
+        
+        if let amount = item.amount {
+            amountLabel.text = amount.toString(maximumFractionDigits: 4, showPlus: true) + " US$"
+        } else {
+            amountLabel.text = nil
+        }
+        
         if let timestamp = item.timestamp {
             dateLabel.text = dateFormatter.string(from: timestamp)
         } else {
             dateLabel.text = nil
         }
         
-        tokensLabel.text = item.tokens.toString(maximumFractionDigits: 9, showPlus: true) + " " + item.symbol
+        var symbol = item.symbol
+        if item.type == .createAccount {
+            symbol = "SOL"
+        }
+        if let tokens = item.tokens {
+            tokensLabel.text = tokens.toString(maximumFractionDigits: 9, showPlus: true) + " " + symbol
+        } else {
+            tokensLabel.text = nil
+        }
+        
     }
     
     var dateFormatter: DateFormatter {

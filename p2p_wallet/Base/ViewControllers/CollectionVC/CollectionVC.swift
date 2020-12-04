@@ -51,6 +51,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         }()
         var interGroupSpacing: CGFloat?
         var orthogonalScrollingBehavior: UICollectionLayoutSectionOrthogonalScrollingBehavior?
+        var itemHeight = NSCollectionLayoutDimension.estimated(100)
     }
     
     // MARK: - Properties
@@ -208,7 +209,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
     }
     
     func createLayoutForGroupOnSmallScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: sections[sectionIndex].itemHeight)
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(env.container.contentSize.width - 32), heightDimension: .estimated(200))
@@ -217,7 +218,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
     }
     
     func createLayoutForGroupOnLargeScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: sections[sectionIndex].itemHeight)
         
         let leadingItem = NSCollectionLayoutItem(layoutSize: itemSize)
         

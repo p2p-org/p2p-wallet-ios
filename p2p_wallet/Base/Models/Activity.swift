@@ -59,11 +59,19 @@ extension Activity {
                 
             }
             if bytes.count >= 12, let lamport = Array(bytes[4..<12]).toUInt64() {
-                tokens = Double(lamport) * pow(Double(10), -(Double(wallet?.decimals ?? 0)))
+                var decimals = wallet?.decimals ?? 0
+                if type == .createAccount {
+                    decimals = 9
+                }
+                
+                tokens = Double(lamport) * pow(Double(10), -(Double(decimals)))
                 
                 if [ActivityType.send, ActivityType.createAccount].contains(type) {tokens = -tokens!}
                 
-                let price = PricesManager.bonfida.prices.value.first(where: {$0.from == symbol})
+                var price = PricesManager.bonfida.prices.value.first(where: {$0.from == symbol})
+                if type == .createAccount {
+                    price = PricesManager.bonfida.solPrice
+                }
                 amount = tokens * price?.value
             }
         }
