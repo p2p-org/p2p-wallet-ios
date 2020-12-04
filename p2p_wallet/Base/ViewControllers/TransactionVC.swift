@@ -29,12 +29,11 @@ class TransactionVC: WLCenterSheet {
     
     private func signatureSubsribe(_ signature: String) {
         let socket = SolanaSDK.Socket.shared
-        socket.signatureWaitForConfirming(signature: signature)
+        socket.observeSignatureNotification(signature: signature)
             .subscribe(onCompleted: { [weak self] in
                 guard var transaction = self?.transaction else {return}
                 transaction.status = .confirmed
                 self?.setUp(transaction: transaction)
-//                transaction.
             })
             .disposed(by: disposeBag)
     }
