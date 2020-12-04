@@ -8,11 +8,13 @@
 import Foundation
 
 struct Transaction {
+    let type: Activity.ActivityType
     let signature: String // signature
     let amount: Double
     let symbol: String
     var status: Status
     var subscription: UInt64?
+    var newWallet: Wallet? // new wallet when type == .createAccount
 }
 
 extension Transaction {
