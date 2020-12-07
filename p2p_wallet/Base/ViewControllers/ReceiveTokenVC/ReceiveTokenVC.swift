@@ -56,8 +56,7 @@ class ReceiveTokenVC: WLBottomSheet {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ReceiveTokenCell.self), for: indexPath) as? ReceiveTokenCell
             cell?.setUp(wallet: item)
             cell?.copyButton.rx.action = CocoaAction {
-                UIPasteboard.general.string = item.pubkey
-                UIApplication.shared.showDone(L10n.copiedToClipboard)
+                UIApplication.shared.copyToClipboard(item.pubkey)
                 return .just(())
             }
             cell?.shareButton.rx.action = CocoaAction {

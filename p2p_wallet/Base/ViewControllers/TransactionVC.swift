@@ -73,8 +73,7 @@ class TransactionVC: WLCenterSheet {
                 copyToClipboardButton.setImage(.copyToClipboard, for: .normal)
                 copyToClipboardButton.tintColor = .textBlack
                 copyToClipboardButton.rx.action = CocoaAction {
-                    UIPasteboard.general.string = transaction.signature
-                    UIApplication.shared.showDone(L10n.copiedToClipboard)
+                    UIApplication.shared.copyToClipboard(transaction.signature)
                     return .just(())
                 }
                 return copyToClipboardButton

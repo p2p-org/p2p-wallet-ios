@@ -18,6 +18,7 @@ extension UIColor {
     static let buttonSub = UIColor(named: "buttonSub", in: bundle, compatibleWith: nil)!
     static let c4c4c4 = UIColor(named: "c4c4c4", in: bundle, compatibleWith: nil)!
     static let ededed = UIColor(named: "ededed", in: bundle, compatibleWith: nil)!
+    static let fafafa = UIColor(named: "fafafa", in: bundle, compatibleWith: nil)!
     static let lightGrayBackground = UIColor(named: "lightGrayBackground", in: bundle, compatibleWith: nil)!
     static let pinViewBgColor = UIColor(named: "pinView-bg-color", in: bundle, compatibleWith: nil)!
     static let pinViewButtonBgColor = UIColor(named: "pinView-button-bg-color", in: bundle, compatibleWith: nil)!
