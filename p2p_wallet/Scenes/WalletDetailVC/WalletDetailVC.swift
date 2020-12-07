@@ -47,4 +47,9 @@ class WalletDetailVC: CollectionVC<Activity, ActivityCell> {
         }
         return header
     }
+    
+    override func itemDidSelect(_ item: Activity) {
+        let vc = TransactionInfoVC()
+        present(vc, animated: true, completion: nil)
+    }
 }

@@ -15,13 +15,11 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     lazy var descriptionLabel = UILabel(textSize: 15, textColor: .secondary, numberOfLines: 0)
         .onTap(self, action: #selector(labelDescriptionDidTouch))
     
-    init(showInFullScreen: Bool = false) {
+    init() {
         let viewModel = ViewModel()
         super.init(viewModel: viewModel)
-        if !showInFullScreen {
-            modalPresentationStyle = .custom
-            transitioningDelegate = self
-        }
+        modalPresentationStyle = .custom
+        transitioningDelegate = self
     }
     
     required init?(coder: NSCoder) {
