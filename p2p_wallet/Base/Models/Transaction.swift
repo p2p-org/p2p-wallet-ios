@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Transaction: Hashable {
+struct Transaction: Hashable, FiatConvertable {
     var id: String { signatureInfo?.signature ?? UUID().uuidString }
     let signatureInfo: SolanaSDK.Transaction.SignatureInfo?
     var signature: String? {signatureInfo?.signature}
@@ -19,10 +19,6 @@ struct Transaction: Hashable {
     var status: Status
     var subscription: UInt64?
     var newWallet: Wallet? // new wallet when type == .createAccount
-    
-    var amountInUSD: Double {
-        amount * PricesManager.bonfida.prices.value.first(where: {$0.from == symbol})?.value
-    }
 }
 
 extension Transaction {
