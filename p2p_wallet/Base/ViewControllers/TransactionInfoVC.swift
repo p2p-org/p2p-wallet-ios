@@ -70,7 +70,7 @@ class TransactionInfoVC: BaseVStackVC {
                 .padding(.init(x: 20, y: 0)),
             UIView.row([
                 UILabel(text: transaction.status.localizedString, textSize: 12, weight: .bold, textColor: .secondary)
-                    .padding(.init(x: 16, y: 8), backgroundColor: .f4f4f4, cornerRadius: 10),
+                    .padding(.init(x: 16, y: 8), backgroundColor: .buttonSub, cornerRadius: 10),
                 .spacer
             ])
                 .with(distribution: .fill)
