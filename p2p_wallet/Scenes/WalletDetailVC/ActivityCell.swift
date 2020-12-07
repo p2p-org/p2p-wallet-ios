@@ -34,7 +34,10 @@ class ActivityCell: BaseCollectionViewCell, CollectionCell {
     func setUp(with item: Activity) {
         typeLabel.text = item.transaction.type?.localizedString ?? L10n.loading + "..."
         
-        let amount = item.transaction.amountInUSD
+        var amount = item.transaction.amountInUSD
+        if item.transaction.type == .createAccount {
+            amount = item.transaction.amount * PricesManager.bonfida.solPrice?.value
+        }
         amountLabel.text = amount.toString(maximumFractionDigits: 4, showPlus: true) + " US$"
         
         if let timestamp = item.transaction.timestamp {
