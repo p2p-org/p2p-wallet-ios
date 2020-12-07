@@ -26,7 +26,7 @@ class ActivityCell: BaseCollectionViewCell, CollectionCell {
                     .row([typeLabel, amountLabel]),
                     .row([dateLabel, tokensLabel])
                 ])
-                    .with(spacing: 5, alignment: .fill, distribution: .fill)
+                    .with(spacing: 5)
             ], padding: .init(all: 16))
             .with(distribution: .fill)
     }

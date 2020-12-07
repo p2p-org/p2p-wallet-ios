@@ -74,6 +74,8 @@ internal enum L10n {
   internal static let exploreDeFi = L10n.tr("Localizable", "Explore  DeFi")
   /// Explore Wowlet and deposit funds when you’re ready
   internal static let exploreWowletAndDepositFundsWhenYouReReady = L10n.tr("Localizable", "Explore Wowlet and deposit funds when you’re ready")
+  /// Fee
+  internal static let fee = L10n.tr("Localizable", "Fee")
   /// Finish setup
   internal static let finishSetup = L10n.tr("Localizable", "Finish setup")
   /// From
@@ -176,6 +178,8 @@ internal enum L10n {
   internal static let swapNow = L10n.tr("Localizable", "Swap now")
   /// Tap button to retry!
   internal static let tapButtonToRetry = L10n.tr("Localizable", "Tap button to retry!")
+  /// Tap here to retry
+  internal static let tapHereToRetry = L10n.tr("Localizable", "Tap here to retry")
   /// tap refresh button to retry
   internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
   /// Terms and conditions

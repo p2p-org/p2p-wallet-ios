@@ -39,6 +39,9 @@ class SendTokenItemVC: BaseVC {
     
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
+    lazy var feeLabel = UILabel(textSize: 15)
+        .onTap(self, action: #selector(labelFeeDidTouch))
+    
     // MARK: - Methods
     override func setUp() {
         super.setUp()
@@ -76,6 +79,17 @@ class SendTokenItemVC: BaseVC {
         
         let separator = UIView.separator(height: 2, color: .vcBackground)
         
+        let priceWrapper = UIView.col([
+            .row([
+                UILabel(text: "1 " + (wallet?.symbol ?? "") + ":", textSize: 15),
+                UILabel(text: (wallet?.price?.value?.toString(maximumFractionDigits: 9) ?? "") + "US$", textSize: 15)
+            ]),
+            .row([
+                UILabel(text: L10n.fee + ":", textSize: 15),
+                feeLabel
+            ])
+        ])
+        
         let addressView: UIStackView = {
             let stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
             let containerView: UIView = {
@@ -93,17 +107,23 @@ class SendTokenItemVC: BaseVC {
             return stackView
         }()
         
+        let separator2 = UIView.separator(height: 2, color: .vcBackground)
+        
         stackView.addArrangedSubviews([
             .spacer,
             tokenInfoView.padding(UIEdgeInsets(x: 16, y: 0)),
             amountView.padding(UIEdgeInsets(x: 16, y: 0)),
             separator,
+            priceWrapper.padding(UIEdgeInsets(x: 16, y: 0)),
+            separator2,
             addressView.padding(UIEdgeInsets(x: 16, y: 0)),
             errorLabel.padding(UIEdgeInsets(x: 16, y: 0)),
             .spacer
         ])
         stackView.setCustomSpacing(16, after: tokenInfoView.wrapper!)
-        stackView.setCustomSpacing(30, after: separator)
+        stackView.setCustomSpacing(16, after: separator)
+        stackView.setCustomSpacing(16, after: priceWrapper)
+        stackView.setCustomSpacing(30, after: separator2)
         stackView.setCustomSpacing(16, after: addressView)
         
         errorLabel.isHidden = true
@@ -114,7 +134,7 @@ class SendTokenItemVC: BaseVC {
     func setUp(wallet: Wallet) {
         self.wallet = wallet
         tokenNameLabel.text = wallet.name
-        balanceLabel.text = "\(wallet.amount.toString(maximumFractionDigits: 9) ?? "") \(wallet.symbol)"
+        balanceLabel.text = "\(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
         coinImageView.setImage(urlString: wallet.icon)
     }
     
@@ -123,7 +143,7 @@ class SendTokenItemVC: BaseVC {
         amountTextField.rx.text.orEmpty
             .map {$0.double ?? 0}
             .map {$0 * self.wallet?.price?.value}
-            .map {"= " + $0.toString(maximumFractionDigits: 9) + " US$"}
+            .map {"= " + $0.toString(maximumFractionDigits: 9) + "  US$"}
             .asDriver(onErrorJustReturn: "")
             .drive(equityValueLabel.rx.text)
             .disposed(by: disposeBag)
@@ -132,6 +152,24 @@ class SendTokenItemVC: BaseVC {
             .skip(1)
             .subscribe(onNext: {(amount, address) in
                 self.validate(amount: amount, address: address)
+            })
+            .disposed(by: disposeBag)
+        
+        FeeVM.shared.state
+            .subscribe(onNext: {[weak self] state in
+                self?.feeLabel.isUserInteractionEnabled = false
+                self?.feeLabel.textColor = .textBlack
+                
+                switch state {
+                case .loading, .initializing:
+                    self?.feeLabel.text = L10n.loading + "..."
+                case .loaded(let fee):
+                    self?.feeLabel.text = fee.toString(maximumFractionDigits: 9) + " SOL"
+                case .error:
+                    self?.feeLabel.isUserInteractionEnabled = true
+                    self?.feeLabel.textColor = .red
+                    self?.feeLabel.text = L10n.error.uppercaseFirst + L10n.tapHereToRetry
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -181,6 +219,10 @@ class SendTokenItemVC: BaseVC {
     
     @objc func buttonChooseWalletDidTouch() {
         chooseWalletAction?.execute()
+    }
+    
+    @objc func labelFeeDidTouch() {
+        FeeVM.shared.reload()
     }
 }
 
