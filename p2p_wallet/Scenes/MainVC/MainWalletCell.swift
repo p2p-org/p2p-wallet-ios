@@ -21,9 +21,13 @@ class MainWalletCell: WalletCell {
         contentView.layer.masksToBounds = true
         
         coinPriceLabel.font = .boldSystemFont(ofSize: 15)
+        coinPriceLabel.setContentHuggingPriority(.required, for: .horizontal)
+        tokenCountLabel.setContentHuggingPriority(.required, for: .horizontal)
         let vStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            row(arrangedSubviews: [coinNameLabel, coinPriceLabel]),
+            row(arrangedSubviews: [coinNameLabel, coinPriceLabel])
+                .with(distribution: .fill),
             row(arrangedSubviews: [addressLabel, tokenCountLabel])
+                .with(distribution: .fill)
         ])
         
         stackView.alignment = .center
