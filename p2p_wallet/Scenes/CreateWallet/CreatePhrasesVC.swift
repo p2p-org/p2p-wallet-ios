@@ -170,8 +170,7 @@ class CreatePhrasesVC: PhrasesVC {
     
     // MARK: - Actions
     @objc func buttonCopyToClipboardDidTouch() {
-        UIPasteboard.general.string = phrases.value.joined(separator: " ")
-        UIApplication.shared.showDone(L10n.copiedToClipboard)
+        UIApplication.shared.copyToClipboard(phrases.value.joined(separator: " "))
     }
     
     @objc func buttonSaveToKeychainDidTouch() {

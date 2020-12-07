@@ -78,13 +78,17 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     }
     
     override var sections: [Section] {
-        [Section(headerTitle: "")]
+        [Section(headerTitle: "", contentInsets: .init(top: 0, leading: 0, bottom: 0, trailing: 0))]
     }
     
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: Wallet) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         if let cell = cell as? Cell {
             cell.addButton.rx.action = self.createTokenAccountAction(newWallet: item)
+            cell.copyToClipboardButton.rx.action = CocoaAction {
+                UIApplication.shared.copyToClipboard(item.mintAddress)
+                return .just(())
+            }
         }
         return cell
     }
@@ -146,6 +150,14 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
                 .map {_ in ()}
                 .asObservable()
         }
+    }
+    
+    override func itemDidSelect(_ item: Wallet) {
+        viewModel.updateItem(where: {item.mintAddress == $0.mintAddress}, transform: {
+            var wallet = $0
+            wallet.isExpanded = !(wallet.isExpanded ?? false)
+            return wallet
+        })
     }
 }
 
@@ -210,6 +222,23 @@ extension AddNewWalletVC {
     class Cell: WalletCell {
         lazy var addButton = UIButton(width: 32, height: 32, backgroundColor: .ededed, cornerRadius: 16, label: "+", labelFont: .systemFont(ofSize: 20), textColor: UIColor.black.withAlphaComponent(0.5))
         lazy var symbolLabel = UILabel(text: "SER", textSize: 17, weight: .bold)
+        lazy var mintAddressWrapper = UIStackView(axis: .horizontal, spacing: 35, alignment: .center, distribution: .fill, arrangedSubviews: [
+            UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
+                UILabel(text: L10n.mintAddress, textSize: 12, textColor: .secondary),
+                mintAddressLabel
+            ]),
+            copyToClipboardButton
+        ])
+        lazy var mintAddressLabel = UILabel(textSize: 12)
+        lazy var copyToClipboardButton: UIButton = {
+            let button = UIButton(width: 32, height: 32, backgroundColor: .ededed, cornerRadius: 16)
+            let image = UIImage.copyToClipboard
+                .withRenderingMode(.alwaysTemplate)
+            button.setImage(.copyToClipboard, for: .normal)
+            button.tintColor = .textBlack
+            button.contentEdgeInsets = .init(all: 6)
+            return button
+        }()
         
         override func commonInit() {
             super.commonInit()
@@ -225,20 +254,25 @@ extension AddNewWalletVC {
             
             coinChangeLabel.font = .systemFont(ofSize: 12, weight: .medium)
             
-            stackView.alignment = .center
+            stackView.axis = .vertical
+            stackView.alignment = .fill
+            stackView.distribution = .fill
             stackView.addArrangedSubviews([
-                coinLogoImageView,
-                UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
-                        symbolLabel,
-                        coinPriceLabel
+                UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
+                    coinLogoImageView,
+                    UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
+                        UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
+                            symbolLabel,
+                            coinPriceLabel
+                        ]),
+                        UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
+                            coinNameLabel,
+                            coinChangeLabel
+                        ])
                     ]),
-                    UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
-                        coinNameLabel,
-                        coinChangeLabel
-                    ])
+                    addButton
                 ]),
-                addButton
+                mintAddressWrapper
             ])
             
             stackView.constraintToSuperviewWithAttribute(.bottom)?.isActive = false
@@ -251,6 +285,9 @@ extension AddNewWalletVC {
         override func setUp(with item: Wallet) {
             super.setUp(with: item)
             symbolLabel.text = item.symbol
+            mintAddressWrapper.isHidden = !(item.isExpanded ?? false)
+            mintAddressLabel.text = item.mintAddress
+            contentView.backgroundColor = item.isExpanded == true ? .fafafa : .clear
         }
     }
 }

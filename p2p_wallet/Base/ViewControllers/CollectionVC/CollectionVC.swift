@@ -52,6 +52,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         var interGroupSpacing: CGFloat?
         var orthogonalScrollingBehavior: UICollectionLayoutSectionOrthogonalScrollingBehavior?
         var itemHeight = NSCollectionLayoutDimension.estimated(100)
+        var contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
     }
     
     // MARK: - Properties
@@ -181,7 +182,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         }
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+        section.contentInsets = sections[sectionIndex].contentInsets
         
         var supplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
         if !sections[sectionIndex].headerTitle.isEmpty,
@@ -209,22 +210,26 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
     }
     
     func createLayoutForGroupOnSmallScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: sections[sectionIndex].itemHeight)
+        let sectionInfo = sections[sectionIndex]
+        
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: sectionInfo.itemHeight)
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(env.container.contentSize.width - 32), heightDimension: .estimated(200))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(env.container.contentSize.width - sectionInfo.contentInsets.leading - sectionInfo.contentInsets.trailing), heightDimension: .estimated(200))
         
         return NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     }
     
     func createLayoutForGroupOnLargeScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: sections[sectionIndex].itemHeight)
+        let sectionInfo = sections[sectionIndex]
+        
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: sectionInfo.itemHeight)
         
         let leadingItem = NSCollectionLayoutItem(layoutSize: itemSize)
         
         let trailingItem = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute((env.container.contentSize.width - 32 - 16)/2), heightDimension: .estimated(300))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute((env.container.contentSize.width - sectionInfo.contentInsets.leading - sectionInfo.contentInsets.trailing - 16)/2), heightDimension: .estimated(300))
         
         let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [leadingItem])
         
