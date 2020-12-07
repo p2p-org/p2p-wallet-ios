@@ -8,7 +8,7 @@
 import Foundation
 
 // wrapper of 
-struct Wallet {
+struct Wallet: FiatConvertable {
     let id: String
     let name: String
     let mintAddress: String
@@ -22,12 +22,8 @@ struct Wallet {
     // MARK: - Additional properties
     var isExpanded: Bool?
     var isProcessing: Bool?
-    var amount: Double {
+    var amount: Double? {
         Double(lamports ?? 0) * pow(10, -Double(decimals ?? 0))
-    }
-    
-    var amountInUSD: Double {
-        amount * PricesManager.bonfida.prices.value.first(where: {$0.from == symbol})?.value
     }
 }
 
