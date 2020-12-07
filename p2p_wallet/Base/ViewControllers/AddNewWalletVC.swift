@@ -108,7 +108,7 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
                 return .just(())
             }
             
-            let transactionVC = self.presentTransactionVC()
+            let transactionVC = self.presentProcessTransactionVC()
             
             return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: SolanaSDK.network)
                 .do(
