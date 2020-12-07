@@ -7,14 +7,22 @@
 
 import Foundation
 
-struct Transaction {
-    let type: Activity.ActivityType
-    let signature: String // signature
-    let amount: Double
+struct Transaction: Hashable {
+    var id: String { signatureInfo?.signature ?? UUID().uuidString }
+    let signatureInfo: SolanaSDK.Transaction.SignatureInfo?
+    var signature: String? {signatureInfo?.signature}
+    
+    var type: TransactionType?
+    var amount: Double?
     let symbol: String
+    var timestamp: Date?
     var status: Status
     var subscription: UInt64?
     var newWallet: Wallet? // new wallet when type == .createAccount
+    
+    var amountInUSD: Double {
+        amount * PricesManager.bonfida.prices.value.first(where: {$0.from == symbol})?.value
+    }
 }
 
 extension Transaction {
@@ -26,6 +34,20 @@ extension Transaction {
                 return L10n.processing
             case .confirmed:
                 return L10n.confirmed
+            }
+        }
+    }
+    
+    enum TransactionType: String {
+        case send, receive, createAccount
+        var localizedString: String {
+            switch self {
+            case .send:
+                return L10n.sendTokens
+            case .receive:
+                return L10n.receiveTokens
+            case .createAccount:
+                return L10n.addWallet
             }
         }
     }
