@@ -142,7 +142,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
             return
         }
         
-        let transactionVC = presentTransactionVC()
+        let transactionVC = presentProcessTransactionVC()
         
         // prepare amount
         let amountToSend = amount * pow(10, Double(vc.wallet?.decimals ?? 0))

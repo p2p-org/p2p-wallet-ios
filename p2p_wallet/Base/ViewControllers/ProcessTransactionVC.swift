@@ -1,5 +1,5 @@
 //
-//  TransactionVC.swift
+//  ProcessTransactionVC.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 27/11/2020.
@@ -8,7 +8,7 @@
 import Foundation
 import Action
 
-class TransactionVC: WLCenterSheet {
+class ProcessTransactionVC: WLCenterSheet {
     override var padding: UIEdgeInsets {UIEdgeInsets(top: 30, left: 20, bottom: 30, right: 20)}
     
     // MARK: - Properties

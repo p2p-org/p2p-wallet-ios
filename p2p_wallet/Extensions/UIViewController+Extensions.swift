@@ -95,8 +95,8 @@ extension UIViewController {
         }
     }
     
-    func presentTransactionVC() -> TransactionVC {
-        let transactionVC = TransactionVC()
+    func presentProcessTransactionVC() -> ProcessTransactionVC {
+        let transactionVC = ProcessTransactionVC()
         present(transactionVC, animated: true, completion: nil)
         return transactionVC
     }
