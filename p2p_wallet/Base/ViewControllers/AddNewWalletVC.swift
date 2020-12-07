@@ -233,7 +233,7 @@ extension AddNewWalletVC {
             let image = UIImage.copyToClipboard
                 .withRenderingMode(.alwaysTemplate)
             button.setImage(.copyToClipboard, for: .normal)
-            button.tintColor = .textBlack
+            button.tintColor = .black
             button.contentEdgeInsets = .init(all: 6)
             return button
         }()
@@ -285,7 +285,7 @@ extension AddNewWalletVC {
             symbolLabel.text = item.symbol
             mintAddressWrapper.isHidden = !(item.isExpanded ?? false)
             mintAddressLabel.text = item.mintAddress
-            contentView.backgroundColor = item.isExpanded == true ? .fafafa : .clear
+            contentView.backgroundColor = item.isExpanded == true ? .buttonSub : .clear
         }
     }
 }
