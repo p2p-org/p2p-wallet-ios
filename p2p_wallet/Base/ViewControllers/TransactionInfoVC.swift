@@ -9,7 +9,7 @@ import Foundation
 
 class TransactionInfoVC: BaseVStackVC {
     // MARK: - Properties
-    override var padding: UIEdgeInsets {.zero}
+    override var padding: UIEdgeInsets {.init(top: 0, left: 0, bottom: 20, right: 0)}
     let transaction: Transaction
     
     // MARK: - Initializers
@@ -106,7 +106,7 @@ class TransactionInfoVC: BaseVStackVC {
                 UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .textBlack)
                     .onTap(self, action: #selector(buttonCopyFromPubkeyDidTouch))
             ])
-                .with(distribution: .fill)
+                .with(spacing: 16, distribution: .fill)
                 .padding(.init(x: 20, y: 0)),
             
             separator(),
@@ -118,9 +118,15 @@ class TransactionInfoVC: BaseVStackVC {
                 UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .textBlack)
                     .onTap(self, action: #selector(buttonCopyToPubkeyDidTouch))
             ])
-                .with(distribution: .fill)
+                .with(spacing: 16, distribution: .fill)
+                .padding(.init(x: 20, y: 0)),
+            
+            separator(),
+            
+            WLButton.stepButton(type: .sub, label: L10n.viewInBlockchainExplorer)
+                .onTap(self, action: #selector(buttonViewInExplorerDidTouch))
                 .padding(.init(x: 20, y: 0))
-        ], withCustomSpacings: [])
+        ], withCustomSpacings: [16, 30, 20, 10, 20, 20, 10, 20, 20, 10, 20, 20, 16, 20, 20, 16, 20, 30])
     }
     
     // MARK: - Actions
@@ -136,6 +142,11 @@ class TransactionInfoVC: BaseVStackVC {
     @objc func buttonCopyToPubkeyDidTouch() {
         guard let string = transaction.to else {return}
         UIApplication.shared.copyToClipboard(string)
+    }
+    
+    @objc func buttonViewInExplorerDidTouch() {
+        guard let signature = transaction.signature else {return}
+        showWebsite(url: "https://explorer.solana.com/tx/" + signature)
     }
     
     // MARK: - View builders
