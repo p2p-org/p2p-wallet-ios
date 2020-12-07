@@ -62,4 +62,9 @@ extension UIApplication {
             }
         }
     }
+    
+    func copyToClipboard(_ text: String?) {
+        UIPasteboard.general.string = text
+        showDone(L10n.copiedToClipboard)
+    }
 }
