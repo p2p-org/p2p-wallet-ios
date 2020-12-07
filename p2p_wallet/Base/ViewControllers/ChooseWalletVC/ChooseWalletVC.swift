@@ -9,7 +9,7 @@ import Foundation
 
 class ChooseWalletVC: MyWalletsVC<ChooseWalletVC.Cell> {
     lazy var titleLabel = UILabel(text: L10n.yourWallets, textSize: 17, weight: .semibold)
-    lazy var closeButton = UIButton.close(tintColor: .textBlack)
+    lazy var closeButton = UIButton.close()
         .onTap(self, action: #selector(back))
     
     var completion: ((Wallet) -> Void)?

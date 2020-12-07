@@ -18,6 +18,7 @@ extension UIColor {
     static let buttonSub = UIColor(named: "buttonSub", in: bundle, compatibleWith: nil)!
     static let c4c4c4 = UIColor(named: "c4c4c4", in: bundle, compatibleWith: nil)!
     static let ededed = UIColor(named: "ededed", in: bundle, compatibleWith: nil)!
+    static let f4f4f4 = UIColor(named: "f4f4f4", in: bundle, compatibleWith: nil)!
     static let fafafa = UIColor(named: "fafafa", in: bundle, compatibleWith: nil)!
     static let lightGrayBackground = UIColor(named: "lightGrayBackground", in: bundle, compatibleWith: nil)!
     static let pinViewBgColor = UIColor(named: "pinView-bg-color", in: bundle, compatibleWith: nil)!
@@ -46,6 +47,7 @@ extension UIImage {
     static let tabbarThunderbolt = UIImage(named: "tabbar-thunderbolt", in: bundle, compatibleWith: nil)!
     static let tabbarWallet = UIImage(named: "tabbar-wallet", in: bundle, compatibleWith: nil)!
     static let touchId = UIImage(named: "touchId", in: bundle, compatibleWith: nil)!
+    static let transactionInfoIcon = UIImage(named: "transaction-info-icon", in: bundle, compatibleWith: nil)!
     static let walletIntro = UIImage(named: "wallet-intro", in: bundle, compatibleWith: nil)!
 }
 

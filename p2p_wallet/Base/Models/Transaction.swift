@@ -11,8 +11,12 @@ struct Transaction: Hashable, FiatConvertable {
     var id: String { signatureInfo?.signature ?? UUID().uuidString }
     let signatureInfo: SolanaSDK.Transaction.SignatureInfo?
     var signature: String? {signatureInfo?.signature}
+    var slot: UInt64?
+    var fee: Double?
     
     var type: TransactionType?
+    var from: String?
+    var to: String?
     var amount: Double?
     let symbol: String
     var timestamp: Date?

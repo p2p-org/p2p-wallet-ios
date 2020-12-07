@@ -13,7 +13,10 @@ protocol FiatConvertable {
 }
 
 extension FiatConvertable {
+    var priceInUSD: Double? {
+        PricesManager.bonfida.prices.value.first(where: {$0.from == symbol})?.value
+    }
     var amountInUSD: Double {
-        amount * PricesManager.bonfida.prices.value.first(where: {$0.from == symbol})?.value
+        amount * priceInUSD
     }
 }
