@@ -49,7 +49,7 @@ class WalletDetailVC: CollectionVC<Activity, ActivityCell> {
     }
     
     override func itemDidSelect(_ item: Activity) {
-        let vc = TransactionInfoVC()
+        let vc = TransactionInfoVC(transaction: item.transaction)
         present(vc, animated: true, completion: nil)
     }
 }

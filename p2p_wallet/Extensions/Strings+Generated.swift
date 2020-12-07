@@ -26,6 +26,8 @@ internal enum L10n {
   internal static let authenticationFailed = L10n.tr("Localizable", "Authentication failed")
   /// Backup
   internal static let backup = L10n.tr("Localizable", "Backup")
+  /// Block number
+  internal static let blockNumber = L10n.tr("Localizable", "Block number")
   /// By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy
   internal static let byTappingAcceptYouAgreeToP2PWalletSTermsOfUseAndPrivacyPolicy = L10n.tr("Localizable", "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy")
   /// Cancel
@@ -194,6 +196,8 @@ internal enum L10n {
   internal static let to = L10n.tr("Localizable", "To")
   /// Token sent!
   internal static let tokenSent = L10n.tr("Localizable", "Token sent!")
+  /// Transaction
+  internal static let transaction = L10n.tr("Localizable", "Transaction")
   /// Transaction ID
   internal static let transactionID = L10n.tr("Localizable", "Transaction ID")
   /// Try again

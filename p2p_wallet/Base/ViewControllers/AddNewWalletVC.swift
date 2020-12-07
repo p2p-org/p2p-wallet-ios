@@ -10,7 +10,7 @@ import Action
 
 class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     lazy var titleLabel = UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
-    lazy var closeButton = UIButton.close(tintColor: .textBlack)
+    lazy var closeButton = UIButton.close()
         .onTap(self, action: #selector(back))
     lazy var descriptionLabel = UILabel(textSize: 15, textColor: .secondary, numberOfLines: 0)
         .onTap(self, action: #selector(labelDescriptionDidTouch))
