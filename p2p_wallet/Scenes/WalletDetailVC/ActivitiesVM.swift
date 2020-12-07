@@ -32,7 +32,7 @@ class ActivitiesVM: ListViewModel<Activity> {
                 SolanaSDK.shared.getConfirmedTransaction(transactionSignature: signature)
                     .subscribe(onSuccess: {[weak self] transaction in
                         guard let self = self else {return}
-                        self.updateItem(where: {$0.info?.signature == signature}, transform: {
+                        self.updateItem(where: {$0.transaction.signature == signature}, transform: {
                             var newItem = $0
                             newItem.withConfirmedTransaction(transaction)
                             return newItem
@@ -41,9 +41,9 @@ class ActivitiesVM: ListViewModel<Activity> {
                             SolanaSDK.shared.getBlockTime(block: slot)
                                 .subscribe(onSuccess: {[weak self] timestamp in
                                     guard let self = self else {return}
-                                    self.updateItem(where: {$0.info?.signature == signature}, transform: {
+                                    self.updateItem(where: {$0.transaction.signature == signature}, transform: {
                                         var activity = $0
-                                        activity.timestamp = timestamp
+                                        activity.transaction.timestamp = timestamp
                                         return activity
                                     })
                                 }, onError: {error in
@@ -60,7 +60,15 @@ class ActivitiesVM: ListViewModel<Activity> {
             
         })
         .map {
-            $0.compactMap {Activity(id: $0.signature, type: nil, amount: nil, tokens: nil, symbol: self.wallet.symbol, timestamp: nil, info: $0)}
+            $0.compactMap {
+                Activity(
+                    transaction: Transaction(
+                        signatureInfo: $0,
+                        symbol: self.wallet.symbol,
+                        status: .confirmed
+                    )
+                )
+            }
         }
     }
 }

@@ -17,10 +17,10 @@ struct TransactionsManager {
     private init() {}
     
     func process(_ transaction: Transaction) {
-        guard transaction.status != .confirmed else {return}
-        transactions.insert(transaction, where: {$0.signature == transaction.signature}, shouldUpdate: true)
+        guard transaction.status != .confirmed, let signature = transaction.signature else {return}
+        transactions.insert(transaction, where: {$0.signature == signature}, shouldUpdate: true)
         let socket = SolanaSDK.Socket.shared
-        socket.observeSignatureNotification(signature: transaction.signature)
+        socket.observeSignatureNotification(signature: signature)
             .subscribe(onCompleted: {
                 var transaction = transaction
                 transaction.status = .confirmed

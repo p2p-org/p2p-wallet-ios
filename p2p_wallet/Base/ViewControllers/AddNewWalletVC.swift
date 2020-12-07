@@ -130,8 +130,8 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
                         newWallet.pubkey = newPubkey
                         newWallet.isProcessing = true
                         let transaction = Transaction(
+                            signatureInfo: .init(signature: signature),
                             type: .createAccount,
-                            signature: signature,
                             amount: -viewModel.feeVM.data,
                             symbol: "SOL",
                             status: .processing,

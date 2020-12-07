@@ -8,30 +8,11 @@
 import Foundation
 
 struct Activity {
-    let id: String
-    var type: ActivityType?
-    var amount: Double?
-    var tokens: Double?
-    let symbol: String
-    var timestamp: Date?
-    let info: SolanaSDK.Transaction.SignatureInfo?
+    var id: String { transaction.id }
+    var transaction: Transaction
 }
 
 extension Activity {
-    enum ActivityType: String {
-        case send, receive, createAccount
-        var localizedString: String {
-            switch self {
-            case .send:
-                return L10n.sendTokens
-            case .receive:
-                return L10n.receiveTokens
-            case .createAccount:
-                return L10n.addWallet
-            }
-        }
-    }
-    
     mutating func withConfirmedTransaction(_ confirmedTransaction: SolanaSDK.Transaction.Info)
     {
         let message = confirmedTransaction.transaction.message
@@ -40,18 +21,18 @@ extension Activity {
            let dataString = instruction.data
         {
             let bytes = Base58.decode(dataString)
-            let wallet = WalletsVM.ofCurrentUser.data.first(where: {$0.symbol == symbol})
+            let wallet = WalletsVM.ofCurrentUser.data.first(where: {$0.symbol == transaction.symbol})
             
             if bytes.count >= 4 {
                 let typeIndex = bytes.toUInt32()
                 switch typeIndex {
                 case 0:
-                    type = .createAccount
+                    transaction.type = .createAccount
                 case 2:
                     if message.accountKeys.first?.publicKey == SolanaSDK.shared.accountStorage.account?.publicKey {
-                        type = .send
+                        transaction.type = .send
                     } else {
-                        type = .receive
+                        transaction.type = .receive
                     }
                 default:
                     break
@@ -60,19 +41,13 @@ extension Activity {
             }
             if bytes.count >= 12, let lamport = Array(bytes[4..<12]).toUInt64() {
                 var decimals = wallet?.decimals ?? 0
-                if type == .createAccount {
+                if transaction.type == .createAccount {
                     decimals = 9
                 }
                 
-                tokens = Double(lamport) * pow(Double(10), -(Double(decimals)))
+                transaction.amount = Double(lamport) * pow(Double(10), -(Double(decimals)))
                 
-                if [ActivityType.send, ActivityType.createAccount].contains(type) {tokens = -tokens!}
-                
-                var price = PricesManager.bonfida.prices.value.first(where: {$0.from == symbol})
-                if type == .createAccount {
-                    price = PricesManager.bonfida.solPrice
-                }
-                amount = tokens * price?.value
+                if [Transaction.TransactionType.send, Transaction.TransactionType.createAccount].contains(transaction.type) {transaction.amount = -transaction.amount!}
             }
         }
     }
@@ -80,6 +55,6 @@ extension Activity {
 
 extension Activity: ListItemType {
     static func placeholder(at index: Int) -> Activity {
-        Activity(id: placeholderId(at: index), type: .receive, amount: 0.12, tokens: 0.12, symbol: "SOL#\(index)", timestamp: Date(), info: nil)
+        Activity(transaction: Transaction(signatureInfo: .init(signature: placeholderId(at: index)), type: .createAccount, amount: Double(index), symbol: "SOL", timestamp: Date(), status: .confirmed, subscription: nil, newWallet: nil))
     }
 }
