@@ -24,6 +24,7 @@ class BaseVM<T: Hashable> {
     @discardableResult
     func reload() -> Bool {
         if state.value == .loading {return false}
+        state.accept(.loading)
         return true
     }
     

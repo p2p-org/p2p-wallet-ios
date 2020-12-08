@@ -39,8 +39,7 @@ class SendTokenItemVC: BaseVC {
     
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
-    lazy var feeLabel = UILabel(textSize: 15)
-        .onTap(self, action: #selector(labelFeeDidTouch))
+    lazy var feeLabel = LazyLabel<Double>(textSize: 15)
     
     // MARK: - Methods
     override func setUp() {
@@ -155,22 +154,10 @@ class SendTokenItemVC: BaseVC {
             })
             .disposed(by: disposeBag)
         
-        FeeVM.shared.state
-            .subscribe(onNext: {[weak self] state in
-                self?.feeLabel.isUserInteractionEnabled = false
-                self?.feeLabel.textColor = .textBlack
-                
-                switch state {
-                case .loading, .initializing:
-                    self?.feeLabel.text = L10n.loading + "..."
-                case .loaded(let fee):
-                    self?.feeLabel.text = fee.toString(maximumFractionDigits: 9) + " SOL"
-                case .error:
-                    self?.feeLabel.isUserInteractionEnabled = true
-                    self?.feeLabel.textColor = .red
-                    self?.feeLabel.text = L10n.error.uppercaseFirst + L10n.tapHereToRetry
-                }
-            })
+        feeLabel
+            .subscribed(to: FeeVM.shared) {
+                $0.toString(maximumFractionDigits: 9) + " SOL"
+            }
             .disposed(by: disposeBag)
     }
     
@@ -219,10 +206,6 @@ class SendTokenItemVC: BaseVC {
     
     @objc func buttonChooseWalletDidTouch() {
         chooseWalletAction?.execute()
-    }
-    
-    @objc func labelFeeDidTouch() {
-        FeeVM.shared.reload()
     }
 }
 
