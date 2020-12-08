@@ -8,14 +8,14 @@
 import Foundation
 import DiffableDataSources
 
-class WalletDetailVC: CollectionVC<Activity, ActivityCell> {
+class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(backgroundColor: .vcBackground) }
     let wallet: Wallet
     
     // MARK: - Initializer
     init(wallet: Wallet) {
         self.wallet = wallet
-        super.init(viewModel: ActivitiesVM(wallet: wallet))
+        super.init(viewModel: WalletTransactionsVM(wallet: wallet))
     }
     
     required init?(coder: NSCoder) {
@@ -48,8 +48,8 @@ class WalletDetailVC: CollectionVC<Activity, ActivityCell> {
         return header
     }
     
-    override func itemDidSelect(_ item: Activity) {
-        let vc = TransactionInfoVC(transaction: item.transaction)
+    override func itemDidSelect(_ item: Transaction) {
+        let vc = TransactionInfoVC(transaction: item)
         present(vc, animated: true, completion: nil)
     }
 }
