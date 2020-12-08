@@ -26,7 +26,7 @@ class LazyLabel<T: Hashable & CustomStringConvertible>: UILabel {
                     self?.text = stringBuilder?(value) ?? "\(value)"
                 case .error:
                     self?.textColor = .red
-                    self?.text = L10n.error.uppercaseFirst
+                    self?.text = L10n.error.uppercaseFirst + ". " +  L10n.retry + "?"
                 }
             })
     }
