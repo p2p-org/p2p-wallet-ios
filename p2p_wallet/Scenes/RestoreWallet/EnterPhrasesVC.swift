@@ -81,21 +81,8 @@ extension EnterPhrasesVC: UITextViewDelegate {
             let text = textView.text as NSString
             let range = text.range(of: phrase)
             
-            let count = getPhrasesInTextView().count
-            
-            // replace phrase's range by attachment that is a uilabel
-            let label = UILabel(text: "\(count + 1). " + phrase, textSize: 15)
-                .padding(.init(x: 10, y: 6), backgroundColor: .textWhite, cornerRadius: 5)
-            label.layer.borderWidth = 1
-            label.layer.borderColor = UIColor.textBlack.cgColor
-            label.translatesAutoresizingMaskIntoConstraints = true
-            
-            // replace text by attachment
-            let attachment = Attachment(view: label)
-            attachment.phrase = phrase
-            let attrString = NSMutableAttributedString(attachment: attachment)
-            attrString.addAttributes(textView.typingAttributes, range: NSRange(location: 0, length: attrString.length))
-            textView.textStorage.replaceCharacters(in: range, with: attrString)
+            // add attachment
+            textView.textStorage.replaceCharacters(in: range, with: attachment(phrase: phrase))
             
             // diff of length, length become 1 when inserting attachment
             lengthDiff = 1 - phrase.count
@@ -104,11 +91,35 @@ extension EnterPhrasesVC: UITextViewDelegate {
                 selectedLocation += lengthDiff
             }
         }
+        // re-arrange attachment's order
+        var count = 0
+        textView.attributedText.enumerateAttribute(.attachment, in: NSRange(location: 0, length: textView.attributedText.length)) { (att, range, _) in
+            if let att = att as? Attachment, let phrase = att.phrase {
+                count += 1
+                textView.textStorage.replaceCharacters(in: range, with: attachment(phrase: phrase, index: count))
+            }
+        }
         
         // recalculate selected range
         DispatchQueue.main.async {
             self.textView.selectedRange = NSRange(location: selectedLocation + 1, length: 0)
         }
+    }
+    
+    fileprivate func attachment(phrase: String, index: Int? = nil) -> NSAttributedString {
+        // replace phrase's range by attachment that is a uilabel
+        let label = UILabel(text: (index != nil ? "\(index!). " : "" ) + phrase, textSize: 15)
+            .padding(.init(x: 10, y: 6), backgroundColor: .textWhite, cornerRadius: 5)
+        label.layer.borderWidth = 1
+        label.layer.borderColor = UIColor.textBlack.cgColor
+        label.translatesAutoresizingMaskIntoConstraints = true
+        
+        // replace text by attachment
+        let attachment = Attachment(view: label)
+        attachment.phrase = phrase
+        let attrString = NSMutableAttributedString(attachment: attachment)
+        attrString.addAttributes(textView.typingAttributes, range: NSRange(location: 0, length: attrString.length))
+        return attrString
     }
     
     fileprivate func getPhrasesInTextView() -> [String] {
