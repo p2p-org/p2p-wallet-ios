@@ -73,6 +73,10 @@ extension EnterPhrasesVC: UITextViewDelegate {
         // get all phrases
         let phrases = textView.text.components(separatedBy: " ")
         
+        // get length's difference after replacing text with attachment
+        var lengthDiff = 0
+        var selectedLocation = textView.selectedRange.location
+        
         for phrase in phrases.map({$0.replacingOccurrences(of: "\u{fffc}", with: "")}).filter({!$0.isEmpty}) {
             let text = textView.text as NSString
             let range = text.range(of: phrase)
@@ -92,9 +96,19 @@ extension EnterPhrasesVC: UITextViewDelegate {
             let attrString = NSMutableAttributedString(attachment: attachment)
             attrString.addAttributes(textView.typingAttributes, range: NSRange(location: 0, length: attrString.length))
             textView.textStorage.replaceCharacters(in: range, with: attrString)
+            
+            // diff of length, length become 1 when inserting attachment
+            lengthDiff = 1 - phrase.count
+            
+            if selectedLocation > range.location {
+                selectedLocation += lengthDiff
+            }
         }
         
         // recalculate selected range
+        DispatchQueue.main.async {
+            self.textView.selectedRange = NSRange(location: selectedLocation + 1, length: 0)
+        }
     }
     
     fileprivate func getPhrasesInTextView() -> [String] {
