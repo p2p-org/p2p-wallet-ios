@@ -44,23 +44,27 @@ extension EnterPhrasesVC: UITextViewDelegate {
         // if deleting
         if text.isEmpty { return true }
         
+        // prevent dupplicated spaces
+        if text.trimmingCharacters(in: .whitespaces).isEmpty {
+            // prevent space at the begining
+            if range.location == 0 {return false}
+            // prevent 2 spaces next to each other
+            else if textView.attributedText.attributedSubstring(from: NSRange(location: range.location - 1, length: 1)).string == " " {
+                return false
+            }
+        }
+        
+        // ignore invalid characters
         let invalidCharactersSet = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz ").inverted
         
         if text.lowercased().rangeOfCharacter(from: invalidCharactersSet) == nil {
-            // force lowercase
-            let text = text.lowercased().replacingOccurrences(of: " +", with: " ", options: String.CompareOptions.regularExpression, range: nil)
-            
-            // prevent dupplicating
-            if text.isEmpty {return false}
-            
-            // force lowercase
-            textView.textStorage.replaceCharacters(in: range, with: NSAttributedString(string: text, attributes: textView.typingAttributes))
-            textView.selectedRange = NSRange(location: range.location + text.count, length: 0)
-            
             // wrap phrase when found a space
-            if text == " " || text.count > 1 {
-                wrapPhrase()
+            DispatchQueue.main.async {
+                if text == " " || text.count > 1 {
+                    self.wrapPhrase()
+                }
             }
+            return true
         }
         return false
     }
@@ -89,6 +93,8 @@ extension EnterPhrasesVC: UITextViewDelegate {
             attrString.addAttributes(textView.typingAttributes, range: NSRange(location: 0, length: attrString.length))
             textView.textStorage.replaceCharacters(in: range, with: attrString)
         }
+        
+        // recalculate selected range
     }
     
     fileprivate func getPhrasesInTextView() -> [String] {
