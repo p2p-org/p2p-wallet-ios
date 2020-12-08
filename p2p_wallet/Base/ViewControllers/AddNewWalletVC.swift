@@ -12,8 +12,7 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     lazy var titleLabel = UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
     lazy var closeButton = UIButton.close()
         .onTap(self, action: #selector(back))
-    lazy var descriptionLabel = UILabel(textSize: 15, textColor: .secondary, numberOfLines: 0)
-        .onTap(self, action: #selector(labelDescriptionDidTouch))
+    lazy var descriptionLabel = LazyLabel<Double>(textSize: 15, textColor: .secondary, numberOfLines: 0)
     
     init() {
         let viewModel = ViewModel()
@@ -54,24 +53,10 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     override func bind() {
         super.bind()
         let viewModel = self.viewModel as! ViewModel
-        viewModel.feeVM.state
-            .subscribe(onNext: {[weak self] state in
-                guard let self = self else {return}
-                switch state {
-                case .initializing, .loading:
-                    self.descriptionLabel.isUserInteractionEnabled = false
-                    self.descriptionLabel.textColor = .secondary
-                    self.descriptionLabel.text = L10n.gettingCreationFee + "..."
-                case .loaded(let fee):
-                    self.descriptionLabel.isUserInteractionEnabled = false
-                    self.descriptionLabel.textColor = .secondary
-                    self.descriptionLabel.text = L10n.AddATokenToYourWallet.thisWillCost + " " + fee.toString(maximumFractionDigits: 9) + " SOL"
-                case .error(let error):
-                    self.descriptionLabel.isUserInteractionEnabled = true
-                    self.descriptionLabel.textColor = .red
-                    self.descriptionLabel.text = L10n.ErrorWhenRetrievingCreationFee.tapToTryAgain + ": " + error.localizedDescription
-                }
-            })
+        descriptionLabel
+            .subscribed(to: viewModel.feeVM) {
+                L10n.AddATokenToYourWallet.thisWillCost + " " + $0.toString(maximumFractionDigits: 9) + " SOL"
+            }
             .disposed(by: disposeBag)
     }
     
@@ -89,11 +74,6 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
             }
         }
         return cell
-    }
-    
-    @objc func labelDescriptionDidTouch() {
-        let viewModel = self.viewModel as! ViewModel
-        viewModel.feeVM.reload()
     }
     
     func createTokenAccountAction(newWallet: Wallet) -> CocoaAction {
@@ -182,7 +162,9 @@ extension AddNewWalletVC: UIViewControllerTransitioningDelegate {
 extension AddNewWalletVC {
     class ViewModel: ListViewModel<Wallet> {
         class FeeVM: BaseVM<Double> {
-            func reload() {
+            @discardableResult
+            override func reload() -> Bool {
+                guard super.reload() else {return false}
                 SolanaSDK.shared.getCreatingTokenAccountFee()
                     .subscribe(onSuccess: {[weak self] fee in
                         guard let strongSelf = self else {return}
@@ -193,6 +175,7 @@ extension AddNewWalletVC {
                         self?.state.accept(.error(error))
                     })
                     .disposed(by: disposeBag)
+                return true
             }
         }
         
