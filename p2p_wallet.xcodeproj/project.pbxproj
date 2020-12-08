@@ -88,6 +88,7 @@
 		BC6EE7DA254BC1A800FE1025 /* SecuritySettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE7D9254BC1A800FE1025 /* SecuritySettingVC.swift */; };
 		BC6EE7E2254BD23700FE1025 /* WellDoneVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE7E1254BD23700FE1025 /* WellDoneVC.swift */; };
 		BC75334D257E1A5B007A00D9 /* FiatConvertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75334C257E1A5B007A00D9 /* FiatConvertable.swift */; };
+		BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75339B257F2953007A00D9 /* Date+Extensions.swift */; };
 		BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7AD0E7254A540700B4A070 /* WLButton.swift */; };
 		BC7AD1D6254A608800B4A070 /* IntroVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7AD1D5254A608800B4A070 /* IntroVC.swift */; };
 		BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */; };
@@ -238,6 +239,7 @@
 		BC6EE7E1254BD23700FE1025 /* WellDoneVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellDoneVC.swift; sourceTree = "<group>"; };
 		BC6EE7E6254BD30600FE1025 /* p2p_wallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = p2p_wallet.entitlements; sourceTree = "<group>"; };
 		BC75334C257E1A5B007A00D9 /* FiatConvertable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiatConvertable.swift; sourceTree = "<group>"; };
+		BC75339B257F2953007A00D9 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		BC7AD0E7254A540700B4A070 /* WLButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLButton.swift; sourceTree = "<group>"; };
 		BC7AD1D5254A608800B4A070 /* IntroVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroVC.swift; sourceTree = "<group>"; };
 		BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonfidaPricesFetcher.swift; sourceTree = "<group>"; };
@@ -560,6 +562,7 @@
 				BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */,
 				BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */,
 				BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */,
+				BC75339B257F2953007A00D9 /* Date+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1101,6 +1104,7 @@
 				BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */,
 				BCD5E770255130DD00F51299 /* News.swift in Sources */,
 				BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */,
+				BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
 				BC2EC1782553ABD2006EEDA5 /* MainFooterView.swift in Sources */,
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,

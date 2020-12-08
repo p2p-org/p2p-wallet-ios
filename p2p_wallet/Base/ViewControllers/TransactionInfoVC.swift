@@ -33,19 +33,11 @@ class TransactionInfoVC: BaseVStackVC {
             .isActive = false
         
         // add header
-        var dateString: String?
-        
-        if let date = transaction.timestamp {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "dd MMM yyyy @ hh:mm a"
-            dateString = dateFormatter.string(from: date)
-        }
-        
         let headerView = UIStackView(axis: .horizontal, spacing: 16, alignment: .top, distribution: .fill, arrangedSubviews: [
             UIImageView(width: 44, height: 44, cornerRadius: 22, image: .transactionInfoIcon),
             .col([
                 UILabel(text: L10n.transaction, textSize: 17, weight: .bold),
-                UILabel(text: dateString, textSize: 15, weight: .medium, textColor: .secondary)
+                UILabel(text: transaction.timestamp?.string(withFormat: "dd MMM yyyy @ hh:mm a"), textSize: 15, weight: .medium, textColor: .secondary)
             ]),
             UIButton.close()
                 .onTap(self, action: #selector(back))
