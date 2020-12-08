@@ -132,6 +132,8 @@ internal enum L10n {
   internal static let restoreUsingICloud = L10n.tr("Localizable", "Restore using iCloud")
   /// Restoring wallet
   internal static let restoringWallet = L10n.tr("Localizable", "Restoring wallet")
+  /// Retry
+  internal static let retry = L10n.tr("Localizable", "Retry")
   /// Retry after
   internal static let retryAfter = L10n.tr("Localizable", "Retry after")
   /// Save to iCloud
