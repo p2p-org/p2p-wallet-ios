@@ -24,6 +24,7 @@ target 'p2p_wallet' do
   pod 'SDWebImage'
   pod 'THPinViewController', :git => "https://github.com/p2p-org/THPinViewController.git"
   pod 'UITextView+Placeholder'
+  pod 'SubviewAttachingTextView'
   
   # Firebase
   pod 'Firebase/Analytics'

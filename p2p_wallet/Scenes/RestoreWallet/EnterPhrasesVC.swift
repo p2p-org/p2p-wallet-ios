@@ -7,19 +7,22 @@
 
 import Foundation
 import UITextView_Placeholder
+import SubviewAttachingTextView
 
 class EnterPhrasesVC: BaseVStackVC {
     override var padding: UIEdgeInsets {.init(all: 20)}
     
-    lazy var textView: UITextView = {
-        let tv = UITextView(forExpandable: ())
+    lazy var textView: SubviewAttachingTextView = {
+        let tv = SubviewAttachingTextView(forExpandable: ())
         tv.backgroundColor = .clear
         tv.font = .systemFont(ofSize: 15)
+        tv.typingAttributes = [.font: UIFont.systemFont(ofSize: 15)]
         tv.heightAnchor.constraint(greaterThanOrEqualToConstant: 70)
             .isActive = true
         tv.placeholder = L10n.enterSeedPhrasesInACorrectOrderToRecoverYourWallet
         tv.delegate = self
         tv.autocapitalizationType = .none
+        tv.autocorrectionType = .no
         return tv
     }()
     
@@ -33,6 +36,10 @@ class EnterPhrasesVC: BaseVStackVC {
 }
 
 extension EnterPhrasesVC: UITextViewDelegate {
+    class Attachment: SubviewTextAttachment {
+        var phrase: String?
+    }
+    
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         // if deleting
         if text.isEmpty { return true }
@@ -41,22 +48,19 @@ extension EnterPhrasesVC: UITextViewDelegate {
         
         if text.lowercased().rangeOfCharacter(from: invalidCharactersSet) == nil {
             // force lowercase
+            let text = text.lowercased().replacingOccurrences(of: " +", with: " ", options: String.CompareOptions.regularExpression, range: nil)
             
-            // get the current text, or use an empty string if that failed
-            let currentText = textView.text ?? ""
-
-            // attempt to read the range they are trying to change, or exit if we can't
-            guard let stringRange = Range(range, in: currentText) else { return false }
-
-            // add their new text to the existing text
-            var updatedText = currentText.replacingCharacters(in: stringRange, with: text.lowercased())
-            
-            updatedText = updatedText.replacingOccurrences(of: " +", with: " ", options: String.CompareOptions.regularExpression, range: nil)
+            // prevent dupplicating
+            if text.isEmpty {return false}
             
             // force lowercase
-            textView.text = updatedText
+            textView.textStorage.replaceCharacters(in: range, with: NSAttributedString(string: text, attributes: textView.typingAttributes))
+            textView.selectedRange = NSRange(location: range.location + text.count, length: 0)
             
-            wrapPhrase()
+            // wrap phrase when found a space
+            if text == " " || text.count > 1 {
+                wrapPhrase()
+            }
         }
         return false
     }
@@ -65,9 +69,35 @@ extension EnterPhrasesVC: UITextViewDelegate {
         // get all phrases
         let phrases = textView.text.components(separatedBy: " ")
         
-        // find phrases ranges
-        
-        // replace phrases ranges by attachments that are uilabel
-        
+        for phrase in phrases.map({$0.replacingOccurrences(of: "\u{fffc}", with: "")}).filter({!$0.isEmpty}) {
+            let text = textView.text as NSString
+            let range = text.range(of: phrase)
+            
+            let count = getPhrasesInTextView().count
+            
+            // replace phrase's range by attachment that is a uilabel
+            let label = UILabel(text: "\(count + 1). " + phrase, textSize: 15)
+                .padding(.init(x: 10, y: 6), backgroundColor: .textWhite, cornerRadius: 5)
+            label.layer.borderWidth = 1
+            label.layer.borderColor = UIColor.textBlack.cgColor
+            label.translatesAutoresizingMaskIntoConstraints = true
+            
+            // replace text by attachment
+            let attachment = Attachment(view: label)
+            attachment.phrase = phrase
+            let attrString = NSMutableAttributedString(attachment: attachment)
+            attrString.addAttributes(textView.typingAttributes, range: NSRange(location: 0, length: attrString.length))
+            textView.textStorage.replaceCharacters(in: range, with: attrString)
+        }
+    }
+    
+    fileprivate func getPhrasesInTextView() -> [String] {
+        var phrases = [String]()
+        textView.attributedText.enumerateAttribute(.attachment, in: NSRange(location: 0, length: textView.attributedText.length)) { (att, _, _) in
+            if let att = att as? Attachment, let phrase = att.phrase {
+                phrases.append(phrase)
+            }
+        }
+        return phrases
     }
 }
