@@ -119,6 +119,7 @@ PODS:
   - TagListView (1.4.1)
   - THPinViewController (1.2.8)
   - TweetNacl (1.0.2)
+  - "UITextView+Placeholder (1.4.0)"
 
 DEPENDENCIES:
   - Action
@@ -138,6 +139,7 @@ DEPENDENCIES:
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
   - THPinViewController (from `https://github.com/p2p-org/THPinViewController.git`)
+  - "UITextView+Placeholder"
 
 SPEC REPOS:
   trunk:
@@ -174,6 +176,7 @@ SPEC REPOS:
     - SwiftyUserDefaults
     - TagListView
     - TweetNacl
+    - "UITextView+Placeholder"
 
 EXTERNAL SOURCES:
   BEPureLayout:
@@ -225,7 +228,8 @@ SPEC CHECKSUMS:
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   THPinViewController: 7c8df68f412ca0b3fa42a84848c382bc343372f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
+  "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 42e26dd4183df787ecdb0164dd297927439dc2cb
+PODFILE CHECKSUM: 61bb94d5d37ea5cd8f2242e927dc310a3e762218
 
 COCOAPODS: 1.10.0
