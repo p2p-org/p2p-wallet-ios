@@ -1,5 +1,5 @@
 //
-//  ActivityCell.swift
+//  TransactionCell.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 30/11/2020.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ActivityCell: BaseCollectionViewCell, CollectionCell {
+class TransactionCell: BaseCollectionViewCell, CollectionCell {
     let iconImageView = UIImageView(width: 32, height: 32, backgroundColor: .gray, cornerRadius: 16)
     let typeLabel = UILabel(textSize: 15, weight: .bold)
     let amountLabel = UILabel(textSize: 13, weight: .medium)
@@ -31,26 +31,26 @@ class ActivityCell: BaseCollectionViewCell, CollectionCell {
             .with(distribution: .fill)
     }
     
-    func setUp(with item: Activity) {
-        typeLabel.text = item.transaction.type?.localizedString ?? L10n.loading + "..."
+    func setUp(with item: Transaction) {
+        typeLabel.text = item.type?.localizedString ?? L10n.loading + "..."
         
-        var amount = item.transaction.amountInUSD
-        if item.transaction.type == .createAccount {
-            amount = item.transaction.amount * PricesManager.bonfida.solPrice?.value
+        var amount = item.amountInUSD
+        if item.type == .createAccount {
+            amount = item.amount * PricesManager.bonfida.solPrice?.value
         }
         amountLabel.text = amount.toString(maximumFractionDigits: 4, showPlus: true) + " US$"
         
-        if let timestamp = item.transaction.timestamp {
+        if let timestamp = item.timestamp {
             dateLabel.text = dateFormatter.string(from: timestamp)
         } else {
             dateLabel.text = nil
         }
         
-        var symbol = item.transaction.symbol
-        if item.transaction.type == .createAccount {
+        var symbol = item.symbol
+        if item.type == .createAccount {
             symbol = "SOL"
         }
-        if let tokens = item.transaction.amount {
+        if let tokens = item.amount {
             tokensLabel.text = tokens.toString(maximumFractionDigits: 9, showPlus: true) + " " + symbol
         } else {
             tokensLabel.text = nil

@@ -1,5 +1,5 @@
 //
-//  ActivitiesVM.swift
+//  WalletTransactionsVM.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 30/11/2020.
@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-class ActivitiesVM: ListViewModel<Activity> {
+class WalletTransactionsVM: ListViewModel<Transaction> {
     
     let wallet: Wallet
     var before: String?
@@ -18,7 +18,7 @@ class ActivitiesVM: ListViewModel<Activity> {
         super.init()
     }
     
-    override var request: Single<[Activity]> {
+    override var request: Single<[Transaction]> {
         guard let pubkey = wallet.pubkey else {
             return .error(SolanaSDK.Error.accountNotFound)
         }
@@ -32,19 +32,19 @@ class ActivitiesVM: ListViewModel<Activity> {
                 SolanaSDK.shared.getConfirmedTransaction(transactionSignature: signature)
                     .subscribe(onSuccess: {[weak self] transaction in
                         guard let self = self else {return}
-                        self.updateItem(where: {$0.transaction.signature == signature}, transform: {
+                        self.updateItem(where: {$0.signature == signature}, transform: {
                             var newItem = $0
-                            newItem.withConfirmedTransaction(transaction)
+                            newItem.confirm(by: transaction)
                             return newItem
                         })
                         if let slot = transaction.slot {
                             SolanaSDK.shared.getBlockTime(block: slot)
                                 .subscribe(onSuccess: {[weak self] timestamp in
                                     guard let self = self else {return}
-                                    self.updateItem(where: {$0.transaction.signature == signature}, transform: {
-                                        var activity = $0
-                                        activity.transaction.timestamp = timestamp
-                                        return activity
+                                    self.updateItem(where: {$0.signature == signature}, transform: {
+                                        var transaction = $0
+                                        transaction.timestamp = timestamp
+                                        return transaction
                                     })
                                 }, onError: {error in
                                     // TODO: Handle error
@@ -61,12 +61,10 @@ class ActivitiesVM: ListViewModel<Activity> {
         })
         .map {
             $0.compactMap {
-                Activity(
-                    transaction: Transaction(
-                        signatureInfo: $0,
-                        symbol: self.wallet.symbol,
-                        status: .confirmed
-                    )
+                Transaction(
+                    signatureInfo: $0,
+                    symbol: self.wallet.symbol,
+                    status: .confirmed
                 )
             }
         }
