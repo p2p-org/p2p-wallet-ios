@@ -517,6 +517,20 @@
 			path = PinCodeVC;
 			sourceTree = "<group>";
 		};
+		BC753397257F28A8007A00D9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				BC6EE7E6254BD30600FE1025 /* p2p_wallet.entitlements */,
+				BCB2232125412AF8002D997F /* Assets.xcassets */,
+				BC65E9F82542C181005F50CE /* Colors.xcassets */,
+				BCB2232325412AF9002D997F /* LaunchScreen.storyboard */,
+				BCB2232625412AF9002D997F /* Info.plist */,
+				BC6366DA255A8D8300D585FD /* GoogleService-Info.plist */,
+				BC2288022542E1CC0028CE8F /* Localizable.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		BC7A8EB1255BCE360023C918 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -601,18 +615,12 @@
 		BCB2231725412AF8002D997F /* p2p_wallet */ = {
 			isa = PBXGroup;
 			children = (
-				BC6EE7E6254BD30600FE1025 /* p2p_wallet.entitlements */,
+				BCB2231825412AF8002D997F /* AppDelegate.swift */,
 				BCB22370254137C2002D997F /* Services */,
 				BC65E9B72542B983005F50CE /* Base */,
 				BC9DFA152541F777009DB93E /* Extensions */,
 				BC65E9D52542BD1F005F50CE /* Scenes */,
-				BCB2231825412AF8002D997F /* AppDelegate.swift */,
-				BCB2232125412AF8002D997F /* Assets.xcassets */,
-				BC65E9F82542C181005F50CE /* Colors.xcassets */,
-				BCB2232325412AF9002D997F /* LaunchScreen.storyboard */,
-				BCB2232625412AF9002D997F /* Info.plist */,
-				BC6366DA255A8D8300D585FD /* GoogleService-Info.plist */,
-				BC2288022542E1CC0028CE8F /* Localizable.strings */,
+				BC753397257F28A8007A00D9 /* Resources */,
 			);
 			path = p2p_wallet;
 			sourceTree = "<group>";
