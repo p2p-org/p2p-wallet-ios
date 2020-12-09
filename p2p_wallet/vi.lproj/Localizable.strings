@@ -129,3 +129,4 @@
 "Transaction" = "Giao dịch";
 "Block number" = "Thứ tự block";
 "Retry" = "Thử lại";
+"Enter seed phrases in a correct order to recover your wallet" = "Nhập các cụm từ bảo mật theo đúng thứ tự để khôi phục ví của bạn";

@@ -35,18 +35,8 @@ class RestoreWalletVC: IntroVCWithButtons {
     }
     
     @objc func buttonRestoreManuallyDidTouch() {
-        let alertController = UIAlertController(title: L10n.securityKeys.uppercaseFirst, message: L10n.enterSecurityKeys, preferredStyle: .alert)
-        alertController.addTextField { textField in
-            textField.placeholder = L10n.securityKeys.uppercaseFirst
-        }
-        let confirmAction = UIAlertAction(title: L10n.ok, style: .default) { [weak alertController] _ in
-            guard let alertController = alertController, let text = alertController.textFields?.first?.text else { return }
-            self.handlePhrases(text)
-        }
-        alertController.addAction(confirmAction)
-        let cancelAction = UIAlertAction(title: L10n.cancel, style: .cancel, handler: nil)
-        alertController.addAction(cancelAction)
-        present(alertController, animated: true, completion: nil)
+        let vc = EnterPhrasesVC()
+        show(vc, sender: nil)
     }
     
     private func handlePhrases(_ text: String)
