@@ -59,8 +59,8 @@ extension EnterPhrasesVC: UITextViewDelegate {
         
         if text.lowercased().rangeOfCharacter(from: invalidCharactersSet) == nil {
             // wrap phrase when found a space
-            DispatchQueue.main.async {
-                if text == " " || text.count > 1 {
+            if text.contains(" ") {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.005) {
                     self.wrapPhrase()
                 }
             }
@@ -102,7 +102,7 @@ extension EnterPhrasesVC: UITextViewDelegate {
         
         // recalculate selected range
         DispatchQueue.main.async {
-            self.textView.selectedRange = NSRange(location: selectedLocation + 1, length: 0)
+            self.textView.selectedRange = NSRange(location: selectedLocation, length: 0)
         }
     }
     
