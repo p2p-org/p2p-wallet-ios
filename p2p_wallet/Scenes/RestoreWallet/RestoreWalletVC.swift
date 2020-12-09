@@ -36,7 +36,7 @@ class RestoreWalletVC: IntroVCWithButtons {
     
     @objc func buttonRestoreManuallyDidTouch() {
         let vc = EnterPhrasesVC()
-        show(vc, sender: self)
+        show(vc, sender: nil)
     }
     
     private func handlePhrases(_ text: String)
