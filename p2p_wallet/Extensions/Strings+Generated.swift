@@ -70,6 +70,8 @@ internal enum L10n {
   internal static let enterPasscode = L10n.tr("Localizable", "Enter passcode")
   /// Enter security keys
   internal static let enterSecurityKeys = L10n.tr("Localizable", "Enter security keys")
+  /// Enter seed phrases in a correct order to recover your wallet
+  internal static let enterSeedPhrasesInACorrectOrderToRecoverYourWallet = L10n.tr("Localizable", "Enter seed phrases in a correct order to recover your wallet")
   /// error
   internal static let error = L10n.tr("Localizable", "error")
   /// Explore  DeFi
