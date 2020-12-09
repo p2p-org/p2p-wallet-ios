@@ -8,13 +8,38 @@
 import Foundation
 import THPinViewController
 
-class PassCodeVC: THPinViewController, THPinViewControllerDelegate {
-    var canIgnore = false
+class PassCodeVC: BEViewController, THPinViewControllerDelegate {
     var completion: ((Bool) -> Void)?
+    var embededPinVC: THPinViewController!
+    
+    var backgroundColor: UIColor? {
+        get {embededPinVC.backgroundColor}
+        set {embededPinVC.backgroundColor = newValue}
+    }
+    
+    var promptColor: UIColor? {
+        get {embededPinVC.promptColor}
+        set {embededPinVC.promptColor = newValue}
+    }
+    
+    var tintColor: UIColor? {
+        get {embededPinVC.view.tintColor}
+        set {embededPinVC.view.tintColor = newValue}
+    }
+    
+    var promptTitle: String? {
+        get {embededPinVC.promptTitle}
+        set {embededPinVC.promptTitle = newValue}
+    }
+    
+    var leftBottomButton: UIButton? {
+        get {embededPinVC.leftBottomButton}
+        set {embededPinVC.leftBottomButton = newValue}
+    }
     
     init() {
-        super.init(delegate: nil)
-        delegate = self
+        super.init(nibName: nil, bundle: nil)
+        embededPinVC = THPinViewController(delegate: self)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -26,24 +51,18 @@ class PassCodeVC: THPinViewController, THPinViewControllerDelegate {
         // Setup views
         backgroundColor = .pinViewBgColor
         promptColor = .textBlack
-        view.tintColor = .pinViewButtonBgColor
+        tintColor = .pinViewButtonBgColor
         
-        // Add cancel button on bottom
-        if !canIgnore {
-            navigationController?.setNavigationBarHidden(true, animated: false)
-        } else {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(title: L10n.close, style: .plain, target: self, action: #selector(cancelButtonDidTouch))
-        }
+        embededPinVC.view.translatesAutoresizingMaskIntoConstraints = false
+        addChild(embededPinVC)
+        view.addSubview(embededPinVC.view)
+        embededPinVC.view.autoPinEdgesToSuperviewEdges()
+        embededPinVC.didMove(toParent: self)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: animated)
-    }
-    
-    // MARK: - Actions
-    @objc func cancelButtonDidTouch() {
-        dismiss(animated: true, completion: nil)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        embededPinVC.clear()
     }
     
     // MARK: - Delegate
