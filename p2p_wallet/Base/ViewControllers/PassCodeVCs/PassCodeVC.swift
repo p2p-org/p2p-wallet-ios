@@ -54,6 +54,7 @@ class PassCodeVC: BEViewController, THPinViewControllerDelegate {
         backgroundColor = .pinViewBgColor
         promptColor = .textBlack
         tintColor = .pinViewButtonBgColor
+        embededPinVC.bottomButtonImage = .delete
         
         embededPinVC.view.translatesAutoresizingMaskIntoConstraints = false
         addChild(embededPinVC)
