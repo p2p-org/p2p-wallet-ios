@@ -7,9 +7,9 @@
 
 import Foundation
 
-class SSPinCodeVC: PinCodeVC {
-    init() {
-        super.init(nibName: nil, bundle: nil)
+class SSPinCodeVC: CreatePassCodeVC {
+    override init() {
+        super.init()
         completion = { _ in
             UIApplication.shared.changeRootVC(to: EnableBiometryVC(), withNaviationController: true)
         }
