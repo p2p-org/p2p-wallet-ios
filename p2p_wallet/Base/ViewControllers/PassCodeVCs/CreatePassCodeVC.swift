@@ -9,6 +9,8 @@ import Foundation
 import THPinViewController
 
 class CreatePassCodeVC: PassCodeVC {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .hidden }
+    
     var passcode: String?
     
     override func viewDidLoad() {
@@ -30,6 +32,8 @@ class CreatePassCodeVC: PassCodeVC {
 }
 
 private class ConfirmPasscodeVC: CreatePassCodeVC {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal() }
+    
     init(currentPasscode: String) {
         super.init()
         self.passcode = currentPasscode
@@ -42,7 +46,6 @@ private class ConfirmPasscodeVC: CreatePassCodeVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         promptTitle = L10n.confirmPINCode.uppercaseFirst
-        navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
     override func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
