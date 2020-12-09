@@ -20,11 +20,16 @@ platform :ios do
   lane :beta do
     match
     gym(scheme: 'p2p_wallet', export_method: 'ad-hoc')
+    # upload to firebase
     firebase_app_distribution(
       app: "1:553127941597:ios:c96032731a2f28562c5234",
       groups: "dev_team",
       firebase_cli_token: "1//0e7sQVYQPvT2vCgYIARAAGA4SNwF-L9Irle7o4pw3SQrwWwwUdjFi_z8Jl3NI3fj3h9EOn6zjPX-_nBHtRKn9gNoHoY9HaUR7Wnw"
     )    
-    # upload_to_testflight
+    # upload to browserstack
+    upload_to_browserstack_app_live(
+      browserstack_username: "veronikadedukhin1",
+      browserstack_access_key: "KsDobGNSbeBdS7P8KpES",
+    )
   end
 end
