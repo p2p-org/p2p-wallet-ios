@@ -113,12 +113,14 @@ PODS:
     - Starscream
     - TweetNacl
   - Starscream (4.0.4)
+  - SubviewAttachingTextView (1.5.0)
   - SwiftGen (6.4.0)
   - SwiftLint (0.41.0)
   - SwiftyUserDefaults (5.0.0)
   - TagListView (1.4.1)
   - THPinViewController (1.2.8)
   - TweetNacl (1.0.2)
+  - "UITextView+Placeholder (1.4.0)"
 
 DEPENDENCIES:
   - Action
@@ -133,11 +135,13 @@ DEPENDENCIES:
   - RxCocoa
   - SDWebImage
   - SolanaSwift (from `SolanaSwift`)
+  - SubviewAttachingTextView
   - SwiftGen (~> 6.0)
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
   - THPinViewController (from `https://github.com/p2p-org/THPinViewController.git`)
+  - "UITextView+Placeholder"
 
 SPEC REPOS:
   trunk:
@@ -169,11 +173,13 @@ SPEC REPOS:
     - RxSwift
     - SDWebImage
     - Starscream
+    - SubviewAttachingTextView
     - SwiftGen
     - SwiftLint
     - SwiftyUserDefaults
     - TagListView
     - TweetNacl
+    - "UITextView+Placeholder"
 
 EXTERNAL SOURCES:
   BEPureLayout:
@@ -219,13 +225,15 @@ SPEC CHECKSUMS:
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
   SolanaSwift: c7ce299daffcd36e0a7d28870b005f4e2c945c5f
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
+  SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftLint: c585ebd615d9520d7fbdbe151f527977b0534f1e
   SwiftyUserDefaults: 33fcb42bd1feb53a37d873feb62c82967db5f7f6
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   THPinViewController: 7c8df68f412ca0b3fa42a84848c382bc343372f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
+  "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 42e26dd4183df787ecdb0164dd297927439dc2cb
+PODFILE CHECKSUM: 764323d2549c86a2c53692a5481d1a10b965136a
 
 COCOAPODS: 1.10.0
