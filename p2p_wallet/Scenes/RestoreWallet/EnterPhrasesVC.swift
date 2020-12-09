@@ -26,12 +26,60 @@ class EnterPhrasesVC: BaseVStackVC {
         return tv
     }()
     
+    lazy var nextButton = WLButton.stepButton(type: .main, label: L10n.next.uppercaseFirst)
+        .onTap(self, action: #selector(buttonNextDidTouch))
+    
     override func setUp() {
         super.setUp()
         title = L10n.enterSecurityKeys
         stackView.addArrangedSubview(
             textView.padding(.init(all: 16), backgroundColor: .lightGrayBackground, cornerRadius: 16)
         )
+        
+        scrollView.constraintToSuperviewWithAttribute(.bottom)?.isActive = false
+        
+        // button
+        view.addSubview(nextButton)
+        nextButton.autoPinEdge(.top, to: .bottom, of: scrollView)
+        nextButton.autoPinEdgesToSuperviewEdges(with: .init(top: 0, left: 30, bottom: padding.bottom, right: 30), excludingEdge: .top)
+    }
+    
+    override func bind() {
+        super.bind()
+        textView.rx.text
+            .map {_ in !self.getPhrasesInTextView().isEmpty}
+            .asDriver(onErrorJustReturn: false)
+            .drive(nextButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+    }
+    
+    @objc func buttonNextDidTouch() {
+        wrapPhrase()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.handlePhrases()
+        }
+    }
+    
+    private func handlePhrases()
+    {
+        do {
+            let phrases = getPhrasesInTextView()
+            _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
+            let nc = BENavigationController(rootViewController: WelcomeBackVC(phrases: phrases))
+            UIApplication.shared.changeRootVC(to: nc)
+        } catch {
+            showError(error)
+        }
+    }
+    
+    private func getPhrasesInTextView() -> [String] {
+        var phrases = [String]()
+        textView.attributedText.enumerateAttribute(.attachment, in: NSRange(location: 0, length: textView.attributedText.length)) { (att, _, _) in
+            if let att = att as? Attachment, let phrase = att.phrase {
+                phrases.append(phrase)
+            }
+        }
+        return phrases
     }
 }
 
@@ -69,7 +117,7 @@ extension EnterPhrasesVC: UITextViewDelegate {
         return false
     }
     
-    private func wrapPhrase() {
+    fileprivate func wrapPhrase() {
         // get all phrases
         let phrases = textView.text.components(separatedBy: " ")
         
@@ -121,15 +169,5 @@ extension EnterPhrasesVC: UITextViewDelegate {
         let attrString = NSMutableAttributedString(attachment: attachment)
         attrString.addAttributes(textView.typingAttributes, range: NSRange(location: 0, length: attrString.length))
         return attrString
-    }
-    
-    fileprivate func getPhrasesInTextView() -> [String] {
-        var phrases = [String]()
-        textView.attributedText.enumerateAttribute(.attachment, in: NSRange(location: 0, length: textView.attributedText.length)) { (att, _, _) in
-            if let att = att as? Attachment, let phrase = att.phrase {
-                phrases.append(phrase)
-            }
-        }
-        return phrases
     }
 }
