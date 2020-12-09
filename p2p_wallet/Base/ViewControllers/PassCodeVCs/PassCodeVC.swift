@@ -9,6 +9,8 @@ import Foundation
 import THPinViewController
 
 class PassCodeVC: BEViewController, THPinViewControllerDelegate {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .hidden }
+    
     var completion: ((Bool) -> Void)?
     var embededPinVC: THPinViewController!
     

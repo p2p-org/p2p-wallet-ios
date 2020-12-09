@@ -9,8 +9,6 @@ import Foundation
 import THPinViewController
 
 class CreatePassCodeVC: PassCodeVC {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .hidden }
-    
     var passcode: String?
     
     override func viewDidLoad() {
