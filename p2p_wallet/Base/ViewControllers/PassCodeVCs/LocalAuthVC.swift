@@ -10,27 +10,12 @@ import THPinViewController
 import RxSwift
 import LocalAuthentication
 
-class LocalAuthVC: THPinViewController {
-    var canIgnore = false
+class LocalAuthVC: PassCodeVC {
     var remainingPinEntries = 3
-    var completion: ((Bool) -> Void)?
     var reason: String?
-    
-    init() {
-        super.init(delegate: nil)
-        delegate = self
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Setup views
-        backgroundColor = .pinViewBgColor
-        promptColor = .textBlack
-        view.tintColor = .pinViewButtonBgColor
         promptTitle = L10n.enterPasscode
         
         // face id, touch id button
@@ -45,13 +30,6 @@ class LocalAuthVC: THPinViewController {
             leftBottomButton?.widthAnchor.constraint(equalTo: leftBottomButton!.heightAnchor).isActive = true
             leftBottomButton?.addTarget(self, action: #selector(authWithBiometric), for: .touchUpInside)
             authWithBiometric(isAuto: true)
-        }
-        
-        // Add cancel button on bottom
-        if !canIgnore {
-            navigationController?.setNavigationBarHidden(true, animated: false)
-        } else {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(title: L10n.close, style: .plain, target: self, action: #selector(cancelButtonDidTouch))
         }
     }
     
@@ -85,24 +63,8 @@ class LocalAuthVC: THPinViewController {
             }
         }
     }
-    
-    @objc func cancelButtonDidTouch() {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: animated)
-    }
 
-}
-
-extension LocalAuthVC: THPinViewControllerDelegate {
-    func pinLength(for pinViewController: THPinViewController) -> UInt {
-        return 6
-    }
-    
-    func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
+    override func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
         guard let correctPin = AccountStorage.shared.pinCode else {return false}
         if pin == correctPin {return true} else {
             remainingPinEntries -= 1
@@ -110,15 +72,7 @@ extension LocalAuthVC: THPinViewControllerDelegate {
         }
     }
     
-    func userCanRetry(in pinViewController: THPinViewController) -> Bool {
+    override func userCanRetry(in pinViewController: THPinViewController) -> Bool {
         return remainingPinEntries > 0
-    }
-    
-    func pinViewControllerWillDismiss(afterPinEntryWasSuccessful pinViewController: THPinViewController) {
-        completion?(true)
-    }
-    
-    func pinViewControllerWillDismiss(afterPinEntryWasUnsuccessful pinViewController: THPinViewController) {
-        completion?(false)
     }
 }
