@@ -191,7 +191,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   THPinViewController:
-    :commit: 4a273eb1728c69ae3f2861d0bfabe0ccfa7fbe0d
+    :commit: b1437bb5253d74da132d72d4ae44972ba9be95b4
     :git: https://github.com/p2p-org/THPinViewController.git
 
 SPEC CHECKSUMS:

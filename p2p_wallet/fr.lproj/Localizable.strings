@@ -130,3 +130,4 @@
 "Block number" = "Numéro de bloc";
 "Retry" = "Réessayez";
 "Enter seed phrases in a correct order to recover your wallet" = "Saisissez les phrases de départ dans le bon ordre pour récupérer votre portefeuille";
+"PIN-codes do not match" = "Les codes PIN ne correspondent pas";

@@ -116,6 +116,8 @@ internal enum L10n {
   internal static let orSavingIntoKeychain = L10n.tr("Localizable", "Or saving into Keychain")
   /// passcodes do not match
   internal static let passcodesDoNotMatch = L10n.tr("Localizable", "passcodes do not match")
+  /// PIN-codes do not match
+  internal static let pinCodesDoNotMatch = L10n.tr("Localizable", "PIN-codes do not match")
   /// please try again later!
   internal static let pleaseTryAgainLater = L10n.tr("Localizable", "please try again later!")
   /// Processing
