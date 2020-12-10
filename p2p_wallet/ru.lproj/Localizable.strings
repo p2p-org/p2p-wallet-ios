@@ -130,3 +130,4 @@
 "Block number" = "Номер блока";
 "Retry" = "Повторить";
 "Enter seed phrases in a correct order to recover your wallet" = "Введите начальные фразы в правильном порядке, чтобы восстановить свой кошелек";
+"PIN-codes do not match" = "PIN-коды не совпадают";

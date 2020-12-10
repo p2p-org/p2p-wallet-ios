@@ -47,7 +47,13 @@ private class ConfirmPasscodeVC: CreatePassCodeVC {
     }
     
     override func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
-        pin == passcode
+        if pin != passcode {
+            embededPinVC.errorTitle = L10n.pinCodesDoNotMatch
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self?.embededPinVC.errorTitle = nil
+            }
+        }
+        return pin == passcode
     }
     
     override func pinViewControllerWillDismiss(afterPinEntryWasSuccessful pinViewController: THPinViewController) {
