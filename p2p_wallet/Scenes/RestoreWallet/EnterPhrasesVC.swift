@@ -108,7 +108,7 @@ extension EnterPhrasesVC: UITextViewDelegate {
         if text.lowercased().rangeOfCharacter(from: invalidCharactersSet) == nil {
             // wrap phrase when found a space
             if text.contains(" ") {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.005) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                     self.wrapPhrase()
                 }
             }
