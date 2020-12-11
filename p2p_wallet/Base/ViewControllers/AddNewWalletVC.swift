@@ -186,7 +186,7 @@ extension AddNewWalletVC {
             var wallets = SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.network)?.compactMap {$0 != nil ? Wallet(programAccount: $0!) : nil} ?? []
             
             for i in 0..<wallets.count {
-                if let price = PricesManager.bonfida.prices.value.first(where: {$0.from == wallets[i].symbol}) {
+                if let price = PricesManager.shared.prices.value.first(where: {$0.from == wallets[i].symbol}) {
                     wallets[i].price = price
                 }
             }
