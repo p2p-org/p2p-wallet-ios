@@ -44,6 +44,11 @@ class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
         if indexPath.section == 0 {
             let header = header as! WDVCSectionHeaderView
             header.setUp(wallet: wallet)
+            PricesManager.shared.fetchHistoricalPrice(for: wallet.symbol, period: .month)
+                .subscribe(onSuccess: {records in
+                    header.setUp(prices: records)
+                })
+                .disposed(by: disposeBag)
         }
         return header
     }
