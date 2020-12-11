@@ -9,16 +9,6 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-struct Price: Hashable {
-    struct Change24h: Hashable {
-        var value: Double?
-        var percentage: Double?
-    }
-    
-    var value: Double?
-    var change24h: Change24h?
-}
-
 class PricesManager {
     typealias Coin = String
     
@@ -26,9 +16,9 @@ class PricesManager {
     private let coinToCompare = "USDT"
     private let disposeBag = DisposeBag()
     var fetcher: PricesFetcher
-    let currentPrices = BehaviorRelay<[Coin: Price]>(value: [:])
+    let currentPrices = BehaviorRelay<[Coin: CurrentPrice]>(value: [:])
     private var refreshInterval: TimeInterval // Refresh
-    var solPrice: Price? {currentPrices.value["SOL"]}
+    var solPrice: CurrentPrice? {currentPrices.value["SOL"]}
     private lazy var supportedCoins: [String] = {
         var pairs = SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.network)?.map {$0.symbol}.filter {$0 != "USDT" && $0 != "USDC" && $0 != "WUSDC"} ?? [String]()
         pairs.append("SOL")
@@ -49,7 +39,7 @@ class PricesManager {
     }
     
     // MARK: - Getters
-    func currentPrice(for coinName: String) -> Price? {
+    func currentPrice(for coinName: String) -> CurrentPrice? {
         currentPrices.value[coinName]
     }
     
@@ -75,18 +65,32 @@ class PricesManager {
                 .disposed(by: disposeBag)
         }
     }
+    
+    func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
+    {
+        fetcher.getHistoricalPrice(of: coinName, period: period)
+            .do(
+                afterSuccess: {
+                    Logger.log(message: "Historical price for \(coinName) in \(period): \($0)", event: .response)
+                    
+                },
+                afterError: { error in
+                    Logger.log(message: "Historical price fetching error: \(error)", event: .error)
+                }
+            )
+    }
 }
 
 extension PricesManager {
     func updatePriceForUSDType() {
         var prices = currentPrices.value
-        prices["USDT"] = Price(value: 1)
-        prices["USDC"] = Price(value: 1)
-        prices["WUSDC"] = Price(value: 1)
+        prices["USDT"] = CurrentPrice(value: 1)
+        prices["USDC"] = CurrentPrice(value: 1)
+        prices["WUSDC"] = CurrentPrice(value: 1)
         currentPrices.accept(prices)
     }
     
-    func updateCurrentPrices(_ newPrices: [Coin: Price]) {
+    func updateCurrentPrices(_ newPrices: [Coin: CurrentPrice]) {
         var prices = currentPrices.value
         for newPrice in newPrices {
             prices[newPrice.key] = newPrice.value
