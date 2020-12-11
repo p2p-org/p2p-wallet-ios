@@ -16,9 +16,12 @@ class WDVCSectionHeaderView: SectionHeaderView {
         chartView.chartDescription?.enabled = false
         chartView.leftAxis.drawAxisLineEnabled = false
         chartView.leftAxis.drawLabelsEnabled = false
+        chartView.leftAxis.gridLineWidth = 0
         chartView.rightAxis.drawAxisLineEnabled = false
         chartView.rightAxis.drawLabelsEnabled = false
+        chartView.rightAxis.gridLineWidth = 0
         chartView.xAxis.enabled = false
+        chartView.legend.enabled = false
         return chartView
     }()
     override func commonInit() {
@@ -43,13 +46,13 @@ class WDVCSectionHeaderView: SectionHeaderView {
         set1.drawFilledEnabled = true
         set1.drawCirclesEnabled = false
         set1.drawIconsEnabled = false
-        set1.drawValuesEnabled = false
         
         set1.drawCirclesEnabled = false
         set1.lineWidth = 0
         set1.circleRadius = 0
         
         let data = LineChartData(dataSet: set1)
+        data.setDrawValues(false)
         lineChartView.data = data
     }
     
