@@ -16,7 +16,7 @@ struct Wallet: FiatConvertable {
     let symbol: String
     let icon: String?
     var lamports: UInt64?
-    var price: Price?
+    var price: CurrentPrice?
     var decimals: Int?
     
     // MARK: - Additional properties
