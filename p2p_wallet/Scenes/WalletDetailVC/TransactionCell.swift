@@ -36,7 +36,7 @@ class TransactionCell: BaseCollectionViewCell, CollectionCell {
         
         var amount = item.amountInUSD
         if item.type == .createAccount {
-            amount = item.amount * PricesManager.bonfida.solPrice?.value
+            amount = item.amount * PricesManager.shared.solPrice?.value
         }
         amountLabel.text = amount.toString(maximumFractionDigits: 4, showPlus: true) + " US$"
         

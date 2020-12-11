@@ -36,7 +36,7 @@ class WalletCell: BaseCollectionViewCell, WalletCellType {
             coinPriceLabel.isHidden = false
             coinChangeLabel.isHidden = false
             
-            equityValueLabel.text = "\((PricesManager.bonfida.solPrice?.value * item.amount).toString(maximumFractionDigits: 9)) US$"
+            equityValueLabel.text = "\((PricesManager.shared.solPrice?.value * item.amount).toString(maximumFractionDigits: 9)) US$"
             coinPriceLabel.text = "\(price.value.toString()) US$"
             coinChangeLabel.text = "\((price.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true))% 24 hrs"
         } else {

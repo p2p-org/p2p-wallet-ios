@@ -12,13 +12,13 @@ class WalletsVM: ListViewModel<Wallet> {
     override var isPaginationEnabled: Bool {false}
     
     static var ofCurrentUser = WalletsVM()
-    var prices: [Price] { PricesManager.bonfida.prices.value }
+    var prices: [Price] { PricesManager.shared.prices.value }
     
     var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
     
     override func bind() {
         super.bind()
-        PricesManager.bonfida.prices
+        PricesManager.shared.prices
             .subscribe(onNext: {prices in
                 if self.items.count == 0 {return}
                 var wallets = self.items

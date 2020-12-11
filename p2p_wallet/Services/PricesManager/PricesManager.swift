@@ -27,7 +27,7 @@ class PricesManager {
     }
     
     func startObserving() {
-        PricesManager.bonfida.fetcher.fetchAll()
+        fetcher.fetchAll()
         timer = Timer.scheduledTimer(timeInterval: refreshInterval, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
     }
     

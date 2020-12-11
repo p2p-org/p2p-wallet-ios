@@ -14,7 +14,7 @@ protocol FiatConvertable {
 
 extension FiatConvertable {
     var priceInUSD: Double? {
-        PricesManager.bonfida.prices.value.first(where: {$0.from == symbol})?.value
+        PricesManager.shared.prices.value.first(where: {$0.from == symbol})?.value
     }
     var amountInUSD: Double {
         amount * priceInUSD
