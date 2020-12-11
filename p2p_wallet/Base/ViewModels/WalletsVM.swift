@@ -12,18 +12,17 @@ class WalletsVM: ListViewModel<Wallet> {
     override var isPaginationEnabled: Bool {false}
     
     static var ofCurrentUser = WalletsVM()
-    var prices: [Price] { PricesManager.shared.prices.value }
     
     var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
     
     override func bind() {
         super.bind()
-        PricesManager.shared.prices
-            .subscribe(onNext: {prices in
+        PricesManager.shared.currentPrices
+            .subscribe(onNext: {_ in
                 if self.items.count == 0 {return}
                 var wallets = self.items
                 for i in 0..<wallets.count {
-                    if let price = prices.first(where: {$0.from == wallets[i].symbol}) {
+                    if let price = PricesManager.shared.currentPrice(for: wallets[i].symbol) {
                         wallets[i].price = price
                     }
                 }
@@ -54,7 +53,8 @@ class WalletsVM: ListViewModel<Wallet> {
                     .map {wallets in
                         var wallets = wallets
                         for i in 0..<wallets.count {
-                            if let price = self.prices.first(where: {$0.from == wallets[i].symbol}) {
+                            if let price = PricesManager.shared.currentPrice(for: wallets[i].symbol)
+                            {
                                 wallets[i].price = price
                             }
                         }
@@ -67,7 +67,7 @@ class WalletsVM: ListViewModel<Wallet> {
                             symbol: "SOL",
                             icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png",
                             lamports: balance,
-                            price: self.prices.first(where: {$0.from == "SOL"}),
+                            price: PricesManager.shared.solPrice,
                             decimals: 9
                         )
                         wallets.insert(solWallet, at: 0)

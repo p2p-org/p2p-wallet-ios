@@ -9,43 +9,88 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-class PricesManager {
-    var fetcher: PricesFetcher
-    var prices: BehaviorRelay<[Price]> {fetcher.prices}
-    var refreshInterval: TimeInterval // Refresh
+struct Price: Hashable {
+    struct Change24h: Hashable {
+        var value: Double?
+        var percentage: Double?
+    }
     
-    var solPrice: Price? {prices.value.first(where: {$0.from == "SOL"})}
+    var value: Double?
+    var change24h: Change24h?
+}
+
+class PricesManager {
+    typealias Coin = String
+    
+    // MARK: - Properties
+    private let coinToCompare = "USDT"
+    private let disposeBag = DisposeBag()
+    var fetcher: PricesFetcher
+    let currentPrices = BehaviorRelay<[Coin: Price]>(value: [:])
+    private var refreshInterval: TimeInterval // Refresh
+    var solPrice: Price? {currentPrices.value["SOL"]}
+    private lazy var supportedCoins: [String] = {
+        var pairs = SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.network)?.map {$0.symbol}.filter {$0 != "USDT" && $0 != "USDC" && $0 != "WUSDC"} ?? [String]()
+        pairs.append("SOL")
+        return pairs
+    }()
     
     private var timer: Timer?
     
+    // MARK: - Initializer
     init(fetcher: PricesFetcher, refreshAfter seconds: TimeInterval = 30) {
         self.fetcher = fetcher
-        self.fetcher.updatePriceForUSDType()
         self.refreshInterval = seconds
-        
-        self.fetcher.pairs = getPairs()
+        self.updatePriceForUSDType()
     }
     
+    deinit {
+        timer?.invalidate()
+    }
+    
+    // MARK: - Getters
+    func currentPrice(for coinName: String) -> Price? {
+        currentPrices.value[coinName]
+    }
+    
+    // MARK: - Observe current price
     func startObserving() {
-        fetcher.fetchAll()
-        timer = Timer.scheduledTimer(timeInterval: refreshInterval, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
+        fetchCurrentPrices()
+        timer = Timer.scheduledTimer(timeInterval: refreshInterval, target: self, selector: #selector(fetchCurrentPrices), userInfo: nil, repeats: true)
     }
     
     func stopObserving() {
         timer?.invalidate()
     }
     
-    func getPairs() -> [PricesFetcher.Pair] {
-        var pairs = SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.network)?.map {$0.symbol}.map {(from: $0, to: "USDT")}.filter {$0.from != "USDT" && $0.from != "USDC" && $0.from != "WUSDC"} ?? [PricesFetcher.Pair]()
-        pairs.append((from: "SOL", to: "USDT"))
-        return pairs
+    // get supported coin
+    @objc func fetchCurrentPrices() {
+        for coin in supportedCoins {
+            fetcher.getCurrentPrice(from: coin, to: coinToCompare)
+                .subscribe(onSuccess: {[weak self] price in
+                    self?.updateCurrentPrices([coin: price])
+                }, onError: {error in
+                    Logger.log(message: "Error fetching price \(error)", event: .error)
+                })
+                .disposed(by: disposeBag)
+        }
+    }
+}
+
+extension PricesManager {
+    func updatePriceForUSDType() {
+        var prices = currentPrices.value
+        prices["USDT"] = Price(value: 1)
+        prices["USDC"] = Price(value: 1)
+        prices["WUSDC"] = Price(value: 1)
+        currentPrices.accept(prices)
     }
     
-    @objc func refresh() {
-        fetcher.fetchAll()
-    }
-    
-    deinit {
-        timer?.invalidate()
+    func updateCurrentPrices(_ newPrices: [Coin: Price]) {
+        var prices = currentPrices.value
+        for newPrice in newPrices {
+            prices[newPrice.key] = newPrice.value
+        }
+        currentPrices.accept(prices)
     }
 }
