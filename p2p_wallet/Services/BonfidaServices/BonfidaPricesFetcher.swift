@@ -25,22 +25,8 @@ struct BonfidaPricesFetcher: PricesFetcher {
         // TODO:
     }
     
-    var pairs = [Pair]()
-    let disposeBag = DisposeBag()
-    let prices = BehaviorRelay<[Price]>(value: [])
-    
-    func fetchAll() {
-        for pair in pairs {
-            fetch(pair: pair)
-                .subscribe(onSuccess: { newPrice in
-                    self.updatePair(pair, newPrice: newPrice)
-                })
-                .disposed(by: disposeBag)
-        }
-    }
-    
-    func fetch(pair: Pair) -> Single<Price> {
-        request(.get, "https://serum-api.bonfida.com/candles/\(pair.from)\(pair.to)?limit=1&resolution=86400")
+    func getCurrentPrice(from: String, to: String) -> Single<Price> {
+        request(.get, "https://serum-api.bonfida.com/candles/\(from)\(to)?limit=1&resolution=86400")
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .responseData()
@@ -52,7 +38,13 @@ struct BonfidaPricesFetcher: PricesFetcher {
                 let close: Double = $0.data?.first?.close ?? 0
                 let change24h = close - open
                 let change24hInPercentages = change24h / (open == 0 ? 1: open)
-                return Price(from: pair.from, to: pair.to, value: close, change24h: Price.Change24h(value: change24h, percentage: change24hInPercentages))
+                return Price(
+                    value: close,
+                    change24h: Price.Change24h(
+                        value: change24h,
+                        percentage: change24hInPercentages
+                    )
+                )
             }
             .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
             .observeOn(MainScheduler.instance)
