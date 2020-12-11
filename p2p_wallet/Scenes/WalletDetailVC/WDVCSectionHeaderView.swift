@@ -36,10 +36,18 @@ class WDVCSectionHeaderView: SectionHeaderView {
         stackView.insertArrangedSubview(amountLabel, at: 0)
         stackView.insertArrangedSubview(changeLabel, at: 1)
         stackView.insertArrangedSubview(lineChartView, at: 2)
-        
-        let values = (0..<10).map { (i) -> ChartDataEntry in
-            let val = Double(arc4random_uniform(10) + 3)
-            return ChartDataEntry(x: Double(i), y: val)
+    }
+    
+    func setUp(wallet: Wallet) {
+        amountLabel.text = wallet.amountInUSD.toString(maximumFractionDigits: 2) + " US$"
+        changeLabel.text = "\(wallet.price?.change24h?.value.toString(showPlus: true) ?? "") US$ (\((wallet.price?.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true)) %) 24 hrs"
+    }
+    
+    func setUp(prices: [PriceRecord]) {
+        var x = 0
+        let values = prices.map { price -> ChartDataEntry in
+            x += 1
+            return ChartDataEntry(x: Double(x), y: price.close)
         }
         
         let set1 = LineChartDataSet(entries: values)
@@ -60,11 +68,6 @@ class WDVCSectionHeaderView: SectionHeaderView {
         let data = LineChartData(dataSet: set1)
         data.setDrawValues(false)
         lineChartView.data = data
-    }
-    
-    func setUp(wallet: Wallet) {
-        amountLabel.text = wallet.amountInUSD.toString(maximumFractionDigits: 2) + " US$"
-        changeLabel.text = "\(wallet.price?.change24h?.value.toString(showPlus: true) ?? "") US$ (\((wallet.price?.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true)) %) 24 hrs"
     }
     
     private func createMarker() -> ChartMarker {
