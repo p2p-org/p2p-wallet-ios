@@ -22,6 +22,12 @@ class WDVCSectionHeaderView: SectionHeaderView {
         chartView.rightAxis.gridLineWidth = 0
         chartView.xAxis.enabled = false
         chartView.legend.enabled = false
+        
+        // marker
+        var marker = createMarker()
+        marker.chartView = chartView
+        chartView.marker = marker
+        
         return chartView
     }()
     override func commonInit() {
@@ -59,5 +65,14 @@ class WDVCSectionHeaderView: SectionHeaderView {
     func setUp(wallet: Wallet) {
         amountLabel.text = wallet.amountInUSD.toString(maximumFractionDigits: 2) + " US$"
         changeLabel.text = "\(wallet.price?.change24h?.value.toString(showPlus: true) ?? "") US$ (\((wallet.price?.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true)) %) 24 hrs"
+    }
+    
+    private func createMarker() -> ChartMarker {
+        ChartMarker(
+            color: .textBlack,
+            font: .systemFont(ofSize: 12),
+            textColor: .textWhite,
+            insets: UIEdgeInsets(top: 8, left: 8, bottom: 20, right: 8)
+        )
     }
 }
