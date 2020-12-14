@@ -19,7 +19,7 @@ class HorizontalPicker: BEView {
     
     var selectedIndex: Int = -1 {
         didSet {
-            guard selectedIndex > 0 && selectedIndex < labels.count else {return}
+            guard selectedIndex >= 0 && selectedIndex < labels.count else {return}
             for (index, label) in (stackView.arrangedSubviews as! [UILabel]).enumerated() {
                 if index != selectedIndex {
                     label.textColor = .secondary
