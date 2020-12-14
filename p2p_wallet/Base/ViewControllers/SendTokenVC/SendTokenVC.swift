@@ -25,10 +25,12 @@ class SendTokenVC: BEPagesVC, LoadableView {
     let disposeBag = DisposeBag()
     var wallets: [Wallet]
     var initialAddress: String?
+    var initialSymbol: String?
     
-    init(wallets: [Wallet], address: String? = nil) {
+    init(wallets: [Wallet], address: String? = nil, initialSymbol: String? = nil) {
         self.wallets = wallets
         self.initialAddress = address
+        self.initialSymbol = initialSymbol
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -75,6 +77,12 @@ class SendTokenVC: BEPagesVC, LoadableView {
             }
             vc.setUp(wallet: item)
             return vc
+        }
+        
+        if let symbol = initialSymbol,
+           let index = wallets.firstIndex(where: {$0.symbol == symbol})
+        {
+            moveToPage(index)
         }
         
         view.layoutIfNeeded()
