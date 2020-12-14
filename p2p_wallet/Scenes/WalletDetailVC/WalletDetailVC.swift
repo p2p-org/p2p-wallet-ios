@@ -11,6 +11,7 @@ import DiffableDataSources
 class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(backgroundColor: .vcBackground) }
     let wallet: Wallet
+    var graphVM: WalletGraphVM { (viewModel as! ViewModel).graphVM }
     
     // MARK: - Initializer
     init(wallet: Wallet) {
@@ -44,10 +45,8 @@ class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
         if indexPath.section == 0 {
             let header = header as! WDVCSectionHeaderView
             header.setUp(wallet: wallet)
-            PricesManager.shared.fetchHistoricalPrice(for: wallet.symbol, period: .month)
-                .subscribe(onSuccess: {records in
-                    header.setUp(prices: records)
-                })
+            header.lineChartView
+                .subscribed(to: graphVM)
                 .disposed(by: disposeBag)
         }
         return header
