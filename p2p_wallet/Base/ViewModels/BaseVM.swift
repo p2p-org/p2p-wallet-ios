@@ -21,11 +21,33 @@ class BaseVM<T: Hashable> {
     
     func bind() {}
     
-    @discardableResult
-    func reload() -> Bool {
-        if state.value == .loading {return false}
+    func reload() {
+        if !shouldReload() {return}
         state.accept(.loading)
-        return true
+        request
+            .subscribe(onSuccess: {newData in
+                self.handleNewData(newData)
+            }, onError: {error in
+                self.handleError(error)
+            })
+            .disposed(by: disposeBag)
+        return
+    }
+    
+    func shouldReload() -> Bool {
+        state.value != .loading
+    }
+    
+    var request: Single<T> { Single<T>.just(data).delay(.seconds(2), scheduler: MainScheduler.instance) // delay for simulating loading
+    }
+    
+    func handleNewData(_ newData: T) {
+        data = newData
+        state.accept(.loaded(data))
+    }
+    
+    func handleError(_ error: Error) {
+        state.accept(.error(error))
     }
     
     var dataDidChange: Observable<Void> {

@@ -23,43 +23,33 @@ class ListViewModel<T: ListItemType>: BaseVM<[T]> {
     var isLastPageLoaded = false
     var isListEmpty: Bool {isLastPageLoaded && items.count == 0}
     
-    var request: Single<[T]> { Single<[T]>.just([]).delay(.seconds(2), scheduler: MainScheduler.instance) // delay for simulating loading
-    }
-    
+    // MARK: - Initializer
     init() {
         super.init(initialData: [])
         reload()
     }
     
-    func reload() {
+    // MARK: - Methods
+    override func reload() {
         data = []
         offset = 0
         isLastPageLoaded = false
-        fetchNext()
+        super.reload()
+    }
+    
+    func fetchNext() {
+        super.reload()
     }
     
     func refresh() {
         reload()
     }
     
-    func fetchNext() {
-        // prevent dupplicate
-        if state.value == .loading || isLastPageLoaded {return}
-        
-        // assign loading state
-        
-        state.accept(.loading)
-        
-        request
-            .subscribe { (items) in
-                self.handleNewData(items)
-            } onError: { (error) in
-                self.state.accept(.error(error))
-            }
-            .disposed(by: disposeBag)
+    override func shouldReload() -> Bool {
+        super.shouldReload() && !isLastPageLoaded
     }
     
-    func handleNewData(_ newItems: [T]) {
+    override func handleNewData(_ newItems: [T]) {
         data = self.join(newItems)
         
         // resign state
