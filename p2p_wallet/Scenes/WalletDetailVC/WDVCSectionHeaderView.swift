@@ -11,7 +11,7 @@ import Action
 
 class WDVCSectionHeaderView: SectionHeaderView {
     lazy var amountLabel = UILabel(text: "$120,00", textSize: 25, weight: .semibold, textColor: .textBlack, textAlignment: .center)
-    lazy var changeLabel = UILabel(text: "+ 0,16 US$ (0,01%) 24 hrs", textSize: 15, textColor: .secondary, textAlignment: .center)
+    lazy var tokenCountLabel = UILabel(text: "0 SOL", textSize: 15, textColor: .secondary, textAlignment: .center)
     lazy var lineChartView: ChartView = {
         let chartView = ChartView(height: 257)
         chartView.chartDescription?.enabled = false
@@ -47,7 +47,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
         super.commonInit()
         stackView.alignment = .fill
         stackView.insertArrangedSubview(amountLabel, at: 0)
-        stackView.insertArrangedSubview(changeLabel, at: 1)
+        stackView.insertArrangedSubview(tokenCountLabel, at: 1)
         stackView.insertArrangedSubview(lineChartView.padding(.init(x: -10, y: 0)), at: 2)
         
         let separator = UIView.separator(height: 1, color: UIColor.textBlack.withAlphaComponent(0.1))
@@ -61,7 +61,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
                         UILabel(text: L10n.walletAddress, textSize: 13, weight: .bold),
                         pubkeyLabel
                     ]),
-                    UIImageView(width: 24.75, height: 24.75, image: .scanQr, tintColor: .secondary)
+                    UIImageView(width: 24.75, height: 24.75, image: .copyToClipboard, tintColor: .secondary)
                         .onTap(self, action: #selector(buttonScanQrCodeDidTouch))
                 ], padding: .init(x: 16, y: 16))
                 .with(spacing: 16, alignment: .center, distribution: .fill)
@@ -71,7 +71,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
         stackView.insertArrangedSubview(walletAddressView.padding(.init(x: 16, y: 0)), at: 5)
         
         stackView.setCustomSpacing(5, after: amountLabel)
-        stackView.setCustomSpacing(0, after: changeLabel)
+        stackView.setCustomSpacing(0, after: tokenCountLabel)
         stackView.setCustomSpacing(16, after: separator)
         stackView.setCustomSpacing(16, after: chartPicker)
         stackView.setCustomSpacing(30, after: walletAddressView.wrapper!)
@@ -82,7 +82,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
     
     func setUp(wallet: Wallet) {
         amountLabel.text = wallet.amountInUSD.toString(maximumFractionDigits: 2) + " US$"
-        changeLabel.text = "\(wallet.price?.change24h?.value.toString(showPlus: true) ?? "") US$ (\((wallet.price?.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true)) %) 24 hrs"
+        tokenCountLabel.text = "\(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
         pubkeyLabel.text = wallet.pubkey
     }
     
@@ -96,7 +96,8 @@ class WDVCSectionHeaderView: SectionHeaderView {
     }
     
     @objc private func buttonScanQrCodeDidTouch() {
-        scanQrCodeAction?.execute()
+//        scanQrCodeAction?.execute()
+        UIApplication.shared.copyToClipboard(pubkeyLabel.text)
     }
 }
 
