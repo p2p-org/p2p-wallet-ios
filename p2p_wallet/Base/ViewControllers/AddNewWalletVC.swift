@@ -7,6 +7,7 @@
 
 import Foundation
 import Action
+import RxSwift
 
 class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     lazy var titleLabel = UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
@@ -162,20 +163,12 @@ extension AddNewWalletVC: UIViewControllerTransitioningDelegate {
 extension AddNewWalletVC {
     class ViewModel: ListViewModel<Wallet> {
         class FeeVM: BaseVM<Double> {
-            @discardableResult
-            override func reload() -> Bool {
-                guard super.reload() else {return false}
+            override var request: Single<Double> {
                 SolanaSDK.shared.getCreatingTokenAccountFee()
-                    .subscribe(onSuccess: {[weak self] fee in
-                        guard let strongSelf = self else {return}
+                    .map {
                         let decimals = WalletsVM.ofCurrentUser.items.first(where: {$0.symbol == "SOL"})?.decimals ?? 9
-                        strongSelf.data = Double(fee) * pow(Double(10), -Double(decimals))
-                        strongSelf.state.accept(.loaded(strongSelf.data))
-                    }, onError: {[weak self] error in
-                        self?.state.accept(.error(error))
-                    })
-                    .disposed(by: disposeBag)
-                return true
+                        return Double($0) * pow(Double(10), -Double(decimals))
+                    }
             }
         }
         
