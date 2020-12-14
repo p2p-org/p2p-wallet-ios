@@ -2,7 +2,7 @@
 //  WalletTransactionsVM.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 30/11/2020.
+//  Created by Chung Tran on 14/12/2020.
 //
 
 import Foundation

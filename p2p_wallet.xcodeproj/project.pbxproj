@@ -57,7 +57,7 @@
 		BC3ADE982570C292002B3B16 /* ProcessTransactionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE972570C292002B3B16 /* ProcessTransactionVC.swift */; };
 		BC3ADEA02570E1B9002B3B16 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE9F2570E1B9002B3B16 /* Transaction.swift */; };
 		BC3ADEC82574D84C002B3B16 /* TransactionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADEC72574D84C002B3B16 /* TransactionCell.swift */; };
-		BC3ADEE82574E1F3002B3B16 /* WalletTransactionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADEE72574E1F3002B3B16 /* WalletTransactionsVM.swift */; };
+		BC3ADEE82574E1F3002B3B16 /* WalletDetailVC+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADEE72574E1F3002B3B16 /* WalletDetailVC+ViewModel.swift */; };
 		BC3EA47C254FCE9200FB1FEA /* IBPCollectionViewCompositionalLayoutInteroperability.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3EA47B254FCE9200FB1FEA /* IBPCollectionViewCompositionalLayoutInteroperability.swift */; };
 		BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3EA480254FD3CE00FB1FEA /* BaseCollectionViewCell.swift */; };
 		BC3EA486254FD44700FB1FEA /* MainWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3EA485254FD44700FB1FEA /* MainWalletCell.swift */; };
@@ -69,6 +69,8 @@
 		BC490CCC256CCEBC006E7AC9 /* AddNewWalletVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC490CCB256CCEBC006E7AC9 /* AddNewWalletVC.swift */; };
 		BC54DCAD25831EAD00A65566 /* BonfidaAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCAC25831EAD00A65566 /* BonfidaAPITests.swift */; };
 		BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCED25837CD600A65566 /* ChartMarker.swift */; };
+		BC54DCF92587089700A65566 /* WalletGraphVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCF82587089700A65566 /* WalletGraphVM.swift */; };
+		BC54DCFE258708B000A65566 /* WalletTransactionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCFD258708B000A65566 /* WalletTransactionsVM.swift */; };
 		BC55B882254BEBAC0032C355 /* SSPinCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B881254BEBAC0032C355 /* SSPinCodeVC.swift */; };
 		BC55B88E254BFBDC0032C355 /* TabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B88D254BFBDC0032C355 /* TabBarVC.swift */; };
 		BC55B8C8254C03700032C355 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B8C7254C03700032C355 /* TabBar.swift */; };
@@ -210,7 +212,7 @@
 		BC3ADE972570C292002B3B16 /* ProcessTransactionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransactionVC.swift; sourceTree = "<group>"; };
 		BC3ADE9F2570E1B9002B3B16 /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		BC3ADEC72574D84C002B3B16 /* TransactionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionCell.swift; sourceTree = "<group>"; };
-		BC3ADEE72574E1F3002B3B16 /* WalletTransactionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTransactionsVM.swift; sourceTree = "<group>"; };
+		BC3ADEE72574E1F3002B3B16 /* WalletDetailVC+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WalletDetailVC+ViewModel.swift"; sourceTree = "<group>"; };
 		BC3EA47B254FCE9200FB1FEA /* IBPCollectionViewCompositionalLayoutInteroperability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IBPCollectionViewCompositionalLayoutInteroperability.swift; sourceTree = "<group>"; };
 		BC3EA480254FD3CE00FB1FEA /* BaseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionViewCell.swift; sourceTree = "<group>"; };
 		BC3EA485254FD44700FB1FEA /* MainWalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWalletCell.swift; sourceTree = "<group>"; };
@@ -222,6 +224,8 @@
 		BC490CCB256CCEBC006E7AC9 /* AddNewWalletVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewWalletVC.swift; sourceTree = "<group>"; };
 		BC54DCAC25831EAD00A65566 /* BonfidaAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonfidaAPITests.swift; sourceTree = "<group>"; };
 		BC54DCED25837CD600A65566 /* ChartMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartMarker.swift; sourceTree = "<group>"; };
+		BC54DCF82587089700A65566 /* WalletGraphVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletGraphVM.swift; sourceTree = "<group>"; };
+		BC54DCFD258708B000A65566 /* WalletTransactionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTransactionsVM.swift; sourceTree = "<group>"; };
 		BC55B881254BEBAC0032C355 /* SSPinCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSPinCodeVC.swift; sourceTree = "<group>"; };
 		BC55B88D254BFBDC0032C355 /* TabBarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarVC.swift; sourceTree = "<group>"; };
 		BC55B8C7254C03700032C355 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
@@ -352,6 +356,8 @@
 				BC932B36257E02D9007F1C29 /* FeeVM.swift */,
 				BCD5E82D25525DD800F51299 /* ListViewModel */,
 				BCD5E82325525C6E00F51299 /* WalletsVM.swift */,
+				BC54DCF82587089700A65566 /* WalletGraphVM.swift */,
+				BC54DCFD258708B000A65566 /* WalletTransactionsVM.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -382,7 +388,7 @@
 				BC2EC18F2553BA2C006EEDA5 /* WDVCSectionHeaderView.swift */,
 				BC3ADEC72574D84C002B3B16 /* TransactionCell.swift */,
 				BC2EC18A2553B700006EEDA5 /* WalletDetailVC.swift */,
-				BC3ADEE72574E1F3002B3B16 /* WalletTransactionsVM.swift */,
+				BC3ADEE72574E1F3002B3B16 /* WalletDetailVC+ViewModel.swift */,
 			);
 			path = WalletDetailVC;
 			sourceTree = "<group>";
@@ -1098,6 +1104,7 @@
 				BC490C20256BAE17006E7AC9 /* WalletsVC.swift in Sources */,
 				BCD5E74E25512DA500F51299 /* InvestmentsVC.swift in Sources */,
 				BC32A393254A77A9002156F0 /* UIViewController+Extensions.swift in Sources */,
+				BC54DCFE258708B000A65566 /* WalletTransactionsVM.swift in Sources */,
 				BC2EC1D02553ED1B006EEDA5 /* DimmingPresentationController.swift in Sources */,
 				BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */,
 				BC2EC1F12553F60C006EEDA5 /* ReceiveTokenVC.swift in Sources */,
@@ -1117,6 +1124,7 @@
 				BC55B8C8254C03700032C355 /* TabBar.swift in Sources */,
 				BCB58375255D299700B10F65 /* SendTokenVC.swift in Sources */,
 				BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */,
+				BC54DCF92587089700A65566 /* WalletGraphVM.swift in Sources */,
 				BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */,
 				BCD5E770255130DD00F51299 /* News.swift in Sources */,
 				BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */,
@@ -1136,7 +1144,7 @@
 				BC7533AA257F31D3007A00D9 /* LazyLabel.swift in Sources */,
 				BC6EE7CA254BBF8900FE1025 /* UIApplication+Extensions.swift in Sources */,
 				BC3ADE822570B005002B3B16 /* FlexibleHeightVC.swift in Sources */,
-				BC3ADEE82574E1F3002B3B16 /* WalletTransactionsVM.swift in Sources */,
+				BC3ADEE82574E1F3002B3B16 /* WalletDetailVC+ViewModel.swift in Sources */,
 				BC23B574254FBB7F00886C9C /* MainVC.swift in Sources */,
 				BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */,
 				BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */,

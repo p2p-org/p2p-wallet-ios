@@ -19,7 +19,7 @@ struct CurrentPrice: Hashable {
     var change24h: Change24h?
 }
 
-struct PriceRecord {
+struct PriceRecord: Hashable {
     let close: Double
     let open: Double
     let low: Double
