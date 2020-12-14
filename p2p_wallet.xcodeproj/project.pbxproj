@@ -22,10 +22,10 @@
 		BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */; };
 		BC23B574254FBB7F00886C9C /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B573254FBB7F00886C9C /* MainVC.swift */; };
 		BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */; };
-		BC23B5AA254FBF6200886C9C /* MainFirstSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A9254FBF6200886C9C /* MainFirstSectionHeaderView.swift */; };
+		BC23B5AA254FBF6200886C9C /* MainVC+FirstSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A9254FBF6200886C9C /* MainVC+FirstSectionHeaderView.swift */; };
 		BC290A00256B9C95002A727C /* SwapTokenItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */; };
 		BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC290A04256BA36F002A727C /* TokenAmountTextField.swift */; };
-		BC2EC1782553ABD2006EEDA5 /* MainFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1772553ABD2006EEDA5 /* MainFooterView.swift */; };
+		BC2EC1782553ABD2006EEDA5 /* MainVC+SectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1772553ABD2006EEDA5 /* MainVC+SectionFooterView.swift */; };
 		BC2EC1802553B1F7006EEDA5 /* SectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */; };
 		BC2EC1852553B326006EEDA5 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */; };
 		BC2EC18B2553B700006EEDA5 /* WalletDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC18A2553B700006EEDA5 /* WalletDetailVC.swift */; };
@@ -72,6 +72,7 @@
 		BC54DCF92587089700A65566 /* WalletGraphVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCF82587089700A65566 /* WalletGraphVM.swift */; };
 		BC54DCFE258708B000A65566 /* WalletTransactionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCFD258708B000A65566 /* WalletTransactionsVM.swift */; };
 		BC54DD062587098800A65566 /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD052587098800A65566 /* LazyView.swift */; };
+		BC54DD232587169400A65566 /* ValueByDateChartMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD222587169400A65566 /* ValueByDateChartMarker.swift */; };
 		BC55B882254BEBAC0032C355 /* SSPinCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B881254BEBAC0032C355 /* SSPinCodeVC.swift */; };
 		BC55B88E254BFBDC0032C355 /* TabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B88D254BFBDC0032C355 /* TabBarVC.swift */; };
 		BC55B8C8254C03700032C355 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B8C7254C03700032C355 /* TabBar.swift */; };
@@ -178,10 +179,10 @@
 		BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeScannerVC.swift; sourceTree = "<group>"; };
 		BC23B573254FBB7F00886C9C /* MainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVC.swift; sourceTree = "<group>"; };
 		BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionView.swift; sourceTree = "<group>"; };
-		BC23B5A9254FBF6200886C9C /* MainFirstSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFirstSectionHeaderView.swift; sourceTree = "<group>"; };
+		BC23B5A9254FBF6200886C9C /* MainVC+FirstSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainVC+FirstSectionHeaderView.swift"; sourceTree = "<group>"; };
 		BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenItemView.swift; sourceTree = "<group>"; };
 		BC290A04256BA36F002A727C /* TokenAmountTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAmountTextField.swift; sourceTree = "<group>"; };
-		BC2EC1772553ABD2006EEDA5 /* MainFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFooterView.swift; sourceTree = "<group>"; };
+		BC2EC1772553ABD2006EEDA5 /* MainVC+SectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainVC+SectionFooterView.swift"; sourceTree = "<group>"; };
 		BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFooterView.swift; sourceTree = "<group>"; };
 		BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		BC2EC18A2553B700006EEDA5 /* WalletDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetailVC.swift; sourceTree = "<group>"; };
@@ -228,6 +229,7 @@
 		BC54DCF82587089700A65566 /* WalletGraphVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletGraphVM.swift; sourceTree = "<group>"; };
 		BC54DCFD258708B000A65566 /* WalletTransactionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTransactionsVM.swift; sourceTree = "<group>"; };
 		BC54DD052587098800A65566 /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
+		BC54DD222587169400A65566 /* ValueByDateChartMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueByDateChartMarker.swift; sourceTree = "<group>"; };
 		BC55B881254BEBAC0032C355 /* SSPinCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSPinCodeVC.swift; sourceTree = "<group>"; };
 		BC55B88D254BFBDC0032C355 /* TabBarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarVC.swift; sourceTree = "<group>"; };
 		BC55B8C7254C03700032C355 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
@@ -376,8 +378,8 @@
 		BC23B572254FBB6300886C9C /* MainVC */ = {
 			isa = PBXGroup;
 			children = (
-				BC23B5A9254FBF6200886C9C /* MainFirstSectionHeaderView.swift */,
-				BC2EC1772553ABD2006EEDA5 /* MainFooterView.swift */,
+				BC23B5A9254FBF6200886C9C /* MainVC+FirstSectionHeaderView.swift */,
+				BC2EC1772553ABD2006EEDA5 /* MainVC+SectionFooterView.swift */,
 				BC3EA485254FD44700FB1FEA /* MainWalletCell.swift */,
 				BC23B573254FBB7F00886C9C /* MainVC.swift */,
 			);
@@ -485,6 +487,15 @@
 			path = ChooseWalletVC;
 			sourceTree = "<group>";
 		};
+		BC54DD1E2587164F00A65566 /* ChartMarkers */ = {
+			isa = PBXGroup;
+			children = (
+				BC54DCED25837CD600A65566 /* ChartMarker.swift */,
+				BC54DD222587169400A65566 /* ValueByDateChartMarker.swift */,
+			);
+			path = ChartMarkers;
+			sourceTree = "<group>";
+		};
 		BC55B8C3254C03660032C355 /* TabBarVC */ = {
 			isa = PBXGroup;
 			children = (
@@ -514,7 +525,7 @@
 				BC2EC1DB2553EFC6006EEDA5 /* SwipeDownInteractor.swift */,
 				BC54DD052587098800A65566 /* LazyView.swift */,
 				BC7533A9257F31D3007A00D9 /* LazyLabel.swift */,
-				BC54DCED25837CD600A65566 /* ChartMarker.swift */,
+				BC54DD1E2587164F00A65566 /* ChartMarkers */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -1110,6 +1121,7 @@
 				BC32A393254A77A9002156F0 /* UIViewController+Extensions.swift in Sources */,
 				BC54DCFE258708B000A65566 /* WalletTransactionsVM.swift in Sources */,
 				BC2EC1D02553ED1B006EEDA5 /* DimmingPresentationController.swift in Sources */,
+				BC54DD232587169400A65566 /* ValueByDateChartMarker.swift in Sources */,
 				BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */,
 				BC2EC1F12553F60C006EEDA5 /* ReceiveTokenVC.swift in Sources */,
 				BCA0CFD8255E78D400CD0F8D /* SendTokenItemVC.swift in Sources */,
@@ -1134,7 +1146,7 @@
 				BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */,
 				BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
-				BC2EC1782553ABD2006EEDA5 /* MainFooterView.swift in Sources */,
+				BC2EC1782553ABD2006EEDA5 /* MainVC+SectionFooterView.swift in Sources */,
 				BC7533B5257F3E7B007A00D9 /* EnterPhrasesVC.swift in Sources */,
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,
 				BC55B88E254BFBDC0032C355 /* TabBarVC.swift in Sources */,
@@ -1174,7 +1186,7 @@
 				BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */,
 				BCF7D953256220F100961D31 /* ErrorView.swift in Sources */,
 				BC75334D257E1A5B007A00D9 /* FiatConvertable.swift in Sources */,
-				BC23B5AA254FBF6200886C9C /* MainFirstSectionHeaderView.swift in Sources */,
+				BC23B5AA254FBF6200886C9C /* MainVC+FirstSectionHeaderView.swift in Sources */,
 				BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */,
 				BCD5E82925525D3D00F51299 /* ListViewModel.swift in Sources */,
 				BC2EC1D22553ED1B006EEDA5 /* FlexibleHeightPresentationController.swift in Sources */,

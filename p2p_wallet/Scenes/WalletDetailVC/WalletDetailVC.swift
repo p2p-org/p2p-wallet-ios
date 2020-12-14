@@ -28,6 +28,8 @@ class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
         super.setUp()
         title = wallet.name
         view.backgroundColor = .vcBackground
+        
+        collectionView.contentInset = collectionView.contentInset.modifying(dBottom: 71)
     }
     
     // MARK: - Layout
