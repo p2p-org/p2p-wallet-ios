@@ -20,4 +20,9 @@ class WalletGraphVM: BaseVM<[PriceRecord]> {
     override var request: Single<[PriceRecord]> {
         PricesManager.shared.fetchHistoricalPrice(for: wallet.symbol, period: period)
     }
+    
+    override func shouldReload() -> Bool {
+        // always allow
+        true
+    }
 }
