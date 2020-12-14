@@ -28,7 +28,7 @@ class SectionHeaderView: UICollectionReusableView {
         stackView.autoPinEdge(toSuperviewEdge: .leading)
         stackView.autoPinEdge(toSuperviewEdge: .trailing)
         
-        stackView.addArrangedSubview(headerLabel)
+        stackView.addArrangedSubview(headerLabel.padding(.init(x: 16, y: 0)))
         headerLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor)
             .isActive = true
     }

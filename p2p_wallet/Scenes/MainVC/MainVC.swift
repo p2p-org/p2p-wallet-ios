@@ -20,7 +20,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     var qrStackView: UIStackView!
     var avatarImageView = UIImageView(width: 44, height: 44, backgroundColor: .c4c4c4, cornerRadius: 22)
     var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .textBlack, cornerRadius: 4)
-    var collectionViewHeaderView: MainFirstSectionHeaderView?
+    var collectionViewHeaderView: FirstSectionHeaderView?
     
     // MARK: - Methods
     override func setUp() {
@@ -67,7 +67,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     override var sections: [Section] {
         [
             Section(
-                headerViewClass: MainFirstSectionHeaderView.self,
+                headerViewClass: FirstSectionHeaderView.self,
                 headerTitle: L10n.wallets,
                 interGroupSpacing: 16
             ),
@@ -79,7 +79,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         let header = super.configureHeaderForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
         
         if indexPath.section == 0,
-           let view = header as? MainFirstSectionHeaderView
+           let view = header as? FirstSectionHeaderView
         {
             view.receiveAction = self.receiveAction
             view.sendAction = self.sendAction()
