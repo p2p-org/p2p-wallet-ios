@@ -21,7 +21,7 @@ struct BonfidaPricesFetcher: PricesFetcher {
         let open: Double?
         let low: Double?
         let high: Double?
-        let startTime: TimeInterval?
+        let startTime: Double?
     }
     
     let endpoint = "https://serum-api.bonfida.com"
@@ -72,10 +72,12 @@ struct BonfidaPricesFetcher: PricesFetcher {
                 records.compactMap { record in
                     guard let close = record.close, let open = record.open, let low = record.low, let high = record.high, let startTime = record.startTime
                     else {return nil}
-                    return PriceRecord(close: close, open: open, low: low, high: high, startTime: Date(timeIntervalSince1970: startTime)
+                    
+                    return PriceRecord(close: close, open: open, low: low, high: high, startTime: Date(timeIntervalSince1970: startTime / 1000.0)
                     )
                 }
             })
+            .map {$0.reversed()}
     }
 }
 

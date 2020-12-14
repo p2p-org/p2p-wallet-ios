@@ -37,7 +37,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
         stackView.alignment = .fill
         stackView.insertArrangedSubview(amountLabel, at: 0)
         stackView.insertArrangedSubview(changeLabel, at: 1)
-        stackView.insertArrangedSubview(lineChartView, at: 2)
+        stackView.insertArrangedSubview(lineChartView.padding(.init(x: -10, y: 0)), at: 2)
     }
     
     func setUp(wallet: Wallet) {
@@ -45,8 +45,8 @@ class WDVCSectionHeaderView: SectionHeaderView {
         changeLabel.text = "\(wallet.price?.change24h?.value.toString(showPlus: true) ?? "") US$ (\((wallet.price?.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true)) %) 24 hrs"
     }
     
-    private func createMarker() -> ChartMarker {
-        ChartMarker(
+    private func createMarker() -> ValueByDateChartMarker {
+        ValueByDateChartMarker(
             color: .textBlack,
             font: .systemFont(ofSize: 12),
             textColor: .textWhite,
@@ -61,7 +61,7 @@ extension WDVCSectionHeaderView {
             var x = 0
             let values = prices.map { price -> ChartDataEntry in
                 x += 1
-                return ChartDataEntry(x: Double(x), y: price.close)
+                return ChartDataEntry(x: Double(x), y: price.close, data: price.startTime)
             }
             
             let set1 = LineChartDataSet(entries: values)
