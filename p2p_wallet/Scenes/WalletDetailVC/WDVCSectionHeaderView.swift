@@ -56,15 +56,20 @@ class WDVCSectionHeaderView: SectionHeaderView {
         
         let walletAddressView: UIView = {
             let view = UIView(backgroundColor: .textWhite, cornerRadius: 16)
+            let separator = UIView(width: 1, backgroundColor: UIColor.textBlack.withAlphaComponent(0.1))
             view.row([
-                    .col([
+                    UIView.col([
                         UILabel(text: L10n.walletAddress, textSize: 13, weight: .bold),
                         pubkeyLabel
-                    ]),
+                    ]).padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 0)),
+                    separator,
                     UIImageView(width: 24.75, height: 24.75, image: .copyToClipboard, tintColor: .secondary)
-                        .onTap(self, action: #selector(buttonScanQrCodeDidTouch))
-                ], padding: .init(x: 16, y: 16))
+                        .onTap(self, action: #selector(buttonScanQrCodeDidTouch)),
+                    UIView.spacer
+                ])
                 .with(spacing: 16, alignment: .center, distribution: .fill)
+            separator.heightAnchor.constraint(equalTo: view.heightAnchor)
+                .isActive = true
             return view
         }()
         

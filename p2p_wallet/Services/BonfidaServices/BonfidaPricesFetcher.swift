@@ -88,10 +88,10 @@ extension Period {
             return 60*60
         case .week, .month:
             return 60*60*24
-        case .year:
-            return 86400 // maximum resolution is 86400
-        case .all:
-            return 86400 // maximum resolution is 86400
+//        case .year:
+//            return 86400 // maximum resolution is 86400
+//        case .all:
+//            return 86400 // maximum resolution is 86400
         }
     }
     
@@ -103,10 +103,10 @@ extension Period {
             return 7
         case .month:
             return 30
-        case .year:
-            return 12 * 30
-        case .all:
-            return nil
+//        case .year:
+//            return 12 * 30
+//        case .all:
+//            return nil
         }
     }
 }
