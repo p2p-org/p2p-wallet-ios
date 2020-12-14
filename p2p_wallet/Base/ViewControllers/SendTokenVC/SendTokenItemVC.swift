@@ -81,7 +81,7 @@ class SendTokenItemVC: BaseVC {
         let priceWrapper = UIView.col([
             .row([
                 UILabel(text: "1 " + (wallet?.symbol ?? "") + ":", textSize: 15),
-                UILabel(text: (wallet?.price?.value?.toString(maximumFractionDigits: 9) ?? "") + "US$", textSize: 15)
+                UILabel(text: (wallet?.price?.value?.toString(maximumFractionDigits: 9) ?? "") + " US$", textSize: 15)
             ]),
             .row([
                 UILabel(text: L10n.fee + ":", textSize: 15),
