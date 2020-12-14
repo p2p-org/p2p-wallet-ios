@@ -31,8 +31,8 @@ enum Period: String, CaseIterable {
     case day
     case week
     case month
-    case year
-    case all
+//    case year
+//    case all
 }
 
 protocol PricesFetcher {

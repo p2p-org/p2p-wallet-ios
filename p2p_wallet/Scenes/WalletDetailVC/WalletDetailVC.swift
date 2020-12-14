@@ -123,11 +123,12 @@ class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
     
     // MARK: - Actions
     @objc func buttonSendDidTouch() {
-        let vc = SendTokenVC(wallets: WalletsVM.ofCurrentUser.data)
+        let vc = SendTokenVC(wallets: WalletsVM.ofCurrentUser.data, initialSymbol: wallet.symbol)
         self.show(vc, sender: nil)
     }
     
     @objc func buttonSwapDidTouch() {
+        // TODO: - Swap
         let vc = SwapTokenVC(wallets: WalletsVM.ofCurrentUser.data)
         self.show(vc, sender: nil)
     }
