@@ -50,6 +50,7 @@ class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
             header.lineChartView
                 .subscribed(to: graphVM)
                 .disposed(by: disposeBag)
+            header.chartPicker.delegate = self
         }
         return header
     }
@@ -57,5 +58,13 @@ class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
     override func itemDidSelect(_ item: Transaction) {
         let vc = TransactionInfoVC(transaction: item)
         present(vc, animated: true, completion: nil)
+    }
+}
+
+extension WalletDetailVC: HorizontalPickerDelegate {
+    func picker(_ picker: HorizontalPicker, didSelectOptionAtIndex index: Int) {
+        guard index < Period.allCases.count else {return}
+        graphVM.period = Period.allCases[index]
+        graphVM.reload()
     }
 }
