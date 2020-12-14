@@ -16,6 +16,8 @@ internal enum L10n {
   internal static let activities = L10n.tr("Localizable", "Activities")
   /// Add wallet
   internal static let addWallet = L10n.tr("Localizable", "Add wallet")
+  /// all
+  internal static let all = L10n.tr("Localizable", "all")
   /// Almost done!
   internal static let almostDone = L10n.tr("Localizable", "Almost done!")
   /// amount
@@ -60,6 +62,8 @@ internal enum L10n {
   internal static let creating = L10n.tr("Localizable", "Creating")
   /// creating an account
   internal static let creatingAnAccount = L10n.tr("Localizable", "creating an account")
+  /// day
+  internal static let day = L10n.tr("Localizable", "day")
   /// Do this later
   internal static let doThisLater = L10n.tr("Localizable", "Do this later")
   /// Done
@@ -106,6 +110,8 @@ internal enum L10n {
   internal static let max = L10n.tr("Localizable", "Max")
   /// Mint address
   internal static let mintAddress = L10n.tr("Localizable", "Mint address")
+  /// month
+  internal static let month = L10n.tr("Localizable", "month")
   /// next
   internal static let next = L10n.tr("Localizable", "next")
   /// No account
@@ -238,6 +244,8 @@ internal enum L10n {
   internal static let weUseFaceIDToSecureYourTransactions = L10n.tr("Localizable", "We use FaceID to secure your transactions")
   /// we've created some security keywords for you.
   internal static let weVeCreatedSomeSecurityKeywordsForYou = L10n.tr("Localizable", "we've created some security keywords for you.")
+  /// week
+  internal static let week = L10n.tr("Localizable", "week")
   /// Welcome back to the Wowlet space!
   internal static let welcomeBackToTheWowletSpace = L10n.tr("Localizable", "Welcome back to the Wowlet space!")
   /// Well done!
@@ -246,6 +254,8 @@ internal enum L10n {
   internal static let wowletForPeopleNotForTokens = L10n.tr("Localizable", "Wowlet for people, not for tokens")
   /// Wowlet recovery
   internal static let wowletRecovery = L10n.tr("Localizable", "Wowlet recovery")
+  /// year
+  internal static let year = L10n.tr("Localizable", "year")
   /// Your device does not support biometrics authentication
   internal static let yourDeviceDoesNotSupportBiometricsAuthentication = L10n.tr("Localizable", "Your device does not support biometrics authentication")
   /// Your wallet has been successfully created!
