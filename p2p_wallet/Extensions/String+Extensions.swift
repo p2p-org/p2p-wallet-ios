@@ -25,6 +25,12 @@ extension String {
         let end = index(startIndex, offsetBy: bounds.upperBound)
         return String(self[start..<end])
     }
+    
+    // swiftlint:disable swiftgen_strings
+    func localized() -> String {
+        NSLocalizedString(self, comment: "")
+    }
+    // swiftlint:enable swiftgen_strings
 }
 
 extension String {
