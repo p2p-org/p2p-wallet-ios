@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 class FeeVM: BaseVM<Double> {
     static let shared = FeeVM()
@@ -15,20 +16,12 @@ class FeeVM: BaseVM<Double> {
         reload()
     }
     
-    @discardableResult
-    override func reload() -> Bool {
-        guard super.reload() else {return false}
+    override var request: Single<Double> {
         SolanaSDK.shared.getFees()
             .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
-            .subscribe(onSuccess: {[weak self] fee in
-                guard let strongSelf = self else {return}
+            .map {
                 let decimals = WalletsVM.ofCurrentUser.items.first(where: {$0.symbol == "SOL"})?.decimals ?? 9
-                strongSelf.data = Double(fee) * pow(Double(10), -Double(decimals))
-                strongSelf.state.accept(.loaded(strongSelf.data))
-            }, onError: {[weak self] error in
-                self?.state.accept(.error(error))
-            })
-            .disposed(by: disposeBag)
-        return true
+                return Double($0) * pow(Double(10), -Double(decimals))
+            }
     }
 }

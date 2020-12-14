@@ -11,11 +11,12 @@ import DiffableDataSources
 class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(backgroundColor: .vcBackground) }
     let wallet: Wallet
+    var graphVM: WalletGraphVM { (viewModel as! ViewModel).graphVM }
     
     // MARK: - Initializer
     init(wallet: Wallet) {
         self.wallet = wallet
-        super.init(viewModel: WalletTransactionsVM(wallet: wallet))
+        super.init(viewModel: ViewModel(wallet: wallet))
     }
     
     required init?(coder: NSCoder) {
@@ -44,6 +45,9 @@ class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
         if indexPath.section == 0 {
             let header = header as! WDVCSectionHeaderView
             header.setUp(wallet: wallet)
+            header.lineChartView
+                .subscribed(to: graphVM)
+                .disposed(by: disposeBag)
         }
         return header
     }
