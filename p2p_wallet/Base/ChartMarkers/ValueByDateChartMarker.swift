@@ -13,7 +13,7 @@ class ValueByDateChartMarker: ChartMarker {
         var string = entry.y.toString(maximumFractionDigits: 4)
         if let date = entry.data as? Date {
             string += "\n"
-            string += date.string(withFormat: "dd MMM yyyy")
+            string += date.string(withFormat: "dd MMM yyyy HH:mm:ss")
         }
         setLabel(string)
     }

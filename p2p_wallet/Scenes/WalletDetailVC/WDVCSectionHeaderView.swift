@@ -7,6 +7,7 @@
 
 import Foundation
 import Charts
+import Action
 
 class WDVCSectionHeaderView: SectionHeaderView {
     lazy var amountLabel = UILabel(text: "$120,00", textSize: 25, weight: .semibold, textColor: .textBlack, textAlignment: .center)
@@ -32,17 +33,57 @@ class WDVCSectionHeaderView: SectionHeaderView {
         
         return chartView
     }()
+    lazy var chartPicker: HorizontalPicker = {
+        let chartPicker = HorizontalPicker(forAutoLayout: ())
+        chartPicker.labels = Period.allCases.map {$0.rawValue}
+        chartPicker.selectedIndex = Period.allCases.firstIndex(where: {$0 == .day})!
+        return chartPicker
+    }()
+    lazy var pubkeyLabel = UILabel(textSize: 13, textColor: .secondary)
+    
+    var scanQrCodeAction: CocoaAction?
+    
     override func commonInit() {
         super.commonInit()
         stackView.alignment = .fill
         stackView.insertArrangedSubview(amountLabel, at: 0)
         stackView.insertArrangedSubview(changeLabel, at: 1)
         stackView.insertArrangedSubview(lineChartView.padding(.init(x: -10, y: 0)), at: 2)
+        
+        let separator = UIView.separator(height: 1, color: UIColor.textBlack.withAlphaComponent(0.1))
+        stackView.insertArrangedSubview(separator, at: 3)
+        stackView.insertArrangedSubview(chartPicker, at: 4)
+        
+        let walletAddressView: UIView = {
+            let view = UIView(backgroundColor: .textWhite, cornerRadius: 16)
+            view.row([
+                    .col([
+                        UILabel(text: L10n.walletAddress, textSize: 13, weight: .bold),
+                        pubkeyLabel
+                    ]),
+                    UIImageView(width: 24.75, height: 24.75, image: .scanQr, tintColor: .secondary)
+                        .onTap(self, action: #selector(buttonScanQrCodeDidTouch))
+                ], padding: .init(x: 16, y: 16))
+                .with(spacing: 16, alignment: .center, distribution: .fill)
+            return view
+        }()
+        
+        stackView.insertArrangedSubview(walletAddressView.padding(.init(x: 16, y: 0)), at: 5)
+        
+        stackView.setCustomSpacing(5, after: amountLabel)
+        stackView.setCustomSpacing(0, after: changeLabel)
+        stackView.setCustomSpacing(16, after: separator)
+        stackView.setCustomSpacing(16, after: chartPicker)
+        stackView.setCustomSpacing(30, after: walletAddressView.wrapper!)
+        
+        // initial setups
+        headerLabel.font = .systemFont(ofSize: 21, weight: .semibold)
     }
     
     func setUp(wallet: Wallet) {
         amountLabel.text = wallet.amountInUSD.toString(maximumFractionDigits: 2) + " US$"
         changeLabel.text = "\(wallet.price?.change24h?.value.toString(showPlus: true) ?? "") US$ (\((wallet.price?.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true)) %) 24 hrs"
+        pubkeyLabel.text = wallet.pubkey
     }
     
     private func createMarker() -> ValueByDateChartMarker {
@@ -52,6 +93,10 @@ class WDVCSectionHeaderView: SectionHeaderView {
             textColor: .textWhite,
             insets: UIEdgeInsets(top: 8, left: 8, bottom: 20, right: 8)
         )
+    }
+    
+    @objc private func buttonScanQrCodeDidTouch() {
+        scanQrCodeAction?.execute()
     }
 }
 
