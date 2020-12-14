@@ -53,6 +53,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         var orthogonalScrollingBehavior: UICollectionLayoutSectionOrthogonalScrollingBehavior?
         var itemHeight = NSCollectionLayoutDimension.estimated(100)
         var contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+        var horizontalInterItemSpacing = NSCollectionLayoutSpacing.fixed(16)
     }
     
     // MARK: - Properties
@@ -172,6 +173,8 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
     }
     
     func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
+        let sectionInfo = sections[sectionIndex]
+        
         let group: NSCollectionLayoutGroup
         // 1 columns
         if env.container.contentSize.width < 536 {
@@ -181,8 +184,9 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
             group = createLayoutForGroupOnLargeScreen(sectionIndex: sectionIndex, env: env)
         }
         
+        group.contentInsets = sectionInfo.contentInsets
+        
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = sections[sectionIndex].contentInsets
         
         var supplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
         if !sections[sectionIndex].headerTitle.isEmpty,
@@ -215,7 +219,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: sectionInfo.itemHeight)
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(env.container.contentSize.width - sectionInfo.contentInsets.leading - sectionInfo.contentInsets.trailing), heightDimension: .estimated(200))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(env.container.contentSize.width), heightDimension: .estimated(200))
         
         return NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     }
@@ -229,15 +233,15 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         
         let trailingItem = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute((env.container.contentSize.width - sectionInfo.contentInsets.leading - sectionInfo.contentInsets.trailing - 16)/2), heightDimension: .estimated(300))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute((env.container.contentSize.width - sectionInfo.horizontalInterItemSpacing.spacing - sectionInfo.contentInsets.leading - sectionInfo.contentInsets.trailing)/2), heightDimension: itemSize.heightDimension)
         
         let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [leadingItem])
         
         let trailingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [trailingItem])
         
-        let combinedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
+        let combinedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: itemSize.heightDimension)
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: combinedGroupSize, subitems: [leadingGroup, trailingGroup])
-        group.interItemSpacing = .fixed(16)
+        group.interItemSpacing = sectionInfo.horizontalInterItemSpacing
         return group
     }
     
