@@ -15,6 +15,7 @@ protocol LazyView: UIView {
     func handleError(_ error: Error)
 }
 
+private class Indicator: UIActivityIndicatorView {}
 extension LazyView {
     func subscribed(
         to viewModel: BaseVM<T>,
@@ -27,18 +28,17 @@ extension LazyView {
                 guard let self = self else {return}
                 switch state {
                 case .loading, .initializing:
-                    let spinner = UIActivityIndicatorView(style: .gray)
+                    let spinner = Indicator(style: .gray)
                     spinner.color = .textBlack
                     spinner.translatesAutoresizingMaskIntoConstraints = false
                     self.addSubview(spinner)
                     spinner.autoCenterInSuperview()
                     spinner.startAnimating()
-                    objc_setAssociatedObject(self, &key, spinner, .OBJC_ASSOCIATION_RETAIN)
                 case .loaded(let value):
-                    (objc_getAssociatedObject(self, &key) as? UIActivityIndicatorView)?.removeFromSuperview()
+                    self.subviews.filter {$0 is Indicator}.forEach {$0.removeFromSuperview()}
                     self.handleDataLoaded(value)
                 case .error(let error):
-                    (objc_getAssociatedObject(self, &key) as? UIActivityIndicatorView)?.removeFromSuperview()
+                    self.subviews.filter {$0 is Indicator}.forEach {$0.removeFromSuperview()}
                     self.handleError(error)
                 }
             })

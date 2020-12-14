@@ -128,6 +128,7 @@ extension WDVCSectionHeaderView {
             let data = LineChartData(dataSet: set1)
             data.setDrawValues(false)
             self.data = data
+            self.animate(xAxisDuration: 0.3)
         }
         
         func handleError(_ error: Error) {

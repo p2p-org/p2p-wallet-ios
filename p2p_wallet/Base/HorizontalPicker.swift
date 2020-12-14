@@ -7,13 +7,28 @@
 
 import Foundation
 
+protocol HorizontalPickerDelegate: class {
+    func picker(_ picker: HorizontalPicker, didSelectOptionAtIndex index: Int)
+}
 class HorizontalPicker: BEView {
+    private class GestureRegconizer: UITapGestureRecognizer {
+        var index: Int?
+    }
+    
     private lazy var stackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fillEqually)
+    weak var delegate: HorizontalPickerDelegate?
     
     var labels: [String] = [] {
         didSet {
             stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
-            stackView.addArrangedSubviews(labels.map {UILabel(text: $0, textSize: 15, textColor: .secondary, textAlignment: .center)})
+            stackView.addArrangedSubviews(labels.enumerated().map {
+                let label = UILabel(text: $1, textSize: 15, textColor: .secondary, textAlignment: .center)
+                let gesture = GestureRegconizer(target: self, action: #selector(buttonOptionDidTouch(_:)))
+                gesture.index = $0
+                label.addGestureRecognizer(gesture)
+                label.isUserInteractionEnabled = true
+                return label
+            })
         }
     }
     
@@ -36,5 +51,11 @@ class HorizontalPicker: BEView {
         super.commonInit()
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
+    }
+    
+    @objc private func buttonOptionDidTouch(_ gesture: UIGestureRecognizer) {
+        let index = (gesture as! GestureRegconizer).index!
+        selectedIndex = index
+        delegate?.picker(self, didSelectOptionAtIndex: index)
     }
 }
