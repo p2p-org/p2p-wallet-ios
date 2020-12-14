@@ -35,7 +35,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
     }()
     lazy var chartPicker: HorizontalPicker = {
         let chartPicker = HorizontalPicker(forAutoLayout: ())
-        chartPicker.labels = Period.allCases.map {$0.rawValue}
+        chartPicker.labels = Period.allCases.map {$0.rawValue.localized().uppercaseFirst}
         chartPicker.selectedIndex = Period.allCases.firstIndex(where: {$0 == .day})!
         return chartPicker
     }()
