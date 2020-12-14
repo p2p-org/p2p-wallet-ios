@@ -10,7 +10,7 @@ import RxSwift
 
 class WalletGraphVM: BaseVM<[PriceRecord]> {
     let wallet: Wallet
-    var period: Period = .week
+    var period: Period = .day
     
     init(wallet: Wallet) {
         self.wallet = wallet

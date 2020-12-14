@@ -27,7 +27,7 @@ struct PriceRecord: Hashable {
     let startTime: Date
 }
 
-enum Period {
+enum Period: String, CaseIterable {
     case day
     case week
     case month
