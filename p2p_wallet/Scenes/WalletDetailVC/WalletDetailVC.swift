@@ -15,7 +15,7 @@ class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
     // MARK: - Initializer
     init(wallet: Wallet) {
         self.wallet = wallet
-        super.init(viewModel: WalletTransactionsVM(wallet: wallet))
+        super.init(viewModel: ViewModel(wallet: wallet))
     }
     
     required init?(coder: NSCoder) {
