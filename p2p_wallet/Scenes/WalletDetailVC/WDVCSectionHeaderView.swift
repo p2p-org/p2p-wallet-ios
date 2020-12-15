@@ -10,6 +10,8 @@ import Charts
 import Action
 
 class WDVCSectionHeaderView: SectionHeaderView {
+    var wallet: Wallet?
+    
     lazy var amountLabel = UILabel(text: "$120,00", textSize: 25, weight: .semibold, textColor: .textBlack, textAlignment: .center)
     lazy var tokenCountLabel = UILabel(text: "0 SOL", textSize: 15, textColor: .secondary, textAlignment: .center)
     lazy var lineChartView: ChartView = {
@@ -39,6 +41,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
         chartPicker.selectedIndex = Period.allCases.firstIndex(where: {$0 == .day})!
         return chartPicker
     }()
+    lazy var walletAddressLabel = UILabel(text: L10n.walletAddress, textSize: 13, weight: .bold)
     lazy var pubkeyLabel = UILabel(textSize: 13, textColor: .secondary)
     
     var scanQrCodeAction: CocoaAction?
@@ -59,15 +62,17 @@ class WDVCSectionHeaderView: SectionHeaderView {
             let separator = UIView(width: 1, backgroundColor: UIColor.textBlack.withAlphaComponent(0.1))
             view.row([
                     UIView.col([
-                        UILabel(text: L10n.walletAddress, textSize: 13, weight: .bold),
+                        walletAddressLabel,
                         pubkeyLabel
-                    ]).padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 0)),
+                    ])
+                        .padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 0))
+                        .onTap(self, action: #selector(buttonCopyToClipboardDidTouch)),
                     separator,
-                    UIImageView(width: 24.75, height: 24.75, image: .copyToClipboard, tintColor: .secondary)
+                    UIImageView(width: 24.75, height: 24.75, image: .scanQr, tintColor: .secondary)
                         .onTap(self, action: #selector(buttonScanQrCodeDidTouch)),
                     UIView.spacer
                 ])
-                .with(spacing: 16, alignment: .center, distribution: .fill)
+                .with(spacing: 20, alignment: .center, distribution: .fill)
             separator.heightAnchor.constraint(equalTo: view.heightAnchor)
                 .isActive = true
             return view
@@ -86,7 +91,9 @@ class WDVCSectionHeaderView: SectionHeaderView {
     }
     
     func setUp(wallet: Wallet) {
-        amountLabel.text = wallet.amountInUSD.toString(maximumFractionDigits: 2) + " US$"
+        self.wallet = wallet
+        let usdAmount = String(format: "%.02f", wallet.amountInUSD)
+        amountLabel.text = usdAmount + " US$"
         tokenCountLabel.text = "\(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
         pubkeyLabel.text = wallet.pubkey
     }
@@ -101,8 +108,16 @@ class WDVCSectionHeaderView: SectionHeaderView {
     }
     
     @objc private func buttonScanQrCodeDidTouch() {
-//        scanQrCodeAction?.execute()
-        UIApplication.shared.copyToClipboard(pubkeyLabel.text)
+        scanQrCodeAction?.execute()
+    }
+    
+    @objc private func buttonCopyToClipboardDidTouch() {
+        UIApplication.shared.copyToClipboard(wallet?.pubkey, alert: false)
+        
+        walletAddressLabel.text = L10n.addressCopied
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+            self?.walletAddressLabel.text = L10n.walletAddress
+        }
     }
 }
 
