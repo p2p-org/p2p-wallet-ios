@@ -68,6 +68,8 @@ internal enum L10n {
   internal static let day = L10n.tr("Localizable", "day")
   /// Do this later
   internal static let doThisLater = L10n.tr("Localizable", "Do this later")
+  /// Do you really want to logout?
+  internal static let doYouReallyWantToLogout = L10n.tr("Localizable", "Do you really want to logout?")
   /// Done
   internal static let done = L10n.tr("Localizable", "Done")
   /// Enable now
@@ -106,6 +108,8 @@ internal enum L10n {
   internal static let insufficientFunds = L10n.tr("Localizable", "Insufficient funds")
   /// Loading
   internal static let loading = L10n.tr("Localizable", "Loading")
+  /// Logout
+  internal static let logout = L10n.tr("Localizable", "Logout")
   /// Make your crypto working on you
   internal static let makeYourCryptoWorkingOnYou = L10n.tr("Localizable", "Make your crypto working on you")
   /// Max
@@ -114,6 +118,8 @@ internal enum L10n {
   internal static let mintAddress = L10n.tr("Localizable", "Mint address")
   /// month
   internal static let month = L10n.tr("Localizable", "month")
+  /// Network
+  internal static let network = L10n.tr("Localizable", "Network")
   /// next
   internal static let next = L10n.tr("Localizable", "next")
   /// No account
@@ -130,6 +136,8 @@ internal enum L10n {
   internal static let pleaseTryAgainLater = L10n.tr("Localizable", "please try again later!")
   /// Processing
   internal static let processing = L10n.tr("Localizable", "Processing")
+  /// Profile
+  internal static let profile = L10n.tr("Localizable", "Profile")
   /// Receive
   internal static let receive = L10n.tr("Localizable", "Receive")
   /// Receive token
@@ -170,6 +178,8 @@ internal enum L10n {
   internal static let scanningQrCodeNotSupported = L10n.tr("Localizable", "Scanning QrCode not supported")
   /// seconds
   internal static let seconds = L10n.tr("Localizable", "seconds")
+  /// Security
+  internal static let security = L10n.tr("Localizable", "Security")
   /// security keys
   internal static let securityKeys = L10n.tr("Localizable", "security keys")
   /// Send
