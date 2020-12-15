@@ -137,7 +137,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
             return snapshot
         }
         snapshot.appendSections([section])
-        var items = viewModel.items
+        var items = filter(viewModel.items)
         switch viewModel.state.value {
         case .loading:
             items += [ItemType.placeholder(at: 0), ItemType.placeholder(at: 1)]
@@ -146,6 +146,10 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         }
         snapshot.appendItems(items, toSection: section)
         return snapshot
+    }
+    
+    func filter(_ items: [ItemType]) -> [ItemType] {
+        items
     }
     
     func dataDidLoad() {
