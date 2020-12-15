@@ -23,6 +23,10 @@ extension Optional where Wrapped == Double {
     static func + (left: Double?, right: Double?) -> Double {
         left.orZero + right.orZero
     }
+    
+    static func > (left: Double?, right: Double?) -> Bool {
+        left.orZero > right.orZero
+    }
 }
 
 extension Double {

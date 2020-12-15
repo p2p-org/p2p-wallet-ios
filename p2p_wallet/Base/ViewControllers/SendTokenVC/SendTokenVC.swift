@@ -29,6 +29,9 @@ class SendTokenVC: BEPagesVC, LoadableView {
     
     init(wallets: [Wallet], address: String? = nil, initialSymbol: String? = nil) {
         self.wallets = wallets
+            .filter {
+                $0.symbol == "SOL" || $0.amount > 0
+            }
         self.initialAddress = address
         self.initialSymbol = initialSymbol
         super.init(nibName: nil, bundle: nil)
@@ -63,21 +66,22 @@ class SendTokenVC: BEPagesVC, LoadableView {
             .spacer
         ])
         
-        viewControllers = wallets.map {item in
-            let vc = SendTokenItemVC()
-            vc.chooseWalletAction = CocoaAction {
-                let vc = ChooseWalletVC()
-                vc.completion = {wallet in
-                    guard let index = self.wallets.firstIndex(where: {$0.mintAddress == wallet.mintAddress}) else {return}
-                    self.moveToPage(index)
-                    vc.back()
+        viewControllers = wallets
+            .map {item in
+                let vc = SendTokenItemVC()
+                vc.chooseWalletAction = CocoaAction {
+                    let vc = ChooseWalletVC()
+                    vc.completion = {wallet in
+                        guard let index = self.wallets.firstIndex(where: {$0.mintAddress == wallet.mintAddress}) else {return}
+                        self.moveToPage(index)
+                        vc.back()
+                    }
+                    self.present(vc, animated: true, completion: nil)
+                    return .just(())
                 }
-                self.present(vc, animated: true, completion: nil)
-                return .just(())
+                vc.setUp(wallet: item)
+                return vc
             }
-            vc.setUp(wallet: item)
-            return vc
-        }
         
         if let symbol = initialSymbol,
            let index = wallets.firstIndex(where: {$0.symbol == symbol})

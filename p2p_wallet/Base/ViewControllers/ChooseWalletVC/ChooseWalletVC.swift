@@ -39,6 +39,10 @@ class ChooseWalletVC: MyWalletsVC<ChooseWalletVC.Cell> {
         collectionView.autoPinEdge(.top, to: .bottom, of: headerStackView, withOffset: 8)
     }
     
+    override func filter(_ items: [Wallet]) -> [Wallet] {
+        items.filter {$0.symbol == "SOL" || $0.amount > 0}
+    }
+    
     // MARK: - Layouts
     override var sections: [Section] {
         [Section(headerTitle: "")]
