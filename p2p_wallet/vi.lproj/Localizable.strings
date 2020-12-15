@@ -137,3 +137,8 @@
 "year" = "năm";
 "all" = "tất cả";
 "Address copied!" = "Đã sao chép địa chỉ!";
+"Profile" = "Hồ sơ";
+"Network" = "Mạng";
+"Security" = "Bảo mật";
+"Logout" = "Đăng xuất";
+"Do you really want to logout?" = "Bạn có thực sự muốn đăng xuất?";

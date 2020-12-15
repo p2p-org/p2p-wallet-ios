@@ -137,3 +137,8 @@
 "year" = "year";
 "all" = "all";
 "Address copied!" = "Address copied!";
+"Profile" = "Profile";
+"Network" = "Network";
+"Security" = "Security";
+"Logout" = "Logout";
+"Do you really want to logout?" = "Do you really want to logout?";
