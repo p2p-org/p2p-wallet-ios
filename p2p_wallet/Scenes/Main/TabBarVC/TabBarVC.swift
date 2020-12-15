@@ -83,7 +83,16 @@ class TabBarVC: BEPagesVC {
     }
     
     @objc func switchTab(_ gesture: UIGestureRecognizer) {
-        moveToPage(gesture.view!.tag)
+        let tag = gesture.view!.tag
+        
+        // show profile modal
+        if tag == 3 {
+            present(ProfileVC(), animated: true, completion: nil)
+            return
+        }
+        
+        // or switch page
+        moveToPage(tag)
     }
     
     override func moveToPage(_ index: Int) {

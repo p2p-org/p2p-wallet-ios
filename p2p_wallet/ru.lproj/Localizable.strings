@@ -137,3 +137,8 @@
 "year" = "год";
 "all" = "все";
 "Address copied!" = "Адрес скопирован!";
+"Profile" = "Профиль";
+"Network" = "Сеть";
+"Security" = "Безопасность";
+"Logout" = "Выйти";
+"Do you really want to logout?" = "Вы действительно хотите выйти?";

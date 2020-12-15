@@ -32,6 +32,7 @@ extension UIColor {
 
 extension UIImage {
     static let backButton = UIImage(named: "back-button", in: bundle, compatibleWith: nil)!
+    static let backupShield = UIImage(named: "backup-shield", in: bundle, compatibleWith: nil)!
     static let checkMark = UIImage(named: "check-mark", in: bundle, compatibleWith: nil)!
     static let close = UIImage(named: "close", in: bundle, compatibleWith: nil)!
     static let copyToClipboard = UIImage(named: "copy-to-clipboard", in: bundle, compatibleWith: nil)!
@@ -39,6 +40,7 @@ extension UIImage {
     static let downArrow = UIImage(named: "down-arrow", in: bundle, compatibleWith: nil)!
     static let emptyPlaceholder = UIImage(named: "empty-placeholder", in: bundle, compatibleWith: nil)!
     static let faceId = UIImage(named: "faceId", in: bundle, compatibleWith: nil)!
+    static let nextArrow = UIImage(named: "next-arrow", in: bundle, compatibleWith: nil)!
     static let qrCodeRange = UIImage(named: "qr-code-range", in: bundle, compatibleWith: nil)!
     static let regenerateButton = UIImage(named: "regenerate-button", in: bundle, compatibleWith: nil)!
     static let reverseButton = UIImage(named: "reverse-button", in: bundle, compatibleWith: nil)!

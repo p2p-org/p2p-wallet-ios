@@ -544,7 +544,7 @@
 				BC23B572254FBB6300886C9C /* MainVC */,
 				BCD5E75225512DA800F51299 /* InvestmentsVC */,
 				BC2EC1892553B6EE006EEDA5 /* WalletDetailVC */,
-				BCB58359255CE96B00B10F65 /* ProfileVC.swift */,
+				BCABF69D2588746400749EEC /* ProfileVC */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -620,6 +620,14 @@
 				BCA0CFD7255E78D400CD0F8D /* SendTokenItemVC.swift */,
 			);
 			path = SendTokenVC;
+			sourceTree = "<group>";
+		};
+		BCABF69D2588746400749EEC /* ProfileVC */ = {
+			isa = PBXGroup;
+			children = (
+				BCB58359255CE96B00B10F65 /* ProfileVC.swift */,
+			);
+			path = ProfileVC;
 			sourceTree = "<group>";
 		};
 		BCB2230C25412AF8002D997F = {
@@ -1414,7 +1422,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.2;
+				MARKETING_VERSION = 0.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -1458,7 +1466,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.2;
+				MARKETING_VERSION = 0.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
