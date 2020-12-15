@@ -63,8 +63,10 @@ extension UIApplication {
         }
     }
     
-    func copyToClipboard(_ text: String?) {
+    func copyToClipboard(_ text: String?, alert: Bool = true) {
         UIPasteboard.general.string = text
-        showDone(L10n.copiedToClipboard)
+        if alert {
+            showDone(L10n.copiedToClipboard)
+        }
     }
 }

@@ -15,6 +15,7 @@ class ReceiveTokenVC: WLBottomSheet {
     override var padding: UIEdgeInsets {UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)}
     
     var dataSource: CollectionViewDiffableDataSource<String, Wallet>!
+    var filteredSymbols: [String]?
     
     // MARK: - Subviews
     lazy var collectionView: BaseCollectionView = {
@@ -33,6 +34,16 @@ class ReceiveTokenVC: WLBottomSheet {
         pc.currentPageIndicatorTintColor = .textBlack
         return pc
     }()
+    
+    // MARK: - Initializers
+    init(filteredSymbols: [String]? = nil) {
+        self.filteredSymbols = filteredSymbols
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Methods
     override func viewDidLoad() {
@@ -74,6 +85,11 @@ class ReceiveTokenVC: WLBottomSheet {
             .subscribe(onNext: {state in
                 switch state {
                 case .loaded(let wallets):
+                    var wallets = wallets
+                    if let filteredSymbols = self.filteredSymbols {
+                        wallets = wallets.filter {filteredSymbols.contains($0.symbol)}
+                    }
+                    
                     // config snapshot
                     var snapshot = DiffableDataSourceSnapshot<String, Wallet>()
                     let section = ""

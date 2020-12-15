@@ -7,6 +7,7 @@
 
 import Foundation
 import DiffableDataSources
+import Action
 
 class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(backgroundColor: .vcBackground) }
@@ -100,6 +101,11 @@ class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
                 .subscribed(to: graphVM)
                 .disposed(by: disposeBag)
             header.chartPicker.delegate = self
+            header.scanQrCodeAction = CocoaAction {
+                let vc = ReceiveTokenVC(filteredSymbols: [self.wallet.symbol])
+                self.present(vc, animated: true, completion: nil)
+                return .just(())
+            }
         }
         return header
     }
