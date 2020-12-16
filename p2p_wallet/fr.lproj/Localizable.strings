@@ -142,3 +142,8 @@
 "Security" = "Sécurité";
 "Logout" = "Se déconnecter";
 "Do you really want to logout?" = "Voulez-vous vraiment vous déconnecter?";
+"Back" = "Retour";
+"Your wallet needs backup" = "Votre portefeuille a besoin d'une sauvegarde";
+"If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases" = "Si vous perdez cet appareil, vous pouvez récupérer votre portefeuille crypté en utilisant iCloud ou en saisissant manuellement vos phrases secrètes";
+"Backup using iCloud" = "Sauvegarde à l'aide d'iCloud";
+"Backup manually" = "Sauvegarder manuellement";

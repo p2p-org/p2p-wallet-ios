@@ -31,6 +31,7 @@ extension UIColor {
 // MARK: - Images -
 
 extension UIImage {
+    static let backArrow = UIImage(named: "back-arrow", in: bundle, compatibleWith: nil)!
     static let backButton = UIImage(named: "back-button", in: bundle, compatibleWith: nil)!
     static let backupShield = UIImage(named: "backup-shield", in: bundle, compatibleWith: nil)!
     static let checkMark = UIImage(named: "check-mark", in: bundle, compatibleWith: nil)!
