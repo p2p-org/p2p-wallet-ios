@@ -72,6 +72,8 @@ internal enum L10n {
   internal static let creatingAnAccount = L10n.tr("Localizable", "creating an account")
   /// day
   internal static let day = L10n.tr("Localizable", "day")
+  /// Default secure check
+  internal static let defaultSecureCheck = L10n.tr("Localizable", "Default secure check")
   /// Do this later
   internal static let doThisLater = L10n.tr("Localizable", "Do this later")
   /// Do you really want to logout?
@@ -144,6 +146,8 @@ internal enum L10n {
   internal static let orSavingIntoKeychain = L10n.tr("Localizable", "Or saving into Keychain")
   /// passcodes do not match
   internal static let passcodesDoNotMatch = L10n.tr("Localizable", "passcodes do not match")
+  /// PIN-code
+  internal static let pinCode = L10n.tr("Localizable", "PIN-code")
   /// PIN-codes do not match
   internal static let pinCodesDoNotMatch = L10n.tr("Localizable", "PIN-codes do not match")
   /// please try again later!
@@ -282,6 +286,8 @@ internal enum L10n {
   internal static let welcomeBackToTheWowletSpace = L10n.tr("Localizable", "Welcome back to the Wowlet space!")
   /// Well done!
   internal static let wellDone = L10n.tr("Localizable", "Well done!")
+  /// Will be  as a primary secure check
+  internal static let willBeAsAPrimarySecureCheck = L10n.tr("Localizable", "Will be  as a primary secure check")
   /// Wowlet for people, not for tokens
   internal static let wowletForPeopleNotForTokens = L10n.tr("Localizable", "Wowlet for people, not for tokens")
   /// Wowlet recovery

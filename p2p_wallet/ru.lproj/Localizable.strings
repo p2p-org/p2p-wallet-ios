@@ -154,3 +154,6 @@
 "Switch network?" = "Переключить сеть?";
 "Do you really want to switch to" = "Вы действительно хотите перейти на";
 "Switching to" = "Переход на";
+"Will be  as a primary secure check" = "Будет как первичная безопасная проверка";
+"PIN-code" = "Пин-код";
+"Default secure check" = "Безопасная проверка по умолчанию";
