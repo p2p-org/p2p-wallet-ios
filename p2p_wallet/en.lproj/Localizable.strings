@@ -161,3 +161,7 @@
 "Current PIN-code" = "Current PIN-code";
 "New PIN-code" = "New PIN-code";
 "Repeat new PIN-code" = "Repeat new PIN-code";
+"Incorrect PIN-code" = "Incorrect PIN-code";
+"Please re-enter PIN-code" = "Please re-enter PIN-code";
+"PIN-code must have 6 digits" = "PIN-code must have 6 digits";
+"Successfully changed PIN-code" = "Successfully changed PIN-code";

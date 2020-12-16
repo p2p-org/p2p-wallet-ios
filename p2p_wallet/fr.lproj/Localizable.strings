@@ -161,3 +161,7 @@
 "Current PIN-code" = "Code PIN actuel";
 "New PIN-code" = "Nouveau code PIN";
 "Repeat new PIN-code" = "Répéter le nouveau code PIN";
+"Incorrect PIN-code" = "Code PIN incorrect";
+"Please re-enter PIN-code" = "Veuillez saisir à nouveau le code PIN";
+"PIN-code must have 6 digits" = "Le code PIN doit comporter 6 chiffres";
+"Successfully changed PIN-code" = "Code PIN modifié avec succès";
