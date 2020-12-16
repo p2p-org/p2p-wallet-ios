@@ -142,3 +142,8 @@
 "Security" = "Bảo mật";
 "Logout" = "Đăng xuất";
 "Do you really want to logout?" = "Bạn có thực sự muốn đăng xuất?";
+"Back" = "Quay lại";
+"Your wallet needs backup" = "Ví của bạn cần được sao lưu";
+"If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases" = "Nếu mất thiết bị này, bạn có thể khôi phục ví đã mã hóa của mình bằng cách sử dụng iCloud hoặc nhập các cụm từ bí mật của mình theo cách thủ công";
+"Backup using iCloud" = "Sao lưu bằng iCloud";
+"Backup manually" = "Sao lưu thủ công";
