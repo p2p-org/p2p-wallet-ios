@@ -147,3 +147,10 @@
 "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases" = "Nếu mất thiết bị này, bạn có thể khôi phục ví đã mã hóa của mình bằng cách sử dụng iCloud hoặc nhập các cụm từ bí mật của mình theo cách thủ công";
 "Backup using iCloud" = "Sao lưu bằng iCloud";
 "Backup manually" = "Sao lưu thủ công";
+"Leave this page?" = "Rời khỏi trang này?";
+"You have unsaved changes that will be lost if you decide to leave" = "Bạn có những thay đổi chưa được lưu, nó sẽ bị mất nếu bạn quyết định rời khỏi";
+"Stay" = "Ở lại";
+"Leave" = "Rời khỏi";
+"Switch network?" = "Chuyển mạng?";
+"Do you really want to switch to" = "Bạn có thực sự muốn chuyển sang";
+"Switching to" = "Chuyển sang";

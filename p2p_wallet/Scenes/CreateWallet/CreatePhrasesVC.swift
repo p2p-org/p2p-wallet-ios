@@ -190,7 +190,7 @@ class CreatePhrasesVC: PhrasesVC {
         UIApplication.shared.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
         DispatchQueue.global().async {
             do {
-                let account = try SolanaSDK.Account(phrase: self.phrases.value, network: SolanaSDK.network)
+                let account = try SolanaSDK.Account(phrase: self.phrases.value, network: Defaults.network.cluster)
                 try AccountStorage.shared.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()

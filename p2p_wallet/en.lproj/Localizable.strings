@@ -147,3 +147,10 @@
 "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases" = "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases";
 "Backup using iCloud" = "Backup using iCloud";
 "Backup manually" = "Backup manually";
+"Leave this page?" = "Leave this page?";
+"You have unsaved changes that will be lost if you decide to leave" = "You have unsaved changes that will be lost if you decide to leave";
+"Stay" = "Stay";
+"Leave" = "Leave";
+"Switch network?" = "Switch network?";
+"Do you really want to switch to" = "Do you really want to switch to";
+"Switching to" = "Switching to";
