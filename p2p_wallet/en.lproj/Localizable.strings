@@ -157,3 +157,7 @@
 "Will be  as a primary secure check" = "Will be  as a primary secure check";
 "PIN-code" = "PIN-code";
 "Default secure check" = "Default secure check";
+"Change PIN-code" = "Change PIN-code";
+"Current PIN-code" = "Current PIN-code";
+"New PIN-code" = "New PIN-code";
+"Repeat new PIN-code" = "Repeat new PIN-code";
