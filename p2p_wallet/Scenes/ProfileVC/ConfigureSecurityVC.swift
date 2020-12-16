@@ -9,10 +9,14 @@ import Foundation
 import LocalAuthentication
 
 class ConfigureSecurityVC: ProfileVCBase {
+    enum Error: Swift.Error {
+        case unknown
+    }
+    
     lazy var biometrySwitcher: UISwitch = {
         let switcher = UISwitch()
         switcher.tintColor = .textWhite
-        switcher.onTintColor = .textBlack
+        switcher.onTintColor = .black
         switcher.addTarget(self, action: #selector(switcherDidChange(_:)), for: .valueChanged)
         return switcher
     }()
@@ -48,6 +52,29 @@ class ConfigureSecurityVC: ProfileVCBase {
     }
     
     @objc func switcherDidChange(_ switcher: UISwitch) {
-        Defaults.isBiometryEnabled.toggle()
+        // prevent default's localAuth action
+        let shouldShowLocalAuth = AppDelegate.shared.shouldShowLocalAuth
+        AppDelegate.shared.shouldShowLocalAuth = false
+        
+        // get context
+        let context = LAContext()
+        let reason = L10n.identifyYourself
+
+        // evaluate Policy
+        context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { [weak self] (success, authenticationError) in
+            DispatchQueue.main.async {
+                if success {
+                    Defaults.isBiometryEnabled.toggle()
+                } else {
+                    self?.showError(authenticationError ?? Error.unknown)
+                    switcher.isOn.toggle()
+                }
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                AppDelegate.shared.shouldShowLocalAuth = shouldShowLocalAuth
+            }
+        }
+        
     }
 }

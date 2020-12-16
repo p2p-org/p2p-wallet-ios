@@ -14,6 +14,7 @@
 		BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC105110258882BE00398EA2 /* ProfileVCBase.swift */; };
 		BC105119258884AA00398EA2 /* SelectNetworkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC105118258884AA00398EA2 /* SelectNetworkVC.swift */; };
 		BC10511E258884D800398EA2 /* ConfigureSecurityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10511D258884D800398EA2 /* ConfigureSecurityVC.swift */; };
+		BC1051232589F1B900398EA2 /* ChangePinCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1051222589F1B900398EA2 /* ChangePinCodeVC.swift */; };
 		BC17577A25788DD200049667 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC17577925788DD200049667 /* Socket.swift */; };
 		BC1D2ACC256B6EA40064E595 /* SwapTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */; };
 		BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */; };
@@ -170,6 +171,7 @@
 		BC105110258882BE00398EA2 /* ProfileVCBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVCBase.swift; sourceTree = "<group>"; };
 		BC105118258884AA00398EA2 /* SelectNetworkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectNetworkVC.swift; sourceTree = "<group>"; };
 		BC10511D258884D800398EA2 /* ConfigureSecurityVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureSecurityVC.swift; sourceTree = "<group>"; };
+		BC1051222589F1B900398EA2 /* ChangePinCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePinCodeVC.swift; sourceTree = "<group>"; };
 		BC17577925788DD200049667 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenVC.swift; sourceTree = "<group>"; };
 		BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeBackVC.swift; sourceTree = "<group>"; };
@@ -435,6 +437,7 @@
 				BC3122322580B34B00F3B14F /* PassCodeVC.swift */,
 				BC31223B2580B37E00F3B14F /* CreatePassCodeVC.swift */,
 				BC3122942580BA1700F3B14F /* LocalAuthVC.swift */,
+				BC1051222589F1B900398EA2 /* ChangePinCodeVC.swift */,
 			);
 			path = PassCodeVCs;
 			sourceTree = "<group>";
@@ -1184,6 +1187,7 @@
 				BC3ADEA02570E1B9002B3B16 /* Transaction.swift in Sources */,
 				BC7533AA257F31D3007A00D9 /* LazyLabel.swift in Sources */,
 				BC6EE7CA254BBF8900FE1025 /* UIApplication+Extensions.swift in Sources */,
+				BC1051232589F1B900398EA2 /* ChangePinCodeVC.swift in Sources */,
 				BC3ADE822570B005002B3B16 /* FlexibleHeightVC.swift in Sources */,
 				BC10510925887F7D00398EA2 /* BackupVC.swift in Sources */,
 				BC3ADEE82574E1F3002B3B16 /* WalletDetailVC+ViewModel.swift in Sources */,

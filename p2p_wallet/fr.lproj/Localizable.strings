@@ -157,3 +157,7 @@
 "Will be  as a primary secure check" = "Sera comme un chèque sécurisé principal";
 "PIN-code" = "Code PIN";
 "Default secure check" = "Vérification sécurisée par défaut";
+"Change PIN-code" = "Changer le code PIN";
+"Current PIN-code" = "Code PIN actuel";
+"New PIN-code" = "Nouveau code PIN";
+"Repeat new PIN-code" = "Répéter le nouveau code PIN";
