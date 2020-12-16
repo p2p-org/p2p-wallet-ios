@@ -147,3 +147,10 @@
 "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases" = "Если вы потеряете это устройство, вы можете восстановить свой зашифрованный кошелек с помощью iCloud или вручную введя секретные фразы.";
 "Backup using iCloud" = "Резервное копирование с помощью iCloud";
 "Backup manually" = "Резервное копирование вручную";
+"Leave this page?" = "Покиньте эту страницу?";
+"You have unsaved changes that will be lost if you decide to leave" = "У вас есть несохраненные изменения, которые будут потеряны, если вы решите уйти";
+"Stay" = "Остаться";
+"Leave" = "Покинуть";
+"Switch network?" = "Переключить сеть?";
+"Do you really want to switch to" = "Вы действительно хотите перейти на";
+"Switching to" = "Переход на";

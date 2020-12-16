@@ -76,6 +76,8 @@ internal enum L10n {
   internal static let doThisLater = L10n.tr("Localizable", "Do this later")
   /// Do you really want to logout?
   internal static let doYouReallyWantToLogout = L10n.tr("Localizable", "Do you really want to logout?")
+  /// Do you really want to switch to
+  internal static let doYouReallyWantToSwitchTo = L10n.tr("Localizable", "Do you really want to switch to")
   /// Done
   internal static let done = L10n.tr("Localizable", "Done")
   /// Enable now
@@ -114,6 +116,10 @@ internal enum L10n {
   internal static let ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases = L10n.tr("Localizable", "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases")
   /// Insufficient funds
   internal static let insufficientFunds = L10n.tr("Localizable", "Insufficient funds")
+  /// Leave
+  internal static let leave = L10n.tr("Localizable", "Leave")
+  /// Leave this page?
+  internal static let leaveThisPage = L10n.tr("Localizable", "Leave this page?")
   /// Loading
   internal static let loading = L10n.tr("Localizable", "Loading")
   /// Logout
@@ -206,10 +212,16 @@ internal enum L10n {
   internal static let slideToScan = L10n.tr("Localizable", "Slide to scan")
   /// Something went wrong!\nPlease try again later
   internal static let somethingWentWrongPleaseTryAgainLater = L10n.tr("Localizable", "Something went wrong!\nPlease try again later")
+  /// Stay
+  internal static let stay = L10n.tr("Localizable", "Stay")
   /// Swap
   internal static let swap = L10n.tr("Localizable", "Swap")
   /// Swap now
   internal static let swapNow = L10n.tr("Localizable", "Swap now")
+  /// Switch network?
+  internal static let switchNetwork = L10n.tr("Localizable", "Switch network?")
+  /// Switching to
+  internal static let switchingTo = L10n.tr("Localizable", "Switching to")
   /// Tap button to retry!
   internal static let tapButtonToRetry = L10n.tr("Localizable", "Tap button to retry!")
   /// Tap here to retry
@@ -276,6 +288,8 @@ internal enum L10n {
   internal static let wowletRecovery = L10n.tr("Localizable", "Wowlet recovery")
   /// year
   internal static let year = L10n.tr("Localizable", "year")
+  /// You have unsaved changes that will be lost if you decide to leave
+  internal static let youHaveUnsavedChangesThatWillBeLostIfYouDecideToLeave = L10n.tr("Localizable", "You have unsaved changes that will be lost if you decide to leave")
   /// Your device does not support biometrics authentication
   internal static let yourDeviceDoesNotSupportBiometricsAuthentication = L10n.tr("Localizable", "Your device does not support biometrics authentication")
   /// Your wallet has been successfully created!

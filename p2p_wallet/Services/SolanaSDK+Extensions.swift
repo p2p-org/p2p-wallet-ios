@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 
 extension SolanaSDK {
-    enum Network: String, DefaultsSerializable {
+    enum Network: String, CaseIterable, DefaultsSerializable {
         case devnet
         case testnet
         case mainnetBeta = "mainnet-beta"

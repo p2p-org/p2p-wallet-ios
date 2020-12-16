@@ -147,3 +147,10 @@
 "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases" = "Si vous perdez cet appareil, vous pouvez récupérer votre portefeuille crypté en utilisant iCloud ou en saisissant manuellement vos phrases secrètes";
 "Backup using iCloud" = "Sauvegarde à l'aide d'iCloud";
 "Backup manually" = "Sauvegarder manuellement";
+"Leave this page?" = "Quitter cette page?";
+"You have unsaved changes that will be lost if you decide to leave" = "Vous avez des modifications non enregistrées qui seront perdues si vous décidez de quitter";
+"Stay" = "Rester";
+"Leave" = "Partir";
+"Switch network?" = "Changer de réseau?";
+"Do you really want to switch to" = "Voulez-vous vraiment passer à";
+"Switching to" = "Passer à";
