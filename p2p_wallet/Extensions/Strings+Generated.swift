@@ -42,6 +42,8 @@ internal enum L10n {
   internal static let byTappingAcceptYouAgreeToP2PWalletSTermsOfUseAndPrivacyPolicy = L10n.tr("Localizable", "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "Cancel")
+  /// Change PIN-code
+  internal static let changePINCode = L10n.tr("Localizable", "Change PIN-code")
   /// Change your settings to use camera for scanning Qr Code
   internal static let changeYourSettingsToUseCameraForScanningQrCode = L10n.tr("Localizable", "Change your settings to use camera for scanning Qr Code")
   /// Close
@@ -70,6 +72,8 @@ internal enum L10n {
   internal static let creating = L10n.tr("Localizable", "Creating")
   /// creating an account
   internal static let creatingAnAccount = L10n.tr("Localizable", "creating an account")
+  /// Current PIN-code
+  internal static let currentPINCode = L10n.tr("Localizable", "Current PIN-code")
   /// day
   internal static let day = L10n.tr("Localizable", "day")
   /// Default secure check
@@ -136,6 +140,8 @@ internal enum L10n {
   internal static let month = L10n.tr("Localizable", "month")
   /// Network
   internal static let network = L10n.tr("Localizable", "Network")
+  /// New PIN-code
+  internal static let newPINCode = L10n.tr("Localizable", "New PIN-code")
   /// next
   internal static let next = L10n.tr("Localizable", "next")
   /// No account
@@ -164,6 +170,8 @@ internal enum L10n {
   internal static let receiveTokens = L10n.tr("Localizable", "Receive tokens")
   /// Recover your Wowlet using cloud services, or recover manually
   internal static let recoverYourWowletUsingCloudServicesOrRecoverManually = L10n.tr("Localizable", "Recover your Wowlet using cloud services or recover manually")
+  /// Repeat new PIN-code
+  internal static let repeatNewPINCode = L10n.tr("Localizable", "Repeat new PIN-code")
   /// Restore manually
   internal static let restoreManually = L10n.tr("Localizable", "Restore manually")
   /// Restore using iCloud

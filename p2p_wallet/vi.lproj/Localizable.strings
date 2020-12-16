@@ -157,3 +157,7 @@
 "Will be  as a primary secure check" = "Sẽ là phương thức bảo mật chính";
 "PIN-code" = "Mã PIN";
 "Default secure check" = "Kiểm tra an toàn mặc định";
+"Change PIN-code" = "Thay đổi mã PIN";
+"Current PIN-code" = "Mã PIN hiện tại";
+"New PIN-code" = "Mã PIN mới";
+"Repeat new PIN-code" = "Lặp lại mã PIN mới";

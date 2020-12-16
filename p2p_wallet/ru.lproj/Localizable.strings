@@ -157,3 +157,7 @@
 "Will be  as a primary secure check" = "Будет как первичная безопасная проверка";
 "PIN-code" = "Пин-код";
 "Default secure check" = "Безопасная проверка по умолчанию";
+"Change PIN-code" = "Сменить PIN-код";
+"Current PIN-code" = "Текущий PIN-код";
+"New PIN-code" = "Новый PIN-код";
+"Repeat new PIN-code" = "Повторите новый PIN-код";
