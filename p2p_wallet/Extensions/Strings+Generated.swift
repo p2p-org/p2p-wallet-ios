@@ -28,8 +28,14 @@ internal enum L10n {
   internal static let amountIsNotValid = L10n.tr("Localizable", "Amount is not valid")
   /// Authentication failed
   internal static let authenticationFailed = L10n.tr("Localizable", "Authentication failed")
+  /// Back
+  internal static let back = L10n.tr("Localizable", "Back")
   /// Backup
   internal static let backup = L10n.tr("Localizable", "Backup")
+  /// Backup manually
+  internal static let backupManually = L10n.tr("Localizable", "Backup manually")
+  /// Backup using iCloud
+  internal static let backupUsingICloud = L10n.tr("Localizable", "Backup using iCloud")
   /// Block number
   internal static let blockNumber = L10n.tr("Localizable", "Block number")
   /// By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy
@@ -104,6 +110,8 @@ internal enum L10n {
   internal static let iVeAlreadyHadAWallet = L10n.tr("Localizable", "i've already had a wallet")
   /// Identify yourself!
   internal static let identifyYourself = L10n.tr("Localizable", "Identify yourself!")
+  /// If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases
+  internal static let ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases = L10n.tr("Localizable", "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases")
   /// Insufficient funds
   internal static let insufficientFunds = L10n.tr("Localizable", "Insufficient funds")
   /// Loading
@@ -272,6 +280,8 @@ internal enum L10n {
   internal static let yourDeviceDoesNotSupportBiometricsAuthentication = L10n.tr("Localizable", "Your device does not support biometrics authentication")
   /// Your wallet has been successfully created!
   internal static let yourWalletHasBeenSuccessfullyCreated = L10n.tr("Localizable", "Your wallet has been successfully created!")
+  /// Your wallet needs backup
+  internal static let yourWalletNeedsBackup = L10n.tr("Localizable", "Your wallet needs backup")
   /// Your wallets
   internal static let yourWallets = L10n.tr("Localizable", "Your wallets")
 

@@ -142,3 +142,8 @@
 "Security" = "Security";
 "Logout" = "Logout";
 "Do you really want to logout?" = "Do you really want to logout?";
+"Back" = "Back";
+"Your wallet needs backup" = "Your wallet needs backup";
+"If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases" = "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases";
+"Backup using iCloud" = "Backup using iCloud";
+"Backup manually" = "Backup manually";
