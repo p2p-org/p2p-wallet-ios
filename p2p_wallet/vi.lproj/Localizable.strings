@@ -154,3 +154,6 @@
 "Switch network?" = "Chuyển mạng?";
 "Do you really want to switch to" = "Bạn có thực sự muốn chuyển sang";
 "Switching to" = "Chuyển sang";
+"Will be  as a primary secure check" = "Sẽ là phương thức bảo mật chính";
+"PIN-code" = "Mã PIN";
+"Default secure check" = "Kiểm tra an toàn mặc định";

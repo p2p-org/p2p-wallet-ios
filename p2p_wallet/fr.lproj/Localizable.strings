@@ -154,3 +154,6 @@
 "Switch network?" = "Changer de réseau?";
 "Do you really want to switch to" = "Voulez-vous vraiment passer à";
 "Switching to" = "Passer à";
+"Will be  as a primary secure check" = "Sera comme un chèque sécurisé principal";
+"PIN-code" = "Code PIN";
+"Default secure check" = "Vérification sécurisée par défaut";

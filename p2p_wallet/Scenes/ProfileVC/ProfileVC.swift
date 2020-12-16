@@ -6,8 +6,17 @@
 //
 
 import Foundation
+import SwiftyUserDefaults
+import LocalAuthentication
 
 class ProfileVC: ProfileVCBase {
+    lazy var secureMethodsLabel = UILabel(textSize: 15, weight: .medium, textColor: .secondary)
+    var disposables = [DefaultsDisposable]()
+    
+    deinit {
+        disposables.forEach {$0.dispose()}
+    }
+    
     // MARK: - Methods
     override func setUp() {
         title = L10n.profile
@@ -24,7 +33,7 @@ class ProfileVC: ProfileVCBase {
                 .withTag(2)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            createCell(text: L10n.security, descriptionView: UILabel(text: "Face ID, Pin", textSize: 15, weight: .medium, textColor: .secondary)
+            createCell(text: L10n.security, descriptionView: secureMethodsLabel
             )
                 .withTag(3)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
@@ -32,6 +41,25 @@ class ProfileVC: ProfileVCBase {
             UIButton(label: L10n.logout, labelFont: .systemFont(ofSize: 15), textColor: .secondary)
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
         ])
+        
+        self.setUp(enabledBiometry: Defaults.isBiometryEnabled)
+    }
+    
+    override func bind() {
+        super.bind()
+        
+        disposables.append(Defaults.observe(\.isBiometryEnabled) { (update) in
+            self.setUp(enabledBiometry: update.newValue)
+        })
+    }
+    
+    func setUp(enabledBiometry: Bool?) {
+        var text = ""
+        if enabledBiometry == true {
+            text += LABiometryType.current.stringValue + ", "
+        }
+        text += L10n.pinCode
+        self.secureMethodsLabel.text = text
     }
     
     override func createHeaderView() -> UIStackView {
