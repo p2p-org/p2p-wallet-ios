@@ -11,4 +11,5 @@ extension DefaultsKeys {
     var didSetEnableBiometry: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var isBiometryEnabled: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var didSetEnableNotifications: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
+    var network: DefaultsKey<SolanaSDK.Network> {.init(#function, defaultValue: .mainnetBeta)}
 }

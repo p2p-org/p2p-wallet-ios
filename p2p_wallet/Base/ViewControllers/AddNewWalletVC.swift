@@ -89,7 +89,7 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
             
             let transactionVC = self.presentProcessTransactionVC()
             
-            return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: SolanaSDK.network)
+            return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: Defaults.network.cluster)
                 .do(
                     afterSuccess: { (signature, newPubkey) in
                         transactionVC.signature = signature
@@ -176,7 +176,7 @@ extension AddNewWalletVC {
         
         override func reload() {
             // get static data
-            var wallets = SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.network)?.compactMap {$0 != nil ? Wallet(programAccount: $0!) : nil} ?? []
+            var wallets = SolanaSDK.Token.getSupportedTokens(network: Defaults.network.cluster)?.compactMap {$0 != nil ? Wallet(programAccount: $0!) : nil} ?? []
             
             for i in 0..<wallets.count {
                 if let price = PricesManager.shared.currentPrice(for: wallets[i].symbol)
