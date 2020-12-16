@@ -10,6 +10,10 @@
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
 		BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */; };
+		BC10510925887F7D00398EA2 /* BackupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10510825887F7D00398EA2 /* BackupVC.swift */; };
+		BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC105110258882BE00398EA2 /* ProfileVCBase.swift */; };
+		BC105119258884AA00398EA2 /* SelectNetworkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC105118258884AA00398EA2 /* SelectNetworkVC.swift */; };
+		BC10511E258884D800398EA2 /* ConfigureSecurityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10511D258884D800398EA2 /* ConfigureSecurityVC.swift */; };
 		BC17577A25788DD200049667 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC17577925788DD200049667 /* Socket.swift */; };
 		BC1D2ACC256B6EA40064E595 /* SwapTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */; };
 		BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */; };
@@ -162,6 +166,10 @@
 		BB6790432D1A5F53BBDB3162 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		BB7CFE6A2633569A3CAC841A /* Pods-p2p_walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.release.xcconfig"; sourceTree = "<group>"; };
 		BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LABiometryType+Extensions.swift"; sourceTree = "<group>"; };
+		BC10510825887F7D00398EA2 /* BackupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupVC.swift; sourceTree = "<group>"; };
+		BC105110258882BE00398EA2 /* ProfileVCBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVCBase.swift; sourceTree = "<group>"; };
+		BC105118258884AA00398EA2 /* SelectNetworkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectNetworkVC.swift; sourceTree = "<group>"; };
+		BC10511D258884D800398EA2 /* ConfigureSecurityVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureSecurityVC.swift; sourceTree = "<group>"; };
 		BC17577925788DD200049667 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenVC.swift; sourceTree = "<group>"; };
 		BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeBackVC.swift; sourceTree = "<group>"; };
@@ -625,7 +633,11 @@
 		BCABF69D2588746400749EEC /* ProfileVC */ = {
 			isa = PBXGroup;
 			children = (
+				BC105110258882BE00398EA2 /* ProfileVCBase.swift */,
 				BCB58359255CE96B00B10F65 /* ProfileVC.swift */,
+				BC10510825887F7D00398EA2 /* BackupVC.swift */,
+				BC105118258884AA00398EA2 /* SelectNetworkVC.swift */,
+				BC10511D258884D800398EA2 /* ConfigureSecurityVC.swift */,
 			);
 			path = ProfileVC;
 			sourceTree = "<group>";
@@ -1142,6 +1154,7 @@
 				BC22ABD22552A2FC0071C69F /* MenuInteractor.swift in Sources */,
 				BC32A3A7254A7B5B002156F0 /* CreateWalletCompletedVC.swift in Sources */,
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
+				BC105119258884AA00398EA2 /* SelectNetworkVC.swift in Sources */,
 				BC460ABF257A44310035F6AA /* TransactionsManager.swift in Sources */,
 				BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */,
 				BC32A31C254A630B002156F0 /* CreateOrRestoreWalletVC.swift in Sources */,
@@ -1161,6 +1174,7 @@
 				BC7533B5257F3E7B007A00D9 /* EnterPhrasesVC.swift in Sources */,
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,
 				BC55B88E254BFBDC0032C355 /* TabBarVC.swift in Sources */,
+				BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				BC2EC1902553BA2C006EEDA5 /* WDVCSectionHeaderView.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
@@ -1171,6 +1185,7 @@
 				BC7533AA257F31D3007A00D9 /* LazyLabel.swift in Sources */,
 				BC6EE7CA254BBF8900FE1025 /* UIApplication+Extensions.swift in Sources */,
 				BC3ADE822570B005002B3B16 /* FlexibleHeightVC.swift in Sources */,
+				BC10510925887F7D00398EA2 /* BackupVC.swift in Sources */,
 				BC3ADEE82574E1F3002B3B16 /* WalletDetailVC+ViewModel.swift in Sources */,
 				BC23B574254FBB7F00886C9C /* MainVC.swift in Sources */,
 				BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */,
@@ -1200,6 +1215,7 @@
 				BC54DD8E25872FE500A65566 /* HorizontalPicker.swift in Sources */,
 				BC23B5AA254FBF6200886C9C /* MainVC+FirstSectionHeaderView.swift in Sources */,
 				BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */,
+				BC10511E258884D800398EA2 /* ConfigureSecurityVC.swift in Sources */,
 				BCD5E82925525D3D00F51299 /* ListViewModel.swift in Sources */,
 				BC2EC1D22553ED1B006EEDA5 /* FlexibleHeightPresentationController.swift in Sources */,
 				BC2EC1BA2553EC7D006EEDA5 /* UIView+Extensions.swift in Sources */,

@@ -7,28 +7,38 @@
 
 import Foundation
 
-class ProfileVC: WLCenterSheet {
-    override var padding: UIEdgeInsets {.init(all: 20)}
-    
+class ProfileVC: ProfileVCBase {
+    // MARK: - Methods
     override func setUp() {
+        title = L10n.profile
+        
         super.setUp()
         stackView.addArrangedSubviews([
-            UIView.row([
-                .spacer,
-                UILabel(text: L10n.profile, textSize: 17, weight: .bold),
-                UIButton(label: L10n.done, labelFont: .systemFont(ofSize: 17), textColor: .secondary)
-                    .onTap(self, action: #selector(doneButtonDidTouch))
-            ]).with(alignment: .fill, distribution: .equalCentering),
+            createCell(text: L10n.backup, descriptionView: UIImageView(width: 17, height: 21, image: .backupShield, tintColor: .secondary)
+            )
+                .withTag(1)
+                .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            createCell(text: L10n.backup, descriptionView: UIImageView(width: 17, height: 21, image: .backupShield, tintColor: .secondary)),
+            createCell(text: L10n.network, descriptionView: UILabel(text: Defaults.network.cluster, textSize: 15, weight: .medium, textColor: .secondary)
+            )
+                .withTag(2)
+                .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            createCell(text: L10n.network, descriptionView: UILabel(text: SolanaSDK.network, textSize: 15, weight: .medium, textColor: .secondary)),
-            
-            createCell(text: L10n.security, descriptionView: UILabel(text: "Face ID, Pin", textSize: 15, weight: .medium, textColor: .secondary)),
+            createCell(text: L10n.security, descriptionView: UILabel(text: "Face ID, Pin", textSize: 15, weight: .medium, textColor: .secondary)
+            )
+                .withTag(3)
+                .onTap(self, action: #selector(cellDidTouch(_:))),
             
             UIButton(label: L10n.logout, labelFont: .systemFont(ofSize: 15), textColor: .secondary)
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
         ])
+    }
+    
+    override func createHeaderView() -> UIStackView {
+        let headerView = super.createHeaderView()
+        headerView.arrangedSubviews.first?.removeFromSuperview()
+        headerView.insertArrangedSubview(.spacer, at: 0)
+        return headerView
     }
     
     // MARK: - Actions
@@ -41,8 +51,22 @@ class ProfileVC: WLCenterSheet {
         }
     }
     
-    @objc func doneButtonDidTouch() {
+    @objc func buttonDoneDidTouch() {
         dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func cellDidTouch(_ gesture: UIGestureRecognizer) {
+        guard let tag = gesture.view?.tag else {return}
+        switch tag {
+        case 1:
+            show(BackupVC(), sender: nil)
+        case 2:
+            show(SelectNetworkVC(), sender: nil)
+        case 3:
+            show(ConfigureSecurityVC(), sender: nil)
+        default:
+            return
+        }
     }
     
     // MARK: - Helpers

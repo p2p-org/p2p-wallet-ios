@@ -142,3 +142,8 @@
 "Security" = "Безопасность";
 "Logout" = "Выйти";
 "Do you really want to logout?" = "Вы действительно хотите выйти?";
+"Back" = "Назад";
+"Your wallet needs backup" = "Вашему кошельку нужна резервная копия";
+"If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases" = "Если вы потеряете это устройство, вы можете восстановить свой зашифрованный кошелек с помощью iCloud или вручную введя секретные фразы.";
+"Backup using iCloud" = "Резервное копирование с помощью iCloud";
+"Backup manually" = "Резервное копирование вручную";
