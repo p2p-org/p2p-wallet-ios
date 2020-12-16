@@ -51,10 +51,6 @@ class ProfileVC: ProfileVCBase {
         }
     }
     
-    @objc func buttonDoneDidTouch() {
-        dismiss(animated: true, completion: nil)
-    }
-    
     @objc func cellDidTouch(_ gesture: UIGestureRecognizer) {
         guard let tag = gesture.view?.tag else {return}
         switch tag {

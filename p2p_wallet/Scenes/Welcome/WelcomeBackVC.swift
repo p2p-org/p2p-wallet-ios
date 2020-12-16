@@ -33,7 +33,7 @@ class WelcomeBackVC: IntroVCWithButtons {
         UIApplication.shared.showIndetermineHudWithMessage(L10n.restoringWallet)
         DispatchQueue.global().async {
             do {
-                let account = try SolanaSDK.Account(phrase: self.phrases, network: SolanaSDK.network)
+                let account = try SolanaSDK.Account(phrase: self.phrases, network: Defaults.network.cluster)
                 try AccountStorage.shared.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
