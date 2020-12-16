@@ -161,3 +161,7 @@
 "Current PIN-code" = "Mã PIN hiện tại";
 "New PIN-code" = "Mã PIN mới";
 "Repeat new PIN-code" = "Lặp lại mã PIN mới";
+"Incorrect PIN-code" = "Mã PIN không đúng";
+"Please re-enter PIN-code" = "Vui lòng nhập lại mã PIN";
+"PIN-code must have 6 digits" = "Mã PIN phải có 6 chữ số";
+"Successfully changed PIN-code" = "Đã thay đổi mã PIN thành công";

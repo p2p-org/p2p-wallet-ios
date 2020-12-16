@@ -161,3 +161,7 @@
 "Current PIN-code" = "Текущий PIN-код";
 "New PIN-code" = "Новый PIN-код";
 "Repeat new PIN-code" = "Повторите новый PIN-код";
+"Incorrect PIN-code" = "Неверный PIN-код";
+"Please re-enter PIN-code" = "Пожалуйста, введите PIN-код еще раз";
+"PIN-code must have 6 digits" = "ПИН-код должен состоять из 6 цифр.";
+"Successfully changed PIN-code" = "ПИН-код успешно изменен";
