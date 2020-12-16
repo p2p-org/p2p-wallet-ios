@@ -9,14 +9,21 @@ import Foundation
 import RxSwift
 
 extension SolanaSDK {
-    #if DEBUG
-    static let network = "mainnet-beta"
-    static let endpoint = "https://api.\(network).solana.com"
-    #else
-    static let network = "mainnet-beta"
-    static let endpoint = "https://api.\(network).solana.com"
-    #endif
-    static let shared = SolanaSDK(endpoint: endpoint, accountStorage: AccountStorage.shared)
+    enum Network: String, CaseIterable, DefaultsSerializable {
+        case devnet
+        case testnet
+        case mainnetBeta = "mainnet-beta"
+        
+        var cluster: String {rawValue}
+        
+        var endpoint: String {
+            var string = cluster + ".solana.com"
+            if self == .mainnetBeta { string = "api." + string }
+            return "https://\(string)"
+        }
+    }
+    
+    static var shared = SolanaSDK(endpoint: Defaults.network.endpoint, accountStorage: AccountStorage.shared)
 }
 
 extension String: ListItemType {
