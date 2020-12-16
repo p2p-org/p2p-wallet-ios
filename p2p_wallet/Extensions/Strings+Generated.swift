@@ -120,6 +120,8 @@ internal enum L10n {
   internal static let identifyYourself = L10n.tr("Localizable", "Identify yourself!")
   /// If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases
   internal static let ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases = L10n.tr("Localizable", "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases")
+  /// Incorrect PIN-code
+  internal static let incorrectPINCode = L10n.tr("Localizable", "Incorrect PIN-code")
   /// Insufficient funds
   internal static let insufficientFunds = L10n.tr("Localizable", "Insufficient funds")
   /// Leave
@@ -154,8 +156,12 @@ internal enum L10n {
   internal static let passcodesDoNotMatch = L10n.tr("Localizable", "passcodes do not match")
   /// PIN-code
   internal static let pinCode = L10n.tr("Localizable", "PIN-code")
+  /// PIN-code must have 6 digits
+  internal static let pinCodeMustHave6Digits = L10n.tr("Localizable", "PIN-code must have 6 digits")
   /// PIN-codes do not match
   internal static let pinCodesDoNotMatch = L10n.tr("Localizable", "PIN-codes do not match")
+  /// Please re-enter PIN-code
+  internal static let pleaseReEnterPINCode = L10n.tr("Localizable", "Please re-enter PIN-code")
   /// please try again later!
   internal static let pleaseTryAgainLater = L10n.tr("Localizable", "please try again later!")
   /// Processing
@@ -226,6 +232,8 @@ internal enum L10n {
   internal static let somethingWentWrongPleaseTryAgainLater = L10n.tr("Localizable", "Something went wrong!\nPlease try again later")
   /// Stay
   internal static let stay = L10n.tr("Localizable", "Stay")
+  /// Successfully changed PIN-code
+  internal static let successfullyChangedPINCode = L10n.tr("Localizable", "Successfully changed PIN-code")
   /// Swap
   internal static let swap = L10n.tr("Localizable", "Swap")
   /// Swap now
