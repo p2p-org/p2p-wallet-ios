@@ -45,7 +45,7 @@ class ConfigureSecurityVC: ProfileVCBase {
             ])
                 .with(spacing: 16, alignment: .center, distribution: .fill)
                 .padding(.init(x: 0, y: 20))
-//            .onTap(self, action: )
+                .onTap(self, action: #selector(buttonChangePinCodeDidTouch))
         ])
         
         biometrySwitcher.isOn = Defaults.isBiometryEnabled
@@ -75,6 +75,9 @@ class ConfigureSecurityVC: ProfileVCBase {
                 AppDelegate.shared.shouldShowLocalAuth = shouldShowLocalAuth
             }
         }
-        
+    }
+    
+    @objc func buttonChangePinCodeDidTouch() {
+        show(ChangePinCodeVC(), sender: nil)
     }
 }
