@@ -78,6 +78,8 @@ internal enum L10n {
   internal static let currentPINCode = L10n.tr("Localizable", "Current PIN-code")
   /// day
   internal static let day = L10n.tr("Localizable", "day")
+  /// Decline
+  internal static let decline = L10n.tr("Localizable", "Decline")
   /// Default secure check
   internal static let defaultSecureCheck = L10n.tr("Localizable", "Default secure check")
   /// Do this later
