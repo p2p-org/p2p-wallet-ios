@@ -16,7 +16,6 @@ class CreateOrRestoreWalletVC: IntroVCWithButtons {
     
     override func setUp() {
         super.setUp()
-        descriptionLabel.isHidden = true
         
         buttonStackView.addArrangedSubview(createWalletButton)
         buttonStackView.addArrangedSubview(restoreWalletButton)
