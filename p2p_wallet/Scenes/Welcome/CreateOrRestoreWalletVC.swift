@@ -23,20 +23,14 @@ class CreateOrRestoreWalletVC: IntroVCWithButtons {
     
     // MARK: - Actions
     @objc func buttonCreateWalletDidTouch() {
-        showAlert(
-            title: L10n.termsAndConditions,
-            message: L10n.byTappingAcceptYouAgreeToP2PWalletSTermsOfUseAndPrivacyPolicy,
-            buttonTitles: [L10n.cancel, L10n.accept],
-            highlightedButtonIndex: 1,
-            completion: { index in
-                if index == 1 {
-                    self.parent?.show(CreatePhrasesVC(), sender: nil)
-                }
-            }
-        )
+        let vc = TermsAndConditionsVC()
+        vc.completion = {
+            self.parent?.show(CreatePhrasesVC(), sender: nil)
+        }
+        parent?.present(vc, animated: true, completion: nil)
     }
     
     @objc func buttonRestoreWalletDidTouch() {
-        self.parent?.show(RestoreWalletVC(), sender: nil)
+        parent?.show(RestoreWalletVC(), sender: nil)
     }
 }
