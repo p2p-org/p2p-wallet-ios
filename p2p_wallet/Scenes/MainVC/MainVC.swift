@@ -18,8 +18,10 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     
     // MARK: - Subviews
     var qrStackView: UIStackView!
-    var avatarImageView = UIImageView(width: 44, height: 44, backgroundColor: .c4c4c4, cornerRadius: 22)
-    var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .textBlack, cornerRadius: 4)
+    lazy var avatarImageView = UIImageView(width: 44, height: 44, backgroundColor: .c4c4c4, cornerRadius: 22)
+        .onTap(self, action: #selector(avatarImageViewDidTouch))
+    lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .textBlack, cornerRadius: 4)
+        .onTap(self, action: #selector(avatarImageViewDidTouch))
     var collectionViewHeaderView: FirstSectionHeaderView?
     
     // MARK: - Methods
@@ -153,6 +155,10 @@ class MainVC: MyWalletsVC<MainWalletCell> {
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
+    }
+    
+    @objc func avatarImageViewDidTouch() {
+        present(ProfileVC(), animated: true, completion: nil)
     }
     
     // MARK: - Private
