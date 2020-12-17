@@ -237,7 +237,11 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         
         let trailingItem = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute((env.container.contentSize.width - sectionInfo.horizontalInterItemSpacing.spacing - sectionInfo.contentInsets.leading - sectionInfo.contentInsets.trailing)/2), heightDimension: itemSize.heightDimension)
+        let window = UIApplication.shared.windows[0]
+        let leftPadding = window.safeAreaInsets.left
+        let rightPadding = window.safeAreaInsets.right
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute((env.container.contentSize.width - sectionInfo.horizontalInterItemSpacing.spacing - sectionInfo.contentInsets.leading - sectionInfo.contentInsets.trailing - leftPadding - rightPadding)/2), heightDimension: itemSize.heightDimension)
         
         let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [leadingItem])
         
