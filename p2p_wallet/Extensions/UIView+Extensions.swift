@@ -17,4 +17,11 @@ extension UIView {
                                 verticalFittingPriority: .defaultLow)
             .height
     }
+    
+    static func copyToClipboardButton(spacing: CGFloat = 10, tintColor: UIColor = .secondary) -> UIStackView {
+        UIStackView(axis: .horizontal, spacing: spacing, alignment: .center, distribution: .fill, arrangedSubviews: [
+            UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: tintColor),
+            UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: tintColor)
+        ])
+    }
 }

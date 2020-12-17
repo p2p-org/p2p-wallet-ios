@@ -20,6 +20,7 @@ class BackupVC: ProfileVCBase {
             WLButton.stepButton(type: .main, label: L10n.backupUsingICloud)
                 .onTap(self, action: #selector(buttonBackupUsingICloudDidTouch)),
             WLButton.stepButton(type: .sub, label: L10n.backupManually)
+                .onTap(self, action: #selector(buttonBackupManuallyDidTouch))
         ], withCustomSpacings: [30, 10, 30, 10])
         
         stackView.setCustomSpacing(60, after: stackView.arrangedSubviews.first!)
@@ -29,5 +30,24 @@ class BackupVC: ProfileVCBase {
         guard let account = AccountStorage.shared.account?.phrase else {return}
         AccountStorage.shared.saveICloud(phrases: account.joined(separator: " "))
         UIApplication.shared.showDone(L10n.savedToICloud)
+    }
+    
+    @objc func buttonBackupManuallyDidTouch() {
+        let localAuthVC = LocalAuthVC()
+        localAuthVC.isIgnorable = true
+        localAuthVC.useBiometry = false
+        localAuthVC.completion = { [weak self] didSuccess in
+            if didSuccess {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self?.show(BackupManuallyVC(), sender: nil)
+                }
+            }
+        }
+//        localAuthVC.modalPresentationStyle = .fullScreen
+        present(localAuthVC, animated: true, completion: nil)
+    }
+    
+    override func buttonDoneDidTouch() {
+        back()
     }
 }

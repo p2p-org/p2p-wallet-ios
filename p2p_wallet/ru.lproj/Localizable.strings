@@ -165,3 +165,4 @@
 "Please re-enter PIN-code" = "Пожалуйста, введите PIN-код еще раз";
 "PIN-code must have 6 digits" = "ПИН-код должен состоять из 6 цифр.";
 "Successfully changed PIN-code" = "ПИН-код успешно изменен";
+"Backup now" = "Сделать резервную копию сейчас";

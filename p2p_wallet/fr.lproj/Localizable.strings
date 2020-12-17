@@ -165,3 +165,4 @@
 "Please re-enter PIN-code" = "Veuillez saisir à nouveau le code PIN";
 "PIN-code must have 6 digits" = "Le code PIN doit comporter 6 chiffres";
 "Successfully changed PIN-code" = "Code PIN modifié avec succès";
+"Backup now" = "Sauvegarder maintenant";

@@ -53,10 +53,7 @@ class PhrasesVC: BaseVStackVC {
 class CreatePhrasesVC: PhrasesVC {
     lazy var phrasesListViews = createTagListView()
     lazy var copyToClipboardButton =
-        UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
-            UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .secondary),
-            UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: .secondary)
-        ])
+        UIView.copyToClipboardButton()
             .onTap(self, action: #selector(buttonCopyToClipboardDidTouch))
     lazy var savedCheckBox = BECheckbox(width: 20, height: 20, cornerRadius: 6)
     lazy var saveToICloudButton = WLButton.stepButton(type: .main, label: L10n.saveToICloud.uppercaseFirst)
