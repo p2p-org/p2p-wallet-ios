@@ -70,7 +70,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
                     separator,
                     UIImageView(width: 24.75, height: 24.75, image: .scanQr, tintColor: .secondary)
                         .onTap(self, action: #selector(buttonScanQrCodeDidTouch)),
-                    UIView.spacer
+                    UIView(width: 0)
                 ])
                 .with(spacing: 20, alignment: .center, distribution: .fill)
             separator.heightAnchor.constraint(equalTo: view.heightAnchor)
