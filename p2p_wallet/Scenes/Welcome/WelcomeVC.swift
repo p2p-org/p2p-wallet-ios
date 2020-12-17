@@ -12,8 +12,8 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
     override func setUp() {
         super.setUp()
         viewControllers = [FirstVC(), SecondVC()]
-        currentPageIndicatorTintColor = .textBlack
-        pageIndicatorTintColor = .a4a4a4
+        currentPageIndicatorTintColor = .white
+        pageIndicatorTintColor = UIColor.white.withAlphaComponent(0.5)
         
         self.delegate = self
     }
