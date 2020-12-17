@@ -80,4 +80,8 @@ class ConfigureSecurityVC: ProfileVCBase {
     @objc func buttonChangePinCodeDidTouch() {
         show(ChangePinCodeVC(), sender: nil)
     }
+    
+    override func buttonDoneDidTouch() {
+        back()
+    }
 }

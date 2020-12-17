@@ -129,8 +129,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         localAuthVC.modalPresentationStyle = .fullScreen
-        self.window?.rootViewController?.topViewController()
-            .present(localAuthVC, animated: true, completion: nil)
+        topVC?.present(localAuthVC, animated: true, completion: nil)
         localAuthVCShown = true
     }
     
