@@ -13,13 +13,15 @@ import LocalAuthentication
 class LocalAuthVC: PassCodeVC {
     var remainingPinEntries = 3
     var reason: String?
+    var isIgnorable = false
+    var useBiometry = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
         promptTitle = L10n.enterPasscode
         
         // face id, touch id button
-        if LABiometryType.isEnabled {
+        if LABiometryType.isEnabled && useBiometry {
             let button = UIButton(frame: .zero)
             let biometryType = LABiometryType.current
             let icon = biometryType.icon?.withRenderingMode(.alwaysTemplate)
@@ -30,6 +32,13 @@ class LocalAuthVC: PassCodeVC {
             leftBottomButton?.widthAnchor.constraint(equalTo: leftBottomButton!.heightAnchor).isActive = true
             leftBottomButton?.addTarget(self, action: #selector(authWithBiometric), for: .touchUpInside)
             authWithBiometric(isAuto: true)
+        }
+        
+        if isIgnorable {
+            let closeButton = UIButton.close()
+                .onTap(self, action: #selector(back))
+            view.addSubview(closeButton)
+            closeButton.autoPinToTopRightCornerOfSuperview(xInset: 16)
         }
     }
     

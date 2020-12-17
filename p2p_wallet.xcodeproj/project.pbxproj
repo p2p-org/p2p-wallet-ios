@@ -15,6 +15,7 @@
 		BC105119258884AA00398EA2 /* SelectNetworkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC105118258884AA00398EA2 /* SelectNetworkVC.swift */; };
 		BC10511E258884D800398EA2 /* ConfigureSecurityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10511D258884D800398EA2 /* ConfigureSecurityVC.swift */; };
 		BC1051232589F1B900398EA2 /* ChangePinCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1051222589F1B900398EA2 /* ChangePinCodeVC.swift */; };
+		BC105130258B05DF00398EA2 /* BackupManuallyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10512F258B05DF00398EA2 /* BackupManuallyVC.swift */; };
 		BC17577A25788DD200049667 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC17577925788DD200049667 /* Socket.swift */; };
 		BC1D2ACC256B6EA40064E595 /* SwapTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */; };
 		BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */; };
@@ -172,6 +173,7 @@
 		BC105118258884AA00398EA2 /* SelectNetworkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectNetworkVC.swift; sourceTree = "<group>"; };
 		BC10511D258884D800398EA2 /* ConfigureSecurityVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureSecurityVC.swift; sourceTree = "<group>"; };
 		BC1051222589F1B900398EA2 /* ChangePinCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePinCodeVC.swift; sourceTree = "<group>"; };
+		BC10512F258B05DF00398EA2 /* BackupManuallyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupManuallyVC.swift; sourceTree = "<group>"; };
 		BC17577925788DD200049667 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenVC.swift; sourceTree = "<group>"; };
 		BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeBackVC.swift; sourceTree = "<group>"; };
@@ -639,6 +641,7 @@
 				BC105110258882BE00398EA2 /* ProfileVCBase.swift */,
 				BCB58359255CE96B00B10F65 /* ProfileVC.swift */,
 				BC10510825887F7D00398EA2 /* BackupVC.swift */,
+				BC10512F258B05DF00398EA2 /* BackupManuallyVC.swift */,
 				BC105118258884AA00398EA2 /* SelectNetworkVC.swift */,
 				BC10511D258884D800398EA2 /* ConfigureSecurityVC.swift */,
 			);
@@ -1176,6 +1179,7 @@
 				BC2EC1782553ABD2006EEDA5 /* MainVC+SectionFooterView.swift in Sources */,
 				BC7533B5257F3E7B007A00D9 /* EnterPhrasesVC.swift in Sources */,
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,
+				BC105130258B05DF00398EA2 /* BackupManuallyVC.swift in Sources */,
 				BC55B88E254BFBDC0032C355 /* TabBarVC.swift in Sources */,
 				BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,

@@ -34,6 +34,8 @@ internal enum L10n {
   internal static let backup = L10n.tr("Localizable", "Backup")
   /// Backup manually
   internal static let backupManually = L10n.tr("Localizable", "Backup manually")
+  /// Backup now
+  internal static let backupNow = L10n.tr("Localizable", "Backup now")
   /// Backup using iCloud
   internal static let backupUsingICloud = L10n.tr("Localizable", "Backup using iCloud")
   /// Block number

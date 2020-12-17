@@ -79,6 +79,10 @@ class ProfileVC: ProfileVCBase {
         }
     }
     
+    override func buttonDoneDidTouch() {
+        back()
+    }
+    
     @objc func cellDidTouch(_ gesture: UIGestureRecognizer) {
         guard let tag = gesture.view?.tag else {return}
         switch tag {
