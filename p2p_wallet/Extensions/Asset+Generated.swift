@@ -21,6 +21,7 @@ extension UIColor {
     static let f4f4f4 = UIColor(named: "f4f4f4", in: bundle, compatibleWith: nil)!
     static let f5f5f5 = UIColor(named: "f5f5f5", in: bundle, compatibleWith: nil)!
     static let fafafa = UIColor(named: "fafafa", in: bundle, compatibleWith: nil)!
+    static let h282828 = UIColor(named: "h282828", in: bundle, compatibleWith: nil)!
     static let lightGrayBackground = UIColor(named: "lightGrayBackground", in: bundle, compatibleWith: nil)!
     static let pinViewBgColor = UIColor(named: "pinView-bg-color", in: bundle, compatibleWith: nil)!
     static let pinViewButtonBgColor = UIColor(named: "pinView-button-bg-color", in: bundle, compatibleWith: nil)!
@@ -42,7 +43,9 @@ extension UIImage {
     static let downArrow = UIImage(named: "down-arrow", in: bundle, compatibleWith: nil)!
     static let emptyPlaceholder = UIImage(named: "empty-placeholder", in: bundle, compatibleWith: nil)!
     static let faceId = UIImage(named: "faceId", in: bundle, compatibleWith: nil)!
+    static let introBankCard1 = UIImage(named: "intro-bank-card-1", in: bundle, compatibleWith: nil)!
     static let nextArrow = UIImage(named: "next-arrow", in: bundle, compatibleWith: nil)!
+    static let p2pValidatorLogo = UIImage(named: "p2p-validator-logo", in: bundle, compatibleWith: nil)!
     static let qrCodeRange = UIImage(named: "qr-code-range", in: bundle, compatibleWith: nil)!
     static let regenerateButton = UIImage(named: "regenerate-button", in: bundle, compatibleWith: nil)!
     static let reverseButton = UIImage(named: "reverse-button", in: bundle, compatibleWith: nil)!
