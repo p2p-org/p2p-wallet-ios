@@ -9,11 +9,21 @@ import Foundation
 
 class WLButton: UIButton {
     enum StepButtonType {
-        case main, sub
+        case main, sub, blue
+        var backgroundColor: UIColor {
+            switch self {
+            case .main:
+                return .textBlack
+            case .sub:
+                return .h202020
+            case .blue:
+                return .h5887ff
+            }
+        }
     }
     
     static func stepButton(type: StepButtonType, label: String?) -> WLButton {
-        WLButton(height: 56, backgroundColor: type == .main ? .textBlack : .buttonSub, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: type == .main ? .textWhite : .textBlack)
+        return WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: .white)
     }
     
     override var isEnabled: Bool {
