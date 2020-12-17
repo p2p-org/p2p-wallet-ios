@@ -24,7 +24,11 @@ class CreateOrRestoreWalletVC: IntroVCWithButtons {
     
     // MARK: - Actions
     @objc func buttonCreateWalletDidTouch() {
-        parent?.present(TermsAndConditionsVC(), animated: true, completion: nil)
+        let vc = TermsAndConditionsVC()
+        vc.completion = {
+            self.parent?.show(CreatePhrasesVC(), sender: nil)
+        }
+        parent?.present(vc, animated: true, completion: nil)
     }
     
     @objc func buttonRestoreWalletDidTouch() {
