@@ -17,7 +17,7 @@ class BackupVC: ProfileVCBase {
                 .centeredHorizontallyView,
             UILabel(text: L10n.yourWalletNeedsBackup, textSize: 17, weight: .bold, numberOfLines: 0, textAlignment: .center),
             UILabel(text: L10n.ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases, textSize: 17, textColor: .secondary, numberOfLines: 0, textAlignment: .center),
-            WLButton.stepButton(type: .main, label: L10n.backupUsingICloud)
+            WLButton.stepButton(type: .black, label: L10n.backupUsingICloud)
                 .onTap(self, action: #selector(buttonBackupUsingICloudDidTouch)),
             WLButton.stepButton(type: .sub, label: L10n.backupManually)
                 .onTap(self, action: #selector(buttonBackupManuallyDidTouch))

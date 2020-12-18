@@ -30,7 +30,7 @@ class CreatePassCodeVC: PassCodeVC {
 }
 
 private class ConfirmPasscodeVC: CreatePassCodeVC {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal() }
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(translucent: true) }
     
     init(currentPasscode: String) {
         super.init()

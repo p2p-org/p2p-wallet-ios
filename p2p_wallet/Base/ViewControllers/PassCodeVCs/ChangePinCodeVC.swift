@@ -16,7 +16,7 @@ class ChangePinCodeVC: WLBottomSheet {
     lazy var currentPinTextField = createTextField()
     lazy var newPinTextField = createTextField(textContentType: .newPassword)
     lazy var repeatNewPinTextField = createTextField()
-    lazy var changePinButton = WLButton.stepButton(type: .main, label: L10n.changePINCode)
+    lazy var changePinButton = WLButton.stepButton(type: .black, label: L10n.changePINCode)
         .onTap(self, action: #selector(buttonChangePinDidTouch))
     
     override func viewDidLoad() {

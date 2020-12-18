@@ -8,7 +8,7 @@
 import Foundation
 
 class WelcomeBackVC: IntroVCWithButtons {
-    lazy var goToWalletButton = WLButton.stepButton(type: .main, label: L10n.goToWallet)
+    lazy var goToWalletButton = WLButton.stepButton(type: .black, label: L10n.goToWallet)
         .onTap(self, action: #selector(buttonGoToWalletDidTouch))
     
     let phrases: [String]
