@@ -290,6 +290,8 @@ internal enum L10n {
   internal static let viewInBlockchainExplorer = L10n.tr("Localizable", "View in blockchain explorer")
   /// Wallet address
   internal static let walletAddress = L10n.tr("Localizable", "Wallet address")
+  /// Wallet name
+  internal static let walletName = L10n.tr("Localizable", "Wallet name")
   /// Wallets
   internal static let wallets = L10n.tr("Localizable", "Wallets")
   /// Warning
