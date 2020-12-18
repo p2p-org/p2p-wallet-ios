@@ -14,6 +14,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
     
     lazy var amountLabel = UILabel(text: "$120,00", textSize: 27, weight: .bold)
     lazy var tokenCountLabel = UILabel(text: "0 SOL", textSize: 15, textColor: .secondary)
+    lazy var changeLabel = UILabel(textColor: .attentionGreen)
     lazy var lineChartView: ChartView = {
         let chartView = ChartView(height: 257)
         chartView.chartDescription?.enabled = false
@@ -49,43 +50,33 @@ class WDVCSectionHeaderView: SectionHeaderView {
     override func commonInit() {
         super.commonInit()
         stackView.alignment = .fill
-        stackView.insertArrangedSubview(amountLabel.padding(.init(x: 20, y: 0)), at: 0)
-        stackView.insertArrangedSubview(tokenCountLabel.padding(.init(x: 20, y: 0)), at: 1)
-        stackView.insertArrangedSubview(.separator(height: 2, color: .separator), at: 2)
-        stackView.insertArrangedSubview(lineChartView.padding(.init(x: -10, y: 0)), at: 3)
         
-        let separator = UIView.separator(height: 1, color: UIColor.textBlack.withAlphaComponent(0.1))
-        stackView.insertArrangedSubview(separator, at: 4)
-        stackView.insertArrangedSubview(chartPicker, at: 5)
-        
-        let walletAddressView: UIView = {
-            let view = UIView(backgroundColor: .textWhite, cornerRadius: 16)
-            let separator = UIView(width: 1, backgroundColor: UIColor.textBlack.withAlphaComponent(0.1))
-            view.row([
-                    UIView.col([
-                        walletAddressLabel,
-                        pubkeyLabel
-                    ])
-                        .padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 0))
-                        .onTap(self, action: #selector(buttonCopyToClipboardDidTouch)),
-                    separator,
-                    UIImageView(width: 24.75, height: 24.75, image: .scanQr, tintColor: .secondary)
-                        .onTap(self, action: #selector(buttonScanQrCodeDidTouch)),
-                    UIView(width: 0)
+        stackView.insertArrangedSubviews([
+            amountLabel.padding(.init(x: 20, y: 0)),
+            UIView.row([
+                tokenCountLabel,
+                changeLabel
+            ]).padding(.init(x: 20, y: 0)),
+            .separator(height: 2, color: .separator),
+            lineChartView.padding(.init(x: -10, y: 0)),
+            .separator(height: 1, color: .separator),
+            chartPicker,
+            UIView.row([
+                UIView.col([
+                    walletAddressLabel,
+                    pubkeyLabel
                 ])
+                    .padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 0))
+                    .onTap(self, action: #selector(buttonCopyToClipboardDidTouch)),
+                UIView(width: 1, backgroundColor: .separator),
+                UIImageView(width: 24.75, height: 24.75, image: .scanQr, tintColor: .secondary)
+                    .onTap(self, action: #selector(buttonScanQrCodeDidTouch)),
+                UIView(width: 0)
+            ])
                 .with(spacing: 20, alignment: .center, distribution: .fill)
-            separator.heightAnchor.constraint(equalTo: view.heightAnchor)
-                .isActive = true
-            return view
-        }()
-        
-        stackView.insertArrangedSubview(walletAddressView.padding(.init(x: 16, y: 0)), at: 6)
-        
-        stackView.setCustomSpacing(5, after: amountLabel)
-        stackView.setCustomSpacing(0, after: tokenCountLabel)
-        stackView.setCustomSpacing(16, after: separator)
-        stackView.setCustomSpacing(16, after: chartPicker)
-        stackView.setCustomSpacing(30, after: walletAddressView.wrapper!)
+                .padding(.zero, backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                .padding(.init(x: 20, y: 0))
+        ], at: 0, withCustomSpacings: [10, 16, 0, 0, 20, 40])
         
         // initial setups
         headerLabel.font = .systemFont(ofSize: 21, weight: .semibold)
@@ -94,8 +85,15 @@ class WDVCSectionHeaderView: SectionHeaderView {
     func setUp(wallet: Wallet) {
         self.wallet = wallet
         let usdAmount = String(format: "%.02f", wallet.amountInUSD)
-        amountLabel.text = usdAmount + " US$"
-        tokenCountLabel.text = "\(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
+        amountLabel.text = "$ " + usdAmount
+        tokenCountLabel.text = "\(wallet.symbol) \(wallet.amount.toString(maximumFractionDigits: 9))"
+        changeLabel.text = "\(wallet.price?.change24h?.percentage?.toString(maximumFractionDigits: 2, showPlus: true) ?? "")% \(L10n._24Hours)"
+        
+        if wallet.price?.change24h?.percentage >= 0 {
+            changeLabel.textColor = .attentionGreen
+        } else {
+            changeLabel.textColor = .red
+        }
         pubkeyLabel.text = wallet.pubkey
     }
     
