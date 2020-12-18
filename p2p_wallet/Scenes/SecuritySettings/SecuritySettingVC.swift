@@ -18,10 +18,10 @@ class SecuritySettingVC: BaseVC {
     
     lazy var buttonStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
     
-    lazy var acceptButton = WLButton.stepButton(type: .main, label: nil)
+    lazy var acceptButton = WLButton.stepButton(type: .blue, label: nil)
         .onTap(self, action: #selector(buttonAcceptDidTouch))
     
-    lazy var doThisLaterButton = WLButton.stepButton(type: .sub, label: L10n.doThisLater)
+    lazy var doThisLaterButton = WLButton.stepButton(type: .gray, label: L10n.doThisLater)
         .onTap(self, action: #selector(buttonDoThisLaterDidTouch))
     
     override func setUp() {

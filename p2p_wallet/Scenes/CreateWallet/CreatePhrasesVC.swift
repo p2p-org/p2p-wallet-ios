@@ -56,7 +56,7 @@ class CreatePhrasesVC: PhrasesVC {
         UIView.copyToClipboardButton()
             .onTap(self, action: #selector(buttonCopyToClipboardDidTouch))
     lazy var savedCheckBox = BECheckbox(width: 20, height: 20, cornerRadius: 6)
-    lazy var saveToICloudButton = WLButton.stepButton(type: .main, label: L10n.saveToICloud.uppercaseFirst)
+    lazy var saveToICloudButton = WLButton.stepButton(type: .black, label: L10n.saveToICloud.uppercaseFirst)
         .onTap(self, action: #selector(buttonSaveToKeychainDidTouch))
     
     lazy var regenerateButton: UIBarButtonItem = {
@@ -67,7 +67,7 @@ class CreatePhrasesVC: PhrasesVC {
         return button
     }()
     
-    lazy var continueButton = WLButton.stepButton(type: .main, label: L10n.continue)
+    lazy var continueButton = WLButton.stepButton(type: .black, label: L10n.continue)
         .onTap(self, action: #selector(buttonContinueDidTouch))
     
     override func setUp() {

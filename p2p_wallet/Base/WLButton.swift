@@ -9,25 +9,25 @@ import Foundation
 
 class WLButton: UIButton {
     enum StepButtonType {
-        case main, sub, blue
+        case black, sub, blue, gray
         var backgroundColor: UIColor {
             switch self {
-            case .main:
+            case .black:
                 return .white
             case .sub:
                 return .h202020
             case .blue:
                 return .h5887ff
+            case .gray:
+                return .f6f6f8
             }
         }
         
         var textColor: UIColor {
             switch self {
-            case .main:
+            case .black, .gray:
                 return .black
-            case .sub:
-                return .white
-            case .blue:
+            case .sub, .blue:
                 return .white
             }
         }
