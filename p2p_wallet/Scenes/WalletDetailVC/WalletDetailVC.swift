@@ -48,9 +48,15 @@ class WalletDetailVC: WLModalVC {
         ], withCustomSpacings: [20, 0])
         
         vc.view.translatesAutoresizingMaskIntoConstraints = false
-        
         addChild(vc)
-        stackView.addArrangedSubview(vc.view)
+        // collectionView(didSelectItemAt) would not be called if
+        // we add vc.view inside stackView or containerView, so I
+        // add vc.view directly into `view`
+        view.addSubview(vc.view)
+        containerView.constraintToSuperviewWithAttribute(.bottom)?
+            .isActive = false
+        vc.view.autoPinEdge(.top, to: .bottom, of: containerView)
+        vc.view.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
         vc.didMove(toParent: self)
     }
     
