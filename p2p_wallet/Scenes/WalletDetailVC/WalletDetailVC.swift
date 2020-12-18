@@ -9,8 +9,35 @@ import Foundation
 import DiffableDataSources
 import Action
 
-class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(backgroundColor: .vcBackground) }
+class WalletDetailVC: WLModalVC {
+    fileprivate let vc: _WalletDetailVC
+    // MARK: - Initializer
+    init(wallet: Wallet) {
+        vc = _WalletDetailVC(wallet: wallet)
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func setUp() {
+        super.setUp()
+        
+        stackView.addArrangedSubviews([
+            
+        ])
+        
+        vc.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        addChild(vc)
+        stackView.addArrangedSubview(vc.view)
+        vc.didMove(toParent: self)
+    }
+}
+
+private class _WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .embeded }
     let wallet: Wallet
     var graphVM: WalletGraphVM { (viewModel as! ViewModel).graphVM }
     
@@ -140,7 +167,23 @@ class WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
     }
 }
 
-extension WalletDetailVC: HorizontalPickerDelegate {
+extension _WalletDetailVC {
+    class ViewModel: WalletTransactionsVM {
+        let graphVM: WalletGraphVM
+        
+        override init(wallet: Wallet) {
+            graphVM = WalletGraphVM(wallet: wallet)
+            super.init(wallet: wallet)
+        }
+        
+        override func reload() {
+            graphVM.reload()
+            super.reload()
+        }
+    }
+}
+
+extension _WalletDetailVC: HorizontalPickerDelegate {
     func picker(_ picker: HorizontalPicker, didSelectOptionAtIndex index: Int) {
         guard index < Period.allCases.count else {return}
         graphVM.period = Period.allCases[index]

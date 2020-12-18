@@ -95,7 +95,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     
     // MARK: - Delegate
     override func itemDidSelect(_ item: Wallet) {
-        show(WalletDetailVC(wallet: item), sender: nil)
+        present(WalletDetailVC(wallet: item), animated: true, completion: nil)
     }
     
     // MARK: - Actions
