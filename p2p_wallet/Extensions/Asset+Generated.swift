@@ -56,6 +56,7 @@ extension UIImage {
     static let qrCodeRange = UIImage(named: "qr-code-range", in: bundle, compatibleWith: nil)!
     static let regenerateButton = UIImage(named: "regenerate-button", in: bundle, compatibleWith: nil)!
     static let reverseButton = UIImage(named: "reverse-button", in: bundle, compatibleWith: nil)!
+    static let scanQr2 = UIImage(named: "scan-qr-2", in: bundle, compatibleWith: nil)!
     static let scanQr = UIImage(named: "scan-qr", in: bundle, compatibleWith: nil)!
     static let tabbarProfile = UIImage(named: "tabbar-profile", in: bundle, compatibleWith: nil)!
     static let tabbarSearch = UIImage(named: "tabbar-search", in: bundle, compatibleWith: nil)!
