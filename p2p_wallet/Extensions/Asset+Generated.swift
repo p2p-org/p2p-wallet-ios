@@ -13,6 +13,7 @@ private let bundle = Bundle(for: BundleToken.self)
 // MARK: - Colors -
 
 extension UIColor {
+    static let a3a5ba = UIColor(named: "a3a5ba", in: bundle, compatibleWith: nil)!
     static let a4a4a4 = UIColor(named: "a4a4a4", in: bundle, compatibleWith: nil)!
     static let background = UIColor(named: "background", in: bundle, compatibleWith: nil)!
     static let buttonSub = UIColor(named: "buttonSub", in: bundle, compatibleWith: nil)!
@@ -40,6 +41,7 @@ extension UIImage {
     static let backArrow = UIImage(named: "back-arrow", in: bundle, compatibleWith: nil)!
     static let backButton = UIImage(named: "back-button", in: bundle, compatibleWith: nil)!
     static let backupShield = UIImage(named: "backup-shield", in: bundle, compatibleWith: nil)!
+    static let buttonEdit = UIImage(named: "button-edit", in: bundle, compatibleWith: nil)!
     static let checkMark = UIImage(named: "check-mark", in: bundle, compatibleWith: nil)!
     static let close = UIImage(named: "close", in: bundle, compatibleWith: nil)!
     static let copyToClipboard = UIImage(named: "copy-to-clipboard", in: bundle, compatibleWith: nil)!

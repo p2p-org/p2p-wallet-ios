@@ -8,8 +8,6 @@
 import Foundation
 
 class TermsAndConditionsVC: WLModalVC {
-    override var padding: UIEdgeInsets {.init(x: 0, y: 20)}
-    
     lazy var tabBar = TabBarVC.TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
     lazy var declineButton = UIButton(label: L10n.decline, labelFont: .systemFont(ofSize: 17), textColor: .red)
         .onTap(self, action: #selector(back))
