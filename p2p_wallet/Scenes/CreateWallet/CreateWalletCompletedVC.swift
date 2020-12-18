@@ -11,7 +11,7 @@ class CreateWalletCompletedVC: IntroVCWithButtons {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
     // MARK: - Subviews
-    lazy var nextButton = WLButton.stepButton(type: .main, label: L10n.next.uppercaseFirst)
+    lazy var nextButton = WLButton.stepButton(type: .black, label: L10n.next.uppercaseFirst)
         .onTap(self, action: #selector(buttonNextDidTouch))
     
     // MARK: - Methods

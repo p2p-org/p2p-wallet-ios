@@ -20,6 +20,7 @@ extension UIColor {
     static let ededed = UIColor(named: "ededed", in: bundle, compatibleWith: nil)!
     static let f4f4f4 = UIColor(named: "f4f4f4", in: bundle, compatibleWith: nil)!
     static let f5f5f5 = UIColor(named: "f5f5f5", in: bundle, compatibleWith: nil)!
+    static let f6f6f8 = UIColor(named: "f6f6f8", in: bundle, compatibleWith: nil)!
     static let fafafa = UIColor(named: "fafafa", in: bundle, compatibleWith: nil)!
     static let h202020 = UIColor(named: "h202020", in: bundle, compatibleWith: nil)!
     static let h282828 = UIColor(named: "h282828", in: bundle, compatibleWith: nil)!
