@@ -15,27 +15,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
     lazy var amountLabel = UILabel(text: "$120,00", textSize: 27, weight: .bold)
     lazy var tokenCountLabel = UILabel(text: "0 SOL", textSize: 15, textColor: .secondary)
     lazy var changeLabel = UILabel(textColor: .attentionGreen)
-    lazy var lineChartView: ChartView = {
-        let chartView = ChartView(height: 257)
-        chartView.chartDescription?.enabled = false
-        chartView.leftAxis.drawAxisLineEnabled = false
-        chartView.leftAxis.drawLabelsEnabled = false
-        chartView.leftAxis.gridLineWidth = 0
-        chartView.rightAxis.drawAxisLineEnabled = false
-        chartView.rightAxis.drawLabelsEnabled = false
-        chartView.rightAxis.gridLineWidth = 0
-        chartView.xAxis.enabled = false
-        chartView.legend.enabled = false
-        chartView.pinchZoomEnabled = false
-        chartView.doubleTapToZoomEnabled = false
-        
-        // marker
-        var marker = createMarker()
-        marker.chartView = chartView
-        chartView.marker = marker
-        
-        return chartView
-    }()
+    lazy var lineChartView = ChartView()
     lazy var chartPicker: HorizontalPicker = {
         let chartPicker = HorizontalPicker(forAutoLayout: ())
         chartPicker.labels = Period.allCases.map {$0.rawValue.localized().uppercaseFirst}
@@ -60,7 +40,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
             .separator(height: 2, color: .separator),
             lineChartView.padding(.init(x: -10, y: 0)),
             .separator(height: 1, color: .separator),
-            chartPicker,
+            chartPicker.padding(.init(x: 20, y: 0)),
             UIView.row([
                 UIView.col([
                     walletAddressLabel,
@@ -97,15 +77,6 @@ class WDVCSectionHeaderView: SectionHeaderView {
         pubkeyLabel.text = wallet.pubkey
     }
     
-    private func createMarker() -> ValueByDateChartMarker {
-        ValueByDateChartMarker(
-            color: .textBlack,
-            font: .systemFont(ofSize: 12),
-            textColor: .textWhite,
-            insets: UIEdgeInsets(top: 8, left: 8, bottom: 20, right: 8)
-        )
-    }
-    
     @objc private func buttonScanQrCodeDidTouch() {
         scanQrCodeAction?.execute()
     }
@@ -122,6 +93,33 @@ class WDVCSectionHeaderView: SectionHeaderView {
 
 extension WDVCSectionHeaderView {
     class ChartView: LineChartView, LazyView {
+        init() {
+            super.init(frame: .zero)
+            configureForAutoLayout()
+            autoSetDimension(.height, toSize: 257)
+            
+            chartDescription?.enabled = false
+            leftAxis.drawAxisLineEnabled = false
+            leftAxis.drawLabelsEnabled = false
+            leftAxis.gridLineWidth = 0
+            rightAxis.drawAxisLineEnabled = false
+            rightAxis.drawLabelsEnabled = false
+            rightAxis.gridLineWidth = 0
+            xAxis.enabled = false
+            legend.enabled = false
+            pinchZoomEnabled = false
+            doubleTapToZoomEnabled = false
+            
+            // marker
+            var marker = createMarker()
+            marker.chartView = self
+            self.marker = marker
+        }
+        
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
         func handleDataLoaded(_ prices: [PriceRecord]) {
             var x = 0
             let values = prices.map { price -> ChartDataEntry in
@@ -156,6 +154,15 @@ extension WDVCSectionHeaderView {
         func handleError(_ error: Error) {
             // TODO: Error
             
+        }
+        
+        private func createMarker() -> ValueByDateChartMarker {
+            ValueByDateChartMarker(
+                color: .textBlack,
+                font: .systemFont(ofSize: 12),
+                textColor: .textWhite,
+                insets: UIEdgeInsets(top: 8, left: 8, bottom: 20, right: 8)
+            )
         }
     }
 }
