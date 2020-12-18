@@ -15,19 +15,19 @@ class HorizontalPicker: BEView {
         var index: Int?
     }
     
-    private lazy var stackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fillEqually)
+    private lazy var stackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .equalSpacing)
     weak var delegate: HorizontalPickerDelegate?
     
     var labels: [String] = [] {
         didSet {
             stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
             stackView.addArrangedSubviews(labels.enumerated().map {
-                let label = UILabel(text: $1, textSize: 15, textColor: .secondary, textAlignment: .center)
+                let label = UILabel(text: $1, textSize: 15)
                 let gesture = GestureRegconizer(target: self, action: #selector(buttonOptionDidTouch(_:)))
                 gesture.index = $0
                 label.addGestureRecognizer(gesture)
                 label.isUserInteractionEnabled = true
-                return label
+                return label.padding(.init(x: 16, y: 8), cornerRadius: 12)
             })
         }
     }
@@ -35,13 +35,11 @@ class HorizontalPicker: BEView {
     var selectedIndex: Int = -1 {
         didSet {
             guard selectedIndex >= 0 && selectedIndex < labels.count else {return}
-            for (index, label) in (stackView.arrangedSubviews as! [UILabel]).enumerated() {
+            for (index, view) in stackView.arrangedSubviews.enumerated() {
                 if index != selectedIndex {
-                    label.textColor = .secondary
-                    label.font = .systemFont(ofSize: 15)
+                    view.backgroundColor = .clear
                 } else {
-                    label.textColor = .textBlack
-                    label.font = .systemFont(ofSize: 15, weight: .bold)
+                    view.backgroundColor = .f6f6f8
                 }
             }
         }
