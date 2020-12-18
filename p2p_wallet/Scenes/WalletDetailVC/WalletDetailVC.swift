@@ -21,6 +21,8 @@ class WalletDetailVC: WLModalVC {
         return tf
     }()
     
+    lazy var tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
+    
     // MARK: - Initializer
     init(wallet: Wallet) {
         self.wallet = wallet
@@ -56,8 +58,27 @@ class WalletDetailVC: WLModalVC {
         containerView.constraintToSuperviewWithAttribute(.bottom)?
             .isActive = false
         vc.view.autoPinEdge(.top, to: .bottom, of: containerView)
-        vc.view.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
+        vc.view.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         vc.didMove(toParent: self)
+        
+        // tabBar
+        view.addSubview(tabBar)
+        tabBar.backgroundColor = .h202020
+        tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        
+        tabBar.stackView.addArrangedSubviews([
+            UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .white)
+                .padding(.init(all: 16)),
+            UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
+                .padding(.init(all: 16))
+                .onTap(self, action: #selector(buttonReceiveDidTouch)),
+            UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
+                .padding(.init(all: 16))
+                .onTap(self, action: #selector(buttonSendDidTouch)),
+            UIImageView(width: 24, height: 24, image: .walletSwap, tintColor: .white)
+                .padding(.init(all: 16))
+                .onTap(self, action: #selector(buttonSwapDidTouch))
+        ])
     }
     
     @objc func buttonEditDidTouch() {
@@ -69,6 +90,11 @@ class WalletDetailVC: WLModalVC {
     
     @objc func buttonSendDidTouch() {
         let vc = SendTokenVC(wallets: WalletsVM.ofCurrentUser.data, initialSymbol: wallet.symbol)
+        self.show(vc, sender: nil)
+    }
+    
+    @objc func buttonReceiveDidTouch() {
+        let vc = ReceiveTokenVC(filteredSymbols: [self.wallet.symbol])
         self.show(vc, sender: nil)
     }
     

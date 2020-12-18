@@ -8,7 +8,7 @@
 import Foundation
 
 class TermsAndConditionsVC: WLModalVC {
-    lazy var tabBar = TabBarVC.TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
+    lazy var tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
     lazy var declineButton = UIButton(label: L10n.decline, labelFont: .systemFont(ofSize: 17), textColor: .red)
         .onTap(self, action: #selector(back))
     lazy var acceptButton = UIButton(label: L10n.accept, labelFont: .boldSystemFont(ofSize: 17), textColor: .blue)

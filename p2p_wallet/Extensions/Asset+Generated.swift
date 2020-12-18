@@ -64,6 +64,10 @@ extension UIImage {
     static let tabbarWallet = UIImage(named: "tabbar-wallet", in: bundle, compatibleWith: nil)!
     static let touchId = UIImage(named: "touchId", in: bundle, compatibleWith: nil)!
     static let transactionInfoIcon = UIImage(named: "transaction-info-icon", in: bundle, compatibleWith: nil)!
+    static let walletAdd = UIImage(named: "wallet-add", in: bundle, compatibleWith: nil)!
     static let walletIntro = UIImage(named: "wallet-intro", in: bundle, compatibleWith: nil)!
+    static let walletReceive = UIImage(named: "wallet-receive", in: bundle, compatibleWith: nil)!
+    static let walletSend = UIImage(named: "wallet-send", in: bundle, compatibleWith: nil)!
+    static let walletSwap = UIImage(named: "wallet-swap", in: bundle, compatibleWith: nil)!
 }
 
