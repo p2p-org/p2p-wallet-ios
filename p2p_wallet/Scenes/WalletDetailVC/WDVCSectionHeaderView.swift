@@ -130,9 +130,11 @@ extension WDVCSectionHeaderView {
             }
             
             let set1 = LineChartDataSet(entries: values)
-            let gradientColors = [UIColor.clear.cgColor,
-                                  UIColor.secondary.cgColor]
-            let gradient = CGGradient(colorsSpace: nil, colors: gradientColors as CFArray, locations: nil)!
+            let gradientColors = [
+                UIColor.h5887ff.withAlphaComponent(0).cgColor,
+                UIColor.h5887ff.withAlphaComponent(1).cgColor
+              ]
+            let gradient = CGGradient(colorsSpace: nil, colors: gradientColors as CFArray, locations: [0, 1])!
             
             set1.fillAlpha = 1
             set1.fill = Fill(linearGradient: gradient, angle: 90)
@@ -141,7 +143,8 @@ extension WDVCSectionHeaderView {
             set1.drawIconsEnabled = false
             
             set1.drawCirclesEnabled = false
-            set1.lineWidth = 0
+            set1.lineWidth = 1.5
+            set1.setColor(.h5887ff)
             set1.circleRadius = 0
             
             let data = LineChartData(dataSet: set1)
