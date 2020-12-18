@@ -12,8 +12,8 @@ import Action
 class WDVCSectionHeaderView: SectionHeaderView {
     var wallet: Wallet?
     
-    lazy var amountLabel = UILabel(text: "$120,00", textSize: 25, weight: .semibold, textColor: .textBlack, textAlignment: .center)
-    lazy var tokenCountLabel = UILabel(text: "0 SOL", textSize: 15, textColor: .secondary, textAlignment: .center)
+    lazy var amountLabel = UILabel(text: "$120,00", textSize: 27, weight: .bold)
+    lazy var tokenCountLabel = UILabel(text: "0 SOL", textSize: 15, textColor: .secondary)
     lazy var lineChartView: ChartView = {
         let chartView = ChartView(height: 257)
         chartView.chartDescription?.enabled = false
@@ -49,13 +49,14 @@ class WDVCSectionHeaderView: SectionHeaderView {
     override func commonInit() {
         super.commonInit()
         stackView.alignment = .fill
-        stackView.insertArrangedSubview(amountLabel, at: 0)
-        stackView.insertArrangedSubview(tokenCountLabel, at: 1)
-        stackView.insertArrangedSubview(lineChartView.padding(.init(x: -10, y: 0)), at: 2)
+        stackView.insertArrangedSubview(amountLabel.padding(.init(x: 20, y: 0)), at: 0)
+        stackView.insertArrangedSubview(tokenCountLabel.padding(.init(x: 20, y: 0)), at: 1)
+        stackView.insertArrangedSubview(.separator(height: 2, color: .separator), at: 2)
+        stackView.insertArrangedSubview(lineChartView.padding(.init(x: -10, y: 0)), at: 3)
         
         let separator = UIView.separator(height: 1, color: UIColor.textBlack.withAlphaComponent(0.1))
-        stackView.insertArrangedSubview(separator, at: 3)
-        stackView.insertArrangedSubview(chartPicker, at: 4)
+        stackView.insertArrangedSubview(separator, at: 4)
+        stackView.insertArrangedSubview(chartPicker, at: 5)
         
         let walletAddressView: UIView = {
             let view = UIView(backgroundColor: .textWhite, cornerRadius: 16)
@@ -78,7 +79,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
             return view
         }()
         
-        stackView.insertArrangedSubview(walletAddressView.padding(.init(x: 16, y: 0)), at: 5)
+        stackView.insertArrangedSubview(walletAddressView.padding(.init(x: 16, y: 0)), at: 6)
         
         stackView.setCustomSpacing(5, after: amountLabel)
         stackView.setCustomSpacing(0, after: tokenCountLabel)
