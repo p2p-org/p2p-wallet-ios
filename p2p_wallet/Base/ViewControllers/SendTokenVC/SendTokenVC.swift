@@ -17,7 +17,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
     
     lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: UIEdgeInsets(top: 44, left: 16, bottom: 0, right: 16))
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
-    lazy var sendButton = WLButton.stepButton(type: .main, label: L10n.sendNow)
+    lazy var sendButton = WLButton.stepButton(type: .black, label: L10n.sendNow)
         .onTap(self, action: #selector(buttonSendDidTouch))
     
     lazy var errorLabel = UILabel(textSize: 17, weight: .semibold, textColor: .textBlack, numberOfLines: 0, textAlignment: .center)

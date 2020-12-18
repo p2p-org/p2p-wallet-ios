@@ -214,6 +214,8 @@ internal enum L10n {
   internal static let scanningQrCodeNotSupported = L10n.tr("Localizable", "Scanning QrCode not supported")
   /// seconds
   internal static let seconds = L10n.tr("Localizable", "seconds")
+  /// Secure non-custodial bank of future
+  internal static let secureNonCustodialBankOfFuture = L10n.tr("Localizable", "Secure non-custodial bank of future")
   /// Security
   internal static let security = L10n.tr("Localizable", "Security")
   /// security keys
@@ -230,6 +232,8 @@ internal enum L10n {
   internal static let sendingToken = L10n.tr("Localizable", "Sending token...")
   /// Share
   internal static let share = L10n.tr("Localizable", "Share")
+  /// Simple finance for everyone
+  internal static let simpleFinanceForEveryone = L10n.tr("Localizable", "Simple finance for everyone")
   /// Slide to scan
   internal static let slideToScan = L10n.tr("Localizable", "Slide to scan")
   /// Something went wrong!\nPlease try again later

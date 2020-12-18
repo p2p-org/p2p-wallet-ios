@@ -19,7 +19,7 @@ class ProcessTransactionVC: WLCenterSheet {
     lazy var titleLabel = UILabel(text: L10n.processing + "...", textSize: 17, weight: .semibold)
     lazy var viewInExplorerButton = WLButton.stepButton(type: .sub, label: L10n.viewInBlockchainExplorer)
     
-    lazy var goBackToWalletButton = WLButton.stepButton(type: .main, label: L10n.goBackToWallet)
+    lazy var goBackToWalletButton = WLButton.stepButton(type: .black, label: L10n.goBackToWallet)
     
     // MARK: - Methods
     override func setUp() {
