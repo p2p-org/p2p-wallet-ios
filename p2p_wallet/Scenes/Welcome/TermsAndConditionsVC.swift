@@ -19,8 +19,6 @@ class TermsAndConditionsVC: WLModalVC {
     
     override func setUp() {
         super.setUp()
-        stackView.spacing = 20
-        
         let scrollView: ContentHuggingScrollView = {
             let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical)
             // TODO: - Change later
