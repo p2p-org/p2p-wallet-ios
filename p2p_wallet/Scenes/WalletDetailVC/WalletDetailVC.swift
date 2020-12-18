@@ -66,33 +66,23 @@ class WalletDetailVC: WLModalVC {
             walletNameTextField.becomeFirstResponder()
         }
     }
+    
+    @objc func buttonSendDidTouch() {
+        let vc = SendTokenVC(wallets: WalletsVM.ofCurrentUser.data, initialSymbol: wallet.symbol)
+        self.show(vc, sender: nil)
+    }
+    
+    @objc func buttonSwapDidTouch() {
+        // TODO: - Swap
+        let vc = SwapTokenVC(wallets: WalletsVM.ofCurrentUser.data)
+        self.show(vc, sender: nil)
+    }
 }
 
 private class _WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .embeded }
     let wallet: Wallet
     var graphVM: WalletGraphVM { (viewModel as! ViewModel).graphVM }
-    
-    lazy var buttonsView: UIView = {
-        let view = UIView(forAutoLayout: ())
-        view.layer.cornerRadius = 16
-        view.layer.masksToBounds = true
-        let buttonsStackView = UIStackView(
-            axis: .horizontal,
-            spacing: 2,
-            alignment: .fill,
-            distribution: .fillEqually,
-            arrangedSubviews: [
-                self.createButton(title: L10n.send)
-                    .onTap(self, action: #selector(buttonSendDidTouch)),
-                self.createButton(title: L10n.swap)
-                    .onTap(self, action: #selector(buttonSwapDidTouch))
-            ]
-        )
-        view.addSubview(buttonsStackView)
-        buttonsStackView.autoPinEdgesToSuperviewEdges()
-        return view
-    }()
     
     // MARK: - Initializer
     init(wallet: Wallet) {
@@ -111,34 +101,6 @@ private class _WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
         view.backgroundColor = .vcBackground
         
         collectionView.contentInset = collectionView.contentInset.modifying(dBottom: 71)
-        
-        view.addSubview(buttonsView)
-        buttonsView.autoAlignAxis(toSuperviewAxis: .vertical)
-        buttonsView.autoPinEdge(toSuperviewSafeArea: .bottom, withInset: 30)
-    }
-    
-    override func bind() {
-        super.bind()
-        
-        // manage show/hide buttons
-        collectionView.rx.willBeginDecelerating
-            .subscribe(onNext: {
-                let actualPosition = self.collectionView.panGestureRecognizer.translation(in: self.view)
-                let constraint = self.buttonsView.constraintToSuperviewWithAttribute(.bottom)
-                if actualPosition.y > 0 {
-                    // Dragging down
-                    constraint?.constant = -30
-                    self.buttonsView.isHidden = false
-                } else{
-                    // Dragging up
-                    constraint?.constant = 30
-                    self.buttonsView.isHidden = true
-                }
-                UIView.animate(withDuration: 0.3) {
-                    self.view.layoutIfNeeded()
-                }
-            })
-            .disposed(by: disposeBag)
     }
     
     // MARK: - Layout
@@ -184,18 +146,6 @@ private class _WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
         label.autoPinEdge(toSuperviewEdge: .leading, withInset: 16.adaptiveWidth)
         label.autoPinEdge(toSuperviewEdge: .trailing, withInset: 16.adaptiveWidth)
         return view
-    }
-    
-    // MARK: - Actions
-    @objc func buttonSendDidTouch() {
-        let vc = SendTokenVC(wallets: WalletsVM.ofCurrentUser.data, initialSymbol: wallet.symbol)
-        self.show(vc, sender: nil)
-    }
-    
-    @objc func buttonSwapDidTouch() {
-        // TODO: - Swap
-        let vc = SwapTokenVC(wallets: WalletsVM.ofCurrentUser.data)
-        self.show(vc, sender: nil)
     }
 }
 
