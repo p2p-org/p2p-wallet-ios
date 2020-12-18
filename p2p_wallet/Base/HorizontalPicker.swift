@@ -38,8 +38,10 @@ class HorizontalPicker: BEView {
             for (index, view) in stackView.arrangedSubviews.enumerated() {
                 if index != selectedIndex {
                     view.backgroundColor = .clear
+                    (view.subviews.first as! UILabel).textColor = .textBlack
                 } else {
                     view.backgroundColor = .f6f6f8
+                    (view.subviews.first as! UILabel).textColor = .black
                 }
             }
         }

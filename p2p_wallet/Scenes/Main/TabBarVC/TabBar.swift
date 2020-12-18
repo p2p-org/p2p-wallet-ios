@@ -7,21 +7,19 @@
 
 import Foundation
 
-extension TabBarVC {
-    class TabBar: BERoundedCornerShadowView {
-        override func commonInit() {
-            super.commonInit()
-            stackView.spacing = 0
-            stackView.alignment = .center
-            stackView.distribution = .equalSpacing
-        }
-        
-        override func layoutStackView() {
-            stackView.autoPinEdgesToSuperviewSafeArea(with: contentInset)
-        }
-        
-        override func roundCorners() {
-            mainView.roundCorners([.topLeft, .topRight], radius: mainViewCornerRadius)
-        }
+class TabBar: BERoundedCornerShadowView {
+    override func commonInit() {
+        super.commonInit()
+        stackView.spacing = 0
+        stackView.alignment = .center
+        stackView.distribution = .equalSpacing
+    }
+    
+    override func layoutStackView() {
+        stackView.autoPinEdgesToSuperviewSafeArea(with: contentInset)
+    }
+    
+    override func roundCorners() {
+        mainView.roundCorners([.topLeft, .topRight], radius: mainViewCornerRadius)
     }
 }
