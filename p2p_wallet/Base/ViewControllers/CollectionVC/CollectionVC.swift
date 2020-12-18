@@ -26,7 +26,7 @@ extension ListItemType {
     }
 }
 
-class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UICollectionViewDelegate {
+class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
     // MARK: - Nested type
     struct Section {
         var headerViewClass: SectionHeaderView.Type = SectionHeaderView.self
@@ -128,7 +128,33 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
             })
             .disposed(by: disposeBag)
         
-        collectionView.delegate = self
+        collectionView.rx.didEndDecelerating
+            .subscribe(onNext: {
+                // Load more
+                if self.viewModel.isPaginationEnabled {
+                    if self.collectionView.contentOffset.y > 0 {
+                        let numberOfSections = self.collectionView.numberOfSections
+                        guard numberOfSections > 0 else {return}
+                        
+                        guard let indexPath = self.collectionView.indexPathsForVisibleItems.filter({$0.section == numberOfSections - 1}).max(by: {$0.row < $1.row})
+                        else {
+                            return
+                        }
+                        
+                        if indexPath.row >= self.collectionView.numberOfItems(inSection: self.collectionView.numberOfSections - 1) - 5 {
+                            self.viewModel.fetchNext()
+                        }
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        collectionView.rx.itemSelected
+            .subscribe(onNext: {indexPath in
+                guard let item = self.dataSource.itemIdentifier(for: indexPath) else {return}
+                self.itemDidSelect(item)
+            })
+            .disposed(by: disposeBag)
     }
     
     func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, ItemType> {
@@ -310,34 +336,6 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
             for: indexPath) as? SectionFooterView
         
         return view
-    }
-    
-    // MARK: - Delegate
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = dataSource.itemIdentifier(for: indexPath) else {return}
-        itemDidSelect(item)
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        if scrollView == collectionView {
-            // Load more
-            if viewModel.isPaginationEnabled {
-                if self.collectionView.contentOffset.y > 0 {
-                    let numberOfSections = collectionView.numberOfSections
-                    guard numberOfSections > 0 else {return}
-                    
-                    guard let indexPath = collectionView.indexPathsForVisibleItems.filter({$0.section == numberOfSections - 1}).max(by: {$0.row < $1.row})
-                    else {
-                        return
-                    }
-                    
-                    if indexPath.row >= collectionView.numberOfItems(inSection: collectionView.numberOfSections - 1) - 5 {
-                        viewModel.fetchNext()
-                    }
-                }
-            }
-        }
-        
     }
     
     // MARK: - Actions
