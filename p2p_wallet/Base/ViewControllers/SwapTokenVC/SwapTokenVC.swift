@@ -22,7 +22,7 @@ class SwapTokenVC: BaseVStackVC {
     lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 22, image: .reverseButton)
         .onTap(self, action: #selector(buttonReverseDidTouch))
     
-    lazy var swapButton = WLButton.stepButton(type: .main, label: L10n.swapNow)
+    lazy var swapButton = WLButton.stepButton(type: .black, label: L10n.swapNow)
         .onTap(self, action: #selector(buttonSwapDidTouch))
     
     init(wallets: [Wallet]) {

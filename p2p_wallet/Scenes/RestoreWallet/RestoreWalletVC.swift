@@ -8,7 +8,7 @@
 import Foundation
 
 class RestoreWalletVC: IntroVCWithButtons {
-    lazy var iCloudRestoreButton = WLButton.stepButton(type: .main, label: L10n.restoreUsingICloud)
+    lazy var iCloudRestoreButton = WLButton.stepButton(type: .black, label: L10n.restoreUsingICloud)
         .onTap(self, action: #selector(buttonICloudRestoreDidTouch))
     lazy var restoreManuallyButton = WLButton.stepButton(type: .sub, label: L10n.restoreManually)
         .onTap(self, action: #selector(buttonRestoreManuallyDidTouch))
