@@ -10,10 +10,20 @@ import DiffableDataSources
 import Action
 
 class WalletDetailVC: WLModalVC {
-    fileprivate let vc: _WalletDetailVC
+    override var padding: UIEdgeInsets {UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)}
+    
+    let wallet: Wallet
+    fileprivate lazy var vc = _WalletDetailVC(wallet: wallet)
+    lazy var walletNameTextField: UITextField = {
+        let tf = UITextField(font: .systemFont(ofSize: 19, weight: .semibold), placeholder: L10n.walletName, autocorrectionType: .no)
+        tf.isUserInteractionEnabled = false
+        tf.text = wallet.name
+        return tf
+    }()
+    
     // MARK: - Initializer
     init(wallet: Wallet) {
-        vc = _WalletDetailVC(wallet: wallet)
+        self.wallet = wallet
         super.init()
     }
     
@@ -25,14 +35,30 @@ class WalletDetailVC: WLModalVC {
         super.setUp()
         
         stackView.addArrangedSubviews([
-            
-        ])
+            UIView.row([
+                UIImageView(width: 35, height: 35, cornerRadius: 12)
+                    .with(urlString: wallet.icon),
+                walletNameTextField,
+                UIImageView(width: 16, height: 18, image: .buttonEdit, tintColor: .a3a5ba)
+                    .onTap(self, action: #selector(buttonEditDidTouch))
+            ])
+                .with(spacing: 16, distribution: .fill)
+                .padding(.init(x: 20, y: 0)),
+            .separator(height: 2, color: .separator)
+        ], withCustomSpacings: [20, 0])
         
         vc.view.translatesAutoresizingMaskIntoConstraints = false
         
         addChild(vc)
         stackView.addArrangedSubview(vc.view)
         vc.didMove(toParent: self)
+    }
+    
+    @objc func buttonEditDidTouch() {
+        walletNameTextField.isUserInteractionEnabled.toggle()
+        if walletNameTextField.isUserInteractionEnabled {
+            walletNameTextField.becomeFirstResponder()
+        }
     }
 }
 

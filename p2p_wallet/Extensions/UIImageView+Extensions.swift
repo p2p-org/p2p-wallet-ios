@@ -50,4 +50,9 @@ extension UIImageView {
             }
         }
     }
+    
+    func with(urlString: String?) -> Self {
+        setImage(urlString: urlString)
+        return self
+    }
 }
