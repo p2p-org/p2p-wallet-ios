@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // BEPureLayoutConfiguration
         BEPureLayoutConfigs.defaultBackgroundColor = .background
         BEPureLayoutConfigs.defaultTextColor = .textBlack
-        BEPureLayoutConfigs.defaultNavigationBarColor = .background
+        BEPureLayoutConfigs.defaultNavigationBarColor = .clear
         BEPureLayoutConfigs.defaultNavigationBarTextFont = .systemFont(ofSize: 17, weight: .semibold)
         BEPureLayoutConfigs.defaultShadowColor = .textBlack
 //        let image = UIImage.backButton.withRenderingMode(.alwaysOriginal)
