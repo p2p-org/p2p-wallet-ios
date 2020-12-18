@@ -34,7 +34,7 @@ class WLButton: UIButton {
     }
     
     static func stepButton(type: StepButtonType, label: String?) -> WLButton {
-        WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: .white)
+        WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: type.textColor)
     }
     
     override var isEnabled: Bool {
