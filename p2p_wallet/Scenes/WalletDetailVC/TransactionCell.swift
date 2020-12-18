@@ -18,7 +18,6 @@ class TransactionCell: BaseCollectionViewCell, CollectionCell {
     
     override func commonInit() {
         super.commonInit()
-        contentView.backgroundColor = .textWhite
         contentView
             .row([
                 iconImageView,

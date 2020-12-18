@@ -22,8 +22,8 @@ class WDVCSectionHeaderView: SectionHeaderView {
         chartPicker.selectedIndex = Period.allCases.firstIndex(where: {$0 == .day})!
         return chartPicker
     }()
-    lazy var walletAddressLabel = UILabel(text: L10n.walletAddress, textSize: 13, weight: .bold)
-    lazy var pubkeyLabel = UILabel(textSize: 13, textColor: .secondary)
+    lazy var walletAddressLabel = UILabel(text: L10n.walletAddress, textSize: 13, weight: .medium, textColor: .secondary)
+    lazy var pubkeyLabel = UILabel(textSize: 15, weight: .medium)
     
     var scanQrCodeAction: CocoaAction?
     
@@ -33,30 +33,34 @@ class WDVCSectionHeaderView: SectionHeaderView {
         
         stackView.insertArrangedSubviews([
             amountLabel.padding(.init(x: 20, y: 0)),
+            
             UIView.row([
                 tokenCountLabel,
                 changeLabel
             ]).padding(.init(x: 20, y: 0)),
+            
             .separator(height: 2, color: .separator),
+            
             lineChartView.padding(.init(x: -10, y: 0)),
+            
             .separator(height: 1, color: .separator),
+            
             chartPicker.padding(.init(x: 20, y: 0)),
+            
             UIView.row([
                 UIView.col([
                     walletAddressLabel,
                     pubkeyLabel
                 ])
-                    .padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 0))
+                    .with(spacing: 5)
                     .onTap(self, action: #selector(buttonCopyToClipboardDidTouch)),
-                UIView(width: 1, backgroundColor: .separator),
-                UIImageView(width: 24.75, height: 24.75, image: .scanQr, tintColor: .secondary)
-                    .onTap(self, action: #selector(buttonScanQrCodeDidTouch)),
-                UIView(width: 0)
+                UIImageView(width: 24.75, height: 24.75, image: .scanQr2, tintColor: .h5887ff)
+                    .onTap(self, action: #selector(buttonScanQrCodeDidTouch))
             ])
                 .with(spacing: 20, alignment: .center, distribution: .fill)
-                .padding(.zero, backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                .padding(.init(x: 16, y: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
                 .padding(.init(x: 20, y: 0))
-        ], at: 0, withCustomSpacings: [10, 16, 0, 0, 20, 40])
+        ], at: 0, withCustomSpacings: [10, 16, 0, 0, 10, 20, 40])
         
         // initial setups
         headerLabel.font = .systemFont(ofSize: 21, weight: .semibold)
@@ -111,7 +115,7 @@ extension WDVCSectionHeaderView {
             doubleTapToZoomEnabled = false
             
             // marker
-            var marker = createMarker()
+            let marker = createMarker()
             marker.chartView = self
             self.marker = marker
         }

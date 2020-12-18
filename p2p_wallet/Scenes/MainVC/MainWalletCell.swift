@@ -16,7 +16,6 @@ class MainWalletCell: WalletCell {
     
     override func commonInit() {
         super.commonInit()
-        contentView.backgroundColor = .textWhite
         contentView.layer.cornerRadius = 12
         contentView.layer.masksToBounds = true
         
