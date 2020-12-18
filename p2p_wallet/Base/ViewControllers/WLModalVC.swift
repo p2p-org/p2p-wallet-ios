@@ -11,7 +11,7 @@ class WLModalVC: BaseVC {
     var padding: UIEdgeInsets {.zero}
     
     private lazy var containerView = UIView(backgroundColor: .vcBackground)
-    lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
+    lazy var stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
     
     // MARK: - Initializers
     init() {
