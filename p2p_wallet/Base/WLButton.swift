@@ -13,17 +13,28 @@ class WLButton: UIButton {
         var backgroundColor: UIColor {
             switch self {
             case .main:
-                return .textBlack
+                return .white
             case .sub:
                 return .h202020
             case .blue:
                 return .h5887ff
             }
         }
+        
+        var textColor: UIColor {
+            switch self {
+            case .main:
+                return .black
+            case .sub:
+                return .white
+            case .blue:
+                return .white
+            }
+        }
     }
     
     static func stepButton(type: StepButtonType, label: String?) -> WLButton {
-        return WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: .white)
+        WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: .white)
     }
     
     override var isEnabled: Bool {
