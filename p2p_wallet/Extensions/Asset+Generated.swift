@@ -68,6 +68,7 @@ extension UIImage {
     static let walletIntro = UIImage(named: "wallet-intro", in: bundle, compatibleWith: nil)!
     static let walletReceive = UIImage(named: "wallet-receive", in: bundle, compatibleWith: nil)!
     static let walletSend = UIImage(named: "wallet-send", in: bundle, compatibleWith: nil)!
+    static let walletShare = UIImage(named: "wallet-share", in: bundle, compatibleWith: nil)!
     static let walletSwap = UIImage(named: "wallet-swap", in: bundle, compatibleWith: nil)!
 }
 
