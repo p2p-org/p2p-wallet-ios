@@ -69,11 +69,14 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     override var sections: [Section] {
         [
             Section(
-                headerViewClass: FirstSectionHeaderView.self,
-                headerTitle: L10n.wallets,
+                header: Section.Header(
+                    viewClass: FirstSectionHeaderView.self,
+                    title: L10n.wallets),
                 interGroupSpacing: 16
             ),
-            Section(headerTitle: L10n.savings, interGroupSpacing: 16)
+            Section(
+                header: Section.Header(title: L10n.savings),
+                interGroupSpacing: 16)
         ]
     }
     

@@ -45,7 +45,7 @@ class ChooseWalletVC: MyWalletsVC<ChooseWalletVC.Cell> {
     
     // MARK: - Layouts
     override var sections: [Section] {
-        [Section(headerTitle: "")]
+        [Section(header: Section.Header(title: ""))]
     }
     
     // MARK: - Delegate

@@ -137,8 +137,10 @@ private class _WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
     // MARK: - Layout
     override var sections: [Section] {
         [Section(
-            headerViewClass: WDVCSectionHeaderView.self,
-            headerTitle: L10n.activities,
+            header: Section.Header(
+                viewClass: WDVCSectionHeaderView.self,
+                title: L10n.activities
+            ),
             interGroupSpacing: 2,
             itemHeight: .absolute(71)
         )]
