@@ -52,7 +52,7 @@ class ReceiveTokenCell: BaseCollectionViewCell {
     func setUp(wallet: Wallet) {
         qrCodeView.setQrCode(string: wallet.pubkey)
         walletNameLabel.text = wallet.name
-        addressLabel.text = wallet.pubkeyShort
+        addressLabel.text = wallet.pubkeyShort(numOfSymbolsRevealed: 6)
         logoImageView.setImage(urlString: wallet.icon)
     }
 }
