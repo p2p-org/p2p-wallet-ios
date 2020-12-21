@@ -40,6 +40,40 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         collectionView.contentInset = collectionView.contentInset.modifying(dTop: 70)
     }
     
+    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, Wallet> {
+        var snapshot = super.mapDataToSnapshot()
+        snapshot.appendSections(["Test"])
+        snapshot.appendItems(viewModel.items)
+        return snapshot
+    }
+    
+    override func filter(_ items: [Wallet]) -> [Wallet] {
+        var wallets = [Wallet]()
+        
+        if let solWallet = items.first(where: {$0.symbol == "SOL"}) {
+            wallets.append(solWallet)
+        }
+        wallets.append(
+            contentsOf: items
+                .filter {$0.symbol != "SOL"}
+                .sorted(by: {$0.amountInUSD > $1.amountInUSD})
+                .prefix(2)
+        )
+        
+        return wallets
+    }
+    
+    // MARK: - Layout
+    override var sections: [Section] {
+        [
+            Section(
+                footer: Section.Footer(viewClass: FirstSectionFooterView.self),
+                interGroupSpacing: 30,
+                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16)),
+            Section(background: SecondSectionBackgroundView.self)
+        ]
+    }
+    
     // MARK: - Actions
     var receiveAction: CocoaAction {
         CocoaAction { _ in
