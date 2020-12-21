@@ -18,7 +18,7 @@ class ReceiveTokenCell: BaseCollectionViewCell {
         return button
     }()
     lazy var logoImageView: UIImageView = {
-        let imageView = UIImageView(width: 36, height: 36, cornerRadius: 12)
+        let imageView = UIImageView(width: 36, height: 36, backgroundColor: .textBlack, cornerRadius: 12)
         imageView.layer.borderWidth = 3
         imageView.layer.borderColor = UIColor.textWhite.cgColor
         return imageView
