@@ -15,14 +15,6 @@ class WalletsVC<WalletCell: WalletCellType>: CollectionVC<Wallet, WalletCell> {
 }
 
 class MyWalletsVC<WalletCell: WalletCellType>: WalletsVC<WalletCell> {
-    // MARK: - Layout
-    override var sections: [Section] {
-        [
-            Section(
-                interGroupSpacing: 30,
-                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16))
-        ]
-    }
     
     init() {
         let viewModel = WalletsVM.ofCurrentUser
