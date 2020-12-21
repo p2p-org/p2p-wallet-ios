@@ -22,6 +22,8 @@ internal enum L10n {
   internal static let addressCopied = L10n.tr("Localizable", "Address copied!")
   /// all
   internal static let all = L10n.tr("Localizable", "all")
+  /// All deposits are stored 100%% non-custodiallity with keys held on this device
+  internal static let allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice = L10n.tr("Localizable", "All deposits are stored 100% non-custodiallity with keys held on this device")
   /// Almost done!
   internal static let almostDone = L10n.tr("Localizable", "Almost done!")
   /// amount
@@ -228,6 +230,8 @@ internal enum L10n {
   internal static let sendCoins = L10n.tr("Localizable", "Send coins")
   /// Send Now
   internal static let sendNow = L10n.tr("Localizable", "Send Now")
+  /// Send to your wallet
+  internal static let sendToYourWallet = L10n.tr("Localizable", "Send to your wallet")
   /// Send tokens
   internal static let sendTokens = L10n.tr("Localizable", "Send tokens")
   /// Sending token...

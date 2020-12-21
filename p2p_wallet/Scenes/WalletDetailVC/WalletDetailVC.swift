@@ -33,6 +33,11 @@ class WalletDetailVC: WLModalVC {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.bringSubviewToFront(tabBar)
+    }
+    
     override func setUp() {
         super.setUp()
         

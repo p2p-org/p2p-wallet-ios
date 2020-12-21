@@ -9,7 +9,7 @@ import Foundation
 
 extension UIColor {
     static var secondary: UIColor {
-        UIColor.textBlack.withAlphaComponent(0.5)
+        .a3a5ba
     }
     
     func image(_ size: CGSize = CGSize(width: 1, height: 1)) -> UIImage {
