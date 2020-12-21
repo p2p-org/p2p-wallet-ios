@@ -31,6 +31,8 @@ extension UIColor {
     static let pinViewBgColor = UIColor(named: "pinView-bg-color", in: bundle, compatibleWith: nil)!
     static let pinViewButtonBgColor = UIColor(named: "pinView-button-bg-color", in: bundle, compatibleWith: nil)!
     static let separator = UIColor(named: "separator", in: bundle, compatibleWith: nil)!
+    static let tabbarSelected = UIColor(named: "tabbar-selected", in: bundle, compatibleWith: nil)!
+    static let tabbarUnselected = UIColor(named: "tabbar-unselected", in: bundle, compatibleWith: nil)!
     static let textBlack = UIColor(named: "textBlack", in: bundle, compatibleWith: nil)!
     static let textWhite = UIColor(named: "textWhite", in: bundle, compatibleWith: nil)!
     static let vcBackground = UIColor(named: "vcBackground", in: bundle, compatibleWith: nil)!
@@ -58,10 +60,9 @@ extension UIImage {
     static let reverseButton = UIImage(named: "reverse-button", in: bundle, compatibleWith: nil)!
     static let scanQr2 = UIImage(named: "scan-qr-2", in: bundle, compatibleWith: nil)!
     static let scanQr = UIImage(named: "scan-qr", in: bundle, compatibleWith: nil)!
-    static let tabbarProfile = UIImage(named: "tabbar-profile", in: bundle, compatibleWith: nil)!
-    static let tabbarSearch = UIImage(named: "tabbar-search", in: bundle, compatibleWith: nil)!
-    static let tabbarThunderbolt = UIImage(named: "tabbar-thunderbolt", in: bundle, compatibleWith: nil)!
-    static let tabbarWallet = UIImage(named: "tabbar-wallet", in: bundle, compatibleWith: nil)!
+    static let tabbarActivities = UIImage(named: "tabbar-activities", in: bundle, compatibleWith: nil)!
+    static let tabbarFriends = UIImage(named: "tabbar-friends", in: bundle, compatibleWith: nil)!
+    static let tabbarHome = UIImage(named: "tabbar-home", in: bundle, compatibleWith: nil)!
     static let touchId = UIImage(named: "touchId", in: bundle, compatibleWith: nil)!
     static let transactionInfoIcon = UIImage(named: "transaction-info-icon", in: bundle, compatibleWith: nil)!
     static let walletAdd = UIImage(named: "wallet-add", in: bundle, compatibleWith: nil)!

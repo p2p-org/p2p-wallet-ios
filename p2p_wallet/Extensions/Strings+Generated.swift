@@ -112,6 +112,8 @@ internal enum L10n {
   internal static let fee = L10n.tr("Localizable", "Fee")
   /// Finish setup
   internal static let finishSetup = L10n.tr("Localizable", "Finish setup")
+  /// Friends
+  internal static let friends = L10n.tr("Localizable", "Friends")
   /// From
   internal static let from = L10n.tr("Localizable", "From")
   /// Getting creation fee
@@ -120,6 +122,8 @@ internal enum L10n {
   internal static let goBackToWallet = L10n.tr("Localizable", "Go back to wallet")
   /// Go to wallet
   internal static let goToWallet = L10n.tr("Localizable", "Go to wallet")
+  /// Home
+  internal static let home = L10n.tr("Localizable", "Home")
   /// I have saved these words in a safe place
   internal static let iHaveSavedTheseWordsInASafePlace = L10n.tr("Localizable", "I have saved these words in a safe place")
   /// i've already had a wallet
