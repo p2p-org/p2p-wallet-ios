@@ -8,7 +8,7 @@
 import Foundation
 
 class SectionHeaderView: UICollectionReusableView {
-    lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .center, distribution: .fill)
+    lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
     lazy var headerLabel = UILabel(text: "Wallets", textSize: 17, weight: .bold, numberOfLines: 0)
     

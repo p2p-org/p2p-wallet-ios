@@ -10,6 +10,11 @@ import Action
 
 extension MainVC {
     class FirstSectionHeaderView: SectionHeaderView, LoadableView {
+        lazy var avatarImageView = UIImageView(width: 44, height: 44, backgroundColor: .c4c4c4, cornerRadius: 22)
+            .onTap(self, action: #selector(avatarImageViewDidTouch))
+        lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .textBlack, cornerRadius: 4)
+            .onTap(self, action: #selector(avatarImageViewDidTouch))
+        
         lazy var priceLabel = UILabel(text: "$120,00", textSize: 36, weight: .semibold, textAlignment: .center)
         lazy var priceChangeLabel = UILabel(text: "+ 0,16 US$ (0,01%) 24 hrs", textSize: 15, textColor: .secondary, numberOfLines: 0, textAlignment: .center)
         
@@ -26,7 +31,7 @@ extension MainVC {
         var receiveAction: CocoaAction?
         var swapAction: CocoaAction?
         
-        var loadingViews: [UIView] { [priceLabel, priceChangeLabel, sendButton.superview!, headerLabel, addCoinButton] }
+        var loadingViews: [UIView] { [avatarImageView, priceLabel, priceChangeLabel, sendButton.superview!, headerLabel, addCoinButton] }
         
         override func commonInit() {
             super.commonInit()
@@ -41,11 +46,20 @@ extension MainVC {
                 return view
             }()
             
-            let spacer1 = UIView.spacer
-            stackView.insertArrangedSubview(spacer1, at: 0)
+            let headerView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalCentering, arrangedSubviews: [
+                avatarImageView,
+    //            notificationView
+                .spacer
+            ])
+            
+            headerView.addSubview(activeStatusView)
+            activeStatusView.autoPinEdge(.top, to: .top, of: avatarImageView, withOffset: 2)
+            activeStatusView.autoPinEdge(.trailing, to: .trailing, of: avatarImageView, withOffset: -2)
+            
+            stackView.insertArrangedSubview(headerView.padding(.init(x: 16, y: 0)), at: 0)
             stackView.insertArrangedSubview(priceLabel, at: 1)
             stackView.insertArrangedSubview(priceChangeLabel, at: 2)
-            stackView.insertArrangedSubview(buttonsView, at: 3)
+            stackView.insertArrangedSubview(buttonsView.centeredHorizontallyView, at: 3)
             
             // modify header
             headerLabel.removeFromSuperview()
@@ -57,9 +71,9 @@ extension MainVC {
             headerStackView.wrapper?.widthAnchor.constraint(equalTo: stackView.widthAnchor)
                 .isActive = true
             
-            stackView.setCustomSpacing(5, after: priceLabel)
-            stackView.setCustomSpacing(30, after: priceChangeLabel)
-            stackView.setCustomSpacing(30, after: buttonsView)
+            stackView.setCustomSpacing(5, after: priceLabel.centeredHorizontallyView)
+            stackView.setCustomSpacing(30, after: priceChangeLabel.centeredHorizontallyView)
+            stackView.setCustomSpacing(30, after: buttonsView.wrapper!)
         }
         
         func setUp(state: FetcherState<[Wallet]>) {
