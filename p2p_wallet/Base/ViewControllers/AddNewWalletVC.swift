@@ -62,7 +62,7 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     }
     
     override var sections: [Section] {
-        [Section(headerTitle: "", contentInsets: .init(top: 0, leading: 0, bottom: 0, trailing: 0))]
+        [Section(header: Section.Header(title: ""), contentInsets: .init(top: 0, leading: 0, bottom: 0, trailing: 0))]
     }
     
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: Wallet) -> UICollectionViewCell {
