@@ -25,6 +25,11 @@ struct Wallet: FiatConvertable {
     var amount: Double? {
         Double(lamports ?? 0) * pow(10, -Double(decimals ?? 0))
     }
+    
+    var pubkeyShort: String {
+        guard let pubkey = pubkey else {return ""}
+        return "0x" + pubkey.prefix(6) + "..." + pubkey.suffix(6)
+    }
 }
 
 extension Wallet: ListItemType {

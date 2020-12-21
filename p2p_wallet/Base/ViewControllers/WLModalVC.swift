@@ -22,6 +22,16 @@ class WLModalVC: BaseVC {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // bottomView for covering safe area
+        let bottomView = UIView(backgroundColor: containerView.backgroundColor)
+        view.addSubview(bottomView)
+        bottomView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        bottomView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            .isActive = true
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         containerView.roundCorners([.topLeft, .topRight], radius: 20)
