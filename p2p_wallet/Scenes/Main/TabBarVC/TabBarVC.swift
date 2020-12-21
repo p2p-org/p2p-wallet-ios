@@ -8,10 +8,6 @@
 import Foundation
 
 class TabBarVC: BEPagesVC {
-    
-    let selectedColor: UIColor = .textBlack
-    let unselectedColor: UIColor = .a4a4a4
-    
     lazy var tabBar = TabBar(cornerRadius: 20)
     
     override func setUp() {
@@ -20,8 +16,7 @@ class TabBarVC: BEPagesVC {
         viewControllers = [
             BENavigationController(rootViewController: MainVC()),
             BENavigationController(rootViewController: InvestmentsVC()),
-            BENavigationController(rootViewController: IntroVC()),
-            BENavigationController(rootViewController: ProfileVC())
+            BENavigationController(rootViewController: IntroVC())
         ]
         
         // disable scrolling
@@ -56,30 +51,28 @@ class TabBarVC: BEPagesVC {
     
     // MARK: - Helpers
     private func configureTabBar() {
-        let firstTabItem = buttonTabBarItem(image: .tabbarWallet, tag: 0)
-        let secondTabItem = buttonTabBarItem(image: .tabbarThunderbolt, tag: 1)
-        let thirdTabItem = buttonTabBarItem(image: .tabbarSearch, tag: 2)
-        let forthTabItem = buttonTabBarItem(image: .tabbarProfile, tag: 3)
+        let firstTabItem = buttonTabBarItem(image: .tabbarHome, title: L10n.home, tag: 0)
+        let secondTabItem = buttonTabBarItem(image: .tabbarActivities, title: L10n.savings, tag: 1)
+        let thirdTabItem = buttonTabBarItem(image: .tabbarFriends, title: L10n.friends, tag: 2)
         
         tabBar.stackView.addArrangedSubviews([
             .spacer,
             firstTabItem,
             secondTabItem,
             thirdTabItem,
-            forthTabItem,
             .spacer
         ])
     }
     
-    private func buttonTabBarItem(image: UIImage, tag: Int) -> UIView {
-        let button = UIImageView(width: 24, height: 24)
-        button.image = image
-        button.tintColor = unselectedColor
-//        button.touchAreaEdgeInsets = UIEdgeInsets(inset: -10)
-//        button.addTarget(self, action: #selector(switchTab(button:)), for: .touchUpInside)
-        let view = button.padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16))
-        view.tag = tag
-        return view.onTap(self, action: #selector(switchTab(_:)))
+    private func buttonTabBarItem(image: UIImage, title: String, tag: Int) -> UIView {
+        let item = TabBarItemView(forAutoLayout: ())
+        item.tintColor = .tabbarUnselected
+        item.imageView.image = image
+        item.titleLabel.text = title
+        return item
+            .padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16))
+            .withTag(tag)
+            .onTap(self, action: #selector(switchTab(_:)))
     }
     
     @objc func switchTab(_ gesture: UIGestureRecognizer) {
@@ -107,8 +100,8 @@ class TabBarVC: BEPagesVC {
         guard index < items.count else {return}
         
         // change tabs' color
-        items.first {$0.tag == currentPage}?.subviews.first?.tintColor = selectedColor
+        items.first {$0.tag == currentPage}?.subviews.first?.tintColor = .tabbarSelected
         
-        items.filter {$0.tag != currentPage}.forEach {$0.subviews.first?.tintColor = unselectedColor}
+        items.filter {$0.tag != currentPage}.forEach {$0.subviews.first?.tintColor = .tabbarUnselected}
     }
 }
