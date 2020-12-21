@@ -24,6 +24,7 @@ extension UIColor {
     static let f5f5f5 = UIColor(named: "f5f5f5", in: bundle, compatibleWith: nil)!
     static let f6f6f8 = UIColor(named: "f6f6f8", in: bundle, compatibleWith: nil)!
     static let fafafa = UIColor(named: "fafafa", in: bundle, compatibleWith: nil)!
+    static let h1b1b1b = UIColor(named: "h1b1b1b", in: bundle, compatibleWith: nil)!
     static let h202020 = UIColor(named: "h202020", in: bundle, compatibleWith: nil)!
     static let h282828 = UIColor(named: "h282828", in: bundle, compatibleWith: nil)!
     static let h5887ff = UIColor(named: "h5887ff", in: bundle, compatibleWith: nil)!
