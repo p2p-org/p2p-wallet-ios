@@ -77,4 +77,6 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     @objc func avatarImageViewDidTouch() {
         present(ProfileVC(), animated: true, completion: nil)
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {.lightContent}
 }

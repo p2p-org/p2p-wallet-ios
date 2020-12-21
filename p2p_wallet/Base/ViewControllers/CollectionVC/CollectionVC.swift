@@ -62,6 +62,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         var itemHeight = NSCollectionLayoutDimension.estimated(100)
         var contentInsets = NSDirectionalEdgeInsets(top: 0, leading: .defaultPadding, bottom: 0, trailing: .defaultPadding)
         var horizontalInterItemSpacing = NSCollectionLayoutSpacing.fixed(16)
+        var background: SectionBackgroundView.Type?
     }
     
     // MARK: - Properties
@@ -212,9 +213,15 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
     
     // MARK: - Layout
     func createLayout() -> UICollectionViewLayout {
-        UICollectionViewCompositionalLayout { (sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             self.createLayoutForSection(sectionIndex, environment: env)
         }
+        
+        for section in sections where section.background != nil {
+            layout.register(section.background.self, forDecorationViewOfKind: String(describing: section.background!))
+        }
+        
+        return layout
     }
     
     func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
@@ -233,6 +240,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         
         let section = NSCollectionLayoutSection(group: group)
         
+        // supplementary items
         var supplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
         
         if let header = sections[sectionIndex].header {
@@ -245,6 +253,18 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         
         if !supplementaryItems.isEmpty {
             section.boundarySupplementaryItems = supplementaryItems
+        }
+        
+        // decoration items
+        var decorationItems = [NSCollectionLayoutDecorationItem]()
+        
+        if let background = sections[sectionIndex].background {
+            decorationItems.append(NSCollectionLayoutDecorationItem.background(
+                    elementKind: String(describing: background)))
+        }
+        
+        if !decorationItems.isEmpty {
+            section.decorationItems = decorationItems
         }
         
         if let interGroupSpacing = sections[sectionIndex].interGroupSpacing {

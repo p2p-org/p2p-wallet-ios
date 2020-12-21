@@ -16,4 +16,10 @@ extension MainVC {
             stackView.addArrangedSubview(addCoinButton.padding(UIEdgeInsets(x: 0, y: 16)))
         }
     }
+    
+    class FirstSectionBackgroundView: SectionBackgroundView {
+        override func commonInit() {
+            backgroundColor = .h1b1b1b
+        }
+    }
 }
