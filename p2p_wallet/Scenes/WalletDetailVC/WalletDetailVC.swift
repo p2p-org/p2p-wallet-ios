@@ -99,7 +99,7 @@ class WalletDetailVC: WLModalVC {
     }
     
     @objc func buttonReceiveDidTouch() {
-        let vc = ReceiveTokenVC(filteredSymbols: [self.wallet.symbol])
+        let vc = ReceiveTokenVC(wallets: [self.wallet])
         self.show(vc, sender: nil)
     }
     
@@ -154,7 +154,7 @@ private class _WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
                 .disposed(by: disposeBag)
             header.chartPicker.delegate = self
             header.scanQrCodeAction = CocoaAction {
-                let vc = ReceiveTokenVC(filteredSymbols: [self.wallet.symbol])
+                let vc = ReceiveTokenVC(wallets: [self.wallet])
                 self.present(vc, animated: true, completion: nil)
                 return .just(())
             }
