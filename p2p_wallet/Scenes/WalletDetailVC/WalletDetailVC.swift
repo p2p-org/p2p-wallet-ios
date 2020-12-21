@@ -67,8 +67,8 @@ class WalletDetailVC: WLModalVC {
         tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         
         tabBar.stackView.addArrangedSubviews([
-            UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .white)
-                .padding(.init(all: 16)),
+//            UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .white)
+//                .padding(.init(all: 16)),
             UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
                 .padding(.init(all: 16))
                 .onTap(self, action: #selector(buttonReceiveDidTouch)),
