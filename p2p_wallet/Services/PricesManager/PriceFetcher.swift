@@ -33,6 +33,18 @@ enum Period: String, CaseIterable {
     case month
 //    case year
 //    case all
+    var shortString: String {
+        var string = "1"
+        switch self {
+        case .day:
+            string += "d"
+        case .week:
+            string += "w"
+        case .month:
+            string += "m"
+        }
+        return string
+    }
 }
 
 protocol PricesFetcher {
