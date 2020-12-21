@@ -19,8 +19,8 @@ class MyWalletsVC<WalletCell: WalletCellType>: WalletsVC<WalletCell> {
     override var sections: [Section] {
         [
             Section(
-                interGroupSpacing: 16,
-                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(30))
+                interGroupSpacing: 30,
+                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16))
         ]
     }
     

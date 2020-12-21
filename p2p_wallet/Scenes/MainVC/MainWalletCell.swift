@@ -34,6 +34,9 @@ class MainWalletCell: WalletCell {
             coinLogoImageView,
             vStackView
         ])
+        
+        coinNameLabel.textColor = .white
+        coinPriceLabel.textColor = .white
     }
     
     override func setUp(with item: Wallet) {
