@@ -38,8 +38,8 @@ class MainWalletCell: WalletCell {
     
     override func setUp(with item: Wallet) {
         super.setUp(with: item)
-        if let pubkey = item.pubkey {
-            addressLabel.text = item.pubkeyShort
+        if item.pubkey != nil {
+            addressLabel.text = item.pubkeyShort()
         } else {
             addressLabel.text = nil
         }

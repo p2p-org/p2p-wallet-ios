@@ -29,7 +29,6 @@
 		BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */; };
 		BC23B574254FBB7F00886C9C /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B573254FBB7F00886C9C /* MainVC.swift */; };
 		BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */; };
-		BC23B5AA254FBF6200886C9C /* MainVC+FirstSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A9254FBF6200886C9C /* MainVC+FirstSectionHeaderView.swift */; };
 		BC290A00256B9C95002A727C /* SwapTokenItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */; };
 		BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC290A04256BA36F002A727C /* TokenAmountTextField.swift */; };
 		BC2EC1782553ABD2006EEDA5 /* MainVC+SectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1772553ABD2006EEDA5 /* MainVC+SectionFooterView.swift */; };
@@ -194,7 +193,6 @@
 		BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeScannerVC.swift; sourceTree = "<group>"; };
 		BC23B573254FBB7F00886C9C /* MainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVC.swift; sourceTree = "<group>"; };
 		BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionView.swift; sourceTree = "<group>"; };
-		BC23B5A9254FBF6200886C9C /* MainVC+FirstSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainVC+FirstSectionHeaderView.swift"; sourceTree = "<group>"; };
 		BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenItemView.swift; sourceTree = "<group>"; };
 		BC290A04256BA36F002A727C /* TokenAmountTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAmountTextField.swift; sourceTree = "<group>"; };
 		BC2EC1772553ABD2006EEDA5 /* MainVC+SectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainVC+SectionFooterView.swift"; sourceTree = "<group>"; };
@@ -394,7 +392,6 @@
 		BC23B572254FBB6300886C9C /* MainVC */ = {
 			isa = PBXGroup;
 			children = (
-				BC23B5A9254FBF6200886C9C /* MainVC+FirstSectionHeaderView.swift */,
 				BC2EC1772553ABD2006EEDA5 /* MainVC+SectionFooterView.swift */,
 				BC3EA485254FD44700FB1FEA /* MainWalletCell.swift */,
 				BC23B573254FBB7F00886C9C /* MainVC.swift */,
@@ -1225,7 +1222,6 @@
 				BCF7D953256220F100961D31 /* ErrorView.swift in Sources */,
 				BC75334D257E1A5B007A00D9 /* FiatConvertable.swift in Sources */,
 				BC54DD8E25872FE500A65566 /* HorizontalPicker.swift in Sources */,
-				BC23B5AA254FBF6200886C9C /* MainVC+FirstSectionHeaderView.swift in Sources */,
 				BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */,
 				BC10511E258884D800398EA2 /* ConfigureSecurityVC.swift in Sources */,
 				BCD5E82925525D3D00F51299 /* ListViewModel.swift in Sources */,
