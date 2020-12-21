@@ -126,7 +126,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     
     var receiveAction: CocoaAction {
         CocoaAction { _ in
-            let vc = ReceiveTokenVC()
+            let vc = ReceiveTokenVC(wallets: WalletsVM.ofCurrentUser.data)
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }

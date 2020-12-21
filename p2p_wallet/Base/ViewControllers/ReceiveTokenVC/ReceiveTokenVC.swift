@@ -13,9 +13,10 @@ import IBPCollectionViewCompositionalLayout
 class ReceiveTokenVC: WLModalVC {
     // MARK: - Properties
     override var padding: UIEdgeInsets {UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)}
+    let collectionViewSpacing: CGFloat = 16
     
     var dataSource: CollectionViewDiffableDataSource<String, Wallet>!
-    var filteredSymbols: [String]?
+    let wallets: [Wallet]
     
     // MARK: - Subviews
     lazy var collectionView: BaseCollectionView = {
@@ -36,8 +37,8 @@ class ReceiveTokenVC: WLModalVC {
     }()
     
     // MARK: - Initializers
-    init(filteredSymbols: [String]? = nil) {
-        self.filteredSymbols = filteredSymbols
+    init(wallets: [Wallet]) {
+        self.wallets = wallets
         super.init()
         modalPresentationStyle = .custom
         transitioningDelegate = self
@@ -77,47 +78,43 @@ class ReceiveTokenVC: WLModalVC {
             }
             return cell ?? UICollectionViewCell()
         }
-    }
-    
-    override func bind() {
-        super.bind()
-        WalletsVM.ofCurrentUser.state
-            .subscribe(onNext: {state in
-                switch state {
-                case .loaded(let wallets):
-                    var wallets = wallets
-                    if let filteredSymbols = self.filteredSymbols {
-                        wallets = wallets.filter {filteredSymbols.contains($0.symbol)}
-                    }
-                    
-                    // config snapshot
-                    var snapshot = DiffableDataSourceSnapshot<String, Wallet>()
-                    let section = ""
-                    snapshot.appendSections([section])
-                    snapshot.appendItems(wallets, toSection: section)
-                    self.dataSource.apply(snapshot)
-                    
-                    // config pagecontrol
-                    self.pageControl.numberOfPages = wallets.count
-                    self.pageControl.isHidden = wallets.count <= 1
-                default:
-                    // TODO:
-                    break
-                }
-            })
-            .disposed(by: disposeBag)
+        
+        // config snapshot
+        var snapshot = DiffableDataSourceSnapshot<String, Wallet>()
+        let section = ""
+        snapshot.appendSections([section])
+        snapshot.appendItems(wallets, toSection: section)
+        self.dataSource.apply(snapshot)
+        
+        // config pagecontrol
+        self.pageControl.numberOfPages = wallets.count
+        self.pageControl.isHidden = wallets.count <= 1
     }
     
     func createLayout() -> UICollectionViewLayout {
-        UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        UICollectionViewCompositionalLayout { (_: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             
-            let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(335), heightDimension: .absolute(438))
+            var width: NSCollectionLayoutDimension = .absolute(env.container.contentSize.width - self.collectionViewSpacing * 4)
+            
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                width = .absolute(335)
+            }
+                
+            if self.wallets.count == 1 {
+                width = .absolute(env.container.contentSize.width - self.collectionViewSpacing * 2)
+            }
+            
+            let groupSize = NSCollectionLayoutSize(widthDimension: width, heightDimension: .absolute(438))
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
             
             let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = 10
+            if self.wallets.count > 1 {
+                section.interGroupSpacing = self.collectionViewSpacing
+            }
+            
             section.orthogonalScrollingBehavior = .groupPagingCentered
             section.visibleItemsInvalidationHandler = { [weak self] _, _, _ in
                 if let visibleRows = self?.collectionView.indexPathsForVisibleItems.map({$0.row})
