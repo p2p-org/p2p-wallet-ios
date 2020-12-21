@@ -10,6 +10,8 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
+  /// 24 hours
+  internal static let _24Hours = L10n.tr("Localizable", "24 hours")
   /// Accept
   internal static let accept = L10n.tr("Localizable", "Accept")
   /// Activities
@@ -20,6 +22,8 @@ internal enum L10n {
   internal static let addressCopied = L10n.tr("Localizable", "Address copied!")
   /// all
   internal static let all = L10n.tr("Localizable", "all")
+  /// All deposits are stored 100%% non-custodiallity with keys held on this device
+  internal static let allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice = L10n.tr("Localizable", "All deposits are stored 100% non-custodiallity with keys held on this device")
   /// Almost done!
   internal static let almostDone = L10n.tr("Localizable", "Almost done!")
   /// amount
@@ -226,6 +230,8 @@ internal enum L10n {
   internal static let sendCoins = L10n.tr("Localizable", "Send coins")
   /// Send Now
   internal static let sendNow = L10n.tr("Localizable", "Send Now")
+  /// Send to your wallet
+  internal static let sendToYourWallet = L10n.tr("Localizable", "Send to your wallet")
   /// Send tokens
   internal static let sendTokens = L10n.tr("Localizable", "Send tokens")
   /// Sending token...
@@ -290,6 +296,8 @@ internal enum L10n {
   internal static let viewInBlockchainExplorer = L10n.tr("Localizable", "View in blockchain explorer")
   /// Wallet address
   internal static let walletAddress = L10n.tr("Localizable", "Wallet address")
+  /// Wallet name
+  internal static let walletName = L10n.tr("Localizable", "Wallet name")
   /// Wallets
   internal static let wallets = L10n.tr("Localizable", "Wallets")
   /// Warning

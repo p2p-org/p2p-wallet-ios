@@ -26,29 +26,37 @@ extension ListItemType {
     }
 }
 
-class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UICollectionViewDelegate {
+class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
     // MARK: - Nested type
     struct Section {
-        var headerViewClass: SectionHeaderView.Type = SectionHeaderView.self
-        let headerTitle: String
-        var headerFont: UIFont = .systemFont(ofSize: 17, weight: .semibold)
-        var headerLayout: NSCollectionLayoutBoundarySupplementaryItem? = {
-            let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
-            return NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: headerSize,
-                elementKind: UICollectionView.elementKindSectionHeader,
-                alignment: .top
-            )
-        }()
-        var footerViewClass: SectionFooterView.Type = SectionFooterView.self
-        var footerLayout: NSCollectionLayoutBoundarySupplementaryItem? = {
-            let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
-            return NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: size,
-                elementKind: UICollectionView.elementKindSectionFooter,
-                alignment: .bottom
-            )
-        }()
+        struct Header {
+            var viewClass: SectionHeaderView.Type = SectionHeaderView.self
+            var title: String
+            var titleFont: UIFont = .systemFont(ofSize: 17, weight: .semibold)
+            var layout: NSCollectionLayoutBoundarySupplementaryItem = {
+                let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
+                return NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: headerSize,
+                    elementKind: UICollectionView.elementKindSectionHeader,
+                    alignment: .top
+                )
+            }()
+        }
+        
+        struct Footer {
+            var viewClass: SectionFooterView.Type = SectionFooterView.self
+            var layout: NSCollectionLayoutBoundarySupplementaryItem = {
+                let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
+                return NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: size,
+                    elementKind: UICollectionView.elementKindSectionFooter,
+                    alignment: .bottom
+                )
+            }()
+        }
+        
+        var header: Header?
+        var footer: Footer?
         var interGroupSpacing: CGFloat?
         var orthogonalScrollingBehavior: UICollectionLayoutSectionOrthogonalScrollingBehavior?
         var itemHeight = NSCollectionLayoutDimension.estimated(100)
@@ -96,18 +104,27 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
     
     func registerCellAndSupplementaryViews() {
         collectionView.registerCells([Cell.self])
-        let headerViewClasses = sections.reduce([SectionHeaderView.Type]()) { (result, header) in
-            if result.contains(where: {$0 == header.headerViewClass}) {return result}
-            return result + [header.headerViewClass]
+        
+        // register headers
+        let headerViewClasses = sections.reduce([SectionHeaderView.Type]()) { (result, section) in
+            if result.contains(where: {$0 == section.header?.viewClass}) {return result}
+            if let headerViewClass = section.header?.viewClass {
+                return result + [headerViewClass]
+            }
+            return result
         }
         
         for viewClass in headerViewClasses {
             collectionView.register(viewClass.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: viewClass))
         }
         
-        let footerViewClasses = sections.reduce([SectionFooterView.Type]()) { (result, header) in
-            if result.contains(where: {$0 == header.footerViewClass}) {return result}
-            return result + [header.footerViewClass]
+        // register footer
+        let footerViewClasses = sections.reduce([SectionFooterView.Type]()) { (result, section) in
+            if result.contains(where: {$0 == section.footer?.viewClass}) {return result}
+            if let footerViewClass = section.footer?.viewClass {
+                return result + [footerViewClass]
+            }
+            return result
         }
         
         for viewClass in footerViewClasses {
@@ -128,14 +145,38 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
             })
             .disposed(by: disposeBag)
         
-        collectionView.delegate = self
+        collectionView.rx.didEndDecelerating
+            .subscribe(onNext: {
+                // Load more
+                if self.viewModel.isPaginationEnabled {
+                    if self.collectionView.contentOffset.y > 0 {
+                        let numberOfSections = self.collectionView.numberOfSections
+                        guard numberOfSections > 0 else {return}
+                        
+                        guard let indexPath = self.collectionView.indexPathsForVisibleItems.filter({$0.section == numberOfSections - 1}).max(by: {$0.row < $1.row})
+                        else {
+                            return
+                        }
+                        
+                        if indexPath.row >= self.collectionView.numberOfItems(inSection: self.collectionView.numberOfSections - 1) - 5 {
+                            self.viewModel.fetchNext()
+                        }
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        collectionView.rx.itemSelected
+            .subscribe(onNext: {indexPath in
+                guard let item = self.dataSource.itemIdentifier(for: indexPath) else {return}
+                self.itemDidSelect(item)
+            })
+            .disposed(by: disposeBag)
     }
     
     func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, ItemType> {
         var snapshot = DiffableDataSourceSnapshot<String, ItemType>()
-        guard let section = sections.first?.headerTitle else {
-            return snapshot
-        }
+        let section = sections.first?.header?.title ?? ""
         snapshot.appendSections([section])
         var items = filter(viewModel.items)
         switch viewModel.state.value {
@@ -193,13 +234,13 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         let section = NSCollectionLayoutSection(group: group)
         
         var supplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
-        if !sections[sectionIndex].headerTitle.isEmpty,
-           let headerLayout = sections[sectionIndex].headerLayout {
-            supplementaryItems.append(headerLayout)
+        
+        if let header = sections[sectionIndex].header {
+            supplementaryItems.append(header.layout)
         }
         
-        if let footerLayout = sections[sectionIndex].footerLayout {
-            supplementaryItems.append(footerLayout)
+        if let footer = sections[sectionIndex].footer {
+            supplementaryItems.append(footer.layout)
         }
         
         if !supplementaryItems.isEmpty {
@@ -292,10 +333,10 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         
         let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: String(describing: sections[indexPath.section].headerViewClass),
+            withReuseIdentifier: String(describing: sections[indexPath.section].header!.viewClass),
             for: indexPath) as? SectionHeaderView
         
-        view?.setUp(headerTitle: sections[indexPath.section].headerTitle, headerFont: sections[indexPath.section].headerFont)
+        view?.setUp(headerTitle: sections[indexPath.section].header!.title, headerFont: sections[indexPath.section].header!.titleFont)
         return view
     }
     
@@ -306,38 +347,10 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC, UIColl
         
         let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: String(describing: sections[indexPath.section].footerViewClass),
+            withReuseIdentifier: String(describing: sections[indexPath.section].footer!.viewClass),
             for: indexPath) as? SectionFooterView
         
         return view
-    }
-    
-    // MARK: - Delegate
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = dataSource.itemIdentifier(for: indexPath) else {return}
-        itemDidSelect(item)
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        if scrollView == collectionView {
-            // Load more
-            if viewModel.isPaginationEnabled {
-                if self.collectionView.contentOffset.y > 0 {
-                    let numberOfSections = collectionView.numberOfSections
-                    guard numberOfSections > 0 else {return}
-                    
-                    guard let indexPath = collectionView.indexPathsForVisibleItems.filter({$0.section == numberOfSections - 1}).max(by: {$0.row < $1.row})
-                    else {
-                        return
-                    }
-                    
-                    if indexPath.row >= collectionView.numberOfItems(inSection: collectionView.numberOfSections - 1) - 5 {
-                        viewModel.fetchNext()
-                    }
-                }
-            }
-        }
-        
     }
     
     // MARK: - Actions

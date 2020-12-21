@@ -10,18 +10,19 @@ import DiffableDataSources
 import Action
 import IBPCollectionViewCompositionalLayout
 
-class ReceiveTokenVC: WLBottomSheet {
+class ReceiveTokenVC: WLModalVC {
     // MARK: - Properties
     override var padding: UIEdgeInsets {UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)}
+    let collectionViewSpacing: CGFloat = 16
     
     var dataSource: CollectionViewDiffableDataSource<String, Wallet>!
-    var filteredSymbols: [String]?
+    let wallets: [Wallet]
     
     // MARK: - Subviews
     lazy var collectionView: BaseCollectionView = {
         let collectionView = BaseCollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.configureForAutoLayout()
-        collectionView.autoSetDimension(.height, toSize: 315)
+        collectionView.autoSetDimension(.height, toSize: 438)
         collectionView.registerCells([ReceiveTokenCell.self])
         collectionView.alwaysBounceVertical = false
         return collectionView
@@ -36,9 +37,11 @@ class ReceiveTokenVC: WLBottomSheet {
     }()
     
     // MARK: - Initializers
-    init(filteredSymbols: [String]? = nil) {
-        self.filteredSymbols = filteredSymbols
+    init(wallets: [Wallet]) {
+        self.wallets = wallets
         super.init()
+        modalPresentationStyle = .custom
+        transitioningDelegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -48,9 +51,6 @@ class ReceiveTokenVC: WLBottomSheet {
     // MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        interactor = nil
-        view.removeGestureRecognizer(panGestureRecognizer!)
-        
         view.layoutIfNeeded()
         DispatchQueue.main.async {
             self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .centeredHorizontally, animated: false)
@@ -59,17 +59,18 @@ class ReceiveTokenVC: WLBottomSheet {
     
     override func setUp() {
         super.setUp()
-        title = L10n.receiveToken
+        containerView.backgroundColor = UIColor(red: 238/255, green: 239/255, blue: 239/255, alpha: 1)
+        stackView.addArrangedSubview(UILabel(text: L10n.sendToYourWallet, textSize: 17, weight: .medium, textAlignment: .center))
         stackView.addArrangedSubview(collectionView)
         stackView.addArrangedSubview(pageControl)
         
         dataSource = CollectionViewDiffableDataSource<String, Wallet>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: Wallet) -> UICollectionViewCell? in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ReceiveTokenCell.self), for: indexPath) as? ReceiveTokenCell
             cell?.setUp(wallet: item)
-            cell?.copyButton.rx.action = CocoaAction {
-                UIApplication.shared.copyToClipboard(item.pubkey)
-                return .just(())
-            }
+//            cell?.copyButton.rx.action = CocoaAction {
+//                UIApplication.shared.copyToClipboard(item.pubkey)
+//                return .just(())
+//            }
             cell?.shareButton.rx.action = CocoaAction {
                 let vc = UIActivityViewController(activityItems: [item.pubkey!], applicationActivities: nil)
                 self.present(vc, animated: true, completion: nil)
@@ -77,46 +78,46 @@ class ReceiveTokenVC: WLBottomSheet {
             }
             return cell ?? UICollectionViewCell()
         }
-    }
-    
-    override func bind() {
-        super.bind()
-        WalletsVM.ofCurrentUser.state
-            .subscribe(onNext: {state in
-                switch state {
-                case .loaded(let wallets):
-                    var wallets = wallets
-                    if let filteredSymbols = self.filteredSymbols {
-                        wallets = wallets.filter {filteredSymbols.contains($0.symbol)}
-                    }
-                    
-                    // config snapshot
-                    var snapshot = DiffableDataSourceSnapshot<String, Wallet>()
-                    let section = ""
-                    snapshot.appendSections([section])
-                    snapshot.appendItems(wallets, toSection: section)
-                    self.dataSource.apply(snapshot)
-                    
-                    // config pagecontrol
-                    self.pageControl.numberOfPages = wallets.count
-                default:
-                    // TODO:
-                    break
-                }
-            })
-            .disposed(by: disposeBag)
+        
+        // config snapshot
+        var snapshot = DiffableDataSourceSnapshot<String, Wallet>()
+        let section = ""
+        snapshot.appendSections([section])
+        snapshot.appendItems(wallets, toSection: section)
+        self.dataSource.apply(snapshot)
+        
+        // config pagecontrol
+        self.pageControl.numberOfPages = wallets.count
+        self.pageControl.isHidden = wallets.count <= 1
     }
     
     func createLayout() -> UICollectionViewLayout {
-        UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        UICollectionViewCompositionalLayout { (_: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             
-            let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(335), heightDimension: .absolute(315))
+            var width: NSCollectionLayoutDimension = .absolute(env.container.contentSize.width - self.collectionViewSpacing * 4)
+            
+            if UIDevice.current.userInterfaceIdiom == .pad ||
+                UIDevice.current.orientation == .landscapeLeft ||
+                UIDevice.current.orientation == .landscapeRight
+            {
+                width = .absolute(335)
+            }
+                
+            if self.wallets.count == 1 {
+                width = .absolute(env.container.contentSize.width - self.collectionViewSpacing * 2)
+            }
+            
+            let groupSize = NSCollectionLayoutSize(widthDimension: width, heightDimension: .absolute(438))
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
             
             let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = 10
+            if self.wallets.count > 1 {
+                section.interGroupSpacing = self.collectionViewSpacing
+            }
+            
             section.orthogonalScrollingBehavior = .groupPagingCentered
             section.visibleItemsInvalidationHandler = { [weak self] _, _, _ in
                 if let visibleRows = self?.collectionView.indexPathsForVisibleItems.map({$0.row})
@@ -151,4 +152,10 @@ class ReceiveTokenVC: WLBottomSheet {
 //        guard pageControl.currentPage < collectionView.numberOfItems(inSection: 0) else {return}
 //        collectionView.scrollToItem(at: IndexPath(row: pageControl.currentPage, section: 0), at: .centeredHorizontally, animated: true)
 //    }
+}
+
+extension ReceiveTokenVC: UIViewControllerTransitioningDelegate {
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        return FlexibleHeightPresentationController(position: .bottom, presentedViewController: presented, presenting: presenting)
+    }
 }
