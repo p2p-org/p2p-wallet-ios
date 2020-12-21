@@ -8,10 +8,10 @@
 import Foundation
 
 class WLModalVC: BaseVC {
-    var padding: UIEdgeInsets {.zero}
+    var padding: UIEdgeInsets {.init(x: 0, y: 20)}
     
-    private lazy var containerView = UIView(backgroundColor: .vcBackground)
-    lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
+    lazy var containerView = UIView(backgroundColor: .vcBackground)
+    lazy var stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
     
     // MARK: - Initializers
     init() {
@@ -20,6 +20,16 @@ class WLModalVC: BaseVC {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // bottomView for covering safe area
+        let bottomView = UIView(backgroundColor: containerView.backgroundColor)
+        view.addSubview(bottomView)
+        bottomView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        bottomView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            .isActive = true
     }
     
     override func viewDidLayoutSubviews() {

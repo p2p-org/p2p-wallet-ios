@@ -16,7 +16,6 @@ class MainWalletCell: WalletCell {
     
     override func commonInit() {
         super.commonInit()
-        contentView.backgroundColor = .textWhite
         contentView.layer.cornerRadius = 12
         contentView.layer.masksToBounds = true
         
@@ -40,7 +39,7 @@ class MainWalletCell: WalletCell {
     override func setUp(with item: Wallet) {
         super.setUp(with: item)
         if let pubkey = item.pubkey {
-            addressLabel.text = "0x" + pubkey.prefix(4) + "..." + pubkey.suffix(4)
+            addressLabel.text = item.pubkeyShort
         } else {
             addressLabel.text = nil
         }

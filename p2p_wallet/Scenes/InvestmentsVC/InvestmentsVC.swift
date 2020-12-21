@@ -84,8 +84,8 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
     // MARK: - Layout
     override var sections: [Section] {
         [
-            Section(headerTitle: L10n.makeYourCryptoWorkingOnYou, headerFont: .systemFont(ofSize: 28, weight: .semibold), interGroupSpacing: 16, orthogonalScrollingBehavior: .groupPaging),
-            Section(headerTitle: L10n.exploreDeFi, interGroupSpacing: 2)
+            Section(header: Section.Header(title: L10n.makeYourCryptoWorkingOnYou, titleFont: .systemFont(ofSize: 28, weight: .semibold)), interGroupSpacing: 16, orthogonalScrollingBehavior: .groupPaging),
+            Section(header: Section.Header(title: L10n.exploreDeFi), interGroupSpacing: 2)
         ]
     }
     

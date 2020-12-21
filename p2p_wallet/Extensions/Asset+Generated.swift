@@ -13,7 +13,9 @@ private let bundle = Bundle(for: BundleToken.self)
 // MARK: - Colors -
 
 extension UIColor {
+    static let a3a5ba = UIColor(named: "a3a5ba", in: bundle, compatibleWith: nil)!
     static let a4a4a4 = UIColor(named: "a4a4a4", in: bundle, compatibleWith: nil)!
+    static let attentionGreen = UIColor(named: "attention-green", in: bundle, compatibleWith: nil)!
     static let background = UIColor(named: "background", in: bundle, compatibleWith: nil)!
     static let buttonSub = UIColor(named: "buttonSub", in: bundle, compatibleWith: nil)!
     static let c4c4c4 = UIColor(named: "c4c4c4", in: bundle, compatibleWith: nil)!
@@ -40,6 +42,7 @@ extension UIImage {
     static let backArrow = UIImage(named: "back-arrow", in: bundle, compatibleWith: nil)!
     static let backButton = UIImage(named: "back-button", in: bundle, compatibleWith: nil)!
     static let backupShield = UIImage(named: "backup-shield", in: bundle, compatibleWith: nil)!
+    static let buttonEdit = UIImage(named: "button-edit", in: bundle, compatibleWith: nil)!
     static let checkMark = UIImage(named: "check-mark", in: bundle, compatibleWith: nil)!
     static let close = UIImage(named: "close", in: bundle, compatibleWith: nil)!
     static let copyToClipboard = UIImage(named: "copy-to-clipboard", in: bundle, compatibleWith: nil)!
@@ -53,6 +56,7 @@ extension UIImage {
     static let qrCodeRange = UIImage(named: "qr-code-range", in: bundle, compatibleWith: nil)!
     static let regenerateButton = UIImage(named: "regenerate-button", in: bundle, compatibleWith: nil)!
     static let reverseButton = UIImage(named: "reverse-button", in: bundle, compatibleWith: nil)!
+    static let scanQr2 = UIImage(named: "scan-qr-2", in: bundle, compatibleWith: nil)!
     static let scanQr = UIImage(named: "scan-qr", in: bundle, compatibleWith: nil)!
     static let tabbarProfile = UIImage(named: "tabbar-profile", in: bundle, compatibleWith: nil)!
     static let tabbarSearch = UIImage(named: "tabbar-search", in: bundle, compatibleWith: nil)!
@@ -60,6 +64,11 @@ extension UIImage {
     static let tabbarWallet = UIImage(named: "tabbar-wallet", in: bundle, compatibleWith: nil)!
     static let touchId = UIImage(named: "touchId", in: bundle, compatibleWith: nil)!
     static let transactionInfoIcon = UIImage(named: "transaction-info-icon", in: bundle, compatibleWith: nil)!
+    static let walletAdd = UIImage(named: "wallet-add", in: bundle, compatibleWith: nil)!
     static let walletIntro = UIImage(named: "wallet-intro", in: bundle, compatibleWith: nil)!
+    static let walletReceive = UIImage(named: "wallet-receive", in: bundle, compatibleWith: nil)!
+    static let walletSend = UIImage(named: "wallet-send", in: bundle, compatibleWith: nil)!
+    static let walletShare = UIImage(named: "wallet-share", in: bundle, compatibleWith: nil)!
+    static let walletSwap = UIImage(named: "wallet-swap", in: bundle, compatibleWith: nil)!
 }
 
