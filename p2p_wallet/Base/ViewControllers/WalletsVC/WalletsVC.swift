@@ -15,6 +15,13 @@ class WalletsVC<WalletCell: WalletCellType>: CollectionVC<Wallet, WalletCell> {
 }
 
 class MyWalletsVC<WalletCell: WalletCellType>: WalletsVC<WalletCell> {
+    // MARK: - Layout
+    override var sections: [Section] {
+        [
+            Section(interGroupSpacing: 16)
+        ]
+    }
+    
     init() {
         let viewModel = WalletsVM.ofCurrentUser
         super.init(viewModel: viewModel)
@@ -50,5 +57,10 @@ class MyWalletsVC<WalletCell: WalletCellType>: WalletsVC<WalletCell> {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Delegate
+    override func itemDidSelect(_ item: Wallet) {
+        present(WalletDetailVC(wallet: item), animated: true, completion: nil)
     }
 }
