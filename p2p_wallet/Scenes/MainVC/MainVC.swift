@@ -69,11 +69,14 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     override var sections: [Section] {
         [
             Section(
-                headerViewClass: FirstSectionHeaderView.self,
-                headerTitle: L10n.wallets,
+                header: Section.Header(
+                    viewClass: FirstSectionHeaderView.self,
+                    title: L10n.wallets),
                 interGroupSpacing: 16
             ),
-            Section(headerTitle: L10n.savings, interGroupSpacing: 16)
+            Section(
+                header: Section.Header(title: L10n.savings),
+                interGroupSpacing: 16)
         ]
     }
     
@@ -95,7 +98,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     
     // MARK: - Delegate
     override func itemDidSelect(_ item: Wallet) {
-        show(WalletDetailVC(wallet: item), sender: nil)
+        present(WalletDetailVC(wallet: item), animated: true, completion: nil)
     }
     
     // MARK: - Actions
@@ -126,7 +129,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     
     var receiveAction: CocoaAction {
         CocoaAction { _ in
-            let vc = ReceiveTokenVC()
+            let vc = ReceiveTokenVC(wallets: WalletsVM.ofCurrentUser.data)
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
