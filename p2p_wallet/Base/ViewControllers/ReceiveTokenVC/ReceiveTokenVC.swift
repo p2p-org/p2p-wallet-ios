@@ -99,7 +99,10 @@ class ReceiveTokenVC: WLModalVC {
             
             var width: NSCollectionLayoutDimension = .absolute(env.container.contentSize.width - self.collectionViewSpacing * 4)
             
-            if UIDevice.current.userInterfaceIdiom == .pad {
+            if UIDevice.current.userInterfaceIdiom == .pad ||
+                UIDevice.current.orientation == .landscapeLeft ||
+                UIDevice.current.orientation == .landscapeRight
+            {
                 width = .absolute(335)
             }
                 
