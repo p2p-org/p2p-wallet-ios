@@ -13,22 +13,33 @@ import RxSwift
 class MainVC: MyWalletsVC<MainWalletCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
+    lazy var avatarImageView = UIImageView(width: 30, height: 30, backgroundColor: .c4c4c4, cornerRadius: 15)
+        .onTap(self, action: #selector(avatarImageViewDidTouch))
+    lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
+        .onTap(self, action: #selector(avatarImageViewDidTouch))
+
+    
     // MARK: - Methods
     override func setUp() {
         super.setUp()
         view.backgroundColor = .vcBackground
-    }
-    
-    // MARK: - Layout
-    override var sections: [Section] {
-        [
-            Section(interGroupSpacing: 16)
-        ]
-    }
-    
-    // MARK: - Delegate
-    override func itemDidSelect(_ item: Wallet) {
-        present(WalletDetailVC(wallet: item), animated: true, completion: nil)
+        
+        // add header
+        let headerView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
+            avatarImageView,
+            .spacer
+        ])
+        
+        headerView.addSubview(activeStatusView)
+        activeStatusView.autoPinEdge(.top, to: .top, of: avatarImageView)
+        activeStatusView.autoPinEdge(.trailing, to: .trailing, of: avatarImageView)
+        
+        view.addSubview(headerView)
+        headerView.autoPinEdgesToSuperviewSafeArea(with: .init(x: .defaultPadding, y: 0), excludingEdge: .bottom)
+        
+        // modify collectionView
+        collectionView.constraintToSuperviewWithAttribute(.top)?.isActive = false
+        collectionView.autoPinEdge(.top, to: .bottom, of: headerView, withOffset: 10)
     }
     
     // MARK: - Actions
