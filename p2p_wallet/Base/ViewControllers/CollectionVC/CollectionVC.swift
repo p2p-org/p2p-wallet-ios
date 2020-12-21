@@ -95,7 +95,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
     override func setUp() {
         super.setUp()
         view.addSubview(collectionView)
-        collectionView.autoPinEdgesToSuperviewEdges()
+        collectionView.autoPinEdgesToSuperviewSafeArea()
         collectionView.refreshControl = refreshControl
         
         registerCellAndSupplementaryViews()
