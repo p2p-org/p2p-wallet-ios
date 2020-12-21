@@ -60,7 +60,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         var interGroupSpacing: CGFloat?
         var orthogonalScrollingBehavior: UICollectionLayoutSectionOrthogonalScrollingBehavior?
         var itemHeight = NSCollectionLayoutDimension.estimated(100)
-        var contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+        var contentInsets = NSDirectionalEdgeInsets(top: 0, leading: .defaultPadding, bottom: 0, trailing: .defaultPadding)
         var horizontalInterItemSpacing = NSCollectionLayoutSpacing.fixed(16)
     }
     

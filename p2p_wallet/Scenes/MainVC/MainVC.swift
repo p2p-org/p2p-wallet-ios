@@ -17,16 +17,15 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         .onTap(self, action: #selector(avatarImageViewDidTouch))
     lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
         .onTap(self, action: #selector(avatarImageViewDidTouch))
-
     
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .vcBackground
+        view.backgroundColor = .h1b1b1b
         
         // add header
         let headerView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
-            avatarImageView,
+            avatarImageView.padding(.init(x: 0, y: 10)),
             .spacer
         ])
         
@@ -34,12 +33,11 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         activeStatusView.autoPinEdge(.top, to: .top, of: avatarImageView)
         activeStatusView.autoPinEdge(.trailing, to: .trailing, of: avatarImageView)
         
-        view.addSubview(headerView)
-        headerView.autoPinEdgesToSuperviewSafeArea(with: .init(x: .defaultPadding, y: 0), excludingEdge: .bottom)
+        view.addSubview(headerView.padding(.zero, backgroundColor: view.backgroundColor))
+        headerView.wrapper?.autoPinEdgesToSuperviewSafeArea(with: .init(x: .defaultPadding, y: 0), excludingEdge: .bottom)
         
         // modify collectionView
-        collectionView.constraintToSuperviewWithAttribute(.top)?.isActive = false
-        collectionView.autoPinEdge(.top, to: .bottom, of: headerView, withOffset: 10)
+        collectionView.contentInset = collectionView.contentInset.modifying(dTop: 70)
     }
     
     // MARK: - Actions
