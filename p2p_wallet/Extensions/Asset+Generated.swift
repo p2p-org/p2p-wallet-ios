@@ -20,10 +20,12 @@ extension UIColor {
     static let buttonSub = UIColor(named: "buttonSub", in: bundle, compatibleWith: nil)!
     static let c4c4c4 = UIColor(named: "c4c4c4", in: bundle, compatibleWith: nil)!
     static let ededed = UIColor(named: "ededed", in: bundle, compatibleWith: nil)!
+    static let eff3ff = UIColor(named: "eff3ff", in: bundle, compatibleWith: nil)!
     static let f4f4f4 = UIColor(named: "f4f4f4", in: bundle, compatibleWith: nil)!
     static let f5f5f5 = UIColor(named: "f5f5f5", in: bundle, compatibleWith: nil)!
     static let f6f6f8 = UIColor(named: "f6f6f8", in: bundle, compatibleWith: nil)!
     static let fafafa = UIColor(named: "fafafa", in: bundle, compatibleWith: nil)!
+    static let h1b1b1b = UIColor(named: "h1b1b1b", in: bundle, compatibleWith: nil)!
     static let h202020 = UIColor(named: "h202020", in: bundle, compatibleWith: nil)!
     static let h282828 = UIColor(named: "h282828", in: bundle, compatibleWith: nil)!
     static let h5887ff = UIColor(named: "h5887ff", in: bundle, compatibleWith: nil)!
@@ -63,6 +65,7 @@ extension UIImage {
     static let tabbarActivities = UIImage(named: "tabbar-activities", in: bundle, compatibleWith: nil)!
     static let tabbarFriends = UIImage(named: "tabbar-friends", in: bundle, compatibleWith: nil)!
     static let tabbarHome = UIImage(named: "tabbar-home", in: bundle, compatibleWith: nil)!
+    static let totalBalanceGraph = UIImage(named: "total-balance-graph", in: bundle, compatibleWith: nil)!
     static let touchId = UIImage(named: "touchId", in: bundle, compatibleWith: nil)!
     static let transactionInfoIcon = UIImage(named: "transaction-info-icon", in: bundle, compatibleWith: nil)!
     static let walletAdd = UIImage(named: "wallet-add", in: bundle, compatibleWith: nil)!

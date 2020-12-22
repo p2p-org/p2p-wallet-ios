@@ -9,7 +9,7 @@ import Foundation
 import Action
 import RxSwift
 
-class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
+class AddNewWalletVC: WalletsVC {
     lazy var titleLabel = UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
     lazy var closeButton = UIButton.close()
         .onTap(self, action: #selector(back))
@@ -62,7 +62,10 @@ class AddNewWalletVC: WalletsVC<AddNewWalletVC.Cell> {
     }
     
     override var sections: [Section] {
-        [Section(header: Section.Header(title: ""), contentInsets: .init(top: 0, leading: 0, bottom: 0, trailing: 0))]
+        [Section(
+            header: Section.Header(title: ""),
+            cellType: AddNewWalletVC.Cell.self,
+            contentInsets: .init(top: 0, leading: 0, bottom: 0, trailing: 0))]
     }
     
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: Wallet) -> UICollectionViewCell {
@@ -255,6 +258,9 @@ extension AddNewWalletVC {
             stackView.superview?.addSubview(separator)
             separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
             separator.autoPinEdge(.top, to: .bottom, of: stackView, withOffset: 20)
+            
+            stackView.constraintToSuperviewWithAttribute(.leading)?.constant = 20
+            stackView.constraintToSuperviewWithAttribute(.trailing)?.constant = -20
         }
         
         override func setUp(with item: Wallet) {

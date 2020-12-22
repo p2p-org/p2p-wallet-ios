@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ReceiveTokenCell: BaseCollectionViewCell {
+class ReceiveTokenCell: ListCollectionCell<Wallet> {
     lazy var stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
     lazy var qrCodeView = UIImageView(width: 150, height: 150, backgroundColor: .white)
     lazy var walletNameLabel = UILabel(textSize: 17, weight: .semibold, textAlignment: .center)
@@ -52,7 +52,7 @@ class ReceiveTokenCell: BaseCollectionViewCell {
     func setUp(wallet: Wallet) {
         qrCodeView.setQrCode(string: wallet.pubkey)
         walletNameLabel.text = wallet.name
-        addressLabel.text = wallet.pubkeyShort
+        addressLabel.text = wallet.pubkeyShort(numOfSymbolsRevealed: 6)
         logoImageView.setImage(urlString: wallet.icon)
     }
 }

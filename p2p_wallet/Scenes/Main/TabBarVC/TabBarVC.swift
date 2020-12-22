@@ -8,6 +8,14 @@
 import Foundation
 
 class TabBarVC: BEPagesVC {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        switch currentPage {
+        case 0:
+            return .lightContent
+        default:
+            return .default
+        }
+    }
     lazy var tabBar = TabBar(cornerRadius: 20)
     
     override func setUp() {
@@ -103,5 +111,7 @@ class TabBarVC: BEPagesVC {
         items.first {$0.tag == currentPage}?.subviews.first?.tintColor = .tabbarSelected
         
         items.filter {$0.tag != currentPage}.forEach {$0.subviews.first?.tintColor = .tabbarUnselected}
+        
+        setNeedsStatusBarAppearanceUpdate()
     }
 }
