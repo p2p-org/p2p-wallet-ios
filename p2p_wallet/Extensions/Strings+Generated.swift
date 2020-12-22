@@ -44,6 +44,8 @@ internal enum L10n {
   internal static let backupNow = L10n.tr("Localizable", "Backup now")
   /// Backup using iCloud
   internal static let backupUsingICloud = L10n.tr("Localizable", "Backup using iCloud")
+  /// Balances
+  internal static let balances = L10n.tr("Localizable", "Balances")
   /// Block number
   internal static let blockNumber = L10n.tr("Localizable", "Block number")
   /// By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy
@@ -116,6 +118,8 @@ internal enum L10n {
   internal static let fee = L10n.tr("Localizable", "Fee")
   /// Finish setup
   internal static let finishSetup = L10n.tr("Localizable", "Finish setup")
+  /// for the last 24 hour
+  internal static let forTheLast24Hour = L10n.tr("Localizable", "for the last 24 hour")
   /// Friends
   internal static let friends = L10n.tr("Localizable", "Friends")
   /// From
@@ -284,6 +288,8 @@ internal enum L10n {
   internal static let to = L10n.tr("Localizable", "To")
   /// Token sent!
   internal static let tokenSent = L10n.tr("Localizable", "Token sent!")
+  /// Total balance
+  internal static let totalBalance = L10n.tr("Localizable", "Total balance")
   /// Transaction
   internal static let transaction = L10n.tr("Localizable", "Transaction")
   /// Transaction ID

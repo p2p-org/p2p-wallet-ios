@@ -186,18 +186,10 @@ class MainVC: CollectionVC<MainVCItem> {
     
     var showAllProducts: CocoaAction {
         CocoaAction { _ in
-            
+            self.present(MyProductsVC(), animated: true, completion: nil)
             return .just(())
         }
     }
-    
-//    var addCoinAction: CocoaAction {
-//        CocoaAction { _ in
-//            let vc = AddNewWalletVC()
-//            self.present(vc, animated: true, completion: nil)
-//            return .just(())
-//        }
-//    }
     
     var openProfile: CocoaAction {
         CocoaAction { _ in
