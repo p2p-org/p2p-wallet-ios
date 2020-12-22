@@ -118,8 +118,8 @@ internal enum L10n {
   internal static let fee = L10n.tr("Localizable", "Fee")
   /// Finish setup
   internal static let finishSetup = L10n.tr("Localizable", "Finish setup")
-  /// for the last 24 hour
-  internal static let forTheLast24Hour = L10n.tr("Localizable", "for the last 24 hour")
+  /// for the last 24 hours
+  internal static let forTheLast24Hours = L10n.tr("Localizable", "for the last 24 hours")
   /// Friends
   internal static let friends = L10n.tr("Localizable", "Friends")
   /// From
