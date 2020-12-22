@@ -25,6 +25,7 @@
 		BC11C9FC2591B2B700E399A9 /* MyProductsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11C9FB2591B2B700E399A9 /* MyProductsVC.swift */; };
 		BC11CA012591B58100E399A9 /* MyProductsWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA002591B58100E399A9 /* MyProductsWalletCell.swift */; };
 		BC11CA092591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA082591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift */; };
+		BC11CA122591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA112591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift */; };
 		BC17577A25788DD200049667 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC17577925788DD200049667 /* Socket.swift */; };
 		BC1D2ACC256B6EA40064E595 /* SwapTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */; };
 		BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */; };
@@ -190,6 +191,7 @@
 		BC11C9FB2591B2B700E399A9 /* MyProductsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsVC.swift; sourceTree = "<group>"; };
 		BC11CA002591B58100E399A9 /* MyProductsWalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsWalletCell.swift; sourceTree = "<group>"; };
 		BC11CA082591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MyProductsVC+UICollectionReusableView.swift"; sourceTree = "<group>"; };
+		BC11CA112591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Extensions.swift"; sourceTree = "<group>"; };
 		BC17577925788DD200049667 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenVC.swift; sourceTree = "<group>"; };
 		BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeBackVC.swift; sourceTree = "<group>"; };
@@ -649,6 +651,7 @@
 				BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */,
 				BC75339B257F2953007A00D9 /* Date+Extensions.swift */,
 				BC11C9C125908F3700E399A9 /* CGFloat+Extensions.swift */,
+				BC11CA112591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1271,6 +1274,7 @@
 				BC2EC1D52553ED1B006EEDA5 /* CustomHeightPresentationController.swift in Sources */,
 				BC5ED749256237AB0030572D /* EmptyView.swift in Sources */,
 				BC6EE77D254BB8F400FE1025 /* Settings.swift in Sources */,
+				BC11CA122591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift in Sources */,
 				BC2EC1D12553ED1B006EEDA5 /* FittingSizePresentationController.swift in Sources */,
 				BC7BCB7B2562807E0018DECA /* Double+Extensions.swift in Sources */,
 				BC2EC1802553B1F7006EEDA5 /* SectionFooterView.swift in Sources */,
