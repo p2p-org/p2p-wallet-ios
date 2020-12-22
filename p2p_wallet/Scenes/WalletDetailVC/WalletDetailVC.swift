@@ -9,11 +9,10 @@ import Foundation
 import DiffableDataSources
 import Action
 
-class WalletDetailVC: WLModalVC {
+class WalletDetailVC: WLModalWrapperVC {
     override var padding: UIEdgeInsets {UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)}
     
     let wallet: Wallet
-    fileprivate lazy var vc = _WalletDetailVC(wallet: wallet)
     lazy var walletNameTextField: UITextField = {
         let tf = UITextField(font: .systemFont(ofSize: 19, weight: .semibold), placeholder: L10n.walletName, autocorrectionType: .no)
         tf.isUserInteractionEnabled = false
@@ -26,7 +25,7 @@ class WalletDetailVC: WLModalVC {
     // MARK: - Initializer
     init(wallet: Wallet) {
         self.wallet = wallet
-        super.init()
+        super.init(wrapped: _WalletDetailVC(wallet: wallet))
     }
     
     required init?(coder: NSCoder) {
@@ -53,18 +52,6 @@ class WalletDetailVC: WLModalVC {
                 .padding(.init(x: 20, y: 0)),
             .separator(height: 2, color: .separator)
         ], withCustomSpacings: [20, 0])
-        
-        vc.view.translatesAutoresizingMaskIntoConstraints = false
-        addChild(vc)
-        // collectionView(didSelectItemAt) would not be called if
-        // we add vc.view inside stackView or containerView, so I
-        // add vc.view directly into `view`
-        view.addSubview(vc.view)
-        containerView.constraintToSuperviewWithAttribute(.bottom)?
-            .isActive = false
-        vc.view.autoPinEdge(.top, to: .bottom, of: containerView)
-        vc.view.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-        vc.didMove(toParent: self)
         
         // tabBar
         view.addSubview(tabBar)
@@ -110,7 +97,7 @@ class WalletDetailVC: WLModalVC {
     }
 }
 
-private class _WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
+private class _WalletDetailVC: CollectionVC<Transaction> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .embeded }
     let wallet: Wallet
     var graphVM: WalletGraphVM { (viewModel as! ViewModel).graphVM }
@@ -141,6 +128,7 @@ private class _WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
                 viewClass: WDVCSectionHeaderView.self,
                 title: L10n.activities
             ),
+            cellType: TransactionCell.self,
             interGroupSpacing: 2,
             itemHeight: .absolute(71)
         )]

@@ -24,6 +24,8 @@ internal enum L10n {
   internal static let all = L10n.tr("Localizable", "all")
   /// All deposits are stored 100%% non-custodiallity with keys held on this device
   internal static let allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice = L10n.tr("Localizable", "All deposits are stored 100% non-custodiallity with keys held on this device")
+  /// All my products
+  internal static let allMyProducts = L10n.tr("Localizable", "All my products")
   /// Almost done!
   internal static let almostDone = L10n.tr("Localizable", "Almost done!")
   /// amount
@@ -42,6 +44,8 @@ internal enum L10n {
   internal static let backupNow = L10n.tr("Localizable", "Backup now")
   /// Backup using iCloud
   internal static let backupUsingICloud = L10n.tr("Localizable", "Backup using iCloud")
+  /// Balances
+  internal static let balances = L10n.tr("Localizable", "Balances")
   /// Block number
   internal static let blockNumber = L10n.tr("Localizable", "Block number")
   /// By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy
@@ -104,6 +108,8 @@ internal enum L10n {
   internal static let enterSeedPhrasesInACorrectOrderToRecoverYourWallet = L10n.tr("Localizable", "Enter seed phrases in a correct order to recover your wallet")
   /// error
   internal static let error = L10n.tr("Localizable", "error")
+  /// Exchange
+  internal static let exchange = L10n.tr("Localizable", "Exchange")
   /// Explore  DeFi
   internal static let exploreDeFi = L10n.tr("Localizable", "Explore  DeFi")
   /// Explore Wowlet and deposit funds when you’re ready
@@ -112,6 +118,8 @@ internal enum L10n {
   internal static let fee = L10n.tr("Localizable", "Fee")
   /// Finish setup
   internal static let finishSetup = L10n.tr("Localizable", "Finish setup")
+  /// for the last 24 hours
+  internal static let forTheLast24Hours = L10n.tr("Localizable", "for the last 24 hours")
   /// Friends
   internal static let friends = L10n.tr("Localizable", "Friends")
   /// From
@@ -152,6 +160,8 @@ internal enum L10n {
   internal static let mintAddress = L10n.tr("Localizable", "Mint address")
   /// month
   internal static let month = L10n.tr("Localizable", "month")
+  /// My balances
+  internal static let myBalances = L10n.tr("Localizable", "My balances")
   /// Network
   internal static let network = L10n.tr("Localizable", "Network")
   /// New PIN-code
@@ -166,6 +176,8 @@ internal enum L10n {
   internal static let orSavingIntoKeychain = L10n.tr("Localizable", "Or saving into Keychain")
   /// passcodes do not match
   internal static let passcodesDoNotMatch = L10n.tr("Localizable", "passcodes do not match")
+  /// Payments
+  internal static let payments = L10n.tr("Localizable", "Payments")
   /// PIN-code
   internal static let pinCode = L10n.tr("Localizable", "PIN-code")
   /// PIN-code must have 6 digits
@@ -278,6 +290,8 @@ internal enum L10n {
   internal static let to = L10n.tr("Localizable", "To")
   /// Token sent!
   internal static let tokenSent = L10n.tr("Localizable", "Token sent!")
+  /// Total balance
+  internal static let totalBalance = L10n.tr("Localizable", "Total balance")
   /// Transaction
   internal static let transaction = L10n.tr("Localizable", "Transaction")
   /// Transaction ID

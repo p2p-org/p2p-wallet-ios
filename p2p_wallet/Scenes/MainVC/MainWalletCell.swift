@@ -15,10 +15,7 @@ class MainWalletCell: WalletCell {
     }
     
     override func commonInit() {
-        super.commonInit()
-        contentView.layer.cornerRadius = 12
-        contentView.layer.masksToBounds = true
-        
+        super.commonInit()        
         coinPriceLabel.font = .boldSystemFont(ofSize: 15)
         coinPriceLabel.setContentHuggingPriority(.required, for: .horizontal)
         tokenCountLabel.setContentHuggingPriority(.required, for: .horizontal)
@@ -34,12 +31,15 @@ class MainWalletCell: WalletCell {
             coinLogoImageView,
             vStackView
         ])
+        
+        coinNameLabel.textColor = .white
+        coinPriceLabel.textColor = .white
     }
     
     override func setUp(with item: Wallet) {
         super.setUp(with: item)
-        if let pubkey = item.pubkey {
-            addressLabel.text = item.pubkeyShort
+        if item.pubkey != nil {
+            addressLabel.text = item.pubkeyShort()
         } else {
             addressLabel.text = nil
         }

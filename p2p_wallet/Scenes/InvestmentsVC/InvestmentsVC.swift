@@ -8,7 +8,7 @@
 import Foundation
 import DiffableDataSources
 
-class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
+class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
     enum ItemType: ListItemType, Equatable {
@@ -40,11 +40,6 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
     override func setUp() {
         super.setUp()
         view.backgroundColor = .vcBackground
-    }
-    
-    override func registerCellAndSupplementaryViews() {
-        super.registerCellAndSupplementaryViews()
-        collectionView.registerCells([DefiCell.self])
     }
     
     // MARK: - Binding
@@ -84,8 +79,17 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType, NewsCell> {
     // MARK: - Layout
     override var sections: [Section] {
         [
-            Section(header: Section.Header(title: L10n.makeYourCryptoWorkingOnYou, titleFont: .systemFont(ofSize: 28, weight: .semibold)), interGroupSpacing: 16, orthogonalScrollingBehavior: .groupPaging),
-            Section(header: Section.Header(title: L10n.exploreDeFi), interGroupSpacing: 2)
+            Section(
+                header: Section.Header(title: L10n.makeYourCryptoWorkingOnYou, titleFont: .systemFont(ofSize: 28, weight: .semibold)),
+                cellType: NewsCell.self,
+                interGroupSpacing: 16,
+                orthogonalScrollingBehavior: .groupPaging
+            ),
+            Section(
+                header: Section.Header(title: L10n.exploreDeFi),
+                cellType: DefiCell.self,
+                interGroupSpacing: 2
+            )
         ]
     }
     
