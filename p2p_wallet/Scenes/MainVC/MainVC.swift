@@ -10,126 +10,154 @@ import DiffableDataSources
 import Action
 import RxSwift
 
-class MainVC: MyWalletsVC<MainWalletCell> {
+enum MainVCItem: ListItemType {
+    static func placeholder(at index: Int) -> MainVCItem {
+        .wallet(Wallet.placeholder(at: index))
+    }
+    
+    var id: String {
+        switch self {
+        case .wallet(let wallet):
+            return "wallet#\(wallet.id)"
+        case .friend:
+            return "friend"
+        }
+    }
+    case wallet(Wallet)
+    case friend // TODO: - Friend
+}
+
+class MainVC: CollectionVC<MainVCItem> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
+    var walletsVM: WalletsVM {(viewModel as! MainVM).walletsVM}
     
-    // MARK: - Properties
-    let interactor = MenuInteractor()
+    init() {
+        let vm = MainVM()
+        super.init(viewModel: vm)
+    }
     
-    // MARK: - Subviews
-    var qrStackView: UIStackView!
-    lazy var avatarImageView = UIImageView(width: 44, height: 44, backgroundColor: .c4c4c4, cornerRadius: 22)
-        .onTap(self, action: #selector(avatarImageViewDidTouch))
-    lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .textBlack, cornerRadius: 4)
-        .onTap(self, action: #selector(avatarImageViewDidTouch))
-    var collectionViewHeaderView: FirstSectionHeaderView?
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .vcBackground
-        
-        // headerView
-        configureHeaderView()
-        
-        // modify collectionView
-        collectionView.contentInset = collectionView.contentInset.modifying(dTop: 10+25+10)
-    }
-    
-    override func bind() {
-        super.bind()
-        collectionView.rx.contentOffset
-            .map {$0.y}
-            .subscribe(onNext: {y in
-                let shouldMinimizeHeader = y > -45
-                self.qrStackView.isHidden = shouldMinimizeHeader
-                
-                let avatarImageViewHeight: CGFloat = shouldMinimizeHeader ? 22: 44
-                self.avatarImageView.heightConstraint?.constant = avatarImageViewHeight
-                self.avatarImageView.widthConstraint?.constant = avatarImageViewHeight
-                self.avatarImageView.layer.cornerRadius = avatarImageViewHeight / 2
-                let activeStatusPosition: CGFloat = shouldMinimizeHeader ? 0: 2
-                self.activeStatusView.constraint(toRelativeView: self.avatarImageView, withAttribute: .top)?.constant = activeStatusPosition
-                self.activeStatusView.constraint(toRelativeView: self.avatarImageView, withAttribute: .trailing)?.constant = -activeStatusPosition
-                self.view.layoutIfNeeded()
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    // MARK: - Binding
-    override func dataDidLoad() {
-        super.dataDidLoad()
-        let viewModel = self.viewModel as! WalletsVM
-        
-        // fix header
-        collectionViewHeaderView?.setUp(state: viewModel.state.value)
+        view.backgroundColor = .white
+        setStatusBarColor(.h1b1b1b)
     }
     
     // MARK: - Layout
     override var sections: [Section] {
         [
             Section(
-                header: Section.Header(
-                    viewClass: FirstSectionHeaderView.self,
-                    title: L10n.wallets),
-                interGroupSpacing: 16
+                header: Section.Header(viewClass: FirstSectionHeaderView.self, title: ""),
+                footer: Section.Footer(viewClass: FirstSectionFooterView.self),
+                cellType: MainWalletCell.self,
+                interGroupSpacing: 30,
+                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16),
+                background: FirstSectionBackgroundView.self
             ),
             Section(
-                header: Section.Header(title: L10n.savings),
-                interGroupSpacing: 16)
+                header: Section.Header(viewClass: SecondSectionHeaderView.self, title: ""),
+                cellType: FriendCell.self,
+                background: SecondSectionBackgroundView.self
+            )
         ]
+    }
+    
+    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, MainVCItem> {
+        // initial snapshot
+        var snapshot = DiffableDataSourceSnapshot<String, MainVCItem>()
+        
+        // section 1
+        let section = L10n.wallets
+        snapshot.appendSections([section])
+        
+        var items = filterWallet(self.walletsVM.items).map {MainVCItem.wallet($0)}
+        switch walletsVM.state.value {
+        case .loading:
+            items += [MainVCItem.placeholder(at: 0), MainVCItem.placeholder(at: 1)]
+        case .loaded, .error, .initializing:
+            break
+        }
+        snapshot.appendItems(items, toSection: section)
+        
+        // section 2
+        let section2 = L10n.friends
+        snapshot.appendSections([section2])
+//        snapshot.appendItems([MainVCItem.friend], toSection: section2)
+        return snapshot
+    }
+    
+    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: MainVCItem) -> UICollectionViewCell {
+        switch item {
+        case .wallet(let wallet):
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: MainWalletCell.self), for: indexPath) as? MainWalletCell
+            cell?.setUp(with: wallet)
+            if item.id.starts(with: "wallet#placeholder") {
+                cell?.showLoading()
+            } else {
+                cell?.hideLoading()
+            }
+            return cell ?? UICollectionViewCell()
+        default:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: FriendCell.self), for: indexPath)
+            return cell
+        }
     }
     
     override func configureHeaderForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
         let header = super.configureHeaderForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
         
-        if indexPath.section == 0,
-           let view = header as? FirstSectionHeaderView
-        {
-            view.receiveAction = self.receiveAction
-            view.sendAction = self.sendAction()
-            view.swapAction = self.swapAction
-            view.addCoinButton.rx.action = self.addCoinAction
-            collectionViewHeaderView = view
+        switch indexPath.section {
+        case 0:
+            if let view = header as? FirstSectionHeaderView {
+                view.openProfileAction = self.openProfile
+            }
+        case 1:
+            if let view = header as? SecondSectionHeaderView {
+                view.receiveAction = self.receiveAction
+                view.sendAction = self.sendAction()
+                view.exchangeAction = self.swapAction
+            }
+        default:
+            break
         }
         
         return header
     }
     
-    // MARK: - Delegate
-    override func itemDidSelect(_ item: Wallet) {
-        present(WalletDetailVC(wallet: item), animated: true, completion: nil)
+    override func configureFooterForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
+        let footer = super.configureFooterForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
+        
+        switch indexPath.section {
+        case 0:
+            if let view = footer as? FirstSectionFooterView {
+                view.showProductsAction = self.showAllProducts
+            }
+        default:
+            break
+        }
+        
+        return footer
     }
     
     // MARK: - Actions
-    @objc func qrScannerDidSwipe(sender: UIPanGestureRecognizer) {
-        let translation = sender.translation(in: view)
-        let progress = MenuHelper.calculateProgress(translationInView: translation, viewBounds: view.bounds, direction: .right
-        )
-        MenuHelper.mapGestureStateToInteractor(
-            gestureState: sender.state,
-            progress: progress,
-            interactor: interactor)
-        {
-            let vc = QrCodeScannerVC()
-            vc.callback = { code in
-                if NSRegularExpression.publicKey.matches(code) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.sendAction(address: code).execute()
-                    }
-                    return true
-                }
-                return false
-            }
-            vc.transitioningDelegate = self
-            vc.modalPresentationStyle = .custom
-            self.present(vc, animated: true, completion: nil)
+    override func itemDidSelect(_ item: MainVCItem) {
+        switch item {
+        case .wallet(let wallet):
+            present(WalletDetailVC(wallet: wallet), animated: true, completion: nil)
+        default:
+            break
         }
     }
     
     var receiveAction: CocoaAction {
         CocoaAction { _ in
-            let vc = ReceiveTokenVC(wallets: WalletsVM.ofCurrentUser.data)
+            let wallets = self.walletsVM.items
+            if wallets.count == 0 {return .just(())}
+            let vc = ReceiveTokenVC(wallets: wallets)
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
@@ -137,8 +165,9 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     
     func sendAction(address: String? = nil) -> CocoaAction {
         CocoaAction { _ in
-            let vc = SendTokenVC(wallets: self.viewModel.items, address: address)
-            
+            let wallets = self.walletsVM.items
+            if wallets.count == 0 {return .just(())}
+            let vc = SendTokenVC(wallets: wallets, address: address)
             self.show(vc, sender: nil)
             return .just(())
         }
@@ -146,83 +175,42 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     
     var swapAction: CocoaAction {
         CocoaAction { _ in
-            let vc = SwapTokenVC(wallets: self.viewModel.items)
+            let wallets = self.walletsVM.items
+            if wallets.count == 0 {return .just(())}
+            let vc = SwapTokenVC(wallets: wallets)
             self.show(vc, sender: nil)
             return .just(())
         }
     }
     
-    var addCoinAction: CocoaAction {
+    var showAllProducts: CocoaAction {
         CocoaAction { _ in
-            let vc = AddNewWalletVC()
-            self.present(vc, animated: true, completion: nil)
+            self.present(MyProductsVC(), animated: true, completion: nil)
             return .just(())
         }
     }
     
-    @objc func avatarImageViewDidTouch() {
-        present(ProfileVC(), animated: true, completion: nil)
-    }
-    
-    // MARK: - Private
-    private func configureHeaderView() {
-        let statusBarBgView = UIView(backgroundColor: view.backgroundColor)
-        view.addSubview(statusBarBgView)
-        statusBarBgView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
-        
-        let headerView = UIView(forAutoLayout: ())
-        qrStackView = {
-            let stackView = UIStackView(axis: .horizontal, spacing: 25, alignment: .center, distribution: .fill)
-            let imageView = UIImageView(width: 25, height: 25, image: .scanQr)
-            imageView.tintColor = .secondary
-             
-            stackView.addArrangedSubviews([
-                imageView,
-                UILabel(text: L10n.slideToScan, textSize: 13, weight: .semibold, textColor: .secondary)
-            ])
-            stackView.addArrangedSubview(.spacer)
-            return stackView
-        }()
-        headerView.addSubview(qrStackView)
-        qrStackView.autoPinEdge(toSuperviewEdge: .leading, withInset: 16)
-        qrStackView.autoAlignAxis(toSuperviewAxis: .horizontal)
-        
-        headerView.addSubview(avatarImageView)
-        avatarImageView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 16), excludingEdge: .leading)
-        
-        headerView.addSubview(activeStatusView)
-        activeStatusView.autoPinEdge(.top, to: .top, of: avatarImageView, withOffset: 2)
-        activeStatusView.autoPinEdge(.trailing, to: .trailing, of: avatarImageView, withOffset: -2)
-        
-        view.addSubview(headerView)
-        headerView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-        headerView.autoPinEdge(.top, to: .bottom, of: statusBarBgView)
-        
-        qrStackView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
-    }
-}
-
-extension MainVC: UIViewControllerTransitioningDelegate {
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        PresentMenuAnimator()
-    }
-    
-//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//        DismissMenuAnimator()
-//    }
-    
-    func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        return interactor.hasStarted ? interactor : nil
-    }
-}
-
-extension MainVC {
-    func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
-        if indexPath.section == 0
-        {
-            if elementKind == UICollectionView.elementKindSectionHeader {
-                collectionViewHeaderView = nil
-            }
+    var openProfile: CocoaAction {
+        CocoaAction { _ in
+            self.present(ProfileVC(), animated: true, completion: nil)
+            return .just(())
         }
+    }
+    
+    // MARK: - Helpers
+    func filterWallet(_ items: [Wallet]) -> [Wallet] {
+        var wallets = [Wallet]()
+        
+        if let solWallet = items.first(where: {$0.symbol == "SOL"}) {
+            wallets.append(solWallet)
+        }
+        wallets.append(
+            contentsOf: items
+                .filter {$0.symbol != "SOL"}
+                .sorted(by: {$0.amountInUSD > $1.amountInUSD})
+                .prefix(2)
+        )
+        
+        return wallets
     }
 }

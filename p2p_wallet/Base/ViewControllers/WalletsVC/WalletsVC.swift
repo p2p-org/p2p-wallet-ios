@@ -7,14 +7,12 @@
 
 import Foundation
 
-protocol WalletCellType: CollectionCell {
-    func setUp(with item: Wallet)
-}
-class WalletsVC<WalletCell: WalletCellType>: CollectionVC<Wallet, WalletCell> {
+class WalletsVC: CollectionVC<Wallet> {
     
 }
 
-class MyWalletsVC<WalletCell: WalletCellType>: WalletsVC<WalletCell> {
+class MyWalletsVC: WalletsVC {
+    
     init() {
         let viewModel = WalletsVM.ofCurrentUser
         super.init(viewModel: viewModel)
@@ -50,5 +48,10 @@ class MyWalletsVC<WalletCell: WalletCellType>: WalletsVC<WalletCell> {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Delegate
+    override func itemDidSelect(_ item: Wallet) {
+        present(WalletDetailVC(wallet: item), animated: true, completion: nil)
     }
 }

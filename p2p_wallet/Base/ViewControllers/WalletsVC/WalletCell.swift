@@ -7,9 +7,9 @@
 
 import Foundation
 
-class WalletCell: BaseCollectionViewCell, WalletCellType {
+class WalletCell: ListCollectionCell<Wallet>, LoadableView {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
-    lazy var coinLogoImageView = UIImageView(width: 32, height: 32, cornerRadius: 32 / 2)
+    lazy var coinLogoImageView = UIImageView(width: 45, height: 45, cornerRadius: 12)
     lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold, numberOfLines: 0)
     lazy var coinPriceLabel = UILabel(text: "12 800,99 US$", textSize: 13)
     lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: .secondary)
@@ -21,12 +21,12 @@ class WalletCell: BaseCollectionViewCell, WalletCellType {
     override func commonInit() {
         super.commonInit()
         contentView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 16.adaptiveWidth, left: 16.adaptiveWidth, bottom: 16.adaptiveWidth, right: 16.adaptiveWidth))
+        stackView.autoPinEdgesToSuperviewEdges()
         
         // Override this method to arrange stackview
     }
     
-    func setUp(with item: Wallet) {
+    override func setUp(with item: Wallet) {
         coinLogoImageView.setImage(urlString: item.icon)
         coinNameLabel.text = item.name /*+ (item.isProcessing == true ? " (\(L10n.creating))" : "")*/
         tokenCountLabel.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.symbol)"

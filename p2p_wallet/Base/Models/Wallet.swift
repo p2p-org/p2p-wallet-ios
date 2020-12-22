@@ -26,9 +26,9 @@ struct Wallet: FiatConvertable {
         Double(lamports ?? 0) * pow(10, -Double(decimals ?? 0))
     }
     
-    var pubkeyShort: String {
+    func pubkeyShort(numOfSymbolsRevealed: Int = 4) -> String {
         guard let pubkey = pubkey else {return ""}
-        return "0x" + pubkey.prefix(6) + "..." + pubkey.suffix(6)
+        return "0x" + pubkey.prefix(numOfSymbolsRevealed) + "..." + pubkey.suffix(numOfSymbolsRevealed)
     }
 }
 

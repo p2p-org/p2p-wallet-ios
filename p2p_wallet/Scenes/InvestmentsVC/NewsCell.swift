@@ -7,7 +7,7 @@
 
 import Foundation
 
-class NewsCell: BaseCollectionViewCell, CollectionCell {
+class NewsCell: BaseCollectionViewCell {
     lazy var imageView = UIImageView(backgroundColor: .gray)
     lazy var titleLabel = UILabel(text: "How it works", textSize: 21, weight: .semibold, textColor: .textWhite, numberOfLines: 0)
     lazy var descriptionLabel = UILabel(text: "The most important info you should know before investing", textSize: 17, textColor: .textWhite, numberOfLines: 0)
