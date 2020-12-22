@@ -13,31 +13,10 @@ import RxSwift
 class MainVC: MyWalletsVC<MainWalletCell> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
-    lazy var avatarImageView = UIImageView(width: 30, height: 30, backgroundColor: .c4c4c4, cornerRadius: 15)
-        .onTap(self, action: #selector(avatarImageViewDidTouch))
-    lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
-        .onTap(self, action: #selector(avatarImageViewDidTouch))
-    
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .h1b1b1b
-        
-        // add header
-        let headerView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
-            avatarImageView.padding(.init(x: 0, y: 10)),
-            .spacer
-        ])
-        
-        headerView.addSubview(activeStatusView)
-        activeStatusView.autoPinEdge(.top, to: .top, of: avatarImageView)
-        activeStatusView.autoPinEdge(.trailing, to: .trailing, of: avatarImageView)
-        
-        view.addSubview(headerView.padding(.init(x: .defaultPadding, y: 10), backgroundColor: view.backgroundColor))
-        headerView.wrapper?.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-        
-        // modify collectionView
-        collectionView.contentInset = collectionView.contentInset.modifying(dTop: 70)
+        view.backgroundColor = .white
     }
     
     override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, Wallet> {
@@ -66,9 +45,12 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     override var sections: [Section] {
         [
             Section(
+                header: Section.Header(viewClass: FirstSectionHeaderView.self, title: ""),
                 footer: Section.Footer(viewClass: FirstSectionFooterView.self),
                 interGroupSpacing: 30,
-                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16)),
+                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16),
+                background: FirstSectionBackgroundView.self
+            ),
             Section(
                 header: Section.Header(viewClass: SecondSectionHeaderView.self, title: ""),
                 background: SecondSectionBackgroundView.self

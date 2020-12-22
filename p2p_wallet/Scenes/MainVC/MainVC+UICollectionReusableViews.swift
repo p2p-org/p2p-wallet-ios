@@ -8,6 +8,29 @@
 import Foundation
 
 extension MainVC {
+    class FirstSectionHeaderView: SectionHeaderView {
+        lazy var avatarImageView = UIImageView(width: 30, height: 30, backgroundColor: .c4c4c4, cornerRadius: 15)
+            .onTap(self, action: #selector(avatarImageViewDidTouch))
+        lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
+            .onTap(self, action: #selector(avatarImageViewDidTouch))
+        
+        override func commonInit() {
+            super.commonInit()
+            headerLabel.removeFromSuperview()
+            // add header
+            let headerView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
+                avatarImageView.padding(.init(x: 0, y: 10)),
+                .spacer
+            ])
+            
+            headerView.addSubview(activeStatusView)
+            activeStatusView.autoPinEdge(.top, to: .top, of: avatarImageView)
+            activeStatusView.autoPinEdge(.trailing, to: .trailing, of: avatarImageView)
+            
+            stackView.addArrangedSubview(headerView.padding(.init(x: 20, y: 0)))
+        }
+    }
+    
     class FirstSectionFooterView: SectionFooterView {
         lazy var button: UIView = {
             let view = UIView(backgroundColor: UIColor.black.withAlphaComponent(0.3), cornerRadius: 12)
@@ -25,15 +48,27 @@ extension MainVC {
         }
     }
     
-    class SecondSectionBackgroundView: SectionBackgroundView {
+    class FirstSectionBackgroundView: SectionBackgroundView {
         override func commonInit() {
             super.commonInit()
-            backgroundColor = .white
+            backgroundColor = .h1b1b1b
+        }
+    }
+    
+    class SecondSectionBackgroundView: SectionBackgroundView {
+        lazy var backgroundView = UIView(backgroundColor: .white)
+        
+        override func commonInit() {
+            super.commonInit()
+            backgroundColor = .h1b1b1b
+            
+            addSubview(backgroundView)
+            backgroundView.autoPinEdgesToSuperviewEdges()
         }
         
         override func layoutSubviews() {
             super.layoutSubviews()
-            roundCorners([.topLeft, .topRight], radius: 20)
+            backgroundView.roundCorners([.topLeft, .topRight], radius: 20)
         }
     }
     
