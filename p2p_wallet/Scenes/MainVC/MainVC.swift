@@ -10,8 +10,36 @@ import DiffableDataSources
 import Action
 import RxSwift
 
-class MainVC: MyWalletsVC<MainWalletCell> {
+enum MainVCItem: ListItemType {
+    static func placeholder(at index: Int) -> MainVCItem {
+        .wallet(Wallet.placeholder(at: index))
+    }
+    
+    var id: String {
+        switch self {
+        case .wallet(let wallet):
+            return "wallet#\(wallet.id)"
+        case .friend:
+            return "friend"
+        }
+    }
+    case wallet(Wallet)
+    case friend // TODO: - Friend
+}
+
+class MainVC: CollectionVC<MainVCItem, MainWalletCell> {
+    override var preferredStatusBarStyle: UIStatusBarStyle {.lightContent}
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
+    var walletsVM: WalletsVM {(viewModel as! MainVM).walletsVM}
+    
+    init() {
+        let vm = MainVM()
+        super.init(viewModel: vm)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Methods
     override func setUp() {
@@ -19,29 +47,12 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         view.backgroundColor = .white
     }
     
-    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, Wallet> {
-        var snapshot = super.mapDataToSnapshot()
-        snapshot.appendSections(["Test"])
-        return snapshot
-    }
-    
-    override func filter(_ items: [Wallet]) -> [Wallet] {
-        var wallets = [Wallet]()
-        
-        if let solWallet = items.first(where: {$0.symbol == "SOL"}) {
-            wallets.append(solWallet)
-        }
-        wallets.append(
-            contentsOf: items
-                .filter {$0.symbol != "SOL"}
-                .sorted(by: {$0.amountInUSD > $1.amountInUSD})
-                .prefix(2)
-        )
-        
-        return wallets
-    }
-    
     // MARK: - Layout
+    override func registerCellAndSupplementaryViews() {
+        super.registerCellAndSupplementaryViews()
+        collectionView.registerCells([FriendCell.self])
+    }
+    
     override var sections: [Section] {
         [
             Section(
@@ -58,6 +69,47 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         ]
     }
     
+    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, MainVCItem> {
+        // initial snapshot
+        var snapshot = DiffableDataSourceSnapshot<String, MainVCItem>()
+        
+        // section 1
+        let section = L10n.wallets
+        snapshot.appendSections([section])
+        
+        var items = filterWallet(self.walletsVM.items).map {MainVCItem.wallet($0)}
+        switch self.walletsVM.state.value {
+        case .loading:
+            items += [MainVCItem.placeholder(at: 0), MainVCItem.placeholder(at: 1)]
+        case .loaded, .error, .initializing:
+            break
+        }
+        snapshot.appendItems(items, toSection: section)
+        
+        // section 2
+        let section2 = L10n.friends
+        snapshot.appendSections([section2])
+        snapshot.appendItems([MainVCItem.friend], toSection: section2)
+        return snapshot
+    }
+    
+    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: MainVCItem) -> UICollectionViewCell {
+        switch item {
+        case .wallet(let wallet):
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: MainWalletCell.self), for: indexPath) as? MainWalletCell
+            cell?.setUp(with: wallet)
+            if item.id.starts(with: "wallet#placeholder") {
+                cell?.showLoading()
+            } else {
+                cell?.hideLoading()
+            }
+            return cell ?? UICollectionViewCell()
+        default:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: FriendCell.self), for: indexPath)
+            return cell
+        }
+    }
+    
     // MARK: - Actions
     var receiveAction: CocoaAction {
         CocoaAction { _ in
@@ -69,7 +121,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     
     func sendAction(address: String? = nil) -> CocoaAction {
         CocoaAction { _ in
-            let vc = SendTokenVC(wallets: self.viewModel.items, address: address)
+            let vc = SendTokenVC(wallets: self.walletsVM.items, address: address)
             
             self.show(vc, sender: nil)
             return .just(())
@@ -78,7 +130,7 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     
     var swapAction: CocoaAction {
         CocoaAction { _ in
-            let vc = SwapTokenVC(wallets: self.viewModel.items)
+            let vc = SwapTokenVC(wallets: self.walletsVM.items)
             self.show(vc, sender: nil)
             return .just(())
         }
@@ -96,5 +148,20 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         present(ProfileVC(), animated: true, completion: nil)
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {.lightContent}
+    // MARK: - Helpers
+    func filterWallet(_ items: [Wallet]) -> [Wallet] {
+        var wallets = [Wallet]()
+        
+        if let solWallet = items.first(where: {$0.symbol == "SOL"}) {
+            wallets.append(solWallet)
+        }
+        wallets.append(
+            contentsOf: items
+                .filter {$0.symbol != "SOL"}
+                .sorted(by: {$0.amountInUSD > $1.amountInUSD})
+                .prefix(2)
+        )
+        
+        return wallets
+    }
 }
