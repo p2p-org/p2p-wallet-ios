@@ -129,6 +129,21 @@ class MainVC: CollectionVC<MainVCItem> {
         return header
     }
     
+    override func configureFooterForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
+        let footer = super.configureFooterForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
+        
+        switch indexPath.section {
+        case 0:
+            if let view = footer as? FirstSectionFooterView {
+                view.showProductsAction = self.showAllProducts
+            }
+        default:
+            break
+        }
+        
+        return footer
+    }
+    
     // MARK: - Actions
     override func itemDidSelect(_ item: MainVCItem) {
         switch item {
@@ -169,13 +184,20 @@ class MainVC: CollectionVC<MainVCItem> {
         }
     }
     
-    var addCoinAction: CocoaAction {
+    var showAllProducts: CocoaAction {
         CocoaAction { _ in
-            let vc = AddNewWalletVC()
-            self.present(vc, animated: true, completion: nil)
+            
             return .just(())
         }
     }
+    
+//    var addCoinAction: CocoaAction {
+//        CocoaAction { _ in
+//            let vc = AddNewWalletVC()
+//            self.present(vc, animated: true, completion: nil)
+//            return .just(())
+//        }
+//    }
     
     var openProfile: CocoaAction {
         CocoaAction { _ in
