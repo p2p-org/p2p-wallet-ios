@@ -28,7 +28,6 @@ enum MainVCItem: ListItemType {
 }
 
 class MainVC: CollectionVC<MainVCItem> {
-    override var preferredStatusBarStyle: UIStatusBarStyle {.lightContent}
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     var walletsVM: WalletsVM {(viewModel as! MainVM).walletsVM}
     

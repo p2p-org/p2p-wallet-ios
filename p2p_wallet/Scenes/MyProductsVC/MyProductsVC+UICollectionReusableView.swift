@@ -8,12 +8,10 @@
 import Foundation
 import Action
 
-extension MyProductsVC {
+extension _MyProductsVC {
     class FirstSectionHeaderView: SectionHeaderView, LoadableView {
-        var addCoinAction: CocoaAction?
-        
-        lazy var equityValueLabel = UILabel(text: "12 000$", textSize: 21, weight: .bold)
-        lazy var changeLabel = UILabel(text: "+3.5 \(L10n.forTheLast24Hours)", textSize: 13)
+        lazy var equityValueLabel = UILabel(text: " ", textSize: 21, weight: .bold)
+        lazy var changeLabel = UILabel(text: " ", textSize: 13)
         
         var loadingViews: [UIView] {[equityValueLabel, changeLabel]}
         
@@ -41,22 +39,13 @@ extension MyProductsVC {
             totalBalanceView.addShadow(ofColor: UIColor.black.withAlphaComponent(0.07), radius: 24, offset: CGSize(width: 0, height: 4), opacity: 1)
             
             stackView.addArrangedSubviews([
-                UIView.row([
-                    UILabel(text: L10n.allMyProducts, textSize: 21, weight: .semibold),
-                    UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .h5887ff)
-                        .padding(.init(all: 10), backgroundColor: .eff3ff, cornerRadius: 12)
-                        .onTap(self, action: #selector(buttonAddCoinDidTouch))
-                ])
-                    .padding(.init(x: .defaultPadding, y: 0)),
                 totalBalanceView
                     .padding(.init(x: .defaultPadding, y: 0)),
                 headerLabel
                     .padding(.init(x: .defaultPadding, y: 0))
-            ], withCustomSpacings: [20, 32])
+            ], withCustomSpacings: [32])
             
-            DispatchQueue.main.async {
-                self.showLoading()
-            }
+            stackView.constraintToSuperviewWithAttribute(.bottom)?.constant = -32
         }
         
         func setUp(with state: FetcherState<[Wallet]>) {
@@ -66,8 +55,8 @@ extension MyProductsVC {
                 changeLabel.text = " "
                 hideLoading()
             case .loading:
-                equityValueLabel.text = "Loading..."
-                changeLabel.text = "loading..."
+                equityValueLabel.text = L10n.loading + "..."
+                changeLabel.text = L10n.loading + "..."
                 showLoading()
             case .loaded(let wallets):
                 let equityValue = wallets.reduce(0) { $0 + $1.amountInUSD }
@@ -87,10 +76,6 @@ extension MyProductsVC {
                 changeLabel.text = L10n.error.uppercaseFirst
                 hideLoading()
             }
-        }
-        
-        @objc func buttonAddCoinDidTouch() {
-            addCoinAction?.execute()
         }
     }
 }
