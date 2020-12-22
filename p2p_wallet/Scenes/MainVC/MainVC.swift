@@ -45,6 +45,7 @@ class MainVC: CollectionVC<MainVCItem> {
     override func setUp() {
         super.setUp()
         view.backgroundColor = .white
+        setStatusBarColor(.h1b1b1b)
     }
     
     // MARK: - Layout
@@ -86,7 +87,7 @@ class MainVC: CollectionVC<MainVCItem> {
         // section 2
         let section2 = L10n.friends
         snapshot.appendSections([section2])
-        snapshot.appendItems([MainVCItem.friend], toSection: section2)
+//        snapshot.appendItems([MainVCItem.friend], toSection: section2)
         return snapshot
     }
     
@@ -105,6 +106,21 @@ class MainVC: CollectionVC<MainVCItem> {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: FriendCell.self), for: indexPath)
             return cell
         }
+    }
+    
+    override func configureHeaderForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
+        let header = super.configureHeaderForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
+        
+        switch indexPath.section {
+        case 0:
+            if let view = header as? FirstSectionHeaderView {
+                view.openProfileAction = self.openProfile
+            }
+        default:
+            break
+        }
+        
+        return header
     }
     
     // MARK: - Actions
@@ -150,11 +166,12 @@ class MainVC: CollectionVC<MainVCItem> {
         }
     }
     
-    @objc func avatarImageViewDidTouch() {
-        present(ProfileVC(), animated: true, completion: nil)
+    var openProfile: CocoaAction {
+        CocoaAction { _ in
+            self.present(ProfileVC(), animated: true, completion: nil)
+            return .just(())
+        }
     }
-    
-    
     
     // MARK: - Helpers
     func filterWallet(_ items: [Wallet]) -> [Wallet] {
