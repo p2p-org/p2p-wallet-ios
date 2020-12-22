@@ -15,10 +15,7 @@ class MainWalletCell: WalletCell {
     }
     
     override func commonInit() {
-        super.commonInit()
-        contentView.layer.cornerRadius = 12
-        contentView.layer.masksToBounds = true
-        
+        super.commonInit()        
         coinPriceLabel.font = .boldSystemFont(ofSize: 15)
         coinPriceLabel.setContentHuggingPriority(.required, for: .horizontal)
         tokenCountLabel.setContentHuggingPriority(.required, for: .horizontal)
