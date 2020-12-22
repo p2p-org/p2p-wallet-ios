@@ -45,7 +45,7 @@ extension MainVC {
         lazy var button: UIView = {
             let view = UIView(backgroundColor: UIColor.white.withAlphaComponent(0.1), cornerRadius: 12)
             view.row([
-                UILabel(text: L10n.allMyProducts, textSize: 17, weight: .medium, textColor: .white),
+                UILabel(text: L10n.myBalances, textSize: 17, weight: .medium, textColor: .white),
                 UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .secondary)
             ], padding: .init(x: 20, y: 16))
             return view
@@ -98,13 +98,15 @@ extension MainVC {
                 UILabel(text: L10n.payments, textSize: 17, weight: .semibold)
                     .padding(.init(x: 20, y: 0)),
                 UIView.row([
+                    .spacer,
 //                    createButton(image: .walletAdd, title: L10n.buy),
                     createButton(image: .walletReceive, title: L10n.receive)
                         .onTap(self, action: #selector(buttonReceiveDidTouch)),
                     createButton(image: .walletSend, title: L10n.send)
                         .onTap(self, action: #selector(buttonSendDidTouch)),
                     createButton(image: .walletSwap, title: L10n.exchange)
-                        .onTap(self, action: #selector(buttonExchangeDidTouch))
+                        .onTap(self, action: #selector(buttonExchangeDidTouch)),
+                    .spacer
                 ])
                     .padding(.init(x: 20, y: 0))
             ], at: 0, withCustomSpacings: [20, 30])

@@ -258,6 +258,9 @@ extension AddNewWalletVC {
             stackView.superview?.addSubview(separator)
             separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
             separator.autoPinEdge(.top, to: .bottom, of: stackView, withOffset: 20)
+            
+            stackView.constraintToSuperviewWithAttribute(.leading)?.constant = 20
+            stackView.constraintToSuperviewWithAttribute(.trailing)?.constant = -20
         }
         
         override func setUp(with item: Wallet) {
