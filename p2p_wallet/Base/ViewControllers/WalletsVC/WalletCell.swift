@@ -7,7 +7,7 @@
 
 import Foundation
 
-class WalletCell: BaseCollectionViewCell, WalletCellType {
+class WalletCell: ListCollectionCell<Wallet>, LoadableView {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
     lazy var coinLogoImageView = UIImageView(width: 45, height: 45, cornerRadius: 12)
     lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold, numberOfLines: 0)
@@ -26,7 +26,7 @@ class WalletCell: BaseCollectionViewCell, WalletCellType {
         // Override this method to arrange stackview
     }
     
-    func setUp(with item: Wallet) {
+    override func setUp(with item: Wallet) {
         coinLogoImageView.setImage(urlString: item.icon)
         coinNameLabel.text = item.name /*+ (item.isProcessing == true ? " (\(L10n.creating))" : "")*/
         tokenCountLabel.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.symbol)"

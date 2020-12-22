@@ -110,7 +110,7 @@ class WalletDetailVC: WLModalVC {
     }
 }
 
-private class _WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
+private class _WalletDetailVC: CollectionVC<Transaction> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .embeded }
     let wallet: Wallet
     var graphVM: WalletGraphVM { (viewModel as! ViewModel).graphVM }
@@ -141,6 +141,7 @@ private class _WalletDetailVC: CollectionVC<Transaction, TransactionCell> {
                 viewClass: WDVCSectionHeaderView.self,
                 title: L10n.activities
             ),
+            cellType: TransactionCell.self,
             interGroupSpacing: 2,
             itemHeight: .absolute(71)
         )]

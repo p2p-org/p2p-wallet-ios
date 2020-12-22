@@ -27,7 +27,7 @@ enum MainVCItem: ListItemType {
     case friend // TODO: - Friend
 }
 
-class MainVC: CollectionVC<MainVCItem, MainWalletCell> {
+class MainVC: CollectionVC<MainVCItem> {
     override var preferredStatusBarStyle: UIStatusBarStyle {.lightContent}
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     var walletsVM: WalletsVM {(viewModel as! MainVM).walletsVM}
@@ -48,22 +48,19 @@ class MainVC: CollectionVC<MainVCItem, MainWalletCell> {
     }
     
     // MARK: - Layout
-    override func registerCellAndSupplementaryViews() {
-        super.registerCellAndSupplementaryViews()
-        collectionView.registerCells([FriendCell.self])
-    }
-    
     override var sections: [Section] {
         [
             Section(
                 header: Section.Header(viewClass: FirstSectionHeaderView.self, title: ""),
                 footer: Section.Footer(viewClass: FirstSectionFooterView.self),
+                cellType: MainWalletCell.self,
                 interGroupSpacing: 30,
                 horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16),
                 background: FirstSectionBackgroundView.self
             ),
             Section(
                 header: Section.Header(viewClass: SecondSectionHeaderView.self, title: ""),
+                cellType: FriendCell.self,
                 background: SecondSectionBackgroundView.self
             )
         ]
@@ -111,6 +108,15 @@ class MainVC: CollectionVC<MainVCItem, MainWalletCell> {
     }
     
     // MARK: - Actions
+    override func itemDidSelect(_ item: MainVCItem) {
+        switch item {
+        case .wallet(let wallet):
+            present(WalletDetailVC(wallet: wallet), animated: true, completion: nil)
+        default:
+            break
+        }
+    }
+    
     var receiveAction: CocoaAction {
         CocoaAction { _ in
             let vc = ReceiveTokenVC(wallets: WalletsVM.ofCurrentUser.data)
@@ -147,6 +153,8 @@ class MainVC: CollectionVC<MainVCItem, MainWalletCell> {
     @objc func avatarImageViewDidTouch() {
         present(ProfileVC(), animated: true, completion: nil)
     }
+    
+    
     
     // MARK: - Helpers
     func filterWallet(_ items: [Wallet]) -> [Wallet] {

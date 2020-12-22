@@ -7,7 +7,7 @@
 
 import Foundation
 
-class FriendCell: BaseCollectionViewCell {
+class FriendCell: ListCollectionCell<String> {
     override func commonInit() {
         super.commonInit()
         contentView.col([
