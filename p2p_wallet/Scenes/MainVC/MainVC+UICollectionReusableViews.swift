@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Action
 
 extension MainVC {
     class FirstSectionHeaderView: SectionHeaderView {
@@ -13,13 +14,16 @@ extension MainVC {
             .onTap(self, action: #selector(avatarImageViewDidTouch))
         lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
             .onTap(self, action: #selector(avatarImageViewDidTouch))
+        var openProfileAction: CocoaAction?
         
         override func commonInit() {
             super.commonInit()
-            headerLabel.removeFromSuperview()
+            // remove all arranged subviews
+            stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
+            
             // add header
             let headerView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
-                avatarImageView.padding(.init(x: 0, y: 10)),
+                avatarImageView,
                 .spacer
             ])
             
@@ -28,6 +32,10 @@ extension MainVC {
             activeStatusView.autoPinEdge(.trailing, to: .trailing, of: avatarImageView)
             
             stackView.addArrangedSubview(headerView.padding(.init(x: 20, y: 0)))
+        }
+        
+        @objc func avatarImageViewDidTouch() {
+            openProfileAction?.execute()
         }
     }
     
