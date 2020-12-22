@@ -10,11 +10,6 @@ import IBPCollectionViewCompositionalLayout
 import DiffableDataSources
 import RxSwift
 
-protocol CollectionCell: BaseCollectionViewCell, LoadableView {
-    associatedtype T: ListItemType
-    func setUp(with item: T)
-}
-
 protocol ListItemType: Hashable {
     static func placeholder(at index: Int) -> Self
     var id: String {get}
@@ -26,7 +21,11 @@ extension ListItemType {
     }
 }
 
-class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
+class ListCollectionCell<T: ListItemType>: BaseCollectionViewCell {
+    func setUp(with item: T) {}
+}
+
+class CollectionVC<ItemType: ListItemType>: BaseVC {
     // MARK: - Nested type
     struct Section {
         struct Header {
@@ -57,6 +56,7 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
         
         var header: Header?
         var footer: Footer?
+        var cellType: BaseCollectionViewCell.Type
         var interGroupSpacing: CGFloat?
         var orthogonalScrollingBehavior: UICollectionLayoutSectionOrthogonalScrollingBehavior?
         var itemHeight = NSCollectionLayoutDimension.estimated(100)
@@ -104,7 +104,9 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
     }
     
     func registerCellAndSupplementaryViews() {
-        collectionView.registerCells([Cell.self])
+        // register cells
+        let cellClasses = sections.map {$0.cellType}
+        collectionView.registerCells(cellClasses)
         
         // register headers
         let headerViewClasses = sections.reduce([SectionHeaderView.Type]()) { (result, section) in
@@ -326,13 +328,19 @@ class CollectionVC<ItemType: ListItemType, Cell: CollectionCell>: BaseVC {
     }
     
     func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: Cell.self), for: indexPath) as? Cell
-        cell?.setUp(with: item as! Cell.T)
-        if item.id.starts(with: "placeholder") {
-            cell?.showLoading()
-        } else {
-            cell?.hideLoading()
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: sections[indexPath.section].cellType), for: indexPath) as? BaseCollectionViewCell
+        if let cell = cell as? ListCollectionCell<ItemType> {
+            cell.setUp(with: item)
         }
+        if let cell = cell as? LoadableView {
+            if item.id.starts(with: "placeholder") {
+                cell.showLoading()
+            } else {
+                cell.hideLoading()
+            }
+        }
+        
         return cell ?? UICollectionViewCell()
     }
     

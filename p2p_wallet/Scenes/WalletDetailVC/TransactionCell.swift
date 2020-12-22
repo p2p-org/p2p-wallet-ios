@@ -7,7 +7,7 @@
 
 import Foundation
 
-class TransactionCell: BaseCollectionViewCell, CollectionCell {
+class TransactionCell: ListCollectionCell<Transaction>, LoadableView {
     let iconImageView = UIImageView(width: 32, height: 32, backgroundColor: .gray, cornerRadius: 16)
     let typeLabel = UILabel(textSize: 15, weight: .bold)
     let amountLabel = UILabel(textSize: 13, weight: .medium)
@@ -30,7 +30,7 @@ class TransactionCell: BaseCollectionViewCell, CollectionCell {
             .with(distribution: .fill)
     }
     
-    func setUp(with item: Transaction) {
+    override func setUp(with item: Transaction) {
         typeLabel.text = item.type?.localizedString ?? L10n.loading + "..."
         
         var amount = item.amountInUSD

@@ -7,14 +7,11 @@
 
 import Foundation
 
-protocol WalletCellType: CollectionCell {
-    func setUp(with item: Wallet)
-}
-class WalletsVC<WalletCell: WalletCellType>: CollectionVC<Wallet, WalletCell> {
+class WalletsVC: CollectionVC<Wallet> {
     
 }
 
-class MyWalletsVC<WalletCell: WalletCellType>: WalletsVC<WalletCell> {
+class MyWalletsVC: WalletsVC {
     
     init() {
         let viewModel = WalletsVM.ofCurrentUser

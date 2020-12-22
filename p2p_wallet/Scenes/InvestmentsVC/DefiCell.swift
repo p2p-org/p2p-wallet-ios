@@ -7,7 +7,7 @@
 
 import Foundation
 
-class DefiCell: BaseCollectionViewCell, CollectionCell {
+class DefiCell: ListCollectionCell<String>, LoadableView {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
     
     lazy var imageView = UIImageView(width: 32, height: 32, backgroundColor: .gray, cornerRadius: 16)
@@ -22,7 +22,7 @@ class DefiCell: BaseCollectionViewCell, CollectionCell {
         stackView.addArrangedSubviews([imageView, titleLabel])
     }
     
-    func setUp(with item: String) {
+    override func setUp(with item: String) {
         
     }
     
