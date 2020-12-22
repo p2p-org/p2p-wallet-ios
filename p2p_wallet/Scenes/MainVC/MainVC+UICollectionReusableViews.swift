@@ -40,19 +40,26 @@ extension MainVC {
     }
     
     class FirstSectionFooterView: SectionFooterView {
+        var showProductsAction: CocoaAction?
+        
         lazy var button: UIView = {
-            let view = UIView(backgroundColor: UIColor.black.withAlphaComponent(0.3), cornerRadius: 12)
+            let view = UIView(backgroundColor: UIColor.white.withAlphaComponent(0.1), cornerRadius: 12)
             view.row([
                 UILabel(text: L10n.allMyProducts, textSize: 17, weight: .medium, textColor: .white),
                 UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .secondary)
             ], padding: .init(x: 20, y: 16))
             return view
+                .onTap(self, action: #selector(buttonDidTouch))
         }()
         
         override func commonInit() {
             super.commonInit()
             stackView.alignment = .fill
             stackView.addArrangedSubview(button.padding(.init(x: .defaultPadding, y: 30)))
+        }
+        
+        @objc func buttonDidTouch() {
+            showProductsAction?.execute()
         }
     }
     
