@@ -160,6 +160,8 @@ internal enum L10n {
   internal static let mintAddress = L10n.tr("Localizable", "Mint address")
   /// month
   internal static let month = L10n.tr("Localizable", "month")
+  /// My balances
+  internal static let myBalances = L10n.tr("Localizable", "My balances")
   /// Network
   internal static let network = L10n.tr("Localizable", "Network")
   /// New PIN-code
