@@ -33,8 +33,8 @@ class MainVC: MyWalletsVC<MainWalletCell> {
         activeStatusView.autoPinEdge(.top, to: .top, of: avatarImageView)
         activeStatusView.autoPinEdge(.trailing, to: .trailing, of: avatarImageView)
         
-        view.addSubview(headerView.padding(.zero, backgroundColor: view.backgroundColor))
-        headerView.wrapper?.autoPinEdgesToSuperviewSafeArea(with: .init(x: .defaultPadding, y: 0), excludingEdge: .bottom)
+        view.addSubview(headerView.padding(.init(x: .defaultPadding, y: 10), backgroundColor: view.backgroundColor))
+        headerView.wrapper?.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
         
         // modify collectionView
         collectionView.contentInset = collectionView.contentInset.modifying(dTop: 70)
@@ -43,7 +43,6 @@ class MainVC: MyWalletsVC<MainWalletCell> {
     override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, Wallet> {
         var snapshot = super.mapDataToSnapshot()
         snapshot.appendSections(["Test"])
-        snapshot.appendItems(viewModel.items)
         return snapshot
     }
     
@@ -70,7 +69,10 @@ class MainVC: MyWalletsVC<MainWalletCell> {
                 footer: Section.Footer(viewClass: FirstSectionFooterView.self),
                 interGroupSpacing: 30,
                 horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16)),
-            Section(background: SecondSectionBackgroundView.self)
+            Section(
+                header: Section.Header(viewClass: SecondSectionHeaderView.self, title: ""),
+                background: SecondSectionBackgroundView.self
+            )
         ]
     }
     

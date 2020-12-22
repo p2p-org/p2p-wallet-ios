@@ -106,6 +106,8 @@ internal enum L10n {
   internal static let enterSeedPhrasesInACorrectOrderToRecoverYourWallet = L10n.tr("Localizable", "Enter seed phrases in a correct order to recover your wallet")
   /// error
   internal static let error = L10n.tr("Localizable", "error")
+  /// Exchange
+  internal static let exchange = L10n.tr("Localizable", "Exchange")
   /// Explore  DeFi
   internal static let exploreDeFi = L10n.tr("Localizable", "Explore  DeFi")
   /// Explore Wowlet and deposit funds when you’re ready
@@ -168,6 +170,8 @@ internal enum L10n {
   internal static let orSavingIntoKeychain = L10n.tr("Localizable", "Or saving into Keychain")
   /// passcodes do not match
   internal static let passcodesDoNotMatch = L10n.tr("Localizable", "passcodes do not match")
+  /// Payments
+  internal static let payments = L10n.tr("Localizable", "Payments")
   /// PIN-code
   internal static let pinCode = L10n.tr("Localizable", "PIN-code")
   /// PIN-code must have 6 digits
