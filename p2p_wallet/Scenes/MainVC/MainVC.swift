@@ -76,7 +76,7 @@ class MainVC: CollectionVC<MainVCItem> {
         snapshot.appendSections([section])
         
         var items = filterWallet(self.walletsVM.items).map {MainVCItem.wallet($0)}
-        switch self.walletsVM.state.value {
+        switch walletsVM.state.value {
         case .loading:
             items += [MainVCItem.placeholder(at: 0), MainVCItem.placeholder(at: 1)]
         case .loaded, .error, .initializing:
@@ -116,6 +116,12 @@ class MainVC: CollectionVC<MainVCItem> {
             if let view = header as? FirstSectionHeaderView {
                 view.openProfileAction = self.openProfile
             }
+        case 1:
+            if let view = header as? SecondSectionHeaderView {
+                view.receiveAction = self.receiveAction
+                view.sendAction = self.sendAction()
+                view.exchangeAction = self.swapAction
+            }
         default:
             break
         }
@@ -135,7 +141,9 @@ class MainVC: CollectionVC<MainVCItem> {
     
     var receiveAction: CocoaAction {
         CocoaAction { _ in
-            let vc = ReceiveTokenVC(wallets: WalletsVM.ofCurrentUser.data)
+            let wallets = self.walletsVM.items
+            if wallets.count == 0 {return .just(())}
+            let vc = ReceiveTokenVC(wallets: wallets)
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
@@ -143,8 +151,9 @@ class MainVC: CollectionVC<MainVCItem> {
     
     func sendAction(address: String? = nil) -> CocoaAction {
         CocoaAction { _ in
-            let vc = SendTokenVC(wallets: self.walletsVM.items, address: address)
-            
+            let wallets = self.walletsVM.items
+            if wallets.count == 0 {return .just(())}
+            let vc = SendTokenVC(wallets: wallets, address: address)
             self.show(vc, sender: nil)
             return .just(())
         }
@@ -152,7 +161,9 @@ class MainVC: CollectionVC<MainVCItem> {
     
     var swapAction: CocoaAction {
         CocoaAction { _ in
-            let vc = SwapTokenVC(wallets: self.walletsVM.items)
+            let wallets = self.walletsVM.items
+            if wallets.count == 0 {return .just(())}
+            let vc = SwapTokenVC(wallets: wallets)
             self.show(vc, sender: nil)
             return .just(())
         }

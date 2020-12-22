@@ -81,6 +81,10 @@ extension MainVC {
     }
     
     class SecondSectionHeaderView: SectionHeaderView {
+        var receiveAction: CocoaAction?
+        var sendAction: CocoaAction?
+        var exchangeAction: CocoaAction?
+        
         override func commonInit() {
             super.commonInit()
             stackView.insertArrangedSubviews([
@@ -88,9 +92,12 @@ extension MainVC {
                     .padding(.init(x: 20, y: 0)),
                 UIView.row([
 //                    createButton(image: .walletAdd, title: L10n.buy),
-                    createButton(image: .walletReceive, title: L10n.receive),
-                    createButton(image: .walletSend, title: L10n.send),
+                    createButton(image: .walletReceive, title: L10n.receive)
+                        .onTap(self, action: #selector(buttonReceiveDidTouch)),
+                    createButton(image: .walletSend, title: L10n.send)
+                        .onTap(self, action: #selector(buttonSendDidTouch)),
                     createButton(image: .walletSwap, title: L10n.exchange)
+                        .onTap(self, action: #selector(buttonExchangeDidTouch))
                 ])
                     .padding(.init(x: 20, y: 0))
             ], at: 0, withCustomSpacings: [20, 30])
@@ -99,11 +106,24 @@ extension MainVC {
         private func createButton(image: UIImage, title: String) -> UIStackView {
             let button = UIButton(width: 56, height: 56, backgroundColor: .f4f4f4, cornerRadius: 12, label: title, contentInsets: .init(all: 16))
             button.setImage(image, for: .normal)
+            button.isUserInteractionEnabled = false
             button.tintColor = .textBlack
             return UIStackView(axis: .vertical, spacing: 8, alignment: .center, distribution: .fill, arrangedSubviews: [
                 button,
                 UILabel(text: title, textSize: 12)
             ])
+        }
+        
+        @objc func buttonReceiveDidTouch() {
+            receiveAction?.execute()
+        }
+        
+        @objc func buttonSendDidTouch() {
+            sendAction?.execute()
+        }
+        
+        @objc func buttonExchangeDidTouch() {
+            exchangeAction?.execute()
         }
     }
 }
