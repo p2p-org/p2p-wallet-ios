@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ChooseWalletVC: MyWalletsVC<ChooseWalletVC.Cell> {
+class ChooseWalletVC: MyWalletsVC {
     lazy var titleLabel = UILabel(text: L10n.yourWallets, textSize: 17, weight: .semibold)
     lazy var closeButton = UIButton.close()
         .onTap(self, action: #selector(back))
@@ -45,7 +45,12 @@ class ChooseWalletVC: MyWalletsVC<ChooseWalletVC.Cell> {
     
     // MARK: - Layouts
     override var sections: [Section] {
-        [Section(header: Section.Header(title: ""))]
+        [
+            Section(
+                header: Section.Header(title: ""),
+                cellType: ChooseWalletVC.Cell.self
+            )
+        ]
     }
     
     // MARK: - Delegate
