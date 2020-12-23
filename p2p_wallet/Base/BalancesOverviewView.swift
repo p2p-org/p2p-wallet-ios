@@ -6,12 +6,23 @@
 //
 
 import Foundation
+import Charts
 
 class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
     lazy var equityValueLabel = UILabel(text: " ", textSize: 21, weight: .bold, textColor: textColor)
     lazy var changeLabel = UILabel(text: " ", textSize: 13)
+    lazy var chartView: PieChartView = {
+        let chartView = PieChartView(width: 75, height: 75, cornerRadius: 75 / 2)
+        chartView.usePercentValuesEnabled = true
+        chartView.drawSlicesUnderHoleEnabled = false
+        chartView.holeColor = .clear
+        chartView.holeRadiusPercent = 0.66
+        chartView.chartDescription?.enabled = false
+        chartView.legend.enabled = false
+        return chartView
+    }()
     
-    var loadingViews: [UIView] {[equityValueLabel, changeLabel]}
+    var loadingViews: [UIView] {[equityValueLabel, changeLabel, chartView]}
     
     let textColor: UIColor
     
@@ -33,13 +44,13 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
             {
                 let labelStackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
                 labelStackView.addArrangedSubviews([
-                    UILabel(text: L10n.totalBalance, textSize: 15),
+                    UILabel(text: L10n.totalBalance, textSize: 15, textColor: textColor),
                     equityValueLabel,
                     changeLabel
                 ], withCustomSpacings: [12, 5])
                 return labelStackView
             }(),
-            UIImageView(width: 75, height: 75, image: .totalBalanceGraph)
+            chartView
         ])
     }
     
@@ -64,12 +75,35 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
             changeLabel.attributedText = NSMutableAttributedString()
                 .text("\(changeValue.toString(maximumFractionDigits: 2, showPlus: true))%", size: 13, color: color)
                 .text(" \(L10n.forTheLast24Hours)", size: 13, color: textColor)
+            setUpChartView(wallets: wallets)
             hideLoading()
+            chartView.animate(xAxisDuration: 1.4, easingOption: .easeOutBack)
         case .error(let error):
             debugPrint(error)
             equityValueLabel.text = L10n.error.uppercaseFirst
             changeLabel.text = L10n.error.uppercaseFirst
             hideLoading()
         }
+    }
+    
+    func setUpChartView(wallets: [Wallet]) {
+        let entries = wallets.compactMap { return $0.amountInUSD == 0 ? nil : $0.amountInUSD}.sorted(by: >).map {PieChartDataEntry(value: $0)}
+        
+        let set = PieChartDataSet(entries: entries)
+        set.sliceSpace = 2
+        set.drawValuesEnabled = false
+        
+        set.colors = ChartColorTemplates.vordiplom()
+            + ChartColorTemplates.joyful()
+            + ChartColorTemplates.colorful()
+            + ChartColorTemplates.liberty()
+            + ChartColorTemplates.pastel()
+            + [UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1)]
+        
+        let data = PieChartData(dataSet: set)
+        data.setValueTextColor(.clear)
+        
+        chartView.data = data
+        chartView.highlightValues(nil)
     }
 }
