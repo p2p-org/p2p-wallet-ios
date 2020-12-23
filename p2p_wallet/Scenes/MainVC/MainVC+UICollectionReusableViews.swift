@@ -10,7 +10,7 @@ import Action
 
 extension MainVC {
     class FirstSectionHeaderView: SectionHeaderView {
-        lazy var balancesOverviewView = BalancesOverviewView()
+        lazy var balancesOverviewView = BalancesOverviewView(textColor: .white)
         
         override func commonInit() {
             super.commonInit()
