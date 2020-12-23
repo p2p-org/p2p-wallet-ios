@@ -34,6 +34,7 @@ class MainVC: CollectionVC<MainVCItem> {
     // MARK: - Properties
     let interactor = MenuInteractor()
     var walletsVM: WalletsVM {(viewModel as! MainVM).walletsVM}
+    let numberOfWalletsToShow = 4
     
     lazy var avatarImageView = UIImageView(width: 32, height: 32, backgroundColor: .c4c4c4, cornerRadius: 16)
         .onTap(self, action: #selector(avatarImageViewDidTouch))
@@ -306,7 +307,7 @@ class MainVC: CollectionVC<MainVCItem> {
             contentsOf: items
                 .filter {$0.symbol != "SOL"}
                 .sorted(by: {$0.amountInUSD > $1.amountInUSD})
-                .prefix(3)
+                .prefix(numberOfWalletsToShow - 1)
         )
         
         return wallets
