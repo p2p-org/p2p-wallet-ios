@@ -172,6 +172,9 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
         collectionView.rx.itemSelected
             .subscribe(onNext: {indexPath in
                 guard let item = self.dataSource.itemIdentifier(for: indexPath) else {return}
+                if item.id.starts(with: "placeholder") {
+                    return
+                }
                 self.itemDidSelect(item)
             })
             .disposed(by: disposeBag)
@@ -329,10 +332,10 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
     
     func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: sections[indexPath.section].cellType), for: indexPath) as? BaseCollectionViewCell
-        if let cell = cell as? ListCollectionCell<ItemType> {
-            cell.setUp(with: item)
-        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: sections[indexPath.section].cellType), for: indexPath)
+        
+        setUpCell(cell: cell, withItem: item)
+        
         if let cell = cell as? LoadableView {
             if item.id.starts(with: "placeholder") {
                 cell.showLoading()
@@ -341,7 +344,13 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
             }
         }
         
-        return cell ?? UICollectionViewCell()
+        return cell
+    }
+    
+    func setUpCell(cell: UICollectionViewCell, withItem item: ItemType) {
+        if let cell = cell as? ListCollectionCell<ItemType> {
+            cell.setUp(with: item)
+        }
     }
     
     func configureSupplementaryView(collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? {
