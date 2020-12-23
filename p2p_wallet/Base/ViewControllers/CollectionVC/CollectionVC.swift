@@ -197,16 +197,16 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
     }
     
     func dataDidLoad() {
-        let numberOfSections = dataSource.numberOfSections(in: collectionView)
-        guard numberOfSections > 0,
-              let footer = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: IndexPath(row: 0, section: numberOfSections - 1)) as? SectionFooterView
-        else {
-            return
-        }
+//        let numberOfSections = dataSource.numberOfSections(in: collectionView)
+//        guard numberOfSections > 0,
+//              let footer = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: IndexPath(row: 0, section: numberOfSections - 1)) as? SectionFooterView
+//        else {
+//            return
+//        }
         
-        footer.setUp(state: viewModel.state.value, isListEmpty: viewModel.isListEmpty)
+//        footer.setUp(state: viewModel.state.value, isListEmpty: viewModel.isListEmpty)
 //        collectionView.collectionViewLayout.invalidateLayout()
-        footer.setNeedsDisplay()
+//        footer.setNeedsDisplay()
     }
     
     func itemDidSelect(_ item: ItemType) {

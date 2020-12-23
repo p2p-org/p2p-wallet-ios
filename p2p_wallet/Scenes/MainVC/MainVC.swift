@@ -97,6 +97,8 @@ class MainVC: CollectionVC<MainVCItem> {
         collectionView.autoPinEdge(.bottom, to: .top, of: tabBar, withOffset: .defaultPadding)
         
         collectionView.contentInset.modify(dBottom: .defaultPadding)
+        
+        refreshControl.tintColor = .white
     }
     
     // MARK: - Layout
@@ -107,6 +109,7 @@ class MainVC: CollectionVC<MainVCItem> {
                 footer: Section.Footer(viewClass: FirstSectionFooterView.self),
                 cellType: MainWalletCell.self,
                 interGroupSpacing: 30,
+                itemHeight: .estimated(45),
                 horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16)
             )
         ]
@@ -188,7 +191,7 @@ class MainVC: CollectionVC<MainVCItem> {
         }
         
         UIView.animate(withDuration: 0.3) {
-            self.tabBar.isHidden = self.walletsVM.data.isEmpty
+            self.tabBar.alpha = self.walletsVM.data.isEmpty ? 0 : 1
         }
     }
     
@@ -272,7 +275,7 @@ class MainVC: CollectionVC<MainVCItem> {
             contentsOf: items
                 .filter {$0.symbol != "SOL"}
                 .sorted(by: {$0.amountInUSD > $1.amountInUSD})
-                .prefix(2)
+                .prefix(3)
         )
         
         return wallets

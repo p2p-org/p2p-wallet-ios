@@ -76,7 +76,7 @@ extension MainVC {
         lazy var button: UIView = {
             let view = UIView(backgroundColor: UIColor.white.withAlphaComponent(0.1), cornerRadius: 12)
             view.row([
-                UILabel(text: L10n.myBalances, textSize: 17, weight: .medium, textColor: .white),
+                UILabel(text: L10n.allMyBalances, textSize: 17, weight: .medium, textColor: .white),
                 UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .secondary)
             ], padding: .init(x: 20, y: 16))
             return view
