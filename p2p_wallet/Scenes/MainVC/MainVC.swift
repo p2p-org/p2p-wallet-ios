@@ -29,7 +29,15 @@ enum MainVCItem: ListItemType {
 
 class MainVC: CollectionVC<MainVCItem> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
+    override var preferredStatusBarStyle: UIStatusBarStyle {.lightContent}
+    
     var walletsVM: WalletsVM {(viewModel as! MainVM).walletsVM}
+    
+    var qrStackView: UIStackView!
+    lazy var avatarImageView = UIImageView(width: 32, height: 32, backgroundColor: .c4c4c4, cornerRadius: 16)
+        .onTap(self, action: #selector(avatarImageViewDidTouch))
+    lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
+        .onTap(self, action: #selector(avatarImageViewDidTouch))
     
     init() {
         let vm = MainVM()
@@ -43,8 +51,31 @@ class MainVC: CollectionVC<MainVCItem> {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .white
+        view.backgroundColor = .h1b1b1b
         setStatusBarColor(.h1b1b1b)
+        
+        // configure header
+        let headerView = UIView(forAutoLayout: ())
+        view.addSubview(headerView)
+        headerView.autoPinEdge(toSuperviewEdge: .leading)
+        headerView.autoPinEdge(toSuperviewEdge: .trailing)
+        headerView.autoPinEdge(toSuperviewSafeArea: .top)
+        headerView.row([
+            UIImageView(width: 25, height: 25, image: .scanQr, tintColor: UIColor.white.withAlphaComponent(0.35)),
+            {
+                let view = UIView(forAutoLayout: ())
+                view.addSubview(avatarImageView)
+                avatarImageView.autoPinEdgesToSuperviewEdges(with: .zero)
+                view.addSubview(activeStatusView)
+                activeStatusView.autoPinEdge(.top, to: .top, of: avatarImageView)
+                activeStatusView.autoPinEdge(.trailing, to: .trailing, of: avatarImageView)
+                return view
+            }()
+        ], padding: .init(x: .defaultPadding, y: 10))
+        
+        // rearrange collectionView
+        collectionView.constraintToSuperviewWithAttribute(.top)?.isActive = false
+        collectionView.autoPinEdge(.top, to: .bottom, of: headerView)
     }
     
     // MARK: - Layout
@@ -55,13 +86,7 @@ class MainVC: CollectionVC<MainVCItem> {
                 footer: Section.Footer(viewClass: FirstSectionFooterView.self),
                 cellType: MainWalletCell.self,
                 interGroupSpacing: 30,
-                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16),
-                background: FirstSectionBackgroundView.self
-            ),
-            Section(
-                header: Section.Header(viewClass: SecondSectionHeaderView.self, title: ""),
-                cellType: FriendCell.self,
-                background: SecondSectionBackgroundView.self
+                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16)
             )
         ]
     }
@@ -84,9 +109,9 @@ class MainVC: CollectionVC<MainVCItem> {
         snapshot.appendItems(items, toSection: section)
         
         // section 2
-        let section2 = L10n.friends
-        snapshot.appendSections([section2])
-//        snapshot.appendItems([MainVCItem.friend], toSection: section2)
+//        let section2 = L10n.friends
+//        snapshot.appendSections([section2])
+////        snapshot.appendItems([MainVCItem.friend], toSection: section2)
         return snapshot
     }
     
@@ -113,13 +138,7 @@ class MainVC: CollectionVC<MainVCItem> {
         switch indexPath.section {
         case 0:
             if let view = header as? FirstSectionHeaderView {
-                view.openProfileAction = self.openProfile
-            }
-        case 1:
-            if let view = header as? SecondSectionHeaderView {
-                view.receiveAction = self.receiveAction
-                view.sendAction = self.sendAction()
-                view.exchangeAction = self.swapAction
+                view.setUp(with: walletsVM.state.value)
             }
         default:
             break
@@ -144,6 +163,15 @@ class MainVC: CollectionVC<MainVCItem> {
     }
     
     // MARK: - Actions
+    override func dataDidLoad() {
+        super.dataDidLoad()
+        
+        if let headerView = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: 0)) as? FirstSectionHeaderView
+        {
+            headerView.setUp(with: walletsVM.state.value)
+        }
+    }
+    
     override func itemDidSelect(_ item: MainVCItem) {
         switch item {
         case .wallet(let wallet):
@@ -195,6 +223,10 @@ class MainVC: CollectionVC<MainVCItem> {
             self.present(ProfileVC(), animated: true, completion: nil)
             return .just(())
         }
+    }
+    
+    @objc func avatarImageViewDidTouch() {
+        present(ProfileVC(), animated: true, completion: nil)
     }
     
     // MARK: - Helpers
