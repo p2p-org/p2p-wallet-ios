@@ -157,7 +157,7 @@ class MainVC: CollectionVC<MainVCItem> {
         switch indexPath.section {
         case 0:
             if let view = header as? FirstSectionHeaderView {
-                view.setUp(with: walletsVM.state.value)
+                view.balancesOverviewView.setUp(with: walletsVM.state.value)
             }
         default:
             break
@@ -187,7 +187,7 @@ class MainVC: CollectionVC<MainVCItem> {
         
         if let headerView = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: 0)) as? FirstSectionHeaderView
         {
-            headerView.setUp(with: walletsVM.state.value)
+            headerView.balancesOverviewView.setUp(with: walletsVM.state.value)
         }
         
         UIView.animate(withDuration: 0.3) {
