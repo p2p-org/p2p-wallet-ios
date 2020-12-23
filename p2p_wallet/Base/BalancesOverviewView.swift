@@ -16,7 +16,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         chartView.usePercentValuesEnabled = true
         chartView.drawSlicesUnderHoleEnabled = false
         chartView.holeColor = .clear
-        chartView.holeRadiusPercent = 0.66
+        chartView.holeRadiusPercent = 0.58
         chartView.chartDescription?.enabled = false
         chartView.legend.enabled = false
         return chartView
@@ -77,7 +77,6 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
                 .text(" \(L10n.forTheLast24Hours)", size: 13, color: textColor)
             setUpChartView(wallets: wallets)
             hideLoading()
-            chartView.animate(xAxisDuration: 1.4)
         case .error(let error):
             debugPrint(error)
             equityValueLabel.text = L10n.error.uppercaseFirst
@@ -94,12 +93,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         set.drawValuesEnabled = false
         set.selectionShift = 0
         
-        set.colors = ChartColorTemplates.vordiplom()
-            + ChartColorTemplates.joyful()
-            + ChartColorTemplates.colorful()
-            + ChartColorTemplates.liberty()
-            + ChartColorTemplates.pastel()
-            + [UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1)]
+        set.colors = [.barChart1, .barChart2, .barChart3, .barChart4]
         
         let data = PieChartData(dataSet: set)
         data.setValueTextColor(.clear)
