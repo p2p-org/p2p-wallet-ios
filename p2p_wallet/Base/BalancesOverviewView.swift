@@ -77,7 +77,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
                 .text(" \(L10n.forTheLast24Hours)", size: 13, color: textColor)
             setUpChartView(wallets: wallets)
             hideLoading()
-            chartView.animate(xAxisDuration: 1.4, easingOption: .easeOutBack)
+            chartView.animate(xAxisDuration: 1.4)
         case .error(let error):
             debugPrint(error)
             equityValueLabel.text = L10n.error.uppercaseFirst
@@ -92,6 +92,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         let set = PieChartDataSet(entries: entries)
         set.sliceSpace = 2
         set.drawValuesEnabled = false
+        set.selectionShift = 0
         
         set.colors = ChartColorTemplates.vordiplom()
             + ChartColorTemplates.joyful()
