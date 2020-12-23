@@ -86,7 +86,12 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
     }
     
     func setUpChartView(wallets: [Wallet]) {
-        let entries = wallets.compactMap { return $0.amountInUSD == 0 ? nil : $0.amountInUSD}.sorted(by: >).map {PieChartDataEntry(value: $0)}
+        let entries = wallets
+            .filter {$0.amountInUSD > 0 || $0.symbol == "SOL"}
+            .sorted(by: {$0.amountInUSD > $1.amountInUSD})
+            .sorted(by: {$0.symbol == "SOL" && $1.symbol != "SOL"})
+            .compactMap { return $0.amountInUSD == 0 ? nil : $0.amountInUSD}
+            .map {PieChartDataEntry(value: $0)}
         
         let set = PieChartDataSet(entries: entries)
         set.sliceSpace = 2

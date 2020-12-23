@@ -16,11 +16,11 @@ class MainWalletCell: WalletCell {
     
     override func commonInit() {
         super.commonInit()        
-        coinPriceLabel.font = .boldSystemFont(ofSize: 15)
-        coinPriceLabel.setContentHuggingPriority(.required, for: .horizontal)
+        equityValueLabel.font = .boldSystemFont(ofSize: 15)
+        equityValueLabel.setContentHuggingPriority(.required, for: .horizontal)
         tokenCountLabel.setContentHuggingPriority(.required, for: .horizontal)
         let vStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            row(arrangedSubviews: [coinNameLabel, coinPriceLabel])
+            row(arrangedSubviews: [coinNameLabel, equityValueLabel])
                 .with(distribution: .fill),
             row(arrangedSubviews: [addressLabel, tokenCountLabel])
                 .with(distribution: .fill)
@@ -33,7 +33,7 @@ class MainWalletCell: WalletCell {
         ])
         
         coinNameLabel.textColor = .white
-        coinPriceLabel.textColor = .white
+        equityValueLabel.textColor = .white
     }
     
     override func setUp(with item: Wallet) {
