@@ -69,7 +69,6 @@ extension UIImage {
     static let tabbarActivities = UIImage(named: "tabbar-activities", in: bundle, compatibleWith: nil)!
     static let tabbarFriends = UIImage(named: "tabbar-friends", in: bundle, compatibleWith: nil)!
     static let tabbarHome = UIImage(named: "tabbar-home", in: bundle, compatibleWith: nil)!
-    static let totalBalanceGraph = UIImage(named: "total-balance-graph", in: bundle, compatibleWith: nil)!
     static let touchId = UIImage(named: "touchId", in: bundle, compatibleWith: nil)!
     static let transactionInfoIcon = UIImage(named: "transaction-info-icon", in: bundle, compatibleWith: nil)!
     static let walletAdd = UIImage(named: "wallet-add", in: bundle, compatibleWith: nil)!
