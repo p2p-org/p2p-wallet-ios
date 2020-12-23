@@ -8,12 +8,15 @@
 import Foundation
 
 class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
-    lazy var equityValueLabel = UILabel(text: " ", textSize: 21, weight: .bold)
+    lazy var equityValueLabel = UILabel(text: " ", textSize: 21, weight: .bold, textColor: textColor)
     lazy var changeLabel = UILabel(text: " ", textSize: 13)
     
     var loadingViews: [UIView] {[equityValueLabel, changeLabel]}
     
-    init() {
+    let textColor: UIColor
+    
+    init(textColor: UIColor = .textBlack) {
+        self.textColor = textColor
         super.init(shadowColor: UIColor.black.withAlphaComponent(0.07), radius: 24, offset: CGSize(width: 0, height: 4), opacity: 1, cornerRadius: 12, contentInset: .init(x: 16, y: 14))
     }
     
@@ -60,7 +63,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
             }
             changeLabel.attributedText = NSMutableAttributedString()
                 .text("\(changeValue.toString(maximumFractionDigits: 2, showPlus: true))%", size: 13, color: color)
-                .text(" \(L10n.forTheLast24Hours)", size: 13)
+                .text(" \(L10n.forTheLast24Hours)", size: 13, color: textColor)
             hideLoading()
         case .error(let error):
             debugPrint(error)
