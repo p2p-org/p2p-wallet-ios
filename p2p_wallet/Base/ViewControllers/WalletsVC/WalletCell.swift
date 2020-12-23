@@ -36,8 +36,8 @@ class WalletCell: ListCollectionCell<Wallet>, LoadableView {
             coinPriceLabel.isHidden = false
             coinChangeLabel.isHidden = false
             
-            equityValueLabel.text = "\((PricesManager.shared.solPrice?.value * item.amount).toString(maximumFractionDigits: 4)) US$"
-            coinPriceLabel.text = "\(price.value.toString()) US$"
+            equityValueLabel.text = "\(item.amountInUSD.toString(maximumFractionDigits: 4)) $"
+            coinPriceLabel.text = "\(price.value.toString()) $"
             coinChangeLabel.text = "\((price.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true))% 24 hrs"
         } else {
             equityValueLabel.isHidden = true
