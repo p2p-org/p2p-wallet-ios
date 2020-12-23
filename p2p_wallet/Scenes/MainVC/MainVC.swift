@@ -18,7 +18,7 @@ enum MainVCItem: ListItemType {
     var id: String {
         switch self {
         case .wallet(let wallet):
-            return "wallet#\(wallet.id)"
+            return "\(wallet.id)#wallet"
         case .friend:
             return "friend"
         }
@@ -142,20 +142,12 @@ class MainVC: CollectionVC<MainVCItem> {
         return snapshot
     }
     
-    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: MainVCItem) -> UICollectionViewCell {
+    override func setUpCell(cell: UICollectionViewCell, withItem item: MainVCItem) {
         switch item {
         case .wallet(let wallet):
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: MainWalletCell.self), for: indexPath) as? MainWalletCell
-            cell?.setUp(with: wallet)
-            if item.id.starts(with: "wallet#placeholder") {
-                cell?.showLoading()
-            } else {
-                cell?.hideLoading()
-            }
-            return cell ?? UICollectionViewCell()
-        default:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: FriendCell.self), for: indexPath)
-            return cell
+            (cell as! MainWalletCell).setUp(with: wallet)
+        case .friend:
+            break
         }
     }
     
