@@ -33,11 +33,12 @@ class MainVC: CollectionVC<MainVCItem> {
     
     var walletsVM: WalletsVM {(viewModel as! MainVM).walletsVM}
     
-    var qrStackView: UIStackView!
     lazy var avatarImageView = UIImageView(width: 32, height: 32, backgroundColor: .c4c4c4, cornerRadius: 16)
         .onTap(self, action: #selector(avatarImageViewDidTouch))
     lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
         .onTap(self, action: #selector(avatarImageViewDidTouch))
+    
+    lazy var tabBar = TabBar(cornerRadius: .defaultPadding, contentInset: UIEdgeInsets(x: 0, y: .defaultPadding))
     
     init() {
         let vm = MainVM()
@@ -73,9 +74,29 @@ class MainVC: CollectionVC<MainVCItem> {
             }()
         ], padding: .init(x: .defaultPadding, y: 10))
         
+        // tabBar
+        view.addSubview(tabBar)
+        tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        tabBar.stackView.addArrangedSubviews([
+            .spacer,
+//                    createButton(image: .walletAdd, title: L10n.buy),
+            createButton(image: .walletReceive, title: L10n.receive)
+                .onTap(self, action: #selector(buttonReceiveDidTouch)),
+            createButton(image: .walletSend, title: L10n.send)
+                .onTap(self, action: #selector(buttonSendDidTouch)),
+            createButton(image: .walletSwap, title: L10n.exchange)
+                .onTap(self, action: #selector(buttonExchangeDidTouch)),
+            .spacer
+        ])
+        
         // rearrange collectionView
         collectionView.constraintToSuperviewWithAttribute(.top)?.isActive = false
         collectionView.autoPinEdge(.top, to: .bottom, of: headerView)
+        
+        collectionView.constraintToSuperviewWithAttribute(.bottom)?.isActive = false
+        collectionView.autoPinEdge(.bottom, to: .top, of: tabBar, withOffset: .defaultPadding)
+        
+        collectionView.contentInset.modify(dBottom: .defaultPadding)
     }
     
     // MARK: - Layout
@@ -107,11 +128,6 @@ class MainVC: CollectionVC<MainVCItem> {
             break
         }
         snapshot.appendItems(items, toSection: section)
-        
-        // section 2
-//        let section2 = L10n.friends
-//        snapshot.appendSections([section2])
-////        snapshot.appendItems([MainVCItem.friend], toSection: section2)
         return snapshot
     }
     
@@ -169,6 +185,10 @@ class MainVC: CollectionVC<MainVCItem> {
         if let headerView = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: 0)) as? FirstSectionHeaderView
         {
             headerView.setUp(with: walletsVM.state.value)
+        }
+        
+        UIView.animate(withDuration: 0.3) {
+            self.tabBar.isHidden = self.walletsVM.data.isEmpty
         }
     }
     
@@ -229,6 +249,18 @@ class MainVC: CollectionVC<MainVCItem> {
         present(ProfileVC(), animated: true, completion: nil)
     }
     
+    @objc func buttonReceiveDidTouch() {
+        receiveAction.execute()
+    }
+    
+    @objc func buttonSendDidTouch() {
+        sendAction().execute()
+    }
+    
+    @objc func buttonExchangeDidTouch() {
+        swapAction.execute()
+    }
+    
     // MARK: - Helpers
     func filterWallet(_ items: [Wallet]) -> [Wallet] {
         var wallets = [Wallet]()
@@ -245,4 +277,16 @@ class MainVC: CollectionVC<MainVCItem> {
         
         return wallets
     }
+    
+    private func createButton(image: UIImage, title: String) -> UIStackView {
+        let button = UIButton(width: 56, height: 56, backgroundColor: .f4f4f4, cornerRadius: 12, label: title, contentInsets: .init(all: 16))
+        button.setImage(image, for: .normal)
+        button.isUserInteractionEnabled = false
+        button.tintColor = .textBlack
+        return UIStackView(axis: .vertical, spacing: 8, alignment: .center, distribution: .fill, arrangedSubviews: [
+            button,
+            UILabel(text: title, textSize: 12)
+        ])
+    }
+
 }
