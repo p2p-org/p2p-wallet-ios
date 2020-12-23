@@ -81,7 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } else {
                 shouldShowLocalAuth = true
                 WalletsVM.ofCurrentUser = WalletsVM()
-                rootVC = TabBarVC()
+                rootVC = MainVC()
             }
         }
         
