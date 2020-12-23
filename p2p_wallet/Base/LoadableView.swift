@@ -17,12 +17,20 @@ extension LoadableView {
     func showLoading() {
         hideLoading()
         loadingViews.forEach {
+            if let view = $0 as? LoadableView {
+                view.showLoading()
+                return
+            }
             self.addLoadingLayer(for: $0)
         }
     }
     
     func hideLoading() {
         loadingViews.forEach {
+            if let view = $0 as? LoadableView {
+                view.hideLoading()
+                return
+            }
             (objc_getAssociatedObject($0, &loadingHandle) as? CAGradientLayer)?.removeFromSuperlayer()
             $0.layer.sublayers?.forEach {$0.isHidden = false}
         }

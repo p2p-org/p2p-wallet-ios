@@ -42,6 +42,7 @@ class _MyProductsVC: MyWalletsVC {
                 header: Section.Header(viewClass: FirstSectionHeaderView.self, title: L10n.balances, titleFont: .systemFont(ofSize: 17, weight: .semibold)),
                 cellType: MyProductsWalletCell.self,
                 interGroupSpacing: 30,
+                itemHeight: .estimated(45),
                 horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16)
             )
         ]
@@ -52,7 +53,7 @@ class _MyProductsVC: MyWalletsVC {
         switch indexPath.section {
         case 0:
             if let view = header as? FirstSectionHeaderView {
-                view.setUp(with: viewModel.state.value)
+                view.balancesOverviewView.setUp(with: viewModel.state.value)
             }
         default:
             break
@@ -67,7 +68,7 @@ class _MyProductsVC: MyWalletsVC {
         // fix header
         if let headerView = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: 0)) as? FirstSectionHeaderView
         {
-            headerView.setUp(with: viewModel.state.value)
+            headerView.balancesOverviewView.setUp(with: viewModel.state.value)
         }
     }
 }
