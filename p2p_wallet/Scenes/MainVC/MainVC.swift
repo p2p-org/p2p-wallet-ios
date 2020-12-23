@@ -31,6 +31,8 @@ class MainVC: CollectionVC<MainVCItem> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     override var preferredStatusBarStyle: UIStatusBarStyle {.lightContent}
     
+    // MARK: - Properties
+    let interactor = MenuInteractor()
     var walletsVM: WalletsVM {(viewModel as! MainVM).walletsVM}
     
     lazy var avatarImageView = UIImageView(width: 32, height: 32, backgroundColor: .c4c4c4, cornerRadius: 16)
@@ -62,7 +64,13 @@ class MainVC: CollectionVC<MainVCItem> {
         headerView.autoPinEdge(toSuperviewEdge: .trailing)
         headerView.autoPinEdge(toSuperviewSafeArea: .top)
         headerView.row([
-            UIImageView(width: 25, height: 25, image: .scanQr, tintColor: UIColor.white.withAlphaComponent(0.35)),
+            {
+                let qrScannerView = UIImageView(width: 25, height: 25, image: .scanQr, tintColor: UIColor.white.withAlphaComponent(0.35)
+                )
+                    .onTap(self, action: #selector(qrScannerDidTouch))
+                qrScannerView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
+                return qrScannerView
+            }(),
             {
                 let view = UIView(forAutoLayout: ())
                 view.addSubview(avatarImageView)
@@ -264,6 +272,37 @@ class MainVC: CollectionVC<MainVCItem> {
         swapAction.execute()
     }
     
+    @objc func qrScannerDidSwipe(sender: UIPanGestureRecognizer) {
+        let translation = sender.translation(in: view)
+        let progress = MenuHelper.calculateProgress(translationInView: translation, viewBounds: view.bounds, direction: .right
+        )
+        MenuHelper.mapGestureStateToInteractor(
+            gestureState: sender.state,
+            progress: progress,
+            interactor: interactor)
+        {
+            let vc = QrCodeScannerVC()
+            vc.callback = { code in
+                if NSRegularExpression.publicKey.matches(code) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        self.sendAction(address: code).execute()
+                    }
+                    return true
+                }
+                return false
+            }
+            vc.transitioningDelegate = self
+            vc.modalPresentationStyle = .custom
+            self.present(vc, animated: true, completion: nil)
+        }
+    }
+    
+    @objc func qrScannerDidTouch() {
+        let vc = QrCodeScannerVC()
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
+    }
+    
     // MARK: - Helpers
     func filterWallet(_ items: [Wallet]) -> [Wallet] {
         var wallets = [Wallet]()
@@ -291,5 +330,18 @@ class MainVC: CollectionVC<MainVCItem> {
             UILabel(text: title, textSize: 12)
         ])
     }
+}
 
+extension MainVC: UIViewControllerTransitioningDelegate {
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        PresentMenuAnimator()
+    }
+    
+//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        DismissMenuAnimator()
+//    }
+    
+    func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        return interactor.hasStarted ? interactor : nil
+    }
 }
