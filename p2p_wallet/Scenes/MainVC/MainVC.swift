@@ -30,6 +30,7 @@ enum MainVCItem: ListItemType {
 class MainVC: CollectionVC<MainVCItem> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     var walletsVM: WalletsVM {(viewModel as! MainVM).walletsVM}
+    let numberOfWalletsToShow = 4
     
     init() {
         let vm = MainVM()
@@ -200,7 +201,7 @@ class MainVC: CollectionVC<MainVCItem> {
             contentsOf: items
                 .filter {$0.symbol != "SOL"}
                 .sorted(by: {$0.amountInUSD > $1.amountInUSD})
-                .prefix(2)
+                .prefix(numberOfWalletsToShow - 1)
         )
         
         return wallets
