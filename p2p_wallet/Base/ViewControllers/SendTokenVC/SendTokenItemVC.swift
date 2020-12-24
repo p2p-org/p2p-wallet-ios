@@ -20,13 +20,13 @@ class SendTokenItemVC: BaseVC {
     
     // MARK: - Subviews
     lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
-    lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .secondary)
+    lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .textSecondary)
     lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
         .onTap(self, action: #selector(buttonChooseWalletDidTouch))
     lazy var amountTextField = TokenAmountTextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0\(Locale.current.decimalSeparator ?? ".")0", autocorrectionType: .no, rightView: useAllBalanceButton, rightViewMode: .always)
-    lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .secondary)
+    lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .textSecondary)
         .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
-    lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .secondary)
+    lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .textSecondary)
     lazy var addressTextView: UITextView = {
         let textView = UITextView(forExpandable: ())
         textView.backgroundColor = .clear

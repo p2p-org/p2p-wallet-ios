@@ -11,8 +11,8 @@ class TransactionCell: ListCollectionCell<Transaction>, LoadableView {
     let iconImageView = UIImageView(width: 32, height: 32, backgroundColor: .gray, cornerRadius: 16)
     let typeLabel = UILabel(textSize: 15, weight: .bold)
     let amountLabel = UILabel(textSize: 13, weight: .medium)
-    let dateLabel = UILabel(textSize: 13, textColor: .secondary)
-    let tokensLabel = UILabel(textSize: 13, textColor: .secondary)
+    let dateLabel = UILabel(textSize: 13, textColor: .textSecondary)
+    let tokensLabel = UILabel(textSize: 13, textColor: .textSecondary)
     
     var loadingViews: [UIView] {[iconImageView, typeLabel, amountLabel, dateLabel, tokensLabel]}
     

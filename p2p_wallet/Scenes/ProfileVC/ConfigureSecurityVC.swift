@@ -29,7 +29,7 @@ class ConfigureSecurityVC: ProfileVCBase {
                 UIImageView(width: 44, height: 44, backgroundColor: .c4c4c4, cornerRadius: 22),
                 UIView.col([
                     UILabel(text: LABiometryType.current.stringValue, textSize: 15, weight: .medium),
-                    UILabel(text: L10n.willBeAsAPrimarySecureCheck, textSize: 12, textColor: .secondary, numberOfLines: 0)
+                    UILabel(text: L10n.willBeAsAPrimarySecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0)
                 ]).with(spacing: 5),
                 biometrySwitcher
             ])
@@ -39,7 +39,7 @@ class ConfigureSecurityVC: ProfileVCBase {
                 UIImageView(width: 44, height: 44, backgroundColor: .c4c4c4, cornerRadius: 22),
                 UIView.col([
                     UILabel(text: L10n.pinCode, textSize: 15, weight: .medium),
-                    UILabel(text: L10n.defaultSecureCheck, textSize: 12, textColor: .secondary, numberOfLines: 0)
+                    UILabel(text: L10n.defaultSecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0)
                 ]).with(spacing: 5),
                 UIImageView(width: 4.5, height: 9, image: .nextArrow, tintColor: .textBlack)
             ])
