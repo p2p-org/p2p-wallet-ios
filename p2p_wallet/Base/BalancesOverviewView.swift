@@ -9,8 +9,8 @@ import Foundation
 import Charts
 
 class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
-    lazy var changeLabel = UILabel(text: " ", textSize: 13, textColor: .secondary)
     lazy var equityValueLabel = UILabel(text: " ", textSize: 21, weight: .bold)
+    lazy var changeLabel = UILabel(text: " ", textSize: 13, textColor: .textSecondary)
     lazy var chartView: PieChartView = {
         let chartView = PieChartView(width: 75, height: 75, cornerRadius: 75 / 2)
         chartView.usePercentValuesEnabled = true
@@ -36,6 +36,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         super.commonInit()
         layer.cornerRadius = 12
         layer.masksToBounds = true
+        backgroundColor = .background3
         
         stackView.addArrangedSubviews([
             {
