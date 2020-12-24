@@ -61,7 +61,7 @@ class WalletsVM: ListViewModel<Wallet> {
                         
                         let solWallet = Wallet(
                             id: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString ?? "Solana",
-                            name: "Solana",
+                            name: Defaults.walletName["SOL"] ?? "Solana",
                             mintAddress: "",
                             pubkey: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString,
                             symbol: "SOL",
@@ -74,5 +74,14 @@ class WalletsVM: ListViewModel<Wallet> {
                         return wallets
                     }
             }
+    }
+    
+    func updateWallet(_ wallet: Wallet, withName name: String) {
+        Defaults.walletName[wallet.symbol] = name
+        updateItem(where: {wallet.symbol == $0.symbol}, transform: {
+            var newItem = $0
+            newItem.name = name
+            return newItem
+        })
     }
 }
