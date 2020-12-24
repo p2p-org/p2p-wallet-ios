@@ -84,6 +84,10 @@ struct BonfidaPricesFetcher: PricesFetcher {
 extension Period {
     var resolution: UInt {
         switch self {
+        case .last1h:
+            return 60
+        case .last4h:
+            return 60
         case .day:
             return 60*60
         case .week, .month:
@@ -97,6 +101,10 @@ extension Period {
     
     var limit: UInt? {
         switch self {
+        case .last1h:
+            return 60
+        case .last4h:
+            return 60*4
         case .day:
             return 24
         case .week:
