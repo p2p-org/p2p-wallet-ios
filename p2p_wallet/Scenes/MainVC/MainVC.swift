@@ -181,7 +181,7 @@ class MainVC: CollectionVC<MainVCItem> {
         if let footerView = footerForSection(0) as? FirstSectionFooterView
         {
             var text = L10n.allMyBalances
-            var image = UIImage.nextArrow
+            var image = UIImage.indicatorNext
             var action = showAllProducts
             switch walletsVM.state.value {
             case .loaded(let wallets):
