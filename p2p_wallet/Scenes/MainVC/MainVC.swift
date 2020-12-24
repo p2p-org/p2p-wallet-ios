@@ -29,7 +29,6 @@ enum MainVCItem: ListItemType {
 
 class MainVC: CollectionVC<MainVCItem> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
-    override var preferredStatusBarStyle: UIStatusBarStyle {.lightContent}
     
     // MARK: - Properties
     let interactor = MenuInteractor()
@@ -41,7 +40,11 @@ class MainVC: CollectionVC<MainVCItem> {
     lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
         .onTap(self, action: #selector(avatarImageViewDidTouch))
     
-    lazy var tabBar = TabBar(cornerRadius: .defaultPadding, contentInset: UIEdgeInsets(top: 20, left: 0, bottom: 8, right: 0))
+    lazy var tabBar: TabBar = {
+        let tabBar = TabBar(cornerRadius: .defaultPadding, contentInset: UIEdgeInsets(top: 20, left: 0, bottom: 8, right: 0))
+        tabBar.backgroundColor = .background2
+        return tabBar
+    }()
     
     init() {
         let vm = MainVM()
@@ -55,8 +58,8 @@ class MainVC: CollectionVC<MainVCItem> {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .h1b1b1b
-        setStatusBarColor(.h1b1b1b)
+        view.backgroundColor = .background
+        setStatusBarColor(view.backgroundColor!)
         
         // configure header
         let headerView = UIView(forAutoLayout: ())
@@ -66,7 +69,7 @@ class MainVC: CollectionVC<MainVCItem> {
         headerView.autoPinEdge(toSuperviewSafeArea: .top)
         headerView.row([
             {
-                let qrScannerView = UIImageView(width: 25, height: 25, image: .scanQr, tintColor: UIColor.white.withAlphaComponent(0.35)
+                let qrScannerView = UIImageView(width: 25, height: 25, image: .scanQr, tintColor: .textSecondary
                 )
                     .onTap(self, action: #selector(qrScannerDidTouch))
                 qrScannerView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
@@ -106,8 +109,6 @@ class MainVC: CollectionVC<MainVCItem> {
         collectionView.autoPinEdge(.bottom, to: .top, of: tabBar, withOffset: .defaultPadding)
         
         collectionView.contentInset.modify(dBottom: .defaultPadding)
-        
-        refreshControl.tintColor = .white
     }
     
     // MARK: - Layout
@@ -329,13 +330,13 @@ class MainVC: CollectionVC<MainVCItem> {
     }
     
     private func createButton(image: UIImage, title: String) -> UIStackView {
-        let button = UIButton(width: 56, height: 56, backgroundColor: .f4f4f4, cornerRadius: 12, label: title, contentInsets: .init(all: 16))
+        let button = UIButton(width: 56, height: 56, backgroundColor: .h5887ff, cornerRadius: 12, label: title, contentInsets: .init(all: 16))
         button.setImage(image, for: .normal)
         button.isUserInteractionEnabled = false
-        button.tintColor = .textBlack
+        button.tintColor = .white
         return UIStackView(axis: .vertical, spacing: 8, alignment: .center, distribution: .fill, arrangedSubviews: [
             button,
-            UILabel(text: title, textSize: 12)
+            UILabel(text: title, textSize: 12, textColor: .textSecondary)
         ])
     }
 }

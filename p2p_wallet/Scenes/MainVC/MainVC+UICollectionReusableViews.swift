@@ -12,7 +12,7 @@ extension MainVC {
     class FirstSectionHeaderView: SectionHeaderView {
         var showAllBalancesAction: CocoaAction?
         
-        lazy var balancesOverviewView = BalancesOverviewView(textColor: .white)
+        lazy var balancesOverviewView = BalancesOverviewView()
             .onTap(self, action: #selector(balancesOverviewDidTouch))
         
         override func commonInit() {
@@ -21,7 +21,6 @@ extension MainVC {
             stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
             
             // add header
-            balancesOverviewView.backgroundColor = .h2b2b2b
             stackView.addArrangedSubviews([
                 balancesOverviewView
                     .padding(.init(x: .defaultPadding, y: 0))
@@ -39,9 +38,9 @@ extension MainVC {
     class FirstSectionFooterView: SectionFooterView {
         var showProductsAction: CocoaAction?
         
-        lazy var buttonLabel = UILabel(text: L10n.allMyBalances, textSize: 17, weight: .medium, textColor: .white)
+        lazy var buttonLabel = UILabel(text: L10n.allMyBalances, textSize: 17, weight: .medium)
         lazy var button: UIView = {
-            let view = UIView(backgroundColor: UIColor.white.withAlphaComponent(0.1), cornerRadius: 12)
+            let view = UIView(backgroundColor: .lightGrayBackground, cornerRadius: 12)
             view.row([
                 buttonLabel,
                 UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .secondary)
