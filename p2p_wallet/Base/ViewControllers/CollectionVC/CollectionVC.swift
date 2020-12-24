@@ -390,6 +390,16 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
         return view
     }
     
+    func headerForSection(_ section: Int) -> UICollectionReusableView?
+    {
+        collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: section))
+    }
+    
+    func footerForSection(_ section: Int) -> UICollectionReusableView?
+    {
+        collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: IndexPath(row: 0, section: section))
+    }
+    
     // MARK: - Actions
     @objc func refresh(_ sender: Any) {
         refreshControl.endRefreshing()
