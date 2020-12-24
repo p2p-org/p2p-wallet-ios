@@ -8,10 +8,10 @@
 import Foundation
 
 class WLModalWrapperVC: WLModalVC {
-    override var padding: UIEdgeInsets {UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)}
-    var vc: BaseVC
+    override var padding: UIEdgeInsets {.init(x: 0, y: .defaultPadding)}
+    var vc: UIViewController
     
-    init(wrapped: BaseVC) {
+    init(wrapped: UIViewController) {
         vc = wrapped
         super.init()
     }
