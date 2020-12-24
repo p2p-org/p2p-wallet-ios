@@ -13,7 +13,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
     var wallet: Wallet?
     
     lazy var amountLabel = UILabel(text: "$120,00", textSize: 27, weight: .bold)
-    lazy var tokenCountLabel = UILabel(text: "0 SOL", textSize: 15, textColor: .secondary)
+    lazy var tokenCountLabel = UILabel(text: "0 SOL", textSize: 15, textColor: .textSecondary)
     lazy var changeLabel = UILabel(textColor: .attentionGreen)
     lazy var lineChartView = ChartView()
     lazy var chartPicker: HorizontalPicker = {
@@ -22,7 +22,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
         chartPicker.selectedIndex = Period.allCases.firstIndex(where: {$0 == .day})!
         return chartPicker
     }()
-    lazy var walletAddressLabel = UILabel(text: L10n.walletAddress, textSize: 13, weight: .medium, textColor: .secondary)
+    lazy var walletAddressLabel = UILabel(text: L10n.walletAddress, textSize: 13, weight: .medium, textColor: .textSecondary)
     lazy var pubkeyLabel = UILabel(textSize: 15, weight: .medium)
     
     var scanQrCodeAction: CocoaAction?

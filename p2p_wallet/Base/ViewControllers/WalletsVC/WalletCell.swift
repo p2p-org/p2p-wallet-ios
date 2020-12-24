@@ -12,10 +12,10 @@ class WalletCell: ListCollectionCell<Wallet>, LoadableView {
     lazy var coinLogoImageView = UIImageView(width: 45, height: 45, cornerRadius: 12)
     lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold, numberOfLines: 0)
     lazy var coinPriceLabel = UILabel(text: "12 800,99 US$", textSize: 13)
-    lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: .secondary)
+    lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: .textSecondary)
     lazy var equityValueLabel = UILabel(text: "44,33 USD", textSize: 13)
     
-    lazy var coinChangeLabel = UILabel(text: "0.35% 24 hrs", textSize: 13, textColor: .secondary)
+    lazy var coinChangeLabel = UILabel(text: "0.35% 24 hrs", textSize: 13, textColor: .textSecondary)
     var loadingViews: [UIView] {[coinLogoImageView, coinNameLabel, tokenCountLabel, coinPriceLabel, equityValueLabel, coinChangeLabel]}
     
     override func commonInit() {
