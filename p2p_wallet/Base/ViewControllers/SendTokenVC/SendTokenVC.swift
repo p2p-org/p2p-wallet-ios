@@ -43,7 +43,7 @@ class _SendTokenVC: BEPagesVC, LoadableView {
     }
     var loadingViews: [UIView] { [containerView, sendButton] }
     
-    lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: UIEdgeInsets(top: 44, left: 16, bottom: 0, right: 16))
+    lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: UIEdgeInsets(top: .defaultPadding, left: .defaultPadding, bottom: 0, right: .defaultPadding))
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     lazy var sendButton = WLButton.stepButton(type: .blue, label: L10n.sendNow)
         .onTap(self, action: #selector(buttonSendDidTouch))
@@ -71,12 +71,7 @@ class _SendTokenVC: BEPagesVC, LoadableView {
     
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .vcBackground
-        title = L10n.sendCoins
-        
-        scrollView.contentView.backgroundColor = .textWhite
-        scrollView.contentView.layer.cornerRadius = 16
-        scrollView.contentView.layer.masksToBounds = true
+        view.backgroundColor = .background
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewDidTouch))
         view.addGestureRecognizer(tapGesture)
