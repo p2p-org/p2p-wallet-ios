@@ -9,7 +9,35 @@ import Foundation
 import RxSwift
 import Action
 
-class SendTokenVC: BEPagesVC, LoadableView {
+class SendTokenVC: WLModalWrapperVC {
+    override var padding: UIEdgeInsets {super.padding.modifying(dLeft: .defaultPadding, dRight: .defaultPadding)}
+    
+    init(wallets: [Wallet], address: String? = nil, initialSymbol: String? = nil) {
+        let vc = _SendTokenVC(wallets: wallets, address: address, initialSymbol: initialSymbol)
+        super.init(wrapped: vc)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func setUp() {
+        super.setUp()
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        stackView.addArrangedSubviews([
+            UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
+                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
+            UILabel(text: L10n.send, textSize: 17, weight: .semibold)
+        ])
+        
+        let separator = UIView.separator(height: 1, color: .separator)
+        containerView.addSubview(separator)
+        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+    }
+}
+
+class _SendTokenVC: BEPagesVC, LoadableView {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
         .normal(backgroundColor: .vcBackground)
     }
@@ -195,7 +223,7 @@ class SendTokenVC: BEPagesVC, LoadableView {
     }
 }
 
-extension SendTokenVC: BEPagesVCDelegate {
+extension _SendTokenVC: BEPagesVCDelegate {
     func bePagesVC(_ pagesVC: BEPagesVC, currentPageDidChangeTo currentPage: Int) {
         // trigger observable
         (viewControllers[currentPage] as! SendTokenItemVC).amountTextField.sendActions(for: .valueChanged)
