@@ -91,14 +91,14 @@ class CreatePhrasesVC: PhrasesVC {
         }()
         
         stackView.addArrangedSubview(keysContainerView)
-        stackView.addArrangedSubview(UILabel(text: L10n.orSavingIntoKeychain, textColor: .secondary, textAlignment: .center))
+        stackView.addArrangedSubview(UILabel(text: L10n.orSavingIntoKeychain, textColor: .textSecondary, textAlignment: .center))
         stackView.addArrangedSubview(saveToICloudButton)
         
         let label = UILabel(
             text: L10n.weVeCreatedSomeSecurityKeywordsForYou.uppercaseFirst + "\n" + L10n.warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture,
             textSize: 15,
             weight: .medium,
-            textColor: .secondary,
+            textColor: .textSecondary,
             numberOfLines: 0,
             textAlignment: .center
         )

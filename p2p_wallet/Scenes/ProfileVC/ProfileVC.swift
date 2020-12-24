@@ -10,7 +10,7 @@ import SwiftyUserDefaults
 import LocalAuthentication
 
 class ProfileVC: ProfileVCBase {
-    lazy var secureMethodsLabel = UILabel(textSize: 15, weight: .medium, textColor: .secondary)
+    lazy var secureMethodsLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
     var disposables = [DefaultsDisposable]()
     
     deinit {
@@ -23,12 +23,12 @@ class ProfileVC: ProfileVCBase {
         
         super.setUp()
         stackView.addArrangedSubviews([
-            createCell(text: L10n.backup, descriptionView: UIImageView(width: 17, height: 21, image: .backupShield, tintColor: .secondary)
+            createCell(text: L10n.backup, descriptionView: UIImageView(width: 17, height: 21, image: .backupShield, tintColor: .textSecondary)
             )
                 .withTag(1)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            createCell(text: L10n.network, descriptionView: UILabel(text: Defaults.network.cluster, textSize: 15, weight: .medium, textColor: .secondary)
+            createCell(text: L10n.network, descriptionView: UILabel(text: Defaults.network.cluster, textSize: 15, weight: .medium, textColor: .textSecondary)
             )
                 .withTag(2)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
@@ -38,7 +38,7 @@ class ProfileVC: ProfileVCBase {
                 .withTag(3)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            UIButton(label: L10n.logout, labelFont: .systemFont(ofSize: 15), textColor: .secondary)
+            UIButton(label: L10n.logout, labelFont: .systemFont(ofSize: 15), textColor: .textSecondary)
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
         ])
         
@@ -101,7 +101,7 @@ class ProfileVC: ProfileVCBase {
     private func createCell(text: String, descriptionView: UIView) -> UIStackView
     {
         let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-            UIImageView(width: 44, height: 44, backgroundColor: .secondary, cornerRadius: 22),
+            UIImageView(width: 44, height: 44, backgroundColor: .textSecondary, cornerRadius: 22),
             UILabel(text: text, textSize: 15),
             descriptionView,
             UIImageView(width: 4.5, height: 9, image: .nextArrow, tintColor: .textBlack)

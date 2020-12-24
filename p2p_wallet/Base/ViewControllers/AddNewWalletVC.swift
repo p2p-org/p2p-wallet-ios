@@ -13,7 +13,7 @@ class AddNewWalletVC: WalletsVC {
     lazy var titleLabel = UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
     lazy var closeButton = UIButton.close()
         .onTap(self, action: #selector(back))
-    lazy var descriptionLabel = LazyLabel<Double>(textSize: 15, textColor: .secondary, numberOfLines: 0)
+    lazy var descriptionLabel = LazyLabel<Double>(textSize: 15, textColor: .textSecondary, numberOfLines: 0)
     
     init() {
         let viewModel = ViewModel()
@@ -202,7 +202,7 @@ extension AddNewWalletVC {
         lazy var symbolLabel = UILabel(text: "SER", textSize: 17, weight: .bold)
         lazy var mintAddressWrapper = UIStackView(axis: .horizontal, spacing: 35, alignment: .center, distribution: .fill, arrangedSubviews: [
             UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.mintAddress, textSize: 12, textColor: .secondary),
+                UILabel(text: L10n.mintAddress, textSize: 12, textColor: .textSecondary),
                 mintAddressLabel
             ]),
             copyToClipboardButton
@@ -226,7 +226,7 @@ extension AddNewWalletVC {
             coinLogoImageView.layer.cornerRadius = 22
             
             coinNameLabel.font = .systemFont(ofSize: 12, weight: .medium)
-            coinNameLabel.textColor = .secondary
+            coinNameLabel.textColor = .textSecondary
             
             coinPriceLabel.font = .systemFont(ofSize: 17, weight: .bold)
             

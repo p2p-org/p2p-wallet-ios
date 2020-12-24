@@ -8,11 +8,5 @@
 import Foundation
 
 class MyProductsWalletCell: MainWalletCell {
-    override func commonInit() {
-        super.commonInit()
-        coinNameLabel.textColor = .textBlack
-        coinPriceLabel.textColor = .textBlack
-        addressLabel.textColor = .secondary
-        tokenCountLabel.textColor = .secondary
-    }
+    
 }
