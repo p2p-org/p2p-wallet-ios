@@ -41,7 +41,7 @@ class MainVC: CollectionVC<MainVCItem> {
     lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
         .onTap(self, action: #selector(avatarImageViewDidTouch))
     
-    lazy var tabBar = TabBar(cornerRadius: .defaultPadding, contentInset: UIEdgeInsets(x: 0, y: .defaultPadding))
+    lazy var tabBar = TabBar(cornerRadius: .defaultPadding, contentInset: UIEdgeInsets(top: 20, left: 0, bottom: 8, right: 0))
     
     init() {
         let vm = MainVM()
@@ -159,6 +159,7 @@ class MainVC: CollectionVC<MainVCItem> {
         case 0:
             if let view = header as? FirstSectionHeaderView {
                 view.balancesOverviewView.setUp(with: walletsVM.state.value)
+                view.showAllBalancesAction = self.showAllProducts
             }
         default:
             break
@@ -186,9 +187,23 @@ class MainVC: CollectionVC<MainVCItem> {
     override func dataDidLoad() {
         super.dataDidLoad()
         
-        if let headerView = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: 0)) as? FirstSectionHeaderView
+        if let headerView = headerForSection(0) as? FirstSectionHeaderView
         {
             headerView.balancesOverviewView.setUp(with: walletsVM.state.value)
+        }
+        
+        if let footerView = footerForSection(0) as? FirstSectionFooterView
+        {
+            var text = L10n.allMyBalances
+            switch walletsVM.state.value {
+            case .loaded(let wallets):
+                if wallets.count <= numberOfWalletsToShow {
+                    text = L10n.addToken
+                }
+            default:
+                break
+            }
+            footerView.buttonLabel.text = text
         }
         
         UIView.animate(withDuration: 0.3) {

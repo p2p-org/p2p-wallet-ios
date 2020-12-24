@@ -10,7 +10,10 @@ import Action
 
 extension MainVC {
     class FirstSectionHeaderView: SectionHeaderView {
+        var showAllBalancesAction: CocoaAction?
+        
         lazy var balancesOverviewView = BalancesOverviewView(textColor: .white)
+            .onTap(self, action: #selector(balancesOverviewDidTouch))
         
         override func commonInit() {
             super.commonInit()
@@ -27,15 +30,20 @@ extension MainVC {
             stackView.constraintToSuperviewWithAttribute(.top)?.constant = 30
             stackView.constraintToSuperviewWithAttribute(.bottom)?.constant = -30
         }
+        
+        @objc func balancesOverviewDidTouch() {
+            showAllBalancesAction?.execute()
+        }
     }
     
     class FirstSectionFooterView: SectionFooterView {
         var showProductsAction: CocoaAction?
         
+        lazy var buttonLabel = UILabel(text: L10n.allMyBalances, textSize: 17, weight: .medium, textColor: .white)
         lazy var button: UIView = {
             let view = UIView(backgroundColor: UIColor.white.withAlphaComponent(0.1), cornerRadius: 12)
             view.row([
-                UILabel(text: L10n.allMyBalances, textSize: 17, weight: .medium, textColor: .white),
+                buttonLabel,
                 UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .secondary)
             ], padding: .init(x: 20, y: 16))
             return view

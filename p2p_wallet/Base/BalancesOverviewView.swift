@@ -10,7 +10,7 @@ import Charts
 
 class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
     lazy var equityValueLabel = UILabel(text: " ", textSize: 21, weight: .bold, textColor: textColor)
-    lazy var changeLabel = UILabel(text: " ", textSize: 13)
+    lazy var changeLabel = UILabel(text: " ", textSize: 13, textColor: .secondary)
     lazy var chartView: PieChartView = {
         let chartView = PieChartView(width: 75, height: 75, cornerRadius: 75 / 2)
         chartView.usePercentValuesEnabled = true
@@ -67,14 +67,15 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         case .loaded(let wallets):
             let equityValue = wallets.reduce(0) { $0 + $1.amountInUSD }
             equityValueLabel.text = "$ \(equityValue.toString(maximumFractionDigits: 2))"
-            let changeValue = PricesManager.shared.solPrice?.change24h?.percentage * 100
-            var color = UIColor.attentionGreen
-            if changeValue < 0 {
-                color = .red
-            }
-            changeLabel.attributedText = NSMutableAttributedString()
-                .text("\(changeValue.toString(maximumFractionDigits: 2, showPlus: true))%", size: 13, color: color)
-                .text(" \(L10n.forTheLast24Hours)", size: 13, color: textColor)
+//            let changeValue = PricesManager.shared.solPrice?.change24h?.percentage * 100
+//            var color = UIColor.attentionGreen
+//            if changeValue < 0 {
+//                color = .red
+//            }
+//            changeLabel.attributedText = NSMutableAttributedString()
+//                .text("\(changeValue.toString(maximumFractionDigits: 2, showPlus: true))%", size: 13, color: color)
+//                .text(" \(L10n.forTheLast24Hours)", size: 13, color: textColor)
+            changeLabel.text = L10n.allTokens // FIXME: - temporarily, remove later
             setUpChartView(wallets: wallets)
             hideLoading()
         case .error(let error):
