@@ -19,7 +19,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
     lazy var chartPicker: HorizontalPicker = {
         let chartPicker = HorizontalPicker(forAutoLayout: ())
         chartPicker.labels = Period.allCases.map {$0.shortString}
-        chartPicker.selectedIndex = Period.allCases.firstIndex(where: {$0 == .day})!
+        chartPicker.selectedIndex = Period.allCases.firstIndex(where: {$0 == .last1h})!
         return chartPicker
     }()
     lazy var walletAddressLabel = UILabel(text: L10n.walletAddress, textSize: 13, weight: .medium, textColor: .textSecondary)
@@ -36,7 +36,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
             
             UIView.row([
                 tokenCountLabel,
-                changeLabel
+//                changeLabel
             ]).padding(.init(x: 20, y: 0)),
             
             .separator(height: 2, color: .separator),

@@ -28,20 +28,26 @@ struct PriceRecord: Hashable {
 }
 
 enum Period: String, CaseIterable {
+    case last1h
+    case last4h
     case day
     case week
     case month
 //    case year
 //    case all
     var shortString: String {
-        var string = "1"
+        var string = ""
         switch self {
+        case .last1h:
+            string = "1h"
+        case .last4h:
+            string = "4h"
         case .day:
-            string += "d"
+            string = "1d"
         case .week:
-            string += "w"
+            string = "1w"
         case .month:
-            string += "m"
+            string = "1m"
         }
         return string
     }
