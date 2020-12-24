@@ -346,6 +346,8 @@ internal enum L10n {
   internal static let wellDone = L10n.tr("Localizable", "Well done!")
   /// Will be  as a primary secure check
   internal static let willBeAsAPrimarySecureCheck = L10n.tr("Localizable", "Will be  as a primary secure check")
+  /// will cost
+  internal static let willCost = L10n.tr("Localizable", "will cost")
   /// Wowlet for people, not for tokens
   internal static let wowletForPeopleNotForTokens = L10n.tr("Localizable", "Wowlet for people, not for tokens")
   /// Wowlet recovery
