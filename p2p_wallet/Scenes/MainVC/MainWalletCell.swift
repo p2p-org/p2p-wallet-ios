@@ -8,7 +8,7 @@
 import Foundation
 
 class MainWalletCell: WalletCell {
-    lazy var addressLabel = UILabel(text: "public key", textSize: 13, textColor: .secondary, numberOfLines: 1)
+    lazy var addressLabel = UILabel(text: "public key", textSize: 13, textColor: .textSecondary, numberOfLines: 1)
     
     override var loadingViews: [UIView] {
         super.loadingViews + [addressLabel]

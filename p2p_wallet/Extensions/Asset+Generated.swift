@@ -16,6 +16,8 @@ extension UIColor {
     static let a3a5ba = UIColor(named: "a3a5ba", in: bundle, compatibleWith: nil)!
     static let a4a4a4 = UIColor(named: "a4a4a4", in: bundle, compatibleWith: nil)!
     static let attentionGreen = UIColor(named: "attention-green", in: bundle, compatibleWith: nil)!
+    static let background2 = UIColor(named: "background-2", in: bundle, compatibleWith: nil)!
+    static let background3 = UIColor(named: "background-3", in: bundle, compatibleWith: nil)!
     static let background = UIColor(named: "background", in: bundle, compatibleWith: nil)!
     static let barChart1 = UIColor(named: "bar-chart-1", in: bundle, compatibleWith: nil)!
     static let barChart2 = UIColor(named: "bar-chart-2", in: bundle, compatibleWith: nil)!

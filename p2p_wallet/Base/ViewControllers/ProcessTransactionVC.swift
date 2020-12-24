@@ -64,7 +64,7 @@ class ProcessTransactionVC: WLCenterSheet {
         
         let separator = UIView.separator(height: 1, color: .c4c4c4)
         
-        let transactionIdLabel = UILabel(text: L10n.transactionID, textSize: 12, weight: .medium, textColor: .secondary)
+        let transactionIdLabel = UILabel(text: L10n.transactionID, textSize: 12, weight: .medium, textColor: .textSecondary)
         
         let transactionIdRow = UIView.row([
             UILabel(text: transaction.signature, textSize: 15, weight: .medium),
