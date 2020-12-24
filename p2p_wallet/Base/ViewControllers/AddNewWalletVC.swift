@@ -9,12 +9,33 @@ import Foundation
 import Action
 import RxSwift
 
-class AddNewWalletVC: WalletsVC {
-    lazy var titleLabel = UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
-    lazy var closeButton = UIButton.close()
-        .onTap(self, action: #selector(back))
-    lazy var descriptionLabel = LazyLabel<Double>(textSize: 15, textColor: .textSecondary, numberOfLines: 0)
+class AddNewWalletVC: WLModalWrapperVC {
+    init() {
+        super.init(wrapped: _AddNewWalletVC())
+    }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func setUp() {
+        super.setUp()
+        stackView.axis = .horizontal
+        stackView.distribution = .equalSpacing
+        stackView.addArrangedSubviews([
+            UILabel(text: L10n.addToken, textSize: 17, weight: .semibold)
+                .padding(.init(x: 20, y: 0)),
+            UIButton(label: L10n.close, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: .h5887ff)
+                .padding(.init(x: 20, y: 0))
+                .onTap(self, action: #selector(back))
+        ])
+        let separator = UIView.separator(height: 1, color: .separator)
+        containerView.addSubview(separator)
+        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+    }
+}
+
+class _AddNewWalletVC: WalletsVC {
     init() {
         let viewModel = ViewModel()
         super.init(viewModel: viewModel)
@@ -28,44 +49,18 @@ class AddNewWalletVC: WalletsVC {
     
     override func setUp() {
         super.setUp()
-        let headerStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
-                titleLabel,
-                closeButton
-            ]),
-            descriptionLabel
-        ])
-        
-        view.addSubview(headerStackView)
-        headerStackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 25, left: 20, bottom: 0, right: 16), excludingEdge: .bottom)
-        
-        let separator = UIView.separator(height: 2, color: .vcBackground)
-        view.addSubview(separator)
-        separator.autoPinEdge(.top, to: .bottom, of: headerStackView, withOffset: 25)
-        separator.autoPinEdge(toSuperviewEdge: .leading)
-        separator.autoPinEdge(toSuperviewEdge: .trailing)
         
         // disable refreshing
         collectionView.refreshControl = nil
-        collectionView.constraintToSuperviewWithAttribute(.top)?.isActive = false
-        collectionView.autoPinEdge(.top, to: .bottom, of: separator)
-    }
-    
-    override func bind() {
-        super.bind()
-        let viewModel = self.viewModel as! ViewModel
-        descriptionLabel
-            .subscribed(to: viewModel.feeVM) {
-                L10n.AddATokenToYourWallet.thisWillCost + " " + $0.toString(maximumFractionDigits: 9) + " SOL"
-            }
-            .disposed(by: disposeBag)
     }
     
     override var sections: [Section] {
-        [Section(
-            header: Section.Header(title: ""),
-            cellType: AddNewWalletVC.Cell.self,
-            contentInsets: .init(top: 0, leading: 0, bottom: 0, trailing: 0))]
+        [
+            Section(
+                cellType: Cell.self,
+                contentInsets: .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+            )
+        ]
     }
     
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: Wallet) -> UICollectionViewCell {
@@ -143,7 +138,7 @@ class AddNewWalletVC: WalletsVC {
     }
 }
 
-extension AddNewWalletVC: UIViewControllerTransitioningDelegate {
+extension _AddNewWalletVC: UIViewControllerTransitioningDelegate {
     class PresentationController: CustomHeightPresentationController {
         override func containerViewDidLayoutSubviews() {
             super.containerViewDidLayoutSubviews()
@@ -163,7 +158,7 @@ extension AddNewWalletVC: UIViewControllerTransitioningDelegate {
     }
 }
 
-extension AddNewWalletVC {
+extension _AddNewWalletVC {
     class ViewModel: ListViewModel<Wallet> {
         class FeeVM: BaseVM<Double> {
             override var request: Single<Double> {
@@ -259,6 +254,7 @@ extension AddNewWalletVC {
             separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
             separator.autoPinEdge(.top, to: .bottom, of: stackView, withOffset: 20)
             
+            stackView.constraintToSuperviewWithAttribute(.top)?.constant = 10
             stackView.constraintToSuperviewWithAttribute(.leading)?.constant = 20
             stackView.constraintToSuperviewWithAttribute(.trailing)?.constant = -20
         }
