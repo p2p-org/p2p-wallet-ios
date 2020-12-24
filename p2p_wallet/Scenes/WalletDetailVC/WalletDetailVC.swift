@@ -73,6 +73,26 @@ class WalletDetailVC: WLModalWrapperVC {
         ])
     }
     
+    override func bind() {
+        super.bind()
+        walletNameTextField.rx.text.orEmpty
+            .skip(1)
+            .map {$0.trimmingCharacters(in: .whitespacesAndNewlines)}
+            .distinctUntilChanged()
+            .subscribe(onNext: {
+                WalletsVM.ofCurrentUser.updateWallet(self.wallet, withName: $0)
+            })
+            .disposed(by: disposeBag)
+        
+        walletNameTextField.delegate = self
+    }
+    
+    // MARK: - Actions
+    override func dismissKeyboard() {
+        super.dismissKeyboard()
+        walletNameTextField.isUserInteractionEnabled = false
+    }
+    
     @objc func buttonEditDidTouch() {
         walletNameTextField.isUserInteractionEnabled.toggle()
         if walletNameTextField.isUserInteractionEnabled {
@@ -94,6 +114,13 @@ class WalletDetailVC: WLModalWrapperVC {
         // TODO: - Swap
         let vc = SwapTokenVC(wallets: WalletsVM.ofCurrentUser.data)
         self.show(vc, sender: nil)
+    }
+}
+
+extension WalletDetailVC: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        dismissKeyboard()
+        return true
     }
 }
 
