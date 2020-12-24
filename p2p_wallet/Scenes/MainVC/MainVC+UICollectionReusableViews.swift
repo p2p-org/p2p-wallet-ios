@@ -39,11 +39,13 @@ extension MainVC {
         var showProductsAction: CocoaAction?
         
         lazy var buttonLabel = UILabel(text: L10n.allMyBalances, textSize: 17, weight: .medium)
+        lazy var indicatorImageView = UIImageView(width: 24, height: 24, image: .indicatorNext, tintColor: .textSecondary)
+        
         lazy var button: UIView = {
             let view = UIView(backgroundColor: .lightGrayBackground, cornerRadius: 12)
             view.row([
                 buttonLabel,
-                UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .textSecondary)
+                indicatorImageView
             ], padding: .init(x: 20, y: 16))
             return view
                 .onTap(self, action: #selector(buttonDidTouch))
@@ -53,6 +55,13 @@ extension MainVC {
             super.commonInit()
             stackView.alignment = .fill
             stackView.addArrangedSubview(button.padding(.init(x: .defaultPadding, y: 30)))
+        }
+        
+        func setUp(title: String, indicator: UIImage, action: CocoaAction)
+        {
+            buttonLabel.text = title
+            indicatorImageView.image = indicator
+            showProductsAction = action
         }
         
         @objc func buttonDidTouch() {
