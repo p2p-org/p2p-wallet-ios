@@ -102,7 +102,7 @@ class WalletDetailVC: WLModalWrapperVC {
     
     @objc func buttonSendDidTouch() {
         let vc = SendTokenVC(wallets: WalletsVM.ofCurrentUser.data, initialSymbol: wallet.symbol)
-        self.show(vc, sender: nil)
+        self.present(vc, animated: true, completion: nil)
     }
     
     @objc func buttonReceiveDidTouch() {
