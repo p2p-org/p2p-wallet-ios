@@ -10,7 +10,7 @@ import Foundation
 // wrapper of 
 struct Wallet: FiatConvertable {
     let id: String
-    let name: String
+    var name: String
     let mintAddress: String
     var pubkey: String?
     let symbol: String
@@ -35,7 +35,7 @@ struct Wallet: FiatConvertable {
 extension Wallet: ListItemType {
     init(programAccount: SolanaSDK.Token) {
         self.id = programAccount.pubkey ?? ""
-        self.name = programAccount.name
+        self.name = Defaults.walletName[programAccount.symbol] ?? programAccount.name
         self.mintAddress = programAccount.mintAddress
         self.symbol = programAccount.symbol
         self.icon = programAccount.icon
