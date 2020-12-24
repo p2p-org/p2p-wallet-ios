@@ -169,21 +169,6 @@ class MainVC: CollectionVC<MainVCItem> {
         return header
     }
     
-    override func configureFooterForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
-        let footer = super.configureFooterForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
-        
-        switch indexPath.section {
-        case 0:
-            if let view = footer as? FirstSectionFooterView {
-                view.showProductsAction = self.showAllProducts
-            }
-        default:
-            break
-        }
-        
-        return footer
-    }
-    
     // MARK: - Actions
     override func dataDidLoad() {
         super.dataDidLoad()
@@ -196,15 +181,19 @@ class MainVC: CollectionVC<MainVCItem> {
         if let footerView = footerForSection(0) as? FirstSectionFooterView
         {
             var text = L10n.allMyBalances
+            var image = UIImage.nextArrow
+            var action = showAllProducts
             switch walletsVM.state.value {
             case .loaded(let wallets):
                 if wallets.count <= numberOfWalletsToShow {
                     text = L10n.addToken
+                    image = .walletAdd
+                    action = addCoin
                 }
             default:
                 break
             }
-            footerView.buttonLabel.text = text
+            footerView.setUp(title: text, indicator: image, action: action)
         }
         
         UIView.animate(withDuration: 0.3) {
@@ -254,6 +243,14 @@ class MainVC: CollectionVC<MainVCItem> {
     var showAllProducts: CocoaAction {
         CocoaAction { _ in
             self.present(MyProductsVC(), animated: true, completion: nil)
+            return .just(())
+        }
+    }
+    
+    var addCoin: CocoaAction {
+        CocoaAction {_ in
+            let vc = AddNewWalletVC()
+            self.present(vc, animated: true, completion: nil)
             return .just(())
         }
     }

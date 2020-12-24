@@ -61,6 +61,7 @@ extension UIImage {
     static let downArrow = UIImage(named: "down-arrow", in: bundle, compatibleWith: nil)!
     static let emptyPlaceholder = UIImage(named: "empty-placeholder", in: bundle, compatibleWith: nil)!
     static let faceId = UIImage(named: "faceId", in: bundle, compatibleWith: nil)!
+    static let indicatorNext = UIImage(named: "indicator-next", in: bundle, compatibleWith: nil)!
     static let introBankCard1 = UIImage(named: "intro-bank-card-1", in: bundle, compatibleWith: nil)!
     static let nextArrow = UIImage(named: "next-arrow", in: bundle, compatibleWith: nil)!
     static let p2pValidatorLogo = UIImage(named: "p2p-validator-logo", in: bundle, compatibleWith: nil)!
