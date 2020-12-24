@@ -19,8 +19,7 @@ class SendTokenItemVC: BaseVC {
     var chooseWalletAction: CocoaAction?
     
     // MARK: - Subviews
-    lazy var tokenNameLabel = UILabel(text: "TOKEN", weight: .semibold)
-    lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .textSecondary)
+    lazy var balanceLabel = UILabel(text: "0", textColor: .h5887ff)
     lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
         .onTap(self, action: #selector(buttonChooseWalletDidTouch))
     lazy var amountTextField = TokenAmountTextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0\(Locale.current.decimalSeparator ?? ".")0", autocorrectionType: .no, rightView: useAllBalanceButton, rightViewMode: .always)
@@ -35,7 +34,7 @@ class SendTokenItemVC: BaseVC {
     }()
     lazy var qrCodeImageView = UIImageView(width: 18, height: 18, image: .scanQr, tintColor: UIColor.black.withAlphaComponent(0.5))
         .onTap(self, action: #selector(buttonScanQrCodeDidTouch))
-    lazy var errorLabel = UILabel(text: "Error: ", textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
+    lazy var errorLabel = UILabel(text: " ", textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
     
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
@@ -48,92 +47,58 @@ class SendTokenItemVC: BaseVC {
         view.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
         
-        let tokenInfoView: UIStackView = {
-            let stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing)
-            stackView.addArrangedSubview(tokenNameLabel)
-            stackView.addArrangedSubview(balanceLabel)
-            return stackView
-        }()
-        
-        let amountView: UIStackView = {
-            let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
-            let downArrowImage = UIImageView(width: 11, height: 8, image: .downArrow)
-                .onTap(self, action: #selector(buttonChooseWalletDidTouch))
-            downArrowImage.tintColor = .textBlack
-            
-            let amountVStack: UIStackView = {
-                let stackView = UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill)
-                stackView.addArrangedSubviews([.spacer, amountTextField, equityValueLabel])
-                return stackView
-            }()
-            
-            stackView.addArrangedSubviews([
-                coinImageView,
-                downArrowImage,
-                amountVStack
-            ])
-            amountTextField.autoAlignAxis(.horizontal, toSameAxisOf: coinImageView)
-            return stackView
-        }()
-        
-        let separator = UIView.separator(height: 2, color: .vcBackground)
-        
-        let priceWrapper = UIView.col([
-            .row([
-                UILabel(text: "1 " + (wallet?.symbol ?? "") + ":", textSize: 15),
-                UILabel(text: (wallet?.price?.value?.toString(maximumFractionDigits: 9) ?? "") + " US$", textSize: 15)
-            ]),
-            .row([
-                UILabel(text: L10n.fee + ":", textSize: 15),
-                feeLabel
-            ])
-        ])
-        
-        let addressView: UIStackView = {
-            let stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
-            let containerView: UIView = {
-                let view = UIView(backgroundColor: .c4c4c4, cornerRadius: 16)
-                let stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill)
-                view.addSubview(stackView)
-                stackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 20))
-                stackView.addArrangedSubviews([addressTextView, qrCodeImageView])
-                return view
-            }()
-            stackView.addArrangedSubviews([
-                UILabel(text: L10n.walletAddress, textSize: 15, weight: .semibold),
-                containerView
-            ])
-            return stackView
-        }()
-        
-        let separator2 = UIView.separator(height: 2, color: .vcBackground)
-        
         stackView.addArrangedSubviews([
-            .spacer,
-            tokenInfoView.padding(UIEdgeInsets(x: 16, y: 0)),
-            amountView.padding(UIEdgeInsets(x: 16, y: 0)),
-            separator,
-            priceWrapper.padding(UIEdgeInsets(x: 16, y: 0)),
-            separator2,
-            addressView.padding(UIEdgeInsets(x: 16, y: 0)),
-            errorLabel.padding(UIEdgeInsets(x: 16, y: 0)),
-            .spacer
-        ])
-        stackView.setCustomSpacing(16, after: tokenInfoView.wrapper!)
-        stackView.setCustomSpacing(16, after: separator)
-        stackView.setCustomSpacing(16, after: priceWrapper)
-        stackView.setCustomSpacing(30, after: separator2)
-        stackView.setCustomSpacing(16, after: addressView)
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
+                UILabel(text: L10n.from, weight: .medium),
+                balanceLabel
+            ]),
+            
+            UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
+                coinImageView,
+                UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textBlack)
+                    .onTap(self, action: #selector(buttonChooseWalletDidTouch)),
+                amountTextField
+            ]),
+            
+            UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
+                UILabel(text: wallet?.symbol, textSize: 15, weight: .semibold),
+                equityValueLabel
+            ]),
+            
+            .separator(height: 1, color: .separator),
+            
+            UIView.col([
+                .row([
+                    UILabel(text: "1 " + (wallet?.symbol ?? "") + ":", textSize: 15),
+                    UILabel(text: (wallet?.price?.value?.toString(maximumFractionDigits: 9) ?? "") + " US$", textSize: 15)
+                ]),
+                .row([
+                    UILabel(text: L10n.fee + ":", textSize: 15),
+                    feeLabel
+                ])
+            ]),
+            
+            .separator(height: 1, color: .separator),
+            
+            UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
+                UILabel(text: L10n.to, textSize: 15, weight: .semibold),
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
+                    addressTextView, qrCodeImageView
+                ])
+                    .padding(.init(all: .defaultPadding), backgroundColor: .c4c4c4, cornerRadius: 16)
+            ]),
+            
+            errorLabel
+        ], withCustomSpacings: [30, 6, 20, 20, 20, 20, 19])
         
-        errorLabel.isHidden = true
+        equityValueLabel.autoPinEdge(.leading, to: .leading, of: amountTextField)
         
         amountTextField.delegate = self
     }
     
     func setUp(wallet: Wallet) {
         self.wallet = wallet
-        tokenNameLabel.text = wallet.name
-        balanceLabel.text = "\(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
+        balanceLabel.text = "\(L10n.available): \(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
         coinImageView.setImage(urlString: wallet.icon)
     }
     
@@ -142,7 +107,7 @@ class SendTokenItemVC: BaseVC {
         amountTextField.rx.text.orEmpty
             .map {$0.double ?? 0}
             .map {$0 * self.wallet?.price?.value}
-            .map {"= " + $0.toString(maximumFractionDigits: 9) + "  US$"}
+            .map {"≈ " + $0.toString(maximumFractionDigits: 9) + "  US$"}
             .asDriver(onErrorJustReturn: "")
             .drive(equityValueLabel.rx.text)
             .disposed(by: disposeBag)
@@ -173,10 +138,8 @@ class SendTokenItemVC: BaseVC {
         
         if let errorMessage = errorMessage {
             errorLabel.text = errorMessage
-            errorLabel.isHidden = false
         } else {
-            errorLabel.text = nil
-            errorLabel.isHidden = true
+            errorLabel.text = " "
         }
     }
     

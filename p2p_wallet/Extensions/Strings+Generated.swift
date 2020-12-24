@@ -40,6 +40,8 @@ internal enum L10n {
   internal static let amountIsNotValid = L10n.tr("Localizable", "Amount is not valid")
   /// Authentication failed
   internal static let authenticationFailed = L10n.tr("Localizable", "Authentication failed")
+  /// Available
+  internal static let available = L10n.tr("Localizable", "Available")
   /// Back
   internal static let back = L10n.tr("Localizable", "Back")
   /// Backup
