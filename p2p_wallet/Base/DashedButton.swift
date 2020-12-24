@@ -10,7 +10,7 @@ import Foundation
 class DashedButton: WLButton {
     lazy var borderLayer: CAShapeLayer = {
         let layer = CAShapeLayer()
-        layer.strokeColor = UIColor.secondary.cgColor
+        layer.strokeColor = UIColor.textSecondary.cgColor
         layer.lineDashPattern = [2, 2]
         layer.fillColor = nil
         return layer
@@ -23,7 +23,7 @@ class DashedButton: WLButton {
         
         setTitle(title, for: .normal)
         titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
-        setTitleColor(.secondary, for: .normal)
+        setTitleColor(.textSecondary, for: .normal)
         contentEdgeInsets = UIEdgeInsets(x: 28, y: 0)
         
         layer.addSublayer(borderLayer)

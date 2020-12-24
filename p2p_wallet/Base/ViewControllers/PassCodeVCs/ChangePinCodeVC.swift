@@ -88,7 +88,7 @@ class ChangePinCodeVC: WLBottomSheet {
     private func createInput(title: String, textField: UITextField) -> UIView {
         let view = UIView(backgroundColor: .f5f5f5, cornerRadius: 16)
         view.col([
-            UILabel(text: title, textSize: 12, textColor: .secondary),
+            UILabel(text: title, textSize: 12, textColor: .textSecondary),
             textField
         ], padding: .init(x: 16, y: 10))
             .with(spacing: 5)

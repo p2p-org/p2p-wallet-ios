@@ -12,11 +12,11 @@ class BackupVC: ProfileVCBase {
         title = L10n.backup
         super.setUp()
         stackView.addArrangedSubviews([
-            UIImageView(width: 63, height: 77, image: .backupShield, tintColor: .secondary
+            UIImageView(width: 63, height: 77, image: .backupShield, tintColor: .textSecondary
             )
                 .centeredHorizontallyView,
             UILabel(text: L10n.yourWalletNeedsBackup, textSize: 17, weight: .bold, numberOfLines: 0, textAlignment: .center),
-            UILabel(text: L10n.ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases, textSize: 17, textColor: .secondary, numberOfLines: 0, textAlignment: .center),
+            UILabel(text: L10n.ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases, textSize: 17, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center),
             WLButton.stepButton(type: .black, label: L10n.backupUsingICloud)
                 .onTap(self, action: #selector(buttonBackupUsingICloudDidTouch)),
             WLButton.stepButton(type: .sub, label: L10n.backupManually)

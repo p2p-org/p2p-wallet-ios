@@ -37,7 +37,7 @@ class TransactionInfoVC: BaseVStackVC {
             UIImageView(width: 44, height: 44, cornerRadius: 22, image: .transactionInfoIcon),
             .col([
                 UILabel(text: L10n.transaction, textSize: 17, weight: .bold),
-                UILabel(text: transaction.timestamp?.string(withFormat: "dd MMM yyyy @ hh:mm a"), textSize: 15, weight: .medium, textColor: .secondary)
+                UILabel(text: transaction.timestamp?.string(withFormat: "dd MMM yyyy @ hh:mm a"), textSize: 15, weight: .medium, textColor: .textSecondary)
             ]),
             UIButton.close()
                 .onTap(self, action: #selector(back))
@@ -61,7 +61,7 @@ class TransactionInfoVC: BaseVStackVC {
             UILabel(text: transaction.amount?.toString(maximumFractionDigits: 9, showPlus: true), textSize: 25, weight: .bold)
                 .padding(.init(x: 20, y: 0)),
             UIView.row([
-                UILabel(text: transaction.status.localizedString, textSize: 12, weight: .bold, textColor: .secondary)
+                UILabel(text: transaction.status.localizedString, textSize: 12, weight: .bold, textColor: .textSecondary)
                     .padding(.init(x: 16, y: 8), backgroundColor: .buttonSub, cornerRadius: 10),
                 .spacer
             ])
@@ -147,7 +147,7 @@ class TransactionInfoVC: BaseVStackVC {
     }
     
     fileprivate func sectionTitle(_ title: String?) -> UIView {
-        UILabel(text: title, textSize: 12, weight: .semibold, textColor: .secondary)
+        UILabel(text: title, textSize: 12, weight: .semibold, textColor: .textSecondary)
             .padding(.init(x: 20, y: 0))
     }
     

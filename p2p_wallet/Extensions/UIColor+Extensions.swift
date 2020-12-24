@@ -8,8 +8,8 @@
 import Foundation
 
 extension UIColor {
-    static var secondary: UIColor {
-        .a3a5ba
+    static var textSecondary: UIColor {
+        UIColor.textBlack.withAlphaComponent(0.5)
     }
     
     func image(_ size: CGSize = CGSize(width: 1, height: 1)) -> UIImage {
