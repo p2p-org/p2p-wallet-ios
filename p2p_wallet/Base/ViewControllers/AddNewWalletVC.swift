@@ -11,11 +11,13 @@ import RxSwift
 
 class AddNewWalletVC: WLModalWrapperVC {
     lazy var searchBar: BESearchBar = {
-        let searchBar = BESearchBar(height: 36, cornerRadius: 12)
+        let searchBar = BESearchBar(fixedHeight: 36, cornerRadius: 12)
         searchBar.textFieldBgColor = .lightGrayBackground
         searchBar.magnifyingIconSize = 24
         searchBar.magnifyingIconImageView.image = .search
         searchBar.leftViewWidth = 24+10+10
+        searchBar.delegate = self
+        searchBar.cancelButton.setTitleColor(.h5887ff, for: .normal)
         return searchBar
     }()
     
@@ -41,6 +43,25 @@ class AddNewWalletVC: WLModalWrapperVC {
             searchBar
                 .padding(.init(x: .defaultPadding, y: 0))
         ], withCustomSpacings: [.defaultPadding, .defaultPadding])
+        
+    }
+}
+
+extension AddNewWalletVC: BESearchBarDelegate {
+    func beSearchBar(_ searchBar: BESearchBar, searchWithKeyword keyword: String) {
+        let vm = (self.vc as! _AddNewWalletVC).viewModel as! _AddNewWalletVC.ViewModel
+        vm.offlineSearch(query: keyword)
+    }
+    
+    func beSearchBarDidBeginSearching(_ searchBar: BESearchBar) {
+        
+    }
+    
+    func beSearchBarDidEndSearching(_ searchBar: BESearchBar) {
+        
+    }
+    
+    func beSearchBarDidCancelSearching(_ searchBar: BESearchBar) {
         
     }
 }
@@ -76,9 +97,8 @@ class _AddNewWalletVC: WalletsVC {
     
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: Wallet) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
-        if let cell = cell as? Cell, indexPath.row < self.viewModel.data.count {
-            let wallet = self.viewModel.data[indexPath.row]
-            
+        if let cell = cell as? Cell, let wallet = itemAtIndexPath(indexPath)
+        {
             cell.viewInBlockchainExplorerButton.rx.action = CocoaAction {_ in
                 self.showWebsite(url: "https://explorer.solana.com/address/\(wallet.mintAddress)")
                 return .just(())
@@ -108,6 +128,12 @@ class _AddNewWalletVC: WalletsVC {
                     afterSuccess: { (signature, newPubkey) in
                         // remove suggestion from the list
                         self.viewModel.removeItem(where: {$0.mintAddress == newWallet.mintAddress})
+                        
+                        // cancel search if search result is empty
+                        if self.viewModel.searchResult?.isEmpty == true
+                        {
+                            (self.parent as? AddNewWalletVC)?.searchBar.clear()
+                        }
                         
                         // process transaction
                         transactionVC.signature = signature
@@ -219,6 +245,11 @@ extension _AddNewWalletVC {
             feeVM.reload()
         }
         override func fetchNext() { /* do nothing */ }
+        
+        override func offlineSearchPredicate(item: Wallet, lowercasedQuery query: String) -> Bool {
+            item.name.lowercased().contains(query) ||
+            item.symbol.lowercased().contains(query)
+        }
     }
     
     class Cell: WalletCell {
