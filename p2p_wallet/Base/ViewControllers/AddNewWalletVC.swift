@@ -10,6 +10,17 @@ import Action
 import RxSwift
 
 class AddNewWalletVC: WLModalWrapperVC {
+    lazy var searchBar: BESearchBar = {
+        let searchBar = BESearchBar(fixedHeight: 36, cornerRadius: 12)
+        searchBar.textFieldBgColor = .lightGrayBackground
+        searchBar.magnifyingIconSize = 24
+        searchBar.magnifyingIconImageView.image = .search
+        searchBar.leftViewWidth = 24+10+10
+        searchBar.delegate = self
+        searchBar.cancelButton.setTitleColor(.h5887ff, for: .normal)
+        return searchBar
+    }()
+    
     init() {
         super.init(wrapped: _AddNewWalletVC())
     }
@@ -20,18 +31,38 @@ class AddNewWalletVC: WLModalWrapperVC {
     
     override func setUp() {
         super.setUp()
-        stackView.axis = .horizontal
-        stackView.distribution = .equalSpacing
         stackView.addArrangedSubviews([
-            UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
-                .padding(.init(x: 20, y: 0)),
-            UIButton(label: L10n.close, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: .h5887ff)
-                .onTap(self, action: #selector(back))
-                .padding(.init(x: 20, y: 0))
-        ])
-        let separator = UIView.separator(height: 1, color: .separator)
-        containerView.addSubview(separator)
-        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
+                UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
+                    .padding(.init(x: 20, y: 0)),
+                UIButton(label: L10n.close, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: .h5887ff)
+                    .onTap(self, action: #selector(back))
+                    .padding(.init(x: 20, y: 0))
+            ]),
+            .separator(height: 1, color: .separator),
+            searchBar
+                .padding(.init(x: .defaultPadding, y: 0))
+        ], withCustomSpacings: [.defaultPadding, .defaultPadding])
+        
+    }
+}
+
+extension AddNewWalletVC: BESearchBarDelegate {
+    func beSearchBar(_ searchBar: BESearchBar, searchWithKeyword keyword: String) {
+        let vm = (self.vc as! _AddNewWalletVC).viewModel as! _AddNewWalletVC.ViewModel
+        vm.offlineSearch(query: keyword)
+    }
+    
+    func beSearchBarDidBeginSearching(_ searchBar: BESearchBar) {
+        
+    }
+    
+    func beSearchBarDidEndSearching(_ searchBar: BESearchBar) {
+        
+    }
+    
+    func beSearchBarDidCancelSearching(_ searchBar: BESearchBar) {
+        
     }
 }
 
@@ -52,6 +83,7 @@ class _AddNewWalletVC: WalletsVC {
         
         // disable refreshing
         collectionView.refreshControl = nil
+        collectionView.keyboardDismissMode = .onDrag
     }
     
     override var sections: [Section] {
@@ -65,9 +97,8 @@ class _AddNewWalletVC: WalletsVC {
     
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: Wallet) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
-        if let cell = cell as? Cell, indexPath.row < self.viewModel.data.count {
-            let wallet = self.viewModel.data[indexPath.row]
-            
+        if let cell = cell as? Cell, let wallet = itemAtIndexPath(indexPath)
+        {
             cell.viewInBlockchainExplorerButton.rx.action = CocoaAction {_ in
                 self.showWebsite(url: "https://explorer.solana.com/address/\(wallet.mintAddress)")
                 return .just(())
@@ -97,6 +128,12 @@ class _AddNewWalletVC: WalletsVC {
                     afterSuccess: { (signature, newPubkey) in
                         // remove suggestion from the list
                         self.viewModel.removeItem(where: {$0.mintAddress == newWallet.mintAddress})
+                        
+                        // cancel search if search result is empty
+                        if self.viewModel.searchResult?.isEmpty == true
+                        {
+                            (self.parent as? AddNewWalletVC)?.searchBar.clear()
+                        }
                         
                         // process transaction
                         transactionVC.signature = signature
@@ -144,6 +181,7 @@ class _AddNewWalletVC: WalletsVC {
     }
     
     override func itemDidSelect(_ item: Wallet) {
+        parent?.view.endEditing(true)
         viewModel.updateItem(where: {item.mintAddress == $0.mintAddress}, transform: {
             var wallet = $0
             wallet.isExpanded = !(wallet.isExpanded ?? false)
@@ -207,6 +245,11 @@ extension _AddNewWalletVC {
             feeVM.reload()
         }
         override func fetchNext() { /* do nothing */ }
+        
+        override func offlineSearchPredicate(item: Wallet, lowercasedQuery query: String) -> Bool {
+            item.name.lowercased().contains(query) ||
+            item.symbol.lowercased().contains(query)
+        }
     }
     
     class Cell: WalletCell {
@@ -227,7 +270,11 @@ extension _AddNewWalletVC {
         ], customSpacing: [20, 5, 20, 20, 20])
         lazy var mintAddressLabel = UILabel(textSize: 15, weight: .semibold, numberOfLines: 0)
         lazy var viewInBlockchainExplorerButton = UIButton(label: L10n.viewInBlockchainExplorer, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .a3a5ba)
-        lazy var feeLabel = LazyLabel<Double>(textSize: 13, textColor: UIColor.white.withAlphaComponent(0.5), textAlignment: .center)
+        lazy var feeLabel: LazyLabel<Double> = {
+            let label = LazyLabel<Double>(textSize: 13, textColor: UIColor.white.withAlphaComponent(0.5), textAlignment: .center)
+            label.isUserInteractionEnabled = false
+            return label
+        }()
         
         var createWalletAction: CocoaAction?
         

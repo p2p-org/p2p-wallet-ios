@@ -30,6 +30,8 @@ internal enum L10n {
   internal static let allMyBalances = L10n.tr("Localizable", "All my balances")
   /// All my products
   internal static let allMyProducts = L10n.tr("Localizable", "All my products")
+  /// All my tokens
+  internal static let allMyTokens = L10n.tr("Localizable", "All my tokens")
   /// All tokens
   internal static let allTokens = L10n.tr("Localizable", "All tokens")
   /// Almost done!
