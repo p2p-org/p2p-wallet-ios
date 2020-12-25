@@ -20,7 +20,7 @@ class MyProductsVC: WLModalWrapperVC {
         super.setUp()
         stackView.axis = .horizontal
         stackView.addArrangedSubviews([
-            UILabel(text: L10n.myBalances, textSize: 21, weight: .semibold)
+            UILabel(text: L10n.allMyTokens, textSize: 21, weight: .semibold)
                 .padding(.init(x: 20, y: 0)),
             UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .h5887ff)
                 .padding(.init(all: 10), backgroundColor: .eff3ff, cornerRadius: 12)

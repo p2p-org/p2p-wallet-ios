@@ -38,7 +38,7 @@ extension MainVC {
     class FirstSectionFooterView: SectionFooterView {
         var showProductsAction: CocoaAction?
         
-        lazy var buttonLabel = UILabel(text: L10n.allMyBalances, textSize: 17, weight: .medium)
+        lazy var buttonLabel = UILabel(text: L10n.allMyTokens, textSize: 17, weight: .medium)
         lazy var indicatorImageView = UIImageView(width: 24, height: 24, image: .indicatorNext, tintColor: .textSecondary)
         
         lazy var button: UIView = {

@@ -184,10 +184,10 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
         var snapshot = DiffableDataSourceSnapshot<String, ItemType>()
         let section = sections.first?.header?.title ?? ""
         snapshot.appendSections([section])
-        var items = filter(viewModel.items)
+        var items = viewModel.searchResult == nil ? filter(viewModel.items) : filter(viewModel.searchResult!)
         switch viewModel.state.value {
         case .loading:
-            items += [ItemType.placeholder(at: 0), ItemType.placeholder(at: 1)]
+            items += [ItemType.placeholder(at: items.count), ItemType.placeholder(at: items.count + 1)]
         case .loaded, .error, .initializing:
             break
         }
@@ -398,6 +398,10 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
     func footerForSection(_ section: Int) -> UICollectionReusableView?
     {
         collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: IndexPath(row: 0, section: section))
+    }
+    
+    func itemAtIndexPath(_ indexPath: IndexPath) -> ItemType? {
+        viewModel.itemAtIndex(indexPath.row)
     }
     
     // MARK: - Actions
