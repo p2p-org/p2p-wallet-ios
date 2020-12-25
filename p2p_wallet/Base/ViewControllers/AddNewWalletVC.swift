@@ -193,6 +193,9 @@ extension _AddNewWalletVC {
             }
             
             data = wallets
+                .filter { newWallet in
+                    !WalletsVM.ofCurrentUser.data.contains(where: {$0.mintAddress == newWallet.mintAddress})
+                }
             state.accept(.loaded(data))
             
             // fee
