@@ -69,6 +69,7 @@ extension UIImage {
     static let reverseButton = UIImage(named: "reverse-button", in: bundle, compatibleWith: nil)!
     static let scanQr2 = UIImage(named: "scan-qr-2", in: bundle, compatibleWith: nil)!
     static let scanQr = UIImage(named: "scan-qr", in: bundle, compatibleWith: nil)!
+    static let search = UIImage(named: "search", in: bundle, compatibleWith: nil)!
     static let tabbarActivities = UIImage(named: "tabbar-activities", in: bundle, compatibleWith: nil)!
     static let tabbarFriends = UIImage(named: "tabbar-friends", in: bundle, compatibleWith: nil)!
     static let tabbarHome = UIImage(named: "tabbar-home", in: bundle, compatibleWith: nil)!
