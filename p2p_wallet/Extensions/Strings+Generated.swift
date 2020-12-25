@@ -26,6 +26,8 @@ internal enum L10n {
   internal static let allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice = L10n.tr("Localizable", "All deposits are stored 100% non-custodiallity with keys held on this device")
   /// All my products
   internal static let allMyProducts = L10n.tr("Localizable", "All my products")
+  /// All my tokens
+  internal static let allMyTokens = L10n.tr("Localizable", "All my tokens")
   /// Almost done!
   internal static let almostDone = L10n.tr("Localizable", "Almost done!")
   /// amount
