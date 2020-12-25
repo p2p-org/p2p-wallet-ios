@@ -18,6 +18,7 @@ extension UIColor {
     static let attentionGreen = UIColor(named: "attention-green", in: bundle, compatibleWith: nil)!
     static let background2 = UIColor(named: "background-2", in: bundle, compatibleWith: nil)!
     static let background3 = UIColor(named: "background-3", in: bundle, compatibleWith: nil)!
+    static let background4 = UIColor(named: "background-4", in: bundle, compatibleWith: nil)!
     static let background = UIColor(named: "background", in: bundle, compatibleWith: nil)!
     static let barChart1 = UIColor(named: "bar-chart-1", in: bundle, compatibleWith: nil)!
     static let barChart2 = UIColor(named: "bar-chart-2", in: bundle, compatibleWith: nil)!
