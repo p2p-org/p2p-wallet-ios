@@ -11,9 +11,11 @@ import RxSwift
 
 class AddNewWalletVC: WLModalWrapperVC {
     lazy var searchBar: BESearchBar = {
-        let searchBar = BESearchBar()
+        let searchBar = BESearchBar(height: 36, cornerRadius: 12)
         searchBar.textFieldBgColor = .lightGrayBackground
-//        searchBar.magnifyingIconImageView.image = .actions
+        searchBar.magnifyingIconSize = 24
+        searchBar.magnifyingIconImageView.image = .search
+        searchBar.leftViewWidth = 24+10+10
         return searchBar
     }()
     
@@ -153,6 +155,7 @@ class _AddNewWalletVC: WalletsVC {
     }
     
     override func itemDidSelect(_ item: Wallet) {
+        parent?.view.endEditing(true)
         viewModel.updateItem(where: {item.mintAddress == $0.mintAddress}, transform: {
             var wallet = $0
             wallet.isExpanded = !(wallet.isExpanded ?? false)
