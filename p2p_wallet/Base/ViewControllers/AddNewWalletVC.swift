@@ -222,7 +222,7 @@ extension _AddNewWalletVC {
         ], customSpacing: [20, 5, 20, 20, 20])
         lazy var mintAddressLabel = UILabel(textSize: 15, weight: .semibold, numberOfLines: 0)
         lazy var viewInBlockchainExplorerButton = UIButton(label: L10n.viewInBlockchainExplorer, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .a3a5ba)
-        lazy var feeLabel = LazyLabel<Double>(textSize: 13, textColor: .f6f6f8, textAlignment: .center)
+        lazy var feeLabel = LazyLabel<Double>(textSize: 13, textColor: UIColor.white.withAlphaComponent(0.5), textAlignment: .center)
         
         var createWalletAction: CocoaAction?
         
