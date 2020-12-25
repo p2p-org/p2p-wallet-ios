@@ -338,6 +338,7 @@ extension _AddNewWalletVC {
                         L10n.willCost + " " + $0.toString(maximumFractionDigits: 9) + " SOL"
                     }
                     .disposed(by: disposeBag)
+                feeLabel.isUserInteractionEnabled = false
             }
             
         }
