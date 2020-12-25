@@ -14,7 +14,7 @@ class WalletDetailVC: WLModalWrapperVC {
     
     let wallet: Wallet
     lazy var walletNameTextField: UITextField = {
-        let tf = UITextField(font: .systemFont(ofSize: 19, weight: .semibold), placeholder: L10n.walletName, autocorrectionType: .no)
+        let tf = UITextField(font: .systemFont(ofSize: 19, weight: .semibold), placeholder: "A", autocorrectionType: .no)
         tf.isUserInteractionEnabled = false
         tf.text = wallet.name
         return tf
@@ -41,14 +41,15 @@ class WalletDetailVC: WLModalWrapperVC {
         super.setUp()
         
         stackView.addArrangedSubviews([
-            UIView.row([
+            UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
                 UIImageView(width: 35, height: 35, cornerRadius: 12)
                     .with(urlString: wallet.icon),
-                walletNameTextField,
+                walletNameTextField
+                    .withContentHuggingPriority(.required, for: .horizontal),
+                UILabel(text: " wallet", textSize: 19, weight: .semibold),
                 UIImageView(width: 16, height: 18, image: .buttonEdit, tintColor: .a3a5ba)
                     .onTap(self, action: #selector(buttonEditDidTouch))
-            ])
-                .with(spacing: 16, distribution: .fill)
+            ], customSpacing: [16, 0, 10])
                 .padding(.init(x: 20, y: 0)),
             .separator(height: 2, color: .separator)
         ], withCustomSpacings: [20, 0])
@@ -80,7 +81,12 @@ class WalletDetailVC: WLModalWrapperVC {
             .map {$0.trimmingCharacters(in: .whitespacesAndNewlines)}
             .distinctUntilChanged()
             .subscribe(onNext: {
-                WalletsVM.ofCurrentUser.updateWallet(self.wallet, withName: $0)
+                var newName = $0
+                if $0.isEmpty {
+                    // fall back to wallet name
+                    newName = self.wallet.name
+                }
+                WalletsVM.ofCurrentUser.updateWallet(self.wallet, withName: newName)
             })
             .disposed(by: disposeBag)
         
