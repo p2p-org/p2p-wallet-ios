@@ -12,12 +12,13 @@ class LazyLabel<T: Hashable & CustomStringConvertible>: UILabel {
     weak var viewModel: BaseVM<T>?
     
     func subscribed(to viewModel: BaseVM<T>, stringBuilder: ((T) -> String)? = nil) -> Disposable {
+        let currentTextColor = textColor
         self.viewModel = viewModel
         self.isUserInteractionEnabled = true
         self.onTap(self, action: #selector(retry))
         return viewModel.state
             .subscribe(onNext: {[weak self] state in
-                self?.textColor = .textBlack
+                self?.textColor = currentTextColor
                 
                 switch state {
                 case .loading, .initializing:
