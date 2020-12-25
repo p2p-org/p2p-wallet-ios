@@ -305,6 +305,15 @@ class MainVC: CollectionVC<MainVCItem> {
     
     @objc func qrScannerDidTouch() {
         let vc = QrCodeScannerVC()
+        vc.callback = { code in
+            if NSRegularExpression.publicKey.matches(code) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.sendAction(address: code).execute()
+                }
+                return true
+            }
+            return false
+        }
         vc.modalPresentationStyle = .fullScreen
         self.present(vc, animated: true, completion: nil)
     }
