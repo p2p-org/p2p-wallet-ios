@@ -180,7 +180,7 @@ class MainVC: CollectionVC<MainVCItem> {
         
         if let footerView = footerForSection(0) as? FirstSectionFooterView
         {
-            var text = L10n.allMyBalances
+            var text = L10n.allMyTokens
             var image = UIImage.indicatorNext
             var action = showAllProducts
             switch walletsVM.state.value {
