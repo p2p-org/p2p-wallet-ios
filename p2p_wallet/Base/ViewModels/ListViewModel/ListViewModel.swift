@@ -98,4 +98,14 @@ class ListViewModel<T: ListItemType>: BaseVM<[T]> {
             state.accept(.loaded(items))
         }
     }
+    
+    @discardableResult
+    func removeItem(where predicate: (T) -> Bool) -> T? {
+        guard let index = items.firstIndex(where: predicate) else {
+            return nil
+        }
+        let result = items.remove(at: index)
+        state.accept(.loaded(items))
+        return result
+    }
 }

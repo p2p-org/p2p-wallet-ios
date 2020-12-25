@@ -17,8 +17,13 @@ extension SolanaSDK {
         var cluster: String {rawValue}
         
         var endpoint: String {
+            // FIXME: - Remove later
+            
             var string = cluster + ".solana.com"
-            if self == .mainnetBeta { string = "api." + string }
+            if self == .mainnetBeta {
+//                string = "api." + string
+                string = "solana-api.projectserum.com"
+            }
             return "https://\(string)"
         }
     }
