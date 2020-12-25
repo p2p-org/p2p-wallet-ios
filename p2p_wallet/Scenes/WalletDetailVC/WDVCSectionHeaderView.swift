@@ -58,7 +58,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
                     .onTap(self, action: #selector(buttonScanQrCodeDidTouch))
             ])
                 .with(spacing: 20, alignment: .center, distribution: .fill)
-                .padding(.init(x: 16, y: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+            .padding(.init(x: 16, y: 10), backgroundColor: .background4, cornerRadius: 12)
                 .padding(.init(x: 20, y: 0))
         ], at: 0, withCustomSpacings: [10, 16, 0, 0, 10, 20, 40])
         

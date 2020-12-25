@@ -110,7 +110,12 @@ class _AddNewWalletVC: WalletsVC {
                             return .just(())
                         }
                         transactionVC.goBackToWalletButton.rx.action = CocoaAction {
-                            transactionVC.dismiss(animated: true, completion: nil)
+                            transactionVC.dismiss(animated: true) {
+                                var wallet = newWallet
+                                wallet.pubkey = newPubkey
+                                
+                                self.present(WalletDetailVC(wallet: wallet), animated: true, completion: nil)
+                            }
                             return .just(())
                         }
                         
