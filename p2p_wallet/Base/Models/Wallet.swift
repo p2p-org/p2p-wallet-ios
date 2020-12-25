@@ -35,7 +35,13 @@ struct Wallet: FiatConvertable {
 extension Wallet: ListItemType {
     init(programAccount: SolanaSDK.Token) {
         self.id = programAccount.pubkey ?? ""
-        self.name = Defaults.walletName[programAccount.symbol] ?? programAccount.name
+        var name = programAccount.name
+        if let pubkey = programAccount.pubkey,
+           let n = Defaults.walletName[pubkey]
+        {
+            name = n
+        }
+        self.name = name
         self.mintAddress = programAccount.mintAddress
         self.symbol = programAccount.symbol
         self.icon = programAccount.icon

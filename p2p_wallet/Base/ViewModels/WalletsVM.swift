@@ -77,8 +77,8 @@ class WalletsVM: ListViewModel<Wallet> {
     }
     
     func updateWallet(_ wallet: Wallet, withName name: String) {
-        Defaults.walletName[wallet.symbol] = name
-        updateItem(where: {wallet.symbol == $0.symbol}, transform: {
+        Defaults.walletName[wallet.pubkey!] = name
+        updateItem(where: {wallet.pubkey == $0.pubkey}, transform: {
             var newItem = $0
             newItem.name = name
             return newItem
