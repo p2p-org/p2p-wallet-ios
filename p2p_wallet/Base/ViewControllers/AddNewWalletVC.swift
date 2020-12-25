@@ -26,8 +26,8 @@ class AddNewWalletVC: WLModalWrapperVC {
             UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
                 .padding(.init(x: 20, y: 0)),
             UIButton(label: L10n.close, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: .h5887ff)
-                .padding(.init(x: 20, y: 0))
                 .onTap(self, action: #selector(back))
+                .padding(.init(x: 20, y: 0))
         ])
         let separator = UIView.separator(height: 1, color: .separator)
         containerView.addSubview(separator)
@@ -65,11 +65,17 @@ class _AddNewWalletVC: WalletsVC {
     
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: Wallet) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
-        if let cell = cell as? Cell {
-//            cell.copyToClipboardButton.rx.action = CocoaAction {
-//                UIApplication.shared.copyToClipboard(item.mintAddress)
-//                return .just(())
-//            }
+        if let cell = cell as? Cell, indexPath.row < self.viewModel.data.count {
+            let wallet = self.viewModel.data[indexPath.row]
+            
+            cell.viewInBlockchainExplorerButton.rx.action = CocoaAction {_ in
+                self.showWebsite(url: "https://explorer.solana.com/address/\(wallet.mintAddress)")
+                return .just(())
+            }
+            
+            cell.createWalletAction = createTokenAccountAction(newWallet: wallet)
+            
+            cell.setUp(feeVM: (viewModel as! ViewModel).feeVM)
         }
         return cell
     }
@@ -89,6 +95,10 @@ class _AddNewWalletVC: WalletsVC {
             return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: Defaults.network.cluster)
                 .do(
                     afterSuccess: { (signature, newPubkey) in
+                        // remove suggestion from the list
+                        self.viewModel.removeItem(where: {$0.mintAddress == newWallet.mintAddress})
+                        
+                        // process transaction
                         transactionVC.signature = signature
                         transactionVC.viewInExplorerButton.rx.action = CocoaAction {
                             transactionVC.dismiss(animated: true) {
@@ -192,20 +202,26 @@ extension _AddNewWalletVC {
     }
     
     class Cell: WalletCell {
+        private let disposeBag = DisposeBag()
         lazy var symbolLabel = UILabel(text: "SER", textSize: 17, weight: .bold)
         lazy var detailView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
             .separator(height: 1, color: .separator),
-            UILabel(text: L10n.mintAddress, textSize: 12, textColor: .textSecondary, numberOfLines: 0),
+            UILabel(text: L10n.mintAddress, textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0),
             mintAddressLabel,
             .separator(height: 1, color: .separator),
-            UIButton(label: L10n.viewInBlockchainExplorer, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .a3a5ba),
+            viewInBlockchainExplorerButton,
             UIStackView(axis: .vertical, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
                 UILabel(text: L10n.addWallet, textSize: 15, weight: .semibold, textColor: .white, textAlignment: .center),
-                UILabel(text: L10n.willCost, textSize: 13, textColor: .f6f6f8, textAlignment: .center)
+                feeLabel
             ])
                 .padding(.init(x: 16, y: 10), backgroundColor: .h5887ff, cornerRadius: 12)
+                .onTap(self, action: #selector(buttonCreateWalletDidTouch))
         ], customSpacing: [20, 5, 20, 20, 20])
-        lazy var mintAddressLabel = UILabel(textSize: 12)
+        lazy var mintAddressLabel = UILabel(textSize: 15, weight: .semibold, numberOfLines: 0)
+        lazy var viewInBlockchainExplorerButton = UIButton(label: L10n.viewInBlockchainExplorer, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .a3a5ba)
+        lazy var feeLabel = LazyLabel<Double>(textSize: 13, textColor: .f6f6f8, textAlignment: .center)
+        
+        var createWalletAction: CocoaAction?
         
         override func commonInit() {
             super.commonInit()
@@ -258,6 +274,21 @@ extension _AddNewWalletVC {
             detailView.isHidden = !(item.isExpanded ?? false)
             mintAddressLabel.text = item.mintAddress
             contentView.backgroundColor = item.isExpanded == true ? .f6f6f8 : .clear
+        }
+        
+        func setUp(feeVM: ViewModel.FeeVM) {
+            if feeLabel.viewModel == nil {
+                feeLabel
+                    .subscribed(to: feeVM) {
+                        L10n.willCost + " " + $0.toString(maximumFractionDigits: 9) + " SOL"
+                    }
+                    .disposed(by: disposeBag)
+            }
+            
+        }
+        
+        @objc func buttonCreateWalletDidTouch() {
+            createWalletAction?.execute()
         }
     }
 }
