@@ -10,6 +10,13 @@ import Action
 import RxSwift
 
 class AddNewWalletVC: WLModalWrapperVC {
+    lazy var searchBar: BESearchBar = {
+        let searchBar = BESearchBar()
+        searchBar.textFieldBgColor = .lightGrayBackground
+//        searchBar.magnifyingIconImageView.image = .actions
+        return searchBar
+    }()
+    
     init() {
         super.init(wrapped: _AddNewWalletVC())
     }
@@ -20,18 +27,19 @@ class AddNewWalletVC: WLModalWrapperVC {
     
     override func setUp() {
         super.setUp()
-        stackView.axis = .horizontal
-        stackView.distribution = .equalSpacing
         stackView.addArrangedSubviews([
-            UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
-                .padding(.init(x: 20, y: 0)),
-            UIButton(label: L10n.close, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: .h5887ff)
-                .onTap(self, action: #selector(back))
-                .padding(.init(x: 20, y: 0))
-        ])
-        let separator = UIView.separator(height: 1, color: .separator)
-        containerView.addSubview(separator)
-        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
+                UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
+                    .padding(.init(x: 20, y: 0)),
+                UIButton(label: L10n.close, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: .h5887ff)
+                    .onTap(self, action: #selector(back))
+                    .padding(.init(x: 20, y: 0))
+            ]),
+            .separator(height: 1, color: .separator),
+            searchBar
+                .padding(.init(x: .defaultPadding, y: 0))
+        ], withCustomSpacings: [.defaultPadding, .defaultPadding])
+        
     }
 }
 
@@ -52,6 +60,7 @@ class _AddNewWalletVC: WalletsVC {
         
         // disable refreshing
         collectionView.refreshControl = nil
+        collectionView.keyboardDismissMode = .onDrag
     }
     
     override var sections: [Section] {
