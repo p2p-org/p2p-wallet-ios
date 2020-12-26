@@ -850,12 +850,12 @@
 			buildConfigurationList = BCB2233F25412AF9002D997F /* Build configuration list for PBXNativeTarget "p2p_wallet" */;
 			buildPhases = (
 				08B83D8022A1F262E2F8AAA9 /* [CP] Check Pods Manifest.lock */,
+				BC65EA002542C305005F50CE /* Swiftgen Run Script */,
+				BC0E0A252542CAFA00CADA18 /* Swiftlint Run Script */,
 				BCB2231125412AF8002D997F /* Sources */,
 				BCB2231225412AF8002D997F /* Frameworks */,
 				BCB2231325412AF8002D997F /* Resources */,
 				78311C6F52E6F43FD0DAC80A /* [CP] Embed Pods Frameworks */,
-				BC65EA002542C305005F50CE /* Swiftgen Run Script */,
-				BC0E0A252542CAFA00CADA18 /* Swiftlint Run Script */,
 				BC636756255AB64C00D585FD /* ShellScript */,
 			);
 			buildRules = (
