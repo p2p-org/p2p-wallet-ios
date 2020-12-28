@@ -187,3 +187,5 @@
 "All my tokens" = "Все мои токены";
 "Search token" = "Поиск по токену";
 "Add token" = "Добавить токен";
+"Adding token to your wallet" = "Добавление токена в кошелек";
+"We couldn’t add a token to your wallet.\nCheck your internet connection and try again." = "Не удалось добавить токен в ваш кошелек.\nПроверьте подключение к Интернету и повторите попытку.";

@@ -187,3 +187,5 @@
 "All my tokens" = "Tous mes jetons";
 "Search token" = "Jeton de recherche";
 "Add token" = "Ajouter un jeton";
+"Adding token to your wallet" = "Ajouter un jeton à votre portefeuille";
+"We couldn’t add a token to your wallet.\nCheck your internet connection and try again." = "Nous n'avons pas pu ajouter de jeton à votre portefeuille.\nVérifiez votre connexion Internet et réessayez.";
