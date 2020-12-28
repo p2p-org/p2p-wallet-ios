@@ -22,9 +22,10 @@ extension _MyProductsVC {
             stackView.addArrangedSubviews([
                 balancesOverviewView
                     .padding(.init(x: .defaultPadding, y: 0)),
+                BEStackViewSpacing(32),
                 headerLabel
                     .padding(.init(x: .defaultPadding, y: 0))
-            ], withCustomSpacings: [32])
+            ])
             
             stackView.constraintToSuperviewWithAttribute(.bottom)?.constant = -32
             
