@@ -372,7 +372,7 @@ extension _AddNewWalletVC {
             
             if let error = item.creatingError {
                 errorLabel.isHidden = false
-                errorLabel.text = error
+                errorLabel.text = L10n.WeCouldnTAddATokenToYourWallet.checkYourInternetConnectionAndTryAgain
             } else {
                 errorLabel.isHidden = true
             }
