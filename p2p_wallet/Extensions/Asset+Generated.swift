@@ -43,6 +43,7 @@ extension UIColor {
     static let separator = UIColor(named: "separator", in: bundle, compatibleWith: nil)!
     static let tabbarSelected = UIColor(named: "tabbar-selected", in: bundle, compatibleWith: nil)!
     static let tabbarUnselected = UIColor(named: "tabbar-unselected", in: bundle, compatibleWith: nil)!
+    static let textGreen = UIColor(named: "text-green", in: bundle, compatibleWith: nil)!
     static let textBlack = UIColor(named: "textBlack", in: bundle, compatibleWith: nil)!
     static let textWhite = UIColor(named: "textWhite", in: bundle, compatibleWith: nil)!
     static let vcBackground = UIColor(named: "vcBackground", in: bundle, compatibleWith: nil)!
