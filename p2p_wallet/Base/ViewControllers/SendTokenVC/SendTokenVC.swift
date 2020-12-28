@@ -139,6 +139,10 @@ class _SendTokenVC: BEPagesVC, LoadableView {
         {
             textView.text = address
         }
+        
+        // enable textfield
+        (viewControllers[currentPage] as! SendTokenItemVC)
+            .amountTextField.becomeFirstResponder()
     }
     
     override func bind() {

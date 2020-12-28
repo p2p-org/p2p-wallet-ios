@@ -61,7 +61,8 @@ class SendTokenItemVC: BaseVC {
             ]),
             
             UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-                UILabel(text: wallet?.symbol, textSize: 15, weight: .semibold),
+                UILabel(text: wallet?.symbol, textSize: 15, weight: .semibold)
+                    .padding(UIEdgeInsets.zero.modifying(dLeft: 8)),
                 equityValueLabel
             ]),
             
