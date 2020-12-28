@@ -17,14 +17,23 @@ class SendTokenItemVC: BaseVC {
         addressTextView.rx.text.orEmpty
     ).share()
     var chooseWalletAction: CocoaAction?
+    var price: Double {wallet?.price?.value ?? 0}
+    var textFieldValue: Double {amountTextField.text.map {$0.double ?? 0} ?? 0}
+    var textFieldValueInToken: Double {price != 0 ? textFieldValue / price: 0}
     
     // MARK: - Subviews
     lazy var balanceLabel = UILabel(text: "0", textColor: .h5887ff)
     lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
         .onTap(self, action: #selector(buttonChooseWalletDidTouch))
-    lazy var amountTextField = TokenAmountTextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0\(Locale.current.decimalSeparator ?? ".")0", autocorrectionType: .no, rightView: useAllBalanceButton, rightViewMode: .always)
-    lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .textSecondary)
-        .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
+    lazy var amountTextField = TokenAmountTextField(
+        font: .systemFont(ofSize: 27, weight: .semibold),
+        textColor: .textBlack,
+        keyboardType: .decimalPad,
+        placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+        autocorrectionType: .no
+    )
+//    lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .textSecondary)
+//        .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
     lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .textSecondary)
     lazy var addressTextView: UITextView = {
         let textView = UITextView(forExpandable: ())
@@ -57,11 +66,15 @@ class SendTokenItemVC: BaseVC {
                 coinImageView,
                 UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textBlack)
                     .onTap(self, action: #selector(buttonChooseWalletDidTouch)),
-                amountTextField
+                amountTextField,
+                UILabel(text: "USD", textSize: 15, weight: .medium, textColor: .textSecondary)
+                    .withContentHuggingPriority(.required, for: .horizontal)
+                    .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
             ]),
             
             UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-                UILabel(text: wallet?.symbol, textSize: 15, weight: .semibold),
+                UILabel(text: wallet?.symbol, textSize: 15, weight: .semibold)
+                    .padding(UIEdgeInsets.zero.modifying(dLeft: 8)),
                 equityValueLabel
             ]),
             
@@ -105,9 +118,8 @@ class SendTokenItemVC: BaseVC {
     override func bind() {
         super.bind()
         amountTextField.rx.text.orEmpty
-            .map {$0.double ?? 0}
-            .map {$0 * self.wallet?.price?.value}
-            .map {"≈ " + $0.toString(maximumFractionDigits: 9) + "  US$"}
+            .map {_ in self.textFieldValueInToken}
+            .map {"≈ " + $0.toString(maximumFractionDigits: 9) + " \(self.wallet?.symbol ?? "")"}
             .asDriver(onErrorJustReturn: "")
             .drive(equityValueLabel.rx.text)
             .disposed(by: disposeBag)
@@ -115,7 +127,7 @@ class SendTokenItemVC: BaseVC {
         dataObservable
             .skip(1)
             .subscribe(onNext: {(amount, address) in
-                self.validate(amount: amount, address: address)
+                self.validate(amountInUSD: amount, address: address)
             })
             .disposed(by: disposeBag)
         
@@ -126,11 +138,11 @@ class SendTokenItemVC: BaseVC {
             .disposed(by: disposeBag)
     }
     
-    private func validate(amount: Double, address: String) {
+    private func validate(amountInUSD: Double, address: String) {
         var errorMessage: String?
-        if amount <= 0 {
+        if amountInUSD <= 0 {
             errorMessage = L10n.amountIsNotValid
-        } else if amount > (wallet?.amount ?? Double.greatestFiniteMagnitude) {
+        } else if (price != 0 ? amountInUSD / price : 0) > (wallet?.amount ?? Double.greatestFiniteMagnitude) {
             errorMessage = L10n.insufficientFunds
         } else if !NSRegularExpression.publicKey.matches(address) {
             errorMessage = L10n.theAddressIsNotValid
@@ -144,8 +156,7 @@ class SendTokenItemVC: BaseVC {
     }
     
     var isDataValid: Bool {
-        let amount = amountTextField.text?.double ?? 0
-        return amount > 0 && amount <= (wallet?.amount ?? 0) && NSRegularExpression.publicKey.matches(addressTextView.text ?? "")
+        textFieldValueInToken > 0 && textFieldValueInToken <= (wallet?.amount ?? 0) && NSRegularExpression.publicKey.matches(addressTextView.text ?? "")
     }
     
     // MARK: - Actions

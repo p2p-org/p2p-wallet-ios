@@ -15,10 +15,12 @@ class AddNewWalletVC: WLModalWrapperVC {
         searchBar.textFieldBgColor = .lightGrayBackground
         searchBar.magnifyingIconSize = 24
         searchBar.magnifyingIconImageView.image = .search
+        searchBar.magnifyingIconImageView.tintColor = .textBlack
         searchBar.leftViewWidth = 24+10+10
         searchBar.placeholder = L10n.searchToken
         searchBar.delegate = self
         searchBar.cancelButton.setTitleColor(.h5887ff, for: .normal)
+        searchBar.setUpTextField(autocorrectionType: .no, autocapitalizationType: UITextAutocapitalizationType.none, spellCheckingType: .no)
         return searchBar
     }()
     
@@ -116,15 +118,32 @@ class _AddNewWalletVC: WalletsVC {
         CocoaAction {
             let viewModel = self.viewModel as! ViewModel
             
+            // catching error
             if viewModel.feeVM.data > (WalletsVM.ofCurrentUser.solWallet?.amount ?? 0)
             {
-                self.showAlert(title: L10n.error.uppercaseFirst, message: L10n.insufficientFunds)
+                viewModel.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
+                    var wallet = $0
+                    wallet.isBeingCreated = nil
+                    wallet.creatingError = L10n.insufficientFunds
+                    return wallet
+                })
                 return .just(())
             }
             
-            let transactionVC = self.presentProcessTransactionVC()
+            // remove existing error
+            viewModel.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
+                var wallet = $0
+                wallet.isBeingCreated = true
+                wallet.creatingError = nil
+                return wallet
+            })
             
+            // request
             return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: Defaults.network.cluster)
+//            return Single<(String, String)>.just(("", "")).delay(.seconds(5), scheduler: MainScheduler.instance)
+//                .map {_ -> (String, String) in
+//                    throw SolanaSDK.Error.other("example")
+//                }
                 .do(
                     afterSuccess: { (signature, newPubkey) in
                         // remove suggestion from the list
@@ -137,26 +156,6 @@ class _AddNewWalletVC: WalletsVC {
                         }
                         
                         // process transaction
-                        transactionVC.signature = signature
-                        transactionVC.viewInExplorerButton.rx.action = CocoaAction {
-                            transactionVC.dismiss(animated: true) {
-                                let vc = self.presentingViewController
-                                self.dismiss(animated: true) {
-                                    vc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
-                                }
-                            }
-                            return .just(())
-                        }
-                        transactionVC.goBackToWalletButton.rx.action = CocoaAction {
-                            transactionVC.dismiss(animated: true) {
-                                var wallet = newWallet
-                                wallet.pubkey = newPubkey
-                                
-                                self.present(WalletDetailVC(wallet: wallet), animated: true, completion: nil)
-                            }
-                            return .just(())
-                        }
-                        
                         var newWallet = newWallet
                         newWallet.pubkey = newPubkey
                         newWallet.isProcessing = true
@@ -169,11 +168,17 @@ class _AddNewWalletVC: WalletsVC {
                             newWallet: newWallet
                         )
                         TransactionsManager.shared.process(transaction)
+                        
+                        // present wallet
+                        self.present(WalletDetailVC(wallet: newWallet), animated: true, completion: nil)
                     },
                     afterError: { (error) in
-                        transactionVC.dismiss(animated: true) {
-                            self.showError(error)
-                        }
+                        viewModel.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
+                            var wallet = $0
+                            wallet.isBeingCreated = nil
+                            wallet.creatingError = error.localizedDescription
+                            return wallet
+                        })
                     }
                 )
                 .map {_ in ()}
@@ -256,26 +261,41 @@ extension _AddNewWalletVC {
     class Cell: WalletCell {
         private let disposeBag = DisposeBag()
         lazy var symbolLabel = UILabel(text: "SER", textSize: 17, weight: .bold)
+        
+        lazy var mintAddressLabel = UILabel(textSize: 15, weight: .semibold, numberOfLines: 0)
+        lazy var viewInBlockchainExplorerButton = UIButton(label: L10n.viewInBlockchainExplorer, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .a3a5ba)
+        
+        lazy var buttonAddTokenLabel = UILabel(text: L10n.addToken, textSize: 15, weight: .semibold, textColor: .white, textAlignment: .center)
+        
+        lazy var feeLabel: LazyLabel<Double> = {
+            let label = LazyLabel<Double>(textSize: 13, textColor: UIColor.white.withAlphaComponent(0.5), textAlignment: .center)
+            label.isUserInteractionEnabled = false
+            return label
+        }()
+        
+        lazy var buttonAddToken: WLLoadingView = {
+            let loadingView = WLLoadingView(height: 56, backgroundColor: .h5887ff, cornerRadius: 12)
+            let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
+                buttonAddTokenLabel,
+                feeLabel
+            ])
+            loadingView.addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 16, y: 10))
+            return loadingView
+        }()
+        
+        lazy var errorLabel = UILabel(textSize: 13, textColor: .red, numberOfLines: 0, textAlignment: .center)
+        
         lazy var detailView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
             .separator(height: 1, color: .separator),
             UILabel(text: L10n.mintAddress, textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0),
             mintAddressLabel,
             .separator(height: 1, color: .separator),
             viewInBlockchainExplorerButton,
-            UIStackView(axis: .vertical, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.addToken, textSize: 15, weight: .semibold, textColor: .white, textAlignment: .center),
-                feeLabel
-            ])
-                .padding(.init(x: 16, y: 10), backgroundColor: .h5887ff, cornerRadius: 12)
-                .onTap(self, action: #selector(buttonCreateWalletDidTouch))
-        ], customSpacing: [20, 5, 20, 20, 20])
-        lazy var mintAddressLabel = UILabel(textSize: 15, weight: .semibold, numberOfLines: 0)
-        lazy var viewInBlockchainExplorerButton = UIButton(label: L10n.viewInBlockchainExplorer, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .a3a5ba)
-        lazy var feeLabel: LazyLabel<Double> = {
-            let label = LazyLabel<Double>(textSize: 13, textColor: UIColor.white.withAlphaComponent(0.5), textAlignment: .center)
-            label.isUserInteractionEnabled = false
-            return label
-        }()
+            buttonAddToken
+                .onTap(self, action: #selector(buttonCreateWalletDidTouch)),
+            errorLabel
+        ], customSpacing: [20, 5, 20, 20, 20, 16])
         
         var createWalletAction: CocoaAction?
         
@@ -330,6 +350,23 @@ extension _AddNewWalletVC {
             detailView.isHidden = !(item.isExpanded ?? false)
             mintAddressLabel.text = item.mintAddress
             contentView.backgroundColor = item.isExpanded == true ? .f6f6f8 : .clear
+            
+            if item.isBeingCreated == true {
+                buttonAddToken.setUp(loading: true)
+                buttonAddTokenLabel.text = L10n.addingTokenToYourWallet
+                feeLabel.isHidden = true
+            } else {
+                buttonAddToken.setUp(loading: false)
+                buttonAddTokenLabel.text = L10n.addToken
+                feeLabel.isHidden = false
+            }
+            
+            if let error = item.creatingError {
+                errorLabel.isHidden = false
+                errorLabel.text = error
+            } else {
+                errorLabel.isHidden = true
+            }
         }
         
         func setUp(feeVM: ViewModel.FeeVM) {
@@ -345,6 +382,9 @@ extension _AddNewWalletVC {
         }
         
         @objc func buttonCreateWalletDidTouch() {
+            if buttonAddToken.isLoading {
+                return
+            }
             createWalletAction?.execute()
         }
     }

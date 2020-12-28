@@ -30,6 +30,9 @@ struct Wallet: FiatConvertable {
         guard let pubkey = pubkey else {return ""}
         return "0x" + pubkey.prefix(numOfSymbolsRevealed) + "..." + pubkey.suffix(numOfSymbolsRevealed)
     }
+    
+    var isBeingCreated: Bool?
+    var creatingError: String?
 }
 
 extension Wallet: ListItemType {

@@ -189,3 +189,5 @@
 "will cost" = "sẽ phải trả";
 "All my tokens" = "Tất cả tokens của tôi";
 "Search token" = "Tìm kiếm token";
+"Adding token to your wallet" = "Thêm token vào ví của bạn";
+"We couldn’t add a token to your wallet.\nCheck your internet connection and try again." = "Chúng tôi không thể thêm token vào ví của bạn.\nHãy kiểm tra kết nối Internet của bạn và thử lại.";

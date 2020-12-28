@@ -10,6 +10,7 @@
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
 		BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */; };
+		BC104A7B259974CE0048C834 /* WLLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC104A7A259974CE0048C834 /* WLLoadingView.swift */; };
 		BC10510925887F7D00398EA2 /* BackupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10510825887F7D00398EA2 /* BackupVC.swift */; };
 		BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC105110258882BE00398EA2 /* ProfileVCBase.swift */; };
 		BC105119258884AA00398EA2 /* SelectNetworkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC105118258884AA00398EA2 /* SelectNetworkVC.swift */; };
@@ -178,6 +179,7 @@
 		BB6790432D1A5F53BBDB3162 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		BB7CFE6A2633569A3CAC841A /* Pods-p2p_walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.release.xcconfig"; sourceTree = "<group>"; };
 		BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LABiometryType+Extensions.swift"; sourceTree = "<group>"; };
+		BC104A7A259974CE0048C834 /* WLLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLLoadingView.swift; sourceTree = "<group>"; };
 		BC10510825887F7D00398EA2 /* BackupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupVC.swift; sourceTree = "<group>"; };
 		BC105110258882BE00398EA2 /* ProfileVCBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVCBase.swift; sourceTree = "<group>"; };
 		BC105118258884AA00398EA2 /* SelectNetworkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectNetworkVC.swift; sourceTree = "<group>"; };
@@ -574,6 +576,7 @@
 				BC54DD1E2587164F00A65566 /* ChartMarkers */,
 				BC54DD8D25872FE500A65566 /* HorizontalPicker.swift */,
 				BC11CA242592FEA300E399A9 /* BalancesOverviewView.swift */,
+				BC104A7A259974CE0048C834 /* WLLoadingView.swift */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -1245,6 +1248,7 @@
 				BC490CCC256CCEBC006E7AC9 /* AddNewWalletVC.swift in Sources */,
 				BC11C9FC2591B2B700E399A9 /* MyProductsVC.swift in Sources */,
 				BC3122332580B34B00F3B14F /* PassCodeVC.swift in Sources */,
+				BC104A7B259974CE0048C834 /* WLLoadingView.swift in Sources */,
 				BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */,
 				BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */,
 				BC31223C2580B37E00F3B14F /* CreatePassCodeVC.swift in Sources */,
