@@ -20,6 +20,8 @@ internal enum L10n {
   internal static let addToken = L10n.tr("Localizable", "Add token")
   /// Add wallet
   internal static let addWallet = L10n.tr("Localizable", "Add wallet")
+  /// Adding token to your wallet
+  internal static let addingTokenToYourWallet = L10n.tr("Localizable", "Adding token to your wallet")
   /// Address copied!
   internal static let addressCopied = L10n.tr("Localizable", "Address copied!")
   /// all
@@ -378,6 +380,11 @@ internal enum L10n {
   internal enum ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode {
     /// This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!
     internal static let pleaseEnableItInSettings = L10n.tr("Localizable", "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!")
+  }
+
+  internal enum WeCouldnTAddATokenToYourWallet {
+    /// We couldn’t add a token to your wallet.\nCheck your internet connection and try again.
+    internal static let checkYourInternetConnectionAndTryAgain = L10n.tr("Localizable", "We couldn’t add a token to your wallet.\nCheck your internet connection and try again.")
   }
 
   internal enum YourDeviceDoesNotSupportScanningACodeFromAnItem {

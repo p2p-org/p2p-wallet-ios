@@ -261,6 +261,9 @@ extension _AddNewWalletVC {
         
         lazy var mintAddressLabel = UILabel(textSize: 15, weight: .semibold, numberOfLines: 0)
         lazy var viewInBlockchainExplorerButton = UIButton(label: L10n.viewInBlockchainExplorer, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .a3a5ba)
+        
+        lazy var buttonAddTokenLabel = UILabel(text: L10n.addToken, textSize: 15, weight: .semibold, textColor: .white, textAlignment: .center)
+        
         lazy var feeLabel: LazyLabel<Double> = {
             let label = LazyLabel<Double>(textSize: 13, textColor: UIColor.white.withAlphaComponent(0.5), textAlignment: .center)
             label.isUserInteractionEnabled = false
@@ -268,16 +271,18 @@ extension _AddNewWalletVC {
         }()
         
         lazy var buttonAddToken: WLLoadingView = {
-            let loadingView = WLLoadingView(backgroundColor: UIColor.h5887ff.withAlphaComponent(0.5), cornerRadius: 12)
+            let loadingView = WLLoadingView(height: 56, backgroundColor: UIColor.h5887ff.withAlphaComponent(0.5), cornerRadius: 12)
             loadingView.tintColor = .h5887ff
             let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.addToken, textSize: 15, weight: .semibold, textColor: .white, textAlignment: .center),
+                buttonAddTokenLabel,
                 feeLabel
             ])
             loadingView.addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 16, y: 10))
             return loadingView
         }()
+        
+        lazy var errorLabel = UILabel(textSize: 13, textColor: .red, numberOfLines: 0, textAlignment: .center)
         
         lazy var detailView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
             .separator(height: 1, color: .separator),
@@ -286,8 +291,9 @@ extension _AddNewWalletVC {
             .separator(height: 1, color: .separator),
             viewInBlockchainExplorerButton,
             buttonAddToken
-                .onTap(self, action: #selector(buttonCreateWalletDidTouch))
-        ], customSpacing: [20, 5, 20, 20, 20])
+                .onTap(self, action: #selector(buttonCreateWalletDidTouch)),
+            errorLabel
+        ], customSpacing: [20, 5, 20, 20, 20, 16])
         
         var createWalletAction: CocoaAction?
         
@@ -342,6 +348,23 @@ extension _AddNewWalletVC {
             detailView.isHidden = !(item.isExpanded ?? false)
             mintAddressLabel.text = item.mintAddress
             contentView.backgroundColor = item.isExpanded == true ? .f6f6f8 : .clear
+            
+            if item.isBeingCreated == true {
+                buttonAddToken.setUp(state: .loading)
+                buttonAddTokenLabel.text = L10n.addingTokenToYourWallet
+                feeLabel.isHidden = true
+            } else {
+                buttonAddToken.setUp(state: .loaded(true))
+                buttonAddTokenLabel.text = L10n.addToken
+                feeLabel.isHidden = false
+            }
+            
+            if let error = item.creatingError {
+                errorLabel.isHidden = false
+                errorLabel.text = error
+            } else {
+                errorLabel.isHidden = true
+            }
         }
         
         func setUp(feeVM: ViewModel.FeeVM) {
