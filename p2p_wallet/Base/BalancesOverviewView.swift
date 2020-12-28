@@ -43,9 +43,11 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
                 let labelStackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
                 labelStackView.addArrangedSubviews([
                     UILabel(text: L10n.totalBalance, textSize: 15),
+                    BEStackViewSpacing(12),
                     equityValueLabel,
+                    BEStackViewSpacing(5),
                     changeLabel
-                ], withCustomSpacings: [12, 5])
+                ])
                 return labelStackView
             }(),
             chartView

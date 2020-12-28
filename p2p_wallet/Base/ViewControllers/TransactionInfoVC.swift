@@ -66,29 +66,29 @@ class TransactionInfoVC: BaseVStackVC {
             toPubkey = "0x" + to.prefix(4) + "..." + to.suffix(4)
         }
         
-        stackView.addArrangedSubviewsWithCustomSpacing([
+        stackView.addArrangedSubviews([
             // amount in usd
             UILabel(text: transaction.amountInUSD.toString(maximumFractionDigits: 9, showPlus: true) + "$", textSize: 27, weight: .bold, textAlignment: .center)
                 .padding(.init(x: 20, y: 0)),
-            CGFloat(5),
+            BEStackViewSpacing(5),
             
             // amount
             UILabel(text: transaction.amount?.toString(maximumFractionDigits: 9, showPlus: true) + " " + transaction.symbol, textSize: 15, weight: .medium, textAlignment: .center)
                 .padding(.init(x: 20, y: 0)),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             // status
             UILabel(text: transaction.status.localizedString, textSize: 12, weight: .bold, textColor: .textGreen)
                 .padding(.init(x: 16, y: 8), backgroundColor: UIColor.attentionGreen.withAlphaComponent(0.3), cornerRadius: 10)
                 .centeredHorizontallyView,
-            CGFloat(30),
+            BEStackViewSpacing(30),
             
             separator(),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             // from
             sectionTitle(L10n.from),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             UIView.row([
                 UIView(width: 55, height: 55, backgroundColor: .c4c4c4, cornerRadius: 12),
                 UILabel(text: fromPubkey, textSize: 15, weight: .semibold),
@@ -98,13 +98,13 @@ class TransactionInfoVC: BaseVStackVC {
             ])
                 .with(spacing: 16, distribution: .fill)
                 .padding(.init(x: 20, y: 0)),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             separator(),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             sectionTitle(L10n.to),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             UIView.row([
                 UIView(width: 55, height: 55, backgroundColor: .c4c4c4, cornerRadius: 12),
                 UILabel(text: toPubkey, textSize: 15, weight: .semibold),
@@ -114,53 +114,53 @@ class TransactionInfoVC: BaseVStackVC {
             ])
                 .with(spacing: 16, distribution: .fill)
                 .padding(.init(x: 20, y: 0)),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             separator(),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             sectionTitle(L10n.date),
-            CGFloat(8),
+            BEStackViewSpacing(8),
             sectionContent(transaction.timestamp?.string(withFormat: "MMMM dd, yyyy @ hh:mm a")),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             separator(),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             sectionTitle(L10n.amount),
-            CGFloat(8),
+            BEStackViewSpacing(8),
             sectionContent(transaction.amount?.toString(maximumFractionDigits: 9, showPlus: true) + " " + transaction.symbol),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             separator(),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             sectionTitle(L10n.value),
-            CGFloat(8),
+            BEStackViewSpacing(8),
             sectionContent(transaction.amountInUSD.toString(maximumFractionDigits: 9, showPlus: true) + "$"),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             separator(),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             sectionTitle(L10n.fee),
-            CGFloat(8),
+            BEStackViewSpacing(8),
             sectionContent(transaction.fee.toString(maximumFractionDigits: 9) + " " + transaction.symbol),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             separator(),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             sectionTitle("#" + L10n.blockNumber),
-            CGFloat(8),
+            BEStackViewSpacing(8),
             sectionContent("\(transaction.slot ?? 0)"),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             separator(),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             sectionTitle(L10n.transactionID),
-            CGFloat(8),
+            BEStackViewSpacing(8),
             UIView.row([
                 UILabel(text: transaction.signature, textSize: 15, weight: .semibold, numberOfLines: 0),
                 UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .textBlack)
@@ -168,10 +168,10 @@ class TransactionInfoVC: BaseVStackVC {
             ])
                 .with(distribution: .fill)
                 .padding(.init(x: 20, y: 0)),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             separator(),
-            CGFloat(20),
+            BEStackViewSpacing(20),
             
             WLButton.stepButton(type: .sub, label: L10n.viewInBlockchainExplorer)
                 .onTap(self, action: #selector(buttonViewInExplorerDidTouch))

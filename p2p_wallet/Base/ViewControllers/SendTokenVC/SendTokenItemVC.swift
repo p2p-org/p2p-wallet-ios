@@ -61,6 +61,7 @@ class SendTokenItemVC: BaseVC {
                 UILabel(text: L10n.from, weight: .medium),
                 balanceLabel
             ]),
+            BEStackViewSpacing(30),
             
             UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
                 coinImageView,
@@ -71,14 +72,17 @@ class SendTokenItemVC: BaseVC {
                     .withContentHuggingPriority(.required, for: .horizontal)
                     .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
             ]),
+            BEStackViewSpacing(6),
             
             UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
                 UILabel(text: wallet?.symbol, textSize: 15, weight: .semibold)
                     .padding(UIEdgeInsets.zero.modifying(dLeft: 8)),
                 equityValueLabel
             ]),
+            BEStackViewSpacing(20),
             
-            .separator(height: 1, color: .separator),
+            UIView.separator(height: 1, color: .separator),
+            BEStackViewSpacing(20),
             
             UIView.col([
                 .row([
@@ -90,8 +94,10 @@ class SendTokenItemVC: BaseVC {
                     feeLabel
                 ])
             ]),
+            BEStackViewSpacing(20),
             
-            .separator(height: 1, color: .separator),
+            UIView.separator(height: 1, color: .separator),
+            BEStackViewSpacing(20),
             
             UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 UILabel(text: L10n.to, textSize: 15, weight: .semibold),
@@ -100,9 +106,10 @@ class SendTokenItemVC: BaseVC {
                 ])
                     .padding(.init(all: .defaultPadding), backgroundColor: .c4c4c4, cornerRadius: 16)
             ]),
+            BEStackViewSpacing(19),
             
             errorLabel
-        ], withCustomSpacings: [30, 6, 20, 20, 20, 20, 19])
+        ])
         
         equityValueLabel.autoPinEdge(.leading, to: .leading, of: amountTextField)
         
