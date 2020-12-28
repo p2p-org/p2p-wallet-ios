@@ -176,7 +176,7 @@ class _SendTokenVC: BEPagesVC, LoadableView {
               let vc = viewControllers[currentPage] as? SendTokenItemVC,
               let sender = vc.wallet?.pubkey,
               let receiver = vc.addressTextView.text,
-              let amount = vc.amountTextField.text?.double
+              vc.textFieldValueInToken > 0
         else {
             return
         }
@@ -184,7 +184,7 @@ class _SendTokenVC: BEPagesVC, LoadableView {
         let transactionVC = presentProcessTransactionVC()
         
         // prepare amount
-        let amountToSend = amount * pow(10, Double(vc.wallet?.decimals ?? 0))
+        let amountToSend = vc.textFieldValueInToken * pow(10, Double(vc.wallet?.decimals ?? 0))
         
         SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: Int64(amountToSend))
             .subscribe(onSuccess: { signature in
@@ -208,7 +208,7 @@ class _SendTokenVC: BEPagesVC, LoadableView {
                 let transaction = Transaction(
                     signatureInfo: .init(signature: signature),
                     type: .send,
-                    amount: -amount,
+                    amount: -vc.textFieldValueInToken,
                     symbol: vc.wallet?.symbol ?? "",
                     status: .processing
                 )
