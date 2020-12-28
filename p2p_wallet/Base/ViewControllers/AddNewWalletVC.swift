@@ -16,6 +16,7 @@ class AddNewWalletVC: WLModalWrapperVC {
         searchBar.magnifyingIconSize = 24
         searchBar.magnifyingIconImageView.image = .search
         searchBar.leftViewWidth = 24+10+10
+        searchBar.placeholder = L10n.searchToken
         searchBar.delegate = self
         searchBar.cancelButton.setTitleColor(.h5887ff, for: .normal)
         return searchBar
@@ -33,7 +34,7 @@ class AddNewWalletVC: WLModalWrapperVC {
         super.setUp()
         stackView.addArrangedSubviews([
             UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
-                UILabel(text: L10n.addWallet, textSize: 17, weight: .semibold)
+                UILabel(text: L10n.addToken, textSize: 17, weight: .semibold)
                     .padding(.init(x: 20, y: 0)),
                 UIButton(label: L10n.close, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: .h5887ff)
                     .onTap(self, action: #selector(back))
@@ -262,7 +263,7 @@ extension _AddNewWalletVC {
             .separator(height: 1, color: .separator),
             viewInBlockchainExplorerButton,
             UIStackView(axis: .vertical, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.addWallet, textSize: 15, weight: .semibold, textColor: .white, textAlignment: .center),
+                UILabel(text: L10n.addToken, textSize: 15, weight: .semibold, textColor: .white, textAlignment: .center),
                 feeLabel
             ])
                 .padding(.init(x: 16, y: 10), backgroundColor: .h5887ff, cornerRadius: 12)
