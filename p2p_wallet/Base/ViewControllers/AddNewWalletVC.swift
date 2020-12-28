@@ -289,15 +289,21 @@ extension _AddNewWalletVC {
         lazy var errorLabel = UILabel(textSize: 13, textColor: .red, numberOfLines: 0, textAlignment: .center)
         
         lazy var detailView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            .separator(height: 1, color: .separator),
+            UIView.separator(height: 1, color: .separator),
+            BEStackViewSpacing(20),
             UILabel(text: L10n.mintAddress, textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0),
+            BEStackViewSpacing(5),
             mintAddressLabel,
-            .separator(height: 1, color: .separator),
+            BEStackViewSpacing(20),
+            UIView.separator(height: 1, color: .separator),
+            BEStackViewSpacing(20),
             viewInBlockchainExplorerButton,
+            BEStackViewSpacing(20),
             buttonAddToken
                 .onTap(self, action: #selector(buttonCreateWalletDidTouch)),
+            BEStackViewSpacing(16),
             errorLabel
-        ], customSpacing: [20, 5, 20, 20, 20, 16])
+        ])
         
         var createWalletAction: CocoaAction?
         
