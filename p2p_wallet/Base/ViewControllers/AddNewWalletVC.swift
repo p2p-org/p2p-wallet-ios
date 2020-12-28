@@ -42,10 +42,12 @@ class AddNewWalletVC: WLModalWrapperVC {
                     .onTap(self, action: #selector(back))
                     .padding(.init(x: 20, y: 0))
             ]),
-            .separator(height: 1, color: .separator),
+            BEStackViewSpacing.defaultPadding,
+            UIView.separator(height: 1, color: .separator),
+            BEStackViewSpacing.defaultPadding,
             searchBar
                 .padding(.init(x: .defaultPadding, y: 0))
-        ], withCustomSpacings: [.defaultPadding, .defaultPadding])
+        ])
         
     }
 }
@@ -330,8 +332,9 @@ extension _AddNewWalletVC {
                         ])
                     ])
                 ]),
+                BEStackViewSpacing(16),
                 detailView
-            ], withCustomSpacings: [16])
+            ])
             
             stackView.constraintToSuperviewWithAttribute(.bottom)?.isActive = false
             let separator = UIView.separator(height: 2, color: .vcBackground)

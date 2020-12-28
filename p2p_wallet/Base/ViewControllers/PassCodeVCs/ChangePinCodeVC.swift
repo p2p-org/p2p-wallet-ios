@@ -31,10 +31,13 @@ class ChangePinCodeVC: WLBottomSheet {
         
         stackView.addArrangedSubviews([
             createInput(title: L10n.currentPINCode, textField: currentPinTextField),
+            BEStackViewSpacing(20),
             createInput(title: L10n.newPINCode, textField: newPinTextField),
+            BEStackViewSpacing(20),
             createInput(title: L10n.repeatNewPINCode, textField: repeatNewPinTextField),
+            BEStackViewSpacing(30),
             changePinButton
-        ], withCustomSpacings: [20, 20, 30])
+        ])
     }
     
     @objc func buttonChangePinDidTouch() {

@@ -51,8 +51,10 @@ class WalletDetailVC: WLModalWrapperVC {
                     .onTap(self, action: #selector(buttonEditDidTouch))
             ], customSpacing: [16, 0, 10])
                 .padding(.init(x: 20, y: 0)),
-            .separator(height: 2, color: .separator)
-        ], withCustomSpacings: [20, 0])
+            BEStackViewSpacing(20),
+            UIView.separator(height: 2, color: .separator),
+            BEStackViewSpacing(0)
+        ])
         
         // tabBar
         view.addSubview(tabBar)
