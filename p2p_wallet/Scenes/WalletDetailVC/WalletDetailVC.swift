@@ -44,12 +44,15 @@ class WalletDetailVC: WLModalWrapperVC {
             UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
                 UIImageView(width: 35, height: 35, cornerRadius: 12)
                     .with(urlString: wallet.icon),
+                BEStackViewSpacing(16),
                 walletNameTextField
                     .withContentHuggingPriority(.required, for: .horizontal),
+                BEStackViewSpacing(0),
                 UILabel(text: " wallet", textSize: 19, weight: .semibold),
+                BEStackViewSpacing(10),
                 UIImageView(width: 16, height: 18, image: .buttonEdit, tintColor: .a3a5ba)
                     .onTap(self, action: #selector(buttonEditDidTouch))
-            ], customSpacing: [16, 0, 10])
+            ])
                 .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(20),
             UIView.separator(height: 2, color: .separator),
