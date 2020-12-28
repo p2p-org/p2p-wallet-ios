@@ -118,15 +118,29 @@ class _AddNewWalletVC: WalletsVC {
         CocoaAction {
             let viewModel = self.viewModel as! ViewModel
             
+            // catching error
             if viewModel.feeVM.data > (WalletsVM.ofCurrentUser.solWallet?.amount ?? 0)
             {
-                self.showAlert(title: L10n.error.uppercaseFirst, message: L10n.insufficientFunds)
+                viewModel.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
+                    var wallet = $0
+                    wallet.isBeingCreated = nil
+                    wallet.creatingError = L10n.insufficientFunds
+                    return wallet
+                })
                 return .just(())
             }
             
-            let transactionVC = self.presentProcessTransactionVC()
+            // remove existing error
+            viewModel.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
+                var wallet = $0
+                wallet.isBeingCreated = true
+                wallet.creatingError = nil
+                return wallet
+            })
             
+            // request
             return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: Defaults.network.cluster)
+//            return Single<(String, String)>.just(("", "")).delay(.seconds(5), scheduler: MainScheduler.instance)
                 .do(
                     afterSuccess: { (signature, newPubkey) in
                         // remove suggestion from the list
@@ -139,26 +153,6 @@ class _AddNewWalletVC: WalletsVC {
                         }
                         
                         // process transaction
-                        transactionVC.signature = signature
-                        transactionVC.viewInExplorerButton.rx.action = CocoaAction {
-                            transactionVC.dismiss(animated: true) {
-                                let vc = self.presentingViewController
-                                self.dismiss(animated: true) {
-                                    vc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
-                                }
-                            }
-                            return .just(())
-                        }
-                        transactionVC.goBackToWalletButton.rx.action = CocoaAction {
-                            transactionVC.dismiss(animated: true) {
-                                var wallet = newWallet
-                                wallet.pubkey = newPubkey
-                                
-                                self.present(WalletDetailVC(wallet: wallet), animated: true, completion: nil)
-                            }
-                            return .just(())
-                        }
-                        
                         var newWallet = newWallet
                         newWallet.pubkey = newPubkey
                         newWallet.isProcessing = true
@@ -171,11 +165,17 @@ class _AddNewWalletVC: WalletsVC {
                             newWallet: newWallet
                         )
                         TransactionsManager.shared.process(transaction)
+                        
+                        // present wallet
+                        self.present(WalletDetailVC(wallet: newWallet), animated: true, completion: nil)
                     },
                     afterError: { (error) in
-                        transactionVC.dismiss(animated: true) {
-                            self.showError(error)
-                        }
+                        viewModel.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
+                            var wallet = $0
+                            wallet.isBeingCreated = nil
+                            wallet.creatingError = error.localizedDescription
+                            return wallet
+                        })
                     }
                 )
                 .map {_ in ()}
