@@ -92,6 +92,8 @@ internal enum L10n {
   internal static let creatingAnAccount = L10n.tr("Localizable", "creating an account")
   /// Current PIN-code
   internal static let currentPINCode = L10n.tr("Localizable", "Current PIN-code")
+  /// Date
+  internal static let date = L10n.tr("Localizable", "Date")
   /// day
   internal static let day = L10n.tr("Localizable", "day")
   /// Decline
@@ -320,6 +322,8 @@ internal enum L10n {
   internal static let useYourFaceIDForQuickAccess = L10n.tr("Localizable", "Use your FaceID for quick access?")
   /// Use your TouchID for quick access?
   internal static let useYourTouchIDForQuickAccess = L10n.tr("Localizable", "Use your TouchID for quick access?")
+  /// Value
+  internal static let value = L10n.tr("Localizable", "Value")
   /// View in blockchain explorer
   internal static let viewInBlockchainExplorer = L10n.tr("Localizable", "View in blockchain explorer")
   /// Wallet address

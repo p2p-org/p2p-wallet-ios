@@ -7,6 +7,15 @@
 
 import Foundation
 
+extension Optional where Wrapped == String {
+    public var orEmpty: String {
+        self ?? ""
+    }
+    static func + (left: String?, right: String?) -> String {
+        left.orEmpty + right.orEmpty
+    }
+}
+
 extension String {
     var firstCharacter: String {
         String(prefix(1))
