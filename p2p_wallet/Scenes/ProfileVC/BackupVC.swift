@@ -15,13 +15,17 @@ class BackupVC: ProfileVCBase {
             UIImageView(width: 63, height: 77, image: .backupShield, tintColor: .textSecondary
             )
                 .centeredHorizontallyView,
+            BEStackViewSpacing(30),
             UILabel(text: L10n.yourWalletNeedsBackup, textSize: 17, weight: .bold, numberOfLines: 0, textAlignment: .center),
+            BEStackViewSpacing(10),
             UILabel(text: L10n.ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases, textSize: 17, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center),
+            BEStackViewSpacing(30),
             WLButton.stepButton(type: .black, label: L10n.backupUsingICloud)
                 .onTap(self, action: #selector(buttonBackupUsingICloudDidTouch)),
+            BEStackViewSpacing(10),
             WLButton.stepButton(type: .sub, label: L10n.backupManually)
                 .onTap(self, action: #selector(buttonBackupManuallyDidTouch))
-        ], withCustomSpacings: [30, 10, 30, 10])
+        ])
         
         stackView.setCustomSpacing(60, after: stackView.arrangedSubviews.first!)
     }

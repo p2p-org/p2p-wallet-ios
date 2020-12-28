@@ -36,11 +36,13 @@ class BackupManuallyVC: ProfileVCBase {
             UIView.copyToClipboardButton(spacing: 16, tintColor: .textBlack)
                 .onTap(self, action: #selector(buttonCopyToClipboardDidTouch))
                 .centeredHorizontallyView,
+            BEStackViewSpacing(30),
             UIView.row(cols)
                 .with(spacing: 50)
                 .padding(.init(x: 50, y: 25), backgroundColor: .buttonSub, cornerRadius: 16)
-                .centeredHorizontallyView
-        ], withCustomSpacings: [30, 30])
+                .centeredHorizontallyView,
+            BEStackViewSpacing(30)
+        ])
         
         stackView.setCustomSpacing(60, after: stackView.arrangedSubviews.first!)
     }

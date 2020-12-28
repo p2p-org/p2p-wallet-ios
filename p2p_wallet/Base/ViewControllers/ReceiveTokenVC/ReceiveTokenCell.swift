@@ -34,7 +34,9 @@ class ReceiveTokenCell: ListCollectionCell<Wallet> {
         
         stackView.addArrangedSubviews([
             qrCodeView.centeredHorizontallyView,
+            BEStackViewSpacing(32),
             walletNameLabel,
+            BEStackViewSpacing(15),
             UIView.row([
                 addressLabel,
                 UIView(width: 2, height: 56, backgroundColor: .textWhite),
@@ -42,8 +44,9 @@ class ReceiveTokenCell: ListCollectionCell<Wallet> {
             ])
                 .with(spacing: 16, alignment: .center, distribution: .fill)
                 .padding(.init(x: 16, y: 0), backgroundColor: UIColor.textSecondary.withAlphaComponent(0.1), cornerRadius: 12),
+            BEStackViewSpacing(24),
             UILabel(text: L10n.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice, textSize: 13, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
-        ], withCustomSpacings: [32, 15, 24])
+        ])
         
         qrCodeView.addSubview(logoImageView)
         logoImageView.autoCenterInSuperview()
