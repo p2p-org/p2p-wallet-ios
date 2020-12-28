@@ -42,7 +42,6 @@ open class WLLoadingView: BEView {
     }
     
     private func animate() {
-        
         UIView.animate(withDuration: TimeInterval(bounds.width / 100), delay: 0, options: .repeat) {
             self.filledViewTrailingConstraint.constant = 0
             self.layoutIfNeeded()
