@@ -20,6 +20,7 @@ class AddNewWalletVC: WLModalWrapperVC {
         searchBar.placeholder = L10n.searchToken
         searchBar.delegate = self
         searchBar.cancelButton.setTitleColor(.h5887ff, for: .normal)
+        searchBar.setUpTextField(autocorrectionType: .no, autocapitalizationType: UITextAutocapitalizationType.none, spellCheckingType: .no)
         return searchBar
     }()
     
