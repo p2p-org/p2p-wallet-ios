@@ -30,8 +30,6 @@ open class WLLoadingView: BEView {
         filledView.layer.removeAllAnimations()
         switch state {
         case .loading:
-            filledViewTrailingConstraint.constant = -bounds.width
-            layoutIfNeeded()
             animate()
             isUserInteractionEnabled = false
         case .initializing, .loaded, .error:
@@ -42,6 +40,8 @@ open class WLLoadingView: BEView {
     }
     
     private func animate() {
+        filledViewTrailingConstraint.constant = -bounds.width
+        layoutIfNeeded()
         UIView.animate(withDuration: TimeInterval(bounds.width / 100), delay: 0, options: .repeat) {
             self.filledViewTrailingConstraint.constant = 0
             self.layoutIfNeeded()
