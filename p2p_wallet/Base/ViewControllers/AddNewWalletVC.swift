@@ -258,19 +258,7 @@ extension _AddNewWalletVC {
     class Cell: WalletCell {
         private let disposeBag = DisposeBag()
         lazy var symbolLabel = UILabel(text: "SER", textSize: 17, weight: .bold)
-        lazy var detailView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            .separator(height: 1, color: .separator),
-            UILabel(text: L10n.mintAddress, textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0),
-            mintAddressLabel,
-            .separator(height: 1, color: .separator),
-            viewInBlockchainExplorerButton,
-            UIStackView(axis: .vertical, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.addToken, textSize: 15, weight: .semibold, textColor: .white, textAlignment: .center),
-                feeLabel
-            ])
-                .padding(.init(x: 16, y: 10), backgroundColor: .h5887ff, cornerRadius: 12)
-                .onTap(self, action: #selector(buttonCreateWalletDidTouch))
-        ], customSpacing: [20, 5, 20, 20, 20])
+        
         lazy var mintAddressLabel = UILabel(textSize: 15, weight: .semibold, numberOfLines: 0)
         lazy var viewInBlockchainExplorerButton = UIButton(label: L10n.viewInBlockchainExplorer, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .a3a5ba)
         lazy var feeLabel: LazyLabel<Double> = {
@@ -278,6 +266,28 @@ extension _AddNewWalletVC {
             label.isUserInteractionEnabled = false
             return label
         }()
+        
+        lazy var buttonAddToken: WLLoadingView = {
+            let loadingView = WLLoadingView(backgroundColor: UIColor.h5887ff.withAlphaComponent(0.5), cornerRadius: 12)
+            loadingView.tintColor = .h5887ff
+            let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
+                UILabel(text: L10n.addToken, textSize: 15, weight: .semibold, textColor: .white, textAlignment: .center),
+                feeLabel
+            ])
+            loadingView.addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 16, y: 10))
+            return loadingView
+        }()
+        
+        lazy var detailView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
+            .separator(height: 1, color: .separator),
+            UILabel(text: L10n.mintAddress, textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0),
+            mintAddressLabel,
+            .separator(height: 1, color: .separator),
+            viewInBlockchainExplorerButton,
+            buttonAddToken
+                .onTap(self, action: #selector(buttonCreateWalletDidTouch))
+        ], customSpacing: [20, 5, 20, 20, 20])
         
         var createWalletAction: CocoaAction?
         
