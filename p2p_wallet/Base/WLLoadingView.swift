@@ -31,11 +31,9 @@ open class WLLoadingView: BEView {
         switch state {
         case .loading:
             animate()
-            isUserInteractionEnabled = false
         case .initializing, .loaded, .error:
             filledViewTrailingConstraint.constant = 0
             layoutIfNeeded()
-            isUserInteractionEnabled = true
         }
     }
     

@@ -353,10 +353,12 @@ extension _AddNewWalletVC {
                 buttonAddToken.setUp(state: .loading)
                 buttonAddTokenLabel.text = L10n.addingTokenToYourWallet
                 feeLabel.isHidden = true
+                buttonAddToken.isUserInteractionEnabled = false
             } else {
                 buttonAddToken.setUp(state: .loaded(true))
                 buttonAddTokenLabel.text = L10n.addToken
                 feeLabel.isHidden = false
+                buttonAddToken.isUserInteractionEnabled = true
             }
             
             if let error = item.creatingError {
