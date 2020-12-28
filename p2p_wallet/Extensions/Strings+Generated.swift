@@ -242,6 +242,8 @@ internal enum L10n {
   internal static let scanQRCode = L10n.tr("Localizable", "Scan QR Code")
   /// Scanning QrCode not supported
   internal static let scanningQrCodeNotSupported = L10n.tr("Localizable", "Scanning QrCode not supported")
+  /// Search token
+  internal static let searchToken = L10n.tr("Localizable", "Search token")
   /// seconds
   internal static let seconds = L10n.tr("Localizable", "seconds")
   /// Secure non-custodial bank of future
