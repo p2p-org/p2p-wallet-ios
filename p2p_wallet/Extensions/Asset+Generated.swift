@@ -57,6 +57,7 @@ extension UIImage {
     static let backupShield = UIImage(named: "backup-shield", in: bundle, compatibleWith: nil)!
     static let buttonEdit = UIImage(named: "button-edit", in: bundle, compatibleWith: nil)!
     static let checkMark = UIImage(named: "check-mark", in: bundle, compatibleWith: nil)!
+    static let closeFill = UIImage(named: "close-fill", in: bundle, compatibleWith: nil)!
     static let close = UIImage(named: "close", in: bundle, compatibleWith: nil)!
     static let copyToClipboard = UIImage(named: "copy-to-clipboard", in: bundle, compatibleWith: nil)!
     static let delete = UIImage(named: "delete", in: bundle, compatibleWith: nil)!
