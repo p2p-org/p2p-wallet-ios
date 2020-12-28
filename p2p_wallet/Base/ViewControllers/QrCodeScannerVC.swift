@@ -39,7 +39,7 @@ class QrCodeScannerVC: BaseVC {
         cameraContainerView.addSubview(rangeLabel)
         rangeLabel.autoCenterInSuperview()
         
-        let closeButton = UIButton.close(tintColor: .white)
+        let closeButton = UIButton.closeFill()
             .onTap(self, action: #selector(back))
         cameraContainerView.addSubview(closeButton)
         closeButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 16)
@@ -50,7 +50,7 @@ class QrCodeScannerVC: BaseVC {
         
         cameraContainerView.bringSubviewToFront(rangeImageView)
         cameraContainerView.bringSubviewToFront(rangeLabel)
-        
+        cameraContainerView.bringSubviewToFront(closeButton)
     }
     
     override func viewDidLayoutSubviews() {
