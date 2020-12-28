@@ -141,6 +141,9 @@ class _AddNewWalletVC: WalletsVC {
             // request
             return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: Defaults.network.cluster)
 //            return Single<(String, String)>.just(("", "")).delay(.seconds(5), scheduler: MainScheduler.instance)
+//                .map {_ -> (String, String) in
+//                    throw SolanaSDK.Error.other("example")
+//                }
                 .do(
                     afterSuccess: { (signature, newPubkey) in
                         // remove suggestion from the list
@@ -271,8 +274,7 @@ extension _AddNewWalletVC {
         }()
         
         lazy var buttonAddToken: WLLoadingView = {
-            let loadingView = WLLoadingView(height: 56, backgroundColor: UIColor.h5887ff.withAlphaComponent(0.5), cornerRadius: 12)
-            loadingView.tintColor = .h5887ff
+            let loadingView = WLLoadingView(height: 56, backgroundColor: .h5887ff, cornerRadius: 12)
             let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
                 buttonAddTokenLabel,
                 feeLabel
@@ -350,15 +352,13 @@ extension _AddNewWalletVC {
             contentView.backgroundColor = item.isExpanded == true ? .f6f6f8 : .clear
             
             if item.isBeingCreated == true {
-                buttonAddToken.setUp(state: .loading)
+                buttonAddToken.setUp(loading: true)
                 buttonAddTokenLabel.text = L10n.addingTokenToYourWallet
                 feeLabel.isHidden = true
-                buttonAddToken.isUserInteractionEnabled = false
             } else {
-                buttonAddToken.setUp(state: .loaded(true))
+                buttonAddToken.setUp(loading: false)
                 buttonAddTokenLabel.text = L10n.addToken
                 feeLabel.isHidden = false
-                buttonAddToken.isUserInteractionEnabled = true
             }
             
             if let error = item.creatingError {
@@ -382,6 +382,9 @@ extension _AddNewWalletVC {
         }
         
         @objc func buttonCreateWalletDidTouch() {
+            if buttonAddToken.isLoading {
+                return
+            }
             createWalletAction?.execute()
         }
     }

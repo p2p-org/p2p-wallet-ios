@@ -8,41 +8,31 @@
 import Foundation
 
 open class WLLoadingView: BEView {
-    open override var tintColor: UIColor? {
-        didSet { filledView.backgroundColor = tintColor }
-    }
+    var isLoading = false
     
-    lazy var filledView = UIView(forAutoLayout: ())
-    
-    var filledViewTrailingConstraint: NSLayoutConstraint!
+    lazy var fillLayer = CALayer()
     
     open override func commonInit() {
         super.commonInit()
-        filledView.backgroundColor = backgroundColor
-        addSubview(filledView)
-        filledView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .trailing)
-        filledViewTrailingConstraint = filledView.widthAnchor.constraint(equalTo: widthAnchor)
+        fillLayer.backgroundColor = UIColor.textWhite.withAlphaComponent(0.5).cgColor
+    }
+    
+    func setUp(loading: Bool) {
+        isLoading = loading
         
-        filledViewTrailingConstraint.isActive = true
-    }
-    
-    func setUp(state: FetcherState<Bool>) {
-        filledView.layer.removeAllAnimations()
-        switch state {
-        case .loading:
-            animate()
-        case .initializing, .loaded, .error:
-            filledViewTrailingConstraint.constant = 0
-            layoutIfNeeded()
-        }
-    }
-    
-    private func animate() {
-        filledViewTrailingConstraint.constant = -bounds.width
-        layoutIfNeeded()
-        UIView.animate(withDuration: TimeInterval(bounds.width / 100), delay: 0, options: .repeat) {
-            self.filledViewTrailingConstraint.constant = 0
-            self.layoutIfNeeded()
+        if loading {
+            fillLayer.removeFromSuperlayer()
+            layer.insertSublayer(fillLayer, at: 1)
+            layer.position = .zero
+            fillLayer.frame.size = bounds.size
+            let anim = CABasicAnimation(keyPath: "position.x")
+            anim.fromValue = 0
+            anim.toValue = bounds.size.width
+            anim.repeatCount = .infinity
+            anim.duration = 5
+            fillLayer.add(anim, forKey: "positionX")
+        } else {
+            fillLayer.removeFromSuperlayer()
         }
     }
 }
