@@ -53,6 +53,17 @@ extension Transaction {
                 return L10n.addWallet
             }
         }
+        
+        var icon: UIImage {
+            switch self {
+            case .send:
+                return .walletSend
+            case .receive:
+                return .walletReceive
+            case .createAccount:
+                return .walletSend
+            }
+        }
     }
     
     mutating func confirm(by confirmedTransaction: SolanaSDK.Transaction.Info)
