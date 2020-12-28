@@ -15,6 +15,7 @@ class AddNewWalletVC: WLModalWrapperVC {
         searchBar.textFieldBgColor = .lightGrayBackground
         searchBar.magnifyingIconSize = 24
         searchBar.magnifyingIconImageView.image = .search
+        searchBar.magnifyingIconImageView.tintColor = .textBlack
         searchBar.leftViewWidth = 24+10+10
         searchBar.placeholder = L10n.searchToken
         searchBar.delegate = self
