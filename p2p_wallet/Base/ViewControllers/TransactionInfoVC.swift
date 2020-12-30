@@ -127,7 +127,7 @@ class TransactionInfoVC: BaseVStackVC {
             separator(),
             BEStackViewSpacing(20),
             
-            sectionTitle(L10n.amount),
+            sectionTitle(L10n.amount.uppercaseFirst),
             BEStackViewSpacing(8),
             sectionContent(transaction.amount?.toString(maximumFractionDigits: 9, showPlus: true) + " " + transaction.symbol),
             BEStackViewSpacing(20),
@@ -151,9 +151,9 @@ class TransactionInfoVC: BaseVStackVC {
             separator(),
             BEStackViewSpacing(20),
             
-            sectionTitle("#" + L10n.blockNumber),
+            sectionTitle(L10n.blockNumber),
             BEStackViewSpacing(8),
-            sectionContent("\(transaction.slot ?? 0)"),
+            sectionContent("#\(transaction.slot ?? 0)"),
             BEStackViewSpacing(20),
             
             separator(),
