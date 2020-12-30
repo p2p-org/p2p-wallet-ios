@@ -56,7 +56,7 @@ class CreatePhrasesVC: PhrasesVC {
         UIView.copyToClipboardButton()
             .onTap(self, action: #selector(buttonCopyToClipboardDidTouch))
     lazy var savedCheckBox = BECheckbox(width: 20, height: 20, cornerRadius: 6)
-    lazy var saveToICloudButton = WLButton.stepButton(type: .black, label: L10n.saveToICloud.uppercaseFirst)
+    lazy var saveToICloudButton = WLButton.stepButton(type: .blue, label: L10n.saveToICloud.uppercaseFirst)
         .onTap(self, action: #selector(buttonSaveToKeychainDidTouch))
     
     lazy var regenerateButton: UIBarButtonItem = {
@@ -67,49 +67,40 @@ class CreatePhrasesVC: PhrasesVC {
         return button
     }()
     
-    lazy var continueButton = WLButton.stepButton(type: .black, label: L10n.continue)
+    lazy var continueButton = WLButton.stepButton(type: .blue, label: L10n.continue)
         .onTap(self, action: #selector(buttonContinueDidTouch))
     
     override func setUp() {
         super.setUp()
         navigationItem.rightBarButtonItem = regenerateButton
         
-        stackView.alignment = .center
+        stackView.alignment = .fill
         stackView.spacing = 20
         
-        let keysContainerView: UIView = {
-            let view = UIView(backgroundColor: .lightGrayBackground, cornerRadius: 16)
-            
-            let stackView = UIStackView(axis: .vertical, spacing: 22, alignment: .center, distribution: .fill, arrangedSubviews: [
+        stackView.addArrangedSubviews([
+            UIStackView(axis: .vertical, spacing: 22, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 phrasesListViews.padding(UIEdgeInsets(top: 0, left: 40, bottom: 0, right: 40)),
                 copyToClipboardButton
+                    .centeredHorizontallyView
             ])
-            phrasesListViews.wrapper!.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
-            view.addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0))
-            return view
-        }()
-        
-        stackView.addArrangedSubview(keysContainerView)
-        stackView.addArrangedSubview(UILabel(text: L10n.orSavingIntoKeychain, textColor: .textSecondary, textAlignment: .center))
-        stackView.addArrangedSubview(saveToICloudButton)
-        
-        let label = UILabel(
-            text: L10n.weVeCreatedSomeSecurityKeywordsForYou.uppercaseFirst + "\n" + L10n.warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture,
-            textSize: 15,
-            weight: .medium,
-            textColor: .textSecondary,
-            numberOfLines: 0,
-            textAlignment: .center
-        )
-        stackView.addArrangedSubview(label)
-        
-        saveToICloudButton.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40)
-            .isActive = true
-        keysContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40)
-            .isActive = true
-        label.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40)
-                .isActive = true
+                .padding(.init(x: 0, y: 20), backgroundColor: .lightGrayBackground, cornerRadius: 16)
+                .padding(.init(x: 20, y: 0)),
+            
+            UILabel(text: L10n.orSavingIntoKeychain, textColor: .textSecondary, textAlignment: .center),
+            
+            saveToICloudButton
+                .padding(.init(x: 20, y: 0)),
+            
+            UILabel(
+                text: L10n.weVeCreatedSomeSecurityKeywordsForYou.uppercaseFirst + "\n" + L10n.warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture,
+                textSize: 15,
+                weight: .medium,
+                textColor: .textSecondary,
+                numberOfLines: 0,
+                textAlignment: .center
+            )
+                .padding(.init(x: 20, y: 0))
+        ])
         
         scrollView.constraintToSuperviewWithAttribute(.bottom)?.isActive = false
         
@@ -117,24 +108,12 @@ class CreatePhrasesVC: PhrasesVC {
         buttonStackView.autoPinEdgesToSuperviewSafeArea(with: UIEdgeInsets(top: 0, left: 20, bottom: 16, right: 20), excludingEdge: .top)
         buttonStackView.autoPinEdge(.top, to: .bottom, of: scrollView, withOffset: 10)
         
-        let savedConfirmView: UIStackView = {
-            let stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill)
-            let spacer1 = UIView.spacer
-            let spacer2 = UIView.spacer
-            let label = UILabel(text: L10n.iHaveSavedTheseWordsInASafePlace, weight: .medium)
-            label.adjustsFontSizeToFitWidth = true
-            stackView.addArrangedSubviews([
-                spacer1,
-                savedCheckBox,
-                label,
-                spacer2
-            ])
-            spacer1.widthAnchor.constraint(equalTo: spacer2.widthAnchor).isActive = true
-            return stackView
-        }()
-        
         buttonStackView.addArrangedSubviews([
-            savedConfirmView,
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
+                savedCheckBox,
+                UILabel(text: L10n.iHaveSavedTheseWordsInASafePlace, weight: .medium)
+            ])
+                .centeredHorizontallyView,
             continueButton
         ])
         
