@@ -23,7 +23,7 @@ class SendTokenItemVC: BaseVC {
     
     // MARK: - Subviews
     lazy var balanceLabel = UILabel(text: "0", textColor: .h5887ff)
-    lazy var coinImageView = UIImageView(width: 44, height: 44, cornerRadius: 22)
+    lazy var coinImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 22)
         .onTap(self, action: #selector(buttonChooseWalletDidTouch))
     lazy var amountTextField = TokenAmountTextField(
         font: .systemFont(ofSize: 27, weight: .semibold),
@@ -119,7 +119,7 @@ class SendTokenItemVC: BaseVC {
     func setUp(wallet: Wallet) {
         self.wallet = wallet
         balanceLabel.text = "\(L10n.available): \(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
-        coinImageView.setImage(urlString: wallet.icon)
+        coinImageView.setUp(wallet: wallet)
     }
     
     override func bind() {

@@ -10,7 +10,7 @@ import Foundation
 class SwapTokenItemView: BEView {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
     
-    lazy var iconImageView = UIImageView(width: 44, height: 44, backgroundColor: .c4c4c4, cornerRadius: 22)
+    lazy var iconImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 22)
     
     lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .medium)
     
@@ -45,12 +45,12 @@ class SwapTokenItemView: BEView {
         if let wallet = wallet {
             tokenSymbolLabel.alpha = 1
             
-            iconImageView.setImage(urlString: wallet.icon)
+            iconImageView.setUp(wallet: wallet)
             tokenSymbolLabel.text = wallet.symbol
         } else {
             tokenSymbolLabel.alpha = 0
             
-            iconImageView.image = nil
+            iconImageView.imageView.image = nil
             tokenSymbolLabel.text = "TOK"
         }
         amountTextField.text = nil
