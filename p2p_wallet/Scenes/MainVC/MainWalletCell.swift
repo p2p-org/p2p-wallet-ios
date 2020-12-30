@@ -48,7 +48,12 @@ class MainWalletCell: WalletCell {
         } else {
             addressLabel.text = nil
         }
-        indicatorColorView.backgroundColor = item.indicatorColor
+        
+        if item.amountInUSD == 0 {
+            indicatorColorView.backgroundColor = .clear
+        } else {
+            indicatorColorView.backgroundColor = item.indicatorColor
+        }
     }
     
     private func row(arrangedSubviews: [UIView]) -> UIStackView {

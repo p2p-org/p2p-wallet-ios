@@ -84,4 +84,12 @@ class WalletsVM: ListViewModel<Wallet> {
             return newItem
         })
     }
+    
+    override func join(_ newItems: [Wallet]) -> [Wallet] {
+        var wallets = super.join(newItems)
+        let solWallet = wallets.removeFirst()
+        wallets = wallets
+            .sorted(by: {$0.amountInUSD > $1.amountInUSD})
+        return [solWallet] + wallets
+    }
 }
