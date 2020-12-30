@@ -8,7 +8,7 @@
 import Foundation
 
 class CoinLogoImageView: BEView {
-    lazy var imageView = UIImageView(tintColor: .white)
+    lazy var imageView = UIImageView(tintColor: .textBlack)
     
     override func commonInit() {
         super.commonInit()
