@@ -7,9 +7,31 @@
 
 import Foundation
 
+class CoinLogoImageView: BEView {
+    lazy var imageView = UIImageView(tintColor: .textBlack)
+    
+    override func commonInit() {
+        super.commonInit()
+        addSubview(imageView)
+        imageView.autoCenterInSuperview()
+        imageView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.66).isActive = true
+        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+    }
+    
+    func setUp(wallet: Wallet) {
+        imageView.image = wallet.image
+        backgroundColor = wallet.backgroundColor
+    }
+    
+    func with(wallet: Wallet) -> Self {
+        setUp(wallet: wallet)
+        return self
+    }
+}
+
 class WalletCell: ListCollectionCell<Wallet>, LoadableView {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
-    lazy var coinLogoImageView = UIImageView(width: 45, height: 45, cornerRadius: 12)
+    lazy var coinLogoImageView = CoinLogoImageView(width: 45, height: 45, cornerRadius: 12)
     lazy var coinNameLabel = UILabel(text: "Coin name", textSize: 15, weight: .semibold, numberOfLines: 0)
     lazy var coinPriceLabel = UILabel(text: "12 800,99 US$", textSize: 13)
     lazy var tokenCountLabel = UILabel(text: "0,00344 Tkns", textSize: 13, textColor: .textSecondary)
@@ -27,7 +49,7 @@ class WalletCell: ListCollectionCell<Wallet>, LoadableView {
     }
     
     override func setUp(with item: Wallet) {
-        coinLogoImageView.setImage(urlString: item.icon)
+        coinLogoImageView.setUp(wallet: item)
         coinNameLabel.text = item.name /*+ (item.isProcessing == true ? " (\(L10n.creating))" : "")*/
         tokenCountLabel.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.symbol)"
         
