@@ -65,7 +65,6 @@ class WalletsVM: ListViewModel<Wallet> {
                             mintAddress: "",
                             pubkey: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString,
                             symbol: "SOL",
-                            icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png",
                             lamports: balance,
                             price: PricesManager.shared.solPrice,
                             decimals: 9
