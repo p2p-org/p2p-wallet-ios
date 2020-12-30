@@ -9,6 +9,7 @@ import Foundation
 
 class MainWalletCell: WalletCell {
     lazy var addressLabel = UILabel(text: "public key", textSize: 13, textColor: .textSecondary, numberOfLines: 1)
+    lazy var indicatorColorView = UIView(width: 3, cornerRadius: 1.5)
     
     override var loadingViews: [UIView] {
         super.loadingViews + [addressLabel]
@@ -29,8 +30,12 @@ class MainWalletCell: WalletCell {
         stackView.alignment = .center
         stackView.addArrangedSubviews([
             coinLogoImageView,
-            vStackView
+            vStackView,
+            indicatorColorView
         ])
+        
+        indicatorColorView.heightAnchor.constraint(equalTo: coinLogoImageView.heightAnchor)
+            .isActive = true
         
         coinNameLabel.textColor = .white
         equityValueLabel.textColor = .white
@@ -43,6 +48,7 @@ class MainWalletCell: WalletCell {
         } else {
             addressLabel.text = nil
         }
+        indicatorColorView.backgroundColor = item.indicatorColor
     }
     
     private func row(arrangedSubviews: [UIView]) -> UIStackView {
