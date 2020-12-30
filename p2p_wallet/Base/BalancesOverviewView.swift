@@ -87,12 +87,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
     }
     
     func setUpChartView(wallets: [Wallet]) {
-        let nonNilWallets = wallets
-            .filter {$0.amountInUSD > 0 || $0.symbol == "SOL"}
-            .sorted(by: {$0.amountInUSD > $1.amountInUSD})
-            .sorted(by: {$0.symbol == "SOL" && $1.symbol != "SOL"})
-            
-        let entries = nonNilWallets
+        let entries = wallets
             .compactMap { return $0.amountInUSD == 0 ? nil : $0.amountInUSD}
             .map {PieChartDataEntry(value: $0)}
         
@@ -101,7 +96,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         set.drawValuesEnabled = false
         set.selectionShift = 0
         
-        set.colors = nonNilWallets.map {$0.indicatorColor}
+        set.colors = wallets.map {$0.indicatorColor}
         
         let data = PieChartData(dataSet: set)
         data.setValueTextColor(.clear)
