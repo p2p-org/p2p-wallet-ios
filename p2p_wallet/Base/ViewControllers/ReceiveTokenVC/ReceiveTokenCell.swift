@@ -17,8 +17,8 @@ class ReceiveTokenCell: ListCollectionCell<Wallet> {
         button.setImage(.walletShare, for: .normal)
         return button
     }()
-    lazy var logoImageView: UIImageView = {
-        let imageView = UIImageView(width: 36, height: 36, backgroundColor: .textBlack, cornerRadius: 12)
+    lazy var logoImageView: CoinLogoImageView = {
+        let imageView = CoinLogoImageView(width: 36, height: 36, cornerRadius: 12)
         imageView.layer.borderWidth = 3
         imageView.layer.borderColor = UIColor.textWhite.cgColor
         return imageView
@@ -56,6 +56,6 @@ class ReceiveTokenCell: ListCollectionCell<Wallet> {
         qrCodeView.setQrCode(string: wallet.pubkey)
         walletNameLabel.text = wallet.name
         addressLabel.text = wallet.pubkeyShort(numOfSymbolsRevealed: 6)
-        logoImageView.setImage(urlString: wallet.icon)
+        logoImageView.setUp(wallet: wallet)
     }
 }
