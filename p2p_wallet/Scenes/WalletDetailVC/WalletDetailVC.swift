@@ -42,8 +42,8 @@ class WalletDetailVC: WLModalWrapperVC {
         
         stackView.addArrangedSubviews([
             UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-                UIImageView(width: 35, height: 35, cornerRadius: 12)
-                    .with(urlString: wallet.icon),
+                CoinLogoImageView(width: 35, height: 35, cornerRadius: 12)
+                    .with(wallet: wallet),
                 BEStackViewSpacing(16),
                 walletNameTextField
                     .withContentHuggingPriority(.required, for: .horizontal),

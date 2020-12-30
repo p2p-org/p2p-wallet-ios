@@ -14,10 +14,10 @@ struct Wallet: FiatConvertable {
     let mintAddress: String
     var pubkey: String?
     let symbol: String
-    let icon: String?
     var lamports: UInt64?
     var price: CurrentPrice?
     var decimals: Int?
+    var indicatorColor: UIColor
     
     // MARK: - Additional properties
     var isExpanded: Bool?
@@ -33,6 +33,18 @@ struct Wallet: FiatConvertable {
     
     var isBeingCreated: Bool?
     var creatingError: String?
+    
+    var backgroundColor: UIColor {
+        // swiftlint:disable swiftgen_assets
+        UIColor(named: symbol) ?? UIColor.background5
+        // swiftlint:enable swiftgen_assets
+    }
+    
+    var image: UIImage? {
+        // swiftlint:disable swiftgen_assets
+        UIImage(named: symbol)
+        // swiftlint:enable swiftgen_assets
+    }
 }
 
 extension Wallet: ListItemType {
@@ -47,13 +59,16 @@ extension Wallet: ListItemType {
         self.name = name
         self.mintAddress = programAccount.mintAddress
         self.symbol = programAccount.symbol
-        self.icon = programAccount.icon
         self.lamports = programAccount.amount
         self.pubkey = programAccount.pubkey
         self.decimals = programAccount.decimals
+        // swiftlint:disable swiftgen_assets
+        self.indicatorColor = UIColor(named: symbol) ?? UIColor.random
+        // swiftlint:enable swiftgen_assets
+        
     }
     
     static func placeholder(at index: Int) -> Wallet {
-        Wallet(id: placeholderId(at: index), name: "placeholder", mintAddress: "placeholder-mintaddress", pubkey: "pubkey", symbol: "PLHD\(index)", icon: nil, lamports: nil, decimals: nil)
+        Wallet(id: placeholderId(at: index), name: "placeholder", mintAddress: "placeholder-mintaddress", pubkey: "pubkey", symbol: "PLHD\(index)", lamports: nil, decimals: nil, indicatorColor: .clear)
     }
 }
