@@ -59,7 +59,7 @@ class ReceiveTokenVC: WLModalVC {
     
     override func setUp() {
         super.setUp()
-        containerView.backgroundColor = UIColor(red: 238/255, green: 239/255, blue: 239/255, alpha: 1)
+        containerView.backgroundColor = .background5
         stackView.addArrangedSubview(UILabel(text: L10n.sendToYourWallet, textSize: 17, weight: .medium, textAlignment: .center))
         stackView.addArrangedSubview(collectionView)
         stackView.addArrangedSubview(pageControl)
