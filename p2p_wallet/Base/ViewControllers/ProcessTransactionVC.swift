@@ -49,7 +49,7 @@ class ProcessTransactionVC: WLCenterSheet {
             titleLabel.padding(UIEdgeInsets(x: 30, y: 0)),
             .separator(height: 20)
         ])
-        forceRelayout()
+        forceResizeModal()
     }
     
     private func showTransactionDetail(_ transaction: Transaction)
@@ -113,7 +113,7 @@ class ProcessTransactionVC: WLCenterSheet {
         stackView.setCustomSpacing(20, after: separator2)
         stackView.setCustomSpacing(10, after: viewInExplorerButton)
         
-        forceRelayout()
+        forceResizeModal()
         
         // button's state
         viewInExplorerButton.isEnabled = transaction.status == .confirmed
