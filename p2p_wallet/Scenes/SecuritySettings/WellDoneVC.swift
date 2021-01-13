@@ -8,6 +8,8 @@
 import Foundation
 
 class WellDoneVC: SecuritySettingVC {
+    override var preferredStatusBarStyle: UIStatusBarStyle {.lightContent}
+    
     override func setUp() {
         super.setUp()
         // static background color
