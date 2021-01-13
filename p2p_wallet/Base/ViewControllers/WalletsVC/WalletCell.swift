@@ -7,28 +7,6 @@
 
 import Foundation
 
-class CoinLogoImageView: BEView {
-    lazy var imageView = UIImageView(tintColor: .textBlack)
-    
-    override func commonInit() {
-        super.commonInit()
-        addSubview(imageView)
-        imageView.autoCenterInSuperview()
-        imageView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.66).isActive = true
-        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
-    }
-    
-    func setUp(wallet: Wallet) {
-        imageView.image = wallet.image
-        backgroundColor = wallet.backgroundColor
-    }
-    
-    func with(wallet: Wallet) -> Self {
-        setUp(wallet: wallet)
-        return self
-    }
-}
-
 class WalletCell: ListCollectionCell<Wallet>, LoadableView {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
     lazy var coinLogoImageView = CoinLogoImageView(width: 45, height: 45, cornerRadius: 12)
