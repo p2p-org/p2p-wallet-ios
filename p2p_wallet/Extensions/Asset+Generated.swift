@@ -37,6 +37,7 @@ extension UIColor {
     static let h202020 = UIColor(named: "h202020", in: bundle, compatibleWith: nil)!
     static let h282828 = UIColor(named: "h282828", in: bundle, compatibleWith: nil)!
     static let h5887ff = UIColor(named: "h5887ff", in: bundle, compatibleWith: nil)!
+    static let introBgStatic = UIColor(named: "intro-bg-static", in: bundle, compatibleWith: nil)!
     static let lightGrayBackground = UIColor(named: "lightGrayBackground", in: bundle, compatibleWith: nil)!
     static let pinViewBgColor = UIColor(named: "pinView-bg-color", in: bundle, compatibleWith: nil)!
     static let pinViewButtonBgColor = UIColor(named: "pinView-button-bg-color", in: bundle, compatibleWith: nil)!
@@ -66,6 +67,7 @@ extension UIImage {
     static let emptyPlaceholder = UIImage(named: "empty-placeholder", in: bundle, compatibleWith: nil)!
     static let faceId = UIImage(named: "faceId", in: bundle, compatibleWith: nil)!
     static let introBankCard1 = UIImage(named: "intro-bank-card-1", in: bundle, compatibleWith: nil)!
+    static let introLinesBg = UIImage(named: "intro-lines-bg", in: bundle, compatibleWith: nil)!
     static let nextArrow = UIImage(named: "next-arrow", in: bundle, compatibleWith: nil)!
     static let p2pValidatorLogo = UIImage(named: "p2p-validator-logo", in: bundle, compatibleWith: nil)!
     static let qrCodeRange = UIImage(named: "qr-code-range", in: bundle, compatibleWith: nil)!
