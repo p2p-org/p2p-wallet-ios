@@ -22,6 +22,10 @@ class BaseVC: BEViewController {
         scrollViewAvoidingTabBar?.contentInset = scrollViewAvoidingTabBar?.contentInset.modifying(dBottom: 20) ?? .zero
     }
     
+    func forceResizeModal() {
+        preferredContentSize.height += 1
+    }
+    
     #if DEBUG //1
     @objc func injected() { //2
         for subview in self.view.subviews {
