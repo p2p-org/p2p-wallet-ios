@@ -71,7 +71,7 @@ class _SendTokenVC: BEPagesVC, LoadableView {
     
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .background
+        view.backgroundColor = .vcBackground
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewDidTouch))
         view.addGestureRecognizer(tapGesture)
