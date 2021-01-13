@@ -10,6 +10,7 @@
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
 		BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */; };
+		BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */; };
 		BC104A7B259974CE0048C834 /* WLLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC104A7A259974CE0048C834 /* WLLoadingView.swift */; };
 		BC10510925887F7D00398EA2 /* BackupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10510825887F7D00398EA2 /* BackupVC.swift */; };
 		BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC105110258882BE00398EA2 /* ProfileVCBase.swift */; };
@@ -199,6 +200,7 @@
 		BB6790432D1A5F53BBDB3162 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		BB7CFE6A2633569A3CAC841A /* Pods-p2p_walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.release.xcconfig"; sourceTree = "<group>"; };
 		BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LABiometryType+Extensions.swift"; sourceTree = "<group>"; };
+		BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLResizableModalVC.swift; sourceTree = "<group>"; };
 		BC104A7A259974CE0048C834 /* WLLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLLoadingView.swift; sourceTree = "<group>"; };
 		BC10510825887F7D00398EA2 /* BackupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupVC.swift; sourceTree = "<group>"; };
 		BC105110258882BE00398EA2 /* ProfileVCBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVCBase.swift; sourceTree = "<group>"; };
@@ -490,8 +492,8 @@
 				BC2EC1C72553ED1B006EEDA5 /* FittingSizePresentationController.swift */,
 				BC2EC1CC2553ED1B006EEDA5 /* CustomHeightPresentationController.swift */,
 				BC2EC1C52553ED1B006EEDA5 /* HalfSizePresentationController.swift */,
-				BC2EC1C82553ED1B006EEDA5 /* FlexibleHeightPresentationController.swift */,
 				BCA9948625AEA1C0005BD8FB /* ResizablePresentationController.swift */,
+				BC2EC1C82553ED1B006EEDA5 /* FlexibleHeightPresentationController.swift */,
 				BC2EC1C22553ED1B006EEDA5 /* CardPresentationController */,
 			);
 			path = UIPresentationControllers;
@@ -849,6 +851,7 @@
 				BC3ADE972570C292002B3B16 /* ProcessTransactionVC.swift */,
 				BC932B3B257E095B007F1C29 /* TransactionInfoVC.swift */,
 				BC3B3DA9258C653000C6117E /* WLModalVC.swift */,
+				BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */,
 				BC11CA192591E30200E399A9 /* WLModalWrapperVC.swift */,
 			);
 			path = ViewControllers;
@@ -1278,6 +1281,7 @@
 				BCEA06BE2542FD3F0006E4C3 /* Asset+Generated.swift in Sources */,
 				BC3ADE772570A2F8002B3B16 /* RestoreWalletVC.swift in Sources */,
 				BC3ADE8D2570B832002B3B16 /* WLCenterSheet.swift in Sources */,
+				BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */,
 				BC3ADE982570C292002B3B16 /* ProcessTransactionVC.swift in Sources */,
 				BC11C9F62591A1AE00E399A9 /* FriendCell.swift in Sources */,
 				BC54DD062587098800A65566 /* LazyView.swift in Sources */,
