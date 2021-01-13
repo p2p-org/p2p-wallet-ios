@@ -4,7 +4,7 @@ PODS:
     - RxSwift (< 7.0, >= 5.0)
   - Alamofire (5.4.0)
   - ASKSecp256k1 (0.0.6)
-  - BEPureLayout (0.1.9):
+  - BEPureLayout (0.2.1):
     - PureLayout
   - Charts (3.6.0):
     - Charts/Core (= 3.6.0)
@@ -203,7 +203,7 @@ SPEC CHECKSUMS:
   Action: 5dc2194f7a0b77857c82a677b0da655f197c005f
   Alamofire: 3b6a534a3df22db367e4dedeeca73d1ddfcf0e2f
   ASKSecp256k1: 58eb44dfa57f9d29ac0b02fe5de5a312064517f2
-  BEPureLayout: c85d1ffb49e8940ecf6da9cc78b7e4f919e72c2c
+  BEPureLayout: 5421e716fb120f196677d9c875cd1fb305af2cea
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   CryptoSwift: 01b0f0cba1d5c212e5a335ff6c054fb75a204f00
   DiffableDataSources: 80396cec405c9b29e1e07b55c9be7d11b46c8741
