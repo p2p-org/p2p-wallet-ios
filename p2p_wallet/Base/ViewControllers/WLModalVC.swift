@@ -55,9 +55,18 @@ class WLModalVC: BaseVC {
         stackView.autoPinEdgesToSuperviewEdges(with: padding)
         
         containerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+        
+        if modalPresentationStyle == .custom {
+            view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(viewDidSwipe(_:))))
+            view.isUserInteractionEnabled = true
+        }
     }
     
     @objc func dismissKeyboard() {
         self.view.endEditing(true)
+    }
+    
+    @objc func viewDidSwipe(_ gestureRecognizer: UIPanGestureRecognizer) {
+        (presentationController as? ResizablePresentationController)?.presentedViewDidSwipe(gestureRecognizer: gestureRecognizer)
     }
 }
