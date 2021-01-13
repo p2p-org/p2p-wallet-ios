@@ -171,7 +171,7 @@ class MainVC: CollectionVC<MainVCItem> {
             let wallets = self.walletsVM.items
             if wallets.count == 0 {return .just(())}
             let vc = SwapTokenVC(wallets: wallets)
-            self.show(vc, sender: nil)
+            self.present(vc, animated: true, completion: nil)
             return .just(())
         }
     }
