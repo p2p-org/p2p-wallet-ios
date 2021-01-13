@@ -24,14 +24,14 @@ class SecuritySettingVC: BaseVC {
     lazy var doThisLaterButton = WLButton.stepButton(type: .gray, label: L10n.doThisLater)
         .onTap(self, action: #selector(buttonDoThisLaterDidTouch))
     
+    lazy var spacer1 = UIView.spacer
+    lazy var spacer2 = UIView.spacer
+    
     override func setUp() {
         super.setUp()
         
         view.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewSafeArea(with: UIEdgeInsets(top: 0, left: 20, bottom: 16, right: 20))
-        
-        let spacer1 = UIView.spacer
-        let spacer2 = UIView.spacer
         
         stackView.addArrangedSubview(spacer1)
         stackView.addArrangedSubview(spacer2)
