@@ -142,7 +142,7 @@
 		BCA9947425AE94D7005BD8FB /* Montserrat-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCA9946225AE94D7005BD8FB /* Montserrat-Italic.ttf */; };
 		BCA9947525AE94D7005BD8FB /* Montserrat-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCA9946325AE94D7005BD8FB /* Montserrat-SemiBoldItalic.ttf */; };
 		BCA9947625AE94D7005BD8FB /* Montserrat-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCA9946425AE94D7005BD8FB /* Montserrat-ExtraBoldItalic.ttf */; };
-		BCA9948725AEA1C0005BD8FB /* WLModalPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA9948625AEA1C0005BD8FB /* WLModalPresentationController.swift */; };
+		BCA9948725AEA1C0005BD8FB /* ResizablePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA9948625AEA1C0005BD8FB /* ResizablePresentationController.swift */; };
 		BCAEF2C4255E159200F3491F /* LoadableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAEF2C3255E159200F3491F /* LoadableView.swift */; };
 		BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2231825412AF8002D997F /* AppDelegate.swift */; };
 		BCB2232225412AF8002D997F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232125412AF8002D997F /* Assets.xcassets */; };
@@ -338,7 +338,7 @@
 		BCA9946225AE94D7005BD8FB /* Montserrat-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Italic.ttf"; sourceTree = "<group>"; };
 		BCA9946325AE94D7005BD8FB /* Montserrat-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		BCA9946425AE94D7005BD8FB /* Montserrat-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
-		BCA9948625AEA1C0005BD8FB /* WLModalPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLModalPresentationController.swift; sourceTree = "<group>"; };
+		BCA9948625AEA1C0005BD8FB /* ResizablePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizablePresentationController.swift; sourceTree = "<group>"; };
 		BCAEF2C3255E159200F3491F /* LoadableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadableView.swift; sourceTree = "<group>"; };
 		BCB2231525412AF8002D997F /* p2p_wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = p2p_wallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB2231825412AF8002D997F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -491,7 +491,7 @@
 				BC2EC1CC2553ED1B006EEDA5 /* CustomHeightPresentationController.swift */,
 				BC2EC1C52553ED1B006EEDA5 /* HalfSizePresentationController.swift */,
 				BC2EC1C82553ED1B006EEDA5 /* FlexibleHeightPresentationController.swift */,
-				BCA9948625AEA1C0005BD8FB /* WLModalPresentationController.swift */,
+				BCA9948625AEA1C0005BD8FB /* ResizablePresentationController.swift */,
 				BC2EC1C22553ED1B006EEDA5 /* CardPresentationController */,
 			);
 			path = UIPresentationControllers;
@@ -1333,7 +1333,7 @@
 				BC7533AA257F31D3007A00D9 /* LazyLabel.swift in Sources */,
 				BC6EE7CA254BBF8900FE1025 /* UIApplication+Extensions.swift in Sources */,
 				BC11C9C225908F3700E399A9 /* CGFloat+Extensions.swift in Sources */,
-				BCA9948725AEA1C0005BD8FB /* WLModalPresentationController.swift in Sources */,
+				BCA9948725AEA1C0005BD8FB /* ResizablePresentationController.swift in Sources */,
 				BC1051232589F1B900398EA2 /* ChangePinCodeVC.swift in Sources */,
 				BC3ADE822570B005002B3B16 /* FlexibleHeightVC.swift in Sources */,
 				BC10510925887F7D00398EA2 /* BackupVC.swift in Sources */,

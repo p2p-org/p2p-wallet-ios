@@ -11,6 +11,7 @@ import UIKit
 class DimmingPresentationController: UIPresentationController {
     // MARK: - Properties
     var dimmingView: UIView!
+    var animateResizing = true
     
     // MARK: - Class Initialization
     override init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
@@ -83,7 +84,11 @@ class DimmingPresentationController: UIPresentationController {
         super.preferredContentSizeDidChange(forChildContentContainer: container)
         self.containerView?.setNeedsLayout()
         self.containerView?.subviews.forEach {$0.layoutIfNeeded()}
-        UIView.animate(withDuration: 0.3) {
+        if animateResizing {
+            UIView.animate(withDuration: 0.3) {
+                self.containerView?.layoutIfNeeded()
+            }
+        } else {
             self.containerView?.layoutIfNeeded()
         }
     }
