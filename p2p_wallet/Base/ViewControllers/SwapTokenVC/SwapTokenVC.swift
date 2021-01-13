@@ -8,7 +8,35 @@
 import Foundation
 import RxCocoa
 
-class SwapTokenVC: BaseVStackVC {
+class SwapTokenVC: WLModalWrapperVC {
+    override var padding: UIEdgeInsets {super.padding.modifying(dLeft: .defaultPadding, dRight: .defaultPadding)}
+    
+    init(wallets: [Wallet]) {
+        let vc = _SwapTokenVC(wallets: wallets)
+        super.init(wrapped: vc)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func setUp() {
+        super.setUp()
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        stackView.addArrangedSubviews([
+            UIImageView(width: 24, height: 24, image: .walletSwap, tintColor: .white)
+                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
+            UILabel(text: L10n.swap, textSize: 17, weight: .semibold)
+        ])
+        
+        let separator = UIView.separator(height: 1, color: .separator)
+        containerView.addSubview(separator)
+        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+    }
+}
+
+class _SwapTokenVC: BaseVStackVC {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(backgroundColor: .vcBackground) }
     override var padding: UIEdgeInsets { UIEdgeInsets(top: 44, left: 16, bottom: 0, right: 16) }
     
@@ -103,7 +131,7 @@ class SwapTokenVC: BaseVStackVC {
     }
 }
 
-extension SwapTokenVC: UITextFieldDelegate {
+extension _SwapTokenVC: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let textField = textField as? TokenAmountTextField {
             return textField.shouldChangeCharactersInRange(range, replacementString: string)

@@ -8,20 +8,49 @@
 import Foundation
 
 class WellDoneVC: SecuritySettingVC {
+    override var preferredStatusBarStyle: UIStatusBarStyle {.lightContent}
+    
     override func setUp() {
         super.setUp()
-        acceptButton.setTitle(L10n.finishSetup, for: .normal)
-        doThisLaterButton.isHidden = true
+        // static background color
+        view.backgroundColor = .introBgStatic
         
+        // lines view
+        let linesView = UIImageView(image: .introLinesBg)
+        view.addSubview(linesView)
+        linesView.autoPinEdgesToSuperviewEdges()
+        
+        // top logo
+        stackView.insertArrangedSubview(
+            UIImageView.p2pValidatorLogo
+                .centeredHorizontallyView,
+            at: 0
+        )
+        
+        // content
         stackView.spacing = 30
         
-        let imageView = UIImageView(width: 219, height: 209, image: .walletIntro)
-        let titleLabel = UILabel(text: L10n.wellDone, textSize: 32, weight: .bold, textAlignment: .center)
-        let descriptionLabel = UILabel(text: L10n.exploreWowletAndDepositFundsWhenYouReReady, textSize: 17, weight: .medium, textColor: UIColor.textBlack.withAlphaComponent(0.6), numberOfLines: 0, textAlignment: .center)
+        acceptButton.removeFromSuperview()
         
-        stackView.insertArrangedSubview(imageView, at: 1)
-        stackView.insertArrangedSubview(titleLabel, at: 2)
-        stackView.insertArrangedSubview(descriptionLabel, at: 3)
+        var index = 2
+        stackView.insertArrangedSubviewsWithCustomSpacing([
+            UILabel(text: L10n.wellDone, font: FontFamily.Montserrat.extraBold.font(size: 32), textColor: .white, textAlignment: .center),
+            UILabel(text: L10n.exploreWowletAndDepositFundsWhenYouReReady, textSize: 17, weight: .medium, textColor: UIColor.white.withAlphaComponent(0.6), numberOfLines: 0, textAlignment: .center),
+            acceptButton
+        ], at: &index)
+        
+        acceptButton.widthAnchor.constraint(equalTo: stackView.widthAnchor, constant: -40)
+            .isActive = true
+        
+        // bottom button
+        doThisLaterButton.isHidden = true
+        acceptButton.setTitle(L10n.finishSetup, for: .normal)
+        
+        // fix spacer
+        spacer1.constraint(toRelativeView: spacer2, withAttribute: .height)?
+            .isActive = false
+        spacer2.heightAnchor.constraint(equalToConstant: 90)
+            .isActive = true
     }
     
     override func buttonAcceptDidTouch() {
