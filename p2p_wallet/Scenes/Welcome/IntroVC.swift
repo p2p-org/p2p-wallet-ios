@@ -32,7 +32,7 @@ class IntroVC: BaseVC {
         let spacer1 = UIView.spacer
         let spacer2 = UIView.spacer
         stackView.addArrangedSubviews([
-            UIImageView(width: 88, height: 31, image: .p2pValidatorLogo)
+            UIImageView.p2pValidatorLogo
                 .centeredHorizontallyView,
             spacer1,
             iconView.centeredHorizontallyView,
