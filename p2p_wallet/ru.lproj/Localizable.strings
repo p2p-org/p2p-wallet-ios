@@ -42,7 +42,6 @@
 "We suggest you also to enable push notifications" = "Предлагаем вам также включить push-уведомления";
 "Enable now" = "Включить сейчас";
 "Well done!" = "Отлично сработано!";
-"Explore Wowlet and deposit funds when you’re ready" = "Изучите Wowlet и внесите средства, когда будете готовы";
 "Finish setup" = "Завершить настройку";
 "Enter security keys" = "Введите электронные ключи";
 "Welcome back to the Wowlet space!" = "С возвращением в пространство Wowlet!";
@@ -191,3 +190,4 @@
 "We couldn’t add a token to your wallet.\nCheck your internet connection and try again." = "Не удалось добавить токен в ваш кошелек.\nПроверьте подключение к Интернету и повторите попытку.";
 "Date" = "Свидание";
 "Value" = "Значение";
+"Explore P2P Wallet and deposit funds when you’re ready." = "Изучите P2P-кошелек и внесите средства, когда будете готовы.";
