@@ -42,7 +42,6 @@
 "We suggest you also to enable push notifications" = "We suggest you also to enable push notifications";
 "Enable now" = "Enable now";
 "Well done!" = "Well done!";
-"Explore Wowlet and deposit funds when you’re ready" = "Explore Wowlet and deposit funds when you’re ready";
 "Finish setup" = "Finish setup";
 "Enter security keys" = "Enter security keys";
 "Welcome back to the Wowlet space!" = "Welcome back to the Wowlet space!";
@@ -191,3 +190,4 @@
 "We couldn’t add a token to your wallet.\nCheck your internet connection and try again." = "We couldn’t add a token to your wallet.\nCheck your internet connection and try again.";
 "Date" = "Date";
 "Value" = "Value";
+"Explore P2P Wallet and deposit funds when you’re ready." = "Explore P2P Wallet and deposit funds when you’re ready.";

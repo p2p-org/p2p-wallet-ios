@@ -17,7 +17,7 @@ class WellDoneVC: SecuritySettingVC {
         
         // lines view
         let linesView = UIImageView(image: .introLinesBg)
-        view.addSubview(linesView)
+        view.insertSubview(linesView, at: 0)
         linesView.autoPinEdgesToSuperviewEdges()
         
         // top logo
@@ -35,7 +35,7 @@ class WellDoneVC: SecuritySettingVC {
         var index = 2
         stackView.insertArrangedSubviewsWithCustomSpacing([
             UILabel(text: L10n.wellDone, font: FontFamily.Montserrat.extraBold.font(size: 32), textColor: .white, textAlignment: .center),
-            UILabel(text: L10n.exploreWowletAndDepositFundsWhenYouReReady, textSize: 17, weight: .medium, textColor: UIColor.white.withAlphaComponent(0.6), numberOfLines: 0, textAlignment: .center),
+            UILabel(text: L10n.exploreP2PWalletAndDepositFundsWhenYouReReady, textSize: 17, weight: .medium, textColor: UIColor.white.withAlphaComponent(0.6), numberOfLines: 0, textAlignment: .center),
             acceptButton
         ], at: &index)
         

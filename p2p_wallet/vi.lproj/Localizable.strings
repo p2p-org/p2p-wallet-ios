@@ -42,7 +42,6 @@
 "We suggest you also to enable push notifications" = "Chúng tôi đề xuất bạn hãy bật Thông báo";
 "Enable now" = "Kích hoạt ngay bây giờ";
 "Well done!" = "Hoàn thành!";
-"Explore Wowlet and deposit funds when you’re ready" = "Khám phá Wowlet và gửi tiền khi bạn đã sẵn sàng";
 "Finish setup" = "Hoàn tất thiết lập";
 "Enter security keys" = "Nhập khóa bảo mật";
 "Welcome back to the Wowlet space!" = "Chào mừng bạn trở lại với Wowlet!";
@@ -191,3 +190,4 @@
 "We couldn’t add a token to your wallet.\nCheck your internet connection and try again." = "Chúng tôi không thể thêm token vào ví của bạn.\nHãy kiểm tra kết nối Internet của bạn và thử lại.";
 "Date" = "Ngày";
 "Value" = "Giá trị";
+"Explore P2P Wallet and deposit funds when you’re ready." = "Khám phá Ví P2P và gửi tiền khi bạn đã sẵn sàng.";
