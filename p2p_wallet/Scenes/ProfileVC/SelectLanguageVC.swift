@@ -43,10 +43,9 @@ class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
     }
     
     override func saveChange() {
-        showAlert(title: L10n.switchLanguage, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem.localizedName + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
+        showAlert(title: L10n.switchLanguage, message: L10n.doYouReallyWantToSwitchTo + selectedItem.localizedName, buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
             if index != 0 {return}
             Defaults.localizedLanguage = self.selectedItem
-            Bundle.swizzleLocalization()
             AppDelegate.shared.reloadRootVC()
         }
     }
