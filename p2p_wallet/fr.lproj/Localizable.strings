@@ -42,7 +42,6 @@
 "We suggest you also to enable push notifications" = "Nous vous suggérons également d'activer les notifications push";
 "Enable now" = "Activer maintenant";
 "Well done!" = "Bien joué!";
-"Explore Wowlet and deposit funds when you’re ready" = "Explorez Wowlet et déposez des fonds lorsque vous êtes prêt";
 "Finish setup" = "Terminer la configuration";
 "Enter security keys" = "Entrez les clés de sécurité";
 "Welcome back to the Wowlet space!" = "Bienvenue à nouveau dans l'espace Wowlet!";
@@ -193,3 +192,4 @@
 "We couldn’t add a token to your wallet.\nCheck your internet connection and try again." = "Nous n'avons pas pu ajouter de jeton à votre portefeuille.\nVérifiez votre connexion Internet et réessayez.";
 "Date" = "Date";
 "Value" = "Valeur";
+"Explore P2P Wallet and deposit funds when you’re ready." = "Explorez le portefeuille P2P et déposez des fonds lorsque vous êtes prêt.";

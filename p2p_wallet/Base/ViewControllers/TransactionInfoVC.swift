@@ -59,11 +59,11 @@ class TransactionInfoVC: BaseVStackVC {
         var fromPubkey: String?
         var toPubkey: String?
         if let from = transaction.from {
-            fromPubkey = "0x" + from.prefix(4) + "..." + from.suffix(4)
+            fromPubkey = from.prefix(4) + "..." + from.suffix(4)
         }
         
         if let to = transaction.to {
-            toPubkey = "0x" + to.prefix(4) + "..." + to.suffix(4)
+            toPubkey = to.prefix(4) + "..." + to.suffix(4)
         }
         
         stackView.addArrangedSubviews([

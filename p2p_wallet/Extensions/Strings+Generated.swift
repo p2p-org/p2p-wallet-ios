@@ -126,8 +126,8 @@ internal enum L10n {
   internal static let exchange = L10n.tr("Localizable", "Exchange")
   /// Explore  DeFi
   internal static let exploreDeFi = L10n.tr("Localizable", "Explore  DeFi")
-  /// Explore Wowlet and deposit funds when you’re ready
-  internal static let exploreWowletAndDepositFundsWhenYouReReady = L10n.tr("Localizable", "Explore Wowlet and deposit funds when you’re ready")
+  /// Explore P2P Wallet and deposit funds when you’re ready.
+  internal static let exploreP2PWalletAndDepositFundsWhenYouReReady = L10n.tr("Localizable", "Explore P2P Wallet and deposit funds when you’re ready.")
   /// Fee
   internal static let fee = L10n.tr("Localizable", "Fee")
   /// Finish setup
