@@ -12,15 +12,15 @@ extension Bundle {
         swizzle(
             originalSelector: #selector(localizedString(forKey:value:table:)),
             newSelector:
-                #selector(myLocaLizedString(forKey:value:table:))
+                #selector(myLocalizedString(forKey:value:table:))
         )
     }
 
-    @objc private func myLocaLizedString(forKey key: String, value: String?, table: String?) -> String {
+    @objc func myLocalizedString(forKey key: String, value: String?, table: String?) -> String {
         guard let bundlePath = Bundle.main.path(forResource: Defaults.localizedLanguage.code, ofType: "lproj"),
             let bundle = Bundle(path: bundlePath) else {
-                return Bundle.main.myLocaLizedString(forKey: key, value: value, table: table)
+                return Bundle.main.myLocalizedString(forKey: key, value: value, table: table)
         }
-        return bundle.myLocaLizedString(forKey: key, value: value, table: table)
+        return bundle.myLocalizedString(forKey: key, value: value, table: table)
     }
 }
