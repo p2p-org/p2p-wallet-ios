@@ -11,398 +11,402 @@ import Foundation
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
   /// 24 hours
-  internal static let _24Hours = L10n.tr("Localizable", "24 hours")
+  internal static var _24Hours: String { L10n.tr("Localizable", "24 hours") }
   /// Accept
-  internal static let accept = L10n.tr("Localizable", "Accept")
+  internal static var accept: String { L10n.tr("Localizable", "Accept") }
   /// Activities
-  internal static let activities = L10n.tr("Localizable", "Activities")
+  internal static var activities: String { L10n.tr("Localizable", "Activities") }
   /// Add token
-  internal static let addToken = L10n.tr("Localizable", "Add token")
+  internal static var addToken: String { L10n.tr("Localizable", "Add token") }
   /// Add wallet
-  internal static let addWallet = L10n.tr("Localizable", "Add wallet")
+  internal static var addWallet: String { L10n.tr("Localizable", "Add wallet") }
   /// Adding token to your wallet
-  internal static let addingTokenToYourWallet = L10n.tr("Localizable", "Adding token to your wallet")
+  internal static var addingTokenToYourWallet: String { L10n.tr("Localizable", "Adding token to your wallet") }
   /// Address copied!
-  internal static let addressCopied = L10n.tr("Localizable", "Address copied!")
+  internal static var addressCopied: String { L10n.tr("Localizable", "Address copied!") }
   /// all
-  internal static let all = L10n.tr("Localizable", "all")
+  internal static var all: String { L10n.tr("Localizable", "all") }
   /// All deposits are stored 100%% non-custodiallity with keys held on this device
-  internal static let allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice = L10n.tr("Localizable", "All deposits are stored 100% non-custodiallity with keys held on this device")
+  internal static var allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice: String { L10n.tr("Localizable", "All deposits are stored 100% non-custodiallity with keys held on this device") }
   /// All my balances
-  internal static let allMyBalances = L10n.tr("Localizable", "All my balances")
+  internal static var allMyBalances: String { L10n.tr("Localizable", "All my balances") }
   /// All my products
-  internal static let allMyProducts = L10n.tr("Localizable", "All my products")
+  internal static var allMyProducts: String { L10n.tr("Localizable", "All my products") }
   /// All my tokens
-  internal static let allMyTokens = L10n.tr("Localizable", "All my tokens")
+  internal static var allMyTokens: String { L10n.tr("Localizable", "All my tokens") }
   /// All tokens
-  internal static let allTokens = L10n.tr("Localizable", "All tokens")
+  internal static var allTokens: String { L10n.tr("Localizable", "All tokens") }
   /// Almost done!
-  internal static let almostDone = L10n.tr("Localizable", "Almost done!")
+  internal static var almostDone: String { L10n.tr("Localizable", "Almost done!") }
   /// amount
-  internal static let amount = L10n.tr("Localizable", "amount")
+  internal static var amount: String { L10n.tr("Localizable", "amount") }
   /// Amount is not valid
-  internal static let amountIsNotValid = L10n.tr("Localizable", "Amount is not valid")
+  internal static var amountIsNotValid: String { L10n.tr("Localizable", "Amount is not valid") }
   /// Authentication failed
-  internal static let authenticationFailed = L10n.tr("Localizable", "Authentication failed")
+  internal static var authenticationFailed: String { L10n.tr("Localizable", "Authentication failed") }
   /// Available
-  internal static let available = L10n.tr("Localizable", "Available")
+  internal static var available: String { L10n.tr("Localizable", "Available") }
   /// Back
-  internal static let back = L10n.tr("Localizable", "Back")
+  internal static var back: String { L10n.tr("Localizable", "Back") }
   /// Backup
-  internal static let backup = L10n.tr("Localizable", "Backup")
+  internal static var backup: String { L10n.tr("Localizable", "Backup") }
   /// Backup manually
-  internal static let backupManually = L10n.tr("Localizable", "Backup manually")
+  internal static var backupManually: String { L10n.tr("Localizable", "Backup manually") }
   /// Backup now
-  internal static let backupNow = L10n.tr("Localizable", "Backup now")
+  internal static var backupNow: String { L10n.tr("Localizable", "Backup now") }
   /// Backup using iCloud
-  internal static let backupUsingICloud = L10n.tr("Localizable", "Backup using iCloud")
+  internal static var backupUsingICloud: String { L10n.tr("Localizable", "Backup using iCloud") }
   /// Balances
-  internal static let balances = L10n.tr("Localizable", "Balances")
+  internal static var balances: String { L10n.tr("Localizable", "Balances") }
   /// Block number
-  internal static let blockNumber = L10n.tr("Localizable", "Block number")
+  internal static var blockNumber: String { L10n.tr("Localizable", "Block number") }
   /// By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy
-  internal static let byTappingAcceptYouAgreeToP2PWalletSTermsOfUseAndPrivacyPolicy = L10n.tr("Localizable", "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy")
+  internal static var byTappingAcceptYouAgreeToP2PWalletSTermsOfUseAndPrivacyPolicy: String { L10n.tr("Localizable", "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy") }
   /// Cancel
-  internal static let cancel = L10n.tr("Localizable", "Cancel")
+  internal static var cancel: String { L10n.tr("Localizable", "Cancel") }
   /// Change PIN-code
-  internal static let changePINCode = L10n.tr("Localizable", "Change PIN-code")
+  internal static var changePINCode: String { L10n.tr("Localizable", "Change PIN-code") }
   /// Change your settings to use camera for scanning Qr Code
-  internal static let changeYourSettingsToUseCameraForScanningQrCode = L10n.tr("Localizable", "Change your settings to use camera for scanning Qr Code")
+  internal static var changeYourSettingsToUseCameraForScanningQrCode: String { L10n.tr("Localizable", "Change your settings to use camera for scanning Qr Code") }
   /// Close
-  internal static let close = L10n.tr("Localizable", "Close")
+  internal static var close: String { L10n.tr("Localizable", "Close") }
   /// Confirm it's you
-  internal static let confirmItSYou = L10n.tr("Localizable", "Confirm it's you")
+  internal static var confirmItSYou: String { L10n.tr("Localizable", "Confirm it's you") }
   /// confirm PIN code
-  internal static let confirmPINCode = L10n.tr("Localizable", "confirm PIN code")
+  internal static var confirmPINCode: String { L10n.tr("Localizable", "confirm PIN code") }
   /// Confirmed
-  internal static let confirmed = L10n.tr("Localizable", "Confirmed")
+  internal static var confirmed: String { L10n.tr("Localizable", "Confirmed") }
   /// Congratulations!
-  internal static let congratulations = L10n.tr("Localizable", "Congratulations!")
+  internal static var congratulations: String { L10n.tr("Localizable", "Congratulations!") }
   /// Continue
-  internal static let `continue` = L10n.tr("Localizable", "Continue")
+  internal static var `continue`: String { L10n.tr("Localizable", "Continue") }
   /// Copied to clipboard
-  internal static let copiedToClipboard = L10n.tr("Localizable", "Copied to clipboard")
+  internal static var copiedToClipboard: String { L10n.tr("Localizable", "Copied to clipboard") }
   /// Copy
-  internal static let copy = L10n.tr("Localizable", "Copy")
+  internal static var copy: String { L10n.tr("Localizable", "Copy") }
   /// Copy to clipboard
-  internal static let copyToClipboard = L10n.tr("Localizable", "Copy to clipboard")
+  internal static var copyToClipboard: String { L10n.tr("Localizable", "Copy to clipboard") }
   /// Create a PIN-code to protect your wallet
-  internal static let createAPINCodeToProtectYourWallet = L10n.tr("Localizable", "Create a PIN-code to protect your wallet")
+  internal static var createAPINCodeToProtectYourWallet: String { L10n.tr("Localizable", "Create a PIN-code to protect your wallet") }
   /// create new wallet
-  internal static let createNewWallet = L10n.tr("Localizable", "create new wallet")
+  internal static var createNewWallet: String { L10n.tr("Localizable", "create new wallet") }
   /// Creating
-  internal static let creating = L10n.tr("Localizable", "Creating")
+  internal static var creating: String { L10n.tr("Localizable", "Creating") }
   /// creating an account
-  internal static let creatingAnAccount = L10n.tr("Localizable", "creating an account")
+  internal static var creatingAnAccount: String { L10n.tr("Localizable", "creating an account") }
   /// Current PIN-code
-  internal static let currentPINCode = L10n.tr("Localizable", "Current PIN-code")
+  internal static var currentPINCode: String { L10n.tr("Localizable", "Current PIN-code") }
   /// Date
-  internal static let date = L10n.tr("Localizable", "Date")
+  internal static var date: String { L10n.tr("Localizable", "Date") }
   /// day
-  internal static let day = L10n.tr("Localizable", "day")
+  internal static var day: String { L10n.tr("Localizable", "day") }
   /// Decline
-  internal static let decline = L10n.tr("Localizable", "Decline")
+  internal static var decline: String { L10n.tr("Localizable", "Decline") }
   /// Default secure check
-  internal static let defaultSecureCheck = L10n.tr("Localizable", "Default secure check")
+  internal static var defaultSecureCheck: String { L10n.tr("Localizable", "Default secure check") }
   /// Do this later
-  internal static let doThisLater = L10n.tr("Localizable", "Do this later")
+  internal static var doThisLater: String { L10n.tr("Localizable", "Do this later") }
   /// Do you really want to logout?
-  internal static let doYouReallyWantToLogout = L10n.tr("Localizable", "Do you really want to logout?")
+  internal static var doYouReallyWantToLogout: String { L10n.tr("Localizable", "Do you really want to logout?") }
   /// Do you really want to switch to
-  internal static let doYouReallyWantToSwitchTo = L10n.tr("Localizable", "Do you really want to switch to")
+  internal static var doYouReallyWantToSwitchTo: String { L10n.tr("Localizable", "Do you really want to switch to") }
   /// Done
-  internal static let done = L10n.tr("Localizable", "Done")
+  internal static var done: String { L10n.tr("Localizable", "Done") }
   /// Enable now
-  internal static let enableNow = L10n.tr("Localizable", "Enable now")
+  internal static var enableNow: String { L10n.tr("Localizable", "Enable now") }
   /// Enter passcode
-  internal static let enterPasscode = L10n.tr("Localizable", "Enter passcode")
+  internal static var enterPasscode: String { L10n.tr("Localizable", "Enter passcode") }
   /// Enter security keys
-  internal static let enterSecurityKeys = L10n.tr("Localizable", "Enter security keys")
+  internal static var enterSecurityKeys: String { L10n.tr("Localizable", "Enter security keys") }
   /// Enter seed phrases in a correct order to recover your wallet
-  internal static let enterSeedPhrasesInACorrectOrderToRecoverYourWallet = L10n.tr("Localizable", "Enter seed phrases in a correct order to recover your wallet")
+  internal static var enterSeedPhrasesInACorrectOrderToRecoverYourWallet: String { L10n.tr("Localizable", "Enter seed phrases in a correct order to recover your wallet") }
   /// error
-  internal static let error = L10n.tr("Localizable", "error")
+  internal static var error: String { L10n.tr("Localizable", "error") }
   /// Exchange
-  internal static let exchange = L10n.tr("Localizable", "Exchange")
+  internal static var exchange: String { L10n.tr("Localizable", "Exchange") }
   /// Explore  DeFi
-  internal static let exploreDeFi = L10n.tr("Localizable", "Explore  DeFi")
+  internal static var exploreDeFi: String { L10n.tr("Localizable", "Explore  DeFi") }
   /// Explore P2P Wallet and deposit funds when you’re ready.
-  internal static let exploreP2PWalletAndDepositFundsWhenYouReReady = L10n.tr("Localizable", "Explore P2P Wallet and deposit funds when you’re ready.")
+  internal static var exploreP2PWalletAndDepositFundsWhenYouReReady: String { L10n.tr("Localizable", "Explore P2P Wallet and deposit funds when you’re ready.") }
   /// Fee
-  internal static let fee = L10n.tr("Localizable", "Fee")
+  internal static var fee: String { L10n.tr("Localizable", "Fee") }
   /// Finish setup
-  internal static let finishSetup = L10n.tr("Localizable", "Finish setup")
+  internal static var finishSetup: String { L10n.tr("Localizable", "Finish setup") }
   /// for the last 24 hours
-  internal static let forTheLast24Hours = L10n.tr("Localizable", "for the last 24 hours")
+  internal static var forTheLast24Hours: String { L10n.tr("Localizable", "for the last 24 hours") }
   /// Friends
-  internal static let friends = L10n.tr("Localizable", "Friends")
+  internal static var friends: String { L10n.tr("Localizable", "Friends") }
   /// From
-  internal static let from = L10n.tr("Localizable", "From")
+  internal static var from: String { L10n.tr("Localizable", "From") }
   /// Getting creation fee
-  internal static let gettingCreationFee = L10n.tr("Localizable", "Getting creation fee")
+  internal static var gettingCreationFee: String { L10n.tr("Localizable", "Getting creation fee") }
   /// Go back to wallet
-  internal static let goBackToWallet = L10n.tr("Localizable", "Go back to wallet")
+  internal static var goBackToWallet: String { L10n.tr("Localizable", "Go back to wallet") }
   /// Go to wallet
-  internal static let goToWallet = L10n.tr("Localizable", "Go to wallet")
+  internal static var goToWallet: String { L10n.tr("Localizable", "Go to wallet") }
   /// Home
-  internal static let home = L10n.tr("Localizable", "Home")
+  internal static var home: String { L10n.tr("Localizable", "Home") }
   /// I have saved these words in a safe place
-  internal static let iHaveSavedTheseWordsInASafePlace = L10n.tr("Localizable", "I have saved these words in a safe place")
+  internal static var iHaveSavedTheseWordsInASafePlace: String { L10n.tr("Localizable", "I have saved these words in a safe place") }
   /// i've already had a wallet
-  internal static let iVeAlreadyHadAWallet = L10n.tr("Localizable", "i've already had a wallet")
+  internal static var iVeAlreadyHadAWallet: String { L10n.tr("Localizable", "i've already had a wallet") }
   /// Identify yourself!
-  internal static let identifyYourself = L10n.tr("Localizable", "Identify yourself!")
+  internal static var identifyYourself: String { L10n.tr("Localizable", "Identify yourself!") }
   /// If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases
-  internal static let ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases = L10n.tr("Localizable", "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases")
+  internal static var ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases: String { L10n.tr("Localizable", "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases") }
   /// Incorrect PIN-code
-  internal static let incorrectPINCode = L10n.tr("Localizable", "Incorrect PIN-code")
+  internal static var incorrectPINCode: String { L10n.tr("Localizable", "Incorrect PIN-code") }
   /// Insufficient funds
-  internal static let insufficientFunds = L10n.tr("Localizable", "Insufficient funds")
+  internal static var insufficientFunds: String { L10n.tr("Localizable", "Insufficient funds") }
+  /// Language
+  internal static var language: String { L10n.tr("Localizable", "Language") }
   /// Leave
-  internal static let leave = L10n.tr("Localizable", "Leave")
+  internal static var leave: String { L10n.tr("Localizable", "Leave") }
   /// Leave this page?
-  internal static let leaveThisPage = L10n.tr("Localizable", "Leave this page?")
+  internal static var leaveThisPage: String { L10n.tr("Localizable", "Leave this page?") }
   /// Loading
-  internal static let loading = L10n.tr("Localizable", "Loading")
+  internal static var loading: String { L10n.tr("Localizable", "Loading") }
   /// Logout
-  internal static let logout = L10n.tr("Localizable", "Logout")
+  internal static var logout: String { L10n.tr("Localizable", "Logout") }
   /// Make your crypto working on you
-  internal static let makeYourCryptoWorkingOnYou = L10n.tr("Localizable", "Make your crypto working on you")
+  internal static var makeYourCryptoWorkingOnYou: String { L10n.tr("Localizable", "Make your crypto working on you") }
   /// Max
-  internal static let max = L10n.tr("Localizable", "Max")
+  internal static var max: String { L10n.tr("Localizable", "Max") }
   /// Mint address
-  internal static let mintAddress = L10n.tr("Localizable", "Mint address")
+  internal static var mintAddress: String { L10n.tr("Localizable", "Mint address") }
   /// month
-  internal static let month = L10n.tr("Localizable", "month")
+  internal static var month: String { L10n.tr("Localizable", "month") }
   /// My balances
-  internal static let myBalances = L10n.tr("Localizable", "My balances")
+  internal static var myBalances: String { L10n.tr("Localizable", "My balances") }
   /// Network
-  internal static let network = L10n.tr("Localizable", "Network")
+  internal static var network: String { L10n.tr("Localizable", "Network") }
   /// New PIN-code
-  internal static let newPINCode = L10n.tr("Localizable", "New PIN-code")
+  internal static var newPINCode: String { L10n.tr("Localizable", "New PIN-code") }
   /// next
-  internal static let next = L10n.tr("Localizable", "next")
+  internal static var next: String { L10n.tr("Localizable", "next") }
   /// No account
-  internal static let noAccount = L10n.tr("Localizable", "No account")
+  internal static var noAccount: String { L10n.tr("Localizable", "No account") }
   /// OK
-  internal static let ok = L10n.tr("Localizable", "OK")
+  internal static var ok: String { L10n.tr("Localizable", "OK") }
   /// Or saving into Keychain
-  internal static let orSavingIntoKeychain = L10n.tr("Localizable", "Or saving into Keychain")
+  internal static var orSavingIntoKeychain: String { L10n.tr("Localizable", "Or saving into Keychain") }
   /// passcodes do not match
-  internal static let passcodesDoNotMatch = L10n.tr("Localizable", "passcodes do not match")
+  internal static var passcodesDoNotMatch: String { L10n.tr("Localizable", "passcodes do not match") }
   /// Payments
-  internal static let payments = L10n.tr("Localizable", "Payments")
+  internal static var payments: String { L10n.tr("Localizable", "Payments") }
   /// PIN-code
-  internal static let pinCode = L10n.tr("Localizable", "PIN-code")
+  internal static var pinCode: String { L10n.tr("Localizable", "PIN-code") }
   /// PIN-code must have 6 digits
-  internal static let pinCodeMustHave6Digits = L10n.tr("Localizable", "PIN-code must have 6 digits")
+  internal static var pinCodeMustHave6Digits: String { L10n.tr("Localizable", "PIN-code must have 6 digits") }
   /// PIN-codes do not match
-  internal static let pinCodesDoNotMatch = L10n.tr("Localizable", "PIN-codes do not match")
+  internal static var pinCodesDoNotMatch: String { L10n.tr("Localizable", "PIN-codes do not match") }
   /// Please re-enter PIN-code
-  internal static let pleaseReEnterPINCode = L10n.tr("Localizable", "Please re-enter PIN-code")
+  internal static var pleaseReEnterPINCode: String { L10n.tr("Localizable", "Please re-enter PIN-code") }
   /// please try again later!
-  internal static let pleaseTryAgainLater = L10n.tr("Localizable", "please try again later!")
+  internal static var pleaseTryAgainLater: String { L10n.tr("Localizable", "please try again later!") }
   /// Processing
-  internal static let processing = L10n.tr("Localizable", "Processing")
+  internal static var processing: String { L10n.tr("Localizable", "Processing") }
   /// Profile
-  internal static let profile = L10n.tr("Localizable", "Profile")
+  internal static var profile: String { L10n.tr("Localizable", "Profile") }
   /// Receive
-  internal static let receive = L10n.tr("Localizable", "Receive")
+  internal static var receive: String { L10n.tr("Localizable", "Receive") }
   /// Receive token
-  internal static let receiveToken = L10n.tr("Localizable", "Receive token")
+  internal static var receiveToken: String { L10n.tr("Localizable", "Receive token") }
   /// Receive tokens
-  internal static let receiveTokens = L10n.tr("Localizable", "Receive tokens")
+  internal static var receiveTokens: String { L10n.tr("Localizable", "Receive tokens") }
   /// Recover your Wowlet using cloud services, or recover manually
-  internal static let recoverYourWowletUsingCloudServicesOrRecoverManually = L10n.tr("Localizable", "Recover your Wowlet using cloud services or recover manually")
+  internal static var recoverYourWowletUsingCloudServicesOrRecoverManually: String { L10n.tr("Localizable", "Recover your Wowlet using cloud services or recover manually") }
   /// Repeat new PIN-code
-  internal static let repeatNewPINCode = L10n.tr("Localizable", "Repeat new PIN-code")
+  internal static var repeatNewPINCode: String { L10n.tr("Localizable", "Repeat new PIN-code") }
   /// Restore manually
-  internal static let restoreManually = L10n.tr("Localizable", "Restore manually")
+  internal static var restoreManually: String { L10n.tr("Localizable", "Restore manually") }
   /// Restore using iCloud
-  internal static let restoreUsingICloud = L10n.tr("Localizable", "Restore using iCloud")
+  internal static var restoreUsingICloud: String { L10n.tr("Localizable", "Restore using iCloud") }
   /// Restoring wallet
-  internal static let restoringWallet = L10n.tr("Localizable", "Restoring wallet")
+  internal static var restoringWallet: String { L10n.tr("Localizable", "Restoring wallet") }
   /// Retry
-  internal static let retry = L10n.tr("Localizable", "Retry")
+  internal static var retry: String { L10n.tr("Localizable", "Retry") }
   /// Retry after
-  internal static let retryAfter = L10n.tr("Localizable", "Retry after")
+  internal static var retryAfter: String { L10n.tr("Localizable", "Retry after") }
   /// Save to iCloud
-  internal static let saveToICloud = L10n.tr("Localizable", "Save to iCloud")
+  internal static var saveToICloud: String { L10n.tr("Localizable", "Save to iCloud") }
   /// save to Keychain
-  internal static let saveToKeychain = L10n.tr("Localizable", "save to Keychain")
+  internal static var saveToKeychain: String { L10n.tr("Localizable", "save to Keychain") }
   /// Saved to iCloud
-  internal static let savedToICloud = L10n.tr("Localizable", "Saved to iCloud")
+  internal static var savedToICloud: String { L10n.tr("Localizable", "Saved to iCloud") }
   /// Saved to Keychain
-  internal static let savedToKeychain = L10n.tr("Localizable", "Saved to Keychain")
+  internal static var savedToKeychain: String { L10n.tr("Localizable", "Saved to Keychain") }
   /// Saving to iCloud
-  internal static let savingToICloud = L10n.tr("Localizable", "Saving to iCloud")
+  internal static var savingToICloud: String { L10n.tr("Localizable", "Saving to iCloud") }
   /// Saving to Keychain
-  internal static let savingToKeychain = L10n.tr("Localizable", "Saving to Keychain")
+  internal static var savingToKeychain: String { L10n.tr("Localizable", "Saving to Keychain") }
   /// Savings
-  internal static let savings = L10n.tr("Localizable", "Savings")
+  internal static var savings: String { L10n.tr("Localizable", "Savings") }
   /// Scan an P2P address
-  internal static let scanAnP2PAddress = L10n.tr("Localizable", "Scan an P2P address")
+  internal static var scanAnP2PAddress: String { L10n.tr("Localizable", "Scan an P2P address") }
   /// Scan QR Code
-  internal static let scanQRCode = L10n.tr("Localizable", "Scan QR Code")
+  internal static var scanQRCode: String { L10n.tr("Localizable", "Scan QR Code") }
   /// Scanning QrCode not supported
-  internal static let scanningQrCodeNotSupported = L10n.tr("Localizable", "Scanning QrCode not supported")
+  internal static var scanningQrCodeNotSupported: String { L10n.tr("Localizable", "Scanning QrCode not supported") }
   /// Search token
-  internal static let searchToken = L10n.tr("Localizable", "Search token")
+  internal static var searchToken: String { L10n.tr("Localizable", "Search token") }
   /// seconds
-  internal static let seconds = L10n.tr("Localizable", "seconds")
+  internal static var seconds: String { L10n.tr("Localizable", "seconds") }
   /// Secure non-custodial bank of future
-  internal static let secureNonCustodialBankOfFuture = L10n.tr("Localizable", "Secure non-custodial bank of future")
+  internal static var secureNonCustodialBankOfFuture: String { L10n.tr("Localizable", "Secure non-custodial bank of future") }
   /// Security
-  internal static let security = L10n.tr("Localizable", "Security")
+  internal static var security: String { L10n.tr("Localizable", "Security") }
   /// security keys
-  internal static let securityKeys = L10n.tr("Localizable", "security keys")
+  internal static var securityKeys: String { L10n.tr("Localizable", "security keys") }
   /// Send
-  internal static let send = L10n.tr("Localizable", "Send")
+  internal static var send: String { L10n.tr("Localizable", "Send") }
   /// Send coins
-  internal static let sendCoins = L10n.tr("Localizable", "Send coins")
+  internal static var sendCoins: String { L10n.tr("Localizable", "Send coins") }
   /// Send Now
-  internal static let sendNow = L10n.tr("Localizable", "Send Now")
+  internal static var sendNow: String { L10n.tr("Localizable", "Send Now") }
   /// Send to your wallet
-  internal static let sendToYourWallet = L10n.tr("Localizable", "Send to your wallet")
+  internal static var sendToYourWallet: String { L10n.tr("Localizable", "Send to your wallet") }
   /// Send tokens
-  internal static let sendTokens = L10n.tr("Localizable", "Send tokens")
+  internal static var sendTokens: String { L10n.tr("Localizable", "Send tokens") }
   /// Sending token...
-  internal static let sendingToken = L10n.tr("Localizable", "Sending token...")
+  internal static var sendingToken: String { L10n.tr("Localizable", "Sending token...") }
   /// Share
-  internal static let share = L10n.tr("Localizable", "Share")
+  internal static var share: String { L10n.tr("Localizable", "Share") }
   /// Simple finance for everyone
-  internal static let simpleFinanceForEveryone = L10n.tr("Localizable", "Simple finance for everyone")
+  internal static var simpleFinanceForEveryone: String { L10n.tr("Localizable", "Simple finance for everyone") }
   /// Slide to scan
-  internal static let slideToScan = L10n.tr("Localizable", "Slide to scan")
+  internal static var slideToScan: String { L10n.tr("Localizable", "Slide to scan") }
   /// Something went wrong!\nPlease try again later
-  internal static let somethingWentWrongPleaseTryAgainLater = L10n.tr("Localizable", "Something went wrong!\nPlease try again later")
+  internal static var somethingWentWrongPleaseTryAgainLater: String { L10n.tr("Localizable", "Something went wrong!\nPlease try again later") }
   /// Stay
-  internal static let stay = L10n.tr("Localizable", "Stay")
+  internal static var stay: String { L10n.tr("Localizable", "Stay") }
   /// Successfully changed PIN-code
-  internal static let successfullyChangedPINCode = L10n.tr("Localizable", "Successfully changed PIN-code")
+  internal static var successfullyChangedPINCode: String { L10n.tr("Localizable", "Successfully changed PIN-code") }
   /// Swap
-  internal static let swap = L10n.tr("Localizable", "Swap")
+  internal static var swap: String { L10n.tr("Localizable", "Swap") }
   /// Swap now
-  internal static let swapNow = L10n.tr("Localizable", "Swap now")
+  internal static var swapNow: String { L10n.tr("Localizable", "Swap now") }
+  /// Switch language?
+  internal static var switchLanguage: String { L10n.tr("Localizable", "Switch language?") }
   /// Switch network?
-  internal static let switchNetwork = L10n.tr("Localizable", "Switch network?")
+  internal static var switchNetwork: String { L10n.tr("Localizable", "Switch network?") }
   /// Switching to
-  internal static let switchingTo = L10n.tr("Localizable", "Switching to")
+  internal static var switchingTo: String { L10n.tr("Localizable", "Switching to") }
   /// Tap button to retry!
-  internal static let tapButtonToRetry = L10n.tr("Localizable", "Tap button to retry!")
+  internal static var tapButtonToRetry: String { L10n.tr("Localizable", "Tap button to retry!") }
   /// Tap here to retry
-  internal static let tapHereToRetry = L10n.tr("Localizable", "Tap here to retry")
+  internal static var tapHereToRetry: String { L10n.tr("Localizable", "Tap here to retry") }
   /// tap refresh button to retry
-  internal static let tapRefreshButtonToRetry = L10n.tr("Localizable", "tap refresh button to retry")
+  internal static var tapRefreshButtonToRetry: String { L10n.tr("Localizable", "tap refresh button to retry") }
   /// Terms and conditions
-  internal static let termsAndConditions = L10n.tr("Localizable", "Terms and conditions")
+  internal static var termsAndConditions: String { L10n.tr("Localizable", "Terms and conditions") }
   /// The address is not valid
-  internal static let theAddressIsNotValid = L10n.tr("Localizable", "The address is not valid")
+  internal static var theAddressIsNotValid: String { L10n.tr("Localizable", "The address is not valid") }
   /// There is no Wowlet saved in your iCloud
-  internal static let thereIsNoWowletSavedInYourICloud = L10n.tr("Localizable", "There is no Wowlet saved in your iCloud")
+  internal static var thereIsNoWowletSavedInYourICloud: String { L10n.tr("Localizable", "There is no Wowlet saved in your iCloud") }
   /// There is nothing in here!
-  internal static let thereIsNothingInHere = L10n.tr("Localizable", "There is nothing in here!")
+  internal static var thereIsNothingInHere: String { L10n.tr("Localizable", "There is nothing in here!") }
   /// To
-  internal static let to = L10n.tr("Localizable", "To")
+  internal static var to: String { L10n.tr("Localizable", "To") }
   /// Token sent!
-  internal static let tokenSent = L10n.tr("Localizable", "Token sent!")
+  internal static var tokenSent: String { L10n.tr("Localizable", "Token sent!") }
   /// Total balance
-  internal static let totalBalance = L10n.tr("Localizable", "Total balance")
+  internal static var totalBalance: String { L10n.tr("Localizable", "Total balance") }
   /// Transaction
-  internal static let transaction = L10n.tr("Localizable", "Transaction")
+  internal static var transaction: String { L10n.tr("Localizable", "Transaction") }
   /// Transaction ID
-  internal static let transactionID = L10n.tr("Localizable", "Transaction ID")
+  internal static var transactionID: String { L10n.tr("Localizable", "Transaction ID") }
   /// Try again
-  internal static let tryAgain = L10n.tr("Localizable", "Try again")
+  internal static var tryAgain: String { L10n.tr("Localizable", "Try again") }
   /// Turn on
-  internal static let turnOn = L10n.tr("Localizable", "Turn on")
+  internal static var turnOn: String { L10n.tr("Localizable", "Turn on") }
   /// unsupported
-  internal static let unsupported = L10n.tr("Localizable", "unsupported")
+  internal static var unsupported: String { L10n.tr("Localizable", "unsupported") }
   /// Use FaceId
-  internal static let useFaceId = L10n.tr("Localizable", "Use FaceId")
+  internal static var useFaceId: String { L10n.tr("Localizable", "Use FaceId") }
   /// Use TouchId
-  internal static let useTouchId = L10n.tr("Localizable", "Use TouchId")
+  internal static var useTouchId: String { L10n.tr("Localizable", "Use TouchId") }
   /// Use your FaceID for quick access?
-  internal static let useYourFaceIDForQuickAccess = L10n.tr("Localizable", "Use your FaceID for quick access?")
+  internal static var useYourFaceIDForQuickAccess: String { L10n.tr("Localizable", "Use your FaceID for quick access?") }
   /// Use your TouchID for quick access?
-  internal static let useYourTouchIDForQuickAccess = L10n.tr("Localizable", "Use your TouchID for quick access?")
+  internal static var useYourTouchIDForQuickAccess: String { L10n.tr("Localizable", "Use your TouchID for quick access?") }
   /// Value
-  internal static let value = L10n.tr("Localizable", "Value")
+  internal static var value: String { L10n.tr("Localizable", "Value") }
   /// View in blockchain explorer
-  internal static let viewInBlockchainExplorer = L10n.tr("Localizable", "View in blockchain explorer")
+  internal static var viewInBlockchainExplorer: String { L10n.tr("Localizable", "View in blockchain explorer") }
   /// Wallet address
-  internal static let walletAddress = L10n.tr("Localizable", "Wallet address")
+  internal static var walletAddress: String { L10n.tr("Localizable", "Wallet address") }
   /// Wallet name
-  internal static let walletName = L10n.tr("Localizable", "Wallet name")
+  internal static var walletName: String { L10n.tr("Localizable", "Wallet name") }
   /// Wallets
-  internal static let wallets = L10n.tr("Localizable", "Wallets")
+  internal static var wallets: String { L10n.tr("Localizable", "Wallets") }
   /// Warning
-  internal static let warning = L10n.tr("Localizable", "Warning")
+  internal static var warning: String { L10n.tr("Localizable", "Warning") }
   /// WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.
-  internal static let warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture = L10n.tr("Localizable", "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.")
+  internal static var warningTheSeedPhraseWillNotBeShownAgainCopyItDownOrSaveInYourPasswordManagerToRecoverThisWalletInTheFuture: String { L10n.tr("Localizable", "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.") }
   /// We have not supported this type of biometry authentication yet
-  internal static let weHaveNotSupportedThisTypeOfBiometryAuthenticationYet = L10n.tr("Localizable", "We have not supported this type of biometry authentication yet")
+  internal static var weHaveNotSupportedThisTypeOfBiometryAuthenticationYet: String { L10n.tr("Localizable", "We have not supported this type of biometry authentication yet") }
   /// We suggest you also to enable push notifications
-  internal static let weSuggestYouAlsoToEnablePushNotifications = L10n.tr("Localizable", "We suggest you also to enable push notifications")
+  internal static var weSuggestYouAlsoToEnablePushNotifications: String { L10n.tr("Localizable", "We suggest you also to enable push notifications") }
   /// We use FaceID to secure your transactions
-  internal static let weUseFaceIDToSecureYourTransactions = L10n.tr("Localizable", "We use FaceID to secure your transactions")
+  internal static var weUseFaceIDToSecureYourTransactions: String { L10n.tr("Localizable", "We use FaceID to secure your transactions") }
   /// we've created some security keywords for you.
-  internal static let weVeCreatedSomeSecurityKeywordsForYou = L10n.tr("Localizable", "we've created some security keywords for you.")
+  internal static var weVeCreatedSomeSecurityKeywordsForYou: String { L10n.tr("Localizable", "we've created some security keywords for you.") }
   /// week
-  internal static let week = L10n.tr("Localizable", "week")
+  internal static var week: String { L10n.tr("Localizable", "week") }
   /// Welcome back to the Wowlet space!
-  internal static let welcomeBackToTheWowletSpace = L10n.tr("Localizable", "Welcome back to the Wowlet space!")
+  internal static var welcomeBackToTheWowletSpace: String { L10n.tr("Localizable", "Welcome back to the Wowlet space!") }
   /// Well done!
-  internal static let wellDone = L10n.tr("Localizable", "Well done!")
+  internal static var wellDone: String { L10n.tr("Localizable", "Well done!") }
   /// Will be  as a primary secure check
-  internal static let willBeAsAPrimarySecureCheck = L10n.tr("Localizable", "Will be  as a primary secure check")
+  internal static var willBeAsAPrimarySecureCheck: String { L10n.tr("Localizable", "Will be  as a primary secure check") }
   /// will cost
-  internal static let willCost = L10n.tr("Localizable", "will cost")
+  internal static var willCost: String { L10n.tr("Localizable", "will cost") }
   /// Wowlet for people, not for tokens
-  internal static let wowletForPeopleNotForTokens = L10n.tr("Localizable", "Wowlet for people, not for tokens")
+  internal static var wowletForPeopleNotForTokens: String { L10n.tr("Localizable", "Wowlet for people, not for tokens") }
   /// Wowlet recovery
-  internal static let wowletRecovery = L10n.tr("Localizable", "Wowlet recovery")
+  internal static var wowletRecovery: String { L10n.tr("Localizable", "Wowlet recovery") }
   /// year
-  internal static let year = L10n.tr("Localizable", "year")
+  internal static var year: String { L10n.tr("Localizable", "year") }
   /// You have unsaved changes that will be lost if you decide to leave
-  internal static let youHaveUnsavedChangesThatWillBeLostIfYouDecideToLeave = L10n.tr("Localizable", "You have unsaved changes that will be lost if you decide to leave")
+  internal static var youHaveUnsavedChangesThatWillBeLostIfYouDecideToLeave: String { L10n.tr("Localizable", "You have unsaved changes that will be lost if you decide to leave") }
   /// Your device does not support biometrics authentication
-  internal static let yourDeviceDoesNotSupportBiometricsAuthentication = L10n.tr("Localizable", "Your device does not support biometrics authentication")
+  internal static var yourDeviceDoesNotSupportBiometricsAuthentication: String { L10n.tr("Localizable", "Your device does not support biometrics authentication") }
   /// Your wallet has been successfully created!
-  internal static let yourWalletHasBeenSuccessfullyCreated = L10n.tr("Localizable", "Your wallet has been successfully created!")
+  internal static var yourWalletHasBeenSuccessfullyCreated: String { L10n.tr("Localizable", "Your wallet has been successfully created!") }
   /// Your wallet needs backup
-  internal static let yourWalletNeedsBackup = L10n.tr("Localizable", "Your wallet needs backup")
+  internal static var yourWalletNeedsBackup: String { L10n.tr("Localizable", "Your wallet needs backup") }
   /// Your wallets
-  internal static let yourWallets = L10n.tr("Localizable", "Your wallets")
+  internal static var yourWallets: String { L10n.tr("Localizable", "Your wallets") }
 
   internal enum AddATokenToYourWallet {
     /// Add a token to your wallet.\nThis will cost
-    internal static let thisWillCost = L10n.tr("Localizable", "Add a token to your wallet.\nThis will cost")
+    internal static var thisWillCost: String { L10n.tr("Localizable", "Add a token to your wallet.\nThis will cost") }
   }
 
   internal enum ErrorWhenRetrievingCreationFee {
     /// Error when retrieving creation fee.\nTap to try again
-    internal static let tapToTryAgain = L10n.tr("Localizable", "Error when retrieving creation fee.\nTap to try again")
+    internal static var tapToTryAgain: String { L10n.tr("Localizable", "Error when retrieving creation fee.\nTap to try again") }
   }
 
   internal enum ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode {
     /// This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!
-    internal static let pleaseEnableItInSettings = L10n.tr("Localizable", "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!")
+    internal static var pleaseEnableItInSettings: String { L10n.tr("Localizable", "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!") }
   }
 
   internal enum WeCouldnTAddATokenToYourWallet {
     /// We couldn’t add a token to your wallet.\nCheck your internet connection and try again.
-    internal static let checkYourInternetConnectionAndTryAgain = L10n.tr("Localizable", "We couldn’t add a token to your wallet.\nCheck your internet connection and try again.")
+    internal static var checkYourInternetConnectionAndTryAgain: String { L10n.tr("Localizable", "We couldn’t add a token to your wallet.\nCheck your internet connection and try again.") }
   }
 
   internal enum YourDeviceDoesNotSupportScanningACodeFromAnItem {
     /// Your device does not support scanning a code from an item. Please use a device with a camera.
-    internal static let pleaseUseADeviceWithACamera = L10n.tr("Localizable", "Your device does not support scanning a code from an item. Please use a device with a camera.")
+    internal static var pleaseUseADeviceWithACamera: String { L10n.tr("Localizable", "Your device does not support scanning a code from an item. Please use a device with a camera.") }
   }
 
   internal enum WasTurnedOff {
     /// was turned off.\nDo you want to turn it on?
-    internal static let doYouWantToTurnItOn = L10n.tr("Localizable", "was turned off.\nDo you want to turn it on?")
+    internal static var doYouWantToTurnItOn: String { L10n.tr("Localizable", "was turned off.\nDo you want to turn it on?") }
   }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length

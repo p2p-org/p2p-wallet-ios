@@ -14,7 +14,7 @@ strings:
   inputs:
     - en.lproj
   outputs:
-    - templateName: structured-swift5
+    - templatePath: strings_custom.stencil
       output: Strings+Generated.swift
 
 
