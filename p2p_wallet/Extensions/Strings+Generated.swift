@@ -282,6 +282,8 @@ internal enum L10n {
   internal static let swap = L10n.tr("Localizable", "Swap")
   /// Swap now
   internal static let swapNow = L10n.tr("Localizable", "Swap now")
+  /// Switch language?
+  internal static let switchLanguage = L10n.tr("Localizable", "Switch language?")
   /// Switch network?
   internal static let switchNetwork = L10n.tr("Localizable", "Switch network?")
   /// Switching to
