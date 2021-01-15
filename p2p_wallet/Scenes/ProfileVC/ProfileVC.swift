@@ -50,7 +50,7 @@ class ProfileVC: ProfileVCBase {
         
         setUp(enabledBiometry: Defaults.isBiometryEnabled)
         
-        activeLanguageLabel.text = Locale.current.localizedString(forLanguageCode: Locale.preferredLanguages[0])
+        activeLanguageLabel.text = Locale.current.uiLanguageLocalizedString?.uppercaseFirst
     }
     
     override func bind() {
