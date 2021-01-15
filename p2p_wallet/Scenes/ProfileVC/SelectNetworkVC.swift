@@ -7,60 +7,44 @@
 
 import Foundation
 
-class SelectNetworkVC: ProfileVCBase {
+class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
+    override var dataDidChange: Bool {selectedItem != Defaults.network}
     
-    lazy var data: [SolanaSDK.Network: Bool] = {
-        var data = [SolanaSDK.Network: Bool]()
+    override init() {
+        super.init()
+        // initial data
         SolanaSDK.Network.allCases.forEach {
             data[$0] = ($0 == Defaults.network)
         }
-        return data
-    }()
-    var cells: [Cell] {stackView.arrangedSubviews.filter {$0 is Cell} as! [Cell]}
-    override var dataDidChange: Bool {selectedNetwork != Defaults.network}
-    var selectedNetwork: SolanaSDK.Network {data.first(where: {$0.value})!.key}
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func setUp() {
         title = L10n.network
         super.setUp()
-        stackView.addArrangedSubviews(data.keys.sorted(by: {(data[$0] ?? data[$1] ?? false)}).map {self.createCell(network: $0)})
-        reloadData()
     }
     
-    func reloadData() {
-        for cell in cells {
-            guard let network = cell.network else {continue}
-            cell.checkBox.isSelected = data[network] ?? false
-        }
-    }
-    
-    @objc func rowDidSelect(_ gesture: UIGestureRecognizer) {
-        guard let cell = gesture.view as? Cell,
-              let network = cell.network,
-              let isCellSelected = data[network],
-              isCellSelected == false
-        else {return}
-        
-        data[network] = true
-        
-        // deselect all other networks
-        data.keys.filter {$0 != network}.forEach {data[$0] = false}
-        
-        reloadData()
+    override func createCell(item: SolanaSDK.Network) -> Cell<SolanaSDK.Network> {
+        let cell = super.createCell(item: item)
+        cell.label.text = item.cluster
+        return cell
     }
     
     override func saveChange() {
-        showAlert(title: L10n.switchNetwork, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedNetwork.cluster + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
+        showAlert(title: L10n.switchNetwork, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem.cluster + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
             if index != 0 {return}
-            UIApplication.shared.showIndetermineHudWithMessage(L10n.switchingTo + " \"" + self.selectedNetwork.cluster + "\"")
+            UIApplication.shared.showIndetermineHudWithMessage(L10n.switchingTo + " \"" + self.selectedItem.cluster + "\"")
             DispatchQueue.global().async {
                 do {
-                    let account = try SolanaSDK.Account(phrase: AccountStorage.shared.account!.phrase, network: self.selectedNetwork.cluster)
+                    let account = try SolanaSDK.Account(phrase: AccountStorage.shared.account!.phrase, network: self.selectedItem.cluster)
                     try AccountStorage.shared.save(account)
                     DispatchQueue.main.async {
                         UIApplication.shared.hideHud()
                         // save
-                        Defaults.network = self.selectedNetwork
+                        Defaults.network = self.selectedItem
                         
                         // refresh sdk
                         SolanaSDK.shared = SolanaSDK(endpoint: Defaults.network.endpoint, accountStorage: AccountStorage.shared)
@@ -76,37 +60,6 @@ class SelectNetworkVC: ProfileVCBase {
                     }
                 }
             }
-        }
-    }
-    
-    private func createCell(network: SolanaSDK.Network) -> Cell {
-        let cell = Cell(height: 66)
-        cell.setUp(network: network)
-        cell.onTap(self, action: #selector(rowDidSelect(_:)))
-        return cell
-    }
-}
-
-extension SelectNetworkVC {
-    class Cell: BEView {
-        var network: SolanaSDK.Network?
-        
-        lazy var label = UILabel(textSize: 15)
-        
-        lazy var checkBox: BECheckbox = {
-            let checkBox = BECheckbox(width: 20, height: 20, cornerRadius: 10)
-            checkBox.isUserInteractionEnabled = false
-            return checkBox
-        }()
-        
-        override func commonInit() {
-            super.commonInit()
-            self.row([label, checkBox])
-        }
-        
-        func setUp(network: SolanaSDK.Network) {
-            self.network = network
-            label.text = network.cluster
         }
     }
 }

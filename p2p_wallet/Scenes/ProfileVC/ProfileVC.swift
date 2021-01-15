@@ -11,6 +11,7 @@ import LocalAuthentication
 
 class ProfileVC: ProfileVCBase {
     lazy var secureMethodsLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
+    lazy var activeLanguageLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
     var disposables = [DefaultsDisposable]()
     
     deinit {
@@ -38,11 +39,18 @@ class ProfileVC: ProfileVCBase {
                 .withTag(3)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
+            createCell(text: L10n.language, descriptionView: activeLanguageLabel
+            )
+                .withTag(4)
+                .onTap(self, action: #selector(cellDidTouch(_:))),
+            
             UIButton(label: L10n.logout, labelFont: .systemFont(ofSize: 15), textColor: .textSecondary)
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
         ])
         
-        self.setUp(enabledBiometry: Defaults.isBiometryEnabled)
+        setUp(enabledBiometry: Defaults.isBiometryEnabled)
+        
+        activeLanguageLabel.text = Locale.current.localizedString(forLanguageCode: Locale.preferredLanguages[0])
     }
     
     override func bind() {
@@ -92,6 +100,8 @@ class ProfileVC: ProfileVCBase {
             show(SelectNetworkVC(), sender: nil)
         case 3:
             show(ConfigureSecurityVC(), sender: nil)
+        case 4:
+            show(SelectLanguageVC(), sender: nil)
         default:
             return
         }
