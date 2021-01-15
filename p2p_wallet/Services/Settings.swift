@@ -13,5 +13,5 @@ extension DefaultsKeys {
     var didSetEnableNotifications: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var network: DefaultsKey<SolanaSDK.Network> {.init(#function, defaultValue: .mainnetBeta)}
     var walletName: DefaultsKey<[String: String]> {.init(#function, defaultValue: [:])}
-    var localizedLanguage: DefaultsKey<LocalizedLanguage> {.init(#function, defaultValue: LocalizedLanguage.current)}
+    var localizedLanguage: DefaultsKey<LocalizedLanguage> {.init(#function, defaultValue: LocalizedLanguage(code: String(Locale.preferredLanguages[0].prefix(2))))}
 }

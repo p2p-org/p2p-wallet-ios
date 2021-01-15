@@ -11,22 +11,19 @@ struct LocalizedLanguage: Hashable, Codable, DefaultsSerializable {
     var code: String
     
     var localizedName: String? {
-        Locale.current.localizedString(forLanguageCode: code)
-    }
-    static var current: LocalizedLanguage {
-        LocalizedLanguage(code: String(Locale.preferredLanguages[0].prefix(2)))
+        Locale.shared.localizedString(forLanguageCode: code)
     }
 }
 
 class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
-    override var dataDidChange: Bool {selectedItem != LocalizedLanguage.current}
+    override var dataDidChange: Bool {selectedItem != Defaults.localizedLanguage}
     
     override init() {
         super.init()
         data = [LocalizedLanguage: Bool]()
         Bundle.main.localizations.filter({$0 != "Base"}).forEach {
             print($0)
-            data[LocalizedLanguage(code: $0)] = $0 == Locale.preferredLanguages[0].prefix(2)
+            data[LocalizedLanguage(code: $0)] = $0 == Defaults.localizedLanguage.code
         }
     }
     
@@ -41,11 +38,16 @@ class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
     
     override func createCell(item: LocalizedLanguage) -> Cell<LocalizedLanguage> {
         let cell = super.createCell(item: item)
-        cell.label.text = item.localizedName
+        cell.label.text = item.localizedName?.uppercaseFirst
         return cell
     }
     
     override func saveChange() {
-        
+        showAlert(title: L10n.switchLanguage, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem.localizedName + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
+            if index != 0 {return}
+            Defaults.localizedLanguage = self.selectedItem
+            Bundle.swizzleLocalization()
+            AppDelegate.shared.reloadRootVC()
+        }
     }
 }
