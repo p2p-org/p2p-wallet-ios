@@ -154,6 +154,8 @@ internal enum L10n {
   internal static let incorrectPINCode = L10n.tr("Localizable", "Incorrect PIN-code")
   /// Insufficient funds
   internal static let insufficientFunds = L10n.tr("Localizable", "Insufficient funds")
+  /// Language
+  internal static let language = L10n.tr("Localizable", "Language")
   /// Leave
   internal static let leave = L10n.tr("Localizable", "Leave")
   /// Leave this page?
