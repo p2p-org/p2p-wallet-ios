@@ -23,6 +23,7 @@ class SendTokenItemVC: BaseVC {
     
     // MARK: - Subviews
     lazy var balanceLabel = UILabel(text: "0", textColor: .h5887ff)
+        .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
     lazy var coinImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 22)
         .onTap(self, action: #selector(buttonChooseWalletDidTouch))
     lazy var amountTextField = TokenAmountTextField(
@@ -32,8 +33,6 @@ class SendTokenItemVC: BaseVC {
         placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
         autocorrectionType: .no
     )
-//    lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .textSecondary)
-//        .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
     lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .textSecondary)
     lazy var addressTextView: UITextView = {
         let textView = UITextView(forExpandable: ())
@@ -181,7 +180,10 @@ class SendTokenItemVC: BaseVC {
     }
     
     @objc func buttonUseAllBalanceDidTouch() {
-        amountTextField.text = wallet?.amount.toString(maximumFractionDigits: 9)
+        guard let token = wallet?.amount else {return}
+        let amountInUSD = token * price
+        
+        amountTextField.text = amountInUSD.toString(maximumFractionDigits: 9)
         amountTextField.sendActions(for: .valueChanged)
     }
     
