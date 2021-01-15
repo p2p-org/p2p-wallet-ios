@@ -86,7 +86,7 @@ class FlexibleHeightPresentationController: DimmingPresentationController, Resiz
             let distanceToTop = abs(presentedViewFixedFrame!.origin.y - presentedViewCurrentTop!)
             
             // Dismiss when presentedView is close to bottom
-            if distanceToBottom < distanceToTop {
+            if distanceToBottom < distanceToTop * 5 {
                 presentedViewController
                     .dismiss(animated: true, completion: nil)
                 return
