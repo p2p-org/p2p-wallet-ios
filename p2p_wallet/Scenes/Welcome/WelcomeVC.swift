@@ -6,8 +6,12 @@
 //
 
 import Foundation
+import SwiftUI
+
 class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+        .hidden
+    }
     
     override func setUp() {
         super.setUp()
@@ -35,27 +39,40 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
 }
 
 extension WelcomeVC {
-    class FirstVC: IntroVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.embeded}
+    class FirstVC: CreateOrRestoreWalletVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .embeded
+        }
         
-        override func createIconView() -> UIView {
-            UIStackView(axis: .horizontal, spacing: -100, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UIImageView(width: 294, height: 183, image: .introBankCard1),
-                UIImageView(width: 294, height: 183, image: .introBankCard1),
-                UIImageView(width: 294, height: 183, image: .introBankCard1)
-            ])
+        override func setUp() {
+            super.setUp()
+            titleLabel.text = L10n.p2PWallet
+            descriptionLabel.text = L10n.secureNonCustodialBankOfFuture + "\n" + L10n.simpleFinanceForEveryone
+            buttonsStackView.alpha = 0
         }
     }
     
     class SecondVC: CreateOrRestoreWalletVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.embeded}
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .embeded
+        }
         
-        override func createIconView() -> UIView {
-            UIStackView(axis: .horizontal, spacing: -100, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UIImageView(width: 294, height: 183, image: .introBankCard1),
-                UIImageView(width: 294, height: 183, image: .introBankCard1),
-                UIImageView(width: 294, height: 183, image: .introBankCard1)
-            ])
+        override func setUp() {
+            super.setUp()
+            titleLabel.text = L10n.p2PWallet
+            descriptionLabel.text = L10n.secureNonCustodialBankOfFuture + "\n" + L10n.simpleFinanceForEveryone
+        }
+    }
+}
+
+@available(iOS 13, *)
+struct WelcomeVC_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            UIViewControllerPreview {
+                WelcomeVC()
+            }
+            .previewDevice("iPhone SE (2nd generation)")
         }
     }
 }

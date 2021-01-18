@@ -11,7 +11,7 @@ import SwiftUI
 class WLIntroVC: BaseVStackVC {
     // MARK: - Settings
     override var padding: UIEdgeInsets {
-        .zero
+        UIEdgeInsets(x: 30, y: 0)
     }
     
     // MARK: - Subviews
@@ -19,7 +19,6 @@ class WLIntroVC: BaseVStackVC {
     lazy var spacer1 = UIView.spacer
     lazy var titleLabel = UILabel(font: FontFamily.Montserrat.extraBold.font(size: 32), textColor: .white, textAlignment: .center)
     lazy var descriptionLabel = UILabel(textSize: 17, textColor: UIColor.white.withAlphaComponent(0.5), numberOfLines: 0, textAlignment: .center)
-    lazy var spacer2 = UIView.spacer
     lazy var buttonsStackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
     override func setUp() {
@@ -39,18 +38,11 @@ class WLIntroVC: BaseVStackVC {
             spacer1,
             titleLabel,
             descriptionLabel,
-            spacer2,
             BEStackViewSpacing(53),
             buttonsStackView
-                .centeredHorizontallyView
         ])
         
-        spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor, multiplier: 2)
-            .isActive = true
-        buttonsStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor, constant: -60)
-            .isActive = true
-        
-        scrollView.contentView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
+        scrollView.contentView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 16)
     }
 }
 
