@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CreateOrRestoreWalletVC: IntroVCWithButtons {
+class CreateOrRestoreWalletVC: WLIntroVC {
     
     lazy var createWalletButton = WLButton.stepButton(type: .blue, label: L10n.createNewWallet.uppercaseFirst)
         .onTap(self, action: #selector(buttonCreateWalletDidTouch))
@@ -17,8 +17,8 @@ class CreateOrRestoreWalletVC: IntroVCWithButtons {
     override func setUp() {
         super.setUp()
         
-        buttonStackView.addArrangedSubview(createWalletButton)
-        buttonStackView.addArrangedSubview(restoreWalletButton)
+        buttonsStackView.addArrangedSubview(createWalletButton)
+        buttonsStackView.addArrangedSubview(restoreWalletButton)
     }
     
     // MARK: - Actions
