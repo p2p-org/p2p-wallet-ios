@@ -37,8 +37,7 @@ class RestoreWalletVC: WLIntroVC {
     }
     
     @objc func buttonRestoreManuallyDidTouch() {
-        let vc = EnterPhrasesVC()
-        show(vc, sender: nil)
+        present(EnterPhrasesVC(), animated: true, completion: nil)
     }
     
     private func handlePhrases(_ text: String)
