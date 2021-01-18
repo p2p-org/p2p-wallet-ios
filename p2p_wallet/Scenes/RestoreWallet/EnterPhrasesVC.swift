@@ -72,6 +72,7 @@ class _EnterPhrasesVC: BaseVStackVC {
     lazy var nextButton = WLButton(backgroundColor: .h5887ff, cornerRadius: 12, label: L10n.done, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .white, contentInsets: .init(x: 16, y: 10))
         .onTap(self, action: #selector(buttonNextDidTouch))
     lazy var pasteButton = WLButton(backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12, label: L10n.paste, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .white, contentInsets: .init(x: 16, y: 10))
+        .onTap(self, action: #selector(buttonPasteDidTouch))
     
     override func setUp() {
         super.setUp()
@@ -105,6 +106,10 @@ class _EnterPhrasesVC: BaseVStackVC {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.handlePhrases()
         }
+    }
+    
+    @objc func buttonPasteDidTouch() {
+        textView.paste(nil)
     }
     
     private func handlePhrases()
