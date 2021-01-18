@@ -200,6 +200,8 @@ internal enum L10n {
   internal static var p2PWallet: String { L10n.tr("Localizable", "P2P Wallet") }
   /// passcodes do not match
   internal static var passcodesDoNotMatch: String { L10n.tr("Localizable", "passcodes do not match") }
+  /// Paste
+  internal static var paste: String { L10n.tr("Localizable", "Paste") }
   /// Payments
   internal static var payments: String { L10n.tr("Localizable", "Payments") }
   /// PIN-code

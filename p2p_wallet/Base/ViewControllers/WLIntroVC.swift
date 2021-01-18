@@ -10,11 +10,23 @@ import SwiftUI
 
 class WLIntroVC: BaseVStackVC {
     // MARK: - Settings
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+        .hidden
+    }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
+    }
     override var padding: UIEdgeInsets {
         UIEdgeInsets(x: 30, y: 0)
     }
     
     // MARK: - Subviews
+    lazy var backButton: UIButton = {
+        let button = UIButton(width: 32, height: 32)
+        button.setImage(.backButtonDark, for: .normal)
+        button.onTap(self, action: #selector(back))
+        return button
+    }()
     lazy var p2pValidatorLogo = UIImageView.p2pValidatorLogo
     lazy var spacer1 = UIView.spacer
     lazy var titleLabel = UILabel(font: FontFamily.Montserrat.extraBold.font(size: 32), textColor: .white, textAlignment: .center)
@@ -25,6 +37,12 @@ class WLIntroVC: BaseVStackVC {
         super.setUp()
         // static background color
         view.backgroundColor = .introBgStatic
+        
+        // Custom back button
+        view.addSubview(backButton)
+        backButton.autoPinEdge(toSuperviewSafeArea: .leading, withInset: 20)
+        backButton.autoPinEdge(toSuperviewSafeArea: .top, withInset: 20)
+        backButton.isHidden = true
         
         // lines view
         let linesView = UIImageView(image: .introLinesBg)

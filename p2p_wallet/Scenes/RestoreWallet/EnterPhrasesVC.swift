@@ -9,7 +9,39 @@ import Foundation
 import UITextView_Placeholder
 import SubviewAttachingTextView
 
-class EnterPhrasesVC: BaseVStackVC {
+class EnterPhrasesVC: WLModalWrapperVC {
+    override var padding: UIEdgeInsets {super.padding.modifying(dLeft: .defaultPadding, dRight: .defaultPadding)}
+    
+    init() {
+        let vc = _EnterPhrasesVC()
+        super.init(wrapped: vc)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        bottomView.backgroundColor = .h2f2f2f
+    }
+    
+    override func setUp() {
+        super.setUp()
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        stackView.addArrangedSubviews([
+            UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white),
+            UILabel(text: L10n.securityKeys.uppercaseFirst, textSize: 21, weight: .semibold)
+        ])
+        
+        let separator = UIView.separator(height: 1, color: .separator)
+        containerView.addSubview(separator)
+        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+    }
+}
+
+class _EnterPhrasesVC: BaseVStackVC {
     override var padding: UIEdgeInsets {.init(all: 20)}
     
     lazy var textView: SubviewAttachingTextView = {
@@ -26,22 +58,38 @@ class EnterPhrasesVC: BaseVStackVC {
         return tv
     }()
     
-    lazy var nextButton = WLButton.stepButton(type: .black, label: L10n.next.uppercaseFirst)
+    lazy var tabBar: TabBar = {
+        let tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
+        tabBar.backgroundColor = .h2f2f2f
+        tabBar.stackView.addArrangedSubviews([
+            pasteButton,
+            UIView.spacer,
+            nextButton
+        ])
+        return tabBar
+    }()
+    
+    lazy var nextButton = WLButton(backgroundColor: .h5887ff, cornerRadius: 12, label: L10n.done, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .white, contentInsets: .init(x: 16, y: 10))
         .onTap(self, action: #selector(buttonNextDidTouch))
+    lazy var pasteButton = WLButton(backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12, label: L10n.paste, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .white, contentInsets: .init(x: 16, y: 10))
+        .onTap(self, action: #selector(buttonPasteDidTouch))
     
     override func setUp() {
         super.setUp()
         title = L10n.enterSecurityKeys
         stackView.addArrangedSubview(
-            textView.padding(.init(all: 16), backgroundColor: .lightGrayBackground, cornerRadius: 16)
+            textView
+                .padding(.init(all: 16), backgroundColor: .lightGrayBackground, cornerRadius: 16)
+                .border(width: 1, color: .a3a5ba)
         )
         
-        scrollView.constraintToSuperviewWithAttribute(.bottom)?.isActive = false
+        // tabBar
+        view.addSubview(tabBar)
+        tabBar.autoPinEdge(toSuperviewEdge: .leading)
+        tabBar.autoPinEdge(toSuperviewEdge: .trailing)
+        tabBar.autoPinBottomToSuperViewAvoidKeyboard()
         
-        // button
-        view.addSubview(nextButton)
-        nextButton.autoPinEdge(.top, to: .bottom, of: scrollView)
-        nextButton.autoPinEdgesToSuperviewEdges(with: .init(top: 0, left: 30, bottom: padding.bottom, right: 30), excludingEdge: .top)
+        textView.becomeFirstResponder()
     }
     
     override func bind() {
@@ -58,6 +106,10 @@ class EnterPhrasesVC: BaseVStackVC {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.handlePhrases()
         }
+    }
+    
+    @objc func buttonPasteDidTouch() {
+        textView.paste(nil)
     }
     
     private func handlePhrases()
@@ -83,7 +135,7 @@ class EnterPhrasesVC: BaseVStackVC {
     }
 }
 
-extension EnterPhrasesVC: UITextViewDelegate {
+extension _EnterPhrasesVC: UITextViewDelegate {
     class Attachment: SubviewTextAttachment {
         var phrase: String?
     }

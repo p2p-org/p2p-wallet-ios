@@ -37,6 +37,7 @@ extension UIColor {
     static let h202020 = UIColor(named: "h202020", in: bundle, compatibleWith: nil)!
     static let h282828 = UIColor(named: "h282828", in: bundle, compatibleWith: nil)!
     static let h2b2b2b = UIColor(named: "h2b2b2b", in: bundle, compatibleWith: nil)!
+    static let h2f2f2f = UIColor(named: "h2f2f2f", in: bundle, compatibleWith: nil)!
     static let h5887ff = UIColor(named: "h5887ff", in: bundle, compatibleWith: nil)!
     static let introBgStatic = UIColor(named: "intro-bg-static", in: bundle, compatibleWith: nil)!
     static let lightGrayBackground = UIColor(named: "lightGrayBackground", in: bundle, compatibleWith: nil)!
@@ -56,6 +57,7 @@ extension UIColor {
 extension UIImage {
     static let search = UIImage(named: "Search", in: bundle, compatibleWith: nil)!
     static let backArrow = UIImage(named: "back-arrow", in: bundle, compatibleWith: nil)!
+    static let backButtonDark = UIImage(named: "back-button-dark", in: bundle, compatibleWith: nil)!
     static let backButton = UIImage(named: "back-button", in: bundle, compatibleWith: nil)!
     static let backupShield = UIImage(named: "backup-shield", in: bundle, compatibleWith: nil)!
     static let buttonEdit = UIImage(named: "button-edit", in: bundle, compatibleWith: nil)!
@@ -77,6 +79,7 @@ extension UIImage {
     static let reverseButton = UIImage(named: "reverse-button", in: bundle, compatibleWith: nil)!
     static let scanQr2 = UIImage(named: "scan-qr-2", in: bundle, compatibleWith: nil)!
     static let scanQr = UIImage(named: "scan-qr", in: bundle, compatibleWith: nil)!
+    static let securityKey = UIImage(named: "security-key", in: bundle, compatibleWith: nil)!
     static let tabbarActivities = UIImage(named: "tabbar-activities", in: bundle, compatibleWith: nil)!
     static let tabbarFriends = UIImage(named: "tabbar-friends", in: bundle, compatibleWith: nil)!
     static let tabbarHome = UIImage(named: "tabbar-home", in: bundle, compatibleWith: nil)!
