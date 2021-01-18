@@ -102,6 +102,8 @@ class ProfileVC: ProfileVCBase {
         showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { (index) in
             if index == 0 {
                 AccountStorage.shared.clear()
+                Defaults.walletName = [:]
+                Defaults.appearance = .unspecified
                 AppDelegate.shared.reloadRootVC()
             }
         }
