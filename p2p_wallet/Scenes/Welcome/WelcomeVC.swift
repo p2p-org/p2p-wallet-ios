@@ -13,6 +13,10 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
         .hidden
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
+    }
+    
     override func setUp() {
         super.setUp()
         viewControllers = [FirstVC(), SecondVC()]

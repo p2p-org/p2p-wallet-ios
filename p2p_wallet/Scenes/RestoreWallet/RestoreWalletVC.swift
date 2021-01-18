@@ -6,20 +6,22 @@
 //
 
 import Foundation
+import SwiftUI
 
-class RestoreWalletVC: IntroVCWithButtons {
-    lazy var iCloudRestoreButton = WLButton.stepButton(type: .black, label: L10n.restoreUsingICloud)
+class RestoreWalletVC: WLIntroVC {
+    lazy var iCloudRestoreButton = WLButton.stepButton(type: .black, label: " " + L10n.restoreUsingICloud)
         .onTap(self, action: #selector(buttonICloudRestoreDidTouch))
     lazy var restoreManuallyButton = WLButton.stepButton(type: .sub, label: L10n.restoreManually)
         .onTap(self, action: #selector(buttonRestoreManuallyDidTouch))
     
     override func setUp() {
         super.setUp()
+        backButton.isHidden = false
         descriptionLabel.isHidden = false
         titleLabel.text = L10n.wowletRecovery
         descriptionLabel.text = L10n.recoverYourWowletUsingCloudServicesOrRecoverManually
         
-        buttonStackView.addArrangedSubviews([
+        buttonsStackView.addArrangedSubviews([
             iCloudRestoreButton,
             restoreManuallyButton
         ])
@@ -35,8 +37,7 @@ class RestoreWalletVC: IntroVCWithButtons {
     }
     
     @objc func buttonRestoreManuallyDidTouch() {
-        let vc = EnterPhrasesVC()
-        show(vc, sender: nil)
+        present(EnterPhrasesVC(), animated: true, completion: nil)
     }
     
     private func handlePhrases(_ text: String)
@@ -48,6 +49,18 @@ class RestoreWalletVC: IntroVCWithButtons {
             UIApplication.shared.changeRootVC(to: nc)
         } catch {
             showError(error)
+        }
+    }
+}
+
+@available(iOS 13, *)
+struct RestoreWalletVC_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            UIViewControllerPreview {
+                RestoreWalletVC()
+            }
+            .previewDevice("iPhone SE (2nd generation)")
         }
     }
 }
