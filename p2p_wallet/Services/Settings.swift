@@ -14,4 +14,9 @@ extension DefaultsKeys {
     var network: DefaultsKey<SolanaSDK.Network> {.init(#function, defaultValue: .mainnetBeta)}
     var walletName: DefaultsKey<[String: String]> {.init(#function, defaultValue: [:])}
     var localizedLanguage: DefaultsKey<LocalizedLanguage> {.init(#function, defaultValue: LocalizedLanguage(code: String(Locale.preferredLanguages[0].prefix(2))))}
+    var appearance: DefaultsKey<UIUserInterfaceStyle> {.init(#function, defaultValue: .unspecified)}
+}
+
+extension UIUserInterfaceStyle: DefaultsSerializable {
+    
 }
