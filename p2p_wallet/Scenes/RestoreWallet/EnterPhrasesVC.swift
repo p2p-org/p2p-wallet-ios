@@ -9,7 +9,34 @@ import Foundation
 import UITextView_Placeholder
 import SubviewAttachingTextView
 
-class EnterPhrasesVC: BaseVStackVC {
+class EnterPhrasesVC: WLModalWrapperVC {
+    override var padding: UIEdgeInsets {super.padding.modifying(dLeft: .defaultPadding, dRight: .defaultPadding)}
+    
+    init() {
+        let vc = _EnterPhrasesVC()
+        super.init(wrapped: vc)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func setUp() {
+        super.setUp()
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        stackView.addArrangedSubviews([
+            UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white),
+            UILabel(text: L10n.securityKeys.uppercaseFirst, textSize: 21, weight: .semibold)
+        ])
+        
+        let separator = UIView.separator(height: 1, color: .separator)
+        containerView.addSubview(separator)
+        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+    }
+}
+
+class _EnterPhrasesVC: BaseVStackVC {
     override var padding: UIEdgeInsets {.init(all: 20)}
     
     lazy var textView: SubviewAttachingTextView = {
@@ -33,7 +60,9 @@ class EnterPhrasesVC: BaseVStackVC {
         super.setUp()
         title = L10n.enterSecurityKeys
         stackView.addArrangedSubview(
-            textView.padding(.init(all: 16), backgroundColor: .lightGrayBackground, cornerRadius: 16)
+            textView
+                .padding(.init(all: 16), backgroundColor: .lightGrayBackground, cornerRadius: 16)
+                .border(width: 1, color: .a3a5ba)
         )
         
         scrollView.constraintToSuperviewWithAttribute(.bottom)?.isActive = false
@@ -83,7 +112,7 @@ class EnterPhrasesVC: BaseVStackVC {
     }
 }
 
-extension EnterPhrasesVC: UITextViewDelegate {
+extension _EnterPhrasesVC: UITextViewDelegate {
     class Attachment: SubviewTextAttachment {
         var phrase: String?
     }
