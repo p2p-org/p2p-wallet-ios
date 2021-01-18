@@ -196,6 +196,8 @@ internal enum L10n {
   internal static var ok: String { L10n.tr("Localizable", "OK") }
   /// Or saving into Keychain
   internal static var orSavingIntoKeychain: String { L10n.tr("Localizable", "Or saving into Keychain") }
+  /// P2P Wallet
+  internal static var p2PWallet: String { L10n.tr("Localizable", "P2P Wallet") }
   /// passcodes do not match
   internal static var passcodesDoNotMatch: String { L10n.tr("Localizable", "passcodes do not match") }
   /// Payments
