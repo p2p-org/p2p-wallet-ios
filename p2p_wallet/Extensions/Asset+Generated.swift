@@ -36,6 +36,7 @@ extension UIColor {
     static let h1b1b1b = UIColor(named: "h1b1b1b", in: bundle, compatibleWith: nil)!
     static let h202020 = UIColor(named: "h202020", in: bundle, compatibleWith: nil)!
     static let h282828 = UIColor(named: "h282828", in: bundle, compatibleWith: nil)!
+    static let h2f2f2f = UIColor(named: "h2f2f2f", in: bundle, compatibleWith: nil)!
     static let h5887ff = UIColor(named: "h5887ff", in: bundle, compatibleWith: nil)!
     static let introBgStatic = UIColor(named: "intro-bg-static", in: bundle, compatibleWith: nil)!
     static let lightGrayBackground = UIColor(named: "lightGrayBackground", in: bundle, compatibleWith: nil)!
