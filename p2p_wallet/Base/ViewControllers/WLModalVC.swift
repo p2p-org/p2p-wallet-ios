@@ -13,6 +13,9 @@ class WLModalVC: BaseVC {
     lazy var containerView = UIView(backgroundColor: .background)
     lazy var stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
     
+    // bottomView for covering safe area
+    lazy var bottomView = UIView(backgroundColor: containerView.backgroundColor)
+    
     // MARK: - Initializers
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -24,8 +27,6 @@ class WLModalVC: BaseVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // bottomView for covering safe area
-        let bottomView = UIView(backgroundColor: containerView.backgroundColor)
         view.addSubview(bottomView)
         bottomView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         bottomView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
