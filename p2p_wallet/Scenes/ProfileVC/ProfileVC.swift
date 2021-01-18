@@ -8,10 +8,12 @@
 import Foundation
 import SwiftyUserDefaults
 import LocalAuthentication
+import SwiftUI
 
 class ProfileVC: ProfileVCBase {
     lazy var secureMethodsLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
     lazy var activeLanguageLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
+    lazy var appearanceLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
     var disposables = [DefaultsDisposable]()
     
     deinit {
@@ -23,7 +25,8 @@ class ProfileVC: ProfileVCBase {
         title = L10n.profile
         
         super.setUp()
-        stackView.addArrangedSubviews([
+        
+        var subviews: [BEStackViewElement] = [
             createCell(text: L10n.backup, descriptionView: UIImageView(width: 17, height: 21, image: .backupShield, tintColor: .textSecondary)
             )
                 .withTag(1)
@@ -46,7 +49,24 @@ class ProfileVC: ProfileVCBase {
             
             UIButton(label: L10n.logout, labelFont: .systemFont(ofSize: 15), textColor: .textSecondary)
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
-        ])
+        ]
+        
+        if #available(iOS 13.0, *) {
+            subviews.insert(
+                createCell(
+                    text: L10n.appearance,
+                    descriptionView: appearanceLabel
+                )
+                    .withTag(5)
+                    .onTap(self, action: #selector(cellDidTouch(_:)))
+                ,
+                at: 4
+            )
+            
+            appearanceLabel.text = Defaults.appearance.localizedString
+        }
+        
+        stackView.addArrangedSubviews(subviews)
         
         setUp(enabledBiometry: Defaults.isBiometryEnabled)
         
@@ -102,6 +122,10 @@ class ProfileVC: ProfileVCBase {
             show(ConfigureSecurityVC(), sender: nil)
         case 4:
             show(SelectLanguageVC(), sender: nil)
+        case 5:
+            if #available(iOS 13.0, *) {
+                show(SelectAppearanceVC(), sender: nil)
+            }
         default:
             return
         }
@@ -118,5 +142,17 @@ class ProfileVC: ProfileVCBase {
         ])
         stackView.setCustomSpacing(12, after: descriptionView)
         return stackView
+    }
+}
+
+@available(iOS 13, *)
+struct ProfileVC_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            UIViewControllerPreview {
+                ProfileVC()
+            }
+            .previewDevice("iPhone SE (2nd generation)")
+        }
     }
 }

@@ -59,6 +59,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // set window
         window = UIWindow(frame: UIScreen.main.bounds)
+        if #available(iOS 13.0, *) {
+            window?.overrideUserInterfaceStyle = Defaults.appearance
+        }
         reloadRootVC()
         window?.makeKeyAndVisible()
         return true
