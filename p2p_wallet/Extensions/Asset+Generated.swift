@@ -55,6 +55,7 @@ extension UIColor {
 extension UIImage {
     static let search = UIImage(named: "Search", in: bundle, compatibleWith: nil)!
     static let backArrow = UIImage(named: "back-arrow", in: bundle, compatibleWith: nil)!
+    static let backButtonDark = UIImage(named: "back-button-dark", in: bundle, compatibleWith: nil)!
     static let backButton = UIImage(named: "back-button", in: bundle, compatibleWith: nil)!
     static let backupShield = UIImage(named: "backup-shield", in: bundle, compatibleWith: nil)!
     static let buttonEdit = UIImage(named: "button-edit", in: bundle, compatibleWith: nil)!
