@@ -37,8 +37,7 @@ class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
     }
     
     override func saveChange() {
-        Defaults.appearance = selectedItem
-        AppDelegate.shared.window?.overrideUserInterfaceStyle = selectedItem
+        AppDelegate.shared.changeThemeTo(selectedItem)
         AppDelegate.shared.reloadRootVC()
     }
 }
