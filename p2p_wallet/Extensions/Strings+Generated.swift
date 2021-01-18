@@ -42,6 +42,8 @@ internal enum L10n {
   internal static var amount: String { L10n.tr("Localizable", "amount") }
   /// Amount is not valid
   internal static var amountIsNotValid: String { L10n.tr("Localizable", "Amount is not valid") }
+  /// Appearance
+  internal static var appearance: String { L10n.tr("Localizable", "Appearance") }
   /// Authentication failed
   internal static var authenticationFailed: String { L10n.tr("Localizable", "Authentication failed") }
   /// Available
@@ -96,6 +98,8 @@ internal enum L10n {
   internal static var creatingAnAccount: String { L10n.tr("Localizable", "creating an account") }
   /// Current PIN-code
   internal static var currentPINCode: String { L10n.tr("Localizable", "Current PIN-code") }
+  /// Dark
+  internal static var dark: String { L10n.tr("Localizable", "Dark") }
   /// Date
   internal static var date: String { L10n.tr("Localizable", "Date") }
   /// day
@@ -164,6 +168,8 @@ internal enum L10n {
   internal static var leave: String { L10n.tr("Localizable", "Leave") }
   /// Leave this page?
   internal static var leaveThisPage: String { L10n.tr("Localizable", "Leave this page?") }
+  /// Light
+  internal static var light: String { L10n.tr("Localizable", "Light") }
   /// Loading
   internal static var loading: String { L10n.tr("Localizable", "Loading") }
   /// Logout
@@ -292,6 +298,8 @@ internal enum L10n {
   internal static var switchNetwork: String { L10n.tr("Localizable", "Switch network?") }
   /// Switching to
   internal static var switchingTo: String { L10n.tr("Localizable", "Switching to") }
+  /// System
+  internal static var system: String { L10n.tr("Localizable", "System") }
   /// Tap button to retry!
   internal static var tapButtonToRetry: String { L10n.tr("Localizable", "Tap button to retry!") }
   /// Tap here to retry
