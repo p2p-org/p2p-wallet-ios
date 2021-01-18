@@ -8,7 +8,6 @@
 import Foundation
 
 class CreateOrRestoreWalletVC: WLIntroVC {
-    
     lazy var createWalletButton = WLButton.stepButton(type: .blue, label: L10n.createNewWallet.uppercaseFirst)
         .onTap(self, action: #selector(buttonCreateWalletDidTouch))
     lazy var restoreWalletButton = WLButton.stepButton(type: .sub, label: L10n.iVeAlreadyHadAWallet.uppercaseFirst)
