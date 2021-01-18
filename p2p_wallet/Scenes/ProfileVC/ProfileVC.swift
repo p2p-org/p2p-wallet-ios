@@ -103,7 +103,6 @@ class ProfileVC: ProfileVCBase {
             if index == 0 {
                 AccountStorage.shared.clear()
                 Defaults.walletName = [:]
-                Defaults.appearance = .unspecified
                 AppDelegate.shared.reloadRootVC()
             }
         }
