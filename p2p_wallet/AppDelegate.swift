@@ -18,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var shouldShowLocalAuth = true
     var localAuthVCShown = false
+    var shouldUpdateBalance = false
     let timeRequiredForAuthentication: Double = 10 // in seconds
     var timestamp: TimeInterval!
     
@@ -91,7 +92,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = rootVC
     }
     
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        shouldUpdateBalance = true
+    }
+    
     func applicationDidBecomeActive(_ application: UIApplication) {
+        // check authentication
         let newTimestamp = Date().timeIntervalSince1970
         if timestamp == nil {
             timestamp = newTimestamp - timeRequiredForAuthentication
@@ -102,6 +108,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             timestamp = newTimestamp
             
             showAuthentication()
+        }
+        
+        // update balance
+        if shouldUpdateBalance {
+            WalletsVM.ofCurrentUser.reload()
+            shouldUpdateBalance = false
         }
     }
     
