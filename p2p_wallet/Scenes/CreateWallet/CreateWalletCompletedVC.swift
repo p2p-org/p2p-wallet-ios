@@ -6,12 +6,11 @@
 //
 
 import Foundation
+import SwiftUI
 
-class CreateWalletCompletedVC: IntroVCWithButtons {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
-    
+class CreateWalletCompletedVC: WLIntroVC {
     // MARK: - Subviews
-    lazy var nextButton = WLButton.stepButton(type: .black, label: L10n.next.uppercaseFirst)
+    lazy var nextButton = WLButton.stepButton(type: .blue, label: L10n.next.uppercaseFirst)
         .onTap(self, action: #selector(buttonNextDidTouch))
     
     // MARK: - Methods
@@ -21,11 +20,26 @@ class CreateWalletCompletedVC: IntroVCWithButtons {
         titleLabel.text = L10n.congratulations
         descriptionLabel.text = L10n.yourWalletHasBeenSuccessfullyCreated
         
-        buttonStackView.addArrangedSubview(nextButton)
+        buttonsStackView.addArrangedSubviews([
+            nextButton,
+            UIView(height: 56)
+        ])
     }
     
     // MARK: - Actions
     @objc func buttonNextDidTouch() {
         UIApplication.shared.changeRootVC(to: SSPinCodeVC(), withNaviationController: true)
+    }
+}
+
+@available(iOS 13, *)
+struct WLCreateWalletCompleted_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            UIViewControllerPreview {
+                CreateWalletCompletedVC()
+            }
+            .previewDevice("iPhone SE (2nd generation)")
+        }
     }
 }
