@@ -54,11 +54,4 @@ class SecuritySettingVC: BaseVC {
     func next() {
         show(nextVC, sender: nil)
     }
-    
-    #if DEBUG //1
-    @objc override func injected() { //2
-        super.injected()
-        stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
-    }
-    #endif
 }
