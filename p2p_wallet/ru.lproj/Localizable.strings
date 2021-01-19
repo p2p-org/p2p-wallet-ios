@@ -44,7 +44,6 @@
 "Well done!" = "Отлично сработано!";
 "Finish setup" = "Завершить настройку";
 "Enter security keys" = "Введите электронные ключи";
-"Welcome back to the Wowlet space!" = "С возвращением в пространство Wowlet!";
 "Go to wallet" = "Перейти в кошелек";
 "Restoring wallet" = "Восстановление кошелька";
 "Send" = "Отправить";
@@ -105,11 +104,8 @@
 "Save to iCloud" = "Сохранить в iCloud";
 "Saving to iCloud" = "Сохранение в iCloud";
 "Saved to iCloud" = "Сохранено в iCloud";
-"Wowlet recovery" = "Wowlet recovery";
-"Recover your Wowlet using cloud services or recover manually" = "Восстановите Wowlet с помощью облачных сервисов, или восстановите вручную";
 "Restore using iCloud" = "Восстановить с помощью iCloud";
 "Restore manually" = "Восстановить вручную";
-"There is no Wowlet saved in your iCloud" = "В вашем iCloud нет сохраненного Wowlet";
 "No account" = "Нет аккаунта";
 "Processing" = "Обработка";
 "Done" = "Выполнено";
@@ -199,3 +195,8 @@
 "System" = "Система";
 "P2P Wallet" = "P2P кошелек";
 "Paste" = "Вставить";
+"P2P Wallet recovery" = "P2P восстановление кошелька";
+"Recover your P2P wallet manually or using cloud services" = "Восстановите свой P2P-кошелек вручную или с помощью облачных сервисов";
+"There is no P2P Wallet saved in your iCloud" = "В вашем iCloud нет сохраненного P2P-кошелька";
+"Welcome back to P2P Wallet!" = "С возвращением в P2P-кошелек!";
+"Welcome back!" = "Добро пожаловать!";

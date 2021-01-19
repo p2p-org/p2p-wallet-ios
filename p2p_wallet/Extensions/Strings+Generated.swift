@@ -194,6 +194,8 @@ internal enum L10n {
   internal static var orSavingIntoKeychain: String { L10n.tr("Localizable", "Or saving into Keychain") }
   /// P2P Wallet
   internal static var p2PWallet: String { L10n.tr("Localizable", "P2P Wallet") }
+  /// P2P Wallet recovery
+  internal static var p2PWalletRecovery: String { L10n.tr("Localizable", "P2P Wallet recovery") }
   /// passcodes do not match
   internal static var passcodesDoNotMatch: String { L10n.tr("Localizable", "passcodes do not match") }
   /// Paste
@@ -220,8 +222,8 @@ internal enum L10n {
   internal static var receiveToken: String { L10n.tr("Localizable", "Receive token") }
   /// Receive tokens
   internal static var receiveTokens: String { L10n.tr("Localizable", "Receive tokens") }
-  /// Recover your Wowlet using cloud services, or recover manually
-  internal static var recoverYourWowletUsingCloudServicesOrRecoverManually: String { L10n.tr("Localizable", "Recover your Wowlet using cloud services or recover manually") }
+  /// Recover your P2P wallet manually or using cloud services
+  internal static var recoverYourP2PWalletManuallyOrUsingCloudServices: String { L10n.tr("Localizable", "Recover your P2P wallet manually or using cloud services") }
   /// Repeat new PIN-code
   internal static var repeatNewPINCode: String { L10n.tr("Localizable", "Repeat new PIN-code") }
   /// Restore manually
@@ -310,8 +312,8 @@ internal enum L10n {
   internal static var termsAndConditions: String { L10n.tr("Localizable", "Terms and conditions") }
   /// The address is not valid
   internal static var theAddressIsNotValid: String { L10n.tr("Localizable", "The address is not valid") }
-  /// There is no Wowlet saved in your iCloud
-  internal static var thereIsNoWowletSavedInYourICloud: String { L10n.tr("Localizable", "There is no Wowlet saved in your iCloud") }
+  /// There is no P2P Wallet saved in your iCloud
+  internal static var thereIsNoP2PWalletSavedInYourICloud: String { L10n.tr("Localizable", "There is no P2P Wallet saved in your iCloud") }
   /// There is nothing in here!
   internal static var thereIsNothingInHere: String { L10n.tr("Localizable", "There is nothing in here!") }
   /// To
@@ -362,8 +364,10 @@ internal enum L10n {
   internal static var weVeCreatedSomeSecurityKeywordsForYou: String { L10n.tr("Localizable", "we've created some security keywords for you.") }
   /// week
   internal static var week: String { L10n.tr("Localizable", "week") }
-  /// Welcome back to the Wowlet space!
-  internal static var welcomeBackToTheWowletSpace: String { L10n.tr("Localizable", "Welcome back to the Wowlet space!") }
+  /// Welcome back to P2P Wallet!
+  internal static var welcomeBackToP2PWallet: String { L10n.tr("Localizable", "Welcome back to P2P Wallet!") }
+  /// Welcome back!
+  internal static var welcomeBack: String { L10n.tr("Localizable", "Welcome back!") }
   /// Well done!
   internal static var wellDone: String { L10n.tr("Localizable", "Well done!") }
   /// Will be  as a primary secure check
@@ -372,8 +376,6 @@ internal enum L10n {
   internal static var willCost: String { L10n.tr("Localizable", "will cost") }
   /// Wowlet for people, not for tokens
   internal static var wowletForPeopleNotForTokens: String { L10n.tr("Localizable", "Wowlet for people, not for tokens") }
-  /// Wowlet recovery
-  internal static var wowletRecovery: String { L10n.tr("Localizable", "Wowlet recovery") }
   /// year
   internal static var year: String { L10n.tr("Localizable", "year") }
   /// You have unsaved changes that will be lost if you decide to leave
