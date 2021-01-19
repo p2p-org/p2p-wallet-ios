@@ -19,7 +19,7 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
     
     override func setUp() {
         super.setUp()
-        viewControllers = [FirstVC(), SecondVC()]
+        viewControllers = [FirstVC(), FirstVC(), FirstVC(), SecondVC()]
         currentPageIndicatorTintColor = .white
         pageIndicatorTintColor = UIColor.white.withAlphaComponent(0.5)
         
@@ -28,7 +28,7 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
     
     func bePagesVC(_ pagesVC: BEPagesVC, currentPageDidChangeTo currentPage: Int) {
         pageControl.isHidden = false
-        if currentPage > 0 {
+        if currentPage == viewControllers.count - 1 {
             pageControl.isHidden = true
         }
     }
