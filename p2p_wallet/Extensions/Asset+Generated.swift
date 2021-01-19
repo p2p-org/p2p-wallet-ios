@@ -70,7 +70,6 @@ extension UIImage {
     static let emptyPlaceholder = UIImage(named: "empty-placeholder", in: bundle, compatibleWith: nil)!
     static let faceId = UIImage(named: "faceId", in: bundle, compatibleWith: nil)!
     static let indicatorNext = UIImage(named: "indicator-next", in: bundle, compatibleWith: nil)!
-    static let introBankCard1 = UIImage(named: "intro-bank-card-1", in: bundle, compatibleWith: nil)!
     static let introLinesBg = UIImage(named: "intro-lines-bg", in: bundle, compatibleWith: nil)!
     static let nextArrow = UIImage(named: "next-arrow", in: bundle, compatibleWith: nil)!
     static let p2pValidatorLogo = UIImage(named: "p2p-validator-logo", in: bundle, compatibleWith: nil)!
@@ -91,5 +90,6 @@ extension UIImage {
     static let walletSend = UIImage(named: "wallet-send", in: bundle, compatibleWith: nil)!
     static let walletShare = UIImage(named: "wallet-share", in: bundle, compatibleWith: nil)!
     static let walletSwap = UIImage(named: "wallet-swap", in: bundle, compatibleWith: nil)!
+    static let welcomeBack = UIImage(named: "welcome-back", in: bundle, compatibleWith: nil)!
 }
 

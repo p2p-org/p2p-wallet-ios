@@ -6,54 +6,52 @@
 //
 
 import Foundation
+import SwiftUI
 
 class WellDoneVC: SecuritySettingVC {
-    override var preferredStatusBarStyle: UIStatusBarStyle {.lightContent}
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
+    }
     
     override func setUp() {
         super.setUp()
-        // static background color
-        view.backgroundColor = .introBgStatic
-        
-        // lines view
-        let linesView = UIImageView(image: .introLinesBg)
-        view.insertSubview(linesView, at: 0)
-        linesView.autoPinEdgesToSuperviewEdges()
-        
-        // top logo
-        stackView.insertArrangedSubview(
-            UIImageView.p2pValidatorLogo
-                .centeredHorizontallyView,
-            at: 0
-        )
-        
-        // content
-        stackView.spacing = 30
-        
-        acceptButton.removeFromSuperview()
-        
-        var index = 2
-        stackView.insertArrangedSubviewsWithCustomSpacing([
-            UILabel(text: L10n.wellDone, font: FontFamily.Montserrat.extraBold.font(size: 32), textColor: .white, textAlignment: .center),
-            UILabel(text: L10n.exploreP2PWalletAndDepositFundsWhenYouReReady, textSize: 17, weight: .medium, textColor: UIColor.white.withAlphaComponent(0.6), numberOfLines: 0, textAlignment: .center),
-            acceptButton
-        ], at: &index)
-        
-        acceptButton.widthAnchor.constraint(equalTo: stackView.widthAnchor, constant: -40)
-            .isActive = true
-        
-        // bottom button
-        doThisLaterButton.isHidden = true
+        // add child
+        let vc = _WellDoneVC()
         acceptButton.setTitle(L10n.finishSetup, for: .normal)
-        
-        // fix spacer
-        spacer1.constraint(toRelativeView: spacer2, withAttribute: .height)?
-            .isActive = false
-        spacer2.heightAnchor.constraint(equalToConstant: 90)
-            .isActive = true
+        vc.finishButton = acceptButton
+        addChild(vc)
+        vc.view.configureForAutoLayout()
+        view.addSubview(vc.view)
+        vc.view.autoPinEdgesToSuperviewEdges()
+        vc.didMove(toParent: self)
     }
     
     override func buttonAcceptDidTouch() {
         AppDelegate.shared.reloadRootVC()
+    }
+}
+
+class _WellDoneVC: WLIntroVC {
+    weak var finishButton: UIButton?
+    override func setUp() {
+        super.setUp()
+        titleLabel.text = L10n.wellDone
+        descriptionLabel.text = L10n.exploreP2PWalletAndDepositFundsWhenYouReReady
+        buttonsStackView.addArrangedSubviews([
+            finishButton,
+            UIView(height: 56)
+        ])
+    }
+}
+
+@available(iOS 13, *)
+struct WellDoneVC_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            UIViewControllerPreview {
+                WellDoneVC()
+            }
+            .previewDevice("iPhone SE (2nd generation)")
+        }
     }
 }

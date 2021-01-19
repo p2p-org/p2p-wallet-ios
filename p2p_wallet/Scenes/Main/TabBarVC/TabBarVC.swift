@@ -24,7 +24,7 @@ class TabBarVC: BEPagesVC {
         viewControllers = [
             BENavigationController(rootViewController: MainVC()),
             BENavigationController(rootViewController: InvestmentsVC()),
-            BENavigationController(rootViewController: IntroVC())
+            BENavigationController(rootViewController: WLIntroVC())
         ]
         
         // disable scrolling

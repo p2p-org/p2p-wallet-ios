@@ -29,7 +29,7 @@ class WLIntroVC: BaseVStackVC {
     }()
     lazy var p2pValidatorLogo = UIImageView.p2pValidatorLogo
     lazy var spacer1 = UIView.spacer
-    lazy var titleLabel = UILabel(font: FontFamily.Montserrat.extraBold.font(size: 32), textColor: .white, textAlignment: .center)
+    lazy var titleLabel = UILabel(font: FontFamily.Montserrat.extraBold.font(size: 32), textColor: .white, numberOfLines: 0, textAlignment: .center)
     lazy var descriptionLabel = UILabel(textSize: 17, textColor: UIColor.white.withAlphaComponent(0.5), numberOfLines: 0, textAlignment: .center)
     lazy var buttonsStackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
