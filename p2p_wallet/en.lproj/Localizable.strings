@@ -44,7 +44,6 @@
 "Well done!" = "Well done!";
 "Finish setup" = "Finish setup";
 "Enter security keys" = "Enter security keys";
-"Welcome back to the Wowlet space!" = "Welcome back to the Wowlet space!";
 "Go to wallet" = "Go to wallet";
 "Restoring wallet" = "Restoring wallet";
 "Send" = "Send";
@@ -105,11 +104,8 @@
 "Save to iCloud" = "Save to iCloud";
 "Saving to iCloud" = "Saving to iCloud";
 "Saved to iCloud" = "Saved to iCloud";
-"Wowlet recovery" = "Wowlet recovery";
-"Recover your Wowlet using cloud services or recover manually" = "Recover your Wowlet using cloud services, or recover manually";
 "Restore using iCloud" = "Restore using iCloud";
 "Restore manually" = "Restore manually";
-"There is no Wowlet saved in your iCloud" = "There is no Wowlet saved in your iCloud";
 "No account" = "No account";
 "Processing" = "Processing";
 "Done" = "Done";
@@ -199,3 +195,8 @@
 "System" = "System";
 "P2P Wallet" = "P2P Wallet";
 "Paste" = "Paste";
+"P2P Wallet recovery" = "P2P Wallet recovery";
+"Recover your P2P wallet manually or using cloud services" = "Recover your P2P wallet manually or using cloud services";
+"There is no P2P Wallet saved in your iCloud" = "There is no P2P Wallet saved in your iCloud";
+"Welcome back to P2P Wallet!" = "Welcome back to P2P Wallet!";
+"Welcome back!" = "Welcome back!";

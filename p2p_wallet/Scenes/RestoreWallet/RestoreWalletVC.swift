@@ -18,8 +18,8 @@ class RestoreWalletVC: WLIntroVC {
         super.setUp()
         backButton.isHidden = false
         descriptionLabel.isHidden = false
-        titleLabel.text = L10n.wowletRecovery
-        descriptionLabel.text = L10n.recoverYourWowletUsingCloudServicesOrRecoverManually
+        titleLabel.text = L10n.p2PWalletRecovery
+        descriptionLabel.text = L10n.recoverYourP2PWalletManuallyOrUsingCloudServices
         
         buttonsStackView.addArrangedSubviews([
             iCloudRestoreButton,
@@ -30,7 +30,7 @@ class RestoreWalletVC: WLIntroVC {
     @objc func buttonICloudRestoreDidTouch() {
         guard let phrases = AccountStorage.shared.phrasesFromICloud() else
         {
-            showAlert(title: L10n.noAccount, message: L10n.thereIsNoWowletSavedInYourICloud)
+            showAlert(title: L10n.noAccount, message: L10n.thereIsNoP2PWalletSavedInYourICloud)
             return
         }
         handlePhrases(phrases)

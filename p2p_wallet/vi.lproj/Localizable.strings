@@ -44,7 +44,6 @@
 "Well done!" = "Hoàn thành!";
 "Finish setup" = "Hoàn tất thiết lập";
 "Enter security keys" = "Nhập khóa bảo mật";
-"Welcome back to the Wowlet space!" = "Chào mừng bạn trở lại với Wowlet!";
 "Go to wallet" = "Chuyển tới Ví";
 "Restoring wallet" = "Khôi phục ví";
 "Send" = "Gửi";
@@ -105,11 +104,8 @@
 "Save to iCloud" = "Lưu vào iCloud";
 "Saving to iCloud" = "Đang vào iCloud";
 "Saved to iCloud" = "Đã lưu vào iCloud";
-"Wowlet recovery" = "Phục hồi Wowlet";
-"Recover your Wowlet using cloud services or recover manually" = "Khôi phục Wowlet của bạn bằng các dịch vụ đám mây, hoặc khôi phục theo cách thủ công";
 "Restore using iCloud" = "Khôi phục bằng iCloud";
 "Restore manually" = "Khôi phục thủ công";
-"There is no Wowlet saved in your iCloud" = "Không có Wowlet nào được lưu trong iCloud của bạn";
 "No account" = "Không có tài khoản";
 "Processing" = "Đang xử lý";
 "Done" = "Hoàn tất";
@@ -199,3 +195,8 @@
 "System" = "Hệ thống";
 "P2P Wallet" = "Ví P2P";
 "Paste" = "Dán";
+"P2P Wallet recovery" = "Khôi phục ví P2P";
+"Recover your P2P wallet manually or using cloud services" = "Khôi phục ví P2P của bạn theo cách thủ công hoặc sử dụng các dịch vụ đám mây";
+"There is no P2P Wallet saved in your iCloud" = "Không có Ví P2P nào được lưu trong iCloud của bạn";
+"Welcome back to P2P Wallet!" = "Chào mừng bạn trở lại Ví P2P!";
+"Welcome back!" = "Chào mừng bạn đã trở lại!";

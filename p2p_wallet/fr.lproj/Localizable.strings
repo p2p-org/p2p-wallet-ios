@@ -44,7 +44,6 @@
 "Well done!" = "Bien joué!";
 "Finish setup" = "Terminer la configuration";
 "Enter security keys" = "Entrez les clés de sécurité";
-"Welcome back to the Wowlet space!" = "Bienvenue à nouveau dans l'espace Wowlet!";
 "Go to wallet" = "Aller au portefeuille";
 "Restoring wallet" = "Restauration du portefeuille";
 "Send" = "Envoyer";
@@ -105,11 +104,8 @@
 "Save to iCloud" = "Enregistrer sur iCloud";
 "Saving to iCloud" = "Enregistrer sur iCloud";
 "Saved to iCloud" = "Enregistré sur iCloud";
-"Wowlet recovery" = "Récupération de Wowlet";
-"Recover your Wowlet using cloud services or recover manually" = "Récupérez votre Wowlet à l'aide des services cloud, ou récupérez manuellement";
 "Restore using iCloud" = "Restaurer à l'aide d'iCloud";
 "Restore manually" = "Restaurer manuellement";
-"There is no Wowlet saved in your iCloud" = "Il n'y a pas de Wowlet enregistré dans votre iCloud";
 "No account" = "Pas de compte";
 "Processing" = "En traitement";
 "Done" = "Terminé";
@@ -199,3 +195,8 @@
 "System" = "Système";
 "P2P Wallet" = "Portefeuille P2P";
 "Paste" = "Pâte";
+"P2P Wallet recovery" = "Récupération de portefeuille P2P";
+"Recover your P2P wallet manually or using cloud services" = "Récupérez votre portefeuille P2P manuellement ou à l'aide de services cloud";
+"There is no P2P Wallet saved in your iCloud" = "Il n'y a pas de portefeuille P2P enregistré dans votre iCloud";
+"Welcome back to P2P Wallet!" = "Bienvenue à nouveau sur le portefeuille P2P!";
+"Welcome back!" = "Nous saluons le retour!";
