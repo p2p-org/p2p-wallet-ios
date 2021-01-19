@@ -27,6 +27,7 @@ class WalletCell: ListCollectionCell<Wallet>, LoadableView {
     }
     
     override func setUp(with item: Wallet) {
+        super.setUp(with: item)
         coinLogoImageView.setUp(wallet: item)
         coinNameLabel.text = item.name /*+ (item.isProcessing == true ? " (\(L10n.creating))" : "")*/
         tokenCountLabel.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.symbol)"

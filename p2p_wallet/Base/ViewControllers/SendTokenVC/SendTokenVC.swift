@@ -95,9 +95,9 @@ class _SendTokenVC: BEPagesVC, LoadableView {
                 vc.chooseWalletAction = CocoaAction {
                     let vc = ChooseWalletVC()
                     vc.completion = {wallet in
-                        guard let index = self.wallets.firstIndex(where: {$0.mintAddress == wallet.mintAddress}) else {return}
-                        self.moveToPage(index)
+                        guard let index = self.wallets.firstIndex(where: {$0.pubkey == wallet.pubkey}) else {return}
                         vc.back()
+                        self.moveToPage(index)
                     }
                     self.present(vc, animated: true, completion: nil)
                     return .just(())

@@ -48,7 +48,8 @@ class ChooseWalletVC: MyWalletsVC {
         [
             Section(
                 header: Section.Header(title: ""),
-                cellType: ChooseWalletVC.Cell.self
+                cellType: ChooseWalletVC.Cell.self,
+                interGroupSpacing: 16
             )
         ]
     }
@@ -71,10 +72,9 @@ extension ChooseWalletVC {
             super.commonInit()
             stackView.spacing = 20
             stackView.alignment = .center
-            coinLogoImageView.removeAllConstraints()
-            coinLogoImageView.autoSetDimensions(to: CGSize(width: 55, height: 55))
+            coinLogoImageView.widthConstraint?.constant = 55
+            coinLogoImageView.heightConstraint?.constant = 55
             coinLogoImageView.layer.cornerRadius = 55/2
-            coinLogoImageView.layer.masksToBounds = true
             coinNameLabel.font = .systemFont(ofSize: 17, weight: .semibold)
             equityValueLabel.font = .systemFont(ofSize: 17, weight: .semibold)
             tokenCountLabel.font = .systemFont(ofSize: 15)
