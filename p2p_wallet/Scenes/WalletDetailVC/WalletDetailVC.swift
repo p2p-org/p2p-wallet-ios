@@ -35,6 +35,8 @@ class WalletDetailVC: WLModalWrapperVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.bringSubviewToFront(tabBar)
+        // update prices
+        PricesManager.shared.fetchCurrentPrices()
     }
     
     override func setUp() {
