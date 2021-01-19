@@ -209,10 +209,8 @@ extension _EnterPhrasesVC: UITextViewDelegate {
     fileprivate func attachment(phrase: String, index: Int? = nil) -> NSAttributedString {
         let phrase = phrase.lowercased()
         // replace phrase's range by attachment that is a uilabel
-        let label = UILabel(text: (index != nil ? "\(index!). " : "" ) + phrase, textSize: 15)
-            .padding(.init(x: 10, y: 6), backgroundColor: .textWhite, cornerRadius: 5)
-        label.layer.borderWidth = 1
-        label.layer.borderColor = UIColor.textBlack.cgColor
+        let label = UILabel(text: (index != nil ? "\(index!). " : "" ) + phrase, textSize: 15, textColor: .white)
+            .padding(.init(x: 10, y: 6), backgroundColor: .h5887ff, cornerRadius: 5)
         label.translatesAutoresizingMaskIntoConstraints = true
         
         // replace text by attachment
