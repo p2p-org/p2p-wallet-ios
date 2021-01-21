@@ -15,27 +15,38 @@ class EnableBiometryVC: SecuritySettingVC {
     
     let context = LAContext()
     
-    override var nextVC: UIViewController {EnableNotificationsVC()}
+    override var nextVC: UIViewController {
+        EnableNotificationsVC()
+    }
     
     override func setUp() {
         super.setUp()
         
-        let label = UILabel(textSize: 21, weight: .medium, numberOfLines: 0, textAlignment: .center)
-        let imageView = UIImageView(width: 64, height: 64)
-        imageView.tintColor = .textBlack
+        // add imageView
+        let imageView = UIImageView(width: 64, height: 64, tintColor: .white)
+        let spacer2 = UIView.spacer
         
-        stackView.insertArrangedSubview(label, at: 1)
-        stackView.insertArrangedSubview(imageView, at: 2)
+        var index = 3
+        stackView.insertArrangedSubviewsWithCustomSpacing([
+            imageView
+                .centeredHorizontallyView,
+            spacer2
+        ], at: &index)
+        
+        spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor)
+            .isActive = true
         
         var error: NSError?
         if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
             switch context.biometryType {
             case .touchID:
-                label.text = L10n.useYourTouchIDForQuickAccess
+                titleLabel.text = L10n.enableTouchID
+                descriptionLabel.text = L10n.useYourTouchIDForQuickAccess
                 imageView.image = .touchId
                 acceptButton.setTitle(L10n.useTouchId, for: .normal)
             case .faceID:
-                label.text = L10n.useYourFaceIDForQuickAccess
+                titleLabel.text = L10n.enableFaceID
+                descriptionLabel.text = L10n.useYourFaceIDForQuickAccess
                 imageView.image = .faceId
                 acceptButton.setTitle(L10n.useFaceId, for: .normal)
             default:
