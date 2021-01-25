@@ -184,9 +184,9 @@ class _SendTokenVC: BEPagesVC, LoadableView {
         let transactionVC = presentProcessTransactionVC()
         
         // prepare amount
-        let amountToSend = vc.textFieldValueInToken * pow(10, Double(vc.wallet?.decimals ?? 0))
+        let amountToSend = UInt64(vc.textFieldValueInToken * pow(10, Double(vc.wallet?.decimals ?? 0)))
         
-        SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: Int64(amountToSend))
+        SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: amountToSend)
             .subscribe(onSuccess: { signature in
                 transactionVC.signature = signature
                 transactionVC.viewInExplorerButton.rx.action = CocoaAction {
