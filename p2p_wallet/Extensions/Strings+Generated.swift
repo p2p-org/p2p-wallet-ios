@@ -116,8 +116,12 @@ internal enum L10n {
   internal static var doYouReallyWantToSwitchTo: String { L10n.tr("Localizable", "Do you really want to switch to") }
   /// Done
   internal static var done: String { L10n.tr("Localizable", "Done") }
+  /// Enable FaceID
+  internal static var enableFaceID: String { L10n.tr("Localizable", "Enable FaceID") }
   /// Enable now
   internal static var enableNow: String { L10n.tr("Localizable", "Enable now") }
+  /// Enable TouchID
+  internal static var enableTouchID: String { L10n.tr("Localizable", "Enable TouchID") }
   /// Enter passcode
   internal static var enterPasscode: String { L10n.tr("Localizable", "Enter passcode") }
   /// Enter security keys

@@ -108,7 +108,7 @@ PODS:
   - SDWebImage (5.10.0):
     - SDWebImage/Core (= 5.10.0)
   - SDWebImage/Core (5.10.0)
-  - SolanaSwift (0.2.0):
+  - SolanaSwift (0.3.0):
     - ASKSecp256k1
     - CryptoSwift
     - RxAlamofire
@@ -229,7 +229,7 @@ SPEC CHECKSUMS:
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
-  SolanaSwift: c7ce299daffcd36e0a7d28870b005f4e2c945c5f
+  SolanaSwift: 1d17d9ad53b92cdc62373f35d00e750625eff508
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108

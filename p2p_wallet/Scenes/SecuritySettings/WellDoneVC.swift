@@ -9,38 +9,17 @@ import Foundation
 import SwiftUI
 
 class WellDoneVC: SecuritySettingVC {
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        .lightContent
-    }
-    
-    override func setUp() {
-        super.setUp()
-        // add child
-        let vc = _WellDoneVC()
-        acceptButton.setTitle(L10n.finishSetup, for: .normal)
-        vc.finishButton = acceptButton
-        addChild(vc)
-        vc.view.configureForAutoLayout()
-        view.addSubview(vc.view)
-        vc.view.autoPinEdgesToSuperviewEdges()
-        vc.didMove(toParent: self)
-    }
-    
-    override func buttonAcceptDidTouch() {
-        AppDelegate.shared.reloadRootVC()
-    }
-}
-
-class _WellDoneVC: WLIntroVC {
-    weak var finishButton: UIButton?
     override func setUp() {
         super.setUp()
         titleLabel.text = L10n.wellDone
         descriptionLabel.text = L10n.exploreP2PWalletAndDepositFundsWhenYouReReady
-        buttonsStackView.addArrangedSubviews([
-            finishButton,
-            UIView(height: 56)
-        ])
+        
+        acceptButton.setTitle(L10n.finishSetup, for: .normal)
+        doThisLaterButton.alpha = 0
+    }
+    
+    override func buttonAcceptDidTouch() {
+        AppDelegate.shared.reloadRootVC()
     }
 }
 
