@@ -9,26 +9,7 @@ import Foundation
 import RxSwift
 
 extension SolanaSDK {
-    enum Network: String, CaseIterable, DefaultsSerializable {
-        case devnet
-        case testnet
-        case mainnetBeta = "mainnet-beta"
-        
-        var cluster: String {rawValue}
-        
-        var endpoint: String {
-            // FIXME: - Remove later
-            
-            var string = cluster + ".solana.com"
-            if self == .mainnetBeta {
-//                string = "api." + string
-                string = "solana-api.projectserum.com"
-            }
-            return "https://\(string)"
-        }
-    }
-    
-    static var shared = SolanaSDK(endpoint: Defaults.network.endpoint, accountStorage: AccountStorage.shared)
+    static var shared = SolanaSDK(network: Defaults.network, accountStorage: AccountStorage.shared)
 }
 
 extension String: ListItemType {
