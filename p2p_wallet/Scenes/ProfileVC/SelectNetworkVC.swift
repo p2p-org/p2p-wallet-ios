@@ -39,7 +39,7 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
             UIApplication.shared.showIndetermineHudWithMessage(L10n.switchingTo + " \"" + self.selectedItem.cluster + "\"")
             DispatchQueue.global().async {
                 do {
-                    let account = try SolanaSDK.Account(phrase: AccountStorage.shared.account!.phrase, network: self.selectedItem.cluster)
+                    let account = try SolanaSDK.Account(phrase: AccountStorage.shared.account!.phrase, network: self.selectedItem)
                     try AccountStorage.shared.save(account)
                     DispatchQueue.main.async {
                         UIApplication.shared.hideHud()
@@ -47,7 +47,7 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
                         Defaults.network = self.selectedItem
                         
                         // refresh sdk
-                        SolanaSDK.shared = SolanaSDK(endpoint: Defaults.network.endpoint, accountStorage: AccountStorage.shared)
+                        SolanaSDK.shared = SolanaSDK(network: Defaults.network, accountStorage: AccountStorage.shared)
                         SolanaSDK.Socket.shared.disconnect()
                         SolanaSDK.Socket.shared = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: SolanaSDK.shared.accountStorage.account?.publicKey)
                         

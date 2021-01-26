@@ -141,7 +141,7 @@ class _AddNewWalletVC: WalletsVC {
             })
             
             // request
-            return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress, in: Defaults.network.cluster)
+            return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress)
 //            return Single<(String, String)>.just(("", "")).delay(.seconds(5), scheduler: MainScheduler.instance)
 //                .map {_ -> (String, String) in
 //                    throw SolanaSDK.Error.other("example")
@@ -234,7 +234,7 @@ extension _AddNewWalletVC {
         
         override func reload() {
             // get static data
-            var wallets = SolanaSDK.Token.getSupportedTokens(network: Defaults.network.cluster)?.compactMap {$0 != nil ? Wallet(programAccount: $0!) : nil} ?? []
+            var wallets = SolanaSDK.Token.getSupportedTokens(network: Defaults.network)?.compactMap {$0 != nil ? Wallet(programAccount: $0!) : nil} ?? []
             
             for i in 0..<wallets.count {
                 if let price = PricesManager.shared.currentPrice(for: wallets[i].symbol)
