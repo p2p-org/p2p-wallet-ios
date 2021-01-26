@@ -20,7 +20,7 @@ class PricesManager {
     private var refreshInterval: TimeInterval // Refresh
     var solPrice: CurrentPrice? {currentPrices.value["SOL"]}
     private lazy var supportedCoins: [String] = {
-        var pairs = SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.Network.mainnetBeta.cluster)?.map {$0.symbol}.filter {$0 != "USDT" && $0 != "USDC" && $0 != "WUSDC"} ?? [String]()
+        var pairs = SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.Network.mainnetBeta)?.map {$0.symbol}.filter {$0 != "USDT" && $0 != "USDC" && $0 != "WUSDC"} ?? [String]()
         pairs.append("SOL")
         return pairs
     }()
