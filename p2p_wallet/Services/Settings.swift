@@ -7,6 +7,10 @@
 
 import Foundation
 
+extension UIUserInterfaceStyle: DefaultsSerializable {}
+
+extension SolanaSDK.Network: DefaultsSerializable {}
+
 extension DefaultsKeys {
     var didSetEnableBiometry: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var isBiometryEnabled: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
@@ -15,8 +19,4 @@ extension DefaultsKeys {
     var walletName: DefaultsKey<[String: String]> {.init(#function, defaultValue: [:])}
     var localizedLanguage: DefaultsKey<LocalizedLanguage> {.init(#function, defaultValue: LocalizedLanguage(code: String(Locale.preferredLanguages[0].prefix(2))))}
     var appearance: DefaultsKey<UIUserInterfaceStyle> {.init(#function, defaultValue: .unspecified)}
-}
-
-extension UIUserInterfaceStyle: DefaultsSerializable {
-    
 }
