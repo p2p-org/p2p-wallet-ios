@@ -11,8 +11,8 @@ import RxCocoa
 class SwapTokenVC: WLModalWrapperVC {
     override var padding: UIEdgeInsets {super.padding.modifying(dLeft: .defaultPadding, dRight: .defaultPadding)}
     
-    init(wallets: [Wallet]) {
-        let vc = _SwapTokenVC(wallets: wallets)
+    init(fromWallet: Wallet? = nil, toWallet: Wallet? = nil) {
+        let vc = _SwapTokenVC(fromWallet: fromWallet, toWallet: toWallet)
         super.init(wrapped: vc)
     }
     
@@ -41,10 +41,12 @@ class _SwapTokenVC: BaseVStackVC {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(backgroundColor: .vcBackground) }
     override var padding: UIEdgeInsets { UIEdgeInsets(top: .defaultPadding, left: 16, bottom: 0, right: 16) }
     
-    var wallets: [Wallet]
+    let viewModel = SwapTokenVM()
     var fromWallet = BehaviorRelay<Wallet?>(value: nil)
     var toWallet = BehaviorRelay<Wallet?>(value: nil)
     
+    lazy var availableBalanceLabel = UILabel(text: "Available", textColor: .h5887ff)
+        .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
     lazy var fromWalletView = SwapTokenItemView(forAutoLayout: ())
     lazy var toWalletView = SwapTokenItemView(forAutoLayout: ())
     
@@ -54,9 +56,17 @@ class _SwapTokenVC: BaseVStackVC {
     lazy var swapButton = WLButton.stepButton(type: .blue, label: L10n.swapNow)
         .onTap(self, action: #selector(buttonSwapDidTouch))
     
-    init(wallets: [Wallet]) {
-        self.wallets = wallets
+    init(fromWallet: Wallet? = nil, toWallet: Wallet? = nil) {
         super.init(nibName: nil, bundle: nil)
+        defer {
+            if let fromWallet = fromWallet {
+                self.fromWallet.accept(fromWallet)
+            }
+            
+            if let toWallet = toWallet {
+                self.toWallet.accept(toWallet)
+            }
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -65,9 +75,11 @@ class _SwapTokenVC: BaseVStackVC {
     
     override func setUp() {
         super.setUp()
+        // Set up ui
         view.backgroundColor = .vcBackground
         title = L10n.swap
         
+        // set up stackView
         stackView.spacing = 30
         stackView.constraintToSuperviewWithAttribute(.leading)?.constant = 16
         stackView.constraintToSuperviewWithAttribute(.trailing)?.constant = -16
@@ -90,7 +102,7 @@ class _SwapTokenVC: BaseVStackVC {
         stackView.addArrangedSubviews([
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 UILabel(text: L10n.from),
-                UILabel(text: "Available", textColor: .h5887ff)
+                availableBalanceLabel
             ]),
             fromWalletView,
             BEStackViewSpacing(8),
@@ -102,19 +114,31 @@ class _SwapTokenVC: BaseVStackVC {
             swapButton
         ])
         
+        // set up textfields
         fromWalletView.amountTextField.delegate = self
+        if fromWallet.value != nil {
+            fromWalletView.amountTextField.becomeFirstResponder()
+        }
+        
+        // disable editing in toWallet text field
         toWalletView.amountTextField.isUserInteractionEnabled = false
     }
     
     override func bind() {
         super.bind()
-        fromWallet.skip(1)
+        fromWallet
             .subscribe(onNext: { wallet in
                 self.fromWalletView.setUp(wallet: wallet)
+                
+                if let wallet = wallet {
+                    self.availableBalanceLabel.text = "\(L10n.available): \(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
+                } else {
+                    self.availableBalanceLabel.text = nil
+                }
             })
             .disposed(by: disposeBag)
         
-        toWallet.skip(1)
+        toWallet
             .subscribe(onNext: { wallet in
                 self.toWalletView.setUp(wallet: wallet)
             })
@@ -122,6 +146,12 @@ class _SwapTokenVC: BaseVStackVC {
     }
     
     // MARK: - Actions
+    @objc func buttonUseAllBalanceDidTouch() {
+        guard let token = fromWallet.value?.amount else {return}
+        fromWalletView.amountTextField.text = token.toString(maximumFractionDigits: 9)
+        fromWalletView.amountTextField.sendActions(for: .valueChanged)
+    }
+    
     @objc func buttonReverseDidTouch() {
         
     }

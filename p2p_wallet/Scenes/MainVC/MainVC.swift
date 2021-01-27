@@ -170,7 +170,7 @@ class MainVC: CollectionVC<MainVCItem> {
         CocoaAction { _ in
             let wallets = self.walletsVM.items
             if wallets.count == 0 {return .just(())}
-            let vc = SwapTokenVC(wallets: wallets)
+            let vc = SwapTokenVC()
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
