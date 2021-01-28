@@ -179,6 +179,26 @@ class _SwapTokenVC: BaseVStackVC {
                 self.errorLabel.isHidden = errorText == nil
             })
             .disposed(by: disposeBag)
+        
+        sourceWalletView.amountTextField.rx.text
+            .map {$0?.double ?? 0}
+            .flatMapLatest {[weak self] (value) -> Single<UInt64> in
+                guard value != 0,
+                      let pool = self?.viewModel.currentSwapPair?.pool,
+                      let slippage = self?.viewModel.slippage.value
+                else {return .just(0)}
+                let decimals = self?.viewModel.sourceWallet.value?.decimals ?? 0
+                return SolanaSDK.shared.getEstimatedAmount(pool: pool, slippage: slippage, inputAmount: UInt64(value * pow(10, Double(decimals))))
+            }
+            .map {[weak self] value -> Double in
+                let decimals = self?.viewModel.destinationWallet.value?.decimals ?? 0
+                return Double(value) * pow(10, -Double(decimals))
+            }
+            .subscribe(onNext: { value in
+                self.destinationWalletView.amountTextField.text = value.toString(maximumFractionDigits: 9)
+                self.destinationWalletView.amountTextField.sendActions(for: .valueChanged)
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Actions
