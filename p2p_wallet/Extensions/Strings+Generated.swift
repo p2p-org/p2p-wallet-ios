@@ -178,6 +178,8 @@ internal enum L10n {
   internal static var makeYourCryptoWorkingOnYou: String { L10n.tr("Localizable", "Make your crypto working on you") }
   /// Max
   internal static var max: String { L10n.tr("Localizable", "Max") }
+  /// Minimum receive
+  internal static var minimumReceive: String { L10n.tr("Localizable", "Minimum receive") }
   /// Mint address
   internal static var mintAddress: String { L10n.tr("Localizable", "Mint address") }
   /// month
@@ -288,6 +290,8 @@ internal enum L10n {
   internal static var simpleFinanceForEveryone: String { L10n.tr("Localizable", "Simple finance for everyone") }
   /// Slide to scan
   internal static var slideToScan: String { L10n.tr("Localizable", "Slide to scan") }
+  /// Slippage
+  internal static var slippage: String { L10n.tr("Localizable", "Slippage") }
   /// Something went wrong!\nPlease try again later
   internal static var somethingWentWrongPleaseTryAgainLater: String { L10n.tr("Localizable", "Something went wrong!\nPlease try again later") }
   /// Stay
