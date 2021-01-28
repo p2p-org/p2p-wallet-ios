@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import Action
 
 class SwapTokenVC: WLModalWrapperVC {
     override var padding: UIEdgeInsets {super.padding.modifying(dLeft: .defaultPadding, dRight: .defaultPadding)}
@@ -128,11 +129,33 @@ class _SwapTokenVC: BaseVStackVC {
         destinationWalletView.amountTextField.isUserInteractionEnabled = false
         
         // setup actions
-        sourceWalletView.iconImageView
-            .onTap(self, action: #selector(buttonChooseSourceWalletDidTouch))
+        sourceWalletView.chooseTokenAction = CocoaAction {
+            let vc = ChooseWalletVC()
+            vc.customFilter = {
+                $0.amount > 0 && $0.symbol != self.destinationWallet.value?.symbol
+            }
+            vc.completion = {wallet in
+                let wallet = self.viewModel.walletsVM.items.first(where: {$0.pubkey == wallet.pubkey})
+                self.sourceWallet.accept(wallet)
+                vc.back()
+            }
+            self.present(vc, animated: true, completion: nil)
+            return .just(())
+        }
         
-        destinationWalletView.iconImageView
-            .onTap(self, action: #selector(buttonChooseDestinationWalletDidTouch))
+        destinationWalletView.chooseTokenAction = CocoaAction {
+            let vc = ChooseWalletVC()
+            vc.customFilter = {
+                $0.symbol != self.sourceWallet.value?.symbol
+            }
+            vc.completion = {wallet in
+                let wallet = self.viewModel.walletsVM.items.first(where: {$0.pubkey == wallet.pubkey})
+                self.destinationWallet.accept(wallet)
+                vc.back()
+            }
+            self.present(vc, animated: true, completion: nil)
+            return .just(())
+        }
     }
     
     override func bind() {
@@ -176,32 +199,6 @@ class _SwapTokenVC: BaseVStackVC {
         guard let token = sourceWallet.value?.amount else {return}
         sourceWalletView.amountTextField.text = token.toString(maximumFractionDigits: 9)
         sourceWalletView.amountTextField.sendActions(for: .valueChanged)
-    }
-    
-    @objc func buttonChooseSourceWalletDidTouch() {
-        let vc = ChooseWalletVC()
-        vc.customFilter = {
-            $0.amount > 0 && $0.symbol != self.destinationWallet.value?.symbol
-        }
-        vc.completion = {wallet in
-            let wallet = self.viewModel.walletsVM.items.first(where: {$0.pubkey == wallet.pubkey})
-            self.sourceWallet.accept(wallet)
-            vc.back()
-        }
-        self.present(vc, animated: true, completion: nil)
-    }
-    
-    @objc func buttonChooseDestinationWalletDidTouch() {
-        let vc = ChooseWalletVC()
-        vc.customFilter = {
-            $0.symbol != self.sourceWallet.value?.symbol
-        }
-        vc.completion = {wallet in
-            let wallet = self.viewModel.walletsVM.items.first(where: {$0.pubkey == wallet.pubkey})
-            self.destinationWallet.accept(wallet)
-            vc.back()
-        }
-        self.present(vc, animated: true, completion: nil)
     }
     
     @objc func buttonReverseDidTouch() {
