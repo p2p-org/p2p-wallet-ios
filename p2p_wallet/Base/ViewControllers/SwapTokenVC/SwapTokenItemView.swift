@@ -45,6 +45,7 @@ class SwapTokenItemView: BEView {
         
         tokenSymbolLabel.centerXAnchor.constraint(equalTo: iconImageView.centerXAnchor)
             .isActive = true
+        tokenSymbolLabel.adjustsFontSizeToFitWidth = true
         equityValueLabel.leadingAnchor.constraint(equalTo: amountTextField.leadingAnchor)
             .isActive = true
         
