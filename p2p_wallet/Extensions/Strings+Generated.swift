@@ -417,6 +417,13 @@ internal enum L10n {
     internal static var checkYourInternetConnectionAndTryAgain: String { L10n.tr("Localizable", "We couldn’t add a token to your wallet.\nCheck your internet connection and try again.") }
   }
 
+  internal enum YouCanNotSwapToItself {
+    /// You can not swap %@ to itself.\nPlease choose another token
+    internal static func pleaseChooseAnotherToken(_ p1: Any) -> String {
+      return L10n.tr("Localizable", "You can not swap %@ to itself.\nPlease choose another token", String(describing: p1))
+    }
+  }
+
   internal enum YourDeviceDoesNotSupportScanningACodeFromAnItem {
     /// Your device does not support scanning a code from an item. Please use a device with a camera.
     internal static var pleaseUseADeviceWithACamera: String { L10n.tr("Localizable", "Your device does not support scanning a code from an item. Please use a device with a camera.") }

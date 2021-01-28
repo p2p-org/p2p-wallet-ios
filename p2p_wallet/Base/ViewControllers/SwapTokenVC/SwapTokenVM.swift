@@ -16,11 +16,27 @@ struct SwapPair {
 
 class SwapTokenVM {
     let walletsVM = WalletsVM.ofCurrentUser
-    var pools: Single<[SolanaSDK.Pool]> {
+    var availableSwapPairs = [SwapPair]()
+    let disposeBag = DisposeBag()
+    
+    init() {
         SolanaSDK.shared.getSwapPools()
+            .subscribe(onSuccess: { (pools) in
+                self.getSwapPairs(pools: pools)
+            })
+            .disposed(by: disposeBag)
     }
-    var availableSwapPairs: Single<[SwapPair]> {
-        pools.map {pools in
+    
+    func findSwapPair(fromWallet: Wallet?, toWallet: Wallet?) -> SwapPair? {
+        availableSwapPairs
+            .first(where: {
+                $0.from.mintAddress == fromWallet?.mintAddress &&
+                    $0.to.mintAddress == toWallet?.mintAddress
+            })
+    }
+    
+    func getSwapPairs(pools: [SolanaSDK.Pool]) {
+        DispatchQueue.global(qos: .background).async {
             if var supportedTokens = SolanaSDK.Token.getSupportedTokens(network: Defaults.network)
             {
                 // Add WSOL
@@ -45,17 +61,8 @@ class SwapTokenVM {
                         pairs.append(SwapPair(from: tokenA, to: tokenB))
                     }
                 }
-                return pairs
+                self.availableSwapPairs = pairs
             }
-            return []
         }
-    }
-    
-    func findSwapPair(fromWallet: Wallet?, toWallet: Wallet?) -> Single<SwapPair?> {
-        availableSwapPairs
-            .map {$0.first(where: {
-                $0.from.mintAddress == fromWallet?.mintAddress &&
-                    $0.to.mintAddress == toWallet?.mintAddress
-            })}
     }
 }
