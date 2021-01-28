@@ -7,9 +7,11 @@
 
 import Foundation
 import Action
+import RxSwift
 
 class SwapTokenItemView: BEView {
     var wallet: Wallet?
+    let disposeBag = DisposeBag()
     
     lazy var iconImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 12)
     
@@ -48,6 +50,7 @@ class SwapTokenItemView: BEView {
         
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
+        bind()
     }
     
     func setUp(wallet: Wallet?) {
@@ -63,12 +66,23 @@ class SwapTokenItemView: BEView {
             iconImageView.imageView.image = nil
             tokenSymbolLabel.text = nil
         }
+        
         if self.wallet?.pubkey != wallet?.pubkey {
             amountTextField.text = nil
             amountTextField.sendActions(for: .valueChanged)
         }
-    
+        
         self.wallet = wallet
+    }
+    
+    func bind() {
+        amountTextField.rx.text
+            .map {$0?.double ?? 0}
+            .map {$0*(self.wallet?.priceInUSD ?? 0)}
+            .subscribe(onNext: { (value) in
+                self.equityValueLabel.text = "≈ \(value.toString(maximumFractionDigits: self.wallet?.decimals ?? 9)) $"
+            })
+            .disposed(by: disposeBag)
     }
     
     @objc func buttonSelectTokenDidTouch() {
