@@ -124,7 +124,7 @@ class WalletDetailVC: WLModalWrapperVC {
     }
     
     @objc func buttonSwapDidTouch() {
-        let vc = SwapTokenVC(fromWallet: wallet)
+        let vc = SwapTokenVC(from: wallet)
         self.show(vc, sender: nil)
     }
 }
