@@ -18,6 +18,8 @@ class SwapTokenVM {
     let walletsVM = WalletsVM.ofCurrentUser
     var availableSwapPairs = [SwapPair]()
     let disposeBag = DisposeBag()
+    var sourceWallet = BehaviorRelay<Wallet?>(value: nil)
+    var destinationWallet = BehaviorRelay<Wallet?>(value: nil)
     
     init() {
         SolanaSDK.shared.getSwapPools()
