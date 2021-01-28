@@ -108,6 +108,20 @@ class _SwapTokenVC: BaseVStackVC {
             UILabel(text: L10n.to),
             destinationWalletView,
             UIView.separator(height: 1, color: .separator),
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
+                UILabel(text: L10n.minimumReceive + ": "),
+                UILabel(text: L10n.minimumReceive),
+            ]),
+            BEStackViewSpacing(16),
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
+                UILabel(text: L10n.fee + ": "),
+                UILabel(text: L10n.minimumReceive),
+            ]),
+            BEStackViewSpacing(16),
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
+                UILabel(text: L10n.slippage + ": "),
+                UILabel(text: L10n.minimumReceive),
+            ]),
             errorLabel,
             swapButton
         ])

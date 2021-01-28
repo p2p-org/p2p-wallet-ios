@@ -204,3 +204,5 @@
 "Enable TouchID" = "Включить TouchID";
 "Swapping from %@ to %@ is currently unsupported" = "Обмен с %@ на %@ в настоящее время не поддерживается";
 "You can not swap %@ to itself.\nPlease choose another token" = "Вы не можете поменять %@ на себя.\nВыберите другой токен";
+"Minimum receive" = "Минимальное получение";
+"Slippage" = "Проскальзывание";
