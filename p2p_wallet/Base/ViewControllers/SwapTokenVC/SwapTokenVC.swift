@@ -131,9 +131,6 @@ class _SwapTokenVC: BaseVStackVC {
         // setup actions
         sourceWalletView.chooseTokenAction = CocoaAction {
             let vc = ChooseWalletVC()
-            vc.customFilter = {
-                $0.amount > 0 && $0.symbol != self.destinationWallet.value?.symbol
-            }
             vc.completion = {wallet in
                 let wallet = self.viewModel.walletsVM.items.first(where: {$0.pubkey == wallet.pubkey})
                 self.sourceWallet.accept(wallet)
@@ -145,9 +142,7 @@ class _SwapTokenVC: BaseVStackVC {
         
         destinationWalletView.chooseTokenAction = CocoaAction {
             let vc = ChooseWalletVC()
-            vc.customFilter = {
-                $0.symbol != self.sourceWallet.value?.symbol
-            }
+            vc.customFilter = {_ in true}
             vc.completion = {wallet in
                 let wallet = self.viewModel.walletsVM.items.first(where: {$0.pubkey == wallet.pubkey})
                 self.destinationWallet.accept(wallet)
@@ -160,38 +155,37 @@ class _SwapTokenVC: BaseVStackVC {
     
     override func bind() {
         super.bind()
-        sourceWallet
-            .subscribe(onNext: { wallet in
-                self.sourceWalletView.setUp(wallet: wallet)
+        Observable.combineLatest(sourceWallet, destinationWallet)
+            .subscribe(onNext: { (sourceWallet, destinationWallet) in
+                // configure source wallet
+                self.sourceWalletView.setUp(wallet: sourceWallet)
                 
-                if let wallet = wallet {
+                if let wallet = sourceWallet {
                     self.availableBalanceLabel.text = "\(L10n.available): \(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
                 } else {
                     self.availableBalanceLabel.text = nil
                 }
+                
+                // configure destinationWallet
+                self.destinationWalletView.setUp(wallet: destinationWallet)
+                
+                // swap pair
+                let pair = self.viewModel.findSwapPair(fromWallet: sourceWallet, toWallet: destinationWallet)
+                var errorText: String?
+                
+                if let sourceWallet = self.sourceWallet.value,
+                   let destinationWallet = self.destinationWallet.value
+                {
+                    if sourceWallet.symbol == destinationWallet.symbol {
+                        errorText = L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.symbol)
+                    } else if pair == nil {
+                        errorText = L10n.swappingFromToIsCurrentlyUnsupported(self.sourceWallet.value!.symbol, self.destinationWallet.value!.symbol)
+                    }
+                }
+                
+                self.errorLabel.text = errorText
             })
             .disposed(by: disposeBag)
-        
-        destinationWallet
-            .subscribe(onNext: { wallet in
-                self.destinationWalletView.setUp(wallet: wallet)
-            })
-            .disposed(by: disposeBag)
-        
-//        Observable.combineLatest(sourceWallet, destinationWallet)
-//            .flatMap {(fromWallet, toWallet) in
-//                self.viewModel.findSwapPair(fromWallet: fromWallet, toWallet: toWallet)
-//            }
-//            .subscribe(onNext: { (pair) in
-//                if pair == nil && (self.sourceWallet.value != nil && self.destinationWallet.value != nil) {
-//                    // error
-//                    self.errorLabel.text = L10n.swappingFromToIsCurrentlyUnsupported(self.sourceWallet.value!.name, self.destinationWallet.value!.name)
-//                } else {
-//                    // normal
-//                    self.errorLabel.text = nil
-//                }
-//            })
-//            .disposed(by: disposeBag)
     }
     
     // MARK: - Actions
