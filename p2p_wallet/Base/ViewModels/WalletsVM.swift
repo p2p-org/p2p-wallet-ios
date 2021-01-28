@@ -15,6 +15,10 @@ class WalletsVM: ListViewModel<Wallet> {
     
     var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
     
+    init() {
+        super.init(prefetch: false)
+    }
+    
     override func bind() {
         super.bind()
         PricesManager.shared.currentPrices
