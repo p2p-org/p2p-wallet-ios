@@ -9,6 +9,8 @@ import Foundation
 import Action
 
 class SwapTokenItemView: BEView {
+    var wallet: Wallet?
+    
     lazy var iconImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 12)
     
     lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
@@ -59,10 +61,14 @@ class SwapTokenItemView: BEView {
             tokenSymbolLabel.alpha = 0
             
             iconImageView.imageView.image = nil
-            tokenSymbolLabel.text = "TOK"
+            tokenSymbolLabel.text = nil
         }
-        amountTextField.text = nil
-        amountTextField.sendActions(for: .valueChanged)
+        if self.wallet?.pubkey != wallet?.pubkey {
+            amountTextField.text = nil
+            amountTextField.sendActions(for: .valueChanged)
+        }
+    
+        self.wallet = wallet
     }
     
     @objc func buttonSelectTokenDidTouch() {
