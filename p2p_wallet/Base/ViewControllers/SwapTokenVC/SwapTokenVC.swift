@@ -143,6 +143,7 @@ class _SwapTokenVC: BaseVStackVC {
         
         // disable editing in toWallet text field
         destinationWalletView.amountTextField.isUserInteractionEnabled = false
+        destinationWalletView.equityValueLabel.isHidden = true
     }
     
     override func bind() {
@@ -182,6 +183,8 @@ class _SwapTokenVC: BaseVStackVC {
         
         sourceWalletView.amountTextField.rx.text
             .map {$0?.double ?? 0}
+            .distinctUntilChanged()
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
             .flatMapLatest {[weak self] (value) -> Single<UInt64> in
                 guard value != 0,
                       let pool = self?.viewModel.currentSwapPair?.pool,
@@ -194,7 +197,8 @@ class _SwapTokenVC: BaseVStackVC {
                 let decimals = self?.viewModel.destinationWallet.value?.decimals ?? 0
                 return Double(value) * pow(10, -Double(decimals))
             }
-            .subscribe(onNext: { value in
+            .asDriver(onErrorJustReturn: 0)
+            .drive(onNext: { value in
                 self.destinationWalletView.amountTextField.text = value.toString(maximumFractionDigits: 9)
                 self.destinationWalletView.amountTextField.sendActions(for: .valueChanged)
             })
