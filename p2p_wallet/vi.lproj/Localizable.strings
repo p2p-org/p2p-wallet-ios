@@ -204,3 +204,5 @@
 "Enable TouchID" = "Bật TouchID";
 "Swapping from %@ to %@ is currently unsupported" = "Việc hoán đổi từ %@ sang %@ hiện không được hỗ trợ";
 "You can not swap %@ to itself.\nPlease choose another token" = "Bạn không thể chuyển đổi %@ thành chính nó.\nVui lòng chọn một token khác";
+"Minimum receive" = "Nhận tối thiểu";
+"Slippage" = "Slippage";
