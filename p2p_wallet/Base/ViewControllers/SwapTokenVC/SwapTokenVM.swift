@@ -12,14 +12,17 @@ import RxCocoa
 struct SwapPair {
     let from: SolanaSDK.Token
     let to: SolanaSDK.Token
+    let pool: SolanaSDK.Pool
 }
 
 class SwapTokenVM {
     let walletsVM = WalletsVM.ofCurrentUser
     var availableSwapPairs = [SwapPair]()
+    var currentSwapPair: SwapPair?
     let disposeBag = DisposeBag()
     var sourceWallet = BehaviorRelay<Wallet?>(value: nil)
     var destinationWallet = BehaviorRelay<Wallet?>(value: nil)
+    var slippage = BehaviorRelay<Double>(value: 0.1)
     
     init() {
         SolanaSDK.shared.getSwapPools()
@@ -30,11 +33,12 @@ class SwapTokenVM {
     }
     
     func findSwapPair(fromWallet: Wallet?, toWallet: Wallet?) -> SwapPair? {
-        availableSwapPairs
+        currentSwapPair = availableSwapPairs
             .first(where: {
                 $0.from.mintAddress == fromWallet?.mintAddress &&
                     $0.to.mintAddress == toWallet?.mintAddress
             })
+        return currentSwapPair
     }
     
     func getSwapPairs(pools: [SolanaSDK.Pool]) {
@@ -60,7 +64,7 @@ class SwapTokenVM {
                     if let tokenA = supportedTokens.first(where: {$0.mintAddress == pool.swapData.mintA.base58EncodedString}),
                        let tokenB = supportedTokens.first(where: {$0.mintAddress == pool.swapData.mintB.base58EncodedString})
                     {
-                        pairs.append(SwapPair(from: tokenA, to: tokenB))
+                        pairs.append(SwapPair(from: tokenA, to: tokenB, pool: pool))
                     }
                 }
                 self.availableSwapPairs = pairs
