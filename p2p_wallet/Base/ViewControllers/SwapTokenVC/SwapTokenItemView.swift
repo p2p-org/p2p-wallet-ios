@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Action
 
 class SwapTokenItemView: BEView {
     lazy var iconImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 12)
@@ -18,13 +19,16 @@ class SwapTokenItemView: BEView {
     
 //    lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .secondary)
 //        .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
+    var chooseTokenAction: CocoaAction?
     
     override func commonInit() {
         super.commonInit()
         let stackView = UIStackView(axis: .vertical, spacing: 6, alignment: .fill, distribution: .fill, arrangedSubviews: [
             UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-                iconImageView,
-                UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textSecondary),
+                iconImageView
+                    .onTap(self, action: #selector(buttonSelectTokenDidTouch)),
+                UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textSecondary)
+                    .onTap(self, action: #selector(buttonSelectTokenDidTouch)),
                 amountTextField
             ]),
             UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
@@ -59,6 +63,10 @@ class SwapTokenItemView: BEView {
         }
         amountTextField.text = nil
         amountTextField.sendActions(for: .valueChanged)
+    }
+    
+    @objc func buttonSelectTokenDidTouch() {
+        chooseTokenAction?.execute()
     }
     
 //    @objc func buttonUseAllBalanceDidTouch() {
