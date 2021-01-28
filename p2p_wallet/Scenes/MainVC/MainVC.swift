@@ -29,7 +29,7 @@ enum MainVCItem: ListItemType {
 
 class MainVC: CollectionVC<MainVCItem> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
-    var walletsVM: WalletsVM {(viewModel as! MainVM).walletsVM}
+    var walletsVM: WalletsVM {WalletsVM.ofCurrentUser}
     let numberOfWalletsToShow = 4
     
     init() {
