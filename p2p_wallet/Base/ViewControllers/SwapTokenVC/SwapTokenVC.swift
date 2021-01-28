@@ -44,8 +44,6 @@ class _SwapTokenVC: BaseVStackVC {
     override var padding: UIEdgeInsets { UIEdgeInsets(top: .defaultPadding, left: 16, bottom: 0, right: 16) }
     
     let viewModel = SwapTokenVM()
-    var sourceWallet = BehaviorRelay<Wallet?>(value: nil)
-    var destinationWallet = BehaviorRelay<Wallet?>(value: nil)
     
     lazy var availableBalanceLabel = UILabel(text: "Available", textColor: .h5887ff)
         .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
@@ -63,8 +61,8 @@ class _SwapTokenVC: BaseVStackVC {
     init(from fromWallet: Wallet? = nil, to toWallet: Wallet? = nil) {
         super.init(nibName: nil, bundle: nil)
         defer {
-            self.sourceWallet.accept(fromWallet ?? viewModel.walletsVM.items.first(where: {$0.symbol == "SOL"}))
-            self.destinationWallet.accept(toWallet)
+            self.viewModel.sourceWallet.accept(fromWallet ?? viewModel.walletsVM.items.first(where: {$0.symbol == "SOL"}))
+            self.viewModel.destinationWallet.accept(toWallet)
         }
     }
     
@@ -119,7 +117,7 @@ class _SwapTokenVC: BaseVStackVC {
             let vc = ChooseWalletVC()
             vc.completion = {wallet in
                 let wallet = self.viewModel.walletsVM.items.first(where: {$0.pubkey == wallet.pubkey})
-                self.sourceWallet.accept(wallet)
+                self.viewModel.sourceWallet.accept(wallet)
                 self.sourceWalletView.amountTextField.becomeFirstResponder()
                 vc.back()
             }
@@ -132,7 +130,7 @@ class _SwapTokenVC: BaseVStackVC {
             vc.customFilter = {_ in true}
             vc.completion = {wallet in
                 let wallet = self.viewModel.walletsVM.items.first(where: {$0.pubkey == wallet.pubkey})
-                self.destinationWallet.accept(wallet)
+                self.viewModel.destinationWallet.accept(wallet)
                 vc.back()
             }
             self.present(vc, animated: true, completion: nil)
@@ -149,7 +147,7 @@ class _SwapTokenVC: BaseVStackVC {
     
     override func bind() {
         super.bind()
-        Observable.combineLatest(sourceWallet, destinationWallet)
+        Observable.combineLatest(viewModel.sourceWallet, viewModel.destinationWallet)
             .subscribe(onNext: { (sourceWallet, destinationWallet) in
                 // configure source wallet
                 self.sourceWalletView.setUp(wallet: sourceWallet)
@@ -167,13 +165,13 @@ class _SwapTokenVC: BaseVStackVC {
                 let pair = self.viewModel.findSwapPair(fromWallet: sourceWallet, toWallet: destinationWallet)
                 var errorText: String?
                 
-                if let sourceWallet = self.sourceWallet.value,
-                   let destinationWallet = self.destinationWallet.value
+                if let sourceWallet = sourceWallet,
+                   let destinationWallet = destinationWallet
                 {
                     if sourceWallet.symbol == destinationWallet.symbol {
                         errorText = L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.symbol)
-                    } else if pair == nil {
-                        errorText = L10n.swappingFromToIsCurrentlyUnsupported(self.sourceWallet.value!.symbol, self.destinationWallet.value!.symbol)
+                    } else if pair == nil && self.viewModel.availableSwapPairs.count > 0 {
+                        errorText = L10n.swappingFromToIsCurrentlyUnsupported(self.viewModel.sourceWallet.value!.symbol, self.viewModel.destinationWallet.value!.symbol)
                     }
                 }
                 
@@ -185,15 +183,15 @@ class _SwapTokenVC: BaseVStackVC {
     
     // MARK: - Actions
     @objc func buttonUseAllBalanceDidTouch() {
-        guard let token = sourceWallet.value?.amount else {return}
+        guard let token = viewModel.sourceWallet.value?.amount else {return}
         sourceWalletView.amountTextField.text = token.toString(maximumFractionDigits: 9)
         sourceWalletView.amountTextField.sendActions(for: .valueChanged)
     }
     
     @objc func buttonReverseDidTouch() {
-        let tempWallet = sourceWallet.value
-        sourceWallet.accept(destinationWallet.value)
-        destinationWallet.accept(tempWallet)
+        let tempWallet = viewModel.sourceWallet.value
+        viewModel.sourceWallet.accept(viewModel.destinationWallet.value)
+        viewModel.destinationWallet.accept(tempWallet)
     }
     
     @objc func buttonSwapDidTouch() {
