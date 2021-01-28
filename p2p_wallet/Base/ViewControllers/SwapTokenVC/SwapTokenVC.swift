@@ -185,21 +185,24 @@ class _SwapTokenVC: BaseVStackVC {
             .map {$0?.double ?? 0}
             .distinctUntilChanged()
             .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .flatMapLatest {[weak self] (value) -> Single<UInt64> in
+            .flatMapLatest {[weak self] (value) -> Single<UInt64?> in
                 guard value != 0,
                       let pool = self?.viewModel.currentSwapPair?.pool,
-                      let slippage = self?.viewModel.slippage.value
-                else {return .just(0)}
-                let decimals = self?.viewModel.sourceWallet.value?.decimals ?? 0
+                      let slippage = self?.viewModel.slippage.value,
+                      let decimals = self?.viewModel.sourceWallet.value?.decimals
+                else {return .just(nil)}
                 return SolanaSDK.shared.getEstimatedAmount(pool: pool, slippage: slippage, inputAmount: UInt64(value * pow(10, Double(decimals))))
+                    .map {$0}
             }
-            .map {[weak self] value -> Double in
-                let decimals = self?.viewModel.destinationWallet.value?.decimals ?? 0
+            .map {[weak self] value -> Double? in
+                guard let value = value,
+                      let decimals = self?.viewModel.destinationWallet.value?.decimals
+                else {return nil}
                 return Double(value) * pow(10, -Double(decimals))
             }
-            .asDriver(onErrorJustReturn: 0)
+            .asDriver(onErrorJustReturn: nil)
             .drive(onNext: { value in
-                self.destinationWalletView.amountTextField.text = value.toString(maximumFractionDigits: 9)
+                self.destinationWalletView.amountTextField.text = value?.toString(maximumFractionDigits: 9)
                 self.destinationWalletView.amountTextField.sendActions(for: .valueChanged)
             })
             .disposed(by: disposeBag)
