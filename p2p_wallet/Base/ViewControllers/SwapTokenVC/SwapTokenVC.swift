@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 import RxCocoa
 
 class SwapTokenVC: WLModalWrapperVC {
@@ -52,6 +53,8 @@ class _SwapTokenVC: BaseVStackVC {
     
     lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
         .onTap(self, action: #selector(buttonReverseDidTouch))
+    
+    lazy var errorLabel = UILabel(textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
     
     lazy var swapButton = WLButton.stepButton(type: .blue, label: L10n.swapNow)
         .onTap(self, action: #selector(buttonSwapDidTouch))
@@ -111,6 +114,7 @@ class _SwapTokenVC: BaseVStackVC {
             UILabel(text: L10n.to),
             toWalletView,
             UIView.separator(height: 1, color: .separator),
+            errorLabel,
             swapButton
         ])
         
@@ -141,6 +145,21 @@ class _SwapTokenVC: BaseVStackVC {
         toWallet
             .subscribe(onNext: { wallet in
                 self.toWalletView.setUp(wallet: wallet)
+            })
+            .disposed(by: disposeBag)
+        
+        Observable.combineLatest(fromWallet, toWallet)
+            .flatMap {(fromWallet, toWallet) in
+                self.viewModel.findSwapPair(fromWallet: fromWallet!, toWallet: toWallet!)
+            }
+            .subscribe(onNext: { (pair) in
+                if pair == nil && (self.fromWallet.value != nil && self.toWallet.value != nil) {
+                    // error
+                    self.errorLabel.text = L10n.swappingFromToIsCurrentlyUnsupported(self.fromWallet.value!.name, self.toWallet.value!.name)
+                } else {
+                    // normal
+                    self.errorLabel.text = nil
+                }
             })
             .disposed(by: disposeBag)
     }
