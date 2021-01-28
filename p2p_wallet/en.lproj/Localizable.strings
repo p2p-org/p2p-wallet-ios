@@ -202,3 +202,4 @@
 "Welcome back!" = "Welcome back!";
 "Enable FaceID" = "Enable FaceID";
 "Enable TouchID" = "Enable TouchID";
+"Swapping from %@ to %@ is currently unsupported" = "Swapping from %@ to %@ is currently unsupported";
