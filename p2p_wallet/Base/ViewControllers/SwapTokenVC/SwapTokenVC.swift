@@ -63,13 +63,8 @@ class _SwapTokenVC: BaseVStackVC {
     init(from fromWallet: Wallet? = nil, to toWallet: Wallet? = nil) {
         super.init(nibName: nil, bundle: nil)
         defer {
-            if let fromWallet = fromWallet {
-                self.sourceWallet.accept(fromWallet)
-            }
-            
-            if let toWallet = toWallet {
-                self.destinationWallet.accept(toWallet)
-            }
+            self.sourceWallet.accept(fromWallet ?? viewModel.walletsVM.items.first(where: {$0.symbol == "SOL"}))
+            self.destinationWallet.accept(toWallet)
         }
     }
     
@@ -119,21 +114,13 @@ class _SwapTokenVC: BaseVStackVC {
             swapButton
         ])
         
-        // set up textfields
-        sourceWalletView.amountTextField.delegate = self
-        if sourceWallet.value != nil {
-            sourceWalletView.amountTextField.becomeFirstResponder()
-        }
-        
-        // disable editing in toWallet text field
-        destinationWalletView.amountTextField.isUserInteractionEnabled = false
-        
         // setup actions
         sourceWalletView.chooseTokenAction = CocoaAction {
             let vc = ChooseWalletVC()
             vc.completion = {wallet in
                 let wallet = self.viewModel.walletsVM.items.first(where: {$0.pubkey == wallet.pubkey})
                 self.sourceWallet.accept(wallet)
+                self.sourceWalletView.amountTextField.becomeFirstResponder()
                 vc.back()
             }
             self.present(vc, animated: true, completion: nil)
@@ -151,6 +138,13 @@ class _SwapTokenVC: BaseVStackVC {
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
+        
+        // set up textfields
+        sourceWalletView.amountTextField.delegate = self
+        sourceWalletView.amountTextField.becomeFirstResponder()
+        
+        // disable editing in toWallet text field
+        destinationWalletView.amountTextField.isUserInteractionEnabled = false
     }
     
     override func bind() {
@@ -184,6 +178,7 @@ class _SwapTokenVC: BaseVStackVC {
                 }
                 
                 self.errorLabel.text = errorText
+                self.errorLabel.isHidden = errorText == nil
             })
             .disposed(by: disposeBag)
     }
