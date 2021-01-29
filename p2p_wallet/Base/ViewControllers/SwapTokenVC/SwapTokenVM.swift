@@ -9,66 +9,65 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-struct SwapPair {
-    let from: SolanaSDK.Token
-    let to: SolanaSDK.Token
-    let pool: SolanaSDK.Pool
-}
-
 class SwapTokenVM {
-    let walletsVM = WalletsVM.ofCurrentUser
-    var availableSwapPairs = [SwapPair]()
-    var currentSwapPair: SwapPair?
+    // MARK: - Nested type
+    class PoolsVM: BaseVM<[SolanaSDK.Pool]> {
+        override var request: Single<[SolanaSDK.Pool]> {
+            SolanaSDK.shared.getSwapPools()
+        }
+    }
+
+    class FeeVM: BaseVM<Double?> {
+        override var request: Single<Double?> {
+            SolanaSDK.shared.getMinimumBalanceForRentExemption(dataLength: UInt64(SolanaSDK.AccountInfo.BUFFER_LENGTH))
+                .map {Double($0) * pow(10, -9)}
+        }
+    }
+    
+    // MARK: - Properties
     let disposeBag = DisposeBag()
-    var sourceWallet = BehaviorRelay<Wallet?>(value: nil)
-    var destinationWallet = BehaviorRelay<Wallet?>(value: nil)
-    var slippage = BehaviorRelay<Double>(value: 0.1)
+    var currentPool: SolanaSDK.Pool?
+    var wallets: [Wallet] {
+        WalletsVM.ofCurrentUser.items
+    }
+    
+    // MARK: - ViewModels
+    let poolsVM = PoolsVM(initialData: [])
+    let feeVM = FeeVM(initialData: nil)
+    
+    // MARK: - Subjects
+    let sourceWallet = BehaviorRelay<Wallet?>(value: nil)
+    let destinationWallet = BehaviorRelay<Wallet?>(value: nil)
+    let amount = BehaviorRelay<Double?>(value: nil)
+    let slippage = BehaviorRelay<Double>(value: 0.1)
     
     init() {
-        SolanaSDK.shared.getSwapPools()
-            .subscribe(onSuccess: { (pools) in
-                self.getSwapPairs(pools: pools)
+        poolsVM.reload()
+        feeVM.reload()
+        bind()
+    }
+    
+    func bind() {
+        poolsVM.dataDidChange
+            .subscribe(onNext: { [weak self] in
+                self?.findCurrentPool()
+            })
+            .disposed(by: disposeBag)
+        
+        Observable.combineLatest(sourceWallet, destinationWallet)
+            .subscribe(onNext: {_ in
+                self.findCurrentPool()
             })
             .disposed(by: disposeBag)
     }
     
-    func findSwapPair(fromWallet: Wallet?, toWallet: Wallet?) -> SwapPair? {
-        currentSwapPair = availableSwapPairs
-            .first(where: {
-                $0.from.mintAddress == fromWallet?.mintAddress &&
-                    $0.to.mintAddress == toWallet?.mintAddress
-            })
-        return currentSwapPair
-    }
-    
-    func getSwapPairs(pools: [SolanaSDK.Pool]) {
-        DispatchQueue.global(qos: .background).async {
-            if var supportedTokens = SolanaSDK.Token.getSupportedTokens(network: Defaults.network)
-            {
-                // Add WSOL
-                supportedTokens.append(
-                    SolanaSDK.Token(
-                        name: "Wrapped Solana",
-                        mintAddress: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString,
-                        pubkey: nil,
-                        symbol: "SOL",
-                        icon: nil,
-                        amount: nil,
-                        decimals: nil
-                    )
-                )
-                
-                // get SwapPairs
-                var pairs = [SwapPair]()
-                for pool in pools {
-                    if let tokenA = supportedTokens.first(where: {$0.mintAddress == pool.swapData.mintA.base58EncodedString}),
-                       let tokenB = supportedTokens.first(where: {$0.mintAddress == pool.swapData.mintB.base58EncodedString})
-                    {
-                        pairs.append(SwapPair(from: tokenA, to: tokenB, pool: pool))
-                    }
-                }
-                self.availableSwapPairs = pairs
+    // MARK: - Helpers
+    private func findCurrentPool() {
+        self.currentPool = poolsVM.data.first(
+            where: {
+                $0.swapData.mintA.base58EncodedString == self.sourceWallet.value?.mintAddress &&
+                    $0.swapData.mintB.base58EncodedString == self.destinationWallet.value?.mintAddress
             }
-        }
+        )
     }
 }
