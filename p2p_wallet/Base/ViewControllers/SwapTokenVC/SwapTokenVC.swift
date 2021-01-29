@@ -219,7 +219,7 @@ class _SwapTokenVC: BaseVStackVC {
                 self.sourceWalletView.amountTextField.isUserInteractionEnabled = true
                 self.exchangeRateLabel.text = nil
                 
-                if self.viewModel.currentPool != nil {
+                if let pool = self.viewModel.currentPool {
                     // supported
                     if self.sourceWalletView.amountTextField.text?.isEmpty == false,
                        let estimatedAmount = self.viewModel.estimatedAmount,
@@ -228,6 +228,7 @@ class _SwapTokenVC: BaseVStackVC {
                     {
                         self.destinationWalletView.amountTextField.text = estimatedAmount.toString(maximumFractionDigits: decimals)
                         self.minimumReceiveLabel.text = "\(minimumReceiveAmount.toString(maximumFractionDigits: decimals)) \(destinationWallet!.symbol)"
+                        self.feeLabel.text = pool.fee.toString(maximumFractionDigits: 9)
                         self.setUpExchangeRateLabel()
                     } else {
                         self.destinationWalletView.amountTextField.text = nil
