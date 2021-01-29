@@ -204,22 +204,27 @@ class _SwapTokenVC: BaseVStackVC {
                 
                 // pool validation
                 var errorText: String?
+                self.sourceWalletView.amountTextField.isUserInteractionEnabled = true
                 
                 if let pool = self.viewModel.currentPool {
                     // supported
-                    if let tokenABalance = pool.tokenABalance?.amountInUInt64,
+                    if inputAmount > 0,
+                       let tokenABalance = pool.tokenABalance?.amountInUInt64,
                        let tokenBBalance = pool.tokenBBalance?.amountInUInt64,
                        let sourceDecimals = self.viewModel.sourceWallet.value?.decimals,
                        let destinationDecimals = self.viewModel.destinationWallet.value?.decimals
                     {
-                        let inputAmount = UInt64(inputAmount * Double(sourceDecimals))
+                        let inputAmount = UInt64(inputAmount * pow(10, Double(sourceDecimals)))
                         let slippage = self.viewModel.slippage.value
-                        let outputAmount = SolanaSDK.shared.getSwapEstimatedAmount(tokenABalance: tokenABalance, tokenBBalance: tokenBBalance, slippage: slippage, inputAmount: inputAmount)
-                        let estimatedAmount = Double(destinationDecimals) * Double(outputAmount)
-                        self.destinationWalletView.amountTextField.text = "\(estimatedAmount)"
+                        let outputAmount = SolanaSDK.calculateSwapEstimatedAmount(tokenABalance: tokenABalance, tokenBBalance: tokenBBalance, inputAmount: inputAmount)
+                        let estimatedAmount = Double(outputAmount) * pow(10, -Double(destinationDecimals))
+                        self.destinationWalletView.amountTextField.text = estimatedAmount.toString(maximumFractionDigits: destinationDecimals)
+                        
+                        let minReceiveAmount = Double(SolanaSDK.calculateSwapMinimumReceiveAmount(estimatedAmount: outputAmount, slippage: slippage)) * pow(10, -Double(destinationDecimals))
+                        self.minimumReceiveLabel.text = "\(minReceiveAmount.toString(maximumFractionDigits: destinationDecimals)) \(destinationWallet!.symbol)"
+                    } else {
+                        self.destinationWalletView.amountTextField.text = nil
                     }
-                    
-                    self.sourceWalletView.amountTextField.isUserInteractionEnabled = true
                 } else {
                     // unsupported
                     self.destinationWalletView.amountTextField.text = nil
@@ -232,10 +237,10 @@ class _SwapTokenVC: BaseVStackVC {
                         } else {
                             errorText = L10n.swappingFromToIsCurrentlyUnsupported(self.viewModel.sourceWallet.value!.symbol, self.viewModel.destinationWallet.value!.symbol)
                         }
+                        
+                        self.sourceWalletView.amountTextField.resignFirstResponder()
+                        self.sourceWalletView.amountTextField.isUserInteractionEnabled = false
                     }
-                    
-                    self.sourceWalletView.amountTextField.resignFirstResponder()
-                    self.sourceWalletView.amountTextField.isUserInteractionEnabled = false
                 }
                 
                 // handle error
@@ -248,32 +253,6 @@ class _SwapTokenVC: BaseVStackVC {
                 self.errorLabel.isHidden = !hasError
             })
             .disposed(by: disposeBag)
-        
-//        sourceWalletView.amountTextField.rx.text
-//            .map {$0?.double ?? 0}
-//            .distinctUntilChanged()
-//            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-//            .flatMapLatest {[weak self] (value) -> Single<UInt64?> in
-//                guard value != 0,
-//                      let pool = self?.viewModel.currentSwapPair?.pool,
-//                      let slippage = self?.viewModel.slippage.value,
-//                      let decimals = self?.viewModel.sourceWallet.value?.decimals
-//                else {return .just(nil)}
-//                return SolanaSDK.shared.getEstimatedAmount(pool: pool, slippage: slippage, inputAmount: UInt64(value * pow(10, Double(decimals))))
-//                    .map {$0}
-//            }
-//            .map {[weak self] value -> Double? in
-//                guard let value = value,
-//                      let decimals = self?.viewModel.destinationWallet.value?.decimals
-//                else {return nil}
-//                return Double(value) * pow(10, -Double(decimals))
-//            }
-//            .asDriver(onErrorJustReturn: nil)
-//            .drive(onNext: { value in
-//                self.destinationWalletView.amountTextField.text = value?.toString(maximumFractionDigits: 9)
-//                self.destinationWalletView.amountTextField.sendActions(for: .valueChanged)
-//            })
-//            .disposed(by: disposeBag)
     }
     
     // MARK: - Actions
