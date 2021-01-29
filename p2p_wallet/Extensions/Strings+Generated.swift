@@ -214,6 +214,8 @@ internal enum L10n {
   internal static var paste: String { L10n.tr("Localizable", "Paste") }
   /// Payments
   internal static var payments: String { L10n.tr("Localizable", "Payments") }
+  /// per
+  internal static var per: String { L10n.tr("Localizable", "per") }
   /// PIN-code
   internal static var pinCode: String { L10n.tr("Localizable", "PIN-code") }
   /// PIN-code must have 6 digits
