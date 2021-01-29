@@ -109,7 +109,7 @@ class _SwapTokenVC: BaseVStackVC {
             sourceWalletView,
             BEStackViewSpacing(8),
             reverseView,
-            BEStackViewSpacing(8),
+            BEStackViewSpacing(16),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 UILabel(text: L10n.to),
                 destinationBalanceLabel
@@ -202,9 +202,11 @@ class _SwapTokenVC: BaseVStackVC {
                     self.destinationBalanceLabel.text = nil
                 }
                 
-                // estimate amount
-                self.destinationWalletView.amountTextField.placeholder = "0.0"
+                // pool validation
+                var errorText: String?
+                
                 if let pool = self.viewModel.currentPool {
+                    // supported
                     if let tokenABalance = pool.tokenABalance?.amountInUInt64,
                        let tokenBBalance = pool.tokenBBalance?.amountInUInt64,
                        let sourceDecimals = self.viewModel.sourceWallet.value?.decimals,
@@ -215,32 +217,35 @@ class _SwapTokenVC: BaseVStackVC {
                         let outputAmount = SolanaSDK.shared.getSwapEstimatedAmount(tokenABalance: tokenABalance, tokenBBalance: tokenBBalance, slippage: slippage, inputAmount: inputAmount)
                         let estimatedAmount = Double(destinationDecimals) * Double(outputAmount)
                         self.destinationWalletView.amountTextField.text = "\(estimatedAmount)"
-                    } else {
-                        self.destinationWalletView.amountTextField.text = nil
-                        self.destinationWalletView.amountTextField.placeholder = L10n.estimating
                     }
                     
+                    self.sourceWalletView.amountTextField.isUserInteractionEnabled = true
                 } else {
-                    // TODO: - Show error
+                    // unsupported
                     self.destinationWalletView.amountTextField.text = nil
-                }
-                
-                // find pool
-                let pool = self.viewModel.currentPool
-                var errorText: String?
-                
-                if let sourceWallet = sourceWallet,
-                   let destinationWallet = destinationWallet
-                {
-                    if sourceWallet.symbol == destinationWallet.symbol {
-                        errorText = L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.symbol)
-                    } else if pool == nil {
-                        errorText = L10n.swappingFromToIsCurrentlyUnsupported(self.viewModel.sourceWallet.value!.symbol, self.viewModel.destinationWallet.value!.symbol)
+                    
+                    if let sourceWallet = sourceWallet,
+                       let destinationWallet = destinationWallet
+                    {
+                        if sourceWallet.symbol == destinationWallet.symbol {
+                            errorText = L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.symbol)
+                        } else {
+                            errorText = L10n.swappingFromToIsCurrentlyUnsupported(self.viewModel.sourceWallet.value!.symbol, self.viewModel.destinationWallet.value!.symbol)
+                        }
                     }
+                    
+                    self.sourceWalletView.amountTextField.resignFirstResponder()
+                    self.sourceWalletView.amountTextField.isUserInteractionEnabled = false
                 }
                 
+                // handle error
                 self.errorLabel.text = errorText
-                self.errorLabel.isHidden = errorText == nil
+                
+                let hasError = errorText != nil
+                self.minimumReceiveLabel.superview?.isHidden = hasError
+                self.feeLabel.superview?.isHidden = hasError
+                self.slippageLabel.superview?.isHidden = hasError
+                self.errorLabel.isHidden = !hasError
             })
             .disposed(by: disposeBag)
         
