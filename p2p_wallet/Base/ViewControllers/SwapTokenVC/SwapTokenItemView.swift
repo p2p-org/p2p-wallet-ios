@@ -68,11 +68,6 @@ class SwapTokenItemView: BEView {
             tokenSymbolLabel.text = nil
         }
         
-        if self.wallet?.pubkey != wallet?.pubkey {
-            amountTextField.text = nil
-            amountTextField.sendActions(for: .valueChanged)
-        }
-        
         self.wallet = wallet
     }
     

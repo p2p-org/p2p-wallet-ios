@@ -206,3 +206,5 @@
 "You can not swap %@ to itself.\nPlease choose another token" = "Vous ne pouvez pas échanger %@ contre lui-même.\nVeuillez choisir un autre jeton";
 "Minimum receive" = "Réception minimale";
 "Slippage" = "Glissement";
+"Balance" = "Équilibre";
+"Estimating..." = "Estimation...";

@@ -206,3 +206,5 @@
 "You can not swap %@ to itself.\nPlease choose another token" = "You can not swap %@ to itself.\nPlease choose another token";
 "Minimum receive" = "Minimum receive";
 "Slippage" = "Slippage";
+"Balance" = "Balance";
+"Estimating..." = "Estimating...";
