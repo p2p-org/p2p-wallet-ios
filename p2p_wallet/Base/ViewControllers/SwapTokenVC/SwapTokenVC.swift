@@ -262,6 +262,12 @@ class _SwapTokenVC: BaseVStackVC {
                 self.errorLabel.isHidden = !hasError
             })
             .disposed(by: disposeBag)
+        
+        viewModel.slippage
+            .map {$0.toString() + " %"}
+            .asDriver(onErrorJustReturn: "")
+            .drive(slippageLabel.rx.text)
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Actions
