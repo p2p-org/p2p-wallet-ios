@@ -132,6 +132,8 @@ internal enum L10n {
   internal static var estimating: String { L10n.tr("Localizable", "Estimating...") }
   /// Exchange
   internal static var exchange: String { L10n.tr("Localizable", "Exchange") }
+  /// Exchange rate
+  internal static var exchangeRate: String { L10n.tr("Localizable", "Exchange rate") }
   /// Explore  DeFi
   internal static var exploreDeFi: String { L10n.tr("Localizable", "Explore  DeFi") }
   /// Explore P2P Wallet and deposit funds when you’re ready.

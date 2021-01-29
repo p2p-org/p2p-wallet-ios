@@ -51,6 +51,10 @@ class _SwapTokenVC: BaseVStackVC {
     lazy var sourceWalletView = SwapTokenItemView(forAutoLayout: ())
     lazy var destinationWalletView = SwapTokenItemView(forAutoLayout: ())
     
+    lazy var exchangeRateLabel = UILabel(text: nil)
+    lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
+        .onTap(self, action: #selector(buttonExchangeRateReverseDidTouch))
+    
     lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
         .onTap(self, action: #selector(buttonReverseDidTouch))
     
@@ -115,6 +119,12 @@ class _SwapTokenVC: BaseVStackVC {
                 destinationBalanceLabel
             ]),
             destinationWalletView,
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
+                UILabel(text: L10n.exchangeRate + ": "),
+                exchangeRateLabel,
+                exchangeRateReverseButton
+            ])
+                .padding(.init(all: 8), backgroundColor: .f6f6f8, cornerRadius: 12),
             UIView.separator(height: 1, color: .separator),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
                 UILabel(text: L10n.minimumReceive + ": "),
@@ -205,6 +215,7 @@ class _SwapTokenVC: BaseVStackVC {
                 // pool validation
                 var errorText: String?
                 self.sourceWalletView.amountTextField.isUserInteractionEnabled = true
+                self.exchangeRateLabel.text = nil
                 
                 if let pool = self.viewModel.currentPool {
                     // supported
@@ -222,6 +233,8 @@ class _SwapTokenVC: BaseVStackVC {
                         
                         let minReceiveAmount = Double(SolanaSDK.calculateSwapMinimumReceiveAmount(estimatedAmount: outputAmount, slippage: slippage)) * pow(10, -Double(destinationDecimals))
                         self.minimumReceiveLabel.text = "\(minReceiveAmount.toString(maximumFractionDigits: destinationDecimals)) \(destinationWallet!.symbol)"
+                        
+                        self.setUpExchangeRateLabel()
                     } else {
                         self.destinationWalletView.amountTextField.text = nil
                     }
@@ -268,7 +281,16 @@ class _SwapTokenVC: BaseVStackVC {
         viewModel.destinationWallet.accept(tempWallet)
     }
     
+    @objc func buttonExchangeRateReverseDidTouch() {
+        setUpExchangeRateLabel()
+    }
+    
     @objc func buttonSwapDidTouch() {
+        
+    }
+    
+    // MARK: - Helpers
+    func setUpExchangeRateLabel() {
         
     }
 }
