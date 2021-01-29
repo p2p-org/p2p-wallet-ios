@@ -295,7 +295,7 @@ class _SwapTokenVC: BaseVStackVC {
     }
     
     @objc func buttonChooseSlippageDidTouch() {
-        present(WLModalVC(), animated: true, completion: nil)
+        present(SwapSlippageSettingsVC(), animated: true, completion: nil)
     }
     
     @objc func buttonSwapDidTouch() {
