@@ -206,3 +206,5 @@
 "You can not swap %@ to itself.\nPlease choose another token" = "Bạn không thể chuyển đổi %@ thành chính nó.\nVui lòng chọn một token khác";
 "Minimum receive" = "Nhận tối thiểu";
 "Slippage" = "Slippage";
+"Balance" = "Số dư";
+"Estimating..." = "Đang ước tính ...";

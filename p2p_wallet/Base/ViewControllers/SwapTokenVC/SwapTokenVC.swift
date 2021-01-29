@@ -45,13 +45,18 @@ class _SwapTokenVC: BaseVStackVC {
     
     let viewModel = SwapTokenVM()
     
-    lazy var availableBalanceLabel = UILabel(text: "Available", textColor: .h5887ff)
+    lazy var availableSourceBalanceLabel = UILabel(text: "Available", textColor: .h5887ff)
         .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
+    lazy var destinationBalanceLabel = UILabel(textColor: .textSecondary)
     lazy var sourceWalletView = SwapTokenItemView(forAutoLayout: ())
     lazy var destinationWalletView = SwapTokenItemView(forAutoLayout: ())
     
     lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
         .onTap(self, action: #selector(buttonReverseDidTouch))
+    
+    lazy var minimumReceiveLabel = UILabel(text: nil)
+    lazy var feeLabel = UILabel(text: nil)
+    lazy var slippageLabel = UILabel(text: nil)
     
     lazy var errorLabel = UILabel(textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
     
@@ -99,28 +104,31 @@ class _SwapTokenVC: BaseVStackVC {
         stackView.addArrangedSubviews([
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 UILabel(text: L10n.from),
-                availableBalanceLabel
+                availableSourceBalanceLabel
             ]),
             sourceWalletView,
             BEStackViewSpacing(8),
             reverseView,
             BEStackViewSpacing(8),
-            UILabel(text: L10n.to),
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
+                UILabel(text: L10n.to),
+                destinationBalanceLabel
+            ]),
             destinationWalletView,
             UIView.separator(height: 1, color: .separator),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
                 UILabel(text: L10n.minimumReceive + ": "),
-                UILabel(text: L10n.minimumReceive),
+                minimumReceiveLabel
             ]),
             BEStackViewSpacing(16),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
                 UILabel(text: L10n.fee + ": "),
-                UILabel(text: L10n.minimumReceive),
+                feeLabel
             ]),
             BEStackViewSpacing(16),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
                 UILabel(text: L10n.slippage + ": "),
-                UILabel(text: L10n.minimumReceive),
+                slippageLabel
             ]),
             errorLabel,
             swapButton
@@ -162,20 +170,60 @@ class _SwapTokenVC: BaseVStackVC {
     
     override func bind() {
         super.bind()
+        // bind amount
+        sourceWalletView.amountTextField.rx.text.orEmpty
+            .map {$0.double}
+            .bind(to: viewModel.amount)
+            .disposed(by: disposeBag)
+        
         // source/destination wallet
-        Observable.combineLatest(viewModel.sourceWallet, viewModel.destinationWallet)
-            .subscribe(onNext: { (sourceWallet, destinationWallet) in
+        Observable.combineLatest(
+            viewModel.poolsVM.dataDidChange,
+            viewModel.sourceWallet,
+            viewModel.destinationWallet,
+            viewModel.amount
+        )
+            .subscribe(onNext: { (_, sourceWallet, destinationWallet, inputAmount) in
                 // configure source wallet
                 self.sourceWalletView.setUp(wallet: sourceWallet)
                 
                 if let wallet = sourceWallet {
-                    self.availableBalanceLabel.text = "\(L10n.available): \(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
+                    self.availableSourceBalanceLabel.text = "\(L10n.available): \(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
                 } else {
-                    self.availableBalanceLabel.text = nil
+                    self.availableSourceBalanceLabel.text = nil
                 }
                 
                 // configure destinationWallet
                 self.destinationWalletView.setUp(wallet: destinationWallet)
+                
+                if let wallet = destinationWallet {
+                    self.destinationBalanceLabel.text = "\(L10n.balance): \(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
+                } else {
+                    self.destinationBalanceLabel.text = nil
+                }
+                
+                // estimate amount
+                self.destinationWalletView.amountTextField.placeholder = "0.0"
+                if let pool = self.viewModel.currentPool {
+                    if let tokenABalance = pool.tokenABalance?.amountInUInt64,
+                       let tokenBBalance = pool.tokenBBalance?.amountInUInt64,
+                       let sourceDecimals = self.viewModel.sourceWallet.value?.decimals,
+                       let destinationDecimals = self.viewModel.destinationWallet.value?.decimals
+                    {
+                        let inputAmount = UInt64(inputAmount * Double(sourceDecimals))
+                        let slippage = self.viewModel.slippage.value
+                        let outputAmount = SolanaSDK.shared.getSwapEstimatedAmount(tokenABalance: tokenABalance, tokenBBalance: tokenBBalance, slippage: slippage, inputAmount: inputAmount)
+                        let estimatedAmount = Double(destinationDecimals) * Double(outputAmount)
+                        self.destinationWalletView.amountTextField.text = "\(estimatedAmount)"
+                    } else {
+                        self.destinationWalletView.amountTextField.text = nil
+                        self.destinationWalletView.amountTextField.placeholder = L10n.estimating
+                    }
+                    
+                } else {
+                    // TODO: - Show error
+                    self.destinationWalletView.amountTextField.text = nil
+                }
                 
                 // find pool
                 let pool = self.viewModel.currentPool
@@ -186,7 +234,7 @@ class _SwapTokenVC: BaseVStackVC {
                 {
                     if sourceWallet.symbol == destinationWallet.symbol {
                         errorText = L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.symbol)
-                    } else if pool == nil && self.viewModel.availableSwapPairs.count > 0 {
+                    } else if pool == nil {
                         errorText = L10n.swappingFromToIsCurrentlyUnsupported(self.viewModel.sourceWallet.value!.symbol, self.viewModel.destinationWallet.value!.symbol)
                     }
                 }

@@ -206,3 +206,5 @@
 "You can not swap %@ to itself.\nPlease choose another token" = "Вы не можете поменять %@ на себя.\nВыберите другой токен";
 "Minimum receive" = "Минимальное получение";
 "Slippage" = "Проскальзывание";
+"Balance" = "Остаток средств";
+"Estimating..." = "Оценка ...";

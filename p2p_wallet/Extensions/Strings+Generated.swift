@@ -54,6 +54,8 @@ internal enum L10n {
   internal static var backupNow: String { L10n.tr("Localizable", "Backup now") }
   /// Backup using iCloud
   internal static var backupUsingICloud: String { L10n.tr("Localizable", "Backup using iCloud") }
+  /// Balance
+  internal static var balance: String { L10n.tr("Localizable", "Balance") }
   /// Balances
   internal static var balances: String { L10n.tr("Localizable", "Balances") }
   /// Block number
@@ -126,6 +128,8 @@ internal enum L10n {
   internal static var enterSeedPhrasesInACorrectOrderToRecoverYourWallet: String { L10n.tr("Localizable", "Enter seed phrases in a correct order to recover your wallet") }
   /// error
   internal static var error: String { L10n.tr("Localizable", "error") }
+  /// Estimating...
+  internal static var estimating: String { L10n.tr("Localizable", "Estimating...") }
   /// Exchange
   internal static var exchange: String { L10n.tr("Localizable", "Exchange") }
   /// Explore  DeFi
