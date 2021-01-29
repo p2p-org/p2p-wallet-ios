@@ -31,11 +31,16 @@ class SwapTokenVC: WLModalWrapperVC {
                 .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
             UILabel(text: L10n.swap, textSize: 17, weight: .semibold),
             UIImageView(width: 36, height: 36, image: .slippageSettings, tintColor: .a3a5ba)
+                .onTap(self, action: #selector(buttonSlippageSettingsDidTouch))
         ])
         
         let separator = UIView.separator(height: 1, color: .separator)
         containerView.addSubview(separator)
         separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+    }
+    
+    @objc func buttonSlippageSettingsDidTouch() {
+        (vc as! _SwapTokenVC).buttonChooseSlippageDidTouch()
     }
 }
 
@@ -141,7 +146,8 @@ class _SwapTokenVC: BaseVStackVC {
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
                 UILabel(text: L10n.slippage + ": "),
                 slippageLabel
-            ]),
+            ])
+                .onTap(self, action: #selector(buttonChooseSlippageDidTouch)),
             errorLabel,
             swapButton
         ])
@@ -286,6 +292,10 @@ class _SwapTokenVC: BaseVStackVC {
     @objc func buttonExchangeRateReverseDidTouch() {
         isExchangeRateReversed.toggle()
         setUpExchangeRateLabel()
+    }
+    
+    @objc func buttonChooseSlippageDidTouch() {
+        present(WLModalVC(), animated: true, completion: nil)
     }
     
     @objc func buttonSwapDidTouch() {
