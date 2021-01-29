@@ -25,11 +25,14 @@ class SwapTokenVM {
     }
     
     // MARK: - Properties
-    let disposeBag = DisposeBag()
-    var currentPool: SolanaSDK.Pool?
     var wallets: [Wallet] {
         WalletsVM.ofCurrentUser.items
     }
+    
+    let disposeBag = DisposeBag()
+    var currentPool: SolanaSDK.Pool?
+    var estimatedAmount: Double?
+    var minimumReceiveAmount: Double?
     
     // MARK: - ViewModels
     let poolsVM = PoolsVM(initialData: [])
@@ -54,9 +57,10 @@ class SwapTokenVM {
             })
             .disposed(by: disposeBag)
         
-        Observable.combineLatest(sourceWallet, destinationWallet)
+        Observable.combineLatest(sourceWallet, destinationWallet, amount)
             .subscribe(onNext: {_ in
                 self.findCurrentPool()
+                self.calculateEstimatedAndMinimumReceiveAmount()
             })
             .disposed(by: disposeBag)
     }
@@ -69,5 +73,25 @@ class SwapTokenVM {
                     $0.swapData.mintB.base58EncodedString == self.destinationWallet.value?.mintAddress
             }
         )
+    }
+    
+    func calculateEstimatedAndMinimumReceiveAmount() {
+        // supported
+        if amount.value > 0,
+           let tokenABalance = currentPool?.tokenABalance?.amountInUInt64,
+           let tokenBBalance = currentPool?.tokenBBalance?.amountInUInt64,
+           let sourceDecimals = sourceWallet.value?.decimals,
+           let destinationDecimals = destinationWallet.value?.decimals
+        {
+            let inputAmount = UInt64(amount.value * pow(10, Double(sourceDecimals)))
+            let slippage = self.slippage.value
+            let outputAmount = SolanaSDK.calculateSwapEstimatedAmount(tokenABalance: tokenABalance, tokenBBalance: tokenBBalance, inputAmount: inputAmount)
+            let estimatedAmount = Double(outputAmount) * pow(10, -Double(destinationDecimals))
+            
+            let minReceiveAmount = Double(SolanaSDK.calculateSwapMinimumReceiveAmount(estimatedAmount: outputAmount, slippage: slippage)) * pow(10, -Double(destinationDecimals))
+            
+            self.estimatedAmount = estimatedAmount
+            self.minimumReceiveAmount = minReceiveAmount
+        }
     }
 }

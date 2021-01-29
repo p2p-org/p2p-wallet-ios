@@ -44,6 +44,7 @@ class _SwapTokenVC: BaseVStackVC {
     override var padding: UIEdgeInsets { UIEdgeInsets(top: .defaultPadding, left: 16, bottom: 0, right: 16) }
     
     let viewModel = SwapTokenVM()
+    var isExchangeRateReversed = false
     
     lazy var availableSourceBalanceLabel = UILabel(text: "Available", textColor: .h5887ff)
         .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
@@ -119,9 +120,10 @@ class _SwapTokenVC: BaseVStackVC {
                 destinationBalanceLabel
             ]),
             destinationWalletView,
-            UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 UILabel(text: L10n.exchangeRate + ": "),
-                exchangeRateLabel,
+                exchangeRateLabel
+                    .withContentHuggingPriority(.required, for: .horizontal),
                 exchangeRateReverseButton
             ])
                 .padding(.init(all: 8), backgroundColor: .f6f6f8, cornerRadius: 12),
@@ -193,7 +195,7 @@ class _SwapTokenVC: BaseVStackVC {
             viewModel.destinationWallet,
             viewModel.amount
         )
-            .subscribe(onNext: { (_, sourceWallet, destinationWallet, inputAmount) in
+            .subscribe(onNext: { (_, sourceWallet, destinationWallet, _) in
                 // configure source wallet
                 self.sourceWalletView.setUp(wallet: sourceWallet)
                 
@@ -217,23 +219,15 @@ class _SwapTokenVC: BaseVStackVC {
                 self.sourceWalletView.amountTextField.isUserInteractionEnabled = true
                 self.exchangeRateLabel.text = nil
                 
-                if let pool = self.viewModel.currentPool {
+                if self.viewModel.currentPool != nil {
                     // supported
-                    if inputAmount > 0,
-                       let tokenABalance = pool.tokenABalance?.amountInUInt64,
-                       let tokenBBalance = pool.tokenBBalance?.amountInUInt64,
-                       let sourceDecimals = self.viewModel.sourceWallet.value?.decimals,
-                       let destinationDecimals = self.viewModel.destinationWallet.value?.decimals
+                    if self.sourceWalletView.amountTextField.text?.isEmpty == false,
+                       let estimatedAmount = self.viewModel.estimatedAmount,
+                       let minimumReceiveAmount = self.viewModel.minimumReceiveAmount,
+                       let decimals = self.viewModel.destinationWallet.value?.decimals
                     {
-                        let inputAmount = UInt64(inputAmount * pow(10, Double(sourceDecimals)))
-                        let slippage = self.viewModel.slippage.value
-                        let outputAmount = SolanaSDK.calculateSwapEstimatedAmount(tokenABalance: tokenABalance, tokenBBalance: tokenBBalance, inputAmount: inputAmount)
-                        let estimatedAmount = Double(outputAmount) * pow(10, -Double(destinationDecimals))
-                        self.destinationWalletView.amountTextField.text = estimatedAmount.toString(maximumFractionDigits: destinationDecimals)
-                        
-                        let minReceiveAmount = Double(SolanaSDK.calculateSwapMinimumReceiveAmount(estimatedAmount: outputAmount, slippage: slippage)) * pow(10, -Double(destinationDecimals))
-                        self.minimumReceiveLabel.text = "\(minReceiveAmount.toString(maximumFractionDigits: destinationDecimals)) \(destinationWallet!.symbol)"
-                        
+                        self.destinationWalletView.amountTextField.text = estimatedAmount.toString(maximumFractionDigits: decimals)
+                        self.minimumReceiveLabel.text = "\(minimumReceiveAmount.toString(maximumFractionDigits: decimals)) \(destinationWallet!.symbol)"
                         self.setUpExchangeRateLabel()
                     } else {
                         self.destinationWalletView.amountTextField.text = nil
@@ -243,7 +237,8 @@ class _SwapTokenVC: BaseVStackVC {
                     self.destinationWalletView.amountTextField.text = nil
                     
                     if let sourceWallet = sourceWallet,
-                       let destinationWallet = destinationWallet
+                       let destinationWallet = destinationWallet,
+                       !self.viewModel.poolsVM.data.isEmpty
                     {
                         if sourceWallet.symbol == destinationWallet.symbol {
                             errorText = L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.symbol)
@@ -282,6 +277,7 @@ class _SwapTokenVC: BaseVStackVC {
     }
     
     @objc func buttonExchangeRateReverseDidTouch() {
+        isExchangeRateReversed.toggle()
         setUpExchangeRateLabel()
     }
     
@@ -291,7 +287,36 @@ class _SwapTokenVC: BaseVStackVC {
     
     // MARK: - Helpers
     func setUpExchangeRateLabel() {
+        guard let amountIn = viewModel.amount.value,
+              let amountOut = viewModel.estimatedAmount,
+              var fromSymbol = viewModel.sourceWallet.value?.symbol,
+              var toSymbol = viewModel.destinationWallet.value?.symbol,
+              var fromDecimals = viewModel.sourceWallet.value?.decimals,
+              var toDecimals = viewModel.destinationWallet.value?.decimals
+        else {
+            exchangeRateLabel.text = nil
+            return
+        }
         
+        var rate = amountOut / amountIn
+        if isExchangeRateReversed {
+            rate = amountIn / amountOut
+            
+            // swap symbol
+            let tempSymbol = fromSymbol
+            fromSymbol = toSymbol
+            toSymbol = tempSymbol
+            
+            // swap decimals
+            let tempDecimals = fromDecimals
+            fromDecimals = toDecimals
+            toDecimals = tempDecimals
+        }
+        
+        exchangeRateLabel.text = rate.toString(maximumFractionDigits: toDecimals) + " "
+            + toSymbol + " "
+            + L10n.per + " "
+            + fromSymbol
     }
 }
 
