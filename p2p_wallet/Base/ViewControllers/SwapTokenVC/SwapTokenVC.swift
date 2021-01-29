@@ -61,7 +61,7 @@ class _SwapTokenVC: BaseVStackVC {
     init(from fromWallet: Wallet? = nil, to toWallet: Wallet? = nil) {
         super.init(nibName: nil, bundle: nil)
         defer {
-            self.viewModel.sourceWallet.accept(fromWallet ?? viewModel.walletsVM.items.first(where: {$0.symbol == "SOL"}))
+            self.viewModel.sourceWallet.accept(fromWallet ?? viewModel.wallets.first(where: {$0.symbol == "SOL"}))
             self.viewModel.destinationWallet.accept(toWallet)
         }
     }
@@ -130,7 +130,7 @@ class _SwapTokenVC: BaseVStackVC {
         sourceWalletView.chooseTokenAction = CocoaAction {
             let vc = ChooseWalletVC()
             vc.completion = {wallet in
-                let wallet = self.viewModel.walletsVM.items.first(where: {$0.pubkey == wallet.pubkey})
+                let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
                 self.viewModel.sourceWallet.accept(wallet)
                 self.sourceWalletView.amountTextField.becomeFirstResponder()
                 vc.back()
@@ -143,7 +143,7 @@ class _SwapTokenVC: BaseVStackVC {
             let vc = ChooseWalletVC()
             vc.customFilter = {_ in true}
             vc.completion = {wallet in
-                let wallet = self.viewModel.walletsVM.items.first(where: {$0.pubkey == wallet.pubkey})
+                let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
                 self.viewModel.destinationWallet.accept(wallet)
                 vc.back()
             }
@@ -162,6 +162,7 @@ class _SwapTokenVC: BaseVStackVC {
     
     override func bind() {
         super.bind()
+        // source/destination wallet
         Observable.combineLatest(viewModel.sourceWallet, viewModel.destinationWallet)
             .subscribe(onNext: { (sourceWallet, destinationWallet) in
                 // configure source wallet
@@ -176,8 +177,8 @@ class _SwapTokenVC: BaseVStackVC {
                 // configure destinationWallet
                 self.destinationWalletView.setUp(wallet: destinationWallet)
                 
-                // swap pair
-                let pair = self.viewModel.findSwapPair(fromWallet: sourceWallet, toWallet: destinationWallet)
+                // find pool
+                let pool = self.viewModel.currentPool
                 var errorText: String?
                 
                 if let sourceWallet = sourceWallet,
@@ -185,7 +186,7 @@ class _SwapTokenVC: BaseVStackVC {
                 {
                     if sourceWallet.symbol == destinationWallet.symbol {
                         errorText = L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.symbol)
-                    } else if pair == nil && self.viewModel.availableSwapPairs.count > 0 {
+                    } else if pool == nil && self.viewModel.availableSwapPairs.count > 0 {
                         errorText = L10n.swappingFromToIsCurrentlyUnsupported(self.viewModel.sourceWallet.value!.symbol, self.viewModel.destinationWallet.value!.symbol)
                     }
                 }
@@ -195,31 +196,31 @@ class _SwapTokenVC: BaseVStackVC {
             })
             .disposed(by: disposeBag)
         
-        sourceWalletView.amountTextField.rx.text
-            .map {$0?.double ?? 0}
-            .distinctUntilChanged()
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .flatMapLatest {[weak self] (value) -> Single<UInt64?> in
-                guard value != 0,
-                      let pool = self?.viewModel.currentSwapPair?.pool,
-                      let slippage = self?.viewModel.slippage.value,
-                      let decimals = self?.viewModel.sourceWallet.value?.decimals
-                else {return .just(nil)}
-                return SolanaSDK.shared.getEstimatedAmount(pool: pool, slippage: slippage, inputAmount: UInt64(value * pow(10, Double(decimals))))
-                    .map {$0}
-            }
-            .map {[weak self] value -> Double? in
-                guard let value = value,
-                      let decimals = self?.viewModel.destinationWallet.value?.decimals
-                else {return nil}
-                return Double(value) * pow(10, -Double(decimals))
-            }
-            .asDriver(onErrorJustReturn: nil)
-            .drive(onNext: { value in
-                self.destinationWalletView.amountTextField.text = value?.toString(maximumFractionDigits: 9)
-                self.destinationWalletView.amountTextField.sendActions(for: .valueChanged)
-            })
-            .disposed(by: disposeBag)
+//        sourceWalletView.amountTextField.rx.text
+//            .map {$0?.double ?? 0}
+//            .distinctUntilChanged()
+//            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+//            .flatMapLatest {[weak self] (value) -> Single<UInt64?> in
+//                guard value != 0,
+//                      let pool = self?.viewModel.currentSwapPair?.pool,
+//                      let slippage = self?.viewModel.slippage.value,
+//                      let decimals = self?.viewModel.sourceWallet.value?.decimals
+//                else {return .just(nil)}
+//                return SolanaSDK.shared.getEstimatedAmount(pool: pool, slippage: slippage, inputAmount: UInt64(value * pow(10, Double(decimals))))
+//                    .map {$0}
+//            }
+//            .map {[weak self] value -> Double? in
+//                guard let value = value,
+//                      let decimals = self?.viewModel.destinationWallet.value?.decimals
+//                else {return nil}
+//                return Double(value) * pow(10, -Double(decimals))
+//            }
+//            .asDriver(onErrorJustReturn: nil)
+//            .drive(onNext: { value in
+//                self.destinationWalletView.amountTextField.text = value?.toString(maximumFractionDigits: 9)
+//                self.destinationWalletView.amountTextField.sendActions(for: .valueChanged)
+//            })
+//            .disposed(by: disposeBag)
     }
     
     // MARK: - Actions
