@@ -74,7 +74,7 @@
 "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!" = "У этого приложения нет разрешения на использование вашей камеры для сканирования QR-кода.  Пожалуйста, включите его в настройках!";
 "Copy to clipboard" = "Скопировать в буфер обмена";
 "I have saved these words in a safe place" = "Я сохранил эти слова в надежном месте";
-"Max" = "Всё";
+"Max" = "Макс";
 "Amount is not valid" = "Сумма недействительна";
 "Insufficient funds" = "Недостаточно средств";
 "The address is not valid" = "Адрес недействителен";
@@ -212,3 +212,4 @@
 "per" = "на";
 "Slippage settings" = "Настройки проскальзывания";
 "Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used." = "Под проскальзыванием понимается разница между ожидаемой ценой сделки и ценой, по которой сделка выполняется. Проскальзывание может произойти в любое время, но наиболее распространено в периоды повышенной волатильности, когда используются рыночные ордера.";
+"Slippage isn't valid" = "Проскальзывание недействительно";

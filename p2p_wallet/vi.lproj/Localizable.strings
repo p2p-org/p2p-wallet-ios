@@ -74,7 +74,7 @@
 "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!" = "Ứng dụng này không được phép sử dụng máy ảnh của bạn để quét Mã Qr.  Vui lòng kích hoạt nó trong cài đặt!";
 "Copy to clipboard" = "Sao chép vào clipboard";
 "I have saved these words in a safe place" = "Tôi đã lưu những từ này ở một nơi an toàn";
-"Max" = "Tất cả";
+"Max" = "Tối đa";
 "Amount is not valid" = "Số tiền không hợp lệ";
 "Insufficient funds" = "Không đủ tiền";
 "The address is not valid" = "Địa chỉ không hợp lệ";
@@ -212,3 +212,4 @@
 "per" = "mỗi";
 "Slippage settings" = "Cài đặt Slippage";
 "Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used." = "Trượt giá (slippage) đề cập đến sự khác biệt giữa giá kỳ vọng của một giao dịch và giá mà giao dịch được thực hiện. Trượt giá có thể xảy ra bất cứ lúc nào nhưng phổ biến nhất trong thời kỳ biến động cao hơn khi các lệnh thị trường được sử dụng.";
+"Slippage isn't valid" = "Slippage không hợp lệ";
