@@ -215,3 +215,9 @@
 "Slippage isn't valid" = "Проскальзывание недействительно";
 "Swapping is currently unavailable" = "Обмен в настоящее время недоступен";
 "Swapping pools not found" = "Пулы обмена не найдены";
+"Swapping" = "Обмен";
+"Account not found" = "аккаунт не найден";
+"PublicKey not found" = "PublicKey не найден";
+"Invalid URL" = "Неверный URL";
+"Invalid status code" = "Неверный код статуса";
+"Unknown error" = "Неизвестная ошибка";

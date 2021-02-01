@@ -215,3 +215,9 @@
 "Slippage isn't valid" = "Slippage không hợp lệ";
 "Swapping is currently unavailable" = "Hoán đổi hiện không khả dụng";
 "Swapping pools not found" = "Không tìm thấy các nhóm hoán đổi";
+"Swapping" = "Hoán đổi";
+"Account not found" = "Tài khoản không được tìm thấy";
+"PublicKey not found" = "Không tìm thấy PublicKey";
+"Invalid URL" = "URL không hợp lệ";
+"Invalid status code" = "Mã trạng thái không hợp lệ";
+"Unknown error" = "Lỗi không thể nhận biết";
