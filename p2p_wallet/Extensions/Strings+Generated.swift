@@ -300,6 +300,8 @@ internal enum L10n {
   internal static var slideToScan: String { L10n.tr("Localizable", "Slide to scan") }
   /// Slippage
   internal static var slippage: String { L10n.tr("Localizable", "Slippage") }
+  /// Slippage isn't valid
+  internal static var slippageIsnTValid: String { L10n.tr("Localizable", "Slippage isn't valid") }
   /// Slippage settings
   internal static var slippageSettings: String { L10n.tr("Localizable", "Slippage settings") }
   /// Something went wrong!\nPlease try again later

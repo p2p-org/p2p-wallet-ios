@@ -42,7 +42,7 @@ class SwapTokenVM {
     let sourceWallet = BehaviorRelay<Wallet?>(value: nil)
     let destinationWallet = BehaviorRelay<Wallet?>(value: nil)
     let amount = BehaviorRelay<Double?>(value: nil)
-    let slippage = BehaviorRelay<Double>(value: 0.1)
+    let slippage = BehaviorRelay<Double>(value: Defaults.slippage)
     
     init() {
         poolsVM.reload()

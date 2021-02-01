@@ -199,9 +199,10 @@ class _SwapTokenVC: BaseVStackVC {
             viewModel.poolsVM.dataDidChange,
             viewModel.sourceWallet,
             viewModel.destinationWallet,
-            viewModel.amount
+            viewModel.amount,
+            viewModel.slippage
         )
-            .subscribe(onNext: { (_, sourceWallet, destinationWallet, _) in
+            .subscribe(onNext: { (_, sourceWallet, destinationWallet, amount, slippage) in
                 // configure source wallet
                 self.sourceWalletView.setUp(wallet: sourceWallet)
                 
@@ -234,7 +235,7 @@ class _SwapTokenVC: BaseVStackVC {
                     {
                         self.destinationWalletView.amountTextField.text = estimatedAmount.toString(maximumFractionDigits: decimals)
                         self.minimumReceiveLabel.text = "\(minimumReceiveAmount.toString(maximumFractionDigits: decimals)) \(destinationWallet!.symbol)"
-                        self.feeLabel.text = pool.fee.toString(maximumFractionDigits: 9)
+                        self.feeLabel.text = pool.fee.toString(maximumFractionDigits: 9) + " SOL"
                         self.setUpExchangeRateLabel()
                     } else {
                         self.destinationWalletView.amountTextField.text = nil
@@ -258,21 +259,32 @@ class _SwapTokenVC: BaseVStackVC {
                     }
                 }
                 
+                // amount
+                if amount > sourceWallet?.amount {
+                    errorText = L10n.insufficientFunds
+                }
+                
+                // slippage
+                if slippage > 20 || slippage < 0 {
+                    errorText = L10n.slippageIsnTValid
+                    self.slippageLabel.attributedText = NSMutableAttributedString()
+                        .text(slippage.toString() + " %", color: .red)
+                        .text(" ")
+                        .text("(\(L10n.max). 20%)", color: .textSecondary)
+                } else {
+                    self.slippageLabel.text = slippage.toString() + " %"
+                }
+                
                 // handle error
                 self.errorLabel.text = errorText
                 
                 let hasError = errorText != nil
                 self.minimumReceiveLabel.superview?.isHidden = hasError
-                self.feeLabel.superview?.isHidden = hasError
-                self.slippageLabel.superview?.isHidden = hasError
                 self.errorLabel.isHidden = !hasError
+                
+                let shouldEnableSwapButton = !self.viewModel.poolsVM.data.isEmpty && !hasError && destinationWallet != nil && amount > 0
+                self.swapButton.isEnabled = shouldEnableSwapButton
             })
-            .disposed(by: disposeBag)
-        
-        viewModel.slippage
-            .map {$0.toString() + " %"}
-            .asDriver(onErrorJustReturn: "")
-            .drive(slippageLabel.rx.text)
             .disposed(by: disposeBag)
     }
     
