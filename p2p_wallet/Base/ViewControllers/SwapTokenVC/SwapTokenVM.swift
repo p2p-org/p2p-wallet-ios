@@ -16,13 +16,6 @@ class SwapTokenVM {
             SolanaSDK.shared.getSwapPools()
         }
     }
-
-    class FeeVM: BaseVM<Double?> {
-        override var request: Single<Double?> {
-            SolanaSDK.shared.getMinimumBalanceForRentExemption(dataLength: UInt64(SolanaSDK.AccountInfo.BUFFER_LENGTH))
-                .map {Double($0) * pow(10, -9)}
-        }
-    }
     
     // MARK: - Properties
     var wallets: [Wallet] {
@@ -36,7 +29,6 @@ class SwapTokenVM {
     
     // MARK: - ViewModels
     let poolsVM = PoolsVM(initialData: [])
-    let feeVM = FeeVM(initialData: nil)
     
     // MARK: - Subjects
     let sourceWallet = BehaviorRelay<Wallet?>(value: nil)
@@ -46,7 +38,6 @@ class SwapTokenVM {
     
     init() {
         poolsVM.reload()
-        feeVM.reload()
         bind()
     }
     
