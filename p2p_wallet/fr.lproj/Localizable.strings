@@ -215,3 +215,9 @@
 "Slippage isn't valid" = "Le glissement n'est pas valide";
 "Swapping is currently unavailable" = "L'échange est actuellement indisponible";
 "Swapping pools not found" = "Échange de pools introuvable";
+"Swapping" = "Échange";
+"Account not found" = "Compte non trouvé";
+"PublicKey not found" = "PublicKey introuvable";
+"Invalid URL" = "URL invalide";
+"Invalid status code" = "Code d'état invalide";
+"Unknown error" = "Erreur inconnue";

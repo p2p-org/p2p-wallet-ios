@@ -14,6 +14,8 @@ internal enum L10n {
   internal static var _24Hours: String { L10n.tr("Localizable", "24 hours") }
   /// Accept
   internal static var accept: String { L10n.tr("Localizable", "Accept") }
+  /// Account not found
+  internal static var accountNotFound: String { L10n.tr("Localizable", "Account not found") }
   /// Activities
   internal static var activities: String { L10n.tr("Localizable", "Activities") }
   /// Add token
@@ -168,6 +170,10 @@ internal enum L10n {
   internal static var incorrectPINCode: String { L10n.tr("Localizable", "Incorrect PIN-code") }
   /// Insufficient funds
   internal static var insufficientFunds: String { L10n.tr("Localizable", "Insufficient funds") }
+  /// Invalid status code
+  internal static var invalidStatusCode: String { L10n.tr("Localizable", "Invalid status code") }
+  /// Invalid URL
+  internal static var invalidURL: String { L10n.tr("Localizable", "Invalid URL") }
   /// Language
   internal static var language: String { L10n.tr("Localizable", "Language") }
   /// Leave
@@ -230,6 +236,8 @@ internal enum L10n {
   internal static var processing: String { L10n.tr("Localizable", "Processing") }
   /// Profile
   internal static var profile: String { L10n.tr("Localizable", "Profile") }
+  /// PublicKey not found
+  internal static var publicKeyNotFound: String { L10n.tr("Localizable", "PublicKey not found") }
   /// Receive
   internal static var receive: String { L10n.tr("Localizable", "Receive") }
   /// Receive token
@@ -314,6 +322,8 @@ internal enum L10n {
   internal static var swap: String { L10n.tr("Localizable", "Swap") }
   /// Swap now
   internal static var swapNow: String { L10n.tr("Localizable", "Swap now") }
+  /// Swapping
+  internal static var swapping: String { L10n.tr("Localizable", "Swapping") }
   /// Swapping from %@ to %@ is currently unsupported
   internal static func swappingFromToIsCurrentlyUnsupported(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "Swapping from %@ to %@ is currently unsupported", String(describing: p1), String(describing: p2))
@@ -358,6 +368,8 @@ internal enum L10n {
   internal static var tryAgain: String { L10n.tr("Localizable", "Try again") }
   /// Turn on
   internal static var turnOn: String { L10n.tr("Localizable", "Turn on") }
+  /// Unknown error
+  internal static var unknownError: String { L10n.tr("Localizable", "Unknown error") }
   /// unsupported
   internal static var unsupported: String { L10n.tr("Localizable", "unsupported") }
   /// Use FaceId

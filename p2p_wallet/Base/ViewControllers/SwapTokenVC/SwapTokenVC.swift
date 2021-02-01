@@ -301,6 +301,7 @@ class _SwapTokenVC: BaseVStackVC {
                 
                 let hasError = errorText != nil
                 self.minimumReceiveLabel.superview?.isHidden = hasError
+                self.feeLabel.superview?.isHidden = hasError
                 self.errorLabel.isHidden = !hasError
                 
                 let shouldEnableSwapButton = !self.viewModel.poolsVM.data.isEmpty && !hasError && destinationWallet != nil && amount > 0
@@ -337,7 +338,16 @@ class _SwapTokenVC: BaseVStackVC {
     }
     
     @objc func buttonSwapDidTouch() {
-        
+        UIApplication.shared.showIndetermineHudWithMessage(L10n.swapping)
+        viewModel.swap()
+            .subscribe { (id) in
+                UIApplication.shared.hideHud()
+                
+            } onError: { (error) in
+                UIApplication.shared.hideHud()
+                self.showError(error)
+            }
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Helpers
