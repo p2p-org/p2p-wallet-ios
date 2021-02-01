@@ -29,7 +29,7 @@ enum MainVCItem: ListItemType {
 
 class MainVC: CollectionVC<MainVCItem> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
-    var walletsVM: WalletsVM {(viewModel as! MainVM).walletsVM}
+    var walletsVM: WalletsVM {WalletsVM.ofCurrentUser}
     let numberOfWalletsToShow = 4
     
     init() {
@@ -170,7 +170,7 @@ class MainVC: CollectionVC<MainVCItem> {
         CocoaAction { _ in
             let wallets = self.walletsVM.items
             if wallets.count == 0 {return .just(())}
-            let vc = SwapTokenVC(wallets: wallets)
+            let vc = SwapTokenVC()
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }

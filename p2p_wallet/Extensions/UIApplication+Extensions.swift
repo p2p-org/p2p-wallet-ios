@@ -19,21 +19,11 @@ extension UIApplication {
     }
     
     func showIndetermineHudWithMessage(_ message: String?) {
-        guard let keyWindow = keyWindow else {return}
-        
-        // Hide all previous hud
-        hideHud()
-        
-        // show new hud
-        let hud = MBProgressHUD.showAdded(to: keyWindow, animated: false)
-        hud.mode = MBProgressHUDMode.indeterminate
-        hud.isUserInteractionEnabled = true
-        hud.label.text = message
+        keyWindow?.showIndetermineHudWithMessage(message)
     }
     
     func hideHud() {
-        guard let keyWindow = keyWindow else {return}
-        MBProgressHUD.hide(for: keyWindow, animated: false)
+        keyWindow?.hideHud()
     }
     
     func showDone(_ message: String, completion: (() -> Void)? = nil) {
