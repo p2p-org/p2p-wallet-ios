@@ -338,14 +338,47 @@ class _SwapTokenVC: BaseVStackVC {
     }
     
     @objc func buttonSwapDidTouch() {
-        UIApplication.shared.showIndetermineHudWithMessage(L10n.swapping)
+        let transactionVC = presentProcessTransactionVC()
         viewModel.swap()
-            .subscribe { (id) in
-                UIApplication.shared.hideHud()
+            .subscribe { (signature) in
+                transactionVC.signature = signature
+                transactionVC.viewInExplorerButton.rx.action = CocoaAction {
+                    transactionVC.dismiss(animated: true) {
+                        let nc = self.navigationController
+                        self.back()
+                        nc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
+                    }
+                    
+                    return .just(())
+                }
+                transactionVC.goBackToWalletButton.rx.action = CocoaAction {
+                    transactionVC.dismiss(animated: true) {
+                        self.back()
+                    }
+                    return .just(())
+                }
                 
+                let transaction = Transaction(
+                    signatureInfo: .init(signature: signature),
+                    type: .send,
+                    amount: -self.viewModel.amount.value!,
+                    symbol: self.viewModel.sourceWallet.value!.symbol,
+                    status: .processing
+                )
+                TransactionsManager.shared.process(transaction)
+                
+                let transaction2 = Transaction(
+                    signatureInfo: .init(signature: signature),
+                    type: .send,
+                    amount: +self.viewModel.estimatedAmount!,
+                    symbol: self.viewModel.destinationWallet.value!.symbol,
+                    status: .processing
+                )
+                TransactionsManager.shared.process(transaction2)
             } onError: { (error) in
-                UIApplication.shared.hideHud()
-                self.showError(error)
+                transactionVC.dismiss(animated: true) {
+                    self.showError(error)
+                }
             }
             .disposed(by: disposeBag)
     }
