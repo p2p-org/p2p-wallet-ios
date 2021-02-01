@@ -38,6 +38,7 @@ extension UIColor {
     static let h282828 = UIColor(named: "h282828", in: bundle, compatibleWith: nil)!
     static let h2f2f2f = UIColor(named: "h2f2f2f", in: bundle, compatibleWith: nil)!
     static let h5887ff = UIColor(named: "h5887ff", in: bundle, compatibleWith: nil)!
+    static let h8b94a9 = UIColor(named: "h8b94a9", in: bundle, compatibleWith: nil)!
     static let introBgStatic = UIColor(named: "intro-bg-static", in: bundle, compatibleWith: nil)!
     static let lightGrayBackground = UIColor(named: "lightGrayBackground", in: bundle, compatibleWith: nil)!
     static let pinViewBgColor = UIColor(named: "pinView-bg-color", in: bundle, compatibleWith: nil)!
@@ -77,6 +78,7 @@ extension UIImage {
     static let scanQr2 = UIImage(named: "scan-qr-2", in: bundle, compatibleWith: nil)!
     static let scanQr = UIImage(named: "scan-qr", in: bundle, compatibleWith: nil)!
     static let securityKey = UIImage(named: "security-key", in: bundle, compatibleWith: nil)!
+    static let slippageEdit = UIImage(named: "slippage-edit", in: bundle, compatibleWith: nil)!
     static let slippageSettings = UIImage(named: "slippage-settings", in: bundle, compatibleWith: nil)!
     static let tabbarActivities = UIImage(named: "tabbar-activities", in: bundle, compatibleWith: nil)!
     static let tabbarFriends = UIImage(named: "tabbar-friends", in: bundle, compatibleWith: nil)!

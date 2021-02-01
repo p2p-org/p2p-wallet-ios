@@ -15,6 +15,10 @@ class WalletsVM: ListViewModel<Wallet> {
     
     var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
     
+    init() {
+        super.init(prefetch: false)
+    }
+    
     override func bind() {
         super.bind()
         PricesManager.shared.currentPrices
@@ -62,7 +66,7 @@ class WalletsVM: ListViewModel<Wallet> {
                         let solWallet = Wallet(
                             id: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString ?? "Solana",
                             name: Defaults.walletName["SOL"] ?? "Solana",
-                            mintAddress: "",
+                            mintAddress: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString,
                             pubkey: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString,
                             symbol: "SOL",
                             lamports: balance,
