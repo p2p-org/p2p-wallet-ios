@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MBProgressHUD
 
 extension UIView {
     func fittingHeight(targetWidth: CGFloat) -> CGFloat {
@@ -23,5 +24,20 @@ extension UIView {
             UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: tintColor),
             UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: tintColor)
         ])
+    }
+    
+    func showIndetermineHudWithMessage(_ message: String?) {
+        // Hide all previous hud
+        hideHud()
+        
+        // show new hud
+        let hud = MBProgressHUD.showAdded(to: self, animated: false)
+        hud.mode = MBProgressHUDMode.indeterminate
+        hud.isUserInteractionEnabled = true
+        hud.label.text = message
+    }
+    
+    func hideHud() {
+        MBProgressHUD.hide(for: self, animated: false)
     }
 }
