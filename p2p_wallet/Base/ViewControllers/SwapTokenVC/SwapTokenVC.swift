@@ -295,7 +295,12 @@ class _SwapTokenVC: BaseVStackVC {
     }
     
     @objc func buttonChooseSlippageDidTouch() {
-        present(SwapSlippageSettingsVC(), animated: true, completion: nil)
+        let vc = SwapSlippageSettingsVC(slippage: Defaults.slippage)
+        vc.completion = {slippage in
+            Defaults.slippage = slippage
+            self.viewModel.slippage.accept(slippage)
+        }
+        present(vc, animated: true, completion: nil)
     }
     
     @objc func buttonSwapDidTouch() {

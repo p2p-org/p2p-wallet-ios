@@ -157,6 +157,7 @@
 		BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232325412AF9002D997F /* LaunchScreen.storyboard */; };
 		BCB2233B25412AF9002D997F /* p2p_walletUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */; };
 		BCB4237125C4078700F8A7A9 /* SwapSlippageSettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237025C4078700F8A7A9 /* SwapSlippageSettingsVC.swift */; };
+		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58359255CE96B00B10F65 /* ProfileVC.swift */; };
 		BCB58360255D231400B10F65 /* BaseVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB5835F255D231400B10F65 /* BaseVM.swift */; };
 		BCB58375255D299700B10F65 /* SendTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58374255D299700B10F65 /* SendTokenVC.swift */; };
@@ -371,6 +372,7 @@
 		BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = p2p_walletUITests.swift; sourceTree = "<group>"; };
 		BCB2233C25412AF9002D997F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCB4237025C4078700F8A7A9 /* SwapSlippageSettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapSlippageSettingsVC.swift; sourceTree = "<group>"; };
+		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58359255CE96B00B10F65 /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
 		BCB5835F255D231400B10F65 /* BaseVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVM.swift; sourceTree = "<group>"; };
 		BCB58374255D299700B10F65 /* SendTokenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenVC.swift; sourceTree = "<group>"; };
@@ -492,6 +494,7 @@
 				BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */,
 				BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */,
 				BCB4237025C4078700F8A7A9 /* SwapSlippageSettingsVC.swift */,
+				BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */,
 			);
 			path = SwapTokenVC;
 			sourceTree = "<group>";
@@ -1343,6 +1346,7 @@
 				BCA0CFD8255E78D400CD0F8D /* SendTokenItemVC.swift in Sources */,
 				BC32A356254A69EA002156F0 /* WelcomeVC.swift in Sources */,
 				BCB92B7025B5311500FF615E /* SelectAppearanceVC.swift in Sources */,
+				BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */,
 				BC2EC1CE2553ED1B006EEDA5 /* CardPresentationController.swift in Sources */,
 				BC11C9F12591A17D00E399A9 /* MainVM.swift in Sources */,
 				BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */,

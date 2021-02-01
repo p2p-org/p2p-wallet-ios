@@ -6,14 +6,14 @@
 //
 
 import Foundation
-import RxCocoa
 
 class SwapSlippageSettingsVC: WLModalVC {
     // MARK: - Properties
     private let quickSelectableSlippages: [Double] = [0.1, 0.5, 1, 5]
-    let slippage = BehaviorRelay<Double>(value: Defaults.slippage)
+    var slippage: Double
     var shouldShowTextField = false
     var isShowingTextField = false
+    var completion: ((Double) -> Void)?
     
     // MARK: - Subviews
     lazy var slippagesView = UIStackView(
@@ -29,10 +29,13 @@ class SwapSlippageSettingsVC: WLModalVC {
                     .onTap(self, action: #selector(buttonCustomSlippageDidTouch))
             ]
     )
-    lazy var customSlippageTextField = BEDecimalTextField(height: 56, backgroundColor: .f6f6f8, cornerRadius: 12, font: .systemFont(ofSize: 17), textColor: .black, placeholder: L10n.slippage, autocorrectionType: .no, autocapitalizationType: UITextAutocapitalizationType.none, spellCheckingType: .no, horizontalPadding: 16)
+    lazy var customSlippageTextField = PercentSuffixTextField(height: 56, backgroundColor: .f6f6f8, cornerRadius: 12, font: .systemFont(ofSize: 17), textColor: .black, placeholder: nil, autocorrectionType: .no, autocapitalizationType: UITextAutocapitalizationType.none, spellCheckingType: .no, horizontalPadding: 16, showClearButton: true)
+    lazy var doneButton = WLButton.stepButton(type: .blue, label: L10n.done)
+        .onTap(self, action: #selector(buttonDoneDidTouch))
     
     // MARK: - Initializers
-    override init() {
+    init(slippage: Double = 0.1) {
+        self.slippage = slippage
         super.init()
         modalPresentationStyle = .custom
         transitioningDelegate = self
@@ -64,26 +67,20 @@ class SwapSlippageSettingsVC: WLModalVC {
             slippagesView
                 .padding(.init(x: 20, y: 0)),
             customSlippageTextField
+                .padding(.init(x: 20, y: 0)),
+            doneButton
                 .padding(.init(x: 20, y: 0))
         ])
         
         customSlippageTextField.delegate = self
+        customSlippageTextField.text = "\(slippage)"
         reloadData()
-    }
-    
-    override func bind() {
-        super.bind()
-        slippage
-            .subscribe { (_) in
-                self.reloadData()
-            }
-            .disposed(by: disposeBag)
     }
     
     func reloadData() {
         var selectedView: UIView!
         if !shouldShowTextField,
-           let index = quickSelectableSlippages.firstIndex(of: slippage.value)
+           let index = quickSelectableSlippages.firstIndex(of: slippage)
         {
             selectedView = slippagesView.arrangedSubviews[index]
         } else {
@@ -120,8 +117,9 @@ class SwapSlippageSettingsVC: WLModalVC {
     @objc func buttonSelectableSlippageDidTouch(_ sender: UIGestureRecognizer) {
         if let index = sender.view?.tag {
             shouldShowTextField = false
-            slippage.accept(quickSelectableSlippages[index])
+            slippage = quickSelectableSlippages[index]
             customSlippageTextField.resignFirstResponder()
+            reloadData()
         }
     }
     
@@ -129,6 +127,16 @@ class SwapSlippageSettingsVC: WLModalVC {
         shouldShowTextField = true
         reloadData()
         customSlippageTextField.becomeFirstResponder()
+    }
+    
+    @objc func buttonDoneDidTouch() {
+        if isShowingTextField,
+           let slippage = Double(customSlippageTextField.text ?? "")
+        {
+            self.slippage = slippage
+        }
+        completion?(slippage)
+        dismiss(animated: true, completion: nil)
     }
     
     @objc func keyboardDidShowOrHide() {
