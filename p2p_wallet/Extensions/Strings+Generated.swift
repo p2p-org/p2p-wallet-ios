@@ -421,6 +421,11 @@ internal enum L10n {
     internal static var tapToTryAgain: String { L10n.tr("Localizable", "Error when retrieving creation fee.\nTap to try again") }
   }
 
+  internal enum SlippageRefersToTheDifferenceBetweenTheExpectedPriceOfATradeAndThePriceAtWhichTheTradeIsExecuted {
+    /// Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used.
+    internal static var slippageCanOccurAtAnyTimeButIsMostPrevalentDuringPeriodsOfHigherVolatilityWhenMarketOrdersAreUsed: String { L10n.tr("Localizable", "Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used.") }
+  }
+
   internal enum ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode {
     /// This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!
     internal static var pleaseEnableItInSettings: String { L10n.tr("Localizable", "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!") }
