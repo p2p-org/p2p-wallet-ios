@@ -14,6 +14,8 @@ internal enum L10n {
   internal static var _24Hours: String { L10n.tr("Localizable", "24 hours") }
   /// Accept
   internal static var accept: String { L10n.tr("Localizable", "Accept") }
+  /// Account not found
+  internal static var accountNotFound: String { L10n.tr("Localizable", "Account not found") }
   /// Activities
   internal static var activities: String { L10n.tr("Localizable", "Activities") }
   /// Add token
@@ -54,6 +56,8 @@ internal enum L10n {
   internal static var backupNow: String { L10n.tr("Localizable", "Backup now") }
   /// Backup using iCloud
   internal static var backupUsingICloud: String { L10n.tr("Localizable", "Backup using iCloud") }
+  /// Balance
+  internal static var balance: String { L10n.tr("Localizable", "Balance") }
   /// Balances
   internal static var balances: String { L10n.tr("Localizable", "Balances") }
   /// Block number
@@ -126,8 +130,12 @@ internal enum L10n {
   internal static var enterSeedPhrasesInACorrectOrderToRecoverYourWallet: String { L10n.tr("Localizable", "Enter seed phrases in a correct order to recover your wallet") }
   /// error
   internal static var error: String { L10n.tr("Localizable", "error") }
+  /// Estimating...
+  internal static var estimating: String { L10n.tr("Localizable", "Estimating...") }
   /// Exchange
   internal static var exchange: String { L10n.tr("Localizable", "Exchange") }
+  /// Exchange rate
+  internal static var exchangeRate: String { L10n.tr("Localizable", "Exchange rate") }
   /// Explore  DeFi
   internal static var exploreDeFi: String { L10n.tr("Localizable", "Explore  DeFi") }
   /// Explore P2P Wallet and deposit funds when you’re ready.
@@ -162,6 +170,10 @@ internal enum L10n {
   internal static var incorrectPINCode: String { L10n.tr("Localizable", "Incorrect PIN-code") }
   /// Insufficient funds
   internal static var insufficientFunds: String { L10n.tr("Localizable", "Insufficient funds") }
+  /// Invalid status code
+  internal static var invalidStatusCode: String { L10n.tr("Localizable", "Invalid status code") }
+  /// Invalid URL
+  internal static var invalidURL: String { L10n.tr("Localizable", "Invalid URL") }
   /// Language
   internal static var language: String { L10n.tr("Localizable", "Language") }
   /// Leave
@@ -178,6 +190,8 @@ internal enum L10n {
   internal static var makeYourCryptoWorkingOnYou: String { L10n.tr("Localizable", "Make your crypto working on you") }
   /// Max
   internal static var max: String { L10n.tr("Localizable", "Max") }
+  /// Minimum receive
+  internal static var minimumReceive: String { L10n.tr("Localizable", "Minimum receive") }
   /// Mint address
   internal static var mintAddress: String { L10n.tr("Localizable", "Mint address") }
   /// month
@@ -206,6 +220,8 @@ internal enum L10n {
   internal static var paste: String { L10n.tr("Localizable", "Paste") }
   /// Payments
   internal static var payments: String { L10n.tr("Localizable", "Payments") }
+  /// per
+  internal static var per: String { L10n.tr("Localizable", "per") }
   /// PIN-code
   internal static var pinCode: String { L10n.tr("Localizable", "PIN-code") }
   /// PIN-code must have 6 digits
@@ -220,6 +236,8 @@ internal enum L10n {
   internal static var processing: String { L10n.tr("Localizable", "Processing") }
   /// Profile
   internal static var profile: String { L10n.tr("Localizable", "Profile") }
+  /// PublicKey not found
+  internal static var publicKeyNotFound: String { L10n.tr("Localizable", "PublicKey not found") }
   /// Receive
   internal static var receive: String { L10n.tr("Localizable", "Receive") }
   /// Receive token
@@ -288,6 +306,12 @@ internal enum L10n {
   internal static var simpleFinanceForEveryone: String { L10n.tr("Localizable", "Simple finance for everyone") }
   /// Slide to scan
   internal static var slideToScan: String { L10n.tr("Localizable", "Slide to scan") }
+  /// Slippage
+  internal static var slippage: String { L10n.tr("Localizable", "Slippage") }
+  /// Slippage isn't valid
+  internal static var slippageIsnTValid: String { L10n.tr("Localizable", "Slippage isn't valid") }
+  /// Slippage settings
+  internal static var slippageSettings: String { L10n.tr("Localizable", "Slippage settings") }
   /// Something went wrong!\nPlease try again later
   internal static var somethingWentWrongPleaseTryAgainLater: String { L10n.tr("Localizable", "Something went wrong!\nPlease try again later") }
   /// Stay
@@ -298,6 +322,16 @@ internal enum L10n {
   internal static var swap: String { L10n.tr("Localizable", "Swap") }
   /// Swap now
   internal static var swapNow: String { L10n.tr("Localizable", "Swap now") }
+  /// Swapping
+  internal static var swapping: String { L10n.tr("Localizable", "Swapping") }
+  /// Swapping from %@ to %@ is currently unsupported
+  internal static func swappingFromToIsCurrentlyUnsupported(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "Swapping from %@ to %@ is currently unsupported", String(describing: p1), String(describing: p2))
+  }
+  /// Swapping is currently unavailable
+  internal static var swappingIsCurrentlyUnavailable: String { L10n.tr("Localizable", "Swapping is currently unavailable") }
+  /// Swapping pools not found
+  internal static var swappingPoolsNotFound: String { L10n.tr("Localizable", "Swapping pools not found") }
   /// Switch language?
   internal static var switchLanguage: String { L10n.tr("Localizable", "Switch language?") }
   /// Switch network?
@@ -334,6 +368,8 @@ internal enum L10n {
   internal static var tryAgain: String { L10n.tr("Localizable", "Try again") }
   /// Turn on
   internal static var turnOn: String { L10n.tr("Localizable", "Turn on") }
+  /// Unknown error
+  internal static var unknownError: String { L10n.tr("Localizable", "Unknown error") }
   /// unsupported
   internal static var unsupported: String { L10n.tr("Localizable", "unsupported") }
   /// Use FaceId
@@ -403,6 +439,11 @@ internal enum L10n {
     internal static var tapToTryAgain: String { L10n.tr("Localizable", "Error when retrieving creation fee.\nTap to try again") }
   }
 
+  internal enum SlippageRefersToTheDifferenceBetweenTheExpectedPriceOfATradeAndThePriceAtWhichTheTradeIsExecuted {
+    /// Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used.
+    internal static var slippageCanOccurAtAnyTimeButIsMostPrevalentDuringPeriodsOfHigherVolatilityWhenMarketOrdersAreUsed: String { L10n.tr("Localizable", "Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used.") }
+  }
+
   internal enum ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode {
     /// This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!
     internal static var pleaseEnableItInSettings: String { L10n.tr("Localizable", "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!") }
@@ -411,6 +452,13 @@ internal enum L10n {
   internal enum WeCouldnTAddATokenToYourWallet {
     /// We couldn’t add a token to your wallet.\nCheck your internet connection and try again.
     internal static var checkYourInternetConnectionAndTryAgain: String { L10n.tr("Localizable", "We couldn’t add a token to your wallet.\nCheck your internet connection and try again.") }
+  }
+
+  internal enum YouCanNotSwapToItself {
+    /// You can not swap %@ to itself.\nPlease choose another token
+    internal static func pleaseChooseAnotherToken(_ p1: Any) -> String {
+      return L10n.tr("Localizable", "You can not swap %@ to itself.\nPlease choose another token", String(describing: p1))
+    }
   }
 
   internal enum YourDeviceDoesNotSupportScanningACodeFromAnItem {

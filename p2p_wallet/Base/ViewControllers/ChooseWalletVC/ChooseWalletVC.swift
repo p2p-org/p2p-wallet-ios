@@ -13,6 +13,7 @@ class ChooseWalletVC: MyWalletsVC {
         .onTap(self, action: #selector(back))
     
     var completion: ((Wallet) -> Void)?
+    var customFilter: ((Wallet) -> Bool) = {$0.symbol == "SOL" || $0.amount > 0}
     
     init(showInFullScreen: Bool = false) {
         super.init()
@@ -40,7 +41,7 @@ class ChooseWalletVC: MyWalletsVC {
     }
     
     override func filter(_ items: [Wallet]) -> [Wallet] {
-        items.filter {$0.symbol == "SOL" || $0.amount > 0}
+        items.filter {customFilter($0)}
     }
     
     // MARK: - Layouts

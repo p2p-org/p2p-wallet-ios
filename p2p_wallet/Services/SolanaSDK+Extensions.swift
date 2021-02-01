@@ -18,3 +18,26 @@ extension String: ListItemType {
     }
     var id: String {self}
 }
+
+extension SolanaSDK.Error {
+    public var errorDescription: String? {
+        switch self {
+        case .accountNotFound:
+            return L10n.accountNotFound
+        case .publicKeyNotFound:
+            return L10n.publicKeyNotFound
+        case .invalidURL:
+            return L10n.invalidURL
+        case .invalidStatusCode(code: let code):
+            return L10n.invalidStatusCode + " \(code)"
+        case .responseError(let error):
+            return (error as? LocalizedError)?.localizedDescription
+        case .other(let string):
+            return string
+        case .socket(let error):
+            return (error as? LocalizedError)?.localizedDescription
+        case .unknown:
+            return L10n.unknownError
+        }
+    }
+}
