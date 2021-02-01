@@ -188,6 +188,25 @@ class _SwapTokenVC: BaseVStackVC {
     
     override func bind() {
         super.bind()
+        // pool validation
+        viewModel.poolsVM
+            .state
+            .subscribe(onNext: {[weak self] state in
+                self?.removeErrorView()
+                self?.hideHud()
+                switch state {
+                case .initializing, .loading:
+                    self?.showIndetermineHudWithMessage(L10n.loading)
+                case .loaded(let pools):
+                    if pools.isEmpty {
+                        self?.showErrorView(title: L10n.swappingIsCurrentlyUnavailable, description: L10n.swappingPoolsNotFound + "\n" + L10n.pleaseTryAgainLater)
+                    }
+                case .error(let error):
+                    self?.showErrorView(title: L10n.swappingIsCurrentlyUnavailable, description: error.localizedDescription + "\n" + L10n.pleaseTryAgainLater)
+                }
+            })
+            .disposed(by: disposeBag)
+        
         // bind amount
         sourceWalletView.amountTextField.rx.text.orEmpty
             .map {$0.double}
@@ -224,6 +243,7 @@ class _SwapTokenVC: BaseVStackVC {
                 // pool validation
                 var errorText: String?
                 self.sourceWalletView.amountTextField.isUserInteractionEnabled = true
+                self.availableSourceBalanceLabel.isUserInteractionEnabled = true
                 self.exchangeRateLabel.text = nil
                 
                 if let pool = self.viewModel.currentPool {
@@ -256,6 +276,7 @@ class _SwapTokenVC: BaseVStackVC {
                         
                         self.sourceWalletView.amountTextField.resignFirstResponder()
                         self.sourceWalletView.amountTextField.isUserInteractionEnabled = false
+                        self.availableSourceBalanceLabel.isUserInteractionEnabled = false
                     }
                 }
                 

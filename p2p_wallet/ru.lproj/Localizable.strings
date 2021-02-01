@@ -213,3 +213,5 @@
 "Slippage settings" = "Настройки проскальзывания";
 "Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used." = "Под проскальзыванием понимается разница между ожидаемой ценой сделки и ценой, по которой сделка выполняется. Проскальзывание может произойти в любое время, но наиболее распространено в периоды повышенной волатильности, когда используются рыночные ордера.";
 "Slippage isn't valid" = "Проскальзывание недействительно";
+"Swapping is currently unavailable" = "Обмен в настоящее время недоступен";
+"Swapping pools not found" = "Пулы обмена не найдены";

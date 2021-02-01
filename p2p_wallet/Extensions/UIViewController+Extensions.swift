@@ -100,4 +100,13 @@ extension UIViewController {
         present(transactionVC, animated: true, completion: nil)
         return transactionVC
     }
+    
+    // MARK: - HUDs
+    func showIndetermineHudWithMessage(_ message: String?) {
+        view.showIndetermineHudWithMessage(message)
+    }
+    
+    func hideHud() {
+        view.hideHud()
+    }
 }

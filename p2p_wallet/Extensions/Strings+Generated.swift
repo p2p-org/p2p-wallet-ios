@@ -318,6 +318,10 @@ internal enum L10n {
   internal static func swappingFromToIsCurrentlyUnsupported(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "Swapping from %@ to %@ is currently unsupported", String(describing: p1), String(describing: p2))
   }
+  /// Swapping is currently unavailable
+  internal static var swappingIsCurrentlyUnavailable: String { L10n.tr("Localizable", "Swapping is currently unavailable") }
+  /// Swapping pools not found
+  internal static var swappingPoolsNotFound: String { L10n.tr("Localizable", "Swapping pools not found") }
   /// Switch language?
   internal static var switchLanguage: String { L10n.tr("Localizable", "Switch language?") }
   /// Switch network?

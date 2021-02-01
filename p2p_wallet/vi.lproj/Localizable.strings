@@ -213,3 +213,5 @@
 "Slippage settings" = "Cài đặt Slippage";
 "Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used." = "Trượt giá (slippage) đề cập đến sự khác biệt giữa giá kỳ vọng của một giao dịch và giá mà giao dịch được thực hiện. Trượt giá có thể xảy ra bất cứ lúc nào nhưng phổ biến nhất trong thời kỳ biến động cao hơn khi các lệnh thị trường được sử dụng.";
 "Slippage isn't valid" = "Slippage không hợp lệ";
+"Swapping is currently unavailable" = "Hoán đổi hiện không khả dụng";
+"Swapping pools not found" = "Không tìm thấy các nhóm hoán đổi";
