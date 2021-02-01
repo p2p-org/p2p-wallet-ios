@@ -213,3 +213,5 @@
 "Slippage settings" = "Paramètres de glissement";
 "Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used." = "Le glissement fait référence à la différence entre le prix attendu d'une transaction et le prix auquel la transaction est exécutée.  Un glissement peut survenir à tout moment, mais il est plus fréquent pendant les périodes de volatilité plus élevée lorsque les ordres du marché sont utilisés.";
 "Slippage isn't valid" = "Le glissement n'est pas valide";
+"Swapping is currently unavailable" = "L'échange est actuellement indisponible";
+"Swapping pools not found" = "Échange de pools introuvable";
