@@ -215,3 +215,9 @@
 "Slippage isn't valid" = "Slippage isn't valid";
 "Swapping is currently unavailable" = "Swapping is currently unavailable";
 "Swapping pools not found" = "Swapping pools not found";
+"Swapping" = "Swapping";
+"Account not found" = "Account not found";
+"PublicKey not found" = "PublicKey not found";
+"Invalid URL" = "Invalid URL";
+"Invalid status code" = "Invalid status code";
+"Unknown error" = "Unknown error";

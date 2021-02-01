@@ -94,4 +94,28 @@ class SwapTokenVM {
             self.minimumReceiveAmount = minReceiveAmount
         }
     }
+    
+    func swap() -> Single<String> {
+        guard let sourceWallet = sourceWallet.value,
+              let sourcePubkey = try? SolanaSDK.PublicKey(string: sourceWallet.pubkey ?? ""),
+              let sourceMint = try? SolanaSDK.PublicKey(string: sourceWallet.mintAddress),
+              let destinationWallet = destinationWallet.value,
+              let destinationMint = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress),
+              
+              let sourceDecimals = sourceWallet.decimals,
+              let amountDouble = amount.value
+        else {
+            return .error(SolanaSDK.Error.other("Params are not valid"))
+        }
+        let amountInUInt64 = UInt64(amountDouble * pow(10, Double(sourceDecimals)))
+        let destinationPubkey = try? SolanaSDK.PublicKey(string: destinationWallet.pubkey ?? "")
+        return SolanaSDK.shared.swap(
+            source: sourcePubkey,
+            sourceMint: sourceMint,
+            destination: destinationPubkey,
+            destinationMint: destinationMint,
+            slippage: slippage.value,
+            amount: amountInUInt64
+        )
+    }
 }
