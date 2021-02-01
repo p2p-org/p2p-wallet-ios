@@ -32,7 +32,7 @@ class MainVC: CollectionVC<MainVCItem> {
     
     // MARK: - Properties
     let interactor = MenuInteractor()
-    var walletsVM: WalletsVM {(viewModel as! MainVM).walletsVM}
+    var walletsVM: WalletsVM {WalletsVM.ofCurrentUser}
     let numberOfWalletsToShow = 4
     
     lazy var avatarImageView = UIImageView(width: 32, height: 32, backgroundColor: .c4c4c4, cornerRadius: 16)
@@ -234,7 +234,7 @@ class MainVC: CollectionVC<MainVCItem> {
         CocoaAction { _ in
             let wallets = self.walletsVM.items
             if wallets.count == 0 {return .just(())}
-            let vc = SwapTokenVC(wallets: wallets)
+            let vc = SwapTokenVC()
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }

@@ -26,9 +26,11 @@ class ListViewModel<T: ListItemType>: BaseVM<[T]> {
     var searchResult: [T]?
     
     // MARK: - Initializer
-    init() {
+    init(prefetch: Bool = true) {
         super.init(initialData: [])
-        reload()
+        if prefetch {
+            reload()
+        }
     }
     
     // MARK: - Methods

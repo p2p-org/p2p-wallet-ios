@@ -10,6 +10,7 @@
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
 		BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */; };
+		BC06825125C156320011542F /* SwapTokenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC06825025C156320011542F /* SwapTokenVM.swift */; };
 		BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */; };
 		BC0978E825AEDEE200DB02E9 /* ResizablePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */; };
 		BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */; };
@@ -155,6 +156,8 @@
 		BCB2232225412AF8002D997F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232125412AF8002D997F /* Assets.xcassets */; };
 		BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232325412AF9002D997F /* LaunchScreen.storyboard */; };
 		BCB2233B25412AF9002D997F /* p2p_walletUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */; };
+		BCB4237125C4078700F8A7A9 /* SwapSlippageSettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237025C4078700F8A7A9 /* SwapSlippageSettingsVC.swift */; };
+		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58359255CE96B00B10F65 /* ProfileVC.swift */; };
 		BCB58360255D231400B10F65 /* BaseVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB5835F255D231400B10F65 /* BaseVM.swift */; };
 		BCB58375255D299700B10F65 /* SendTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58374255D299700B10F65 /* SendTokenVC.swift */; };
@@ -209,6 +212,7 @@
 		BB6790432D1A5F53BBDB3162 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		BB7CFE6A2633569A3CAC841A /* Pods-p2p_walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.release.xcconfig"; sourceTree = "<group>"; };
 		BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LABiometryType+Extensions.swift"; sourceTree = "<group>"; };
+		BC06825025C156320011542F /* SwapTokenVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenVM.swift; sourceTree = "<group>"; };
 		BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLResizableModalVC.swift; sourceTree = "<group>"; };
 		BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizablePresentationController.swift; sourceTree = "<group>"; };
 		BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinLogoImageView.swift; sourceTree = "<group>"; };
@@ -367,6 +371,8 @@
 		BCB2233625412AF9002D997F /* p2p_walletUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = p2p_walletUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = p2p_walletUITests.swift; sourceTree = "<group>"; };
 		BCB2233C25412AF9002D997F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BCB4237025C4078700F8A7A9 /* SwapSlippageSettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapSlippageSettingsVC.swift; sourceTree = "<group>"; };
+		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58359255CE96B00B10F65 /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
 		BCB5835F255D231400B10F65 /* BaseVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVM.swift; sourceTree = "<group>"; };
 		BCB58374255D299700B10F65 /* SendTokenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenVC.swift; sourceTree = "<group>"; };
@@ -484,8 +490,11 @@
 		BC1D2ACA256B6E7A0064E595 /* SwapTokenVC */ = {
 			isa = PBXGroup;
 			children = (
+				BC06825025C156320011542F /* SwapTokenVM.swift */,
 				BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */,
 				BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */,
+				BCB4237025C4078700F8A7A9 /* SwapSlippageSettingsVC.swift */,
+				BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */,
 			);
 			path = SwapTokenVC;
 			sourceTree = "<group>";
@@ -1315,6 +1324,7 @@
 				BC0E7DC225B15B90009AD08B /* ProfileSingleSelectionVC.swift in Sources */,
 				BC3EA47C254FCE9200FB1FEA /* IBPCollectionViewCompositionalLayoutInteroperability.swift in Sources */,
 				BC17577A25788DD200049667 /* Socket.swift in Sources */,
+				BCB4237125C4078700F8A7A9 /* SwapSlippageSettingsVC.swift in Sources */,
 				BCEA06BE2542FD3F0006E4C3 /* Asset+Generated.swift in Sources */,
 				BC3ADE772570A2F8002B3B16 /* RestoreWalletVC.swift in Sources */,
 				BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */,
@@ -1336,6 +1346,7 @@
 				BCA0CFD8255E78D400CD0F8D /* SendTokenItemVC.swift in Sources */,
 				BC32A356254A69EA002156F0 /* WelcomeVC.swift in Sources */,
 				BCB92B7025B5311500FF615E /* SelectAppearanceVC.swift in Sources */,
+				BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */,
 				BC2EC1CE2553ED1B006EEDA5 /* CardPresentationController.swift in Sources */,
 				BC11C9F12591A17D00E399A9 /* MainVM.swift in Sources */,
 				BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */,
@@ -1370,6 +1381,7 @@
 				BCB92B8025B5386F00FF615E /* WLIntroVC.swift in Sources */,
 				BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
+				BC06825125C156320011542F /* SwapTokenVM.swift in Sources */,
 				BC2EC1902553BA2C006EEDA5 /* WDVCSectionHeaderView.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
 				BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */,
