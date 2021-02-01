@@ -211,3 +211,4 @@
 "Exchange rate" = "Exchange rate";
 "per" = "per";
 "Slippage settings" = "Slippage settings";
+"Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used." = "Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used.";
