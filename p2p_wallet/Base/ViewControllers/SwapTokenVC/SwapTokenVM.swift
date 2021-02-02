@@ -58,11 +58,9 @@ class SwapTokenVM {
     
     // MARK: - Helpers
     private func findCurrentPool() {
-        self.currentPool = poolsVM.data.first(
-            where: {
-                $0.swapData.mintA.base58EncodedString == self.sourceWallet.value?.mintAddress &&
-                    $0.swapData.mintB.base58EncodedString == self.destinationWallet.value?.mintAddress
-            }
+        self.currentPool = poolsVM.data.matchedPool(
+            sourceMint: sourceWallet.value?.mintAddress,
+            destinationMint: destinationWallet.value?.mintAddress
         )
     }
     
@@ -101,6 +99,7 @@ class SwapTokenVM {
         let amountInUInt64 = UInt64(amountDouble * pow(10, Double(sourceDecimals)))
         let destinationPubkey = try? SolanaSDK.PublicKey(string: destinationWallet.pubkey ?? "")
         return SolanaSDK.shared.swap(
+            pool: currentPool,
             source: sourcePubkey,
             sourceMint: sourceMint,
             destination: destinationPubkey,
