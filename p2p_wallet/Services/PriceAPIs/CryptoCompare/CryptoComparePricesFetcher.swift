@@ -10,9 +10,12 @@ import RxSwift
 
 class CryptoComparePricesFetcher: PricesFetcher {
     let endpoint = "https://min-api.cryptocompare.com/data"
+    let apikey = "887b4e547fd87338984f7298d0b25dffee49522df82c0b4ed0a301be9ca688c9"
     
     func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[String: CurrentPrice?]> {
-        send("/pricemulti?fsyms=\(coins.joined(separator: ","))&tsyms=\(fiat)", decodedTo: [String: [String: Double]].self)
+        var path = "/pricemulti?"
+//        path += "api_key=\(apikey)&"
+        return send("\(path)fsyms=\(coins.joined(separator: ","))&tsyms=\(fiat)", decodedTo: [String: [String: Double]].self)
             .map {dict in
                 var result = [String: CurrentPrice?]()
                 for key in dict.keys {
@@ -26,7 +29,34 @@ class CryptoComparePricesFetcher: PricesFetcher {
             }
     }
     
-    func getHistoricalPrice(of coinName: String, period: Period) -> Single<[PriceRecord]> {
-        .just([])
+    func getHistoricalPrice(of coinName: String, fiat: String, period: Period) -> Single<[PriceRecord]> {
+        var path = "/v2"
+        switch period {
+        case .last1h:
+            path += "/histominute?limit=60"
+        case .last4h:
+            path += "/histominute?limit=240" //60*4
+        case .day:
+            path += "/histohour?limit=24"
+        case .week:
+            path += "/histoday?limit=7"
+        case .month:
+            path += "/histoday?limit=30"
+        }
+        path += "&"
+//        path += "api_key=\(apikey)&"
+        return send("\(path)fsym=\(coinName)&tsym=\(fiat)", decodedTo: Response.self)
+            .map {$0.Data.Data}
+            .map {
+                $0.map {
+                    PriceRecord(
+                        close: $0.close,
+                        open: $0.open,
+                        low: $0.low,
+                        high: $0.high,
+                        startTime: Date(timeIntervalSince1970: TimeInterval($0.time))
+                    )
+                }
+            }
     }
 }

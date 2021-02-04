@@ -8,5 +8,5 @@
 import Foundation
 
 extension PricesManager {
-    static let shared = PricesManager(fetcher: CryptoComparePricesFetcher())
+    static let shared = PricesManager(fetcher: CryptoComparePricesFetcher(), refreshAfter: 10 * 1000) // 10minutes
 }

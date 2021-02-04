@@ -47,7 +47,8 @@ struct BonfidaPricesFetcher: PricesFetcher {
         }
     }
     
-    func getHistoricalPrice(of coinName: String, period: Period) -> Single<[PriceRecord]> {
+    func getHistoricalPrice(of coinName: String, fiat: String, period: Period) -> Single<[PriceRecord]> {
+        // WARNING: - ignored fiat, use USDT as fiat
         var path = "/candles/\(coinName)USDT"
         
         if let limit = period.limit {
