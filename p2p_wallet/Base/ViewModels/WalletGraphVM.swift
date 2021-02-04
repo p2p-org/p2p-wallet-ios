@@ -18,14 +18,7 @@ class WalletGraphVM: BaseVM<[PriceRecord]> {
     }
     
     override var request: Single<[PriceRecord]> {
-        if wallet.symbol.contains("USD") {
-            return .just([
-                PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Calendar.current.date(byAdding: .day, value: -2, to: Date())!),
-                PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Calendar.current.date(byAdding: .day, value: -1, to: Date())!),
-                PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Date())
-            ])
-        }
-        return PricesManager.shared.fetchHistoricalPrice(for: wallet.symbol, period: period)
+        PricesManager.shared.fetchHistoricalPrice(for: wallet.symbol, period: period)
     }
     
     override func shouldReload() -> Bool {
