@@ -68,7 +68,7 @@ class PricesManager {
     
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
     {
-        fetcher.getHistoricalPrice(of: coinName, period: period)
+        fetcher.getHistoricalPrice(of: coinName, fiat: Defaults.fiat.code, period: period)
             .do(
                 afterSuccess: {
                     Logger.log(message: "Historical price for \(coinName) in \(period): \($0)", event: .response)
