@@ -13,7 +13,7 @@ import RxAlamofire
 protocol PricesFetcher {
     var endpoint: String {get}
     func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[String: CurrentPrice?]>
-    func getHistoricalPrice(of coinName: String, period: Period) -> Single<[PriceRecord]>
+    func getHistoricalPrice(of coinName: String, fiat: String, period: Period) -> Single<[PriceRecord]>
 }
 
 extension PricesFetcher {
