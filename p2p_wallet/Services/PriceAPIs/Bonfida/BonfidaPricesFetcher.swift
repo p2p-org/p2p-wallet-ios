@@ -48,6 +48,15 @@ struct BonfidaPricesFetcher: PricesFetcher {
     }
     
     func getHistoricalPrice(of coinName: String, fiat: String, period: Period) -> Single<[PriceRecord]> {
+        
+        if ["USDT", "USDC", "WUSDC"].contains(coinName) {
+            return .just([
+                PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Calendar.current.date(byAdding: .day, value: -2, to: Date())!),
+                PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Calendar.current.date(byAdding: .day, value: -1, to: Date())!),
+                PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Date())
+            ])
+        }
+        
         // WARNING: - ignored fiat, use USDT as fiat
         var path = "/candles/\(coinName)USDT"
         
