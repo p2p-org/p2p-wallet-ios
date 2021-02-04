@@ -13,25 +13,26 @@ class PricesManager {
     typealias Coin = String
     
     // MARK: - Properties
-    private let coinToCompare = "USDT"
-    private let disposeBag = DisposeBag()
     var fetcher: PricesFetcher
-    let currentPrices = BehaviorRelay<[Coin: CurrentPrice]>(value: [:])
+    private let disposeBag = DisposeBag()
+    
     private var refreshInterval: TimeInterval // Refresh
+    private var timer: Timer?
     var solPrice: CurrentPrice? {currentPrices.value["SOL"]}
+    
     private lazy var supportedCoins: [String] = {
-        var pairs = SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.Network.mainnetBeta)?.map {$0.symbol}.filter {$0 != "USDT" && $0 != "USDC" && $0 != "WUSDC"} ?? [String]()
+        var pairs = SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.Network.mainnetBeta)?.map {$0.symbol} ?? [String]()
         pairs.append("SOL")
         return pairs
     }()
     
-    private var timer: Timer?
+    // MARK: - Subjects
+    let currentPrices = BehaviorRelay<[Coin: CurrentPrice]>(value: [:])
     
     // MARK: - Initializer
     init(fetcher: PricesFetcher, refreshAfter seconds: TimeInterval = 30) {
         self.fetcher = fetcher
         self.refreshInterval = seconds
-        self.updatePriceForUSDType()
     }
     
     deinit {
@@ -55,15 +56,14 @@ class PricesManager {
     
     // get supported coin
     @objc func fetchCurrentPrices() {
-        for coin in supportedCoins {
-            fetcher.getCurrentPrice(from: coin, to: coinToCompare)
-                .subscribe(onSuccess: {[weak self] price in
-                    self?.updateCurrentPrices([coin: price])
-                }, onError: {error in
-                    Logger.log(message: "Error fetching price \(error)", event: .error)
-                })
-                .disposed(by: disposeBag)
-        }
+        fetcher.getCurrentPrices(coins: supportedCoins, toFiat: Defaults.fiat.code)
+            .subscribe(onSuccess: {[weak self] prices in
+                guard let self = self else {return}
+                self.updateCurrentPrices(prices)
+            }, onError: {error in
+                Logger.log(message: "Error fetching price \(error)", event: .error)
+            })
+            .disposed(by: disposeBag)
     }
     
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
@@ -82,15 +82,7 @@ class PricesManager {
 }
 
 extension PricesManager {
-    func updatePriceForUSDType() {
-        var prices = currentPrices.value
-        prices["USDT"] = CurrentPrice(value: 1)
-        prices["USDC"] = CurrentPrice(value: 1)
-        prices["WUSDC"] = CurrentPrice(value: 1)
-        currentPrices.accept(prices)
-    }
-    
-    func updateCurrentPrices(_ newPrices: [Coin: CurrentPrice]) {
+    func updateCurrentPrices(_ newPrices: [Coin: CurrentPrice?]) {
         var prices = currentPrices.value
         for newPrice in newPrices {
             prices[newPrice.key] = newPrice.value
