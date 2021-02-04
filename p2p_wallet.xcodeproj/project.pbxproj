@@ -93,6 +93,7 @@
 		BC490CB0256CB1B0006E7AC9 /* ChooseWalletVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC490CAF256CB1B0006E7AC9 /* ChooseWalletVC.swift */; };
 		BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC490CBD256CB796006E7AC9 /* WalletCell.swift */; };
 		BC490CCC256CCEBC006E7AC9 /* AddNewWalletVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC490CCB256CCEBC006E7AC9 /* AddNewWalletVC.swift */; };
+		BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */; };
 		BC54DCAD25831EAD00A65566 /* BonfidaAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCAC25831EAD00A65566 /* BonfidaAPITests.swift */; };
 		BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCED25837CD600A65566 /* ChartMarker.swift */; };
 		BC54DCF92587089700A65566 /* WalletGraphVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCF82587089700A65566 /* WalletGraphVM.swift */; };
@@ -301,6 +302,7 @@
 		BC490CAF256CB1B0006E7AC9 /* ChooseWalletVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWalletVC.swift; sourceTree = "<group>"; };
 		BC490CBD256CB796006E7AC9 /* WalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCell.swift; sourceTree = "<group>"; };
 		BC490CCB256CCEBC006E7AC9 /* AddNewWalletVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewWalletVC.swift; sourceTree = "<group>"; };
+		BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BonfidaPricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC54DCAC25831EAD00A65566 /* BonfidaAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonfidaAPITests.swift; sourceTree = "<group>"; };
 		BC54DCED25837CD600A65566 /* ChartMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartMarker.swift; sourceTree = "<group>"; };
 		BC54DCF82587089700A65566 /* WalletGraphVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletGraphVM.swift; sourceTree = "<group>"; };
@@ -614,6 +616,16 @@
 			path = ChooseWalletVC;
 			sourceTree = "<group>";
 		};
+		BC5257CD25CBA6A60076317E /* PriceAPIs */ = {
+			isa = PBXGroup;
+			children = (
+				BC7BCB74256274E10018DECA /* PricesManager+Extensions.swift */,
+				BC7BCB6F256274B90018DECA /* PricesManager */,
+				BC7BCB73256274C40018DECA /* BonfidaServices */,
+			);
+			path = PriceAPIs;
+			sourceTree = "<group>";
+		};
 		BC54DD1E2587164F00A65566 /* ChartMarkers */ = {
 			isa = PBXGroup;
 			children = (
@@ -717,7 +729,7 @@
 			isa = PBXGroup;
 			children = (
 				BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */,
-				BC7BCB74256274E10018DECA /* PricesManager+Extensions.swift */,
+				BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */,
 			);
 			path = BonfidaServices;
 			sourceTree = "<group>";
@@ -867,8 +879,7 @@
 				BC6EE771254AEEB300FE1025 /* SolanaSDK+Extensions.swift */,
 				BC6EE77C254BB8F400FE1025 /* Settings.swift */,
 				BC17577925788DD200049667 /* Socket.swift */,
-				BC7BCB6F256274B90018DECA /* PricesManager */,
-				BC7BCB73256274C40018DECA /* BonfidaServices */,
+				BC5257CD25CBA6A60076317E /* PriceAPIs */,
 				BC460ABE257A44310035F6AA /* TransactionsManager.swift */,
 			);
 			path = Services;
@@ -1371,6 +1382,7 @@
 				BCD5E770255130DD00F51299 /* News.swift in Sources */,
 				BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */,
 				BC11CA092591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift in Sources */,
+				BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */,
 				BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
 				BC2EC1782553ABD2006EEDA5 /* MainVC+UICollectionReusableViews.swift in Sources */,
