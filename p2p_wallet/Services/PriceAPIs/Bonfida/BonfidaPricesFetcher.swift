@@ -11,48 +11,40 @@ import RxAlamofire
 import RxSwift
 
 struct BonfidaPricesFetcher: PricesFetcher {
-    struct Response<T: Decodable>: Decodable {
-        let success: Bool?
-        let data: T?
-    }
-    
-    struct ResponsePriceRecord: Decodable {
-        let close: Double?
-        let open: Double?
-        let low: Double?
-        let high: Double?
-        let startTime: Double?
-    }
-    
     let endpoint = "https://serum-api.bonfida.com"
     
-    func send<T: Decodable>(_ path: String, decodedTo: T.Type) -> Single<T> {
-        request(.get, "\(endpoint)\(path)")
-            .validate(statusCode: 200..<300)
-            .validate(contentType: ["application/json"])
-            .responseData()
-            .take(1)
-            .asSingle()
-            .map {try JSONDecoder().decode(T.self, from: $0.1)}
-    }
-    
-    func getCurrentPrice(from: String, to: String) -> Single<CurrentPrice> {
-        send("/candles/\(from)\(to)?limit=1&resolution=86400", decodedTo: Response<[ResponsePriceRecord]>.self)
-            .map {
-                let open: Double = $0.data?.first?.open ?? 0
-                let close: Double = $0.data?.first?.close ?? 0
-                let change24h = close - open
-                let change24hInPercentages = change24h / (open == 0 ? 1: open)
-                return CurrentPrice(
-                    value: close,
-                    change24h: CurrentPrice.Change24h(
-                        value: change24h,
-                        percentage: change24hInPercentages
-                    )
-                )
+    func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[String: CurrentPrice?]> {
+        // WARNING: - ignored fiat, use USDT as fiat
+        Single<(String, CurrentPrice?)>.zip(
+            coins
+                .map { coin in
+                    if ["USDT", "USDC", "WUSDC"].contains(coin) {
+                        return .just((coin, CurrentPrice(value: 1)))
+                    }
+                    return send("/candles/\(coin)USDT?limit=1&resolution=86400", decodedTo: Response<[ResponsePriceRecord]>.self)
+                        .map {
+                            let open: Double = $0.data?.first?.open ?? 0
+                            let close: Double = $0.data?.first?.close ?? 0
+                            let change24h = close - open
+                            let change24hInPercentages = change24h / (open == 0 ? 1: open)
+                            return (coin, CurrentPrice(
+                                value: close,
+                                change24h: CurrentPrice.Change24h(
+                                    value: change24h,
+                                    percentage: change24hInPercentages
+                                )
+                            ))
+                        }
+                        .catchErrorJustReturn((coin, nil))
+                }
+        )
+        .map {prices in
+            var result = [String: CurrentPrice]()
+            for (coin, price) in prices {
+                result[coin] = price
             }
-            .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
-            .observeOn(MainScheduler.instance)
+            return result
+        }
     }
     
     func getHistoricalPrice(of coinName: String, period: Period) -> Single<[PriceRecord]> {
@@ -81,7 +73,7 @@ struct BonfidaPricesFetcher: PricesFetcher {
     }
 }
 
-extension Period {
+private extension Period {
     var resolution: UInt {
         switch self {
         case .last1h:

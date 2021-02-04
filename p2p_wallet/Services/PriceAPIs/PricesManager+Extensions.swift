@@ -8,5 +8,5 @@
 import Foundation
 
 extension PricesManager {
-    static let shared = PricesManager(fetcher: BonfidaPricesFetcher())
+    static let shared = PricesManager(fetcher: CryptoComparePricesFetcher())
 }
