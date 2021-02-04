@@ -11,6 +11,8 @@ extension UIUserInterfaceStyle: DefaultsSerializable {}
 
 extension SolanaSDK.Network: DefaultsSerializable {}
 
+extension Fiat: DefaultsSerializable {}
+
 extension DefaultsKeys {
     var didSetEnableBiometry: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var isBiometryEnabled: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
@@ -20,4 +22,5 @@ extension DefaultsKeys {
     var localizedLanguage: DefaultsKey<LocalizedLanguage> {.init(#function, defaultValue: LocalizedLanguage(code: String(Locale.preferredLanguages[0].prefix(2))))}
     var appearance: DefaultsKey<UIUserInterfaceStyle> {.init(#function, defaultValue: .unspecified)}
     var slippage: DefaultsKey<Double> {.init(#function, defaultValue: 0.1)}
+    var fiat: DefaultsKey<Fiat> {.init(#function, defaultValue: .usd)}
 }

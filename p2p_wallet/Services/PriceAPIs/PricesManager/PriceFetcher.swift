@@ -8,6 +8,27 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import RxAlamofire
+
+protocol PricesFetcher {
+    var endpoint: String {get}
+    func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[CurrentPrice]>
+    func getHistoricalPrice(of coinName: String, period: Period) -> Single<[PriceRecord]>
+}
+
+extension PricesFetcher {
+    func send<T: Decodable>(_ path: String, decodedTo: T.Type) -> Single<T> {
+        request(.get, "\(endpoint)\(path)")
+            .validate(statusCode: 200..<300)
+            .validate(contentType: ["application/json"])
+            .responseData()
+            .take(1)
+            .asSingle()
+            .map {try JSONDecoder().decode(T.self, from: $0.1)}
+            .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
+            .observeOn(MainScheduler.instance)
+    }
+}
 
 struct CurrentPrice: Hashable {
     struct Change24h: Hashable {
@@ -51,9 +72,4 @@ enum Period: String, CaseIterable {
         }
         return string
     }
-}
-
-protocol PricesFetcher {
-    func getCurrentPrice(from: String, to: String) -> Single<CurrentPrice>
-    func getHistoricalPrice(of coinName: String, period: Period) -> Single<[PriceRecord]>
 }
