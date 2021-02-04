@@ -27,7 +27,32 @@ class CryptoComparePricesFetcher: PricesFetcher {
             }
     }
     
-    func getHistoricalPrice(of coinName: String, period: Period) -> Single<[PriceRecord]> {
-        .just([])
+    func getHistoricalPrice(of coinName: String, fiat: String, period: Period) -> Single<[PriceRecord]> {
+        var path = "/v2"
+        switch period {
+        case .last1h:
+            path += "/histominute?limit=60"
+        case .last4h:
+            path += "/histominute?limit=240" //60*4
+        case .day:
+            path += "/histohour?limit=24"
+        case .week:
+            path += "/histoday?limit=7"
+        case .month:
+            path += "/histoday?limit=30"
+        }
+        return send("\(path)&api_key=\(apikey)&fsym=\(coinName)&tsym=\(fiat)", decodedTo: Response.self)
+            .map {$0.Data.Data}
+            .map {
+                $0.map {
+                    PriceRecord(
+                        close: $0.close,
+                        open: $0.open,
+                        low: $0.low,
+                        high: $0.high,
+                        startTime: Date(timeIntervalSince1970: TimeInterval($0.time))
+                    )
+                }
+            }
     }
 }
