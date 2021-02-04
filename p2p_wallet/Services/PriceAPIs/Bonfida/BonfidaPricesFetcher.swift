@@ -13,13 +13,13 @@ import RxSwift
 struct BonfidaPricesFetcher: PricesFetcher {
     let endpoint = "https://serum-api.bonfida.com"
     
-    func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[CurrentPrice]> {
+    func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[String: CurrentPrice?]> {
         // WARNING: - ignored fiat, use USDT as fiat
-        Single.zip(
+        Single<(String, CurrentPrice?)>.zip(
             coins
                 .map { coin in
                     if ["USDT", "USDC", "WUSDC"].contains(coin) {
-                        return .just(CurrentPrice(value: 1))
+                        return .just((coin, CurrentPrice(value: 1)))
                     }
                     return send("/candles/\(coin)USDT?limit=1&resolution=86400", decodedTo: Response<[ResponsePriceRecord]>.self)
                         .map {
@@ -27,16 +27,24 @@ struct BonfidaPricesFetcher: PricesFetcher {
                             let close: Double = $0.data?.first?.close ?? 0
                             let change24h = close - open
                             let change24hInPercentages = change24h / (open == 0 ? 1: open)
-                            return CurrentPrice(
+                            return (coin, CurrentPrice(
                                 value: close,
                                 change24h: CurrentPrice.Change24h(
                                     value: change24h,
                                     percentage: change24hInPercentages
                                 )
-                            )
+                            ))
                         }
+                        .catchErrorJustReturn((coin, nil))
                 }
         )
+        .map {prices in
+            var result = [String: CurrentPrice]()
+            for (coin, price) in prices {
+                result[coin] = price
+            }
+            return result
+        }
     }
     
     func getHistoricalPrice(of coinName: String, period: Period) -> Single<[PriceRecord]> {

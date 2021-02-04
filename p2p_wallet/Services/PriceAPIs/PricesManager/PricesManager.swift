@@ -59,9 +59,7 @@ class PricesManager {
         fetcher.getCurrentPrices(coins: supportedCoins, toFiat: Defaults.fiat.code)
             .subscribe(onSuccess: {[weak self] prices in
                 guard let self = self else {return}
-                for (index, coin) in self.supportedCoins.enumerated() {
-                    self.updateCurrentPrices([coin: prices[index]])
-                }
+                self.updateCurrentPrices(prices)
             }, onError: {error in
                 Logger.log(message: "Error fetching price \(error)", event: .error)
             })
@@ -84,7 +82,7 @@ class PricesManager {
 }
 
 extension PricesManager {
-    func updateCurrentPrices(_ newPrices: [Coin: CurrentPrice]) {
+    func updateCurrentPrices(_ newPrices: [Coin: CurrentPrice?]) {
         var prices = currentPrices.value
         for newPrice in newPrices {
             prices[newPrice.key] = newPrice.value

@@ -12,7 +12,7 @@ import RxAlamofire
 
 protocol PricesFetcher {
     var endpoint: String {get}
-    func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[CurrentPrice]>
+    func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[String: CurrentPrice?]>
     func getHistoricalPrice(of coinName: String, period: Period) -> Single<[PriceRecord]>
 }
 
@@ -24,6 +24,11 @@ extension PricesFetcher {
             .responseData()
             .take(1)
             .asSingle()
+            .do(onSuccess: {response in
+                Logger.log(message: String(data: response.1, encoding: .utf8) ?? "", event: .response, apiMethod: "getPrices")
+            }, onSubscribe: {
+                Logger.log(message: "\(endpoint)\(path)", event: .request, apiMethod: "getPrices")
+            })
             .map {try JSONDecoder().decode(T.self, from: $0.1)}
             .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
             .observeOn(MainScheduler.instance)
