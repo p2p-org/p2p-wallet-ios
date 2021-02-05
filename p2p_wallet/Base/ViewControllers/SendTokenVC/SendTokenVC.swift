@@ -23,17 +23,7 @@ class SendTokenVC: WLModalWrapperVC {
     
     override func setUp() {
         super.setUp()
-        stackView.axis = .horizontal
-        stackView.spacing = 16
-        stackView.addArrangedSubviews([
-            UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
-                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
-            UILabel(text: L10n.send, textSize: 17, weight: .semibold)
-        ])
-        
-        let separator = UIView.separator(height: 1, color: .separator)
-        containerView.addSubview(separator)
-        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        addHeader(title: L10n.send, image: .walletSend)
     }
 }
 

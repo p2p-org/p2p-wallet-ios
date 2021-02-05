@@ -35,4 +35,24 @@ class WLModalWrapperVC: WLModalVC {
         vc.didMove(toParent: self)
     }
     
+    // MARK: - Helpers
+    func addHeader(title: String, image: UIImage? = nil) {
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        var subviews = [UIView]()
+        if let image = image {
+            subviews.append(
+                UIImageView(width: 24, height: 24, image: image, tintColor: .white)
+                    .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
+            )
+        }
+        subviews.append(
+            UILabel(text: title, textSize: 17, weight: .semibold)
+        )
+        stackView.addArrangedSubviews(subviews)
+        
+        let separator = UIView.separator(height: 1, color: .separator)
+        containerView.addSubview(separator)
+        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+    }
 }
