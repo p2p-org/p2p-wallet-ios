@@ -16,10 +16,6 @@ class WLModalWrapperVC: WLModalVC {
         super.init()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func setUp() {
         super.setUp()
         vc.view.translatesAutoresizingMaskIntoConstraints = false

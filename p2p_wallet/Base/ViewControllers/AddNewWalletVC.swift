@@ -28,10 +28,6 @@ class AddNewWalletVC: WLModalWrapperVC {
         super.init(wrapped: _AddNewWalletVC())
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func setUp() {
         super.setUp()
         stackView.addArrangedSubviews([
@@ -77,10 +73,6 @@ class _AddNewWalletVC: WalletsVC {
         super.init(viewModel: viewModel)
         modalPresentationStyle = .custom
         transitioningDelegate = self
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func setUp() {

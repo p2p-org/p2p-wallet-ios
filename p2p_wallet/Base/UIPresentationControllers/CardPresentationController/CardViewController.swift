@@ -13,14 +13,10 @@ class CardViewController: BaseVStackVC {
     
     init(contentView: UIView) {
         self.contentView = contentView
-        super.init(nibName: nil, bundle: nil)
+        super.init()
         
         transitioningDelegate = self
         modalPresentationStyle = .custom
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func setUp() {

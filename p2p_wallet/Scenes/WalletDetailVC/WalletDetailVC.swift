@@ -28,10 +28,6 @@ class WalletDetailVC: WLModalWrapperVC {
         super.init(wrapped: _WalletDetailVC(wallet: wallet))
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.bringSubviewToFront(tabBar)
@@ -145,10 +141,6 @@ private class _WalletDetailVC: CollectionVC<Transaction> {
     init(wallet: Wallet) {
         self.wallet = wallet
         super.init(viewModel: ViewModel(wallet: wallet))
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Methods
