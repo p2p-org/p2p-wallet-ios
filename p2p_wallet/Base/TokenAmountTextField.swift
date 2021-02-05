@@ -9,6 +9,9 @@ import Foundation
 
 class TokenAmountTextField: BEDecimalTextField {
     var wallet: Wallet?
+    var value: Double {
+        text.map {$0.double ?? 0} ?? 0
+    }
     
     override func shouldChangeCharactersInRange(_ range: NSRange, replacementString string: String) -> Bool {
         // get the current text, or use an empty string if that failed
