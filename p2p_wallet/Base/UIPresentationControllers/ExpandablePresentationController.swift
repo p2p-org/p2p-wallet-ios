@@ -73,18 +73,18 @@ class ExpandablePresentationController: DimmingPresentationController, Resizable
             
             // calculate distances
             let distanceToTop = abs(minTop - currentTop!)
-            let distanceToCenter = abs(containerView!.frame.size.height / 2 - currentTop!)
-            let distanceToBottom = abs(containerView!.bounds.height - currentTop!)
+            let distanceToCenter = containerView!.frame.size.height / 2 - currentTop!
+            let distanceToBottom = containerView!.bounds.height - currentTop!
             
             // Dismiss when presentedView is close to bottom
-            if distanceToBottom < distanceToCenter {
+            if distanceToCenter < 0, distanceToBottom < abs(distanceToCenter) * 3 {
                 presentedViewController
                     .dismiss(animated: true, completion: nil)
                 return
             }
             
             // Define coverType
-            if distanceToTop > distanceToCenter{
+            if distanceToTop > abs(distanceToCenter) {
                 coverType = .haft
             } else {
                 coverType = .full
