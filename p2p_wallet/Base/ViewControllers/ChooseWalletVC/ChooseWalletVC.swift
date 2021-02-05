@@ -39,7 +39,7 @@ class ChooseWalletVC: WLModalWrapperVC, UIViewControllerTransitioningDelegate {
     }
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        HalfSizePresentationController(presentedViewController: presented, presenting: presenting)
+        ExpandablePresentationController(presentedViewController: presented, presenting: presenting)
     }
 }
 
