@@ -18,10 +18,6 @@ class SwapTokenVC: WLModalWrapperVC {
         super.init(wrapped: vc)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func setUp() {
         super.setUp()
         stackView.axis = .horizontal
@@ -74,15 +70,11 @@ class _SwapTokenVC: BaseVStackVC {
         .onTap(self, action: #selector(buttonSwapDidTouch))
     
     init(from fromWallet: Wallet? = nil, to toWallet: Wallet? = nil) {
-        super.init(nibName: nil, bundle: nil)
+        super.init()
         defer {
             self.viewModel.sourceWallet.accept(fromWallet ?? viewModel.wallets.first(where: {$0.symbol == "SOL"}))
             self.viewModel.destinationWallet.accept(toWallet)
         }
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func setUp() {

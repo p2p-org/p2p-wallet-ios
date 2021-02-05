@@ -14,10 +14,6 @@ class WLCenterSheet: FlexibleHeightVC {
         super.init(position: .center)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func fittingHeightInContainer(frame: CGRect) -> CGFloat {
         super.fittingHeightInContainer(frame: frame)
             - 32 // unknown why

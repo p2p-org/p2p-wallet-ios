@@ -51,10 +51,6 @@ class MainVC: CollectionVC<MainVCItem> {
         super.init(viewModel: vm)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     // MARK: - Methods
     override func setUp() {
         super.setUp()
