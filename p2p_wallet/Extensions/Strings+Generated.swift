@@ -292,6 +292,8 @@ internal enum L10n {
   internal static var security: String { L10n.tr("Localizable", "Security") }
   /// security keys
   internal static var securityKeys: String { L10n.tr("Localizable", "security keys") }
+  /// Select wallet
+  internal static var selectWallet: String { L10n.tr("Localizable", "Select wallet") }
   /// Send
   internal static var send: String { L10n.tr("Localizable", "Send") }
   /// Send coins
