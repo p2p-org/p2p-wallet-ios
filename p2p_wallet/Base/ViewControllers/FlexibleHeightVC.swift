@@ -41,13 +41,9 @@ class FlexibleHeightVC: BaseVStackVC, UIViewControllerTransitioningDelegate {
     init(position: FlexibleHeightPresentationController.Position)
     {
         self.position = position
-        super.init(nibName: nil, bundle: nil)
+        super.init()
         transitioningDelegate = self
         modalPresentationStyle = .custom
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     func fittingHeightInContainer(frame: CGRect) -> CGFloat {

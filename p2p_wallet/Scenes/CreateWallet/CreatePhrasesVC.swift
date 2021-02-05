@@ -21,11 +21,7 @@ class PhrasesVC: BaseVStackVC {
     
     init(phrases: [String] = []) {
         self.phrases.accept(phrases)
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init()
     }
     
     override func setUp() {
