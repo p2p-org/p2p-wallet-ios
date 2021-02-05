@@ -224,3 +224,10 @@
 "Invalid status code" = "Mã trạng thái không hợp lệ";
 "Unknown error" = "Lỗi không thể nhận biết";
 "Select wallet" = "Chọn ví";
+"Send to" = "Gửi đến";
+"wallet_rename" = " ";
+"1h" = "1h";
+"4h" = "4h";
+"1d" = "1d";
+"1w" = "1w";
+"1m" = "1m";
