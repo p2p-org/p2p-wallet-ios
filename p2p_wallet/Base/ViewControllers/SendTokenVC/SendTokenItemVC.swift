@@ -24,7 +24,7 @@ class SendTokenItemVC: BaseVC {
     // MARK: - Subviews
     lazy var balanceLabel = UILabel(text: "0", textColor: .h5887ff)
         .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
-    lazy var coinImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 22)
+    lazy var coinImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 12)
         .onTap(self, action: #selector(buttonChooseWalletDidTouch))
     lazy var amountTextField = TokenAmountTextField(
         font: .systemFont(ofSize: 27, weight: .semibold),
@@ -46,7 +46,7 @@ class SendTokenItemVC: BaseVC {
     
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
-    lazy var feeLabel = LazyLabel<Double>(textSize: 15)
+    lazy var feeLabel = LazyLabel<Double>(textSize: 15, textColor: .textSecondary)
     
     // MARK: - Methods
     override func setUp() {
@@ -57,7 +57,7 @@ class SendTokenItemVC: BaseVC {
         
         stackView.addArrangedSubviews([
             UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
-                UILabel(text: L10n.from, weight: .medium),
+                UILabel(text: L10n.from, weight: .bold),
                 balanceLabel
             ]),
             BEStackViewSpacing(30),
@@ -85,11 +85,11 @@ class SendTokenItemVC: BaseVC {
             
             UIView.col([
                 .row([
-                    UILabel(text: "1 " + (wallet?.symbol ?? "") + ":", textSize: 15),
-                    UILabel(text: (wallet?.price?.value?.toString(maximumFractionDigits: 9) ?? "") + " US$", textSize: 15)
+                    UILabel(text: "1 " + (wallet?.symbol ?? "") + ":", textSize: 15, textColor: .textSecondary),
+                    UILabel(text: (wallet?.price?.value?.toString(maximumFractionDigits: 9) ?? "") + " US$", textSize: 15, textColor: .textSecondary)
                 ]),
                 .row([
-                    UILabel(text: L10n.fee + ":", textSize: 15),
+                    UILabel(text: L10n.fee + ":", textSize: 15, textColor: .textSecondary),
                     feeLabel
                 ])
             ]),
@@ -99,7 +99,7 @@ class SendTokenItemVC: BaseVC {
             BEStackViewSpacing(20),
             
             UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.to, textSize: 15, weight: .semibold),
+                UILabel(text: L10n.sendTo, textSize: 15, weight: .bold),
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
                     addressTextView, qrCodeImageView
                 ])

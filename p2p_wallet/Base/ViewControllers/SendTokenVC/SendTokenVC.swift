@@ -154,7 +154,7 @@ class _SendTokenVC: BEPagesVC, LoadableView {
     }
     
     override func setUpPageControl() {
-        stackView.addArrangedSubview(pageControl)
+//        stackView.addArrangedSubview(pageControl)
     }
     
     @objc func viewDidTouch() {
