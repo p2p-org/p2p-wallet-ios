@@ -12,10 +12,6 @@ class MyProductsVC: WLModalWrapperVC {
         super.init(wrapped: _MyProductsVC())
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func setUp() {
         super.setUp()
         stackView.axis = .horizontal

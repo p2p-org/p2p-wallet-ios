@@ -27,10 +27,6 @@ class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
         }
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func setUp() {
         title = L10n.language
         super.setUp()

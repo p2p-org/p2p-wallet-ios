@@ -17,10 +17,6 @@ class EnterPhrasesVC: WLModalWrapperVC {
         super.init(wrapped: vc)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         bottomView.backgroundColor = .h2f2f2f
