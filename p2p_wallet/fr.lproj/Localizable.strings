@@ -223,3 +223,9 @@
 "Unknown error" = "Erreur inconnue";
 "Select wallet" = "Sélectionnez le portefeuille";
 "Send to" = "Envoyer à";
+"wallet_rename" = " ";
+"1h" = "1h";
+"4h" = "4h";
+"1d" = "1d";
+"1w" = "1w";
+"1m" = "1m";
