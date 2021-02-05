@@ -97,6 +97,7 @@
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */; };
 		BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */; };
+		BC5258CE25CD2B1E0076317E /* SendTokenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5258CD25CD2B1E0076317E /* SendTokenVM.swift */; };
 		BC54DCAD25831EAD00A65566 /* BonfidaAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCAC25831EAD00A65566 /* BonfidaAPITests.swift */; };
 		BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCED25837CD600A65566 /* ChartMarker.swift */; };
 		BC54DCF92587089700A65566 /* WalletGraphVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCF82587089700A65566 /* WalletGraphVM.swift */; };
@@ -309,6 +310,7 @@
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcher.swift; sourceTree = "<group>"; };
 		BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoComparePricesFetcher+Models.swift"; sourceTree = "<group>"; };
+		BC5258CD25CD2B1E0076317E /* SendTokenVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenVM.swift; sourceTree = "<group>"; };
 		BC54DCAC25831EAD00A65566 /* BonfidaAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonfidaAPITests.swift; sourceTree = "<group>"; };
 		BC54DCED25837CD600A65566 /* ChartMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartMarker.swift; sourceTree = "<group>"; };
 		BC54DCF82587089700A65566 /* WalletGraphVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletGraphVM.swift; sourceTree = "<group>"; };
@@ -783,6 +785,7 @@
 			isa = PBXGroup;
 			children = (
 				BCB58374255D299700B10F65 /* SendTokenVC.swift */,
+				BC5258CD25CD2B1E0076317E /* SendTokenVM.swift */,
 				BCA0CFD7255E78D400CD0F8D /* SendTokenItemVC.swift */,
 			);
 			path = SendTokenVC;
@@ -1440,6 +1443,7 @@
 				BC31223C2580B37E00F3B14F /* CreatePassCodeVC.swift in Sources */,
 				BC2EC1F92553FF6A006EEDA5 /* DashedButton.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */,
+				BC5258CE25CD2B1E0076317E /* SendTokenVM.swift in Sources */,
 				BC6EE7DA254BC1A800FE1025 /* SecuritySettingVC.swift in Sources */,
 				BC7BCB75256274E10018DECA /* PricesManager+Extensions.swift in Sources */,
 				BC2EC18B2553B700006EEDA5 /* WalletDetailVC.swift in Sources */,
