@@ -35,7 +35,7 @@ class SendTokenItemVC: BaseVC {
     )
     lazy var changeModeButton = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
         .onTap(self, action: #selector(modeSwitcherDidTouch))
-    lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .textSecondary)
+    lazy var equityValueLabel = UILabel(text: "≈", textSize: 13, textColor: .textSecondary)
     lazy var addressTextView: UITextView = {
         let textView = UITextView(forExpandable: ())
         textView.backgroundColor = .clear
@@ -127,7 +127,7 @@ class SendTokenItemVC: BaseVC {
         
         dataDidChange
             .skip(1)
-            .subscribe(onNext: {(amount, _, isUSDMode) in
+            .subscribe(onNext: {(_, _, isUSDMode) in
                 guard let wallet = self.wallet else {return}
                 
                 // balance label
@@ -150,8 +150,21 @@ class SendTokenItemVC: BaseVC {
                 balanceLabelText += " \(symbol)"
                 self.balanceLabel.text = balanceLabelText
                 
+                // equity value label
+                var equityValue = self.amountTextField.value * wallet.priceInUSD
+                var equityValueSymbol = "USD"
+                if isUSDMode {
+                    if let price = wallet.priceInUSD,
+                       price != 0 {
+                        equityValue = self.amountTextField.value / price
+                    }
+                    
+                    equityValueSymbol = wallet.symbol
+                }
+                self.equityValueLabel.text = equityValue.toString(maximumFractionDigits: 9) + " " + equityValueSymbol
+                
                 // change mode button
-                self.changeModeButton.text = isUSDMode ? "USD": self.wallet?.symbol
+                self.changeModeButton.text = symbol
                 
                 // validate error
                 self.handleError()
