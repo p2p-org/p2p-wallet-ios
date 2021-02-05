@@ -84,10 +84,10 @@ class ExpandablePresentationController: DimmingPresentationController, Resizable
             }
             
             // Define coverType
-            if distanceToTop > abs(distanceToCenter) {
-                coverType = .haft
-            } else {
+            if distanceToTop < abs(distanceToCenter) * 3 {
                 coverType = .full
+            } else {
+                coverType = .haft
             }
             
             currentTop = nil
