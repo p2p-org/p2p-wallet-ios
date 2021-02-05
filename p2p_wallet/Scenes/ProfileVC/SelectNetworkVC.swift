@@ -18,10 +18,6 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
         }
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func setUp() {
         title = L10n.network
         super.setUp()

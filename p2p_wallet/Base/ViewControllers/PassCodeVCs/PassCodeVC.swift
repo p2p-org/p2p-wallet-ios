@@ -39,13 +39,9 @@ class PassCodeVC: BEViewController, THPinViewControllerDelegate {
         set {embededPinVC.leftBottomButton = newValue}
     }
     
-    init() {
-        super.init(nibName: nil, bundle: nil)
+    override init() {
+        super.init()
         embededPinVC = THPinViewController(delegate: self)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {

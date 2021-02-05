@@ -29,10 +29,6 @@ class ChooseWalletVC: WLModalWrapperVC, UIViewControllerTransitioningDelegate {
         transitioningDelegate = self
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func setUp() {
         super.setUp()
         addHeader(title: L10n.selectWallet)
@@ -54,10 +50,6 @@ class _ChooseWalletVC: MyWalletsVC {
             modalPresentationStyle = .custom
             transitioningDelegate = self
         }
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func filter(_ items: [Wallet]) -> [Wallet] {

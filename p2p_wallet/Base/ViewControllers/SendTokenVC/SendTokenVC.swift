@@ -17,10 +17,6 @@ class SendTokenVC: WLModalWrapperVC {
         super.init(wrapped: vc)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func setUp() {
         super.setUp()
         addHeader(title: L10n.send, image: .walletSend)
@@ -47,11 +43,7 @@ class _SendTokenVC: BEPagesVC, LoadableView {
     init(selectedWalletPubkey: String? = nil, destinationAddress: String? = nil) {
         initialSelectedWalletPubkey = selectedWalletPubkey
         initialDestinationAddress = destinationAddress
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init()
     }
     
     override func setUp() {

@@ -14,10 +14,6 @@ class WLResizableModalVC: WLModalVC, UIViewControllerTransitioningDelegate {
         transitioningDelegate = self
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         ExpandablePresentationController(presentedViewController: presented, presenting: presenting)
     }

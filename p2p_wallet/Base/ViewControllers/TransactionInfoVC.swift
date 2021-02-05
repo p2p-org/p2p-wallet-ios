@@ -15,11 +15,7 @@ class TransactionInfoVC: BaseVStackVC {
     // MARK: - Initializers
     init(transaction: Transaction) {
         self.transaction = transaction
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init()
     }
     
     // MARK: - Methods
