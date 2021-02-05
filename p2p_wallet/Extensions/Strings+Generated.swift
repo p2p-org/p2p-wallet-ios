@@ -296,6 +296,8 @@ internal enum L10n {
   internal static var sendCoins: String { L10n.tr("Localizable", "Send coins") }
   /// Send Now
   internal static var sendNow: String { L10n.tr("Localizable", "Send Now") }
+  /// Send to
+  internal static var sendTo: String { L10n.tr("Localizable", "Send to") }
   /// Send to your wallet
   internal static var sendToYourWallet: String { L10n.tr("Localizable", "Send to your wallet") }
   /// Send tokens
