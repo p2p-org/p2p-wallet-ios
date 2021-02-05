@@ -310,10 +310,6 @@ extension _AddNewWalletVC {
         override func commonInit() {
             super.commonInit()
             
-            coinLogoImageView.widthConstraint?.constant = 44
-            coinLogoImageView.heightConstraint?.constant = 44
-            coinLogoImageView.layer.cornerRadius = 22
-            
             coinNameLabel.font = .systemFont(ofSize: 12, weight: .medium)
             coinNameLabel.textColor = .textSecondary
             
