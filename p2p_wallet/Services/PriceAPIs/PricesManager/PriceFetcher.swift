@@ -65,15 +65,15 @@ enum Period: String, CaseIterable {
         var string = ""
         switch self {
         case .last1h:
-            string = "1h"
+            string = L10n._1h
         case .last4h:
-            string = "4h"
+            string = L10n._4h
         case .day:
-            string = "1d"
+            string = L10n._1d
         case .week:
-            string = "1w"
+            string = L10n._1w
         case .month:
-            string = "1m"
+            string = L10n._1m
         }
         return string
     }

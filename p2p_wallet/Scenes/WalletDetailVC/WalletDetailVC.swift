@@ -50,7 +50,7 @@ class WalletDetailVC: WLModalWrapperVC {
                 walletNameTextField
                     .withContentHuggingPriority(.required, for: .horizontal),
                 BEStackViewSpacing(0),
-                UILabel(text: " wallet", textSize: 19, weight: .semibold),
+                UILabel(text: " \(L10n.walletRename)", textSize: 19, weight: .semibold),
                 BEStackViewSpacing(10),
                 UIImageView(width: 16, height: 18, image: .buttonEdit, tintColor: .a3a5ba)
                     .onTap(self, action: #selector(buttonEditDidTouch))
