@@ -52,8 +52,8 @@ class WalletDetailVC: WLModalWrapperVC {
                 BEStackViewSpacing(0),
                 UILabel(text: " wallet", textSize: 19, weight: .semibold),
                 BEStackViewSpacing(10),
-                UIImageView(width: 16, height: 18, image: .buttonEdit, tintColor: .a3a5ba)
-                    .onTap(self, action: #selector(buttonEditDidTouch))
+//                UIImageView(width: 16, height: 18, image: .buttonEdit, tintColor: .a3a5ba)
+//                    .onTap(self, action: #selector(buttonEditDidTouch))
             ])
                 .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(20),
