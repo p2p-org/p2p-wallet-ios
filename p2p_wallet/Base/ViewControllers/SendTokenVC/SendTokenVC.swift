@@ -122,7 +122,7 @@ class _SendTokenVC: BEPagesVC, LoadableView {
         let vcs = viewControllers.map {$0 as! SendTokenItemVC}.enumerated()
         
         Observable.merge(vcs.map { (index, vc) in
-            vc.dataObservable
+            vc.dataDidChange
                 .map {_ in vc.isDataValid}
                 .filter {_ in index == self.currentPage}
         })
@@ -148,17 +148,26 @@ class _SendTokenVC: BEPagesVC, LoadableView {
               let vc = viewControllers[currentPage] as? SendTokenItemVC,
               let sender = vc.wallet?.pubkey,
               let receiver = vc.addressTextView.text,
-              vc.textFieldValueInToken > 0
+              let price = vc.wallet?.priceInUSD,
+              price > 0
         else {
             return
+        }
+        
+        var amount = vc.amountTextField.value
+        if vc.isUSDMode.value,
+           let price = vc.wallet?.priceInUSD,
+           price > 0
+        {
+            amount = amount / price
         }
         
         let transactionVC = presentProcessTransactionVC()
         
         // prepare amount
-        let amountToSend = UInt64(vc.textFieldValueInToken * pow(10, Double(vc.wallet?.decimals ?? 0)))
+        let lamport = UInt64(amount * pow(10, Double(vc.wallet?.decimals ?? 0)))
         
-        SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: amountToSend)
+        SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: lamport)
             .subscribe(onSuccess: { signature in
                 transactionVC.signature = signature
                 transactionVC.viewInExplorerButton.rx.action = CocoaAction {
@@ -180,7 +189,7 @@ class _SendTokenVC: BEPagesVC, LoadableView {
                 let transaction = Transaction(
                     signatureInfo: .init(signature: signature),
                     type: .send,
-                    amount: -vc.textFieldValueInToken,
+                    amount: -amount,
                     symbol: vc.wallet?.symbol ?? "",
                     status: .processing
                 )
