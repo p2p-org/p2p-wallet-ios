@@ -95,7 +95,11 @@ extension _ChooseWalletVC {
         override func commonInit() {
             super.commonInit()
             stackView.alignment = .center
+            stackView.constraintToSuperviewWithAttribute(.bottom)?
+                .constant = -16
+            
             coinNameLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+            coinNameLabel.numberOfLines = 1
             equityValueLabel.font = .systemFont(ofSize: 17, weight: .semibold)
             tokenCountLabel.font = .systemFont(ofSize: 13)
             
