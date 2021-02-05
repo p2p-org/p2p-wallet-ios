@@ -22,7 +22,7 @@ class SendTokenItemVC: BaseVC {
     var textFieldValueInToken: Double {price != 0 ? textFieldValue / price: 0}
     
     // MARK: - Subviews
-    lazy var balanceLabel = UILabel(text: "0", textColor: .h5887ff)
+    lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .h5887ff)
         .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
     lazy var coinImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 12)
         .onTap(self, action: #selector(buttonChooseWalletDidTouch))
