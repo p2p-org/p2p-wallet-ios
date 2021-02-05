@@ -166,8 +166,7 @@ class _SwapTokenVC: BaseVStackVC {
         }
         
         destinationWalletView.chooseTokenAction = CocoaAction {
-            let vc = ChooseWalletVC()
-            vc.customFilter = {_ in true}
+            let vc = ChooseWalletVC(customFilter: {_ in true})
             vc.completion = {wallet in
                 let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
                 self.viewModel.destinationWallet.accept(wallet)
