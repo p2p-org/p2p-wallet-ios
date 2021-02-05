@@ -8,21 +8,21 @@
 import Foundation
 import RxSwift
 import Action
+import RxCocoa
 
 class SendTokenItemVC: BaseVC {
     // MARK: - Properties
     var wallet: Wallet?
-    lazy var dataObservable = Observable.combineLatest(
+    lazy var dataDidChange = Observable.combineLatest(
         amountTextField.rx.text.orEmpty.map {$0.double ?? 0},
-        addressTextView.rx.text.orEmpty
+        addressTextView.rx.text.orEmpty,
+        isUSDMode
     ).share()
     var chooseWalletAction: CocoaAction?
-    var price: Double {wallet?.price?.value ?? 0}
-    var textFieldValue: Double {amountTextField.text.map {$0.double ?? 0} ?? 0}
-    var textFieldValueInToken: Double {price != 0 ? textFieldValue / price: 0}
+    let isUSDMode = BehaviorRelay<Bool>(value: false)
     
     // MARK: - Subviews
-    lazy var balanceLabel = UILabel(text: "0", textColor: .h5887ff)
+    lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .h5887ff)
         .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
     lazy var coinImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 12)
         .onTap(self, action: #selector(buttonChooseWalletDidTouch))
@@ -33,7 +33,9 @@ class SendTokenItemVC: BaseVC {
         placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
         autocorrectionType: .no
     )
-    lazy var equityValueLabel = UILabel(text: "=", textSize: 13, textColor: .textSecondary)
+    lazy var changeModeButton = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
+        .onTap(self, action: #selector(modeSwitcherDidTouch))
+    lazy var equityValueLabel = UILabel(text: "≈", textSize: 13, textColor: .textSecondary)
     lazy var addressTextView: UITextView = {
         let textView = UITextView(forExpandable: ())
         textView.backgroundColor = .clear
@@ -67,7 +69,7 @@ class SendTokenItemVC: BaseVC {
                 UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textBlack)
                     .onTap(self, action: #selector(buttonChooseWalletDidTouch)),
                 amountTextField,
-                UILabel(text: "USD", textSize: 15, weight: .medium, textColor: .textSecondary)
+                changeModeButton
                     .withContentHuggingPriority(.required, for: .horizontal)
                     .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
             ]),
@@ -117,23 +119,55 @@ class SendTokenItemVC: BaseVC {
     
     func setUp(wallet: Wallet) {
         self.wallet = wallet
-        balanceLabel.text = "\(L10n.available): \(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.symbol)"
         coinImageView.setUp(wallet: wallet)
     }
     
     override func bind() {
         super.bind()
-        amountTextField.rx.text.orEmpty
-            .map {_ in self.textFieldValueInToken}
-            .map {"≈ " + $0.toString(maximumFractionDigits: 9) + " \(self.wallet?.symbol ?? "")"}
-            .asDriver(onErrorJustReturn: "")
-            .drive(equityValueLabel.rx.text)
-            .disposed(by: disposeBag)
         
-        dataObservable
+        dataDidChange
             .skip(1)
-            .subscribe(onNext: {(amount, address) in
-                self.validate(amountInUSD: amount, address: address)
+            .subscribe(onNext: {(_, _, isUSDMode) in
+                guard let wallet = self.wallet else {return}
+                
+                // balance label
+                var balanceLabelText = L10n.available + ": "
+                
+                // calculate available amount
+                var amount = wallet.amount ?? 0
+                var fee = FeeVM.shared.data
+                var symbol = wallet.symbol
+                if isUSDMode {
+                    amount = wallet.amountInUSD
+                    fee = fee * wallet.priceInUSD
+                    symbol = "USD"
+                }
+                amount = amount - fee
+                if amount < 0 { amount = 0 }
+                
+                // set label
+                balanceLabelText += amount.toString(maximumFractionDigits: 9)
+                balanceLabelText += " \(symbol)"
+                self.balanceLabel.text = balanceLabelText
+                
+                // equity value label
+                var equityValue = self.amountTextField.value * wallet.priceInUSD
+                var equityValueSymbol = "USD"
+                if isUSDMode {
+                    if let price = wallet.priceInUSD,
+                       price != 0 {
+                        equityValue = self.amountTextField.value / price
+                    }
+                    
+                    equityValueSymbol = wallet.symbol
+                }
+                self.equityValueLabel.text = equityValue.toString(maximumFractionDigits: 9) + " " + equityValueSymbol
+                
+                // change mode button
+                self.changeModeButton.text = symbol
+                
+                // validate error
+                self.handleError()
             })
             .disposed(by: disposeBag)
         
@@ -144,14 +178,21 @@ class SendTokenItemVC: BaseVC {
             .disposed(by: disposeBag)
     }
     
-    private func validate(amountInUSD: Double, address: String) {
+    private func handleError() {
+        guard let wallet = wallet else {return}
         var errorMessage: String?
-        if amountInUSD <= 0 {
+        if amountTextField.value <= 0 {
             errorMessage = L10n.amountIsNotValid
-        } else if (price != 0 ? amountInUSD / price : 0) > (wallet?.amount ?? Double.greatestFiniteMagnitude) {
-            errorMessage = L10n.insufficientFunds
-        } else if !NSRegularExpression.publicKey.matches(address) {
-            errorMessage = L10n.theAddressIsNotValid
+        } else {
+            let amount = amountTextField.value
+            let amountToCompare = isUSDMode.value ? wallet.amountInUSD: wallet.amount
+            
+            if amount > amountToCompare {
+                errorMessage = L10n.insufficientFunds
+            } else if !NSRegularExpression.publicKey.matches(addressTextView.text)
+            {
+                errorMessage = L10n.theAddressIsNotValid
+            }
         }
         
         if let errorMessage = errorMessage {
@@ -162,10 +203,14 @@ class SendTokenItemVC: BaseVC {
     }
     
     var isDataValid: Bool {
-        textFieldValueInToken > 0 && textFieldValueInToken <= (wallet?.amount ?? 0) && NSRegularExpression.publicKey.matches(addressTextView.text ?? "")
+        errorLabel.text == " "
     }
     
     // MARK: - Actions
+    @objc func modeSwitcherDidTouch() {
+        isUSDMode.accept(!isUSDMode.value)
+    }
+    
     @objc func buttonScanQrCodeDidTouch() {
         let vc = QrCodeScannerVC()
         vc.callback = { code in
@@ -180,11 +225,17 @@ class SendTokenItemVC: BaseVC {
     }
     
     @objc func buttonUseAllBalanceDidTouch() {
-        guard let token = wallet?.amount else {return}
-        let amountInUSD = token * price
-        
-        amountTextField.text = amountInUSD.toString(maximumFractionDigits: 9)
-        amountTextField.sendActions(for: .valueChanged)
+        guard let wallet = wallet else {return}
+        let allBalance = isUSDMode.value ? wallet.amountInUSD: (wallet.amount ?? 0)
+        var fee = FeeVM.shared.data
+        if isUSDMode.value {
+            fee = fee * wallet.priceInUSD
+        }
+        let amountToUse = allBalance - fee
+        if amountToUse > 0 {
+            amountTextField.text = amountToUse.toString(maximumFractionDigits: 9, groupingSeparator: nil)
+            amountTextField.sendActions(for: .valueChanged)
+        }
     }
     
     @objc func buttonChooseWalletDidTouch() {

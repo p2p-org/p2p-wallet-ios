@@ -42,11 +42,14 @@ extension Double {
         return formatter.string(from: self as NSNumber) ?? "0"
     }
     
-    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false) -> String {
+    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false, groupingSeparator: String? = " ") -> String {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
-        formatter.groupingSeparator = " "
+        if let groupingSeparator = groupingSeparator {
+            formatter.groupingSeparator = groupingSeparator
+        }
+        
         formatter.locale = Locale.current
         if showPlus {
             formatter.positivePrefix = formatter.plusSign

@@ -12,8 +12,8 @@ import Action
 class SendTokenVC: WLModalWrapperVC {
     override var padding: UIEdgeInsets {super.padding.modifying(dLeft: .defaultPadding, dRight: .defaultPadding)}
     
-    init(wallets: [Wallet], address: String? = nil, initialSymbol: String? = nil) {
-        let vc = _SendTokenVC(wallets: wallets, address: address, initialSymbol: initialSymbol)
+    init(selectedWalletPubkey: String? = nil, destinationAddress: String? = nil) {
+        let vc = _SendTokenVC(selectedWalletPubkey: selectedWalletPubkey, destinationAddress: destinationAddress)
         super.init(wrapped: vc)
     }
     
@@ -41,17 +41,12 @@ class _SendTokenVC: BEPagesVC, LoadableView {
     lazy var errorLabel = UILabel(textSize: 17, weight: .semibold, textColor: .textBlack, numberOfLines: 0, textAlignment: .center)
     
     let disposeBag = DisposeBag()
-    var wallets: [Wallet]
-    var initialAddress: String?
-    var initialSymbol: String?
+    let initialSelectedWalletPubkey: String?
+    let initialDestinationAddress: String?
     
-    init(wallets: [Wallet], address: String? = nil, initialSymbol: String? = nil) {
-        self.wallets = wallets
-            .filter {
-                $0.symbol == "SOL" || $0.amount > 0
-            }
-        self.initialAddress = address
-        self.initialSymbol = initialSymbol
+    init(selectedWalletPubkey: String? = nil, destinationAddress: String? = nil) {
+        initialSelectedWalletPubkey = selectedWalletPubkey
+        initialDestinationAddress = destinationAddress
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -75,33 +70,13 @@ class _SendTokenVC: BEPagesVC, LoadableView {
         stackView.autoPinEdgesToSuperviewEdges()
         
         stackView.addArrangedSubviews([
-            sendButton.padding(UIEdgeInsets(x: 20, y: 0)),
+            sendButton,
             .spacer
         ])
         
-        viewControllers = wallets
-            .map {item in
-                let vc = SendTokenItemVC()
-                vc.chooseWalletAction = CocoaAction {
-                    let vc = ChooseWalletVC()
-                    vc.completion = {wallet in
-                        guard let index = self.wallets.firstIndex(where: {$0.pubkey == wallet.pubkey}) else {return}
-                        vc.back()
-                        self.moveToPage(index)
-                    }
-                    self.present(vc, animated: true, completion: nil)
-                    return .just(())
-                }
-                vc.setUp(wallet: item)
-                return vc
-            }
-        
-        if let symbol = initialSymbol,
-           let index = wallets.firstIndex(where: {$0.symbol == symbol})
-        {
-            moveToPage(index)
-        }
-        
+        // placeholder vc
+        viewControllers = WalletsVM.ofCurrentUser.data
+            .map {self.sendTokenItemVCForItem($0)}
         view.layoutIfNeeded()
         
         // fix container's height
@@ -123,8 +98,15 @@ class _SendTokenVC: BEPagesVC, LoadableView {
         // delegate
         self.delegate = self
         
+        // set up initial data
+        if let pubkey = initialSelectedWalletPubkey,
+           let index = WalletsVM.ofCurrentUser.data.firstIndex(where: {$0.pubkey == pubkey})
+        {
+            moveToPage(index)
+        }
+
         // if address was passed
-        if let address = initialAddress,
+        if let address = initialDestinationAddress,
             let textView = (viewControllers.first as? SendTokenItemVC)?.addressTextView
         {
             textView.text = address
@@ -140,7 +122,7 @@ class _SendTokenVC: BEPagesVC, LoadableView {
         let vcs = viewControllers.map {$0 as! SendTokenItemVC}.enumerated()
         
         Observable.merge(vcs.map { (index, vc) in
-            vc.dataObservable
+            vc.dataDidChange
                 .map {_ in vc.isDataValid}
                 .filter {_ in index == self.currentPage}
         })
@@ -166,17 +148,26 @@ class _SendTokenVC: BEPagesVC, LoadableView {
               let vc = viewControllers[currentPage] as? SendTokenItemVC,
               let sender = vc.wallet?.pubkey,
               let receiver = vc.addressTextView.text,
-              vc.textFieldValueInToken > 0
+              let price = vc.wallet?.priceInUSD,
+              price > 0
         else {
             return
+        }
+        
+        var amount = vc.amountTextField.value
+        if vc.isUSDMode.value,
+           let price = vc.wallet?.priceInUSD,
+           price > 0
+        {
+            amount = amount / price
         }
         
         let transactionVC = presentProcessTransactionVC()
         
         // prepare amount
-        let amountToSend = UInt64(vc.textFieldValueInToken * pow(10, Double(vc.wallet?.decimals ?? 0)))
+        let lamport = UInt64(amount * pow(10, Double(vc.wallet?.decimals ?? 0)))
         
-        SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: amountToSend)
+        SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: lamport)
             .subscribe(onSuccess: { signature in
                 transactionVC.signature = signature
                 transactionVC.viewInExplorerButton.rx.action = CocoaAction {
@@ -198,7 +189,7 @@ class _SendTokenVC: BEPagesVC, LoadableView {
                 let transaction = Transaction(
                     signatureInfo: .init(signature: signature),
                     type: .send,
-                    amount: -vc.textFieldValueInToken,
+                    amount: -amount,
                     symbol: vc.wallet?.symbol ?? "",
                     status: .processing
                 )
@@ -209,6 +200,23 @@ class _SendTokenVC: BEPagesVC, LoadableView {
                 }
             })
             .disposed(by: disposeBag)
+    }
+    
+    // MARK: - Helpers
+    private func sendTokenItemVCForItem(_ item: Wallet) -> SendTokenItemVC {
+        let vc = SendTokenItemVC()
+        vc.chooseWalletAction = CocoaAction {
+            let vc = ChooseWalletVC()
+            vc.completion = {wallet in
+                guard let index = WalletsVM.ofCurrentUser.data.firstIndex(where: {$0.pubkey == wallet.pubkey}) else {return}
+                vc.back()
+                self.moveToPage(index)
+            }
+            self.present(vc, animated: true, completion: nil)
+            return .just(())
+        }
+        vc.setUp(wallet: item)
+        return vc
     }
 }
 
