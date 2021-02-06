@@ -13,9 +13,11 @@ class BaseCollectionView: UICollectionView {
         commonInit()
     }
     
+    @available(*, unavailable,
+    message: "Loading this view from a nib is unsupported in favor of initializer dependency injection."
+    )
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        commonInit()
+        fatalError("Loading this view from a nib is unsupported in favor of initializer dependency injection.")
     }
     
     func commonInit() {
