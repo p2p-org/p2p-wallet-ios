@@ -28,10 +28,6 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         super.init(shadowColor: UIColor.black.withAlphaComponent(0.07), radius: 24, offset: CGSize(width: 0, height: 4), opacity: 1, cornerRadius: 12, contentInset: .init(x: 16, y: 14))
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func commonInit() {
         super.commonInit()
         layer.cornerRadius = 12
