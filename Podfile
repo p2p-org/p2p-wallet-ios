@@ -12,6 +12,7 @@ target 'p2p_wallet' do
   use_frameworks!
   common_pods
   pod 'BEPureLayout', :path => 'BEPureLayout'
+  pod 'LazySubject', :path => 'LazySubject'
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
   pod 'Action'
