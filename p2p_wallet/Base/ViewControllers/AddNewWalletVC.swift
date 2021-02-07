@@ -8,6 +8,7 @@
 import Foundation
 import Action
 import RxSwift
+import LazySubject
 
 class AddNewWalletVC: WLModalWrapperVC {
     lazy var searchBar: BESearchBar = {
@@ -103,7 +104,7 @@ class _AddNewWalletVC: WalletsVC {
             
             cell.createWalletAction = createTokenAccountAction(newWallet: wallet)
             
-            cell.setUp(feeVM: (viewModel as! ViewModel).feeVM)
+            cell.setUp(feeSubject: (viewModel as! ViewModel).feeSubject)
         }
         return cell
     }
@@ -113,7 +114,7 @@ class _AddNewWalletVC: WalletsVC {
             let viewModel = self.viewModel as! ViewModel
             
             // catching error
-            if viewModel.feeVM.data > (WalletsVM.ofCurrentUser.solWallet?.amount ?? 0)
+            if viewModel.feeSubject.value > (WalletsVM.ofCurrentUser.solWallet?.amount ?? 0)
             {
                 viewModel.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
                     var wallet = $0
@@ -156,7 +157,7 @@ class _AddNewWalletVC: WalletsVC {
                         let transaction = Transaction(
                             signatureInfo: .init(signature: signature),
                             type: .createAccount,
-                            amount: -viewModel.feeVM.data,
+                            amount: -(viewModel.feeSubject.value ?? 0),
                             symbol: "SOL",
                             status: .processing,
                             newWallet: newWallet
@@ -212,17 +213,14 @@ extension _AddNewWalletVC: UIViewControllerTransitioningDelegate {
 
 extension _AddNewWalletVC {
     class ViewModel: ListViewModel<Wallet> {
-        class FeeVM: BaseVM<Double> {
-            override var request: Single<Double> {
-                SolanaSDK.shared.getCreatingTokenAccountFee()
-                    .map {
-                        let decimals = WalletsVM.ofCurrentUser.items.first(where: {$0.symbol == "SOL"})?.decimals ?? 9
-                        return Double($0) * pow(Double(10), -Double(decimals))
-                    }
-            }
-        }
-        
-        let feeVM = FeeVM(initialData: 0)
+        let feeSubject = LazySubject(
+            value: Double(0),
+            request: SolanaSDK.shared.getCreatingTokenAccountFee()
+                .map {
+                    let decimals = WalletsVM.ofCurrentUser.items.first(where: {$0.symbol == "SOL"})?.decimals ?? 9
+                    return Double($0) * pow(Double(10), -Double(decimals))
+                }
+        )
         
         override func reload() {
             // get static data
@@ -242,7 +240,7 @@ extension _AddNewWalletVC {
             state.accept(.loaded(data))
             
             // fee
-            feeVM.reload()
+            feeSubject.reload()
         }
         override func fetchNext() { /* do nothing */ }
         
@@ -366,10 +364,10 @@ extension _AddNewWalletVC {
             }
         }
         
-        func setUp(feeVM: ViewModel.FeeVM) {
+        func setUp(feeSubject: LazySubject<Double>) {
             if feeLabel.viewModel == nil {
                 feeLabel
-                    .subscribed(to: feeVM) {
+                    .subscribed(to: feeSubject) {
                         L10n.willCost + " " + $0.toString(maximumFractionDigits: 9) + " SOL"
                     }
                     .disposed(by: disposeBag)
