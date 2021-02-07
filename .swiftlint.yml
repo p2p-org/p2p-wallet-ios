@@ -4,6 +4,7 @@ excluded:
  - Pods
  - SolanaSwift
  - BEPureLayout
+ - LazySubject
 
 disabled_rules:
   - variable_name
