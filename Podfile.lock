@@ -84,6 +84,9 @@ PODS:
     - GoogleUtilities/Logger
   - IBPCollectionViewCompositionalLayout (0.6.7)
   - KeychainSwift (19.0.0)
+  - LazySubject (0.1.0):
+    - RxCocoa (~> 5.1.1)
+    - RxSwift (~> 5.1.1)
   - MBProgressHUD (1.2.0)
   - nanopb (2.30906.0):
     - nanopb/decode (= 2.30906.0)
@@ -134,6 +137,7 @@ DEPENDENCIES:
   - Firebase/Crashlytics
   - IBPCollectionViewCompositionalLayout
   - KeychainSwift (~> 19.0)
+  - LazySubject (from `LazySubject`)
   - MBProgressHUD (~> 1.2.0)
   - RxBlocking
   - RxCocoa
@@ -189,6 +193,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   BEPureLayout:
     :path: BEPureLayout
+  LazySubject:
+    :path: LazySubject
   SolanaSwift:
     :path: SolanaSwift
   THPinViewController:
@@ -219,6 +225,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 3dc4ff0d5e4840e2fa8eef0889620e8c33d4218c
   IBPCollectionViewCompositionalLayout: 06cf9aa021fd80807385d5c49ece4364609a0c97
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
+  LazySubject: 9d7d35af4a5204142e0b5587a3975292f19ab4a1
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
@@ -240,6 +247,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 88534de197b554f287e8318038e8820898cddbed
+PODFILE CHECKSUM: 88962917116c3e989551b2f6c41d3e1dfbb29e7a
 
 COCOAPODS: 1.10.0

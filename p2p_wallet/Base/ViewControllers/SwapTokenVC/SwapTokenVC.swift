@@ -242,11 +242,15 @@ class _SwapTokenVC: BaseVStackVC {
                     if self.sourceWalletView.amountTextField.text?.isEmpty == false,
                        let estimatedAmount = self.viewModel.estimatedAmount,
                        let minimumReceiveAmount = self.viewModel.minimumReceiveAmount,
-                       let decimals = self.viewModel.destinationWallet.value?.decimals
+                       let sourceDecimals = sourceWallet?.decimals,
+                       let destinationDecimals = destinationWallet?.decimals,
+                       let inputAmount = amount?.toLamport(decimals: sourceDecimals),
+                       let fee = pool.fee(forInputAmount: inputAmount)
                     {
-                        self.destinationWalletView.amountTextField.text = estimatedAmount.toString(maximumFractionDigits: decimals)
-                        self.minimumReceiveLabel.text = "\(minimumReceiveAmount.toString(maximumFractionDigits: decimals)) \(destinationWallet!.symbol)"
-                        self.feeLabel.text = pool.fee.toString(maximumFractionDigits: 9) + " SOL"
+                        self.destinationWalletView.amountTextField.text = estimatedAmount.toString(maximumFractionDigits: destinationDecimals)
+                        self.minimumReceiveLabel.text = "\(minimumReceiveAmount.toString(maximumFractionDigits: destinationDecimals)) \(destinationWallet!.symbol)"
+                        
+                        self.feeLabel.text = "\(fee.toString(maximumFractionDigits: 5)) SOL"
                         self.setUpExchangeRateLabel()
                     } else {
                         self.destinationWalletView.amountTextField.text = nil
@@ -277,14 +281,14 @@ class _SwapTokenVC: BaseVStackVC {
                 }
                 
                 // slippage
-                if slippage > 20 || slippage < 0 {
+                if slippage > 0.2 || slippage < 0 {
                     errorText = L10n.slippageIsnTValid
                     self.slippageLabel.attributedText = NSMutableAttributedString()
-                        .text(slippage.toString() + " %", color: .red)
+                        .text((slippage * 100).toString() + " %", color: .red)
                         .text(" ")
                         .text("(\(L10n.max). 20%)", color: .textSecondary)
                 } else {
-                    self.slippageLabel.text = slippage.toString() + " %"
+                    self.slippageLabel.text = (slippage * 100).toString() + " %"
                 }
                 
                 // handle error
@@ -320,10 +324,10 @@ class _SwapTokenVC: BaseVStackVC {
     }
     
     @objc func buttonChooseSlippageDidTouch() {
-        let vc = SwapSlippageSettingsVC(slippage: Defaults.slippage)
+        let vc = SwapSlippageSettingsVC(slippage: Defaults.slippage * 100)
         vc.completion = {slippage in
-            Defaults.slippage = slippage
-            self.viewModel.slippage.accept(slippage)
+            Defaults.slippage = slippage / 100
+            self.viewModel.slippage.accept(slippage / 100)
         }
         present(vc, animated: true, completion: nil)
     }
