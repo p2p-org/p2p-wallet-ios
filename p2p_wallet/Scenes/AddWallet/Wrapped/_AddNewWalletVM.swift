@@ -20,7 +20,7 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
             }
     )
     
-    let navigatorSubject = PublishSubject<Navigator>()
+    let navigatorSubject = PublishSubject<Navigation>()
     let clearSearchBarSubject = PublishSubject<Void>()
     
     override func reload() {
