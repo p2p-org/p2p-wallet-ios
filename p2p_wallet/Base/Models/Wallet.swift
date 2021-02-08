@@ -23,7 +23,8 @@ struct Wallet: FiatConvertable {
     var isExpanded: Bool?
     var isProcessing: Bool?
     var amount: Double? {
-        Double(lamports ?? 0) * pow(10, -Double(decimals ?? 0))
+        guard let decimals = decimals else {return nil}
+        return lamports?.convertToBalance(decimals: decimals)
     }
     
     func pubkeyShort(numOfSymbolsRevealed: Int = 4) -> String {
@@ -59,7 +60,7 @@ extension Wallet: ListItemType {
         self.name = name
         self.mintAddress = programAccount.mintAddress
         self.symbol = programAccount.symbol
-        self.lamports = programAccount.amount
+        self.lamports = programAccount.lamports
         self.pubkey = programAccount.pubkey
         self.decimals = programAccount.decimals
         // swiftlint:disable swiftgen_assets
