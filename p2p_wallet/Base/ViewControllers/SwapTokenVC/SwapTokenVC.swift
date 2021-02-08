@@ -281,14 +281,14 @@ class _SwapTokenVC: BaseVStackVC {
                 }
                 
                 // slippage
-                if slippage > 20 || slippage < 0 {
+                if slippage > 0.2 || slippage < 0 {
                     errorText = L10n.slippageIsnTValid
                     self.slippageLabel.attributedText = NSMutableAttributedString()
-                        .text(slippage.toString() + " %", color: .red)
+                        .text((slippage * 100).toString() + " %", color: .red)
                         .text(" ")
                         .text("(\(L10n.max). 20%)", color: .textSecondary)
                 } else {
-                    self.slippageLabel.text = slippage.toString() + " %"
+                    self.slippageLabel.text = (slippage * 100).toString() + " %"
                 }
                 
                 // handle error
@@ -324,10 +324,10 @@ class _SwapTokenVC: BaseVStackVC {
     }
     
     @objc func buttonChooseSlippageDidTouch() {
-        let vc = SwapSlippageSettingsVC(slippage: Defaults.slippage)
+        let vc = SwapSlippageSettingsVC(slippage: Defaults.slippage * 100)
         vc.completion = {slippage in
-            Defaults.slippage = slippage
-            self.viewModel.slippage.accept(slippage)
+            Defaults.slippage = slippage / 100
+            self.viewModel.slippage.accept(slippage / 100)
         }
         present(vc, animated: true, completion: nil)
     }
