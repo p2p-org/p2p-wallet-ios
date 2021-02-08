@@ -67,20 +67,14 @@ class SwapTokenVM {
     func calculateEstimatedAndMinimumReceiveAmount() {
         // supported
         if amount.value > 0,
-           let tokenABalance = currentPool?.tokenABalance?.amountInUInt64,
-           let tokenBBalance = currentPool?.tokenBBalance?.amountInUInt64,
            let sourceDecimals = sourceWallet.value?.decimals,
-           let destinationDecimals = destinationWallet.value?.decimals
+           let destinationDecimals = destinationWallet.value?.decimals,
+           let inputLamports = amount.value?.toLamport(decimals: sourceDecimals),
+           let estimatedAmountLamports = currentPool?.estimatedAmount(forInputAmount: inputLamports),
+           let minimumReceiveAmountLamports = currentPool?.minimumReceiveAmount(estimatedAmount: estimatedAmountLamports, slippage: slippage.value)
         {
-            let inputAmount = UInt64(amount.value * pow(10, Double(sourceDecimals)))
-            let slippage = self.slippage.value
-            let outputAmount = SolanaSDK.calculateSwapEstimatedAmount(tokenABalance: tokenABalance, tokenBBalance: tokenBBalance, inputAmount: inputAmount)
-            let estimatedAmount = Double(outputAmount) * pow(10, -Double(destinationDecimals))
-            
-            let minReceiveAmount = Double(SolanaSDK.calculateSwapMinimumReceiveAmount(estimatedAmount: outputAmount, slippage: slippage)) * pow(10, -Double(destinationDecimals))
-            
-            self.estimatedAmount = estimatedAmount
-            self.minimumReceiveAmount = minReceiveAmount
+            self.estimatedAmount = estimatedAmountLamports.convertToBalance(decimals: destinationDecimals)
+            self.minimumReceiveAmount = minimumReceiveAmountLamports.convertToBalance(decimals: destinationDecimals)
         }
     }
     
