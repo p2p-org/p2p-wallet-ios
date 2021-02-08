@@ -242,11 +242,15 @@ class _SwapTokenVC: BaseVStackVC {
                     if self.sourceWalletView.amountTextField.text?.isEmpty == false,
                        let estimatedAmount = self.viewModel.estimatedAmount,
                        let minimumReceiveAmount = self.viewModel.minimumReceiveAmount,
-                       let decimals = self.viewModel.destinationWallet.value?.decimals
+                       let sourceDecimals = sourceWallet?.decimals,
+                       let destinationDecimals = destinationWallet?.decimals,
+                       let inputAmount = amount?.toLamport(decimals: sourceDecimals),
+                       let fee = pool.fee(forInputAmount: inputAmount)
                     {
-                        self.destinationWalletView.amountTextField.text = estimatedAmount.toString(maximumFractionDigits: decimals)
-                        self.minimumReceiveLabel.text = "\(minimumReceiveAmount.toString(maximumFractionDigits: decimals)) \(destinationWallet!.symbol)"
-                        self.feeLabel.text = pool.fee.toString(maximumFractionDigits: 9) + " SOL"
+                        self.destinationWalletView.amountTextField.text = estimatedAmount.toString(maximumFractionDigits: destinationDecimals)
+                        self.minimumReceiveLabel.text = "\(minimumReceiveAmount.toString(maximumFractionDigits: destinationDecimals)) \(destinationWallet!.symbol)"
+                        
+                        self.feeLabel.text = "\(fee.toString(maximumFractionDigits: 5)) SOL"
                         self.setUpExchangeRateLabel()
                     } else {
                         self.destinationWalletView.amountTextField.text = nil
