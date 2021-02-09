@@ -27,11 +27,15 @@ extension SolanaSDK.Error: LocalizedError {
         case .notFound:
             return L10n.notFound
         case .invalidRequest(let reason):
-            return L10n.invalidRequest + ". " + L10n.reason + ": " + reason.localized()
+            var message = L10n.invalidRequest
+            if let reason = reason {
+                message = reason.localized()
+            }
+            return message
         case .invalidResponse(let responseError):
             var string = L10n.responseError
             if let description = responseError.message {
-                string += ": " + description.localized()
+                string = description.localized()
             }
             return string
         case .socket(let error):
