@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import DiffableDataSources
 import Action
 
 class WalletDetailVC: WLModalWrapperVC {

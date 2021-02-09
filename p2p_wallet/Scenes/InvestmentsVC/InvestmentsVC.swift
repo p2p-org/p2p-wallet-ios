@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import DiffableDataSources
 
 class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
@@ -39,9 +38,9 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType> {
     }
     
     // MARK: - Binding
-    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, ItemType> {
+    override func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, ItemType> {
         // initial snapshot
-        var snapshot = DiffableDataSourceSnapshot<String, ItemType>()
+        var snapshot = NSDiffableDataSourceSnapshot<String, ItemType>()
         let section = L10n.makeYourCryptoWorkingOnYou
         snapshot.appendSections([section])
         snapshot.appendItems(
