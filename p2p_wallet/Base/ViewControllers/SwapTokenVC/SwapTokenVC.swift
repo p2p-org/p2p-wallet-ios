@@ -193,7 +193,7 @@ class _SwapTokenVC: BaseVStackVC {
                         self?.showErrorView(title: L10n.swappingIsCurrentlyUnavailable, description: L10n.swappingPoolsNotFound + "\n" + L10n.pleaseTryAgainLater)
                     }
                 case .error(let error):
-                    self?.showErrorView(title: L10n.swappingIsCurrentlyUnavailable, description: error.localizedDescription + "\n" + L10n.pleaseTryAgainLater)
+                    self?.showErrorView(error: error)
                 }
             })
             .disposed(by: disposeBag)

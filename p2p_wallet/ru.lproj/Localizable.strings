@@ -229,3 +229,9 @@
 "1d" = "1д";
 "1w" = "1н";
 "1m" = "1м";
+"Unauthorized" = "Неавторизованный";
+"Not Found" = "Не найден(о)";
+"Invalid request" = "Неверный запрос";
+"Reason" = "Причина";
+"Response error" = "Ошибка ответа";
+"Socket returns an error" = "Socket возвращает ошибку";
