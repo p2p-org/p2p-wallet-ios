@@ -240,3 +240,4 @@
 "Could not retrieve balance" = "Could not retrieve balance";
 "Could not derivate private key" = "Could not derivate private key";
 "Blockhash required" = "Blockhash required";
+"Your account does not have enough SOL to cover fee" = "Your account does not have enough SOL to cover fee";
