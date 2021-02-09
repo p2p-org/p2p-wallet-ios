@@ -156,7 +156,8 @@ class MainVC: CollectionVC<MainVCItem> {
         CocoaAction { _ in
             let wallets = self.walletsVM.items
             if wallets.count == 0 {return .just(())}
-            let vc = SendTokenVC(destinationAddress: address)
+            let vm = SendTokenViewModel(wallets: wallets, activeWallet: nil)
+            let vc = SendTokenViewController(viewModel: vm)
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
