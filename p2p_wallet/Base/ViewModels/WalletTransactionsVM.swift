@@ -20,7 +20,7 @@ class WalletTransactionsVM: ListViewModel<Transaction> {
     
     override var request: Single<[Transaction]> {
         guard let pubkey = wallet.pubkey else {
-            return .error(SolanaSDK.Error.accountNotFound)
+            return .error(SolanaSDK.Error.notFound)
         }
         return SolanaSDK.shared.getConfirmedSignaturesForAddress2(account: pubkey, configs: SolanaSDK.RequestConfiguration(limit: limit, before: before)
         )

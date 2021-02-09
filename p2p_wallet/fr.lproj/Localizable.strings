@@ -231,3 +231,14 @@
 "1d" = "1d";
 "1w" = "1w";
 "1m" = "1m";
+"Unauthorized" = "Non autorisé";
+"Not Found" = "Pas trouvé";
+"Invalid request" = "Requête invalide";
+"Reason" = "Raison";
+"Response error" = "Erreur de réponse";
+"Socket returns an error" = "Socket renvoie une erreur";
+"Swap instruction exceeds desired slippage limit" = "L'instruction de swap dépasse la limite de glissement souhaitée";
+"Blockhash not found" = "Blockhash introuvable";
+"Could not retrieve balance" = "Impossible de récupérer le solde";
+"Could not derivate private key" = "Impossible de dériver la clé privée";
+"Blockhash required" = "Blockhash requis";

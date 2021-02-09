@@ -88,7 +88,7 @@ class SwapTokenVM {
               let sourceDecimals = sourceWallet.decimals,
               let amountDouble = amount.value
         else {
-            return .error(SolanaSDK.Error.other("Params are not valid"))
+            return .error(SolanaSDK.Error.invalidRequest())
         }
         let amountInUInt64 = UInt64(amountDouble * pow(10, Double(sourceDecimals)))
         let destinationPubkey = try? SolanaSDK.PublicKey(string: destinationWallet.pubkey ?? "")

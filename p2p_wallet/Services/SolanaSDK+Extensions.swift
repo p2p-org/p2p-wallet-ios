@@ -19,23 +19,35 @@ extension String: ListItemType {
     var id: String {self}
 }
 
-extension SolanaSDK.Error {
+extension SolanaSDK.Error: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .accountNotFound:
-            return L10n.accountNotFound
-        case .publicKeyNotFound:
-            return L10n.publicKeyNotFound
-        case .invalidURL:
-            return L10n.invalidURL
-        case .invalidStatusCode(code: let code):
-            return L10n.invalidStatusCode + " \(code)"
-        case .responseError(let error):
-            return (error as? LocalizedError)?.localizedDescription
-        case .other(let string):
+        case .unauthorized:
+            return L10n.unauthorized
+        case .notFound:
+            return L10n.notFound
+        case .invalidRequest(let reason):
+            var message = L10n.invalidRequest
+            if let reason = reason {
+                message = reason.localized()
+            }
+            return message
+        case .invalidResponse(let responseError):
+            var string = L10n.responseError
+            if let description = responseError.message {
+                string = description.localized()
+            }
             return string
         case .socket(let error):
-            return (error as? LocalizedError)?.localizedDescription
+            var string = L10n.socketReturnsAnError + ": "
+            if let error = error as? LocalizedError {
+                string += error.errorDescription ?? error.localizedDescription
+            } else {
+                string += error.localizedDescription
+            }
+            return string
+        case .other(let string):
+            return string.localized()
         case .unknown:
             return L10n.unknownError
         }
