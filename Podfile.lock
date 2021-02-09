@@ -10,12 +10,6 @@ PODS:
     - Charts/Core (= 3.6.0)
   - Charts/Core (3.6.0)
   - CryptoSwift (1.3.8)
-  - DiffableDataSources (0.4.0):
-    - DifferenceKit/AppKitExtension (~> 1.1)
-    - DifferenceKit/UIKitExtension (~> 1.1)
-  - DifferenceKit/Core (1.1.5)
-  - DifferenceKit/UIKitExtension (1.1.5):
-    - DifferenceKit/Core
   - Firebase/Analytics (7.2.0):
     - Firebase/Core
   - Firebase/Core (7.2.0):
@@ -82,7 +76,6 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.1.1):
     - GoogleUtilities/Logger
-  - IBPCollectionViewCompositionalLayout (0.6.7)
   - KeychainSwift (19.0.0)
   - LazySubject (0.1.0):
     - RxCocoa (~> 5.1.1)
@@ -132,10 +125,8 @@ DEPENDENCIES:
   - Action
   - BEPureLayout (from `BEPureLayout`)
   - Charts
-  - DiffableDataSources
   - Firebase/Analytics
   - Firebase/Crashlytics
-  - IBPCollectionViewCompositionalLayout
   - KeychainSwift (~> 19.0)
   - LazySubject (from `LazySubject`)
   - MBProgressHUD (~> 1.2.0)
@@ -158,8 +149,6 @@ SPEC REPOS:
     - ASKSecp256k1
     - Charts
     - CryptoSwift
-    - DiffableDataSources
-    - DifferenceKit
     - Firebase
     - FirebaseAnalytics
     - FirebaseCore
@@ -169,7 +158,6 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
-    - IBPCollectionViewCompositionalLayout
     - KeychainSwift
     - MBProgressHUD
     - nanopb
@@ -212,8 +200,6 @@ SPEC CHECKSUMS:
   BEPureLayout: 5421e716fb120f196677d9c875cd1fb305af2cea
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   CryptoSwift: 01b0f0cba1d5c212e5a335ff6c054fb75a204f00
-  DiffableDataSources: 80396cec405c9b29e1e07b55c9be7d11b46c8741
-  DifferenceKit: 516f12e336ed65a3a0665847b5c3cb5cad4bd4ea
   Firebase: 456eeacc158d8c58586b7871619a81bb9f27d4ae
   FirebaseAnalytics: 2673264e482b428df13786b59165ebf420881d7a
   FirebaseCore: c959e8a598f83125c01c1700d9161b236ab3833c
@@ -223,7 +209,6 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: 57a0df93dc2feb5176b1bac06012dbd725191ba5
   GoogleDataTransport: e4085e6762f36a6141738f46b0153473ce57fb18
   GoogleUtilities: 3dc4ff0d5e4840e2fa8eef0889620e8c33d4218c
-  IBPCollectionViewCompositionalLayout: 06cf9aa021fd80807385d5c49ece4364609a0c97
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   LazySubject: 9d7d35af4a5204142e0b5587a3975292f19ab4a1
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
@@ -247,6 +232,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 88962917116c3e989551b2f6c41d3e1dfbb29e7a
+PODFILE CHECKSUM: 8e29f8454073a8562fc4bf67012f0042be9081f9
 
 COCOAPODS: 1.10.0
