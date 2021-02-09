@@ -70,6 +70,6 @@ extension Wallet: ListItemType {
     }
     
     static func placeholder(at index: Int) -> Wallet {
-        Wallet(id: placeholderId(at: index), name: "placeholder", mintAddress: "placeholder-mintaddress", pubkey: "pubkey", symbol: "PLHD\(index)", lamports: nil, decimals: nil, indicatorColor: .clear)
+        Wallet(id: placeholderId(at: index), name: "<placeholder>", mintAddress: "placeholder-mintaddress", pubkey: "<pubkey>", symbol: "<PLHD\(index)>", lamports: nil, decimals: nil, indicatorColor: .clear)
     }
 }
