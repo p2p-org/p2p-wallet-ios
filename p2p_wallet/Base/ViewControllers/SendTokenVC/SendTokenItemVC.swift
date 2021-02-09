@@ -142,8 +142,11 @@ class SendTokenItemVC: BaseVC {
                     fee = fee * wallet.priceInUSD
                     symbol = "USD"
                 }
-                amount = amount - fee
-                if amount < 0 { amount = 0 }
+                
+                if wallet.symbol == "SOL" {
+                    amount = amount - fee
+                    if amount < 0 { amount = 0 }
+                }
                 
                 // set label
                 balanceLabelText += amount.toString(maximumFractionDigits: 9)
@@ -187,7 +190,9 @@ class SendTokenItemVC: BaseVC {
             let amount = amountTextField.value
             let amountToCompare = isUSDMode.value ? wallet.amountInUSD: wallet.amount
             
-            if amount > amountToCompare {
+            if FeeVM.shared.data > WalletsVM.ofCurrentUser.solWallet?.amount {
+                errorMessage = L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
+            } else if amount > amountToCompare {
                 errorMessage = L10n.insufficientFunds
             } else if !NSRegularExpression.publicKey.matches(addressTextView.text)
             {
@@ -226,14 +231,16 @@ class SendTokenItemVC: BaseVC {
     
     @objc func buttonUseAllBalanceDidTouch() {
         guard let wallet = wallet else {return}
-        let allBalance = isUSDMode.value ? wallet.amountInUSD: (wallet.amount ?? 0)
-        var fee = FeeVM.shared.data
-        if isUSDMode.value {
-            fee = fee * wallet.priceInUSD
+        var amount = isUSDMode.value ? wallet.amountInUSD: (wallet.amount ?? 0)
+        if wallet.symbol == "SOL" {
+            var fee = FeeVM.shared.data
+            if isUSDMode.value {
+                fee = fee * wallet.priceInUSD
+            }
+            amount -= fee
         }
-        let amountToUse = allBalance - fee
-        if amountToUse > 0 {
-            amountTextField.text = amountToUse.toString(maximumFractionDigits: 9, groupingSeparator: nil)
+        if amount > 0 {
+            amountTextField.text = amount.toString(maximumFractionDigits: 9, groupingSeparator: nil)
             amountTextField.sendActions(for: .valueChanged)
         }
     }

@@ -240,3 +240,4 @@
 "Could not retrieve balance" = "Не удалось получить баланс";
 "Could not derivate private key" = "Не удалось получить закрытый ключ";
 "Blockhash required" = "Требуется блок-хеш";
+"Your account does not have enough SOL to cover fee" = "В вашем аккаунте недостаточно SOL для заплаты комиссии";
