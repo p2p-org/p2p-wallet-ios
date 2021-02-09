@@ -115,10 +115,11 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
                         self.navigatorSubject.onNext(.present(WalletDetailVC(wallet: newWallet)))
                     },
                     afterError: { (error) in
+                        let description = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                         self.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
                             var wallet = $0
                             wallet.isBeingCreated = nil
-                            wallet.creatingError = error.localizedDescription
+                            wallet.creatingError = description
                             return wallet
                         })
                     }

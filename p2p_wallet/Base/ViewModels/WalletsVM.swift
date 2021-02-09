@@ -48,7 +48,7 @@ class WalletsVM: ListViewModel<Wallet> {
     
     override var request: Single<[Wallet]> {
         guard let account = SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString else {
-            return .error(SolanaSDK.Error.publicKeyNotFound)
+            return .error(SolanaSDK.Error.unauthorized)
         }
         return SolanaSDK.shared.getBalance(account: account)
             .flatMap {balance in

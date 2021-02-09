@@ -231,3 +231,14 @@
 "1d" = "1d";
 "1w" = "1w";
 "1m" = "1m";
+"Unauthorized" = "Không có quyền truy cập";
+"Not Found" = "Không tìm thấy";
+"Invalid request" = "Yêu cầu không hợp lệ";
+"Reason" = "Lý do";
+"Response error" = "Lỗi phản hồi";
+"Socket returns an error" = "Socket trả về một lỗi";
+"Swap instruction exceeds desired slippage limit" = "Lệnh hoán đổi vượt quá giới hạn trượt giá mong muốn";
+"Blockhash not found" = "Không tìm thấy blockhash";
+"Could not retrieve balance" = "Không thể truy xuất số dư";
+"Could not derivate private key" = "Không thể trích xuất private key";
+"Blockhash required" = "Blockhash không có";
