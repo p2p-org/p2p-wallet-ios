@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import DiffableDataSources
 import Action
 import RxSwift
 
@@ -63,9 +62,9 @@ class MainVC: CollectionVC<MainVCItem> {
         ]
     }
     
-    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, MainVCItem> {
+    override func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, MainVCItem> {
         // initial snapshot
-        var snapshot = DiffableDataSourceSnapshot<String, MainVCItem>()
+        var snapshot = NSDiffableDataSourceSnapshot<String, MainVCItem>()
         
         // section 1
         let section = L10n.wallets
