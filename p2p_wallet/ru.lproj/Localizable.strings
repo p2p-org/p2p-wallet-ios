@@ -235,3 +235,8 @@
 "Reason" = "Причина";
 "Response error" = "Ошибка ответа";
 "Socket returns an error" = "Socket возвращает ошибку";
+"Swap instruction exceeds desired slippage limit" = "Инструкция по свопу превышает желаемый предел проскальзывания";
+"Blockhash not found" = "Blockhash не найден";
+"Could not retrieve balance" = "Не удалось получить баланс";
+"Could not derivate private key" = "Не удалось получить закрытый ключ";
+"Blockhash required" = "Требуется блок-хеш";
