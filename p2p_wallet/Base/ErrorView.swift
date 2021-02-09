@@ -62,6 +62,7 @@ class ErrorView: MessageView {
     }
     
     func setUpWithError(_ error: Error) {
-        descriptionLabel.text = error.localizedDescription + "\n" + L10n.pleaseTryAgainLater.uppercaseFirst
+        let description = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        descriptionLabel.text = description + "\n" + L10n.pleaseTryAgainLater.uppercaseFirst
     }
 }

@@ -229,3 +229,9 @@
 "1d" = "1d";
 "1w" = "1w";
 "1m" = "1m";
+"Unauthorized" = "Không có quyền truy cập";
+"Not Found" = "Không tìm thấy";
+"Invalid request" = "Yêu cầu không hợp lệ";
+"Reason" = "Lý do";
+"Response error" = "Lỗi phản hồi";
+"Socket returns an error" = "Socket trả về một lỗi";
