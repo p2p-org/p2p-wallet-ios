@@ -20,8 +20,6 @@ target 'p2p_wallet' do
   pod 'MBProgressHUD', '~> 1.2.0'
   pod 'TagListView', '~> 1.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
-  pod 'IBPCollectionViewCompositionalLayout'
-  pod 'DiffableDataSources'
   pod 'SDWebImage'
   pod 'THPinViewController', :git => "https://github.com/p2p-org/THPinViewController.git"
   pod 'UITextView+Placeholder'
