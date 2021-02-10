@@ -9,35 +9,7 @@ import Foundation
 import UITextView_Placeholder
 import SubviewAttachingTextView
 
-class EnterPhrasesVC: WLModalWrapperVC {
-    override var padding: UIEdgeInsets {super.padding.modifying(dLeft: .defaultPadding, dRight: .defaultPadding)}
-    
-    init() {
-        let vc = _EnterPhrasesVC()
-        super.init(wrapped: vc)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        bottomView.backgroundColor = .h2f2f2f
-    }
-    
-    override func setUp() {
-        super.setUp()
-        stackView.axis = .horizontal
-        stackView.spacing = 16
-        stackView.addArrangedSubviews([
-            UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white),
-            UILabel(text: L10n.securityKeys.uppercaseFirst, textSize: 21, weight: .semibold)
-        ])
-        
-        let separator = UIView.separator(height: 1, color: .separator)
-        containerView.addSubview(separator)
-        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-    }
-}
-
-class _EnterPhrasesVC: BaseVStackVC {
+class EnterPhrasesVC: BaseVStackVC {
     override var padding: UIEdgeInsets {.init(all: 20)}
     
     lazy var textView: SubviewAttachingTextView = {
@@ -131,7 +103,7 @@ class _EnterPhrasesVC: BaseVStackVC {
     }
 }
 
-extension _EnterPhrasesVC: UITextViewDelegate {
+extension EnterPhrasesVC: UITextViewDelegate {
     class Attachment: SubviewTextAttachment {
         var phrase: String?
     }
