@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import DiffableDataSources
 import Action
 import RxSwift
 
@@ -121,9 +120,9 @@ class MainVC: CollectionVC<MainVCItem> {
         ]
     }
     
-    override func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, MainVCItem> {
+    override func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, MainVCItem> {
         // initial snapshot
-        var snapshot = DiffableDataSourceSnapshot<String, MainVCItem>()
+        var snapshot = NSDiffableDataSourceSnapshot<String, MainVCItem>()
         
         // section 1
         let section = L10n.wallets
@@ -220,7 +219,8 @@ class MainVC: CollectionVC<MainVCItem> {
         CocoaAction { _ in
             let wallets = self.walletsVM.items
             if wallets.count == 0 {return .just(())}
-            let vc = SendTokenVC(destinationAddress: address)
+            let vm = _SendTokenViewModel(wallets: wallets, activeWallet: nil)
+            let vc = SendTokenViewController(viewModel: vm)
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
