@@ -36,6 +36,7 @@ class SendTokenViewModel {
                 return Double($0) * pow(Double(10), -Double(decimals))
             }
     )
+    let errorSubject = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Input
     let amountInput = BehaviorRelay<Double?>(value: nil)
@@ -52,10 +53,53 @@ class SendTokenViewModel {
     // MARK: - Methods
     private func bind() {
         // available amount
-        Observable.combineLatest(currentWallet, isUSDMode, fee.observable)
+        Observable.combineLatest(
+            currentWallet.distinctUntilChanged(),
+            isUSDMode.distinctUntilChanged(),
+            fee.observable.distinctUntilChanged()
+        )
             .subscribe(onNext: {[weak self] _ in
                 self?.bindAvailableAmount()
             })
+            .disposed(by: disposeBag)
+        
+        // error
+        Observable.combineLatest(
+            currentWallet.distinctUntilChanged(),
+            amountInput.distinctUntilChanged(),
+            destinationAddressInput.distinctUntilChanged(),
+            isUSDMode.distinctUntilChanged(),
+            fee.observable.distinctUntilChanged()
+        )
+            .map { (wallet, amountInput, addressInput, _, _) -> String? in
+                guard wallet != nil else {
+                    return L10n.youMustSelectAWalletToSend
+                }
+                
+                guard let amount = amountInput,
+                      amount > 0
+                else {
+                    return L10n.amountIsNotValid
+                }
+                
+                guard let solWallet = self.wallets.solWallet,
+                      (self.fee.value ?? 0) <= (solWallet.amount ?? 0)
+                else {
+                    return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
+                }
+                
+                let amountToCompare = self.availableAmount.value
+                if amount > amountToCompare {
+                    return L10n.insufficientFunds
+                }
+                
+                if addressInput == nil || !NSRegularExpression.publicKey.matches(addressInput!)
+                {
+                    return L10n.theAddressIsNotValid
+                }
+                return nil
+            }
+            .bind(to: errorSubject)
             .disposed(by: disposeBag)
     }
     
@@ -95,6 +139,10 @@ class SendTokenViewModel {
     
     @objc func scanQrCode() {
         navigationSubject.onNext(.scanQrCode)
+    }
+    
+    @objc func clearDestinationAddress() {
+        destinationAddressInput.accept(nil)
     }
     
     @objc func send() {
