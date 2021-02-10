@@ -1,5 +1,5 @@
 //
-//  SendTokenViewController.swift
+//  _SendTokenViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 09/02/2021.
@@ -9,15 +9,15 @@ import Foundation
 import UIKit
 import SwiftUI
 
-class SendTokenViewController: BaseVC {
+class _SendTokenViewController: BaseVC {
     
     // MARK: - Properties
-    let viewModel: SendTokenViewModel
+    let viewModel: _SendTokenViewModel
     
     // MARK: - Subviews
     
     // MARK: - Initializer
-    init(viewModel: SendTokenViewModel)
+    init(viewModel: _SendTokenViewModel)
     {
         self.viewModel = viewModel
         super.init()
@@ -25,7 +25,7 @@ class SendTokenViewController: BaseVC {
     
     // MARK: - Methods
     override func loadView() {
-        view = SendTokenRootView(viewModel: viewModel)
+        view = _SendTokenRootView(viewModel: viewModel)
     }
     
     override func setUp() {

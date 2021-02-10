@@ -1,5 +1,5 @@
 //
-//  SendTokenRootView.swift
+//  _SendTokenRootView.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 09/02/2021.
@@ -8,18 +8,18 @@
 import UIKit
 import RxSwift
 
-class SendTokenRootView: ScrollableVStackRootView {
+class _SendTokenRootView: ScrollableVStackRootView {
     // MARK: - Constants
     
     // MARK: - Properties
-    let viewModel: SendTokenViewModel
+    let viewModel: _SendTokenViewModel
     let disposeBag = DisposeBag()
     
     // MARK: - Subviews
     lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .h5887ff)
-        .onTap(viewModel, action: #selector(SendTokenViewModel.useAllBalance))
+        .onTap(viewModel, action: #selector(_SendTokenViewModel.useAllBalance))
     lazy var coinImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 12)
-        .onTap(viewModel, action: #selector(SendTokenViewModel.chooseWallet))
+        .onTap(viewModel, action: #selector(_SendTokenViewModel.chooseWallet))
     lazy var amountTextField = TokenAmountTextField(
         font: .systemFont(ofSize: 27, weight: .semibold),
         textColor: .textBlack,
@@ -28,7 +28,7 @@ class SendTokenRootView: ScrollableVStackRootView {
         autocorrectionType: .no
     )
     lazy var changeModeButton = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
-        .onTap(viewModel, action: #selector(SendTokenViewModel.switchMode))
+        .onTap(viewModel, action: #selector(_SendTokenViewModel.switchMode))
     lazy var symbolLabel = UILabel(textSize: 15, weight: .semibold)
     lazy var equityValueLabel = UILabel(text: "≈", textSize: 13, textColor: .textSecondary)
     lazy var coinSymbolPriceLabel = UILabel(textSize: 15, textColor: .textSecondary)
@@ -41,18 +41,18 @@ class SendTokenRootView: ScrollableVStackRootView {
         .padding(.init(all: 10), backgroundColor: .textWhite, cornerRadius: 12)
     lazy var addressTextField = UITextField(height: 44, backgroundColor: .clear, placeholder: L10n.walletAddress, autocorrectionType: .none, autocapitalizationType: UITextAutocapitalizationType.none, spellCheckingType: .no, horizontalPadding: 8)
     lazy var clearAddressButton = UIImageView(width: 24, height: 24, image: .closeFill, tintColor: UIColor.black.withAlphaComponent(0.6))
-        .onTap(viewModel, action: #selector(SendTokenViewModel.clearDestinationAddress))
+        .onTap(viewModel, action: #selector(_SendTokenViewModel.clearDestinationAddress))
     lazy var qrCodeImageView = UIImageView(width: 35, height: 35, image: .scanQr3, tintColor: .a3a5ba)
-        .onTap(viewModel, action: #selector(SendTokenViewModel.scanQrCode))
+        .onTap(viewModel, action: #selector(_SendTokenViewModel.scanQrCode))
     lazy var errorLabel = UILabel(text: " ", textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
     
     lazy var feeLabel = LazyLabel<Double>(textSize: 15, textColor: .textSecondary)
     
     lazy var sendButton = WLButton.stepButton(type: .blue, label: L10n.sendNow)
-        .onTap(viewModel, action: #selector(SendTokenViewModel.send))
+        .onTap(viewModel, action: #selector(_SendTokenViewModel.send))
     
     // MARK: - Initializers
-    init(viewModel: SendTokenViewModel) {
+    init(viewModel: _SendTokenViewModel) {
         self.viewModel = viewModel
         super.init(frame: .zero)
     }
@@ -81,7 +81,7 @@ class SendTokenRootView: ScrollableVStackRootView {
             UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
                 coinImageView,
                 UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textBlack)
-                    .onTap(viewModel, action: #selector(SendTokenViewModel.chooseWallet)),
+                    .onTap(viewModel, action: #selector(_SendTokenViewModel.chooseWallet)),
                 amountTextField,
                 changeModeButton
                     .withContentHuggingPriority(.required, for: .horizontal)
@@ -264,7 +264,7 @@ class SendTokenRootView: ScrollableVStackRootView {
     }
 }
 
-extension SendTokenRootView: UITextFieldDelegate {
+extension _SendTokenRootView: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let textField = textField as? TokenAmountTextField {
             return textField.shouldChangeCharactersInRange(range, replacementString: string)
