@@ -505,7 +505,7 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		BC1D2ACA256B6E7A0064E595 /* SwapTokenVC */ = {
+		BC1D2ACA256B6E7A0064E595 /* SwapToken */ = {
 			isa = PBXGroup;
 			children = (
 				BC06825025C156320011542F /* SwapTokenVM.swift */,
@@ -514,7 +514,7 @@
 				BCB4237025C4078700F8A7A9 /* SwapSlippageSettingsVC.swift */,
 				BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */,
 			);
-			path = SwapTokenVC;
+			path = SwapToken;
 			sourceTree = "<group>";
 		};
 		BC22A5D825D2716400F7026D /* SendToken */ = {
@@ -724,6 +724,8 @@
 				BCEF14A725CFF0E500DFE931 /* AddWallet */,
 				BCABF69D2588746400749EEC /* ProfileVC */,
 				BC22A5D825D2716400F7026D /* SendToken */,
+				BCBBE1822563C0F400533F6B /* ReceiveToken */,
+				BC1D2ACA256B6E7A0064E595 /* SwapToken */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -925,8 +927,6 @@
 				BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */,
 				BC3122372580B36D00F3B14F /* PassCodeVCs */,
 				BCD5E74425512D1500F51299 /* CollectionVC */,
-				BCBBE1822563C0F400533F6B /* ReceiveTokenVC */,
-				BC1D2ACA256B6E7A0064E595 /* SwapTokenVC */,
 				BC490CA8256CB13C006E7AC9 /* WalletsVC */,
 				BC490CB4256CB492006E7AC9 /* ChooseWalletVC */,
 				BC3ADE972570C292002B3B16 /* ProcessTransactionVC.swift */,
@@ -939,13 +939,13 @@
 			path = ViewControllers;
 			sourceTree = "<group>";
 		};
-		BCBBE1822563C0F400533F6B /* ReceiveTokenVC */ = {
+		BCBBE1822563C0F400533F6B /* ReceiveToken */ = {
 			isa = PBXGroup;
 			children = (
 				BC2EC1F02553F60C006EEDA5 /* ReceiveTokenVC.swift */,
 				BCBBE1862563C2D300533F6B /* ReceiveTokenCell.swift */,
 			);
-			path = ReceiveTokenVC;
+			path = ReceiveToken;
 			sourceTree = "<group>";
 		};
 		BCD5E74425512D1500F51299 /* CollectionVC */ = {
