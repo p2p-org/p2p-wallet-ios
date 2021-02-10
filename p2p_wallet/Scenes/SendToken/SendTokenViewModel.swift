@@ -128,6 +128,11 @@ class SendTokenViewModel {
         }
     }
     
+    func isDestinationWalletValid() -> Bool {
+        guard let input = destinationAddressInput.value else {return false}
+        return NSRegularExpression.publicKey.matches(input)
+    }
+    
     // MARK: - Actions
     @objc func useAllBalance() {
         amountInput.accept(availableAmount.value)
