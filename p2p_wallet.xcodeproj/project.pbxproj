@@ -42,9 +42,9 @@
 		BC1D2ACC256B6EA40064E595 /* SwapTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */; };
 		BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */; };
 		BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC2288022542E1CC0028CE8F /* Localizable.strings */; };
-		BC22A5D225D2715C00F7026D /* SendTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22A5CF25D2715C00F7026D /* SendTokenViewModel.swift */; };
-		BC22A5D325D2715C00F7026D /* SendTokenRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22A5D025D2715C00F7026D /* SendTokenRootView.swift */; };
-		BC22A5D425D2715C00F7026D /* SendTokenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22A5D125D2715C00F7026D /* SendTokenViewController.swift */; };
+		BC22A5D225D2715C00F7026D /* _SendTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22A5CF25D2715C00F7026D /* _SendTokenViewModel.swift */; };
+		BC22A5D325D2715C00F7026D /* _SendTokenRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22A5D025D2715C00F7026D /* _SendTokenRootView.swift */; };
+		BC22A5D425D2715C00F7026D /* _SendTokenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22A5D125D2715C00F7026D /* _SendTokenViewController.swift */; };
 		BC22A5E825D2726700F7026D /* ScrollableVStackRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22A5E725D2726700F7026D /* ScrollableVStackRootView.swift */; };
 		BC22AA3425527F190071C69F /* InvestmentsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22AA3325527F190071C69F /* InvestmentsVM.swift */; };
 		BC22ABD22552A2FC0071C69F /* MenuInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABD12552A2FC0071C69F /* MenuInteractor.swift */; };
@@ -100,7 +100,6 @@
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */; };
 		BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */; };
-		BC5258CE25CD2B1E0076317E /* SendTokenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5258CD25CD2B1E0076317E /* SendTokenVM.swift */; };
 		BC54DCAD25831EAD00A65566 /* BonfidaAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCAC25831EAD00A65566 /* BonfidaAPITests.swift */; };
 		BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCED25837CD600A65566 /* ChartMarker.swift */; };
 		BC54DCF92587089700A65566 /* WalletGraphVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCF82587089700A65566 /* WalletGraphVM.swift */; };
@@ -138,7 +137,6 @@
 		BC932B37257E02D9007F1C29 /* FeeVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC932B36257E02D9007F1C29 /* FeeVM.swift */; };
 		BC932B3C257E095B007F1C29 /* TransactionInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC932B3B257E095B007F1C29 /* TransactionInfoVC.swift */; };
 		BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */; };
-		BCA0CFD8255E78D400CD0F8D /* SendTokenItemVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA0CFD7255E78D400CD0F8D /* SendTokenItemVC.swift */; };
 		BCA9941F25AE93D5005BD8FB /* Fonts+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA9941E25AE93D5005BD8FB /* Fonts+Generated.swift */; };
 		BCA9946525AE94D7005BD8FB /* Montserrat-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCA9945325AE94D7005BD8FB /* Montserrat-LightItalic.ttf */; };
 		BCA9946625AE94D7005BD8FB /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCA9945425AE94D7005BD8FB /* Montserrat-Medium.ttf */; };
@@ -261,9 +259,9 @@
 		BC2288062542E1CF0028CE8F /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		BC2288072542E1D00028CE8F /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		BC2288082542E1D10028CE8F /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
-		BC22A5CF25D2715C00F7026D /* SendTokenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenViewModel.swift; sourceTree = "<group>"; };
-		BC22A5D025D2715C00F7026D /* SendTokenRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenRootView.swift; sourceTree = "<group>"; };
-		BC22A5D125D2715C00F7026D /* SendTokenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenViewController.swift; sourceTree = "<group>"; };
+		BC22A5CF25D2715C00F7026D /* _SendTokenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _SendTokenViewModel.swift; sourceTree = "<group>"; };
+		BC22A5D025D2715C00F7026D /* _SendTokenRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _SendTokenRootView.swift; sourceTree = "<group>"; };
+		BC22A5D125D2715C00F7026D /* _SendTokenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _SendTokenViewController.swift; sourceTree = "<group>"; };
 		BC22A5E725D2726700F7026D /* ScrollableVStackRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollableVStackRootView.swift; sourceTree = "<group>"; };
 		BC22AA3325527F190071C69F /* InvestmentsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsVM.swift; sourceTree = "<group>"; };
 		BC22ABD12552A2FC0071C69F /* MenuInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuInteractor.swift; sourceTree = "<group>"; };
@@ -319,7 +317,6 @@
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcher.swift; sourceTree = "<group>"; };
 		BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoComparePricesFetcher+Models.swift"; sourceTree = "<group>"; };
-		BC5258CD25CD2B1E0076317E /* SendTokenVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenVM.swift; sourceTree = "<group>"; };
 		BC54DCAC25831EAD00A65566 /* BonfidaAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonfidaAPITests.swift; sourceTree = "<group>"; };
 		BC54DCED25837CD600A65566 /* ChartMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartMarker.swift; sourceTree = "<group>"; };
 		BC54DCF82587089700A65566 /* WalletGraphVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletGraphVM.swift; sourceTree = "<group>"; };
@@ -358,7 +355,6 @@
 		BC932B36257E02D9007F1C29 /* FeeVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeeVM.swift; sourceTree = "<group>"; };
 		BC932B3B257E095B007F1C29 /* TransactionInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionInfoVC.swift; sourceTree = "<group>"; };
 		BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
-		BCA0CFD7255E78D400CD0F8D /* SendTokenItemVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenItemVC.swift; sourceTree = "<group>"; };
 		BCA9941E25AE93D5005BD8FB /* Fonts+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Fonts+Generated.swift"; sourceTree = "<group>"; };
 		BCA9945325AE94D7005BD8FB /* Montserrat-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-LightItalic.ttf"; sourceTree = "<group>"; };
 		BCA9945425AE94D7005BD8FB /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Medium.ttf"; sourceTree = "<group>"; };
@@ -524,9 +520,8 @@
 		BC22A5D825D2716400F7026D /* SendToken */ = {
 			isa = PBXGroup;
 			children = (
-				BC22A5CF25D2715C00F7026D /* SendTokenViewModel.swift */,
-				BC22A5D025D2715C00F7026D /* SendTokenRootView.swift */,
-				BC22A5D125D2715C00F7026D /* SendTokenViewController.swift */,
+				BCB58374255D299700B10F65 /* SendTokenVC.swift */,
+				BCEA825025D38F10008B1970 /* Wrapped */,
 			);
 			path = SendToken;
 			sourceTree = "<group>";
@@ -805,16 +800,6 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		BCA0CFD6255E78C000CD0F8D /* SendTokenVC */ = {
-			isa = PBXGroup;
-			children = (
-				BCB58374255D299700B10F65 /* SendTokenVC.swift */,
-				BC5258CD25CD2B1E0076317E /* SendTokenVM.swift */,
-				BCA0CFD7255E78D400CD0F8D /* SendTokenItemVC.swift */,
-			);
-			path = SendTokenVC;
-			sourceTree = "<group>";
-		};
 		BCA9945125AE94D7005BD8FB /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -941,7 +926,6 @@
 				BC3122372580B36D00F3B14F /* PassCodeVCs */,
 				BCD5E74425512D1500F51299 /* CollectionVC */,
 				BCBBE1822563C0F400533F6B /* ReceiveTokenVC */,
-				BCA0CFD6255E78C000CD0F8D /* SendTokenVC */,
 				BC1D2ACA256B6E7A0064E595 /* SwapTokenVC */,
 				BC490CA8256CB13C006E7AC9 /* WalletsVC */,
 				BC490CB4256CB492006E7AC9 /* ChooseWalletVC */,
@@ -1020,6 +1004,16 @@
 				BC22ABE02552A4B70071C69F /* DismissMenuAnimator.swift */,
 			);
 			path = LeftSwipeMenu;
+			sourceTree = "<group>";
+		};
+		BCEA825025D38F10008B1970 /* Wrapped */ = {
+			isa = PBXGroup;
+			children = (
+				BC22A5CF25D2715C00F7026D /* _SendTokenViewModel.swift */,
+				BC22A5D025D2715C00F7026D /* _SendTokenRootView.swift */,
+				BC22A5D125D2715C00F7026D /* _SendTokenViewController.swift */,
+			);
+			path = Wrapped;
 			sourceTree = "<group>";
 		};
 		BCEF14A725CFF0E500DFE931 /* AddWallet */ = {
@@ -1387,7 +1381,7 @@
 				BC490CB0256CB1B0006E7AC9 /* ChooseWalletVC.swift in Sources */,
 				BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */,
 				BC32A3D5254A8F7F002156F0 /* CreatePhrasesVC.swift in Sources */,
-				BC22A5D325D2715C00F7026D /* SendTokenRootView.swift in Sources */,
+				BC22A5D325D2715C00F7026D /* _SendTokenRootView.swift in Sources */,
 				BC0E7DC725B178BF009AD08B /* SelectLanguageVC.swift in Sources */,
 				BC932B3C257E095B007F1C29 /* TransactionInfoVC.swift in Sources */,
 				BC22ABE12552A4B70071C69F /* DismissMenuAnimator.swift in Sources */,
@@ -1416,7 +1410,6 @@
 				BC54DD232587169400A65566 /* ValueByDateChartMarker.swift in Sources */,
 				BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */,
 				BC2EC1F12553F60C006EEDA5 /* ReceiveTokenVC.swift in Sources */,
-				BCA0CFD8255E78D400CD0F8D /* SendTokenItemVC.swift in Sources */,
 				BC32A356254A69EA002156F0 /* WelcomeVC.swift in Sources */,
 				BCB92B7025B5311500FF615E /* SelectAppearanceVC.swift in Sources */,
 				BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */,
@@ -1443,7 +1436,7 @@
 				BC54DCF92587089700A65566 /* WalletGraphVM.swift in Sources */,
 				BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */,
 				BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */,
-				BC22A5D225D2715C00F7026D /* SendTokenViewModel.swift in Sources */,
+				BC22A5D225D2715C00F7026D /* _SendTokenViewModel.swift in Sources */,
 				BCD5E770255130DD00F51299 /* News.swift in Sources */,
 				BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */,
 				BC11CA092591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift in Sources */,
@@ -1489,13 +1482,12 @@
 				BC31223C2580B37E00F3B14F /* CreatePassCodeVC.swift in Sources */,
 				BC2EC1F92553FF6A006EEDA5 /* DashedButton.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */,
-				BC5258CE25CD2B1E0076317E /* SendTokenVM.swift in Sources */,
 				BC6EE7DA254BC1A800FE1025 /* SecuritySettingVC.swift in Sources */,
 				BC7BCB75256274E10018DECA /* PricesManager+Extensions.swift in Sources */,
 				BC2EC18B2553B700006EEDA5 /* WalletDetailVC.swift in Sources */,
 				BC6EE777254AF6E600FE1025 /* EnableBiometryVC.swift in Sources */,
 				BC3B3DAA258C653000C6117E /* WLModalVC.swift in Sources */,
-				BC22A5D425D2715C00F7026D /* SendTokenViewController.swift in Sources */,
+				BC22A5D425D2715C00F7026D /* _SendTokenViewController.swift in Sources */,
 				BC2EC1CD2553ED1B006EEDA5 /* CardViewController.swift in Sources */,
 				BCD5E73A2551265300F51299 /* CollectionVC.swift in Sources */,
 				BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */,
