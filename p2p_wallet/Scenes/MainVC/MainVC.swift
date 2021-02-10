@@ -219,7 +219,7 @@ class MainVC: CollectionVC<MainVCItem> {
         CocoaAction { _ in
             let wallets = self.walletsVM.items
             if wallets.count == 0 {return .just(())}
-            let vm = SendTokenViewModel(wallets: wallets, activeWallet: nil)
+            let vm = SendTokenViewModel(wallets: wallets, activeWallet: nil, destinationAddress: address)
             let vc = SendTokenViewController(viewModel: vm)
             let titleImageView = UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
                 .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)

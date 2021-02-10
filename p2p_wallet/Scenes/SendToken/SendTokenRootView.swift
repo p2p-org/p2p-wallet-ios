@@ -138,12 +138,6 @@ class SendTokenRootView: ScrollableVStackRootView {
     
     func bind() {
         // amount text field
-        amountTextField.rx.text
-            .distinctUntilChanged()
-            .map {$0 == nil ? nil: Double($0!)}
-            .bind(to: viewModel.amountInput)
-            .disposed(by: disposeBag)
-        
         viewModel.amountInput
             .distinctUntilChanged()
             .map { $0 == nil ? nil: $0.toString(maximumFractionDigits: 9, groupingSeparator: nil) }
@@ -223,12 +217,7 @@ class SendTokenRootView: ScrollableVStackRootView {
         }
             .disposed(by: disposeBag)
         
-        // address textfield
-        addressTextField.rx.text
-            .distinctUntilChanged()
-            .bind(to: viewModel.destinationAddressInput)
-            .disposed(by: disposeBag)
-        
+        // input to address textfield
         let destinationAddressInput = viewModel.destinationAddressInput
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: nil)
@@ -265,6 +254,18 @@ class SendTokenRootView: ScrollableVStackRootView {
         viewModel.errorSubject.map {$0 == nil}
             .asDriver(onErrorJustReturn: false)
             .drive(sendButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        // textfields to viewModel
+        amountTextField.rx.text
+            .distinctUntilChanged()
+            .map {$0 == nil ? nil: Double($0!)}
+            .bind(to: viewModel.amountInput)
+            .disposed(by: disposeBag)
+        
+        addressTextField.rx.text
+            .distinctUntilChanged()
+            .bind(to: viewModel.destinationAddressInput)
             .disposed(by: disposeBag)
     }
 }
