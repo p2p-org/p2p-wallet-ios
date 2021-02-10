@@ -32,7 +32,7 @@ class SendTokenViewController: BaseVC {
     
     override func setUp() {
         super.setUp()
-        
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideKeyboard)))
     }
     
     override func bind() {
@@ -72,6 +72,10 @@ class SendTokenViewController: BaseVC {
                 }
             })
             .disposed(by: disposeBag)
+    }
+    
+    @objc func hideKeyboard() {
+        view.endEditing(true)
     }
     
     // MARK: - Helpers
