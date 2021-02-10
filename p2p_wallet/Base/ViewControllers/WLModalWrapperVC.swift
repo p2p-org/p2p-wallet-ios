@@ -10,7 +10,7 @@ import Foundation
 class WLModalWrapperVC: WLModalVC {
     override var padding: UIEdgeInsets {.init(x: .defaultPadding, y: .defaultPadding)}
     var vc: UIViewController
-    var titleImage: UIImage?
+    var titleImageView: UIView?
     
     init(wrapped: UIViewController) {
         vc = wrapped
@@ -31,21 +31,18 @@ class WLModalWrapperVC: WLModalVC {
         vc.view.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         vc.didMove(toParent: self)
         
-        if let title = title {
-            addHeader(title: title, image: titleImage)
+        if title != nil {
+            addHeader()
         }
     }
     
     // MARK: - Helpers
-    private func addHeader(title: String, image: UIImage? = nil) {
+    private func addHeader() {
         stackView.axis = .horizontal
         stackView.spacing = 16
         var subviews = [UIView]()
-        if let image = image {
-            subviews.append(
-                UIImageView(width: 24, height: 24, image: image, tintColor: .white)
-                    .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
-            )
+        if let imageView = titleImageView {
+            subviews.append(imageView)
         }
         subviews.append(
             UILabel(text: title, textSize: 17, weight: .semibold)

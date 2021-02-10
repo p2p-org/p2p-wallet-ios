@@ -37,7 +37,10 @@ class RestoreWalletVC: WLIntroVC {
     }
     
     @objc func buttonRestoreManuallyDidTouch() {
-        present(EnterPhrasesVC(), animated: true, completion: nil)
+        let vc = EnterPhrasesVC()
+        let titleImageView = UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white)
+
+        presentCustomModal(vc: vc, title: L10n.securityKeys.uppercaseFirst, titleImageView: titleImageView)
     }
     
     private func handlePhrases(_ text: String)
