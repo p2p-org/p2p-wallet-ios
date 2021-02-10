@@ -11,8 +11,6 @@ import RxCocoa
 import Action
 
 class SwapTokenVC: WLModalWrapperVC {
-    override var padding: UIEdgeInsets {super.padding.modifying(dLeft: .defaultPadding, dRight: .defaultPadding)}
-    
     init(from fromWallet: Wallet? = nil, to toWallet: Wallet? = nil) {
         let vc = _SwapTokenVC(from: fromWallet, to: toWallet)
         super.init(wrapped: vc)
@@ -153,7 +151,7 @@ class _SwapTokenVC: BaseVStackVC {
                 self.sourceWalletView.amountTextField.becomeFirstResponder()
                 vc.back()
             }
-            self.present(vc, animated: true, completion: nil)
+            self.presentCustomModal(vc: vc, title: L10n.selectWallet)
             return .just(())
         }
         
@@ -164,7 +162,7 @@ class _SwapTokenVC: BaseVStackVC {
                 self.viewModel.destinationWallet.accept(wallet)
                 vc.back()
             }
-            self.present(vc, animated: true, completion: nil)
+            self.presentCustomModal(vc: vc, title: L10n.selectWallet)
             return .just(())
         }
         
