@@ -1,5 +1,5 @@
 //
-//  _SendTokenViewModel.swift
+//  SendTokenViewModel.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 09/02/2021.
@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import LazySubject
 
-enum _SendTokenNavigatableScene {
+enum SendTokenNavigatableScene {
     case chooseWallet
     case chooseAddress
     case scanQrCode
@@ -19,7 +19,7 @@ enum _SendTokenNavigatableScene {
     case transactionError(_ error: Error)
 }
 
-class _SendTokenViewModel {
+class SendTokenViewModel {
     // MARK: - Constants
     
     // MARK: - Properties
@@ -27,7 +27,7 @@ class _SendTokenViewModel {
     let disposeBag = DisposeBag()
     
     // MARK: - Subjects
-    let navigationSubject = PublishSubject<_SendTokenNavigatableScene>()
+    let navigationSubject = PublishSubject<SendTokenNavigatableScene>()
     let currentWallet = BehaviorRelay<Wallet?>(value: nil)
     let availableAmount = BehaviorRelay<Double>(value: 0)
     let isUSDMode = BehaviorRelay<Bool>(value: false)

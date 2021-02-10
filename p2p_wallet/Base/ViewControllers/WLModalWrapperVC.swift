@@ -8,8 +8,9 @@
 import Foundation
 
 class WLModalWrapperVC: WLModalVC {
-    override var padding: UIEdgeInsets {.init(x: 0, y: .defaultPadding)}
+    override var padding: UIEdgeInsets {.init(x: .defaultPadding, y: .defaultPadding)}
     var vc: UIViewController
+    var titleImage: UIImage?
     
     init(wrapped: UIViewController) {
         vc = wrapped
@@ -29,10 +30,14 @@ class WLModalWrapperVC: WLModalVC {
         vc.view.autoPinEdge(.top, to: .bottom, of: containerView)
         vc.view.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         vc.didMove(toParent: self)
+        
+        if let title = title {
+            addHeader(title: title, image: titleImage)
+        }
     }
     
     // MARK: - Helpers
-    func addHeader(title: String, image: UIImage? = nil) {
+    private func addHeader(title: String, image: UIImage? = nil) {
         stackView.axis = .horizontal
         stackView.spacing = 16
         var subviews = [UIView]()
