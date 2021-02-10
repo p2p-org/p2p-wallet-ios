@@ -67,7 +67,6 @@ class SendTokenRootView: ScrollableVStackRootView {
         bind()
         
         amountTextField.delegate = self
-        scrollView.keyboardDismissMode = .onDrag
     }
     
     override func didMoveToWindow() {
@@ -226,12 +225,13 @@ class SendTokenRootView: ScrollableVStackRootView {
             .drive(addressTextField.rx.text)
             .disposed(by: disposeBag)
         
-        let destinationAddressInputEmpty = destinationAddressInput
-            .map {$0 == nil || $0!.isEmpty}
-        
-        destinationAddressInputEmpty
+        destinationAddressInput
+            .map {_ in !self.viewModel.isDestinationWalletValid()}
             .drive(walletIconView.rx.isHidden)
             .disposed(by: disposeBag)
+        
+        let destinationAddressInputEmpty = destinationAddressInput
+            .map {$0 == nil || $0!.isEmpty}
         
         destinationAddressInputEmpty
             .drive(clearAddressButton.rx.isHidden)
