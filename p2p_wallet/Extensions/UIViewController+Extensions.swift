@@ -116,10 +116,12 @@ extension UIViewController {
     }
     
     // MARK: - Custom modal
-    func presentCustomModal(vc: UIViewController, title: String? = nil, titleImageView: UIView? = nil) {
-        let vc = WLModalWrapperVC(wrapped: vc)
+    func presentCustomModal(vc wrappedVC: UIViewController, title: String? = nil, titleImageView: UIView? = nil) {
+        let vc = WLModalWrapperVC(wrapped: wrappedVC)
         vc.title = title
         vc.titleImageView = titleImageView
+        vc.modalPresentationStyle = wrappedVC.modalPresentationStyle
+        vc.transitioningDelegate = wrappedVC as? UIViewControllerTransitioningDelegate
         present(vc, animated: true, completion: nil)
     }
 }
