@@ -7,49 +7,15 @@
 
 import Foundation
 
-class ChooseWalletVC: WLModalWrapperVC, UIViewControllerTransitioningDelegate {
-    override var padding: UIEdgeInsets {super.padding.modifying(dLeft: .defaultPadding, dRight: .defaultPadding)}
-    
-    var completion: ((Wallet) -> Void)? {
-        get {
-            (vc as! _ChooseWalletVC).completion
-        }
-        set {
-            (vc as! _ChooseWalletVC).completion = newValue
-        }
-    }
-    
-    init(
-        showInFullScreen: Bool = false,
-        customFilter: @escaping ((Wallet) -> Bool) = {$0.symbol == "SOL" || $0.amount > 0}
-    ) {
-        let vc = _ChooseWalletVC(showInFullScreen: showInFullScreen, customFilter: customFilter)
-        super.init(wrapped: vc)
-        modalPresentationStyle = .custom
-        transitioningDelegate = self
-    }
-    
-    override func setUp() {
-        title = L10n.selectWallet
-        super.setUp()
-    }
-    
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        ExpandablePresentationController(presentedViewController: presented, presenting: presenting)
-    }
-}
-
-class _ChooseWalletVC: MyWalletsVC {
+class ChooseWalletVC: MyWalletsVC {
     var completion: ((Wallet) -> Void)?
     let customFilter: ((Wallet) -> Bool)
     
-    init(showInFullScreen: Bool = false, customFilter: @escaping ((Wallet) -> Bool)) {
-        self.customFilter = customFilter
+    init(customFilter: ((Wallet) -> Bool)? = nil) {
+        self.customFilter = customFilter ?? {$0.symbol == "SOL" || $0.amount > 0}
         super.init()
-        if !showInFullScreen {
-            modalPresentationStyle = .custom
-            transitioningDelegate = self
-        }
+        modalPresentationStyle = .custom
+        transitioningDelegate = self
     }
     
     override func filter(_ items: [Wallet]) -> [Wallet] {
@@ -73,13 +39,13 @@ class _ChooseWalletVC: MyWalletsVC {
     }
 }
 
-extension _ChooseWalletVC: UIViewControllerTransitioningDelegate {
+extension ChooseWalletVC: UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        HalfSizePresentationController(presentedViewController: presented, presenting: presenting)
+        ExpandablePresentationController(presentedViewController: presented, presenting: presenting)
     }
 }
 
-extension _ChooseWalletVC {
+extension ChooseWalletVC {
     class Cell: WalletCell {
         override var loadingViews: [UIView] {super.loadingViews + [addressLabel]}
         lazy var addressLabel = UILabel(textSize: 13, textColor: .textSecondary)

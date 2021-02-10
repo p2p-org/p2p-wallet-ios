@@ -153,7 +153,7 @@ class _SwapTokenVC: BaseVStackVC {
                 self.sourceWalletView.amountTextField.becomeFirstResponder()
                 vc.back()
             }
-            self.present(vc, animated: true, completion: nil)
+            self.presentCustomModal(vc: vc, title: L10n.selectWallet)
             return .just(())
         }
         
@@ -164,7 +164,7 @@ class _SwapTokenVC: BaseVStackVC {
                 self.viewModel.destinationWallet.accept(wallet)
                 vc.back()
             }
-            self.present(vc, animated: true, completion: nil)
+            self.presentCustomModal(vc: vc, title: L10n.selectWallet)
             return .just(())
         }
         
