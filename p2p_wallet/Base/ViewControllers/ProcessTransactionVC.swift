@@ -114,9 +114,6 @@ class ProcessTransactionVC: WLCenterSheet {
         stackView.setCustomSpacing(10, after: viewInExplorerButton)
         
         forceResizeModal()
-        
-        // button's state
-        viewInExplorerButton.isEnabled = transaction.status == .confirmed
     }
     
     // MARK: - PresentationControllerDelegate
