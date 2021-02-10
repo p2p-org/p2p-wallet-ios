@@ -10,6 +10,12 @@ import RxSwift
 import RxCocoa
 import LazySubject
 
+enum SendTokenNavigatableScene {
+    case chooseWallet
+    case chooseAddress
+    case scanQrCode
+}
+
 class SendTokenViewModel {
     // MARK: - Constants
     
@@ -18,7 +24,7 @@ class SendTokenViewModel {
     let disposeBag = DisposeBag()
     
     // MARK: - Subjects
-    let navigationSubject = PublishSubject<Navigation>()
+    let navigationSubject = PublishSubject<SendTokenNavigatableScene>()
     let currentWallet = BehaviorRelay<Wallet?>(value: nil)
     let availableAmount = BehaviorRelay<Double>(value: 0)
     let isUSDMode = BehaviorRelay<Bool>(value: false)
@@ -80,13 +86,7 @@ class SendTokenViewModel {
     }
     
     @objc func chooseWallet() {
-        let vc = ChooseWalletVC()
-        vc.completion = {wallet in
-            guard let wallet = WalletsVM.ofCurrentUser.data.first(where: {$0.pubkey == wallet.pubkey}) else {return}
-            vc.back()
-            self.currentWallet.accept(wallet)
-        }
-        navigationSubject.onNext(.present(vc))
+        navigationSubject.onNext(.chooseWallet)
     }
     
     @objc func switchMode() {
@@ -94,15 +94,10 @@ class SendTokenViewModel {
     }
     
     @objc func scanQrCode() {
-        let vc = QrCodeScannerVC()
-        vc.callback = { code in
-            if NSRegularExpression.publicKey.matches(code) {
-                self.destinationAddressInput.accept(code)
-                return true
-            }
-            return false
-        }
-        vc.modalPresentationStyle = .custom
-        navigationSubject.onNext(.present(vc))
+        navigationSubject.onNext(.scanQrCode)
+    }
+    
+    @objc func send() {
+        
     }
 }

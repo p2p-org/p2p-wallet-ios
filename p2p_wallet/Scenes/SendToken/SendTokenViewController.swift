@@ -38,10 +38,27 @@ class SendTokenViewController: BaseVC {
         viewModel.navigationSubject
             .subscribe(onNext: {
                 switch $0 {
-                case .present(let vc):
+                case .chooseWallet:
+                    let vc = ChooseWalletVC()
+                    vc.completion = {wallet in
+                        guard let wallet = WalletsVM.ofCurrentUser.data.first(where: {$0.pubkey == wallet.pubkey}) else {return}
+                        vc.back()
+                        self.viewModel.currentWallet.accept(wallet)
+                    }
                     self.present(vc, animated: true, completion: nil)
-                case .show(let vc):
-                    self.show(vc, sender: nil)
+                case .chooseAddress:
+                    break
+                case .scanQrCode:
+                    let vc = QrCodeScannerVC()
+                    vc.callback = { code in
+                        if NSRegularExpression.publicKey.matches(code) {
+                            self.viewModel.destinationAddressInput.accept(code)
+                            return true
+                        }
+                        return false
+                    }
+                    vc.modalPresentationStyle = .custom
+                    self.present(vc, animated: true, completion: nil)
                 }
             })
             .disposed(by: disposeBag)

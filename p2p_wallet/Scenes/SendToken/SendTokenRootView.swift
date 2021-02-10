@@ -33,17 +33,19 @@ class SendTokenRootView: ScrollableVStackRootView {
     lazy var equityValueLabel = UILabel(text: "≈", textSize: 13, textColor: .textSecondary)
     lazy var coinSymbolPriceLabel = UILabel(textSize: 15, textColor: .textSecondary)
     lazy var coinPriceLabel = UILabel(textSize: 15, textColor: .textSecondary)
-    lazy var addressTextView: UITextView = {
-        let textView = UITextView(forExpandable: ())
-        textView.backgroundColor = .clear
-        textView.font = .systemFont(ofSize: 15)
-        return textView
-    }()
-    lazy var qrCodeImageView = UIImageView(width: 18, height: 18, image: .scanQr, tintColor: UIColor.black.withAlphaComponent(0.5))
+    
+    lazy var addressStackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
+        walletAddressLabel, qrCodeImageView
+    ])
+    lazy var walletAddressLabel = UILabel(text: L10n.walletAddress, weight: .medium, textColor: .a3a5ba)
+    lazy var qrCodeImageView = UIImageView(width: 35, height: 35, image: .scanQr3, tintColor: .a3a5ba)
         .onTap(viewModel, action: #selector(SendTokenViewModel.scanQrCode))
     lazy var errorLabel = UILabel(text: " ", textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
     
     lazy var feeLabel = LazyLabel<Double>(textSize: 15, textColor: .textSecondary)
+    
+    lazy var sendButton = WLButton.stepButton(type: .blue, label: L10n.sendNow)
+        .onTap(viewModel, action: #selector(SendTokenViewModel.send))
     
     // MARK: - Initializers
     init(viewModel: SendTokenViewModel) {
@@ -106,16 +108,19 @@ class SendTokenRootView: ScrollableVStackRootView {
             UIView.separator(height: 1, color: .separator),
             BEStackViewSpacing(20),
             
-            UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.sendTo, textSize: 15, weight: .bold),
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
-                    addressTextView, qrCodeImageView
-                ])
-                    .padding(.init(all: .defaultPadding), backgroundColor: .c4c4c4, cornerRadius: 16)
-            ]),
+            UILabel(text: L10n.sendTo, textSize: 15, weight: .bold),
+            addressStackView
+                .padding(.init(top: 12, left: 16, bottom: 12, right: 12), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12),
+            
             BEStackViewSpacing(19),
             
-            errorLabel
+            errorLabel,
+            
+            BEStackViewSpacing(20),
+            UIView.separator(height: 1, color: .separator),
+            BEStackViewSpacing(20),
+            
+            sendButton
         ])
         
         equityValueLabel.autoPinEdge(.leading, to: .leading, of: amountTextField)
