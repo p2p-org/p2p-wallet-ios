@@ -6,16 +6,14 @@
 //
 
 import Foundation
-import DiffableDataSources
 import Action
-import IBPCollectionViewCompositionalLayout
 
 class ReceiveTokenVC: WLModalVC {
     // MARK: - Properties
     override var padding: UIEdgeInsets {UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)}
     let collectionViewSpacing: CGFloat = 16
     
-    var dataSource: CollectionViewDiffableDataSource<String, Wallet>!
+    var dataSource: UICollectionViewDiffableDataSource<String, Wallet>!
     let wallets: [Wallet]
     
     // MARK: - Subviews
@@ -60,7 +58,7 @@ class ReceiveTokenVC: WLModalVC {
         stackView.addArrangedSubview(collectionView)
         stackView.addArrangedSubview(pageControl)
         
-        dataSource = CollectionViewDiffableDataSource<String, Wallet>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: Wallet) -> UICollectionViewCell? in
+        dataSource = UICollectionViewDiffableDataSource<String, Wallet>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: Wallet) -> UICollectionViewCell? in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ReceiveTokenCell.self), for: indexPath) as? ReceiveTokenCell
             cell?.setUp(wallet: item)
 //            cell?.copyButton.rx.action = CocoaAction {
@@ -76,7 +74,7 @@ class ReceiveTokenVC: WLModalVC {
         }
         
         // config snapshot
-        var snapshot = DiffableDataSourceSnapshot<String, Wallet>()
+        var snapshot = NSDiffableDataSourceSnapshot<String, Wallet>()
         let section = ""
         snapshot.appendSections([section])
         snapshot.appendItems(wallets, toSection: section)

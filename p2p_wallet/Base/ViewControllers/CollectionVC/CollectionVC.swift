@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import IBPCollectionViewCompositionalLayout
-import DiffableDataSources
 import RxSwift
 
 protocol ListItemType: Hashable {
@@ -66,7 +64,7 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
     }
     
     // MARK: - Properties
-    var dataSource: CollectionViewDiffableDataSource<String, ItemType>!
+    var dataSource: UICollectionViewDiffableDataSource<String, ItemType>!
     let viewModel: ListViewModel<ItemType>
     var sections: [Section] { [] }
     
@@ -176,8 +174,8 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
             .disposed(by: disposeBag)
     }
     
-    func mapDataToSnapshot() -> DiffableDataSourceSnapshot<String, ItemType> {
-        var snapshot = DiffableDataSourceSnapshot<String, ItemType>()
+    func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, ItemType> {
+        var snapshot = NSDiffableDataSourceSnapshot<String, ItemType>()
         let section = sections.first?.header?.title ?? ""
         snapshot.appendSections([section])
         var items = viewModel.searchResult == nil ? filter(viewModel.items) : filter(viewModel.searchResult!)
@@ -313,7 +311,7 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
     
     // MARK: - Datasource
     private func configureDataSource() {
-        dataSource = CollectionViewDiffableDataSource<String, ItemType>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell? in
+        dataSource = UICollectionViewDiffableDataSource<String, ItemType>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell? in
             self.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         }
                 

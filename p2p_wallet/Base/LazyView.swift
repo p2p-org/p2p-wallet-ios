@@ -28,7 +28,7 @@ extension LazyView {
                 guard let self = self else {return}
                 switch state {
                 case .loading, .initializing:
-                    let spinner = Indicator(style: .gray)
+                    let spinner = Indicator(style: .medium)
                     spinner.color = .textBlack
                     spinner.translatesAutoresizingMaskIntoConstraints = false
                     self.addSubview(spinner)

@@ -8,8 +8,8 @@
 import Foundation
 
 extension Optional where Wrapped == Double {
-    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false) -> String {
-        orZero.toString(maximumFractionDigits: maximumFractionDigits, showPlus: showPlus)
+    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false, groupingSeparator: String? = " ") -> String {
+        orZero.toString(maximumFractionDigits: maximumFractionDigits, showPlus: showPlus, groupingSeparator: groupingSeparator)
     }
     
     public var orZero: Double {
@@ -30,6 +30,12 @@ extension Optional where Wrapped == Double {
     
     static func >= (left: Double?, right: Double?) -> Bool {
         left.orZero >= right.orZero
+    }
+    
+    static func / (left: Double?, right: Double?) -> Double {
+        let right = right.orZero
+        if right == 0 {return 0}
+        return left.orZero / right
     }
 }
 

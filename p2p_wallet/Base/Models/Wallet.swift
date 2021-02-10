@@ -73,3 +73,9 @@ extension Wallet: ListItemType {
         Wallet(id: placeholderId(at: index), name: "<placeholder>", mintAddress: "placeholder-mintaddress", pubkey: "<pubkey>", symbol: "<PLHD\(index)>", lamports: nil, decimals: nil, indicatorColor: .clear)
     }
 }
+
+extension Array where Element == Wallet {
+    var solWallet: Wallet? {
+        first(where: {$0.symbol == "SOL"})
+    }
+}
