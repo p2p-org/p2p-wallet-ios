@@ -46,9 +46,10 @@ class SendTokenViewModel {
     let destinationAddressInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(wallets: [Wallet], activeWallet: Wallet? = nil) {
+    init(wallets: [Wallet], activeWallet: Wallet? = nil, destinationAddress: String? = nil) {
         self.wallets = wallets
         self.currentWallet.accept(activeWallet ?? wallets.first)
+        self.destinationAddressInput.accept(destinationAddress)
         fee.reload()
         bind()
     }
