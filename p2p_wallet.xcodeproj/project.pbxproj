@@ -166,7 +166,7 @@
 		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58359255CE96B00B10F65 /* ProfileVC.swift */; };
 		BCB58360255D231400B10F65 /* BaseVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB5835F255D231400B10F65 /* BaseVM.swift */; };
-		BCB58375255D299700B10F65 /* SendTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58374255D299700B10F65 /* SendTokenVC.swift */; };
+		BCB58375255D299700B10F65 /* SendTokenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58374255D299700B10F65 /* SendTokenViewController.swift */; };
 		BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58379255D29C500B10F65 /* WLBottomSheet.swift */; };
 		BCB92B7025B5311500FF615E /* SelectAppearanceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B6F25B5311500FF615E /* SelectAppearanceVC.swift */; };
 		BCB92B7525B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B7425B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift */; };
@@ -390,7 +390,7 @@
 		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58359255CE96B00B10F65 /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
 		BCB5835F255D231400B10F65 /* BaseVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVM.swift; sourceTree = "<group>"; };
-		BCB58374255D299700B10F65 /* SendTokenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenVC.swift; sourceTree = "<group>"; };
+		BCB58374255D299700B10F65 /* SendTokenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenViewController.swift; sourceTree = "<group>"; };
 		BCB58379255D29C500B10F65 /* WLBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBottomSheet.swift; sourceTree = "<group>"; };
 		BCB92B6F25B5311500FF615E /* SelectAppearanceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAppearanceVC.swift; sourceTree = "<group>"; };
 		BCB92B7425B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIUserInterfaceStyle+Extensions.swift"; sourceTree = "<group>"; };
@@ -520,7 +520,7 @@
 		BC22A5D825D2716400F7026D /* SendToken */ = {
 			isa = PBXGroup;
 			children = (
-				BCB58374255D299700B10F65 /* SendTokenVC.swift */,
+				BCB58374255D299700B10F65 /* SendTokenViewController.swift */,
 				BCEA825025D38F10008B1970 /* Wrapped */,
 			);
 			path = SendToken;
@@ -1430,7 +1430,7 @@
 				BC6EE7E2254BD23700FE1025 /* WellDoneVC.swift in Sources */,
 				BC55B8C8254C03700032C355 /* TabBar.swift in Sources */,
 				BC11CA012591B58100E399A9 /* MyProductsWalletCell.swift in Sources */,
-				BCB58375255D299700B10F65 /* SendTokenVC.swift in Sources */,
+				BCB58375255D299700B10F65 /* SendTokenViewController.swift in Sources */,
 				BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */,
 				BCA9941F25AE93D5005BD8FB /* Fonts+Generated.swift in Sources */,
 				BC54DCF92587089700A65566 /* WalletGraphVM.swift in Sources */,

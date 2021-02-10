@@ -70,6 +70,11 @@ class _SendTokenRootView: ScrollableVStackRootView {
         scrollView.keyboardDismissMode = .onDrag
     }
     
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        amountTextField.becomeFirstResponder()
+    }
+    
     func layout() {
         stackView.addArrangedSubviews([
             UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [

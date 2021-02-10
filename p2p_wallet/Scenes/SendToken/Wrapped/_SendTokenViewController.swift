@@ -8,11 +8,13 @@
 import Foundation
 import UIKit
 import SwiftUI
+import Action
 
 class _SendTokenViewController: BaseVC {
     
     // MARK: - Properties
     let viewModel: _SendTokenViewModel
+    var transactionVC: ProcessTransactionVC!
     
     // MARK: - Subviews
     
@@ -59,10 +61,36 @@ class _SendTokenViewController: BaseVC {
                     }
                     vc.modalPresentationStyle = .custom
                     self.present(vc, animated: true, completion: nil)
+                case .sendTransaction:
+                    self.transactionVC = self.presentProcessTransactionVC()
+                case .processTransaction(let signature):
+                    self.showProcessingTransaction(signature: signature)
+                case .transactionError(let error):
+                    self.transactionVC.dismiss(animated: true) {
+                        self.showError(error)
+                    }
                 }
             })
             .disposed(by: disposeBag)
     }
     
     // MARK: - Helpers
+    private func showProcessingTransaction(signature: String) {
+        transactionVC.signature = signature
+        transactionVC.viewInExplorerButton.rx.action = CocoaAction {
+            self.transactionVC.dismiss(animated: true) {
+                let nc = self.navigationController
+                self.back()
+                nc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
+            }
+            
+            return .just(())
+        }
+        transactionVC.goBackToWalletButton.rx.action = CocoaAction {
+            self.transactionVC.dismiss(animated: true) {
+                self.back()
+            }
+            return .just(())
+        }
+    }
 }

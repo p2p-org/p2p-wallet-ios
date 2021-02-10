@@ -14,6 +14,9 @@ enum _SendTokenNavigatableScene {
     case chooseWallet
     case chooseAddress
     case scanQrCode
+    case sendTransaction
+    case processTransaction(signature: String)
+    case transactionError(_ error: Error)
 }
 
 class _SendTokenViewModel {
@@ -146,6 +149,39 @@ class _SendTokenViewModel {
     }
     
     @objc func send() {
+        guard errorSubject.value == nil,
+              let sender = currentWallet.value?.pubkey,
+              let receiver = destinationAddressInput.value,
+              let price = currentWallet.value?.priceInUSD,
+              price > 0,
+              var amount = amountInput.value,
+              let decimals = currentWallet.value?.decimals
+        else {
+            return
+        }
+        let isUSDMode = self.isUSDMode.value
         
+        if isUSDMode { amount = amount / price }
+        
+        navigationSubject.onNext(.sendTransaction)
+        
+        // prepare amount
+        let lamport = amount.toLamport(decimals: decimals)
+        
+        SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: lamport)
+            .subscribe(onSuccess: { signature in
+                self.navigationSubject.onNext(.processTransaction(signature: signature))
+                let transaction = Transaction(
+                    signatureInfo: .init(signature: signature),
+                    type: .send,
+                    amount: -amount,
+                    symbol: self.currentWallet.value?.symbol ?? "",
+                    status: .processing
+                )
+                TransactionsManager.shared.process(transaction)
+            }, onError: {error in
+                self.navigationSubject.onNext(.transactionError(error))
+            })
+            .disposed(by: disposeBag)
     }
 }
