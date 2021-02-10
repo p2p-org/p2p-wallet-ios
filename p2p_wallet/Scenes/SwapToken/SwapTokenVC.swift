@@ -11,8 +11,6 @@ import RxCocoa
 import Action
 
 class SwapTokenVC: WLModalWrapperVC {
-    override var padding: UIEdgeInsets {super.padding.modifying(dLeft: .defaultPadding, dRight: .defaultPadding)}
-    
     init(from fromWallet: Wallet? = nil, to toWallet: Wallet? = nil) {
         let vc = _SwapTokenVC(from: fromWallet, to: toWallet)
         super.init(wrapped: vc)

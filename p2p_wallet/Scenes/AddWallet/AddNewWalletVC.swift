@@ -8,6 +8,7 @@
 import Foundation
 
 class AddNewWalletVC: WLModalWrapperVC {
+    override var padding: UIEdgeInsets {.init(x: 0, y: .defaultPadding)}
     lazy var searchBar: BESearchBar = {
         let searchBar = BESearchBar(fixedHeight: 36, cornerRadius: 12)
         searchBar.textFieldBgColor = .lightGrayBackground
