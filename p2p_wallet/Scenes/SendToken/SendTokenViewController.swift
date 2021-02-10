@@ -47,7 +47,7 @@ class SendTokenViewController: BaseVC {
                         vc.back()
                         self.viewModel.currentWallet.accept(wallet)
                     }
-                    self.present(vc, animated: true, completion: nil)
+                    self.presentCustomModal(vc: vc, title: L10n.selectWallet)
                 case .chooseAddress:
                     break
                 case .scanQrCode:
