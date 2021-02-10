@@ -34,10 +34,14 @@ class SendTokenRootView: ScrollableVStackRootView {
     lazy var coinSymbolPriceLabel = UILabel(textSize: 15, textColor: .textSecondary)
     lazy var coinPriceLabel = UILabel(textSize: 15, textColor: .textSecondary)
     
-    lazy var addressStackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
-        walletAddressLabel, qrCodeImageView
+    lazy var addressStackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
+        walletIconView, addressTextField, clearAddressButton, qrCodeImageView
     ])
-    lazy var walletAddressLabel = UILabel(text: L10n.walletAddress, weight: .medium, textColor: .a3a5ba)
+    lazy var walletIconView = UIImageView(width: 24, height: 24, image: .walletIcon, tintColor: .a3a5ba)
+        .padding(.init(all: 10), backgroundColor: .textWhite, cornerRadius: 12)
+    lazy var addressTextField = UITextField(height: 44, backgroundColor: .clear, placeholder: L10n.walletAddress, autocorrectionType: .none, autocapitalizationType: UITextAutocapitalizationType.none, spellCheckingType: .no, horizontalPadding: 8)
+    lazy var clearAddressButton = UIImageView(width: 24, height: 24, image: .closeFill, tintColor: UIColor.black.withAlphaComponent(0.6))
+        .onTap(viewModel, action: #selector(SendTokenViewModel.clearDestinationAddress))
     lazy var qrCodeImageView = UIImageView(width: 35, height: 35, image: .scanQr3, tintColor: .a3a5ba)
         .onTap(viewModel, action: #selector(SendTokenViewModel.scanQrCode))
     lazy var errorLabel = UILabel(text: " ", textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
@@ -63,6 +67,7 @@ class SendTokenRootView: ScrollableVStackRootView {
         bind()
         
         amountTextField.delegate = self
+        scrollView.keyboardDismissMode = .onDrag
     }
     
     func layout() {
@@ -110,7 +115,7 @@ class SendTokenRootView: ScrollableVStackRootView {
             
             UILabel(text: L10n.sendTo, textSize: 15, weight: .bold),
             addressStackView
-                .padding(.init(top: 12, left: 16, bottom: 12, right: 12), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12),
+                .padding(.init(all: 8), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12),
             
             BEStackViewSpacing(19),
             
@@ -127,6 +132,7 @@ class SendTokenRootView: ScrollableVStackRootView {
     }
     
     func bind() {
+        // amount text field
         amountTextField.rx.text
             .distinctUntilChanged()
             .map {$0 == nil ? nil: Double($0!)}
@@ -140,6 +146,7 @@ class SendTokenRootView: ScrollableVStackRootView {
             .drive(amountTextField.rx.text)
             .disposed(by: disposeBag)
         
+        // available amout
         viewModel.availableAmount
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: 0)
@@ -155,6 +162,7 @@ class SendTokenRootView: ScrollableVStackRootView {
             })
             .disposed(by: disposeBag)
         
+        // current wallet
         viewModel.currentWallet.distinctUntilChanged()
             .subscribe(onNext: {wallet in
                 guard let wallet = wallet else {return}
@@ -204,9 +212,54 @@ class SendTokenRootView: ScrollableVStackRootView {
             .drive(coinPriceLabel.rx.text)
             .disposed(by: disposeBag)
         
+        // fee
         feeLabel.subscribed(to: viewModel.fee) {
             "\($0.toString(maximumFractionDigits: 9)) SOL"
         }
+            .disposed(by: disposeBag)
+        
+        // address textfield
+        addressTextField.rx.text
+            .distinctUntilChanged()
+            .bind(to: viewModel.destinationAddressInput)
+            .disposed(by: disposeBag)
+        
+        let destinationAddressInput = viewModel.destinationAddressInput
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: nil)
+            
+        destinationAddressInput
+            .drive(addressTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        let destinationAddressInputEmpty = destinationAddressInput
+            .map {$0 == nil || $0!.isEmpty}
+        
+        destinationAddressInputEmpty
+            .drive(walletIconView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        destinationAddressInputEmpty
+            .drive(clearAddressButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        let destinationAddressInputNotEmpty = destinationAddressInputEmpty
+            .map {!$0}
+        
+        destinationAddressInputNotEmpty
+            .drive(qrCodeImageView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        // error
+        viewModel.errorSubject
+            .asDriver()
+            .drive(errorLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        // send button
+        viewModel.errorSubject.map {$0 == nil}
+            .asDriver(onErrorJustReturn: false)
+            .drive(sendButton.rx.isEnabled)
             .disposed(by: disposeBag)
     }
 }

@@ -241,3 +241,4 @@
 "Could not derivate private key" = "Impossible de dériver la clé privée";
 "Blockhash required" = "Blockhash requis";
 "Your account does not have enough SOL to cover fee" = "Votre compte n'a pas assez de SOL pour couvrir les frais";
+"You must select a wallet to send" = "Vous devez sélectionner un portefeuille à envoyer";
