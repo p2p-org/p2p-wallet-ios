@@ -109,9 +109,11 @@ class WalletDetailVC: WLModalWrapperVC {
     }
     
     @objc func buttonSendDidTouch() {
-        let vm = _SendTokenViewModel(wallets: WalletsVM.ofCurrentUser.data, activeWallet: wallet)
+        let vm = SendTokenViewModel(wallets: WalletsVM.ofCurrentUser.data, activeWallet: wallet)
         let vc = SendTokenViewController(viewModel: vm)
-        self.present(vc, animated: true, completion: nil)
+        let imageView = UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
+            .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
+        presentCustomModal(vc: vc, title: L10n.send, titleImageView: imageView)
     }
     
     @objc func buttonReceiveDidTouch() {

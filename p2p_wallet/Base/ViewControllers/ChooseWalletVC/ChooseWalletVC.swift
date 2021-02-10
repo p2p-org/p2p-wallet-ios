@@ -30,8 +30,8 @@ class ChooseWalletVC: WLModalWrapperVC, UIViewControllerTransitioningDelegate {
     }
     
     override func setUp() {
+        title = L10n.selectWallet
         super.setUp()
-        addHeader(title: L10n.selectWallet)
     }
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {

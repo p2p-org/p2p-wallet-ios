@@ -219,9 +219,11 @@ class MainVC: CollectionVC<MainVCItem> {
         CocoaAction { _ in
             let wallets = self.walletsVM.items
             if wallets.count == 0 {return .just(())}
-            let vm = _SendTokenViewModel(wallets: wallets, activeWallet: nil)
+            let vm = SendTokenViewModel(wallets: wallets, activeWallet: nil)
             let vc = SendTokenViewController(viewModel: vm)
-            self.present(vc, animated: true, completion: nil)
+            let titleImageView = UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
+                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
+            self.presentCustomModal(vc: vc, title: L10n.send, titleImageView: titleImageView)
             return .just(())
         }
     }
