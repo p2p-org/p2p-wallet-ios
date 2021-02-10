@@ -114,4 +114,12 @@ extension UIViewController {
     func hideHud() {
         view.hideHud()
     }
+    
+    // MARK: - Custom modal
+    func presentCustomModal(vc: UIViewController, title: String? = nil, titleImage: UIImage? = nil) {
+        let vc = WLModalWrapperVC(wrapped: vc)
+        vc.title = title
+        vc.titleImage = titleImage
+        present(vc, animated: true, completion: nil)
+    }
 }
