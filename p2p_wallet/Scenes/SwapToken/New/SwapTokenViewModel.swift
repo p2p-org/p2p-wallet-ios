@@ -96,7 +96,6 @@ class SwapTokenViewModel {
         
         // TODO: Reverse: estimated amount to input amount
         
-        
         // minimum receive
         Observable.combineLatest(
             estimatedAmountLamports.distinctUntilChanged(),
@@ -123,8 +122,9 @@ class SwapTokenViewModel {
         )
             .map {_, pool, sourceWallet, destinationWallet, sourceAmountInput, slippage -> String? in
                 var errorText: String?
-                if pool != nil, let input = sourceAmountInput {
+                if pool != nil {
                     // supported
+                    let input = sourceAmountInput ?? 0
                     if input <= 0 {
                         errorText = L10n.amountIsNotValid
                     } else if input > sourceWallet?.amount {
