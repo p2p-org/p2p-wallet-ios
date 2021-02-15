@@ -111,6 +111,8 @@ class SwapTokenViewModel {
     
     // MARK: - Actions
     @objc func useAllBalance() {
+        // TODO: - Calculate fee per signatures
+//        let fee =
         amountInput.accept(sourceWallet.value?.amount)
     }
     
