@@ -48,30 +48,15 @@ extension UIViewController {
     }
     
     func showErrorView(error: Error) {
-        let description = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-        showErrorView(title: L10n.error, description: description)
+        view.showErrorView(error: error)
     }
     
     func showErrorView(title: String? = nil, description: String? = nil) {
-        removeErrorView()
-        let errorView = ErrorView(backgroundColor: .textWhite)
-        if let title = title {
-            errorView.titleLabel.text = title
-        }
-        if let description = description {
-            errorView.descriptionLabel.text = description
-        }
-        let spacer1 = UIView.spacer
-        let spacer2 = UIView.spacer
-        errorView.stackView.insertArrangedSubview(spacer1, at: 0)
-        errorView.stackView.addArrangedSubview(spacer2)
-        spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor).isActive = true
-        view.addSubview(errorView)
-        errorView.autoPinEdgesToSuperviewEdges()
+        view.showErrorView(title: title, description: description)
     }
     
     func removeErrorView() {
-        view.subviews.filter {$0 is ErrorView}.forEach {$0.removeFromSuperview()}
+        view.removeErrorView()
     }
     
     func topViewController() -> UIViewController {
