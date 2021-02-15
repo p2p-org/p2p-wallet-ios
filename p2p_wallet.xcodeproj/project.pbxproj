@@ -10,7 +10,9 @@
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
 		BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */; };
-		BC06825125C156320011542F /* SwapTokenVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC06825025C156320011542F /* SwapTokenVM.swift */; };
+		BC05891325D3CD7C00632993 /* SwapTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC05891025D3CD7C00632993 /* SwapTokenViewModel.swift */; };
+		BC05891425D3CD7C00632993 /* SwapTokenRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC05891125D3CD7C00632993 /* SwapTokenRootView.swift */; };
+		BC05891525D3CD7C00632993 /* SwapTokenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC05891225D3CD7C00632993 /* SwapTokenViewController.swift */; };
 		BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */; };
 		BC0978E825AEDEE200DB02E9 /* ResizablePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */; };
 		BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */; };
@@ -39,7 +41,6 @@
 		BC123E7F25B181B60043178E /* NSObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC123E7E25B181B60043178E /* NSObject+Extensions.swift */; };
 		BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC123E8325B181D80043178E /* Locale+Extensions.swift */; };
 		BC17577A25788DD200049667 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC17577925788DD200049667 /* Socket.swift */; };
-		BC1D2ACC256B6EA40064E595 /* SwapTokenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */; };
 		BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */; };
 		BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC2288022542E1CC0028CE8F /* Localizable.strings */; };
 		BC22A5D225D2715C00F7026D /* SendTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22A5CF25D2715C00F7026D /* SendTokenViewModel.swift */; };
@@ -220,7 +221,9 @@
 		BB6790432D1A5F53BBDB3162 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		BB7CFE6A2633569A3CAC841A /* Pods-p2p_walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.release.xcconfig"; sourceTree = "<group>"; };
 		BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LABiometryType+Extensions.swift"; sourceTree = "<group>"; };
-		BC06825025C156320011542F /* SwapTokenVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenVM.swift; sourceTree = "<group>"; };
+		BC05891025D3CD7C00632993 /* SwapTokenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenViewModel.swift; sourceTree = "<group>"; };
+		BC05891125D3CD7C00632993 /* SwapTokenRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenRootView.swift; sourceTree = "<group>"; };
+		BC05891225D3CD7C00632993 /* SwapTokenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenViewController.swift; sourceTree = "<group>"; };
 		BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLResizableModalVC.swift; sourceTree = "<group>"; };
 		BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizablePresentationController.swift; sourceTree = "<group>"; };
 		BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinLogoImageView.swift; sourceTree = "<group>"; };
@@ -249,7 +252,6 @@
 		BC123E7E25B181B60043178E /* NSObject+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSObject+Extensions.swift"; sourceTree = "<group>"; };
 		BC123E8325B181D80043178E /* Locale+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Locale+Extensions.swift"; sourceTree = "<group>"; };
 		BC17577925788DD200049667 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
-		BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenVC.swift; sourceTree = "<group>"; };
 		BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeBackVC.swift; sourceTree = "<group>"; };
 		BC2287FA2542E1A30028CE8F /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		BC2287FE2542E1B90028CE8F /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
@@ -506,11 +508,9 @@
 		BC1D2ACA256B6E7A0064E595 /* SwapToken */ = {
 			isa = PBXGroup;
 			children = (
-				BC06825025C156320011542F /* SwapTokenVM.swift */,
-				BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */,
-				BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */,
-				BCB4237025C4078700F8A7A9 /* SwapSlippageSettingsVC.swift */,
-				BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */,
+				BC5FB0C325DA03D90021DFF3 /* Subviews */,
+				BC05891025D3CD7C00632993 /* SwapTokenViewModel.swift */,
+				BC05891225D3CD7C00632993 /* SwapTokenViewController.swift */,
 			);
 			path = SwapToken;
 			sourceTree = "<group>";
@@ -679,6 +679,24 @@
 			path = Main/TabBarVC;
 			sourceTree = "<group>";
 		};
+		BC5FB0C325DA03D90021DFF3 /* Subviews */ = {
+			isa = PBXGroup;
+			children = (
+				BC05891125D3CD7C00632993 /* SwapTokenRootView.swift */,
+				BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */,
+			);
+			path = Subviews;
+			sourceTree = "<group>";
+		};
+		BC5FB0C425DA03FB0021DFF3 /* SwapSlippageSettings */ = {
+			isa = PBXGroup;
+			children = (
+				BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */,
+				BCB4237025C4078700F8A7A9 /* SwapSlippageSettingsVC.swift */,
+			);
+			path = SwapSlippageSettings;
+			sourceTree = "<group>";
+		};
 		BC65E9B72542B983005F50CE /* Base */ = {
 			isa = PBXGroup;
 			children = (
@@ -725,6 +743,7 @@
 				BC22A5D825D2716400F7026D /* SendToken */,
 				BCBBE1822563C0F400533F6B /* ReceiveToken */,
 				BC1D2ACA256B6E7A0064E595 /* SwapToken */,
+				BC5FB0C425DA03FB0021DFF3 /* SwapSlippageSettings */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -1439,7 +1458,6 @@
 				BCB92B8025B5386F00FF615E /* WLIntroVC.swift in Sources */,
 				BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
-				BC06825125C156320011542F /* SwapTokenVM.swift in Sources */,
 				BC2EC1902553BA2C006EEDA5 /* WDVCSectionHeaderView.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
 				BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */,
@@ -1463,12 +1481,14 @@
 				BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */,
 				BC490CCC256CCEBC006E7AC9 /* AddNewWalletVC.swift in Sources */,
 				BC11C9FC2591B2B700E399A9 /* MyProductsVC.swift in Sources */,
+				BC05891425D3CD7C00632993 /* SwapTokenRootView.swift in Sources */,
 				BC3122332580B34B00F3B14F /* PassCodeVC.swift in Sources */,
 				BC104A7B259974CE0048C834 /* WLLoadingView.swift in Sources */,
 				BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */,
 				BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */,
 				BC31223C2580B37E00F3B14F /* CreatePassCodeVC.swift in Sources */,
 				BC2EC1F92553FF6A006EEDA5 /* DashedButton.swift in Sources */,
+				BC05891525D3CD7C00632993 /* SwapTokenViewController.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */,
 				BC6EE7DA254BC1A800FE1025 /* SecuritySettingVC.swift in Sources */,
 				BC7BCB75256274E10018DECA /* PricesManager+Extensions.swift in Sources */,
@@ -1498,7 +1518,6 @@
 				BC2EC1D22553ED1B006EEDA5 /* FlexibleHeightPresentationController.swift in Sources */,
 				BC2EC1BA2553EC7D006EEDA5 /* UIView+Extensions.swift in Sources */,
 				BC22AA3425527F190071C69F /* InvestmentsVM.swift in Sources */,
-				BC1D2ACC256B6EA40064E595 /* SwapTokenVC.swift in Sources */,
 				BC5ED7532562687F0030572D /* PricesManager.swift in Sources */,
 				BC932B37257E02D9007F1C29 /* FeeVM.swift in Sources */,
 				BCD5E82425525C6E00F51299 /* WalletsVM.swift in Sources */,
@@ -1506,6 +1525,7 @@
 				BC5ED749256237AB0030572D /* EmptyView.swift in Sources */,
 				BC6EE77D254BB8F400FE1025 /* Settings.swift in Sources */,
 				BC11CA122591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift in Sources */,
+				BC05891325D3CD7C00632993 /* SwapTokenViewModel.swift in Sources */,
 				BC2EC1D12553ED1B006EEDA5 /* FittingSizePresentationController.swift in Sources */,
 				BCB92B7525B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift in Sources */,
 				BC7BCB7B2562807E0018DECA /* Double+Extensions.swift in Sources */,
