@@ -213,6 +213,90 @@ private extension SwapTokenRootView {
             .asDriver(onErrorJustReturn: nil)
             .drive(destinationWalletView.amountTextField.rx.text)
             .disposed(by: disposeBag)
+        
+        // exchange rate label
+        Observable.combineLatest(
+            viewModel.sourceWallet,
+            viewModel.sourceAmountInput,
+            viewModel.destinationWallet,
+            viewModel.destinationAmountInput,
+            viewModel.isReversedExchangeRate
+        )
+            .map {sourceWallet, sourceAmount, destinationWallet, destinationAmount, isReversed -> String? in
+                guard let amountIn = sourceAmount,
+                      let amountOut = destinationAmount,
+                      var fromSymbol = sourceWallet?.symbol,
+                      var toSymbol = destinationWallet?.symbol,
+                      var fromDecimals = sourceWallet?.decimals,
+                      var toDecimals = destinationWallet?.decimals
+                else {
+                    return nil
+                }
+                var rate = amountOut / amountIn
+                if isReversed {
+                    rate = amountIn / amountOut
+                    
+                    // swap symbol
+                    swap(&fromSymbol, &toSymbol)
+                    
+                    // swap decimals
+                    swap(&fromDecimals, &toDecimals)
+                }
+                
+                return rate.toString(maximumFractionDigits: toDecimals) + " "
+                    + toSymbol + " "
+                    + L10n.per + " "
+                    + fromSymbol
+            }
+            .asDriver(onErrorJustReturn: nil)
+            .drive(exchangeRateLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        // minimum receive
+        Observable.combineLatest(
+            viewModel.minimumReceiveAmount,
+            viewModel.destinationWallet
+        )
+            .map {minReceiveAmount, wallet -> String? in
+                guard let symbol = wallet?.symbol else {return nil}
+                return minReceiveAmount?.toString(maximumFractionDigits: 9) + " " + symbol
+            }
+            .asDriver(onErrorJustReturn: nil)
+            .drive(minimumReceiveLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        // fee
+        Observable.combineLatest(
+            viewModel.currentPool,
+            viewModel.sourceWallet,
+            viewModel.sourceAmountInput
+        )
+            .map {pool, sourceWallet, amountInput -> String? in
+                guard let pool = pool,
+                      let decimals = sourceWallet?.decimals,
+                      let lamports = amountInput?.toLamport(decimals: decimals),
+                      let amount = pool.fee(forInputAmount: lamports)
+                else {return nil}
+                
+                return amount.toString(maximumFractionDigits: 5) + " " + "SOL"
+            }
+            .asDriver(onErrorJustReturn: nil)
+            .drive(feeLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        // slippage
+        viewModel.slippage
+            .subscribe(onNext: {slippage in
+                if slippage > 0.2 || slippage < 0 {
+                    self.slippageLabel.attributedText = NSMutableAttributedString()
+                        .text((slippage * 100).toString() + " %", color: .red)
+                        .text(" ")
+                        .text("(\(L10n.max). 20%)", color: .textSecondary)
+                } else {
+                    self.slippageLabel.text = (slippage * 100).toString() + " %"
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     func bindControlsToViewModel() {
