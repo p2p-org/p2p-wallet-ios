@@ -244,3 +244,5 @@
 "Blockhash required" = "Blockhash không có";
 "Your account does not have enough SOL to cover fee" = "Tài khoản của bạn không có đủ SOL để trả phí";
 "You must select a wallet to send" = "Bạn phải chọn một ví để gửi";
+"Price" = "Giá bán";
+"Select currency" = "Chọn loại tiền tệ";

@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "toggle-right.png",
+      "filename" : "Group 832.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "toggle-right@2x.png",
+      "filename" : "Group 832@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "toggle-right@3x.png",
+      "filename" : "Group 832@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
@@ -19,8 +19,5 @@
   "info" : {
     "author" : "xcode",
     "version" : 1
-  },
-  "properties" : {
-    "template-rendering-intent" : "template"
   }
 }
