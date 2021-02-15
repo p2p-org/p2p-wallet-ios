@@ -17,9 +17,9 @@ class SwapTokenRootView: ScrollableVStackRootView {
     let disposeBag = DisposeBag()
     
     // MARK: - Subviews
-    lazy var availableSourceBalanceLabel = UILabel(text: "Available", textColor: .h5887ff)
+    lazy var availableSourceBalanceLabel = UILabel(text: "Available", weight: .bold, textColor: .h5887ff)
         .onTap(viewModel, action: #selector(SwapTokenViewModel.useAllBalance))
-    lazy var destinationBalanceLabel = UILabel(textColor: .textSecondary)
+    lazy var destinationBalanceLabel = UILabel(weight: .bold, textColor: .textSecondary)
     lazy var sourceWalletView = SwapTokenItemView(forAutoLayout: ())
     lazy var destinationWalletView = SwapTokenItemView(forAutoLayout: ())
     
@@ -93,7 +93,7 @@ private extension SwapTokenRootView {
         
         stackView.addArrangedSubviews([
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.from),
+                UILabel(text: L10n.from, weight: .bold),
                 availableSourceBalanceLabel
             ]),
             sourceWalletView,
@@ -101,7 +101,7 @@ private extension SwapTokenRootView {
             swapSourceAndDestinationView(),
             BEStackViewSpacing(16),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.to),
+                UILabel(text: L10n.to, weight: .bold),
                 destinationBalanceLabel
             ]),
             destinationWalletView,
@@ -196,6 +196,7 @@ private extension SwapTokenRootView {
         viewModel.destinationWallet
             .subscribe(onNext: { [weak self] wallet in
                 self?.destinationWalletView.setUp(wallet: wallet)
+                self?.destinationBalanceLabel.text = L10n.balance + ": " + wallet?.amount?.toString(maximumFractionDigits: 9) + " " + "\(wallet?.symbol ?? "")"
             })
             .disposed(by: disposeBag)
         
