@@ -74,10 +74,6 @@ class SendTokenViewController: BaseVC {
             .disposed(by: disposeBag)
     }
     
-    @objc func hideKeyboard() {
-        view.endEditing(true)
-    }
-    
     // MARK: - Helpers
     private func showProcessingTransaction(signature: String) {
         transactionVC.signature = signature
