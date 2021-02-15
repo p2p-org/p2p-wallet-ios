@@ -20,8 +20,8 @@ class SwapTokenRootView: ScrollableVStackRootView {
     lazy var availableSourceBalanceLabel = UILabel(text: "Available", weight: .bold, textColor: .h5887ff)
         .onTap(viewModel, action: #selector(SwapTokenViewModel.useAllBalance))
     lazy var destinationBalanceLabel = UILabel(weight: .bold, textColor: .textSecondary)
-    lazy var sourceWalletView = SwapTokenItemView(forAutoLayout: ())
-    lazy var destinationWalletView = SwapTokenItemView(forAutoLayout: ())
+    lazy var sourceWalletView = SwapTokenWalletView(forAutoLayout: ())
+    lazy var destinationWalletView = SwapTokenWalletView(forAutoLayout: ())
     
     lazy var exchangeRateLabel = UILabel(text: nil)
     lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
