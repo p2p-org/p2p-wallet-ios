@@ -9,11 +9,12 @@ import Foundation
 import Action
 import RxSwift
 
-class SwapTokenItemView: BEView {
+class SwapTokenWalletView: BEView {
     var wallet: Wallet?
     let disposeBag = DisposeBag()
     
     lazy var iconImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 12)
+        .with(placeholder: UIImageView(image: .walletPlaceholder))
     
     lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
     
@@ -55,15 +56,12 @@ class SwapTokenItemView: BEView {
     
     func setUp(wallet: Wallet?) {
         amountTextField.wallet = wallet
+        iconImageView.setUp(wallet: wallet)
         if let wallet = wallet {
             tokenSymbolLabel.alpha = 1
-            
-            iconImageView.setUp(wallet: wallet)
             tokenSymbolLabel.text = wallet.symbol
         } else {
             tokenSymbolLabel.alpha = 0
-            
-            iconImageView.imageView.image = nil
             tokenSymbolLabel.text = nil
         }
         

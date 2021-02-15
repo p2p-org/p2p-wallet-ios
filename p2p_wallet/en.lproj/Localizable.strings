@@ -244,3 +244,5 @@
 "Blockhash required" = "Blockhash required";
 "Your account does not have enough SOL to cover fee" = "Your account does not have enough SOL to cover fee";
 "You must select a wallet to send" = "You must select a wallet to send";
+"Price" = "Price";
+"Select currency" = "Select currency";

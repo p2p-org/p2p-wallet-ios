@@ -17,11 +17,11 @@ class SwapTokenRootView: ScrollableVStackRootView {
     let disposeBag = DisposeBag()
     
     // MARK: - Subviews
-    lazy var availableSourceBalanceLabel = UILabel(text: "Available", textColor: .h5887ff)
+    lazy var availableSourceBalanceLabel = UILabel(text: "Available", weight: .bold, textColor: .h5887ff)
         .onTap(viewModel, action: #selector(SwapTokenViewModel.useAllBalance))
-    lazy var destinationBalanceLabel = UILabel(textColor: .textSecondary)
-    lazy var sourceWalletView = SwapTokenItemView(forAutoLayout: ())
-    lazy var destinationWalletView = SwapTokenItemView(forAutoLayout: ())
+    lazy var destinationBalanceLabel = UILabel(weight: .bold, textColor: .textSecondary)
+    lazy var sourceWalletView = SwapTokenWalletView(forAutoLayout: ())
+    lazy var destinationWalletView = SwapTokenWalletView(forAutoLayout: ())
     
     lazy var exchangeRateLabel = UILabel(text: nil)
     lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
@@ -68,7 +68,6 @@ class SwapTokenRootView: ScrollableVStackRootView {
         
         // disable editing in toWallet text field
         destinationWalletView.amountTextField.isUserInteractionEnabled = false
-        destinationWalletView.equityValueLabel.isHidden = true
     }
     
     override func didMoveToWindow() {
@@ -93,7 +92,7 @@ private extension SwapTokenRootView {
         
         stackView.addArrangedSubviews([
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.from),
+                UILabel(text: L10n.from, weight: .bold),
                 availableSourceBalanceLabel
             ]),
             sourceWalletView,
@@ -101,12 +100,12 @@ private extension SwapTokenRootView {
             swapSourceAndDestinationView(),
             BEStackViewSpacing(16),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.to),
+                UILabel(text: L10n.to, weight: .bold),
                 destinationBalanceLabel
             ]),
             destinationWalletView,
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.exchangeRate + ": "),
+                UILabel(text: L10n.price + ": "),
                 exchangeRateLabel
                     .withContentHuggingPriority(.required, for: .horizontal),
                 exchangeRateReverseButton
@@ -196,6 +195,11 @@ private extension SwapTokenRootView {
         viewModel.destinationWallet
             .subscribe(onNext: { [weak self] wallet in
                 self?.destinationWalletView.setUp(wallet: wallet)
+                if let amount = wallet?.amount?.toString(maximumFractionDigits: 9) {
+                    self?.destinationBalanceLabel.text = L10n.balance + ": " + amount + " " + "\(wallet?.symbol ?? "")"
+                } else {
+                    self?.destinationBalanceLabel.text = nil
+                }
             })
             .disposed(by: disposeBag)
         
@@ -214,29 +218,46 @@ private extension SwapTokenRootView {
             .drive(destinationWalletView.amountTextField.rx.text)
             .disposed(by: disposeBag)
         
+        // equity value labels
         Observable.combineLatest(
             viewModel.sourceAmountInput,
             viewModel.sourceWallet
         )
             .map {sourceAmountInput, sourceWallet in
-                let value = sourceAmountInput * sourceWallet?.priceInUSD
-                return "≈ \(value.toString(maximumFractionDigits: 9)) $"
+                if let sourceWallet = sourceWallet {
+                    let value = sourceAmountInput * sourceWallet.priceInUSD
+                    return "≈ \(value.toString(maximumFractionDigits: 9)) $"
+                } else {
+                    return L10n.selectCurrency
+                }
             }
             .asDriver(onErrorJustReturn: "")
             .drive(self.sourceWalletView.equityValueLabel.rx.text)
             .disposed(by: disposeBag)
         
+        viewModel.destinationWallet
+            .map {destinationWallet -> String? in
+                if destinationWallet != nil {
+                    return nil
+                } else {
+                    return L10n.selectCurrency
+                }
+            }
+            .asDriver(onErrorJustReturn: nil)
+            .drive(self.destinationWalletView.equityValueLabel.rx.text)
+            .disposed(by: disposeBag)
+        
         // exchange rate label
         Observable.combineLatest(
+            viewModel.currentPool,
             viewModel.sourceWallet,
             viewModel.sourceAmountInput,
             viewModel.destinationWallet,
-            viewModel.destinationAmountInput,
             viewModel.isReversedExchangeRate
         )
-            .map {sourceWallet, sourceAmount, destinationWallet, destinationAmount, isReversed -> String? in
-                guard let amountIn = sourceAmount,
-                      let amountOut = destinationAmount,
+            .map {pool, sourceWallet, sourceAmount, destinationWallet, isReversed -> String? in
+                let amountIn = sourceAmount ?? 1
+                guard let pool = pool,
                       var fromSymbol = sourceWallet?.symbol,
                       var toSymbol = destinationWallet?.symbol,
                       var fromDecimals = sourceWallet?.decimals,
@@ -244,6 +265,8 @@ private extension SwapTokenRootView {
                 else {
                     return nil
                 }
+                let amountOut = pool.estimatedAmount(forInputAmount: amountIn.toLamport(decimals: fromDecimals))?.convertToBalance(decimals: toDecimals)
+                
                 var rate = amountOut / amountIn
                 if isReversed {
                     rate = amountIn / amountOut
