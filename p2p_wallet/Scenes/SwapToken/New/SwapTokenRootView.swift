@@ -65,7 +65,6 @@ class SwapTokenRootView: ScrollableVStackRootView {
         
         // set up textfields
         sourceWalletView.amountTextField.delegate = self
-        sourceWalletView.amountTextField.becomeFirstResponder()
         
         // disable editing in toWallet text field
         destinationWalletView.amountTextField.isUserInteractionEnabled = false
@@ -74,11 +73,22 @@ class SwapTokenRootView: ScrollableVStackRootView {
     
     override func didMoveToWindow() {
         super.didMoveToWindow()
-        
     }
-    
-    // MARK: - Layout
-    private func layout() {
+}
+
+// MARK: - TextField delegate
+extension SwapTokenRootView: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if let textField = textField as? TokenAmountTextField {
+            return textField.shouldChangeCharactersInRange(range, replacementString: string)
+        }
+        return true
+    }
+}
+
+// MARK: - Layout
+private extension SwapTokenRootView {
+    func layout() {
         stackView.spacing = 30
         
         stackView.addArrangedSubviews([
@@ -123,7 +133,29 @@ class SwapTokenRootView: ScrollableVStackRootView {
         ])
     }
     
-    private func bind() {
+    func swapSourceAndDestinationView() -> UIView {
+        let view = UIView(forAutoLayout: ())
+        let separator = UIView.separator(height: 1, color: .separator)
+        view.addSubview(separator)
+        separator.autoPinEdge(toSuperviewEdge: .leading)
+        separator.autoPinEdge(toSuperviewEdge: .trailing)
+        separator.autoAlignAxis(toSuperviewAxis: .horizontal)
+        
+        view.addSubview(reverseButton)
+        reverseButton.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .leading)
+        
+        return view
+    }
+}
+
+// MARK: - Binding
+private extension SwapTokenRootView {
+    func bind() {
+        bindViewModelToViews()
+        bindControlsToViewModel()
+    }
+    
+    func bindViewModelToViews() {
         // pool validation
         viewModel.pools.observable
             .subscribe(onNext: {[weak self] state in
@@ -143,29 +175,34 @@ class SwapTokenRootView: ScrollableVStackRootView {
                 }
             })
             .disposed(by: disposeBag)
+        
+        // available source balance label
+        viewModel.sourceWallet
+            .map {$0?.amount ?? 0}
+            .map {$0.toString(maximumFractionDigits: 9)}
+            .map {"\(L10n.available): \($0) \(self.viewModel.sourceWallet.value?.symbol ?? "")"}
+            .asDriver(onErrorJustReturn: "")
+            .drive(availableSourceBalanceLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        // source wallet view
+        viewModel.sourceWallet
+            .subscribe(onNext: { [weak self] wallet in
+                self?.sourceWalletView.setUp(wallet: wallet)
+            })
+            .disposed(by: disposeBag)
+        
+        // destination wallet view
+        viewModel.destinationWallet
+            .subscribe(onNext: { [weak self] wallet in
+                self?.destinationWalletView.setUp(wallet: wallet)
+            })
+            .disposed(by: disposeBag)
+        
+        // 
     }
     
-    // MARK: - Helpers
-    private func swapSourceAndDestinationView() -> UIView {
-        let view = UIView(forAutoLayout: ())
-        let separator = UIView.separator(height: 1, color: .separator)
-        view.addSubview(separator)
-        separator.autoPinEdge(toSuperviewEdge: .leading)
-        separator.autoPinEdge(toSuperviewEdge: .trailing)
-        separator.autoAlignAxis(toSuperviewAxis: .horizontal)
+    func bindControlsToViewModel() {
         
-        view.addSubview(reverseButton)
-        reverseButton.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .leading)
-        
-        return view
-    }
-}
-
-extension SwapTokenRootView: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if let textField = textField as? TokenAmountTextField {
-            return textField.shouldChangeCharactersInRange(range, replacementString: string)
-        }
-        return true
     }
 }
