@@ -56,7 +56,7 @@ private class _SwapTokenViewController: BaseVC {
     
     override func setUp() {
         super.setUp()
-        
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideKeyboard)))
     }
     
     override func bind() {

@@ -109,4 +109,8 @@ extension UIViewController {
         vc.transitioningDelegate = wrappedVC as? UIViewControllerTransitioningDelegate
         present(vc, animated: true, completion: nil)
     }
+    
+    @objc func hideKeyboard() {
+        view.endEditing(true)
+    }
 }
