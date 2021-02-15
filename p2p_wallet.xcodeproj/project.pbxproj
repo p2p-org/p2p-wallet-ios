@@ -697,7 +697,6 @@
 		BC5FB0C325DA03D90021DFF3 /* Subviews */ = {
 			isa = PBXGroup;
 			children = (
-				BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */,
 				BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */,
 			);
 			path = Subviews;
@@ -706,6 +705,7 @@
 		BC5FB0C425DA03FB0021DFF3 /* SwapSlippageSettings */ = {
 			isa = PBXGroup;
 			children = (
+				BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */,
 				BCB4237025C4078700F8A7A9 /* SwapSlippageSettingsVC.swift */,
 			);
 			path = SwapSlippageSettings;
