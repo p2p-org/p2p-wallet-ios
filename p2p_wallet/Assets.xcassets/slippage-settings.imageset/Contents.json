@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "toggle-right 3.png",
+      "filename" : "toggle-right.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "toggle-right 3@2x.png",
+      "filename" : "toggle-right@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "toggle-right 3@3x.png",
+      "filename" : "toggle-right@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
