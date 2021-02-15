@@ -68,7 +68,6 @@ class SwapTokenRootView: ScrollableVStackRootView {
         
         // disable editing in toWallet text field
         destinationWalletView.amountTextField.isUserInteractionEnabled = false
-        destinationWalletView.equityValueLabel.isHidden = true
     }
     
     override func didMoveToWindow() {
@@ -219,16 +218,33 @@ private extension SwapTokenRootView {
             .drive(destinationWalletView.amountTextField.rx.text)
             .disposed(by: disposeBag)
         
+        // equity value labels
         Observable.combineLatest(
             viewModel.sourceAmountInput,
             viewModel.sourceWallet
         )
             .map {sourceAmountInput, sourceWallet in
-                let value = sourceAmountInput * sourceWallet?.priceInUSD
-                return "≈ \(value.toString(maximumFractionDigits: 9)) $"
+                if let sourceWallet = sourceWallet {
+                    let value = sourceAmountInput * sourceWallet.priceInUSD
+                    return "≈ \(value.toString(maximumFractionDigits: 9)) $"
+                } else {
+                    return L10n.selectCurrency
+                }
             }
             .asDriver(onErrorJustReturn: "")
             .drive(self.sourceWalletView.equityValueLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.destinationWallet
+            .map {destinationWallet -> String? in
+                if destinationWallet != nil {
+                    return nil
+                } else {
+                    return L10n.selectCurrency
+                }
+            }
+            .asDriver(onErrorJustReturn: nil)
+            .drive(self.destinationWalletView.equityValueLabel.rx.text)
             .disposed(by: disposeBag)
         
         // exchange rate label
