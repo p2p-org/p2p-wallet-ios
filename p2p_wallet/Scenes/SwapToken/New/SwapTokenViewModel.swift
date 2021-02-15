@@ -11,7 +11,9 @@ import RxCocoa
 import LazySubject
 
 enum SwapTokenNavigatableScene {
-//    case detail
+    case chooseSourceWallet
+    case chooseDestinationWallet
+    case chooseSlippage
 }
 
 class SwapTokenViewModel {
@@ -34,11 +36,15 @@ class SwapTokenViewModel {
     let sourceWallet = BehaviorRelay<Wallet?>(value: nil)
     let destinationWallet = BehaviorRelay<Wallet?>(value: nil)
     let slippage = BehaviorRelay<Double>(value: Defaults.slippage)
+    let isReversedExchangeRate = BehaviorRelay<Bool>(value: false)
     
     // MARK: - Initializer
-    init(wallets: [Wallet]) {
+    init(wallets: [Wallet], fromWallet: Wallet? = nil, toWallet: Wallet? = nil) {
         self.wallets = wallets
         pools.reload()
+        
+        sourceWallet.accept(fromWallet)
+        destinationWallet.accept(toWallet)
         bind()
     }
     
@@ -104,7 +110,33 @@ class SwapTokenViewModel {
     }
     
     // MARK: - Actions
-//    @objc func showDetail() {
-//        
-//    }
+    @objc func useAllBalance() {
+        amountInput.accept(sourceWallet.value?.amount)
+    }
+    
+    @objc func chooseSourceWallet() {
+        navigationSubject.onNext(.chooseSourceWallet)
+    }
+    
+    @objc func chooseDestinationWallet() {
+        navigationSubject.onNext(.chooseDestinationWallet)
+    }
+    
+    @objc func swapSourceAndDestination() {
+        let tempWallet = sourceWallet.value
+        sourceWallet.accept(destinationWallet.value)
+        destinationWallet.accept(tempWallet)
+    }
+    
+    @objc func reverseExchangeRate() {
+        isReversedExchangeRate.accept(!isReversedExchangeRate.value)
+    }
+    
+    @objc func chooseSlippage() {
+        navigationSubject.onNext(.chooseSlippage)
+    }
+    
+    @objc func swap() {
+        
+    }
 }

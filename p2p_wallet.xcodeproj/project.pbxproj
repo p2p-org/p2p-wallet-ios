@@ -480,6 +480,7 @@
 		BC05890F25D3CD4A00632993 /* New */ = {
 			isa = PBXGroup;
 			children = (
+				BC5FB0C325DA03D90021DFF3 /* Subviews */,
 				BC05891025D3CD7C00632993 /* SwapTokenViewModel.swift */,
 				BC05891125D3CD7C00632993 /* SwapTokenRootView.swift */,
 				BC05891225D3CD7C00632993 /* SwapTokenViewController.swift */,
@@ -525,9 +526,6 @@
 				BC05890F25D3CD4A00632993 /* New */,
 				BC06825025C156320011542F /* SwapTokenVM.swift */,
 				BC1D2ACB256B6EA40064E595 /* SwapTokenVC.swift */,
-				BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */,
-				BCB4237025C4078700F8A7A9 /* SwapSlippageSettingsVC.swift */,
-				BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */,
 			);
 			path = SwapToken;
 			sourceTree = "<group>";
@@ -696,6 +694,23 @@
 			path = Main/TabBarVC;
 			sourceTree = "<group>";
 		};
+		BC5FB0C325DA03D90021DFF3 /* Subviews */ = {
+			isa = PBXGroup;
+			children = (
+				BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */,
+				BC2909FF256B9C95002A727C /* SwapTokenItemView.swift */,
+			);
+			path = Subviews;
+			sourceTree = "<group>";
+		};
+		BC5FB0C425DA03FB0021DFF3 /* SwapSlippageSettings */ = {
+			isa = PBXGroup;
+			children = (
+				BCB4237025C4078700F8A7A9 /* SwapSlippageSettingsVC.swift */,
+			);
+			path = SwapSlippageSettings;
+			sourceTree = "<group>";
+		};
 		BC65E9B72542B983005F50CE /* Base */ = {
 			isa = PBXGroup;
 			children = (
@@ -742,6 +757,7 @@
 				BC22A5D825D2716400F7026D /* SendToken */,
 				BCBBE1822563C0F400533F6B /* ReceiveToken */,
 				BC1D2ACA256B6E7A0064E595 /* SwapToken */,
+				BC5FB0C425DA03FB0021DFF3 /* SwapSlippageSettings */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";

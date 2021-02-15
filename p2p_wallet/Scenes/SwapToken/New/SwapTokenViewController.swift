@@ -36,7 +36,31 @@ class SwapTokenViewController: BaseVC {
         viewModel.navigationSubject
             .subscribe(onNext: {
                 switch $0 {
-                
+                case .chooseSourceWallet:
+                    let vc = ChooseWalletVC()
+                    vc.completion = {wallet in
+                        let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
+                        self.viewModel.sourceWallet.accept(wallet)
+//                        self.sourceWalletView.amountTextField.becomeFirstResponder()
+                        vc.back()
+                    }
+                    self.presentCustomModal(vc: vc, title: L10n.selectWallet)
+                case .chooseDestinationWallet:
+                    let vc = ChooseWalletVC(customFilter: {_ in true})
+                    vc.completion = {wallet in
+                        let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
+                        self.viewModel.destinationWallet.accept(wallet)
+//                        self.destination.amountTextField.becomeFirstResponder()
+                        vc.back()
+                    }
+                    self.presentCustomModal(vc: vc, title: L10n.selectWallet)
+                case .chooseSlippage:
+                    let vc = SwapSlippageSettingsVC(slippage: Defaults.slippage * 100)
+                    vc.completion = {slippage in
+                        Defaults.slippage = slippage / 100
+                        self.viewModel.slippage.accept(slippage / 100)
+                    }
+                    self.present(vc, animated: true, completion: nil)
                 }
             })
             .disposed(by: disposeBag)
