@@ -324,6 +324,17 @@ private extension SwapTokenRootView {
             
         hasError.drive(feeLabel.superview!.rx.isHidden)
             .disposed(by: disposeBag)
+        
+        // swap button
+        Observable.combineLatest(
+            viewModel.currentPool,
+            viewModel.sourceAmountInput,
+            viewModel.errorSubject.map {$0 == nil}
+        )
+            .map {$0 != nil && $1 > 0 && $2}
+            .asDriver(onErrorJustReturn: false)
+            .drive(swapButton.rx.isEnabled)
+            .disposed(by: disposeBag)
     }
     
     func bindControlsToViewModel() {
