@@ -168,7 +168,8 @@ class MainVC: CollectionVC<MainVCItem> {
         CocoaAction { _ in
             let wallets = self.walletsVM.items
             if wallets.count == 0 {return .just(())}
-            let vc = SwapTokenVC()
+            let vm = SwapTokenViewModel(wallets: wallets)
+            let vc = SwapTokenViewController(viewModel: vm)
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
