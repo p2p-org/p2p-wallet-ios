@@ -8,11 +8,13 @@
 import Foundation
 import UIKit
 import SwiftUI
+import Action
 
 class SwapTokenViewController: BaseVC {
     
     // MARK: - Properties
     let viewModel: SwapTokenViewModel
+    var transactionVC: ProcessTransactionVC!
     
     // MARK: - Initializer
     init(viewModel: SwapTokenViewModel)
@@ -61,12 +63,38 @@ class SwapTokenViewController: BaseVC {
                         self.viewModel.slippage.accept(slippage / 100)
                     }
                     self.present(vc, animated: true, completion: nil)
+                case .sendTransaction:
+                    self.transactionVC = self.presentProcessTransactionVC()
+                case .processTransaction(signature: let signature):
+                    self.showProcessingTransaction(signature: signature)
+                case .transactionError(let error):
+                    self.transactionVC.dismiss(animated: true) {
+                        self.showError(error)
+                    }
                 }
             })
             .disposed(by: disposeBag)
     }
     
     // MARK: - Helpers
+    private func showProcessingTransaction(signature: String) {
+        transactionVC.signature = signature
+        transactionVC.viewInExplorerButton.rx.action = CocoaAction {
+            self.transactionVC.dismiss(animated: true) {
+                let pc = self.presentingViewController
+                self.back()
+                pc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
+            }
+            
+            return .just(())
+        }
+        transactionVC.goBackToWalletButton.rx.action = CocoaAction {
+            self.transactionVC.dismiss(animated: true) {
+                self.back()
+            }
+            return .just(())
+        }
+    }
 }
 
 //@available(iOS 13, *)
