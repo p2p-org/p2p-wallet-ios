@@ -214,6 +214,18 @@ private extension SwapTokenRootView {
             .drive(destinationWalletView.amountTextField.rx.text)
             .disposed(by: disposeBag)
         
+        Observable.combineLatest(
+            viewModel.sourceAmountInput,
+            viewModel.sourceWallet
+        )
+            .map {sourceAmountInput, sourceWallet in
+                let value = sourceAmountInput * sourceWallet?.priceInUSD
+                return "≈ \(value.toString(maximumFractionDigits: 9)) $"
+            }
+            .asDriver(onErrorJustReturn: "")
+            .drive(self.sourceWalletView.equityValueLabel.rx.text)
+            .disposed(by: disposeBag)
+        
         // exchange rate label
         Observable.combineLatest(
             viewModel.sourceWallet,

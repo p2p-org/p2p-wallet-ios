@@ -123,9 +123,11 @@ class SwapTokenViewModel {
         )
             .map {_, pool, sourceWallet, destinationWallet, sourceAmountInput, slippage -> String? in
                 var errorText: String?
-                if pool != nil {
+                if pool != nil, let input = sourceAmountInput {
                     // supported
-                    if sourceAmountInput > sourceWallet?.amount {
+                    if input <= 0 {
+                        errorText = L10n.amountIsNotValid
+                    } else if input > sourceWallet?.amount {
                         errorText = L10n.insufficientFunds
                     } else if !self.isSlippageValid(slippage: slippage) {
                         errorText = L10n.slippageIsnTValid
