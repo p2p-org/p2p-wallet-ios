@@ -243,3 +243,4 @@
 "Your account does not have enough SOL to cover fee" = "В вашем аккаунте недостаточно SOL для заплаты комиссии";
 "You must select a wallet to send" = "Вы должны выбрать кошелек для отправки";
 "Price" = "Цена";
+"Select currency" = "Выберите валюту";
