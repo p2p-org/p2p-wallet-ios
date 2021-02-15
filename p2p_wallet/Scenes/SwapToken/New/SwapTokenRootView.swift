@@ -199,10 +199,33 @@ private extension SwapTokenRootView {
             })
             .disposed(by: disposeBag)
         
-        // 
+        // text fields
+        viewModel.sourceAmountInput
+            .distinctUntilChanged()
+            .map { $0 == nil ? nil: $0.toString(maximumFractionDigits: 9, groupingSeparator: nil) }
+            .asDriver(onErrorJustReturn: nil)
+            .drive(sourceWalletView.amountTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.destinationAmountInput
+            .distinctUntilChanged()
+            .map { $0 == nil ? nil: $0.toString(maximumFractionDigits: 9, groupingSeparator: nil) }
+            .asDriver(onErrorJustReturn: nil)
+            .drive(destinationWalletView.amountTextField.rx.text)
+            .disposed(by: disposeBag)
     }
     
     func bindControlsToViewModel() {
+        sourceWalletView.amountTextField.rx.text
+            .distinctUntilChanged()
+            .map {$0 == nil ? nil: Double($0!)}
+            .bind(to: viewModel.sourceAmountInput)
+            .disposed(by: disposeBag)
         
+        destinationWalletView.amountTextField.rx.text
+            .distinctUntilChanged()
+            .map {$0 == nil ? nil: Double($0!)}
+            .bind(to: viewModel.destinationAmountInput)
+            .disposed(by: disposeBag)
     }
 }

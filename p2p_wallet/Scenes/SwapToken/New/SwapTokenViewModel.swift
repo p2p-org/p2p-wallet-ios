@@ -28,11 +28,11 @@ class SwapTokenViewModel {
     let navigationSubject = PublishSubject<SwapTokenNavigatableScene>()
     let pools = LazySubject<[Pool]>(request: SolanaSDK.shared.getSwapPools())
     let currentPool = BehaviorRelay<Pool?>(value: nil)
-    let estimatedAmount = BehaviorRelay<Double?>(value: nil)
     let minimumReceiveAmount = BehaviorRelay<Double?>(value: nil)
     
     // MARK: - Input
-    let amountInput = BehaviorRelay<Double?>(value: nil)
+    let sourceAmountInput = BehaviorRelay<Double?>(value: nil)
+    let destinationAmountInput = BehaviorRelay<Double?>(value: nil)
     let sourceWallet = BehaviorRelay<Wallet?>(value: nil)
     let destinationWallet = BehaviorRelay<Wallet?>(value: nil)
     let slippage = BehaviorRelay<Double>(value: Defaults.slippage)
@@ -73,7 +73,7 @@ class SwapTokenViewModel {
         // estimated amount
         let estimatedAmountLamports = Observable.combineLatest(
             currentPool.distinctUntilChanged(),
-            amountInput.distinctUntilChanged()
+            sourceAmountInput.distinctUntilChanged()
         )
             .map {(pool, amount) -> UInt64? in
                 guard let amount = amount,
@@ -90,8 +90,11 @@ class SwapTokenViewModel {
                 else {return nil}
                 return lamports?.convertToBalance(decimals: destinationDecimals)
             }
-            .bind(to: estimatedAmount)
+            .bind(to: destinationAmountInput)
             .disposed(by: disposeBag)
+        
+        // TODO: Reverse: estimated amount to input amount
+        
         
         // minimum receive
         Observable.combineLatest(
@@ -113,7 +116,7 @@ class SwapTokenViewModel {
     @objc func useAllBalance() {
         // TODO: - Calculate fee per signatures
 //        let fee =
-        amountInput.accept(sourceWallet.value?.amount)
+        sourceAmountInput.accept(sourceWallet.value?.amount)
     }
     
     @objc func chooseSourceWallet() {
