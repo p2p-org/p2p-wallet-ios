@@ -14,6 +14,9 @@ enum SwapTokenNavigatableScene {
     case chooseSourceWallet
     case chooseDestinationWallet
     case chooseSlippage
+    case sendTransaction
+    case processTransaction(signature: String)
+    case transactionError(_ error: Error)
 }
 
 class SwapTokenViewModel {
@@ -44,7 +47,7 @@ class SwapTokenViewModel {
         self.wallets = wallets
         pools.reload()
         
-        sourceWallet.accept(fromWallet)
+        sourceWallet.accept(fromWallet ?? wallets.first(where: {$0.symbol == "SOL"}))
         destinationWallet.accept(toWallet)
         bind()
     }
@@ -163,8 +166,6 @@ class SwapTokenViewModel {
     
     // MARK: - Actions
     @objc func useAllBalance() {
-        // TODO: - Calculate fee per signatures
-//        let fee =
         sourceAmountInput.accept(sourceWallet.value?.amount)
     }
     
@@ -191,6 +192,54 @@ class SwapTokenViewModel {
     }
     
     @objc func swap() {
+        navigationSubject.onNext(.sendTransaction)
+        guard let sourceWallet = sourceWallet.value,
+              let sourcePubkey = try? SolanaSDK.PublicKey(string: sourceWallet.pubkey ?? ""),
+              let sourceMint = try? SolanaSDK.PublicKey(string: sourceWallet.mintAddress),
+              let destinationWallet = destinationWallet.value,
+              let destinationMint = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress),
+              
+              let sourceDecimals = sourceWallet.decimals,
+              let amountDouble = sourceAmountInput.value
+        else {
+            navigationSubject.onNext(.transactionError(SolanaSDK.Error.invalidRequest()))
+            return
+        }
         
+        let lamports = amountDouble.toLamport(decimals: sourceDecimals)
+        let destinationPubkey = try? SolanaSDK.PublicKey(string: destinationWallet.pubkey ?? "")
+        
+        SolanaSDK.shared.swap(
+            pool: currentPool.value,
+            source: sourcePubkey,
+            sourceMint: sourceMint,
+            destination: destinationPubkey,
+            destinationMint: destinationMint,
+            slippage: slippage.value,
+            amount: lamports
+        )
+            .subscribe(onSuccess: { signature in
+                self.navigationSubject.onNext(.processTransaction(signature: signature))
+                let transaction = Transaction(
+                    signatureInfo: .init(signature: signature),
+                    type: .send,
+                    amount: -amountDouble,
+                    symbol: sourceWallet.symbol,
+                    status: .processing
+                )
+                TransactionsManager.shared.process(transaction)
+                
+                let transaction2 = Transaction(
+                    signatureInfo: .init(signature: signature),
+                    type: .send,
+                    amount: +(self.destinationAmountInput.value ?? 0),
+                    symbol: destinationWallet.symbol,
+                    status: .processing
+                )
+                TransactionsManager.shared.process(transaction2)
+            }, onError: {error in
+                self.navigationSubject.onNext(.transactionError(error))
+            })
+            .disposed(by: disposeBag)
     }
 }
