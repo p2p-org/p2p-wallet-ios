@@ -287,7 +287,7 @@ private extension SwapTokenRootView {
         // slippage
         viewModel.slippage
             .subscribe(onNext: {slippage in
-                if slippage > 0.2 || slippage < 0 {
+                if !self.viewModel.isSlippageValid(slippage: slippage) {
                     self.slippageLabel.attributedText = NSMutableAttributedString()
                         .text((slippage * 100).toString() + " %", color: .red)
                         .text(" ")
@@ -296,6 +296,21 @@ private extension SwapTokenRootView {
                     self.slippageLabel.text = (slippage * 100).toString() + " %"
                 }
             })
+            .disposed(by: disposeBag)
+        
+        // error
+        viewModel.errorSubject
+            .asDriver()
+            .drive(errorLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        let hasError = viewModel.errorSubject.map {$0 != nil}
+            .asDriver(onErrorJustReturn: false)
+        
+        hasError.drive(minimumReceiveLabel.superview!.rx.isHidden)
+            .disposed(by: disposeBag)
+            
+        hasError.drive(feeLabel.superview!.rx.isHidden)
             .disposed(by: disposeBag)
     }
     

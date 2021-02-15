@@ -29,6 +29,7 @@ class SwapTokenViewModel {
     let pools = LazySubject<[Pool]>(request: SolanaSDK.shared.getSwapPools())
     let currentPool = BehaviorRelay<Pool?>(value: nil)
     let minimumReceiveAmount = BehaviorRelay<Double?>(value: nil)
+    let errorSubject = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Input
     let sourceAmountInput = BehaviorRelay<Double?>(value: nil)
@@ -110,6 +111,52 @@ class SwapTokenViewModel {
             }
             .bind(to: minimumReceiveAmount)
             .disposed(by: disposeBag)
+        
+        // error subject
+        Observable.combineLatest(
+            pools.observable,
+            currentPool,
+            sourceWallet,
+            destinationWallet,
+            sourceAmountInput,
+            slippage
+        )
+            .map {_, pool, sourceWallet, destinationWallet, sourceAmountInput, slippage -> String? in
+                var errorText: String?
+                if pool != nil {
+                    // supported
+                    if sourceAmountInput > sourceWallet?.amount {
+                        errorText = L10n.insufficientFunds
+                    } else if !self.isSlippageValid(slippage: slippage) {
+                        errorText = L10n.slippageIsnTValid
+                    }
+                } else {
+                    // unsupported
+                    if let pools = self.pools.value,
+                       !pools.isEmpty
+                    {
+                        if let sourceWallet = sourceWallet,
+                           let destinationWallet = destinationWallet
+                        {
+                            if sourceWallet.symbol == destinationWallet.symbol {
+                                errorText = L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.symbol)
+                            } else {
+                                errorText = L10n.swappingFromToIsCurrentlyUnsupported(sourceWallet.symbol, destinationWallet.symbol)
+                            }
+                        }
+                    } else {
+                        errorText = L10n.swappingIsCurrentlyUnavailable
+                    }
+                }
+                return errorText
+            }
+            .bind(to: errorSubject)
+            .disposed(by: disposeBag)
+    }
+    
+    // MARK: - Helpers
+    func isSlippageValid(slippage: Double) -> Bool {
+        slippage <= 0.2 && slippage > 0
     }
     
     // MARK: - Actions
