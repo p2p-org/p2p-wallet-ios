@@ -10,7 +10,33 @@ import UIKit
 import SwiftUI
 import Action
 
-class SwapTokenViewController: BaseVC {
+class SwapTokenViewController: WLModalWrapperVC {
+    let viewModel: SwapTokenViewModel
+    init(viewModel: SwapTokenViewModel) {
+        self.viewModel = viewModel
+        let vc = _SwapTokenViewController(viewModel: viewModel)
+        super.init(wrapped: vc)
+    }
+    
+    override func setUp() {
+        super.setUp()
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        stackView.addArrangedSubviews([
+            UIImageView(width: 24, height: 24, image: .walletSwap, tintColor: .white)
+                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
+            UILabel(text: L10n.swap, textSize: 17, weight: .semibold),
+            UIImageView(width: 36, height: 36, image: .slippageSettings, tintColor: .a3a5ba)
+                .onTap(viewModel, action: #selector(SwapTokenViewModel.chooseSlippage))
+        ])
+        
+        let separator = UIView.separator(height: 1, color: .separator)
+        containerView.addSubview(separator)
+        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+    }
+}
+
+private class _SwapTokenViewController: BaseVC {
     
     // MARK: - Properties
     let viewModel: SwapTokenViewModel
