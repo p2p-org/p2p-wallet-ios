@@ -196,7 +196,11 @@ private extension SwapTokenRootView {
         viewModel.destinationWallet
             .subscribe(onNext: { [weak self] wallet in
                 self?.destinationWalletView.setUp(wallet: wallet)
-                self?.destinationBalanceLabel.text = L10n.balance + ": " + wallet?.amount?.toString(maximumFractionDigits: 9) + " " + "\(wallet?.symbol ?? "")"
+                if let amount = wallet?.amount?.toString(maximumFractionDigits: 9) {
+                    self?.destinationBalanceLabel.text = L10n.balance + ": " + amount + " " + "\(wallet?.symbol ?? "")"
+                } else {
+                    self?.destinationBalanceLabel.text = nil
+                }
             })
             .disposed(by: disposeBag)
         
