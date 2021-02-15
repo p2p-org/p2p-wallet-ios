@@ -106,7 +106,7 @@ private extension SwapTokenRootView {
             ]),
             destinationWalletView,
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.exchangeRate + ": "),
+                UILabel(text: L10n.price + ": "),
                 exchangeRateLabel
                     .withContentHuggingPriority(.required, for: .horizontal),
                 exchangeRateReverseButton
@@ -229,15 +229,15 @@ private extension SwapTokenRootView {
         
         // exchange rate label
         Observable.combineLatest(
+            viewModel.currentPool,
             viewModel.sourceWallet,
             viewModel.sourceAmountInput,
             viewModel.destinationWallet,
-            viewModel.destinationAmountInput,
             viewModel.isReversedExchangeRate
         )
-            .map {sourceWallet, sourceAmount, destinationWallet, destinationAmount, isReversed -> String? in
-                guard let amountIn = sourceAmount,
-                      let amountOut = destinationAmount,
+            .map {pool, sourceWallet, sourceAmount, destinationWallet, isReversed -> String? in
+                let amountIn = sourceAmount ?? 1
+                guard let pool = pool,
                       var fromSymbol = sourceWallet?.symbol,
                       var toSymbol = destinationWallet?.symbol,
                       var fromDecimals = sourceWallet?.decimals,
@@ -245,6 +245,8 @@ private extension SwapTokenRootView {
                 else {
                     return nil
                 }
+                let amountOut = pool.estimatedAmount(forInputAmount: amountIn.toLamport(decimals: fromDecimals))?.convertToBalance(decimals: toDecimals)
+                
                 var rate = amountOut / amountIn
                 if isReversed {
                     rate = amountIn / amountOut
