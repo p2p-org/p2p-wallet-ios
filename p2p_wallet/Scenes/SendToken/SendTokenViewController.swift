@@ -83,9 +83,9 @@ class SendTokenViewController: BaseVC {
         transactionVC.signature = signature
         transactionVC.viewInExplorerButton.rx.action = CocoaAction {
             self.transactionVC.dismiss(animated: true) {
-                let nc = self.navigationController
+                let pc = self.presentingViewController
                 self.back()
-                nc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
+                pc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
             }
             
             return .just(())
