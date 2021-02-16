@@ -244,7 +244,12 @@ private extension SwapTokenRootView {
             viewModel.isReversedExchangeRate
         )
             .map {pool, sourceWallet, sourceAmount, destinationWallet, isReversed -> String? in
-                let amountIn = sourceAmount.toDouble() ?? 1
+                let amountIn: Double = {
+                    guard let amount = sourceAmount.toDouble() else {return 1}
+                    if amount <= 0 {return 1}
+                    return amount
+                }()
+                
                 guard let pool = pool,
                       var fromSymbol = sourceWallet?.symbol,
                       var toSymbol = destinationWallet?.symbol,
