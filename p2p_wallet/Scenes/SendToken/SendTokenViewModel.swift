@@ -80,7 +80,7 @@ class SendTokenViewModel {
                     return L10n.youMustSelectAWalletToSend
                 }
                 
-                guard let amount = amountInput.toDouble(),
+                guard let amount = amountInput.double,
                       amount > 0
                 else {
                     return L10n.amountIsNotValid
@@ -160,7 +160,7 @@ class SendTokenViewModel {
               let receiver = destinationAddressInput.value,
               let price = currentWallet.value?.priceInUSD,
               price > 0,
-              var amount = amountInput.value.toDouble(),
+              var amount = amountInput.value.double,
               let decimals = currentWallet.value?.decimals
         else {
             return

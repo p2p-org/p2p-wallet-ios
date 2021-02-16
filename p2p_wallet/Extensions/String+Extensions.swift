@@ -14,11 +14,9 @@ extension Optional where Wrapped == String {
     static func + (left: String?, right: String?) -> String {
         left.orEmpty + right.orEmpty
     }
-    func toDouble() -> Double? {
+    var double: Double? {
         guard let string = self else {return nil}
-        let formatter = NumberFormatter()
-        formatter.locale = Locale.current
-        return formatter.number(from: string)?.doubleValue
+        return string.double
     }
 }
 
