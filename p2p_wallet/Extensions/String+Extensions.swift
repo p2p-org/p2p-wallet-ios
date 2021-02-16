@@ -14,6 +14,9 @@ extension Optional where Wrapped == String {
     static func + (left: String?, right: String?) -> String {
         left.orEmpty + right.orEmpty
     }
+    func toDouble() -> Double? {
+        self == nil ? nil: Double(self!)
+    }
 }
 
 extension String {
