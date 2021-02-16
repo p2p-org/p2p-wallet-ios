@@ -42,7 +42,7 @@ class SendTokenViewModel {
     let errorSubject = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Input
-    let amountInput = BehaviorRelay<Double?>(value: nil)
+    let amountInput = BehaviorRelay<String?>(value: nil)
     let destinationAddressInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
@@ -80,7 +80,7 @@ class SendTokenViewModel {
                     return L10n.youMustSelectAWalletToSend
                 }
                 
-                guard let amount = amountInput,
+                guard let amount = amountInput.toDouble(),
                       amount > 0
                 else {
                     return L10n.amountIsNotValid
@@ -135,7 +135,7 @@ class SendTokenViewModel {
     
     // MARK: - Actions
     @objc func useAllBalance() {
-        amountInput.accept(availableAmount.value)
+        amountInput.accept(availableAmount.value.toString(maximumFractionDigits: 9, groupingSeparator: nil))
     }
     
     @objc func chooseWallet() {
@@ -160,7 +160,7 @@ class SendTokenViewModel {
               let receiver = destinationAddressInput.value,
               let price = currentWallet.value?.priceInUSD,
               price > 0,
-              var amount = amountInput.value,
+              var amount = amountInput.value.toDouble(),
               let decimals = currentWallet.value?.decimals
         else {
             return

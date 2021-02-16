@@ -35,8 +35,8 @@ class SwapTokenViewModel {
     let errorSubject = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Input
-    let sourceAmountInput = BehaviorRelay<Double?>(value: nil)
-    let destinationAmountInput = BehaviorRelay<Double?>(value: nil)
+    let sourceAmountInput = BehaviorRelay<String?>(value: nil)
+    let destinationAmountInput = BehaviorRelay<String?>(value: nil)
     let sourceWallet = BehaviorRelay<Wallet?>(value: nil)
     let destinationWallet = BehaviorRelay<Wallet?>(value: nil)
     let slippage = BehaviorRelay<Double>(value: Defaults.slippage)
@@ -80,7 +80,7 @@ class SwapTokenViewModel {
             sourceAmountInput.distinctUntilChanged()
         )
             .map {(pool, amount) -> UInt64? in
-                guard let amount = amount,
+                guard let amount = amount.toDouble(),
                       amount > 0,
                       let sourceDecimals = self.sourceWallet.value?.decimals,
                       let estimatedAmountLamports = pool?.estimatedAmount(forInputAmount: amount.toLamport(decimals: sourceDecimals))
@@ -94,6 +94,7 @@ class SwapTokenViewModel {
                 else {return nil}
                 return lamports?.convertToBalance(decimals: destinationDecimals)
             }
+            .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: nil)}
             .bind(to: destinationAmountInput)
             .disposed(by: disposeBag)
         
@@ -127,13 +128,14 @@ class SwapTokenViewModel {
                 var errorText: String?
                 if pool != nil {
                     // supported
-                    let input = sourceAmountInput ?? 0
-                    if input <= 0 {
-                        errorText = L10n.amountIsNotValid
-                    } else if input > sourceWallet?.amount {
-                        errorText = L10n.insufficientFunds
-                    } else if !self.isSlippageValid(slippage: slippage) {
-                        errorText = L10n.slippageIsnTValid
+                    if let input = sourceAmountInput.toDouble() {
+                        if input <= 0 {
+                            errorText = L10n.amountIsNotValid
+                        } else if input > sourceWallet?.amount {
+                            errorText = L10n.insufficientFunds
+                        } else if !self.isSlippageValid(slippage: slippage) {
+                            errorText = L10n.slippageIsnTValid
+                        }
                     }
                 } else {
                     // unsupported
@@ -166,7 +168,7 @@ class SwapTokenViewModel {
     
     // MARK: - Actions
     @objc func useAllBalance() {
-        sourceAmountInput.accept(sourceWallet.value?.amount)
+        sourceAmountInput.accept(sourceWallet.value?.amount?.toString(maximumFractionDigits: 9, groupingSeparator: nil))
     }
     
     @objc func chooseSourceWallet() {
@@ -200,7 +202,7 @@ class SwapTokenViewModel {
               let destinationMint = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress),
               
               let sourceDecimals = sourceWallet.decimals,
-              let amountDouble = sourceAmountInput.value
+              let amountDouble = sourceAmountInput.value.toDouble()
         else {
             navigationSubject.onNext(.transactionError(SolanaSDK.Error.invalidRequest()))
             return
@@ -232,7 +234,7 @@ class SwapTokenViewModel {
                 let transaction2 = Transaction(
                     signatureInfo: .init(signature: signature),
                     type: .send,
-                    amount: +(self.destinationAmountInput.value ?? 0),
+                    amount: +(self.destinationAmountInput.value.toDouble() ?? 0),
                     symbol: destinationWallet.symbol,
                     status: .processing
                 )

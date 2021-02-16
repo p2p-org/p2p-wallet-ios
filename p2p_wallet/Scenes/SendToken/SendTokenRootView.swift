@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxBiBinding
 
 class SendTokenRootView: ScrollableVStackRootView {
     // MARK: - Constants
@@ -137,11 +138,9 @@ class SendTokenRootView: ScrollableVStackRootView {
     
     func bind() {
         // amount text field
-        viewModel.amountInput
-            .distinctUntilChanged()
-            .map { $0 == nil ? nil: $0.toString(maximumFractionDigits: 9, groupingSeparator: nil) }
-            .asDriver(onErrorJustReturn: nil)
-            .drive(amountTextField.rx.text)
+        (amountTextField.rx.text <-> viewModel.amountInput)
+            .disposed(by: disposeBag)
+        (addressTextField.rx.text <-> viewModel.destinationAddressInput)
             .disposed(by: disposeBag)
         
         // available amout
@@ -175,10 +174,10 @@ class SendTokenRootView: ScrollableVStackRootView {
         )
             .map { (wallet, isUSDMode, amount) -> String in
                 guard let wallet = wallet else {return ""}
-                var equityValue = amount * wallet.priceInUSD
+                var equityValue = amount.toDouble() * wallet.priceInUSD
                 var equityValueSymbol = "USD"
                 if isUSDMode {
-                    equityValue = amount / wallet.priceInUSD
+                    equityValue = amount.toDouble() / wallet.priceInUSD
                     equityValueSymbol = wallet.symbol
                 }
                 return "≈ " + equityValue.toString(maximumFractionDigits: 9) + " " + equityValueSymbol
@@ -220,10 +219,6 @@ class SendTokenRootView: ScrollableVStackRootView {
         let destinationAddressInput = viewModel.destinationAddressInput
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: nil)
-            
-        destinationAddressInput
-            .drive(addressTextField.rx.text)
-            .disposed(by: disposeBag)
         
         destinationAddressInput
             .map {_ in !self.viewModel.isDestinationWalletValid()}
@@ -254,18 +249,6 @@ class SendTokenRootView: ScrollableVStackRootView {
         viewModel.errorSubject.map {$0 == nil}
             .asDriver(onErrorJustReturn: false)
             .drive(sendButton.rx.isEnabled)
-            .disposed(by: disposeBag)
-        
-        // textfields to viewModel
-        amountTextField.rx.text
-            .distinctUntilChanged()
-            .map {$0 == nil ? nil: Double($0!)}
-            .bind(to: viewModel.amountInput)
-            .disposed(by: disposeBag)
-        
-        addressTextField.rx.text
-            .distinctUntilChanged()
-            .bind(to: viewModel.destinationAddressInput)
             .disposed(by: disposeBag)
     }
 }
