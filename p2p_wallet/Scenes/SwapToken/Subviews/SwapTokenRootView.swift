@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import Action
+import RxBiBinding
 
 class SwapTokenRootView: ScrollableVStackRootView {
     // MARK: - Constants
@@ -150,11 +151,6 @@ private extension SwapTokenRootView {
 // MARK: - Binding
 private extension SwapTokenRootView {
     func bind() {
-        bindViewModelToViews()
-        bindControlsToViewModel()
-    }
-    
-    func bindViewModelToViews() {
         // pool validation
         viewModel.pools.observable
             .subscribe(onNext: {[weak self] state in
@@ -204,18 +200,10 @@ private extension SwapTokenRootView {
             .disposed(by: disposeBag)
         
         // text fields
-        viewModel.sourceAmountInput
-            .distinctUntilChanged()
-            .map { $0 == nil ? nil: $0.toString(maximumFractionDigits: 9, groupingSeparator: nil) }
-            .asDriver(onErrorJustReturn: nil)
-            .drive(sourceWalletView.amountTextField.rx.text)
+        (sourceWalletView.amountTextField.rx.text <-> viewModel.sourceAmountInput)
             .disposed(by: disposeBag)
         
-        viewModel.destinationAmountInput
-            .distinctUntilChanged()
-            .map { $0 == nil ? nil: $0.toString(maximumFractionDigits: 9, groupingSeparator: nil) }
-            .asDriver(onErrorJustReturn: nil)
-            .drive(destinationWalletView.amountTextField.rx.text)
+        (destinationWalletView.amountTextField.rx.text <-> viewModel.destinationAmountInput)
             .disposed(by: disposeBag)
         
         // equity value labels
@@ -225,7 +213,7 @@ private extension SwapTokenRootView {
         )
             .map {sourceAmountInput, sourceWallet in
                 if let sourceWallet = sourceWallet {
-                    let value = sourceAmountInput * sourceWallet.priceInUSD
+                    let value = sourceAmountInput.toDouble() * sourceWallet.priceInUSD
                     return "≈ \(value.toString(maximumFractionDigits: 9)) $"
                 } else {
                     return L10n.selectCurrency
@@ -256,7 +244,7 @@ private extension SwapTokenRootView {
             viewModel.isReversedExchangeRate
         )
             .map {pool, sourceWallet, sourceAmount, destinationWallet, isReversed -> String? in
-                let amountIn = sourceAmount ?? 1
+                let amountIn = sourceAmount.toDouble() ?? 1
                 guard let pool = pool,
                       var fromSymbol = sourceWallet?.symbol,
                       var toSymbol = destinationWallet?.symbol,
@@ -309,7 +297,7 @@ private extension SwapTokenRootView {
             .map {pool, sourceWallet, amountInput -> String? in
                 guard let pool = pool,
                       let decimals = sourceWallet?.decimals,
-                      let lamports = amountInput?.toLamport(decimals: decimals),
+                      let lamports = amountInput.toDouble()?.toLamport(decimals: decimals),
                       let amount = pool.fee(forInputAmount: lamports)
                 else {return nil}
                 
@@ -354,23 +342,9 @@ private extension SwapTokenRootView {
             viewModel.sourceAmountInput,
             viewModel.errorSubject.map {$0 == nil}
         )
-            .map {$0 != nil && $1 > 0 && $2}
+            .map {$0 != nil && $1.toDouble() > 0 && $2}
             .asDriver(onErrorJustReturn: false)
             .drive(swapButton.rx.isEnabled)
-            .disposed(by: disposeBag)
-    }
-    
-    func bindControlsToViewModel() {
-        sourceWalletView.amountTextField.rx.text
-            .distinctUntilChanged()
-            .map {$0 == nil ? nil: Double($0!)}
-            .bind(to: viewModel.sourceAmountInput)
-            .disposed(by: disposeBag)
-        
-        destinationWalletView.amountTextField.rx.text
-            .distinctUntilChanged()
-            .map {$0 == nil ? nil: Double($0!)}
-            .bind(to: viewModel.destinationAmountInput)
             .disposed(by: disposeBag)
     }
 }
