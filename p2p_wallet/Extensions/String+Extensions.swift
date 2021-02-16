@@ -15,7 +15,10 @@ extension Optional where Wrapped == String {
         left.orEmpty + right.orEmpty
     }
     func toDouble() -> Double? {
-        self == nil ? nil: Double(self!)
+        guard let string = self else {return nil}
+        let formatter = NumberFormatter()
+        formatter.locale = Locale.current
+        return formatter.number(from: string)?.doubleValue
     }
 }
 
