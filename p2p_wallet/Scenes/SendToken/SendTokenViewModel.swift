@@ -156,12 +156,13 @@ class SendTokenViewModel {
     
     @objc func send() {
         guard errorSubject.value == nil,
-              let sender = currentWallet.value?.pubkey,
+              let currentWallet = currentWallet.value,
+              let sender = currentWallet.pubkey,
               let receiver = destinationAddressInput.value,
-              let price = currentWallet.value?.priceInUSD,
+              let price = currentWallet.priceInUSD,
               price > 0,
               var amount = amountInput.value.double,
-              let decimals = currentWallet.value?.decimals
+              let decimals = currentWallet.decimals
         else {
             return
         }
@@ -174,7 +175,17 @@ class SendTokenViewModel {
         // prepare amount
         let lamport = amount.toLamport(decimals: decimals)
         
-        SolanaSDK.shared.sendTokens(from: sender, to: receiver, amount: lamport)
+        // define token
+        var request: Single<String>!
+        if currentWallet.symbol == "SOL" {
+            // SOLANA
+            request = SolanaSDK.shared.sendSOL(to: receiver, amount: lamport)
+        } else {
+            // other tokens
+            request = SolanaSDK.shared.sendSPLTokens(from: sender, to: receiver, amount: lamport)
+        }
+        
+        request
             .subscribe(onSuccess: { signature in
                 self.navigationSubject.onNext(.processTransaction(signature: signature))
                 let transaction = Transaction(
