@@ -213,7 +213,7 @@ private extension SwapTokenRootView {
         )
             .map {sourceAmountInput, sourceWallet in
                 if let sourceWallet = sourceWallet {
-                    let value = sourceAmountInput.toDouble() * sourceWallet.priceInUSD
+                    let value = sourceAmountInput.double * sourceWallet.priceInUSD
                     return "≈ \(value.toString(maximumFractionDigits: 9)) $"
                 } else {
                     return L10n.selectCurrency
@@ -245,7 +245,7 @@ private extension SwapTokenRootView {
         )
             .map {pool, sourceWallet, sourceAmount, destinationWallet, isReversed -> String? in
                 let amountIn: Double = {
-                    guard let amount = sourceAmount.toDouble() else {return 1}
+                    guard let amount = sourceAmount.double else {return 1}
                     if amount <= 0 {return 1}
                     return amount
                 }()
@@ -302,7 +302,7 @@ private extension SwapTokenRootView {
             .map {pool, sourceWallet, amountInput -> String? in
                 guard let pool = pool,
                       let decimals = sourceWallet?.decimals,
-                      let lamports = amountInput.toDouble()?.toLamport(decimals: decimals),
+                      let lamports = amountInput.double?.toLamport(decimals: decimals),
                       let amount = pool.fee(forInputAmount: lamports)
                 else {return nil}
                 
@@ -347,7 +347,7 @@ private extension SwapTokenRootView {
             viewModel.sourceAmountInput,
             viewModel.errorSubject.map {$0 == nil}
         )
-            .map {$0 != nil && $1.toDouble() > 0 && $2}
+            .map {$0 != nil && $1.double > 0 && $2}
             .asDriver(onErrorJustReturn: false)
             .drive(swapButton.rx.isEnabled)
             .disposed(by: disposeBag)

@@ -80,7 +80,7 @@ class SwapTokenViewModel {
             sourceAmountInput.distinctUntilChanged()
         )
             .map {(pool, amount) -> UInt64? in
-                guard let amount = amount.toDouble(),
+                guard let amount = amount.double,
                       amount > 0,
                       let sourceDecimals = self.sourceWallet.value?.decimals,
                       let estimatedAmountLamports = pool?.estimatedAmount(forInputAmount: amount.toLamport(decimals: sourceDecimals))
@@ -128,7 +128,7 @@ class SwapTokenViewModel {
                 var errorText: String?
                 if pool != nil {
                     // supported
-                    if let input = sourceAmountInput.toDouble() {
+                    if let input = sourceAmountInput.double {
                         if input <= 0 {
                             errorText = L10n.amountIsNotValid
                         } else if input > sourceWallet?.amount {
@@ -202,7 +202,7 @@ class SwapTokenViewModel {
               let destinationMint = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress),
               
               let sourceDecimals = sourceWallet.decimals,
-              let amountDouble = sourceAmountInput.value.toDouble()
+              let amountDouble = sourceAmountInput.value.double
         else {
             navigationSubject.onNext(.transactionError(SolanaSDK.Error.invalidRequest()))
             return
@@ -234,7 +234,7 @@ class SwapTokenViewModel {
                 let transaction2 = Transaction(
                     signatureInfo: .init(signature: signature),
                     type: .send,
-                    amount: +(self.destinationAmountInput.value.toDouble() ?? 0),
+                    amount: +(self.destinationAmountInput.value.double ?? 0),
                     symbol: destinationWallet.symbol,
                     status: .processing
                 )
