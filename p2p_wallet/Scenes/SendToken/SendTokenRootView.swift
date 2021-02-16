@@ -174,10 +174,10 @@ class SendTokenRootView: ScrollableVStackRootView {
         )
             .map { (wallet, isUSDMode, amount) -> String in
                 guard let wallet = wallet else {return ""}
-                var equityValue = amount.toDouble() * wallet.priceInUSD
+                var equityValue = amount.double * wallet.priceInUSD
                 var equityValueSymbol = "USD"
                 if isUSDMode {
-                    equityValue = amount.toDouble() / wallet.priceInUSD
+                    equityValue = amount.double / wallet.priceInUSD
                     equityValueSymbol = wallet.symbol
                 }
                 return "≈ " + equityValue.toString(maximumFractionDigits: 9) + " " + equityValueSymbol
