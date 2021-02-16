@@ -81,13 +81,12 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
             })
             
             // request
-            return SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress)
+            SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress)
 //            return Single<(String, String)>.just(("", "")).delay(.seconds(5), scheduler: MainScheduler.instance)
 //                .map {_ -> (String, String) in
 //                    throw SolanaSDK.Error.other("example")
 //                }
-                .do(
-                    afterSuccess: { (signature, newPubkey) in
+                .subscribe(onSuccess: { (signature, newPubkey) in
                         // remove suggestion from the list
                         self.removeItem(where: {$0.mintAddress == newWallet.mintAddress})
                         
@@ -114,7 +113,7 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
                         // present wallet
                         self.navigatorSubject.onNext(.present(WalletDetailVC(wallet: newWallet)))
                     },
-                    afterError: { (error) in
+                    onError: { (error) in
                         let description = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                         self.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
                             var wallet = $0
@@ -124,8 +123,8 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
                         })
                     }
                 )
-                .map {_ in ()}
-                .asObservable()
+                .disposed(by: self.disposeBag)
+            return .just(())
         }
     }
 }
