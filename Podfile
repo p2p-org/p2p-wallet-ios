@@ -25,6 +25,7 @@ target 'p2p_wallet' do
   pod 'UITextView+Placeholder'
   pod 'SubviewAttachingTextView'
   pod 'Charts'
+  pod 'RxBiBinding'
   
   # Firebase
   pod 'Firebase/Analytics'
