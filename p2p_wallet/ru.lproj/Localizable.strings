@@ -246,3 +246,5 @@
 "You must select a wallet to send" = "Вы должны выбрать кошелек для отправки";
 "Price" = "Цена";
 "Select currency" = "Выберите валюту";
+"The wallet address is not valid, it must be a %@ wallet address" = "Адрес кошелька недействителен, это должен быть адрес %@ кошелька.";
+"Invalid account info" = "Неверная информация об аккаунте";
