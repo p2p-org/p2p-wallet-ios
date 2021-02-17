@@ -11,9 +11,9 @@ class ChooseWalletVC: MyWalletsVC {
     var completion: ((Wallet) -> Void)?
     let customFilter: ((Wallet) -> Bool)
     
-    init(customFilter: ((Wallet) -> Bool)? = nil) {
+    init(viewModel: ListViewModel<Wallet>, customFilter: ((Wallet) -> Bool)? = nil) {
         self.customFilter = customFilter ?? {$0.symbol == "SOL" || $0.amount > 0}
-        super.init()
+        super.init(viewModel: viewModel)
         modalPresentationStyle = .custom
         transitioningDelegate = self
     }
@@ -74,6 +74,8 @@ extension ChooseWalletVC {
             super.setUp(with: item)
             if let pubkey = item.pubkey {
                 addressLabel.text = pubkey.prefix(4) + "..." + pubkey.suffix(4)
+            } else {
+                addressLabel.text = nil
             }
         }
     }
