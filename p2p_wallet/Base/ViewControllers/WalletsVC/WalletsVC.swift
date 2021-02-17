@@ -7,11 +7,7 @@
 
 import Foundation
 
-class WalletsVC: CollectionVC<Wallet> {
-    
-}
-
-class MyWalletsVC: WalletsVC {
+class MyWalletsVC: CollectionVC<Wallet> {
     
     init() {
         let viewModel = WalletsVM.ofCurrentUser
