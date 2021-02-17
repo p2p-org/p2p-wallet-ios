@@ -9,11 +9,6 @@ import Foundation
 
 class MyWalletsVC: CollectionVC<Wallet> {
     
-    init() {
-        let viewModel = WalletsVM.ofCurrentUser
-        super.init(viewModel: viewModel)
-    }
-    
     override func bind() {
         super.bind()
         TransactionsManager.shared.transactions
