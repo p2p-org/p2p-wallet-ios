@@ -65,7 +65,7 @@ private class _SwapTokenViewController: BaseVC {
             .subscribe(onNext: {
                 switch $0 {
                 case .chooseSourceWallet:
-                    let vc = ChooseWalletVC()
+                    let vc = ChooseWalletVC(viewModel: WalletsVM.ofCurrentUser)
                     vc.completion = {wallet in
                         let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
                         self.viewModel.sourceWallet.accept(wallet)
@@ -74,9 +74,8 @@ private class _SwapTokenViewController: BaseVC {
                     }
                     self.presentCustomModal(vc: vc, title: L10n.selectWallet)
                 case .chooseDestinationWallet:
-                    let vc = ChooseWalletVC(customFilter: {_ in true})
+                    let vc = SwapChooseDestinationWalletVC()
                     vc.completion = {wallet in
-                        let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
                         self.viewModel.destinationWallet.accept(wallet)
 //                        self.destination.amountTextField.becomeFirstResponder()
                         vc.back()
