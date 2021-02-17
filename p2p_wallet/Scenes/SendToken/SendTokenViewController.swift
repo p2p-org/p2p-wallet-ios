@@ -41,7 +41,7 @@ class SendTokenViewController: BaseVC {
             .subscribe(onNext: {
                 switch $0 {
                 case .chooseWallet:
-                    let vc = ChooseWalletVC()
+                    let vc = ChooseWalletVC(viewModel: WalletsVM.ofCurrentUser)
                     vc.completion = {wallet in
                         guard let wallet = WalletsVM.ofCurrentUser.data.first(where: {$0.pubkey == wallet.pubkey}) else {return}
                         vc.back()
