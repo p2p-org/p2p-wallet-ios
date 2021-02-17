@@ -143,7 +143,7 @@ class SendTokenRootView: ScrollableVStackRootView {
         (addressTextField.rx.text <-> viewModel.destinationAddressInput)
             .disposed(by: disposeBag)
         
-        // available amout
+        // available amount
         viewModel.availableAmount
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: 0)
@@ -156,6 +156,14 @@ class SendTokenRootView: ScrollableVStackRootView {
                     availableAmount.toString(maximumFractionDigits: 9) +
                     " " +
                     symbol
+            })
+            .disposed(by: disposeBag)
+        
+        // available amount color
+        viewModel.errorSubject
+            .map {$0 == L10n.insufficientFunds ? UIColor.red: UIColor.h5887ff}
+            .subscribe(onNext: {color in
+                self.balanceLabel.textColor = color
             })
             .disposed(by: disposeBag)
         
