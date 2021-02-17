@@ -182,7 +182,7 @@ class SendTokenViewModel {
             request = SolanaSDK.shared.sendSOL(to: receiver, amount: lamport)
         } else {
             // other tokens
-            request = SolanaSDK.shared.sendSPLTokens(from: sender, to: receiver, amount: lamport)
+            request = SolanaSDK.shared.sendSPLTokens(mintAddress: currentWallet.mintAddress, from: sender, to: receiver, amount: lamport)
         }
         
         request

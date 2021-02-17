@@ -244,3 +244,5 @@
 "You must select a wallet to send" = "Bạn phải chọn một ví để gửi";
 "Price" = "Giá bán";
 "Select currency" = "Chọn loại tiền tệ";
+"The wallet address is not valid, it must be a %@ wallet address" = "Địa chỉ ví không hợp lệ, nó phải là địa chỉ ví %@";
+"Invalid account info" = "Thông tin tài khoản không hợp lệ";

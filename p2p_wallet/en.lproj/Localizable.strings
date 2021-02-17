@@ -244,3 +244,5 @@
 "You must select a wallet to send" = "You must select a wallet to send";
 "Price" = "Price";
 "Select currency" = "Select currency";
+"The wallet address is not valid, it must be a %@ wallet address" = "The wallet address is not valid, it must be a %@ wallet address";
+"Invalid account info" = "Invalid account info";
