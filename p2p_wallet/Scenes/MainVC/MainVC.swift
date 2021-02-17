@@ -34,9 +34,7 @@ class MainVC: CollectionVC<MainVCItem> {
     var walletsVM: WalletsVM {WalletsVM.ofCurrentUser}
     let numberOfWalletsToShow = 4
     
-    lazy var avatarImageView = UIImageView(width: 32, height: 32, backgroundColor: .c4c4c4, cornerRadius: 16)
-        .onTap(self, action: #selector(avatarImageViewDidTouch))
-    lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
+    lazy var avatarImageView = UIImageView(width: 30, height: 30, image: .mainSettings)
         .onTap(self, action: #selector(avatarImageViewDidTouch))
     
     lazy var tabBar: TabBar = {
@@ -70,15 +68,7 @@ class MainVC: CollectionVC<MainVCItem> {
                 qrScannerView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
                 return qrScannerView
             }(),
-            {
-                let view = UIView(forAutoLayout: ())
-                view.addSubview(avatarImageView)
-                avatarImageView.autoPinEdgesToSuperviewEdges(with: .zero)
-                view.addSubview(activeStatusView)
-                activeStatusView.autoPinEdge(.top, to: .top, of: avatarImageView)
-                activeStatusView.autoPinEdge(.trailing, to: .trailing, of: avatarImageView)
-                return view
-            }()
+            avatarImageView
         ], padding: .init(x: .defaultPadding, y: 10))
         
         // tabBar
