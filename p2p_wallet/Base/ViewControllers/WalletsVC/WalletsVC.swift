@@ -7,16 +7,7 @@
 
 import Foundation
 
-class WalletsVC: CollectionVC<Wallet> {
-    
-}
-
-class MyWalletsVC: WalletsVC {
-    
-    init() {
-        let viewModel = WalletsVM.ofCurrentUser
-        super.init(viewModel: viewModel)
-    }
+class MyWalletsVC: CollectionVC<Wallet> {
     
     override func bind() {
         super.bind()
