@@ -9,7 +9,7 @@ import Foundation
 import LazySubject
 import Action
 
-class _AddNewWalletVC: WalletsVC {
+class _AddNewWalletVC: CollectionVC<Wallet> {
     init() {
         let viewModel = _AddNewWalletVM()
         super.init(viewModel: viewModel)
