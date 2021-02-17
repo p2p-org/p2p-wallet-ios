@@ -10,7 +10,7 @@ import Foundation
 class MyProductsVC: WLModalWrapperVC {
     override var padding: UIEdgeInsets {.init(x: 0, y: .defaultPadding)}
     init() {
-        super.init(wrapped: _MyProductsVC())
+        super.init(wrapped: _MyProductsVC(viewModel: WalletsVM.ofCurrentUser))
     }
     
     override func setUp() {
