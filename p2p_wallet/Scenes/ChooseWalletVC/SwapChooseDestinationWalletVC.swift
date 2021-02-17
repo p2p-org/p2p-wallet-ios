@@ -43,7 +43,13 @@ private class ViewModel: WalletsVM {
                     return uncreatedWallets
                 }
         
-        return super.request
+        var request: Single<[Wallet]>!
+        if WalletsVM.ofCurrentUser.data.isEmpty {
+            request = super.request
+        } else {
+            request = .just(WalletsVM.ofCurrentUser.data)
+        }
+        return request
             .flatMap {wallets in
                 return getUncreatedWalletInfo
                     .map {wallets + $0}
