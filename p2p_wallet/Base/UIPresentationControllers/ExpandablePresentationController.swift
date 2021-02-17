@@ -64,7 +64,7 @@ class ExpandablePresentationController: DimmingPresentationController, Resizable
             originalTop = view.frame.origin.y
         case .changed:
             // on gesture changed
-            currentTop = originalTop! + translation.y
+            currentTop = (originalTop ?? 0) + translation.y
             animateResizing = false
             (presentedViewController as? BaseVC)?.forceResizeModal()
         case .ended:
@@ -72,9 +72,9 @@ class ExpandablePresentationController: DimmingPresentationController, Resizable
             originalTop = nil
             
             // calculate distances
-            let distanceToTop = abs(minTop - currentTop!)
-            let distanceToCenter = containerView!.frame.size.height / 2 - currentTop!
-            let distanceToBottom = containerView!.bounds.height - currentTop!
+            let distanceToTop = abs(minTop - (currentTop ?? 0))
+            let distanceToCenter = containerView!.frame.size.height / 2 - (currentTop ?? 0)
+            let distanceToBottom = containerView!.bounds.height - (currentTop ?? 0)
             
             // Dismiss when presentedView is close to bottom
             if distanceToCenter < 0, distanceToBottom < abs(distanceToCenter) * 3 {
