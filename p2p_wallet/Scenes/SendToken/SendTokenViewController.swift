@@ -67,7 +67,19 @@ class SendTokenViewController: BaseVC {
                     self.showProcessingTransaction(signature: signature)
                 case .transactionError(let error):
                     self.transactionVC.dismiss(animated: true) {
-                        self.showError(error)
+                        if (error as? SolanaSDK.Error) == SolanaSDK.Error.other("The address is not valid"),
+                           let symbol = self.viewModel.currentWallet.value?.symbol
+                        {
+                            self.showAlert(
+                                title: L10n.error.uppercaseFirst,
+                                message:
+                                    L10n.theWalletAddressIsNotValidItMustBeAWalletAddress(symbol),
+                                buttonTitles: [L10n.ok]
+                            )
+                        } else {
+                            self.showError(error)
+                        }
+                        
                     }
                 }
             })
