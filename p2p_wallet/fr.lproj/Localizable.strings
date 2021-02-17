@@ -246,3 +246,5 @@
 "You must select a wallet to send" = "Vous devez sélectionner un portefeuille à envoyer";
 "Price" = "Prix";
 "Select currency" = "Sélectionnez la devise";
+"The wallet address is not valid, it must be a %@ wallet address" = "L'adresse du portefeuille n'est pas valide, il doit s'agir d'une adresse de portefeuille %@";
+"Invalid account info" = "Informations de compte non valides";
