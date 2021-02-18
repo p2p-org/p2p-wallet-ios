@@ -19,6 +19,13 @@ class ChangePinCodeVC: WLBottomSheet {
     lazy var changePinButton = WLButton.stepButton(type: .black, label: L10n.changePINCode)
         .onTap(self, action: #selector(buttonChangePinDidTouch))
     
+    let accountStorage: KeychainAccountStorage
+    
+    init(accountStorage: KeychainAccountStorage) {
+        self.accountStorage = accountStorage
+        super.init()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         interactor = nil
@@ -42,7 +49,7 @@ class ChangePinCodeVC: WLBottomSheet {
     
     @objc func buttonChangePinDidTouch() {
         // check pin
-        guard currentPinTextField.text == AccountStorage.shared.pinCode
+        guard currentPinTextField.text == accountStorage.pinCode
         else {
             showAlert(title: L10n.incorrectPINCode, message: L10n.pleaseReEnterPINCode)
             return
@@ -58,7 +65,7 @@ class ChangePinCodeVC: WLBottomSheet {
             return
         }
         
-        AccountStorage.shared.save(newPinTextField.text!)
+        accountStorage.save(newPinTextField.text!)
         dismiss(animated: true) {
             UIApplication.shared.showDone(L10n.successfullyChangedPINCode)
         }

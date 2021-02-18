@@ -239,7 +239,8 @@ class MainVC: CollectionVC<MainVCItem> {
     
     var openProfile: CocoaAction {
         CocoaAction { _ in
-            self.present(ProfileVC(), animated: true, completion: nil)
+            let profileVC = DependencyContainer.shared.makeProfileVC()
+            self.present(profileVC, animated: true, completion: nil)
             return .just(())
         }
     }
