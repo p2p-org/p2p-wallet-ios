@@ -63,6 +63,7 @@ class SendTokenViewController: BaseVC {
                     self.present(vc, animated: true, completion: nil)
                 case .sendTransaction:
                     self.transactionVC = DependencyContainer.shared.makeProcessTransactionVC()
+                    self.present(self.transactionVC, animated: true, completion: nil)
                 case .processTransaction(let signature):
                     self.showProcessingTransaction(signature: signature)
                 case .transactionError(let error):
