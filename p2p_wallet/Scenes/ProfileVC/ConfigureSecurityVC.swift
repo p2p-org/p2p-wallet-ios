@@ -21,6 +21,11 @@ class ConfigureSecurityVC: ProfileVCBase {
         return switcher
     }()
     
+    let accountStorage: KeychainAccountStorage
+    init(accountStorage: KeychainAccountStorage) {
+        self.accountStorage = accountStorage
+    }
+    
     override func setUp() {
         title = L10n.security
         super.setUp()
@@ -78,7 +83,7 @@ class ConfigureSecurityVC: ProfileVCBase {
     }
     
     @objc func buttonChangePinCodeDidTouch() {
-        show(ChangePinCodeVC(), sender: nil)
+        show(ChangePinCodeVC(accountStorage: accountStorage), sender: nil)
     }
     
     override func buttonDoneDidTouch() {

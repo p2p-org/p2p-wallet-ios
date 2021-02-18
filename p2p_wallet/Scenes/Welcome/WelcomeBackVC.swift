@@ -13,8 +13,10 @@ class WelcomeBackVC: WLIntroVC {
         .onTap(self, action: #selector(buttonGoToWalletDidTouch))
     
     let phrases: [String]
-    init(phrases: [String]) {
+    let accountStorage: KeychainAccountStorage
+    init(phrases: [String], accountStorage: KeychainAccountStorage) {
         self.phrases = phrases
+        self.accountStorage = accountStorage
         super.init()
     }
     
@@ -46,10 +48,11 @@ class WelcomeBackVC: WLIntroVC {
         DispatchQueue.global().async {
             do {
                 let account = try SolanaSDK.Account(phrase: self.phrases, network: Defaults.network)
-                try AccountStorage.shared.save(account)
+                try self.accountStorage.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
-                    UIApplication.shared.changeRootVC(to: SSPinCodeVC(), withNaviationController: true)
+                    let vc = DependencyContainer.shared.makeSSPinCodeVC()
+                    UIApplication.shared.changeRootVC(to: vc, withNaviationController: true)
                 }
             } catch {
                 DispatchQueue.main.async {
@@ -57,18 +60,6 @@ class WelcomeBackVC: WLIntroVC {
                     self.showError(error)
                 }
             }
-        }
-    }
-}
-
-@available(iOS 13, *)
-struct WelcomeBackVC_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            UIViewControllerPreview {
-                WelcomeBackVC(phrases: [])
-            }
-            .previewDevice("iPhone SE (2nd generation)")
         }
     }
 }

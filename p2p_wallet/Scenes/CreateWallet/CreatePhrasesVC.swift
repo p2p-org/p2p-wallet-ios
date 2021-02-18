@@ -66,6 +66,11 @@ class CreatePhrasesVC: PhrasesVC {
     lazy var continueButton = WLButton.stepButton(type: .blue, label: L10n.continue)
         .onTap(self, action: #selector(buttonContinueDidTouch))
     
+    let accountStorage: KeychainAccountStorage
+    init(accountStorage: KeychainAccountStorage) {
+        self.accountStorage = accountStorage
+    }
+    
     override func setUp() {
         super.setUp()
         navigationItem.rightBarButtonItem = regenerateButton
@@ -146,7 +151,7 @@ class CreatePhrasesVC: PhrasesVC {
     }
     
     @objc func buttonSaveToKeychainDidTouch() {
-        AccountStorage.shared.saveICloud(phrases: phrases.value.joined(separator: " "))
+        accountStorage.saveICloud(phrases: phrases.value.joined(separator: " "))
         UIApplication.shared.showDone(L10n.savedToICloud)
     }
     
@@ -155,7 +160,7 @@ class CreatePhrasesVC: PhrasesVC {
         // clear
         savedCheckBox.isSelected = false
         continueButton.isEnabled = false
-        AccountStorage.shared.clear()
+        accountStorage.clear()
     }
     
     @objc func buttonContinueDidTouch() {
@@ -163,7 +168,7 @@ class CreatePhrasesVC: PhrasesVC {
         DispatchQueue.global().async {
             do {
                 let account = try SolanaSDK.Account(phrase: self.phrases.value, network: Defaults.network)
-                try AccountStorage.shared.save(account)
+                try self.accountStorage.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
                     self.show(CreateWalletCompletedVC(), sender: nil)

@@ -8,16 +8,13 @@
 import Foundation
 import KeychainSwift
 
-struct AccountStorage: SolanaSDKAccountStorage {
+class KeychainAccountStorage: SolanaSDKAccountStorage {
     let tokenKey = "Keychain.Token"
     let pincodeKey = "Keychain.Pincode"
     let phrasesKey = "Keychain.Phrases"
         
     let keychain = KeychainSwift()
     let iCloudStore = NSUbiquitousKeyValueStore()
-    
-    static let shared = AccountStorage()
-    private init() {}
     
     // MARK: - Account
     func save(_ account: SolanaSDK.Account) throws {
