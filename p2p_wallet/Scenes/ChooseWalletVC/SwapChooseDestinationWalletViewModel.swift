@@ -8,7 +8,14 @@
 import Foundation
 import RxSwift
 
-private class ViewModel: WalletsVM {
+class SwapChooseDestinationViewModel: WalletsVM {
+    let walletsVM: WalletsVM
+    
+    init(solanaSDK: SolanaSDK, socket: SolanaSDK.Socket, walletsVM: WalletsVM) {
+        self.walletsVM = walletsVM
+        super.init(solanaSDK: solanaSDK, socket: socket)
+    }
+    
     override var request: Single<[Wallet]> {
         // get uncreated wallet
         var wallets = SolanaSDK.Token.getSupportedTokens(network: Defaults.network)?.compactMap {$0 != nil ? Wallet(programAccount: $0!) : nil} ?? []
@@ -22,7 +29,7 @@ private class ViewModel: WalletsVM {
         
         var uncreatedWallets = wallets
             .filter { newWallet in
-                !WalletsVM.ofCurrentUser.data.contains(where: {$0.mintAddress == newWallet.mintAddress})
+                !walletsVM.data.contains(where: {$0.mintAddress == newWallet.mintAddress})
             }
         
         let getUncreatedWalletInfo: Single<[Wallet]> =
@@ -31,7 +38,7 @@ private class ViewModel: WalletsVM {
                     .map {
                         guard let mint = try? SolanaSDK.PublicKey(string: $0.mintAddress)
                         else {return .error(SolanaSDK.Error.other("Mint address is not valid"))}
-                        return SolanaSDK.shared.getMintData(mintAddress: mint)
+                        return solanaSDK.getMintData(mintAddress: mint)
                             .map {Int($0.decimals)}
                             .catchErrorJustReturn(0)
                     }
@@ -44,24 +51,15 @@ private class ViewModel: WalletsVM {
                 }
         
         var request: Single<[Wallet]>!
-        if WalletsVM.ofCurrentUser.data.isEmpty {
+        if walletsVM.data.isEmpty {
             request = super.request
         } else {
-            request = .just(WalletsVM.ofCurrentUser.data)
+            request = .just(walletsVM.data)
         }
         return request
             .flatMap {wallets in
                 return getUncreatedWalletInfo
                     .map {wallets + $0}
             }
-    }
-}
-
-class SwapChooseDestinationWalletVC: ChooseWalletVC {
-    
-    init() {
-        let vm = ViewModel()
-        super.init(viewModel: vm, customFilter: {_ in true})
-        vm.reload()
     }
 }

@@ -25,11 +25,13 @@ class SwapTokenViewModel {
     
     // MARK: - Properties
     let disposeBag = DisposeBag()
+    let solanaSDK: SolanaSDK
+    let transactionManager: TransactionsManager
     let wallets: [Wallet]
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<SwapTokenNavigatableScene>()
-    let pools = LazySubject<[Pool]>(request: SolanaSDK.shared.getSwapPools())
+    lazy var pools = LazySubject<[Pool]>(request: solanaSDK.getSwapPools())
     let currentPool = BehaviorRelay<Pool?>(value: nil)
     let minimumReceiveAmount = BehaviorRelay<Double?>(value: nil)
     let errorSubject = BehaviorRelay<String?>(value: nil)
@@ -43,7 +45,9 @@ class SwapTokenViewModel {
     let isReversedExchangeRate = BehaviorRelay<Bool>(value: false)
     
     // MARK: - Initializer
-    init(wallets: [Wallet], fromWallet: Wallet? = nil, toWallet: Wallet? = nil) {
+    init(solanaSDK: SolanaSDK, transactionManager: TransactionsManager, wallets: [Wallet], fromWallet: Wallet? = nil, toWallet: Wallet? = nil) {
+        self.solanaSDK = solanaSDK
+        self.transactionManager = transactionManager
         self.wallets = wallets
         pools.reload()
         
@@ -211,7 +215,7 @@ class SwapTokenViewModel {
         let lamports = amountDouble.toLamport(decimals: sourceDecimals)
         let destinationPubkey = try? SolanaSDK.PublicKey(string: destinationWallet.pubkey ?? "")
         
-        SolanaSDK.shared.swap(
+        solanaSDK.swap(
             pool: currentPool.value,
             source: sourcePubkey,
             sourceMint: sourceMint,
@@ -229,7 +233,7 @@ class SwapTokenViewModel {
                     symbol: sourceWallet.symbol,
                     status: .processing
                 )
-                TransactionsManager.shared.process(transaction)
+                self.transactionManager.process(transaction)
                 
                 let transaction2 = Transaction(
                     signatureInfo: .init(signature: signature),
@@ -238,7 +242,7 @@ class SwapTokenViewModel {
                     symbol: destinationWallet.symbol,
                     status: .processing
                 )
-                TransactionsManager.shared.process(transaction2)
+                self.transactionManager.process(transaction2)
             }, onError: {error in
                 self.navigationSubject.onNext(.transactionError(error))
             })

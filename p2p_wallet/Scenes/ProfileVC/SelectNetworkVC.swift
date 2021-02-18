@@ -9,8 +9,12 @@ import Foundation
 
 class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
     override var dataDidChange: Bool {selectedItem != Defaults.network}
+    var solanaSDK: SolanaSDK
+    var socket: SolanaSDK.Socket
     
-    override init() {
+    init(solanaSDK: SolanaSDK, socket: SolanaSDK.Socket) {
+        self.solanaSDK = solanaSDK
+        self.socket = socket
         super.init()
         // initial data
         SolanaSDK.Network.allCases.forEach {
@@ -43,9 +47,9 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
                         Defaults.network = self.selectedItem
                         
                         // refresh sdk
-                        SolanaSDK.shared = SolanaSDK(network: Defaults.network, accountStorage: AccountStorage.shared)
-                        SolanaSDK.Socket.shared.disconnect()
-                        SolanaSDK.Socket.shared = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: SolanaSDK.shared.accountStorage.account?.publicKey)
+                        self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: AccountStorage.shared)
+                        self.socket.disconnect()
+                        self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: self.solanaSDK.accountStorage.account?.publicKey)
                         
                         AppDelegate.shared.reloadRootVC()
                     }

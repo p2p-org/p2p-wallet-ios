@@ -84,8 +84,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 shouldShowLocalAuth = false
             } else {
                 shouldShowLocalAuth = true
-                WalletsVM.ofCurrentUser = WalletsVM()
-                rootVC = MainVC()
+                // recreate myWalletsVM
+                DependencyContainer.shared.makeMyWalletsVM()
+                rootVC = DependencyContainer.shared.makeMainVC()
             }
         }
         
@@ -112,7 +113,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // update balance
         if shouldUpdateBalance {
-            WalletsVM.ofCurrentUser.reload()
+            DependencyContainer.shared.myWalletsVM.reload()
             shouldUpdateBalance = false
         }
     }

@@ -11,17 +11,26 @@ import LazySubject
 import Action
 
 class _AddNewWalletVM: ListViewModel<Wallet> {
-    let feeSubject = LazySubject(
+    let solanaSDK: SolanaSDK
+    let walletsVM: WalletsVM
+    let transactionManager: TransactionsManager
+    lazy var feeSubject = LazySubject(
         value: Double(0),
-        request: SolanaSDK.shared.getCreatingTokenAccountFee()
+        request: solanaSDK.getCreatingTokenAccountFee()
             .map {
-                let decimals = WalletsVM.ofCurrentUser.items.first(where: {$0.symbol == "SOL"})?.decimals ?? 9
+                let decimals = self.walletsVM.items.solWallet?.decimals ?? 9
                 return Double($0) * pow(Double(10), -Double(decimals))
             }
     )
     
     let navigatorSubject = PublishSubject<Navigation>()
     let clearSearchBarSubject = PublishSubject<Void>()
+    
+    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, transactionManager: TransactionsManager) {
+        self.solanaSDK = solanaSDK
+        self.walletsVM = walletsVM
+        self.transactionManager = transactionManager
+    }
     
     override func reload() {
         // get static data
@@ -36,7 +45,7 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
         
         data = wallets
             .filter { newWallet in
-                !WalletsVM.ofCurrentUser.data.contains(where: {$0.mintAddress == newWallet.mintAddress})
+                !walletsVM.data.contains(where: {$0.mintAddress == newWallet.mintAddress})
             }
         state.accept(.loaded(data))
         
@@ -61,7 +70,7 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
     func addNewToken(newWallet: Wallet) -> CocoaAction {
         CocoaAction {
             // catching error
-            if self.feeSubject.value > (WalletsVM.ofCurrentUser.solWallet?.amount ?? 0)
+            if self.feeSubject.value > (self.walletsVM.solWallet?.amount ?? 0)
             {
                 self.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
                     var wallet = $0
@@ -81,7 +90,7 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
             })
             
             // request
-            SolanaSDK.shared.createTokenAccount(mintAddress: newWallet.mintAddress)
+            self.solanaSDK.createTokenAccount(mintAddress: newWallet.mintAddress)
 //            return Single<(String, String)>.just(("", "")).delay(.seconds(5), scheduler: MainScheduler.instance)
 //                .map {_ -> (String, String) in
 //                    throw SolanaSDK.Error.other("example")
@@ -108,10 +117,11 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
                             status: .processing,
                             newWallet: newWallet
                         )
-                        TransactionsManager.shared.process(transaction)
+                        self.transactionManager.process(transaction)
                         
                         // present wallet
-                        self.navigatorSubject.onNext(.present(WalletDetailVC(wallet: newWallet)))
+                        let vc = DependencyContainer.shared.makeWalletDetailVC(wallet: newWallet)
+                        self.navigatorSubject.onNext(.present(vc))
                     },
                     onError: { (error) in
                         let description = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription

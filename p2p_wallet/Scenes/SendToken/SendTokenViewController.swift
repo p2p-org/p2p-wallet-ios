@@ -41,9 +41,9 @@ class SendTokenViewController: BaseVC {
             .subscribe(onNext: {
                 switch $0 {
                 case .chooseWallet:
-                    let vc = ChooseWalletVC(viewModel: WalletsVM.ofCurrentUser)
+                    let vc = DependencyContainer.shared.makeChooseWalletVC()
                     vc.completion = {wallet in
-                        guard let wallet = WalletsVM.ofCurrentUser.data.first(where: {$0.pubkey == wallet.pubkey}) else {return}
+                        guard let wallet = self.viewModel.walletsVM.data.first(where: {$0.pubkey == wallet.pubkey}) else {return}
                         vc.back()
                         self.viewModel.currentWallet.accept(wallet)
                     }
@@ -62,7 +62,7 @@ class SendTokenViewController: BaseVC {
                     vc.modalPresentationStyle = .custom
                     self.present(vc, animated: true, completion: nil)
                 case .sendTransaction:
-                    self.transactionVC = self.presentProcessTransactionVC()
+                    self.transactionVC = DependencyContainer.shared.makeProcessTransactionVC()
                 case .processTransaction(let signature):
                     self.showProcessingTransaction(signature: signature)
                 case .transactionError(let error):

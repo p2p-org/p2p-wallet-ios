@@ -66,7 +66,7 @@ extension Transaction {
         }
     }
     
-    mutating func confirm(by confirmedTransaction: SolanaSDK.Transaction.Info)
+    mutating func confirm(by confirmedTransaction: SolanaSDK.Transaction.Info, walletsVM: WalletsVM, myAccountPubkey: SolanaSDK.PublicKey)
     {
         let message = confirmedTransaction.transaction.message
         
@@ -74,7 +74,7 @@ extension Transaction {
            let dataString = instruction.data
         {
             let bytes = Base58.decode(dataString)
-            let wallet = WalletsVM.ofCurrentUser.data.first(where: {$0.symbol == symbol})
+            let wallet = walletsVM.data.first(where: {$0.symbol == symbol})
             
             if bytes.count >= 4 {
                 let typeIndex = bytes.toUInt32()
@@ -82,7 +82,7 @@ extension Transaction {
                 case 0:
                     type = .createAccount
                 case 2:
-                    if message.accountKeys.first?.publicKey == SolanaSDK.shared.accountStorage.account?.publicKey {
+                    if message.accountKeys.first?.publicKey == myAccountPubkey {
                         type = .send
                     } else {
                         type = .receive
