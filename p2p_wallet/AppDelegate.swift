@@ -69,11 +69,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func reloadRootVC() {
         let rootVC: UIViewController
-        if DependencyContainer.shared.accountStorage.account == nil {
+        if DependencyContainer.shared.sharedAccountStorage.account == nil {
             rootVC = BENavigationController(rootViewController: WelcomeVC())
             shouldShowLocalAuth = false
         } else {
-            if DependencyContainer.shared.accountStorage.pinCode == nil {
+            if DependencyContainer.shared.sharedAccountStorage.pinCode == nil {
                 let vc = DependencyContainer.shared.makeSSPinCodeVC()
                 rootVC = BENavigationController(rootViewController: vc)
                 shouldShowLocalAuth = false
@@ -114,7 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // update balance
         if shouldUpdateBalance {
-            DependencyContainer.shared.myWalletsVM.reload()
+            DependencyContainer.shared.sharedMyWalletsVM.reload()
             shouldUpdateBalance = false
         }
     }

@@ -10,104 +10,102 @@ import SolanaSwift
 
 class DependencyContainer {
     // MARK: - Long lived dependency
-    let accountStorage: KeychainAccountStorage
-    var solanaSDK: SolanaSDK
-    var socket: SolanaSDK.Socket
-    let transactionManager: TransactionsManager
-    private(set) var myWalletsVM: WalletsVM!
-    private(set) var feeVM: FeeVM!
+    let sharedAccountStorage: KeychainAccountStorage
+    var sharedSolanaSDK: SolanaSDK
+    var sharedSocket: SolanaSDK.Socket
+    let sharedTransactionManager: TransactionsManager
+    private(set) var sharedMyWalletsVM: WalletsVM!
     
     // MARK: - Singleton
     static let shared = DependencyContainer()
     
     private init() {
-        self.accountStorage = KeychainAccountStorage()
-        self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: accountStorage)
-        self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: solanaSDK.accountStorage.account?.publicKey)
-        self.transactionManager = TransactionsManager(socket: socket)
+        self.sharedAccountStorage = KeychainAccountStorage()
+        self.sharedSolanaSDK = SolanaSDK(network: Defaults.network, accountStorage: sharedAccountStorage)
+        self.sharedSocket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: sharedSolanaSDK.accountStorage.account?.publicKey)
+        self.sharedTransactionManager = TransactionsManager(socket: sharedSocket)
     }
     
     // MARK: - State
     func makeMyWalletsVM() {
-        self.myWalletsVM = WalletsVM(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager)
-        self.feeVM = FeeVM(solanaSDK: solanaSDK, walletsVM: myWalletsVM)
+        self.sharedMyWalletsVM = WalletsVM(solanaSDK: sharedSolanaSDK, socket: sharedSocket, transactionManager: sharedTransactionManager)
     }
     
     // MARK: - Authentication
     func makeLocalAuthVC() -> LocalAuthVC {
-        LocalAuthVC(accountStorage: accountStorage)
+        LocalAuthVC(accountStorage: sharedAccountStorage)
     }
     
     // MARK: - Onboarding
     func makeRestoreWalletVC() -> RestoreWalletVC {
-        RestoreWalletVC(accountStorage: accountStorage)
+        RestoreWalletVC(accountStorage: sharedAccountStorage)
     }
     
     func makeSSPinCodeVC() -> SSPinCodeVC {
-        SSPinCodeVC(accountStorage: accountStorage)
+        SSPinCodeVC(accountStorage: sharedAccountStorage)
     }
     
     func makeWelcomeBackVC(phrases: [String]) -> WelcomeBackVC {
-        WelcomeBackVC(phrases: phrases, accountStorage: accountStorage)
+        WelcomeBackVC(phrases: phrases, accountStorage: sharedAccountStorage)
     }
     
     // MARK: - Tabbar
     func makeTabBarVC() -> TabBarVC {
         makeMyWalletsVM()
-        return TabBarVC(socket: socket)
+        return TabBarVC(socket: sharedSocket)
     }
     
     // MARK: - Main
     func makeMainVC() -> MainVC {
-        let vm = MainVM(walletsVM: myWalletsVM)
+        let vm = MainVM(walletsVM: sharedMyWalletsVM)
         return MainVC(viewModel: vm)
     }
     
     func makeMyProductVC() -> MyProductsVC {
-        MyProductsVC(walletsVM: myWalletsVM)
+        MyProductsVC(walletsVM: sharedMyWalletsVM)
     }
     
     func makeWalletDetailVC(wallet: Wallet) -> WalletDetailVC {
-        WalletDetailVC(solanaSDK: solanaSDK, walletsVM: myWalletsVM, wallet: wallet)
+        WalletDetailVC(solanaSDK: sharedSolanaSDK, walletsVM: sharedMyWalletsVM, wallet: wallet)
     }
     
     // MARK: - Profile VCs
     func makeProfileVC() -> ProfileVC {
-        ProfileVC(accountStorage: accountStorage)
+        ProfileVC(accountStorage: sharedAccountStorage)
     }
     
     func makeBackupMannuallyVC() -> BackupManuallyVC {
-        BackupManuallyVC(accountStorage: accountStorage)
+        BackupManuallyVC(accountStorage: sharedAccountStorage)
     }
     
     func makeSelectNetworkVC() -> SelectNetworkVC {
-        SelectNetworkVC(accountStorage: accountStorage)
+        SelectNetworkVC(accountStorage: sharedAccountStorage)
     }
     
     func makeBackupVC() -> BackupVC {
-        BackupVC(accountStorage: accountStorage)
+        BackupVC(accountStorage: sharedAccountStorage)
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {
-        ConfigureSecurityVC(accountStorage: accountStorage)
+        ConfigureSecurityVC(accountStorage: sharedAccountStorage)
     }
     
     func makeCreatePhrasesVC() -> CreatePhrasesVC {
-        CreatePhrasesVC(accountStorage: accountStorage)
+        CreatePhrasesVC(accountStorage: sharedAccountStorage)
     }
     
     // MARK: - Add, Send, Receive, Swap Token VCs
     func makeAddNewTokenVC() -> AddNewWalletVC {
-        let vm = _AddNewWalletVM(solanaSDK: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager)
+        let vm = _AddNewWalletVM(solanaSDK: sharedSolanaSDK, walletsVM: sharedMyWalletsVM, transactionManager: sharedTransactionManager)
         return AddNewWalletVC(viewModel: vm)
     }
     
     func makeReceiveTokenViewController() -> ReceiveTokenVC {
-        ReceiveTokenVC(wallets: myWalletsVM.data)
+        ReceiveTokenVC(wallets: sharedMyWalletsVM.data)
     }
     
     func makeSendTokenViewController(activeWallet: Wallet? = nil, destinationAddress: String? = nil) -> WLModalWrapperVC {
-        let vm = SendTokenViewModel(solanaSDK: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, activeWallet: activeWallet, destinationAddress: destinationAddress)
+        let vm = SendTokenViewModel(solanaSDK: sharedSolanaSDK, walletsVM: sharedMyWalletsVM, transactionManager: sharedTransactionManager, activeWallet: activeWallet, destinationAddress: destinationAddress)
         let wrappedVC = SendTokenViewController(viewModel: vm)
         let titleImageView = UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
             .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
@@ -115,16 +113,16 @@ class DependencyContainer {
     }
     
     func makeSwapTokenViewController(fromWallet wallet: Wallet? = nil) -> SwapTokenViewController {
-        let vm = SwapTokenViewModel(solanaSDK: solanaSDK, transactionManager: transactionManager, wallets: myWalletsVM.data, fromWallet: wallet)
+        let vm = SwapTokenViewModel(solanaSDK: sharedSolanaSDK, transactionManager: sharedTransactionManager, wallets: sharedMyWalletsVM.data, fromWallet: wallet)
         return SwapTokenViewController(viewModel: vm)
     }
     
     func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)? = nil) -> ChooseWalletVC {
-        ChooseWalletVC(viewModel: myWalletsVM, customFilter: customFilter)
+        ChooseWalletVC(viewModel: sharedMyWalletsVM, customFilter: customFilter)
     }
     
     func makeSwapChooseDestinationWalletVC() -> ChooseWalletVC {
-        let vm = SwapChooseDestinationViewModel(solanaSDK: solanaSDK, socket: socket, walletsVM: myWalletsVM)
+        let vm = SwapChooseDestinationViewModel(solanaSDK: sharedSolanaSDK, socket: sharedSocket, walletsVM: sharedMyWalletsVM)
         let vc = ChooseWalletVC(viewModel: vm, customFilter: {_ in true})
         vm.reload()
         return vc
@@ -132,7 +130,7 @@ class DependencyContainer {
     
     // MARK: - Other vcs
     func makeProcessTransactionVC() -> ProcessTransactionVC {
-        ProcessTransactionVC(transactionManager: transactionManager)
+        ProcessTransactionVC(transactionManager: sharedTransactionManager)
     }
     
     // MARK: - Helpers
@@ -147,8 +145,8 @@ class DependencyContainer {
     }
     
     func changeNetwork() {
-        self.socket.disconnect()
-        self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: accountStorage)
-        self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: self.solanaSDK.accountStorage.account?.publicKey)
+        self.sharedSocket.disconnect()
+        self.sharedSolanaSDK = SolanaSDK(network: Defaults.network, accountStorage: sharedAccountStorage)
+        self.sharedSocket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: self.sharedSolanaSDK.accountStorage.account?.publicKey)
     }
 }
