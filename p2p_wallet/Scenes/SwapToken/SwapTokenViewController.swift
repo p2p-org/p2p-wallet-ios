@@ -91,6 +91,7 @@ private class _SwapTokenViewController: BaseVC {
                 case .sendTransaction:
                     self.transactionVC =
                         DependencyContainer.shared.makeProcessTransactionVC()
+                    self.present(self.transactionVC, animated: true, completion: nil)
                 case .processTransaction(signature: let signature):
                     self.showProcessingTransaction(signature: signature)
                 case .transactionError(let error):
