@@ -28,10 +28,9 @@ enum MainVCItem: ListItemType {
 
 class MainVC: CollectionVC<MainVCItem> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
-    
+
     // MARK: - Properties
     let interactor = MenuInteractor()
-    var walletsVM: WalletsVM {WalletsVM.ofCurrentUser}
     let numberOfWalletsToShow = 4
     
     lazy var avatarImageView = UIImageView(width: 30, height: 30, image: .mainSettings)
@@ -42,11 +41,6 @@ class MainVC: CollectionVC<MainVCItem> {
         tabBar.backgroundColor = .background2
         return tabBar
     }()
-    
-    init() {
-        let vm = MainVM()
-        super.init(viewModel: vm)
-    }
     
     // MARK: - Methods
     override func setUp() {
@@ -111,6 +105,8 @@ class MainVC: CollectionVC<MainVCItem> {
     }
     
     override func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, MainVCItem> {
+        let viewModel = self.viewModel as! MainVM
+        
         // initial snapshot
         var snapshot = NSDiffableDataSourceSnapshot<String, MainVCItem>()
         
@@ -118,8 +114,8 @@ class MainVC: CollectionVC<MainVCItem> {
         let section = L10n.wallets
         snapshot.appendSections([section])
         
-        var items = filterWallet(self.walletsVM.items).map {MainVCItem.wallet($0)}
-        switch walletsVM.state.value {
+        var items = filterWallet(viewModel.walletsVM.items).map {MainVCItem.wallet($0)}
+        switch viewModel.walletsVM.state.value {
         case .loading:
             items += [MainVCItem.placeholder(at: 0), MainVCItem.placeholder(at: 1)]
         case .loaded, .error, .initializing:
@@ -139,12 +135,14 @@ class MainVC: CollectionVC<MainVCItem> {
     }
     
     override func configureHeaderForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
+        let viewModel = self.viewModel as! MainVM
+        
         let header = super.configureHeaderForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
         
         switch indexPath.section {
         case 0:
             if let view = header as? FirstSectionHeaderView {
-                view.balancesOverviewView.setUp(with: walletsVM.state.value)
+                view.balancesOverviewView.setUp(with: viewModel.walletsVM.state.value)
                 view.showAllBalancesAction = self.showAllProducts
             }
         default:
@@ -158,9 +156,11 @@ class MainVC: CollectionVC<MainVCItem> {
     override func dataDidLoad() {
         super.dataDidLoad()
         
+        let viewModel = self.viewModel as! MainVM
+        
         if let headerView = headerForSection(0) as? FirstSectionHeaderView
         {
-            headerView.balancesOverviewView.setUp(with: walletsVM.state.value)
+            headerView.balancesOverviewView.setUp(with: viewModel.walletsVM.state.value)
         }
         
         if let footerView = footerForSection(0) as? FirstSectionFooterView
@@ -168,7 +168,7 @@ class MainVC: CollectionVC<MainVCItem> {
             var text = L10n.allMyTokens
             var image = UIImage.indicatorNext
             var action = showAllProducts
-            switch walletsVM.state.value {
+            switch viewModel.walletsVM.state.value {
             case .loaded(let wallets):
                 if wallets.count <= numberOfWalletsToShow {
                     text = L10n.addToken
@@ -182,14 +182,15 @@ class MainVC: CollectionVC<MainVCItem> {
         }
         
         UIView.animate(withDuration: 0.3) {
-            self.tabBar.alpha = self.walletsVM.data.isEmpty ? 0 : 1
+            self.tabBar.alpha = viewModel.walletsVM.data.isEmpty ? 0 : 1
         }
     }
     
     override func itemDidSelect(_ item: MainVCItem) {
         switch item {
         case .wallet(let wallet):
-            present(WalletDetailVC(wallet: wallet), animated: true, completion: nil)
+            let vc = DependencyContainer.shared.makeWalletDetailVC(wallet: wallet)
+            present(vc, animated: true, completion: nil)
         default:
             break
         }
@@ -197,9 +198,7 @@ class MainVC: CollectionVC<MainVCItem> {
     
     var receiveAction: CocoaAction {
         CocoaAction { _ in
-            let wallets = self.walletsVM.items
-            if wallets.count == 0 {return .just(())}
-            let vc = ReceiveTokenVC(wallets: wallets)
+            let vc = DependencyContainer.shared.makeReceiveTokenViewController()
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
@@ -207,23 +206,16 @@ class MainVC: CollectionVC<MainVCItem> {
     
     func sendAction(address: String? = nil) -> CocoaAction {
         CocoaAction { _ in
-            let wallets = self.walletsVM.items
-            if wallets.count == 0 {return .just(())}
-            let vm = SendTokenViewModel(wallets: wallets, activeWallet: nil, destinationAddress: address)
-            let vc = SendTokenViewController(viewModel: vm)
-            let titleImageView = UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
-                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
-            self.presentCustomModal(vc: vc, title: L10n.send, titleImageView: titleImageView)
+            let vc = DependencyContainer.shared
+                .makeSendTokenViewController(destinationAddress: address)
+            self.present(vc, animated: true, completion: nil)
             return .just(())
         }
     }
     
     var swapAction: CocoaAction {
         CocoaAction { _ in
-            let wallets = self.walletsVM.items
-            if wallets.count == 0 {return .just(())}
-            let vm = SwapTokenViewModel(wallets: wallets)
-            let vc = SwapTokenViewController(viewModel: vm)
+            let vc = DependencyContainer.shared.makeSwapTokenViewController()
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
@@ -231,14 +223,15 @@ class MainVC: CollectionVC<MainVCItem> {
     
     var showAllProducts: CocoaAction {
         CocoaAction { _ in
-            self.present(MyProductsVC(), animated: true, completion: nil)
+            let vc = DependencyContainer.shared.makeMyProductVC()
+            self.present(vc, animated: true, completion: nil)
             return .just(())
         }
     }
     
     var addCoin: CocoaAction {
         CocoaAction {_ in
-            let vc = AddNewWalletVC()
+            let vc = DependencyContainer.shared.makeAddNewTokenVC()
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }

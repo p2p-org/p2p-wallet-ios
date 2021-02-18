@@ -12,9 +12,13 @@ class WalletTransactionsVM: ListViewModel<Transaction> {
     
     let wallet: Wallet
     var before: String?
+    let solanaSDK: SolanaSDK
+    let walletsVM: WalletsVM
     
-    init(wallet: Wallet) {
+    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, wallet: Wallet) {
         self.wallet = wallet
+        self.solanaSDK = solanaSDK
+        self.walletsVM = walletsVM
         super.init()
     }
     
@@ -22,23 +26,26 @@ class WalletTransactionsVM: ListViewModel<Transaction> {
         guard let pubkey = wallet.pubkey else {
             return .error(SolanaSDK.Error.notFound)
         }
-        return SolanaSDK.shared.getConfirmedSignaturesForAddress2(account: pubkey, configs: SolanaSDK.RequestConfiguration(limit: limit, before: before)
+        return solanaSDK.getConfirmedSignaturesForAddress2(account: pubkey, configs: SolanaSDK.RequestConfiguration(limit: limit, before: before)
         )
         .do(onSuccess: {[weak self] activities in
             self?.before = activities.last?.signature
             guard let self = self else {return}
             let signatures = activities.map {$0.signature}
             signatures.forEach { signature in
-                SolanaSDK.shared.getConfirmedTransaction(transactionSignature: signature)
+                self.solanaSDK.getConfirmedTransaction(transactionSignature: signature)
                     .subscribe(onSuccess: {[weak self] transaction in
                         guard let self = self else {return}
                         self.updateItem(where: {$0.signature == signature}, transform: {
                             var newItem = $0
-                            newItem.confirm(by: transaction)
+                            if let myAccountPubkey = self.solanaSDK.accountStorage.account?.publicKey
+                            {
+                                newItem.confirm(by: transaction, walletsVM: self.walletsVM, myAccountPubkey: myAccountPubkey)
+                            }
                             return newItem
                         })
                         if let slot = transaction.slot {
-                            SolanaSDK.shared.getBlockTime(block: slot)
+                            self.solanaSDK.getBlockTime(block: slot)
                                 .subscribe(onSuccess: {[weak self] timestamp in
                                     guard let self = self else {return}
                                     self.updateItem(where: {$0.signature == signature}, transform: {

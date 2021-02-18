@@ -65,7 +65,7 @@ private class _SwapTokenViewController: BaseVC {
             .subscribe(onNext: {
                 switch $0 {
                 case .chooseSourceWallet:
-                    let vc = ChooseWalletVC(viewModel: WalletsVM.ofCurrentUser)
+                    let vc = DependencyContainer.shared.makeChooseWalletVC()
                     vc.completion = {wallet in
                         let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
                         self.viewModel.sourceWallet.accept(wallet)
@@ -74,7 +74,7 @@ private class _SwapTokenViewController: BaseVC {
                     }
                     self.presentCustomModal(vc: vc, title: L10n.selectWallet)
                 case .chooseDestinationWallet:
-                    let vc = SwapChooseDestinationWalletVC()
+                    let vc = DependencyContainer.shared.makeSwapChooseDestinationWalletVC()
                     vc.completion = {wallet in
                         self.viewModel.destinationWallet.accept(wallet)
 //                        self.destination.amountTextField.becomeFirstResponder()
@@ -89,7 +89,8 @@ private class _SwapTokenViewController: BaseVC {
                     }
                     self.present(vc, animated: true, completion: nil)
                 case .sendTransaction:
-                    self.transactionVC = self.presentProcessTransactionVC()
+                    self.transactionVC =
+                        DependencyContainer.shared.makeProcessTransactionVC()
                 case .processTransaction(signature: let signature):
                     self.showProcessingTransaction(signature: signature)
                 case .transactionError(let error):

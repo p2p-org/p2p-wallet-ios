@@ -23,8 +23,8 @@ class AddNewWalletVC: WLModalWrapperVC {
         return searchBar
     }()
     
-    init() {
-        super.init(wrapped: _AddNewWalletVC())
+    init(viewModel: _AddNewWalletVM) {
+        super.init(wrapped: _AddNewWalletVC(viewModel: viewModel))
         modalPresentationStyle = .custom
         transitioningDelegate = self
     }
