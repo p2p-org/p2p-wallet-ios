@@ -14,5 +14,4 @@ class SSPinCodeVC: CreatePassCodeVC {
             UIApplication.shared.changeRootVC(to: EnableBiometryVC(), withNaviationController: true)
         }
     }
-    
 }

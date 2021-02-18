@@ -15,6 +15,7 @@ class CreatePassCodeVC: PassCodeVC {
     init(accountStorage: KeychainAccountStorage) {
         self.accountStorage = accountStorage
         super.init()
+        embededPinVC.disableDismissAfterCompletion = true
     }
     
     override func viewDidLoad() {

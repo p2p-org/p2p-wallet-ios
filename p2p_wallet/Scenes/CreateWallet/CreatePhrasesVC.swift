@@ -171,7 +171,8 @@ class CreatePhrasesVC: PhrasesVC {
                 try self.accountStorage.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
-                    self.show(CreateWalletCompletedVC(), sender: nil)
+                    let vc = DependencyContainer.shared.makeSSPinCodeVC()
+                    self.show(vc, sender: nil)
                 }
             } catch {
                 DispatchQueue.main.async {

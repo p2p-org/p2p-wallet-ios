@@ -25,8 +25,11 @@ class CreateOrRestoreWalletVC: WLIntroVC {
         let vc = TermsAndConditionsVC()
         vc.completion = {
             let vc = DependencyContainer.shared.makeCreatePhrasesVC()
-            self.parent?.show(vc, sender: nil)
+            let nc = BENavigationController(rootViewController: vc)
+            nc.isModalInPresentation = true
+            self.parent?.present(nc, animated: true, completion: nil)
         }
+        
         parent?.present(vc, animated: true, completion: nil)
     }
     
