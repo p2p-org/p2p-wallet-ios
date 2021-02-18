@@ -11,11 +11,15 @@ import RxSwift
 class WalletsVM: ListViewModel<Wallet> {
     override var isPaginationEnabled: Bool {false}
     
-    static var ofCurrentUser = WalletsVM()
-    
+    let solanaSDK: SolanaSDK
+    let socket: SolanaSDK.Socket
+    let transactionManager: TransactionsManager?
     var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
     
-    init() {
+    init(solanaSDK: SolanaSDK, socket: SolanaSDK.Socket, transactionManager: TransactionsManager? = nil) {
+        self.solanaSDK = solanaSDK
+        self.socket = socket
+        self.transactionManager = transactionManager
         super.init(prefetch: false)
     }
     
@@ -35,7 +39,7 @@ class WalletsVM: ListViewModel<Wallet> {
             })
             .disposed(by: disposeBag)
         
-        SolanaSDK.Socket.shared.observeAccountNotification()
+        socket.observeAccountNotification()
             .subscribe(onNext: {notification in
                 self.updateItem(where: {$0.symbol == "SOL"}) { wallet in
                     var wallet = wallet
@@ -44,15 +48,37 @@ class WalletsVM: ListViewModel<Wallet> {
                 }
             })
             .disposed(by: disposeBag)
+        
+        transactionManager?.transactions
+            .map {$0.filter {$0.type == .createAccount && $0.newWallet != nil}}
+            .filter {$0.count > 0}
+            .subscribe(onNext: { transactions in
+                let newWallets = transactions.compactMap({$0.newWallet})
+                var wallets = self.items
+                for wallet in newWallets {
+                    if !wallets.contains(where: {$0.pubkey == wallet.pubkey}) {
+                        wallets.append(wallet)
+                    } else {
+                        self.updateItem(where: {$0.pubkey == wallet.pubkey}) { oldWallet in
+                            var newWallet = oldWallet
+                            newWallet.isProcessing = wallet.isProcessing
+                            return newWallet
+                        }
+                    }
+                }
+                
+                if wallets.count > 0 {
+                    self.items = wallets
+                    self.state.accept(.loaded(wallets))
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     override var request: Single<[Wallet]> {
-        guard let account = SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString else {
-            return .error(SolanaSDK.Error.unauthorized)
-        }
-        return SolanaSDK.shared.getBalance(account: account)
+        solanaSDK.getBalance()
             .flatMap {balance in
-                SolanaSDK.shared.getTokensInfo()
+                self.solanaSDK.getTokensInfo()
                     .map {$0.map {Wallet(programAccount: $0)}}
                     .map {wallets in
                         var wallets = wallets
@@ -64,10 +90,10 @@ class WalletsVM: ListViewModel<Wallet> {
                         }
                         
                         let solWallet = Wallet(
-                            id: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString ?? "Solana",
+                            id: self.solanaSDK.accountStorage.account?.publicKey.base58EncodedString ?? "Solana",
                             name: Defaults.walletName["SOL"] ?? "Solana",
                             mintAddress: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString,
-                            pubkey: SolanaSDK.shared.accountStorage.account?.publicKey.base58EncodedString,
+                            pubkey: self.solanaSDK.accountStorage.account?.publicKey.base58EncodedString,
                             symbol: "SOL",
                             lamports: balance,
                             price: PricesManager.shared.solPrice,

@@ -9,18 +9,19 @@ import Foundation
 import RxSwift
 
 class FeeVM: BaseVM<Double> {
-    static let shared = FeeVM()
-    
-    private init() {
+    let solanaSDK: SolanaSDK
+    let walletsVM: WalletsVM
+    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM) {
+        self.solanaSDK = solanaSDK
+        self.walletsVM = walletsVM
         super.init(initialData: 0)
-        reload()
     }
     
     override var request: Single<Double> {
-        SolanaSDK.shared.getFees()
+        solanaSDK.getFees()
             .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
             .map {
-                let decimals = WalletsVM.ofCurrentUser.items.first(where: {$0.symbol == "SOL"})?.decimals ?? 9
+                let decimals = self.walletsVM.items.solWallet?.decimals ?? 9
                 return Double($0) * pow(Double(10), -Double(decimals))
             }
     }

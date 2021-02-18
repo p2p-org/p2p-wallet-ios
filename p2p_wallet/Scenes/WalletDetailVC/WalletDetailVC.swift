@@ -11,6 +11,8 @@ import Action
 class WalletDetailVC: WLModalWrapperVC {
     override var padding: UIEdgeInsets {UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)}
     
+    let solanaSDK: SolanaSDK
+    let walletsVM: WalletsVM
     let wallet: Wallet
     lazy var walletNameTextField: UITextField = {
         let tf = UITextField(font: .systemFont(ofSize: 19, weight: .semibold), placeholder: "A", autocorrectionType: .no)
@@ -22,9 +24,12 @@ class WalletDetailVC: WLModalWrapperVC {
     lazy var tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
     
     // MARK: - Initializer
-    init(wallet: Wallet) {
+    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, wallet: Wallet) {
+        self.solanaSDK = solanaSDK
+        self.walletsVM = walletsVM
         self.wallet = wallet
-        super.init(wrapped: _WalletDetailVC(wallet: wallet))
+        let viewModel = _WalletDetailVC.ViewModel(solanaSDK: solanaSDK, walletsVM: walletsVM, wallet: wallet)
+        super.init(wrapped: _WalletDetailVC(viewModel: viewModel))
     }
     
     override func viewDidLoad() {
@@ -88,7 +93,7 @@ class WalletDetailVC: WLModalWrapperVC {
                     // fall back to wallet name
                     newName = self.wallet.name
                 }
-                WalletsVM.ofCurrentUser.updateWallet(self.wallet, withName: newName)
+                self.walletsVM.updateWallet(self.wallet, withName: newName)
             })
             .disposed(by: disposeBag)
         
@@ -133,19 +138,13 @@ extension WalletDetailVC: UITextFieldDelegate {
 
 private class _WalletDetailVC: CollectionVC<Transaction> {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .embeded }
-    let wallet: Wallet
     var graphVM: WalletGraphVM { (viewModel as! ViewModel).graphVM }
-    
-    // MARK: - Initializer
-    init(wallet: Wallet) {
-        self.wallet = wallet
-        super.init(viewModel: ViewModel(wallet: wallet))
-    }
     
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        title = wallet.name
+        let vm = viewModel as! ViewModel
+        title = vm.wallet.name
         view.backgroundColor = .vcBackground
         
         collectionView.contentInset = collectionView.contentInset.modifying(dBottom: 71)
@@ -166,15 +165,16 @@ private class _WalletDetailVC: CollectionVC<Transaction> {
     
     override func configureHeaderForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
         let header = super.configureHeaderForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
+        let vm = viewModel as! ViewModel
         if indexPath.section == 0 {
             let header = header as! WDVCSectionHeaderView
-            header.setUp(wallet: wallet)
+            header.setUp(wallet: vm.wallet)
             header.lineChartView
                 .subscribed(to: graphVM)
                 .disposed(by: disposeBag)
             header.chartPicker.delegate = self
             header.scanQrCodeAction = CocoaAction {
-                let vc = ReceiveTokenVC(wallets: [self.wallet])
+                let vc = ReceiveTokenVC(wallets: [vm.wallet])
                 self.present(vc, animated: true, completion: nil)
                 return .just(())
             }
@@ -204,9 +204,9 @@ extension _WalletDetailVC {
     class ViewModel: WalletTransactionsVM {
         let graphVM: WalletGraphVM
         
-        override init(wallet: Wallet) {
+        override init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, wallet: Wallet) {
             graphVM = WalletGraphVM(wallet: wallet)
-            super.init(wallet: wallet)
+            super.init(solanaSDK: solanaSDK, walletsVM: walletsVM, wallet: wallet)
         }
         
         override func reload() {

@@ -23,19 +23,21 @@ class SendTokenViewModel {
     // MARK: - Constants
     
     // MARK: - Properties
-    let wallets: [Wallet]
+    let walletsVM: WalletsVM
     let disposeBag = DisposeBag()
+    let solanaSDK: SolanaSDK
+    let transactionManager: TransactionsManager
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<SendTokenNavigatableScene>()
     let currentWallet = BehaviorRelay<Wallet?>(value: nil)
     let availableAmount = BehaviorRelay<Double>(value: 0)
     let isUSDMode = BehaviorRelay<Bool>(value: false)
-    let fee = LazySubject<Double>(
-        request: SolanaSDK.shared.getFees()
+    lazy var fee = LazySubject<Double>(
+        request: solanaSDK.getFees()
             .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
             .map {
-                let decimals = WalletsVM.ofCurrentUser.items.first(where: {$0.symbol == "SOL"})?.decimals ?? 9
+                let decimals = self.walletsVM.items.first(where: {$0.symbol == "SOL"})?.decimals ?? 9
                 return Double($0) * pow(Double(10), -Double(decimals))
             }
     )
@@ -46,9 +48,11 @@ class SendTokenViewModel {
     let destinationAddressInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(wallets: [Wallet], activeWallet: Wallet? = nil, destinationAddress: String? = nil) {
-        self.wallets = wallets
-        self.currentWallet.accept(activeWallet ?? wallets.first)
+    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, transactionManager: TransactionsManager, activeWallet: Wallet? = nil, destinationAddress: String? = nil) {
+        self.solanaSDK = solanaSDK
+        self.walletsVM = walletsVM
+        self.transactionManager = transactionManager
+        self.currentWallet.accept(activeWallet ?? walletsVM.data.first)
         self.destinationAddressInput.accept(destinationAddress)
         fee.reload()
         bind()
@@ -86,7 +90,7 @@ class SendTokenViewModel {
                     return L10n.amountIsNotValid
                 }
                 
-                guard let solWallet = self.wallets.solWallet,
+                guard let solWallet = self.walletsVM.data.solWallet,
                       (self.fee.value ?? 0) <= (solWallet.amount ?? 0)
                 else {
                     return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
@@ -179,10 +183,10 @@ class SendTokenViewModel {
         var request: Single<String>!
         if currentWallet.symbol == "SOL" {
             // SOLANA
-            request = SolanaSDK.shared.sendSOL(to: receiver, amount: lamport)
+            request = solanaSDK.sendSOL(to: receiver, amount: lamport)
         } else {
             // other tokens
-            request = SolanaSDK.shared.sendSPLTokens(mintAddress: currentWallet.mintAddress, from: sender, to: receiver, amount: lamport)
+            request = solanaSDK.sendSPLTokens(mintAddress: currentWallet.mintAddress, from: sender, to: receiver, amount: lamport)
         }
         
         request
@@ -195,7 +199,7 @@ class SendTokenViewModel {
                     symbol: self.currentWallet.value?.symbol ?? "",
                     status: .processing
                 )
-                TransactionsManager.shared.process(transaction)
+                self.transactionManager.process(transaction)
             }, onError: {error in
                 self.navigationSubject.onNext(.transactionError(error))
             })

@@ -12,14 +12,16 @@ import RxCocoa
 struct TransactionsManager {
     public let transactions = BehaviorRelay<[Transaction]>(value: [])
     
-    static let shared = TransactionsManager()
     let disposeBag = DisposeBag()
-    private init() {}
+    let socket: SolanaSDK.Socket
+    
+    init(socket: SolanaSDK.Socket) {
+        self.socket = socket
+    }
     
     func process(_ transaction: Transaction) {
         guard transaction.status != .confirmed, let signature = transaction.signature else {return}
         transactions.insert(transaction, where: {$0.signature == signature}, shouldUpdate: true)
-        let socket = SolanaSDK.Socket.shared
         socket.observeSignatureNotification(signature: signature)
             .subscribe(onCompleted: {
                 var transaction = transaction

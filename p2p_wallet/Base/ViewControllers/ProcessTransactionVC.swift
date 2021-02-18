@@ -12,6 +12,7 @@ class ProcessTransactionVC: WLCenterSheet {
     override var padding: UIEdgeInsets {UIEdgeInsets(top: 30, left: 20, bottom: 30, right: 20)}
     
     // MARK: - Properties
+    let transactionManager: TransactionsManager
     var signature: String?
     
     // MARK: - Subviews
@@ -20,6 +21,11 @@ class ProcessTransactionVC: WLCenterSheet {
     lazy var viewInExplorerButton = WLButton.stepButton(type: .sub, label: L10n.viewInBlockchainExplorer)
     
     lazy var goBackToWalletButton = WLButton.stepButton(type: .black, label: L10n.goBackToWallet)
+    
+    init(transactionManager: TransactionsManager) {
+        self.transactionManager = transactionManager
+        super.init()
+    }
     
     // MARK: - Methods
     override func setUp() {
@@ -30,7 +36,7 @@ class ProcessTransactionVC: WLCenterSheet {
     
     override func bind() {
         super.bind()
-        TransactionsManager.shared.transactions
+        transactionManager.transactions
             .map {$0.first(where: {$0.signature == self.signature})}
             .filter {$0 != nil}
             .subscribe(onNext: {[weak self] transaction in
