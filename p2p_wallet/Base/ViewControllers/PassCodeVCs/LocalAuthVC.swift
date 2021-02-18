@@ -15,6 +15,12 @@ class LocalAuthVC: PassCodeVC {
     var reason: String?
     var isIgnorable = false
     var useBiometry = true
+    let accountStorage: KeychainAccountStorage
+    
+    init(accountStorage: KeychainAccountStorage) {
+        self.accountStorage = accountStorage
+        super.init()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,7 +80,7 @@ class LocalAuthVC: PassCodeVC {
     }
 
     override func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
-        guard let correctPin = AccountStorage.shared.pinCode else {return false}
+        guard let correctPin = accountStorage.pinCode else {return false}
         if pin == correctPin {return true} else {
             remainingPinEntries -= 1
             return false
