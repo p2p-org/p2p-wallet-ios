@@ -153,23 +153,16 @@ class MainVC: CollectionVC<MainVCItem> {
     
     func sendAction(address: String? = nil) -> CocoaAction {
         CocoaAction { _ in
-            let wallets = self.walletsVM.items
-            if wallets.count == 0 {return .just(())}
-            let vm = SendTokenViewModel(wallets: wallets, activeWallet: nil, destinationAddress: address)
-            let vc = SendTokenViewController(viewModel: vm)
-            let titleImageView = UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
-                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
-            self.presentCustomModal(vc: vc, title: L10n.send, titleImageView: titleImageView)
+            let vc = DependencyContainer.shared
+                .makeSendTokenViewController(destinationAddress: address)
+            self.present(vc, animated: true, completion: nil)
             return .just(())
         }
     }
     
     var swapAction: CocoaAction {
         CocoaAction { _ in
-            let wallets = self.walletsVM.items
-            if wallets.count == 0 {return .just(())}
-            let vm = SwapTokenViewModel(wallets: wallets)
-            let vc = SwapTokenViewController(viewModel: vm)
+            let vc = DependencyContainer.shared.makeSwapTokenViewController()
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
