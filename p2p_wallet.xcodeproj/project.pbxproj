@@ -134,7 +134,6 @@
 		BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */; };
 		BC7BCB75256274E10018DECA /* PricesManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB74256274E10018DECA /* PricesManager+Extensions.swift */; };
 		BC7BCB7B2562807E0018DECA /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */; };
-		BC932B37257E02D9007F1C29 /* FeeVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC932B36257E02D9007F1C29 /* FeeVM.swift */; };
 		BC932B3C257E095B007F1C29 /* TransactionInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC932B3B257E095B007F1C29 /* TransactionInfoVC.swift */; };
 		BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */; };
 		BCA9941F25AE93D5005BD8FB /* Fonts+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA9941E25AE93D5005BD8FB /* Fonts+Generated.swift */; };
@@ -353,7 +352,6 @@
 		BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonfidaPricesFetcher.swift; sourceTree = "<group>"; };
 		BC7BCB74256274E10018DECA /* PricesManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PricesManager+Extensions.swift"; sourceTree = "<group>"; };
 		BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
-		BC932B36257E02D9007F1C29 /* FeeVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeeVM.swift; sourceTree = "<group>"; };
 		BC932B3B257E095B007F1C29 /* TransactionInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionInfoVC.swift; sourceTree = "<group>"; };
 		BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		BCA9941E25AE93D5005BD8FB /* Fonts+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Fonts+Generated.swift"; sourceTree = "<group>"; };
@@ -498,7 +496,6 @@
 			isa = PBXGroup;
 			children = (
 				BCB5835F255D231400B10F65 /* BaseVM.swift */,
-				BC932B36257E02D9007F1C29 /* FeeVM.swift */,
 				BCD5E82D25525DD800F51299 /* ListViewModel */,
 				BCD5E82325525C6E00F51299 /* WalletsVM.swift */,
 				BC54DCF82587089700A65566 /* WalletGraphVM.swift */,
@@ -1523,7 +1520,6 @@
 				BC2EC1BA2553EC7D006EEDA5 /* UIView+Extensions.swift in Sources */,
 				BC22AA3425527F190071C69F /* InvestmentsVM.swift in Sources */,
 				BC5ED7532562687F0030572D /* PricesManager.swift in Sources */,
-				BC932B37257E02D9007F1C29 /* FeeVM.swift in Sources */,
 				BCD5E82425525C6E00F51299 /* WalletsVM.swift in Sources */,
 				BC2EC1D52553ED1B006EEDA5 /* CustomHeightPresentationController.swift in Sources */,
 				BC5ED749256237AB0030572D /* EmptyView.swift in Sources */,
