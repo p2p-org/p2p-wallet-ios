@@ -9,7 +9,12 @@ import Foundation
 import RxSwift
 
 class MainVM: ListViewModel<MainVCItem> {
-    let walletsVM = WalletsVM.ofCurrentUser
+    let walletsVM: WalletsVM
+    
+    init(walletsVM: WalletsVM) {
+        self.walletsVM = walletsVM
+        super.init()
+    }
     
     override func reload() {
         walletsVM.reload()

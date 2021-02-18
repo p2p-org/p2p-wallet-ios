@@ -85,12 +85,6 @@ extension UIViewController {
         }
     }
     
-    func presentProcessTransactionVC() -> ProcessTransactionVC {
-        let transactionVC = ProcessTransactionVC()
-        present(transactionVC, animated: true, completion: nil)
-        return transactionVC
-    }
-    
     // MARK: - HUDs
     func showIndetermineHudWithMessage(_ message: String?) {
         view.showIndetermineHudWithMessage(message)

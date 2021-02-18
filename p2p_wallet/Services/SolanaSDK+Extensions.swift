@@ -8,10 +8,6 @@
 import Foundation
 import RxSwift
 
-extension SolanaSDK {
-    static var shared = SolanaSDK(network: Defaults.network, accountStorage: AccountStorage.shared)
-}
-
 extension String: ListItemType {
     static func placeholder(at index: Int) -> String {
         "\(index)"

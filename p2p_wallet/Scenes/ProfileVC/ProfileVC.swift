@@ -118,7 +118,8 @@ class ProfileVC: ProfileVCBase {
         case 1:
             show(BackupVC(), sender: nil)
         case 2:
-            show(SelectNetworkVC(), sender: nil)
+            let vc = DependencyContainer.shared.makeSelectNetworkVC()
+            show(vc, sender: nil)
         case 3:
             show(ConfigureSecurityVC(), sender: nil)
         case 4:

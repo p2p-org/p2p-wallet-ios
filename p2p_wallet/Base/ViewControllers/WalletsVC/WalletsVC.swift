@@ -9,36 +9,9 @@ import Foundation
 
 class MyWalletsVC: CollectionVC<Wallet> {
     
-    override func bind() {
-        super.bind()
-        TransactionsManager.shared.transactions
-            .map {$0.filter {$0.type == .createAccount && $0.newWallet != nil}}
-            .filter {$0.count > 0}
-            .subscribe(onNext: { transactions in
-                let newWallets = transactions.compactMap({$0.newWallet})
-                var wallets = self.viewModel.items
-                for wallet in newWallets {
-                    if !wallets.contains(where: {$0.pubkey == wallet.pubkey}) {
-                        wallets.append(wallet)
-                    } else {
-                        self.viewModel.updateItem(where: {$0.pubkey == wallet.pubkey}) { oldWallet in
-                            var newWallet = oldWallet
-                            newWallet.isProcessing = wallet.isProcessing
-                            return newWallet
-                        }
-                    }
-                }
-                
-                if wallets.count > 0 {
-                    self.viewModel.items = wallets
-                    self.viewModel.state.accept(.loaded(wallets))
-                }
-            })
-            .disposed(by: disposeBag)
-    }
-    
     // MARK: - Delegate
     override func itemDidSelect(_ item: Wallet) {
-        present(WalletDetailVC(wallet: item), animated: true, completion: nil)
+        let vc = DependencyContainer.shared.makeWalletDetailVC(wallet: item)
+        present(vc, animated: true, completion: nil)
     }
 }

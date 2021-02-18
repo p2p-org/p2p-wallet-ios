@@ -10,11 +10,6 @@ import LazySubject
 import Action
 
 class _AddNewWalletVC: CollectionVC<Wallet> {
-    init() {
-        let viewModel = _AddNewWalletVM()
-        super.init(viewModel: viewModel)
-    }
-    
     override func setUp() {
         super.setUp()
         

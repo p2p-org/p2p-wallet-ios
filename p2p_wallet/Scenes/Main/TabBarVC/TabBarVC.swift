@@ -18,11 +18,18 @@ class TabBarVC: BEPagesVC {
     }
     lazy var tabBar = TabBar(cornerRadius: 20)
     
+    let socket: SolanaSDK.Socket
+    init(socket: SolanaSDK.Socket) {
+        self.socket = socket
+        super.init()
+    }
+    
     override func setUp() {
         super.setUp()
         // pages
+        let mainVC = DependencyContainer.shared.makeMainVC()
         viewControllers = [
-            BENavigationController(rootViewController: MainVC()),
+            BENavigationController(rootViewController: mainVC),
             BENavigationController(rootViewController: InvestmentsVC()),
             BENavigationController(rootViewController: WLIntroVC())
         ]
@@ -54,7 +61,7 @@ class TabBarVC: BEPagesVC {
     override func bind() {
         super.bind()
         // connect websocket
-        SolanaSDK.Socket.shared.connect()
+        socket.connect()
     }
     
     // MARK: - Helpers
