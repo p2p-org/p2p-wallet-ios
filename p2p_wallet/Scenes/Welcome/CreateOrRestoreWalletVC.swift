@@ -24,12 +24,14 @@ class CreateOrRestoreWalletVC: WLIntroVC {
     @objc func buttonCreateWalletDidTouch() {
         let vc = TermsAndConditionsVC()
         vc.completion = {
-            self.parent?.show(CreatePhrasesVC(), sender: nil)
+            let vc = DependencyContainer.shared.makeCreatePhrasesVC()
+            self.parent?.show(vc, sender: nil)
         }
         parent?.present(vc, animated: true, completion: nil)
     }
     
     @objc func buttonRestoreWalletDidTouch() {
-        parent?.show(RestoreWalletVC(), sender: nil)
+        let vc = DependencyContainer.shared.makeRestoreWalletVC()
+        parent?.show(vc, sender: nil)
     }
 }

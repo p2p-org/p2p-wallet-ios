@@ -8,8 +8,8 @@
 import Foundation
 
 class SSPinCodeVC: CreatePassCodeVC {
-    override init() {
-        super.init()
+    override init(accountStorage: KeychainAccountStorage) {
+        super.init(accountStorage: accountStorage)
         completion = { _ in
             UIApplication.shared.changeRootVC(to: EnableBiometryVC(), withNaviationController: true)
         }

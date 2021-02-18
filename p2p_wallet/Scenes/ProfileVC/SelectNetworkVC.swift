@@ -9,12 +9,10 @@ import Foundation
 
 class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
     override var dataDidChange: Bool {selectedItem != Defaults.network}
-    var solanaSDK: SolanaSDK
-    var socket: SolanaSDK.Socket
+    var accountStorage: SolanaSDKAccountStorage
     
-    init(solanaSDK: SolanaSDK, socket: SolanaSDK.Socket) {
-        self.solanaSDK = solanaSDK
-        self.socket = socket
+    init(accountStorage: SolanaSDKAccountStorage) {
+        self.accountStorage = accountStorage
         super.init()
         // initial data
         SolanaSDK.Network.allCases.forEach {
@@ -39,17 +37,15 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
             UIApplication.shared.showIndetermineHudWithMessage(L10n.switchingTo + " \"" + self.selectedItem.cluster + "\"")
             DispatchQueue.global().async {
                 do {
-                    let account = try SolanaSDK.Account(phrase: AccountStorage.shared.account!.phrase, network: self.selectedItem)
-                    try AccountStorage.shared.save(account)
+                    let account = try SolanaSDK.Account(phrase: self.accountStorage.account!.phrase, network: self.selectedItem)
+                    try self.accountStorage.save(account)
                     DispatchQueue.main.async {
                         UIApplication.shared.hideHud()
                         // save
                         Defaults.network = self.selectedItem
                         
                         // refresh sdk
-                        self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: AccountStorage.shared)
-                        self.socket.disconnect()
-                        self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: self.solanaSDK.accountStorage.account?.publicKey)
+                        DependencyContainer.shared.changeNetwork()
                         
                         AppDelegate.shared.reloadRootVC()
                     }

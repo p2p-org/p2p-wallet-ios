@@ -15,9 +15,14 @@ class ProfileVC: ProfileVCBase {
     lazy var activeLanguageLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
     lazy var appearanceLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
     var disposables = [DefaultsDisposable]()
+    let accountStorage: SolanaSDKAccountStorage
     
     deinit {
         disposables.forEach {$0.dispose()}
+    }
+    
+    init(accountStorage: SolanaSDKAccountStorage) {
+        self.accountStorage = accountStorage
     }
     
     // MARK: - Methods
@@ -101,7 +106,7 @@ class ProfileVC: ProfileVCBase {
     @objc func buttonLogoutDidTouch() {
         showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { (index) in
             if index == 0 {
-                AccountStorage.shared.clear()
+                self.accountStorage.clear()
                 Defaults.walletName = [:]
                 AppDelegate.shared.reloadRootVC()
             }
@@ -116,12 +121,14 @@ class ProfileVC: ProfileVCBase {
         guard let tag = gesture.view?.tag else {return}
         switch tag {
         case 1:
-            show(BackupVC(), sender: nil)
+            let vc = DependencyContainer.shared.makeBackupVC()
+            show(vc, sender: nil)
         case 2:
             let vc = DependencyContainer.shared.makeSelectNetworkVC()
             show(vc, sender: nil)
         case 3:
-            show(ConfigureSecurityVC(), sender: nil)
+            let vc = DependencyContainer.shared.makeConfigureSecurityVC()
+            show(vc, sender: nil)
         case 4:
             show(SelectLanguageVC(), sender: nil)
         case 5:
@@ -144,17 +151,5 @@ class ProfileVC: ProfileVCBase {
         ])
         stackView.setCustomSpacing(12, after: descriptionView)
         return stackView
-    }
-}
-
-@available(iOS 13, *)
-struct ProfileVC_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            UIViewControllerPreview {
-                ProfileVC()
-            }
-            .previewDevice("iPhone SE (2nd generation)")
-        }
     }
 }

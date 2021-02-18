@@ -95,7 +95,8 @@ class TabBarVC: BEPagesVC {
         
         // show profile modal
         if tag == 3 {
-            present(ProfileVC(), animated: true, completion: nil)
+            let vc = DependencyContainer.shared.makeProfileVC()
+            present(vc, animated: true, completion: nil)
             return
         }
         

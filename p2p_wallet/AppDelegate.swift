@@ -69,12 +69,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func reloadRootVC() {
         let rootVC: UIViewController
-        if AccountStorage.shared.account == nil {
+        if DependencyContainer.shared.accountStorage.account == nil {
             rootVC = BENavigationController(rootViewController: WelcomeVC())
             shouldShowLocalAuth = false
         } else {
-            if AccountStorage.shared.pinCode == nil {
-                rootVC = BENavigationController(rootViewController: SSPinCodeVC())
+            if DependencyContainer.shared.accountStorage.pinCode == nil {
+                let vc = DependencyContainer.shared.makeSSPinCodeVC()
+                rootVC = BENavigationController(rootViewController: vc)
                 shouldShowLocalAuth = false
             } else if !Defaults.didSetEnableBiometry {
                 rootVC = BENavigationController(rootViewController: EnableBiometryVC())
@@ -120,7 +121,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     fileprivate func showAuthentication() {
         let topVC = self.window?.rootViewController?.topViewController()
-        let localAuthVC = LocalAuthVC()
+        let localAuthVC = DependencyContainer.shared.makeLocalAuthVC()
         localAuthVC.completion = { [self] didSuccess in
             localAuthVCShown = false
             if !didSuccess {

@@ -85,7 +85,8 @@ class EnterPhrasesVC: BaseVStackVC {
         do {
             let phrases = getPhrasesInTextView()
             _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
-            let nc = BENavigationController(rootViewController: WelcomeBackVC(phrases: phrases))
+            let vc = DependencyContainer.shared.makeWelcomeBackVC(phrases: phrases)
+            let nc = BENavigationController(rootViewController: vc)
             UIApplication.shared.changeRootVC(to: nc)
         } catch {
             showError(error)
