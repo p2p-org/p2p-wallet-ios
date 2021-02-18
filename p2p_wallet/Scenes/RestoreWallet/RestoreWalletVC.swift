@@ -14,6 +14,11 @@ class RestoreWalletVC: WLIntroVC {
     lazy var restoreManuallyButton = WLButton.stepButton(type: .sub, label: L10n.restoreManually)
         .onTap(self, action: #selector(buttonRestoreManuallyDidTouch))
     
+    let accountStorage: KeychainAccountStorage
+    init(accountStorage: KeychainAccountStorage) {
+        self.accountStorage = accountStorage
+    }
+    
     override func setUp() {
         super.setUp()
         backButton.isHidden = false
@@ -28,7 +33,7 @@ class RestoreWalletVC: WLIntroVC {
     }
     
     @objc func buttonICloudRestoreDidTouch() {
-        guard let phrases = AccountStorage.shared.phrasesFromICloud() else
+        guard let phrases = accountStorage.phrasesFromICloud() else
         {
             showAlert(title: L10n.noAccount, message: L10n.thereIsNoP2PWalletSavedInYourICloud)
             return
@@ -48,22 +53,11 @@ class RestoreWalletVC: WLIntroVC {
         do {
             let phrases = text.components(separatedBy: " ")
             _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
-            let nc = BENavigationController(rootViewController: WelcomeBackVC(phrases: phrases))
+            let vc = DependencyContainer.shared.makeWelcomeBackVC(phrases: phrases)
+            let nc = BENavigationController(rootViewController: vc)
             UIApplication.shared.changeRootVC(to: nc)
         } catch {
             showError(error)
-        }
-    }
-}
-
-@available(iOS 13, *)
-struct RestoreWalletVC_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            UIViewControllerPreview {
-                RestoreWalletVC()
-            }
-            .previewDevice("iPhone SE (2nd generation)")
         }
     }
 }

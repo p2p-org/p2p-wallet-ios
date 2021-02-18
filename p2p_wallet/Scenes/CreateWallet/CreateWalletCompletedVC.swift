@@ -28,7 +28,8 @@ class CreateWalletCompletedVC: WLIntroVC {
     
     // MARK: - Actions
     @objc func buttonNextDidTouch() {
-        UIApplication.shared.changeRootVC(to: SSPinCodeVC(), withNaviationController: true)
+        let vc = DependencyContainer.shared.makeSSPinCodeVC()
+        UIApplication.shared.changeRootVC(to: vc, withNaviationController: true)
     }
 }
 

@@ -10,6 +10,12 @@ import THPinViewController
 
 class CreatePassCodeVC: PassCodeVC {
     var passcode: String?
+    let accountStorage: KeychainAccountStorage
+    
+    init(accountStorage: KeychainAccountStorage) {
+        self.accountStorage = accountStorage
+        super.init()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +29,7 @@ class CreatePassCodeVC: PassCodeVC {
     
     override func pinViewControllerWillDismiss(afterPinEntryWasSuccessful pinViewController: THPinViewController) {
         // show confirm
-        let vc = ConfirmPasscodeVC(currentPasscode: passcode!)
+        let vc = ConfirmPasscodeVC(currentPasscode: passcode!, accountStorage: accountStorage)
         vc.completion = completion
         show(vc, sender: nil)
     }
@@ -32,8 +38,8 @@ class CreatePassCodeVC: PassCodeVC {
 private class ConfirmPasscodeVC: CreatePassCodeVC {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(translucent: true) }
     
-    init(currentPasscode: String) {
-        super.init()
+    init(currentPasscode: String, accountStorage: KeychainAccountStorage) {
+        super.init(accountStorage: accountStorage)
         self.passcode = currentPasscode
     }
     
@@ -57,7 +63,7 @@ private class ConfirmPasscodeVC: CreatePassCodeVC {
     }
     
     override func pinViewControllerWillDismiss(afterPinEntryWasSuccessful pinViewController: THPinViewController) {
-        AccountStorage.shared.save(passcode!)
+        accountStorage.save(passcode!)
         completion?(true)
     }
 }

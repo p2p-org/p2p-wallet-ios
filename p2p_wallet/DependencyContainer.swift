@@ -10,8 +10,9 @@ import SolanaSwift
 
 class DependencyContainer {
     // MARK: - Long lived dependency
-    let solanaSDK: SolanaSDK
-    let socket: SolanaSDK.Socket
+    let accountStorage: KeychainAccountStorage
+    var solanaSDK: SolanaSDK
+    var socket: SolanaSDK.Socket
     let transactionManager: TransactionsManager
     private(set) var myWalletsVM: WalletsVM!
     private(set) var feeVM: FeeVM!
@@ -20,7 +21,8 @@ class DependencyContainer {
     static let shared = DependencyContainer()
     
     private init() {
-        self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: AccountStorage.shared)
+        self.accountStorage = KeychainAccountStorage()
+        self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: accountStorage)
         self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: solanaSDK.accountStorage.account?.publicKey)
         self.transactionManager = TransactionsManager(socket: socket)
     }
@@ -29,6 +31,24 @@ class DependencyContainer {
     func makeMyWalletsVM() {
         self.myWalletsVM = WalletsVM(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager)
         self.feeVM = FeeVM(solanaSDK: solanaSDK, walletsVM: myWalletsVM)
+    }
+    
+    // MARK: - Authentication
+    func makeLocalAuthVC() -> LocalAuthVC {
+        LocalAuthVC(accountStorage: accountStorage)
+    }
+    
+    // MARK: - Onboarding
+    func makeRestoreWalletVC() -> RestoreWalletVC {
+        RestoreWalletVC(accountStorage: accountStorage)
+    }
+    
+    func makeSSPinCodeVC() -> SSPinCodeVC {
+        SSPinCodeVC(accountStorage: accountStorage)
+    }
+    
+    func makeWelcomeBackVC(phrases: [String]) -> WelcomeBackVC {
+        WelcomeBackVC(phrases: phrases, accountStorage: accountStorage)
     }
     
     // MARK: - Tabbar
@@ -51,9 +71,29 @@ class DependencyContainer {
         WalletDetailVC(solanaSDK: solanaSDK, walletsVM: myWalletsVM, wallet: wallet)
     }
     
-    // MARK: - Settings VCs
+    // MARK: - Profile VCs
+    func makeProfileVC() -> ProfileVC {
+        ProfileVC(accountStorage: accountStorage)
+    }
+    
+    func makeBackupMannuallyVC() -> BackupManuallyVC {
+        BackupManuallyVC(accountStorage: accountStorage)
+    }
+    
     func makeSelectNetworkVC() -> SelectNetworkVC {
-        SelectNetworkVC(solanaSDK: solanaSDK, socket: socket)
+        SelectNetworkVC(accountStorage: accountStorage)
+    }
+    
+    func makeBackupVC() -> BackupVC {
+        BackupVC(accountStorage: accountStorage)
+    }
+    
+    func makeConfigureSecurityVC() -> ConfigureSecurityVC {
+        ConfigureSecurityVC(accountStorage: accountStorage)
+    }
+    
+    func makeCreatePhrasesVC() -> CreatePhrasesVC {
+        CreatePhrasesVC(accountStorage: accountStorage)
     }
     
     // MARK: - Add, Send, Receive, Swap Token VCs
@@ -104,5 +144,11 @@ class DependencyContainer {
         vc.modalPresentationStyle = wrappedVC.modalPresentationStyle
         vc.transitioningDelegate = wrappedVC as? UIViewControllerTransitioningDelegate
         return vc
+    }
+    
+    func changeNetwork() {
+        self.socket.disconnect()
+        self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: accountStorage)
+        self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: self.solanaSDK.accountStorage.account?.publicKey)
     }
 }

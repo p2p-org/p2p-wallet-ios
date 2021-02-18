@@ -8,6 +8,12 @@
 import Foundation
 
 class BackupVC: ProfileVCBase {
+    let accountStorage: KeychainAccountStorage
+    init(accountStorage: KeychainAccountStorage) {
+        self.accountStorage = accountStorage
+        super.init()
+    }
+    
     override func setUp() {
         title = L10n.backup
         super.setUp()
@@ -31,19 +37,20 @@ class BackupVC: ProfileVCBase {
     }
     
     @objc func buttonBackupUsingICloudDidTouch() {
-        guard let account = AccountStorage.shared.account?.phrase else {return}
-        AccountStorage.shared.saveICloud(phrases: account.joined(separator: " "))
+        guard let account = accountStorage.account?.phrase else {return}
+        accountStorage.saveICloud(phrases: account.joined(separator: " "))
         UIApplication.shared.showDone(L10n.savedToICloud)
     }
     
     @objc func buttonBackupManuallyDidTouch() {
-        let localAuthVC = LocalAuthVC()
+        let localAuthVC = LocalAuthVC(accountStorage: accountStorage)
         localAuthVC.isIgnorable = true
         localAuthVC.useBiometry = false
         localAuthVC.completion = { [weak self] didSuccess in
             if didSuccess {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self?.show(BackupManuallyVC(), sender: nil)
+                    let vc = DependencyContainer.shared.makeBackupMannuallyVC()
+                    self?.show(vc, sender: nil)
                 }
             }
         }

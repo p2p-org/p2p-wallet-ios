@@ -8,7 +8,11 @@
 import Foundation
 
 class BackupManuallyVC: ProfileVCBase {
-    var phrases: [String] { AccountStorage.shared.account?.phrase ?? [] }
+    
+    let phrases: [String]
+    init(accountStorage: SolanaSDKAccountStorage) {
+        self.phrases = accountStorage.account?.phrase ?? []
+    }
     
     override func setUp() {
         title = L10n.securityKeys.uppercaseFirst
