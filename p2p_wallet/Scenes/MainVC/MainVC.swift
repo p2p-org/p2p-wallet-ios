@@ -246,7 +246,8 @@ class MainVC: CollectionVC<MainVCItem> {
     }
     
     @objc func avatarImageViewDidTouch() {
-        present(ProfileVC(), animated: true, completion: nil)
+        let vc = DependencyContainer.shared.makeProfileVC()
+        present(vc, animated: true, completion: nil)
     }
     
     @objc func buttonReceiveDidTouch() {
