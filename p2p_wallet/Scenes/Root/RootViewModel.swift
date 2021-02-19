@@ -26,15 +26,17 @@ enum SettingsStep: Int {
 }
 
 class RootViewModel {
+    // MARK: - Constants
+    let timeRequiredForAuthentication: Double = 10 // in seconds
+    
     // MARK: - Properties
     private let bag = DisposeBag()
     private let accountStorage: KeychainAccountStorage
     
     private var shouldShowLocalAuth = true
-    private var localAuthVCShown = false
+    var localAuthVCShown = false
     private var shouldUpdateBalance = false
-    private let timeRequiredForAuthentication: Double = 10 // in seconds
-    private var timestamp = Date().timeIntervalSince1970
+    private(set) var timestamp = Date().timeIntervalSince1970
     
     // MARK: - Subjects
     let navigationSubject = BehaviorRelay<RootNavigatableScene?>(value: nil)
@@ -68,6 +70,10 @@ class RootViewModel {
             shouldShowLocalAuth = true
             navigationSubject.accept(.main)
         }
+    }
+    
+    func rescheduleAuth() {
+        timestamp = Date().timeIntervalSince1970
     }
     
     // MARK: - Application notifications
