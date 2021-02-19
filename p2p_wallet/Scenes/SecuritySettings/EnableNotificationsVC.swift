@@ -10,7 +10,9 @@ import UserNotifications
 import SwiftUI
 
 class EnableNotificationsVC: SecuritySettingVC {
-    override var nextVC: UIViewController { WellDoneVC() }
+    override var nextVC: UIViewController {
+        DependencyContainer.shared.makeWeldoneVC()
+    }
     
     override func setUp() {
         super.setUp()

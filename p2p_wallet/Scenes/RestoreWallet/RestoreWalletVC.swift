@@ -15,8 +15,10 @@ class RestoreWalletVC: WLIntroVC {
         .onTap(self, action: #selector(buttonRestoreManuallyDidTouch))
     
     let accountStorage: KeychainAccountStorage
-    init(accountStorage: KeychainAccountStorage) {
+    let rootViewModel: RootViewModel
+    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel) {
         self.accountStorage = accountStorage
+        self.rootViewModel = rootViewModel
     }
     
     override func setUp() {
@@ -42,7 +44,7 @@ class RestoreWalletVC: WLIntroVC {
     }
     
     @objc func buttonRestoreManuallyDidTouch() {
-        let vc = EnterPhrasesVC()
+        let vc = DependencyContainer.shared.makeEnterPhrasesVC()
         let titleImageView = UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white)
 
         presentCustomModal(vc: vc, title: L10n.securityKeys.uppercaseFirst, titleImageView: titleImageView)
@@ -53,9 +55,7 @@ class RestoreWalletVC: WLIntroVC {
         do {
             let phrases = text.components(separatedBy: " ")
             _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
-            let vc = DependencyContainer.shared.makeWelcomeBackVC(phrases: phrases)
-            let nc = BENavigationController(rootViewController: vc)
-            UIApplication.shared.changeRootVC(to: nc)
+            rootViewModel.navigationSubject.accept(.welcomeBack(phrases: phrases))
         } catch {
             showError(error)
         }

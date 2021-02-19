@@ -40,11 +40,18 @@ class RootViewController: BaseVC {
     }
     
     // MARK: - Navigation
-    private func navigate(to scene: RootNavigatableScene?) {
+    private func navigate(to scene: RootNavigatableScene) {
         var vcToAdd: UIViewController?
         switch scene {
+        case .initializing:
+            break
         case .onboarding:
             vcToAdd = BENavigationController(rootViewController: WelcomeVC())
+        case .welcomeBack(let phrases):
+            let vc = DependencyContainer.shared.makeWelcomeBackVC(phrases: phrases)
+            vcToAdd = BENavigationController(rootViewController: vc)
+        case .createWalletCompleted:
+            vcToAdd = DependencyContainer.shared.makeCreateWalletCompletedVC()
         case .settings(let step):
             switch step {
             case .pincode:
@@ -57,8 +64,6 @@ class RootViewController: BaseVC {
             }
         case .main:
             vcToAdd = DependencyContainer.shared.makeTabBarVC()
-        default:
-            break
         }
         
         if let vc = vcToAdd {

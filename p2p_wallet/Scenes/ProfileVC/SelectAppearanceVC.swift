@@ -12,7 +12,10 @@ class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
     var interfaceStyle: UIUserInterfaceStyle { AppDelegate.shared.window?.overrideUserInterfaceStyle ?? .unspecified }
     override var dataDidChange: Bool {selectedItem != interfaceStyle}
     
-    override init() {
+    let rootViewModel: RootViewModel
+    
+    init(rootViewModel: RootViewModel) {
+        self.rootViewModel = rootViewModel
         super.init()
         data = [
             .dark: interfaceStyle == .dark,
@@ -34,6 +37,6 @@ class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
     
     override func saveChange() {
         AppDelegate.shared.changeThemeTo(selectedItem)
-        AppDelegate.shared.reloadRootVC()
+        rootViewModel.reload()
     }
 }

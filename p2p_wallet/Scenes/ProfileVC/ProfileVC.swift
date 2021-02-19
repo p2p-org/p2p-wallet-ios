@@ -16,13 +16,15 @@ class ProfileVC: ProfileVCBase {
     lazy var appearanceLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
     var disposables = [DefaultsDisposable]()
     let accountStorage: SolanaSDKAccountStorage
+    let rootViewModel: RootViewModel
+    
+    init(accountStorage: SolanaSDKAccountStorage, rootViewModel: RootViewModel) {
+        self.accountStorage = accountStorage
+        self.rootViewModel = rootViewModel
+    }
     
     deinit {
         disposables.forEach {$0.dispose()}
-    }
-    
-    init(accountStorage: SolanaSDKAccountStorage) {
-        self.accountStorage = accountStorage
     }
     
     // MARK: - Methods
@@ -108,7 +110,7 @@ class ProfileVC: ProfileVCBase {
             if index == 0 {
                 self.accountStorage.clear()
                 Defaults.walletName = [:]
-                AppDelegate.shared.reloadRootVC()
+                self.rootViewModel.reload()
             }
         }
     }
@@ -130,10 +132,12 @@ class ProfileVC: ProfileVCBase {
             let vc = DependencyContainer.shared.makeConfigureSecurityVC()
             show(vc, sender: nil)
         case 4:
-            show(SelectLanguageVC(), sender: nil)
+            let vc = DependencyContainer.shared.makeSelectLanguageVC()
+            show(vc, sender: nil)
         case 5:
             if #available(iOS 13.0, *) {
-                show(SelectAppearanceVC(), sender: nil)
+                let vc = DependencyContainer.shared.makeSelectAppearanceVC()
+                show(vc, sender: nil)
             }
         default:
             return
