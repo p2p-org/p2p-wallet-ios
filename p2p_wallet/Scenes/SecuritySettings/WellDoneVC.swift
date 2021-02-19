@@ -9,6 +9,12 @@ import Foundation
 import SwiftUI
 
 class WellDoneVC: SecuritySettingVC {
+    let rootViewModel: RootViewModel
+    init(rootViewModel: RootViewModel) {
+        self.rootViewModel = rootViewModel
+        super.init()
+    }
+    
     override func setUp() {
         super.setUp()
         titleLabel.text = L10n.wellDone
@@ -19,18 +25,6 @@ class WellDoneVC: SecuritySettingVC {
     }
     
     override func buttonAcceptDidTouch() {
-        AppDelegate.shared.reloadRootVC()
-    }
-}
-
-@available(iOS 13, *)
-struct WellDoneVC_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            UIViewControllerPreview {
-                WellDoneVC()
-            }
-            .previewDevice("iPhone SE (2nd generation)")
-        }
+        rootViewModel.reload()
     }
 }

@@ -10,7 +10,10 @@ import RxSwift
 import RxCocoa
 
 enum RootNavigatableScene: Equatable {
+    case initializing
     case onboarding
+    case welcomeBack(phrases: [String])
+    case createWalletCompleted
     case settings(_ step: SettingsStep)
     case main
 }
@@ -33,13 +36,13 @@ class RootViewModel {
     private let bag = DisposeBag()
     private let accountStorage: KeychainAccountStorage
     
-    private var shouldShowLocalAuth = true
+    var shouldShowLocalAuth = true
     var localAuthVCShown = false
     private var shouldUpdateBalance = false
     private(set) var timestamp = Date().timeIntervalSince1970
     
     // MARK: - Subjects
-    let navigationSubject = BehaviorRelay<RootNavigatableScene?>(value: nil)
+    let navigationSubject = BehaviorRelay<RootNavigatableScene>(value: .initializing)
     let authenticationSubject = PublishSubject<Void>()
     
     // MARK: - Methods

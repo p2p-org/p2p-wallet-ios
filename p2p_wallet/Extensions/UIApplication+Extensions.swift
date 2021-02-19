@@ -9,15 +9,6 @@ import Foundation
 import MBProgressHUD
 
 extension UIApplication {
-    func changeRootVC(to rootVC: UIViewController, withNaviationController: Bool = false) {
-        guard let window = keyWindow else {
-            return
-        }
-        window.rootViewController = withNaviationController ? BENavigationController(rootViewController: rootVC) : rootVC
-        
-        UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromLeft, animations: {})
-    }
-    
     func showIndetermineHudWithMessage(_ message: String?) {
         keyWindow?.showIndetermineHudWithMessage(message)
     }

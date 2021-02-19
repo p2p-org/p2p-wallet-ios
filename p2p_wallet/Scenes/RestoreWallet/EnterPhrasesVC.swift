@@ -42,6 +42,12 @@ class EnterPhrasesVC: BaseVStackVC {
     lazy var pasteButton = WLButton(backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12, label: L10n.paste, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .white, contentInsets: .init(x: 16, y: 10))
         .onTap(self, action: #selector(buttonPasteDidTouch))
     
+    let rootViewModel: RootViewModel
+    init(rootViewModel: RootViewModel) {
+        self.rootViewModel = rootViewModel
+        super.init()
+    }
+    
     override func setUp() {
         super.setUp()
         title = L10n.enterSecurityKeys
@@ -85,9 +91,7 @@ class EnterPhrasesVC: BaseVStackVC {
         do {
             let phrases = getPhrasesInTextView()
             _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
-            let vc = DependencyContainer.shared.makeWelcomeBackVC(phrases: phrases)
-            let nc = BENavigationController(rootViewController: vc)
-            UIApplication.shared.changeRootVC(to: nc)
+            rootViewModel.navigationSubject.accept(.welcomeBack(phrases: phrases))
         } catch {
             showError(error)
         }
