@@ -39,10 +39,10 @@ class CreateWalletViewController: BaseVC {
     private func navigate(to scene: CreateWalletNavigatableScene) {
         switch scene {
         case .createPhrases:
-            let vc = DependencyContainer.shared.makeCreatePhrasesVC(viewModel: viewModel)
+            let vc = DependencyContainer.shared.makeCreatePhrasesVC(createWalletViewModel: viewModel)
             show(vc, sender: nil)
         case .completed:
-            let vc = DependencyContainer.shared.makeCreateWalletCompletedVC()
+            let vc = DependencyContainer.shared.makeCreateWalletCompletedVC(createWalletViewModel: viewModel)
             show(vc, sender: nil)
         case .dismiss:
             dismiss(animated: true, completion: nil)

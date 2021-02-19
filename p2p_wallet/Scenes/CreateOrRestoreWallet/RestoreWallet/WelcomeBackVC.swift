@@ -14,11 +14,11 @@ class WelcomeBackVC: WLIntroVC {
     
     let phrases: [String]
     let accountStorage: KeychainAccountStorage
-    let rootViewModel: RootViewModel
-    init(phrases: [String], accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel) {
+    let restoreWalletViewModel: RestoreWalletViewModel
+    init(phrases: [String], accountStorage: KeychainAccountStorage, restoreWalletViewModel: RestoreWalletViewModel) {
         self.phrases = phrases
         self.accountStorage = accountStorage
-        self.rootViewModel = rootViewModel
+        self.restoreWalletViewModel = restoreWalletViewModel
         super.init()
     }
     
@@ -53,7 +53,7 @@ class WelcomeBackVC: WLIntroVC {
                 try self.accountStorage.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
-                    self.rootViewModel.navigationSubject.accept(.settings(.pincode))
+                    self.restoreWalletViewModel.finish()
                 }
             } catch {
                 DispatchQueue.main.async {
