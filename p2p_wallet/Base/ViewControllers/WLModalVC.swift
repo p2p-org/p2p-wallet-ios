@@ -7,12 +7,9 @@
 
 import Foundation
 
-class WLModalVC: BaseVC {
+class WLIndicatorModalVC: BaseVC {
     var padding: UIEdgeInsets {.init(x: 0, y: 20)}
-    
     lazy var containerView = UIView(backgroundColor: .background)
-    lazy var stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
-    
     // bottomView for covering safe area
     lazy var bottomView = UIView(backgroundColor: containerView.backgroundColor)
     
@@ -44,9 +41,6 @@ class WLModalVC: BaseVC {
         containerView.autoPinEdge(toSuperviewSafeArea: .trailing)
         containerView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
         
-        containerView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: padding)
-        
         containerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
         
         if modalPresentationStyle == .custom {
@@ -61,5 +55,15 @@ class WLModalVC: BaseVC {
     
     @objc func viewDidSwipe(_ gestureRecognizer: UIPanGestureRecognizer) {
         (presentationController as? ResizablePresentationController)?.presentedViewDidSwipe(gestureRecognizer: gestureRecognizer)
+    }
+}
+
+class WLModalVC: WLIndicatorModalVC {
+    lazy var stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
+    
+    override func setUp() {
+        super.setUp()
+        containerView.addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges(with: padding)
     }
 }

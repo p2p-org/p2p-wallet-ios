@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class CreateWalletViewController: BaseVC {
+class CreateWalletViewController: WLIndicatorModalVC {
     // MARK: - Properties
     let viewModel: CreateWalletViewModel
     var childNavigationController: BENavigationController!
@@ -25,7 +25,7 @@ class CreateWalletViewController: BaseVC {
         super.setUp()
         // kickoff Terms and Conditions
         childNavigationController = BENavigationController(rootViewController: TermsAndConditionsVC(createWalletViewModel: viewModel))
-        add(child: childNavigationController)
+        add(child: childNavigationController, to: containerView)
     }
     
     override func bind() {
@@ -40,10 +40,10 @@ class CreateWalletViewController: BaseVC {
         switch scene {
         case .createPhrases:
             let vc = DependencyContainer.shared.makeCreatePhrasesVC(createWalletViewModel: viewModel)
-            show(vc, sender: nil)
+            childNavigationController.pushViewController(vc, animated: true)
         case .completed:
             let vc = DependencyContainer.shared.makeCreateWalletCompletedVC(createWalletViewModel: viewModel)
-            show(vc, sender: nil)
+            childNavigationController.pushViewController(vc, animated: true)
         case .dismiss:
             dismiss(animated: true, completion: nil)
         }
