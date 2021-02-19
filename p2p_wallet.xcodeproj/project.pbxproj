@@ -81,7 +81,6 @@
 		BC32A3A7254A7B5B002156F0 /* CreateWalletCompletedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A3A6254A7B5B002156F0 /* CreateWalletCompletedVC.swift */; };
 		BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A3AB254A8884002156F0 /* AccountStorage.swift */; };
 		BC32A3D5254A8F7F002156F0 /* CreatePhrasesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A3D4254A8F7F002156F0 /* CreatePhrasesVC.swift */; };
-		BC3ADE772570A2F8002B3B16 /* RestoreWalletVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE762570A2F8002B3B16 /* RestoreWalletVC.swift */; };
 		BC3ADE822570B005002B3B16 /* FlexibleHeightVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE812570B005002B3B16 /* FlexibleHeightVC.swift */; };
 		BC3ADE8D2570B832002B3B16 /* WLCenterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE8C2570B832002B3B16 /* WLCenterSheet.swift */; };
 		BC3ADE982570C292002B3B16 /* ProcessTransactionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE972570C292002B3B16 /* ProcessTransactionVC.swift */; };
@@ -307,7 +306,6 @@
 		BC32A3A6254A7B5B002156F0 /* CreateWalletCompletedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateWalletCompletedVC.swift; sourceTree = "<group>"; };
 		BC32A3AB254A8884002156F0 /* AccountStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountStorage.swift; sourceTree = "<group>"; };
 		BC32A3D4254A8F7F002156F0 /* CreatePhrasesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePhrasesVC.swift; sourceTree = "<group>"; };
-		BC3ADE762570A2F8002B3B16 /* RestoreWalletVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreWalletVC.swift; sourceTree = "<group>"; };
 		BC3ADE812570B005002B3B16 /* FlexibleHeightVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexibleHeightVC.swift; sourceTree = "<group>"; };
 		BC3ADE8C2570B832002B3B16 /* WLCenterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLCenterSheet.swift; sourceTree = "<group>"; };
 		BC3ADE972570C292002B3B16 /* ProcessTransactionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransactionVC.swift; sourceTree = "<group>"; };
@@ -599,13 +597,6 @@
 			path = PassCodeVCs;
 			sourceTree = "<group>";
 		};
-		BC32A3D3254A8F66002156F0 /* CreateWallet */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = CreateWallet;
-			sourceTree = "<group>";
-		};
 		BC32A46F254AAE96002156F0 /* SecuritySettings */ = {
 			isa = PBXGroup;
 			children = (
@@ -616,15 +607,6 @@
 				BC6EE7E1254BD23700FE1025 /* WellDoneVC.swift */,
 			);
 			path = SecuritySettings;
-			sourceTree = "<group>";
-		};
-		BC3ADE752570A2E8002B3B16 /* RestoreWallet */ = {
-			isa = PBXGroup;
-			children = (
-				BC3ADE762570A2F8002B3B16 /* RestoreWalletVC.swift */,
-				BC7533B4257F3E7B007A00D9 /* EnterPhrasesVC.swift */,
-			);
-			path = RestoreWallet;
 			sourceTree = "<group>";
 		};
 		BC490CA8256CB13C006E7AC9 /* WalletsVC */ = {
@@ -728,8 +710,6 @@
 				BCAB212725DF5CFD004F4F9D /* Root */,
 				BCE42DE125DF9B980021540E /* CreateOrRestoreWallet */,
 				BCE42DF125DF9C360021540E /* Onboarding */,
-				BC32A3D3254A8F66002156F0 /* CreateWallet */,
-				BC3ADE752570A2E8002B3B16 /* RestoreWallet */,
 				BC32A46F254AAE96002156F0 /* SecuritySettings */,
 				BC55B8C3254C03660032C355 /* TabBarVC */,
 				BC23B572254FBB6300886C9C /* MainVC */,
@@ -1078,6 +1058,7 @@
 			children = (
 				BCE42E1525DFA5100021540E /* RestoreWalletViewModel.swift */,
 				BCE42E1725DFA5100021540E /* RestoreWalletViewController.swift */,
+				BC7533B4257F3E7B007A00D9 /* EnterPhrasesVC.swift */,
 				BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */,
 			);
 			path = RestoreWallet;
@@ -1464,7 +1445,6 @@
 				BCEA06BE2542FD3F0006E4C3 /* Asset+Generated.swift in Sources */,
 				BCAB1F6125DCC1A1004F4F9D /* SwapChooseDestinationWalletViewModel.swift in Sources */,
 				BCAB212D25DF5D1C004F4F9D /* RootViewController.swift in Sources */,
-				BC3ADE772570A2F8002B3B16 /* RestoreWalletVC.swift in Sources */,
 				BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */,
 				BC3ADE8D2570B832002B3B16 /* WLCenterSheet.swift in Sources */,
 				BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */,

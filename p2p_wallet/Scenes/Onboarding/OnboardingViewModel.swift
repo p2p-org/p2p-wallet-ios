@@ -19,7 +19,7 @@ enum OnboardingNavigatableScene: Int {
     }
 }
 
-struct OnboardingViewModel {
+class OnboardingViewModel {
     // MARK: - Constants
     
     // MARK: - Properties

@@ -95,7 +95,7 @@ class DependencyContainer {
     }
     
     func makeCreateWalletCompletedVC() -> CreateWalletCompletedVC {
-        CreateWalletCompletedVC(rootViewModel: sharedRootViewModel)
+        CreateWalletCompletedVC(createWalletViewModel: sharedRootViewModel)
     }
     
     // MARK: - Tabbar

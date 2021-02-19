@@ -15,7 +15,7 @@ enum CreateOrRestoreWalletNavigatableScene {
     case restoreWallet
 }
 
-struct CreateOrRestoreWalletViewModel {
+class CreateOrRestoreWalletViewModel {
     // MARK: - Constants
     
     // MARK: - Properties
