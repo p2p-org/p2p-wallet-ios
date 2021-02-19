@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
@@ -17,9 +16,20 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
         .lightContent
     }
     
+    let createOrRestoreWalletViewModel: CreateOrRestoreWalletViewModel
+    init(createOrRestoreWalletViewModel: CreateOrRestoreWalletViewModel)
+    {
+        self.createOrRestoreWalletViewModel = createOrRestoreWalletViewModel
+    }
+    
     override func setUp() {
         super.setUp()
-        viewControllers = [FirstVC(), FirstVC(), FirstVC(), SecondVC()]
+        viewControllers = [
+            FirstVC(createOrRestoreWalletViewModel: createOrRestoreWalletViewModel),
+            FirstVC(createOrRestoreWalletViewModel: createOrRestoreWalletViewModel),
+            FirstVC(createOrRestoreWalletViewModel: createOrRestoreWalletViewModel),
+            SecondVC(createOrRestoreWalletViewModel: createOrRestoreWalletViewModel)
+        ]
         currentPageIndicatorTintColor = .white
         pageIndicatorTintColor = UIColor.white.withAlphaComponent(0.5)
         
@@ -49,6 +59,12 @@ extension WelcomeVC {
         lazy var restoreWalletButton = WLButton.stepButton(type: .sub, label: L10n.iVeAlreadyHadAWallet.uppercaseFirst)
             .onTap(self, action: #selector(buttonRestoreWalletDidTouch))
         
+        let createOrRestoreWalletViewModel: CreateOrRestoreWalletViewModel
+        init(createOrRestoreWalletViewModel: CreateOrRestoreWalletViewModel)
+        {
+            self.createOrRestoreWalletViewModel = createOrRestoreWalletViewModel
+        }
+        
         override func setUp() {
             super.setUp()
             
@@ -58,17 +74,11 @@ extension WelcomeVC {
         
         // MARK: - Actions
         @objc func buttonCreateWalletDidTouch() {
-            let vc = TermsAndConditionsVC()
-            vc.completion = {
-                let vc = DependencyContainer.shared.makeCreatePhrasesVC()
-                self.parent?.show(vc, sender: nil)
-            }
-            parent?.present(vc, animated: true, completion: nil)
+            createOrRestoreWalletViewModel.navigationSubject.accept(.createWallet)
         }
         
         @objc func buttonRestoreWalletDidTouch() {
-            let vc = DependencyContainer.shared.makeRestoreWalletVC()
-            parent?.show(vc, sender: nil)
+            createOrRestoreWalletViewModel.navigationSubject.accept(.restoreWallet)
         }
     }
     
@@ -94,18 +104,6 @@ extension WelcomeVC {
             super.setUp()
             titleLabel.text = L10n.p2PWallet
             descriptionLabel.text = L10n.secureNonCustodialBankOfFuture + "\n" + L10n.simpleFinanceForEveryone
-        }
-    }
-}
-
-@available(iOS 13, *)
-struct WelcomeVC_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            UIViewControllerPreview {
-                WelcomeVC()
-            }
-            .previewDevice("iPhone SE (2nd generation)")
         }
     }
 }
