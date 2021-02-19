@@ -29,13 +29,13 @@ class OnboardingViewController: BaseVC {
     
     override func bind() {
         super.bind()
-        viewModel.navigationSubject
-            .subscribe(onNext: {
-                switch $0 {
-                
-                }
-            })
-            .disposed(by: disposeBag)
+//        viewModel.navigationSubject
+//            .subscribe(onNext: {
+////                switch $0 {
+////                
+////                }
+//            })
+//            .disposed(by: disposeBag)
     }
     
     // MARK: - Helpers

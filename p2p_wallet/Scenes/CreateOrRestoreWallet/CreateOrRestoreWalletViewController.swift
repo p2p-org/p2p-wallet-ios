@@ -36,8 +36,7 @@ class CreateOrRestoreWalletViewController: BaseVC {
             removeAllChilds()
             add(child: WelcomeVC(createOrRestoreWalletViewModel: viewModel))
         case .createWallet:
-            let createWalletViewController = DependencyContainer.shared.makeCreateWalletViewController()
-            let vc = WLModalWrapperVC(wrapped: createWalletViewController)
+            let vc = DependencyContainer.shared.makeCreateWalletViewController()
             vc.isModalInPresentation = true
             present(vc, animated: true, completion: nil)
         case .restoreWallet:
