@@ -43,7 +43,36 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
 }
 
 extension WelcomeVC {
-    class FirstVC: CreateOrRestoreWalletVC {
+    class SlideVC: WLIntroVC {
+        lazy var createWalletButton = WLButton.stepButton(type: .blue, label: L10n.createNewWallet.uppercaseFirst)
+            .onTap(self, action: #selector(buttonCreateWalletDidTouch))
+        lazy var restoreWalletButton = WLButton.stepButton(type: .sub, label: L10n.iVeAlreadyHadAWallet.uppercaseFirst)
+            .onTap(self, action: #selector(buttonRestoreWalletDidTouch))
+        
+        override func setUp() {
+            super.setUp()
+            
+            buttonsStackView.addArrangedSubview(createWalletButton)
+            buttonsStackView.addArrangedSubview(restoreWalletButton)
+        }
+        
+        // MARK: - Actions
+        @objc func buttonCreateWalletDidTouch() {
+            let vc = TermsAndConditionsVC()
+            vc.completion = {
+                let vc = DependencyContainer.shared.makeCreatePhrasesVC()
+                self.parent?.show(vc, sender: nil)
+            }
+            parent?.present(vc, animated: true, completion: nil)
+        }
+        
+        @objc func buttonRestoreWalletDidTouch() {
+            let vc = DependencyContainer.shared.makeRestoreWalletVC()
+            parent?.show(vc, sender: nil)
+        }
+    }
+    
+    class FirstVC: SlideVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .embeded
         }
@@ -56,7 +85,7 @@ extension WelcomeVC {
         }
     }
     
-    class SecondVC: CreateOrRestoreWalletVC {
+    class SecondVC: SlideVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .embeded
         }
