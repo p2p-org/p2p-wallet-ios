@@ -77,37 +77,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     
-    fileprivate func showAuthentication() {
-        let topVC = self.window?.rootViewController?.topViewController()
-        let localAuthVC = DependencyContainer.shared.makeLocalAuthVC()
-        localAuthVC.completion = { [self] didSuccess in
-            localAuthVCShown = false
-            if !didSuccess {
-                topVC?.showErrorView()
-                // reset timestamp
-                timestamp = Date().timeIntervalSince1970
-                
-                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-                    topVC?.errorView?.descriptionLabel.text = L10n.authenticationFailed + "\n" + L10n.retryAfter + " \(Int(10 - Date().timeIntervalSince1970 + timestamp) + 1) " + L10n.seconds
-
-                    if Int(Date().timeIntervalSince1970) == Int(timestamp + timeRequiredForAuthentication) {
-                        topVC?.errorView?.descriptionLabel.text = L10n.tapButtonToRetry
-                        topVC?.errorView?.buttonAction = CocoaAction {
-                            showAuthentication()
-                            return .just(())
-                        }
-                        timer.invalidate()
-                    }
-                }
-            } else {
-                topVC?.removeErrorView()
-            }
-        }
-        localAuthVC.modalPresentationStyle = .fullScreen
-        topVC?.present(localAuthVC, animated: true, completion: nil)
-        localAuthVCShown = true
-    }
-    
     func application(
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data

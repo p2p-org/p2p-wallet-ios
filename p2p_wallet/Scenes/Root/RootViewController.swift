@@ -7,12 +7,13 @@
 
 import Foundation
 import UIKit
-import SwiftUI
+import Action
 
 class RootViewController: BaseVC {
     
     // MARK: - Properties
     let viewModel: RootViewModel
+    var currentVC: UIViewController? {children.last}
     
     // MARK: - Initializer
     init(viewModel: RootViewModel)
@@ -30,26 +31,69 @@ class RootViewController: BaseVC {
     override func bind() {
         super.bind()
         viewModel.navigationSubject
-            .subscribe(onNext: {
-                self.removeAllChilds()
-                switch $0 {
-                
-                }
-            })
+            .subscribe(onNext: {self.navigate(to: $0)})
+            .disposed(by: disposeBag)
+        
+        viewModel.authenticationSubject
+            .subscribe(onNext: {self.authenticate()})
             .disposed(by: disposeBag)
     }
     
-    // MARK: - Helpers
-}
+    // MARK: - Navigation
+    private func navigate(to scene: RootNavigatableScene?) {
+        var vcToAdd: UIViewController?
+        switch scene {
+        case .onboarding:
+            vcToAdd = BENavigationController(rootViewController: WelcomeVC())
+        case .settings(let step):
+            switch step {
+            case .pincode:
+                let pincodeVC = DependencyContainer.shared.makeSSPinCodeVC()
+                vcToAdd = BENavigationController(rootViewController: pincodeVC)
+            case .biometry:
+                vcToAdd = BENavigationController(rootViewController: EnableBiometryVC())
+            case .notification:
+                vcToAdd = BENavigationController(rootViewController: EnableNotificationsVC())
+            }
+        case .main:
+            vcToAdd = DependencyContainer.shared.makeTabBarVC()
+        default:
+            break
+        }
+        
+        if let vc = vcToAdd {
+            removeAllChilds()
+            add(child: vc)
+        }
+    }
+    
+    private func authenticate() {
+        let localAuthVC = DependencyContainer.shared.makeLocalAuthVC()
+        localAuthVC.completion = { [self] didSuccess in
+            viewModel.localAuthVCShown = false
+            if !didSuccess {
+                currentVC?.showErrorView()
+                // reset timestamp
+                viewModel.rescheduleAuth()
+                
+                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+                    currentVC?.errorView?.descriptionLabel.text = L10n.authenticationFailed + "\n" + L10n.retryAfter + " \(Int(10 - Date().timeIntervalSince1970 + viewModel.timestamp) + 1) " + L10n.seconds
 
-//@available(iOS 13, *)
-//struct RootViewController_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Group {
-//            UIViewControllerPreview {
-//                RootViewController()
-//            }
-//            .previewDevice("iPhone SE (2nd generation)")
-//        }
-//    }
-//}
+                    if Int(Date().timeIntervalSince1970) == Int(viewModel.timestamp + viewModel.timeRequiredForAuthentication) {
+                        currentVC?.errorView?.descriptionLabel.text = L10n.tapButtonToRetry
+                        currentVC?.errorView?.buttonAction = CocoaAction {
+                            authenticate()
+                            return .just(())
+                        }
+                        timer.invalidate()
+                    }
+                }
+            } else {
+                currentVC?.removeErrorView()
+            }
+        }
+        localAuthVC.modalPresentationStyle = .fullScreen
+        currentVC?.present(localAuthVC, animated: true, completion: nil)
+        viewModel.localAuthVCShown = true
+    }
+}
