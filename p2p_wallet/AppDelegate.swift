@@ -51,8 +51,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BEPureLayoutConfigs.defaultCheckBoxActiveColor = .textBlack
         
         // THPinViewController
-        THPinInputCircleView.fillColor = .textBlack
+        THPinInputCircleView.fillColor = .passcodeHighlightColor
         THPinNumButton.textColor = .textBlack
+        THPinNumButton.textHighlightColor = .white
+        THPinNumButton.backgroundHighlightColor = .passcodeHighlightColor
         
         // Use Firebase library to configure APIs
         FirebaseApp.configure()
