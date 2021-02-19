@@ -19,7 +19,7 @@ class DependencyContainer {
     // MARK: - Singleton
     static let shared = DependencyContainer()
     
-    private init() {
+    init() {
         self.sharedAccountStorage = KeychainAccountStorage()
         self.sharedSolanaSDK = SolanaSDK(network: Defaults.network, accountStorage: sharedAccountStorage)
         self.sharedSocket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: sharedSolanaSDK.accountStorage.account?.publicKey)
@@ -29,6 +29,12 @@ class DependencyContainer {
     // MARK: - State
     func makeMyWalletsVM() {
         self.sharedMyWalletsVM = WalletsVM(solanaSDK: sharedSolanaSDK, socket: sharedSocket, transactionManager: sharedTransactionManager)
+    }
+    
+    // MARK: - Root
+    func makeRootViewController() -> RootViewController {
+        let viewModel = RootViewModel(accountStorage: sharedAccountStorage)
+        return RootViewController(viewModel: viewModel)
     }
     
     // MARK: - Authentication

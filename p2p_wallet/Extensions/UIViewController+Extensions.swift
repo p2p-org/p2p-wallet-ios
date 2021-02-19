@@ -18,7 +18,7 @@ extension UIViewController {
         if allButtons.count == 0 {
             allButtons.append("OK")
         }
-
+        
         for index in 0..<allButtons.count {
             let buttonTitle = allButtons[index]
             let action = UIAlertAction(title: buttonTitle, style: .default, handler: { (_) in
@@ -78,9 +78,9 @@ extension UIViewController {
         if let url = URL(string: url) {
             let config = SFSafariViewController.Configuration()
             config.entersReaderIfAvailable = true
-
+            
             let safariVC = SFSafariViewController(url: url, configuration: config)
-
+            
             present(safariVC, animated: true)
         }
     }
@@ -102,5 +102,27 @@ extension UIViewController {
     
     @objc func hideKeyboard() {
         view.endEditing(true)
+    }
+    
+    // MARK: - ChildVCs
+    func add(child: UIViewController, to view: UIView? = nil) {
+        guard child.parent == nil else {
+            return
+        }
+        
+        addChild(child)
+        (view ?? self.view).addSubview(child.view)
+        
+        child.view.autoPinEdgesToSuperviewEdges()
+        
+        child.didMove(toParent: self)
+    }
+    
+    func removeAllChilds() {
+        for child in children {
+            child.willMove(toParent: nil)
+            child.view.removeFromSuperview()
+            child.removeFromParent()
+        }
     }
 }
