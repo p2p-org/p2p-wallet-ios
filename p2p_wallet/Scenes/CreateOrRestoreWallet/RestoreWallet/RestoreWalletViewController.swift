@@ -58,13 +58,13 @@ class RestoreWalletViewController: WLIntroVC {
     private func navigate(to scene: RestoreWalletNavigatableScene) {
         switch scene {
         case .enterPhrases:
-            let vc = DependencyContainer.shared.makeEnterPhrasesVC()
+            let vc = DependencyContainer.shared.makeEnterPhrasesVC(restoreWalletViewModel: viewModel)
             let titleImageView = UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white)
 
             presentCustomModal(vc: vc, title: L10n.securityKeys.uppercaseFirst, titleImageView: titleImageView)
         case .welcomeBack(phrases: let phrases):
             removeAllChilds()
-            let vc = DependencyContainer.shared.makeWelcomeBackVC(phrases: phrases)
+            let vc = DependencyContainer.shared.makeWelcomeBackVC(phrases: phrases, restoreWalletViewModel: viewModel)
             let nc = BENavigationController(rootViewController: vc)
             add(child: nc)
         }

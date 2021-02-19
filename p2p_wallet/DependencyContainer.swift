@@ -55,7 +55,9 @@ class DependencyContainer {
     
     func makeRestoreWalletViewController() -> RestoreWalletViewController
     {
-        let viewModel = RestoreWalletViewModel()
+        let viewModel = RestoreWalletViewModel(accountStorage: sharedAccountStorage, completion: {
+            self.sharedRootViewModel.navigationSubject.accept(.boarding)
+        })
         return RestoreWalletViewController(viewModel: viewModel)
     }
     
@@ -70,32 +72,28 @@ class DependencyContainer {
         return OnboardingViewController(viewModel: viewModel)
     }
     
-    func makeCreatePhrasesVC(viewModel: CreateWalletViewModel) -> CreatePhrasesVC {
-        CreatePhrasesVC(accountStorage: sharedAccountStorage, createWalletViewModel: viewModel)
-    }
-    
-    func makeRestoreWalletVC() -> RestoreWalletVC {
-        RestoreWalletVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
+    func makeCreatePhrasesVC(createWalletViewModel: CreateWalletViewModel) -> CreatePhrasesVC {
+        CreatePhrasesVC(accountStorage: sharedAccountStorage, createWalletViewModel: createWalletViewModel)
     }
     
     func makeSSPinCodeVC() -> SSPinCodeVC {
         SSPinCodeVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
     }
     
-    func makeWelcomeBackVC(phrases: [String]) -> WelcomeBackVC {
-        WelcomeBackVC(phrases: phrases, accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
+    func makeWelcomeBackVC(phrases: [String], restoreWalletViewModel: RestoreWalletViewModel) -> WelcomeBackVC {
+        WelcomeBackVC(phrases: phrases, accountStorage: sharedAccountStorage, restoreWalletViewModel: restoreWalletViewModel)
     }
     
     func makeWeldoneVC() -> WellDoneVC {
         WellDoneVC(rootViewModel: sharedRootViewModel)
     }
     
-    func makeEnterPhrasesVC() -> EnterPhrasesVC {
-        EnterPhrasesVC(rootViewModel: sharedRootViewModel)
+    func makeEnterPhrasesVC(restoreWalletViewModel: RestoreWalletViewModel) -> EnterPhrasesVC {
+        EnterPhrasesVC(restoreWalletViewModel: restoreWalletViewModel)
     }
     
-    func makeCreateWalletCompletedVC() -> CreateWalletCompletedVC {
-        CreateWalletCompletedVC(createWalletViewModel: sharedRootViewModel)
+    func makeCreateWalletCompletedVC(createWalletViewModel: CreateWalletViewModel) -> CreateWalletCompletedVC {
+        CreateWalletCompletedVC(createWalletViewModel: createWalletViewModel)
     }
     
     // MARK: - Tabbar
