@@ -10,7 +10,9 @@ import RxSwift
 import RxCocoa
 
 enum CreateWalletNavigatableScene {
-//    case detail
+    case createPhrases
+    case completed
+    case dismiss
 }
 
 struct CreateWalletViewModel {
@@ -18,25 +20,16 @@ struct CreateWalletViewModel {
     
     // MARK: - Properties
     let bag = DisposeBag()
+    let completion: () -> Void
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<CreateWalletNavigatableScene>()
     
-    // MARK: - Input
-//    let textFieldInput = BehaviorRelay<String?>(value: nil)
-    
-    // MARK: - Initializer
-    init() {
-        bind()
+    init(completion: @escaping () -> Void) {
+        self.completion = completion
     }
     
-    // MARK: - Binding
-    func bind() {
-        
+    func finish() {
+        completion()
     }
-    
-    // MARK: - Actions
-//    @objc func showDetail() {
-//        
-//    }
 }

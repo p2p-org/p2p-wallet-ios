@@ -68,8 +68,8 @@ class DependencyContainer {
         return OnboardingViewController(viewModel: viewModel)
     }
     
-    func makeCreatePhrasesVC() -> CreatePhrasesVC {
-        CreatePhrasesVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
+    func makeCreatePhrasesVC(viewModel: CreateWalletViewModel) -> CreatePhrasesVC {
+        CreatePhrasesVC(accountStorage: sharedAccountStorage, createWalletViewModel: sharedRootViewModel)
     }
     
     func makeRestoreWalletVC() -> RestoreWalletVC {
