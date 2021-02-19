@@ -45,23 +45,10 @@ class RootViewController: BaseVC {
         switch scene {
         case .initializing:
             break
-        case .onboarding:
-            vcToAdd = BENavigationController(rootViewController: WelcomeVC())
-        case .welcomeBack(let phrases):
-            let vc = DependencyContainer.shared.makeWelcomeBackVC(phrases: phrases)
-            vcToAdd = BENavigationController(rootViewController: vc)
-        case .createWalletCompleted:
-            vcToAdd = DependencyContainer.shared.makeCreateWalletCompletedVC()
-        case .settings(let step):
-            switch step {
-            case .pincode:
-                let pincodeVC = DependencyContainer.shared.makeSSPinCodeVC()
-                vcToAdd = BENavigationController(rootViewController: pincodeVC)
-            case .biometry:
-                vcToAdd = BENavigationController(rootViewController: EnableBiometryVC())
-            case .notification:
-                vcToAdd = BENavigationController(rootViewController: EnableNotificationsVC())
-            }
+        case .createOrRestoreWallet:
+            vcToAdd = DependencyContainer.shared.makeCreateOrRestoreWalletViewController()
+        case .boarding:
+            vcToAdd = DependencyContainer.shared.makeOnboardingViewController()
         case .main:
             vcToAdd = DependencyContainer.shared.makeTabBarVC()
         }

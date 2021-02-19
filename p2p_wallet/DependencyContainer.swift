@@ -38,12 +38,36 @@ class DependencyContainer {
         return RootViewController(viewModel: sharedRootViewModel)
     }
     
+    // MARK: - CreateOrRestore wallet
+    func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
+    {
+        let viewModel = CreateOrRestoreWalletViewModel()
+        return CreateOrRestoreWalletViewController(viewModel: viewModel)
+    }
+    
+    func makeCreateWalletViewController() -> CreateWalletViewController
+    {
+        let viewModel = CreateWalletViewModel()
+        return CreateWalletViewController(viewModel: viewModel)
+    }
+    
+    func makeRestoreWalletViewController() -> RestoreWalletViewController
+    {
+        let viewModel = RestoreWalletViewModel()
+        return RestoreWalletViewController(viewModel: viewModel)
+    }
+    
     // MARK: - Authentication
     func makeLocalAuthVC() -> LocalAuthVC {
         LocalAuthVC(accountStorage: sharedAccountStorage)
     }
     
     // MARK: - Onboarding
+    func makeOnboardingViewController() -> OnboardingViewController {
+        let viewModel = OnboardingViewModel()
+        return OnboardingViewController(viewModel: viewModel)
+    }
+    
     func makeCreatePhrasesVC() -> CreatePhrasesVC {
         CreatePhrasesVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
     }
