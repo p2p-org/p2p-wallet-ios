@@ -15,6 +15,7 @@ class DependencyContainer {
     var sharedSocket: SolanaSDK.Socket
     let sharedTransactionManager: TransactionsManager
     private(set) var sharedMyWalletsVM: WalletsVM!
+    let sharedRootViewModel: RootViewModel
     
     // MARK: - Singleton
     static let shared = DependencyContainer()
@@ -24,6 +25,7 @@ class DependencyContainer {
         self.sharedSolanaSDK = SolanaSDK(network: Defaults.network, accountStorage: sharedAccountStorage)
         self.sharedSocket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: sharedSolanaSDK.accountStorage.account?.publicKey)
         self.sharedTransactionManager = TransactionsManager(socket: sharedSocket)
+        self.sharedRootViewModel = RootViewModel(accountStorage: sharedAccountStorage)
     }
     
     // MARK: - State
@@ -33,8 +35,7 @@ class DependencyContainer {
     
     // MARK: - Root
     func makeRootViewController() -> RootViewController {
-        let viewModel = RootViewModel(accountStorage: sharedAccountStorage)
-        return RootViewController(viewModel: viewModel)
+        return RootViewController(viewModel: sharedRootViewModel)
     }
     
     // MARK: - Authentication
@@ -43,16 +44,32 @@ class DependencyContainer {
     }
     
     // MARK: - Onboarding
+    func makeCreatePhrasesVC() -> CreatePhrasesVC {
+        CreatePhrasesVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
+    }
+    
     func makeRestoreWalletVC() -> RestoreWalletVC {
-        RestoreWalletVC(accountStorage: sharedAccountStorage)
+        RestoreWalletVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
     }
     
     func makeSSPinCodeVC() -> SSPinCodeVC {
-        SSPinCodeVC(accountStorage: sharedAccountStorage)
+        SSPinCodeVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
     }
     
     func makeWelcomeBackVC(phrases: [String]) -> WelcomeBackVC {
-        WelcomeBackVC(phrases: phrases, accountStorage: sharedAccountStorage)
+        WelcomeBackVC(phrases: phrases, accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
+    }
+    
+    func makeWeldoneVC() -> WellDoneVC {
+        WellDoneVC(rootViewModel: sharedRootViewModel)
+    }
+    
+    func makeEnterPhrasesVC() -> EnterPhrasesVC {
+        EnterPhrasesVC(rootViewModel: sharedRootViewModel)
+    }
+    
+    func makeCreateWalletCompletedVC() -> CreateWalletCompletedVC {
+        CreateWalletCompletedVC(rootViewModel: sharedRootViewModel)
     }
     
     // MARK: - Tabbar
@@ -77,7 +94,11 @@ class DependencyContainer {
     
     // MARK: - Profile VCs
     func makeProfileVC() -> ProfileVC {
-        ProfileVC(accountStorage: sharedAccountStorage)
+        ProfileVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
+    }
+    
+    func makeBackupVC() -> BackupVC {
+        BackupVC(accountStorage: sharedAccountStorage)
     }
     
     func makeBackupMannuallyVC() -> BackupManuallyVC {
@@ -85,19 +106,19 @@ class DependencyContainer {
     }
     
     func makeSelectNetworkVC() -> SelectNetworkVC {
-        SelectNetworkVC(accountStorage: sharedAccountStorage)
-    }
-    
-    func makeBackupVC() -> BackupVC {
-        BackupVC(accountStorage: sharedAccountStorage)
+        SelectNetworkVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {
-        ConfigureSecurityVC(accountStorage: sharedAccountStorage)
+        ConfigureSecurityVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
     }
     
-    func makeCreatePhrasesVC() -> CreatePhrasesVC {
-        CreatePhrasesVC(accountStorage: sharedAccountStorage)
+    func makeSelectLanguageVC() -> SelectLanguageVC {
+        SelectLanguageVC(rootViewModel: sharedRootViewModel)
+    }
+    
+    func makeSelectAppearanceVC() -> SelectAppearanceVC {
+        SelectAppearanceVC(rootViewModel: sharedRootViewModel)
     }
     
     // MARK: - Add, Send, Receive, Swap Token VCs

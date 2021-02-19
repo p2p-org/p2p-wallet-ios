@@ -14,6 +14,12 @@ class CreateWalletCompletedVC: WLIntroVC {
         .onTap(self, action: #selector(buttonNextDidTouch))
     
     // MARK: - Methods
+    let rootViewModel: RootViewModel
+    init(rootViewModel: RootViewModel) {
+        self.rootViewModel = rootViewModel
+        super.init()
+    }
+    
     override func setUp() {
         super.setUp()
         descriptionLabel.isHidden = false
@@ -28,19 +34,6 @@ class CreateWalletCompletedVC: WLIntroVC {
     
     // MARK: - Actions
     @objc func buttonNextDidTouch() {
-        let vc = DependencyContainer.shared.makeSSPinCodeVC()
-        UIApplication.shared.changeRootVC(to: vc, withNaviationController: true)
-    }
-}
-
-@available(iOS 13, *)
-struct WLCreateWalletCompleted_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            UIViewControllerPreview {
-                CreateWalletCompletedVC()
-            }
-            .previewDevice("iPhone SE (2nd generation)")
-        }
+        rootViewModel.navigationSubject.accept(.settings(.pincode))
     }
 }

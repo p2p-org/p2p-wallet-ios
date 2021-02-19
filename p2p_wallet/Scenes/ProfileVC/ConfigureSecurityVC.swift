@@ -22,8 +22,10 @@ class ConfigureSecurityVC: ProfileVCBase {
     }()
     
     let accountStorage: KeychainAccountStorage
-    init(accountStorage: KeychainAccountStorage) {
+    let rootViewModel: RootViewModel
+    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel) {
         self.accountStorage = accountStorage
+        self.rootViewModel = rootViewModel
     }
     
     override func setUp() {
@@ -58,8 +60,8 @@ class ConfigureSecurityVC: ProfileVCBase {
     
     @objc func switcherDidChange(_ switcher: UISwitch) {
         // prevent default's localAuth action
-        let shouldShowLocalAuth = AppDelegate.shared.shouldShowLocalAuth
-        AppDelegate.shared.shouldShowLocalAuth = false
+        let shouldShowLocalAuth = rootViewModel.shouldShowLocalAuth
+        rootViewModel.shouldShowLocalAuth = false
         
         // get context
         let context = LAContext()
@@ -77,7 +79,7 @@ class ConfigureSecurityVC: ProfileVCBase {
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                AppDelegate.shared.shouldShowLocalAuth = shouldShowLocalAuth
+                self?.rootViewModel.shouldShowLocalAuth = shouldShowLocalAuth
             }
         }
     }

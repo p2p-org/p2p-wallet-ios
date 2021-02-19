@@ -16,7 +16,7 @@ import Action
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    let container = DependencyContainer()
+    let container = DependencyContainer.shared
     
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
