@@ -10,11 +10,11 @@ import RxSwift
 
 class CryptoComparePricesFetcher: PricesFetcher {
     let endpoint = "https://min-api.cryptocompare.com/data"
-    let apikey = "887b4e547fd87338984f7298d0b25dffee49522df82c0b4ed0a301be9ca688c9"
+    let apikey = "ad6104e4e9d655c1faab7ef1743c16651a1628f01d384bc5fea09661c0eb18db"
     
     func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[String: CurrentPrice?]> {
         var path = "/pricemulti?"
-//        path += "api_key=\(apikey)&"
+        path += "api_key=\(apikey)&"
         return send("\(path)fsyms=\(coins.joined(separator: ","))&tsyms=\(fiat)", decodedTo: [String: [String: Double]].self)
             .map {dict in
                 var result = [String: CurrentPrice?]()

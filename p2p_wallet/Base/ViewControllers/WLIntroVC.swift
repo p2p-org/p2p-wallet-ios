@@ -46,6 +46,7 @@ class WLIntroVC: BaseVStackVC {
         
         // lines view
         let linesView = UIImageView(image: .introLinesBg)
+        linesView.alpha = 0.5
         view.insertSubview(linesView, at: 0)
         linesView.autoPinEdgesToSuperviewEdges()
         
