@@ -67,10 +67,10 @@ class CreatePhrasesVC: PhrasesVC {
         .onTap(self, action: #selector(buttonContinueDidTouch))
     
     let accountStorage: KeychainAccountStorage
-    let rootViewModel: RootViewModel
-    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel) {
+    let createWalletViewModel: CreateWalletViewModel
+    init(accountStorage: KeychainAccountStorage, createWalletViewModel: CreateWalletViewModel) {
         self.accountStorage = accountStorage
-        self.rootViewModel = rootViewModel
+        self.createWalletViewModel = createWalletViewModel
         super.init()
     }
     
@@ -174,7 +174,7 @@ class CreatePhrasesVC: PhrasesVC {
                 try self.accountStorage.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
-                    self.rootViewModel.navigationSubject.accept(.createWalletCompleted)
+                    self.createWalletViewModel.navigationSubject.onNext(.completed)
                 }
             } catch {
                 DispatchQueue.main.async {

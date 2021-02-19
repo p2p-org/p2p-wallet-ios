@@ -7,13 +7,18 @@
 
 import Foundation
 
-class TermsAndConditionsVC: WLModalVC {
+class TermsAndConditionsVC: BaseVStackVC {
     lazy var tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
     lazy var declineButton = UIButton(label: L10n.decline, labelFont: .systemFont(ofSize: 17), textColor: .red)
-        .onTap(self, action: #selector(back))
+    
     lazy var acceptButton = UIButton(label: L10n.accept, labelFont: .boldSystemFont(ofSize: 17), textColor: .blue)
         .onTap(self, action: #selector(buttonAcceptDidTouch))
-    var completion: (() -> Void)?
+    
+    let createWalletViewModel: CreateWalletViewModel
+    init(createWalletViewModel: CreateWalletViewModel) {
+        self.createWalletViewModel = createWalletViewModel
+        super.init()
+    }
     
     override func setUp() {
         super.setUp()
@@ -38,7 +43,11 @@ class TermsAndConditionsVC: WLModalVC {
         tabBar.stackView.addArrangedSubviews([declineButton, acceptButton])
     }
     
+    @objc func buttonDeclineDidTouch() {
+        createWalletViewModel.navigationSubject.onNext(.dismiss)
+    }
+    
     @objc func buttonAcceptDidTouch() {
-        dismiss(animated: true, completion: completion)
+        createWalletViewModel.navigationSubject.onNext(.createPhrases)
     }
 }

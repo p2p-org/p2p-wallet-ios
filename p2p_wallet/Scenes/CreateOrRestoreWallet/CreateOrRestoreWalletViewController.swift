@@ -34,17 +34,15 @@ class CreateOrRestoreWalletViewController: BaseVC {
         switch scene {
         case .welcome:
             removeAllChilds()
-            add(child: WelcomeVC())
+            add(child: WelcomeVC(createOrRestoreWalletViewModel: viewModel))
         case .createWallet:
             let createWalletViewController = DependencyContainer.shared.makeCreateWalletViewController()
-            let nc = BENavigationController(rootViewController: createWalletViewController)
-            let vc = WLModalWrapperVC(wrapped: nc)
+            let vc = WLModalWrapperVC(wrapped: createWalletViewController)
             vc.isModalInPresentation = true
             present(vc, animated: true, completion: nil)
         case .restoreWallet:
             let restoreWaleltViewController = DependencyContainer.shared.makeRestoreWalletViewController()
-            let nc = BENavigationController(rootViewController: restoreWaleltViewController)
-            let vc = WLModalWrapperVC(wrapped: nc)
+            let vc = WLModalWrapperVC(wrapped: restoreWaleltViewController)
             vc.isModalInPresentation = true
             present(vc, animated: true, completion: nil)
         }

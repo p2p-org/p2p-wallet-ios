@@ -7,18 +7,14 @@
 
 import Foundation
 import UIKit
-import SwiftUI
 
 class CreateWalletViewController: BaseVC {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-        .hidden
-    }
-    
     // MARK: - Properties
     let viewModel: CreateWalletViewModel
+    var childNavigationController: BENavigationController!
     
     // MARK: - Initializer
-    init(viewModel: CreateWalletViewModel = CreateWalletViewModel())
+    init(viewModel: CreateWalletViewModel)
     {
         self.viewModel = viewModel
         super.init()
@@ -27,31 +23,29 @@ class CreateWalletViewController: BaseVC {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        
+        // kickoff Terms and Conditions
+        childNavigationController = BENavigationController(rootViewController: TermsAndConditionsVC(createWalletViewModel: viewModel))
+        add(child: childNavigationController)
     }
     
     override func bind() {
         super.bind()
         viewModel.navigationSubject
-            .subscribe(onNext: {
-                switch $0 {
-                
-                }
-            })
+            .subscribe(onNext: {self.navigate(to: $0)})
             .disposed(by: disposeBag)
     }
     
-    // MARK: - Helpers
+    // MARK: - Navigation
+    private func navigate(to scene: CreateWalletNavigatableScene) {
+        switch scene {
+        case .createPhrases:
+            let vc = DependencyContainer.shared.makeCreatePhrasesVC(viewModel: viewModel)
+            show(vc, sender: nil)
+        case .completed:
+            let vc = DependencyContainer.shared.makeCreateWalletCompletedVC()
+            show(vc, sender: nil)
+        case .dismiss:
+            dismiss(animated: true, completion: nil)
+        }
+    }
 }
-
-//@available(iOS 13, *)
-//struct CreateWalletViewController_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Group {
-//            UIViewControllerPreview {
-//                CreateWalletViewController()
-//            }
-//            .previewDevice("iPhone SE (2nd generation)")
-//        }
-//    }
-//}

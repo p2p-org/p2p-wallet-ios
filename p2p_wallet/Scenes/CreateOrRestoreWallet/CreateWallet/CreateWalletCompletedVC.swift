@@ -14,9 +14,9 @@ class CreateWalletCompletedVC: WLIntroVC {
         .onTap(self, action: #selector(buttonNextDidTouch))
     
     // MARK: - Methods
-    let rootViewModel: RootViewModel
-    init(rootViewModel: RootViewModel) {
-        self.rootViewModel = rootViewModel
+    let createWalletViewModel: CreateWalletViewModel
+    init(createWalletViewModel: CreateWalletViewModel) {
+        self.createWalletViewModel = createWalletViewModel
         super.init()
     }
     
@@ -34,6 +34,6 @@ class CreateWalletCompletedVC: WLIntroVC {
     
     // MARK: - Actions
     @objc func buttonNextDidTouch() {
-        rootViewModel.navigationSubject.accept(.settings(.pincode))
+        createWalletViewModel.finish()
     }
 }
