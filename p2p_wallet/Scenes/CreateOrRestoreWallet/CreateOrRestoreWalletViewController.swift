@@ -42,9 +42,7 @@ class CreateOrRestoreWalletViewController: BaseVC {
             present(vc, animated: true, completion: nil)
         case .restoreWallet:
             let restoreWaleltViewController = DependencyContainer.shared.makeRestoreWalletViewController()
-            let vc = WLModalWrapperVC(wrapped: restoreWaleltViewController)
-            vc.isModalInPresentation = true
-            present(vc, animated: true, completion: nil)
+            show(restoreWaleltViewController, sender: nil)
         }
     }
 }
