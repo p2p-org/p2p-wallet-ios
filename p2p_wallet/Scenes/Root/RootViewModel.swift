@@ -11,21 +11,9 @@ import RxCocoa
 
 enum RootNavigatableScene: Equatable {
     case initializing
-    case onboarding
-    case welcomeBack(phrases: [String])
-    case createWalletCompleted
-    case settings(_ step: SettingsStep)
+    case createOrRestoreWallet
+    case boarding
     case main
-}
-
-enum SettingsStep: Int {
-    case pincode = 0
-    case biometry
-    case notification
-    
-    var next: Self? {
-        Self(rawValue: rawValue + 1)
-    }
 }
 
 class RootViewModel {
@@ -59,16 +47,13 @@ class RootViewModel {
     func reload() {
         if accountStorage.account == nil {
             shouldShowLocalAuth = false
-            navigationSubject.accept(.onboarding)
-        } else if accountStorage.pinCode == nil {
+            navigationSubject.accept(.createOrRestoreWallet)
+        } else if accountStorage.pinCode == nil ||
+                    !Defaults.didSetEnableBiometry ||
+                    !Defaults.didSetEnableNotifications
+        {
             shouldShowLocalAuth = false
-            navigationSubject.accept(.settings(.pincode))
-        } else if !Defaults.didSetEnableBiometry {
-            shouldShowLocalAuth = false
-            navigationSubject.accept(.settings(.biometry))
-        } else if !Defaults.didSetEnableNotifications {
-            shouldShowLocalAuth = false
-            navigationSubject.accept(.settings(.notification))
+            navigationSubject.accept(.boarding)
         } else {
             shouldShowLocalAuth = true
             navigationSubject.accept(.main)
