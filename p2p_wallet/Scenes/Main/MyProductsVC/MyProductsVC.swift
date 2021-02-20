@@ -9,8 +9,11 @@ import Foundation
 
 class MyProductsVC: WLModalWrapperVC {
     override var padding: UIEdgeInsets {.init(x: 0, y: .defaultPadding)}
-    init(walletsVM: WalletsVM) {
-        super.init(wrapped: _MyProductsVC(viewModel: walletsVM))
+    
+    let scenesFactory: MyWalletsScenesFactory
+    init(walletsVM: WalletsVM, scenesFactory: MyWalletsScenesFactory) {
+        self.scenesFactory = scenesFactory
+        super.init(wrapped: _MyProductsVC(viewModel: walletsVM, sceneFactory: scenesFactory))
     }
     
     override func setUp() {
@@ -27,7 +30,7 @@ class MyProductsVC: WLModalWrapperVC {
     }
     
     @objc func buttonAddCoinDidTouch() {
-        let vc = DependencyContainer.shared.makeAddNewTokenVC()
+        let vc = scenesFactory.makeAddNewTokenVC()
         self.present(vc, animated: true, completion: nil)
     }
 }

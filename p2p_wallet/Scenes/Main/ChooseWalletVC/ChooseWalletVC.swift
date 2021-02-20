@@ -11,9 +11,9 @@ class ChooseWalletVC: MyWalletsVC {
     var completion: ((Wallet) -> Void)?
     let customFilter: ((Wallet) -> Bool)
     
-    init(viewModel: ListViewModel<Wallet>, customFilter: ((Wallet) -> Bool)? = nil) {
+    init(viewModel: ListViewModel<Wallet>, sceneFactory: MyWalletsScenesFactory, customFilter: ((Wallet) -> Bool)? = nil) {
         self.customFilter = customFilter ?? {$0.symbol == "SOL" || $0.amount > 0}
-        super.init(viewModel: viewModel)
+        super.init(viewModel: viewModel, sceneFactory: sceneFactory)
         modalPresentationStyle = .custom
         transitioningDelegate = self
     }

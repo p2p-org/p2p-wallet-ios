@@ -8,16 +8,25 @@
 import Foundation
 import UIKit
 
+protocol CreateOrRestoreWalletScenesFactory {
+    func makeCreateWalletViewController() -> CreateWalletViewController
+    func makeRestoreWalletViewController() -> RestoreWalletViewController
+}
+
 class CreateOrRestoreWalletViewController: BaseVC {
     
     // MARK: - Properties
     let viewModel: CreateOrRestoreWalletViewModel
+    let scenesFactory: CreateOrRestoreWalletScenesFactory
     var childNavigationController: BENavigationController!
     
     // MARK: - Initializer
-    init(viewModel: CreateOrRestoreWalletViewModel)
-    {
+    init(
+        viewModel: CreateOrRestoreWalletViewModel,
+        scenesFactory: CreateOrRestoreWalletScenesFactory
+    ) {
         self.viewModel = viewModel
+        self.scenesFactory = scenesFactory
         super.init()
     }
     
@@ -36,11 +45,11 @@ class CreateOrRestoreWalletViewController: BaseVC {
             removeAllChilds()
             add(child: WelcomeVC(createOrRestoreWalletViewModel: viewModel))
         case .createWallet:
-            let vc = DependencyContainer.shared.makeCreateWalletViewController()
+            let vc = scenesFactory.makeCreateWalletViewController()
             vc.isModalInPresentation = true
             present(vc, animated: true, completion: nil)
         case .restoreWallet:
-            let restoreWaleltViewController = DependencyContainer.shared.makeRestoreWalletViewController()
+            let restoreWaleltViewController = scenesFactory.makeRestoreWalletViewController()
             show(restoreWaleltViewController, sender: nil)
         }
     }

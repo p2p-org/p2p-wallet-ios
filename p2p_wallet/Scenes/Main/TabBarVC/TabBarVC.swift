@@ -7,6 +7,11 @@
 
 import Foundation
 
+protocol TabBarScenesFactory {
+    func makeMainVC() -> MainVC
+    func makeProfileVC() -> ProfileVC
+}
+
 class TabBarVC: BEPagesVC {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         switch currentPage {
@@ -19,15 +24,17 @@ class TabBarVC: BEPagesVC {
     lazy var tabBar = TabBar(cornerRadius: 20)
     
     let socket: SolanaSDK.Socket
-    init(socket: SolanaSDK.Socket) {
+    let scenesFactory: TabBarScenesFactory
+    init(socket: SolanaSDK.Socket, scenesFactory: TabBarScenesFactory) {
         self.socket = socket
+        self.scenesFactory = scenesFactory
         super.init()
     }
     
     override func setUp() {
         super.setUp()
         // pages
-        let mainVC = DependencyContainer.shared.makeMainVC()
+        let mainVC = scenesFactory.makeMainVC()
         viewControllers = [
             BENavigationController(rootViewController: mainVC),
             BENavigationController(rootViewController: InvestmentsVC()),
@@ -95,7 +102,7 @@ class TabBarVC: BEPagesVC {
         
         // show profile modal
         if tag == 3 {
-            let vc = DependencyContainer.shared.makeProfileVC()
+            let vc = scenesFactory.makeProfileVC()
             present(vc, animated: true, completion: nil)
             return
         }
