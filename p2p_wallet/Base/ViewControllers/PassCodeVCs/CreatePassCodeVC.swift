@@ -8,13 +8,26 @@
 import Foundation
 import THPinViewController
 
-class CreatePassCodeVC: PassCodeVC {
+class BaseCreatePassCodeVC: PassCodeVC {
     var passcode: String?
-    let accountStorage: KeychainAccountStorage
     
-    init(accountStorage: KeychainAccountStorage) {
-        self.accountStorage = accountStorage
-        super.init()
+    var disableDismissAfterCompletion: Bool {
+        get {
+            embededPinVC.disableDismissAfterCompletion
+        }
+        set {
+            embededPinVC.disableDismissAfterCompletion = newValue
+        }
+    }
+}
+
+class CreatePassCodeVC: BaseCreatePassCodeVC {
+    fileprivate var confirmPasscodeVC: ConfirmPasscodeVC?
+    
+    override var disableDismissAfterCompletion: Bool {
+        didSet {
+            confirmPasscodeVC?.disableDismissAfterCompletion = disableDismissAfterCompletion
+        }
     }
     
     override func viewDidLoad() {
@@ -29,17 +42,18 @@ class CreatePassCodeVC: PassCodeVC {
     
     override func pinViewControllerWillDismiss(afterPinEntryWasSuccessful pinViewController: THPinViewController) {
         // show confirm
-        let vc = ConfirmPasscodeVC(currentPasscode: passcode!, accountStorage: accountStorage)
-        vc.completion = completion
-        show(vc, sender: nil)
+        confirmPasscodeVC = ConfirmPasscodeVC(currentPasscode: passcode!)
+        confirmPasscodeVC!.completion = completion
+        confirmPasscodeVC?.disableDismissAfterCompletion = disableDismissAfterCompletion
+        show(confirmPasscodeVC!, sender: nil)
     }
 }
 
-private class ConfirmPasscodeVC: CreatePassCodeVC {
+private class ConfirmPasscodeVC: BaseCreatePassCodeVC {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(translucent: true) }
     
-    init(currentPasscode: String, accountStorage: KeychainAccountStorage) {
-        super.init(accountStorage: accountStorage)
+    init(currentPasscode: String) {
+        super.init()
         self.passcode = currentPasscode
     }
     
@@ -63,7 +77,6 @@ private class ConfirmPasscodeVC: CreatePassCodeVC {
     }
     
     override func pinViewControllerWillDismiss(afterPinEntryWasSuccessful pinViewController: THPinViewController) {
-        accountStorage.save(passcode!)
         completion?(true)
     }
 }

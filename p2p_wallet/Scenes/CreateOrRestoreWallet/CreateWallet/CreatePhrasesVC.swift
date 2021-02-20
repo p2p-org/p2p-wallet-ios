@@ -67,8 +67,11 @@ class CreatePhrasesVC: PhrasesVC {
         .onTap(self, action: #selector(buttonContinueDidTouch))
     
     let accountStorage: KeychainAccountStorage
-    init(accountStorage: KeychainAccountStorage) {
+    let createWalletViewModel: CreateWalletViewModel
+    init(accountStorage: KeychainAccountStorage, createWalletViewModel: CreateWalletViewModel) {
         self.accountStorage = accountStorage
+        self.createWalletViewModel = createWalletViewModel
+        super.init()
     }
     
     override func setUp() {
@@ -171,7 +174,7 @@ class CreatePhrasesVC: PhrasesVC {
                 try self.accountStorage.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
-                    self.show(CreateWalletCompletedVC(), sender: nil)
+                    self.createWalletViewModel.finish()
                 }
             } catch {
                 DispatchQueue.main.async {
