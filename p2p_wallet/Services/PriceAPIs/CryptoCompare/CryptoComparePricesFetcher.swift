@@ -44,7 +44,7 @@ class CryptoComparePricesFetcher: PricesFetcher {
             path += "/histoday?limit=30"
         }
         path += "&"
-//        path += "api_key=\(apikey)&"
+        path += "api_key=\(apikey)&"
         return send("\(path)fsym=\(coinName)&tsym=\(fiat)", decodedTo: Response.self)
             .map {$0.Data.Data}
             .map {
