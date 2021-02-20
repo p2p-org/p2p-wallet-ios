@@ -7,14 +7,21 @@
 
 import Foundation
 import UIKit
-import SwiftUI
 import Action
+
+protocol SwapScenesFactory {
+    func makeChooseWalletVC() -> ChooseWalletVC
+    func makeSwapChooseDestinationWalletVC() -> ChooseWalletVC
+    func makeProcessTransactionVC() -> ProcessTransactionVC
+}
 
 class SwapTokenViewController: WLModalWrapperVC {
     let viewModel: SwapTokenViewModel
-    init(viewModel: SwapTokenViewModel) {
+    let scenesFactory: SwapScenesFactory
+    init(viewModel: SwapTokenViewModel, scenesFactory: SwapScenesFactory) {
         self.viewModel = viewModel
-        let vc = _SwapTokenViewController(viewModel: viewModel)
+        self.scenesFactory = scenesFactory
+        let vc = _SwapTokenViewController(viewModel: viewModel, scenesFactory: scenesFactory)
         super.init(wrapped: vc)
     }
     
@@ -40,12 +47,14 @@ private class _SwapTokenViewController: BaseVC {
     
     // MARK: - Properties
     let viewModel: SwapTokenViewModel
+    let scenesFactory: SwapScenesFactory
     var transactionVC: ProcessTransactionVC!
     
     // MARK: - Initializer
-    init(viewModel: SwapTokenViewModel)
+    init(viewModel: SwapTokenViewModel, scenesFactory: SwapScenesFactory)
     {
         self.viewModel = viewModel
+        self.scenesFactory = scenesFactory
         super.init()
     }
     
@@ -65,7 +74,7 @@ private class _SwapTokenViewController: BaseVC {
             .subscribe(onNext: {
                 switch $0 {
                 case .chooseSourceWallet:
-                    let vc = DependencyContainer.shared.makeChooseWalletVC()
+                    let vc = self.scenesFactory.makeChooseWalletVC()
                     vc.completion = {wallet in
                         let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
                         self.viewModel.sourceWallet.accept(wallet)
@@ -74,7 +83,7 @@ private class _SwapTokenViewController: BaseVC {
                     }
                     self.presentCustomModal(vc: vc, title: L10n.selectWallet)
                 case .chooseDestinationWallet:
-                    let vc = DependencyContainer.shared.makeSwapChooseDestinationWalletVC()
+                    let vc = self.scenesFactory.makeSwapChooseDestinationWalletVC()
                     vc.completion = {wallet in
                         self.viewModel.destinationWallet.accept(wallet)
 //                        self.destination.amountTextField.becomeFirstResponder()
@@ -90,7 +99,7 @@ private class _SwapTokenViewController: BaseVC {
                     self.present(vc, animated: true, completion: nil)
                 case .sendTransaction:
                     self.transactionVC =
-                        DependencyContainer.shared.makeProcessTransactionVC()
+                        self.scenesFactory.makeProcessTransactionVC()
                     self.present(self.transactionVC, animated: true, completion: nil)
                 case .processTransaction(signature: let signature):
                     self.showProcessingTransaction(signature: signature)
@@ -123,15 +132,3 @@ private class _SwapTokenViewController: BaseVC {
         }
     }
 }
-
-//@available(iOS 13, *)
-//struct SwapTokenViewController_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Group {
-//            UIViewControllerPreview {
-//                SwapTokenViewController()
-//            }
-//            .previewDevice("iPhone SE (2nd generation)")
-//        }
-//    }
-//}
