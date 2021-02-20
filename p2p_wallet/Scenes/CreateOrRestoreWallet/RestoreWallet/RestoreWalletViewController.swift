@@ -8,10 +8,16 @@
 import Foundation
 import UIKit
 
+protocol RestoreWalletScenesFactory {
+    func makeEnterPhrasesVC() -> EnterPhrasesVC
+    func makeWelcomeBackVC(phrases: [String]) -> WelcomeBackVC
+}
+
 class RestoreWalletViewController: WLIntroVC {
     
     // MARK: - Properties
     let viewModel: RestoreWalletViewModel
+    let scenesFactory: RestoreWalletScenesFactory
     
     // MARK: - Subviews
     lazy var iCloudRestoreButton = WLButton.stepButton(type: .black, label: " " + L10n.restoreUsingICloud)
@@ -20,8 +26,9 @@ class RestoreWalletViewController: WLIntroVC {
         .onTap(viewModel, action: #selector(RestoreWalletViewModel.restoreManually))
     
     // MARK: - Initializer
-    init(viewModel: RestoreWalletViewModel)
+    init(viewModel: RestoreWalletViewModel, scenesFactory: RestoreWalletScenesFactory)
     {
+        self.scenesFactory = scenesFactory
         self.viewModel = viewModel
         super.init()
     }
@@ -58,12 +65,12 @@ class RestoreWalletViewController: WLIntroVC {
     private func navigate(to scene: RestoreWalletNavigatableScene) {
         switch scene {
         case .enterPhrases:
-            let vc = DependencyContainer.shared.makeEnterPhrasesVC(restoreWalletViewModel: viewModel)
+            let vc = scenesFactory.makeEnterPhrasesVC()
             let titleImageView = UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white)
 
             presentCustomModal(vc: vc, title: L10n.securityKeys.uppercaseFirst, titleImageView: titleImageView)
         case .welcomeBack(phrases: let phrases):
-            let vc = DependencyContainer.shared.makeWelcomeBackVC(phrases: phrases, restoreWalletViewModel: viewModel)
+            let vc = scenesFactory.makeWelcomeBackVC(phrases: phrases)
             transition(to: vc)
         }
     }
