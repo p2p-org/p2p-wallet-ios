@@ -16,11 +16,7 @@ import Action
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    var shouldShowLocalAuth = true
-    var localAuthVCShown = false
-    var shouldUpdateBalance = false
-    let timeRequiredForAuthentication: Double = 10 // in seconds
-    var timestamp: TimeInterval!
+    let container = DependencyContainer.shared
     
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -64,92 +60,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if #available(iOS 13.0, *) {
             window?.overrideUserInterfaceStyle = Defaults.appearance
         }
-        reloadRootVC()
+        
+        // set rootVC
+        let vc = container.makeRootViewController()
+        window?.rootViewController = vc
+        
         window?.makeKeyAndVisible()
         return true
     }
     
-    func reloadRootVC() {
-        let rootVC: UIViewController
-        if DependencyContainer.shared.sharedAccountStorage.account == nil {
-            rootVC = BENavigationController(rootViewController: WelcomeVC())
-            shouldShowLocalAuth = false
-        } else {
-            if DependencyContainer.shared.sharedAccountStorage.pinCode == nil {
-                let vc = DependencyContainer.shared.makeSSPinCodeVC()
-                rootVC = BENavigationController(rootViewController: vc)
-                shouldShowLocalAuth = false
-            } else if !Defaults.didSetEnableBiometry {
-                rootVC = BENavigationController(rootViewController: EnableBiometryVC())
-                shouldShowLocalAuth = false
-            } else if !Defaults.didSetEnableNotifications {
-                rootVC = BENavigationController(rootViewController: EnableNotificationsVC())
-                shouldShowLocalAuth = false
-            } else {
-                shouldShowLocalAuth = true
-                // recreate myWalletsVM
-                let vc = DependencyContainer.shared.makeTabBarVC()
-                rootVC = vc
-            }
-        }
-        
-        window?.rootViewController = rootVC
-    }
-    
     func applicationDidEnterBackground(_ application: UIApplication) {
-        shouldUpdateBalance = true
+        
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        // check authentication
-        let newTimestamp = Date().timeIntervalSince1970
-        if timestamp == nil {
-            timestamp = newTimestamp - timeRequiredForAuthentication
-        }
-        if shouldShowLocalAuth && !localAuthVCShown && timestamp + timeRequiredForAuthentication <= newTimestamp
-        {
-            
-            timestamp = newTimestamp
-            
-            showAuthentication()
-        }
         
-        // update balance
-        if shouldUpdateBalance {
-            DependencyContainer.shared.sharedMyWalletsVM.reload()
-            shouldUpdateBalance = false
-        }
-    }
-    
-    fileprivate func showAuthentication() {
-        let topVC = self.window?.rootViewController?.topViewController()
-        let localAuthVC = DependencyContainer.shared.makeLocalAuthVC()
-        localAuthVC.completion = { [self] didSuccess in
-            localAuthVCShown = false
-            if !didSuccess {
-                topVC?.showErrorView()
-                // reset timestamp
-                timestamp = Date().timeIntervalSince1970
-                
-                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-                    topVC?.errorView?.descriptionLabel.text = L10n.authenticationFailed + "\n" + L10n.retryAfter + " \(Int(10 - Date().timeIntervalSince1970 + timestamp) + 1) " + L10n.seconds
-
-                    if Int(Date().timeIntervalSince1970) == Int(timestamp + timeRequiredForAuthentication) {
-                        topVC?.errorView?.descriptionLabel.text = L10n.tapButtonToRetry
-                        topVC?.errorView?.buttonAction = CocoaAction {
-                            showAuthentication()
-                            return .just(())
-                        }
-                        timer.invalidate()
-                    }
-                }
-            } else {
-                topVC?.removeErrorView()
-            }
-        }
-        localAuthVC.modalPresentationStyle = .fullScreen
-        topVC?.present(localAuthVC, animated: true, completion: nil)
-        localAuthVCShown = true
     }
     
     func application(
