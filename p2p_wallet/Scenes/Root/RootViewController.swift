@@ -12,7 +12,7 @@ import Action
 protocol RootViewControllerScenesFactory {
     func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
     func makeOnboardingViewController() -> OnboardingViewController
-    func makeTabBarVC() -> TabBarVC
+    func makeMainViewController() -> UIViewController
     func makeLocalAuthVC() -> LocalAuthVC
 }
 
@@ -63,7 +63,7 @@ class RootViewController: BaseVC {
             let vc = scenesFactory.makeOnboardingViewController()
             transition(to: vc)
         case .main:
-            let vc = scenesFactory.makeTabBarVC()
+            let vc = scenesFactory.makeMainViewController()
             transition(to: vc)
         }
     }
