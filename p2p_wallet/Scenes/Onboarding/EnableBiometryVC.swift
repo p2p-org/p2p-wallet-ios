@@ -8,15 +8,19 @@
 import Foundation
 import LocalAuthentication
 
-class EnableBiometryVC: OnboardingVC {
+class EnableBiometryVC: BaseOnboardingVC {
     enum Error: Swift.Error {
         case unknown
     }
     
+    // MARK: - Properties
     let context = LAContext()
+    let onboardingViewModel: OnboardingViewModel
     
-    override var nextVC: UIViewController {
-        EnableNotificationsVC()
+    // MARK: - Initializers
+    init(onboardingViewModel: OnboardingViewModel) {
+        self.onboardingViewModel = onboardingViewModel
+        super.init()
     }
     
     override func setUp() {
@@ -87,8 +91,6 @@ class EnableBiometryVC: OnboardingVC {
     }
     
     func handleIsBiometryEnabled(_ enabled: Bool) {
-        Defaults.isBiometryEnabled = enabled
-        Defaults.didSetEnableBiometry = true
-        next()
+        onboardingViewModel.setEnableBiometry(enabled)
     }
 }

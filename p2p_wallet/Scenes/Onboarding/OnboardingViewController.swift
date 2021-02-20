@@ -55,14 +55,25 @@ class OnboardingViewController: WLIntroVC {
     private func navigate(to scene: OnboardingNavigatableScene) {
         switch scene {
         case .createPincode:
-            let pincodeVC = DependencyContainer.shared.makeSSPinCodeVC()
+            let pincodeVC = CreatePassCodeVC()
+            pincodeVC.disableDismissAfterCompletion = true
+
+            pincodeVC.completion = {_ in
+                guard let pincode = pincodeVC.passcode else {return}
+                self.viewModel.savePincode(pincode)
+            }
             childNavigationController.viewControllers = [pincodeVC]
         case .setUpBiometryAuthentication:
-            let biometryVC = EnableBiometryVC()
+            let biometryVC = EnableBiometryVC(onboardingViewModel: viewModel)
             childNavigationController.pushViewController(biometryVC, animated: true)
         case .setUpNotifications:
-            let enableNotificationsVC = EnableNotificationsVC()
+            let enableNotificationsVC = EnableNotificationsVC(onboardingViewModel: viewModel)
             childNavigationController.pushViewController(enableNotificationsVC, animated: true)
+        case .done:
+            let vc = WellDoneVC(onboardingViewModel: viewModel)
+            childNavigationController.pushViewController(vc, animated: true)
+        case .dismiss:
+            dismiss(animated: true, completion: nil)
         }
     }
 }

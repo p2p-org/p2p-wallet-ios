@@ -1,26 +1,29 @@
 //
-//  OnboardingVC.swift
+//  BaseOnboardingVC.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 10/30/20.
+//  Created by Chung Tran on 20/02/2021.
 //
 
 import Foundation
 
-class OnboardingVC: WLIntroVC {
+class BaseOnboardingVC: WLIntroVC {
     lazy var acceptButton = WLButton.stepButton(type: .blue, label: nil)
         .onTap(self, action: #selector(buttonAcceptDidTouch))
-    
     lazy var doThisLaterButton = WLButton.stepButton(type: .sub, label: L10n.doThisLater)
         .onTap(self, action: #selector(buttonDoThisLaterDidTouch))
     
     override func setUp() {
         super.setUp()
-        
-        buttonsStackView.addArrangedSubview(acceptButton)
-        buttonsStackView.addArrangedSubview(doThisLaterButton)
+        buttonsStackView.addArrangedSubviews([
+            acceptButton,
+            doThisLaterButton
+        ])
     }
     
-    @objc func buttonDoThisLaterDidTouch() {}
-    @objc func buttonAcceptDidTouch() {}
+    @objc func buttonAcceptDidTouch() {
+    }
+    
+    @objc func buttonDoThisLaterDidTouch() {
+    }
 }
