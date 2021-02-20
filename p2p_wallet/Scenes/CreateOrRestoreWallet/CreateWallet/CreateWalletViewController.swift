@@ -8,15 +8,22 @@
 import Foundation
 import UIKit
 
+protocol CreateWalletScenesFactory {
+    func makeTermsAndConditionsVC() -> TermsAndConditionsVC
+    func makeCreatePhrasesVC() -> CreatePhrasesVC
+}
+
 class CreateWalletViewController: WLIndicatorModalVC {
     // MARK: - Properties
     let viewModel: CreateWalletViewModel
+    let scenesFactory: CreateWalletScenesFactory
     var childNavigationController: BENavigationController!
     
     // MARK: - Initializer
-    init(viewModel: CreateWalletViewModel)
+    init(viewModel: CreateWalletViewModel, scenesFactory: CreateWalletScenesFactory)
     {
         self.viewModel = viewModel
+        self.scenesFactory = scenesFactory
         super.init()
     }
     
@@ -24,7 +31,7 @@ class CreateWalletViewController: WLIndicatorModalVC {
     override func setUp() {
         super.setUp()
         // kickoff Terms and Conditions
-        childNavigationController = BENavigationController(rootViewController: TermsAndConditionsVC(createWalletViewModel: viewModel))
+        childNavigationController = BENavigationController(rootViewController: scenesFactory.makeTermsAndConditionsVC())
         add(child: childNavigationController, to: containerView)
     }
     
@@ -39,7 +46,7 @@ class CreateWalletViewController: WLIndicatorModalVC {
     private func navigate(to scene: CreateWalletNavigatableScene) {
         switch scene {
         case .createPhrases:
-            let vc = DependencyContainer.shared.makeCreatePhrasesVC(createWalletViewModel: viewModel)
+            let vc = scenesFactory.makeCreatePhrasesVC()
             childNavigationController.pushViewController(vc, animated: true)
         case .dismiss:
             dismiss(animated: true, completion: nil)

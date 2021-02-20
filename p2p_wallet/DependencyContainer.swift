@@ -18,6 +18,7 @@ class DependencyContainer {
     let sharedRootViewModel: RootViewModel
     
     // MARK: - Singleton
+    @available(*, deprecated, message: "Singleton will be removed")
     static let shared = DependencyContainer()
     
     init() {
@@ -35,55 +36,31 @@ class DependencyContainer {
     
     // MARK: - Root
     func makeRootViewController() -> RootViewController {
-        return RootViewController(viewModel: sharedRootViewModel)
+        return RootViewController(viewModel: sharedRootViewModel, scenesFactory: self)
     }
     
     // MARK: - CreateOrRestore wallet
     func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
     {
-        let viewModel = CreateOrRestoreWalletViewModel()
-        return CreateOrRestoreWalletViewController(viewModel: viewModel)
-    }
-    
-    func makeCreateWalletViewController() -> CreateWalletViewController
-    {
-        let viewModel = CreateWalletViewModel(handler: sharedRootViewModel)
-        return CreateWalletViewController(viewModel: viewModel)
-    }
-    
-    func makeRestoreWalletViewController() -> RestoreWalletViewController
-    {
-        let viewModel = RestoreWalletViewModel(accountStorage: sharedAccountStorage, handler: sharedRootViewModel)
-        return RestoreWalletViewController(viewModel: viewModel)
-    }
-    
-    // MARK: - Authentication
-    func makeLocalAuthVC() -> LocalAuthVC {
-        LocalAuthVC(accountStorage: sharedAccountStorage)
+        let container = CreateOrRestoreWalletContainer(accountStorage: sharedAccountStorage, handler: sharedRootViewModel)
+        return container.makeCreateOrRestoreWalletViewController()
     }
     
     // MARK: - Onboarding
     func makeOnboardingViewController() -> OnboardingViewController {
-        let viewModel = OnboardingViewModel(accountStorage: sharedAccountStorage, handler: sharedRootViewModel)
-        return OnboardingViewController(viewModel: viewModel)
-    }
-    
-    func makeCreatePhrasesVC(createWalletViewModel: CreateWalletViewModel) -> CreatePhrasesVC {
-        CreatePhrasesVC(accountStorage: sharedAccountStorage, createWalletViewModel: createWalletViewModel)
-    }
-    
-    func makeWelcomeBackVC(phrases: [String], restoreWalletViewModel: RestoreWalletViewModel) -> WelcomeBackVC {
-        WelcomeBackVC(phrases: phrases, accountStorage: sharedAccountStorage, restoreWalletViewModel: restoreWalletViewModel)
-    }
-    
-    func makeEnterPhrasesVC(restoreWalletViewModel: RestoreWalletViewModel) -> EnterPhrasesVC {
-        EnterPhrasesVC(restoreWalletViewModel: restoreWalletViewModel)
+        let container = OnboardingContainer(accountStorage: sharedAccountStorage, handler: sharedRootViewModel)
+        return container.makeOnboardingViewController()
     }
     
     // MARK: - Tabbar
     func makeTabBarVC() -> TabBarVC {
         makeMyWalletsVM()
         return TabBarVC(socket: sharedSocket)
+    }
+    
+    // MARK: - Authentication
+    func makeLocalAuthVC() -> LocalAuthVC {
+        LocalAuthVC(accountStorage: sharedAccountStorage)
     }
     
     // MARK: - Main
@@ -185,3 +162,5 @@ class DependencyContainer {
         self.sharedSocket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: self.sharedSolanaSDK.accountStorage.account?.publicKey)
     }
 }
+
+extension DependencyContainer: RootViewControllerScenesFactory {}
