@@ -63,10 +63,8 @@ class RestoreWalletViewController: WLIntroVC {
 
             presentCustomModal(vc: vc, title: L10n.securityKeys.uppercaseFirst, titleImageView: titleImageView)
         case .welcomeBack(phrases: let phrases):
-            removeAllChilds()
             let vc = DependencyContainer.shared.makeWelcomeBackVC(phrases: phrases, restoreWalletViewModel: viewModel)
-            let nc = BENavigationController(rootViewController: vc)
-            add(child: nc)
+            transition(to: vc)
         }
     }
 }

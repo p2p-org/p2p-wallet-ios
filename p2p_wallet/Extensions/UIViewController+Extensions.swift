@@ -112,7 +112,7 @@ extension UIViewController {
         
         addChild(child)
         (view ?? self.view).addSubview(child.view)
-        
+        child.view.configureForAutoLayout()
         child.view.autoPinEdgesToSuperviewEdges()
         
         child.didMove(toParent: self)
@@ -123,6 +123,31 @@ extension UIViewController {
             child.willMove(toParent: nil)
             child.view.removeFromSuperview()
             child.removeFromParent()
+        }
+    }
+    
+    func transition(from oldVC: UIViewController? = nil, to newVC: UIViewController, in containerView: UIView? = nil) {
+        let oldVC = oldVC ?? children.last
+        let containerView = containerView ?? view
+        
+        oldVC?.willMove(toParent: nil)
+        oldVC?.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        addChild(newVC)
+        containerView?.addSubview(newVC.view)
+        newVC.view.configureForAutoLayout()
+        newVC.view.autoPinEdgesToSuperviewEdges()
+        
+        newVC.view.alpha = 0
+        newVC.view.layoutIfNeeded()
+        
+        UIView.animate(withDuration: 0.3) {
+            newVC.view.alpha = 1
+            oldVC?.view.alpha = 0
+        } completion: { _ in
+            oldVC?.view.removeFromSuperview()
+            oldVC?.removeFromParent()
+            newVC.didMove(toParent: self)
         }
     }
 }
