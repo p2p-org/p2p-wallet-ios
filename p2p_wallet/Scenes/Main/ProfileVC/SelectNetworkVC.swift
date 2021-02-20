@@ -7,14 +7,20 @@
 
 import Foundation
 
+protocol ChangeNetworkResponder {
+    func changeNetwork(to network: SolanaSDK.Network)
+}
+
 class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
     override var dataDidChange: Bool {selectedItem != Defaults.network}
     var accountStorage: SolanaSDKAccountStorage
     let rootViewModel: RootViewModel
+    let changeNetworkResponder: ChangeNetworkResponder
     
-    init(accountStorage: SolanaSDKAccountStorage, rootViewModel: RootViewModel) {
+    init(accountStorage: SolanaSDKAccountStorage, rootViewModel: RootViewModel, changeNetworkResponder: ChangeNetworkResponder) {
         self.accountStorage = accountStorage
         self.rootViewModel = rootViewModel
+        self.changeNetworkResponder = changeNetworkResponder
         super.init()
         // initial data
         SolanaSDK.Network.allCases.forEach {
@@ -43,12 +49,7 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
                     try self.accountStorage.save(account)
                     DispatchQueue.main.async {
                         UIApplication.shared.hideHud()
-                        // save
-                        Defaults.network = self.selectedItem
-                        
-                        // refresh sdk
-                        DependencyContainer.shared.changeNetwork()
-                        
+                        self.changeNetworkResponder.changeNetwork(to: self.selectedItem)
                         self.rootViewModel.reload()
                     }
                 } catch {

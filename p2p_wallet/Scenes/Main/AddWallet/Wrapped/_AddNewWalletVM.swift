@@ -14,6 +14,7 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
     let solanaSDK: SolanaSDK
     let walletsVM: WalletsVM
     let transactionManager: TransactionsManager
+    let scenesFactory: AddNewWalletScenesFactory
     lazy var feeSubject = LazySubject(
         value: Double(0),
         request: solanaSDK.getCreatingTokenAccountFee()
@@ -26,10 +27,11 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
     let navigatorSubject = PublishSubject<Navigation>()
     let clearSearchBarSubject = PublishSubject<Void>()
     
-    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, transactionManager: TransactionsManager) {
+    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, transactionManager: TransactionsManager, scenesFactory: AddNewWalletScenesFactory) {
         self.solanaSDK = solanaSDK
         self.walletsVM = walletsVM
         self.transactionManager = transactionManager
+        self.scenesFactory = scenesFactory
     }
     
     override func reload() {
@@ -120,7 +122,7 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
                         self.transactionManager.process(transaction)
                         
                         // present wallet
-                        let vc = DependencyContainer.shared.makeWalletDetailVC(wallet: newWallet)
+                        let vc = self.scenesFactory.makeWalletDetailVC(wallet: newWallet)
                         self.navigatorSubject.onNext(.present(vc))
                     },
                     onError: { (error) in
