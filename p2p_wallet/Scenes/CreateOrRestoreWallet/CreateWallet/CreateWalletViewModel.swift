@@ -11,7 +11,6 @@ import RxCocoa
 
 enum CreateWalletNavigatableScene {
     case createPhrases
-    case completed
     case dismiss
 }
 

@@ -174,7 +174,7 @@ class CreatePhrasesVC: PhrasesVC {
                 try self.accountStorage.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
-                    self.createWalletViewModel.navigationSubject.onNext(.completed)
+                    self.createWalletViewModel.finish()
                 }
             } catch {
                 DispatchQueue.main.async {

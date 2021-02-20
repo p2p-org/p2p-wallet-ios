@@ -8,7 +8,7 @@
 import Foundation
 import LocalAuthentication
 
-class EnableBiometryVC: SecuritySettingVC {
+class EnableBiometryVC: OnboardingVC {
     enum Error: Swift.Error {
         case unknown
     }

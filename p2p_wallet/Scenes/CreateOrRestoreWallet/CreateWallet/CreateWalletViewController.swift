@@ -41,10 +41,6 @@ class CreateWalletViewController: WLIndicatorModalVC {
         case .createPhrases:
             let vc = DependencyContainer.shared.makeCreatePhrasesVC(createWalletViewModel: viewModel)
             childNavigationController.pushViewController(vc, animated: true)
-        case .completed:
-            let vc = DependencyContainer.shared.makeCreateWalletCompletedVC(createWalletViewModel: viewModel)
-            removeAllChilds()
-            add(child: vc)
         case .dismiss:
             dismiss(animated: true, completion: nil)
         }
