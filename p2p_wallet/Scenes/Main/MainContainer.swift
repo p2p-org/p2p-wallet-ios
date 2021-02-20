@@ -23,10 +23,12 @@ class MainContainer {
         self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: accountStorage.account?.publicKey)
         self.transactionManager = TransactionsManager(socket: socket)
         myWalletsVM = WalletsVM(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager)
+        
+        defer {socket.connect()}
     }
     
     func makeMainViewController() -> UIViewController {
-        TabBarVC(socket: socket, scenesFactory: self)
+        TabBarVC(scenesFactory: self)
     }
     
     func makeMainVC() -> MainVC {

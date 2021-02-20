@@ -23,10 +23,8 @@ class TabBarVC: BEPagesVC {
     }
     lazy var tabBar = TabBar(cornerRadius: 20)
     
-    let socket: SolanaSDK.Socket
     let scenesFactory: TabBarScenesFactory
-    init(socket: SolanaSDK.Socket, scenesFactory: TabBarScenesFactory) {
-        self.socket = socket
+    init(scenesFactory: TabBarScenesFactory) {
         self.scenesFactory = scenesFactory
         super.init()
     }
@@ -63,12 +61,6 @@ class TabBarVC: BEPagesVC {
         // action
         currentPage = -1
         moveToPage(0)
-    }
-    
-    override func bind() {
-        super.bind()
-        // connect websocket
-        socket.connect()
     }
     
     // MARK: - Helpers
