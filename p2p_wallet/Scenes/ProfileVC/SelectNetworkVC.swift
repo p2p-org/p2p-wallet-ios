@@ -10,9 +10,11 @@ import Foundation
 class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
     override var dataDidChange: Bool {selectedItem != Defaults.network}
     var accountStorage: SolanaSDKAccountStorage
+    let rootViewModel: RootViewModel
     
-    init(accountStorage: SolanaSDKAccountStorage) {
+    init(accountStorage: SolanaSDKAccountStorage, rootViewModel: RootViewModel) {
         self.accountStorage = accountStorage
+        self.rootViewModel = rootViewModel
         super.init()
         // initial data
         SolanaSDK.Network.allCases.forEach {
@@ -47,7 +49,7 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
                         // refresh sdk
                         DependencyContainer.shared.changeNetwork()
                         
-                        AppDelegate.shared.reloadRootVC()
+                        self.rootViewModel.reload()
                     }
                 } catch {
                     DispatchQueue.main.async {

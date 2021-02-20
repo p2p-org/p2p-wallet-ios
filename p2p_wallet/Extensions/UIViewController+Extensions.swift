@@ -18,7 +18,7 @@ extension UIViewController {
         if allButtons.count == 0 {
             allButtons.append("OK")
         }
-
+        
         for index in 0..<allButtons.count {
             let buttonTitle = allButtons[index]
             let action = UIAlertAction(title: buttonTitle, style: .default, handler: { (_) in
@@ -78,9 +78,9 @@ extension UIViewController {
         if let url = URL(string: url) {
             let config = SFSafariViewController.Configuration()
             config.entersReaderIfAvailable = true
-
+            
             let safariVC = SFSafariViewController(url: url, configuration: config)
-
+            
             present(safariVC, animated: true)
         }
     }
@@ -102,5 +102,52 @@ extension UIViewController {
     
     @objc func hideKeyboard() {
         view.endEditing(true)
+    }
+    
+    // MARK: - ChildVCs
+    func add(child: UIViewController, to view: UIView? = nil) {
+        guard child.parent == nil else {
+            return
+        }
+        
+        addChild(child)
+        (view ?? self.view).addSubview(child.view)
+        child.view.configureForAutoLayout()
+        child.view.autoPinEdgesToSuperviewEdges()
+        
+        child.didMove(toParent: self)
+    }
+    
+    func removeAllChilds() {
+        for child in children {
+            child.willMove(toParent: nil)
+            child.view.removeFromSuperview()
+            child.removeFromParent()
+        }
+    }
+    
+    func transition(from oldVC: UIViewController? = nil, to newVC: UIViewController, in containerView: UIView? = nil) {
+        let oldVC = oldVC ?? children.last
+        let containerView = containerView ?? view
+        
+        oldVC?.willMove(toParent: nil)
+        oldVC?.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        addChild(newVC)
+        containerView?.addSubview(newVC.view)
+        newVC.view.configureForAutoLayout()
+        newVC.view.autoPinEdgesToSuperviewEdges()
+        
+        newVC.view.alpha = 0
+        newVC.view.layoutIfNeeded()
+        
+        UIView.animate(withDuration: 0.3) {
+            newVC.view.alpha = 1
+            oldVC?.view.alpha = 0
+        } completion: { _ in
+            oldVC?.view.removeFromSuperview()
+            oldVC?.removeFromParent()
+            newVC.didMove(toParent: self)
+        }
     }
 }
