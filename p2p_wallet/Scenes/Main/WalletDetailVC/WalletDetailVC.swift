@@ -8,11 +8,17 @@
 import Foundation
 import Action
 
+protocol WalletDetailScenesFactory {
+    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> WLModalWrapperVC
+    func makeSwapTokenViewController(fromWallet: Wallet?) -> SwapTokenViewController
+}
+
 class WalletDetailVC: WLModalWrapperVC {
     override var padding: UIEdgeInsets {UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)}
     
     let solanaSDK: SolanaSDK
     let walletsVM: WalletsVM
+    let scenesFactory: WalletDetailScenesFactory
     let wallet: Wallet
     lazy var walletNameTextField: UITextField = {
         let tf = UITextField(font: .systemFont(ofSize: 19, weight: .semibold), placeholder: "A", autocorrectionType: .no)
@@ -24,10 +30,11 @@ class WalletDetailVC: WLModalWrapperVC {
     lazy var tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
     
     // MARK: - Initializer
-    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, wallet: Wallet) {
+    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, wallet: Wallet, scenesFactory: WalletDetailScenesFactory) {
         self.solanaSDK = solanaSDK
         self.walletsVM = walletsVM
         self.wallet = wallet
+        self.scenesFactory = scenesFactory
         let viewModel = _WalletDetailVC.ViewModel(solanaSDK: solanaSDK, walletsVM: walletsVM, wallet: wallet)
         super.init(wrapped: _WalletDetailVC(viewModel: viewModel))
     }
@@ -114,7 +121,7 @@ class WalletDetailVC: WLModalWrapperVC {
     }
     
     @objc func buttonSendDidTouch() {
-        let vc = DependencyContainer.shared.makeSendTokenViewController(activeWallet: wallet)
+        let vc = scenesFactory.makeSendTokenViewController(activeWallet: wallet, destinationAddress: nil)
         self.present(vc, animated: true, completion: nil)
     }
     
@@ -124,7 +131,7 @@ class WalletDetailVC: WLModalWrapperVC {
     }
     
     @objc func buttonSwapDidTouch() {
-        let vc = DependencyContainer.shared.makeSwapTokenViewController(fromWallet: wallet)
+        let vc = scenesFactory.makeSwapTokenViewController(fromWallet: wallet)
         self.show(vc, sender: nil)
     }
 }

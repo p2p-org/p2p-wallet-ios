@@ -10,18 +10,25 @@ import UIKit
 import SwiftUI
 import Action
 
+protocol SendTokenScenesFactory {
+    func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
+    func makeProcessTransactionVC() -> ProcessTransactionVC
+}
+
 class SendTokenViewController: BaseVC {
     
     // MARK: - Properties
     let viewModel: SendTokenViewModel
+    let scenesFactory: SendTokenScenesFactory
     var transactionVC: ProcessTransactionVC!
     
     // MARK: - Subviews
     
     // MARK: - Initializer
-    init(viewModel: SendTokenViewModel)
+    init(viewModel: SendTokenViewModel, scenesFactory: SendTokenScenesFactory)
     {
         self.viewModel = viewModel
+        self.scenesFactory = scenesFactory
         super.init()
     }
     
@@ -41,7 +48,7 @@ class SendTokenViewController: BaseVC {
             .subscribe(onNext: {
                 switch $0 {
                 case .chooseWallet:
-                    let vc = DependencyContainer.shared.makeChooseWalletVC()
+                    let vc = self.scenesFactory.makeChooseWalletVC(customFilter: nil)
                     vc.completion = {wallet in
                         guard let wallet = self.viewModel.walletsVM.data.first(where: {$0.pubkey == wallet.pubkey}) else {return}
                         vc.back()
@@ -62,7 +69,7 @@ class SendTokenViewController: BaseVC {
                     vc.modalPresentationStyle = .custom
                     self.present(vc, animated: true, completion: nil)
                 case .sendTransaction:
-                    self.transactionVC = DependencyContainer.shared.makeProcessTransactionVC()
+                    self.transactionVC = self.scenesFactory.makeProcessTransactionVC()
                     self.present(self.transactionVC, animated: true, completion: nil)
                 case .processTransaction(let signature):
                     self.showProcessingTransaction(signature: signature)
