@@ -14,6 +14,8 @@ class WalletsVM: ListViewModel<Wallet> {
     let solanaSDK: SolanaSDK
     let socket: SolanaSDK.Socket
     let transactionManager: TransactionsManager?
+    private(set) var shouldUpdateBalance = false
+    
     var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
     
     init(solanaSDK: SolanaSDK, socket: SolanaSDK.Socket, transactionManager: TransactionsManager? = nil) {
@@ -21,6 +23,10 @@ class WalletsVM: ListViewModel<Wallet> {
         self.socket = socket
         self.transactionManager = transactionManager
         super.init(prefetch: false)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     override func bind() {
@@ -73,6 +79,10 @@ class WalletsVM: ListViewModel<Wallet> {
                 }
             })
             .disposed(by: disposeBag)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
     
     override var request: Single<[Wallet]> {
@@ -121,5 +131,17 @@ class WalletsVM: ListViewModel<Wallet> {
         wallets = wallets
             .sorted(by: {$0.amountInUSD > $1.amountInUSD})
         return [solWallet] + wallets
+    }
+    
+    @objc func appDidBecomeActive() {
+        // update balance
+        if shouldUpdateBalance {
+            reload()
+            shouldUpdateBalance = false
+        }
+    }
+    
+    @objc func appDidEnterBackground() {
+        shouldUpdateBalance = true
     }
 }
