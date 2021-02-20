@@ -64,7 +64,7 @@ class DependencyContainer {
     
     // MARK: - Onboarding
     func makeOnboardingViewController() -> OnboardingViewController {
-        let viewModel = OnboardingViewModel()
+        let viewModel = OnboardingViewModel(accountStorage: sharedAccountStorage, handler: sharedRootViewModel)
         return OnboardingViewController(viewModel: viewModel)
     }
     
@@ -72,24 +72,12 @@ class DependencyContainer {
         CreatePhrasesVC(accountStorage: sharedAccountStorage, createWalletViewModel: createWalletViewModel)
     }
     
-    func makeSSPinCodeVC() -> SSPinCodeVC {
-        SSPinCodeVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
-    }
-    
     func makeWelcomeBackVC(phrases: [String], restoreWalletViewModel: RestoreWalletViewModel) -> WelcomeBackVC {
         WelcomeBackVC(phrases: phrases, accountStorage: sharedAccountStorage, restoreWalletViewModel: restoreWalletViewModel)
     }
     
-    func makeWeldoneVC() -> WellDoneVC {
-        WellDoneVC(rootViewModel: sharedRootViewModel)
-    }
-    
     func makeEnterPhrasesVC(restoreWalletViewModel: RestoreWalletViewModel) -> EnterPhrasesVC {
         EnterPhrasesVC(restoreWalletViewModel: restoreWalletViewModel)
-    }
-    
-    func makeCreateWalletCompletedVC(createWalletViewModel: CreateWalletViewModel) -> CreateWalletCompletedVC {
-        CreateWalletCompletedVC(createWalletViewModel: createWalletViewModel)
     }
     
     // MARK: - Tabbar

@@ -8,10 +8,10 @@
 import Foundation
 import SwiftUI
 
-class WellDoneVC: OnboardingVC {
-    let rootViewModel: RootViewModel
-    init(rootViewModel: RootViewModel) {
-        self.rootViewModel = rootViewModel
+class WellDoneVC: BaseOnboardingVC {
+    let onboardingViewModel: OnboardingViewModel
+    init(onboardingViewModel: OnboardingViewModel) {
+        self.onboardingViewModel = onboardingViewModel
         super.init()
     }
     
@@ -25,6 +25,6 @@ class WellDoneVC: OnboardingVC {
     }
     
     override func buttonAcceptDidTouch() {
-        rootViewModel.reload()
+        onboardingViewModel.endOnboarding()
     }
 }
