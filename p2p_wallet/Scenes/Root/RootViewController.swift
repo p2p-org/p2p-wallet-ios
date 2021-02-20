@@ -55,8 +55,7 @@ class RootViewController: BaseVC {
         }
         
         if let vc = vcToAdd {
-            removeAllChilds()
-            add(child: vc)
+            transition(to: vc)
         }
     }
     
