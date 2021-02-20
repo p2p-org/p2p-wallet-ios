@@ -189,6 +189,10 @@
 		BCE42E1A25DFA5100021540E /* RestoreWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE42E1725DFA5100021540E /* RestoreWalletViewController.swift */; };
 		BCEA06BE2542FD3F0006E4C3 /* Asset+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */; };
 		BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */; };
+		BCEB204725E148C400B54FEF /* CreateOrRestoreWalletContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB204625E148C400B54FEF /* CreateOrRestoreWalletContainer.swift */; };
+		BCEB205125E14E4F00B54FEF /* CreateWalletContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB205025E14E4F00B54FEF /* CreateWalletContainer.swift */; };
+		BCEB205925E1519600B54FEF /* RestoreWalletContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB205825E1519600B54FEF /* RestoreWalletContainer.swift */; };
+		BCEB206125E1532C00B54FEF /* OnboardingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB206025E1532C00B54FEF /* OnboardingContainer.swift */; };
 		BCEF14AC25CFF13E00DFE931 /* _AddNewWalletVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEF14AB25CFF13E00DFE931 /* _AddNewWalletVC.swift */; };
 		BCEF14B525CFF22100DFE931 /* _AddNewWalletVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEF14B425CFF22100DFE931 /* _AddNewWalletVM.swift */; };
 		BCEF14BA25CFF27800DFE931 /* _AddNewWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEF14B925CFF27800DFE931 /* _AddNewWalletCell.swift */; };
@@ -419,6 +423,10 @@
 		BCE42E1725DFA5100021540E /* RestoreWalletViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreWalletViewController.swift; sourceTree = "<group>"; };
 		BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Asset+Generated.swift"; sourceTree = "<group>"; };
 		BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
+		BCEB204625E148C400B54FEF /* CreateOrRestoreWalletContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreWalletContainer.swift; sourceTree = "<group>"; };
+		BCEB205025E14E4F00B54FEF /* CreateWalletContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateWalletContainer.swift; sourceTree = "<group>"; };
+		BCEB205825E1519600B54FEF /* RestoreWalletContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreWalletContainer.swift; sourceTree = "<group>"; };
+		BCEB206025E1532C00B54FEF /* OnboardingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContainer.swift; sourceTree = "<group>"; };
 		BCEF14AB25CFF13E00DFE931 /* _AddNewWalletVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _AddNewWalletVC.swift; sourceTree = "<group>"; };
 		BCEF14B425CFF22100DFE931 /* _AddNewWalletVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _AddNewWalletVM.swift; sourceTree = "<group>"; };
 		BCEF14B925CFF27800DFE931 /* _AddNewWalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _AddNewWalletCell.swift; sourceTree = "<group>"; };
@@ -1006,6 +1014,7 @@
 		BCE42DE125DF9B980021540E /* CreateOrRestoreWallet */ = {
 			isa = PBXGroup;
 			children = (
+				BCEB204625E148C400B54FEF /* CreateOrRestoreWalletContainer.swift */,
 				BCE42DE225DF9BDA0021540E /* CreateOrRestoreWalletViewModel.swift */,
 				BCE42DE425DF9BDA0021540E /* CreateOrRestoreWalletViewController.swift */,
 				BC32A355254A69EA002156F0 /* WelcomeVC.swift */,
@@ -1018,6 +1027,7 @@
 		BCE42DF125DF9C360021540E /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
+				BCEB206025E1532C00B54FEF /* OnboardingContainer.swift */,
 				BCE42DF225DF9C7A0021540E /* OnboardingViewModel.swift */,
 				BCE42DF425DF9C7A0021540E /* OnboardingViewController.swift */,
 				BC89ADB725E0FCB3001A6791 /* BaseOnboardingVC.swift */,
@@ -1031,6 +1041,7 @@
 		BCE42DFE25DFA0830021540E /* CreateWallet */ = {
 			isa = PBXGroup;
 			children = (
+				BCEB205025E14E4F00B54FEF /* CreateWalletContainer.swift */,
 				BCE42DFF25DFA0B50021540E /* CreateWalletViewModel.swift */,
 				BCE42E0125DFA0B50021540E /* CreateWalletViewController.swift */,
 				BC105135258B2A2A00398EA2 /* TermsAndConditionsVC.swift */,
@@ -1042,6 +1053,7 @@
 		BCE42E1425DFA4F90021540E /* RestoreWallet */ = {
 			isa = PBXGroup;
 			children = (
+				BCEB205825E1519600B54FEF /* RestoreWalletContainer.swift */,
 				BCE42E1525DFA5100021540E /* RestoreWalletViewModel.swift */,
 				BCE42E1725DFA5100021540E /* RestoreWalletViewController.swift */,
 				BC7533B4257F3E7B007A00D9 /* EnterPhrasesVC.swift */,
@@ -1415,6 +1427,7 @@
 				BC6EE772254AEEB300FE1025 /* SolanaSDK+Extensions.swift in Sources */,
 				BCE42DF725DF9C7A0021540E /* OnboardingViewController.swift in Sources */,
 				BC490CB0256CB1B0006E7AC9 /* ChooseWalletVC.swift in Sources */,
+				BCEB206125E1532C00B54FEF /* OnboardingContainer.swift in Sources */,
 				BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */,
 				BC32A3D5254A8F7F002156F0 /* CreatePhrasesVC.swift in Sources */,
 				BC22A5D325D2715C00F7026D /* SendTokenRootView.swift in Sources */,
@@ -1477,6 +1490,7 @@
 				BCD5E770255130DD00F51299 /* News.swift in Sources */,
 				BCE42DE525DF9BDA0021540E /* CreateOrRestoreWalletViewModel.swift in Sources */,
 				BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */,
+				BCEB204725E148C400B54FEF /* CreateOrRestoreWalletContainer.swift in Sources */,
 				BC11CA092591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift in Sources */,
 				BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */,
 				BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */,
@@ -1493,6 +1507,7 @@
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
 				BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */,
 				BCBBE1872563C2D300533F6B /* ReceiveTokenCell.swift in Sources */,
+				BCEB205925E1519600B54FEF /* RestoreWalletContainer.swift in Sources */,
 				BC5257E725CBACEA0076317E /* Fiat.swift in Sources */,
 				BC290A00256B9C95002A727C /* SwapTokenWalletView.swift in Sources */,
 				BC3ADEA02570E1B9002B3B16 /* Transaction.swift in Sources */,
@@ -1528,6 +1543,7 @@
 				BC3B3DAA258C653000C6117E /* WLModalVC.swift in Sources */,
 				BC22A5D425D2715C00F7026D /* SendTokenViewController.swift in Sources */,
 				BC2EC1CD2553ED1B006EEDA5 /* CardViewController.swift in Sources */,
+				BCEB205125E14E4F00B54FEF /* CreateWalletContainer.swift in Sources */,
 				BCD5E73A2551265300F51299 /* CollectionVC.swift in Sources */,
 				BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */,
 				BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */,
