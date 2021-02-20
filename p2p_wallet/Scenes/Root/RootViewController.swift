@@ -53,8 +53,7 @@ class RootViewController: BaseVC {
             transition(to: vc)
         case .main:
             let vc = DependencyContainer.shared.makeTabBarVC()
-            removeAllChilds()
-            add(child: vc)
+            transition(to: vc)
         }
     }
     
