@@ -8,15 +8,24 @@
 import Foundation
 import UIKit
 
+protocol OnboardingScenesFactory {
+    func makeCreatePassCodeVC() -> CreatePassCodeVC
+    func makeEnableBiometryVC() -> EnableBiometryVC
+    func makeEnableNotificationsVC() -> EnableNotificationsVC
+    func makeWellDoneVC() -> WellDoneVC
+}
+
 class OnboardingViewController: WLIntroVC {
     
     // MARK: - Properties
     let viewModel: OnboardingViewModel
+    let scenesFactory: OnboardingScenesFactory
     var childNavigationController: BENavigationController!
     
     // MARK: - Initializer
-    init(viewModel: OnboardingViewModel)
+    init(viewModel: OnboardingViewModel, scenesFactory: OnboardingScenesFactory)
     {
+        self.scenesFactory = scenesFactory
         self.viewModel = viewModel
         super.init()
     }
@@ -55,7 +64,7 @@ class OnboardingViewController: WLIntroVC {
     private func navigate(to scene: OnboardingNavigatableScene) {
         switch scene {
         case .createPincode:
-            let pincodeVC = CreatePassCodeVC()
+            let pincodeVC = scenesFactory.makeCreatePassCodeVC()
             pincodeVC.disableDismissAfterCompletion = true
 
             pincodeVC.completion = {_ in
@@ -64,13 +73,13 @@ class OnboardingViewController: WLIntroVC {
             }
             childNavigationController.viewControllers = [pincodeVC]
         case .setUpBiometryAuthentication:
-            let biometryVC = EnableBiometryVC(onboardingViewModel: viewModel)
+            let biometryVC = scenesFactory.makeEnableBiometryVC()
             childNavigationController.pushViewController(biometryVC, animated: true)
         case .setUpNotifications:
-            let enableNotificationsVC = EnableNotificationsVC(onboardingViewModel: viewModel)
+            let enableNotificationsVC = scenesFactory.makeEnableNotificationsVC()
             childNavigationController.pushViewController(enableNotificationsVC, animated: true)
         case .done:
-            let vc = WellDoneVC(onboardingViewModel: viewModel)
+            let vc = scenesFactory.makeWellDoneVC()
             childNavigationController.pushViewController(vc, animated: true)
         case .dismiss:
             dismiss(animated: true, completion: nil)

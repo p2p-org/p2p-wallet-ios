@@ -9,16 +9,27 @@ import Foundation
 import UIKit
 import Action
 
+protocol RootViewControllerScenesFactory {
+    func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
+    func makeOnboardingViewController() -> OnboardingViewController
+    func makeMainViewController() -> UIViewController
+    func makeLocalAuthVC() -> LocalAuthVC
+}
+
 class RootViewController: BaseVC {
+    var currentVC: UIViewController? {children.last}
     
     // MARK: - Properties
     let viewModel: RootViewModel
-    var currentVC: UIViewController? {children.last}
+    let scenesFactory: RootViewControllerScenesFactory
     
     // MARK: - Initializer
-    init(viewModel: RootViewModel)
-    {
+    init(
+        viewModel: RootViewModel,
+        scenesFactory: RootViewControllerScenesFactory
+    ) {
         self.viewModel = viewModel
+        self.scenesFactory = scenesFactory
         super.init()
     }
     
@@ -45,21 +56,20 @@ class RootViewController: BaseVC {
         case .initializing:
             break
         case .createOrRestoreWallet:
-            let vc = DependencyContainer.shared.makeCreateOrRestoreWalletViewController()
+            let vc = scenesFactory.makeCreateOrRestoreWalletViewController()
             let nc = BENavigationController(rootViewController: vc)
             transition(to: nc)
         case .onboarding:
-            let vc = DependencyContainer.shared.makeOnboardingViewController()
+            let vc = scenesFactory.makeOnboardingViewController()
             transition(to: vc)
         case .main:
-            DependencyContainer.shared.makeMyWalletsVM()
-            let vc = DependencyContainer.shared.makeMainVC()
+            let vc = scenesFactory.makeMainViewController()
             transition(to: vc)
         }
     }
     
     private func authenticate() {
-        let localAuthVC = DependencyContainer.shared.makeLocalAuthVC()
+        let localAuthVC = scenesFactory.makeLocalAuthVC()
         localAuthVC.completion = { [self] didSuccess in
             viewModel.localAuthVCShown = false
             if !didSuccess {

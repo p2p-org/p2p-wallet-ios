@@ -9,6 +9,16 @@ import Foundation
 import Action
 import RxSwift
 
+protocol MainScenesFactory {
+    func makeWalletDetailVC(wallet: Wallet) -> WalletDetailVC
+    func makeReceiveTokenViewController() -> ReceiveTokenVC
+    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> WLModalWrapperVC
+    func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController
+    func makeMyProductsVC() -> MyProductsVC
+    func makeProfileVC() -> ProfileVC
+    func makeAddNewTokenVC() -> AddNewWalletVC
+}
+
 enum MainVCItem: ListItemType {
     static func placeholder(at index: Int) -> MainVCItem {
         .wallet(Wallet.placeholder(at: index))
@@ -32,6 +42,12 @@ class MainVC: CollectionVC<MainVCItem> {
     // MARK: - Properties
     let interactor = MenuInteractor()
     let numberOfWalletsToShow = 4
+    let scenesFactory: MainScenesFactory
+    
+    init(viewModel: ListViewModel<MainVCItem>, scenesFactory: MainScenesFactory) {
+        self.scenesFactory = scenesFactory
+        super.init(viewModel: viewModel)
+    }
     
     lazy var avatarImageView = UIImageView(width: 30, height: 30, image: .mainSettings)
         .onTap(self, action: #selector(avatarImageViewDidTouch))
@@ -189,7 +205,7 @@ class MainVC: CollectionVC<MainVCItem> {
     override func itemDidSelect(_ item: MainVCItem) {
         switch item {
         case .wallet(let wallet):
-            let vc = DependencyContainer.shared.makeWalletDetailVC(wallet: wallet)
+            let vc = scenesFactory.makeWalletDetailVC(wallet: wallet)
             present(vc, animated: true, completion: nil)
         default:
             break
@@ -198,7 +214,7 @@ class MainVC: CollectionVC<MainVCItem> {
     
     var receiveAction: CocoaAction {
         CocoaAction { _ in
-            let vc = DependencyContainer.shared.makeReceiveTokenViewController()
+            let vc = self.scenesFactory.makeReceiveTokenViewController()
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
@@ -206,8 +222,8 @@ class MainVC: CollectionVC<MainVCItem> {
     
     func sendAction(address: String? = nil) -> CocoaAction {
         CocoaAction { _ in
-            let vc = DependencyContainer.shared
-                .makeSendTokenViewController(destinationAddress: address)
+            let vc = self.scenesFactory
+                .makeSendTokenViewController(activeWallet: nil, destinationAddress: address)
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
@@ -215,7 +231,7 @@ class MainVC: CollectionVC<MainVCItem> {
     
     var swapAction: CocoaAction {
         CocoaAction { _ in
-            let vc = DependencyContainer.shared.makeSwapTokenViewController()
+            let vc = self.scenesFactory.makeSwapTokenViewController(fromWallet: nil)
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
@@ -223,7 +239,7 @@ class MainVC: CollectionVC<MainVCItem> {
     
     var showAllProducts: CocoaAction {
         CocoaAction { _ in
-            let vc = DependencyContainer.shared.makeMyProductVC()
+            let vc = self.scenesFactory.makeMyProductsVC()
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
@@ -231,7 +247,7 @@ class MainVC: CollectionVC<MainVCItem> {
     
     var addCoin: CocoaAction {
         CocoaAction {_ in
-            let vc = DependencyContainer.shared.makeAddNewTokenVC()
+            let vc = self.scenesFactory.makeAddNewTokenVC()
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
@@ -239,14 +255,14 @@ class MainVC: CollectionVC<MainVCItem> {
     
     var openProfile: CocoaAction {
         CocoaAction { _ in
-            let profileVC = DependencyContainer.shared.makeProfileVC()
+            let profileVC = self.scenesFactory.makeProfileVC()
             self.present(profileVC, animated: true, completion: nil)
             return .just(())
         }
     }
     
     @objc func avatarImageViewDidTouch() {
-        let vc = DependencyContainer.shared.makeProfileVC()
+        let vc = self.scenesFactory.makeProfileVC()
         present(vc, animated: true, completion: nil)
     }
     
