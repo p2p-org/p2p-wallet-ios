@@ -18,7 +18,9 @@ struct LocalizedLanguage: Hashable, Codable, DefaultsSerializable {
 class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
     override var dataDidChange: Bool {selectedItem != Defaults.localizedLanguage}
     
-    override init() {
+    let rootViewModel: RootViewModel
+    init(rootViewModel: RootViewModel) {
+        self.rootViewModel = rootViewModel
         super.init()
         data = [LocalizedLanguage: Bool]()
         Bundle.main.localizations.filter({$0 != "Base"}).forEach {
@@ -42,7 +44,7 @@ class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
         showAlert(title: L10n.switchLanguage, message: L10n.doYouReallyWantToSwitchTo + " " + selectedItem.localizedName?.uppercaseFirst + "?", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
             if index != 0 {return}
             UIApplication.changeLanguage(to: self.selectedItem)
-            AppDelegate.shared.reloadRootVC()
+            self.rootViewModel.reload()
         }
     }
 }

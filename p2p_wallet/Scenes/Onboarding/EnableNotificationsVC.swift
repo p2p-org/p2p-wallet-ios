@@ -7,11 +7,18 @@
 
 import Foundation
 import UserNotifications
-import SwiftUI
 
-class EnableNotificationsVC: SecuritySettingVC {
-    override var nextVC: UIViewController { WellDoneVC() }
+class EnableNotificationsVC: BaseOnboardingVC {
+    // MARK: - Properties
+    let onboardingViewModel: OnboardingViewModel
     
+    // MARK: - Inititalizers
+    init(onboardingViewModel: OnboardingViewModel) {
+        self.onboardingViewModel = onboardingViewModel
+        super.init()
+    }
+    
+    // MARK: - Methods
     override func setUp() {
         super.setUp()
         acceptButton.setTitle(L10n.enableNow, for: .normal)
@@ -33,11 +40,11 @@ class EnableNotificationsVC: SecuritySettingVC {
     }
     
     override func buttonDoThisLaterDidTouch() {
-        Defaults.didSetEnableNotifications = true
-        super.buttonDoThisLaterDidTouch()
+        onboardingViewModel.markNotificationsAsSet()
     }
     
-    func getNotificationSettings() {
+    // MARK: - Helpers
+    private func getNotificationSettings() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             print("Notification settings: \(settings)")
             guard settings.authorizationStatus == .authorized else {
@@ -46,21 +53,8 @@ class EnableNotificationsVC: SecuritySettingVC {
             }
             DispatchQueue.main.async {
                 UIApplication.shared.registerForRemoteNotifications()
-                Defaults.didSetEnableNotifications = true
-                self.next()
+                self.onboardingViewModel.markNotificationsAsSet()
             }
-        }
-    }
-}
-
-@available(iOS 13, *)
-struct EnableNotificationsVC_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            UIViewControllerPreview {
-                EnableNotificationsVC()
-            }
-            .previewDevice("iPhone SE (2nd generation)")
         }
     }
 }
