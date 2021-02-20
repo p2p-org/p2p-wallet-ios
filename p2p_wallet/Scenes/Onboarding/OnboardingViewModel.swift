@@ -13,6 +13,8 @@ enum OnboardingNavigatableScene {
     case createPincode
     case setUpBiometryAuthentication
     case setUpNotifications
+    case done
+    case dismiss
 }
 
 class OnboardingViewModel {
@@ -44,11 +46,30 @@ class OnboardingViewModel {
             navigationSubject.onNext(.setUpBiometryAuthentication)
         } else if !Defaults.didSetEnableNotifications {
             navigationSubject.onNext(.setUpNotifications)
+        } else {
+            navigationSubject.onNext(.done)
         }
     }
     
     // MARK: - Actions
-//    @objc func showDetail() {
-//        
-//    }
+    func savePincode(_ pincode: String) {
+        accountStorage.save(pincode)
+        navigationSubject.onNext(.setUpBiometryAuthentication)
+    }
+    
+    func setEnableBiometry(_ on: Bool) {
+        Defaults.isBiometryEnabled = on
+        Defaults.didSetEnableBiometry = true
+        navigationSubject.onNext(.setUpNotifications)
+    }
+    
+    func markNotificationsAsSet() {
+        Defaults.didSetEnableNotifications = true
+        navigationSubject.onNext(.done)
+    }
+    
+    func endOnboarding() {
+        navigationSubject.onNext(.dismiss)
+        handler.onboardingDidComplete()
+    }
 }

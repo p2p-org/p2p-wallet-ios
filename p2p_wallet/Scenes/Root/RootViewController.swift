@@ -41,21 +41,20 @@ class RootViewController: BaseVC {
     
     // MARK: - Navigation
     private func navigate(to scene: RootNavigatableScene) {
-        var vcToAdd: UIViewController?
         switch scene {
         case .initializing:
             break
         case .createOrRestoreWallet:
             let vc = DependencyContainer.shared.makeCreateOrRestoreWalletViewController()
-            vcToAdd = BENavigationController(rootViewController: vc)
+            let nc = BENavigationController(rootViewController: vc)
+            transition(to: nc)
         case .onboarding:
-            vcToAdd = DependencyContainer.shared.makeOnboardingViewController()
-        case .main:
-            vcToAdd = DependencyContainer.shared.makeTabBarVC()
-        }
-        
-        if let vc = vcToAdd {
+            let vc = DependencyContainer.shared.makeOnboardingViewController()
             transition(to: vc)
+        case .main:
+            let vc = DependencyContainer.shared.makeTabBarVC()
+            removeAllChilds()
+            add(child: vc)
         }
     }
     
