@@ -34,7 +34,6 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     
     var shouldShowLocalAuth = true
     var localAuthVCShown = false
-    private var shouldUpdateBalance = false
     private(set) var timestamp = Date().timeIntervalSince1970
     
     // MARK: - Subjects
@@ -46,10 +45,12 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
         self.accountStorage = accountStorage
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     func observeAppNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(appDidActive), name: UIScene.didActivateNotification, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIScene.didEnterBackgroundNotification, object: nil)
     }
     
     func reload() {
@@ -85,16 +86,6 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
             timestamp = newTimestamp
             authenticationSubject.onNext(())
         }
-        
-        // update balance
-        if shouldUpdateBalance {
-            DependencyContainer.shared.sharedMyWalletsVM.reload()
-            shouldUpdateBalance = false
-        }
-    }
-    
-    @objc func appDidEnterBackground() {
-        shouldUpdateBalance = true
     }
     
     // MARK: - Handler

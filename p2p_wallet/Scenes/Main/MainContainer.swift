@@ -93,7 +93,7 @@ class MainContainer {
     }
     
     func makeSelectNetworkVC() -> SelectNetworkVC {
-        SelectNetworkVC(accountStorage: accountStorage, rootViewModel: rootViewModel)
+        SelectNetworkVC(accountStorage: accountStorage, rootViewModel: rootViewModel, changeNetworkResponder: self)
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {
@@ -119,11 +119,13 @@ class MainContainer {
         return vc
     }
     
-    func changeNetwork() {
+    func changeNetwork(to network: SolanaSDK.Network) {
+        Defaults.network = network
+        
         self.socket.disconnect()
         self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: accountStorage)
         self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: accountStorage.account?.publicKey)
     }
 }
 
-extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory, MainScenesFactory {}
+extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory, MainScenesFactory, ChangeNetworkResponder {}

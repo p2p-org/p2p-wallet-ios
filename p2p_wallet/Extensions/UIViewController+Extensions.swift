@@ -96,8 +96,17 @@ extension UIViewController {
     
     // MARK: - Custom modal
     func presentCustomModal(vc wrappedVC: UIViewController, title: String? = nil, titleImageView: UIView? = nil) {
-        let vc = DependencyContainer.shared.makeCustomModalVC(wrappedVC: wrappedVC, title: title, titleImageView: titleImageView)
+        let vc = makeCustomModalVC(wrappedVC: wrappedVC, title: title, titleImageView: titleImageView)
         present(vc, animated: true, completion: nil)
+    }
+    
+    func makeCustomModalVC(wrappedVC: UIViewController, title: String? = nil, titleImageView: UIView? = nil) -> WLModalWrapperVC {
+        let vc = WLModalWrapperVC(wrapped: wrappedVC)
+        vc.title = title
+        vc.titleImageView = titleImageView
+        vc.modalPresentationStyle = wrappedVC.modalPresentationStyle
+        vc.transitioningDelegate = wrappedVC as? UIViewControllerTransitioningDelegate
+        return vc
     }
     
     @objc func hideKeyboard() {

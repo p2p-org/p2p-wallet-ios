@@ -13,10 +13,6 @@ class DependencyContainer {
     let sharedAccountStorage: KeychainAccountStorage
     let sharedRootViewModel: RootViewModel
     
-    // MARK: - Singleton
-    @available(*, deprecated, message: "Singleton will be removed")
-    static let shared = DependencyContainer()
-    
     init() {
         self.sharedAccountStorage = KeychainAccountStorage()
         self.sharedRootViewModel = RootViewModel(accountStorage: sharedAccountStorage)
