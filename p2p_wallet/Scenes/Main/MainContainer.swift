@@ -39,11 +39,11 @@ class MainContainer {
     }
     
     func makeWalletDetailVC(wallet: Wallet) -> WalletDetailVC {
-        WalletDetailVC(solanaSDK: solanaSDK, walletsVM: myWalletsVM, wallet: wallet)
+        WalletDetailVC(solanaSDK: solanaSDK, walletsVM: myWalletsVM, wallet: wallet, scenesFactory: self)
     }
     
     func makeAddNewTokenVC() -> AddNewWalletVC {
-        let vm = _AddNewWalletVM(solanaSDK: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager)
+        let vm = _AddNewWalletVM(solanaSDK: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, scenesFactory: self)
         return AddNewWalletVC(viewModel: vm)
     }
     
@@ -51,26 +51,26 @@ class MainContainer {
         ReceiveTokenVC(wallets: myWalletsVM.data)
     }
     
-    func makeSendTokenViewController(activeWallet: Wallet? = nil, destinationAddress: String? = nil) -> WLModalWrapperVC {
+    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> WLModalWrapperVC {
         let vm = SendTokenViewModel(solanaSDK: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, activeWallet: activeWallet, destinationAddress: destinationAddress)
-        let wrappedVC = SendTokenViewController(viewModel: vm)
+        let wrappedVC = SendTokenViewController(viewModel: vm, scenesFactory: self)
         let titleImageView = UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
             .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
         return makeCustomModalVC(wrappedVC: wrappedVC, title: L10n.send, titleImageView: titleImageView)
     }
     
-    func makeSwapTokenViewController(fromWallet wallet: Wallet? = nil) -> SwapTokenViewController {
+    func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController {
         let vm = SwapTokenViewModel(solanaSDK: solanaSDK, transactionManager: transactionManager, wallets: myWalletsVM.data, fromWallet: wallet)
-        return SwapTokenViewController(viewModel: vm)
+        return SwapTokenViewController(viewModel: vm, scenesFactory: self)
     }
     
     func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)? = nil) -> ChooseWalletVC {
-        ChooseWalletVC(viewModel: myWalletsVM, customFilter: customFilter)
+        ChooseWalletVC(viewModel: myWalletsVM, sceneFactory: self, customFilter: customFilter)
     }
     
     func makeSwapChooseDestinationWalletVC() -> ChooseWalletVC {
         let vm = SwapChooseDestinationViewModel(solanaSDK: solanaSDK, socket: socket, walletsVM: myWalletsVM)
-        let vc = ChooseWalletVC(viewModel: vm, customFilter: {_ in true})
+        let vc = ChooseWalletVC(viewModel: vm, sceneFactory: self, customFilter: {_ in true})
         vm.reload()
         return vc
     }
@@ -85,10 +85,10 @@ class MainContainer {
     }
     
     func makeBackupVC() -> BackupVC {
-        BackupVC(accountStorage: accountStorage)
+        BackupVC(accountStorage: accountStorage, scenesFactory: self)
     }
     
-    func makeBackupMannuallyVC() -> BackupManuallyVC {
+    func makeBackupManuallyVC() -> BackupManuallyVC {
         BackupManuallyVC(accountStorage: accountStorage)
     }
     
@@ -126,4 +126,4 @@ class MainContainer {
     }
 }
 
-extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory {}
+extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory {}

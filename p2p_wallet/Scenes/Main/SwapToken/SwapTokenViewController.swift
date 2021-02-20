@@ -10,7 +10,7 @@ import UIKit
 import Action
 
 protocol SwapScenesFactory {
-    func makeChooseWalletVC() -> ChooseWalletVC
+    func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
     func makeSwapChooseDestinationWalletVC() -> ChooseWalletVC
     func makeProcessTransactionVC() -> ProcessTransactionVC
 }
@@ -74,7 +74,7 @@ private class _SwapTokenViewController: BaseVC {
             .subscribe(onNext: {
                 switch $0 {
                 case .chooseSourceWallet:
-                    let vc = self.scenesFactory.makeChooseWalletVC()
+                    let vc = self.scenesFactory.makeChooseWalletVC(customFilter: nil)
                     vc.completion = {wallet in
                         let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
                         self.viewModel.sourceWallet.accept(wallet)
