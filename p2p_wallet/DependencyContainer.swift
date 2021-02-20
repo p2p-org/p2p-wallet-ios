@@ -47,17 +47,13 @@ class DependencyContainer {
     
     func makeCreateWalletViewController() -> CreateWalletViewController
     {
-        let viewModel = CreateWalletViewModel(completion: {
-            self.sharedRootViewModel.navigationSubject.accept(.boarding)
-        })
+        let viewModel = CreateWalletViewModel(handler: sharedRootViewModel)
         return CreateWalletViewController(viewModel: viewModel)
     }
     
     func makeRestoreWalletViewController() -> RestoreWalletViewController
     {
-        let viewModel = RestoreWalletViewModel(accountStorage: sharedAccountStorage, completion: {
-            self.sharedRootViewModel.navigationSubject.accept(.boarding)
-        })
+        let viewModel = RestoreWalletViewModel(accountStorage: sharedAccountStorage, handler: sharedRootViewModel)
         return RestoreWalletViewController(viewModel: viewModel)
     }
     

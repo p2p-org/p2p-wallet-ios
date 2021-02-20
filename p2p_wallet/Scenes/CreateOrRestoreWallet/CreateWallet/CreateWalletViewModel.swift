@@ -20,17 +20,17 @@ class CreateWalletViewModel {
     
     // MARK: - Properties
     let bag = DisposeBag()
-    let completion: () -> Void
+    let handler: CreateOrRestoreWalletHandler
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<CreateWalletNavigatableScene>()
     
-    init(completion: @escaping () -> Void) {
-        self.completion = completion
+    init(handler: CreateOrRestoreWalletHandler) {
+        self.handler = handler
     }
     
     func finish() {
         navigationSubject.onNext(.dismiss)
-        completion()
+        handler.creatingOrRestoringWalletDidComplete()
     }
 }
