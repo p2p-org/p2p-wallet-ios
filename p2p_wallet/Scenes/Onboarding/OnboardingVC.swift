@@ -1,5 +1,5 @@
 //
-//  SecuritySettingVC.swift
+//  OnboardingVC.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 10/30/20.
@@ -7,11 +7,7 @@
 
 import Foundation
 
-class SecuritySettingVC: WLIntroVC {
-    var nextVC: UIViewController {
-        fatalError("Must override")
-    }
-    
+class OnboardingVC: WLIntroVC {
     lazy var acceptButton = WLButton.stepButton(type: .blue, label: nil)
         .onTap(self, action: #selector(buttonAcceptDidTouch))
     
@@ -25,13 +21,6 @@ class SecuritySettingVC: WLIntroVC {
         buttonsStackView.addArrangedSubview(doThisLaterButton)
     }
     
-    @objc func buttonDoThisLaterDidTouch() {
-        next()
-    }
-    
+    @objc func buttonDoThisLaterDidTouch() {}
     @objc func buttonAcceptDidTouch() {}
-    
-    func next() {
-        show(nextVC, sender: nil)
-    }
 }
