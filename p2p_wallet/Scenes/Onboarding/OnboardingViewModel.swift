@@ -9,14 +9,10 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-enum OnboardingNavigatableScene: Int {
-    case pincode = 0
-    case biometry
-    case notification
-    
-    var next: Self? {
-        Self(rawValue: rawValue + 1)
-    }
+enum OnboardingNavigatableScene {
+    case createPincode
+    case setUpBiometryAuthentication
+    case setUpNotifications
 }
 
 class OnboardingViewModel {
@@ -24,6 +20,8 @@ class OnboardingViewModel {
     
     // MARK: - Properties
     let bag = DisposeBag()
+    let handler: OnboardingHandler
+    let accountStorage: KeychainAccountStorage
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<OnboardingNavigatableScene>()
@@ -32,13 +30,21 @@ class OnboardingViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializer
-    init() {
-        bind()
+    init(accountStorage: KeychainAccountStorage, handler: OnboardingHandler) {
+        self.accountStorage = accountStorage
+        self.handler = handler
+        navigateNext()
     }
     
     // MARK: - Binding
-    func bind() {
-        
+    func navigateNext() {
+        if accountStorage.pinCode == nil {
+            navigationSubject.onNext(.createPincode)
+        } else if !Defaults.didSetEnableBiometry {
+            navigationSubject.onNext(.setUpBiometryAuthentication)
+        } else if !Defaults.didSetEnableNotifications {
+            navigationSubject.onNext(.setUpNotifications)
+        }
     }
     
     // MARK: - Actions

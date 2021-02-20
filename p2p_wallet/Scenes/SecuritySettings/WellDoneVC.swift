@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-class WellDoneVC: SecuritySettingVC {
+class WellDoneVC: OnboardingVC {
     let rootViewModel: RootViewModel
     init(rootViewModel: RootViewModel) {
         self.rootViewModel = rootViewModel

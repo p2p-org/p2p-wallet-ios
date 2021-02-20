@@ -9,7 +9,7 @@ import Foundation
 import UserNotifications
 import SwiftUI
 
-class EnableNotificationsVC: SecuritySettingVC {
+class EnableNotificationsVC: OnboardingVC {
     override var nextVC: UIViewController {
         DependencyContainer.shared.makeWeldoneVC()
     }
