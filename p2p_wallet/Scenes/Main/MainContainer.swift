@@ -35,7 +35,7 @@ class MainContainer {
     }
     
     func makeMyProductVC() -> MyProductsVC {
-        MyProductsVC(walletsVM: myWalletsVM)
+        MyProductsVC(walletsVM: myWalletsVM, scenesFactory: self)
     }
     
     func makeWalletDetailVC(wallet: Wallet) -> WalletDetailVC {
@@ -81,7 +81,7 @@ class MainContainer {
     
     // MARK: - Profile VCs
     func makeProfileVC() -> ProfileVC {
-        ProfileVC(accountStorage: accountStorage, rootViewModel: rootViewModel)
+        ProfileVC(accountStorage: accountStorage, rootViewModel: rootViewModel, scenesFactory: self)
     }
     
     func makeBackupVC() -> BackupVC {
@@ -126,4 +126,4 @@ class MainContainer {
     }
 }
 
-extension MainContainer: TabBarScenesFactory {}
+extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory {}

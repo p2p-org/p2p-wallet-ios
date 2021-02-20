@@ -9,6 +9,7 @@ import Foundation
 
 protocol TabBarScenesFactory {
     func makeMainVC() -> MainVC
+    func makeProfileVC() -> ProfileVC
 }
 
 class TabBarVC: BEPagesVC {
@@ -101,7 +102,7 @@ class TabBarVC: BEPagesVC {
         
         // show profile modal
         if tag == 3 {
-            let vc = DependencyContainer.shared.makeProfileVC()
+            let vc = scenesFactory.makeProfileVC()
             present(vc, animated: true, completion: nil)
             return
         }
