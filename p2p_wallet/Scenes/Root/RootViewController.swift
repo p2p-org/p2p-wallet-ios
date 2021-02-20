@@ -48,7 +48,7 @@ class RootViewController: BaseVC {
         case .createOrRestoreWallet:
             let vc = DependencyContainer.shared.makeCreateOrRestoreWalletViewController()
             vcToAdd = BENavigationController(rootViewController: vc)
-        case .boarding:
+        case .onboarding:
             vcToAdd = DependencyContainer.shared.makeOnboardingViewController()
         case .main:
             vcToAdd = DependencyContainer.shared.makeTabBarVC()

@@ -19,21 +19,21 @@ class RestoreWalletViewModel {
     
     // MARK: - Properties
     let bag = DisposeBag()
-    let completion: () -> Void
     let accountStorage: KeychainAccountStorage
+    let handler: CreateOrRestoreWalletHandler
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<RestoreWalletNavigatableScene>()
     let errorMessage = PublishSubject<String?>()
     
     // MARK: - Initializer
-    init(accountStorage: KeychainAccountStorage, completion: @escaping () -> Void) {
+    init(accountStorage: KeychainAccountStorage, handler: CreateOrRestoreWalletHandler) {
         self.accountStorage = accountStorage
-        self.completion = completion
+        self.handler = handler
     }
     
     func finish() {
-        completion()
+        handler.creatingOrRestoringWalletDidComplete()
     }
     
     // MARK: - Actions

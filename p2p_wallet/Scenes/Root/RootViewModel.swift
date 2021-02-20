@@ -12,11 +12,19 @@ import RxCocoa
 enum RootNavigatableScene: Equatable {
     case initializing
     case createOrRestoreWallet
-    case boarding
+    case onboarding
     case main
 }
 
-class RootViewModel {
+protocol CreateOrRestoreWalletHandler {
+    func creatingOrRestoringWalletDidComplete()
+}
+
+protocol OnboardingHandler {
+    func onboardingDidComplete()
+}
+
+class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     // MARK: - Constants
     let timeRequiredForAuthentication: Double = 10 // in seconds
     
@@ -53,7 +61,7 @@ class RootViewModel {
                     !Defaults.didSetEnableNotifications
         {
             shouldShowLocalAuth = false
-            navigationSubject.accept(.boarding)
+            navigationSubject.accept(.onboarding)
         } else {
             shouldShowLocalAuth = true
             navigationSubject.accept(.main)
@@ -87,5 +95,14 @@ class RootViewModel {
     
     @objc func appDidEnterBackground() {
         shouldUpdateBalance = true
+    }
+    
+    // MARK: - Handler
+    func creatingOrRestoringWalletDidComplete() {
+        navigationSubject.accept(.onboarding)
+    }
+    
+    func onboardingDidComplete() {
+        navigationSubject.accept(.main)
     }
 }
