@@ -104,8 +104,6 @@
 		BC54DD062587098800A65566 /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD052587098800A65566 /* LazyView.swift */; };
 		BC54DD232587169400A65566 /* ValueByDateChartMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD222587169400A65566 /* ValueByDateChartMarker.swift */; };
 		BC54DD8E25872FE500A65566 /* HorizontalPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD8D25872FE500A65566 /* HorizontalPicker.swift */; };
-		BC55B88E254BFBDC0032C355 /* TabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B88D254BFBDC0032C355 /* TabBarVC.swift */; };
-		BC55B8C8254C03700032C355 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC55B8C7254C03700032C355 /* TabBar.swift */; };
 		BC5ED749256237AB0030572D /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED748256237AB0030572D /* EmptyView.swift */; };
 		BC5ED74E256265700030572D /* Wallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED74D256265700030572D /* Wallet.swift */; };
 		BC5ED7532562687F0030572D /* PricesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED7522562687F0030572D /* PricesManager.swift */; };
@@ -193,6 +191,9 @@
 		BCEB205125E14E4F00B54FEF /* CreateWalletContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB205025E14E4F00B54FEF /* CreateWalletContainer.swift */; };
 		BCEB205925E1519600B54FEF /* RestoreWalletContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB205825E1519600B54FEF /* RestoreWalletContainer.swift */; };
 		BCEB206125E1532C00B54FEF /* OnboardingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB206025E1532C00B54FEF /* OnboardingContainer.swift */; };
+		BCEB206C25E1561200B54FEF /* TabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB206A25E1561200B54FEF /* TabBarVC.swift */; };
+		BCEB206D25E1561200B54FEF /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB206B25E1561200B54FEF /* TabBar.swift */; };
+		BCEB207225E1563B00B54FEF /* MainContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB207125E1563B00B54FEF /* MainContainer.swift */; };
 		BCEF14AC25CFF13E00DFE931 /* _AddNewWalletVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEF14AB25CFF13E00DFE931 /* _AddNewWalletVC.swift */; };
 		BCEF14B525CFF22100DFE931 /* _AddNewWalletVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEF14B425CFF22100DFE931 /* _AddNewWalletVM.swift */; };
 		BCEF14BA25CFF27800DFE931 /* _AddNewWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEF14B925CFF27800DFE931 /* _AddNewWalletCell.swift */; };
@@ -331,8 +332,6 @@
 		BC54DD052587098800A65566 /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		BC54DD222587169400A65566 /* ValueByDateChartMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueByDateChartMarker.swift; sourceTree = "<group>"; };
 		BC54DD8D25872FE500A65566 /* HorizontalPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalPicker.swift; sourceTree = "<group>"; };
-		BC55B88D254BFBDC0032C355 /* TabBarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarVC.swift; sourceTree = "<group>"; };
-		BC55B8C7254C03700032C355 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		BC5ED748256237AB0030572D /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		BC5ED74D256265700030572D /* Wallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wallet.swift; sourceTree = "<group>"; };
 		BC5ED7522562687F0030572D /* PricesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricesManager.swift; sourceTree = "<group>"; };
@@ -427,6 +426,9 @@
 		BCEB205025E14E4F00B54FEF /* CreateWalletContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateWalletContainer.swift; sourceTree = "<group>"; };
 		BCEB205825E1519600B54FEF /* RestoreWalletContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreWalletContainer.swift; sourceTree = "<group>"; };
 		BCEB206025E1532C00B54FEF /* OnboardingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContainer.swift; sourceTree = "<group>"; };
+		BCEB206A25E1561200B54FEF /* TabBarVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarVC.swift; sourceTree = "<group>"; };
+		BCEB206B25E1561200B54FEF /* TabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
+		BCEB207125E1563B00B54FEF /* MainContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContainer.swift; sourceTree = "<group>"; };
 		BCEF14AB25CFF13E00DFE931 /* _AddNewWalletVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _AddNewWalletVC.swift; sourceTree = "<group>"; };
 		BCEF14B425CFF22100DFE931 /* _AddNewWalletVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _AddNewWalletVM.swift; sourceTree = "<group>"; };
 		BCEF14B925CFF27800DFE931 /* _AddNewWalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _AddNewWalletCell.swift; sourceTree = "<group>"; };
@@ -639,16 +641,6 @@
 			path = ChartMarkers;
 			sourceTree = "<group>";
 		};
-		BC55B8C3254C03660032C355 /* TabBarVC */ = {
-			isa = PBXGroup;
-			children = (
-				BC55B8C7254C03700032C355 /* TabBar.swift */,
-				BC55B88D254BFBDC0032C355 /* TabBarVC.swift */,
-			);
-			name = TabBarVC;
-			path = Main/TabBarVC;
-			sourceTree = "<group>";
-		};
 		BC5FB0C325DA03D90021DFF3 /* Subviews */ = {
 			isa = PBXGroup;
 			children = (
@@ -702,18 +694,7 @@
 				BCAB212725DF5CFD004F4F9D /* Root */,
 				BCE42DE125DF9B980021540E /* CreateOrRestoreWallet */,
 				BCE42DF125DF9C360021540E /* Onboarding */,
-				BC55B8C3254C03660032C355 /* TabBarVC */,
-				BC23B572254FBB6300886C9C /* MainVC */,
-				BC11C9FA2591B29F00E399A9 /* MyProductsVC */,
-				BCD5E75225512DA800F51299 /* InvestmentsVC */,
-				BC2EC1892553B6EE006EEDA5 /* WalletDetailVC */,
-				BCEF14A725CFF0E500DFE931 /* AddWallet */,
-				BCABF69D2588746400749EEC /* ProfileVC */,
-				BC22A5D825D2716400F7026D /* SendToken */,
-				BCBBE1822563C0F400533F6B /* ReceiveToken */,
-				BC1D2ACA256B6E7A0064E595 /* SwapToken */,
-				BCAB1F5425DCBE89004F4F9D /* ChooseWalletVC */,
-				BC5FB0C425DA03FB0021DFF3 /* SwapSlippageSettings */,
+				BCEB206825E1559500B54FEF /* Main */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -1060,6 +1041,35 @@
 				BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */,
 			);
 			path = RestoreWallet;
+			sourceTree = "<group>";
+		};
+		BCEB206825E1559500B54FEF /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				BCEB207125E1563B00B54FEF /* MainContainer.swift */,
+				BCEB206925E1561200B54FEF /* TabBarVC */,
+				BC23B572254FBB6300886C9C /* MainVC */,
+				BC11C9FA2591B29F00E399A9 /* MyProductsVC */,
+				BCD5E75225512DA800F51299 /* InvestmentsVC */,
+				BC2EC1892553B6EE006EEDA5 /* WalletDetailVC */,
+				BCEF14A725CFF0E500DFE931 /* AddWallet */,
+				BCABF69D2588746400749EEC /* ProfileVC */,
+				BC22A5D825D2716400F7026D /* SendToken */,
+				BCBBE1822563C0F400533F6B /* ReceiveToken */,
+				BC1D2ACA256B6E7A0064E595 /* SwapToken */,
+				BCAB1F5425DCBE89004F4F9D /* ChooseWalletVC */,
+				BC5FB0C425DA03FB0021DFF3 /* SwapSlippageSettings */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		BCEB206925E1561200B54FEF /* TabBarVC */ = {
+			isa = PBXGroup;
+			children = (
+				BCEB206A25E1561200B54FEF /* TabBarVC.swift */,
+				BCEB206B25E1561200B54FEF /* TabBar.swift */,
+			);
+			path = TabBarVC;
 			sourceTree = "<group>";
 		};
 		BCEF14A725CFF0E500DFE931 /* AddWallet */ = {
@@ -1443,6 +1453,7 @@
 				BCEA06BE2542FD3F0006E4C3 /* Asset+Generated.swift in Sources */,
 				BCAB1F6125DCC1A1004F4F9D /* SwapChooseDestinationWalletViewModel.swift in Sources */,
 				BCAB212D25DF5D1C004F4F9D /* RootViewController.swift in Sources */,
+				BCEB206C25E1561200B54FEF /* TabBarVC.swift in Sources */,
 				BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */,
 				BC3ADE8D2570B832002B3B16 /* WLCenterSheet.swift in Sources */,
 				BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */,
@@ -1478,7 +1489,6 @@
 				BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */,
 				BCE42E1A25DFA5100021540E /* RestoreWalletViewController.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WellDoneVC.swift in Sources */,
-				BC55B8C8254C03700032C355 /* TabBar.swift in Sources */,
 				BC11CA012591B58100E399A9 /* MyProductsWalletCell.swift in Sources */,
 				BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */,
 				BCA9941F25AE93D5005BD8FB /* Fonts+Generated.swift in Sources */,
@@ -1499,7 +1509,7 @@
 				BC7533B5257F3E7B007A00D9 /* EnterPhrasesVC.swift in Sources */,
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,
 				BC105130258B05DF00398EA2 /* BackupManuallyVC.swift in Sources */,
-				BC55B88E254BFBDC0032C355 /* TabBarVC.swift in Sources */,
+				BCEB206D25E1561200B54FEF /* TabBar.swift in Sources */,
 				BCB92B8025B5386F00FF615E /* WLIntroVC.swift in Sources */,
 				BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
@@ -1523,6 +1533,7 @@
 				BC10510925887F7D00398EA2 /* BackupVC.swift in Sources */,
 				BC11C9E325909D2400E399A9 /* MainWalletCell.swift in Sources */,
 				BC23B574254FBB7F00886C9C /* MainVC.swift in Sources */,
+				BCEB207225E1563B00B54FEF /* MainContainer.swift in Sources */,
 				BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */,
 				BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */,
 				BC490CCC256CCEBC006E7AC9 /* AddNewWalletVC.swift in Sources */,
