@@ -15,20 +15,46 @@ class DependencyContainer {
     var sharedSocket: SolanaSDK.Socket
     let sharedTransactionManager: TransactionsManager
     private(set) var sharedMyWalletsVM: WalletsVM!
+    let sharedRootViewModel: RootViewModel
     
     // MARK: - Singleton
     static let shared = DependencyContainer()
     
-    private init() {
+    init() {
         self.sharedAccountStorage = KeychainAccountStorage()
         self.sharedSolanaSDK = SolanaSDK(network: Defaults.network, accountStorage: sharedAccountStorage)
         self.sharedSocket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: sharedSolanaSDK.accountStorage.account?.publicKey)
         self.sharedTransactionManager = TransactionsManager(socket: sharedSocket)
+        self.sharedRootViewModel = RootViewModel(accountStorage: sharedAccountStorage)
     }
     
     // MARK: - State
     func makeMyWalletsVM() {
         self.sharedMyWalletsVM = WalletsVM(solanaSDK: sharedSolanaSDK, socket: sharedSocket, transactionManager: sharedTransactionManager)
+    }
+    
+    // MARK: - Root
+    func makeRootViewController() -> RootViewController {
+        return RootViewController(viewModel: sharedRootViewModel)
+    }
+    
+    // MARK: - CreateOrRestore wallet
+    func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
+    {
+        let viewModel = CreateOrRestoreWalletViewModel()
+        return CreateOrRestoreWalletViewController(viewModel: viewModel)
+    }
+    
+    func makeCreateWalletViewController() -> CreateWalletViewController
+    {
+        let viewModel = CreateWalletViewModel(handler: sharedRootViewModel)
+        return CreateWalletViewController(viewModel: viewModel)
+    }
+    
+    func makeRestoreWalletViewController() -> RestoreWalletViewController
+    {
+        let viewModel = RestoreWalletViewModel(accountStorage: sharedAccountStorage, handler: sharedRootViewModel)
+        return RestoreWalletViewController(viewModel: viewModel)
     }
     
     // MARK: - Authentication
@@ -37,16 +63,21 @@ class DependencyContainer {
     }
     
     // MARK: - Onboarding
-    func makeRestoreWalletVC() -> RestoreWalletVC {
-        RestoreWalletVC(accountStorage: sharedAccountStorage)
+    func makeOnboardingViewController() -> OnboardingViewController {
+        let viewModel = OnboardingViewModel(accountStorage: sharedAccountStorage, handler: sharedRootViewModel)
+        return OnboardingViewController(viewModel: viewModel)
     }
     
-    func makeSSPinCodeVC() -> SSPinCodeVC {
-        SSPinCodeVC(accountStorage: sharedAccountStorage)
+    func makeCreatePhrasesVC(createWalletViewModel: CreateWalletViewModel) -> CreatePhrasesVC {
+        CreatePhrasesVC(accountStorage: sharedAccountStorage, createWalletViewModel: createWalletViewModel)
     }
     
-    func makeWelcomeBackVC(phrases: [String]) -> WelcomeBackVC {
-        WelcomeBackVC(phrases: phrases, accountStorage: sharedAccountStorage)
+    func makeWelcomeBackVC(phrases: [String], restoreWalletViewModel: RestoreWalletViewModel) -> WelcomeBackVC {
+        WelcomeBackVC(phrases: phrases, accountStorage: sharedAccountStorage, restoreWalletViewModel: restoreWalletViewModel)
+    }
+    
+    func makeEnterPhrasesVC(restoreWalletViewModel: RestoreWalletViewModel) -> EnterPhrasesVC {
+        EnterPhrasesVC(restoreWalletViewModel: restoreWalletViewModel)
     }
     
     // MARK: - Tabbar
@@ -71,7 +102,11 @@ class DependencyContainer {
     
     // MARK: - Profile VCs
     func makeProfileVC() -> ProfileVC {
-        ProfileVC(accountStorage: sharedAccountStorage)
+        ProfileVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
+    }
+    
+    func makeBackupVC() -> BackupVC {
+        BackupVC(accountStorage: sharedAccountStorage)
     }
     
     func makeBackupMannuallyVC() -> BackupManuallyVC {
@@ -79,19 +114,19 @@ class DependencyContainer {
     }
     
     func makeSelectNetworkVC() -> SelectNetworkVC {
-        SelectNetworkVC(accountStorage: sharedAccountStorage)
-    }
-    
-    func makeBackupVC() -> BackupVC {
-        BackupVC(accountStorage: sharedAccountStorage)
+        SelectNetworkVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {
-        ConfigureSecurityVC(accountStorage: sharedAccountStorage)
+        ConfigureSecurityVC(accountStorage: sharedAccountStorage, rootViewModel: sharedRootViewModel)
     }
     
-    func makeCreatePhrasesVC() -> CreatePhrasesVC {
-        CreatePhrasesVC(accountStorage: sharedAccountStorage)
+    func makeSelectLanguageVC() -> SelectLanguageVC {
+        SelectLanguageVC(rootViewModel: sharedRootViewModel)
+    }
+    
+    func makeSelectAppearanceVC() -> SelectAppearanceVC {
+        SelectAppearanceVC(rootViewModel: sharedRootViewModel)
     }
     
     // MARK: - Add, Send, Receive, Swap Token VCs
