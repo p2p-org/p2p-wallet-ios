@@ -7,6 +7,10 @@
 
 import Foundation
 
+protocol AddNewWalletScenesFactory {
+    func makeWalletDetailVC(wallet: Wallet) -> WalletDetailVC
+}
+
 class AddNewWalletVC: WLModalWrapperVC {
     override var padding: UIEdgeInsets {.init(x: 0, y: .defaultPadding)}
     lazy var searchBar: BESearchBar = {

@@ -10,6 +10,14 @@ import SwiftyUserDefaults
 import LocalAuthentication
 import SwiftUI
 
+protocol ProfileScenesFactory {
+    func makeBackupVC() -> BackupVC
+    func makeSelectNetworkVC() -> SelectNetworkVC
+    func makeConfigureSecurityVC() -> ConfigureSecurityVC
+    func makeSelectLanguageVC() -> SelectLanguageVC
+    func makeSelectAppearanceVC() -> SelectAppearanceVC
+}
+
 class ProfileVC: ProfileVCBase {
     lazy var secureMethodsLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
     lazy var activeLanguageLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
@@ -17,8 +25,10 @@ class ProfileVC: ProfileVCBase {
     var disposables = [DefaultsDisposable]()
     let accountStorage: SolanaSDKAccountStorage
     let rootViewModel: RootViewModel
+    let scenesFactory: ProfileScenesFactory
     
-    init(accountStorage: SolanaSDKAccountStorage, rootViewModel: RootViewModel) {
+    init(accountStorage: SolanaSDKAccountStorage, rootViewModel: RootViewModel, scenesFactory: ProfileScenesFactory) {
+        self.scenesFactory = scenesFactory
         self.accountStorage = accountStorage
         self.rootViewModel = rootViewModel
     }
@@ -123,22 +133,20 @@ class ProfileVC: ProfileVCBase {
         guard let tag = gesture.view?.tag else {return}
         switch tag {
         case 1:
-            let vc = DependencyContainer.shared.makeBackupVC()
+            let vc = scenesFactory.makeBackupVC()
             show(vc, sender: nil)
         case 2:
-            let vc = DependencyContainer.shared.makeSelectNetworkVC()
+            let vc = scenesFactory.makeSelectNetworkVC()
             show(vc, sender: nil)
         case 3:
-            let vc = DependencyContainer.shared.makeConfigureSecurityVC()
+            let vc = scenesFactory.makeConfigureSecurityVC()
             show(vc, sender: nil)
         case 4:
-            let vc = DependencyContainer.shared.makeSelectLanguageVC()
+            let vc = scenesFactory.makeSelectLanguageVC()
             show(vc, sender: nil)
         case 5:
-            if #available(iOS 13.0, *) {
-                let vc = DependencyContainer.shared.makeSelectAppearanceVC()
-                show(vc, sender: nil)
-            }
+            let vc = scenesFactory.makeSelectAppearanceVC()
+            show(vc, sender: nil)
         default:
             return
         }

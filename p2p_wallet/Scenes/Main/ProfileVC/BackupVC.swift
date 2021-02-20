@@ -7,10 +7,17 @@
 
 import Foundation
 
+protocol BackupScenesFactory {
+    func makeBackupManuallyVC() -> BackupManuallyVC
+}
+
 class BackupVC: ProfileVCBase {
     let accountStorage: KeychainAccountStorage
-    init(accountStorage: KeychainAccountStorage) {
+    let scenesFactory: BackupScenesFactory
+    
+    init(accountStorage: KeychainAccountStorage, scenesFactory: BackupScenesFactory) {
         self.accountStorage = accountStorage
+        self.scenesFactory = scenesFactory
         super.init()
     }
     
@@ -49,7 +56,8 @@ class BackupVC: ProfileVCBase {
         localAuthVC.completion = { [weak self] didSuccess in
             if didSuccess {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    let vc = DependencyContainer.shared.makeBackupMannuallyVC()
+                    guard let vc = self?.scenesFactory.makeBackupManuallyVC()
+                    else {return}
                     self?.show(vc, sender: nil)
                 }
             }
