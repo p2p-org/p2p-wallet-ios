@@ -31,10 +31,10 @@ class MainContainer {
     
     func makeMainVC() -> MainVC {
         let vm = MainVM(walletsVM: myWalletsVM)
-        return MainVC(viewModel: vm)
+        return MainVC(viewModel: vm, scenesFactory: self)
     }
     
-    func makeMyProductVC() -> MyProductsVC {
+    func makeMyProductsVC() -> MyProductsVC {
         MyProductsVC(walletsVM: myWalletsVM, scenesFactory: self)
     }
     
@@ -126,4 +126,4 @@ class MainContainer {
     }
 }
 
-extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory {}
+extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory, MainScenesFactory {}
