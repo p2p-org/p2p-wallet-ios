@@ -25,13 +25,11 @@ class ProfileVC: ProfileVCBase {
     lazy var networkLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
     
     var disposables = [DefaultsDisposable]()
-    let accountStorage: SolanaSDKAccountStorage
     let rootViewModel: RootViewModel
     let scenesFactory: ProfileScenesFactory
     
-    init(accountStorage: SolanaSDKAccountStorage, rootViewModel: RootViewModel, scenesFactory: ProfileScenesFactory) {
+    init(rootViewModel: RootViewModel, scenesFactory: ProfileScenesFactory) {
         self.scenesFactory = scenesFactory
-        self.accountStorage = accountStorage
         self.rootViewModel = rootViewModel
     }
     
@@ -72,7 +70,7 @@ class ProfileVC: ProfileVCBase {
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             UIButton(label: L10n.logout, labelFont: .systemFont(ofSize: 15), textColor: .textSecondary)
-                .onTap(self, action: #selector(buttonLogoutDidTouch)),
+                .onTap(self, action: #selector(buttonLogoutDidTouch))
         ])
         
         setUp(enabledBiometry: Defaults.isBiometryEnabled)
@@ -125,9 +123,7 @@ class ProfileVC: ProfileVCBase {
         showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { (index) in
             if index == 0 {
                 self.dismiss(animated: true) {
-                    self.accountStorage.clear()
-                    Defaults.walletName = [:]
-                    self.rootViewModel.reload()
+                    self.rootViewModel.logout()
                 }
             }
         }
