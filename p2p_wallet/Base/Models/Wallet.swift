@@ -37,7 +37,7 @@ struct Wallet: FiatConvertable {
     
     var backgroundColor: UIColor {
         // swiftlint:disable swiftgen_assets
-        UIColor(named: symbol) ?? UIColor.background5
+        UIColor(named: symbol) ?? UIColor.coinGenericBackground
         // swiftlint:enable swiftgen_assets
     }
     
