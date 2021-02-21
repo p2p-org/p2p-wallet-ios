@@ -86,7 +86,7 @@ class MainContainer {
     
     // MARK: - Profile VCs
     func makeProfileVC() -> ProfileVC {
-        ProfileVC(accountStorage: accountStorage, rootViewModel: rootViewModel, scenesFactory: self)
+        ProfileVC(rootViewModel: rootViewModel, scenesFactory: self)
     }
     
     func makeBackupVC() -> BackupVC {
