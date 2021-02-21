@@ -37,6 +37,5 @@ class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
     
     override func saveChange() {
         AppDelegate.shared.changeThemeTo(selectedItem)
-        rootViewModel.reload()
     }
 }
