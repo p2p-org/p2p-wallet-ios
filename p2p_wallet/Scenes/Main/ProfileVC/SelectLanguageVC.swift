@@ -44,6 +44,11 @@ class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
         showAlert(title: L10n.switchLanguage, message: L10n.doYouReallyWantToSwitchTo + " " + selectedItem.localizedName?.uppercaseFirst + "?", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
             if index != 0 {return}
             UIApplication.changeLanguage(to: self.selectedItem)
+            
+            let rootVC = self.presentingViewController?.presentingViewController
+            self.presentingViewController?.dismiss(animated: false) {
+                rootVC?.dismiss(animated: true, completion: nil)
+            }
             self.rootViewModel.reload()
         }
     }
