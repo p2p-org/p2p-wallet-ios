@@ -31,8 +31,8 @@ class OnboardingViewController: WLIntroVC {
     }
     
     // MARK: - Methods
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         childNavigationController = BENavigationController()
         
         childNavigationController.isModalInPresentation = true
