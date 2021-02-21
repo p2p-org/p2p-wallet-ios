@@ -69,6 +69,14 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
         }
     }
     
+    func logout() {
+        accountStorage.clear()
+        Defaults.walletName = [:]
+        Defaults.didSetEnableBiometry = false
+        Defaults.didSetEnableNotifications = false
+        reload()
+    }
+    
     func rescheduleAuth() {
         timestamp = Date().timeIntervalSince1970
     }
