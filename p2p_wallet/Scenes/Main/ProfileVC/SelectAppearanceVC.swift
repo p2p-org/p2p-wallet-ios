@@ -27,6 +27,8 @@ class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
     override func setUp() {
         title = L10n.appearance
         super.setUp()
+        
+        doneButton.alpha = 0
     }
     
     override func createCell(item: UIUserInterfaceStyle) -> Cell<UIUserInterfaceStyle> {
@@ -35,8 +37,8 @@ class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
         return cell
     }
     
-    override func saveChange() {
+    override func rowDidSelect(_ gesture: UIGestureRecognizer) {
+        super.rowDidSelect(gesture)
         AppDelegate.shared.changeThemeTo(selectedItem)
-        rootViewModel.reload()
     }
 }

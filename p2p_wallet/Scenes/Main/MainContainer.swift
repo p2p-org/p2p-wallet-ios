@@ -24,7 +24,10 @@ class MainContainer {
         self.transactionManager = TransactionsManager(socket: socket)
         myWalletsVM = WalletsVM(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager)
         
-        defer {socket.connect()}
+        defer {
+            rootViewModel.observeAppNotifications()
+            socket.connect()
+        }
     }
     
     func makeMainViewController() -> UIViewController {
