@@ -10,6 +10,8 @@ import Foundation
 class ProfileVCBase: WLCenterSheet {
     override var padding: UIEdgeInsets {.init(all: 20)}
     var dataDidChange: Bool {false}
+    lazy var doneButton = UIButton(label: L10n.done, labelFont: .systemFont(ofSize: 17), textColor: .textSecondary)
+        .onTap(self, action: #selector(buttonDoneDidTouch))
     
     override func setUp() {
         super.setUp()
@@ -25,8 +27,7 @@ class ProfileVCBase: WLCenterSheet {
                 .with(spacing: 8)
                 .onTap(self, action: #selector(back)),
             UILabel(text: title, textSize: 17, weight: .bold),
-            UIButton(label: L10n.done, labelFont: .systemFont(ofSize: 17), textColor: .textSecondary)
-                .onTap(self, action: #selector(buttonDoneDidTouch))
+            doneButton
         ]).with(alignment: .fill, distribution: .equalCentering)
     }
     
