@@ -27,7 +27,10 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
         .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.copyToClipboard))
     lazy var savedCheckBox = BECheckbox(width: 20, height: 20, cornerRadius: 6)
     
+    lazy var saveToICloudButton = WLButton.stepButton(type: .black, label: " \(L10n.saveToICloud)")
+        .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.saveToICloud))
     lazy var continueButton = WLButton.stepButton(type: .blue, label: L10n.next)
+        .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.next))
     
     // MARK: - Initializers
     init(viewModel: CreateSecurityKeysViewModel, backButton: UIView) {
@@ -50,12 +53,15 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
     
     // MARK: - Layout
     private func layout() {
+        let topView = UIStackView(axis: .horizontal, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
+            backButton,
+            regenerateButton
+        ])
+        addSubview(topView)
+        topView.autoPinEdgesToSuperviewEdges(with: .init(all: 20), excludingEdge: .bottom)
+        
+        scrollView.constraintToSuperviewWithAttribute(.top)?.constant = 66
         stackView.addArrangedSubviews([
-            UIStackView(axis: .horizontal, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
-                backButton,
-                regenerateButton
-            ]),
-            BEStackViewSpacing(30),
             UILabel(text: L10n.securityKeys.uppercaseFirst, textSize: 27, weight: .bold),
             BEStackViewSpacing(15),
             UILabel(text: L10n.WriteDownOrDuplicateTheseWordsInTheCorrectOrderAndKeepThemInASafePlace.copyThemManuallyOrBackupToICloud, textColor: .textSecondary, numberOfLines: 0),
@@ -73,7 +79,7 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
                 UILabel(text: L10n.iHaveSavedTheseWordsInASafePlace, weight: .medium)
             ]),
             BEStackViewSpacing(27),
-            WLButton.stepButton(type: .black, label: " \(L10n.saveToICloud)"),
+            saveToICloudButton,
             BEStackViewSpacing(16),
             continueButton
         ])

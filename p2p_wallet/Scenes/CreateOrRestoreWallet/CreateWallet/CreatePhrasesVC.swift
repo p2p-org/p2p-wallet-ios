@@ -167,21 +167,6 @@ class CreatePhrasesVC: PhrasesVC {
     }
     
     @objc func buttonContinueDidTouch() {
-        UIApplication.shared.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
-        DispatchQueue.global().async {
-            do {
-                let account = try SolanaSDK.Account(phrase: self.phrases.value, network: Defaults.network)
-                try self.accountStorage.save(account)
-                DispatchQueue.main.async {
-                    UIApplication.shared.hideHud()
-                    self.createWalletViewModel.finish()
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    UIApplication.shared.hideHud()
-                    self.showError(error, additionalMessage: L10n.tapRefreshButtonToRetry)
-                }
-            }
-        }
+        
     }
 }

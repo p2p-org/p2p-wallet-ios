@@ -32,13 +32,12 @@ class CreateSecurityKeysViewController: BaseVC {
         view = CreateSecurityKeysRootView(viewModel: viewModel, backButton: backButton)
     }
     
-    override func setUp() {
-        super.setUp()
-        
-    }
-    
     override func bind() {
         super.bind()
-        
+        viewModel.errorSubject
+            .subscribe(onNext: {error in
+                self.showAlert(title: L10n.error, message: error)
+            })
+            .disposed(by: disposeBag)
     }
 }
