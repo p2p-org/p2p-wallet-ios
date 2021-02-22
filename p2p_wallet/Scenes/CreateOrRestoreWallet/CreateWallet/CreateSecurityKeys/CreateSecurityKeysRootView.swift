@@ -29,7 +29,7 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
     
     lazy var saveToICloudButton = WLButton.stepButton(type: .black, label: " \(L10n.saveToICloud)")
         .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.saveToICloud))
-    lazy var continueButton = WLButton.stepButton(type: .blue, label: L10n.next)
+    lazy var continueButton = WLButton.stepButton(type: .blue, label: L10n.next.uppercaseFirst)
         .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.next))
     
     // MARK: - Initializers
@@ -76,21 +76,34 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
             BEStackViewSpacing(27),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
                 savedCheckBox,
-                UILabel(text: L10n.iHaveSavedTheseWordsInASafePlace, weight: .medium)
+                UILabel(text: L10n.iHaveSavedTheseWordsInASafePlace, weight: .medium, textColor: .textSecondary)
             ]),
             BEStackViewSpacing(27),
             saveToICloudButton,
             BEStackViewSpacing(16),
-            continueButton
+            continueButton,
+            BEStackViewSpacing(30),
+            UIView()
         ])
         
         continueButton.isEnabled = false
+        
+        scrollView.constraintToSuperviewWithAttribute(.bottom)?.constant = 0
     }
     
     private func bind() {
         viewModel.phrasesSubject.subscribe(onNext: { phrases in
             self.phrasesListViews.removeAllTags()
-            self.phrasesListViews.addTags(phrases)
+            for (index, phrase) in phrases.enumerated() {
+                self.phrasesListViews.addTag("\(index + 1). \(phrase)")
+                self.phrasesListViews.tagViews[index].setAttributedTitle(
+                    NSMutableAttributedString()
+                        .text("\(index + 1). ", color: .a3a5ba)
+                        .text(phrase),
+                    for: .normal
+                )
+                    
+            }
             self.layoutIfNeeded()
         })
             .disposed(by: disposeBag)
@@ -116,15 +129,15 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
     func createTagListView() -> TagListView {
         let tagListView = TagListView(forAutoLayout: ())
         tagListView.tagBackgroundColor = .textWhite
-        tagListView.textFont = .systemFont(ofSize: 18)
+        tagListView.textFont = .systemFont(ofSize: 15)
         tagListView.textColor = .textBlack
-        tagListView.marginX = 5
-        tagListView.marginY = 5
-        tagListView.paddingX = 10
-        tagListView.paddingY = 6
+        tagListView.marginX = 7
+        tagListView.marginY = 10
+        tagListView.paddingX = 12
+        tagListView.paddingY = 12
         tagListView.borderWidth = 1
-        tagListView.borderColor = .textBlack
-        tagListView.cornerRadius = 5
+        tagListView.borderColor = UIColor.a3a5ba.withAlphaComponent(0.5)
+        tagListView.cornerRadius = 8
         return tagListView
     }
 }

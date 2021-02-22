@@ -249,3 +249,4 @@
 "The wallet address is not valid, it must be a %@ wallet address" = "Địa chỉ ví không hợp lệ, nó phải là địa chỉ ví %@";
 "Invalid account info" = "Thông tin tài khoản không hợp lệ";
 "Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud" = "Viết ra hoặc sao chép những từ này theo đúng thứ tự và giữ chúng ở nơi an toàn.\nSao chép chúng theo cách thủ công hoặc sao lưu vào iCloud";
+"Allow notifications" = "Cho phép thông báo";
