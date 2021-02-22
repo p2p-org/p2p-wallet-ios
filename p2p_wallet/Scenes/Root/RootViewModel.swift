@@ -55,6 +55,7 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     func logout() {
         accountStorage.clear()
         Defaults.walletName = [:]
+        Defaults.isBiometryEnabled = false
         Defaults.didSetEnableBiometry = false
         Defaults.didSetEnableNotifications = false
         reload()
