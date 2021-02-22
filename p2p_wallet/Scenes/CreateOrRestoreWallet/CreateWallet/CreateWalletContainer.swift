@@ -34,7 +34,8 @@ class CreateWalletContainer {
     }
     
     func makeCreatePhrasesVC() -> CreateSecurityKeysViewController {
-        CreateSecurityKeysViewController(viewModel: CreateSecurityKeysViewModel())
+        let viewModel = CreateSecurityKeysViewModel(accountStorage: accountStorage, createWalletViewModel: self.viewModel)
+        return CreateSecurityKeysViewController(viewModel: viewModel)
     }
     
     func makeCreatePhrasesVC(createWalletViewModel: CreateWalletViewModel) -> CreatePhrasesVC {
