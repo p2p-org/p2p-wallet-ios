@@ -28,7 +28,8 @@ class CreateSecurityKeysViewModel {
     // MARK: - Actions
     @objc func createPhrases() {
         let mnemonic = Mnemonic()
-        self.phrasesSubject.accept(mnemonic.phrase)
+        phrasesSubject.accept(mnemonic.phrase)
+        checkBoxIsSelectedInput.accept(false)
     }
     
     @objc func copyToClipboard() {

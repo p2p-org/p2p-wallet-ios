@@ -8,6 +8,7 @@
 import UIKit
 import TagListView
 import RxSwift
+import RxBiBinding
 
 class CreateSecurityKeysRootView: ScrollableVStackRootView {
     // MARK: - Constants
@@ -18,8 +19,15 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
     
     // MARK: - Subviews
     let backButton: UIView
+    lazy var regenerateButton = UIImageView(width: 36, height: 36, image: .regenerateButton, tintColor: .a3a5ba)
+        .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.createPhrases))
     lazy var phrasesListViews = createTagListView()
+    lazy var copyToClipboardButton = UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: .textSecondary, textAlignment: .center)
+        .padding(.init(all: 16))
+        .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.copyToClipboard))
     lazy var savedCheckBox = BECheckbox(width: 20, height: 20, cornerRadius: 6)
+    
+    lazy var continueButton = WLButton.stepButton(type: .blue, label: L10n.next)
     
     // MARK: - Initializers
     init(viewModel: CreateSecurityKeysViewModel, backButton: UIView) {
@@ -45,7 +53,7 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
         stackView.addArrangedSubviews([
             UIStackView(axis: .horizontal, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
                 backButton,
-                UIImageView(width: 36, height: 36, image: .regenerateButton, tintColor: .a3a5ba)
+                regenerateButton
             ]),
             BEStackViewSpacing(30),
             UILabel(text: L10n.securityKeys.uppercaseFirst, textSize: 27, weight: .bold),
@@ -56,8 +64,7 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
                 phrasesListViews
                     .padding(.init(top: 10, left: 10, bottom: 16, right: 10), cornerRadius: 12),
                 UIView.separator(height: 1, color: .separator),
-                UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: .textSecondary, textAlignment: .center)
-                    .padding(.init(all: 16))
+                copyToClipboardButton
             ])
                 .padding(.zero, backgroundColor: .f6f6f8, cornerRadius: 12),
             BEStackViewSpacing(27),
@@ -68,8 +75,10 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
             BEStackViewSpacing(27),
             WLButton.stepButton(type: .black, label: " \(L10n.saveToICloud)"),
             BEStackViewSpacing(16),
-            WLButton.stepButton(type: .blue, label: L10n.next)
+            continueButton
         ])
+        
+        continueButton.isEnabled = false
     }
     
     private func bind() {
@@ -78,6 +87,23 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
             self.phrasesListViews.addTags(phrases)
             self.layoutIfNeeded()
         })
+            .disposed(by: disposeBag)
+        
+        viewModel.checkBoxIsSelectedInput
+            .asDriver(onErrorJustReturn: false)
+            .distinctUntilChanged()
+            .drive(savedCheckBox.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        savedCheckBox.rx.tap
+            .map {_ in self.savedCheckBox.isSelected}
+            .bind(to: viewModel.checkBoxIsSelectedInput)
+            .disposed(by: disposeBag)
+        
+        viewModel.checkBoxIsSelectedInput
+            .asDriver(onErrorJustReturn: false)
+            .distinctUntilChanged()
+            .drive(continueButton.rx.isEnabled)
             .disposed(by: disposeBag)
     }
     
