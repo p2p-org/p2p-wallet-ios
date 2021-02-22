@@ -13,6 +13,7 @@ protocol RootViewControllerScenesFactory {
     func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
     func makeOnboardingViewController() -> OnboardingViewController
     func makeMainViewController() -> MainViewController
+    func makeLocalAuthVC() -> LocalAuthVC
 }
 
 class RootViewController: BaseVC {
@@ -43,8 +44,11 @@ class RootViewController: BaseVC {
     override func bind() {
         super.bind()
         viewModel.navigationSubject
-            .distinctUntilChanged()
             .subscribe(onNext: {self.navigate(to: $0)})
+            .disposed(by: disposeBag)
+        
+        viewModel.authenticationSubject
+            .subscribe(onNext: {self.authenticate()})
             .disposed(by: disposeBag)
     }
     
@@ -64,8 +68,56 @@ class RootViewController: BaseVC {
             transition(to: vc)
         case .main:
             let vc = scenesFactory.makeMainViewController()
-            vc.shouldAuthenticate = isBoardingCompleted
             transition(to: vc)
         }
+    }
+    
+    private func authenticate() {
+        if viewIfLoaded?.window == nil, !isBoardingCompleted {return}
+        
+        let localAuthVC = scenesFactory.makeLocalAuthVC()
+        localAuthVC.completion = {[weak self] didSuccess in
+            self?.viewModel.isAuthenticating = false
+            self?.viewModel.lastAuthenticationTimestamp = Int(Date().timeIntervalSince1970)
+            if !didSuccess {
+                // show error
+                self?.showErrorView()
+                
+                // Count down to next
+                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+                    guard let strongSelf = self else {return}
+                    
+                    let secondsLeft = strongSelf.viewModel.secondsLeftToNextAuthentication()
+                    
+                    strongSelf.errorView?.descriptionLabel.text =
+                        L10n.authenticationFailed +
+                        "\n" +
+                        L10n.retryAfter + " \(secondsLeft) " + L10n.seconds
+                    
+                    if strongSelf.viewModel.isSessionExpired {
+                        strongSelf.errorView?.descriptionLabel.text = L10n.tapButtonToRetry
+                        strongSelf.errorView?.buttonAction = CocoaAction {
+                            strongSelf.viewModel.authenticationSubject.onNext(())
+                            return .just(())
+                        }
+                        timer.invalidate()
+                    }
+                }
+
+            } else {
+                self?.removeErrorView()
+            }
+        }
+        localAuthVC.modalPresentationStyle = .fullScreen
+        let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+
+        if var topController = keyWindow?.rootViewController {
+            while let presentedViewController = topController.presentedViewController {
+                topController = presentedViewController
+            }
+            topController.present(localAuthVC, animated: true, completion: nil)
+        }
+        
+        viewModel.isAuthenticating = true
     }
 }

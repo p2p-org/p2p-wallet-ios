@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import RxAppState
 
 enum RootNavigatableScene: Equatable {
     case initializing
@@ -26,17 +27,27 @@ protocol OnboardingHandler {
 
 class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     // MARK: - Constants
+    private let timeRequiredForAuthentication = 10 // in seconds
     
     // MARK: - Properties
-    private let bag = DisposeBag()
+    private let disposeBag = DisposeBag()
     private let accountStorage: KeychainAccountStorage
+    
+    var isAuthenticating = false
+    lazy var lastAuthenticationTimestamp = Int(Date().timeIntervalSince1970) - timeRequiredForAuthentication
+    
+    var isSessionExpired: Bool {
+        Int(Date().timeIntervalSince1970) >= lastAuthenticationTimestamp + timeRequiredForAuthentication
+    }
     
     // MARK: - Subjects
     let navigationSubject = BehaviorRelay<RootNavigatableScene>(value: .initializing)
+    let authenticationSubject = PublishSubject<Void>()
     
     // MARK: - Methods
     init(accountStorage: KeychainAccountStorage) {
         self.accountStorage = accountStorage
+        observeAppNotifications()
     }
     
     func reload() {
@@ -55,7 +66,6 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     func logout() {
         accountStorage.clear()
         Defaults.walletName = [:]
-        Defaults.isBiometryEnabled = false
         Defaults.didSetEnableBiometry = false
         Defaults.didSetEnableNotifications = false
         reload()
@@ -68,5 +78,19 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     
     func onboardingDidComplete() {
         navigationSubject.accept(.main)
+    }
+    
+    func observeAppNotifications() {
+        UIApplication.shared.rx.applicationDidBecomeActive
+            .subscribe(onNext: {[weak self] _ in
+                guard let strongSelf = self, !strongSelf.isAuthenticating, strongSelf.isSessionExpired, strongSelf.navigationSubject.value == .main else {return}
+                strongSelf.isAuthenticating = true
+                strongSelf.authenticationSubject.onNext(())
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func secondsLeftToNextAuthentication() -> Int {
+        timeRequiredForAuthentication - (Int(Date().timeIntervalSince1970) - Int(lastAuthenticationTimestamp))
     }
 }

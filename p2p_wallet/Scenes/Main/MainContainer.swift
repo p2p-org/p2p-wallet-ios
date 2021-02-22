@@ -16,8 +16,6 @@ class MainContainer {
     let transactionManager: TransactionsManager
     private(set) var myWalletsVM: WalletsVM
     
-    let mainViewModel = MainViewModel()
-    
     init(rootViewModel: RootViewModel, accountStorage: KeychainAccountStorage) {
         self.rootViewModel = rootViewModel
         self.accountStorage = accountStorage
@@ -32,12 +30,7 @@ class MainContainer {
     }
     
     func makeMainViewController() -> MainViewController {
-        MainViewController(viewModel: mainViewModel, scenesFactory: self)
-    }
-    
-    // MARK: - Authentication
-    func makeLocalAuthVC() -> LocalAuthVC {
-        LocalAuthVC(accountStorage: accountStorage)
+        MainViewController(rootViewModel: rootViewModel, scenesFactory: self)
     }
     
     func makeMainVC() -> MainVC {
@@ -108,7 +101,7 @@ class MainContainer {
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {
-        ConfigureSecurityVC(accountStorage: accountStorage, mainViewModel: mainViewModel)
+        ConfigureSecurityVC(accountStorage: accountStorage, rootViewModel: rootViewModel)
     }
     
     func makeSelectLanguageVC() -> SelectLanguageVC {

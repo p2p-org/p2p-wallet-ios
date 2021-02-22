@@ -22,10 +22,10 @@ class ConfigureSecurityVC: ProfileVCBase {
     }()
     
     let accountStorage: KeychainAccountStorage
-    let mainViewModel: MainViewModel
-    init(accountStorage: KeychainAccountStorage, mainViewModel: MainViewModel) {
+    let rootViewModel: RootViewModel
+    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel) {
         self.accountStorage = accountStorage
-        self.mainViewModel = mainViewModel
+        self.rootViewModel = rootViewModel
     }
     
     override func setUp() {
@@ -60,13 +60,13 @@ class ConfigureSecurityVC: ProfileVCBase {
     
     @objc func switcherDidChange(_ switcher: UISwitch) {
         // prevent default's localAuth action
-        let isAuthenticating = mainViewModel.isAuthenticating
+        let isAuthenticating = rootViewModel.isAuthenticating
         guard !isAuthenticating else {
             switcher.isOn.toggle()
             return
         }
         
-        mainViewModel.isAuthenticating = true
+        rootViewModel.isAuthenticating = true
         
         // get context
         let context = LAContext()
@@ -84,7 +84,7 @@ class ConfigureSecurityVC: ProfileVCBase {
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self?.mainViewModel.isAuthenticating = isAuthenticating
+                self?.rootViewModel.isAuthenticating = isAuthenticating
             }
         }
     }
