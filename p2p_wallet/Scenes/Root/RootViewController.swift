@@ -12,8 +12,7 @@ import Action
 protocol RootViewControllerScenesFactory {
     func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
     func makeOnboardingViewController() -> OnboardingViewController
-    func makeMainViewController() -> UIViewController
-    func makeLocalAuthVC() -> LocalAuthVC
+    func makeMainViewController() -> MainViewController
 }
 
 class RootViewController: BaseVC {
@@ -22,6 +21,8 @@ class RootViewController: BaseVC {
     // MARK: - Properties
     let viewModel: RootViewModel
     let scenesFactory: RootViewControllerScenesFactory
+    
+    var isBoardingCompleted = true
     
     // MARK: - Initializer
     init(
@@ -44,10 +45,6 @@ class RootViewController: BaseVC {
         viewModel.navigationSubject
             .subscribe(onNext: {self.navigate(to: $0)})
             .disposed(by: disposeBag)
-        
-        viewModel.authenticationSubject
-            .subscribe(onNext: {self.authenticate()})
-            .disposed(by: disposeBag)
     }
     
     // MARK: - Navigation
@@ -58,43 +55,16 @@ class RootViewController: BaseVC {
         case .createOrRestoreWallet:
             let vc = scenesFactory.makeCreateOrRestoreWalletViewController()
             let nc = BENavigationController(rootViewController: vc)
+            isBoardingCompleted = false
             transition(to: nc)
         case .onboarding:
             let vc = scenesFactory.makeOnboardingViewController()
+            isBoardingCompleted = false
             transition(to: vc)
         case .main:
             let vc = scenesFactory.makeMainViewController()
+            vc.shouldAuthenticate = isBoardingCompleted
             transition(to: vc)
         }
-    }
-    
-    private func authenticate() {
-        let localAuthVC = scenesFactory.makeLocalAuthVC()
-        localAuthVC.completion = { [self] didSuccess in
-            viewModel.localAuthVCShown = false
-            if !didSuccess {
-                currentVC?.showErrorView()
-                // reset timestamp
-                viewModel.rescheduleAuth()
-                
-                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-                    currentVC?.errorView?.descriptionLabel.text = L10n.authenticationFailed + "\n" + L10n.retryAfter + " \(Int(10 - Date().timeIntervalSince1970 + viewModel.timestamp) + 1) " + L10n.seconds
-
-                    if Int(Date().timeIntervalSince1970) == Int(viewModel.timestamp + viewModel.timeRequiredForAuthentication) {
-                        currentVC?.errorView?.descriptionLabel.text = L10n.tapButtonToRetry
-                        currentVC?.errorView?.buttonAction = CocoaAction {
-                            authenticate()
-                            return .just(())
-                        }
-                        timer.invalidate()
-                    }
-                }
-            } else {
-                currentVC?.removeErrorView()
-            }
-        }
-        localAuthVC.modalPresentationStyle = .fullScreen
-        currentVC?.present(localAuthVC, animated: true, completion: nil)
-        viewModel.localAuthVCShown = true
     }
 }
