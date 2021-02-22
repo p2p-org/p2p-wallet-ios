@@ -43,6 +43,7 @@ class RootViewController: BaseVC {
     override func bind() {
         super.bind()
         viewModel.navigationSubject
+            .distinctUntilChanged()
             .subscribe(onNext: {self.navigate(to: $0)})
             .disposed(by: disposeBag)
     }
