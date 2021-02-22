@@ -9,6 +9,7 @@ import Foundation
 import THPinViewController
 
 class BaseCreatePassCodeVC: PassCodeVC {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .hidden }
     var passcode: String?
     
     var disableDismissAfterCompletion: Bool {
@@ -50,7 +51,8 @@ class CreatePassCodeVC: BaseCreatePassCodeVC {
 }
 
 private class ConfirmPasscodeVC: BaseCreatePassCodeVC {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .normal(translucent: true) }
+    lazy var backButton = UIImageView(width: 36, height: 36, image: .backButtonLight)
+        .onTap(self, action: #selector(back))
     
     init(currentPasscode: String) {
         super.init()
@@ -64,6 +66,9 @@ private class ConfirmPasscodeVC: BaseCreatePassCodeVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         promptTitle = L10n.confirmPINCode.uppercaseFirst
+        view.addSubview(backButton)
+        backButton.autoPinEdge(toSuperviewEdge: .top, withInset: 20)
+        backButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
     }
     
     override func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
