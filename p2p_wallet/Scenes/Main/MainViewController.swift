@@ -51,6 +51,8 @@ class MainViewController: BaseVC {
     }
     
     private func authenticate() {
+        if viewIfLoaded?.window == nil {return}
+        
         let localAuthVC = scenesFactory.makeLocalAuthVC()
         localAuthVC.completion = {[weak self] didSuccess in
             self?.viewModel.isAuthenticating = false
@@ -85,7 +87,15 @@ class MainViewController: BaseVC {
             }
         }
         localAuthVC.modalPresentationStyle = .fullScreen
-        present(localAuthVC, animated: true, completion: nil)
+        let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+
+        if var topController = keyWindow?.rootViewController {
+            while let presentedViewController = topController.presentedViewController {
+                topController = presentedViewController
+            }
+            topController.present(localAuthVC, animated: true, completion: nil)
+        }
+        
         viewModel.isAuthenticating = true
     }
 }
