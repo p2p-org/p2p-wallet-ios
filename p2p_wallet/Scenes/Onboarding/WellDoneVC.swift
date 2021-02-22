@@ -8,23 +8,26 @@
 import Foundation
 import SwiftUI
 
-class WellDoneVC: BaseOnboardingVC {
+class WellDoneVC: WLIntroVC {
     let onboardingViewModel: OnboardingViewModel
     init(onboardingViewModel: OnboardingViewModel) {
         self.onboardingViewModel = onboardingViewModel
         super.init()
     }
     
+    lazy var acceptButton = WLButton.stepButton(type: .blue, label: nil)
+        .onTap(self, action: #selector(buttonAcceptDidTouch))
+    
     override func setUp() {
         super.setUp()
         titleLabel.text = L10n.wellDone
         descriptionLabel.text = L10n.exploreP2PWalletAndDepositFundsWhenYouReReady
         
+        stackView.addArrangedSubviews([acceptButton, UIView(height: 56)])
         acceptButton.setTitle(L10n.finishSetup, for: .normal)
-        doThisLaterButton.alpha = 0
     }
     
-    override func buttonAcceptDidTouch() {
+    @objc func buttonAcceptDidTouch() {
         onboardingViewModel.endOnboarding()
     }
 }
