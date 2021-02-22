@@ -41,6 +41,11 @@ class DependencyContainer {
         let container = MainContainer(rootViewModel: sharedRootViewModel, accountStorage: sharedAccountStorage)
         return container.makeMainViewController()
     }
+    
+    // MARK: - Authentication
+    func makeLocalAuthVC() -> LocalAuthVC {
+        LocalAuthVC(accountStorage: sharedAccountStorage)
+    }
 }
 
 extension DependencyContainer: RootViewControllerScenesFactory {}
