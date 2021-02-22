@@ -26,31 +26,17 @@ class EnableBiometryVC: BaseOnboardingVC {
     override func setUp() {
         super.setUp()
         
-        // add imageView
-        let imageView = UIImageView(width: 64, height: 64, tintColor: .white)
-        let spacer2 = UIView.spacer
-        
-        var index = 3
-        stackView.insertArrangedSubviewsWithCustomSpacing([
-            imageView
-                .centeredHorizontallyView,
-            spacer2
-        ], at: &index)
-        
-        spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor)
-            .isActive = true
-        
         var error: NSError?
         if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
             switch context.biometryType {
             case .touchID:
-                titleLabel.text = L10n.enableTouchID
-                descriptionLabel.text = L10n.useYourTouchIDForQuickAccess
+                firstDescriptionLabel.text = L10n.useYourTouchIDForQuickAccess
+                secondDescriptionLabel.isHidden = true
                 imageView.image = .touchId
                 acceptButton.setTitle(L10n.useTouchId, for: .normal)
             case .faceID:
-                titleLabel.text = L10n.enableFaceID
-                descriptionLabel.text = L10n.useYourFaceIDForQuickAccess
+                firstDescriptionLabel.text = L10n.useYourFaceIDForQuickAccess
+                secondDescriptionLabel.isHidden = true
                 imageView.image = .faceId
                 acceptButton.setTitle(L10n.useFaceId, for: .normal)
             default:
