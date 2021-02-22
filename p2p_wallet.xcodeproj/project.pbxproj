@@ -124,6 +124,9 @@
 		BC7533AA257F31D3007A00D9 /* LazyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7533A9257F31D3007A00D9 /* LazyLabel.swift */; };
 		BC7533B5257F3E7B007A00D9 /* EnterPhrasesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7533B4257F3E7B007A00D9 /* EnterPhrasesVC.swift */; };
 		BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7AD0E7254A540700B4A070 /* WLButton.swift */; };
+		BC7B2C7025E384F700833656 /* CreateSecurityKeysViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2C6D25E384F700833656 /* CreateSecurityKeysViewModel.swift */; };
+		BC7B2C7125E384F700833656 /* CreateSecurityKeysRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2C6E25E384F700833656 /* CreateSecurityKeysRootView.swift */; };
+		BC7B2C7225E384F700833656 /* CreateSecurityKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2C6F25E384F700833656 /* CreateSecurityKeysViewController.swift */; };
 		BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */; };
 		BC7BCB75256274E10018DECA /* PricesManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB74256274E10018DECA /* PricesManager+Extensions.swift */; };
 		BC7BCB7B2562807E0018DECA /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */; };
@@ -354,6 +357,9 @@
 		BC7533A9257F31D3007A00D9 /* LazyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyLabel.swift; sourceTree = "<group>"; };
 		BC7533B4257F3E7B007A00D9 /* EnterPhrasesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterPhrasesVC.swift; sourceTree = "<group>"; };
 		BC7AD0E7254A540700B4A070 /* WLButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLButton.swift; sourceTree = "<group>"; };
+		BC7B2C6D25E384F700833656 /* CreateSecurityKeysViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeysViewModel.swift; sourceTree = "<group>"; };
+		BC7B2C6E25E384F700833656 /* CreateSecurityKeysRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeysRootView.swift; sourceTree = "<group>"; };
+		BC7B2C6F25E384F700833656 /* CreateSecurityKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeysViewController.swift; sourceTree = "<group>"; };
 		BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonfidaPricesFetcher.swift; sourceTree = "<group>"; };
 		BC7BCB74256274E10018DECA /* PricesManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PricesManager+Extensions.swift"; sourceTree = "<group>"; };
 		BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
@@ -728,6 +734,16 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		BC7B2C7625E384FE00833656 /* CreateSecurityKeys */ = {
+			isa = PBXGroup;
+			children = (
+				BC7B2C6D25E384F700833656 /* CreateSecurityKeysViewModel.swift */,
+				BC7B2C6E25E384F700833656 /* CreateSecurityKeysRootView.swift */,
+				BC7B2C6F25E384F700833656 /* CreateSecurityKeysViewController.swift */,
+			);
+			path = CreateSecurityKeys;
+			sourceTree = "<group>";
+		};
 		BC7BCB6F256274B90018DECA /* PricesManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -1029,6 +1045,7 @@
 				BCE42E0125DFA0B50021540E /* CreateWalletViewController.swift */,
 				BC105135258B2A2A00398EA2 /* TermsAndConditionsVC.swift */,
 				BC32A3D4254A8F7F002156F0 /* CreatePhrasesVC.swift */,
+				BC7B2C7625E384FE00833656 /* CreateSecurityKeys */,
 			);
 			path = CreateWallet;
 			sourceTree = "<group>";
@@ -1434,6 +1451,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC7B2C7225E384F700833656 /* CreateSecurityKeysViewController.swift in Sources */,
 				BC11CA252592FEA300E399A9 /* BalancesOverviewView.swift in Sources */,
 				BCAB206F25DE0563004F4F9D /* DependencyContainer.swift in Sources */,
 				BC5ED74E256265700030572D /* Wallet.swift in Sources */,
@@ -1515,6 +1533,7 @@
 				BCEB206D25E1561200B54FEF /* TabBar.swift in Sources */,
 				BCB92B8025B5386F00FF615E /* WLIntroVC.swift in Sources */,
 				BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */,
+				BC7B2C7125E384F700833656 /* CreateSecurityKeysRootView.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				BC2EC1902553BA2C006EEDA5 /* WDVCSectionHeaderView.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
@@ -1566,6 +1585,7 @@
 				BCD5E7962551332200F51299 /* DefiCell.swift in Sources */,
 				BCD5E82F25525DE600F51299 /* FetcherState.swift in Sources */,
 				BC105136258B2A2A00398EA2 /* TermsAndConditionsVC.swift in Sources */,
+				BC7B2C7025E384F700833656 /* CreateSecurityKeysViewModel.swift in Sources */,
 				BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */,
 				BC0978E825AEDEE200DB02E9 /* ResizablePresentationController.swift in Sources */,
 				BC22A5E825D2726700F7026D /* ScrollableVStackRootView.swift in Sources */,

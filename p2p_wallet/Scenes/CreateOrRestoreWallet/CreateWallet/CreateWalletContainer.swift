@@ -33,8 +33,8 @@ class CreateWalletContainer {
         TermsAndConditionsVC(createWalletViewModel: viewModel)
     }
     
-    func makeCreatePhrasesVC() -> CreatePhrasesVC {
-        CreatePhrasesVC(accountStorage: accountStorage, createWalletViewModel: viewModel)
+    func makeCreatePhrasesVC() -> CreateSecurityKeysViewController {
+        CreateSecurityKeysViewController(viewModel: CreateSecurityKeysViewModel())
     }
     
     func makeCreatePhrasesVC(createWalletViewModel: CreateWalletViewModel) -> CreatePhrasesVC {
