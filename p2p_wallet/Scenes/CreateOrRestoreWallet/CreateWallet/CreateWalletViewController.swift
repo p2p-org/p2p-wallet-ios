@@ -10,7 +10,7 @@ import UIKit
 
 protocol CreateWalletScenesFactory {
     func makeTermsAndConditionsVC() -> TermsAndConditionsVC
-    func makeCreatePhrasesVC() -> CreateSecurityKeysViewController
+    func makeCreateSecurityKeysViewController() -> CreateSecurityKeysViewController
 }
 
 class CreateWalletViewController: WLIndicatorModalVC {
@@ -46,7 +46,7 @@ class CreateWalletViewController: WLIndicatorModalVC {
     private func navigate(to scene: CreateWalletNavigatableScene) {
         switch scene {
         case .createPhrases:
-            let vc = scenesFactory.makeCreatePhrasesVC()
+            let vc = scenesFactory.makeCreateSecurityKeysViewController()
             childNavigationController.pushViewController(vc, animated: true)
         case .dismiss:
             dismiss(animated: true, completion: nil)
