@@ -26,45 +26,28 @@ protocol OnboardingHandler {
 
 class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     // MARK: - Constants
-    let timeRequiredForAuthentication: Double = 10 // in seconds
     
     // MARK: - Properties
     private let bag = DisposeBag()
     private let accountStorage: KeychainAccountStorage
     
-    var shouldShowLocalAuth = true
-    var localAuthVCShown = false
-    private(set) var timestamp = Date().timeIntervalSince1970
-    
     // MARK: - Subjects
     let navigationSubject = BehaviorRelay<RootNavigatableScene>(value: .initializing)
-    let authenticationSubject = PublishSubject<Void>()
     
     // MARK: - Methods
     init(accountStorage: KeychainAccountStorage) {
         self.accountStorage = accountStorage
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-    
-    func observeAppNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(appDidActive), name: UIScene.didActivateNotification, object: nil)
-    }
-    
     func reload() {
         if accountStorage.account == nil {
-            shouldShowLocalAuth = false
             navigationSubject.accept(.createOrRestoreWallet)
         } else if accountStorage.pinCode == nil ||
                     !Defaults.didSetEnableBiometry ||
                     !Defaults.didSetEnableNotifications
         {
-            shouldShowLocalAuth = false
             navigationSubject.accept(.onboarding)
         } else {
-            shouldShowLocalAuth = true
             navigationSubject.accept(.main)
         }
     }
@@ -75,25 +58,6 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
         Defaults.didSetEnableBiometry = false
         Defaults.didSetEnableNotifications = false
         reload()
-    }
-    
-    func rescheduleAuth() {
-        timestamp = Date().timeIntervalSince1970
-    }
-    
-    // MARK: - Application notifications
-    @objc func appDidActive() {
-        // check authentication
-        let newTimestamp = Date().timeIntervalSince1970
-        timestamp = newTimestamp - timeRequiredForAuthentication
-        
-        if shouldShowLocalAuth && !localAuthVCShown && timestamp + timeRequiredForAuthentication <= newTimestamp,
-           navigationSubject.value == .main
-        {
-            
-            timestamp = newTimestamp
-            authenticationSubject.onNext(())
-        }
     }
     
     // MARK: - Handler
