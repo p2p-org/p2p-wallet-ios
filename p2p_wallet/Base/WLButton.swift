@@ -13,7 +13,7 @@ class WLButton: UIButton {
         var backgroundColor: UIColor {
             switch self {
             case .black:
-                return .white
+                return .black
             case .sub:
                 return .h202020
             case .blue:
@@ -25,9 +25,9 @@ class WLButton: UIButton {
         
         var textColor: UIColor {
             switch self {
-            case .black, .gray:
+            case .gray:
                 return .black
-            case .sub, .blue:
+            case .sub, .blue, .black:
                 return .white
             }
         }
