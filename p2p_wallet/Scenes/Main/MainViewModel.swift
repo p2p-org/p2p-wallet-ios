@@ -8,6 +8,8 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import RxAppState
+
 class MainViewModel {
     // MARK: - Constants
     private let timeRequiredForAuthentication = 10 // in seconds
@@ -28,21 +30,17 @@ class MainViewModel {
         defer {observeAppNotifications()}
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-    
     func observeAppNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(appDidActive), name: UIScene.didActivateNotification, object: nil)
+        UIApplication.shared.rx.applicationDidBecomeActive
+            .subscribe(onNext: {[weak self] _ in
+                guard let strongSelf = self, !strongSelf.isAuthenticating, strongSelf.isSessionExpired else {return}
+                strongSelf.isAuthenticating = true
+                strongSelf.authenticationSubject.onNext(())
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Application notifications
-    @objc func appDidActive() {
-        guard !isAuthenticating, isSessionExpired else {return}
-        isAuthenticating = true
-        authenticationSubject.onNext(())
-    }
-    
     func secondsLeftToNextAuthentication() -> Int {
         timeRequiredForAuthentication - (Int(Date().timeIntervalSince1970) - Int(lastAuthenticationTimestamp))
     }
