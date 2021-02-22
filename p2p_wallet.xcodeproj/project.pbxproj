@@ -198,7 +198,6 @@
 		BCEF14B525CFF22100DFE931 /* _AddNewWalletVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEF14B425CFF22100DFE931 /* _AddNewWalletVM.swift */; };
 		BCEF14BA25CFF27800DFE931 /* _AddNewWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEF14B925CFF27800DFE931 /* _AddNewWalletCell.swift */; };
 		BCF7D953256220F100961D31 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF7D952256220F100961D31 /* ErrorView.swift */; };
-		BCFC768625E2EAB800FBE148 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFC768325E2EAB800FBE148 /* MainViewModel.swift */; };
 		BCFC768825E2EAB800FBE148 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFC768525E2EAB800FBE148 /* MainViewController.swift */; };
 		C1BC9C27F85EDDFE51E0FDB8 /* Pods_p2p_walletTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A342CCD45E7CDE0BA60EFBB2 /* Pods_p2p_walletTests.framework */; };
 /* End PBXBuildFile section */
@@ -435,7 +434,6 @@
 		BCEF14B425CFF22100DFE931 /* _AddNewWalletVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _AddNewWalletVM.swift; sourceTree = "<group>"; };
 		BCEF14B925CFF27800DFE931 /* _AddNewWalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _AddNewWalletCell.swift; sourceTree = "<group>"; };
 		BCF7D952256220F100961D31 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
-		BCFC768325E2EAB800FBE148 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		BCFC768525E2EAB800FBE148 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		CCD9F8F81880F7B23634EBE4 /* Pods-p2p_wallet-p2p_walletUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.release.xcconfig"; sourceTree = "<group>"; };
 		E65B1C647C0DE910BEFF2221 /* Pods-p2p wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p wallet/Pods-p2p wallet.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1051,7 +1049,6 @@
 			isa = PBXGroup;
 			children = (
 				BCEB207125E1563B00B54FEF /* MainContainer.swift */,
-				BCFC768325E2EAB800FBE148 /* MainViewModel.swift */,
 				BCFC768525E2EAB800FBE148 /* MainViewController.swift */,
 				BCEB206925E1561200B54FEF /* TabBarVC */,
 				BC23B572254FBB6300886C9C /* MainVC */,
@@ -1502,7 +1499,6 @@
 				BC54DCF92587089700A65566 /* WalletGraphVM.swift in Sources */,
 				BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */,
 				BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */,
-				BCFC768625E2EAB800FBE148 /* MainViewModel.swift in Sources */,
 				BC22A5D225D2715C00F7026D /* SendTokenViewModel.swift in Sources */,
 				BCD5E770255130DD00F51299 /* News.swift in Sources */,
 				BCE42DE525DF9BDA0021540E /* CreateOrRestoreWalletViewModel.swift in Sources */,
