@@ -10,7 +10,7 @@ import UIKit
 
 protocol CreateWalletScenesFactory {
     func makeTermsAndConditionsVC() -> TermsAndConditionsVC
-    func makeCreatePhrasesVC() -> CreatePhrasesVC
+    func makeCreatePhrasesVC() -> CreateSecurityKeysViewController
 }
 
 class CreateWalletViewController: WLIndicatorModalVC {
