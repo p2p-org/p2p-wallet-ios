@@ -35,8 +35,11 @@ class OnboardingViewController: WLIntroVC {
         super.viewDidAppear(animated)
         childNavigationController = BENavigationController()
         
-        childNavigationController.isModalInPresentation = true
-        present(childNavigationController, animated: true, completion: nil)
+        let modalVC = WLIndicatorModalVC()
+        modalVC.add(child: childNavigationController, to: modalVC.containerView)
+        
+        modalVC.isModalInPresentation = true
+        present(modalVC, animated: true, completion: nil)
         
         viewModel.navigateNext()
     }

@@ -248,3 +248,4 @@
 "Select currency" = "Sélectionnez la devise";
 "The wallet address is not valid, it must be a %@ wallet address" = "L'adresse du portefeuille n'est pas valide, il doit s'agir d'une adresse de portefeuille %@";
 "Invalid account info" = "Informations de compte non valides";
+"Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud" = "Notez ou dupliquez ces mots dans le bon ordre et conservez-les en lieu sûr.\nCopiez-les manuellement ou sauvegardez-les sur iCloud";
