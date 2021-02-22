@@ -37,14 +37,9 @@ class DependencyContainer {
     }
     
     // MARK: - Main
-    func makeMainViewController() -> UIViewController {
+    func makeMainViewController() -> MainViewController {
         let container = MainContainer(rootViewModel: sharedRootViewModel, accountStorage: sharedAccountStorage)
         return container.makeMainViewController()
-    }
-    
-    // MARK: - Authentication
-    func makeLocalAuthVC() -> LocalAuthVC {
-        LocalAuthVC(accountStorage: sharedAccountStorage)
     }
 }
 

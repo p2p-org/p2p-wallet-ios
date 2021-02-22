@@ -16,6 +16,8 @@ class MainContainer {
     let transactionManager: TransactionsManager
     private(set) var myWalletsVM: WalletsVM
     
+    let mainViewModel = MainViewModel()
+    
     init(rootViewModel: RootViewModel, accountStorage: KeychainAccountStorage) {
         self.rootViewModel = rootViewModel
         self.accountStorage = accountStorage
@@ -25,12 +27,20 @@ class MainContainer {
         myWalletsVM = WalletsVM(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager)
         
         defer {
-            rootViewModel.observeAppNotifications()
             socket.connect()
         }
     }
     
-    func makeMainViewController() -> UIViewController {
+    func makeMainViewController() -> MainViewController {
+        MainViewController(viewModel: mainViewModel, scenesFactory: self)
+    }
+    
+    // MARK: - Authentication
+    func makeLocalAuthVC() -> LocalAuthVC {
+        LocalAuthVC(accountStorage: accountStorage)
+    }
+    
+    func makeTabBarVC() -> TabBarVC {
         TabBarVC(scenesFactory: self)
     }
     
@@ -102,7 +112,7 @@ class MainContainer {
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {
-        ConfigureSecurityVC(accountStorage: accountStorage, rootViewModel: rootViewModel)
+        ConfigureSecurityVC(accountStorage: accountStorage, mainViewModel: mainViewModel)
     }
     
     func makeSelectLanguageVC() -> SelectLanguageVC {
@@ -133,4 +143,4 @@ class MainContainer {
     }
 }
 
-extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory, MainScenesFactory, ChangeNetworkResponder {}
+extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory, MainScenesFactory, ChangeNetworkResponder, _MainScenesFactory {}
