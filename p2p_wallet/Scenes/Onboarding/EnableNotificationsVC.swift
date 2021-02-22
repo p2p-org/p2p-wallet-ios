@@ -21,10 +21,12 @@ class EnableNotificationsVC: BaseOnboardingVC {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        acceptButton.setTitle(L10n.enableNow, for: .normal)
+        acceptButton.setTitle(L10n.allowNotifications, for: .normal)
         
-        titleLabel.text = L10n.almostDone
-        descriptionLabel.text = L10n.weSuggestYouAlsoToEnablePushNotifications
+        firstDescriptionLabel.text = L10n.weSuggestYouAlsoToEnablePushNotifications
+        secondDescriptionLabel.isHidden = true
+        
+        imageView.image = .turnOnNotification
     }
     
     override func buttonAcceptDidTouch() {
