@@ -81,7 +81,7 @@ class SendTokenViewController: BaseVC {
                             self.showAlert(
                                 title: L10n.error.uppercaseFirst,
                                 message:
-                                    L10n.theWalletAddressIsNotValidItMustBeAWalletAddress(symbol),
+                                    L10n.theWalletAddressIsNotValidItMustBeAWalletAddress(symbol) + " " + L10n.orYourSOLAccountSAddress,
                                 buttonTitles: [L10n.ok]
                             )
                         } else {
