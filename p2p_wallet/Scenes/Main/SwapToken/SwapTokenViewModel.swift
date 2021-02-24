@@ -135,7 +135,8 @@ class SwapTokenViewModel {
                     if let input = sourceAmountInput.double {
                         if input <= 0 {
                             errorText = L10n.amountIsNotValid
-                        } else if input > sourceWallet?.amount {
+                        } else if input.rounded(decimals: sourceWallet?.decimals) > sourceWallet?.amount?.rounded(decimals: sourceWallet?.decimals)
+                        {
                             errorText = L10n.insufficientFunds
                         } else if !self.isSlippageValid(slippage: slippage) {
                             errorText = L10n.slippageIsnTValid

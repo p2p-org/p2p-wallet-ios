@@ -97,7 +97,9 @@ class SendTokenViewModel {
                 }
                 
                 let amountToCompare = self.availableAmount.value
-                if amount > amountToCompare {
+                
+                if amount.rounded(decimals: wallet?.decimals) > amountToCompare.rounded(decimals: wallet?.decimals)
+                {
                     return L10n.insufficientFunds
                 }
                 
