@@ -71,4 +71,10 @@ extension Double {
         
         return (formatter.string(from: self as NSNumber) ?? "0")
     }
+    
+    func rounded(decimals: Int?) -> Double {
+        guard let decimals = decimals else {return self}
+        let realAmount = self.toString(maximumFractionDigits: decimals, groupingSeparator: nil)
+        return realAmount.double ?? self
+    }
 }
