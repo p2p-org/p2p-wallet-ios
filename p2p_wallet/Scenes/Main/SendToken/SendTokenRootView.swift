@@ -17,7 +17,7 @@ class SendTokenRootView: ScrollableVStackRootView {
     let disposeBag = DisposeBag()
     
     // MARK: - Subviews
-    lazy var balanceLabel = UILabel(text: "0", weight: .semibold, textColor: .h5887ff)
+    lazy var balanceLabel = UILabel(text: "0", textSize: 15, weight: .medium)
         .onTap(viewModel, action: #selector(SendTokenViewModel.useAllBalance))
     lazy var coinImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 12)
         .onTap(viewModel, action: #selector(SendTokenViewModel.chooseWallet))
@@ -28,10 +28,10 @@ class SendTokenRootView: ScrollableVStackRootView {
         placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
         autocorrectionType: .no
     )
-    lazy var changeModeButton = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
+    lazy var changeModeButton = UILabel(textSize: 15, weight: .semibold, textColor: .textSecondary)
         .onTap(viewModel, action: #selector(SendTokenViewModel.switchMode))
     lazy var symbolLabel = UILabel(textSize: 15, weight: .semibold)
-    lazy var equityValueLabel = UILabel(text: "≈", textSize: 13, textColor: .textSecondary)
+    lazy var equityValueLabel = UILabel(text: "≈", textSize: 15, textColor: .textSecondary)
     lazy var coinSymbolPriceLabel = UILabel(textSize: 15, textColor: .textSecondary)
     lazy var coinPriceLabel = UILabel(textSize: 15, textColor: .textSecondary)
     
@@ -78,7 +78,7 @@ class SendTokenRootView: ScrollableVStackRootView {
     func layout() {
         stackView.addArrangedSubviews([
             UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
-                UILabel(text: L10n.from, weight: .bold),
+                UILabel(text: L10n.from, textSize: 15, weight: .bold),
                 balanceLabel
             ]),
             BEStackViewSpacing(30),
@@ -95,7 +95,7 @@ class SendTokenRootView: ScrollableVStackRootView {
             BEStackViewSpacing(6),
             
             UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-                symbolLabel,
+                UIView(),
                 equityValueLabel
             ]),
             BEStackViewSpacing(20),
@@ -134,6 +134,10 @@ class SendTokenRootView: ScrollableVStackRootView {
         ])
         
         equityValueLabel.autoPinEdge(.leading, to: .leading, of: amountTextField)
+        
+        addSubview(symbolLabel)
+        symbolLabel.centerXAnchor.constraint(equalTo: coinImageView.centerXAnchor).isActive = true
+        symbolLabel.centerYAnchor.constraint(equalTo: equityValueLabel.centerYAnchor).isActive = true
     }
     
     func bind() {
@@ -172,6 +176,7 @@ class SendTokenRootView: ScrollableVStackRootView {
             .subscribe(onNext: {wallet in
                 guard let wallet = wallet else {return}
                 self.coinImageView.setUp(wallet: wallet)
+                self.symbolLabel.text = wallet.symbol
             })
             .disposed(by: disposeBag)
         
