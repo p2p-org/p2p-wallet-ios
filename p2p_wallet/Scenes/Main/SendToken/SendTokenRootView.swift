@@ -161,7 +161,7 @@ class SendTokenRootView: ScrollableVStackRootView {
         
         // available amount color
         viewModel.errorSubject
-            .map {$0 == L10n.insufficientFunds ? UIColor.red: UIColor.h5887ff}
+            .map {($0 == L10n.insufficientFunds || $0 == L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee) ? UIColor.red: UIColor.h5887ff}
             .subscribe(onNext: {color in
                 self.balanceLabel.textColor = color
             })
@@ -249,7 +249,13 @@ class SendTokenRootView: ScrollableVStackRootView {
         
         // error
         viewModel.errorSubject
-            .asDriver()
+            .map {
+                if $0 == L10n.insufficientFunds {
+                    return nil
+                }
+                return $0
+            }
+            .asDriver(onErrorJustReturn: nil)
             .drive(errorLabel.rx.text)
             .disposed(by: disposeBag)
         
