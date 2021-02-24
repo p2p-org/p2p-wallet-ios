@@ -250,3 +250,5 @@
 "Invalid account info" = "Informations de compte non valides";
 "Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud" = "Notez ou dupliquez ces mots dans le bon ordre et conservez-les en lieu sûr.\nCopiez-les manuellement ou sauvegardez-les sur iCloud";
 "Allow notifications" = "Autoriser les notifications";
+"You can not send tokens to yourself" = "Vous ne pouvez pas vous envoyer de jetons";
+"or your SOL account's address" = "ou l'adresse de votre compte SOL";
