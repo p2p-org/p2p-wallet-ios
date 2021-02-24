@@ -248,3 +248,4 @@
 "Invalid account info" = "Неверная информация об аккаунте";
 "Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud" = "Запишите или продублируйте эти слова в правильном порядке и храните их в надежном месте.\nСкопируйте их вручную или сделайте резервную копию в iCloud.";
 "Allow notifications" = "Разрешить уведомления";
+"You can not send tokens to yourself" = "Вы не можете отправлять токены себе";
