@@ -53,18 +53,18 @@ class MainVC: CollectionVC<MainVCItem> {
     }
     
     // MARK: - Layout
-    override var sections: [Section] {
+    override var sections: [CollectionViewSection] {
         [
-            Section(
-                header: Section.Header(viewClass: FirstSectionHeaderView.self, title: ""),
-                footer: Section.Footer(viewClass: FirstSectionFooterView.self),
+            CollectionViewSection(
+                header: CollectionViewSection.Header(viewClass: FirstSectionHeaderView.self, title: ""),
+                footer: CollectionViewSection.Footer(viewClass: FirstSectionFooterView.self),
                 cellType: MainWalletCell.self,
                 interGroupSpacing: 30,
                 horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16),
                 background: FirstSectionBackgroundView.self
             ),
-            Section(
-                header: Section.Header(viewClass: SecondSectionHeaderView.self, title: ""),
+            CollectionViewSection(
+                header: CollectionViewSection.Header(viewClass: SecondSectionHeaderView.self, title: ""),
                 cellType: FriendCell.self,
                 background: SecondSectionBackgroundView.self
             )
