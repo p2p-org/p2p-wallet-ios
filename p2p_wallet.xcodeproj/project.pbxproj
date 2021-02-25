@@ -92,7 +92,7 @@
 		BC490CB0256CB1B0006E7AC9 /* ChooseWalletVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC490CAF256CB1B0006E7AC9 /* ChooseWalletVC.swift */; };
 		BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC490CBD256CB796006E7AC9 /* WalletCell.swift */; };
 		BC490CCC256CCEBC006E7AC9 /* AddNewWalletVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC490CCB256CCEBC006E7AC9 /* AddNewWalletVC.swift */; };
-		BC4E933F25E757A90095C512 /* UICollectionViewSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4E933E25E757A90095C512 /* UICollectionViewSection.swift */; };
+		BC4E933F25E757A90095C512 /* CollectionViewSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4E933E25E757A90095C512 /* CollectionViewSection.swift */; };
 		BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */; };
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */; };
@@ -324,7 +324,7 @@
 		BC490CAF256CB1B0006E7AC9 /* ChooseWalletVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWalletVC.swift; sourceTree = "<group>"; };
 		BC490CBD256CB796006E7AC9 /* WalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCell.swift; sourceTree = "<group>"; };
 		BC490CCB256CCEBC006E7AC9 /* AddNewWalletVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewWalletVC.swift; sourceTree = "<group>"; };
-		BC4E933E25E757A90095C512 /* UICollectionViewSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICollectionViewSection.swift; sourceTree = "<group>"; };
+		BC4E933E25E757A90095C512 /* CollectionViewSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewSection.swift; sourceTree = "<group>"; };
 		BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BonfidaPricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcher.swift; sourceTree = "<group>"; };
@@ -620,6 +620,14 @@
 			path = WalletsVC;
 			sourceTree = "<group>";
 		};
+		BC4E934625E758930095C512 /* CollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				BC4E933E25E757A90095C512 /* CollectionViewSection.swift */,
+			);
+			path = CollectionView;
+			sourceTree = "<group>";
+		};
 		BC5257CD25CBA6A60076317E /* PriceAPIs */ = {
 			isa = PBXGroup;
 			children = (
@@ -692,7 +700,7 @@
 				BC104A7A259974CE0048C834 /* WLLoadingView.swift */,
 				BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */,
 				BC22A5E725D2726700F7026D /* ScrollableVStackRootView.swift */,
-				BC4E933E25E757A90095C512 /* UICollectionViewSection.swift */,
+				BC4E934625E758930095C512 /* CollectionView */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -1549,7 +1557,7 @@
 				BC11C9C225908F3700E399A9 /* CGFloat+Extensions.swift in Sources */,
 				BCA9948725AEA1C0005BD8FB /* ExpandablePresentationController.swift in Sources */,
 				BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */,
-				BC4E933F25E757A90095C512 /* UICollectionViewSection.swift in Sources */,
+				BC4E933F25E757A90095C512 /* CollectionViewSection.swift in Sources */,
 				BC1051232589F1B900398EA2 /* ChangePinCodeVC.swift in Sources */,
 				BC3ADE822570B005002B3B16 /* FlexibleHeightVC.swift in Sources */,
 				BC10510925887F7D00398EA2 /* BackupVC.swift in Sources */,

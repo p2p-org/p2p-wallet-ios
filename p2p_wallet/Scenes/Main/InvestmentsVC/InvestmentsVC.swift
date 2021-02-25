@@ -78,7 +78,14 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType> {
                 header: CollectionViewSection.Header(title: L10n.makeYourCryptoWorkingOnYou, titleFont: .systemFont(ofSize: 28, weight: .semibold)),
                 cellType: NewsCell.self,
                 interGroupSpacing: 16,
-                orthogonalScrollingBehavior: .groupPaging
+                orthogonalScrollingBehavior: .groupPaging,
+                customLayoutForGroupOnSmallScreen: { env in
+                    let width = env.container.contentSize.width - 32 - 16
+                    return self.groupLayoutForFirstSection(width: width, height: width * 259 / 335)
+                },
+                customLayoutForGroupOnLargeScreen: { _ in
+                    self.groupLayoutForFirstSection(width: 335, height: 259)
+                }
             ),
             CollectionViewSection(
                 header: CollectionViewSection.Header(title: L10n.exploreDeFi),
@@ -86,21 +93,6 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType> {
                 interGroupSpacing: 2
             )
         ]
-    }
-    
-    override func createLayoutForGroupOnSmallScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
-        if sectionIndex == 0 {
-            let width = env.container.contentSize.width - 32 - 16
-            return groupLayoutForFirstSection(width: width, height: width * 259 / 335)
-        }
-        return super.createLayoutForGroupOnSmallScreen(sectionIndex: sectionIndex, env: env)
-    }
-    
-    override func createLayoutForGroupOnLargeScreen(sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup {
-        if sectionIndex == 0 {
-            return groupLayoutForFirstSection(width: 335, height: 259)
-        }
-        return super.createLayoutForGroupOnLargeScreen(sectionIndex: sectionIndex, env: env)
     }
     
     private func groupLayoutForFirstSection(width: CGFloat, height: CGFloat) -> NSCollectionLayoutGroup {
