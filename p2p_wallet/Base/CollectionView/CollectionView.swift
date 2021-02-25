@@ -25,7 +25,7 @@ class CollectionView<T: ListItemType>: BEView {
     
     lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
-//        control.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        control.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
         return control
     }()
     
