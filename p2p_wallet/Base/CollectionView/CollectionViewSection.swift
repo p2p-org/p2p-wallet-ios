@@ -46,6 +46,21 @@ struct CollectionViewSection {
     var customLayoutForGroupOnSmallScreen: ((NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup)?
     var customLayoutForGroupOnLargeScreen: ((NSCollectionLayoutEnvironment) -> NSCollectionLayoutGroup)?
     
+    func registerCellAndSupplementaryViews(in collectionView: BaseCollectionView) {
+        // register cells
+        collectionView.registerCells([cellType])
+        
+        // register header
+        if let header = header {
+            collectionView.register(header.viewClass, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: header.viewClass))
+        }
+        
+        // register footer
+        if let footer = footer {
+            collectionView.register(footer.viewClass, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: String(describing: footer.viewClass))
+        }
+    }
+    
     func layout(environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
         let group: NSCollectionLayoutGroup
         // 1 columns
@@ -130,5 +145,24 @@ struct CollectionViewSection {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: combinedGroupSize, subitems: [leadingGroup, trailingGroup])
         group.interItemSpacing = horizontalInterItemSpacing
         return group
+    }
+}
+
+extension Array where Element == CollectionViewSection {
+    func createLayout() -> UICollectionViewLayout {
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            self.createLayoutForSection(sectionIndex, environment: env)
+        }
+        
+        for section in self where section.background != nil {
+            layout.register(section.background.self, forDecorationViewOfKind: String(describing: section.background!))
+        }
+        
+        return layout
+    }
+    
+    func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
+        let section = self[sectionIndex]
+        return section.layout(environment: env)
     }
 }
