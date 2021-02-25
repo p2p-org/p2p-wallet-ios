@@ -16,6 +16,7 @@ protocol MainScenesFactory {
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController
     func makeMyProductsVC() -> MyProductsVC
     func makeProfileVC() -> ProfileVC
+    func makeTokenSettingsViewController() -> TokenSettingsViewController
 }
 
 enum MainVCItem: ListItemType {
@@ -60,6 +61,7 @@ class MainVC: CollectionVC<MainVCItem> {
                 footer: CollectionViewSection.Footer(viewClass: FirstSectionFooterView.self),
                 cellType: MainWalletCell.self,
                 interGroupSpacing: 30,
+                itemHeight: .absolute(45),
                 horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16),
                 background: FirstSectionBackgroundView.self
             ),
@@ -101,6 +103,11 @@ class MainVC: CollectionVC<MainVCItem> {
         switch item {
         case .wallet(let wallet):
             (cell as! MainWalletCell).setUp(with: wallet)
+            (cell as! MainWalletCell).editAction = CocoaAction {
+                let vc = self.scenesFactory.makeTokenSettingsViewController()
+                self.present(vc, animated: true, completion: nil)
+                return .just(())
+            }
         case .friend:
             break
         }
