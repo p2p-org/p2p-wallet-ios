@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import Action
 
 protocol MyWalletsScenesFactory {
     func makeWalletDetailVC(wallet: Wallet) -> WalletDetailVC
     func makeAddNewTokenVC() -> AddNewWalletVC
+    func makeTokenSettingsViewController() -> TokenSettingsViewController
 }
 
 class MyWalletsVC: CollectionVC<Wallet> {
@@ -23,5 +25,14 @@ class MyWalletsVC: CollectionVC<Wallet> {
     override func itemDidSelect(_ item: Wallet) {
         let vc = scenesFactory.makeWalletDetailVC(wallet: item)
         present(vc, animated: true, completion: nil)
+    }
+    
+    override func setUpCell(cell: UICollectionViewCell, withItem item: Wallet) {
+        super.setUpCell(cell: cell, withItem: item)
+        (cell as? EditableWalletCell)?.editAction = CocoaAction {
+            let vc = self.scenesFactory.makeTokenSettingsViewController()
+            self.present(vc, animated: true, completion: nil)
+            return .just(())
+        }
     }
 }
