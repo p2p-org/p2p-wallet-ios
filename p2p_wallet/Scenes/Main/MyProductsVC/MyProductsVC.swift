@@ -36,10 +36,10 @@ class MyProductsVC: WLModalWrapperVC {
 }
 
 class _MyProductsVC: MyWalletsVC {
-    override var sections: [Section] {
+    override var sections: [CollectionViewSection] {
         [
-            Section(
-                header: Section.Header(viewClass: FirstSectionHeaderView.self, title: L10n.balances, titleFont: .systemFont(ofSize: 17, weight: .semibold)),
+            CollectionViewSection(
+                header: CollectionViewSection.Header(viewClass: FirstSectionHeaderView.self, title: L10n.balances, titleFont: .systemFont(ofSize: 17, weight: .semibold)),
                 cellType: MyProductsWalletCell.self,
                 interGroupSpacing: 30,
                 itemHeight: .estimated(45),

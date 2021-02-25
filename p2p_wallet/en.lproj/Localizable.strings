@@ -250,3 +250,8 @@
 "Allow notifications" = "Allow notifications";
 "You can not send tokens to yourself" = "You can not send tokens to yourself";
 "or your SOL account's address" = "or your SOL account's address";
+"Visibility in token list" = "Visibility in token list";
+"Visible" = "Visible";
+"Invisible" = "Invisible";
+"Close token account" = "Close token account";
+"Wallet settings" = "Wallet settings";
