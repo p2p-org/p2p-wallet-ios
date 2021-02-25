@@ -250,3 +250,4 @@
 "Allow notifications" = "Cho phép thông báo";
 "You can not send tokens to yourself" = "Bạn không thể gửi tokens cho chính mình";
 "or your SOL account's address" = "hoặc địa chỉ tài khoản SOL của bạn";
+"no signer found" = "không tìm thấy tài khoản xác thực";
