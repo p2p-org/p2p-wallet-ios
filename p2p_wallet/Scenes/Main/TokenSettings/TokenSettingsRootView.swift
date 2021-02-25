@@ -12,19 +12,15 @@ class TokenSettingsRootView: BEView {
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
-    lazy var collectionView: CollectionView<TokenSettings> = {
-        let collectionView = CollectionView(viewModel: viewModel, sections: [
-            CollectionViewSection(
-                cellType: TokenSettingsCell.self,
-                interGroupSpacing: 1,
-                itemHeight: .estimated(72),
-                contentInsets: .zero,
-                horizontalInterItemSpacing: .fixed(0)
-            )
-        ])
-        collectionView.backgroundColor = .f6f6f8
-        return collectionView
-    }()
+    lazy var collectionView = CollectionView(viewModel: viewModel, sections: [
+        CollectionViewSection(
+            cellType: TokenSettingsCell.self,
+            interGroupSpacing: 1,
+            itemHeight: .estimated(72),
+            contentInsets: .zero,
+            horizontalInterItemSpacing: .fixed(0)
+        )
+    ])
     
     // MARK: - Subviews
     
