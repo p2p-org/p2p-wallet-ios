@@ -8,13 +8,20 @@
 import Foundation
 import RxSwift
 
-class CollectionView<T: ListItemType>: BEView {
+struct CollectionViewItem<T: Hashable>: Hashable {
+    var placeholderIndex: Int?
+    var value: T?
+    
+    var isPlaceholder: Bool {placeholderIndex != nil}
+}
+
+class CollectionView<T: Hashable>: BEView {
     // MARK: - Property
     let disposeBag = DisposeBag()
     let viewModel: ListViewModel<T>
     let sections: [CollectionViewSection]
     
-    var dataSource: UICollectionViewDiffableDataSource<String, T>!
+    var dataSource: UICollectionViewDiffableDataSource<String, CollectionViewItem<T>>!
     var itemDidSelect: ((T) -> Void)?
     
     // MARK: - Subviews
@@ -83,26 +90,32 @@ class CollectionView<T: ListItemType>: BEView {
         collectionView.rx.itemSelected
             .subscribe(onNext: {indexPath in
                 guard let item = self.dataSource.itemIdentifier(for: indexPath) else {return}
-                if item.id.starts(with: "placeholder") {
+                if item.isPlaceholder {
                     return
                 }
-                self.itemDidSelect?(item)
+                if let item = item.value {
+                    self.itemDidSelect?(item)
+                }
             })
             .disposed(by: disposeBag)
     }
     
-    func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, T> {
-        var snapshot = NSDiffableDataSourceSnapshot<String, T>()
+    func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, CollectionViewItem<T>> {
+        var snapshot = NSDiffableDataSourceSnapshot<String, CollectionViewItem<T>>()
         let section = sections.first?.header?.title ?? ""
         snapshot.appendSections([section])
-        var items = viewModel.searchResult == nil ? filter(viewModel.items) : filter(viewModel.searchResult!)
+        let items = viewModel.searchResult == nil ? filter(viewModel.items) : filter(viewModel.searchResult!)
+        var wrappedItems = items.map {CollectionViewItem(placeholderIndex: nil, value: $0)}
         switch viewModel.state.value {
         case .loading:
-            items += [T.placeholder(at: items.count), T.placeholder(at: items.count + 1)]
+            wrappedItems += [
+                CollectionViewItem(placeholderIndex: 0, value: nil),
+                CollectionViewItem(placeholderIndex: 1, value: nil)
+            ]
         case .loaded, .error, .initializing:
             break
         }
-        snapshot.appendItems(items, toSection: section)
+        snapshot.appendItems(wrappedItems, toSection: section)
         return snapshot
     }
     
@@ -131,7 +144,7 @@ class CollectionView<T: ListItemType>: BEView {
     
     // MARK: - Datasource
     private func configureDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<String, T>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: T) -> UICollectionViewCell? in
+        dataSource = UICollectionViewDiffableDataSource<String, CollectionViewItem<T>>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: CollectionViewItem<T>) -> UICollectionViewCell? in
             self.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         }
                 
@@ -140,14 +153,14 @@ class CollectionView<T: ListItemType>: BEView {
         }
     }
     
-    func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: T) -> UICollectionViewCell {
+    func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: CollectionViewItem<T>) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: sections[indexPath.section].cellType), for: indexPath)
         
-        setUpCell(cell: cell, withItem: item)
+        setUpCell(cell: cell, withItem: item.value)
         
         if let cell = cell as? LoadableView {
-            if item.id.starts(with: "placeholder") {
+            if item.isPlaceholder {
                 cell.showLoading()
             } else {
                 cell.hideLoading()
@@ -157,8 +170,8 @@ class CollectionView<T: ListItemType>: BEView {
         return cell
     }
     
-    func setUpCell(cell: UICollectionViewCell, withItem item: T) {
-        if let cell = cell as? ListCollectionCell<T> {
+    func setUpCell(cell: UICollectionViewCell, withItem item: T?) {
+        if let cell = cell as? ListCollectionCell<T>, let item = item {
             cell.setUp(with: item)
         }
     }

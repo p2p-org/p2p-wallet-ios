@@ -34,13 +34,11 @@ class TokenSettingsCell: ListCollectionCell<TokenSettings> {
         case .visibility(let isVisible):
             iconImageView.image = .visibilityShow
             descriptionLabel.text = L10n.visibilityInTokenList
-            mainLabel.text = L10n.visibilityInTokenList
+            mainLabel.text = L10n.visible
         case .close:
             iconImageView.image = .closeToken
             descriptionLabel.isHidden = true
             mainLabel.text = L10n.closeTokenAccount
-        case .placeholder:
-            break
         }
     }
 }

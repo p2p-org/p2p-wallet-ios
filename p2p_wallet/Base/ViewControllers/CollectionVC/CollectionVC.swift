@@ -19,7 +19,7 @@ extension ListItemType {
     }
 }
 
-class ListCollectionCell<T: ListItemType>: BaseCollectionViewCell {
+class ListCollectionCell<T: Hashable>: BaseCollectionViewCell {
     func setUp(with item: T) {}
 }
 
