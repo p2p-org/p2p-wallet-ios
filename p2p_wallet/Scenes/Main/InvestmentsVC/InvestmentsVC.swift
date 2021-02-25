@@ -72,16 +72,16 @@ class InvestmentsVC: CollectionVC<InvestmentsVC.ItemType> {
     }
     
     // MARK: - Layout
-    override var sections: [Section] {
+    override var sections: [CollectionViewSection] {
         [
-            Section(
-                header: Section.Header(title: L10n.makeYourCryptoWorkingOnYou, titleFont: .systemFont(ofSize: 28, weight: .semibold)),
+            CollectionViewSection(
+                header: CollectionViewSection.Header(title: L10n.makeYourCryptoWorkingOnYou, titleFont: .systemFont(ofSize: 28, weight: .semibold)),
                 cellType: NewsCell.self,
                 interGroupSpacing: 16,
                 orthogonalScrollingBehavior: .groupPaging
             ),
-            Section(
-                header: Section.Header(title: L10n.exploreDeFi),
+            CollectionViewSection(
+                header: CollectionViewSection.Header(title: L10n.exploreDeFi),
                 cellType: DefiCell.self,
                 interGroupSpacing: 2
             )
