@@ -32,7 +32,7 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
     override var scrollViewAvoidingTabBar: UIScrollView? {collectionView}
     
     lazy var collectionView: BaseCollectionView = {
-        let collectionView = BaseCollectionView(frame: .zero, collectionViewLayout: createLayout())
+        let collectionView = BaseCollectionView(frame: .zero, collectionViewLayout: sections.createLayout())
         return collectionView
     }()
     
@@ -54,40 +54,8 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
         collectionView.autoPinEdgesToSuperviewSafeArea()
         collectionView.refreshControl = refreshControl
         
-        registerCellAndSupplementaryViews()
+        sections.forEach {$0.registerCellAndSupplementaryViews(in: collectionView)}
         configureDataSource()
-    }
-    
-    func registerCellAndSupplementaryViews() {
-        // register cells
-        let cellClasses = sections.map {$0.cellType}
-        collectionView.registerCells(cellClasses)
-        
-        // register headers
-        let headerViewClasses = sections.reduce([SectionHeaderView.Type]()) { (result, section) in
-            if result.contains(where: {$0 == section.header?.viewClass}) {return result}
-            if let headerViewClass = section.header?.viewClass {
-                return result + [headerViewClass]
-            }
-            return result
-        }
-        
-        for viewClass in headerViewClasses {
-            collectionView.register(viewClass.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: viewClass))
-        }
-        
-        // register footer
-        let footerViewClasses = sections.reduce([SectionFooterView.Type]()) { (result, section) in
-            if result.contains(where: {$0 == section.footer?.viewClass}) {return result}
-            if let footerViewClass = section.footer?.viewClass {
-                return result + [footerViewClass]
-            }
-            return result
-        }
-        
-        for viewClass in footerViewClasses {
-            collectionView.register(viewClass.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: String(describing: viewClass))
-        }
     }
     
     // MARK: - Binding
@@ -169,24 +137,6 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
     
     func itemDidSelect(_ item: ItemType) {
         
-    }
-    
-    // MARK: - Layout
-    func createLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            self.createLayoutForSection(sectionIndex, environment: env)
-        }
-        
-        for section in sections where section.background != nil {
-            layout.register(section.background.self, forDecorationViewOfKind: String(describing: section.background!))
-        }
-        
-        return layout
-    }
-    
-    func createLayoutForSection(_ sectionIndex: Int, environment env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? {
-        let section = sections[sectionIndex]
-        return section.layout(environment: env)
     }
     
     // MARK: - Datasource
