@@ -250,3 +250,8 @@
 "Allow notifications" = "Cho phép thông báo";
 "You can not send tokens to yourself" = "Bạn không thể gửi tokens cho chính mình";
 "or your SOL account's address" = "hoặc địa chỉ tài khoản SOL của bạn";
+"Visibility in token list" = "Hiển thị trong danh sách token";
+"Visible" = "Hiển thị";
+"Invisible" = "Ẩn";
+"Close token account" = "Đóng tài khoản";
+"Wallet settings" = "Cài đặt ví";
