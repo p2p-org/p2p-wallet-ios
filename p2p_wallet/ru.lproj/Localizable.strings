@@ -250,3 +250,4 @@
 "Allow notifications" = "Разрешить уведомления";
 "You can not send tokens to yourself" = "Вы не можете отправлять токены себе";
 "or your SOL account's address" = "или адрес вашей учетной записи SOL";
+"no signer found" = "подписант не найден";

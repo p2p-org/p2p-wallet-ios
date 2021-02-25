@@ -250,3 +250,4 @@
 "Allow notifications" = "Allow notifications";
 "You can not send tokens to yourself" = "You can not send tokens to yourself";
 "or your SOL account's address" = "or your SOL account's address";
+"no signer found" = "no signer found";
