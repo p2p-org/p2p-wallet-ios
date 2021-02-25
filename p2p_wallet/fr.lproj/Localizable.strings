@@ -250,3 +250,4 @@
 "Allow notifications" = "Autoriser les notifications";
 "You can not send tokens to yourself" = "Vous ne pouvez pas vous envoyer de jetons";
 "or your SOL account's address" = "ou l'adresse de votre compte SOL";
+"no signer found" = "aucun signataire trouvé";
