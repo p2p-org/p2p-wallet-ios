@@ -39,7 +39,30 @@ extension MainVC {
         }
     }
     
-    class ActiveWalletsSectionFooterView: SectionFooterView {
+    class ActiveWalletsSectionBackgroundView: SectionBackgroundView {
+        override func commonInit() {
+            super.commonInit()
+            backgroundColor = .h1b1b1b
+        }
+    }
+    
+    class HiddenWalletsSectionHeaderView: SectionHeaderView {
+        override func commonInit() {
+            super.commonInit()
+            stackView.axis = .horizontal
+            stackView.distribution = .fill
+            stackView.alignment = .center
+            let imageView = UIImageView(width: 20, height: 20, image: .visibilityShow, tintColor: .textSecondary)
+                .padding(.init(all: 12.5))
+                .padding(.init(top: 10, left: .defaultPadding, bottom: 10, right: 0))
+            stackView.insertArrangedSubview(
+                imageView,
+                at: 0
+            )
+        }
+    }
+    
+    class WalletsSectionFooterView: SectionFooterView {
         var showProductsAction: CocoaAction?
         
         lazy var button: UIView = {
@@ -60,27 +83,6 @@ extension MainVC {
         
         @objc func buttonDidTouch() {
             showProductsAction?.execute()
-        }
-    }
-    
-    class ActiveWalletsSectionBackgroundView: SectionBackgroundView {
-        override func commonInit() {
-            super.commonInit()
-            backgroundColor = .h1b1b1b
-        }
-    }
-    
-    class HiddenWalletsSectionHeaderView: SectionHeaderView {
-        override func commonInit() {
-            super.commonInit()
-            stackView.axis = .horizontal
-            stackView.spacing = 27
-            stackView.distribution = .fill
-            stackView.insertArrangedSubview(
-                UIImageView(width: 20, height: 20, image: .visibilityShow, tintColor: .textSecondary)
-                    .padding(.init(top: 0, left: .defaultPadding, bottom: 0, right: 0)),
-                at: 0
-            )
         }
     }
     
