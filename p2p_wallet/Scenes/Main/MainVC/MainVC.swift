@@ -34,6 +34,16 @@ enum MainVCItem: ListItemType {
     }
     case wallet(Wallet)
     case friend // TODO: - Friend
+    
+    var wallet: Wallet? {
+        switch self {
+        case .wallet(let wallet):
+            return wallet
+        default:
+            break
+        }
+        return nil
+    }
 }
 
 class MainVC: CollectionVC<MainVCItem> {
@@ -57,18 +67,28 @@ class MainVC: CollectionVC<MainVCItem> {
     override var sections: [CollectionViewSection] {
         [
             CollectionViewSection(
-                header: CollectionViewSection.Header(viewClass: FirstSectionHeaderView.self, title: ""),
-                footer: CollectionViewSection.Footer(viewClass: FirstSectionFooterView.self),
+                header: CollectionViewSection.Header(viewClass: ActiveWalletsSectionHeaderView.self, title: ""),
+                footer: CollectionViewSection.Footer(viewClass: ActiveWalletsSectionFooterView.self),
                 cellType: MainWalletCell.self,
                 interGroupSpacing: 30,
                 itemHeight: .absolute(45),
                 horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16),
-                background: FirstSectionBackgroundView.self
+                background: ActiveWalletsSectionBackgroundView.self
             ),
             CollectionViewSection(
-                header: CollectionViewSection.Header(viewClass: SecondSectionHeaderView.self, title: ""),
+                header: CollectionViewSection.Header(
+                    viewClass: HiddenWalletsSectionHeaderView.self, title: "Hidden wallet"
+                ),
+                cellType: MainWalletCell.self,
+                interGroupSpacing: 30,
+                itemHeight: .absolute(45),
+                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16),
+                background: ActiveWalletsSectionBackgroundView.self
+            ),
+            CollectionViewSection(
+                header: CollectionViewSection.Header(viewClass: FriendsSectionHeaderView.self, title: ""),
                 cellType: FriendCell.self,
-                background: SecondSectionBackgroundView.self
+                background: FriendsSectionBackgroundView.self
             )
         ]
     }
@@ -79,22 +99,30 @@ class MainVC: CollectionVC<MainVCItem> {
         // initial snapshot
         var snapshot = NSDiffableDataSourceSnapshot<String, MainVCItem>()
         
-        // section 1
-        let section = L10n.wallets
-        snapshot.appendSections([section])
+        // activeWallet
+        let activeWalletSections = L10n.wallets
+        snapshot.appendSections([activeWalletSections])
         
-        var items = filterWallet(viewModel.walletsVM.items).map {MainVCItem.wallet($0)}
+        let allWallets = filterWallet(viewModel.walletsVM.items)
+        
+        var items = allWallets.filter {!$0.isHidden}.map {MainVCItem.wallet($0)}
         switch viewModel.walletsVM.state.value {
         case .loading:
             items += [MainVCItem.placeholder(at: 0), MainVCItem.placeholder(at: 1)]
         case .loaded, .error, .initializing:
             break
         }
-        snapshot.appendItems(items, toSection: section)
+        snapshot.appendItems(items, toSection: activeWalletSections)
+        
+        // hiddenWallet
+        let hiddenWalletSections = sections[2].header?.title ?? "Hidden"
+        snapshot.appendSections([hiddenWalletSections])
+        let hiddenItems = allWallets.filter {$0.isHidden}.map {MainVCItem.wallet($0)}
+        snapshot.appendItems(hiddenItems, toSection: hiddenWalletSections)
         
         // section 2
-        let section2 = L10n.friends
-        snapshot.appendSections([section2])
+        let friendsSection = L10n.friends
+        snapshot.appendSections([friendsSection])
 //        snapshot.appendItems([MainVCItem.friend], toSection: section2)
         return snapshot
     }
@@ -108,6 +136,12 @@ class MainVC: CollectionVC<MainVCItem> {
                 self.present(vc, animated: true, completion: nil)
                 return .just(())
             }
+            (cell as! MainWalletCell).hideAction = CocoaAction {
+                if let wallet = item.wallet {
+                    (self.viewModel as? MainVM)?.walletsVM.hideWallet(wallet)
+                }
+                return .just(())
+            }
         case .friend:
             break
         }
@@ -118,11 +152,11 @@ class MainVC: CollectionVC<MainVCItem> {
         
         switch indexPath.section {
         case 0:
-            if let view = header as? FirstSectionHeaderView {
+            if let view = header as? ActiveWalletsSectionHeaderView {
                 view.openProfileAction = self.openProfile
             }
-        case 1:
-            if let view = header as? SecondSectionHeaderView {
+        case 2:
+            if let view = header as? FriendsSectionHeaderView {
                 view.receiveAction = self.receiveAction
                 view.sendAction = self.sendAction()
                 view.exchangeAction = self.swapAction
@@ -139,7 +173,7 @@ class MainVC: CollectionVC<MainVCItem> {
         
         switch indexPath.section {
         case 0:
-            if let view = footer as? FirstSectionFooterView {
+            if let view = footer as? ActiveWalletsSectionFooterView {
                 view.showProductsAction = self.showAllProducts
             }
         default:

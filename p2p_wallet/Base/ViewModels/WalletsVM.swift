@@ -15,6 +15,7 @@ class WalletsVM: ListViewModel<Wallet> {
     let socket: SolanaSDK.Socket
     let transactionManager: TransactionsManager?
     private(set) var shouldUpdateBalance = false
+    var disposables = [DefaultsDisposable]()
     
     var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
     
@@ -27,6 +28,7 @@ class WalletsVM: ListViewModel<Wallet> {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+        disposables.forEach {$0.dispose()}
     }
     
     override func bind() {
@@ -80,6 +82,17 @@ class WalletsVM: ListViewModel<Wallet> {
             })
             .disposed(by: disposeBag)
         
+        disposables.append(Defaults.observe(\.hiddenWalletPubkey) { update in
+            self.updateItem(where: {
+                guard let pubkey = $0.pubkey else {return false}
+                return update.newValue?.contains(pubkey) == true
+            }) { wallet -> Wallet? in
+                var wallet = wallet
+                wallet.isHidden = true
+                return wallet
+            }
+        })
+        
         NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -93,9 +106,14 @@ class WalletsVM: ListViewModel<Wallet> {
                     .map {wallets in
                         var wallets = wallets
                         for i in 0..<wallets.count {
+                            // update prices
                             if let price = PricesManager.shared.currentPrice(for: wallets[i].symbol)
                             {
                                 wallets[i].price = price
+                            }
+                            // update visibility
+                            if let pubkey = wallets[i].pubkey {
+                                wallets[i].isHidden = Defaults.hiddenWalletPubkey.contains(pubkey)
                             }
                         }
                         
@@ -114,6 +132,10 @@ class WalletsVM: ListViewModel<Wallet> {
                         return wallets
                     }
             }
+    }
+    
+    func hideWallet(_ wallet: Wallet) {
+        Defaults.hiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
     }
     
     func updateWallet(_ wallet: Wallet, withName name: String) {

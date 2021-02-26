@@ -51,9 +51,7 @@ class EditableWalletCell: WalletCell {
     
     override func setUp(with item: Wallet) {
         super.setUp(with: item)
-        if item.symbol == "SOL" {
-            buttonStackView.isHidden = true
-        }
+        buttonStackView.isHidden = item.symbol == "SOL"
     }
     
     @objc func buttonEditDidTouch() {

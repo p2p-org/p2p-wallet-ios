@@ -18,6 +18,7 @@ struct Wallet: FiatConvertable {
     var price: CurrentPrice?
     var decimals: Int?
     var indicatorColor: UIColor
+    var isHidden = false
     
     // MARK: - Additional properties
     var isExpanded: Bool?

@@ -34,5 +34,9 @@ class MyWalletsVC: CollectionVC<Wallet> {
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
+        (cell as? EditableWalletCell)?.hideAction = CocoaAction {
+            (self.viewModel as? WalletsVM)?.hideWallet(item)
+            return .just(())
+        }
     }
 }
