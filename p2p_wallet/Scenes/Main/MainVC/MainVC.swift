@@ -68,7 +68,6 @@ class MainVC: CollectionVC<MainVCItem> {
         [
             CollectionViewSection(
                 header: CollectionViewSection.Header(viewClass: ActiveWalletsSectionHeaderView.self, title: ""),
-                footer: CollectionViewSection.Footer(viewClass: ActiveWalletsSectionFooterView.self),
                 cellType: MainWalletCell.self,
                 interGroupSpacing: 30,
                 itemHeight: .absolute(45),
@@ -79,6 +78,7 @@ class MainVC: CollectionVC<MainVCItem> {
                 header: CollectionViewSection.Header(
                     viewClass: HiddenWalletsSectionHeaderView.self, title: "Hidden wallet"
                 ),
+                footer: CollectionViewSection.Footer(viewClass: WalletsSectionFooterView.self),
                 cellType: MainWalletCell.self,
                 interGroupSpacing: 30,
                 itemHeight: .absolute(45),
@@ -105,7 +105,10 @@ class MainVC: CollectionVC<MainVCItem> {
         
         let allWallets = filterWallet(viewModel.walletsVM.items)
         
-        var items = allWallets.filter {!$0.isHidden}.map {MainVCItem.wallet($0)}
+        var items = allWallets
+            .filter {!$0.isHidden}
+            .prefix(numberOfWalletsToShow)
+            .map {MainVCItem.wallet($0)}
         switch viewModel.walletsVM.state.value {
         case .loading:
             items += [MainVCItem.placeholder(at: 0), MainVCItem.placeholder(at: 1)]
@@ -172,8 +175,8 @@ class MainVC: CollectionVC<MainVCItem> {
         let footer = super.configureFooterForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
         
         switch indexPath.section {
-        case 0:
-            if let view = footer as? ActiveWalletsSectionFooterView {
+        case 1:
+            if let view = footer as? WalletsSectionFooterView {
                 view.showProductsAction = self.showAllProducts
             }
         default:
@@ -246,7 +249,6 @@ class MainVC: CollectionVC<MainVCItem> {
             contentsOf: items
                 .filter {$0.symbol != "SOL"}
                 .sorted(by: {$0.amountInUSD > $1.amountInUSD})
-                .prefix(numberOfWalletsToShow - 1)
         )
         
         return wallets
