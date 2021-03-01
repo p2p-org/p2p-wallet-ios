@@ -1,36 +1,30 @@
 //
-//  CollectionVC.swift
+//  CollectionView.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 11/3/20.
+//  Created by Chung Tran on 25/02/2021.
 //
 
 import Foundation
 import RxSwift
 
-protocol ListItemType: Hashable {
-    static func placeholder(at index: Int) -> Self
-    var id: String {get}
-}
-
-extension ListItemType {
-    static func placeholderId(at index: Int) -> String {
-        "placeholder#\(index)"
-    }
-}
-
-class ListCollectionCell<T: Hashable>: BaseCollectionViewCell {
-    func setUp(with item: T) {}
-}
-
-class CollectionVC<ItemType: ListItemType>: BaseVC {
-    // MARK: - Properties
-    var dataSource: UICollectionViewDiffableDataSource<String, ItemType>!
-    let viewModel: ListViewModel<ItemType>
-    var sections: [CollectionViewSection] { [] }
+struct CollectionViewItem<T: Hashable>: Hashable {
+    var placeholderIndex: Int?
+    var value: T?
     
-    override var scrollViewAvoidingTabBar: UIScrollView? {collectionView}
+    var isPlaceholder: Bool {placeholderIndex != nil}
+}
+
+class CollectionView<T: Hashable>: BEView {
+    // MARK: - Property
+    let disposeBag = DisposeBag()
+    let viewModel: ListViewModel<T>
+    let sections: [CollectionViewSection]
     
+    var dataSource: UICollectionViewDiffableDataSource<String, CollectionViewItem<T>>!
+    var itemDidSelect: ((T) -> Void)?
+    
+    // MARK: - Subviews
     lazy var collectionView: BaseCollectionView = {
         let collectionView = BaseCollectionView(frame: .zero, collectionViewLayout: sections.createLayout())
         return collectionView
@@ -42,25 +36,26 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
         return control
     }()
     
-    init(viewModel: ListViewModel<ItemType>) {
+    // MARK: - Initializers
+    init(viewModel: ListViewModel<T>, sections: [CollectionViewSection]) {
         self.viewModel = viewModel
-        super.init()
+        self.sections = sections
+        super.init(frame: .zero)
     }
     
-    // MARK: - Setup
-    override func setUp() {
-        super.setUp()
-        view.addSubview(collectionView)
+    override func commonInit() {
+        super.commonInit()
+        addSubview(collectionView)
         collectionView.autoPinEdgesToSuperviewSafeArea()
         collectionView.refreshControl = refreshControl
         
         sections.forEach {$0.registerCellAndSupplementaryViews(in: collectionView)}
         configureDataSource()
+        
+        bind()
     }
     
-    // MARK: - Binding
-    override func bind() {
-        super.bind()
+    func bind() {
         viewModel.dataDidChange
             .subscribe(onNext: { (_) in
                 let snapshot = self.mapDataToSnapshot()
@@ -95,30 +90,36 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
         collectionView.rx.itemSelected
             .subscribe(onNext: {indexPath in
                 guard let item = self.dataSource.itemIdentifier(for: indexPath) else {return}
-                if item.id.starts(with: "placeholder") {
+                if item.isPlaceholder {
                     return
                 }
-                self.itemDidSelect(item)
+                if let item = item.value {
+                    self.itemDidSelect?(item)
+                }
             })
             .disposed(by: disposeBag)
     }
     
-    func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, ItemType> {
-        var snapshot = NSDiffableDataSourceSnapshot<String, ItemType>()
+    func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, CollectionViewItem<T>> {
+        var snapshot = NSDiffableDataSourceSnapshot<String, CollectionViewItem<T>>()
         let section = sections.first?.header?.title ?? ""
         snapshot.appendSections([section])
-        var items = viewModel.searchResult == nil ? filter(viewModel.items) : filter(viewModel.searchResult!)
+        let items = viewModel.searchResult == nil ? filter(viewModel.items) : filter(viewModel.searchResult!)
+        var wrappedItems = items.map {CollectionViewItem(placeholderIndex: nil, value: $0)}
         switch viewModel.state.value {
         case .loading:
-            items += [ItemType.placeholder(at: items.count), ItemType.placeholder(at: items.count + 1)]
+            wrappedItems += [
+                CollectionViewItem(placeholderIndex: 0, value: nil),
+                CollectionViewItem(placeholderIndex: 1, value: nil)
+            ]
         case .loaded, .error, .initializing:
             break
         }
-        snapshot.appendItems(items, toSection: section)
+        snapshot.appendItems(wrappedItems, toSection: section)
         return snapshot
     }
     
-    func filter(_ items: [ItemType]) -> [ItemType] {
+    func filter(_ items: [T]) -> [T] {
         items
     }
     
@@ -135,13 +136,15 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
         footer.setNeedsDisplay()
     }
     
-    func itemDidSelect(_ item: ItemType) {
-        
+    // MARK: - Actions
+    @objc func refresh(_ sender: Any) {
+        refreshControl.endRefreshing()
+        viewModel.refresh()
     }
     
     // MARK: - Datasource
     private func configureDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<String, ItemType>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell? in
+        dataSource = UICollectionViewDiffableDataSource<String, CollectionViewItem<T>>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: CollectionViewItem<T>) -> UICollectionViewCell? in
             self.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         }
                 
@@ -150,14 +153,14 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
         }
     }
     
-    func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell {
+    func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: CollectionViewItem<T>) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: sections[indexPath.section].cellType), for: indexPath)
         
-        setUpCell(cell: cell, withItem: item)
+        setUpCell(cell: cell, withItem: item.value)
         
         if let cell = cell as? LoadableView {
-            if item.id.starts(with: "placeholder") {
+            if item.isPlaceholder {
                 cell.showLoading()
             } else {
                 cell.hideLoading()
@@ -167,8 +170,8 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
         return cell
     }
     
-    func setUpCell(cell: UICollectionViewCell, withItem item: ItemType) {
-        if let cell = cell as? ListCollectionCell<ItemType> {
+    func setUpCell(cell: UICollectionViewCell, withItem item: T?) {
+        if let cell = cell as? ListCollectionCell<T>, let item = item {
             cell.setUp(with: item)
         }
     }
@@ -208,15 +211,5 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
             for: indexPath) as? SectionFooterView
         
         return view
-    }
-    
-    func itemAtIndexPath(_ indexPath: IndexPath) -> ItemType? {
-        viewModel.itemAtIndex(indexPath.row)
-    }
-    
-    // MARK: - Actions
-    @objc func refresh(_ sender: Any) {
-        refreshControl.endRefreshing()
-        viewModel.refresh()
     }
 }

@@ -251,3 +251,8 @@
 "You can not send tokens to yourself" = "Вы не можете отправлять токены себе";
 "or your SOL account's address" = "или адрес вашей учетной записи SOL";
 "no signer found" = "подписант не найден";
+"Visibility in token list" = "Видимость в списке токенов";
+"Visible" = "Видимый";
+"Invisible" = "Невидимый";
+"Close token account" = "Закрыть счет токена";
+"Wallet settings" = "Настройки кошелька";

@@ -16,6 +16,7 @@ protocol MainScenesFactory {
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController
     func makeMyProductsVC() -> MyProductsVC
     func makeProfileVC() -> ProfileVC
+    func makeTokenSettingsViewController() -> TokenSettingsViewController
 }
 
 enum MainVCItem: ListItemType {
@@ -33,6 +34,16 @@ enum MainVCItem: ListItemType {
     }
     case wallet(Wallet)
     case friend // TODO: - Friend
+    
+    var wallet: Wallet? {
+        switch self {
+        case .wallet(let wallet):
+            return wallet
+        default:
+            break
+        }
+        return nil
+    }
 }
 
 class MainVC: CollectionVC<MainVCItem> {
@@ -50,23 +61,37 @@ class MainVC: CollectionVC<MainVCItem> {
         super.setUp()
         view.backgroundColor = .white
         setStatusBarColor(.h1b1b1b)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(collectionViewDidTouch(_:)))
+        collectionView.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Layout
-    override var sections: [Section] {
+    override var sections: [CollectionViewSection] {
         [
-            Section(
-                header: Section.Header(viewClass: FirstSectionHeaderView.self, title: ""),
-                footer: Section.Footer(viewClass: FirstSectionFooterView.self),
+            CollectionViewSection(
+                header: CollectionViewSection.Header(viewClass: ActiveWalletsSectionHeaderView.self, title: ""),
                 cellType: MainWalletCell.self,
                 interGroupSpacing: 30,
+                itemHeight: .absolute(45),
                 horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16),
-                background: FirstSectionBackgroundView.self
+                background: ActiveWalletsSectionBackgroundView.self
             ),
-            Section(
-                header: Section.Header(viewClass: SecondSectionHeaderView.self, title: ""),
+            CollectionViewSection(
+                header: CollectionViewSection.Header(
+                    viewClass: HiddenWalletsSectionHeaderView.self, title: "Hidden wallet"
+                ),
+                footer: CollectionViewSection.Footer(viewClass: WalletsSectionFooterView.self),
+                cellType: MainWalletCell.self,
+                interGroupSpacing: 30,
+                itemHeight: .absolute(45),
+                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16),
+                background: ActiveWalletsSectionBackgroundView.self
+            ),
+            CollectionViewSection(
+                header: CollectionViewSection.Header(viewClass: FriendsSectionHeaderView.self, title: ""),
                 cellType: FriendCell.self,
-                background: SecondSectionBackgroundView.self
+                background: FriendsSectionBackgroundView.self
             )
         ]
     }
@@ -77,22 +102,35 @@ class MainVC: CollectionVC<MainVCItem> {
         // initial snapshot
         var snapshot = NSDiffableDataSourceSnapshot<String, MainVCItem>()
         
-        // section 1
-        let section = L10n.wallets
-        snapshot.appendSections([section])
+        // activeWallet
+        let activeWalletSections = L10n.wallets
+        snapshot.appendSections([activeWalletSections])
         
-        var items = filterWallet(viewModel.walletsVM.items).map {MainVCItem.wallet($0)}
+        var items = viewModel.walletsVM.shownWallets()
+            .prefix(numberOfWalletsToShow)
+            .map {MainVCItem.wallet($0)}
         switch viewModel.walletsVM.state.value {
         case .loading:
             items += [MainVCItem.placeholder(at: 0), MainVCItem.placeholder(at: 1)]
         case .loaded, .error, .initializing:
             break
         }
-        snapshot.appendItems(items, toSection: section)
+        snapshot.appendItems(items, toSection: activeWalletSections)
+        
+        // hiddenWallet
+        let hiddenWalletSections = sections[1].header?.title ?? "Hidden"
+        var hiddenItems = [MainVCItem]()
+        if viewModel.walletsVM.isHiddenWalletsShown.value {
+            hiddenItems = viewModel.walletsVM.hiddenWallets()
+                .prefix(numberOfWalletsToShow)
+                .map {MainVCItem.wallet($0)}
+        }
+        snapshot.appendSections([hiddenWalletSections])
+        snapshot.appendItems(hiddenItems, toSection: hiddenWalletSections)
         
         // section 2
-        let section2 = L10n.friends
-        snapshot.appendSections([section2])
+        let friendsSection = L10n.friends
+        snapshot.appendSections([friendsSection])
 //        snapshot.appendItems([MainVCItem.friend], toSection: section2)
         return snapshot
     }
@@ -101,6 +139,22 @@ class MainVC: CollectionVC<MainVCItem> {
         switch item {
         case .wallet(let wallet):
             (cell as! MainWalletCell).setUp(with: wallet)
+            (cell as! MainWalletCell).editAction = CocoaAction {
+                let vc = self.scenesFactory.makeTokenSettingsViewController()
+                self.present(vc, animated: true, completion: nil)
+                return .just(())
+            }
+            (cell as! MainWalletCell).hideAction = CocoaAction {
+                if let wallet = item.wallet {
+                    let walletsVM = (self.viewModel as? MainVM)?.walletsVM
+                    if wallet.isHidden {
+                        walletsVM?.unhideWallet(wallet)
+                    } else {
+                        walletsVM?.hideWallet(wallet)
+                    }
+                }
+                return .just(())
+            }
         case .friend:
             break
         }
@@ -111,11 +165,18 @@ class MainVC: CollectionVC<MainVCItem> {
         
         switch indexPath.section {
         case 0:
-            if let view = header as? FirstSectionHeaderView {
+            if let view = header as? ActiveWalletsSectionHeaderView {
                 view.openProfileAction = self.openProfile
             }
         case 1:
-            if let view = header as? SecondSectionHeaderView {
+            if let view = header as? HiddenWalletsSectionHeaderView {
+                view.showHideHiddenWalletsAction = CocoaAction {
+                    (self.viewModel as! MainVM).walletsVM.toggleIsHiddenWalletShown()
+                    return .just(())
+                }
+            }
+        case 2:
+            if let view = header as? FriendsSectionHeaderView {
                 view.receiveAction = self.receiveAction
                 view.sendAction = self.sendAction()
                 view.exchangeAction = self.swapAction
@@ -131,8 +192,8 @@ class MainVC: CollectionVC<MainVCItem> {
         let footer = super.configureFooterForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
         
         switch indexPath.section {
-        case 0:
-            if let view = footer as? FirstSectionFooterView {
+        case 1:
+            if let view = footer as? WalletsSectionFooterView {
                 view.showProductsAction = self.showAllProducts
             }
         default:
@@ -194,20 +255,32 @@ class MainVC: CollectionVC<MainVCItem> {
         }
     }
     
-    // MARK: - Helpers
-    func filterWallet(_ items: [Wallet]) -> [Wallet] {
-        var wallets = [Wallet]()
-        
-        if let solWallet = items.first(where: {$0.symbol == "SOL"}) {
-            wallets.append(solWallet)
+    override func itemAtIndexPath(_ indexPath: IndexPath) -> MainVCItem? {
+        let viewModel = (self.viewModel as? MainVM)
+        switch indexPath.section {
+        case 0:
+            if let wallet = viewModel?.walletsVM.shownWallets()[indexPath.row]
+            {
+                return MainVCItem.wallet(wallet)
+            }
+        case 1:
+            if let wallet = viewModel?.walletsVM.hiddenWallets()[indexPath.row]
+            {
+                return MainVCItem.wallet(wallet)
+            }
+        default:
+            break
         }
-        wallets.append(
-            contentsOf: items
-                .filter {$0.symbol != "SOL"}
-                .sorted(by: {$0.amountInUSD > $1.amountInUSD})
-                .prefix(numberOfWalletsToShow - 1)
-        )
-        
-        return wallets
+        return nil
+    }
+    
+    @objc func collectionViewDidTouch(_ sender: UIGestureRecognizer) {
+        if let indexPath = collectionView.indexPathForItem(at: sender.location(in: collectionView)) {
+            if let item = itemAtIndexPath(indexPath) {
+                itemDidSelect(item)
+            }
+        } else {
+            print("collection view was tapped")
+        }
     }
 }

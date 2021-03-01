@@ -158,9 +158,9 @@ private class _WalletDetailVC: CollectionVC<Transaction> {
     }
     
     // MARK: - Layout
-    override var sections: [Section] {
-        [Section(
-            header: Section.Header(
+    override var sections: [CollectionViewSection] {
+        [CollectionViewSection(
+            header: CollectionViewSection.Header(
                 viewClass: WDVCSectionHeaderView.self,
                 title: L10n.activities
             ),
