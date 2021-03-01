@@ -21,7 +21,6 @@ class EditableWalletCell: WalletCell {
         .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.3), cornerRadius: 12)
         .onTap(self, action: #selector(buttonEditDidTouch))
     lazy var hideButton = UIImageView(width: 24, height: 24, image: .visibilityHide, tintColor: .textBlack)
-        .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.3), cornerRadius: 12)
         .onTap(self, action: #selector(buttonHideDidTouch))
     
     var editAction: CocoaAction?
@@ -46,12 +45,14 @@ class EditableWalletCell: WalletCell {
         buttonStackView.addArrangedSubviews([
             editButton,
             hideButton
+                .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.3), cornerRadius: 12)
         ])
     }
     
     override func setUp(with item: Wallet) {
         super.setUp(with: item)
         buttonStackView.isHidden = item.symbol == "SOL"
+        hideButton.image = item.isHidden ? .visibilityShow: .visibilityHide
     }
     
     @objc func buttonEditDidTouch() {
