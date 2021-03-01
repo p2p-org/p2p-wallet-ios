@@ -103,7 +103,7 @@ class MainVC: CollectionVC<MainVCItem> {
         let activeWalletSections = L10n.wallets
         snapshot.appendSections([activeWalletSections])
         
-        let allWallets = filterWallet(viewModel.walletsVM.items)
+        let allWallets = viewModel.walletsVM.items
         
         var items = allWallets
             .filter {!$0.isHidden}
@@ -241,21 +241,5 @@ class MainVC: CollectionVC<MainVCItem> {
             self.present(profileVC, animated: true, completion: nil)
             return .just(())
         }
-    }
-    
-    // MARK: - Helpers
-    func filterWallet(_ items: [Wallet]) -> [Wallet] {
-        var wallets = [Wallet]()
-        
-        if let solWallet = items.first(where: {$0.symbol == "SOL"}) {
-            wallets.append(solWallet)
-        }
-        wallets.append(
-            contentsOf: items
-                .filter {$0.symbol != "SOL"}
-                .sorted(by: {$0.amountInUSD > $1.amountInUSD})
-        )
-        
-        return wallets
     }
 }

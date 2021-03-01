@@ -18,10 +18,8 @@ class EditableWalletCell: WalletCell {
     }()
     lazy var buttonStackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .fill, distribution: .fill)
     lazy var editButton = UIImageView(width: 24, height: 24, image: .walletEdit, tintColor: .textBlack)
-        .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.3), cornerRadius: 12)
-        .onTap(self, action: #selector(buttonEditDidTouch))
     lazy var hideButton = UIImageView(width: 24, height: 24, image: .visibilityHide, tintColor: .textBlack)
-        .onTap(self, action: #selector(buttonHideDidTouch))
+        
     
     var editAction: CocoaAction?
     var hideAction: CocoaAction?
@@ -43,9 +41,12 @@ class EditableWalletCell: WalletCell {
         stackView.heightAnchor.constraint(equalTo: scrollView.heightAnchor).isActive = true
         
         buttonStackView.addArrangedSubviews([
-            editButton,
+            editButton
+                .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.3), cornerRadius: 12)
+                .onTap(self, action: #selector(buttonEditDidTouch)),
             hideButton
                 .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.3), cornerRadius: 12)
+                .onTap(self, action: #selector(buttonHideDidTouch))
         ])
     }
     
