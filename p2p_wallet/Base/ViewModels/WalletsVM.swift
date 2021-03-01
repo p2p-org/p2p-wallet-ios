@@ -15,7 +15,6 @@ class WalletsVM: ListViewModel<Wallet> {
     let socket: SolanaSDK.Socket
     let transactionManager: TransactionsManager?
     private(set) var shouldUpdateBalance = false
-    var disposables = [DefaultsDisposable]()
     
     var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
     
@@ -28,7 +27,6 @@ class WalletsVM: ListViewModel<Wallet> {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
-        disposables.forEach {$0.dispose()}
     }
     
     override func bind() {
@@ -82,17 +80,6 @@ class WalletsVM: ListViewModel<Wallet> {
             })
             .disposed(by: disposeBag)
         
-        disposables.append(Defaults.observe(\.hiddenWalletPubkey) { update in
-            self.updateItem(where: {
-                guard let pubkey = $0.pubkey else {return false}
-                return update.newValue?.contains(pubkey) == true
-            }) { wallet -> Wallet? in
-                var wallet = wallet
-                wallet.isHidden = true
-                return wallet
-            }
-        })
-        
         NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -136,6 +123,24 @@ class WalletsVM: ListViewModel<Wallet> {
     
     func hideWallet(_ wallet: Wallet) {
         Defaults.hiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
+        self.updateItem(where: {
+            $0.pubkey == wallet.pubkey
+        }) { wallet -> Wallet? in
+            var wallet = wallet
+            wallet.isHidden = true
+            return wallet
+        }
+    }
+    
+    func unhideWallet(_ wallet: Wallet) {
+        Defaults.hiddenWalletPubkey.removeAll(where: {$0 == wallet.pubkey})
+        self.updateItem(where: {
+            $0.pubkey == wallet.pubkey
+        }) { wallet -> Wallet? in
+            var wallet = wallet
+            wallet.isHidden = false
+            return wallet
+        }
     }
     
     func updateWallet(_ wallet: Wallet, withName name: String) {
