@@ -179,4 +179,12 @@ class WalletsVM: ListViewModel<Wallet> {
     @objc func appDidEnterBackground() {
         shouldUpdateBalance = true
     }
+    
+    func hiddenWallets() -> [Wallet] {
+        items.filter {$0.isHidden}
+    }
+    
+    func shownWallets() -> [Wallet] {
+        items.filter { !hiddenWallets().contains($0) }
+    }
 }

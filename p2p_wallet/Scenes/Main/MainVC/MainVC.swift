@@ -105,8 +105,7 @@ class MainVC: CollectionVC<MainVCItem> {
         
         let allWallets = viewModel.walletsVM.items
         
-        var items = allWallets
-            .filter {!$0.isHidden}
+        var items = viewModel.walletsVM.shownWallets()
             .prefix(numberOfWalletsToShow)
             .map {MainVCItem.wallet($0)}
         switch viewModel.walletsVM.state.value {
@@ -120,8 +119,7 @@ class MainVC: CollectionVC<MainVCItem> {
         // hiddenWallet
         let hiddenWalletSections = sections[2].header?.title ?? "Hidden"
         snapshot.appendSections([hiddenWalletSections])
-        let hiddenItems = allWallets
-            .filter {$0.isHidden}
+        let hiddenItems = viewModel.walletsVM.hiddenWallets()
             .prefix(numberOfWalletsToShow)
             .map {MainVCItem.wallet($0)}
         snapshot.appendItems(hiddenItems, toSection: hiddenWalletSections)
