@@ -11,12 +11,16 @@ import RxCocoa
 
 enum TokenSettingsNavigatableScene {
     case closeConfirmation
+    case sendTransaction
+    case processTransaction(signature: String)
+    case transactionError(_ error: Error)
 }
 
 class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     // MARK: - Properties
     let walletsVM: WalletsVM
     let pubkey: String
+    let solanaSDK: SolanaSDK
     var wallet: Wallet? {walletsVM.items.first(where: {$0.pubkey == pubkey})}
     
     // MARK: - Subject
@@ -25,9 +29,10 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
-    init(walletsVM: WalletsVM, pubkey: String) {
+    init(walletsVM: WalletsVM, pubkey: String, solanaSDK: SolanaSDK) {
         self.walletsVM = walletsVM
         self.pubkey = pubkey
+        self.solanaSDK = solanaSDK
         super.init()
     }
     
@@ -68,6 +73,6 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     }
     
     @objc func closeWallet() {
-        
+        navigationSubject.onNext(.sendTransaction)
     }
 }
