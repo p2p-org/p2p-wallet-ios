@@ -120,7 +120,10 @@ class MainVC: CollectionVC<MainVCItem> {
         // hiddenWallet
         let hiddenWalletSections = sections[2].header?.title ?? "Hidden"
         snapshot.appendSections([hiddenWalletSections])
-        let hiddenItems = allWallets.filter {$0.isHidden}.map {MainVCItem.wallet($0)}
+        let hiddenItems = allWallets
+            .filter {$0.isHidden}
+            .prefix(numberOfWalletsToShow)
+            .map {MainVCItem.wallet($0)}
         snapshot.appendItems(hiddenItems, toSection: hiddenWalletSections)
         
         // section 2
