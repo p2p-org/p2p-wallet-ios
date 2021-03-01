@@ -141,7 +141,12 @@ class MainVC: CollectionVC<MainVCItem> {
             }
             (cell as! MainWalletCell).hideAction = CocoaAction {
                 if let wallet = item.wallet {
-                    (self.viewModel as? MainVM)?.walletsVM.hideWallet(wallet)
+                    let walletsVM = (self.viewModel as? MainVM)?.walletsVM
+                    if wallet.isHidden {
+                        walletsVM?.unhideWallet(wallet)
+                    } else {
+                        walletsVM?.hideWallet(wallet)
+                    }
                 }
                 return .just(())
             }
