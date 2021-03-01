@@ -9,12 +9,18 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+enum TokenSettingsNavigatableScene {
+    case closeConfirmation
+}
+
 class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     // MARK: - Properties
     let walletsVM: WalletsVM
     let pubkey: String
+    var wallet: Wallet? {walletsVM.items.first(where: {$0.pubkey == pubkey})}
     
     // MARK: - Subject
+    let navigationSubject = PublishSubject<TokenSettingsNavigatableScene>()
 //    private let wallet = BehaviorRelay<Wallet?>(value: nil)
     
     // MARK: - Input
@@ -53,7 +59,7 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     
     // MARK: - Actions
     @objc func toggleHideWallet() {
-        guard let wallet = walletsVM.items.first(where: {$0.pubkey == pubkey}) else {return}
+        guard let wallet = wallet else {return}
         if wallet.isHidden {
             walletsVM.unhideWallet(wallet)
         } else {
@@ -61,7 +67,7 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
         }
     }
     
-    @objc func showWallet() {
+    @objc func closeWallet() {
         
     }
 }
