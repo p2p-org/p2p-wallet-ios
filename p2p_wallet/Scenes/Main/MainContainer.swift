@@ -113,8 +113,8 @@ class MainContainer {
     }
     
     // MARK: - Token edit
-    func makeTokenSettingsViewController() -> TokenSettingsViewController {
-        TokenSettingsViewController(viewModel: TokenSettingsViewModel())
+    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController {
+        TokenSettingsViewController(viewModel: TokenSettingsViewModel(walletsVM: myWalletsVM, pubkey: pubkey, solanaSDK: solanaSDK, transactionManager: transactionManager), scenesFactory: self)
     }
     
     // MARK: - Helpers
@@ -137,4 +137,4 @@ class MainContainer {
     }
 }
 
-extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory, MainScenesFactory, ChangeNetworkResponder, _MainScenesFactory {}
+extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory, MainScenesFactory, ChangeNetworkResponder, _MainScenesFactory, TokenSettingsScenesFactory {}

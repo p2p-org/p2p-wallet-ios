@@ -53,6 +53,9 @@ class CollectionView<T: Hashable>: BEView {
         configureDataSource()
         
         bind()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(collectionViewDidTouch(_:)))
+        collectionView.addGestureRecognizer(tapGesture)
     }
     
     func bind() {
@@ -87,17 +90,17 @@ class CollectionView<T: Hashable>: BEView {
             })
             .disposed(by: disposeBag)
         
-        collectionView.rx.itemSelected
-            .subscribe(onNext: {indexPath in
-                guard let item = self.dataSource.itemIdentifier(for: indexPath) else {return}
-                if item.isPlaceholder {
-                    return
-                }
-                if let item = item.value {
-                    self.itemDidSelect?(item)
-                }
-            })
-            .disposed(by: disposeBag)
+//        collectionView.rx.itemSelected
+//            .subscribe(onNext: {indexPath in
+//                guard let item = self.dataSource.itemIdentifier(for: indexPath) else {return}
+//                if item.isPlaceholder {
+//                    return
+//                }
+//                if let item = item.value {
+//                    self.itemDidSelect?(item)
+//                }
+//            })
+//            .disposed(by: disposeBag)
     }
     
     func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, CollectionViewItem<T>> {
@@ -211,5 +214,19 @@ class CollectionView<T: Hashable>: BEView {
             for: indexPath) as? SectionFooterView
         
         return view
+    }
+    
+    @objc func collectionViewDidTouch(_ sender: UIGestureRecognizer) {
+        if let indexPath = collectionView.indexPathForItem(at: sender.location(in: collectionView)) {
+            guard let item = self.dataSource.itemIdentifier(for: indexPath) else {return}
+            if item.isPlaceholder {
+                return
+            }
+            if let item = item.value {
+                self.itemDidSelect?(item)
+            }
+        } else {
+            print("collection view was tapped")
+        }
     }
 }
