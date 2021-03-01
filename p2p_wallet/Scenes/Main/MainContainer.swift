@@ -117,8 +117,8 @@ class MainContainer {
     }
     
     // MARK: - Token edit
-    func makeTokenSettingsViewController() -> TokenSettingsViewController {
-        TokenSettingsViewController(viewModel: TokenSettingsViewModel())
+    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController {
+        TokenSettingsViewController(viewModel: TokenSettingsViewModel(walletsVM: myWalletsVM, pubkey: pubkey))
     }
     
     // MARK: - Helpers
