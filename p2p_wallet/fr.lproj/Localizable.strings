@@ -252,8 +252,11 @@
 "Allow notifications" = "Autoriser les notifications";
 "You can not send tokens to yourself" = "Vous ne pouvez pas vous envoyer de jetons";
 "or your SOL account's address" = "ou l'adresse de votre compte SOL";
+"no signer found" = "aucun signataire trouvé";
 "Visibility in token list" = "Visibilité dans la liste de jetons";
 "Visible" = "Visible";
 "Invisible" = "Invisible";
 "Close token account" = "Fermer le compte de jeton";
 "Wallet settings" = "Paramètres du portefeuille";
+"Close %@ account" = "Fermer le compte %@";
+"Your balance will be converted and transferred to your main SOL wallet and your %@ address will be disabled. This action can not be undone." = "Votre solde sera converti et transféré vers votre portefeuille SOL principal et votre adresse %@ sera désactivée.  Cette action ne peut pas être annulée.";
