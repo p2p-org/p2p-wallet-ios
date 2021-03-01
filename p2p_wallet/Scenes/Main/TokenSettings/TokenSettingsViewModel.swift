@@ -21,6 +21,7 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     let walletsVM: WalletsVM
     let pubkey: String
     let solanaSDK: SolanaSDK
+    let transactionManager: TransactionsManager
     var wallet: Wallet? {walletsVM.items.first(where: {$0.pubkey == pubkey})}
     
     // MARK: - Subject
@@ -29,10 +30,11 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
-    init(walletsVM: WalletsVM, pubkey: String, solanaSDK: SolanaSDK) {
+    init(walletsVM: WalletsVM, pubkey: String, solanaSDK: SolanaSDK, transactionManager: TransactionsManager) {
         self.walletsVM = walletsVM
         self.pubkey = pubkey
         self.solanaSDK = solanaSDK
+        self.transactionManager = transactionManager
         super.init()
     }
     
@@ -74,5 +76,24 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     
     @objc func closeWallet() {
         navigationSubject.onNext(.sendTransaction)
+        Single.zip(
+            solanaSDK.closeTokenAccount(tokenPubkey: pubkey),
+            solanaSDK.getCreatingTokenAccountFee().catchErrorJustReturn(0)
+        )
+            .subscribe(onSuccess: { signature, fee in
+                self.navigationSubject.onNext(.processTransaction(signature: signature))
+                let transaction = Transaction(
+                    signatureInfo: .init(signature: signature),
+                    type: .send,
+                    amount: +fee.convertToBalance(decimals: 9),
+                    symbol: "SOL",
+                    status: .processing
+                )
+                self.transactionManager.process(transaction)
+                self.walletsVM.removeItem(where: {$0.pubkey == self.pubkey})
+            }, onError: {error in
+                self.navigationSubject.onNext(.transactionError(error))
+            })
+            .disposed(by: disposeBag)
     }
 }
