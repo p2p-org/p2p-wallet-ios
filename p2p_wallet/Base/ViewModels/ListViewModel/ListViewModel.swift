@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-class ListViewModel<T: ListItemType>: BaseVM<[T]> {
+class ListViewModel<T: Hashable>: BaseVM<[T]> {
     // MARK: - Subjects
     var items: [T] {
         get {data}
@@ -71,43 +71,48 @@ class ListViewModel<T: ListItemType>: BaseVM<[T]> {
         if !isPaginationEnabled {
             return newItems
         }
-        return items + newItems.filter {!items.map{$0.id}.contains($0.id)}
+        return items + newItems.filter {!items.contains($0)}
     }
     
     // MARK: - Helper
     @discardableResult
     func updateItem(where predicate: (T) -> Bool, transform: (T) -> T?) -> Bool {
-        // modify search result
-        var searchResultChanged = false
-        if let index = searchResult?.firstIndex(where: predicate),
-           let item = transform(searchResult![index]),
-           item != searchResult![index]
-        {
-            searchResultChanged = true
-            searchResult![index] = item
-        }
-        
-        // modify items
-        var itemsChanged = false
-        if let index = items.firstIndex(where: predicate),
-           let item = transform(items[index]),
-           item != items[index]
-        {
-            itemsChanged = true
-            items[index] = item
-        }
-        
-        // update state
-        if isSearchingOffline {
-            if searchResultChanged {
-                state.accept(.loaded(searchResult!))
+        switch state.value {
+        case .loaded :
+            // modify search result
+            var searchResultChanged = false
+            if let index = searchResult?.firstIndex(where: predicate),
+               let item = transform(searchResult![index]),
+               item != searchResult![index]
+            {
+                searchResultChanged = true
+                searchResult![index] = item
             }
-            return searchResultChanged
-        } else {
-            if itemsChanged {
-                state.accept(.loaded(items))
+            
+            // modify items
+            var itemsChanged = false
+            if let index = items.firstIndex(where: predicate),
+               let item = transform(items[index]),
+               item != items[index]
+            {
+                itemsChanged = true
+                items[index] = item
             }
-            return itemsChanged
+            
+            // update state
+            if isSearchingOffline {
+                if searchResultChanged {
+                    state.accept(.loaded(searchResult!))
+                }
+                return searchResultChanged
+            } else {
+                if itemsChanged {
+                    state.accept(.loaded(items))
+                }
+                return itemsChanged
+            }
+        default:
+            return false
         }
     }
     

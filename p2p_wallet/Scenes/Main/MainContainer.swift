@@ -112,6 +112,11 @@ class MainContainer {
         SelectAppearanceVC(rootViewModel: rootViewModel)
     }
     
+    // MARK: - Token edit
+    func makeTokenSettingsViewController() -> TokenSettingsViewController {
+        TokenSettingsViewController(viewModel: TokenSettingsViewModel())
+    }
+    
     // MARK: - Helpers
     func makeCustomModalVC(wrappedVC: UIViewController, title: String? = nil, titleImageView: UIView? = nil) -> WLModalWrapperVC
     {

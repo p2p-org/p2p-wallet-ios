@@ -7,9 +7,12 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 class WalletsVM: ListViewModel<Wallet> {
     override var isPaginationEnabled: Bool {false}
+    
+    let isHiddenWalletsShown = BehaviorRelay<Bool>(value: Defaults.isHiddenWalletsShown)
     
     let solanaSDK: SolanaSDK
     let socket: SolanaSDK.Socket
@@ -17,6 +20,7 @@ class WalletsVM: ListViewModel<Wallet> {
     private(set) var shouldUpdateBalance = false
     
     var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
+    var defaultsDisposables = [DefaultsDisposable]()
     
     init(solanaSDK: SolanaSDK, socket: SolanaSDK.Socket, transactionManager: TransactionsManager? = nil) {
         self.solanaSDK = solanaSDK
@@ -80,6 +84,13 @@ class WalletsVM: ListViewModel<Wallet> {
             })
             .disposed(by: disposeBag)
         
+        defaultsDisposables.append(
+            Defaults.observe(\.isHiddenWalletsShown, handler: { (update) in
+                guard let newValue = update.newValue, self.isHiddenWalletsShown.value != newValue else {return}
+                self.isHiddenWalletsShown.accept(newValue)
+            })
+        )
+        
         NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -93,9 +104,14 @@ class WalletsVM: ListViewModel<Wallet> {
                     .map {wallets in
                         var wallets = wallets
                         for i in 0..<wallets.count {
+                            // update prices
                             if let price = PricesManager.shared.currentPrice(for: wallets[i].symbol)
                             {
                                 wallets[i].price = price
+                            }
+                            // update visibility
+                            if let pubkey = wallets[i].pubkey {
+                                wallets[i].isHidden = Defaults.hiddenWalletPubkey.contains(pubkey)
                             }
                         }
                         
@@ -115,6 +131,35 @@ class WalletsVM: ListViewModel<Wallet> {
                     }
             }
     }
+    override var dataDidChange: Observable<Void> {
+        Observable.combineLatest(
+            super.dataDidChange,
+            isHiddenWalletsShown
+        )
+            .map {_ in ()}
+    }
+    
+    func hideWallet(_ wallet: Wallet) {
+        Defaults.hiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
+        self.updateItem(where: {
+            $0.pubkey == wallet.pubkey
+        }) { wallet -> Wallet? in
+            var wallet = wallet
+            wallet.isHidden = true
+            return wallet
+        }
+    }
+    
+    func unhideWallet(_ wallet: Wallet) {
+        Defaults.hiddenWalletPubkey.removeAll(where: {$0 == wallet.pubkey})
+        self.updateItem(where: {
+            $0.pubkey == wallet.pubkey
+        }) { wallet -> Wallet? in
+            var wallet = wallet
+            wallet.isHidden = false
+            return wallet
+        }
+    }
     
     func updateWallet(_ wallet: Wallet, withName name: String) {
         Defaults.walletName[wallet.pubkey!] = name
@@ -129,7 +174,15 @@ class WalletsVM: ListViewModel<Wallet> {
         var wallets = super.join(newItems)
         let solWallet = wallets.removeFirst()
         wallets = wallets
-            .sorted(by: {$0.amountInUSD > $1.amountInUSD})
+            .sorted(by: { lhs, rhs -> Bool in
+                if lhs.amountInUSD != rhs.amountInUSD {
+                    return lhs.amountInUSD > rhs.amountInUSD
+                }
+                if lhs.amount != rhs.amount {
+                    return lhs.amount.orZero > rhs.amount.orZero
+                }
+                return lhs.symbol < rhs.symbol
+            })
         return [solWallet] + wallets
     }
     
@@ -143,5 +196,17 @@ class WalletsVM: ListViewModel<Wallet> {
     
     @objc func appDidEnterBackground() {
         shouldUpdateBalance = true
+    }
+    
+    @objc func toggleIsHiddenWalletShown() {
+        Defaults.isHiddenWalletsShown.toggle()
+    }
+    
+    func hiddenWallets() -> [Wallet] {
+        items.filter {$0.isHidden}
+    }
+    
+    func shownWallets() -> [Wallet] {
+        items.filter { !hiddenWallets().contains($0) }
     }
 }
