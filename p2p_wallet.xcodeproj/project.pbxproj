@@ -1104,7 +1104,6 @@
 		BCEB206825E1559500B54FEF /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				BCA93F4F25E77C070081DDF6 /* TokenSettings */,
 				BCEB207125E1563B00B54FEF /* MainContainer.swift */,
 				BCFC768525E2EAB800FBE148 /* MainViewController.swift */,
 				BCEB206925E1561200B54FEF /* TabBarVC */,
@@ -1119,6 +1118,7 @@
 				BC1D2ACA256B6E7A0064E595 /* SwapToken */,
 				BCAB1F5425DCBE89004F4F9D /* ChooseWalletVC */,
 				BC5FB0C425DA03FB0021DFF3 /* SwapSlippageSettings */,
+				BCA93F4F25E77C070081DDF6 /* TokenSettings */,
 			);
 			path = Main;
 			sourceTree = "<group>";
