@@ -6,12 +6,17 @@
 //
 
 import Foundation
+import Action
 
 class TokenSettingsCell: ListCollectionCell<TokenSettings> {
     // MARK: - Subviews
-    lazy var iconImageView = UIImageView(width: 24, height: 24, image: .buttonEdit)
+    lazy var iconImageView = UIImageView(width: 24, height: 24, image: .buttonEdit, tintColor: .a3a5ba)
     lazy var descriptionLabel = UILabel(textSize: 13, weight: .semibold, textColor: .textSecondary)
     lazy var mainLabel = UILabel(textSize: 17, weight: .semibold)
+    lazy var isVisibleSwitcher = UISwitch()
+    
+    // MARK: - Actions
+    var toggleVisibilityAction: CocoaAction?
     
     override func commonInit() {
         super.commonInit()
@@ -22,25 +27,35 @@ class TokenSettingsCell: ListCollectionCell<TokenSettings> {
             UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 descriptionLabel,
                 mainLabel
-            ])
+            ]),
+            isVisibleSwitcher
         ])
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 14))
+        
+        isVisibleSwitcher.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged)
     }
     
     override func setUp(with item: TokenSettings) {
         descriptionLabel.isHidden = false
         mainLabel.textColor = .textBlack
+        isVisibleSwitcher.isHidden = true
         switch item {
         case .visibility(let isVisible):
+            isVisibleSwitcher.isHidden = false
             iconImageView.image = .visibilityShow
             descriptionLabel.text = L10n.visibilityInTokenList
             mainLabel.text = L10n.visible
+            isVisibleSwitcher.isOn = isVisible
         case .close:
             iconImageView.image = .closeToken
             descriptionLabel.isHidden = true
             mainLabel.text = L10n.closeTokenAccount
             mainLabel.textColor = .red
         }
+    }
+    
+    @objc func switchChanged(_ mySwitch: UISwitch) {
+        toggleVisibilityAction?.execute()
     }
 }

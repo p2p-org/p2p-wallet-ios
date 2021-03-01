@@ -11,7 +11,7 @@ import Action
 protocol MyWalletsScenesFactory {
     func makeWalletDetailVC(wallet: Wallet) -> WalletDetailVC
     func makeAddNewTokenVC() -> AddNewWalletVC
-    func makeTokenSettingsViewController() -> TokenSettingsViewController
+    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
 }
 
 class MyWalletsVC: CollectionVC<Wallet> {
@@ -30,7 +30,8 @@ class MyWalletsVC: CollectionVC<Wallet> {
     override func setUpCell(cell: UICollectionViewCell, withItem item: Wallet) {
         super.setUpCell(cell: cell, withItem: item)
         (cell as? EditableWalletCell)?.editAction = CocoaAction {
-            let vc = self.scenesFactory.makeTokenSettingsViewController()
+            guard let pubkey = item.pubkey else {return .just(())}
+            let vc = self.scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
             self.present(vc, animated: true, completion: nil)
             return .just(())
         }
