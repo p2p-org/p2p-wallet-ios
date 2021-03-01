@@ -7,11 +7,17 @@
 
 import Foundation
 import UIKit
+import Action
+
+protocol TokenSettingsScenesFactory {
+    func makeProcessTransactionVC() -> ProcessTransactionVC
+}
 
 class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
+    let scenesFactory: TokenSettingsScenesFactory
     lazy var navigationBar: WLNavigationBar = {
         let navigationBar = WLNavigationBar(backgroundColor: .textWhite)
         navigationBar.backButton
@@ -19,11 +25,13 @@ class TokenSettingsViewController: WLIndicatorModalVC {
         navigationBar.titleLabel.text = L10n.walletSettings
         return navigationBar
     }()
+    var transactionVC: ProcessTransactionVC!
     
     // MARK: - Initializer
-    init(viewModel: TokenSettingsViewModel)
+    init(viewModel: TokenSettingsViewModel, scenesFactory: TokenSettingsScenesFactory)
     {
         self.viewModel = viewModel
+        self.scenesFactory = scenesFactory
         super.init()
     }
     
@@ -43,5 +51,52 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     
     override func bind() {
         super.bind()
+        viewModel.navigationSubject
+            .subscribe(onNext: {self.navigate(to: $0)})
+            .disposed(by: disposeBag)
+    }
+    
+    func navigate(to scene: TokenSettingsNavigatableScene) {
+        switch scene {
+        case .closeConfirmation:
+            guard let symbol = viewModel.wallet?.symbol else {return}
+            let vc = TokenSettingsCloseAccountConfirmationVC(symbol: symbol)
+            vc.completion = {
+                vc.dismiss(animated: true) { [unowned self] in
+                    self.viewModel.closeWallet()
+                }
+            }
+            self.present(vc, animated: true, completion: nil)
+        case .sendTransaction:
+            self.transactionVC =
+                self.scenesFactory.makeProcessTransactionVC()
+            self.present(self.transactionVC, animated: true, completion: nil)
+        case .processTransaction(signature: let signature):
+            self.showProcessingTransaction(signature: signature)
+        case .transactionError(let error):
+            self.transactionVC.dismiss(animated: true) {
+                self.showError(error)
+            }
+        }
+    }
+    
+    // MARK: - Helpers
+    private func showProcessingTransaction(signature: String) {
+        transactionVC.signature = signature
+        transactionVC.viewInExplorerButton.rx.action = CocoaAction {
+            self.transactionVC.dismiss(animated: true) {
+                let pc = self.presentingViewController
+                self.back()
+                pc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
+            }
+            
+            return .just(())
+        }
+        transactionVC.goBackToWalletButton.rx.action = CocoaAction {
+            self.transactionVC.dismiss(animated: true) {
+                self.back()
+            }
+            return .just(())
+        }
     }
 }

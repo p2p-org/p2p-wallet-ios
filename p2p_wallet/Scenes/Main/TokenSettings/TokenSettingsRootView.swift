@@ -6,33 +6,32 @@
 //
 
 import UIKit
-import Action
-
-class SettingsCollectionView: CollectionView<TokenSettings> {
-    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: CollectionViewItem<TokenSettings>) -> UICollectionViewCell {
-        let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
-        (cell as! TokenSettingsCell).toggleVisibilityAction = CocoaAction {
-            (self.viewModel as! TokenSettingsViewModel).toggleHideWallet()
-            return .just(())
-        }
-        return cell
-    }
-}
 
 class TokenSettingsRootView: BEView {
     // MARK: - Constants
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
-    lazy var collectionView = SettingsCollectionView(viewModel: viewModel, sections: [
-        CollectionViewSection(
-            cellType: TokenSettingsCell.self,
-            interGroupSpacing: 1,
-            itemHeight: .estimated(72),
-            contentInsets: .zero,
-            horizontalInterItemSpacing: .fixed(0)
-        )
-    ])
+    lazy var collectionView: TokenSettingsCollectionView = {
+        let collectionView = TokenSettingsCollectionView(viewModel: viewModel, sections: [
+            CollectionViewSection(
+                cellType: TokenSettingsCell.self,
+                interGroupSpacing: 1,
+                itemHeight: .estimated(72),
+                contentInsets: .zero,
+                horizontalInterItemSpacing: .fixed(0)
+            )
+        ])
+        collectionView.itemDidSelect = {
+            switch $0 {
+            case .close:
+                self.viewModel.navigationSubject.onNext(.closeConfirmation)
+            default:
+                return
+            }
+        }
+        return collectionView
+    }()
     
     // MARK: - Subviews
     
