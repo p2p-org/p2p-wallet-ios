@@ -12,15 +12,26 @@ class TokenSettingsRootView: BEView {
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
-    lazy var collectionView = TokenSettingsCollectionView(viewModel: viewModel, sections: [
-        CollectionViewSection(
-            cellType: TokenSettingsCell.self,
-            interGroupSpacing: 1,
-            itemHeight: .estimated(72),
-            contentInsets: .zero,
-            horizontalInterItemSpacing: .fixed(0)
-        )
-    ])
+    lazy var collectionView: TokenSettingsCollectionView = {
+        let collectionView = TokenSettingsCollectionView(viewModel: viewModel, sections: [
+            CollectionViewSection(
+                cellType: TokenSettingsCell.self,
+                interGroupSpacing: 1,
+                itemHeight: .estimated(72),
+                contentInsets: .zero,
+                horizontalInterItemSpacing: .fixed(0)
+            )
+        ])
+        collectionView.itemDidSelect = {
+            switch $0 {
+            case .close:
+                self.viewModel.navigationSubject.onNext(.closeConfirmation)
+            default:
+                return
+            }
+        }
+        return collectionView
+    }()
     
     // MARK: - Subviews
     
