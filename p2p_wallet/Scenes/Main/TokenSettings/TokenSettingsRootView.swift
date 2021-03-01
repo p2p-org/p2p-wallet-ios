@@ -6,25 +6,13 @@
 //
 
 import UIKit
-import Action
-
-class SettingsCollectionView: CollectionView<TokenSettings> {
-    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: CollectionViewItem<TokenSettings>) -> UICollectionViewCell {
-        let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
-        (cell as! TokenSettingsCell).toggleVisibilityAction = CocoaAction {
-            (self.viewModel as! TokenSettingsViewModel).toggleHideWallet()
-            return .just(())
-        }
-        return cell
-    }
-}
 
 class TokenSettingsRootView: BEView {
     // MARK: - Constants
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
-    lazy var collectionView = SettingsCollectionView(viewModel: viewModel, sections: [
+    lazy var collectionView = TokenSettingsCollectionView(viewModel: viewModel, sections: [
         CollectionViewSection(
             cellType: TokenSettingsCell.self,
             interGroupSpacing: 1,
