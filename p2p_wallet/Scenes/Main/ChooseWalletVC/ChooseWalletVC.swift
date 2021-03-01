@@ -23,10 +23,10 @@ class ChooseWalletVC: MyWalletsVC {
     }
     
     // MARK: - Layouts
-    override var sections: [Section] {
+    override var sections: [CollectionViewSection] {
         [
-            Section(
-                header: Section.Header(title: ""),
+            CollectionViewSection(
+                header: CollectionViewSection.Header(title: ""),
                 cellType: Cell.self,
                 interGroupSpacing: 16
             )

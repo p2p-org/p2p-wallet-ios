@@ -40,9 +40,9 @@ class _AddNewWalletVC: CollectionVC<Wallet> {
             .disposed(by: disposeBag)
     }
     
-    override var sections: [Section] {
+    override var sections: [CollectionViewSection] {
         [
-            Section(
+            CollectionViewSection(
                 cellType: _AddNewWalletCell.self,
                 contentInsets: .init(top: 0, leading: 0, bottom: 0, trailing: 0)
             )

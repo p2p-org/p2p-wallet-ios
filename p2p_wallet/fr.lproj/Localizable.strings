@@ -251,3 +251,8 @@
 "You can not send tokens to yourself" = "Vous ne pouvez pas vous envoyer de jetons";
 "or your SOL account's address" = "ou l'adresse de votre compte SOL";
 "no signer found" = "aucun signataire trouvé";
+"Visibility in token list" = "Visibilité dans la liste de jetons";
+"Visible" = "Visible";
+"Invisible" = "Invisible";
+"Close token account" = "Fermer le compte de jeton";
+"Wallet settings" = "Paramètres du portefeuille";
