@@ -156,7 +156,15 @@ class WalletsVM: ListViewModel<Wallet> {
         var wallets = super.join(newItems)
         let solWallet = wallets.removeFirst()
         wallets = wallets
-            .sorted(by: {$0.amountInUSD > $1.amountInUSD})
+            .sorted(by: { lhs, rhs -> Bool in
+                if lhs.amountInUSD != rhs.amountInUSD {
+                    return lhs.amountInUSD > rhs.amountInUSD
+                }
+                if lhs.amount != rhs.amount {
+                    return lhs.amount.orZero > rhs.amount.orZero
+                }
+                return lhs.symbol < rhs.symbol
+            })
         return [solWallet] + wallets
     }
     
