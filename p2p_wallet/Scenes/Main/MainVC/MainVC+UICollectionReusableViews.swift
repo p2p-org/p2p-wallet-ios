@@ -130,7 +130,7 @@ extension MainVC {
                         .onTap(self, action: #selector(buttonReceiveDidTouch)),
                     createButton(image: .walletSend, title: L10n.send)
                         .onTap(self, action: #selector(buttonSendDidTouch)),
-                    createButton(image: .walletSwap, title: L10n.exchange)
+                    createButton(image: .walletSwap, title: L10n.swap)
                         .onTap(self, action: #selector(buttonExchangeDidTouch)),
                     .spacer
                 ])
