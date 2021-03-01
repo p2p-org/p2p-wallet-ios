@@ -24,4 +24,5 @@ extension DefaultsKeys {
     var slippage: DefaultsKey<Double> {.init(#function, defaultValue: 0.005)}
     var fiat: DefaultsKey<Fiat> {.init(#function, defaultValue: .usd)}
     var hiddenWalletPubkey: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
+    var isHiddenWalletsShown: DefaultsKey<Bool> {.init(#function, defaultValue: true)}
 }
