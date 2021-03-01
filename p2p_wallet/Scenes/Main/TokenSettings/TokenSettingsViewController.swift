@@ -43,5 +43,22 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     
     override func bind() {
         super.bind()
+        viewModel.navigationSubject
+            .subscribe(onNext: {self.navigate(to: $0)})
+            .disposed(by: disposeBag)
+    }
+    
+    func navigate(to scene: TokenSettingsNavigatableScene) {
+        switch scene {
+        case .closeConfirmation:
+            guard let symbol = viewModel.wallet?.symbol else {return}
+            let vc = TokenSettingsCloseAccountConfirmationVC(symbol: symbol)
+            vc.completion = {
+                vc.dismiss(animated: true) { [unowned self] in
+                    self.viewModel.closeWallet()
+                }
+            }
+            self.present(vc, animated: true, completion: nil)
+        }
     }
 }
