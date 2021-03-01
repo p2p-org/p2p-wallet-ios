@@ -9,19 +9,30 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+enum TokenSettingsNavigatableScene {
+    case closeConfirmation
+    case sendTransaction
+    case processTransaction(signature: String)
+    case transactionError(_ error: Error)
+}
+
 class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     // MARK: - Properties
     let walletsVM: WalletsVM
     let pubkey: String
+    let solanaSDK: SolanaSDK
+    var wallet: Wallet? {walletsVM.items.first(where: {$0.pubkey == pubkey})}
     
     // MARK: - Subject
+    let navigationSubject = PublishSubject<TokenSettingsNavigatableScene>()
 //    private let wallet = BehaviorRelay<Wallet?>(value: nil)
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
-    init(walletsVM: WalletsVM, pubkey: String) {
+    init(walletsVM: WalletsVM, pubkey: String, solanaSDK: SolanaSDK) {
         self.walletsVM = walletsVM
         self.pubkey = pubkey
+        self.solanaSDK = solanaSDK
         super.init()
     }
     
@@ -53,7 +64,7 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     
     // MARK: - Actions
     @objc func toggleHideWallet() {
-        guard let wallet = walletsVM.items.first(where: {$0.pubkey == pubkey}) else {return}
+        guard let wallet = wallet else {return}
         if wallet.isHidden {
             walletsVM.unhideWallet(wallet)
         } else {
@@ -61,7 +72,7 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
         }
     }
     
-    @objc func showWallet() {
-        
+    @objc func closeWallet() {
+        navigationSubject.onNext(.sendTransaction)
     }
 }
