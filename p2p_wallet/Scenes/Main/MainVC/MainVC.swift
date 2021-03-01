@@ -256,25 +256,6 @@ class MainVC: CollectionVC<MainVCItem> {
         }
     }
     
-    override func itemAtIndexPath(_ indexPath: IndexPath) -> MainVCItem? {
-        let viewModel = (self.viewModel as? MainVM)
-        switch indexPath.section {
-        case 0:
-            if let wallet = viewModel?.walletsVM.shownWallets()[indexPath.row]
-            {
-                return MainVCItem.wallet(wallet)
-            }
-        case 1:
-            if let wallet = viewModel?.walletsVM.hiddenWallets()[indexPath.row]
-            {
-                return MainVCItem.wallet(wallet)
-            }
-        default:
-            break
-        }
-        return nil
-    }
-    
     @objc func collectionViewDidTouch(_ sender: UIGestureRecognizer) {
         if let indexPath = collectionView.indexPathForItem(at: sender.location(in: collectionView)) {
             if let item = itemAtIndexPath(indexPath) {

@@ -211,7 +211,7 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
     }
     
     func itemAtIndexPath(_ indexPath: IndexPath) -> ItemType? {
-        viewModel.itemAtIndex(indexPath.row)
+        dataSource.itemIdentifier(for: indexPath)
     }
     
     // MARK: - Actions
