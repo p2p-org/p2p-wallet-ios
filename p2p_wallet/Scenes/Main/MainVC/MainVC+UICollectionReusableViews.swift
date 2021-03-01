@@ -9,7 +9,7 @@ import Foundation
 import Action
 
 extension MainVC {
-    class FirstSectionHeaderView: SectionHeaderView {
+    class ActiveWalletsSectionHeaderView: SectionHeaderView {
         lazy var avatarImageView = UIImageView(width: 30, height: 30, backgroundColor: .c4c4c4, cornerRadius: 15)
             .onTap(self, action: #selector(avatarImageViewDidTouch))
         lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
@@ -39,7 +39,40 @@ extension MainVC {
         }
     }
     
-    class FirstSectionFooterView: SectionFooterView {
+    class ActiveWalletsSectionBackgroundView: SectionBackgroundView {
+        override func commonInit() {
+            super.commonInit()
+            backgroundColor = .h1b1b1b
+        }
+    }
+    
+    class HiddenWalletsSectionHeaderView: SectionHeaderView {
+        var showHideHiddenWalletsAction: CocoaAction?
+        override func commonInit() {
+            super.commonInit()
+            stackView.axis = .horizontal
+            stackView.distribution = .fill
+            stackView.alignment = .center
+            let imageView = UIImageView(width: 20, height: 20, image: .visibilityShow, tintColor: .textSecondary)
+                .padding(.init(all: 12.5))
+                .padding(.init(top: 10, left: .defaultPadding, bottom: 10, right: 0))
+            stackView.insertArrangedSubview(
+                imageView,
+                at: 0
+            )
+            
+            headerLabel.alpha = 0.5
+            
+            stackView.isUserInteractionEnabled = true
+            stackView.onTap(self, action: #selector(stackViewDidTouch))
+        }
+        
+        @objc func stackViewDidTouch() {
+            showHideHiddenWalletsAction?.execute()
+        }
+    }
+    
+    class WalletsSectionFooterView: SectionFooterView {
         var showProductsAction: CocoaAction?
         
         lazy var button: UIView = {
@@ -63,14 +96,7 @@ extension MainVC {
         }
     }
     
-    class FirstSectionBackgroundView: SectionBackgroundView {
-        override func commonInit() {
-            super.commonInit()
-            backgroundColor = .h1b1b1b
-        }
-    }
-    
-    class SecondSectionBackgroundView: SectionBackgroundView {
+    class FriendsSectionBackgroundView: SectionBackgroundView {
         lazy var backgroundView = UIView(backgroundColor: .white)
         
         override func commonInit() {
@@ -87,7 +113,7 @@ extension MainVC {
         }
     }
     
-    class SecondSectionHeaderView: SectionHeaderView {
+    class FriendsSectionHeaderView: SectionHeaderView {
         var receiveAction: CocoaAction?
         var sendAction: CocoaAction?
         var exchangeAction: CocoaAction?
