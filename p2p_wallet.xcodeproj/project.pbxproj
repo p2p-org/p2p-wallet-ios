@@ -33,7 +33,6 @@
 		BC11C9F12591A17D00E399A9 /* MainVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11C9F02591A17D00E399A9 /* MainVM.swift */; };
 		BC11C9F62591A1AE00E399A9 /* FriendCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11C9F52591A1AE00E399A9 /* FriendCell.swift */; };
 		BC11C9FC2591B2B700E399A9 /* MyProductsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11C9FB2591B2B700E399A9 /* MyProductsVC.swift */; };
-		BC11CA012591B58100E399A9 /* MyProductsWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA002591B58100E399A9 /* MyProductsWalletCell.swift */; };
 		BC11CA092591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA082591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift */; };
 		BC11CA122591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA112591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift */; };
 		BC11CA1A2591E30200E399A9 /* WLModalWrapperVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA192591E30200E399A9 /* WLModalWrapperVC.swift */; };
@@ -268,7 +267,6 @@
 		BC11C9F02591A17D00E399A9 /* MainVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVM.swift; sourceTree = "<group>"; };
 		BC11C9F52591A1AE00E399A9 /* FriendCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendCell.swift; sourceTree = "<group>"; };
 		BC11C9FB2591B2B700E399A9 /* MyProductsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsVC.swift; sourceTree = "<group>"; };
-		BC11CA002591B58100E399A9 /* MyProductsWalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsWalletCell.swift; sourceTree = "<group>"; };
 		BC11CA082591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MyProductsVC+UICollectionReusableView.swift"; sourceTree = "<group>"; };
 		BC11CA112591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Extensions.swift"; sourceTree = "<group>"; };
 		BC11CA192591E30200E399A9 /* WLModalWrapperVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLModalWrapperVC.swift; sourceTree = "<group>"; };
@@ -534,7 +532,6 @@
 			isa = PBXGroup;
 			children = (
 				BC11CA082591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift */,
-				BC11CA002591B58100E399A9 /* MyProductsWalletCell.swift */,
 				BC11C9FB2591B2B700E399A9 /* MyProductsVC.swift */,
 			);
 			path = MyProductsVC;
@@ -1555,7 +1552,6 @@
 				BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */,
 				BCE42E1A25DFA5100021540E /* RestoreWalletViewController.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WellDoneVC.swift in Sources */,
-				BC11CA012591B58100E399A9 /* MyProductsWalletCell.swift in Sources */,
 				BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */,
 				BCA9941F25AE93D5005BD8FB /* Fonts+Generated.swift in Sources */,
 				BCE42E0225DFA0B50021540E /* CreateWalletViewModel.swift in Sources */,

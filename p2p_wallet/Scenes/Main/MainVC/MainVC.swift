@@ -61,6 +61,9 @@ class MainVC: CollectionVC<MainVCItem> {
         super.setUp()
         view.backgroundColor = .white
         setStatusBarColor(.h1b1b1b)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(collectionViewDidTouch(_:)))
+        collectionView.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Layout
@@ -103,8 +106,6 @@ class MainVC: CollectionVC<MainVCItem> {
         let activeWalletSections = L10n.wallets
         snapshot.appendSections([activeWalletSections])
         
-        let allWallets = viewModel.walletsVM.items
-        
         var items = viewModel.walletsVM.shownWallets()
             .prefix(numberOfWalletsToShow)
             .map {MainVCItem.wallet($0)}
@@ -117,11 +118,14 @@ class MainVC: CollectionVC<MainVCItem> {
         snapshot.appendItems(items, toSection: activeWalletSections)
         
         // hiddenWallet
-        let hiddenWalletSections = sections[2].header?.title ?? "Hidden"
+        let hiddenWalletSections = sections[1].header?.title ?? "Hidden"
+        var hiddenItems = [MainVCItem]()
+        if viewModel.walletsVM.isHiddenWalletsShown.value {
+            hiddenItems = viewModel.walletsVM.hiddenWallets()
+                .prefix(numberOfWalletsToShow)
+                .map {MainVCItem.wallet($0)}
+        }
         snapshot.appendSections([hiddenWalletSections])
-        let hiddenItems = viewModel.walletsVM.hiddenWallets()
-            .prefix(numberOfWalletsToShow)
-            .map {MainVCItem.wallet($0)}
         snapshot.appendItems(hiddenItems, toSection: hiddenWalletSections)
         
         // section 2
@@ -163,6 +167,13 @@ class MainVC: CollectionVC<MainVCItem> {
         case 0:
             if let view = header as? ActiveWalletsSectionHeaderView {
                 view.openProfileAction = self.openProfile
+            }
+        case 1:
+            if let view = header as? HiddenWalletsSectionHeaderView {
+                view.showHideHiddenWalletsAction = CocoaAction {
+                    (self.viewModel as! MainVM).walletsVM.toggleIsHiddenWalletShown()
+                    return .just(())
+                }
             }
         case 2:
             if let view = header as? FriendsSectionHeaderView {
@@ -241,6 +252,35 @@ class MainVC: CollectionVC<MainVCItem> {
             let profileVC = self.scenesFactory.makeProfileVC()
             self.present(profileVC, animated: true, completion: nil)
             return .just(())
+        }
+    }
+    
+    override func itemAtIndexPath(_ indexPath: IndexPath) -> MainVCItem? {
+        let viewModel = (self.viewModel as? MainVM)
+        switch indexPath.section {
+        case 0:
+            if let wallet = viewModel?.walletsVM.shownWallets()[indexPath.row]
+            {
+                return MainVCItem.wallet(wallet)
+            }
+        case 1:
+            if let wallet = viewModel?.walletsVM.hiddenWallets()[indexPath.row]
+            {
+                return MainVCItem.wallet(wallet)
+            }
+        default:
+            break
+        }
+        return nil
+    }
+    
+    @objc func collectionViewDidTouch(_ sender: UIGestureRecognizer) {
+        if let indexPath = collectionView.indexPathForItem(at: sender.location(in: collectionView)) {
+            if let item = itemAtIndexPath(indexPath) {
+                itemDidSelect(item)
+            }
+        } else {
+            print("collection view was tapped")
         }
     }
 }

@@ -7,9 +7,12 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 class WalletsVM: ListViewModel<Wallet> {
     override var isPaginationEnabled: Bool {false}
+    
+    let isHiddenWalletsShown = BehaviorRelay<Bool>(value: Defaults.isHiddenWalletsShown)
     
     let solanaSDK: SolanaSDK
     let socket: SolanaSDK.Socket
@@ -17,6 +20,7 @@ class WalletsVM: ListViewModel<Wallet> {
     private(set) var shouldUpdateBalance = false
     
     var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
+    var defaultsDisposables = [DefaultsDisposable]()
     
     init(solanaSDK: SolanaSDK, socket: SolanaSDK.Socket, transactionManager: TransactionsManager? = nil) {
         self.solanaSDK = solanaSDK
@@ -80,6 +84,13 @@ class WalletsVM: ListViewModel<Wallet> {
             })
             .disposed(by: disposeBag)
         
+        defaultsDisposables.append(
+            Defaults.observe(\.isHiddenWalletsShown, handler: { (update) in
+                guard let newValue = update.newValue, self.isHiddenWalletsShown.value != newValue else {return}
+                self.isHiddenWalletsShown.accept(newValue)
+            })
+        )
+        
         NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -119,6 +130,13 @@ class WalletsVM: ListViewModel<Wallet> {
                         return wallets
                     }
             }
+    }
+    override var dataDidChange: Observable<Void> {
+        Observable.combineLatest(
+            super.dataDidChange,
+            isHiddenWalletsShown
+        )
+            .map {_ in ()}
     }
     
     func hideWallet(_ wallet: Wallet) {
@@ -178,6 +196,10 @@ class WalletsVM: ListViewModel<Wallet> {
     
     @objc func appDidEnterBackground() {
         shouldUpdateBalance = true
+    }
+    
+    @objc func toggleIsHiddenWalletShown() {
+        Defaults.isHiddenWalletsShown.toggle()
     }
     
     func hiddenWallets() -> [Wallet] {

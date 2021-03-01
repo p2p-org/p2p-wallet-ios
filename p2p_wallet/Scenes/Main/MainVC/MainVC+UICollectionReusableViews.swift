@@ -47,6 +47,7 @@ extension MainVC {
     }
     
     class HiddenWalletsSectionHeaderView: SectionHeaderView {
+        var showHideHiddenWalletsAction: CocoaAction?
         override func commonInit() {
             super.commonInit()
             stackView.axis = .horizontal
@@ -61,6 +62,13 @@ extension MainVC {
             )
             
             headerLabel.alpha = 0.5
+            
+            stackView.isUserInteractionEnabled = true
+            stackView.onTap(self, action: #selector(stackViewDidTouch))
+        }
+        
+        @objc func stackViewDidTouch() {
+            showHideHiddenWalletsAction?.execute()
         }
     }
     
