@@ -31,9 +31,7 @@ class SectionHeaderView: UICollectionReusableView {
         stackView.autoPinEdge(toSuperviewEdge: .leading)
         stackView.autoPinEdge(toSuperviewEdge: .trailing)
         
-        stackView.addArrangedSubview(headerLabel.padding(.init(x: 20, y: 0)))
-        headerLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor)
-            .isActive = true
+        stackView.addArrangedSubview(headerLabel)
     }
     
     func setUp(headerTitle: String, headerFont: UIFont = .systemFont(ofSize: 17, weight: .bold)) {
