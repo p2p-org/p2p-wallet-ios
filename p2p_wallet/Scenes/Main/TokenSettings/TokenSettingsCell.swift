@@ -30,6 +30,7 @@ class TokenSettingsCell: ListCollectionCell<TokenSettings> {
     
     override func setUp(with item: TokenSettings) {
         descriptionLabel.isHidden = false
+        mainLabel.textColor = .textBlack
         switch item {
         case .visibility(let isVisible):
             iconImageView.image = .visibilityShow
@@ -39,6 +40,7 @@ class TokenSettingsCell: ListCollectionCell<TokenSettings> {
             iconImageView.image = .closeToken
             descriptionLabel.isHidden = true
             mainLabel.text = L10n.closeTokenAccount
+            mainLabel.textColor = .red
         }
     }
 }
