@@ -19,7 +19,6 @@ class EditableWalletCell: WalletCell {
     lazy var buttonStackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .fill, distribution: .fill)
     lazy var editButton = UIImageView(width: 24, height: 24, image: .walletEdit, tintColor: .textBlack)
     lazy var hideButton = UIImageView(width: 24, height: 24, image: .visibilityHide, tintColor: .textBlack)
-        
     
     var editAction: CocoaAction?
     var hideAction: CocoaAction?
@@ -54,6 +53,7 @@ class EditableWalletCell: WalletCell {
         super.setUp(with: item)
         buttonStackView.isHidden = item.symbol == "SOL"
         hideButton.image = item.isHidden ? .visibilityShow: .visibilityHide
+        stackView.alpha = item.isHidden ? 0.5: 1
     }
     
     @objc func buttonEditDidTouch() {

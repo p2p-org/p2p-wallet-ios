@@ -59,6 +59,8 @@ extension MainVC {
                 imageView,
                 at: 0
             )
+            
+            headerLabel.alpha = 0.5
         }
     }
     
