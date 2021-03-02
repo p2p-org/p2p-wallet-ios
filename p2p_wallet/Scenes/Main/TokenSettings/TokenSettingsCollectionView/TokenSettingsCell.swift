@@ -51,7 +51,7 @@ class TokenSettingsCell: ListCollectionCell<TokenSettings> {
             iconImageView.image = .closeToken
             descriptionLabel.isHidden = true
             mainLabel.text = L10n.closeTokenAccount
-            mainLabel.textColor = .red
+            mainLabel.textColor = .alert
         }
     }
     

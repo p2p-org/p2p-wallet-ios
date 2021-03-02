@@ -64,17 +64,4 @@ class BackupVC: ProfileVCBase {
     override func buttonDoneDidTouch() {
         back()
     }
-    
-    private func presentLocalAuthVC(completion: (() -> Void)?) {
-        let localAuthVC = LocalAuthVC(accountStorage: accountStorage)
-        localAuthVC.isIgnorable = true
-        localAuthVC.useBiometry = false
-        localAuthVC.completion = { didSuccess in
-            if didSuccess {
-                completion?()
-            }
-        }
-//        localAuthVC.modalPresentationStyle = .fullScreen
-        present(localAuthVC, animated: true, completion: nil)
-    }
 }
