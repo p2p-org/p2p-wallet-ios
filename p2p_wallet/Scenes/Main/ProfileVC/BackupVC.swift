@@ -45,14 +45,14 @@ class BackupVC: ProfileVCBase {
     
     @objc func buttonBackupUsingICloudDidTouch() {
         guard let account = accountStorage.account?.phrase else {return}
-        presentLocalAuthVC { [weak self] in
+        presentLocalAuthVC(accountStorage: accountStorage) { [weak self] in
             self?.accountStorage.saveICloud(phrases: account.joined(separator: " "))
             UIApplication.shared.showDone(L10n.savedToICloud)
         }
     }
     
     @objc func buttonBackupManuallyDidTouch() {
-        presentLocalAuthVC { [weak self] in
+        presentLocalAuthVC(accountStorage: accountStorage) { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 guard let vc = self?.scenesFactory.makeBackupManuallyVC()
                 else {return}
@@ -63,18 +63,5 @@ class BackupVC: ProfileVCBase {
     
     override func buttonDoneDidTouch() {
         back()
-    }
-    
-    private func presentLocalAuthVC(completion: (() -> Void)?) {
-        let localAuthVC = LocalAuthVC(accountStorage: accountStorage)
-        localAuthVC.isIgnorable = true
-        localAuthVC.useBiometry = false
-        localAuthVC.completion = { didSuccess in
-            if didSuccess {
-                completion?()
-            }
-        }
-//        localAuthVC.modalPresentationStyle = .fullScreen
-        present(localAuthVC, animated: true, completion: nil)
     }
 }

@@ -11,7 +11,7 @@ import Action
 
 protocol SwapScenesFactory {
     func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
-    func makeSwapChooseDestinationWalletVC() -> ChooseWalletVC
+    func makeSwapChooseDestinationWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
     func makeProcessTransactionVC() -> ProcessTransactionVC
 }
 
@@ -83,7 +83,9 @@ private class _SwapTokenViewController: BaseVC {
                     }
                     self.presentCustomModal(vc: vc, title: L10n.selectWallet)
                 case .chooseDestinationWallet:
-                    let vc = self.scenesFactory.makeSwapChooseDestinationWalletVC()
+                    let vc = self.scenesFactory.makeSwapChooseDestinationWalletVC {
+                        $0.pubkey != self.viewModel.sourceWallet.value?.pubkey
+                    }
                     vc.completion = {wallet in
                         self.viewModel.destinationWallet.accept(wallet)
 //                        self.destination.amountTextField.becomeFirstResponder()

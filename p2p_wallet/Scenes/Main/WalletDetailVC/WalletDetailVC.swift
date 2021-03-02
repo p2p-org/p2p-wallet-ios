@@ -11,6 +11,7 @@ import Action
 protocol WalletDetailScenesFactory {
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> WLModalWrapperVC
     func makeSwapTokenViewController(fromWallet: Wallet?) -> SwapTokenViewController
+    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
 }
 
 class WalletDetailVC: WLModalWrapperVC {
@@ -114,10 +115,9 @@ class WalletDetailVC: WLModalWrapperVC {
     }
     
     @objc func buttonEditDidTouch() {
-        walletNameTextField.isUserInteractionEnabled.toggle()
-        if walletNameTextField.isUserInteractionEnabled {
-            walletNameTextField.becomeFirstResponder()
-        }
+        guard let pubkey = wallet.pubkey else {return}
+        let vc = scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
+        self.present(vc, animated: true, completion: nil)
     }
     
     @objc func buttonSendDidTouch() {
