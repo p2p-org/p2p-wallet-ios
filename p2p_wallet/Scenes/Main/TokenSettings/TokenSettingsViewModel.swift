@@ -22,6 +22,7 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     let pubkey: String
     let solanaSDK: SolanaSDK
     let transactionManager: TransactionsManager
+    let accountStorage: KeychainAccountStorage
     var wallet: Wallet? {walletsVM.items.first(where: {$0.pubkey == pubkey})}
     
     // MARK: - Subject
@@ -30,11 +31,12 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
-    init(walletsVM: WalletsVM, pubkey: String, solanaSDK: SolanaSDK, transactionManager: TransactionsManager) {
+    init(walletsVM: WalletsVM, pubkey: String, solanaSDK: SolanaSDK, transactionManager: TransactionsManager, accountStorage: KeychainAccountStorage) {
         self.walletsVM = walletsVM
         self.pubkey = pubkey
         self.solanaSDK = solanaSDK
         self.transactionManager = transactionManager
+        self.accountStorage = accountStorage
         super.init()
     }
     
