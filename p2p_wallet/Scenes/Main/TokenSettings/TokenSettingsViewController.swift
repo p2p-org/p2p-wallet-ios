@@ -63,7 +63,11 @@ class TokenSettingsViewController: WLIndicatorModalVC {
             let vc = TokenSettingsCloseAccountConfirmationVC(symbol: symbol)
             vc.completion = {
                 vc.dismiss(animated: true) { [unowned self] in
-                    self.viewModel.closeWallet()
+                    presentLocalAuthVC(accountStorage: self.viewModel.accountStorage) { [unowned self] in
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            self.viewModel.closeWallet()
+                        }
+                    }
                 }
             }
             self.present(vc, animated: true, completion: nil)

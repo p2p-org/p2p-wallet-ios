@@ -260,3 +260,4 @@
 "Wallet settings" = "Wallet settings";
 "Close %@ account" = "Close %@ account";
 "Your balance will be converted and transferred to your main SOL wallet and your %@ address will be disabled. This action can not be undone." = "Your balance will be converted and transferred to your main SOL wallet and your %@ address will be disabled. This action can not be undone.";
+"Hidden" = "Hidden";
