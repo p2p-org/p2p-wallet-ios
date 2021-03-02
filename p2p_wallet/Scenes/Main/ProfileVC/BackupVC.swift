@@ -45,14 +45,14 @@ class BackupVC: ProfileVCBase {
     
     @objc func buttonBackupUsingICloudDidTouch() {
         guard let account = accountStorage.account?.phrase else {return}
-        presentLocalAuthVC { [weak self] in
+        presentLocalAuthVC(accountStorage: accountStorage) { [weak self] in
             self?.accountStorage.saveICloud(phrases: account.joined(separator: " "))
             UIApplication.shared.showDone(L10n.savedToICloud)
         }
     }
     
     @objc func buttonBackupManuallyDidTouch() {
-        presentLocalAuthVC { [weak self] in
+        presentLocalAuthVC(accountStorage: accountStorage) { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 guard let vc = self?.scenesFactory.makeBackupManuallyVC()
                 else {return}
