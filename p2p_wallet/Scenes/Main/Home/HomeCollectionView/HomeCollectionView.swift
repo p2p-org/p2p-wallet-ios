@@ -60,6 +60,18 @@ class HomeCollectionView: CollectionView<HomeItem> {
             headerView.balancesOverviewView.setUp(with: viewModel.walletsVM.state.value)
         }
         
+        if let headerView = headerForSection(1) as? HiddenWalletsSectionHeaderView {
+            if viewModel.walletsVM.hiddenWallets().isEmpty {
+                headerView.removeStackView {
+                    self.collectionView.collectionViewLayout.invalidateLayout()
+                }
+            } else {
+                headerView.addStackView {
+                    self.collectionView.collectionViewLayout.invalidateLayout()
+                }
+            }
+        }
+        
         if let footerView = footerForSection(1) as? WalletsSectionFooterView
         {
             var text = L10n.allMyTokens
