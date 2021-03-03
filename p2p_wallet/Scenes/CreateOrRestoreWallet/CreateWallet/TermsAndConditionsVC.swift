@@ -17,10 +17,10 @@ class TermsAndConditionsVC: BaseVStackVC {
     }
     
     lazy var tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
-    lazy var declineButton = UIButton(label: L10n.decline, labelFont: .systemFont(ofSize: 17), textColor: .red)
+    lazy var declineButton = UIButton(label: L10n.decline, labelFont: .systemFont(ofSize: 17), textColor: .alert)
         .onTap(self, action: #selector(buttonDeclineDidTouch))
     
-    lazy var acceptButton = UIButton(label: L10n.accept, labelFont: .boldSystemFont(ofSize: 17), textColor: .blue)
+    lazy var acceptButton = UIButton(label: L10n.accept, labelFont: .boldSystemFont(ofSize: 17), textColor: .h5887ff)
         .onTap(self, action: #selector(buttonAcceptDidTouch))
     
     let createWalletViewModel: CreateWalletViewModel

@@ -57,7 +57,7 @@ class WLIntroVC: BaseVStackVC {
             spacer1,
             titleLabel,
             descriptionLabel,
-            BEStackViewSpacing(53),
+            BEStackViewSpacing(84),
             buttonsStackView
         ])
         
