@@ -63,7 +63,7 @@ extension HomeCollectionView {
                 headerLabel
             ])
             
-            headerLabel.alpha = 0.5
+            headerLabel.textColor = .textSecondary
             
             stackView.isUserInteractionEnabled = true
             stackView.onTap(self, action: #selector(stackViewDidTouch))

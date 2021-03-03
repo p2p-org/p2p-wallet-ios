@@ -62,6 +62,7 @@ class HomeCollectionView: CollectionView<HomeItem> {
         let viewModel = self.viewModel as! HomeCollectionViewModel
         
         if let headerView = headerForSection(1) as? HiddenWalletsSectionHeaderView {
+            headerView.headerLabel.text = "\(viewModel.walletsVM.hiddenWallets().count) \(L10n.hiddenWallets.lowercased())"
             if viewModel.walletsVM.hiddenWallets().isEmpty {
                 headerView.removeStackView {
                     self.collectionView.collectionViewLayout.invalidateLayout()
