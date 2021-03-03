@@ -210,16 +210,6 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
         return view
     }
     
-    func headerForSection(_ section: Int) -> UICollectionReusableView?
-    {
-        collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: section))
-    }
-    
-    func footerForSection(_ section: Int) -> UICollectionReusableView?
-    {
-        collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: IndexPath(row: 0, section: section))
-    }
-    
     func itemAtIndexPath(_ indexPath: IndexPath) -> ItemType? {
         dataSource.itemIdentifier(for: indexPath)
     }
@@ -228,5 +218,15 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
     @objc func refresh(_ sender: Any) {
         refreshControl.endRefreshing()
         viewModel.refresh()
+    }
+    
+    func headerForSection(_ section: Int) -> UICollectionReusableView?
+    {
+        collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: section))
+    }
+    
+    func footerForSection(_ section: Int) -> UICollectionReusableView?
+    {
+        collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: IndexPath(row: 0, section: section))
     }
 }
