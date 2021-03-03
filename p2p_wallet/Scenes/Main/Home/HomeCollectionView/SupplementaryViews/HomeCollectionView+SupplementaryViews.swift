@@ -26,7 +26,7 @@ extension HomeCollectionView {
                     .padding(.init(x: .defaultPadding, y: 0))
             ])
             
-            stackView.constraintToSuperviewWithAttribute(.top)?.constant = 30
+            stackView.constraintToSuperviewWithAttribute(.top)?.constant = 20
             stackView.constraintToSuperviewWithAttribute(.bottom)?.constant = -30
         }
         
