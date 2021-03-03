@@ -219,4 +219,14 @@ class CollectionVC<ItemType: ListItemType>: BaseVC {
         refreshControl.endRefreshing()
         viewModel.refresh()
     }
+    
+    func headerForSection(_ section: Int) -> UICollectionReusableView?
+    {
+        collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: section))
+    }
+    
+    func footerForSection(_ section: Int) -> UICollectionReusableView?
+    {
+        collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: IndexPath(row: 0, section: section))
+    }
 }
