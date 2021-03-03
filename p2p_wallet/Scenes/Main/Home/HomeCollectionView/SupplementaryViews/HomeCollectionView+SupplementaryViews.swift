@@ -1,14 +1,14 @@
 //
-//  MainFooterView.swift
+//  HomeCollectionView+SupplementaryViews.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 11/5/20.
+//  Created by Chung Tran on 03/03/2021.
 //
 
 import Foundation
 import Action
 
-extension MainVC {
+extension HomeCollectionView {
     class ActiveWalletsSectionHeaderView: SectionHeaderView {
         var showAllBalancesAction: CocoaAction?
         
@@ -83,8 +83,9 @@ extension MainVC {
             stackView.addArrangedSubview(button.padding(.init(x: .defaultPadding, y: 30)))
         }
         
-        func setUp(title: String, indicator: UIImage, action: CocoaAction)
+        func setUp(title: String, indicator: UIImage, action: CocoaAction?)
         {
+            setUp(state: .loaded(title), isListEmpty: false)
             buttonLabel.text = title
             indicatorImageView.image = indicator
             showProductsAction = action
