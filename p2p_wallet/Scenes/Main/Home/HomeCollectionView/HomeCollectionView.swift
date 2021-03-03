@@ -77,10 +77,6 @@ class HomeCollectionView: CollectionView<HomeItem> {
             }
             footerView.setUp(title: text, indicator: image, action: action)
         }
-        
-//        UIView.animate(withDuration: 0.3) {
-//            self.tabBar.alpha = viewModel.walletsVM.data.isEmpty ? 0 : 1
-//        }
     }
     
     // MARK: - Methods

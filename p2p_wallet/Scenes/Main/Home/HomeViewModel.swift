@@ -46,7 +46,20 @@ class HomeViewModel {
             return .just(())
         }
     }
-//    @objc func showDetail() {
-//        
-//    }
+    
+    @objc func showSettings() {
+        navigationSubject.onNext(.profile)
+    }
+    
+    @objc func receiveToken() {
+        navigationSubject.onNext(.receiveToken)
+    }
+    
+    @objc func sendToken() {
+        navigationSubject.onNext(.sendToken(address: nil))
+    }
+    
+    @objc func swapToken() {
+        navigationSubject.onNext(.swapToken)
+    }
 }

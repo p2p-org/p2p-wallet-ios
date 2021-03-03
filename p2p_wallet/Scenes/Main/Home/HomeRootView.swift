@@ -21,11 +21,8 @@ class HomeRootView: BEView {
             guard let wallet = item.wallet else {return}
             self.viewModel.navigationSubject.onNext(.walletDetail(wallet: wallet))
         }
-//        collectionView.openProfileAction = viewModel.navigationAction(scene: .profile)
-//        collectionView.receiveAction = viewModel.navigationAction(scene: .receiveToken)
-//        collectionView.sendAction = viewModel.navigationAction(scene: .scanQr)
-//        collectionView.swapAction = viewModel.navigationAction(scene: .swapToken)
         collectionView.showAllProductsAction = viewModel.navigationAction(scene: .allProducts)
+        collectionView.addNewWalletAction = viewModel.navigationAction(scene: .addToken)
         collectionView.walletCellEditAction = Action<Wallet, Void> {wallet in
             self.viewModel.navigationSubject.onNext(.walletSettings(wallet: wallet))
             return .just(())
@@ -53,6 +50,7 @@ class HomeRootView: BEView {
     
     // MARK: - Layout
     private func layout() {
+        // configure header
         addSubview(collectionView)
         collectionView.autoPinEdgesToSuperviewEdges()
     }
