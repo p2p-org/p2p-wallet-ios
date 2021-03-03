@@ -155,10 +155,8 @@ class HomeCollectionView: CollectionView<HomeItem> {
             }
         case 1:
             if let view = header as? HiddenWalletsSectionHeaderView {
-                view.showHideHiddenWalletsAction = CocoaAction {
-                    viewModel.walletsVM.toggleIsHiddenWalletShown()
-                    return .just(())
-                }
+                view.headerLabel.text = L10n.hiddenWallets
+                view.showHideHiddenWalletsAction = showHideHiddenWalletsAction
             }
         default:
             break
