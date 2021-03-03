@@ -73,6 +73,25 @@ class HomeCollectionView: CollectionView<HomeItem> {
                 }
             }
         }
+        
+        if let footerView = footerForSection(1) as? WalletsSectionFooterView {
+            if let topConstraint = footerView.button.constraintToSuperviewWithAttribute(.top)
+            {
+                if !viewModel.walletsVM.hiddenWallets().isEmpty && !viewModel.walletsVM.isHiddenWalletsShown.value {
+                    if topConstraint.constant != 0 {
+                        topConstraint.constant = 0
+                        footerView.setNeedsLayout()
+                        collectionView.collectionViewLayout.invalidateLayout()
+                    }
+                } else {
+                    if topConstraint.constant != 30 {
+                        topConstraint.constant = 30
+                        footerView.setNeedsLayout()
+                        collectionView.collectionViewLayout.invalidateLayout()
+                    }
+                }
+            }
+        }
     }
     
     // MARK: - Methods
