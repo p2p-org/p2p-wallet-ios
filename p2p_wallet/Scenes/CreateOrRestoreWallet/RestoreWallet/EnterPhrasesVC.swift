@@ -53,7 +53,7 @@ class EnterPhrasesVC: BaseVStackVC {
         title = L10n.enterSecurityKeys
         stackView.addArrangedSubview(
             textView
-                .padding(.init(all: 16), backgroundColor: .lightGrayBackground, cornerRadius: 16)
+                .padding(.init(all: 10), backgroundColor: .lightGrayBackground, cornerRadius: 16)
                 .border(width: 1, color: .a3a5ba)
         )
         
@@ -184,8 +184,15 @@ extension EnterPhrasesVC: UITextViewDelegate {
     fileprivate func attachment(phrase: String, index: Int? = nil) -> NSAttributedString {
         let phrase = phrase.lowercased()
         // replace phrase's range by attachment that is a uilabel
-        let label = UILabel(text: (index != nil ? "\(index!). " : "" ) + phrase, textSize: 15, textColor: .white)
-            .padding(.init(x: 10, y: 6), backgroundColor: .h5887ff, cornerRadius: 5)
+        let label = { () -> UILabel in
+            let label = UILabel(textSize: 15, textColor: .textBlack)
+            label.attributedText = NSMutableAttributedString()
+                .text("\(index != nil ? "\(index!)": ""). ", size: 15, color: .a3a5ba)
+                .text("\(phrase)", size: 15)
+            return label
+        }()
+            .padding(.init(x: 12, y: 12), backgroundColor: .textWhite, cornerRadius: 5)
+        label.border(width: 1, color: UIColor.a3a5ba.withAlphaComponent(0.5))
         label.translatesAutoresizingMaskIntoConstraints = true
         
         // replace text by attachment
