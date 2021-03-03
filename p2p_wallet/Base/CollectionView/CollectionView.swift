@@ -15,6 +15,10 @@ struct CollectionViewItem<T: Hashable>: Hashable {
     var isPlaceholder: Bool {placeholderIndex != nil}
 }
 
+protocol CollectionViewDelegate: class {
+    func dataDidLoad()
+}
+
 class CollectionView<T: Hashable>: BEView {
     // MARK: - Property
     let disposeBag = DisposeBag()
@@ -23,6 +27,8 @@ class CollectionView<T: Hashable>: BEView {
     
     var dataSource: UICollectionViewDiffableDataSource<String, CollectionViewItem<T>>!
     var itemDidSelect: ((T) -> Void)?
+    
+    weak var delegate: CollectionViewDelegate?
     
     // MARK: - Subviews
     lazy var collectionView: BaseCollectionView = {
@@ -137,6 +143,8 @@ class CollectionView<T: Hashable>: BEView {
         footer.setUp(state: viewModel.state.value, isListEmpty: viewModel.isListEmpty)
 //        collectionView.collectionViewLayout.invalidateLayout()
         footer.setNeedsDisplay()
+        
+        delegate?.dataDidLoad()
     }
     
     // MARK: - Actions
