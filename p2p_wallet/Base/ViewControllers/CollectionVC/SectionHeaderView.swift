@@ -25,13 +25,28 @@ class SectionHeaderView: UICollectionReusableView {
     }
     
     func commonInit() {
-        addSubview(stackView)
-        stackView.autoPinEdge(toSuperviewEdge: .top, withInset: 16)
-        stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 16)
-        stackView.autoPinEdge(toSuperviewEdge: .leading)
-        stackView.autoPinEdge(toSuperviewEdge: .trailing)
-        
+        addStackView()
         stackView.addArrangedSubview(headerLabel)
+    }
+    
+    func addStackView(completion: (()->Void)? = nil) {
+        if stackView.superview == nil {
+            addSubview(stackView)
+            stackView.autoPinEdge(toSuperviewEdge: .top, withInset: 16)
+            stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 16)
+            stackView.autoPinEdge(toSuperviewEdge: .leading)
+            stackView.autoPinEdge(toSuperviewEdge: .trailing)
+            setNeedsLayout()
+            completion?()
+        }
+    }
+    
+    func removeStackView(completion: (()->Void)? = nil) {
+        if stackView.superview != nil {
+            stackView.removeFromSuperview()
+            setNeedsLayout()
+            completion?()
+        }
     }
     
     func setUp(headerTitle: String, headerFont: UIFont = .systemFont(ofSize: 17, weight: .bold)) {
