@@ -9,13 +9,14 @@ import Foundation
 
 private var loadingHandle: UInt8 = 0
 
-protocol LoadableView {
+protocol LoadableView: UIView {
     var loadingViews: [UIView] {get}
 }
 
 extension LoadableView {
     func showLoading() {
         hideLoading()
+        layoutIfNeeded()
         loadingViews.forEach {
             if let view = $0 as? LoadableView {
                 view.showLoading()
