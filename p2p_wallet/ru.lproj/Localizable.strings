@@ -259,3 +259,4 @@
 "Close %@ account" = "Закрыть аккаунт %@";
 "Your balance will be converted and transferred to your main SOL wallet and your %@ address will be disabled. This action can not be undone." = "Ваш баланс будет конвертирован и переведен в ваш основной кошелек SOL, а ваш адрес %@ будет отключен.  Это действие не может быть отменено.";
 "Hidden" = "Скрытый";
+"Hidden wallets" = "Скрытые кошельки";
