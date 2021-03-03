@@ -128,6 +128,7 @@ class HomeCollectionView: CollectionView<HomeItem> {
         }
         snapshot.appendSections([hiddenWalletSections])
         snapshot.appendItems(hiddenItems, toSection: hiddenWalletSections)
+        
         return snapshot
     }
     

@@ -26,7 +26,7 @@ class SectionHeaderView: UICollectionReusableView {
     
     func commonInit() {
         addStackView()
-        stackView.addArrangedSubview(headerLabel)
+        stackView.addArrangedSubview(headerLabel.padding(.init(x: .defaultPadding, y: 0)))
     }
     
     func addStackView(completion: (()->Void)? = nil) {
