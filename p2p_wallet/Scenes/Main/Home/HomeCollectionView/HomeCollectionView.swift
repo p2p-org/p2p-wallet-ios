@@ -115,7 +115,7 @@ class HomeCollectionView: CollectionView<HomeItem> {
         // section 2
         let friendsSection = L10n.friends
         snapshot.appendSections([friendsSection])
-//        snapshot.appendItems([MainVCItem.friend], toSection: section2)
+        snapshot.appendItems([CollectionViewItem(value: HomeItem.friend)], toSection: friendsSection)
         return snapshot
     }
     
