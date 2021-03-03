@@ -116,9 +116,22 @@ class _MyProductsVC: MyWalletsVC {
         let viewModel = self.viewModel as! WalletsVM
         
         // fix header
-        if let headerView = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: 0)) as? FirstSectionHeaderView
+        if let headerView = headerForSection(0) as? FirstSectionHeaderView
         {
             headerView.balancesOverviewView.setUp(with: viewModel.state.value)
+        }
+        
+        if let headerView = headerForSection(1) as? HiddenWalletsSectionHeaderView {
+            headerView.headerLabel.text = "\(viewModel.hiddenWallets().count) \(L10n.hiddenWallets.lowercased())"
+            if viewModel.hiddenWallets().isEmpty {
+                headerView.removeStackView {
+                    self.collectionView.collectionViewLayout.invalidateLayout()
+                }
+            } else {
+                headerView.addStackView {
+                    self.collectionView.collectionViewLayout.invalidateLayout()
+                }
+            }
         }
     }
     

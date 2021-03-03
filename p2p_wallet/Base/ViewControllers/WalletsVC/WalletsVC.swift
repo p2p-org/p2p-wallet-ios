@@ -42,7 +42,6 @@ class MyWalletsVC: CollectionVC<Wallet> {
             } else {
                 walletsVM?.hideWallet(item)
             }
-            (self.viewModel as? WalletsVM)?.hideWallet(item)
             return .just(())
         }
     }

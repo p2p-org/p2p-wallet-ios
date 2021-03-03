@@ -89,6 +89,23 @@ class HomeCollectionView: CollectionView<HomeItem> {
                 break
             }
             footerView.setUp(title: text, indicator: image, action: action)
+            
+            if let topConstraint = footerView.button.constraintToSuperviewWithAttribute(.top)
+            {
+                if !viewModel.walletsVM.hiddenWallets().isEmpty && !viewModel.walletsVM.isHiddenWalletsShown.value {
+                    if topConstraint.constant != 0 {
+                        topConstraint.constant = 0
+                        footerView.setNeedsLayout()
+                        collectionView.collectionViewLayout.invalidateLayout()
+                    }
+                } else {
+                    if topConstraint.constant != 30 {
+                        topConstraint.constant = 30
+                        footerView.setNeedsLayout()
+                        collectionView.collectionViewLayout.invalidateLayout()
+                    }
+                }
+            }
         }
     }
     
