@@ -136,6 +136,7 @@ class HomeCollectionView: CollectionView<HomeItem> {
             }
         case 1:
             if let view = header as? HiddenWalletsSectionHeaderView {
+                view.headerLabel.text = L10n.hiddenWallets
                 view.showHideHiddenWalletsAction = showHideHiddenWalletsAction
             }
         case 2:
