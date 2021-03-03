@@ -8,7 +8,7 @@
 import Foundation
 
 protocol TabBarScenesFactory {
-    func makeMainVC() -> MainVC
+    func makeHomeViewController() -> HomeViewController
     func makeProfileVC() -> ProfileVC
 }
 
@@ -32,7 +32,7 @@ class TabBarVC: BEPagesVC {
     override func setUp() {
         super.setUp()
         // pages
-        let mainVC = scenesFactory.makeMainVC()
+        let mainVC = scenesFactory.makeHomeViewController()
         viewControllers = [
             BENavigationController(rootViewController: mainVC),
             BENavigationController(rootViewController: InvestmentsVC()),

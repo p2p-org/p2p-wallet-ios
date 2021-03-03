@@ -76,7 +76,7 @@ class _MyProductsVC: MyWalletsVC {
         [
             CollectionViewSection(
                 header: CollectionViewSection.Header(viewClass: FirstSectionHeaderView.self, title: L10n.balances, titleFont: .systemFont(ofSize: 17, weight: .semibold)),
-                cellType: MainWalletCell.self,
+                cellType: HomeWalletCell.self,
                 interGroupSpacing: 30,
                 itemHeight: .estimated(45),
                 horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16)
@@ -85,7 +85,7 @@ class _MyProductsVC: MyWalletsVC {
                 header: CollectionViewSection.Header(
                     viewClass: HiddenWalletsSectionHeaderView.self, title: "Hidden wallet"
                 ),
-                cellType: MainWalletCell.self,
+                cellType: HomeWalletCell.self,
                 interGroupSpacing: 30,
                 itemHeight: .absolute(45),
                 horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16)
