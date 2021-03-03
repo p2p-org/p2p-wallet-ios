@@ -1,13 +1,13 @@
 //
-//  FriendCell.swift
+//  HomeFriendCell.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 22/12/2020.
+//  Created by Chung Tran on 03/03/2021.
 //
 
 import Foundation
 
-class FriendCell: ListCollectionCell<String> {
+class HomeFriendCell: ListCollectionCell<String> {
     override func commonInit() {
         super.commonInit()
         contentView.col([

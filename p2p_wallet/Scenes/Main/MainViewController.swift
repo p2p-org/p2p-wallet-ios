@@ -10,7 +10,7 @@ import UIKit
 import Action
 
 protocol _MainScenesFactory {
-    func makeMainVC() -> MainVC
+    func makeHomeViewController() -> HomeViewController
 }
 
 class MainViewController: BaseVC {
@@ -30,6 +30,6 @@ class MainViewController: BaseVC {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        add(child: scenesFactory.makeMainVC())
+        add(child: scenesFactory.makeHomeViewController())
     }
 }

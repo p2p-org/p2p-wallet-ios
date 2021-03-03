@@ -1,14 +1,15 @@
 //
-//  MainVM.swift
+//  HomeCollectionViewModel.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 22/12/2020.
+//  Created by Chung Tran on 03/03/2021.
 //
 
 import Foundation
 import RxSwift
 
-class MainVM: ListViewModel<MainVCItem> {
+class HomeCollectionViewModel: ListViewModel<HomeItem> {
+    // MARK: - Properties
     let walletsVM: WalletsVM
     
     init(walletsVM: WalletsVM) {
@@ -16,6 +17,7 @@ class MainVM: ListViewModel<MainVCItem> {
         super.init()
     }
     
+    // MARK: - Methods
     override func reload() {
         walletsVM.reload()
     }
