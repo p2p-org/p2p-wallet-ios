@@ -37,9 +37,9 @@ class MainContainer {
         TabBarVC(scenesFactory: self)
     }
     
-    func makeMainVC() -> MainVC {
-        let vm = MainVM(walletsVM: myWalletsVM)
-        return MainVC(viewModel: vm, scenesFactory: self)
+    func makeHomeViewController() -> HomeViewController {
+        let vm = HomeViewModel(walletsVM: myWalletsVM)
+        return HomeViewController(viewModel: vm, scenesFactory: self)
     }
     
     func makeMyProductsVC() -> MyProductsVC {
@@ -142,4 +142,4 @@ class MainContainer {
     }
 }
 
-extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory, MainScenesFactory, ChangeNetworkResponder, _MainScenesFactory, TokenSettingsScenesFactory {}
+extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory, HomeScenesFactory, ChangeNetworkResponder, _MainScenesFactory, TokenSettingsScenesFactory {}

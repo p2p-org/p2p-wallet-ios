@@ -1,13 +1,13 @@
 //
-//  PriceCell.swift
+//  HomeWalletCell.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 11/2/20.
+//  Created by Chung Tran on 03/03/2021.
 //
 
 import Foundation
 
-class MainWalletCell: EditableWalletCell {
+class HomeWalletCell: EditableWalletCell {
     lazy var addressLabel = UILabel(text: "public key", textSize: 13, textColor: .textSecondary, numberOfLines: 1)
     lazy var indicatorColorView = UIView(width: 3, cornerRadius: 1.5)
     
@@ -16,7 +16,7 @@ class MainWalletCell: EditableWalletCell {
     }
     
     override func commonInit() {
-        super.commonInit()        
+        super.commonInit()
         equityValueLabel.font = .boldSystemFont(ofSize: 15)
         equityValueLabel.setContentHuggingPriority(.required, for: .horizontal)
         tokenCountLabel.setContentHuggingPriority(.required, for: .horizontal)
