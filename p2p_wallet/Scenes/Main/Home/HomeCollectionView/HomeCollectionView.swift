@@ -57,6 +57,23 @@ class HomeCollectionView: CollectionView<HomeItem> {
         ])
     }
     
+    override func dataDidLoad() {
+        super.dataDidLoad()
+        let viewModel = self.viewModel as! HomeCollectionViewModel
+        
+        if let headerView = headerForSection(1) as? HiddenWalletsSectionHeaderView {
+            if viewModel.walletsVM.hiddenWallets().isEmpty {
+                headerView.removeStackView {
+                    self.collectionView.collectionViewLayout.invalidateLayout()
+                }
+            } else {
+                headerView.addStackView {
+                    self.collectionView.collectionViewLayout.invalidateLayout()
+                }
+            }
+        }
+    }
+    
     // MARK: - Methods
     override func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, CollectionViewItem<HomeItem>> {
         let viewModel = self.viewModel as! HomeCollectionViewModel

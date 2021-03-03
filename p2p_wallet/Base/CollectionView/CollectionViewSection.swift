@@ -12,14 +12,15 @@ struct CollectionViewSection {
         var viewClass: SectionHeaderView.Type = SectionHeaderView.self
         var title: String
         var titleFont: UIFont = .systemFont(ofSize: 17, weight: .semibold)
-        var layout: NSCollectionLayoutBoundarySupplementaryItem = {
-            let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
+        var heightDimension: NSCollectionLayoutDimension = .estimated(0)
+        var layout: NSCollectionLayoutBoundarySupplementaryItem {
+            let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: heightDimension)
             return NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: headerSize,
                 elementKind: UICollectionView.elementKindSectionHeader,
                 alignment: .top
             )
-        }()
+        }
     }
     
     struct Footer {
@@ -149,10 +150,15 @@ struct CollectionViewSection {
 }
 
 extension Array where Element == CollectionViewSection {
-    func createLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            self.createLayoutForSection(sectionIndex, environment: env)
+    func createLayout(interSectionSpacing: CGFloat? = nil) -> UICollectionViewLayout {
+        let config = UICollectionViewCompositionalLayoutConfiguration()
+        if let interSectionSpacing = interSectionSpacing {
+            config.interSectionSpacing = interSectionSpacing
         }
+        
+        let layout = UICollectionViewCompositionalLayout(sectionProvider: { (sectionIndex: Int, env: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            self.createLayoutForSection(sectionIndex, environment: env)
+        }, configuration: config)
         
         for section in self where section.background != nil {
             layout.register(section.background.self, forDecorationViewOfKind: String(describing: section.background!))
