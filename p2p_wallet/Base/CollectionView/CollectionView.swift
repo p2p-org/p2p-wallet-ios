@@ -229,4 +229,15 @@ class CollectionView<T: Hashable>: BEView {
             print("collection view was tapped")
         }
     }
+    
+    // MARK: - Helpers
+    func headerForSection(_ section: Int) -> UICollectionReusableView?
+    {
+        collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: section))
+    }
+    
+    func footerForSection(_ section: Int) -> UICollectionReusableView?
+    {
+        collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionFooter, at: IndexPath(row: 0, section: section))
+    }
 }

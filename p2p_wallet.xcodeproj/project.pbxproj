@@ -181,6 +181,16 @@
 		BCB92B7525B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B7425B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift */; };
 		BCB92B8025B5386F00FF615E /* WLIntroVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B7F25B5386F00FF615E /* WLIntroVC.swift */; };
 		BCBBE1872563C2D300533F6B /* ReceiveTokenCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBBE1862563C2D300533F6B /* ReceiveTokenCell.swift */; };
+		BCBE148725EF3CF90014BCE5 /* EditableWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE148625EF3CF90014BCE5 /* EditableWalletCell.swift */; };
+		BCBE149825EF3D110014BCE5 /* HomeCollectionView+SupplementaryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE148E25EF3D100014BCE5 /* HomeCollectionView+SupplementaryViews.swift */; };
+		BCBE149925EF3D110014BCE5 /* HomeFriendCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE149025EF3D100014BCE5 /* HomeFriendCell.swift */; };
+		BCBE149A25EF3D110014BCE5 /* HomeWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE149125EF3D100014BCE5 /* HomeWalletCell.swift */; };
+		BCBE149B25EF3D110014BCE5 /* HomeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE149225EF3D100014BCE5 /* HomeItem.swift */; };
+		BCBE149C25EF3D110014BCE5 /* HomeCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE149325EF3D100014BCE5 /* HomeCollectionView.swift */; };
+		BCBE149D25EF3D110014BCE5 /* HomeCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE149425EF3D100014BCE5 /* HomeCollectionViewModel.swift */; };
+		BCBE149E25EF3D110014BCE5 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE149525EF3D100014BCE5 /* HomeViewModel.swift */; };
+		BCBE149F25EF3D110014BCE5 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE149625EF3D100014BCE5 /* HomeViewController.swift */; };
+		BCBE14A025EF3D110014BCE5 /* HomeRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE149725EF3D100014BCE5 /* HomeRootView.swift */; };
 		BCD5E73A2551265300F51299 /* CollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E7392551265300F51299 /* CollectionVC.swift */; };
 		BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74825512D2500F51299 /* SectionHeaderView.swift */; };
 		BCD5E74E25512DA500F51299 /* InvestmentsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74D25512DA500F51299 /* InvestmentsVC.swift */; };
@@ -430,6 +440,16 @@
 		BCB92B7425B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIUserInterfaceStyle+Extensions.swift"; sourceTree = "<group>"; };
 		BCB92B7F25B5386F00FF615E /* WLIntroVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLIntroVC.swift; sourceTree = "<group>"; };
 		BCBBE1862563C2D300533F6B /* ReceiveTokenCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveTokenCell.swift; sourceTree = "<group>"; };
+		BCBE148625EF3CF90014BCE5 /* EditableWalletCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditableWalletCell.swift; sourceTree = "<group>"; };
+		BCBE148E25EF3D100014BCE5 /* HomeCollectionView+SupplementaryViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "HomeCollectionView+SupplementaryViews.swift"; sourceTree = "<group>"; };
+		BCBE149025EF3D100014BCE5 /* HomeFriendCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeFriendCell.swift; sourceTree = "<group>"; };
+		BCBE149125EF3D100014BCE5 /* HomeWalletCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeWalletCell.swift; sourceTree = "<group>"; };
+		BCBE149225EF3D100014BCE5 /* HomeItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeItem.swift; sourceTree = "<group>"; };
+		BCBE149325EF3D100014BCE5 /* HomeCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeCollectionView.swift; sourceTree = "<group>"; };
+		BCBE149425EF3D100014BCE5 /* HomeCollectionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeCollectionViewModel.swift; sourceTree = "<group>"; };
+		BCBE149525EF3D100014BCE5 /* HomeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		BCBE149625EF3D100014BCE5 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		BCBE149725EF3D100014BCE5 /* HomeRootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeRootView.swift; sourceTree = "<group>"; };
 		BCD5E7392551265300F51299 /* CollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionVC.swift; sourceTree = "<group>"; };
 		BCD5E74825512D2500F51299 /* SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		BCD5E74D25512DA500F51299 /* InvestmentsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsVC.swift; sourceTree = "<group>"; };
@@ -723,6 +743,7 @@
 				BC22A5E725D2726700F7026D /* ScrollableVStackRootView.swift */,
 				BC4E934625E758930095C512 /* CollectionView */,
 				BCA93F6925E78D8A0081DDF6 /* WLNavigationBar.swift */,
+				BCBE148625EF3CF90014BCE5 /* EditableWalletCell.swift */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -1014,6 +1035,46 @@
 			path = ReceiveToken;
 			sourceTree = "<group>";
 		};
+		BCBE148B25EF3D100014BCE5 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				BCBE148C25EF3D100014BCE5 /* HomeCollectionView */,
+				BCBE149525EF3D100014BCE5 /* HomeViewModel.swift */,
+				BCBE149625EF3D100014BCE5 /* HomeViewController.swift */,
+				BCBE149725EF3D100014BCE5 /* HomeRootView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		BCBE148C25EF3D100014BCE5 /* HomeCollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				BCBE148D25EF3D100014BCE5 /* SupplementaryViews */,
+				BCBE148F25EF3D100014BCE5 /* Cells */,
+				BCBE149225EF3D100014BCE5 /* HomeItem.swift */,
+				BCBE149325EF3D100014BCE5 /* HomeCollectionView.swift */,
+				BCBE149425EF3D100014BCE5 /* HomeCollectionViewModel.swift */,
+			);
+			path = HomeCollectionView;
+			sourceTree = "<group>";
+		};
+		BCBE148D25EF3D100014BCE5 /* SupplementaryViews */ = {
+			isa = PBXGroup;
+			children = (
+				BCBE148E25EF3D100014BCE5 /* HomeCollectionView+SupplementaryViews.swift */,
+			);
+			path = SupplementaryViews;
+			sourceTree = "<group>";
+		};
+		BCBE148F25EF3D100014BCE5 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				BCBE149025EF3D100014BCE5 /* HomeFriendCell.swift */,
+				BCBE149125EF3D100014BCE5 /* HomeWalletCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		BCD5E74425512D1500F51299 /* CollectionVC */ = {
 			isa = PBXGroup;
 			children = (
@@ -1129,6 +1190,7 @@
 				BCEB207125E1563B00B54FEF /* MainContainer.swift */,
 				BCFC768525E2EAB800FBE148 /* MainViewController.swift */,
 				BCEB206925E1561200B54FEF /* TabBarVC */,
+				BCBE148B25EF3D100014BCE5 /* Home */,
 				BC23B572254FBB6300886C9C /* MainVC */,
 				BC11C9FA2591B29F00E399A9 /* MyProductsVC */,
 				BCD5E75225512DA800F51299 /* InvestmentsVC */,
@@ -1522,6 +1584,7 @@
 				BC490CB0256CB1B0006E7AC9 /* ChooseWalletVC.swift in Sources */,
 				BCEB206125E1532C00B54FEF /* OnboardingContainer.swift in Sources */,
 				BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */,
+				BCBE14A025EF3D110014BCE5 /* HomeRootView.swift in Sources */,
 				BC22A5D325D2715C00F7026D /* SendTokenRootView.swift in Sources */,
 				BC0E7DC725B178BF009AD08B /* SelectLanguageVC.swift in Sources */,
 				BC932B3C257E095B007F1C29 /* TransactionInfoVC.swift in Sources */,
@@ -1544,8 +1607,10 @@
 				BC11C9F62591A1AE00E399A9 /* FriendCell.swift in Sources */,
 				BC54DD062587098800A65566 /* LazyView.swift in Sources */,
 				BC490C20256BAE17006E7AC9 /* WalletsVC.swift in Sources */,
+				BCBE149A25EF3D110014BCE5 /* HomeWalletCell.swift in Sources */,
 				BCD5E74E25512DA500F51299 /* InvestmentsVC.swift in Sources */,
 				BC32A393254A77A9002156F0 /* UIViewController+Extensions.swift in Sources */,
+				BCBE148725EF3CF90014BCE5 /* EditableWalletCell.swift in Sources */,
 				BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */,
 				BC123E7F25B181B60043178E /* NSObject+Extensions.swift in Sources */,
 				BCA93F4025E762A70081DDF6 /* CollectionViewModel.swift in Sources */,
@@ -1572,11 +1637,13 @@
 				BC11C9D82590987D00E399A9 /* SectionBackgroundView.swift in Sources */,
 				BCEF14AC25CFF13E00DFE931 /* _AddNewWalletVC.swift in Sources */,
 				BC3ADEC82574D84C002B3B16 /* TransactionCell.swift in Sources */,
+				BCBE149825EF3D110014BCE5 /* HomeCollectionView+SupplementaryViews.swift in Sources */,
 				BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */,
 				BCE42E1A25DFA5100021540E /* RestoreWalletViewController.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WellDoneVC.swift in Sources */,
 				BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */,
 				BCA9941F25AE93D5005BD8FB /* Fonts+Generated.swift in Sources */,
+				BCBE149C25EF3D110014BCE5 /* HomeCollectionView.swift in Sources */,
 				BCE42E0225DFA0B50021540E /* CreateWalletViewModel.swift in Sources */,
 				BC54DCF92587089700A65566 /* WalletGraphVM.swift in Sources */,
 				BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */,
@@ -1600,6 +1667,7 @@
 				BC7B2C7125E384F700833656 /* CreateSecurityKeysRootView.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				BC2EC1902553BA2C006EEDA5 /* WDVCSectionHeaderView.swift in Sources */,
+				BCBE149E25EF3D110014BCE5 /* HomeViewModel.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
 				BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */,
 				BCA93F6225E77EF50081DDF6 /* TokenSettingsCell.swift in Sources */,
@@ -1616,6 +1684,7 @@
 				BC6EE7CA254BBF8900FE1025 /* UIApplication+Extensions.swift in Sources */,
 				BC11C9C225908F3700E399A9 /* CGFloat+Extensions.swift in Sources */,
 				BCA9948725AEA1C0005BD8FB /* ExpandablePresentationController.swift in Sources */,
+				BCBE149B25EF3D110014BCE5 /* HomeItem.swift in Sources */,
 				BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */,
 				BC4E933F25E757A90095C512 /* CollectionViewSection.swift in Sources */,
 				BC1051232589F1B900398EA2 /* ChangePinCodeVC.swift in Sources */,
@@ -1638,6 +1707,7 @@
 				BCA93F8125E883A50081DDF6 /* Array+Extensions.swift in Sources */,
 				BC2EC1F92553FF6A006EEDA5 /* DashedButton.swift in Sources */,
 				BC05891525D3CD7C00632993 /* SwapTokenViewController.swift in Sources */,
+				BCBE149925EF3D110014BCE5 /* HomeFriendCell.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */,
 				BC7BCB75256274E10018DECA /* PricesManager+Extensions.swift in Sources */,
 				BC2EC18B2553B700006EEDA5 /* WalletDetailVC.swift in Sources */,
@@ -1645,6 +1715,7 @@
 				BC3B3DAA258C653000C6117E /* WLModalVC.swift in Sources */,
 				BC22A5D425D2715C00F7026D /* SendTokenViewController.swift in Sources */,
 				BC2EC1CD2553ED1B006EEDA5 /* CardViewController.swift in Sources */,
+				BCBE149F25EF3D110014BCE5 /* HomeViewController.swift in Sources */,
 				BCEB205125E14E4F00B54FEF /* CreateWalletContainer.swift in Sources */,
 				BCD5E73A2551265300F51299 /* CollectionVC.swift in Sources */,
 				BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */,
@@ -1676,6 +1747,7 @@
 				BC2EC1D52553ED1B006EEDA5 /* CustomHeightPresentationController.swift in Sources */,
 				BC5ED749256237AB0030572D /* EmptyView.swift in Sources */,
 				BC6EE77D254BB8F400FE1025 /* Settings.swift in Sources */,
+				BCBE149D25EF3D110014BCE5 /* HomeCollectionViewModel.swift in Sources */,
 				BC11CA122591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift in Sources */,
 				BC05891325D3CD7C00632993 /* SwapTokenViewModel.swift in Sources */,
 				BC2EC1D12553ED1B006EEDA5 /* FittingSizePresentationController.swift in Sources */,
