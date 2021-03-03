@@ -8,7 +8,7 @@
 import Foundation
 
 class WLButton: UIButton {
-    enum StepButtonType {
+    enum StepButtonType: Equatable {
         case black, sub, blue, gray
         var backgroundColor: UIColor {
             switch self {
@@ -34,10 +34,25 @@ class WLButton: UIButton {
     }
     
     static func stepButton(type: StepButtonType, label: String?) -> WLButton {
-        WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: type.textColor)
+        let button = WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: type.textColor)
+        button.type = type
+        return button
     }
     
+    static func stepButton(backgroundColor: UIColor, textColor: UIColor, label: String?) -> WLButton {
+        WLButton(height: 56, backgroundColor: backgroundColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: textColor)
+    }
+    
+    var type: StepButtonType?
+    
     override var isEnabled: Bool {
-        didSet {isEnabled ? (alpha = 1) : (alpha = 0.5)}
+        didSet {
+            switch type {
+            case .blue:
+                backgroundColor = isEnabled ? type!.backgroundColor: .a3a5ba
+            default:
+                isEnabled ? (alpha = 1) : (alpha = 0.5)
+            }
+        }
     }
 }

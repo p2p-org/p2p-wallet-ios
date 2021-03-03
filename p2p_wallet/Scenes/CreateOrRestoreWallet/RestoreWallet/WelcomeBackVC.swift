@@ -27,7 +27,7 @@ class WelcomeBackVC: WLIntroVC {
         
         // add center image
         var i = 3
-        let logoImageView = UIImageView(width: 200, height: 200, image: .welcomeBack)
+        let logoImageView = UIImageView(width: 150, height: 150, image: .welcomeBack)
         let spacer2 = UIView.spacer
         stackView.insertArrangedSubviewsWithCustomSpacing([
             logoImageView.centeredHorizontallyView,
@@ -41,7 +41,7 @@ class WelcomeBackVC: WLIntroVC {
         
         buttonsStackView.addArrangedSubviews([
             goToWalletButton,
-            UIView(height: 56)
+            UIView(height: 100)
         ])
     }
     
