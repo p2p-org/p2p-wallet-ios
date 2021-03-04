@@ -68,6 +68,11 @@ class OnboardingViewModel {
         navigationSubject.onNext(.done)
     }
     
+    @objc func cancelOnboarding() {
+        navigationSubject.onNext(.dismiss)
+        handler.onboardingDidCancel()
+    }
+    
     func endOnboarding() {
         navigationSubject.onNext(.dismiss)
         handler.onboardingDidComplete()

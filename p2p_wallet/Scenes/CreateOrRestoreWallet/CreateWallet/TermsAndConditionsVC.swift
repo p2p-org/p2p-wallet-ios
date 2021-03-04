@@ -52,6 +52,7 @@ class TermsAndConditionsVC: BaseVStackVC {
     }
     
     @objc func buttonAcceptDidTouch() {
+        Defaults.isTermAndConditionsAccepted = true
         createWalletViewModel.navigationSubject.onNext(.createPhrases)
     }
 }
