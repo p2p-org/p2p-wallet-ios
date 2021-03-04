@@ -12,7 +12,6 @@ protocol OnboardingScenesFactory {
     func makeOnboardingCreatePassCodeVC() -> OnboardingCreatePassCodeVC
     func makeEnableBiometryVC() -> EnableBiometryVC
     func makeEnableNotificationsVC() -> EnableNotificationsVC
-    func makeWellDoneVC() -> WellDoneVC
 }
 
 class OnboardingViewController: WLIntroVC {
@@ -81,9 +80,6 @@ class OnboardingViewController: WLIntroVC {
         case .setUpNotifications:
             let enableNotificationsVC = scenesFactory.makeEnableNotificationsVC()
             childNavigationController.pushViewController(enableNotificationsVC, animated: true)
-        case .done:
-            let vc = scenesFactory.makeWellDoneVC()
-            childNavigationController.pushViewController(vc, animated: true)
         case .dismiss:
             dismiss(animated: true, completion: nil)
         }
