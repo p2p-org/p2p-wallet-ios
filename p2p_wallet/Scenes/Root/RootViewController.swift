@@ -14,6 +14,7 @@ protocol RootViewControllerScenesFactory {
     func makeOnboardingViewController() -> OnboardingViewController
     func makeMainViewController() -> MainViewController
     func makeLocalAuthVC() -> LocalAuthVC
+    func makeWellDoneVC() -> WellDoneVC
 }
 
 class RootViewController: BaseVC {
@@ -64,6 +65,10 @@ class RootViewController: BaseVC {
             transition(to: nc)
         case .onboarding:
             let vc = scenesFactory.makeOnboardingViewController()
+            isBoardingCompleted = false
+            transition(to: vc)
+        case .onboardingDone:
+            let vc = scenesFactory.makeWellDoneVC()
             isBoardingCompleted = false
             transition(to: vc)
         case .main:
