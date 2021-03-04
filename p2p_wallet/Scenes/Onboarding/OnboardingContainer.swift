@@ -37,10 +37,6 @@ class OnboardingContainer {
     func makeEnableNotificationsVC() -> EnableNotificationsVC {
         EnableNotificationsVC(onboardingViewModel: viewModel)
     }
-    
-    func makeWellDoneVC() -> WellDoneVC {
-        WellDoneVC(onboardingViewModel: viewModel)
-    }
 }
 
 extension OnboardingContainer: OnboardingScenesFactory {}
