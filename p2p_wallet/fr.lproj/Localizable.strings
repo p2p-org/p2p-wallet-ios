@@ -261,3 +261,4 @@
 "Hidden" = "Caché";
 "Hidden wallets" = "Portefeuilles cachés";
 "Hide" = "Cacher";
+"Non-native account can only be closed if its balance is zero" = "Un compte non natif ne peut être fermé que si son solde est nul";
