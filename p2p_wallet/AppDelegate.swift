@@ -44,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BEPureLayoutConfigs.defaultShadowColor = .textBlack
 //        let image = UIImage.backButton.withRenderingMode(.alwaysOriginal)
 //        BEPureLayoutConfigs.defaultBackButton = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
-        BEPureLayoutConfigs.defaultCheckBoxActiveColor = .textBlack
+        BEPureLayoutConfigs.defaultCheckBoxActiveColor = .h5887ff
         
         // THPinViewController
         THPinInputCircleView.fillColor = .passcodeHighlightColor
