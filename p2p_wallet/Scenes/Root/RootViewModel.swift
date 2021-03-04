@@ -22,6 +22,7 @@ protocol CreateOrRestoreWalletHandler {
 }
 
 protocol OnboardingHandler {
+    func onboardingDidCancel()
     func onboardingDidComplete()
 }
 
@@ -74,6 +75,10 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     // MARK: - Handler
     func creatingOrRestoringWalletDidComplete() {
         navigationSubject.accept(.onboarding)
+    }
+    
+    func onboardingDidCancel() {
+        logout()
     }
     
     func onboardingDidComplete() {

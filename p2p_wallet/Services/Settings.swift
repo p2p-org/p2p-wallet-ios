@@ -25,4 +25,6 @@ extension DefaultsKeys {
     var fiat: DefaultsKey<Fiat> {.init(#function, defaultValue: .usd)}
     var hiddenWalletPubkey: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
     var isHiddenWalletsShown: DefaultsKey<Bool> {.init(#function, defaultValue: true)}
+    var isTermAndConditionsAccepted: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
+    var isIntroductionViewed: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
 }

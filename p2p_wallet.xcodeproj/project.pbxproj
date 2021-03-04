@@ -16,6 +16,7 @@
 		BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */; };
 		BC0978E825AEDEE200DB02E9 /* ResizablePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */; };
 		BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */; };
+		BC0A9E9025F09BDE0063F9E3 /* OnboardingCreatePassCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0A9E8F25F09BDE0063F9E3 /* OnboardingCreatePassCodeVC.swift */; };
 		BC0E7DC225B15B90009AD08B /* ProfileSingleSelectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0E7DC125B15B90009AD08B /* ProfileSingleSelectionVC.swift */; };
 		BC0E7DC725B178BF009AD08B /* SelectLanguageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0E7DC625B178BF009AD08B /* SelectLanguageVC.swift */; };
 		BC0E7DCC25B17AB2009AD08B /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0E7DCB25B17AB2009AD08B /* Bundle+Extensions.swift */; };
@@ -257,6 +258,7 @@
 		BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLResizableModalVC.swift; sourceTree = "<group>"; };
 		BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizablePresentationController.swift; sourceTree = "<group>"; };
 		BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinLogoImageView.swift; sourceTree = "<group>"; };
+		BC0A9E8F25F09BDE0063F9E3 /* OnboardingCreatePassCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCreatePassCodeVC.swift; sourceTree = "<group>"; };
 		BC0E7DC125B15B90009AD08B /* ProfileSingleSelectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSingleSelectionVC.swift; sourceTree = "<group>"; };
 		BC0E7DC625B178BF009AD08B /* SelectLanguageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectLanguageVC.swift; sourceTree = "<group>"; };
 		BC0E7DCB25B17AB2009AD08B /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
@@ -1131,6 +1133,7 @@
 				BCE42DF225DF9C7A0021540E /* OnboardingViewModel.swift */,
 				BCE42DF425DF9C7A0021540E /* OnboardingViewController.swift */,
 				BC89ADB725E0FCB3001A6791 /* BaseOnboardingVC.swift */,
+				BC0A9E8F25F09BDE0063F9E3 /* OnboardingCreatePassCodeVC.swift */,
 				BC6EE776254AF6E600FE1025 /* EnableBiometryVC.swift */,
 				BC6EE7C4254BBEC000FE1025 /* EnableNotificationsVC.swift */,
 				BC6EE7E1254BD23700FE1025 /* WellDoneVC.swift */,
@@ -1642,6 +1645,7 @@
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				BC2EC1902553BA2C006EEDA5 /* WDVCSectionHeaderView.swift in Sources */,
 				BCBE149E25EF3D110014BCE5 /* HomeViewModel.swift in Sources */,
+				BC0A9E9025F09BDE0063F9E3 /* OnboardingCreatePassCodeVC.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
 				BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */,
 				BCA93F6225E77EF50081DDF6 /* TokenSettingsCell.swift in Sources */,
