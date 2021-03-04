@@ -263,3 +263,4 @@
 "Hidden" = "Ẩn";
 "Hidden wallets" = "Ví ẩn";
 "Hide" = "Ẩn";
+"Non-native account can only be closed if its balance is zero" = "Tài khoản không phải gốc chỉ có thể bị đóng nếu số dư của nó bằng 0";

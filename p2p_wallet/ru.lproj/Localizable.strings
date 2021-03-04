@@ -263,3 +263,4 @@
 "Hidden" = "Скрытый";
 "Hidden wallets" = "Скрытые кошельки";
 "Hide" = "Скрывать";
+"Non-native account can only be closed if its balance is zero" = "Неродная учетная запись может быть закрыта только при нулевом балансе";
