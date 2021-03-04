@@ -14,6 +14,7 @@ enum RootNavigatableScene: Equatable {
     case initializing
     case createOrRestoreWallet
     case onboarding
+    case onboardingDone
     case main
 }
 
@@ -22,6 +23,7 @@ protocol CreateOrRestoreWalletHandler {
 }
 
 protocol OnboardingHandler {
+    func onboardingDidCancel()
     func onboardingDidComplete()
 }
 
@@ -76,7 +78,15 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
         navigationSubject.accept(.onboarding)
     }
     
-    func onboardingDidComplete() {
+    func onboardingDidCancel() {
+        logout()
+    }
+    
+    @objc func onboardingDidComplete() {
+        navigationSubject.accept(.onboardingDone)
+    }
+    
+    @objc func navigateToMain() {
         navigationSubject.accept(.main)
     }
     

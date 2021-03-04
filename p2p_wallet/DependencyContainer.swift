@@ -36,6 +36,10 @@ class DependencyContainer {
         return container.makeOnboardingViewController()
     }
     
+    func makeWellDoneVC() -> WellDoneVC {
+        WellDoneVC(viewModel: sharedRootViewModel)
+    }
+    
     // MARK: - Main
     func makeMainViewController() -> MainViewController {
         let container = MainContainer(rootViewModel: sharedRootViewModel, accountStorage: sharedAccountStorage)
