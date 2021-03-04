@@ -49,9 +49,10 @@ extension HomeCollectionView {
     class HiddenWalletsSectionHeaderView: SectionHeaderView {
         var showHideHiddenWalletsAction: CocoaAction?
         
+        lazy var imageView = UIImageView(width: 20, height: 20, image: .visibilityShow, tintColor: .textSecondary)
+        
         override func layoutSubviews() {
             super.layoutSubviews()
-            headerLabel.textColor = .a3a5ba
             headerLabel.font = .systemFont(ofSize: 15)
         }
         
@@ -60,13 +61,13 @@ extension HomeCollectionView {
             stackView.axis = .horizontal
             stackView.distribution = .fill
             stackView.alignment = .center
-            let imageView = UIImageView(width: 20, height: 20, image: .visibilityShow, tintColor: .textSecondary)
-                .padding(.init(all: 12.5))
-                .padding(.init(top: 10, left: .defaultPadding, bottom: 10, right: 0))
             
             headerLabel.wrapper?.removeFromSuperview()
             stackView.addArrangedSubviews([
-                imageView,
+                imageView
+                    .padding(.init(all: 12.5))
+                    .padding(.init(top: 10, left: .defaultPadding, bottom: 10, right: 0))
+                ,
                 headerLabel
             ])
             
