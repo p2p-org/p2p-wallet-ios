@@ -26,8 +26,8 @@ class OnboardingContainer {
         OnboardingViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeCreatePassCodeVC() -> CreatePassCodeVC {
-        CreatePassCodeVC()
+    func makeOnboardingCreatePassCodeVC() -> OnboardingCreatePassCodeVC {
+        OnboardingCreatePassCodeVC(viewModel: viewModel)
     }
     
     func makeEnableBiometryVC() -> EnableBiometryVC {

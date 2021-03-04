@@ -28,10 +28,15 @@ class CreateWalletViewController: WLIndicatorModalVC {
     }
     
     // MARK: - Methods
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.kickOff()
+    }
+    
     override func setUp() {
         super.setUp()
-        // kickoff Terms and Conditions
-        childNavigationController = BENavigationController(rootViewController: scenesFactory.makeTermsAndConditionsVC())
+        // kickoff
+        childNavigationController = BENavigationController()
         add(child: childNavigationController, to: containerView)
     }
     
@@ -45,6 +50,9 @@ class CreateWalletViewController: WLIndicatorModalVC {
     // MARK: - Navigation
     private func navigate(to scene: CreateWalletNavigatableScene) {
         switch scene {
+        case .termsAndConditions:
+            let vc = scenesFactory.makeTermsAndConditionsVC()
+            childNavigationController.pushViewController(vc, animated: true)
         case .createPhrases:
             let vc = scenesFactory.makeCreateSecurityKeysViewController()
             childNavigationController.pushViewController(vc, animated: true)
