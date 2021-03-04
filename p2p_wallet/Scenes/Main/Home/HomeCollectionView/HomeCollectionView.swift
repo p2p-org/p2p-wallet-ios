@@ -61,7 +61,17 @@ class HomeCollectionView: CollectionView<HomeItem> {
         }
         
         if let headerView = headerForSection(1) as? HiddenWalletsSectionHeaderView {
-            headerView.headerLabel.text = "\(viewModel.walletsVM.hiddenWallets().count) \(L10n.hiddenWallets.lowercased())"
+            if viewModel.walletsVM.isHiddenWalletsShown.value {
+                headerView.imageView.tintColor = .textBlack
+                headerView.imageView.image = .visibilityHide
+                headerView.headerLabel.textColor = .textBlack
+                headerView.headerLabel.text = L10n.hide
+            } else {
+                headerView.imageView.tintColor = .textSecondary
+                headerView.imageView.image = .visibilityShow
+                headerView.headerLabel.textColor = .textSecondary
+                headerView.headerLabel.text = "\(viewModel.walletsVM.hiddenWallets().count) \(L10n.hiddenWallets.lowercased())"
+            }
             if viewModel.walletsVM.hiddenWallets().isEmpty {
                 headerView.removeStackView {
                     self.collectionView.collectionViewLayout.invalidateLayout()

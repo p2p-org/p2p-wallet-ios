@@ -9,10 +9,9 @@ import Foundation
 import UIKit
 
 protocol OnboardingScenesFactory {
-    func makeCreatePassCodeVC() -> CreatePassCodeVC
+    func makeOnboardingCreatePassCodeVC() -> OnboardingCreatePassCodeVC
     func makeEnableBiometryVC() -> EnableBiometryVC
     func makeEnableNotificationsVC() -> EnableNotificationsVC
-    func makeWellDoneVC() -> WellDoneVC
 }
 
 class OnboardingViewController: WLIntroVC {
@@ -67,7 +66,7 @@ class OnboardingViewController: WLIntroVC {
     private func navigate(to scene: OnboardingNavigatableScene) {
         switch scene {
         case .createPincode:
-            let pincodeVC = scenesFactory.makeCreatePassCodeVC()
+            let pincodeVC = scenesFactory.makeOnboardingCreatePassCodeVC()
             pincodeVC.disableDismissAfterCompletion = true
 
             pincodeVC.completion = {_ in
@@ -81,9 +80,6 @@ class OnboardingViewController: WLIntroVC {
         case .setUpNotifications:
             let enableNotificationsVC = scenesFactory.makeEnableNotificationsVC()
             childNavigationController.pushViewController(enableNotificationsVC, animated: true)
-        case .done:
-            let vc = scenesFactory.makeWellDoneVC()
-            childNavigationController.pushViewController(vc, animated: true)
         case .dismiss:
             dismiss(animated: true, completion: nil)
         }

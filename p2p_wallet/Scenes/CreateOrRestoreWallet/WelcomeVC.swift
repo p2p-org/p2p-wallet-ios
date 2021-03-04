@@ -22,6 +22,14 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
         self.createOrRestoreWalletViewModel = createOrRestoreWalletViewModel
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        if Defaults.isIntroductionViewed {
+            moveToPage(viewControllers.count - 1)
+            pageControl.isHidden = true
+        }
+    }
+    
     override func setUp() {
         super.setUp()
         viewControllers = [
@@ -41,6 +49,7 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
         if currentPage == viewControllers.count - 1 {
             pageControl.isHidden = true
         }
+        Defaults.isIntroductionViewed = true
     }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {

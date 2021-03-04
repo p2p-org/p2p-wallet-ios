@@ -25,10 +25,20 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
     lazy var copyToClipboardButton = UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: .textSecondary, textAlignment: .center)
         .padding(.init(all: 16))
         .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.copyToClipboard))
-    lazy var savedCheckBox = BECheckbox(width: 20, height: 20, cornerRadius: 6)
+    lazy var savedCheckBox: BECheckbox = {
+        let checkbox = BECheckbox(width: 20, height: 20, cornerRadius: 6)
+        checkbox.layer.borderColor = UIColor.a3a5ba.cgColor
+        return checkbox
+    }()
     
-    lazy var saveToICloudButton = WLButton.stepButton(type: .black, label: " \(L10n.saveToICloud)")
-        .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.saveToICloud))
+    lazy var saveToICloudButton: WLButton = {
+        let button = WLButton.stepButton(type: .black, label: " \(L10n.saveToICloud)")
+        button.titleLabel?.attributedText = NSMutableAttributedString()
+            .text(" ", size: 25, color: button.currentTitleColor)
+            .text(L10n.saveToICloud, size: 15, weight: .medium, color: button.currentTitleColor)
+        return button
+    }()
+        
     lazy var continueButton = WLButton.stepButton(type: .blue, label: L10n.next.uppercaseFirst)
         .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.next))
     
@@ -79,7 +89,8 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
                 UILabel(text: L10n.iHaveSavedTheseWordsInASafePlace, weight: .medium, textColor: .textSecondary)
             ]),
             BEStackViewSpacing(27),
-            saveToICloudButton,
+            saveToICloudButton
+                .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.saveToICloud)),
             BEStackViewSpacing(16),
             continueButton,
             BEStackViewSpacing(30),
