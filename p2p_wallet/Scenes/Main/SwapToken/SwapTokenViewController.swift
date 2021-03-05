@@ -11,7 +11,7 @@ import Action
 
 protocol SwapScenesFactory {
     func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
-    func makeSwapChooseDestinationWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
+    func makeSwapChooseDestinationWalletVC(customFilter: ((Wallet) -> Bool)?) -> SwapChooseDestinationWalletViewController
     func makeProcessTransactionVC() -> ProcessTransactionVC
 }
 
