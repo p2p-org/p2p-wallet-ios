@@ -135,7 +135,7 @@ class WalletsVM: ListViewModel<Wallet> {
     override var dataDidChange: Observable<Void> {
         Observable.combineLatest(
             super.dataDidChange,
-            isHiddenWalletsShown
+            isHiddenWalletsShown.distinctUntilChanged()
         )
             .map {_ in ()}
     }

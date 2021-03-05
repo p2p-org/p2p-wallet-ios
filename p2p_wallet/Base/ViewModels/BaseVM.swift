@@ -58,8 +58,8 @@ class BaseVM<T: Hashable> {
         state
             .map { state -> T? in
                 switch state {
-                case .loaded(let data):
-                    return data
+                case .loaded:
+                    return self.data
                 default:
                     return nil
                 }

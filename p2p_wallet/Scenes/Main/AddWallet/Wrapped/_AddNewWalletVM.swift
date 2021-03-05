@@ -120,9 +120,12 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
                             newWallet: newWallet
                         )
                         self.transactionManager.process(transaction)
+                    
+                    // add to walletsVM
+                    self.walletsVM.state.accept(.loaded(self.walletsVM.data + [newWallet]))
                         
                         // present wallet
-                        let vc = self.scenesFactory.makeWalletDetailVC(wallet: newWallet)
+                    let vc = self.scenesFactory.makeWalletDetailViewController(pubkey: newPubkey, symbol: newWallet.symbol)
                         self.navigatorSubject.onNext(.present(vc))
                     },
                     onError: { (error) in
