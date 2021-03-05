@@ -8,7 +8,7 @@
 import Foundation
 
 class HomeWalletCell: EditableWalletCell {
-    lazy var addressLabel = UILabel(text: "public key", textSize: 13, textColor: .textSecondary, numberOfLines: 1)
+    lazy var addressLabel = UILabel(text: "<public key>", textSize: 13, textColor: .textSecondary, numberOfLines: 1)
     lazy var indicatorColorView = UIView(width: 3, cornerRadius: 1.5)
     
     override var loadingViews: [UIView] {
