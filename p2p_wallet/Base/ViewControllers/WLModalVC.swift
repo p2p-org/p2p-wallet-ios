@@ -8,7 +8,6 @@
 import Foundation
 
 class WLIndicatorModalVC: BaseVC {
-    var padding: UIEdgeInsets {.init(x: 0, y: 20)}
     lazy var containerView = UIView(backgroundColor: .background)
     // bottomView for covering safe area
     lazy var bottomView = UIView(backgroundColor: containerView.backgroundColor)
@@ -59,6 +58,7 @@ class WLIndicatorModalVC: BaseVC {
 }
 
 class WLModalVC: WLIndicatorModalVC {
+    var padding: UIEdgeInsets {.init(x: 0, y: 20)}
     lazy var stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
     
     override func setUp() {
