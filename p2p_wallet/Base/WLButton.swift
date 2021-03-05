@@ -49,7 +49,7 @@ class WLButton: UIButton {
         didSet {
             switch type {
             case .blue:
-                backgroundColor = isEnabled ? type!.backgroundColor: .a3a5ba
+                backgroundColor = isEnabled ? type!.backgroundColor: .a3a5baStatic
             default:
                 isEnabled ? (alpha = 1) : (alpha = 0.5)
             }
