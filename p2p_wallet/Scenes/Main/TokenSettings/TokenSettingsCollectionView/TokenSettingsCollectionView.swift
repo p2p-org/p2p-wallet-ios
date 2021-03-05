@@ -8,11 +8,11 @@
 import Foundation
 import Action
 
-class TokenSettingsCollectionView: CollectionView<TokenSettings> {
+class TokenSettingsCollectionView: CollectionView<TokenSettings, TokenSettingsViewModel> {
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: CollectionViewItem<TokenSettings>) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         (cell as! TokenSettingsCell).toggleVisibilityAction = CocoaAction {
-            (self.viewModel as! TokenSettingsViewModel).toggleHideWallet()
+            self.viewModel.toggleHideWallet()
             return .just(())
         }
         return cell

@@ -8,12 +8,6 @@
 import Foundation
 import Action
 
-protocol WalletDetailScenesFactory {
-    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> WLModalWrapperVC
-    func makeSwapTokenViewController(fromWallet: Wallet?) -> SwapTokenViewController
-    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
-}
-
 class WalletDetailVC: WLModalWrapperVC {
     override var padding: UIEdgeInsets {UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)}
     
