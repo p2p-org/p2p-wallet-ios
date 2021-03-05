@@ -19,10 +19,10 @@ protocol CollectionViewDelegate: class {
     func dataDidLoad()
 }
 
-class CollectionView<T: Hashable>: BEView {
+class CollectionView<T: Hashable, ViewModel: ListViewModel<T>>: BEView {
     // MARK: - Property
     let disposeBag = DisposeBag()
-    let viewModel: ListViewModel<T>
+    let viewModel: ViewModel
     let sections: [CollectionViewSection]
     
     var dataSource: UICollectionViewDiffableDataSource<String, CollectionViewItem<T>>!
@@ -43,7 +43,7 @@ class CollectionView<T: Hashable>: BEView {
     }()
     
     // MARK: - Initializers
-    init(viewModel: ListViewModel<T>, sections: [CollectionViewSection]) {
+    init(viewModel: ViewModel, sections: [CollectionViewSection]) {
         self.viewModel = viewModel
         self.sections = sections
         super.init(frame: .zero)
@@ -243,7 +243,6 @@ class CollectionView<T: Hashable>: BEView {
             print("collection view was tapped")
         }
     }
-    
     
     // MARK: - Helpers
     func headerForSection(_ section: Int) -> UICollectionReusableView?

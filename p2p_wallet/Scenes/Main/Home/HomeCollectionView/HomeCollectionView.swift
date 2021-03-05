@@ -8,7 +8,7 @@
 import Foundation
 import Action
 
-class HomeCollectionView: CollectionView<HomeItem> {
+class HomeCollectionView: CollectionView<HomeItem, HomeCollectionViewModel> {
     // MARK: - Constants
     let numberOfWalletsToShow = 4
     
@@ -23,7 +23,7 @@ class HomeCollectionView: CollectionView<HomeItem> {
     
     // MARK: - Lazy actions
     lazy var showHideHiddenWalletsAction = CocoaAction {
-        (self.viewModel as! HomeCollectionViewModel).walletsVM.toggleIsHiddenWalletShown()
+        self.viewModel.walletsVM.toggleIsHiddenWalletShown()
         return .just(())
     }
     
@@ -59,8 +59,6 @@ class HomeCollectionView: CollectionView<HomeItem> {
     
     override func dataDidLoad() {
         super.dataDidLoad()
-        let viewModel = self.viewModel as! HomeCollectionViewModel
-        
         if let headerView = headerForSection(1) as? HiddenWalletsSectionHeaderView {
             if viewModel.walletsVM.isHiddenWalletsShown.value {
                 headerView.imageView.tintColor = .textBlack
@@ -106,8 +104,6 @@ class HomeCollectionView: CollectionView<HomeItem> {
     
     // MARK: - Methods
     override func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, CollectionViewItem<HomeItem>> {
-        let viewModel = self.viewModel as! HomeCollectionViewModel
-        
         // initial snapshot
         var snapshot = NSDiffableDataSourceSnapshot<String, CollectionViewItem<HomeItem>>()
         
@@ -159,7 +155,7 @@ class HomeCollectionView: CollectionView<HomeItem> {
             }
             (cell as! HomeWalletCell).hideAction = CocoaAction {
                 if let wallet = item?.wallet {
-                    let walletsVM = (self.viewModel as! HomeCollectionViewModel).walletsVM
+                    let walletsVM = self.viewModel.walletsVM
                     if wallet.isHidden {
                         walletsVM.unhideWallet(wallet)
                     } else {
