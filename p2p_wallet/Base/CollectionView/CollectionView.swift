@@ -66,6 +66,7 @@ class CollectionView<T: Hashable>: BEView {
     
     func bind() {
         viewModel.dataDidChange
+            .debounce(.milliseconds(3), scheduler: MainScheduler.instance)
             .subscribe(onNext: { (_) in
                 let snapshot = self.mapDataToSnapshot()
                 self.dataSource.apply(snapshot)
