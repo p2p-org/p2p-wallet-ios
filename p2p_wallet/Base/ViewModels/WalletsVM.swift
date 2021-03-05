@@ -124,7 +124,8 @@ class WalletsVM: ListViewModel<Wallet> {
                             lamports: balance,
                             price: PricesManager.shared.solPrice,
                             decimals: 9,
-                            indicatorColor: .black
+                            indicatorColor: .black,
+                            isLiquidity: false
                         )
                         wallets.insert(solWallet, at: 0)
                         return wallets
@@ -175,13 +176,19 @@ class WalletsVM: ListViewModel<Wallet> {
         let solWallet = wallets.removeFirst()
         wallets = wallets
             .sorted(by: { lhs, rhs -> Bool in
+                if lhs.isLiquidity != rhs.isLiquidity {
+                    return !lhs.isLiquidity
+                }
                 if lhs.amountInUSD != rhs.amountInUSD {
                     return lhs.amountInUSD > rhs.amountInUSD
                 }
                 if lhs.amount != rhs.amount {
                     return lhs.amount.orZero > rhs.amount.orZero
                 }
-                return lhs.symbol < rhs.symbol
+                if lhs.symbol != rhs.symbol {
+                    return lhs.symbol < rhs.symbol
+                }
+                return lhs.mintAddress < rhs.mintAddress
             })
         return [solWallet] + wallets
     }
