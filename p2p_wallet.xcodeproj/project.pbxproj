@@ -306,7 +306,6 @@
 		BC290A04256BA36F002A727C /* TokenAmountTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAmountTextField.swift; sourceTree = "<group>"; };
 		BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFooterView.swift; sourceTree = "<group>"; };
 		BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
-		BC2EC18A2553B700006EEDA5 /* WalletDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetailVC.swift; sourceTree = "<group>"; };
 		BC2EC18F2553BA2C006EEDA5 /* WDVCSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WDVCSectionHeaderView.swift; sourceTree = "<group>"; };
 		BC2EC1B92553EC7D006EEDA5 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		BC2EC1C32553ED1B006EEDA5 /* CardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardViewController.swift; sourceTree = "<group>"; };
@@ -592,15 +591,6 @@
 				BC22A5D125D2715C00F7026D /* SendTokenViewController.swift */,
 			);
 			path = SendToken;
-			sourceTree = "<group>";
-		};
-		BC2EC1892553B6EE006EEDA5 /* WalletDetailVC */ = {
-			isa = PBXGroup;
-			children = (
-				BC2EC18F2553BA2C006EEDA5 /* WDVCSectionHeaderView.swift */,
-				BC2EC18A2553B700006EEDA5 /* WalletDetailVC.swift */,
-			);
-			path = WalletDetailVC;
 			sourceTree = "<group>";
 		};
 		BC2EC1C12553ED1B006EEDA5 /* UIPresentationControllers */ = {
@@ -1137,6 +1127,7 @@
 		BCE3D56425F212CD0092F91B /* TransactionsCollectionView */ = {
 			isa = PBXGroup;
 			children = (
+				BC2EC18F2553BA2C006EEDA5 /* WDVCSectionHeaderView.swift */,
 				BC3ADEC72574D84C002B3B16 /* TransactionCell.swift */,
 				BCE3D56525F2135D0092F91B /* TransactionsCollectionView.swift */,
 			);
@@ -1203,7 +1194,6 @@
 				BCBE148B25EF3D100014BCE5 /* Home */,
 				BC11C9FA2591B29F00E399A9 /* MyProductsVC */,
 				BCD5E75225512DA800F51299 /* InvestmentsVC */,
-				BC2EC1892553B6EE006EEDA5 /* WalletDetailVC */,
 				BCE3D55725F2127B0092F91B /* WalletDetail */,
 				BCEF14A725CFF0E500DFE931 /* AddWallet */,
 				BCABF69D2588746400749EEC /* ProfileVC */,

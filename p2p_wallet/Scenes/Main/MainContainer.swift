@@ -46,8 +46,8 @@ class MainContainer {
         MyProductsVC(walletsVM: myWalletsVM, scenesFactory: self)
     }
     
-    func makeWalletDetailViewController(pubkey: String) -> WalletDetailViewController {
-        let viewModel = WalletDetailViewModel(solanaSDK: solanaSDK, walletsVM: myWalletsVM, walletPubkey: pubkey)
+    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController {
+        let viewModel = WalletDetailViewModel(solanaSDK: solanaSDK, walletsVM: myWalletsVM, walletPubkey: pubkey, walletSymbol: symbol)
         return WalletDetailViewController(viewModel: viewModel, scenesFactory: self)
     }
     

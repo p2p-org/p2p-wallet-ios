@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol HomeScenesFactory {
-    func makeWalletDetailViewController(pubkey: String) -> WalletDetailViewController
+    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController
     func makeReceiveTokenViewController() -> ReceiveTokenVC
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> WLModalWrapperVC
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController
@@ -75,7 +75,7 @@ class HomeViewController: BaseVC {
             self.present(profileVC, animated: true, completion: nil)
         case .walletDetail(let wallet):
             guard let pubkey = wallet.pubkey else {return}
-            let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey)
+            let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey, symbol: wallet.symbol)
             present(vc, animated: true, completion: nil)
         case .walletSettings(let wallet):
             guard let pubkey = wallet.pubkey else {return}

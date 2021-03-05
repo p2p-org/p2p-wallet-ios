@@ -9,7 +9,7 @@ import Foundation
 import Action
 
 protocol MyWalletsScenesFactory {
-    func makeWalletDetailViewController(pubkey: String) -> WalletDetailViewController
+    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController
     func makeAddNewTokenVC() -> AddNewWalletVC
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
 }
@@ -24,7 +24,7 @@ class MyWalletsVC: CollectionVC<Wallet> {
     // MARK: - Delegate
     override func itemDidSelect(_ item: Wallet) {
         guard let pubkey = item.pubkey else {return}
-        let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey)
+        let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey, symbol: item.symbol)
         present(vc, animated: true, completion: nil)
     }
     

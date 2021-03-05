@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import Action
 
 class WalletDetailRootView: BEView {
     // MARK: - Constants
@@ -26,6 +27,24 @@ class WalletDetailRootView: BEView {
         return tf
     }()
     
+    lazy var collectionView: TransactionsCollectionView = {
+        let collectionView = TransactionsCollectionView(viewModel: viewModel.transactionsVM, sections: [
+            CollectionViewSection(
+                header: CollectionViewSection.Header(
+                    viewClass: WDVCSectionHeaderView.self,
+                    title: L10n.activities
+                ),
+                cellType: TransactionCell.self,
+                interGroupSpacing: 2,
+                itemHeight: .absolute(71)
+            )
+        ])
+        collectionView.itemDidSelect = {
+            self.viewModel.navigationSubject.onNext(.transactionInfo($0))
+        }
+        return collectionView
+    }()
+    
     lazy var tabBar: TabBar = {
         let tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
         tabBar.backgroundColor = .h202020
@@ -41,15 +60,9 @@ class WalletDetailRootView: BEView {
     // MARK: - Methods
     override func commonInit() {
         super.commonInit()
+        backgroundColor = .vcBackground
         layout()
         bind()
-    }
-    
-    override func didMoveToWindow() {
-        super.didMoveToWindow()
-        bringSubviewToFront(tabBar)
-        // update prices
-        PricesManager.shared.fetchCurrentPrices()
     }
     
     // MARK: - Layout
@@ -76,8 +89,15 @@ class WalletDetailRootView: BEView {
             BEStackViewSpacing(0)
         ])
         
+        // collection view
+        addSubview(collectionView)
+        collectionView.autoPinEdge(.top, to: .bottom, of: headerStackView)
+        collectionView.autoPinEdge(toSuperviewEdge: .leading)
+        collectionView.autoPinEdge(toSuperviewEdge: .trailing)
+        
         // tabBar
         addSubview(tabBar)
+        tabBar.autoPinEdge(.top, to: .bottom, of: collectionView)
         tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         
         tabBar.stackView.addArrangedSubviews([
@@ -97,15 +117,33 @@ class WalletDetailRootView: BEView {
     
     private func bind() {
         viewModel.wallet
+            .filter {$0 != nil}
             .map {$0?.name}
             .asDriver(onErrorJustReturn: nil)
             .drive(walletNameTextField.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.wallet
+            .filter {$0 != nil}
             .asDriver(onErrorJustReturn: nil)
             .drive(onNext: {wallet in
                 self.coinLogoImageView.setUp(wallet: wallet)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.wallet
+            .filter {$0 != nil}
+            .map {$0!}
+            .subscribe(onNext: {wallet in
+                self.collectionView.wallet = wallet
+                self.collectionView.receiveAction = CocoaAction {
+                    self.viewModel.receiveTokens()
+                    return .just(())
+                }
+                if let header = self.collectionView.headerForSection(0) as? WDVCSectionHeaderView
+                {
+                    self.collectionView.reloadHeader(header)
+                }
             })
             .disposed(by: disposeBag)
         
