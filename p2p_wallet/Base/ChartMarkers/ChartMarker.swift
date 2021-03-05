@@ -74,7 +74,7 @@ open class ChartMarker: MarkerImage
 
         if origin.y + offset.y < 0
         {
-            offset.y = height + padding;
+            offset.y = height + padding
         } else if let chart = chartView,
             origin.y + height + offset.y > chart.bounds.size.height
         {

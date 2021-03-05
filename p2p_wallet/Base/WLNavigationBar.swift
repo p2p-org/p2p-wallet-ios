@@ -27,7 +27,6 @@ class WLNavigationBar: BEView {
     lazy var backButton = UIImageView(width: 35, height: 35, image: .backSquare)
     lazy var titleLabel = UILabel(textSize: 19, weight: .semibold, textAlignment: .center)
     
-    
     override func commonInit() {
         super.commonInit()
         addSubview(stackView)
