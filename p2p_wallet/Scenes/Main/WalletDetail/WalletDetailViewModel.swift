@@ -10,7 +10,10 @@ import RxSwift
 import RxCocoa
 
 enum WalletDetailNavigatableScene {
-//    case detail
+    case settings
+    case send
+    case receive
+    case swap
 }
 
 class WalletDetailViewModel {
@@ -45,18 +48,18 @@ class WalletDetailViewModel {
     }
     // MARK: - Actions
     @objc func showWalletSettings() {
-        
+        navigationSubject.onNext(.settings)
     }
     
     @objc func sendTokens() {
-        
+        navigationSubject.onNext(.send)
     }
     
     @objc func receiveTokens() {
-        
+        navigationSubject.onNext(.receive)
     }
     
     @objc func swapTokens() {
-        
+        navigationSubject.onNext(.swap)
     }
 }

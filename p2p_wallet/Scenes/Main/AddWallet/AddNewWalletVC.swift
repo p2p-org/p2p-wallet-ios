@@ -8,7 +8,7 @@
 import Foundation
 
 protocol AddNewWalletScenesFactory {
-    func makeWalletDetailVC(wallet: Wallet) -> WalletDetailVC
+    func makeWalletDetailViewController(pubkey: String) -> WalletDetailViewController
 }
 
 class AddNewWalletVC: WLModalWrapperVC {

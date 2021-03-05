@@ -108,5 +108,32 @@ class WalletDetailRootView: BEView {
                 self.coinLogoImageView.setUp(wallet: wallet)
             })
             .disposed(by: disposeBag)
+        
+        // bind controls to view model
+        walletNameTextField.rx.text.orEmpty
+            .skip(1)
+            .map {$0.trimmingCharacters(in: .whitespacesAndNewlines)}
+            .distinctUntilChanged()
+            .subscribe(onNext: {
+                if let wallet = self.viewModel.wallet.value {
+                    var newName = $0
+                    if $0.isEmpty {
+                        // fall back to wallet name
+                        newName = wallet.name
+                    }
+                    self.viewModel.walletsVM.updateWallet(wallet, withName: newName)
+                }
+                
+            })
+            .disposed(by: disposeBag)
+        
+        walletNameTextField.delegate = self
+    }
+}
+
+extension WalletDetailRootView: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        walletNameTextField.isUserInteractionEnabled = false
+        return true
     }
 }
