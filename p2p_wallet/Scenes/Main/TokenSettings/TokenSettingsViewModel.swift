@@ -42,15 +42,8 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     
     override func bind() {
         super.bind()
-        walletsVM.state
-            .map { state -> Wallet? in
-                switch state {
-                case .loaded(let data):
-                    return data.first(where: {$0.pubkey == self.pubkey})
-                default:
-                    return nil
-                }
-            }
+        walletsVM.dataObservable
+            .map {$0?.first(where: {$0.pubkey == self.pubkey})}
             .map {wallet -> [TokenSettings] in
                 [
                     .visibility(!(wallet?.isHidden ?? false)),
