@@ -54,7 +54,6 @@
 		BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC290A04256BA36F002A727C /* TokenAmountTextField.swift */; };
 		BC2EC1802553B1F7006EEDA5 /* SectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */; };
 		BC2EC1852553B326006EEDA5 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */; };
-		BC2EC18B2553B700006EEDA5 /* WalletDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC18A2553B700006EEDA5 /* WalletDetailVC.swift */; };
 		BC2EC1902553BA2C006EEDA5 /* WDVCSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC18F2553BA2C006EEDA5 /* WDVCSectionHeaderView.swift */; };
 		BC2EC1BA2553EC7D006EEDA5 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1B92553EC7D006EEDA5 /* UIView+Extensions.swift */; };
 		BC2EC1CD2553ED1B006EEDA5 /* CardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1C32553ED1B006EEDA5 /* CardViewController.swift */; };
@@ -1721,7 +1720,6 @@
 				BCBE149925EF3D110014BCE5 /* HomeFriendCell.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */,
 				BC7BCB75256274E10018DECA /* PricesManager+Extensions.swift in Sources */,
-				BC2EC18B2553B700006EEDA5 /* WalletDetailVC.swift in Sources */,
 				BC6EE777254AF6E600FE1025 /* EnableBiometryVC.swift in Sources */,
 				BC3B3DAA258C653000C6117E /* WLModalVC.swift in Sources */,
 				BC22A5D425D2715C00F7026D /* SendTokenViewController.swift in Sources */,
