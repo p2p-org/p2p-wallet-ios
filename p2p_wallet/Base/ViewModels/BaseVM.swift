@@ -53,4 +53,16 @@ class BaseVM<T: Hashable> {
     var dataDidChange: Observable<Void> {
         state.distinctUntilChanged().map {_ in ()}
     }
+    
+    var dataObservable: Observable<T?> {
+        state
+            .map { state -> T? in
+                switch state {
+                case .loaded(let data):
+                    return data
+                default:
+                    return nil
+                }
+            }
+    }
 }
