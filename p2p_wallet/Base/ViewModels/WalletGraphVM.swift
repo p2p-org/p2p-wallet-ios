@@ -9,16 +9,16 @@ import Foundation
 import RxSwift
 
 class WalletGraphVM: BaseVM<[PriceRecord]> {
-    let wallet: Wallet
+    let symbol: String
     var period: Period = .last1h
     
-    init(wallet: Wallet) {
-        self.wallet = wallet
+    init(symbol: String) {
+        self.symbol = symbol
         super.init(initialData: [])
     }
     
     override var request: Single<[PriceRecord]> {
-        PricesManager.shared.fetchHistoricalPrice(for: wallet.symbol, period: period)
+        PricesManager.shared.fetchHistoricalPrice(for: symbol, period: period)
     }
     
     override func shouldReload() -> Bool {

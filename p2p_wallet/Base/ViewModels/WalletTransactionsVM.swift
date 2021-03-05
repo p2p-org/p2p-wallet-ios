@@ -10,22 +10,21 @@ import RxSwift
 
 class WalletTransactionsVM: ListViewModel<Transaction> {
     
-    let wallet: Wallet
+    let pubkey: String
+    let symbol: String
     var before: String?
     let solanaSDK: SolanaSDK
     let walletsVM: WalletsVM
     
-    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, wallet: Wallet) {
-        self.wallet = wallet
+    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, pubkey: String, symbol: String) {
+        self.pubkey = pubkey
+        self.symbol = symbol
         self.solanaSDK = solanaSDK
         self.walletsVM = walletsVM
         super.init()
     }
     
     override var request: Single<[Transaction]> {
-        guard let pubkey = wallet.pubkey else {
-            return .error(SolanaSDK.Error.notFound)
-        }
         return solanaSDK.getConfirmedSignaturesForAddress2(account: pubkey, configs: SolanaSDK.RequestConfiguration(limit: limit, before: before)
         )
         .do(onSuccess: {[weak self] activities in
@@ -70,7 +69,7 @@ class WalletTransactionsVM: ListViewModel<Transaction> {
             $0.compactMap {
                 Transaction(
                     signatureInfo: $0,
-                    symbol: self.wallet.symbol,
+                    symbol: self.symbol,
                     status: .confirmed
                 )
             }

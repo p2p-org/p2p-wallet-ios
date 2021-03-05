@@ -29,7 +29,7 @@ class SectionHeaderView: UICollectionReusableView {
         stackView.addArrangedSubview(headerLabel.padding(.init(x: .defaultPadding, y: 0)))
     }
     
-    func addStackView(completion: (()->Void)? = nil) {
+    func addStackView(completion: (() -> Void)? = nil) {
         if stackView.superview == nil {
             addSubview(stackView)
             stackView.autoPinEdge(toSuperviewEdge: .top, withInset: 16)
@@ -41,7 +41,7 @@ class SectionHeaderView: UICollectionReusableView {
         }
     }
     
-    func removeStackView(completion: (()->Void)? = nil) {
+    func removeStackView(completion: (() -> Void)? = nil) {
         if stackView.superview != nil {
             stackView.removeFromSuperview()
             setNeedsLayout()
