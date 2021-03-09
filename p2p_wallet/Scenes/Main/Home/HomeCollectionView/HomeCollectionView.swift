@@ -40,7 +40,7 @@ class HomeCollectionView: CollectionView<HomeItem, HomeCollectionViewModel> {
             ),
             CollectionViewSection(
                 header: CollectionViewSection.Header(
-                    viewClass: HiddenWalletsSectionHeaderView.self, title: "Hidden wallet"
+                    viewClass: HiddenWalletsSectionHeaderView.self, title: L10n.hiddenWallets
                 ),
                 footer: CollectionViewSection.Footer(viewClass: WalletsSectionFooterView.self),
                 cellType: HomeWalletCell.self,
@@ -69,7 +69,7 @@ class HomeCollectionView: CollectionView<HomeItem, HomeCollectionViewModel> {
                 headerView.imageView.tintColor = .textSecondary
                 headerView.imageView.image = .visibilityShow
                 headerView.headerLabel.textColor = .textSecondary
-                headerView.headerLabel.text = "\(viewModel.walletsVM.hiddenWallets().count) \(L10n.hiddenWallets.lowercased())"
+                headerView.headerLabel.text = L10n.dHiddenWallet(viewModel.walletsVM.hiddenWallets().count)
             }
             if viewModel.walletsVM.hiddenWallets().isEmpty {
                 headerView.removeStackView {
@@ -179,7 +179,6 @@ class HomeCollectionView: CollectionView<HomeItem, HomeCollectionViewModel> {
             }
         case 1:
             if let view = header as? HiddenWalletsSectionHeaderView {
-                view.headerLabel.text = L10n.hiddenWallets
                 view.showHideHiddenWalletsAction = showHideHiddenWalletsAction
             }
         case 2:
