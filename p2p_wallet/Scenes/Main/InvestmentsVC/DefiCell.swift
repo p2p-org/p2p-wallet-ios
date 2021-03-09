@@ -11,7 +11,7 @@ class DefiCell: ListCollectionCell<String>, LoadableView {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
     
     lazy var imageView = UIImageView(width: 32, height: 32, backgroundColor: .gray, cornerRadius: 16)
-    lazy var titleLabel = UILabel(text: "Token exchange", textSize: 15, weight: .semibold, numberOfLines: 0)
+    lazy var titleLabel = UILabel(text: "Token exchange", weight: .semibold, numberOfLines: 0)
     
     override func commonInit() {
         super.commonInit()
