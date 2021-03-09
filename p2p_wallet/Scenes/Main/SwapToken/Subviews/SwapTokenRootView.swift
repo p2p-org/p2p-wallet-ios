@@ -106,7 +106,7 @@ private extension SwapTokenRootView {
             ]),
             destinationWalletView,
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.price + ": ", textColor: .textSecondary),
+                UILabel(text: L10n.price + ": ", weight: .medium, textColor: .textSecondary),
                 exchangeRateLabel
                     .withContentHuggingPriority(.required, for: .horizontal),
                 exchangeRateReverseButton
