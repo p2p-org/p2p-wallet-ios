@@ -12,7 +12,7 @@ struct CollectionViewSection {
         var viewClass: SectionHeaderView.Type = SectionHeaderView.self
         var title: String
         var titleFont: UIFont = .systemFont(ofSize: 17, weight: .semibold)
-        var heightDimension: NSCollectionLayoutDimension = .estimated(0)
+        var heightDimension: NSCollectionLayoutDimension = .estimated(10)
         var layout: NSCollectionLayoutBoundarySupplementaryItem {
             let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: heightDimension)
             return NSCollectionLayoutBoundarySupplementaryItem(
