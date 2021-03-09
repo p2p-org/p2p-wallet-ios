@@ -37,7 +37,7 @@ class TransactionIndicatorView: BEView {
     }
 }
 
-class ProcessTransactionRootView: ScrollableVStackRootView {
+class ProcessTransactionRootView: BEView {
     // MARK: - Constants
     
     // MARK: - Properties
@@ -46,6 +46,7 @@ class ProcessTransactionRootView: ScrollableVStackRootView {
     var transactionDidChange: (() -> Void)?
     
     // MARK: - Subviews
+    lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     lazy var titleLabel = UILabel(textSize: 21, weight: .semibold, textAlignment: .center)
     lazy var subtitleLabel = UILabel(weight: .medium, textColor: .textSecondary, textAlignment: .center)
     lazy var transactionStatusImageView = UIImageView(width: 65, height: 65, image: .transactionProcessing)
@@ -92,7 +93,8 @@ class ProcessTransactionRootView: ScrollableVStackRootView {
     
     // MARK: - Layout
     private func layout() {
-        scrollView.contentInset = .init(top: 30, left: 0, bottom: 0, right: 0)
+        addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 0, y: 30))
         
         stackView.spacing = 0
         stackView.addArrangedSubviews([
