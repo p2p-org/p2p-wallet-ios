@@ -20,7 +20,7 @@ class SwapTokenWalletView: BEView {
     
     lazy var amountTextField = TokenAmountTextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0\(Locale.current.decimalSeparator ?? ".")0", autocorrectionType: .no/*, rightView: useAllBalanceButton, rightViewMode: .always*/)
     
-    lazy var equityValueLabel = UILabel(text: "≈ 0.00 $", textColor: .textSecondary)
+    lazy var equityValueLabel = UILabel(text: "≈ 0.00 $", weight: .semibold, textColor: .textSecondary)
     
 //    lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .secondary)
 //        .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))
@@ -32,7 +32,7 @@ class SwapTokenWalletView: BEView {
             UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
                 iconImageView
                     .onTap(self, action: #selector(buttonSelectTokenDidTouch)),
-                UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textSecondary)
+                UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
                     .onTap(self, action: #selector(buttonSelectTokenDidTouch)),
                 amountTextField
             ]),

@@ -73,7 +73,7 @@ class ProcessTransactionVC: WLCenterSheet {
         let transactionIdLabel = UILabel(text: L10n.transactionID, textSize: 12, weight: .medium, textColor: .textSecondary)
         
         let transactionIdRow = UIView.row([
-            UILabel(text: transaction.signature, textSize: 15, weight: .medium),
+            UILabel(text: transaction.signature, weight: .medium),
             {
                 var copyToClipboardButton = UIButton(width: 24, height: 24)
                 copyToClipboardButton.setImage(.copyToClipboard, for: .normal)

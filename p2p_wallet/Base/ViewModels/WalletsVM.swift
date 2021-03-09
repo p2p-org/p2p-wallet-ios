@@ -12,7 +12,7 @@ import RxCocoa
 class WalletsVM: ListViewModel<Wallet> {
     override var isPaginationEnabled: Bool {false}
     
-    let isHiddenWalletsShown = BehaviorRelay<Bool>(value: Defaults.isHiddenWalletsShown)
+    let isHiddenWalletsShown = BehaviorRelay<Bool>(value: false)
     
     let solanaSDK: SolanaSDK
     let socket: SolanaSDK.Socket
@@ -20,7 +20,6 @@ class WalletsVM: ListViewModel<Wallet> {
     private(set) var shouldUpdateBalance = false
     
     var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
-    var defaultsDisposables = [DefaultsDisposable]()
     
     init(solanaSDK: SolanaSDK, socket: SolanaSDK.Socket, transactionManager: TransactionsManager? = nil) {
         self.solanaSDK = solanaSDK
@@ -83,13 +82,6 @@ class WalletsVM: ListViewModel<Wallet> {
                 }
             })
             .disposed(by: disposeBag)
-        
-        defaultsDisposables.append(
-            Defaults.observe(\.isHiddenWalletsShown, handler: { (update) in
-                guard let newValue = update.newValue, self.isHiddenWalletsShown.value != newValue else {return}
-                self.isHiddenWalletsShown.accept(newValue)
-            })
-        )
         
         NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
@@ -206,7 +198,7 @@ class WalletsVM: ListViewModel<Wallet> {
     }
     
     @objc func toggleIsHiddenWalletShown() {
-        Defaults.isHiddenWalletsShown.toggle()
+        isHiddenWalletsShown.accept(!isHiddenWalletsShown.value)
     }
     
     func hiddenWallets() -> [Wallet] {

@@ -17,7 +17,7 @@ class SendTokenRootView: ScrollableVStackRootView {
     let disposeBag = DisposeBag()
     
     // MARK: - Subviews
-    lazy var balanceLabel = UILabel(text: "0", textSize: 15, weight: .medium)
+    lazy var balanceLabel = UILabel(text: "0", weight: .medium)
         .onTap(viewModel, action: #selector(SendTokenViewModel.useAllBalance))
     lazy var coinImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 12)
         .onTap(viewModel, action: #selector(SendTokenViewModel.chooseWallet))
@@ -28,12 +28,12 @@ class SendTokenRootView: ScrollableVStackRootView {
         placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
         autocorrectionType: .no
     )
-    lazy var changeModeButton = UILabel(textSize: 15, weight: .semibold, textColor: .textSecondary)
+    lazy var changeModeButton = UILabel(weight: .semibold, textColor: .textSecondary)
         .onTap(viewModel, action: #selector(SendTokenViewModel.switchMode))
-    lazy var symbolLabel = UILabel(textSize: 15, weight: .semibold)
-    lazy var equityValueLabel = UILabel(text: "≈", textSize: 15, textColor: .textSecondary)
-    lazy var coinSymbolPriceLabel = UILabel(textSize: 15, textColor: .textSecondary)
-    lazy var coinPriceLabel = UILabel(textSize: 15, textColor: .textSecondary)
+    lazy var symbolLabel = UILabel(weight: .semibold)
+    lazy var equityValueLabel = UILabel(text: "≈", textColor: .textSecondary)
+    lazy var coinSymbolPriceLabel = UILabel(textColor: .textSecondary)
+    lazy var coinPriceLabel = UILabel(textColor: .textSecondary)
     
     lazy var addressStackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
         walletIconView, addressTextField, clearAddressButton, qrCodeImageView
@@ -47,7 +47,7 @@ class SendTokenRootView: ScrollableVStackRootView {
         .onTap(viewModel, action: #selector(SendTokenViewModel.scanQrCode))
     lazy var errorLabel = UILabel(text: " ", textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
     
-    lazy var feeLabel = LazyLabel<Double>(textSize: 15, textColor: .textSecondary)
+    lazy var feeLabel = LazyLabel<Double>(textColor: .textSecondary)
     
     lazy var sendButton = WLButton.stepButton(type: .blue, label: L10n.sendNow)
         .onTap(viewModel, action: #selector(SendTokenViewModel.send))
@@ -78,7 +78,7 @@ class SendTokenRootView: ScrollableVStackRootView {
     func layout() {
         stackView.addArrangedSubviews([
             UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
-                UILabel(text: L10n.from, textSize: 15, weight: .bold),
+                UILabel(text: L10n.from, weight: .bold),
                 balanceLabel
             ]),
             BEStackViewSpacing(30),
@@ -109,7 +109,7 @@ class SendTokenRootView: ScrollableVStackRootView {
                     coinPriceLabel
                 ]),
                 .row([
-                    UILabel(text: L10n.fee + ":", textSize: 15, textColor: .textSecondary),
+                    UILabel(text: L10n.fee + ":", textColor: .textSecondary),
                     feeLabel
                 ])
             ]),
@@ -118,7 +118,7 @@ class SendTokenRootView: ScrollableVStackRootView {
             UIView.separator(height: 1, color: .separator),
             BEStackViewSpacing(20),
             
-            UILabel(text: L10n.sendTo, textSize: 15, weight: .bold),
+            UILabel(text: L10n.sendTo, weight: .bold),
             addressStackView
                 .padding(.init(all: 8), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12),
             
