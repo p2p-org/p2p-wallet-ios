@@ -265,3 +265,7 @@
 "Your tokens" = "Vos jetons";
 "All tokens" = "Tous les jetons";
 "Activity" = "Activité";
+"Sending" = "Envoi en cours";
+"Transaction processing" = "Transaction en cours";
+"Success" = "Succès";
+"Transaction has been confirmed" = "La transaction a été confirmée";

@@ -265,3 +265,7 @@
 "Your tokens" = "Tokens của bạn";
 "All tokens" = "Tất cả tokens";
 "Activity" = "Hoạt động";
+"Sending" = "Đang gửi";
+"Transaction processing" = "Xử lý giao dịch";
+"Success" = "Sự thành công";
+"Transaction has been confirmed" = "Giao dịch đã được xác nhận";
