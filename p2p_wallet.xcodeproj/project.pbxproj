@@ -98,6 +98,7 @@
 		BC54DD062587098800A65566 /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD052587098800A65566 /* LazyView.swift */; };
 		BC54DD232587169400A65566 /* ValueByDateChartMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD222587169400A65566 /* ValueByDateChartMarker.swift */; };
 		BC54DD8E25872FE500A65566 /* HorizontalPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD8D25872FE500A65566 /* HorizontalPicker.swift */; };
+		BC5DB13225F739F9003D00BE /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = BC5DB13425F739F9003D00BE /* Localizable.stringsdict */; };
 		BC5ED749256237AB0030572D /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED748256237AB0030572D /* EmptyView.swift */; };
 		BC5ED74E256265700030572D /* Wallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED74D256265700030572D /* Wallet.swift */; };
 		BC5ED7532562687F0030572D /* PricesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED7522562687F0030572D /* PricesManager.swift */; };
@@ -196,11 +197,11 @@
 		BCD5E82925525D3D00F51299 /* ListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E82825525D3D00F51299 /* ListViewModel.swift */; };
 		BCD5E82F25525DE600F51299 /* FetcherState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E82E25525DE600F51299 /* FetcherState.swift */; };
 		BCE3D54725F1D01C0092F91B /* SwapChooseDestinationWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE3D54625F1D01C0092F91B /* SwapChooseDestinationWalletViewController.swift */; };
-		BCE3D58525F2426D0092F91B /* SystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE3D58425F2426D0092F91B /* SystemVersion.swift */; };
 		BCE3D55B25F212960092F91B /* WalletDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE3D55825F212960092F91B /* WalletDetailViewModel.swift */; };
 		BCE3D55C25F212960092F91B /* WalletDetailRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE3D55925F212960092F91B /* WalletDetailRootView.swift */; };
 		BCE3D55D25F212960092F91B /* WalletDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE3D55A25F212960092F91B /* WalletDetailViewController.swift */; };
 		BCE3D56625F2135D0092F91B /* TransactionsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE3D56525F2135D0092F91B /* TransactionsCollectionView.swift */; };
+		BCE3D58525F2426D0092F91B /* SystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE3D58425F2426D0092F91B /* SystemVersion.swift */; };
 		BCE42DE525DF9BDA0021540E /* CreateOrRestoreWalletViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE42DE225DF9BDA0021540E /* CreateOrRestoreWalletViewModel.swift */; };
 		BCE42DE725DF9BDA0021540E /* CreateOrRestoreWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE42DE425DF9BDA0021540E /* CreateOrRestoreWalletViewController.swift */; };
 		BCE42DF525DF9C7A0021540E /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE42DF225DF9C7A0021540E /* OnboardingViewModel.swift */; };
@@ -351,6 +352,10 @@
 		BC54DD052587098800A65566 /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		BC54DD222587169400A65566 /* ValueByDateChartMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueByDateChartMarker.swift; sourceTree = "<group>"; };
 		BC54DD8D25872FE500A65566 /* HorizontalPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalPicker.swift; sourceTree = "<group>"; };
+		BC5DB13325F739F9003D00BE /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fr; path = fr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		BC5DB13825F739FD003D00BE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		BC5DB13925F739FF003D00BE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		BC5DB13A25F73A01003D00BE /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = vi; path = vi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		BC5ED748256237AB0030572D /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		BC5ED74D256265700030572D /* Wallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wallet.swift; sourceTree = "<group>"; };
 		BC5ED7522562687F0030572D /* PricesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricesManager.swift; sourceTree = "<group>"; };
@@ -456,11 +461,11 @@
 		BCD5E82825525D3D00F51299 /* ListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewModel.swift; sourceTree = "<group>"; };
 		BCD5E82E25525DE600F51299 /* FetcherState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherState.swift; sourceTree = "<group>"; };
 		BCE3D54625F1D01C0092F91B /* SwapChooseDestinationWalletViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapChooseDestinationWalletViewController.swift; sourceTree = "<group>"; };
-		BCE3D58425F2426D0092F91B /* SystemVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemVersion.swift; sourceTree = "<group>"; };
 		BCE3D55825F212960092F91B /* WalletDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetailViewModel.swift; sourceTree = "<group>"; };
 		BCE3D55925F212960092F91B /* WalletDetailRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetailRootView.swift; sourceTree = "<group>"; };
 		BCE3D55A25F212960092F91B /* WalletDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetailViewController.swift; sourceTree = "<group>"; };
 		BCE3D56525F2135D0092F91B /* TransactionsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsCollectionView.swift; sourceTree = "<group>"; };
+		BCE3D58425F2426D0092F91B /* SystemVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemVersion.swift; sourceTree = "<group>"; };
 		BCE42DE225DF9BDA0021540E /* CreateOrRestoreWalletViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreWalletViewModel.swift; sourceTree = "<group>"; };
 		BCE42DE425DF9BDA0021540E /* CreateOrRestoreWalletViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreWalletViewController.swift; sourceTree = "<group>"; };
 		BCE42DF225DF9C7A0021540E /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
@@ -750,6 +755,7 @@
 				BCB2232625412AF9002D997F /* Info.plist */,
 				BC6366DA255A8D8300D585FD /* GoogleService-Info.plist */,
 				BC2288022542E1CC0028CE8F /* Localizable.strings */,
+				BC5DB13425F739F9003D00BE /* Localizable.stringsdict */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1363,6 +1369,7 @@
 				BCA9946D25AE94D7005BD8FB /* Montserrat-MediumItalic.ttf in Resources */,
 				BCA9946E25AE94D7005BD8FB /* Montserrat-BlackItalic.ttf in Resources */,
 				BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */,
+				BC5DB13225F739F9003D00BE /* Localizable.stringsdict in Resources */,
 				BCA9946825AE94D7005BD8FB /* Montserrat-Light.ttf in Resources */,
 				BCA9947425AE94D7005BD8FB /* Montserrat-Italic.ttf in Resources */,
 				BCA9947625AE94D7005BD8FB /* Montserrat-ExtraBoldItalic.ttf in Resources */,
@@ -1811,6 +1818,17 @@
 				BC2288082542E1D10028CE8F /* vi */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		BC5DB13425F739F9003D00BE /* Localizable.stringsdict */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BC5DB13325F739F9003D00BE /* fr */,
+				BC5DB13825F739FD003D00BE /* en */,
+				BC5DB13925F739FF003D00BE /* ru */,
+				BC5DB13A25F73A01003D00BE /* vi */,
+			);
+			name = Localizable.stringsdict;
 			sourceTree = "<group>";
 		};
 		BCB2232325412AF9002D997F /* LaunchScreen.storyboard */ = {
