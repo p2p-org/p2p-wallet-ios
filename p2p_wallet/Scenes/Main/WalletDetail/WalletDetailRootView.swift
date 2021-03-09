@@ -80,7 +80,7 @@ class WalletDetailRootView: BEView {
                 BEStackViewSpacing(0),
                 UILabel(text: " \(L10n.walletRename)", textSize: 19, weight: .semibold),
                 BEStackViewSpacing(10),
-                UIImageView(width: 16, height: 18, image: .buttonEdit, tintColor: .a3a5ba)
+                UIImageView(width: 25, height: 25, image: .settings, tintColor: .a3a5ba)
                     .onTap(viewModel, action: #selector(WalletDetailViewModel.showWalletSettings))
             ])
                 .padding(.init(x: 20, y: 0)),
