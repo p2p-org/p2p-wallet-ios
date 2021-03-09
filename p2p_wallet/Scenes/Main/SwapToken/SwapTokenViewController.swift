@@ -83,8 +83,12 @@ private class _SwapTokenViewController: BaseVC {
                     }
                     self.presentCustomModal(vc: vc, title: L10n.selectWallet)
                 case .chooseDestinationWallet:
-                    let vc = self.scenesFactory.makeSwapChooseDestinationWalletVC {
-                        $0.pubkey != self.viewModel.sourceWallet.value?.pubkey
+                    let vc = self.scenesFactory.makeSwapChooseDestinationWalletVC
+                    {
+                        let sourceWalletPubkey = self.viewModel.sourceWallet.value?.pubkey
+                        let sourceWalletMint = self.viewModel.sourceWallet.value?.mintAddress
+                        return $0.pubkey != sourceWalletPubkey &&
+                            self.viewModel.pools.value?.matchedPool(sourceMint: sourceWalletMint, destinationMint: $0.mintAddress) != nil
                     }
                     vc.completion = {wallet in
                         self.viewModel.destinationWallet.accept(wallet)
