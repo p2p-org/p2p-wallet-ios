@@ -29,6 +29,11 @@ class WalletDetailTransactionsVM: WalletTransactionsVM {
         graphVM.reload()
         super.reload()
     }
+    
+    override func refresh() {
+        super.refresh()
+        walletsVM.reload()
+    }
 }
 
 class WalletDetailViewModel {
