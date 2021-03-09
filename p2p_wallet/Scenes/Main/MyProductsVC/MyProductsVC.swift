@@ -83,7 +83,7 @@ class _MyProductsVC: MyWalletsVC {
             ),
             CollectionViewSection(
                 header: CollectionViewSection.Header(
-                    viewClass: HiddenWalletsSectionHeaderView.self, title: "Hidden wallet"
+                    viewClass: HiddenWalletsSectionHeaderView.self, title: L10n.hiddenWallets
                 ),
                 cellType: HomeWalletCell.self,
                 interGroupSpacing: 30,
@@ -102,7 +102,7 @@ class _MyProductsVC: MyWalletsVC {
             }
         case 1:
             if let view = header as? HiddenWalletsSectionHeaderView {
-                view.headerLabel.text = L10n.hiddenWallets
+                
 //                view.showHideHiddenWalletsAction = showHideHiddenWalletsAction
             }
         default:
@@ -122,7 +122,7 @@ class _MyProductsVC: MyWalletsVC {
         }
         
         if let headerView = headerForSection(1) as? HiddenWalletsSectionHeaderView {
-            headerView.headerLabel.text = "\(viewModel.hiddenWallets().count) \(L10n.hiddenWallets.lowercased())"
+            headerView.headerLabel.text = L10n.dHiddenWallet(viewModel.hiddenWallets().count)
             if viewModel.hiddenWallets().isEmpty {
                 headerView.removeStackView {
                     self.collectionView.collectionViewLayout.invalidateLayout()
