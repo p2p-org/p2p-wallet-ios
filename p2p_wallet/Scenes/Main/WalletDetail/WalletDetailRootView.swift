@@ -32,7 +32,7 @@ class WalletDetailRootView: BEView {
             CollectionViewSection(
                 header: CollectionViewSection.Header(
                     viewClass: WDVCSectionHeaderView.self,
-                    title: L10n.activities
+                    title: L10n.activity
                 ),
                 cellType: TransactionCell.self,
                 interGroupSpacing: 2,
