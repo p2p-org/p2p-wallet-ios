@@ -33,8 +33,8 @@ class WLButton: UIButton {
         }
     }
     
-    static func stepButton(type: StepButtonType, label: String?) -> WLButton {
-        let button = WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: type.textColor)
+    static func stepButton(type: StepButtonType, label: String?, labelFont: UIFont = UIFont.systemFont(ofSize: 17, weight: .semibold)) -> WLButton {
+        let button = WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: labelFont, textColor: type.textColor)
         button.type = type
         return button
     }
