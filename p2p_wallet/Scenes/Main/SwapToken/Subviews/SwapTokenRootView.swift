@@ -18,9 +18,9 @@ class SwapTokenRootView: ScrollableVStackRootView {
     let disposeBag = DisposeBag()
     
     // MARK: - Subviews
-    lazy var availableSourceBalanceLabel = UILabel(text: "Available", weight: .bold, textColor: .h5887ff)
+    lazy var availableSourceBalanceLabel = UILabel(text: "Available", weight: .medium, textColor: .h5887ff)
         .onTap(viewModel, action: #selector(SwapTokenViewModel.useAllBalance))
-    lazy var destinationBalanceLabel = UILabel(weight: .bold, textColor: .textSecondary)
+    lazy var destinationBalanceLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var sourceWalletView = SwapTokenWalletView(forAutoLayout: ())
     lazy var destinationWalletView = SwapTokenWalletView(forAutoLayout: ())
     
@@ -31,9 +31,9 @@ class SwapTokenRootView: ScrollableVStackRootView {
     lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
         .onTap(viewModel, action: #selector(SwapTokenViewModel.swapSourceAndDestination))
     
-    lazy var minimumReceiveLabel = UILabel(text: nil)
-    lazy var feeLabel = UILabel(text: nil)
-    lazy var slippageLabel = UILabel(text: nil)
+    lazy var minimumReceiveLabel = UILabel(textColor: .textSecondary)
+    lazy var feeLabel = UILabel(textColor: .textSecondary)
+    lazy var slippageLabel = UILabel(textColor: .textSecondary)
     
     lazy var errorLabel = UILabel(textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
     
@@ -93,7 +93,7 @@ private extension SwapTokenRootView {
         
         stackView.addArrangedSubviews([
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.from, weight: .bold),
+                UILabel(text: L10n.from, weight: .semibold),
                 availableSourceBalanceLabel
             ]),
             sourceWalletView,
@@ -101,12 +101,12 @@ private extension SwapTokenRootView {
             swapSourceAndDestinationView(),
             BEStackViewSpacing(16),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.to, weight: .bold),
+                UILabel(text: L10n.to, weight: .semibold),
                 destinationBalanceLabel
             ]),
             destinationWalletView,
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.price + ": "),
+                UILabel(text: L10n.price + ": ", weight: .medium, textColor: .textSecondary),
                 exchangeRateLabel
                     .withContentHuggingPriority(.required, for: .horizontal),
                 exchangeRateReverseButton
@@ -114,17 +114,17 @@ private extension SwapTokenRootView {
                 .padding(.init(all: 8), backgroundColor: .f6f6f8, cornerRadius: 12),
             UIView.separator(height: 1, color: .separator),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
-                UILabel(text: L10n.minimumReceive + ": "),
+                UILabel(text: L10n.minimumReceive + ": ", textColor: .textSecondary),
                 minimumReceiveLabel
             ]),
             BEStackViewSpacing(16),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
-                UILabel(text: L10n.fee + ": "),
+                UILabel(text: L10n.fee + ": ", textColor: .textSecondary),
                 feeLabel
             ]),
             BEStackViewSpacing(16),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
-                UILabel(text: L10n.slippage + ": "),
+                UILabel(text: L10n.slippage + ": ", textColor: .textSecondary),
                 slippageLabel
             ])
             .onTap(viewModel, action: #selector(SwapTokenViewModel.chooseSlippage)),
@@ -235,7 +235,15 @@ private extension SwapTokenRootView {
             .drive(self.destinationWalletView.equityValueLabel.rx.text)
             .disposed(by: disposeBag)
         
+        // pool
+        let poolUnavailability = viewModel.currentPool.map {$0 == nil}
+            .asDriver(onErrorJustReturn: false)
+        
         // exchange rate label
+        poolUnavailability
+            .drive(exchangeRateLabel.superview!.superview!.rx.isHidden)
+            .disposed(by: disposeBag)
+        
         Observable.combineLatest(
             viewModel.currentPool,
             viewModel.sourceWallet,
@@ -281,6 +289,10 @@ private extension SwapTokenRootView {
             .disposed(by: disposeBag)
         
         // minimum receive
+        poolUnavailability
+            .drive(minimumReceiveLabel.superview!.rx.isHidden)
+            .disposed(by: disposeBag)
+        
         Observable.combineLatest(
             viewModel.minimumReceiveAmount,
             viewModel.destinationWallet
@@ -294,6 +306,10 @@ private extension SwapTokenRootView {
             .disposed(by: disposeBag)
         
         // fee
+        poolUnavailability
+            .drive(feeLabel.superview!.rx.isHidden)
+            .disposed(by: disposeBag)
+        
         Observable.combineLatest(
             viewModel.currentPool,
             viewModel.sourceWallet,
@@ -313,6 +329,10 @@ private extension SwapTokenRootView {
             .disposed(by: disposeBag)
         
         // slippage
+        poolUnavailability
+            .drive(slippageLabel.superview!.rx.isHidden)
+            .disposed(by: disposeBag)
+        
         viewModel.slippage
             .subscribe(onNext: {slippage in
                 if !self.viewModel.isSlippageValid(slippage: slippage) {
@@ -330,15 +350,6 @@ private extension SwapTokenRootView {
         viewModel.errorSubject
             .asDriver()
             .drive(errorLabel.rx.text)
-            .disposed(by: disposeBag)
-        
-        let hasError = viewModel.errorSubject.map {$0 != nil}
-            .asDriver(onErrorJustReturn: false)
-        
-        hasError.drive(minimumReceiveLabel.superview!.rx.isHidden)
-            .disposed(by: disposeBag)
-            
-        hasError.drive(feeLabel.superview!.rx.isHidden)
             .disposed(by: disposeBag)
         
         // swap button

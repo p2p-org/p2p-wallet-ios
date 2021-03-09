@@ -19,10 +19,10 @@ protocol ProfileScenesFactory {
 }
 
 class ProfileVC: ProfileVCBase {
-    lazy var secureMethodsLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
-    lazy var activeLanguageLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
-    lazy var appearanceLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
-    lazy var networkLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
+    lazy var secureMethodsLabel = UILabel(weight: .medium, textColor: .textSecondary)
+    lazy var activeLanguageLabel = UILabel(weight: .medium, textColor: .textSecondary)
+    lazy var appearanceLabel = UILabel(weight: .medium, textColor: .textSecondary)
+    lazy var networkLabel = UILabel(weight: .medium, textColor: .textSecondary)
     
     var disposables = [DefaultsDisposable]()
     let rootViewModel: RootViewModel
@@ -161,7 +161,7 @@ class ProfileVC: ProfileVCBase {
     {
         let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
             UIImageView(width: 44, height: 44, backgroundColor: .textSecondary, cornerRadius: 22),
-            UILabel(text: text, textSize: 15),
+            UILabel(text: text),
             descriptionView,
             UIImageView(width: 4.5, height: 9, image: .nextArrow, tintColor: .textBlack)
         ])

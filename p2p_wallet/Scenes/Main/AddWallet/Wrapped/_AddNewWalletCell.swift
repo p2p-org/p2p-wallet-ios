@@ -14,10 +14,10 @@ class _AddNewWalletCell: WalletCell {
     private let disposeBag = DisposeBag()
     lazy var symbolLabel = UILabel(text: "SER", textSize: 17, weight: .bold)
     
-    lazy var mintAddressLabel = UILabel(textSize: 15, weight: .semibold, numberOfLines: 0)
+    lazy var mintAddressLabel = UILabel(weight: .semibold, numberOfLines: 0)
     lazy var viewInBlockchainExplorerButton = UIButton(label: L10n.viewInBlockchainExplorer, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .a3a5ba)
     
-    lazy var buttonAddTokenLabel = UILabel(text: L10n.addToken, textSize: 15, weight: .semibold, textColor: .white, textAlignment: .center)
+    lazy var buttonAddTokenLabel = UILabel(text: L10n.addToken, weight: .semibold, textColor: .white, textAlignment: .center)
     
     lazy var feeLabel: LazyLabel<Double> = {
         let label = LazyLabel<Double>(textSize: 13, textColor: UIColor.white.withAlphaComponent(0.5), textAlignment: .center)

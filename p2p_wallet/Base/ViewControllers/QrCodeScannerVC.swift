@@ -35,7 +35,7 @@ class QrCodeScannerVC: BaseVC {
         rangeImageView.addSubview(overlayLayer)
         overlayLayer.autoPinEdgesToSuperviewEdges(with: .init(all: 10))
         
-        let rangeLabel = UILabel(text: L10n.scanQRCode, textSize: 15, weight: .medium, textColor: .white, textAlignment: .center)
+        let rangeLabel = UILabel(text: L10n.scanQRCode, weight: .medium, textColor: .white, textAlignment: .center)
         cameraContainerView.addSubview(rangeLabel)
         rangeLabel.autoCenterInSuperview()
         

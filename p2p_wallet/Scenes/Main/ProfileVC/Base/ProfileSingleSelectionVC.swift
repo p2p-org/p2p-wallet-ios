@@ -55,7 +55,7 @@ extension ProfileSingleSelectionVC {
     class Cell<T>: BEView {
         var item: T?
         
-        lazy var label = UILabel(textSize: 15)
+        lazy var label = UILabel(text: nil)
         
         lazy var checkBox: BECheckbox = {
             let checkBox = BECheckbox(width: 20, height: 20, cornerRadius: 10)
