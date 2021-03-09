@@ -69,7 +69,7 @@ class TransactionInfoVC: BaseVStackVC {
             BEStackViewSpacing(5),
             
             // amount
-            UILabel(text: transaction.amount?.toString(maximumFractionDigits: 9, showPlus: true) + " " + transaction.symbol, textSize: 15, weight: .medium, textAlignment: .center)
+            UILabel(text: transaction.amount?.toString(maximumFractionDigits: 9, showPlus: true) + " " + transaction.symbol, weight: .medium, textAlignment: .center)
                 .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(20),
             
@@ -87,7 +87,7 @@ class TransactionInfoVC: BaseVStackVC {
             BEStackViewSpacing(20),
             UIView.row([
                 UIView(width: 55, height: 55, backgroundColor: .c4c4c4, cornerRadius: 12),
-                UILabel(text: fromPubkey, textSize: 15, weight: .semibold),
+                UILabel(text: fromPubkey, weight: .semibold),
                 UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .a3a5ba)
                     .padding(.init(all: 6), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
                     .onTap(self, action: #selector(buttonCopyFromPubkeyDidTouch))
@@ -103,7 +103,7 @@ class TransactionInfoVC: BaseVStackVC {
             BEStackViewSpacing(20),
             UIView.row([
                 UIView(width: 55, height: 55, backgroundColor: .c4c4c4, cornerRadius: 12),
-                UILabel(text: toPubkey, textSize: 15, weight: .semibold),
+                UILabel(text: toPubkey, weight: .semibold),
                 UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .a3a5ba)
                     .padding(.init(all: 6), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
                     .onTap(self, action: #selector(buttonCopyToPubkeyDidTouch))
@@ -158,7 +158,7 @@ class TransactionInfoVC: BaseVStackVC {
             sectionTitle(L10n.transactionID),
             BEStackViewSpacing(8),
             UIView.row([
-                UILabel(text: transaction.signature, textSize: 15, weight: .semibold, numberOfLines: 0),
+                UILabel(text: transaction.signature, weight: .semibold, numberOfLines: 0),
                 UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .textBlack)
                     .onTap(self, action: #selector(buttonCopySignatureToClipboardDidTouch))
             ])
@@ -206,7 +206,7 @@ class TransactionInfoVC: BaseVStackVC {
     }
     
     fileprivate func sectionContent(_ content: String?) -> UIView {
-        UILabel(text: content, textSize: 15, weight: .semibold)
+        UILabel(text: content, weight: .semibold)
             .padding(.init(x: 20, y: 0))
     }
 }

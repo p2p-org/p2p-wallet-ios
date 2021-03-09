@@ -22,7 +22,7 @@ class HorizontalPicker: BEView {
         didSet {
             stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
             stackView.addArrangedSubviews(labels.enumerated().map {
-                let label = UILabel(text: $1, textSize: 15)
+                let label = UILabel(text: $1)
                 let gesture = GestureRegconizer(target: self, action: #selector(buttonOptionDidTouch(_:)))
                 gesture.index = $0
                 label.addGestureRecognizer(gesture)

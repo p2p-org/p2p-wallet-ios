@@ -25,7 +25,6 @@ class TokenSettingsCloseAccountConfirmationVC: WLModalVC {
             BEStackViewSpacing(5),
             UILabel(
                 text: L10n.YourBalanceWillBeConvertedAndTransferredToYourMainSOLWalletAndYourAddressWillBeDisabled.thisActionCanNotBeUndone(symbol),
-                textSize: 15,
                 weight: .medium,
                 textColor: .textSecondary,
                 numberOfLines: 0

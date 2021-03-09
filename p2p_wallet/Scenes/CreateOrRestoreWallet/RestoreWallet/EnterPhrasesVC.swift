@@ -185,7 +185,7 @@ extension EnterPhrasesVC: UITextViewDelegate {
         let phrase = phrase.lowercased()
         // replace phrase's range by attachment that is a uilabel
         let label = { () -> UILabel in
-            let label = UILabel(textSize: 15, textColor: .textBlack)
+            let label = UILabel(textColor: .textBlack)
             label.attributedText = NSMutableAttributedString()
                 .text("\(index != nil ? "\(index!)": ""). ", size: 15, color: .a3a5ba)
                 .text("\(phrase)", size: 15)
