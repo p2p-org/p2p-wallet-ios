@@ -8,12 +8,11 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Action
 
 enum TokenSettingsNavigatableScene {
     case closeConfirmation
-    case sendTransaction
-    case processTransaction(signature: String)
-    case transactionError(_ error: Error)
+    case processTransaction
 }
 
 class TokenSettingsViewModel: ListViewModel<TokenSettings> {
@@ -24,6 +23,14 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     let transactionManager: TransactionsManager
     let accountStorage: KeychainAccountStorage
     var wallet: Wallet? {walletsVM.items.first(where: {$0.pubkey == pubkey})}
+    lazy var processTransactionViewModel: ProcessTransactionViewModel = {
+        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager)
+        viewModel.tryAgainAction = CocoaAction {
+            self.closeWallet()
+            return .just(())
+        }
+        return viewModel
+    }()
     
     // MARK: - Subject
     let navigationSubject = PublishSubject<TokenSettingsNavigatableScene>()
@@ -69,25 +76,38 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
         }
     }
     
-    @objc func closeWallet() {
-        navigationSubject.onNext(.sendTransaction)
+    @objc func showProcessingAndClose() {
+        navigationSubject.onNext(.processTransaction)
+        closeWallet()
+    }
+    
+    private func closeWallet() {
+        var transaction = Transaction(
+            type: .send,
+            symbol: "SOL",
+            status: .processing
+        )
+        
+        self.processTransactionViewModel.transactionHandler.accept(
+            TransactionHandler(transaction: transaction)
+        )
+        
         Single.zip(
             solanaSDK.closeTokenAccount(tokenPubkey: pubkey),
             solanaSDK.getCreatingTokenAccountFee().catchErrorJustReturn(0)
         )
             .subscribe(onSuccess: { signature, fee in
-                self.navigationSubject.onNext(.processTransaction(signature: signature))
-                let transaction = Transaction(
-                    signatureInfo: .init(signature: signature),
-                    type: .send,
-                    amount: +fee.convertToBalance(decimals: 9),
-                    symbol: "SOL",
-                    status: .processing
+                transaction.amount = fee.convertToBalance(decimals: 9)
+                transaction.signatureInfo = .init(signature: signature)
+                self.processTransactionViewModel.transactionHandler.accept(
+                    TransactionHandler(transaction: transaction)
                 )
                 self.transactionManager.process(transaction)
                 self.walletsVM.removeItem(where: {$0.pubkey == self.pubkey})
             }, onError: {error in
-                self.navigationSubject.onNext(.transactionError(error))
+                self.processTransactionViewModel.transactionHandler.accept(
+                    TransactionHandler(transaction: transaction, error: error)
+                )
             })
             .disposed(by: disposeBag)
     }
