@@ -50,7 +50,7 @@ class SendTokenRootView: ScrollableVStackRootView {
     lazy var feeLabel = LazyLabel<Double>(textColor: .textSecondary)
     
     lazy var sendButton = WLButton.stepButton(type: .blue, label: L10n.sendNow)
-        .onTap(viewModel, action: #selector(SendTokenViewModel.send))
+        .onTap(viewModel, action: #selector(SendTokenViewModel.sendAndShowProcessTransactionScene))
     
     // MARK: - Initializers
     init(viewModel: SendTokenViewModel) {

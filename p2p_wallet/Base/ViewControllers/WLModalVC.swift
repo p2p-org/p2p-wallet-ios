@@ -11,6 +11,7 @@ class WLIndicatorModalVC: BaseVC {
     lazy var containerView = UIView(backgroundColor: .background)
     // bottomView for covering safe area
     lazy var bottomView = UIView(backgroundColor: containerView.backgroundColor)
+    var swipeGesture: UIGestureRecognizer?
     
     // MARK: - Initializers
     override func viewDidLoad() {
@@ -43,7 +44,8 @@ class WLIndicatorModalVC: BaseVC {
         containerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
         
         if modalPresentationStyle == .custom {
-            view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(viewDidSwipe(_:))))
+            swipeGesture = UIPanGestureRecognizer(target: self, action: #selector(viewDidSwipe(_:)))
+            view.addGestureRecognizer(swipeGesture!)
             view.isUserInteractionEnabled = true
         }
     }
