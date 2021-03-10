@@ -38,7 +38,7 @@ class SwapTokenRootView: ScrollableVStackRootView {
     lazy var errorLabel = UILabel(textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
     
     lazy var swapButton = WLButton.stepButton(type: .blue, label: L10n.swapNow)
-        .onTap(viewModel, action: #selector(SwapTokenViewModel.swap))
+        .onTap(viewModel, action: #selector(SwapTokenViewModel.showSwapSceneAndSwap))
     
     // MARK: - Initializers
     init(viewModel: SwapTokenViewModel) {

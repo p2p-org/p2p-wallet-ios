@@ -12,7 +12,6 @@ import Action
 protocol SwapScenesFactory {
     func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
     func makeSwapChooseDestinationWalletVC(customFilter: ((Wallet) -> Bool)?) -> SwapChooseDestinationWalletViewController
-    func makeProcessTransactionVC() -> ProcessTransactionVC
 }
 
 class SwapTokenViewController: WLModalWrapperVC {
@@ -48,7 +47,6 @@ private class _SwapTokenViewController: BaseVC {
     // MARK: - Properties
     let viewModel: SwapTokenViewModel
     let scenesFactory: SwapScenesFactory
-    var transactionVC: ProcessTransactionVC!
     
     // MARK: - Initializer
     init(viewModel: SwapTokenViewModel, scenesFactory: SwapScenesFactory)
@@ -103,38 +101,11 @@ private class _SwapTokenViewController: BaseVC {
                         self.viewModel.slippage.accept(slippage / 100)
                     }
                     self.present(vc, animated: true, completion: nil)
-                case .sendTransaction:
-                    self.transactionVC =
-                        self.scenesFactory.makeProcessTransactionVC()
-                    self.present(self.transactionVC, animated: true, completion: nil)
-                case .processTransaction(signature: let signature):
-                    self.showProcessingTransaction(signature: signature)
-                case .transactionError(let error):
-                    self.transactionVC.dismiss(animated: true) {
-                        self.showError(error)
-                    }
+                case .processTransaction:
+                    let vc = ProcessTransactionViewController(viewModel: self.viewModel.processTransactionViewModel)
+                    self.present(vc, animated: true, completion: nil)
                 }
             })
             .disposed(by: disposeBag)
-    }
-    
-    // MARK: - Helpers
-    private func showProcessingTransaction(signature: String) {
-        transactionVC.signature = signature
-        transactionVC.viewInExplorerButton.rx.action = CocoaAction {
-            self.transactionVC.dismiss(animated: true) {
-                let pc = self.presentingViewController
-                self.back()
-                pc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
-            }
-            
-            return .just(())
-        }
-        transactionVC.goBackToWalletButton.rx.action = CocoaAction {
-            self.transactionVC.dismiss(animated: true) {
-                self.back()
-            }
-            return .just(())
-        }
     }
 }
