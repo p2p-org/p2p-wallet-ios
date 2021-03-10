@@ -134,7 +134,7 @@ class ProcessTransactionRootView: BEView {
                         WLButton.stepButton(type: .blue, label: L10n.tryAgain)
                             .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.tryAgain)),
                         WLButton.stepButton(type: .sub, label: L10n.cancel)
-                            .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.close))
+                            .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.cancel))
                     ])
                 } else if let transaction = transactionHandler.transaction {
                     switch transaction.status {
@@ -148,7 +148,7 @@ class ProcessTransactionRootView: BEView {
                                 .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.viewInExplorer)),
                             WLButton.stepButton(type: .blue, label: L10n.done)
                                 .enableIf(self.viewModel.transaction?.signature != nil)
-                                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.close))
+                                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.done))
                         ])
                     case .confirmed:
                         self.titleLabel.text = L10n.success
@@ -160,7 +160,7 @@ class ProcessTransactionRootView: BEView {
                                 .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.viewInExplorer)),
                             WLButton.stepButton(type: .blue, label: L10n.done)
                                 .enableIf(self.viewModel.transaction?.signature != nil)
-                                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.close))
+                                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.done))
                         ])
                     }
                 } else {
