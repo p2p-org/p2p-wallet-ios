@@ -25,6 +25,7 @@ class ProcessTransactionViewModel {
     
     // MARK: - Properties
     let disposeBag = DisposeBag()
+    let transactionsManager: TransactionsManager
     var tryAgainAction: CocoaAction?
     
     var transaction: Transaction? {transactionHandler.value.transaction}
@@ -38,6 +39,25 @@ class ProcessTransactionViewModel {
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
+    // MARK: - Initializers
+    init(transactionsManager: TransactionsManager) {
+        self.transactionsManager = transactionsManager
+        bind()
+    }
+    
+    func bind() {
+        transactionsManager.transactions
+            .map {$0.first(where: {$0.signature == self.transaction?.signature})}
+            .filter {$0 != nil}
+            .subscribe(onNext: {[unowned self] transaction in
+                if var transaction = self.transaction {
+                    transaction.status = .confirmed
+                    self.transactionHandler.accept(TransactionHandler(transaction: transaction, error: self.error))
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
     // MARK: - Actions
     @objc func tryAgain() {
         tryAgainAction?.execute()
@@ -49,7 +69,6 @@ class ProcessTransactionViewModel {
     }
     
     @objc func close() {
-        if transactionHandler.value.transaction?.signature == nil {return}
         navigationSubject.onNext(.done)
     }
 }

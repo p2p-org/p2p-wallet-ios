@@ -27,7 +27,7 @@ class SendTokenViewModel {
     let solanaSDK: SolanaSDK
     let transactionManager: TransactionsManager
     lazy var processTransactionViewModel: ProcessTransactionViewModel = {
-        let viewModel = ProcessTransactionViewModel()
+        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager)
         viewModel.tryAgainAction = CocoaAction {
             self.send()
             return .just(())
@@ -220,7 +220,7 @@ class SendTokenViewModel {
             .subscribe(onSuccess: { signature in
                 transaction.signatureInfo = .init(signature: signature)
                 self.processTransactionViewModel.transactionHandler.accept(
-                    TransactionHandler(transaction: transaction, error: nil)
+                    TransactionHandler(transaction: transaction)
                 )
                 self.transactionManager.process(transaction)
             }, onError: {error in
