@@ -30,7 +30,7 @@ class HomeViewController: BaseVC {
     let interactor = MenuInteractor()
     
     // MARK: - Tabbar
-    lazy var avatarImageView = UIImageView(width: 30, height: 30, image: .settings, tintColor: .a3a5ba)
+    lazy var avatarImageView = UIImageView(width: 30, height: 30, image: .settings, tintColor: .textSecondary)
         .onTap(viewModel, action: #selector(HomeViewModel.showSettings))
     lazy var homeRootView = HomeRootView(viewModel: viewModel)
     lazy var tabBar: TabBar = {
