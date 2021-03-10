@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Action
 
 enum ProcessTransactionNavigatableScene {
     case viewInExplorer(signature: String)
@@ -24,6 +25,8 @@ class ProcessTransactionViewModel {
     
     // MARK: - Properties
     let disposeBag = DisposeBag()
+    var tryAgainAction: CocoaAction?
+    
     var transaction: Transaction? {transactionHandler.value.transaction}
     var error: Error? {transactionHandler.value.error}
     
@@ -36,6 +39,10 @@ class ProcessTransactionViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Actions
+    @objc func tryAgain() {
+        tryAgainAction?.execute()
+    }
+    
     @objc func viewInExplorer() {
         guard let signature = transactionHandler.value.transaction?.signature else {return}
         navigationSubject.onNext(.viewInExplorer(signature: signature))

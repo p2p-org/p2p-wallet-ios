@@ -130,8 +130,10 @@ class ProcessTransactionRootView: BEView {
                     self.subtitleLabel.text = error.readableDescription
                     self.transactionStatusImageView.image = .transactionError
                     self.buttonStackView.addArrangedSubviews([
-                        WLButton.stepButton(type: .blue, label: L10n.tryAgain),
+                        WLButton.stepButton(type: .blue, label: L10n.tryAgain)
+                            .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.tryAgain)),
                         WLButton.stepButton(type: .sub, label: L10n.cancel)
+                            .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.close))
                     ])
                 } else if let transaction = transactionHandler.transaction {
                     switch transaction.status {
