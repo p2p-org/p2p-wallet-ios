@@ -65,6 +65,9 @@ class ProcessTransactionViewController: WLIndicatorModalVC {
 
 extension ProcessTransactionViewController: UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        return FlexibleHeightPresentationController(position: .bottom, presentedViewController: presented, presenting: presenting)
+        let pc = FlexibleHeightPresentationController(position: .bottom, presentedViewController: presented, presenting: presenting)
+        // disable dismissing on dimmingView
+        pc.dimmingView.gestureRecognizers?.forEach {pc.dimmingView.removeGestureRecognizer($0)}
+        return pc
     }
 }
