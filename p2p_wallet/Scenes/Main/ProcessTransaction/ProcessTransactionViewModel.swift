@@ -49,6 +49,7 @@ class ProcessTransactionViewModel {
     }
     
     @objc func close() {
+        if transactionHandler.value.transaction?.signature == nil {return}
         navigationSubject.onNext(.done)
     }
 }
