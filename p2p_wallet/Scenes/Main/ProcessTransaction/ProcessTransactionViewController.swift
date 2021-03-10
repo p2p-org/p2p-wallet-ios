@@ -32,6 +32,10 @@ class ProcessTransactionViewController: WLIndicatorModalVC {
         }
         containerView.addSubview(rootView)
         rootView.autoPinEdgesToSuperviewEdges()
+        
+        if let gesture = swipeGesture {
+            view.removeGestureRecognizer(gesture)
+        }
     }
     
     override func bind() {
