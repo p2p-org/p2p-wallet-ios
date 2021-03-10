@@ -69,9 +69,7 @@ class ProcessTransactionRootView: BEView {
         BEStackViewSpacing(20),
         UIView.separator(height: 1, color: .separator)
     ])
-    lazy var buttonStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-        WLButton.stepButton(type: .blue, label: "test")
-    ])
+    lazy var buttonStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
     
     // MARK: - Initializers
     init(viewModel: ProcessTransactionViewModel) {
@@ -118,31 +116,68 @@ class ProcessTransactionRootView: BEView {
     }
     
     private func bind() {
-        viewModel.transaction
-            .asDriver(onErrorJustReturn: nil)
-            .drive(onNext: {[unowned self] transaction in
+        viewModel.transactionHandler
+            .asDriver(onErrorJustReturn: TransactionHandler(transaction: nil, error: nil))
+            .drive(onNext: {[unowned self] transactionHandler in
                 self.amountLabel.isHidden = false
                 self.equityAmountLabel.isHidden = false
                 self.transactionIDStackView.isHidden = false
-                if let transaction = transaction {
+                self.buttonStackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
+                
+                // title, subtitle, image, button
+                if let error = transactionHandler.error {
+                    self.titleLabel.text = L10n.somethingWentWrong
+                    self.subtitleLabel.text = error.readableDescription
+                    self.transactionStatusImageView.image = .transactionError
+                    self.buttonStackView.addArrangedSubviews([
+                        WLButton.stepButton(type: .blue, label: L10n.tryAgain),
+                        WLButton.stepButton(type: .sub, label: L10n.cancel)
+                    ])
+                } else if let transaction = transactionHandler.transaction {
                     switch transaction.status {
                     case .processing:
                         self.titleLabel.text = L10n.sending + "..."
                         self.subtitleLabel.text = L10n.transactionProcessing
                         self.transactionStatusImageView.image = .transactionProcessing
+                        self.buttonStackView.addArrangedSubviews([
+                            WLButton.stepButton(enabledColor: .f6f6f8, textColor: .a3a5baStatic, label: L10n.viewInBlockchainExplorer)
+                                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.viewInExplorer)),
+                            WLButton.stepButton(type: .blue, label: L10n.done)
+                                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.close))
+                        ])
                     case .confirmed:
                         self.titleLabel.text = L10n.success
                         self.subtitleLabel.text = L10n.transactionHasBeenConfirmed
                         self.transactionStatusImageView.image = .transactionSuccess
+                        self.buttonStackView.addArrangedSubviews([
+                            WLButton.stepButton(enabledColor: .f6f6f8, textColor: .a3a5baStatic, label: L10n.viewInBlockchainExplorer)
+                                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.viewInExplorer)),
+                            WLButton.stepButton(type: .blue, label: L10n.done)
+                                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.close))
+                        ])
                     }
-                    self.amountLabel.text = "\(transaction.amount.toString(maximumFractionDigits: 9, showPlus: true)) \(transaction.symbol)"
-                    self.equityAmountLabel.text = "\(transaction.amountInUSD.toString(maximumFractionDigits: 9, showPlus: true)) $"
-                    self.transactionIDLabel.text = transaction.signature
                 } else {
                     self.titleLabel.text = L10n.sending + "..."
                     self.subtitleLabel.text = L10n.transactionProcessing
+                    self.transactionStatusImageView.image = .transactionProcessing
+                }
+                
+                // amount & equity value
+                if let amount = transactionHandler.transaction?.amount,
+                   let equityValue = transactionHandler.transaction?.amountInUSD,
+                   let symbol = transactionHandler.transaction?.symbol
+                {
+                    self.amountLabel.text = "\(amount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
+                    self.equityAmountLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) $"
+                } else {
                     self.amountLabel.isHidden = true
                     self.equityAmountLabel.isHidden = true
+                }
+                
+                // transaction id
+                if let signature = transactionHandler.transaction?.signature {
+                    self.transactionIDLabel.text = signature
+                } else {
                     self.transactionIDStackView.isHidden = true
                 }
                 
