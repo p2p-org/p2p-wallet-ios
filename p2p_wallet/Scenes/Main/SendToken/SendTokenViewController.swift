@@ -12,7 +12,6 @@ import Action
 
 protocol SendTokenScenesFactory {
     func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
-    func makeProcessTransactionVC() -> ProcessTransactionVC
 }
 
 class SendTokenViewController: BaseVC {
@@ -20,7 +19,6 @@ class SendTokenViewController: BaseVC {
     // MARK: - Properties
     let viewModel: SendTokenViewModel
     let scenesFactory: SendTokenScenesFactory
-    var transactionVC: ProcessTransactionVC!
     
     // MARK: - Subviews
     
@@ -68,49 +66,11 @@ class SendTokenViewController: BaseVC {
                     }
                     vc.modalPresentationStyle = .custom
                     self.present(vc, animated: true, completion: nil)
-                case .sendTransaction:
-                    self.transactionVC = self.scenesFactory.makeProcessTransactionVC()
-                    self.present(self.transactionVC, animated: true, completion: nil)
-                case .processTransaction(let signature):
-                    self.showProcessingTransaction(signature: signature)
-                case .transactionError(let error):
-                    self.transactionVC.dismiss(animated: true) {
-                        if (error as? SolanaSDK.Error) == SolanaSDK.Error.other("The address is not valid"),
-                           let symbol = self.viewModel.currentWallet.value?.symbol
-                        {
-                            self.showAlert(
-                                title: L10n.error.uppercaseFirst,
-                                message:
-                                    L10n.theWalletAddressIsNotValidItMustBeAWalletAddress(symbol) + " " + L10n.orYourSOLAccountSAddress,
-                                buttonTitles: [L10n.ok]
-                            )
-                        } else {
-                            self.showError(error)
-                        }
-                        
-                    }
+                case .processTransaction:
+                    let vc = ProcessTransactionViewController(viewModel: self.viewModel.processTransactionViewModel)
+                    self.present(vc, animated: true, completion: nil)
                 }
             })
             .disposed(by: disposeBag)
-    }
-    
-    // MARK: - Helpers
-    private func showProcessingTransaction(signature: String) {
-        transactionVC.signature = signature
-        transactionVC.viewInExplorerButton.rx.action = CocoaAction {
-            self.transactionVC.dismiss(animated: true) {
-                let pc = self.presentingViewController
-                self.back()
-                pc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
-            }
-            
-            return .just(())
-        }
-        transactionVC.goBackToWalletButton.rx.action = CocoaAction {
-            self.transactionVC.dismiss(animated: true) {
-                self.back()
-            }
-            return .just(())
-        }
     }
 }
