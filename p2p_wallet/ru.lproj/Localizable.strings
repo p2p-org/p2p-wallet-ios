@@ -267,3 +267,8 @@
 "Your tokens" = "Ваши токены";
 "All tokens" = "Все токены";
 "Activity" = "Мероприятия";
+"Sending" = "Отправка";
+"Transaction processing" = "Обработка транзакции";
+"Success" = "Успех";
+"Transaction has been confirmed" = "Транзакция подтверждена";
+"Something went wrong" = "Что-то пошло не так";

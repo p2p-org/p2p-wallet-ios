@@ -81,10 +81,6 @@ class MainContainer {
         return vc
     }
     
-    func makeProcessTransactionVC() -> ProcessTransactionVC {
-        ProcessTransactionVC(transactionManager: transactionManager)
-    }
-    
     // MARK: - Profile VCs
     func makeProfileVC() -> ProfileVC {
         ProfileVC(rootViewModel: rootViewModel, scenesFactory: self)
@@ -116,7 +112,7 @@ class MainContainer {
     
     // MARK: - Token edit
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController {
-        TokenSettingsViewController(viewModel: TokenSettingsViewModel(walletsVM: myWalletsVM, pubkey: pubkey, solanaSDK: solanaSDK, transactionManager: transactionManager, accountStorage: accountStorage), scenesFactory: self)
+        TokenSettingsViewController(viewModel: TokenSettingsViewModel(walletsVM: myWalletsVM, pubkey: pubkey, solanaSDK: solanaSDK, transactionManager: transactionManager, accountStorage: accountStorage))
     }
     
     // MARK: - Helpers
@@ -139,4 +135,4 @@ class MainContainer {
     }
 }
 
-extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory, HomeScenesFactory, ChangeNetworkResponder, _MainScenesFactory, TokenSettingsScenesFactory {}
+extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory, HomeScenesFactory, ChangeNetworkResponder, _MainScenesFactory {}
