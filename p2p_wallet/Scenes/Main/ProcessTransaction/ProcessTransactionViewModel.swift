@@ -13,6 +13,7 @@ import Action
 enum ProcessTransactionNavigatableScene {
     case viewInExplorer(signature: String)
     case done
+    case cancel
 }
 
 struct TransactionHandler {
@@ -68,7 +69,11 @@ class ProcessTransactionViewModel {
         navigationSubject.onNext(.viewInExplorer(signature: signature))
     }
     
-    @objc func close() {
+    @objc func done() {
         navigationSubject.onNext(.done)
+    }
+    
+    @objc func cancel() {
+        navigationSubject.onNext(.cancel)
     }
 }
