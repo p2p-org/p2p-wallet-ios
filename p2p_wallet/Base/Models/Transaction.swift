@@ -9,7 +9,7 @@ import Foundation
 
 struct Transaction: FiatConvertable, ListItemType {
     var id: String { signatureInfo?.signature ?? UUID().uuidString }
-    let signatureInfo: SolanaSDK.Transaction.SignatureInfo?
+    var signatureInfo: SolanaSDK.Transaction.SignatureInfo?
     var signature: String? {signatureInfo?.signature}
     var slot: UInt64?
     var fee: Double?
