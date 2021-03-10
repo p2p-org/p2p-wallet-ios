@@ -9,14 +9,13 @@ import UIKit
 import RxSwift
 import RxCocoa
 import LazySubject
+import Action
 
 enum SwapTokenNavigatableScene {
     case chooseSourceWallet
     case chooseDestinationWallet
     case chooseSlippage
-    case sendTransaction
-    case processTransaction(signature: String)
-    case transactionError(_ error: Error)
+    case processTransaction
 }
 
 class SwapTokenViewModel {
@@ -28,6 +27,14 @@ class SwapTokenViewModel {
     let solanaSDK: SolanaSDK
     let transactionManager: TransactionsManager
     let wallets: [Wallet]
+    lazy var processTransactionViewModel: ProcessTransactionViewModel = {
+        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager)
+        viewModel.tryAgainAction = CocoaAction {
+            self.swap()
+            return .just(())
+        }
+        return viewModel
+    }()
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<SwapTokenNavigatableScene>()
@@ -198,8 +205,12 @@ class SwapTokenViewModel {
         navigationSubject.onNext(.chooseSlippage)
     }
     
-    @objc func swap() {
-        navigationSubject.onNext(.sendTransaction)
+    @objc func showSwapSceneAndSwap() {
+        navigationSubject.onNext(.processTransaction)
+        swap()
+    }
+    
+    private func swap() {
         guard let sourceWallet = sourceWallet.value,
               let sourcePubkey = try? SolanaSDK.PublicKey(string: sourceWallet.pubkey ?? ""),
               let sourceMint = try? SolanaSDK.PublicKey(string: sourceWallet.mintAddress),
@@ -209,12 +220,22 @@ class SwapTokenViewModel {
               let sourceDecimals = sourceWallet.decimals,
               let amountDouble = sourceAmountInput.value.double
         else {
-            navigationSubject.onNext(.transactionError(SolanaSDK.Error.invalidRequest()))
             return
         }
         
         let lamports = amountDouble.toLamport(decimals: sourceDecimals)
         let destinationPubkey = try? SolanaSDK.PublicKey(string: destinationWallet.pubkey ?? "")
+        
+        var transaction = Transaction(
+            type: .send,
+            amount: +(self.destinationAmountInput.value.double ?? 0),
+            symbol: destinationWallet.symbol,
+            status: .processing
+        )
+        
+        self.processTransactionViewModel.transactionHandler.accept(
+            TransactionHandler(transaction: transaction)
+        )
         
         solanaSDK.swap(
             pool: currentPool.value,
@@ -226,26 +247,24 @@ class SwapTokenViewModel {
             amount: lamports
         )
             .subscribe(onSuccess: { signature in
-                self.navigationSubject.onNext(.processTransaction(signature: signature))
-                let transaction = Transaction(
-                    signatureInfo: .init(signature: signature),
-                    type: .send,
-                    amount: -amountDouble,
-                    symbol: sourceWallet.symbol,
-                    status: .processing
+                transaction.signatureInfo = .init(signature: signature)
+                self.processTransactionViewModel.transactionHandler.accept(
+                    TransactionHandler(transaction: transaction)
                 )
                 self.transactionManager.process(transaction)
                 
                 let transaction2 = Transaction(
                     signatureInfo: .init(signature: signature),
                     type: .send,
-                    amount: +(self.destinationAmountInput.value.double ?? 0),
-                    symbol: destinationWallet.symbol,
+                    amount: -amountDouble,
+                    symbol: sourceWallet.symbol,
                     status: .processing
                 )
                 self.transactionManager.process(transaction2)
             }, onError: {error in
-                self.navigationSubject.onNext(.transactionError(error))
+                self.processTransactionViewModel.transactionHandler.accept(
+                    TransactionHandler(transaction: transaction, error: error)
+                )
             })
             .disposed(by: disposeBag)
     }
