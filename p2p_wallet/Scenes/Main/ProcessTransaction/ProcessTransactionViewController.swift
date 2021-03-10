@@ -49,19 +49,11 @@ class ProcessTransactionViewController: WLIndicatorModalVC {
     private func navigate(to scene: ProcessTransactionNavigatableScene) {
         switch scene {
         case .viewInExplorer(let signature):
-            let pc = self.presentingViewController
-            self.dismiss(animated: true) {
-                if let rootVC = pc?.presentingViewController {
-                    pc?.dismiss(animated: true, completion: {
-                        rootVC.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
-                    })
-                } else {
-                    pc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
-                }
-            }
+            self.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
         case .done:
+            let pc = presentingViewController
             self.dismiss(animated: true) {
-                self.presentingViewController?.dismiss(animated: true, completion: nil)
+                pc?.dismiss(animated: true, completion: nil)
             }
         }
     }
