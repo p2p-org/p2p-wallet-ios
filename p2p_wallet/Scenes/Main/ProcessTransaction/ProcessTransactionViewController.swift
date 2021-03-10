@@ -55,6 +55,8 @@ class ProcessTransactionViewController: WLIndicatorModalVC {
             self.dismiss(animated: true) {
                 pc?.dismiss(animated: true, completion: nil)
             }
+        case .cancel:
+            self.dismiss(animated: true, completion: nil)
         }
     }
 }
