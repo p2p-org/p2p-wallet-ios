@@ -12,6 +12,7 @@ class ProcessTransactionViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: ProcessTransactionViewModel
+    var viewInExplorerCompletion: (() -> Void)?
     
     // MARK: - Initializer
     init(viewModel: ProcessTransactionViewModel)
@@ -43,7 +44,21 @@ class ProcessTransactionViewController: WLIndicatorModalVC {
     // MARK: - Navigation
     private func navigate(to scene: ProcessTransactionNavigatableScene) {
         switch scene {
-        
+        case .viewInExplorer(let signature):
+            let pc = self.presentingViewController
+            self.dismiss(animated: true) {
+                if let rootVC = pc?.presentingViewController {
+                    pc?.dismiss(animated: true, completion: {
+                        rootVC.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
+                    })
+                } else {
+                    pc?.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
+                }
+            }
+        case .done:
+            self.dismiss(animated: true) {
+                self.presentingViewController?.dismiss(animated: true, completion: nil)
+            }
         }
     }
 }
