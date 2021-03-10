@@ -9,14 +9,13 @@ import UIKit
 import RxSwift
 import RxCocoa
 import LazySubject
+import Action
 
 enum SendTokenNavigatableScene {
     case chooseWallet
     case chooseAddress
     case scanQrCode
-    case sendTransaction
-    case processTransaction(signature: String)
-    case transactionError(_ error: Error)
+    case processTransaction
 }
 
 class SendTokenViewModel {
@@ -27,6 +26,14 @@ class SendTokenViewModel {
     let disposeBag = DisposeBag()
     let solanaSDK: SolanaSDK
     let transactionManager: TransactionsManager
+    lazy var processTransactionViewModel: ProcessTransactionViewModel = {
+        let viewModel = ProcessTransactionViewModel()
+        viewModel.tryAgainAction = CocoaAction {
+            self.send()
+            return .just(())
+        }
+        return viewModel
+    }()
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<SendTokenNavigatableScene>()
@@ -160,7 +167,11 @@ class SendTokenViewModel {
         destinationAddressInput.accept(nil)
     }
     
-    @objc func send() {
+    @objc func sendAndShowProcessTransactionScene() {
+        send(showScene: true)
+    }
+    
+    private func send(showScene: Bool = false) {
         guard errorSubject.value == nil,
               let currentWallet = currentWallet.value,
               let sender = currentWallet.pubkey,
@@ -176,7 +187,9 @@ class SendTokenViewModel {
         
         if isUSDMode { amount = amount / price }
         
-        navigationSubject.onNext(.sendTransaction)
+        if showScene {
+            navigationSubject.onNext(.processTransaction)
+        }
         
         // prepare amount
         let lamport = amount.toLamport(decimals: decimals)
@@ -191,19 +204,29 @@ class SendTokenViewModel {
             request = solanaSDK.sendSPLTokens(mintAddress: currentWallet.mintAddress, from: sender, to: receiver, amount: lamport)
         }
         
+        var transaction = Transaction(
+            signatureInfo: nil,
+            type: .send,
+            amount: -amount,
+            symbol: currentWallet.symbol,
+            status: .processing
+        )
+        
+        self.processTransactionViewModel.transactionHandler.accept(
+            TransactionHandler(transaction: transaction)
+        )
+        
         request
             .subscribe(onSuccess: { signature in
-                self.navigationSubject.onNext(.processTransaction(signature: signature))
-                let transaction = Transaction(
-                    signatureInfo: .init(signature: signature),
-                    type: .send,
-                    amount: -amount,
-                    symbol: self.currentWallet.value?.symbol ?? "",
-                    status: .processing
+                transaction.signatureInfo = .init(signature: signature)
+                self.processTransactionViewModel.transactionHandler.accept(
+                    TransactionHandler(transaction: transaction, error: nil)
                 )
                 self.transactionManager.process(transaction)
             }, onError: {error in
-                self.navigationSubject.onNext(.transactionError(error))
+                self.processTransactionViewModel.transactionHandler.accept(
+                    TransactionHandler(transaction: transaction, error: error)
+                )
             })
             .disposed(by: disposeBag)
     }
