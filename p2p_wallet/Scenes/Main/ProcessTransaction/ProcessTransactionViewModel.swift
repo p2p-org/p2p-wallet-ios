@@ -10,7 +10,13 @@ import RxSwift
 import RxCocoa
 
 enum ProcessTransactionNavigatableScene {
-//    case detail
+    case viewInExplorer(signature: String)
+    case done
+}
+
+struct TransactionHandler {
+    var transaction: Transaction?
+    var error: Error?
 }
 
 class ProcessTransactionViewModel {
@@ -18,18 +24,24 @@ class ProcessTransactionViewModel {
     
     // MARK: - Properties
     let disposeBag = DisposeBag()
+    var transaction: Transaction? {transactionHandler.value.transaction}
+    var error: Error? {transactionHandler.value.error}
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<ProcessTransactionNavigatableScene>()
     
-    let transaction = BehaviorRelay<Transaction?>(value: nil)
+    let transactionHandler = BehaviorRelay<TransactionHandler>(value: TransactionHandler())
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
-    
     // MARK: - Actions
-//    @objc func showDetail() {
-//        
-//    }
+    @objc func viewInExplorer() {
+        guard let signature = transactionHandler.value.transaction?.signature else {return}
+        navigationSubject.onNext(.viewInExplorer(signature: signature))
+    }
+    
+    @objc func close() {
+        navigationSubject.onNext(.done)
+    }
 }
