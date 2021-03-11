@@ -27,8 +27,6 @@ class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
     override func setUp() {
         title = L10n.appearance
         super.setUp()
-        
-        doneButton.alpha = 0
     }
     
     override func createCell(item: UIUserInterfaceStyle) -> Cell<UIUserInterfaceStyle> {

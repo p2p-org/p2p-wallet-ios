@@ -8,7 +8,7 @@
 import Foundation
 
 class WLNavigationBar: BEView {
-    lazy var stackView = UIStackView(axis: .horizontal, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
+    lazy var stackView = UIStackView(axis: .horizontal, alignment: .fill, distribution: .equalCentering, arrangedSubviews: [
         leftItems,
         centerItems,
         rightItems
@@ -25,12 +25,16 @@ class WLNavigationBar: BEView {
     ])
     
     lazy var backButton = UIImageView(width: 35, height: 35, image: .backSquare)
-    lazy var titleLabel = UILabel(textSize: 19, weight: .semibold, textAlignment: .center)
+    lazy var titleLabel: UILabel = {
+        let label = UILabel(textSize: 19, weight: .semibold, textAlignment: .center)
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
     
     override func commonInit() {
         super.commonInit()
         addSubview(stackView)
         backgroundColor = .textWhite
-        stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 20))
+        stackView.autoPinEdgesToSuperviewSafeArea(with: .init(all: 20))
     }
 }

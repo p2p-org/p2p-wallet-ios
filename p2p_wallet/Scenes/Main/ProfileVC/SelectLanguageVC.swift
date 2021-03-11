@@ -32,6 +32,10 @@ class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
     override func setUp() {
         title = L10n.language
         super.setUp()
+        navigationBar.rightItems.addArrangedSubviews([
+            UILabel(text: L10n.done, textSize: 17, weight: .medium, textColor: .h5887ff)
+                .onTap(self, action: #selector(saveChange))
+        ])
     }
     
     override func createCell(item: LocalizedLanguage) -> Cell<LocalizedLanguage> {
@@ -40,7 +44,7 @@ class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
         return cell
     }
     
-    override func saveChange() {
+    @objc func saveChange() {
         showAlert(title: L10n.switchLanguage, message: L10n.doYouReallyWantToSwitchTo + " " + selectedItem.localizedName?.uppercaseFirst + "?", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
             if index != 0 {return}
             UIApplication.changeLanguage(to: self.selectedItem)
