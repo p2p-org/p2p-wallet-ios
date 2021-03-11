@@ -65,6 +65,7 @@ extension ProfileSingleSelectionVC {
         
         override func commonInit() {
             super.commonInit()
+            backgroundColor = .textWhite
             self.row([label, checkBox])
         }
     }

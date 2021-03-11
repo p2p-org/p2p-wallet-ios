@@ -60,8 +60,4 @@ class BackupVC: ProfileVCBase {
             }
         }
     }
-    
-    override func buttonDoneDidTouch() {
-        back()
-    }
 }

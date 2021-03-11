@@ -55,8 +55,4 @@ class BackupManuallyVC: ProfileVCBase {
     @objc func buttonCopyToClipboardDidTouch() {
         UIApplication.shared.copyToClipboard(phrases.joined(separator: " "))
     }
-    
-    override func buttonDoneDidTouch() {
-        back()
-    }
 }
