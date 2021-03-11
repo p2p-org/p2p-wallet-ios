@@ -272,3 +272,6 @@
 "Success" = "Success";
 "Transaction has been confirmed" = "Transaction has been confirmed";
 "Something went wrong" = "Something went wrong";
+"Your wallet is backed up" = "Your wallet is backed up";
+"If you lose this device, you can recover your encrypted wallet backup from iCloud" = "If you lose this device, you can recover your encrypted wallet backup from iCloud";
+"View recovery key" = "View recovery key";

@@ -272,3 +272,6 @@
 "Success" = "Succès";
 "Transaction has been confirmed" = "La transaction a été confirmée";
 "Something went wrong" = "Un problème est survenu";
+"Your wallet is backed up" = "Votre portefeuille est sauvegardé";
+"If you lose this device, you can recover your encrypted wallet backup from iCloud" = "Si vous perdez cet appareil, vous pouvez récupérer votre sauvegarde de portefeuille chiffrée à partir d'iCloud";
+"View recovery key" = "Afficher la clé de récupération";

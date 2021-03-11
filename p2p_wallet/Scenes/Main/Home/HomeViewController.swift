@@ -122,7 +122,7 @@ class HomeViewController: BaseVC {
             self.present(vc, animated: true, completion: nil)
         case .profile:
             let profileVC = self.scenesFactory.makeProfileVC()
-            self.present(profileVC, animated: true, completion: nil)
+            self.show(profileVC, sender: nil)
         case .walletDetail(let wallet):
             guard let pubkey = wallet.pubkey else {return}
             let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey, symbol: wallet.symbol)
