@@ -115,7 +115,7 @@ class BackupVC: ProfileVCBase {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 guard let vc = self?.scenesFactory.makeBackupManuallyVC()
                 else {return}
-                self?.show(vc, sender: nil)
+                self?.present(vc, animated: true, completion: nil)
             }
         }
     }
