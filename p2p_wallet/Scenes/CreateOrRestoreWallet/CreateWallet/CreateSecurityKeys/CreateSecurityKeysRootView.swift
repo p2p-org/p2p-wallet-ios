@@ -9,6 +9,7 @@ import UIKit
 import TagListView
 import RxSwift
 import RxBiBinding
+import Action
 
 class CreateSecurityKeysRootView: ScrollableVStackRootView {
     // MARK: - Constants
@@ -21,10 +22,14 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
     let backButton: UIView
     lazy var regenerateButton = UIImageView(width: 36, height: 36, image: .regenerateButton, tintColor: .a3a5ba)
         .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.createPhrases))
-    lazy var phrasesListViews = createTagListView()
-    lazy var copyToClipboardButton = UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: .textSecondary, textAlignment: .center)
-        .padding(.init(all: 16))
-        .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.copyToClipboard))
+    lazy var phrasesListViews: WLPhrasesListView = {
+        let listView = WLPhrasesListView(forAutoLayout: ())
+        listView.copyToClipboardAction = CocoaAction {
+            self.viewModel.copyToClipboard()
+            return .just(())
+        }
+        return listView
+    }()
     lazy var savedCheckBox: BECheckbox = {
         let checkbox = BECheckbox(width: 20, height: 20, cornerRadius: 6)
         checkbox.layer.borderColor = UIColor.a3a5ba.cgColor
@@ -74,15 +79,7 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
         stackView.addArrangedSubviews([
             UILabel(text: L10n.securityKeys.uppercaseFirst, textSize: 27, weight: .bold),
             BEStackViewSpacing(15),
-            UILabel(text: L10n.WriteDownOrDuplicateTheseWordsInTheCorrectOrderAndKeepThemInASafePlace.copyThemManuallyOrBackupToICloud, textColor: .textSecondary, numberOfLines: 0),
-            BEStackViewSpacing(30),
-            UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                phrasesListViews
-                    .padding(.init(top: 10, left: 10, bottom: 16, right: 10), cornerRadius: 12),
-                UIView.separator(height: 1, color: .separator),
-                copyToClipboardButton
-            ])
-                .padding(.zero, backgroundColor: .f6f6f8, cornerRadius: 12),
+            phrasesListViews,
             BEStackViewSpacing(27),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
                 savedCheckBox,
@@ -104,18 +101,7 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
     
     private func bind() {
         viewModel.phrasesSubject.subscribe(onNext: { phrases in
-            self.phrasesListViews.removeAllTags()
-            for (index, phrase) in phrases.enumerated() {
-                self.phrasesListViews.addTag("\(index + 1). \(phrase)")
-                self.phrasesListViews.tagViews[index].setAttributedTitle(
-                    NSMutableAttributedString()
-                        .text("\(index + 1). ", color: .a3a5ba)
-                        .text(phrase),
-                    for: .normal
-                )
-                    
-            }
-            self.layoutIfNeeded()
+            self.phrasesListViews.setUp(phrases: phrases)
         })
             .disposed(by: disposeBag)
         
@@ -135,20 +121,5 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
             .distinctUntilChanged()
             .drive(continueButton.rx.isEnabled)
             .disposed(by: disposeBag)
-    }
-    
-    func createTagListView() -> TagListView {
-        let tagListView = TagListView(forAutoLayout: ())
-        tagListView.tagBackgroundColor = .textWhite
-        tagListView.textFont = .systemFont(ofSize: 15)
-        tagListView.textColor = .textBlack
-        tagListView.marginX = 7
-        tagListView.marginY = 10
-        tagListView.paddingX = 12
-        tagListView.paddingY = 12
-        tagListView.borderWidth = 1
-        tagListView.borderColor = UIColor.a3a5ba.withAlphaComponent(0.5)
-        tagListView.cornerRadius = 8
-        return tagListView
     }
 }
