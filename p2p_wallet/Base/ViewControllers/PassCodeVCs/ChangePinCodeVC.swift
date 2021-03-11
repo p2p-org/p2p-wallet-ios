@@ -9,6 +9,10 @@ import Foundation
 import LocalAuthentication
 
 class ChangePinCodeVC: WLBottomSheet {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+        .hidden
+    }
+    
     enum Error: Swift.Error {
         case unknown
     }
