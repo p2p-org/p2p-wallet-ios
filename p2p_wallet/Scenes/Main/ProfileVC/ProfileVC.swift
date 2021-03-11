@@ -19,16 +19,19 @@ protocol ProfileScenesFactory {
 }
 
 class ProfileVC: ProfileVCBase {
+    lazy var backupShieldImageView = UIImageView(width: 17, height: 21, image: .backupShield)
     lazy var secureMethodsLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var activeLanguageLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var appearanceLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var networkLabel = UILabel(weight: .medium, textColor: .textSecondary)
     
     var disposables = [DefaultsDisposable]()
+    let accountStorage: KeychainAccountStorage
     let rootViewModel: RootViewModel
     let scenesFactory: ProfileScenesFactory
     
-    init(rootViewModel: RootViewModel, scenesFactory: ProfileScenesFactory) {
+    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel, scenesFactory: ProfileScenesFactory) {
+        self.accountStorage = accountStorage
         self.scenesFactory = scenesFactory
         self.rootViewModel = rootViewModel
     }
@@ -45,7 +48,7 @@ class ProfileVC: ProfileVCBase {
             createCell(
                 image: .settingsBackup,
                 text: L10n.backup,
-                descriptionView: UIImageView(width: 17, height: 21, image: .backupShield, tintColor: .alertOrange)
+                descriptionView: backupShieldImageView
             )
                 .withTag(1)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
@@ -90,6 +93,8 @@ class ProfileVC: ProfileVCBase {
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
         ])
         
+        setUpBackupShield()
+        
         setUp(enabledBiometry: Defaults.isBiometryEnabled)
         
         setUp(network: Defaults.network)
@@ -109,6 +114,15 @@ class ProfileVC: ProfileVCBase {
         disposables.append(Defaults.observe(\.network){ update in
             self.setUp(network: update.newValue)
         })
+    }
+    
+    func setUpBackupShield() {
+        var shieldColor = UIColor.alertOrange
+        if accountStorage.didBackupUsingIcloud
+        {
+            shieldColor = .attentionGreen
+        }
+        backupShieldImageView.tintColor = shieldColor
     }
     
     func setUp(enabledBiometry: Bool?) {
@@ -144,6 +158,9 @@ class ProfileVC: ProfileVCBase {
         switch tag {
         case 1:
             let vc = scenesFactory.makeBackupVC()
+            vc.backedUpIcloudCompletion = {
+                self.setUpBackupShield()
+            }
             show(vc, sender: nil)
         case 2:
             let vc = scenesFactory.makeSelectNetworkVC()
