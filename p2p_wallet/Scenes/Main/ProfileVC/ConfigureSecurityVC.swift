@@ -92,8 +92,4 @@ class ConfigureSecurityVC: ProfileVCBase {
     @objc func buttonChangePinCodeDidTouch() {
         show(ChangePinCodeVC(accountStorage: accountStorage), sender: nil)
     }
-    
-    override func buttonDoneDidTouch() {
-        back()
-    }
 }

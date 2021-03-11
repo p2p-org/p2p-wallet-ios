@@ -111,13 +111,6 @@ class ProfileVC: ProfileVCBase {
         appearanceLabel.text = theme?.localizedString
     }
     
-    override func createHeaderView() -> UIStackView {
-        let headerView = super.createHeaderView()
-        headerView.arrangedSubviews.first?.removeFromSuperview()
-        headerView.insertArrangedSubview(.spacer, at: 0)
-        return headerView
-    }
-    
     // MARK: - Actions
     @objc func buttonLogoutDidTouch() {
         showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { (index) in
@@ -127,10 +120,6 @@ class ProfileVC: ProfileVCBase {
                 }
             }
         }
-    }
-    
-    override func buttonDoneDidTouch() {
-        back()
     }
     
     @objc func cellDidTouch(_ gesture: UIGestureRecognizer) {
