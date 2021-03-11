@@ -35,6 +35,6 @@ class WLNavigationBar: BEView {
         super.commonInit()
         addSubview(stackView)
         backgroundColor = .textWhite
-        stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 20))
+        stackView.autoPinEdgesToSuperviewSafeArea(with: .init(all: 20))
     }
 }
