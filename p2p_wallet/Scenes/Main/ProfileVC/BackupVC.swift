@@ -16,7 +16,8 @@ class BackupVC: ProfileVCBase {
     let accountStorage: KeychainAccountStorage
     let scenesFactory: BackupScenesFactory
     
-    let isIcloudBackedUp = BehaviorRelay<Bool>(value: false)
+    lazy var isIcloudBackedUp = BehaviorRelay<Bool>(value: accountStorage.didBackupUsingIcloud)
+    var backedUpIcloudCompletion: (() -> Void)?
     
     lazy var shieldImageView = UIImageView(width: 63, height: 77, image: .backupShield)
     lazy var titleLabel = UILabel(textSize: 17, weight: .bold, numberOfLines: 0, textAlignment: .center)
@@ -105,6 +106,7 @@ class BackupVC: ProfileVCBase {
         presentLocalAuthVC(accountStorage: accountStorage) { [weak self] in
             self?.accountStorage.saveICloud(phrases: account.joined(separator: " "))
             self?.isIcloudBackedUp.accept(true)
+            self?.backedUpIcloudCompletion?()
         }
     }
     
