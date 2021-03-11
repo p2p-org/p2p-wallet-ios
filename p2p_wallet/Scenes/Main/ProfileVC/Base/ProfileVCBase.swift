@@ -7,28 +7,34 @@
 
 import Foundation
 
-class ProfileVCBase: WLCenterSheet {
+class ProfileVCBase: BaseVStackVC {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+        .hidden
+    }
+    
     override var padding: UIEdgeInsets {.init(all: 20)}
     var dataDidChange: Bool {false}
-    lazy var doneButton = UIButton(label: L10n.done, labelFont: .systemFont(ofSize: 17), textColor: .textSecondary)
-        .onTap(self, action: #selector(buttonDoneDidTouch))
+    
+    lazy var navigationBar: WLNavigationBar = {
+        let navigationBar = WLNavigationBar(backgroundColor: .textWhite)
+        navigationBar.backButton
+            .onTap(self, action: #selector(back))
+        return navigationBar
+    }()
     
     override func setUp() {
         super.setUp()
-        stackView.addArrangedSubview(createHeaderView())
-    }
-    
-    func createHeaderView() -> UIStackView {
-        UIView.row([
-            UIView.row([
-                UIImageView(width: 4.5, height: 9, image: .backArrow, tintColor: .textBlack),
-                UILabel(text: L10n.back, textSize: 17, textColor: .textSecondary)
-            ])
-                .with(spacing: 8)
-                .onTap(self, action: #selector(back)),
-            UILabel(text: title, textSize: 17, weight: .bold),
-            doneButton
-        ]).with(alignment: .fill, distribution: .equalCentering)
+        navigationBar.titleLabel.text = title
+        view.backgroundColor = .f6f6f8
+        
+        view.addSubview(navigationBar)
+        navigationBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
+        
+        scrollView.constraintToSuperviewWithAttribute(.top)?.isActive = false
+        scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 10)
+        
+        scrollView.contentInset = .zero
+        stackView.spacing = 1
     }
     
     override func back() {
@@ -41,13 +47,5 @@ class ProfileVCBase: WLCenterSheet {
         } else {
             super.back()
         }
-    }
-    
-    @objc func buttonDoneDidTouch() {
-        if dataDidChange {saveChange()}
-    }
-    
-    func saveChange() {
-        
     }
 }

@@ -27,6 +27,10 @@ class KeychainAccountStorage: SolanaSDKAccountStorage {
         return try? JSONDecoder().decode(SolanaSDK.Account.self, from: data)
     }
     
+    var didBackupUsingIcloud: Bool {
+        phrasesFromICloud() == account?.phrase.joined(separator: " ")
+    }
+    
     // MARK: - Pincode
     func save(_ pinCode: String) {
         keychain.set(pinCode, forKey: pincodeKey)
