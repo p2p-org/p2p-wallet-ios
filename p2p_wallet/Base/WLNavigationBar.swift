@@ -25,7 +25,11 @@ class WLNavigationBar: BEView {
     ])
     
     lazy var backButton = UIImageView(width: 35, height: 35, image: .backSquare)
-    lazy var titleLabel = UILabel(textSize: 19, weight: .semibold, textAlignment: .center)
+    lazy var titleLabel: UILabel = {
+        let label = UILabel(textSize: 19, weight: .semibold, textAlignment: .center)
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
     
     override func commonInit() {
         super.commonInit()
