@@ -270,3 +270,6 @@
 "Success" = "Успех";
 "Transaction has been confirmed" = "Транзакция подтверждена";
 "Something went wrong" = "Что-то пошло не так";
+"Your wallet is backed up" = "Ваш кошелек зарезервирован";
+"If you lose this device, you can recover your encrypted wallet backup from iCloud" = "Если вы потеряете это устройство, вы можете восстановить зашифрованную резервную копию кошелька из iCloud.";
+"View recovery key" = "Посмотреть ключ восстановления";
