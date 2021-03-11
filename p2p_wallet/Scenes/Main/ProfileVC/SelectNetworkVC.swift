@@ -31,6 +31,10 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
     override func setUp() {
         title = L10n.network
         super.setUp()
+        navigationBar.rightItems.addArrangedSubviews([
+            UILabel(text: L10n.done, textSize: 17, weight: .medium, textColor: .h5887ff)
+                .onTap(self, action: #selector(saveChange))
+        ])
     }
     
     override func createCell(item: SolanaSDK.Network) -> Cell<SolanaSDK.Network> {
@@ -39,7 +43,7 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
         return cell
     }
     
-    override func saveChange() {
+    @objc func saveChange() {
         showAlert(title: L10n.switchNetwork, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem.cluster + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
             if index != 0 {return}
             UIApplication.shared.showIndetermineHudWithMessage(L10n.switchingTo + " \"" + self.selectedItem.cluster + "\"")

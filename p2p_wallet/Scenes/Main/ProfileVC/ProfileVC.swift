@@ -19,16 +19,19 @@ protocol ProfileScenesFactory {
 }
 
 class ProfileVC: ProfileVCBase {
+    lazy var backupShieldImageView = UIImageView(width: 17, height: 21, image: .backupShield)
     lazy var secureMethodsLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var activeLanguageLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var appearanceLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var networkLabel = UILabel(weight: .medium, textColor: .textSecondary)
     
     var disposables = [DefaultsDisposable]()
+    let accountStorage: KeychainAccountStorage
     let rootViewModel: RootViewModel
     let scenesFactory: ProfileScenesFactory
     
-    init(rootViewModel: RootViewModel, scenesFactory: ProfileScenesFactory) {
+    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel, scenesFactory: ProfileScenesFactory) {
+        self.accountStorage = accountStorage
         self.scenesFactory = scenesFactory
         self.rootViewModel = rootViewModel
     }
@@ -39,39 +42,58 @@ class ProfileVC: ProfileVCBase {
     
     // MARK: - Methods
     override func setUp() {
-        title = L10n.profile
-        
         super.setUp()
         
         stackView.addArrangedSubviews([
-            createCell(text: L10n.backup, descriptionView: UIImageView(width: 17, height: 21, image: .backupShield, tintColor: .textSecondary)
+            createCell(
+                image: .settingsBackup,
+                text: L10n.backup,
+                descriptionView: backupShieldImageView
             )
                 .withTag(1)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            createCell(text: L10n.network, descriptionView: networkLabel)
+            createCell(
+                image: .settingsNetwork,
+                text: L10n.network,
+                descriptionView: networkLabel
+            )
                 .withTag(2)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            createCell(text: L10n.security, descriptionView: secureMethodsLabel
+            createCell(
+                image: .settingsSecurity,
+                text: L10n.security,
+                descriptionView: secureMethodsLabel
             )
                 .withTag(3)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            createCell(text: L10n.language, descriptionView: activeLanguageLabel
+            createCell(
+                image: nil,
+                text: L10n.language,
+                descriptionView: activeLanguageLabel
             )
                 .withTag(4)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             createCell(
+                image: .settingsAppearance,
                 text: L10n.appearance,
                 descriptionView: appearanceLabel
             )
                 .withTag(5)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            UIButton(label: L10n.logout, labelFont: .systemFont(ofSize: 15), textColor: .textSecondary)
+            BEStackViewSpacing(10),
+            
+            createCell(
+                image: .settingsLogout,
+                text: L10n.logout
+            )
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
         ])
+        
+        setUpBackupShield()
         
         setUp(enabledBiometry: Defaults.isBiometryEnabled)
         
@@ -94,6 +116,15 @@ class ProfileVC: ProfileVCBase {
         })
     }
     
+    func setUpBackupShield() {
+        var shieldColor = UIColor.alertOrange
+        if accountStorage.didBackupUsingIcloud
+        {
+            shieldColor = .attentionGreen
+        }
+        backupShieldImageView.tintColor = shieldColor
+    }
+    
     func setUp(enabledBiometry: Bool?) {
         var text = ""
         if enabledBiometry == true {
@@ -111,13 +142,6 @@ class ProfileVC: ProfileVCBase {
         appearanceLabel.text = theme?.localizedString
     }
     
-    override func createHeaderView() -> UIStackView {
-        let headerView = super.createHeaderView()
-        headerView.arrangedSubviews.first?.removeFromSuperview()
-        headerView.insertArrangedSubview(.spacer, at: 0)
-        return headerView
-    }
-    
     // MARK: - Actions
     @objc func buttonLogoutDidTouch() {
         showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { (index) in
@@ -129,15 +153,14 @@ class ProfileVC: ProfileVCBase {
         }
     }
     
-    override func buttonDoneDidTouch() {
-        back()
-    }
-    
     @objc func cellDidTouch(_ gesture: UIGestureRecognizer) {
         guard let tag = gesture.view?.tag else {return}
         switch tag {
         case 1:
             let vc = scenesFactory.makeBackupVC()
+            vc.backedUpIcloudCompletion = {
+                self.setUpBackupShield()
+            }
             show(vc, sender: nil)
         case 2:
             let vc = scenesFactory.makeSelectNetworkVC()
@@ -157,16 +180,21 @@ class ProfileVC: ProfileVCBase {
     }
     
     // MARK: - Helpers
-    private func createCell(text: String, descriptionView: UIView) -> UIStackView
+    private func createCell(image: UIImage?, text: String, descriptionView: UIView? = nil) -> UIView
     {
         let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-            UIImageView(width: 44, height: 44, backgroundColor: .textSecondary, cornerRadius: 22),
-            UILabel(text: text),
-            descriptionView,
-            UIImageView(width: 4.5, height: 9, image: .nextArrow, tintColor: .textBlack)
+            UIImageView(width: 24, height: 24, image: image, tintColor: .a3a5ba),
+            UILabel(text: text, textSize: 17, numberOfLines: 0)
         ])
-        stackView.setCustomSpacing(12, after: descriptionView)
+        if let descriptionView = descriptionView {
+            stackView.addArrangedSubviews([
+                descriptionView
+                    .withContentHuggingPriority(.required, for: .horizontal),
+                UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .textBlack)
+            ])
+        }
         return stackView
+            .padding(.init(x: 20, y: 16), backgroundColor: .textWhite)
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

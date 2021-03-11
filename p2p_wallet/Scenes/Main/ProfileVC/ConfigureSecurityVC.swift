@@ -16,7 +16,7 @@ class ConfigureSecurityVC: ProfileVCBase {
     lazy var biometrySwitcher: UISwitch = {
         let switcher = UISwitch()
         switcher.tintColor = .textWhite
-        switcher.onTintColor = .black
+//        switcher.onTintColor = .h5887ff
         switcher.addTarget(self, action: #selector(switcherDidChange(_:)), for: .valueChanged)
         return switcher
     }()
@@ -31,29 +31,39 @@ class ConfigureSecurityVC: ProfileVCBase {
     override func setUp() {
         title = L10n.security
         super.setUp()
+        
         stackView.addArrangedSubviews([
             UIView.row([
-                UIImageView(width: 44, height: 44, backgroundColor: .c4c4c4, cornerRadius: 22),
-                UIView.col([
-                    UILabel(text: LABiometryType.current.stringValue, weight: .medium),
-                    UILabel(text: L10n.willBeAsAPrimarySecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0)
-                ]).with(spacing: 5),
-                biometrySwitcher
-            ])
-                .with(spacing: 16, alignment: .center, distribution: .fill)
-                .padding(.init(x: 0, y: 20)),
-            UIView.row([
-                UIImageView(width: 44, height: 44, backgroundColor: .c4c4c4, cornerRadius: 22),
+                UIImageView(width: 24, height: 24, image: .settingsPincode, tintColor: .a3a5ba)
+                    .padding(.init(all: 13), backgroundColor: .f6f6f8, cornerRadius: 12),
                 UIView.col([
                     UILabel(text: L10n.pinCode, weight: .medium),
                     UILabel(text: L10n.defaultSecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0)
                 ]).with(spacing: 5),
-                UIImageView(width: 4.5, height: 9, image: .nextArrow, tintColor: .textBlack)
+                UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .textBlack)
             ])
                 .with(spacing: 16, alignment: .center, distribution: .fill)
-                .padding(.init(x: 0, y: 20))
+                .padding(.init(x: 20, y: 14), backgroundColor: .textWhite)
                 .onTap(self, action: #selector(buttonChangePinCodeDidTouch))
         ])
+        
+        let biometryMethod = LABiometryType.current
+        if !biometryMethod.stringValue.isEmpty {
+            stackView.insertArrangedSubview(
+                UIView.row([
+                    UIImageView(width: 24, height: 24, image: biometryMethod.icon, tintColor: .a3a5ba)
+                        .padding(.init(all: 13), backgroundColor: .f6f6f8, cornerRadius: 12),
+                    UIView.col([
+                        UILabel(text: LABiometryType.current.stringValue, weight: .medium),
+                        UILabel(text: L10n.willBeAsAPrimarySecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0)
+                    ]).with(spacing: 5),
+                    biometrySwitcher
+                ])
+                    .with(spacing: 16, alignment: .center, distribution: .fill)
+                    .padding(.init(x: 20, y: 14), backgroundColor: .textWhite),
+                at: 0
+            )
+        }
         
         biometrySwitcher.isOn = Defaults.isBiometryEnabled
     }
@@ -91,9 +101,5 @@ class ConfigureSecurityVC: ProfileVCBase {
     
     @objc func buttonChangePinCodeDidTouch() {
         show(ChangePinCodeVC(accountStorage: accountStorage), sender: nil)
-    }
-    
-    override func buttonDoneDidTouch() {
-        back()
     }
 }
