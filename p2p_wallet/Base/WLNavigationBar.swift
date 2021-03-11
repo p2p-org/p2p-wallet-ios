@@ -8,7 +8,7 @@
 import Foundation
 
 class WLNavigationBar: BEView {
-    lazy var stackView = UIStackView(axis: .horizontal, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
+    lazy var stackView = UIStackView(axis: .horizontal, alignment: .fill, distribution: .equalCentering, arrangedSubviews: [
         leftItems,
         centerItems,
         rightItems
