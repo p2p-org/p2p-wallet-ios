@@ -39,37 +39,54 @@ class ProfileVC: ProfileVCBase {
     
     // MARK: - Methods
     override func setUp() {
-        title = L10n.profile
-        
         super.setUp()
         
         stackView.addArrangedSubviews([
-            createCell(text: L10n.backup, descriptionView: UIImageView(width: 17, height: 21, image: .backupShield, tintColor: .textSecondary)
+            createCell(
+                image: .settingsBackup,
+                text: L10n.backup,
+                descriptionView: UIImageView(width: 17, height: 21, image: .backupShield, tintColor: .alertOrange)
             )
                 .withTag(1)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            createCell(text: L10n.network, descriptionView: networkLabel)
+            createCell(
+                image: .settingsNetwork,
+                text: L10n.network,
+                descriptionView: networkLabel
+            )
                 .withTag(2)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            createCell(text: L10n.security, descriptionView: secureMethodsLabel
+            createCell(
+                image: .settingsSecurity,
+                text: L10n.security,
+                descriptionView: secureMethodsLabel
             )
                 .withTag(3)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            createCell(text: L10n.language, descriptionView: activeLanguageLabel
+            createCell(
+                image: nil,
+                text: L10n.language,
+                descriptionView: activeLanguageLabel
             )
                 .withTag(4)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             createCell(
+                image: .settingsAppearance,
                 text: L10n.appearance,
                 descriptionView: appearanceLabel
             )
                 .withTag(5)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
-            UIButton(label: L10n.logout, labelFont: .systemFont(ofSize: 15), textColor: .textSecondary)
+            BEStackViewSpacing(10),
+            
+            createCell(
+                image: .settingsLogout,
+                text: L10n.logout
+            )
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
         ])
         
@@ -146,16 +163,21 @@ class ProfileVC: ProfileVCBase {
     }
     
     // MARK: - Helpers
-    private func createCell(text: String, descriptionView: UIView) -> UIStackView
+    private func createCell(image: UIImage?, text: String, descriptionView: UIView? = nil) -> UIView
     {
         let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-            UIImageView(width: 44, height: 44, backgroundColor: .textSecondary, cornerRadius: 22),
-            UILabel(text: text),
-            descriptionView,
-            UIImageView(width: 4.5, height: 9, image: .nextArrow, tintColor: .textBlack)
+            UIImageView(width: 24, height: 24, image: image, tintColor: .a3a5ba),
+            UILabel(text: text, textSize: 17, numberOfLines: 0)
         ])
-        stackView.setCustomSpacing(12, after: descriptionView)
+        if let descriptionView = descriptionView {
+            stackView.addArrangedSubviews([
+                descriptionView
+                    .withContentHuggingPriority(.required, for: .horizontal),
+                UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .textBlack)
+            ])
+        }
         return stackView
+            .padding(.init(x: 20, y: 16), backgroundColor: .textWhite)
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

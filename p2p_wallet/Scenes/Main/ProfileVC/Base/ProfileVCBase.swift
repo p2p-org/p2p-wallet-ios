@@ -32,6 +32,9 @@ class ProfileVCBase: BaseVStackVC {
         
         scrollView.constraintToSuperviewWithAttribute(.top)?.isActive = false
         scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 10)
+        
+        scrollView.contentInset = .zero
+        stackView.spacing = 1
     }
     
     override func back() {
