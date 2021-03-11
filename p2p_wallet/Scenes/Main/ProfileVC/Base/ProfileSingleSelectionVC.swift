@@ -24,7 +24,7 @@ class ProfileSingleSelectionVC<T: Hashable>: ProfileVCBase {
     func reloadData() {
         for cell in cells {
             guard let item = cell.item else {continue}
-            cell.checkBox.isSelected = data[item] ?? false
+            cell.radioButton.isSelected = data[item] ?? false
         }
     }
     
@@ -57,8 +57,8 @@ extension ProfileSingleSelectionVC {
         
         lazy var label = UILabel(text: nil)
         
-        lazy var checkBox: BECheckbox = {
-            let checkBox = BECheckbox(width: 20, height: 20, cornerRadius: 10)
+        lazy var radioButton: WLRadioButton = {
+            let checkBox = WLRadioButton()
             checkBox.isUserInteractionEnabled = false
             return checkBox
         }()
@@ -66,7 +66,11 @@ extension ProfileSingleSelectionVC {
         override func commonInit() {
             super.commonInit()
             backgroundColor = .textWhite
-            self.row([label, checkBox])
+            let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
+                radioButton, label
+            ])
+            addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 20))
         }
     }
 }
