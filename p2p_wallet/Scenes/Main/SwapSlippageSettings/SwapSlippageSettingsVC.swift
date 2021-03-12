@@ -68,6 +68,9 @@ class SwapSlippageSettingsVC: WLModalVC {
                 .padding(.init(x: 20, y: 0))
         ])
         
+        containerView.constraintToSuperviewWithAttribute(.bottom)?.isActive = false
+        containerView.autoPinBottomToSuperViewAvoidKeyboard()
+        
         customSlippageTextField.delegate = self
         customSlippageTextField.text = "\(slippage)"
         reloadData()
