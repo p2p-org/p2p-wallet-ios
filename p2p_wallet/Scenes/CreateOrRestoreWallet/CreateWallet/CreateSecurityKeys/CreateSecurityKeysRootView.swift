@@ -37,10 +37,13 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
     }()
     
     lazy var saveToICloudButton: WLButton = {
-        let button = WLButton.stepButton(type: .black, label: " \(L10n.saveToICloud)")
-        button.titleLabel?.attributedText = NSMutableAttributedString()
-            .text(" ", size: 25, color: button.currentTitleColor)
-            .text(L10n.saveToICloud, size: 15, weight: .medium, color: button.currentTitleColor)
+        let button = WLButton.stepButton(type: .black, label: nil)
+        
+        let attrString = NSMutableAttributedString()
+            .text("  ", size: 25, color: button.currentTitleColor)
+            .text(L10n.backupToICloud, size: 15, weight: .medium, color: button.currentTitleColor, baselineOffset: (25-15)/4)
+        
+        button.setAttributedTitle(attrString, for: .normal)
         return button
     }()
         
@@ -77,7 +80,7 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
         
         scrollView.constraintToSuperviewWithAttribute(.top)?.constant = 66
         stackView.addArrangedSubviews([
-            UILabel(text: L10n.securityKeys.uppercaseFirst, textSize: 27, weight: .bold),
+            UILabel(text: L10n.securityKey.uppercaseFirst, textSize: 27, weight: .bold),
             BEStackViewSpacing(15),
             phrasesListViews,
             BEStackViewSpacing(27),
@@ -95,8 +98,6 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
         ])
         
         continueButton.isEnabled = false
-        
-        scrollView.constraintToSuperviewWithAttribute(.bottom)?.constant = 0
     }
     
     private func bind() {

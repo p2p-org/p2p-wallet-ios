@@ -33,9 +33,6 @@ class WalletDetailViewController: WLIndicatorModalVC {
         let rootView = WalletDetailRootView(viewModel: viewModel)
         containerView.addSubview(rootView)
         rootView.autoPinEdgesToSuperviewEdges()
-        
-        view.removeConstraint(containerView.constraintToSuperviewWithAttribute(.bottom)!)
-        containerView.autoPinEdge(toSuperviewEdge: .bottom)
     }
     
     override func bind() {

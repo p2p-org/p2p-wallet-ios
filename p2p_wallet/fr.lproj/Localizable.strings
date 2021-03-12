@@ -20,7 +20,7 @@
 "OK" = "OK";
 "please try again later!" = "Veuillez réessayer plus tard!";
 "creating an account" = "créer un compte";
-"security keys" = "clés de sécurité";
+"security key" = "clef de sécurité";
 "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future." = "AVERTISSEMENT: la phrase de départ ne sera plus affichée, copiez-la ou enregistrez-la dans votre gestionnaire de mots de passe pour récupérer ce portefeuille à l'avenir.";
 "tap refresh button to retry" = "appuyez sur le bouton d'actualisation pour réessayer";
 "we've created some security keywords for you." = "nous avons créé des mots clés de sécurité pour vous.";
@@ -275,3 +275,4 @@
 "Your wallet is backed up" = "Votre portefeuille est sauvegardé";
 "If you lose this device, you can recover your encrypted wallet backup from iCloud" = "Si vous perdez cet appareil, vous pouvez récupérer votre sauvegarde de portefeuille chiffrée à partir d'iCloud";
 "View recovery key" = "Afficher la clé de récupération";
+"Backup to iCloud" = "Sauvegarde sur iCloud";

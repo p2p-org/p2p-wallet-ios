@@ -20,7 +20,7 @@
 "OK" = "OK";
 "please try again later!" = "please try again later!";
 "creating an account" = "creating an account";
-"security keys" = "security keys";
+"security key" = "security key";
 "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future." = "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.";
 "tap refresh button to retry" = "tap refresh button to retry";
 "we've created some security keywords for you." = "we've created some security keywords for you.";
@@ -275,3 +275,4 @@
 "Your wallet is backed up" = "Your wallet is backed up";
 "If you lose this device, you can recover your encrypted wallet backup from iCloud" = "If you lose this device, you can recover your encrypted wallet backup from iCloud";
 "View recovery key" = "View recovery key";
+"Backup to iCloud" = "Backup to iCloud";

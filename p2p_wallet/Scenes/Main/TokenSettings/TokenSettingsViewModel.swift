@@ -11,6 +11,7 @@ import RxCocoa
 import Action
 
 enum TokenSettingsNavigatableScene {
+    case alert(title: String?, description: String)
     case closeConfirmation
     case processTransaction
 }

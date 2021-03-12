@@ -61,7 +61,7 @@ class WLIntroVC: BaseVStackVC {
             buttonsStackView
         ])
         
-        scrollView.contentView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 16)
+        scrollView.contentView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 50)
     }
 }
 

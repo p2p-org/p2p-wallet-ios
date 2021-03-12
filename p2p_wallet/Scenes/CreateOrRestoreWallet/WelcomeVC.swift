@@ -12,10 +12,6 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
         .hidden
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        .lightContent
-    }
-    
     let createOrRestoreWalletViewModel: CreateOrRestoreWalletViewModel
     init(createOrRestoreWalletViewModel: CreateOrRestoreWalletViewModel)
     {
