@@ -33,7 +33,7 @@ class BackupManuallyVC: WLIndicatorModalVC {
         // header view
         let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
             UIStackView(axis: .horizontal, distribution: .equalSpacing, arrangedSubviews: [
-                UILabel(text: L10n.securityKeys.uppercaseFirst, textSize: 21, weight: .semibold),
+                UILabel(text: L10n.securityKey.uppercaseFirst, textSize: 21, weight: .semibold),
                 UILabel(text: L10n.done, textSize: 17, textColor: .h5887ff)
                     .onTap(self, action: #selector(back))
             ])
