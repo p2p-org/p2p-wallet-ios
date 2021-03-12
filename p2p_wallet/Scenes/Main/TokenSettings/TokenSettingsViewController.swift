@@ -51,6 +51,8 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     
     func navigate(to scene: TokenSettingsNavigatableScene) {
         switch scene {
+        case .alert(let title, let description):
+            showAlert(title: title?.uppercaseFirst, message: description)
         case .closeConfirmation:
             guard let symbol = viewModel.wallet?.symbol else {return}
             let vc = TokenSettingsCloseAccountConfirmationVC(symbol: symbol)
