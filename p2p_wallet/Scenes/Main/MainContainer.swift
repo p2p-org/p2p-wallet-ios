@@ -38,8 +38,9 @@ class MainContainer {
         return HomeViewController(viewModel: vm, scenesFactory: self)
     }
     
-    func makeMyProductsVC() -> MyProductsVC {
-        MyProductsVC(walletsVM: myWalletsVM, scenesFactory: self)
+    func makeMyProductsViewController() -> MyProductsViewController {
+        let viewModel = MyProductsViewModel(walletsVM: myWalletsVM)
+        return MyProductsViewController(viewModel: viewModel, scenesFactory: self)
     }
     
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController {
@@ -56,12 +57,10 @@ class MainContainer {
         ReceiveTokenVC(wallets: myWalletsVM.data)
     }
     
-    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> WLModalWrapperVC {
+    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController {
         let vm = SendTokenViewModel(solanaSDK: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, activeWallet: activeWallet, destinationAddress: destinationAddress)
-        let wrappedVC = SendTokenViewController(viewModel: vm, scenesFactory: self)
-        let titleImageView = UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
-            .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
-        return makeCustomModalVC(wrappedVC: wrappedVC, title: L10n.send, titleImageView: titleImageView)
+        let vc = SendTokenViewController(viewModel: vm, scenesFactory: self)
+        return vc
     }
     
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController {
@@ -116,16 +115,6 @@ class MainContainer {
     }
     
     // MARK: - Helpers
-    func makeCustomModalVC(wrappedVC: UIViewController, title: String? = nil, titleImageView: UIView? = nil) -> WLModalWrapperVC
-    {
-        let vc = WLModalWrapperVC(wrapped: wrappedVC)
-        vc.title = title
-        vc.titleImageView = titleImageView
-        vc.modalPresentationStyle = wrappedVC.modalPresentationStyle
-        vc.transitioningDelegate = wrappedVC as? UIViewControllerTransitioningDelegate
-        return vc
-    }
-    
     func changeNetwork(to network: SolanaSDK.Network) {
         Defaults.network = network
         

@@ -135,7 +135,7 @@ class SendTokenRootView: ScrollableVStackRootView {
         
         equityValueLabel.autoPinEdge(.leading, to: .leading, of: amountTextField)
         
-        addSubview(symbolLabel)
+        scrollView.contentView.addSubview(symbolLabel)
         symbolLabel.centerXAnchor.constraint(equalTo: coinImageView.centerXAnchor).isActive = true
         symbolLabel.centerYAnchor.constraint(equalTo: equityValueLabel.centerYAnchor).isActive = true
     }
