@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol WalletDetailScenesFactory {
-    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> WLModalWrapperVC
+    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController
     func makeSwapTokenViewController(fromWallet: Wallet?) -> SwapTokenViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
 }
