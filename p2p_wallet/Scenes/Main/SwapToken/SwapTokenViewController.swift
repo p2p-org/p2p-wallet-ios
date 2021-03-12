@@ -14,39 +14,13 @@ protocol SwapScenesFactory {
     func makeSwapChooseDestinationWalletVC(customFilter: ((Wallet) -> Bool)?) -> SwapChooseDestinationWalletViewController
 }
 
-class SwapTokenViewController: WLModalWrapperVC {
-    let viewModel: SwapTokenViewModel
-    let scenesFactory: SwapScenesFactory
-    init(viewModel: SwapTokenViewModel, scenesFactory: SwapScenesFactory) {
-        self.viewModel = viewModel
-        self.scenesFactory = scenesFactory
-        let vc = _SwapTokenViewController(viewModel: viewModel, scenesFactory: scenesFactory)
-        super.init(wrapped: vc)
-    }
-    
-    override func setUp() {
-        super.setUp()
-        stackView.axis = .horizontal
-        stackView.spacing = 16
-        stackView.addArrangedSubviews([
-            UIImageView(width: 24, height: 24, image: .walletSwap, tintColor: .white)
-                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
-            UILabel(text: L10n.swap, textSize: 17, weight: .semibold),
-            UIImageView(width: 36, height: 36, image: .slippageSettings, tintColor: .a3a5ba)
-                .onTap(viewModel, action: #selector(SwapTokenViewModel.chooseSlippage))
-        ])
-        
-        let separator = UIView.separator(height: 1, color: .separator)
-        containerView.addSubview(separator)
-        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-    }
-}
-
-private class _SwapTokenViewController: BaseVC {
+class SwapTokenViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: SwapTokenViewModel
     let scenesFactory: SwapScenesFactory
+    
+    lazy var rootView = SwapTokenRootView(viewModel: viewModel)
     
     // MARK: - Initializer
     init(viewModel: SwapTokenViewModel, scenesFactory: SwapScenesFactory)
@@ -57,13 +31,23 @@ private class _SwapTokenViewController: BaseVC {
     }
     
     // MARK: - Methods
-    override func loadView() {
-        view = SwapTokenRootView(viewModel: viewModel)
-    }
-    
     override func setUp() {
         super.setUp()
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideKeyboard)))
+        let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
+            UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
+                UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
+                    .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
+                UILabel(text: L10n.swap, textSize: 17, weight: .semibold),
+                UIImageView(width: 36, height: 36, image: .slippageSettings, tintColor: .a3a5ba)
+                    .onTap(viewModel, action: #selector(SwapTokenViewModel.chooseSlippage))
+            ])
+                .padding(.init(all: 20)),
+            UIView.separator(height: 1, color: .separator),
+            rootView
+        ])
+        
+        containerView.addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges()
     }
     
     override func bind() {

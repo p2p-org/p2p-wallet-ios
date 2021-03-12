@@ -17,7 +17,7 @@ class ScrollableVStackRootView: BEView {
         addSubview(scrollView)
         scrollView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
         scrollView.autoPinBottomToSuperViewAvoidKeyboard()
-        scrollView.contentInset.modify(dBottom: 16)
+        scrollView.contentInset.modify(dBottom: 24)
         
         // stackView
         scrollView.contentView.addSubview(stackView)

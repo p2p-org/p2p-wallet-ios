@@ -118,16 +118,6 @@ class MainContainer {
     }
     
     // MARK: - Helpers
-    func makeCustomModalVC(wrappedVC: UIViewController, title: String? = nil, titleImageView: UIView? = nil) -> WLModalWrapperVC
-    {
-        let vc = WLModalWrapperVC(wrapped: wrappedVC)
-        vc.title = title
-        vc.titleImageView = titleImageView
-        vc.modalPresentationStyle = wrappedVC.modalPresentationStyle
-        vc.transitioningDelegate = wrappedVC as? UIViewControllerTransitioningDelegate
-        return vc
-    }
-    
     func changeNetwork(to network: SolanaSDK.Network) {
         Defaults.network = network
         
