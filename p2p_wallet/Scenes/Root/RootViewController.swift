@@ -18,6 +18,10 @@ protocol RootViewControllerScenesFactory {
 }
 
 class RootViewController: BaseVC {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        isLightStatusBarStyle ? .lightContent: .darkContent
+    }
+    
     var currentVC: UIViewController? {children.last}
     
     // MARK: - Properties
@@ -25,6 +29,7 @@ class RootViewController: BaseVC {
     let scenesFactory: RootViewControllerScenesFactory
     
     var isBoardingCompleted = true
+    var isLightStatusBarStyle = false
     
     // MARK: - Initializer
     init(
@@ -59,19 +64,31 @@ class RootViewController: BaseVC {
         case .initializing:
             break
         case .createOrRestoreWallet:
+            isLightStatusBarStyle = true
+            setNeedsStatusBarAppearanceUpdate()
+            
             let vc = scenesFactory.makeCreateOrRestoreWalletViewController()
             let nc = BENavigationController(rootViewController: vc)
             isBoardingCompleted = false
             transition(to: nc)
         case .onboarding:
+            isLightStatusBarStyle = true
+            setNeedsStatusBarAppearanceUpdate()
+            
             let vc = scenesFactory.makeOnboardingViewController()
             isBoardingCompleted = false
             transition(to: vc)
         case .onboardingDone:
+            isLightStatusBarStyle = true
+            setNeedsStatusBarAppearanceUpdate()
+            
             let vc = scenesFactory.makeWellDoneVC()
             isBoardingCompleted = false
             transition(to: vc)
         case .main:
+            isLightStatusBarStyle = false
+            setNeedsStatusBarAppearanceUpdate()
+            
             let vc = scenesFactory.makeMainViewController()
             transition(to: vc)
         }

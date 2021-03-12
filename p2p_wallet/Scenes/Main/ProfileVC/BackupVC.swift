@@ -23,7 +23,7 @@ class BackupVC: ProfileVCBase {
     lazy var titleLabel = UILabel(textSize: 17, weight: .bold, numberOfLines: 0, textAlignment: .center)
     lazy var descriptionLabel = UILabel(textSize: 17, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
     lazy var backupUsingIcloudButton = WLButton.stepButton(type: .black, label: " " + L10n.backupUsingICloud)
-    lazy var backupMannuallyButton = WLButton.stepButton(type: .sub, label: L10n.backupManually)
+    lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .eff3ff, textColor: .textBlack, label: L10n.backupManually)
     
     init(accountStorage: KeychainAccountStorage, scenesFactory: BackupScenesFactory) {
         self.accountStorage = accountStorage
