@@ -98,8 +98,6 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
         ])
         
         continueButton.isEnabled = false
-        
-        scrollView.constraintToSuperviewWithAttribute(.bottom)?.constant = 0
     }
     
     private func bind() {

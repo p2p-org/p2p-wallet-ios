@@ -9,18 +9,9 @@ import Foundation
 
 class WLIndicatorModalVC: BaseVC {
     lazy var containerView = UIView(backgroundColor: .background)
-    // bottomView for covering safe area
-    lazy var bottomView = UIView(backgroundColor: containerView.backgroundColor)
     var swipeGesture: UIGestureRecognizer?
     
     // MARK: - Initializers
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.addSubview(bottomView)
-        bottomView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-        bottomView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-            .isActive = true
-    }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -39,7 +30,7 @@ class WLIndicatorModalVC: BaseVC {
         containerView.autoPinEdge(.top, to: .bottom, of: topGestureView, withOffset: 8)
         containerView.autoPinEdge(toSuperviewSafeArea: .leading)
         containerView.autoPinEdge(toSuperviewSafeArea: .trailing)
-        containerView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
+        containerView.autoPinEdge(toSuperviewEdge: .bottom)
         
         containerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
         
