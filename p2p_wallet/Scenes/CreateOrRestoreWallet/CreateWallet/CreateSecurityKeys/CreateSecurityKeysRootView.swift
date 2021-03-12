@@ -37,10 +37,13 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
     }()
     
     lazy var saveToICloudButton: WLButton = {
-        let button = WLButton.stepButton(type: .black, label: " \(L10n.saveToICloud)")
-        button.titleLabel?.attributedText = NSMutableAttributedString()
-            .text(" ", size: 25, color: button.currentTitleColor)
-            .text(L10n.saveToICloud, size: 15, weight: .medium, color: button.currentTitleColor)
+        let button = WLButton.stepButton(type: .black, label: nil)
+        
+        let attrString = NSMutableAttributedString()
+            .text("  ", size: 25, color: button.currentTitleColor)
+            .text(L10n.backupToICloud, size: 15, weight: .medium, color: button.currentTitleColor, baselineOffset: (25-15)/4)
+        
+        button.setAttributedTitle(attrString, for: .normal)
         return button
     }()
         
