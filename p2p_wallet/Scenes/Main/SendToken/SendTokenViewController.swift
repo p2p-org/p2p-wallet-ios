@@ -14,11 +14,12 @@ protocol SendTokenScenesFactory {
     func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
 }
 
-class SendTokenViewController: BaseVC {
+class SendTokenViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: SendTokenViewModel
     let scenesFactory: SendTokenScenesFactory
+    lazy var rootView = SendTokenRootView(viewModel: viewModel)
     
     // MARK: - Subviews
     
@@ -31,12 +32,22 @@ class SendTokenViewController: BaseVC {
     }
     
     // MARK: - Methods
-    override func loadView() {
-        view = SendTokenRootView(viewModel: viewModel)
-    }
-    
     override func setUp() {
         super.setUp()
+        let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
+            UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
+                UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
+                    .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
+                UILabel(text: L10n.send, textSize: 17, weight: .semibold)
+            ])
+                .padding(.init(all: 20)),
+            UIView.separator(height: 1, color: .separator),
+            rootView
+        ])
+        
+        containerView.addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges()
+        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideKeyboard)))
     }
     
