@@ -13,7 +13,7 @@ protocol HomeScenesFactory {
     func makeReceiveTokenViewController() -> ReceiveTokenVC
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController
-    func makeMyProductsVC() -> MyProductsVC
+    func makeMyProductsViewController() -> MyProductsViewController
     func makeProfileVC() -> ProfileVC
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
 }
@@ -68,7 +68,7 @@ class HomeViewController: BaseVC {
             let vc = self.scenesFactory.makeSwapTokenViewController(fromWallet: nil)
             self.present(vc, animated: true, completion: nil)
         case .allProducts:
-            let vc = self.scenesFactory.makeMyProductsVC()
+            let vc = self.scenesFactory.makeMyProductsViewController()
             self.present(vc, animated: true, completion: nil)
         case .profile:
             let profileVC = self.scenesFactory.makeProfileVC()

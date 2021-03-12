@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
+		BC0378F825FB538D00D10EAE /* MyProductsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0378F525FB538D00D10EAE /* MyProductsViewModel.swift */; };
+		BC0378F925FB538D00D10EAE /* MyProductsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0378F625FB538D00D10EAE /* MyProductsRootView.swift */; };
+		BC0378FA25FB538D00D10EAE /* MyProductsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0378F725FB538D00D10EAE /* MyProductsViewController.swift */; };
+		BC0378FF25FB551300D10EAE /* WalletsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0378FE25FB551300D10EAE /* WalletsCollectionView.swift */; };
+		BC03791125FB570900D10EAE /* MyProductsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03791025FB570900D10EAE /* MyProductsCollectionView.swift */; };
+		BC03791625FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03791525FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift */; };
 		BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */; };
 		BC05891325D3CD7C00632993 /* SwapTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC05891025D3CD7C00632993 /* SwapTokenViewModel.swift */; };
 		BC05891425D3CD7C00632993 /* SwapTokenRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC05891125D3CD7C00632993 /* SwapTokenRootView.swift */; };
@@ -30,8 +36,6 @@
 		BC105136258B2A2A00398EA2 /* TermsAndConditionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC105135258B2A2A00398EA2 /* TermsAndConditionsVC.swift */; };
 		BC11C9C225908F3700E399A9 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11C9C125908F3700E399A9 /* CGFloat+Extensions.swift */; };
 		BC11C9D82590987D00E399A9 /* SectionBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11C9D72590987D00E399A9 /* SectionBackgroundView.swift */; };
-		BC11C9FC2591B2B700E399A9 /* MyProductsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11C9FB2591B2B700E399A9 /* MyProductsVC.swift */; };
-		BC11CA092591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA082591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift */; };
 		BC11CA122591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA112591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift */; };
 		BC11CA1A2591E30200E399A9 /* WLModalWrapperVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA192591E30200E399A9 /* WLModalWrapperVC.swift */; };
 		BC11CA252592FEA300E399A9 /* BalancesOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA242592FEA300E399A9 /* BalancesOverviewView.swift */; };
@@ -263,6 +267,12 @@
 		A342CCD45E7CDE0BA60EFBB2 /* Pods_p2p_walletTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_walletTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB6790432D1A5F53BBDB3162 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		BB7CFE6A2633569A3CAC841A /* Pods-p2p_walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.release.xcconfig"; sourceTree = "<group>"; };
+		BC0378F525FB538D00D10EAE /* MyProductsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsViewModel.swift; sourceTree = "<group>"; };
+		BC0378F625FB538D00D10EAE /* MyProductsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsRootView.swift; sourceTree = "<group>"; };
+		BC0378F725FB538D00D10EAE /* MyProductsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsViewController.swift; sourceTree = "<group>"; };
+		BC0378FE25FB551300D10EAE /* WalletsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletsCollectionView.swift; sourceTree = "<group>"; };
+		BC03791025FB570900D10EAE /* MyProductsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsCollectionView.swift; sourceTree = "<group>"; };
+		BC03791525FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MyProductsCollectionView+SupplementaryViews.swift"; sourceTree = "<group>"; };
 		BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LABiometryType+Extensions.swift"; sourceTree = "<group>"; };
 		BC05891025D3CD7C00632993 /* SwapTokenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenViewModel.swift; sourceTree = "<group>"; };
 		BC05891125D3CD7C00632993 /* SwapTokenRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenRootView.swift; sourceTree = "<group>"; };
@@ -284,8 +294,6 @@
 		BC105135258B2A2A00398EA2 /* TermsAndConditionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsVC.swift; sourceTree = "<group>"; };
 		BC11C9C125908F3700E399A9 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
 		BC11C9D72590987D00E399A9 /* SectionBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionBackgroundView.swift; sourceTree = "<group>"; };
-		BC11C9FB2591B2B700E399A9 /* MyProductsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsVC.swift; sourceTree = "<group>"; };
-		BC11CA082591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MyProductsVC+UICollectionReusableView.swift"; sourceTree = "<group>"; };
 		BC11CA112591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Extensions.swift"; sourceTree = "<group>"; };
 		BC11CA192591E30200E399A9 /* WLModalWrapperVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLModalWrapperVC.swift; sourceTree = "<group>"; };
 		BC11CA242592FEA300E399A9 /* BalancesOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalancesOverviewView.swift; sourceTree = "<group>"; };
@@ -562,6 +570,27 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		BC0378F425FB536C00D10EAE /* MyProducts */ = {
+			isa = PBXGroup;
+			children = (
+				BC03790625FB551A00D10EAE /* MyProductsCollectionView */,
+				BC0378F525FB538D00D10EAE /* MyProductsViewModel.swift */,
+				BC0378F625FB538D00D10EAE /* MyProductsRootView.swift */,
+				BC0378F725FB538D00D10EAE /* MyProductsViewController.swift */,
+			);
+			path = MyProducts;
+			sourceTree = "<group>";
+		};
+		BC03790625FB551A00D10EAE /* MyProductsCollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				BC0378FE25FB551300D10EAE /* WalletsCollectionView.swift */,
+				BC03791525FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift */,
+				BC03791025FB570900D10EAE /* MyProductsCollectionView.swift */,
+			);
+			path = MyProductsCollectionView;
+			sourceTree = "<group>";
+		};
 		BC0E7DBD25B15B7D009AD08B /* Base */ = {
 			isa = PBXGroup;
 			children = (
@@ -569,15 +598,6 @@
 				BC0E7DC125B15B90009AD08B /* ProfileSingleSelectionVC.swift */,
 			);
 			path = Base;
-			sourceTree = "<group>";
-		};
-		BC11C9FA2591B29F00E399A9 /* MyProductsVC */ = {
-			isa = PBXGroup;
-			children = (
-				BC11CA082591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift */,
-				BC11C9FB2591B2B700E399A9 /* MyProductsVC.swift */,
-			);
-			path = MyProductsVC;
 			sourceTree = "<group>";
 		};
 		BC1ABC37255BD0B8002FCE65 /* ViewModels */ = {
@@ -1226,7 +1246,7 @@
 				BCFC768525E2EAB800FBE148 /* MainViewController.swift */,
 				BCEB206925E1561200B54FEF /* TabBarVC */,
 				BCBE148B25EF3D100014BCE5 /* Home */,
-				BC11C9FA2591B29F00E399A9 /* MyProductsVC */,
+				BC0378F425FB536C00D10EAE /* MyProducts */,
 				BCD5E75225512DA800F51299 /* InvestmentsVC */,
 				BCE3D55725F2127B0092F91B /* WalletDetail */,
 				BCEF14A725CFF0E500DFE931 /* AddWallet */,
@@ -1665,6 +1685,7 @@
 				BCA93F3825E761400081DDF6 /* CollectionView.swift in Sources */,
 				BCB92B7025B5311500FF615E /* SelectAppearanceVC.swift in Sources */,
 				BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */,
+				BC0378F825FB538D00D10EAE /* MyProductsViewModel.swift in Sources */,
 				BC2EC1CE2553ED1B006EEDA5 /* CardPresentationController.swift in Sources */,
 				BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */,
 				BC22ABD22552A2FC0071C69F /* MenuInteractor.swift in Sources */,
@@ -1688,13 +1709,14 @@
 				BC54DCF92587089700A65566 /* WalletGraphVM.swift in Sources */,
 				BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */,
 				BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */,
+				BC0378FF25FB551300D10EAE /* WalletsCollectionView.swift in Sources */,
 				BC22A5D225D2715C00F7026D /* SendTokenViewModel.swift in Sources */,
 				BCD5E770255130DD00F51299 /* News.swift in Sources */,
 				BCE42DE525DF9BDA0021540E /* CreateOrRestoreWalletViewModel.swift in Sources */,
 				BC5DB15A25F75E59003D00BE /* ProcessTransactionViewModel.swift in Sources */,
 				BC1DAFD0254BE9170002BEBC /* WelcomeBackVC.swift in Sources */,
+				BC0378F925FB538D00D10EAE /* MyProductsRootView.swift in Sources */,
 				BCEB204725E148C400B54FEF /* CreateOrRestoreWalletContainer.swift in Sources */,
-				BC11CA092591B65300E399A9 /* MyProductsVC+UICollectionReusableView.swift in Sources */,
 				BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */,
 				BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
@@ -1738,17 +1760,19 @@
 				BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */,
 				BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */,
 				BC490CCC256CCEBC006E7AC9 /* AddNewWalletVC.swift in Sources */,
-				BC11C9FC2591B2B700E399A9 /* MyProductsVC.swift in Sources */,
 				BC05891425D3CD7C00632993 /* SwapTokenRootView.swift in Sources */,
 				BC3122332580B34B00F3B14F /* PassCodeVC.swift in Sources */,
+				BC0378FA25FB538D00D10EAE /* MyProductsViewController.swift in Sources */,
 				BCE42E1825DFA5100021540E /* RestoreWalletViewModel.swift in Sources */,
 				BC104A7B259974CE0048C834 /* WLLoadingView.swift in Sources */,
 				BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */,
 				BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */,
+				BC03791125FB570900D10EAE /* MyProductsCollectionView.swift in Sources */,
 				BC31223C2580B37E00F3B14F /* CreatePassCodeVC.swift in Sources */,
 				BCA93F8125E883A50081DDF6 /* Array+Extensions.swift in Sources */,
 				BC2EC1F92553FF6A006EEDA5 /* DashedButton.swift in Sources */,
 				BC05891525D3CD7C00632993 /* SwapTokenViewController.swift in Sources */,
+				BC03791625FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift in Sources */,
 				BCBE149925EF3D110014BCE5 /* HomeFriendCell.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */,
 				BC7BCB75256274E10018DECA /* PricesManager+Extensions.swift in Sources */,
