@@ -20,7 +20,7 @@
 "OK" = "OK";
 "please try again later!" = "vui lòng thử lại sau!";
 "creating an account" = "tạo một tài khoản";
-"security keys" = "khóa bảo mật";
+"security key" = "khóa bảo mật";
 "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future." = "CẢNH BÁO: Những cụm từ bảo mật này sẽ không được hiển thị lại, hãy sao chép nó xuống hoặc lưu trong trình quản lý mật khẩu của bạn để khôi phục ví này trong tương lai.";
 "tap refresh button to retry" = "chạm vào nút làm mới để thử lại";
 "we've created some security keywords for you." = "chúng tôi đã tạo một số từ khóa bảo mật cho bạn.";

@@ -68,7 +68,7 @@ class RestoreWalletViewController: WLIntroVC {
             let vc = scenesFactory.makeEnterPhrasesVC()
             let titleImageView = UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white)
 
-            presentCustomModal(vc: vc, title: L10n.securityKeys.uppercaseFirst, titleImageView: titleImageView)
+            presentCustomModal(vc: vc, title: L10n.securityKey.uppercaseFirst, titleImageView: titleImageView)
         case .welcomeBack(phrases: let phrases):
             let vc = scenesFactory.makeWelcomeBackVC(phrases: phrases)
             transition(to: vc)
