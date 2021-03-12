@@ -23,7 +23,7 @@ class WellDoneVC: WLIntroVC {
         titleLabel.text = L10n.wellDone
         descriptionLabel.text = L10n.exploreP2PWalletAndDepositFundsWhenYouReReady
         
-        stackView.addArrangedSubviews([acceptButton, UIView(height: 139)])
+        stackView.addArrangedSubviews([acceptButton, UIView(height: 56)])
         acceptButton.setTitle(L10n.finishSetup, for: .normal)
     }
 }

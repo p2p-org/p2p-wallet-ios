@@ -41,7 +41,7 @@ class WelcomeBackVC: WLIntroVC {
         
         buttonsStackView.addArrangedSubviews([
             goToWalletButton,
-            UIView(height: 100)
+            UIView(height: 56)
         ])
     }
     
