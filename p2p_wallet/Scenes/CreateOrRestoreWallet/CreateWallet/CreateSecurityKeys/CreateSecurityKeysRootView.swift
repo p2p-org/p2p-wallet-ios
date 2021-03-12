@@ -77,7 +77,7 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
         
         scrollView.constraintToSuperviewWithAttribute(.top)?.constant = 66
         stackView.addArrangedSubviews([
-            UILabel(text: L10n.securityKeys.uppercaseFirst, textSize: 27, weight: .bold),
+            UILabel(text: L10n.securityKey.uppercaseFirst, textSize: 27, weight: .bold),
             BEStackViewSpacing(15),
             phrasesListViews,
             BEStackViewSpacing(27),
