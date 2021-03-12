@@ -133,7 +133,7 @@ class ProcessTransactionRootView: BEView {
                     self.buttonStackView.addArrangedSubviews([
                         WLButton.stepButton(type: .blue, label: L10n.tryAgain)
                             .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.tryAgain)),
-                        WLButton.stepButton(type: .sub, label: L10n.cancel)
+                        WLButton.stepButton(enabledColor: .eff3ff, textColor: .h5887ff, label: L10n.cancel)
                             .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.cancel))
                     ])
                 } else if let transaction = transactionHandler.transaction {
