@@ -9,15 +9,19 @@ import Foundation
 
 class ChooseWalletCollectionView: WalletsCollectionView {
     let customFilter: ((Wallet) -> Bool)
-    init(viewModel: WalletsVM, customFilter: @escaping ((Wallet) -> Bool)) {
-        self.customFilter = customFilter
-        super.init(viewModel: viewModel, sections: [
+    init(
+        viewModel: WalletsVM,
+        sections: [CollectionViewSection] = [
             CollectionViewSection(
                 header: CollectionViewSection.Header(title: ""),
                 cellType: ChooseWalletCollectionViewCell.self,
                 interGroupSpacing: 16
             )
-        ])
+        ],
+        customFilter: @escaping ((Wallet) -> Bool)
+    ) {
+        self.customFilter = customFilter
+        super.init(viewModel: viewModel, sections: sections)
     }
     
     override func filter(_ items: [Wallet]) -> [Wallet] {

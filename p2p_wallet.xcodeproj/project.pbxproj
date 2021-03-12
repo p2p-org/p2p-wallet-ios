@@ -201,6 +201,7 @@
 		BCD1895825FB633700668443 /* ChooseWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD1895525FB633700668443 /* ChooseWalletViewController.swift */; };
 		BCD1895D25FB648300668443 /* ChooseWalletCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD1895C25FB648300668443 /* ChooseWalletCollectionView.swift */; };
 		BCD1896625FB65F500668443 /* ChooseWalletCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD1896525FB65F500668443 /* ChooseWalletCollectionViewCell.swift */; };
+		BCD1896F25FB69D000668443 /* SwapDestinationWalletsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD1896E25FB69D000668443 /* SwapDestinationWalletsCollectionView.swift */; };
 		BCD5E73A2551265300F51299 /* CollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E7392551265300F51299 /* CollectionVC.swift */; };
 		BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74825512D2500F51299 /* SectionHeaderView.swift */; };
 		BCD5E74E25512DA500F51299 /* InvestmentsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74D25512DA500F51299 /* InvestmentsVC.swift */; };
@@ -479,6 +480,7 @@
 		BCD1895525FB633700668443 /* ChooseWalletViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWalletViewController.swift; sourceTree = "<group>"; };
 		BCD1895C25FB648300668443 /* ChooseWalletCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWalletCollectionView.swift; sourceTree = "<group>"; };
 		BCD1896525FB65F500668443 /* ChooseWalletCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWalletCollectionViewCell.swift; sourceTree = "<group>"; };
+		BCD1896E25FB69D000668443 /* SwapDestinationWalletsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapDestinationWalletsCollectionView.swift; sourceTree = "<group>"; };
 		BCD5E7392551265300F51299 /* CollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionVC.swift; sourceTree = "<group>"; };
 		BCD5E74825512D2500F51299 /* SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		BCD5E74D25512DA500F51299 /* InvestmentsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsVC.swift; sourceTree = "<group>"; };
@@ -950,8 +952,6 @@
 			children = (
 				BCD1895225FB632300668443 /* ChooseWallet */,
 				BC490CAF256CB1B0006E7AC9 /* ChooseWalletVC.swift */,
-				BCAB1F6025DCC1A1004F4F9D /* SwapChooseDestinationWalletViewModel.swift */,
-				BCE3D54625F1D01C0092F91B /* SwapChooseDestinationWalletViewController.swift */,
 			);
 			path = ChooseWalletVC;
 			sourceTree = "<group>";
@@ -1124,6 +1124,7 @@
 				BCD1896125FB65E400668443 /* ChooseWalletCollectionView */,
 				BCD1895325FB633700668443 /* ChooseWalletViewModel.swift */,
 				BCD1895525FB633700668443 /* ChooseWalletViewController.swift */,
+				BCD1896D25FB69A000668443 /* SwapChooseDestinationWallet */,
 			);
 			path = ChooseWallet;
 			sourceTree = "<group>";
@@ -1135,6 +1136,16 @@
 				BCD1895C25FB648300668443 /* ChooseWalletCollectionView.swift */,
 			);
 			path = ChooseWalletCollectionView;
+			sourceTree = "<group>";
+		};
+		BCD1896D25FB69A000668443 /* SwapChooseDestinationWallet */ = {
+			isa = PBXGroup;
+			children = (
+				BCD1896E25FB69D000668443 /* SwapDestinationWalletsCollectionView.swift */,
+				BCAB1F6025DCC1A1004F4F9D /* SwapChooseDestinationWalletViewModel.swift */,
+				BCE3D54625F1D01C0092F91B /* SwapChooseDestinationWalletViewController.swift */,
+			);
+			path = SwapChooseDestinationWallet;
 			sourceTree = "<group>";
 		};
 		BCD5E74425512D1500F51299 /* CollectionVC */ = {
@@ -1772,6 +1783,7 @@
 				BC290A00256B9C95002A727C /* SwapTokenWalletView.swift in Sources */,
 				BC3ADEA02570E1B9002B3B16 /* Transaction.swift in Sources */,
 				BCEF14B525CFF22100DFE931 /* _AddNewWalletVM.swift in Sources */,
+				BCD1896F25FB69D000668443 /* SwapDestinationWalletsCollectionView.swift in Sources */,
 				BCEF14BA25CFF27800DFE931 /* _AddNewWalletCell.swift in Sources */,
 				BCA93FB125ECD2250081DDF6 /* TokenSettingsCloseAccountConfirmationVC.swift in Sources */,
 				BC7533AA257F31D3007A00D9 /* LazyLabel.swift in Sources */,
