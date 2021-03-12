@@ -42,8 +42,9 @@ class MainContainer {
         return HomeViewController(viewModel: vm, scenesFactory: self)
     }
     
-    func makeMyProductsVC() -> MyProductsVC {
-        MyProductsVC(walletsVM: myWalletsVM, scenesFactory: self)
+    func makeMyProductsViewController() -> MyProductsViewController {
+        let viewModel = MyProductsViewModel(walletsVM: myWalletsVM)
+        return MyProductsViewController(viewModel: viewModel, scenesFactory: self)
     }
     
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController {

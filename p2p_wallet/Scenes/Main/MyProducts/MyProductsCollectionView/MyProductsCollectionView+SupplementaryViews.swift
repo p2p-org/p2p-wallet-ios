@@ -1,14 +1,14 @@
 //
-//  MyProductsVC+UICollectionReusableView.swift
+//  MyProductsCollectionView+SupplementaryViews.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 22/12/2020.
+//  Created by Chung Tran on 12/03/2021.
 //
 
 import Foundation
 import Action
 
-extension _MyProductsVC {
+extension MyProductsCollectionView {
     class FirstSectionHeaderView: SectionHeaderView {
         lazy var balancesOverviewView = BalancesOverviewView()
         
