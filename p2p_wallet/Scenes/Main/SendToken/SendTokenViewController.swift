@@ -47,8 +47,6 @@ class SendTokenViewController: WLIndicatorModalVC {
         
         containerView.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
-        
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideKeyboard)))
     }
     
     override func bind() {
