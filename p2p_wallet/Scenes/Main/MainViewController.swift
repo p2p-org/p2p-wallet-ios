@@ -30,6 +30,7 @@ class MainViewController: BaseVC {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        add(child: scenesFactory.makeHomeViewController())
+        let nc = BENavigationController(rootViewController: scenesFactory.makeHomeViewController())
+        add(child: nc)
     }
 }
