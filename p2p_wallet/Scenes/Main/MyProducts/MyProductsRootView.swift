@@ -50,11 +50,9 @@ class MyProductsRootView: BEView {
     private func layout() {
         let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
             UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.allMyTokens, textSize: 21, weight: .semibold)
-                    .padding(.init(x: 20, y: 0)),
+                UILabel(text: L10n.allMyTokens, textSize: 21, weight: .semibold),
                 UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .h5887ff)
                     .padding(.init(all: 10), backgroundColor: .eff3ff, cornerRadius: 12)
-                    .padding(.init(x: 20, y: 0))
                     .onTap(viewModel, action: #selector(MyProductsViewModel.addNewWallet))
             ])
                 .padding(.init(all: 20)),
