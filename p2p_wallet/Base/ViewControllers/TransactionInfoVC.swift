@@ -169,7 +169,7 @@ class TransactionInfoVC: BaseVStackVC {
             separator(),
             BEStackViewSpacing(20),
             
-            WLButton.stepButton(type: .sub, label: L10n.viewInBlockchainExplorer)
+            WLButton.stepButton(enabledColor: .f6f6f8, textColor: .a3a5ba, label: L10n.viewInBlockchainExplorer)
                 .onTap(self, action: #selector(buttonViewInExplorerDidTouch))
                 .padding(.init(x: 20, y: 0))
         ])

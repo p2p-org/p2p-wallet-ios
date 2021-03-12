@@ -15,7 +15,7 @@ class WLButton: UIButton {
             case .black:
                 return .black
             case .sub:
-                return .eff3ff
+                return .h202020
             case .blue:
                 return .h5887ff
             case .gray:
@@ -36,9 +36,7 @@ class WLButton: UIButton {
             switch self {
             case .gray:
                 return .black
-            case .sub:
-                return .h5887ff
-            case .blue, .black:
+            case .sub, .blue, .black:
                 return .white
             }
         }
@@ -52,7 +50,7 @@ class WLButton: UIButton {
     }
     
     static func stepButton(enabledColor: UIColor, disabledColor: UIColor? = nil, textColor: UIColor, label: String?) -> WLButton {
-        let button = WLButton(height: 56, backgroundColor: enabledColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: textColor)
+        let button = WLButton(height: 56, backgroundColor: enabledColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .semibold), textColor: textColor)
         button.enabledColor = enabledColor
         button.disabledColor = disabledColor
         return button
