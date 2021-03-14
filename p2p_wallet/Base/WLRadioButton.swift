@@ -22,7 +22,16 @@ class WLRadioButton: BEView {
     
     var isSelected: Bool = false {
         didSet {
-            border(width: isSelected ? 6: 2, color: isSelected ? .h5887ff: .a3a5ba)
+            resetBorder()
         }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        resetBorder()
+    }
+    
+    private func resetBorder() {
+        border(width: isSelected ? 6: 2, color: isSelected ? .h5887ff: .a3a5ba)
     }
 }
