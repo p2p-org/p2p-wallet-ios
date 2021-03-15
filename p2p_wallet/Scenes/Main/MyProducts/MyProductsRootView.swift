@@ -21,7 +21,7 @@ class MyProductsRootView: BEView {
             guard let pubkey = wallet.pubkey else {return}
             self.viewModel.showWalletDetail(pubkey: pubkey, symbol: wallet.symbol)
         }
-        collectionView.walletCellEditAction = Action<Wallet, Void> { wallet in
+        collectionView.walletCellEditAction = Action<Wallet, Void> {[unowned self] wallet in
             self.viewModel.showWalletSettings(wallet: wallet)
             return .just(())
         }
