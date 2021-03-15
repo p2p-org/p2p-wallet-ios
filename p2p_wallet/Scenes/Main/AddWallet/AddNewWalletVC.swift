@@ -29,8 +29,6 @@ class AddNewWalletVC: WLModalWrapperVC {
     
     init(viewModel: _AddNewWalletVM) {
         super.init(wrapped: _AddNewWalletVC(viewModel: viewModel))
-        modalPresentationStyle = .custom
-        transitioningDelegate = self
     }
     
     override func setUp() {
@@ -69,25 +67,5 @@ extension AddNewWalletVC: BESearchBarDelegate {
     
     func beSearchBarDidCancelSearching(_ searchBar: BESearchBar) {
         
-    }
-}
-
-extension AddNewWalletVC: UIViewControllerTransitioningDelegate {
-    class PresentationController: CustomHeightPresentationController {
-        override func containerViewDidLayoutSubviews() {
-            super.containerViewDidLayoutSubviews()
-            presentedView?.roundCorners([.topLeft, .topRight], radius: 20)
-        }
-    }
-    
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        PresentationController(height: {
-            if UIDevice.current.userInterfaceIdiom == .phone, UIDevice.current.orientation == .landscapeLeft ||
-                UIDevice.current.orientation == .landscapeRight
-            {
-                return UIScreen.main.bounds.height
-            }
-            return UIScreen.main.bounds.height - 85.adaptiveHeight
-        }, presentedViewController: presented, presenting: presenting)
     }
 }
