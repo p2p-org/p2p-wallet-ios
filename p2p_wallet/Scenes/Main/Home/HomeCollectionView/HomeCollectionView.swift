@@ -22,12 +22,6 @@ class HomeCollectionView: CollectionView<HomeItem, HomeCollectionViewModel> {
     
     var walletCellEditAction: Action<Wallet, Void>?
     
-    // MARK: - Lazy actions
-    lazy var showHideHiddenWalletsAction = CocoaAction {
-        self.viewModel.walletsVM.toggleIsHiddenWalletShown()
-        return .just(())
-    }
-    
     // MARK: - Initializers
     init(viewModel: HomeCollectionViewModel) {
         super.init(viewModel: viewModel, sections: [
@@ -192,7 +186,10 @@ class HomeCollectionView: CollectionView<HomeItem, HomeCollectionViewModel> {
             }
         case 1:
             if let view = header as? HiddenWalletsSectionHeaderView {
-                view.showHideHiddenWalletsAction = showHideHiddenWalletsAction
+                view.showHideHiddenWalletsAction = CocoaAction { [weak self] in
+                    self?.viewModel.walletsVM.toggleIsHiddenWalletShown()
+                    return .just(())
+                }
             }
         default:
             break
