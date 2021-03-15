@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Action
 
 class MyProductsCollectionView: WalletsCollectionView {
     init(viewModel: WalletsVM) {
@@ -38,8 +39,11 @@ class MyProductsCollectionView: WalletsCollectionView {
             }
         case 1:
             if let view = header as? HiddenWalletsSectionHeaderView {
-                
-//                view.showHideHiddenWalletsAction = showHideHiddenWalletsAction
+                setUpHeaderForHiddenWalletsSection(view)
+                view.showHideHiddenWalletsAction = CocoaAction { [weak self] in
+                    self?.viewModel.toggleIsHiddenWalletShown()
+                    return .just(())
+                }
             }
         default:
             break
@@ -56,15 +60,29 @@ class MyProductsCollectionView: WalletsCollectionView {
         }
         
         if let headerView = headerForSection(1) as? HiddenWalletsSectionHeaderView {
+            setUpHeaderForHiddenWalletsSection(headerView)
+        }
+    }
+    
+    private func setUpHeaderForHiddenWalletsSection(_ headerView: HiddenWalletsSectionHeaderView) {
+        if viewModel.isHiddenWalletsShown.value {
+            headerView.imageView.tintColor = .textBlack
+            headerView.imageView.image = .visibilityHide
+            headerView.headerLabel.textColor = .textBlack
+            headerView.headerLabel.text = L10n.hide
+        } else {
+            headerView.imageView.tintColor = .textSecondary
+            headerView.imageView.image = .visibilityShow
+            headerView.headerLabel.textColor = .textSecondary
             headerView.headerLabel.text = L10n.dHiddenWallet(viewModel.hiddenWallets().count)
-            if viewModel.hiddenWallets().isEmpty {
-                headerView.removeStackView {
-                    self.collectionView.collectionViewLayout.invalidateLayout()
-                }
-            } else {
-                headerView.addStackView {
-                    self.collectionView.collectionViewLayout.invalidateLayout()
-                }
+        }
+        if viewModel.hiddenWallets().isEmpty {
+            headerView.removeStackView {
+                self.collectionView.collectionViewLayout.invalidateLayout()
+            }
+        } else {
+            headerView.addStackView {
+                self.collectionView.collectionViewLayout.invalidateLayout()
             }
         }
     }

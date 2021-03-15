@@ -35,10 +35,10 @@ class WalletsCollectionView: CollectionView<Wallet, WalletsVM> {
         // hiddenWallet
         let hiddenWalletSections = sections[1].header?.title ?? "Hidden"
         var hiddenItems = [CollectionViewItem<Wallet>]()
-//        if viewModel.isHiddenWalletsShown.value {
+        if viewModel.isHiddenWalletsShown.value {
             hiddenItems = viewModel.hiddenWallets()
                 .map {CollectionViewItem(value: $0)}
-//        }
+        }
         snapshot.appendSections([hiddenWalletSections])
         snapshot.appendItems(hiddenItems, toSection: hiddenWalletSections)
         return snapshot
