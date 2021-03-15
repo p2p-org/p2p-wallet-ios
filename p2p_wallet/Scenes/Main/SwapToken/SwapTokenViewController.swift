@@ -53,43 +53,46 @@ class SwapTokenViewController: WLIndicatorModalVC {
     override func bind() {
         super.bind()
         viewModel.navigationSubject
-            .subscribe(onNext: {
-                switch $0 {
-                case .chooseSourceWallet:
-                    let vc = self.scenesFactory.makeChooseWalletVC(customFilter: nil)
-                    vc.completion = {wallet in
-                        let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
-                        self.viewModel.sourceWallet.accept(wallet)
-//                        self.sourceWalletView.amountTextField.becomeFirstResponder()
-                        vc.back()
-                    }
-                    self.presentCustomModal(vc: vc, title: L10n.selectWallet)
-                case .chooseDestinationWallet:
-                    let vc = self.scenesFactory.makeSwapChooseDestinationWalletVC
-                    {
-                        let sourceWalletPubkey = self.viewModel.sourceWallet.value?.pubkey
-                        let sourceWalletMint = self.viewModel.sourceWallet.value?.mintAddress
-                        return $0.pubkey != sourceWalletPubkey &&
-                            self.viewModel.pools.value?.matchedPool(sourceMint: sourceWalletMint, destinationMint: $0.mintAddress) != nil
-                    }
-                    vc.completion = {wallet in
-                        self.viewModel.destinationWallet.accept(wallet)
-//                        self.destination.amountTextField.becomeFirstResponder()
-                        vc.back()
-                    }
-                    self.presentCustomModal(vc: vc, title: L10n.selectWallet)
-                case .chooseSlippage:
-                    let vc = SwapSlippageSettingsVC(slippage: Defaults.slippage * 100)
-                    vc.completion = {slippage in
-                        Defaults.slippage = slippage / 100
-                        self.viewModel.slippage.accept(slippage / 100)
-                    }
-                    self.present(vc, animated: true, completion: nil)
-                case .processTransaction:
-                    let vc = ProcessTransactionViewController(viewModel: self.viewModel.processTransactionViewModel)
-                    self.present(vc, animated: true, completion: nil)
-                }
-            })
+            .subscribe(onNext: { [unowned self] in self.navigate(to: $0)})
             .disposed(by: disposeBag)
+    }
+    
+    // MARK: - Navigation
+    private func navigate(to scene: SwapTokenNavigatableScene) {
+        switch scene {
+        case .chooseSourceWallet:
+            let vc = self.scenesFactory.makeChooseWalletVC(customFilter: nil)
+            vc.completion = {wallet in
+                let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
+                self.viewModel.sourceWallet.accept(wallet)
+//                        self.sourceWalletView.amountTextField.becomeFirstResponder()
+                vc.back()
+            }
+            self.presentCustomModal(vc: vc, title: L10n.selectWallet)
+        case .chooseDestinationWallet:
+            let vc = self.scenesFactory.makeSwapChooseDestinationWalletVC
+            {
+                let sourceWalletPubkey = self.viewModel.sourceWallet.value?.pubkey
+                let sourceWalletMint = self.viewModel.sourceWallet.value?.mintAddress
+                return $0.pubkey != sourceWalletPubkey &&
+                    self.viewModel.pools.value?.matchedPool(sourceMint: sourceWalletMint, destinationMint: $0.mintAddress) != nil
+            }
+            vc.completion = {wallet in
+                self.viewModel.destinationWallet.accept(wallet)
+//                        self.destination.amountTextField.becomeFirstResponder()
+                vc.back()
+            }
+            self.presentCustomModal(vc: vc, title: L10n.selectWallet)
+        case .chooseSlippage:
+            let vc = SwapSlippageSettingsVC(slippage: Defaults.slippage * 100)
+            vc.completion = {slippage in
+                Defaults.slippage = slippage / 100
+                self.viewModel.slippage.accept(slippage / 100)
+            }
+            self.present(vc, animated: true, completion: nil)
+        case .processTransaction:
+            let vc = ProcessTransactionViewController(viewModel: self.viewModel.processTransactionViewModel)
+            self.present(vc, animated: true, completion: nil)
+        }
     }
 }
