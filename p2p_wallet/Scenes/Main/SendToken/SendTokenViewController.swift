@@ -52,34 +52,37 @@ class SendTokenViewController: WLIndicatorModalVC {
     override func bind() {
         super.bind()
         viewModel.navigationSubject
-            .subscribe(onNext: {
-                switch $0 {
-                case .chooseWallet:
-                    let vc = self.scenesFactory.makeChooseWalletVC(customFilter: nil)
-                    vc.completion = {wallet in
-                        guard let wallet = self.viewModel.walletsVM.data.first(where: {$0.pubkey == wallet.pubkey}) else {return}
-                        vc.back()
-                        self.viewModel.currentWallet.accept(wallet)
-                    }
-                    self.presentCustomModal(vc: vc, title: L10n.selectWallet)
-                case .chooseAddress:
-                    break
-                case .scanQrCode:
-                    let vc = QrCodeScannerVC()
-                    vc.callback = { code in
-                        if NSRegularExpression.publicKey.matches(code) {
-                            self.viewModel.destinationAddressInput.accept(code)
-                            return true
-                        }
-                        return false
-                    }
-                    vc.modalPresentationStyle = .custom
-                    self.present(vc, animated: true, completion: nil)
-                case .processTransaction:
-                    let vc = ProcessTransactionViewController(viewModel: self.viewModel.processTransactionViewModel)
-                    self.present(vc, animated: true, completion: nil)
-                }
-            })
+            .subscribe(onNext: {[unowned self] in self.navigate(to: $0)})
             .disposed(by: disposeBag)
+    }
+    
+    // MARK: - Navigation
+    private func navigate(to scene: SendTokenNavigatableScene) {
+        switch scene {
+        case .chooseWallet:
+            let vc = self.scenesFactory.makeChooseWalletVC(customFilter: nil)
+            vc.completion = {wallet in
+                guard let wallet = self.viewModel.walletsVM.data.first(where: {$0.pubkey == wallet.pubkey}) else {return}
+                vc.back()
+                self.viewModel.currentWallet.accept(wallet)
+            }
+            self.presentCustomModal(vc: vc, title: L10n.selectWallet)
+        case .chooseAddress:
+            break
+        case .scanQrCode:
+            let vc = QrCodeScannerVC()
+            vc.callback = { code in
+                if NSRegularExpression.publicKey.matches(code) {
+                    self.viewModel.destinationAddressInput.accept(code)
+                    return true
+                }
+                return false
+            }
+            vc.modalPresentationStyle = .custom
+            self.present(vc, animated: true, completion: nil)
+        case .processTransaction:
+            let vc = ProcessTransactionViewController(viewModel: self.viewModel.processTransactionViewModel)
+            self.present(vc, animated: true, completion: nil)
+        }
     }
 }

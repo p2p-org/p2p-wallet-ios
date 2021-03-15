@@ -161,12 +161,12 @@ class CollectionView<T: Hashable, ViewModel: ListViewModel<T>>: BEView {
     
     // MARK: - Datasource
     private func configureDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<String, CollectionViewItem<T>>(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, item: CollectionViewItem<T>) -> UICollectionViewCell? in
-            self.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
+        dataSource = UICollectionViewDiffableDataSource<String, CollectionViewItem<T>>(collectionView: collectionView) { [weak self] (collectionView: UICollectionView, indexPath: IndexPath, item: CollectionViewItem<T>) -> UICollectionViewCell? in
+            self?.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         }
                 
-        dataSource.supplementaryViewProvider = { (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
-            self.configureSupplementaryView(collectionView: collectionView, kind: kind, indexPath: indexPath)
+        dataSource.supplementaryViewProvider = { [weak self] (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
+            self?.configureSupplementaryView(collectionView: collectionView, kind: kind, indexPath: indexPath)
         }
     }
     
