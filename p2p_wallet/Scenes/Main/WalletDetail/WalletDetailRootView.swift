@@ -39,8 +39,12 @@ class WalletDetailRootView: BEView {
                 itemHeight: .absolute(71)
             )
         ])
-        collectionView.itemDidSelect = {
+        collectionView.itemDidSelect = { [unowned self] in
             self.viewModel.navigationSubject.onNext(.transactionInfo($0))
+        }
+        collectionView.receiveAction = CocoaAction { [unowned self] in
+            self.viewModel.receiveTokens()
+            return .just(())
         }
         return collectionView
     }()
@@ -134,12 +138,8 @@ class WalletDetailRootView: BEView {
         viewModel.wallet
             .filter {$0 != nil}
             .map {$0!}
-            .subscribe(onNext: {wallet in
+            .subscribe(onNext: {[unowned self] wallet in
                 self.collectionView.wallet = wallet
-                self.collectionView.receiveAction = CocoaAction {
-                    self.viewModel.receiveTokens()
-                    return .just(())
-                }
                 if let header = self.collectionView.headerForSection(0) as? WDVCSectionHeaderView
                 {
                     self.collectionView.reloadHeader(header)
@@ -152,7 +152,7 @@ class WalletDetailRootView: BEView {
             .skip(1)
             .map {$0.trimmingCharacters(in: .whitespacesAndNewlines)}
             .distinctUntilChanged()
-            .subscribe(onNext: {
+            .subscribe(onNext: {[unowned self] in
                 if let wallet = self.viewModel.wallet.value {
                     var newName = $0
                     if $0.isEmpty {

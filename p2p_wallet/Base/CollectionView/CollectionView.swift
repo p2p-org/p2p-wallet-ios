@@ -72,7 +72,7 @@ class CollectionView<T: Hashable, ViewModel: ListViewModel<T>>: BEView {
                 .debounce(.nanoseconds(1), scheduler: MainScheduler.instance)
         }
         observable
-            .subscribe(onNext: { (_) in
+            .subscribe(onNext: { [unowned self] (_) in
                 let snapshot = self.mapDataToSnapshot()
                 self.dataSource.apply(snapshot)
                 DispatchQueue.main.async {
@@ -82,7 +82,7 @@ class CollectionView<T: Hashable, ViewModel: ListViewModel<T>>: BEView {
             .disposed(by: disposeBag)
         
         collectionView.rx.didEndDecelerating
-            .subscribe(onNext: {
+            .subscribe(onNext: { [unowned self] in
                 // Load more
                 if self.viewModel.isPaginationEnabled {
                     if self.collectionView.contentOffset.y > 0 {
@@ -103,7 +103,7 @@ class CollectionView<T: Hashable, ViewModel: ListViewModel<T>>: BEView {
             .disposed(by: disposeBag)
         
 //        collectionView.rx.itemSelected
-//            .subscribe(onNext: {indexPath in
+//            .subscribe(onNext: {[unowned self] indexPath in
 //                guard let item = self.dataSource.itemIdentifier(for: indexPath) else {return}
 //                if item.isPlaceholder {
 //                    return

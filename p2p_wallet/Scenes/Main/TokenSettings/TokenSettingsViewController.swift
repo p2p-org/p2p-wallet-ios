@@ -45,7 +45,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     override func bind() {
         super.bind()
         viewModel.navigationSubject
-            .subscribe(onNext: {self.navigate(to: $0)})
+            .subscribe(onNext: {[unowned self] in self.navigate(to: $0)})
             .disposed(by: disposeBag)
     }
     

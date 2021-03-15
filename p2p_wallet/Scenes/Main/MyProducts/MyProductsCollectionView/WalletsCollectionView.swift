@@ -46,13 +46,13 @@ class WalletsCollectionView: CollectionView<Wallet, WalletsVM> {
     
     override func setUpCell(cell: UICollectionViewCell, withItem wallet: Wallet?) {
         super.setUpCell(cell: cell, withItem: wallet)
-        (cell as? EditableWalletCell)?.editAction = CocoaAction {
+        (cell as? EditableWalletCell)?.editAction = CocoaAction { [unowned self] in
             if let wallet = wallet {
                 self.walletCellEditAction?.execute(wallet)
             }
             return .just(())
         }
-        (cell as? EditableWalletCell)?.hideAction = CocoaAction {
+        (cell as? EditableWalletCell)?.hideAction = CocoaAction { [unowned self] in
             if let wallet = wallet {
                 if wallet.isHidden {
                     self.viewModel.unhideWallet(wallet)
