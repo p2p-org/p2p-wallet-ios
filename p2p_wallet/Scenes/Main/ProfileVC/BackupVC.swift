@@ -19,11 +19,11 @@ class BackupVC: ProfileVCBase {
     lazy var isIcloudBackedUp = BehaviorRelay<Bool>(value: accountStorage.didBackupUsingIcloud)
     var backedUpIcloudCompletion: (() -> Void)?
     
-    lazy var shieldImageView = UIImageView(width: 63, height: 77, image: .backupShield)
-    lazy var titleLabel = UILabel(textSize: 17, weight: .bold, numberOfLines: 0, textAlignment: .center)
-    lazy var descriptionLabel = UILabel(textSize: 17, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
+    lazy var shieldImageView = UIImageView(width: 80, height: 100, image: .backupShield)
+    lazy var titleLabel = UILabel(textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
+    lazy var descriptionLabel = UILabel(textSize: 15, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
     lazy var backupUsingIcloudButton = WLButton.stepButton(type: .black, label: " " + L10n.backupUsingICloud)
-    lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .eff3ff, textColor: .textBlack, label: L10n.backupManually)
+    lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .f6f6f8, textColor: .textBlack, label: L10n.backupManually)
     
     init(accountStorage: KeychainAccountStorage, scenesFactory: BackupScenesFactory) {
         self.accountStorage = accountStorage
@@ -65,7 +65,7 @@ class BackupVC: ProfileVCBase {
             BEStackViewSpacing(10),
             backupMannuallyButton
                 .onTap(self, action: #selector(buttonBackupManuallyDidTouch))
-                .padding(.init(x: 20, y: 0))
+                .padding(UIEdgeInsets.init(x: 20, y: 0).modifying(dBottom: 20))
         ])
         
         spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor)
