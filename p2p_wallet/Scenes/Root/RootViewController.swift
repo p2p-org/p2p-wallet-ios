@@ -54,7 +54,7 @@ class RootViewController: BaseVC {
             .disposed(by: disposeBag)
         
         viewModel.authenticationSubject
-            .subscribe(onNext: {self.authenticate()})
+            .subscribe(onNext: {[unowned self] in self.authenticate()})
             .disposed(by: disposeBag)
     }
     
