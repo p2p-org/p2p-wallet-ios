@@ -161,7 +161,12 @@ extension QrCodeScannerVC {
     private var cameraAuthorized: Bool {
         let status = AVCaptureDevice.authorizationStatus(for: .video)
         if status == .restricted || status == .denied {
-            showAlert(title: L10n.changeYourSettingsToUseCameraForScanningQrCode, message: L10n.ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode.pleaseEnableItInSettings, buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
+            showAlert(
+                title: L10n.changeYourSettingsToUseCameraForScanningQrCode,
+                message: L10n.ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode.pleaseEnableItInSettings,
+                buttonTitles: [L10n.ok, L10n.cancel],
+                highlightedButtonIndex: 0)
+            { (index) in
                 if index == 0 {
                     guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
                         return

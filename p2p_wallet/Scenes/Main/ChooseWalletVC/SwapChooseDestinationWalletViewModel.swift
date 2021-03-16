@@ -40,7 +40,7 @@ class SwapChooseDestinationViewModel: WalletsVM {
                         else {return .error(SolanaSDK.Error.other("Mint address is not valid"))}
                         return solanaSDK.getMintData(mintAddress: mint)
                             .map {Int($0.decimals)}
-                            .catchErrorJustReturn(0)
+                            .catchAndReturn(0)
                     }
             )
                 .map {decimalInfos -> [Wallet] in

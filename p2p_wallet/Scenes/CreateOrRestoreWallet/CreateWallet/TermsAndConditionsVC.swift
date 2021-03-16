@@ -32,7 +32,14 @@ class TermsAndConditionsVC: BaseVStackVC {
     override func setUp() {
         super.setUp()
         // TODO: - Change later
-        let label = UILabel(text: "Physiological respiration involves the mechanisms that ensure that the composition of the functional residual capacity is kept constant, and equilibrates with the gases dissolved in the pulmonary capillary blood, and thus throughout the body. Thus, in precise usage, the words breathing and ventilation are hyponyms, not synonyms, of respiration; but this prescription is not consistently followed, even by most health care providers, because the term respiratory rate (RR) is a well-established term in health care, even though it would need to be consistently replaced with ventilation rate if the precise usage were to be followed. (RR) is a well-established term in health care, even though it would need to be consistently replaced with ventilation rate if the precise usage were to be followed.", numberOfLines: 0)
+        let text = """
+        Physiological respiration involves the mechanisms that ensure that the composition of the functional residual capacity is kept constant, and equilibrates with the gases dissolved in the pulmonary capillary blood, and thus throughout the body.
+        Thus, in precise usage, the words breathing and ventilation are hyponyms, not synonyms, of respiration;
+            but this prescription is not consistently followed, even by most health care providers, because the term respiratory rate (RR) is a well-established term in health care,
+            even though it would need to be consistently replaced with ventilation rate if the precise usage were to be followed.
+        (RR) is a well-established term in health care, even though it would need to be consistently replaced with ventilation rate if the precise usage were to be followed.
+        """
+        let label = UILabel(text: text, numberOfLines: 0)
         
         stackView.spacing = 20
         stackView.addArrangedSubviews([

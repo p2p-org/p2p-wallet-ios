@@ -18,7 +18,13 @@ class SwapTokenWalletView: BEView {
     
     lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
     
-    lazy var amountTextField = TokenAmountTextField(font: .systemFont(ofSize: 27, weight: .semibold), textColor: .textBlack, keyboardType: .decimalPad, placeholder: "0\(Locale.current.decimalSeparator ?? ".")0", autocorrectionType: .no/*, rightView: useAllBalanceButton, rightViewMode: .always*/)
+    lazy var amountTextField = TokenAmountTextField(
+        font: .systemFont(ofSize: 27, weight: .semibold),
+        textColor: .textBlack,
+        keyboardType: .decimalPad,
+        placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+        autocorrectionType: .no/*, rightView: useAllBalanceButton, rightViewMode: .always*/
+    )
     
     lazy var equityValueLabel = UILabel(text: "≈ 0.00 $", weight: .semibold, textColor: .textSecondary)
     

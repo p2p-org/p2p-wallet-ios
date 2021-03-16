@@ -124,4 +124,14 @@ class MainContainer {
     }
 }
 
-extension MainContainer: TabBarScenesFactory, MyWalletsScenesFactory, ProfileScenesFactory, SwapScenesFactory, WalletDetailScenesFactory, SendTokenScenesFactory, BackupScenesFactory, AddNewWalletScenesFactory, HomeScenesFactory, ChangeNetworkResponder, _MainScenesFactory {}
+extension MainContainer: TabBarScenesFactory,
+                         MyWalletsScenesFactory,
+                         ProfileScenesFactory,
+                         SwapScenesFactory,
+                         WalletDetailScenesFactory,
+                         SendTokenScenesFactory,
+                         BackupScenesFactory,
+                         AddNewWalletScenesFactory,
+                         HomeScenesFactory,
+                         ChangeNetworkResponder,
+                         _MainScenesFactory {}

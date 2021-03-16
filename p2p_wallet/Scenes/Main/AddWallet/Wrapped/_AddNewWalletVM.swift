@@ -128,7 +128,7 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
                     let vc = self.scenesFactory.makeWalletDetailViewController(pubkey: newPubkey, symbol: newWallet.symbol)
                         self.navigatorSubject.onNext(.present(vc))
                     },
-                    onError: { (error) in
+                    onFailure: { (error) in
                         let description = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                         self.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
                             var wallet = $0
