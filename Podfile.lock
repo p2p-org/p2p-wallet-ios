@@ -4,10 +4,6 @@ PODS:
     - RxSwift (~> 6.0)
   - Alamofire (5.4.1)
   - ASKSecp256k1 (0.0.6)
-  - BECollectionView (0.1.0):
-    - ListPlaceholder
-    - PureLayout
-    - RxCocoa
   - BEPureLayout (0.2.1):
     - PureLayout
   - Charts (3.6.0):
@@ -86,7 +82,6 @@ PODS:
   - LazySubject (0.1.0):
     - RxCocoa
     - RxSwift
-  - ListPlaceholder (1.4)
   - MBProgressHUD (1.2.0)
   - nanopb (2.30907.0):
     - nanopb/decode (= 2.30907.0)
@@ -136,7 +131,6 @@ PODS:
 
 DEPENDENCIES:
   - Action
-  - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
   - Charts
   - Firebase/Analytics
@@ -175,7 +169,6 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleUtilities
     - KeychainSwift
-    - ListPlaceholder
     - MBProgressHUD
     - nanopb
     - PromisesObjC
@@ -198,8 +191,6 @@ SPEC REPOS:
     - "UITextView+Placeholder"
 
 EXTERNAL SOURCES:
-  BECollectionView:
-    :path: BECollectionView
   BEPureLayout:
     :path: BEPureLayout
   LazySubject:
@@ -218,7 +209,6 @@ SPEC CHECKSUMS:
   Action: 9891cd1b0a9047557d7e58e8dfae743e19d08197
   Alamofire: 2291f7d21ca607c491dd17642e5d40fdcda0e65c
   ASKSecp256k1: 58eb44dfa57f9d29ac0b02fe5de5a312064517f2
-  BECollectionView: 098e19a8d0f4ecaa96018ec43fe776e5dc60f4fe
   BEPureLayout: 5421e716fb120f196677d9c875cd1fb305af2cea
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   CryptoSwift: 01b0f0cba1d5c212e5a335ff6c054fb75a204f00
@@ -233,7 +223,6 @@ SPEC CHECKSUMS:
   GoogleUtilities: e1d9ed4e544fc32a93e00e721400cbc3f377200d
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   LazySubject: 9eb19a8524f377efd877f44d9f48c17be7962ebd
-  ListPlaceholder: 08ddaddf67520a20fc52cf37160fb56aa64d071d
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   nanopb: 59221d7f958fb711001e6a449489542d92ae113e
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
@@ -257,6 +246,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 4417d9ab4cd855a39927708171880213466116cc
+PODFILE CHECKSUM: 12a5e7d1f97ce856fc3a0d15a4ca4d4cfd2d4953
 
 COCOAPODS: 1.10.1
