@@ -70,7 +70,7 @@ class ProfileVC: ProfileVCBase {
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             createCell(
-                image: nil,
+                image: .settingsLanguage,
                 text: L10n.language,
                 descriptionView: activeLanguageLabel
             )

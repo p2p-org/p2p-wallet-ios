@@ -9,6 +9,8 @@ import Foundation
 import THPinViewController
 
 class BaseCreatePassCodeVC: PassCodeVC {
+    lazy var backButton = UIImageView(width: 36, height: 36, image: .backButtonLight)
+        .onTap(self, action: #selector(back))
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .hidden }
     var passcode: String?
     
@@ -19,6 +21,13 @@ class BaseCreatePassCodeVC: PassCodeVC {
         set {
             embededPinVC.disableDismissAfterCompletion = newValue
         }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.addSubview(backButton)
+        backButton.autoPinEdge(toSuperviewEdge: .top, withInset: 20)
+        backButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
     }
 }
 
@@ -31,9 +40,9 @@ class CreatePassCodeVC: BaseCreatePassCodeVC {
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        promptTitle = L10n.createAPINCodeToProtectYourWallet
+    init(promptTitle: String = L10n.createAPINCodeToProtectYourWallet) {
+        super.init()
+        self.promptTitle = promptTitle
     }
     
     override func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
@@ -51,24 +60,14 @@ class CreatePassCodeVC: BaseCreatePassCodeVC {
 }
 
 private class ConfirmPasscodeVC: BaseCreatePassCodeVC {
-    lazy var backButton = UIImageView(width: 36, height: 36, image: .backButtonLight)
-        .onTap(self, action: #selector(back))
-    
-    init(currentPasscode: String) {
+    init(currentPasscode: String, promptTitle: String = L10n.confirmPINCode.uppercaseFirst) {
         super.init()
         self.passcode = currentPasscode
+        self.promptTitle = promptTitle
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        promptTitle = L10n.confirmPINCode.uppercaseFirst
-        view.addSubview(backButton)
-        backButton.autoPinEdge(toSuperviewEdge: .top, withInset: 20)
-        backButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
     }
     
     override func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
