@@ -23,6 +23,8 @@ class BaseCreatePassCodeVC: PassCodeVC {
 }
 
 class CreatePassCodeVC: BaseCreatePassCodeVC {
+    lazy var backButton = UIImageView(width: 36, height: 36, image: .backButtonLight)
+        .onTap(self, action: #selector(back))
     fileprivate var confirmPasscodeVC: ConfirmPasscodeVC?
     
     override var disableDismissAfterCompletion: Bool {
@@ -34,6 +36,10 @@ class CreatePassCodeVC: BaseCreatePassCodeVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         promptTitle = L10n.createAPINCodeToProtectYourWallet
+        
+        view.addSubview(backButton)
+        backButton.autoPinEdge(toSuperviewEdge: .top, withInset: 20)
+        backButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
     }
     
     override func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
