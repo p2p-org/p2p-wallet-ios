@@ -29,7 +29,19 @@ class SwapSlippageSettingsVC: WLModalVC {
                     .onTap(self, action: #selector(buttonCustomSlippageDidTouch))
             ]
     )
-    lazy var customSlippageTextField = PercentSuffixTextField(height: 56, backgroundColor: .f6f6f8, cornerRadius: 12, font: .systemFont(ofSize: 17), textColor: .black, placeholder: nil, autocorrectionType: .no, autocapitalizationType: UITextAutocapitalizationType.none, spellCheckingType: .no, horizontalPadding: 16, showClearButton: true)
+    lazy var customSlippageTextField = PercentSuffixTextField(
+        height: 56,
+        backgroundColor: .f6f6f8,
+        cornerRadius: 12,
+        font: .systemFont(ofSize: 17),
+        textColor: .black,
+        placeholder: nil,
+        autocorrectionType: .no,
+        autocapitalizationType: UITextAutocapitalizationType.none,
+        spellCheckingType: .no,
+        horizontalPadding: 16,
+        showClearButton: true
+    )
     lazy var doneButton = WLButton.stepButton(type: .blue, label: L10n.done)
         .onTap(self, action: #selector(buttonDoneDidTouch))
     

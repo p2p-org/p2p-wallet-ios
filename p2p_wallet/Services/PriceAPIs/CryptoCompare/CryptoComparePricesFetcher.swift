@@ -35,7 +35,7 @@ class CryptoComparePricesFetcher: PricesFetcher {
         case .last1h:
             path += "/histominute?limit=60"
         case .last4h:
-            path += "/histominute?limit=240" //60*4
+            path += "/histominute?limit=240" // 60*4
         case .day:
             path += "/histohour?limit=24"
         case .week:
