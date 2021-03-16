@@ -31,22 +31,28 @@ class WDVCSectionHeaderView: SectionHeaderView {
         super.commonInit()
         stackView.alignment = .fill
         
-        stackView.insertArrangedSubviews([
-            amountLabel.padding(.init(x: 20, y: 0)),
-            
+        // [20, 40]
+        var index = 0
+        stackView.insertArrangedSubviewsWithCustomSpacing([
+            amountLabel
+                .padding(.init(x: 20, y: 0)),
+            BEStackViewSpacing(10),
             UIView.row([
-                tokenCountLabel,
+                tokenCountLabel
 //                changeLabel
-            ]).padding(.init(x: 20, y: 0)),
-            
-            .separator(height: 2, color: .separator),
-            
-            lineChartView.padding(.init(x: -10, y: 0)),
-            
-            .separator(height: 1, color: .separator),
-            
-            chartPicker.padding(.init(x: 20, y: 0)),
-            
+            ])
+                .padding(.init(x: 20, y: 0)),
+            BEStackViewSpacing(16),
+            UIView.separator(height: 2, color: .separator),
+            BEStackViewSpacing(0),
+            lineChartView
+                .padding(.init(x: -10, y: 0)),
+            BEStackViewSpacing(0),
+            UIView.separator(height: 1, color: .separator),
+            BEStackViewSpacing(10),
+            chartPicker
+                .padding(.init(x: 20, y: 0)),
+            BEStackViewSpacing(20),
             UIView.row([
                 UIView.col([
                     walletAddressLabel,
@@ -58,9 +64,10 @@ class WDVCSectionHeaderView: SectionHeaderView {
                     .onTap(self, action: #selector(buttonScanQrCodeDidTouch))
             ])
                 .with(spacing: 20, alignment: .center, distribution: .fill)
-            .padding(.init(x: 16, y: 10), backgroundColor: .background4, cornerRadius: 12)
-                .padding(.init(x: 20, y: 0))
-        ], at: 0, withCustomSpacings: [10, 16, 0, 0, 10, 20, 40])
+                .padding(.init(x: 16, y: 10), backgroundColor: .background4, cornerRadius: 12)
+                .padding(.init(x: 20, y: 0)),
+            BEStackViewSpacing(40)
+        ], at: &index)
         
         // initial setups
         headerLabel.font = .systemFont(ofSize: 21, weight: .semibold)

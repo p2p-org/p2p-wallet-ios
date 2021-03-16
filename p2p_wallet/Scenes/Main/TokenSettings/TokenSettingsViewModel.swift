@@ -95,7 +95,7 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
         
         Single.zip(
             solanaSDK.closeTokenAccount(tokenPubkey: pubkey),
-            solanaSDK.getCreatingTokenAccountFee().catchErrorJustReturn(0)
+            solanaSDK.getCreatingTokenAccountFee().catchAndReturn(0)
         )
             .subscribe(onSuccess: { signature, fee in
                 transaction.amount = fee.convertToBalance(decimals: 9)
@@ -105,7 +105,7 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
                 )
                 self.transactionManager.process(transaction)
                 self.walletsVM.removeItem(where: {$0.pubkey == self.pubkey})
-            }, onError: {error in
+            }, onFailure: {error in
                 self.processTransactionViewModel.transactionHandler.accept(
                     TransactionHandler(transaction: transaction, error: error)
                 )

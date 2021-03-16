@@ -30,8 +30,8 @@ extension PricesFetcher {
                 Logger.log(message: "\(endpoint)\(path)", event: .request, apiMethod: "getPrices")
             })
             .map {try JSONDecoder().decode(T.self, from: $0.1)}
-            .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
-            .observeOn(MainScheduler.instance)
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .observe(on: MainScheduler.instance)
     }
 }
 
