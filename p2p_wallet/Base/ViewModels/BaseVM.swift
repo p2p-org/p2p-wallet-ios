@@ -27,7 +27,7 @@ class BaseVM<T: Hashable> {
         request
             .subscribe(onSuccess: {newData in
                 self.handleNewData(newData)
-            }, onError: {error in
+            }, onFailure: {error in
                 self.handleError(error)
             })
             .disposed(by: disposeBag)

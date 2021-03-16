@@ -35,7 +35,7 @@ struct BonfidaPricesFetcher: PricesFetcher {
                                 )
                             ))
                         }
-                        .catchErrorJustReturn((coin, nil))
+                        .catchAndReturn((coin, nil))
                 }
         )
         .map {prices in

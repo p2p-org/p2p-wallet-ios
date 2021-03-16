@@ -60,7 +60,7 @@ class PricesManager {
             .subscribe(onSuccess: {[weak self] prices in
                 guard let self = self else {return}
                 self.updateCurrentPrices(prices)
-            }, onError: {error in
+            }, onFailure: {error in
                 Logger.log(message: "Error fetching price \(error)", event: .error)
             })
             .disposed(by: disposeBag)

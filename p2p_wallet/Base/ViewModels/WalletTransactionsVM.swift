@@ -52,13 +52,13 @@ class WalletTransactionsVM: ListViewModel<Transaction> {
                                         transaction.timestamp = timestamp
                                         return transaction
                                     })
-                                }, onError: {error in
+                                }, onFailure: {error in
                                     // TODO: Handle error
                                 })
                                 .disposed(by: self.disposeBag)
                         }
                         
-                    }, onError: {error in
+                    }, onFailure: {error in
                         // TODO: Handle error
                     })
                     .disposed(by: self.disposeBag)
