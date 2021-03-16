@@ -9,16 +9,21 @@ import Foundation
 import MBProgressHUD
 
 extension UIApplication {
+    private var kWindow: UIWindow? {
+        // keyWindow is deprecated
+        UIApplication.shared.windows.first { $0.isKeyWindow }
+    }
+    
     func showIndetermineHudWithMessage(_ message: String?) {
-        keyWindow?.showIndetermineHudWithMessage(message)
+        kWindow?.showIndetermineHudWithMessage(message)
     }
     
     func hideHud() {
-        keyWindow?.hideHud()
+        kWindow?.hideHud()
     }
     
     func showDone(_ message: String, completion: (() -> Void)? = nil) {
-        guard let keyWindow = keyWindow else {return}
+        guard let keyWindow = kWindow else {return}
         
         // Hide all previous hud
         hideHud()

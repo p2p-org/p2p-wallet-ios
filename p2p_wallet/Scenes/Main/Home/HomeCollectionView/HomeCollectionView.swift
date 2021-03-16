@@ -175,7 +175,6 @@ class HomeCollectionView: CollectionView<HomeItem, HomeCollectionViewModel> {
     }
     
     override func configureHeaderForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
-        let viewModel = (self.viewModel as! HomeCollectionViewModel)
         let header = super.configureHeaderForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
         
         switch indexPath.section {
