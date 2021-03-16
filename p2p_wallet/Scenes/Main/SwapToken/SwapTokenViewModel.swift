@@ -261,7 +261,7 @@ class SwapTokenViewModel {
                     status: .processing
                 )
                 self.transactionManager.process(transaction2)
-            }, onError: {error in
+            }, onFailure: {error in
                 self.processTransactionViewModel.transactionHandler.accept(
                     TransactionHandler(transaction: transaction, error: error)
                 )

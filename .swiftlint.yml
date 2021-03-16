@@ -5,6 +5,7 @@ excluded:
  - SolanaSwift
  - BEPureLayout
  - LazySubject
+ - BECollectionView
 
 disabled_rules:
   - variable_name

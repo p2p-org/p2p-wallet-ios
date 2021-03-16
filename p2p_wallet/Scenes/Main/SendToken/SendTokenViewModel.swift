@@ -223,7 +223,7 @@ class SendTokenViewModel {
                     TransactionHandler(transaction: transaction)
                 )
                 self.transactionManager.process(transaction)
-            }, onError: {error in
+            }, onFailure: {error in
                 self.processTransactionViewModel.transactionHandler.accept(
                     TransactionHandler(transaction: transaction, error: error)
                 )
