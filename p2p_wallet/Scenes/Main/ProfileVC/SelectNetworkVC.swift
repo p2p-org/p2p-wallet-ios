@@ -39,7 +39,7 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
     
     override func createCell(item: SolanaSDK.Network) -> Cell<SolanaSDK.Network> {
         let cell = super.createCell(item: item)
-        cell.label.text = item.cluster
+        cell.label.text = item.endpoint
         return cell
     }
     
