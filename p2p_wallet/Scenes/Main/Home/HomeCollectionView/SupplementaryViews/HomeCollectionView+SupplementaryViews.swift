@@ -128,9 +128,11 @@ extension HomeCollectionView {
         
         override func commonInit() {
             super.commonInit()
-            stackView.insertArrangedSubviews([
+            var index = 0
+            stackView.insertArrangedSubviewsWithCustomSpacing([
                 UILabel(text: L10n.payments, textSize: 17, weight: .semibold)
                     .padding(.init(x: 20, y: 0)),
+                BEStackViewSpacing(20),
                 UIView.row([
                     .spacer,
 //                    createButton(image: .walletAdd, title: L10n.buy),
@@ -142,8 +144,9 @@ extension HomeCollectionView {
                         .onTap(self, action: #selector(buttonExchangeDidTouch)),
                     .spacer
                 ])
-                    .padding(.init(x: 20, y: 0))
-            ], at: 0, withCustomSpacings: [20, 30])
+                    .padding(.init(x: 20, y: 0)),
+                BEStackViewSpacing(30)
+            ], at: &index)
         }
         
         private func createButton(image: UIImage, title: String) -> UIStackView {
