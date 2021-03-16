@@ -110,6 +110,16 @@ class ChangePinCodeVC: WLBottomSheet {
     }
     
     private func createTextField(textContentType: UITextContentType = .password) -> UITextField {
-        UITextField(font: .systemFont(ofSize: 15), textColor: .textBlack, keyboardType: .numberPad, placeholder: nil, autocorrectionType: .none, autocapitalizationType: UITextAutocapitalizationType.none, spellCheckingType: .none, textContentType: textContentType, isSecureTextEntry: true)
+        UITextField(
+            font: .systemFont(ofSize: 15),
+            textColor: .textBlack,
+            keyboardType: .numberPad,
+            placeholder: nil,
+            autocorrectionType: .none,
+            autocapitalizationType: UITextAutocapitalizationType.none,
+            spellCheckingType: .none,
+            textContentType: textContentType,
+            isSecureTextEntry: true
+        )
     }
 }

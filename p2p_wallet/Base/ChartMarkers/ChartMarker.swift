@@ -112,7 +112,7 @@ open class ChartMarker: MarkerImage
             context.addLine(to: CGPoint(
                 x: rect.origin.x + (rect.size.width - arrowSize.width) / 2.0,
                 y: rect.origin.y + arrowSize.height))
-            //arrow vertex
+            // arrow vertex
             context.addLine(to: CGPoint(
                 x: point.x,
                 y: point.y))
@@ -146,7 +146,7 @@ open class ChartMarker: MarkerImage
             context.addLine(to: CGPoint(
                 x: rect.origin.x + (rect.size.width + arrowSize.width) / 2.0,
                 y: rect.origin.y + rect.size.height - arrowSize.height))
-            //arrow vertex
+            // arrow vertex
             context.addLine(to: CGPoint(
                 x: point.x,
                 y: point.y))

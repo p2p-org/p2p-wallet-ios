@@ -8,21 +8,18 @@ excluded:
  - BECollectionView
 
 disabled_rules:
-  - variable_name
+  - identifier_name
   - cyclomatic_complexity
   - large_tuple
   - trailing_whitespace
   - force_try
   - force_cast
   - function_body_length
-  - line_length
-  - type_body_lengt10
   - multiple_closures_with_trailing_closure
   - redundant_string_enum_value
   - inert_defer
   - nesting
   - type_name
-  - file_length
   - opening_brace
   - shorthand_operator
 

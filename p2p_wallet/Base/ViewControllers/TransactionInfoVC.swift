@@ -211,7 +211,7 @@ class TransactionInfoVC: BaseVStackVC {
     }
 }
 
-//extension TransactionInfoVC: UIViewControllerTransitioningDelegate {
+// extension TransactionInfoVC: UIViewControllerTransitioningDelegate {
 //    class PresentationController: CustomHeightPresentationController {
 //        override func containerViewDidLayoutSubviews() {
 //            super.containerViewDidLayoutSubviews()
@@ -229,4 +229,4 @@ class TransactionInfoVC: BaseVStackVC {
 //            return UIScreen.main.bounds.height - 85.adaptiveHeight
 //        }, presentedViewController: presented, presenting: presenting)
 //    }
-//}
+// }

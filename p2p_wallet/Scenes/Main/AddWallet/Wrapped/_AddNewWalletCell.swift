@@ -116,7 +116,7 @@ class _AddNewWalletCell: WalletCell {
             feeLabel.isHidden = false
         }
         
-        if let error = item.creatingError {
+        if item.creatingError != nil {
             errorLabel.isHidden = false
             errorLabel.text = L10n.WeCouldnTAddATokenToYourWallet.checkYourInternetConnectionAndTryAgain
         } else {
