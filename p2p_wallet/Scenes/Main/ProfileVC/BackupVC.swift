@@ -65,7 +65,7 @@ class BackupVC: ProfileVCBase {
             BEStackViewSpacing(10),
             backupMannuallyButton
                 .onTap(self, action: #selector(buttonBackupManuallyDidTouch))
-                .padding(UIEdgeInsets.init(x: 20, y: 0).modifying(dBottom: 20))
+                .padding(UIEdgeInsets.init(x: 20, y: 0).modifying(dBottom: 44))
         ])
         
         spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor)
