@@ -7,6 +7,3 @@
 [submodule "LazySubject"]
 	path = LazySubject
 	url = git@github.com:bigearsenal/LazySubject.git
-[submodule "BECollectionView"]
-	path = BECollectionView
-	url = https://github.com/bigearsenal/BECollectionView
