@@ -27,6 +27,8 @@ class WalletDetailRootView: BEView {
         return tf
     }()
     
+    lazy var settingsButton = UIImageView(width: 25, height: 25, image: .settings, tintColor: .a3a5ba)
+    
     lazy var collectionView: TransactionsCollectionView = {
         let collectionView = TransactionsCollectionView(viewModel: viewModel.transactionsVM, sections: [
             CollectionViewSection(
@@ -84,7 +86,7 @@ class WalletDetailRootView: BEView {
                 BEStackViewSpacing(0),
                 UILabel(text: " \(L10n.walletRename)", textSize: 19, weight: .semibold),
                 BEStackViewSpacing(10),
-                UIImageView(width: 25, height: 25, image: .settings, tintColor: .a3a5ba)
+                settingsButton
                     .onTap(viewModel, action: #selector(WalletDetailViewModel.showWalletSettings))
             ])
                 .padding(.init(x: 20, y: 0)),
@@ -120,25 +122,30 @@ class WalletDetailRootView: BEView {
     }
     
     private func bind() {
-        viewModel.wallet
+        let walletDriver = viewModel.wallet
+            .asDriver(onErrorJustReturn: nil)
             .filter {$0 != nil}
-            .map {$0?.name}
+            .map {$0!}
+        
+        walletDriver
+            .map {$0.symbol == "SOL"}
+            .drive(settingsButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        walletDriver
+            .map {$0.name}
             .asDriver(onErrorJustReturn: nil)
             .drive(walletNameTextField.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.wallet
-            .filter {$0 != nil}
-            .asDriver(onErrorJustReturn: nil)
+        walletDriver
             .drive(onNext: {wallet in
                 self.coinLogoImageView.setUp(wallet: wallet)
             })
             .disposed(by: disposeBag)
         
-        viewModel.wallet
-            .filter {$0 != nil}
-            .map {$0!}
-            .subscribe(onNext: {[unowned self] wallet in
+        walletDriver
+            .drive(onNext: {[unowned self] wallet in
                 self.collectionView.wallet = wallet
                 if let header = self.collectionView.headerForSection(0) as? WDVCSectionHeaderView
                 {
