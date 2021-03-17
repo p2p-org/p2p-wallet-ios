@@ -58,7 +58,8 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
                     .close
                 ]
             }
-            .subscribe(onNext: { [weak self] (settings) in
+            .asDriver(onErrorJustReturn: [])
+            .drive(onNext: { [weak self] (settings) in
                 self?.items = settings
                 self?.state.accept(.loaded(settings))
             })

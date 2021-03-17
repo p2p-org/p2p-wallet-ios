@@ -9,10 +9,17 @@ import Foundation
 import UIKit
 import Action
 
+@objc protocol TokenSettingsViewControllerDelegate: class {
+    @objc optional func tokenSettingsViewControllerDidCloseToken(_ vc: TokenSettingsViewController)
+}
+
 class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
+    weak var delegate: TokenSettingsViewControllerDelegate?
+    
+    // MARK: - Subviews
     lazy var navigationBar: WLNavigationBar = {
         let navigationBar = WLNavigationBar(backgroundColor: .textWhite)
         navigationBar.backButton
@@ -68,7 +75,19 @@ class TokenSettingsViewController: WLIndicatorModalVC {
             self.present(vc, animated: true, completion: nil)
         case .processTransaction:
             let vc = ProcessTransactionViewController(viewModel: viewModel.processTransactionViewModel)
+            vc.delegate = self
             self.present(vc, animated: true, completion: nil)
+        }
+    }
+}
+
+extension TokenSettingsViewController: ProcessTransactionViewControllerDelegate {
+    func processTransactionViewControllerDidComplete(_ vc: ProcessTransactionViewController) {
+        vc.dismiss(animated: true) { [weak self] in
+            self?.dismiss(animated: true, completion: { [weak self] in
+                guard let strongSelf = self else {return}
+                strongSelf.delegate?.tokenSettingsViewControllerDidCloseToken?(strongSelf)
+            })
         }
     }
 }

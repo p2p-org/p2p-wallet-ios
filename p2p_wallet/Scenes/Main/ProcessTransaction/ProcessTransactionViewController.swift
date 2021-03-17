@@ -8,11 +8,16 @@
 import Foundation
 import UIKit
 
+@objc protocol ProcessTransactionViewControllerDelegate: class {
+    func processTransactionViewControllerDidComplete(_ vc: ProcessTransactionViewController)
+}
+
 class ProcessTransactionViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: ProcessTransactionViewModel
     var viewInExplorerCompletion: (() -> Void)?
+    weak var delegate: ProcessTransactionViewControllerDelegate?
     
     // MARK: - Initializer
     init(viewModel: ProcessTransactionViewModel)
@@ -51,9 +56,13 @@ class ProcessTransactionViewController: WLIndicatorModalVC {
         case .viewInExplorer(let signature):
             self.showWebsite(url: "https://explorer.solana.com/tx/" + signature)
         case .done:
-            let pc = presentingViewController
-            self.dismiss(animated: true) {
-                pc?.dismiss(animated: true, completion: nil)
+            if let delegate = delegate {
+                delegate.processTransactionViewControllerDidComplete(self)
+            } else {
+                let pc = presentingViewController
+                self.dismiss(animated: true) {
+                    pc?.dismiss(animated: true, completion: nil)
+                }
             }
         case .cancel:
             self.dismiss(animated: true, completion: nil)
