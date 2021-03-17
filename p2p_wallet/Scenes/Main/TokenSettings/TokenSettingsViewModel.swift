@@ -58,9 +58,10 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
                     .close
                 ]
             }
-            .subscribe(onNext: { (settings) in
-                self.items = settings
-                self.state.accept(.loaded(settings))
+            .asDriver(onErrorJustReturn: [])
+            .drive(onNext: { [weak self] (settings) in
+                self?.items = settings
+                self?.state.accept(.loaded(settings))
             })
             .disposed(by: disposeBag)
     }

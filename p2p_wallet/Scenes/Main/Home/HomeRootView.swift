@@ -17,9 +17,9 @@ class HomeRootView: BEView {
     // MARK: - Subviews
     lazy var collectionView: HomeCollectionView = {
         let collectionView = HomeCollectionView(viewModel: viewModel.homeCollectionViewModel)
-        collectionView.itemDidSelect = { item in
+        collectionView.itemDidSelect = { [weak self] item in
             guard let wallet = item.wallet else {return}
-            self.viewModel.navigationSubject.onNext(.walletDetail(wallet: wallet))
+            self?.viewModel.navigationSubject.onNext(.walletDetail(wallet: wallet))
         }
         collectionView.showAllProductsAction = viewModel.navigationAction(scene: .allProducts)
         collectionView.addNewWalletAction = viewModel.navigationAction(scene: .addToken)

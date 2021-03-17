@@ -8,6 +8,10 @@
 import Foundation
 import Action
 
+protocol TokenSettingsCellDelegate: class {
+    func tokenSettingsCellDidToggleVisibility(_ cell: TokenSettingsCell)
+}
+
 class TokenSettingsCell: ListCollectionCell<TokenSettings> {
     // MARK: - Subviews
     lazy var iconImageView = UIImageView(width: 24, height: 24, image: .buttonEdit, tintColor: .a3a5ba)
@@ -16,7 +20,7 @@ class TokenSettingsCell: ListCollectionCell<TokenSettings> {
     lazy var isVisibleSwitcher = UISwitch()
     
     // MARK: - Actions
-    var toggleVisibilityAction: CocoaAction?
+    weak var delegate: TokenSettingsCellDelegate?
     
     override func commonInit() {
         super.commonInit()
@@ -54,6 +58,6 @@ class TokenSettingsCell: ListCollectionCell<TokenSettings> {
     }
     
     @objc func switchChanged(_ mySwitch: UISwitch) {
-        toggleVisibilityAction?.execute()
+        delegate?.tokenSettingsCellDidToggleVisibility(self)
     }
 }
