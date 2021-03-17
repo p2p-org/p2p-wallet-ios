@@ -76,7 +76,7 @@ class ConfigureSecurityVC: ProfileVCBase {
             return
         }
         
-        rootViewModel.isAuthenticating = true
+        rootViewModel.markAsIsAuthenticating()
         
         // get context
         let context = LAContext()
@@ -94,7 +94,7 @@ class ConfigureSecurityVC: ProfileVCBase {
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self?.rootViewModel.isAuthenticating = isAuthenticating
+                self?.rootViewModel.markAsIsAuthenticating(isAuthenticating)
             }
         }
     }
@@ -105,9 +105,8 @@ class ConfigureSecurityVC: ProfileVCBase {
                 isRequired: false,
                 isFullScreen: false,
                 useBiometry: false,
-                dismissAfterCompletion: false,
-                completion: {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                completion: { [weak self] in
+                    self?.presentedViewController?.dismiss(animated: true, completion: { [weak self] in
                         // pin code vc
                         let vc = CreatePassCodeVC(promptTitle: L10n.newPINCode)
                         vc.disableDismissAfterCompletion = true
@@ -127,7 +126,7 @@ class ConfigureSecurityVC: ProfileVCBase {
                         
         //                modalVC.isModalInPresentation = true
                         self?.present(modalVC, animated: true, completion: nil)
-                    }
+                    })
                 }
             )
         )

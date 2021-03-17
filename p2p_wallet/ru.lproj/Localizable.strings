@@ -274,3 +274,5 @@
 "If you lose this device, you can recover your encrypted wallet backup from iCloud" = "Если вы потеряете это устройство, вы можете восстановить зашифрованную резервную копию кошелька из iCloud.";
 "View recovery key" = "Посмотреть ключ восстановления";
 "Backup to iCloud" = "Резервнить в iCloud";
+"We’ve locked your wallet, try again in %@" = "Мы заблокировали ваш кошелек, попробуйте еще раз через %@";
+"minutes" = "минут";

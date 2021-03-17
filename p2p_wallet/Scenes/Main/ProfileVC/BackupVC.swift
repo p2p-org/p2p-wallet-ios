@@ -110,7 +110,6 @@ class BackupVC: ProfileVCBase {
                 isRequired: false,
                 isFullScreen: false,
                 useBiometry: true,
-                dismissAfterCompletion: true,
                 completion: { [weak self] in
                     self?.accountStorage.saveICloud(phrases: account.joined(separator: " "))
                     self?.isIcloudBackedUp.accept(true)
@@ -126,7 +125,6 @@ class BackupVC: ProfileVCBase {
                 isRequired: false,
                 isFullScreen: false,
                 useBiometry: true,
-                dismissAfterCompletion: true,
                 completion: {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                         guard let vc = self?.scenesFactory.makeBackupManuallyVC()

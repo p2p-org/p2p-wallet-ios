@@ -11,10 +11,30 @@ import RxSwift
 import LocalAuthentication
 
 class LocalAuthVC: PassCodeVC {
+    lazy var closeButton = UIButton.close()
+        .onTap(self, action: #selector(back))
+    
+    private lazy var blockingView: UIView = {
+        let view = UIView(forAutoLayout: ())
+        view.backgroundColor = .clear
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+    
     var remainingPinEntries = 3
     var reason: String?
-    var isIgnorable = false
+    var isIgnorable = false {
+        didSet {
+            closeButton.isHidden = !isIgnorable
+            isModalInPresentation = !isIgnorable
+        }
+    }
     var useBiometry = true
+    var isBlocked = false {
+        didSet {
+            blockingView.isHidden = !isBlocked
+        }
+    }
     let accountStorage: KeychainAccountStorage
     
     init(accountStorage: KeychainAccountStorage) {
@@ -41,11 +61,12 @@ class LocalAuthVC: PassCodeVC {
         }
         
         if isIgnorable {
-            let closeButton = UIButton.close()
-                .onTap(self, action: #selector(back))
             view.addSubview(closeButton)
             closeButton.autoPinToTopRightCornerOfSuperview(xInset: 16)
         }
+        
+        view.addSubview(blockingView)
+        blockingView.isHidden = true
     }
     
     @objc func authWithBiometric(isAuto: Bool = false) {
