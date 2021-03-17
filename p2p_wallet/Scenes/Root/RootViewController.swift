@@ -54,7 +54,7 @@ class RootViewController: BaseVC {
             .disposed(by: disposeBag)
         
         viewModel.authenticationSubject
-            .subscribe(onNext: {[unowned self] in self.authenticate()})
+            .subscribe(onNext: {[unowned self] in self.authenticate($0)})
             .disposed(by: disposeBag)
     }
     
@@ -94,52 +94,70 @@ class RootViewController: BaseVC {
         }
     }
     
-    private func authenticate() {
+    private func authenticate(_ authStyle: AuthenticationPresentationStyle) {
+        // check if view is fully loaded
         if viewIfLoaded?.window == nil, !isBoardingCompleted {return}
         
+        // create localAuthVC
         let localAuthVC = scenesFactory.makeLocalAuthVC()
+        localAuthVC.isIgnorable = !authStyle.isRequired
+        localAuthVC.useBiometry = authStyle.useBiometry
+        if authStyle.isFullScreen {
+            localAuthVC.modalPresentationStyle = .fullScreen
+        }
+        localAuthVC.disableDismissAfterCompletion = !authStyle.dismissAfterCompletion
+        if localAuthVC.isIgnorable {
+            viewModel.isAuthenticating = false
+        } else {
+            viewModel.isAuthenticating = true
+        }
+        
+        // completion
         localAuthVC.completion = {[weak self] didSuccess in
             self?.viewModel.isAuthenticating = false
             self?.viewModel.lastAuthenticationTimestamp = Int(Date().timeIntervalSince1970)
-            if !didSuccess {
-                // show error
-                self?.showErrorView()
-                
-                // Count down to next
-                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-                    guard let strongSelf = self else {return}
-                    
-                    let secondsLeft = strongSelf.viewModel.secondsLeftToNextAuthentication()
-                    
-                    strongSelf.errorView?.descriptionLabel.text =
-                        L10n.authenticationFailed +
-                        "\n" +
-                        L10n.retryAfter + " \(secondsLeft) " + L10n.seconds
-                    
-                    if strongSelf.viewModel.isSessionExpired {
-                        strongSelf.errorView?.descriptionLabel.text = L10n.tapButtonToRetry
-                        strongSelf.errorView?.buttonAction = CocoaAction {
-                            strongSelf.viewModel.authenticationSubject.onNext(())
-                            return .just(())
-                        }
-                        timer.invalidate()
-                    }
-                }
-
-            } else {
-                self?.removeErrorView()
-            }
+            self?.lockScreen(!didSuccess, retryAuthStyle: authStyle)
         }
-        localAuthVC.modalPresentationStyle = .fullScreen
+        
+        // present on top
         let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-
         if var topController = keyWindow?.rootViewController {
             while let presentedViewController = topController.presentedViewController {
                 topController = presentedViewController
             }
             topController.present(localAuthVC, animated: true, completion: nil)
         }
-        
-        viewModel.isAuthenticating = true
+    }
+    
+    private func lockScreen(_ isLocked: Bool, retryAuthStyle: AuthenticationPresentationStyle) {
+        if isLocked {
+            // show error
+            showErrorView()
+            
+            // Count down to next
+            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+                guard let strongSelf = self else {return}
+                
+                let secondsLeft = strongSelf.viewModel.secondsLeftToNextAuthentication()
+                
+                strongSelf.errorView?.descriptionLabel.text =
+                    L10n.authenticationFailed +
+                    "\n" +
+                    L10n.retryAfter + " \(secondsLeft) " + L10n.seconds
+                
+                if strongSelf.viewModel.isSessionExpired {
+                    strongSelf.errorView?.descriptionLabel.text = L10n.tapButtonToRetry
+                    strongSelf.errorView?.buttonAction = CocoaAction { [weak self] in
+                        guard let strongSelf = self else {return .just(())}
+                        strongSelf.viewModel.authenticationSubject.onNext(retryAuthStyle)
+                        return .just(())
+                    }
+                    timer.invalidate()
+                }
+            }
+        } else {
+            removeErrorView()
+            retryAuthStyle.completion?()
+        }
     }
 }
