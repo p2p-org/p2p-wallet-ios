@@ -13,6 +13,7 @@ target 'p2p_wallet' do
   common_pods
   pod 'BEPureLayout', :path => 'BEPureLayout'
   pod 'LazySubject', :path => 'LazySubject'
+  pod 'THPinViewController', :path => 'THPinViewController'
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
   pod 'Action'
@@ -21,7 +22,6 @@ target 'p2p_wallet' do
   pod 'TagListView', '~> 1.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
   pod 'SDWebImage'
-  pod 'THPinViewController', :git => "https://github.com/p2p-org/THPinViewController.git"
   pod 'UITextView+Placeholder'
   pod 'SubviewAttachingTextView'
   pod 'Charts'
