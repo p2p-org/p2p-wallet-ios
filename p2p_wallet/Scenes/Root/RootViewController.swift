@@ -37,7 +37,7 @@ class RootViewController: BaseVC {
         return blurEffectView
     }()
     
-    lazy var localAuthVC = scenesFactory.makeLocalAuthVC()
+    var localAuthVC: LocalAuthVC?
     
     // MARK: - Initializer
     init(
@@ -108,28 +108,29 @@ class RootViewController: BaseVC {
     
     private func authenticate(_ authStyle: AuthenticationPresentationStyle) {
         // check if view is fully loaded
-        if viewIfLoaded?.window == nil, !isBoardingCompleted, localAuthVC.isBeingPresented {return}
+        if viewIfLoaded?.window == nil, !isBoardingCompleted, localAuthVC?.isBeingPresented == true {return}
         
         // create localAuthVC
-        localAuthVC.isIgnorable = !authStyle.isRequired
-        localAuthVC.useBiometry = authStyle.useBiometry
+        localAuthVC = scenesFactory.makeLocalAuthVC()
+        localAuthVC?.isIgnorable = !authStyle.isRequired
+        localAuthVC?.useBiometry = authStyle.useBiometry
         if authStyle.isFullScreen {
-            localAuthVC.modalPresentationStyle = .fullScreen
+            localAuthVC?.modalPresentationStyle = .fullScreen
         }
-        localAuthVC.disableDismissAfterCompletion = true
-        if localAuthVC.isIgnorable {
+        localAuthVC?.disableDismissAfterCompletion = true
+        if localAuthVC?.isIgnorable == true {
             viewModel.markAsIsAuthenticating(false)
         } else {
             viewModel.markAsIsAuthenticating(true)
         }
         
         // completion
-        localAuthVC.completion = {[weak self] didSuccess in
+        localAuthVC?.completion = {[weak self] didSuccess in
             self?.viewModel.markAsIsAuthenticating(false)
             self?.viewModel.lastAuthenticationTimestamp = Int(Date().timeIntervalSince1970)
             self?.lockScreen(!didSuccess, retryAuthStyle: authStyle)
             if !didSuccess {
-                self?.localAuthVC.isIgnorable = false
+                self?.localAuthVC?.isIgnorable = false
             }
         }
         
@@ -139,7 +140,7 @@ class RootViewController: BaseVC {
             while let presentedViewController = topController.presentedViewController {
                 topController = presentedViewController
             }
-            topController.present(localAuthVC, animated: true, completion: nil)
+            topController.present(localAuthVC!, animated: true, completion: nil)
         }
     }
     
@@ -158,19 +159,19 @@ class RootViewController: BaseVC {
                 let minutes = minutesAndSeconds.0
                 let seconds = minutesAndSeconds.1
                 
-                self?.localAuthVC.embededPinVC.errorTitle = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)")
+                self?.localAuthVC?.embededPinVC.errorTitle = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)")
                 
-                self?.localAuthVC.isBlocked = true
+                self?.localAuthVC?.isBlocked = true
                 
                 if strongSelf.viewModel.isSessionExpired {
-                    self?.localAuthVC.embededPinVC.errorTitle = nil
-                    self?.localAuthVC.isBlocked = false
+                    self?.localAuthVC?.embededPinVC.errorTitle = nil
+                    self?.localAuthVC?.isBlocked = false
                     timer.invalidate()
                 }
             }
         } else {
             blurEffectView.isHidden = true
-            localAuthVC.dismiss(animated: true) {
+            localAuthVC?.dismiss(animated: true) {
                 retryAuthStyle.completion?()
             }
         }
