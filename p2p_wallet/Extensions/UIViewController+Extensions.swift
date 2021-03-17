@@ -160,10 +160,10 @@ extension UIViewController {
         }
     }
     
-    func presentLocalAuthVC(accountStorage: KeychainAccountStorage, completion: (() -> Void)?) {
+    func presentLocalAuthVC(accountStorage: KeychainAccountStorage, useBiometry: Bool = false, completion: (() -> Void)?) {
         let localAuthVC = LocalAuthVC(accountStorage: accountStorage)
         localAuthVC.isIgnorable = true
-        localAuthVC.useBiometry = false
+        localAuthVC.useBiometry = useBiometry
         localAuthVC.completion = { didSuccess in
             if didSuccess {
                 completion?()
