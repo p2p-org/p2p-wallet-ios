@@ -162,10 +162,12 @@ class RootViewController: BaseVC {
                 self?.localAuthVC?.embededPinVC.errorTitle = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)")
                 
                 self?.localAuthVC?.isBlocked = true
+                self?.localAuthVC?.embededPinVC.clear()
                 
                 if strongSelf.viewModel.isSessionExpired {
                     self?.localAuthVC?.embededPinVC.errorTitle = nil
                     self?.localAuthVC?.isBlocked = false
+                    self?.localAuthVC?.remainingPinEntries = 3
                     timer.invalidate()
                 }
             }
