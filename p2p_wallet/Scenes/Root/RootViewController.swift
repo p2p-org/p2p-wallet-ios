@@ -31,6 +31,14 @@ class RootViewController: BaseVC {
     var isBoardingCompleted = true
     var isLightStatusBarStyle = false
     
+    lazy var blurEffectView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.dark)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        return blurEffectView
+    }()
+    
+    lazy var localAuthVC = scenesFactory.makeLocalAuthVC()
+    
     // MARK: - Initializer
     init(
         viewModel: RootViewModel,
@@ -45,6 +53,9 @@ class RootViewController: BaseVC {
     override func setUp() {
         super.setUp()
         viewModel.reload()
+        view.addSubview(blurEffectView)
+        blurEffectView.autoPinEdgesToSuperviewEdges()
+        blurEffectView.isHidden = true
     }
     
     override func bind() {
@@ -92,31 +103,34 @@ class RootViewController: BaseVC {
             let vc = scenesFactory.makeMainViewController()
             transition(to: vc)
         }
+        view.bringSubviewToFront(blurEffectView)
     }
     
     private func authenticate(_ authStyle: AuthenticationPresentationStyle) {
         // check if view is fully loaded
-        if viewIfLoaded?.window == nil, !isBoardingCompleted {return}
+        if viewIfLoaded?.window == nil, !isBoardingCompleted, localAuthVC.isBeingPresented {return}
         
         // create localAuthVC
-        let localAuthVC = scenesFactory.makeLocalAuthVC()
         localAuthVC.isIgnorable = !authStyle.isRequired
         localAuthVC.useBiometry = authStyle.useBiometry
         if authStyle.isFullScreen {
             localAuthVC.modalPresentationStyle = .fullScreen
         }
-        localAuthVC.disableDismissAfterCompletion = !authStyle.dismissAfterCompletion
+        localAuthVC.disableDismissAfterCompletion = true
         if localAuthVC.isIgnorable {
-            viewModel.isAuthenticating = false
+            viewModel.markAsIsAuthenticating(false)
         } else {
-            viewModel.isAuthenticating = true
+            viewModel.markAsIsAuthenticating(true)
         }
         
         // completion
         localAuthVC.completion = {[weak self] didSuccess in
-            self?.viewModel.isAuthenticating = false
+            self?.viewModel.markAsIsAuthenticating(false)
             self?.viewModel.lastAuthenticationTimestamp = Int(Date().timeIntervalSince1970)
             self?.lockScreen(!didSuccess, retryAuthStyle: authStyle)
+            if !didSuccess {
+                self?.localAuthVC.isIgnorable = false
+            }
         }
         
         // present on top
@@ -131,8 +145,8 @@ class RootViewController: BaseVC {
     
     private func lockScreen(_ isLocked: Bool, retryAuthStyle: AuthenticationPresentationStyle) {
         if isLocked {
-            // show error
-            showErrorView()
+            // lock screen
+            blurEffectView.isHidden = false
             
             // Count down to next
             Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
@@ -140,24 +154,29 @@ class RootViewController: BaseVC {
                 
                 let secondsLeft = strongSelf.viewModel.secondsLeftToNextAuthentication()
                 
-                strongSelf.errorView?.descriptionLabel.text =
-                    L10n.authenticationFailed +
-                    "\n" +
-                    L10n.retryAfter + " \(secondsLeft) " + L10n.seconds
+                let minutesAndSeconds = secondsToMinutesSeconds(seconds: secondsLeft)
+                let minutes = minutesAndSeconds.0
+                let seconds = minutesAndSeconds.1
+                
+                self?.localAuthVC.embededPinVC.errorTitle = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)")
+                
+                self?.localAuthVC.isBlocked = true
                 
                 if strongSelf.viewModel.isSessionExpired {
-                    strongSelf.errorView?.descriptionLabel.text = L10n.tapButtonToRetry
-                    strongSelf.errorView?.buttonAction = CocoaAction { [weak self] in
-                        guard let strongSelf = self else {return .just(())}
-                        strongSelf.viewModel.authenticationSubject.onNext(retryAuthStyle)
-                        return .just(())
-                    }
+                    self?.localAuthVC.embededPinVC.errorTitle = nil
+                    self?.localAuthVC.isBlocked = false
                     timer.invalidate()
                 }
             }
         } else {
-            removeErrorView()
-            retryAuthStyle.completion?()
+            blurEffectView.isHidden = true
+            localAuthVC.dismiss(animated: true) {
+                retryAuthStyle.completion?()
+            }
         }
     }
+}
+
+private func secondsToMinutesSeconds (seconds: Int) -> (Int, Int) {
+    return ((seconds % 3600) / 60, (seconds % 3600) % 60)
 }

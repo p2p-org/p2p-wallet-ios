@@ -22,7 +22,6 @@ struct AuthenticationPresentationStyle {
     let isRequired: Bool
     let isFullScreen: Bool
     var useBiometry: Bool
-    var dismissAfterCompletion: Bool
     var completion: (() -> Void)?
 }
 
@@ -43,7 +42,7 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     private let disposeBag = DisposeBag()
     private let accountStorage: KeychainAccountStorage
     
-    private var isAuthenticating = false
+    private(set) var isAuthenticating = false
     lazy var lastAuthenticationTimestamp = Int(Date().timeIntervalSince1970) - timeRequiredForAuthentication
     
     var isSessionExpired: Bool {
@@ -108,7 +107,6 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
                             isRequired: true,
                             isFullScreen: true,
                             useBiometry: true,
-                            dismissAfterCompletion: true,
                             completion: nil
                         )
                     )
@@ -118,5 +116,9 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     
     func secondsLeftToNextAuthentication() -> Int {
         timeRequiredForAuthentication - (Int(Date().timeIntervalSince1970) - Int(lastAuthenticationTimestamp))
+    }
+    
+    func markAsIsAuthenticating(_ bool: Bool = true) {
+        isAuthenticating = bool
     }
 }
