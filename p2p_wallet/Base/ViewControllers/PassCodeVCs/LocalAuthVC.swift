@@ -66,6 +66,7 @@ class LocalAuthVC: PassCodeVC {
         }
         
         view.addSubview(blockingView)
+        blockingView.autoPinEdgesToSuperviewEdges()
         blockingView.isHidden = true
     }
     
