@@ -100,28 +100,36 @@ class ConfigureSecurityVC: ProfileVCBase {
     }
     
     @objc func buttonChangePinCodeDidTouch() {
-        presentLocalAuthVC(accountStorage: accountStorage) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                // pin code vc
-                let vc = CreatePassCodeVC(promptTitle: L10n.newPINCode)
-                vc.disableDismissAfterCompletion = true
-                vc.completion = {_ in
-                    guard let pincode = vc.passcode else {return}
-                    self?.accountStorage.save(pincode)
-                    vc.dismiss(animated: true, completion: nil)
+        rootViewModel.authenticationSubject.onNext(
+            .init(
+                isRequired: false,
+                isFullScreen: false,
+                useBiometry: false,
+                dismissAfterCompletion: false,
+                completion: {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                        // pin code vc
+                        let vc = CreatePassCodeVC(promptTitle: L10n.newPINCode)
+                        vc.disableDismissAfterCompletion = true
+                        vc.completion = {_ in
+                            guard let pincode = vc.passcode else {return}
+                            self?.accountStorage.save(pincode)
+                            vc.dismiss(animated: true, completion: nil)
+                        }
+                        
+                        // navigation
+                        let nc = BENavigationController()
+                        nc.viewControllers = [vc]
+                        
+                        // modal
+                        let modalVC = WLIndicatorModalVC()
+                        modalVC.add(child: nc, to: modalVC.containerView)
+                        
+        //                modalVC.isModalInPresentation = true
+                        self?.present(modalVC, animated: true, completion: nil)
+                    }
                 }
-                
-                // navigation
-                let nc = BENavigationController()
-                nc.viewControllers = [vc]
-                
-                // modal
-                let modalVC = WLIndicatorModalVC()
-                modalVC.add(child: nc, to: modalVC.containerView)
-                
-//                modalVC.isModalInPresentation = true
-                self?.present(modalVC, animated: true, completion: nil)
-            }
-        }
+            )
+        )
     }
 }
