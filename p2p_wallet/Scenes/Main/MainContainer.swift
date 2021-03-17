@@ -90,7 +90,7 @@ class MainContainer {
     }
     
     func makeBackupVC() -> BackupVC {
-        BackupVC(accountStorage: accountStorage, scenesFactory: self)
+        BackupVC(accountStorage: accountStorage, rootViewModel: rootViewModel, scenesFactory: self)
     }
     
     func makeBackupManuallyVC() -> BackupManuallyVC {
@@ -115,7 +115,7 @@ class MainContainer {
     
     // MARK: - Token edit
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController {
-        TokenSettingsViewController(viewModel: TokenSettingsViewModel(walletsVM: myWalletsVM, pubkey: pubkey, solanaSDK: solanaSDK, transactionManager: transactionManager, accountStorage: accountStorage))
+        TokenSettingsViewController(viewModel: TokenSettingsViewModel(walletsVM: myWalletsVM, pubkey: pubkey, solanaSDK: solanaSDK, transactionManager: transactionManager, accountStorage: accountStorage), rootViewModel: rootViewModel)
     }
     
     // MARK: - Helpers

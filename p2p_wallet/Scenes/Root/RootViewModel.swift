@@ -18,6 +18,14 @@ enum RootNavigatableScene: Equatable {
     case main
 }
 
+struct AuthenticationPresentationStyle {
+    let isRequired: Bool
+    let isFullScreen: Bool
+    var useBiometry: Bool
+    var dismissAfterCompletion: Bool
+    var completion: (() -> Void)?
+}
+
 protocol CreateOrRestoreWalletHandler {
     func creatingOrRestoringWalletDidComplete()
 }
@@ -29,13 +37,13 @@ protocol OnboardingHandler {
 
 class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     // MARK: - Constants
-    private let timeRequiredForAuthentication = 10 // in seconds
+    private var timeRequiredForAuthentication = 10 // in seconds
     
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private let accountStorage: KeychainAccountStorage
     
-    var isAuthenticating = false
+    private var isAuthenticating = false
     lazy var lastAuthenticationTimestamp = Int(Date().timeIntervalSince1970) - timeRequiredForAuthentication
     
     var isSessionExpired: Bool {
@@ -44,7 +52,7 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     
     // MARK: - Subjects
     let navigationSubject = BehaviorRelay<RootNavigatableScene>(value: .initializing)
-    let authenticationSubject = PublishSubject<Void>()
+    let authenticationSubject = PublishSubject<AuthenticationPresentationStyle>()
     
     // MARK: - Methods
     init(accountStorage: KeychainAccountStorage) {
@@ -94,8 +102,16 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
         UIApplication.shared.rx.applicationDidBecomeActive
             .subscribe(onNext: {[weak self] _ in
                 guard let strongSelf = self, !strongSelf.isAuthenticating, strongSelf.isSessionExpired, strongSelf.navigationSubject.value == .main else {return}
-                strongSelf.isAuthenticating = true
-                strongSelf.authenticationSubject.onNext(())
+                strongSelf.authenticationSubject
+                    .onNext(
+                        AuthenticationPresentationStyle(
+                            isRequired: true,
+                            isFullScreen: true,
+                            useBiometry: true,
+                            dismissAfterCompletion: true,
+                            completion: nil
+                        )
+                    )
             })
             .disposed(by: disposeBag)
     }

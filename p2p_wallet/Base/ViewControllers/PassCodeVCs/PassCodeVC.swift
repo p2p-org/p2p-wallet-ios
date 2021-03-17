@@ -12,6 +12,7 @@ class PassCodeVC: BEViewController, THPinViewControllerDelegate {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .hidden }
     
     var completion: ((Bool) -> Void)?
+    var cancelledCompletion: (() -> Void)?
     var embededPinVC: THPinViewController!
     
     var backgroundColor: UIColor? {
@@ -37,6 +38,15 @@ class PassCodeVC: BEViewController, THPinViewControllerDelegate {
     var leftBottomButton: UIButton? {
         get {embededPinVC.leftBottomButton}
         set {embededPinVC.leftBottomButton = newValue}
+    }
+    
+    var disableDismissAfterCompletion: Bool {
+        get {
+            embededPinVC.disableDismissAfterCompletion
+        }
+        set {
+            embededPinVC.disableDismissAfterCompletion = newValue
+        }
     }
     
     override init() {
@@ -83,6 +93,10 @@ class PassCodeVC: BEViewController, THPinViewControllerDelegate {
     
     func pinViewControllerWillDismiss(afterPinEntryWasUnsuccessful pinViewController: THPinViewController) {
         completion?(false)
+    }
+    
+    func pinViewControllerWillDismiss(afterPinEntryWasCancelled pinViewController: THPinViewController) {
+        cancelledCompletion?()
     }
     
     // MARK: - Orientation
