@@ -149,7 +149,7 @@ DEPENDENCIES:
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
-  - THPinViewController (from `https://github.com/p2p-org/THPinViewController.git`)
+  - THPinViewController (from `THPinViewController`)
   - "UITextView+Placeholder"
 
 SPEC REPOS:
@@ -198,12 +198,7 @@ EXTERNAL SOURCES:
   SolanaSwift:
     :path: SolanaSwift
   THPinViewController:
-    :git: https://github.com/p2p-org/THPinViewController.git
-
-CHECKOUT OPTIONS:
-  THPinViewController:
-    :commit: 4e923de0c0d6b4abd47d436d383741a22949864a
-    :git: https://github.com/p2p-org/THPinViewController.git
+    :path: THPinViewController
 
 SPEC CHECKSUMS:
   Action: 9891cd1b0a9047557d7e58e8dfae743e19d08197
@@ -242,10 +237,10 @@ SPEC CHECKSUMS:
   SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
-  THPinViewController: 7c8df68f412ca0b3fa42a84848c382bc343372f3
+  THPinViewController: d9d65cdc5670b99b82d4cef841c954caf4b78299
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 12a5e7d1f97ce856fc3a0d15a4ca4d4cfd2d4953
+PODFILE CHECKSUM: 50d9f08342d2514de68f00406eb96aab1cb2b948
 
 COCOAPODS: 1.10.1

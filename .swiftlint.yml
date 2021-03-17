@@ -6,6 +6,7 @@ excluded:
  - BEPureLayout
  - LazySubject
  - BECollectionView
+ - THPinViewController
 
 disabled_rules:
   - identifier_name

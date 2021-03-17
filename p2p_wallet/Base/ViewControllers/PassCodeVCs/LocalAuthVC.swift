@@ -81,8 +81,14 @@ class LocalAuthVC: PassCodeVC {
 
     override func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
         guard let correctPin = accountStorage.pinCode else {return false}
-        if pin == correctPin {return true} else {
+        if pin == correctPin {
+            return true
+        } else {
             remainingPinEntries -= 1
+            embededPinVC.errorTitle = L10n.wrongPinCodeDAttemptSLeft(remainingPinEntries)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self?.embededPinVC.errorTitle = nil
+            }
             return false
         }
     }
