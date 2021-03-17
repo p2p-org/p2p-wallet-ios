@@ -148,6 +148,8 @@ class RootViewController: BaseVC {
         if isLocked {
             // lock screen
             blurEffectView.isHidden = false
+            localAuthVC?.isBlocked = true
+            localAuthVC?.embededPinVC.clear()
             
             // Count down to next
             Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
@@ -160,9 +162,6 @@ class RootViewController: BaseVC {
                 let seconds = minutesAndSeconds.1
                 
                 self?.localAuthVC?.embededPinVC.errorTitle = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)")
-                
-                self?.localAuthVC?.isBlocked = true
-                self?.localAuthVC?.embededPinVC.clear()
                 
                 if strongSelf.viewModel.isSessionExpired {
                     self?.localAuthVC?.embededPinVC.errorTitle = nil
