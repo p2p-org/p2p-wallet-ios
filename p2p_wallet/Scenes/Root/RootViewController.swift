@@ -108,7 +108,7 @@ class RootViewController: BaseVC {
     
     private func authenticate(_ authStyle: AuthenticationPresentationStyle) {
         // check if view is fully loaded
-        if viewIfLoaded?.window == nil, !isBoardingCompleted, localAuthVC?.isBeingPresented == true {return}
+        if viewIfLoaded?.window == nil || !isBoardingCompleted || (presentedViewController is LocalAuthVC) {return}
         
         // create localAuthVC
         localAuthVC = scenesFactory.makeLocalAuthVC()
@@ -172,8 +172,9 @@ class RootViewController: BaseVC {
             }
         } else {
             blurEffectView.isHidden = true
-            localAuthVC?.dismiss(animated: true) {
+            localAuthVC?.dismiss(animated: true) { [weak self] in
                 retryAuthStyle.completion?()
+                self?.localAuthVC = nil
             }
         }
     }
