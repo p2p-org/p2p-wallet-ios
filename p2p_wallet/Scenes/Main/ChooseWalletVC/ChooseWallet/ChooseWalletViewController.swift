@@ -30,8 +30,8 @@ class ChooseWalletViewController: BaseVC {
     // MARK: - Methods
     override func loadView() {
         let rootView = ChooseWalletCollectionView(viewModel: viewModel.walletsVM, customFilter: customFilter)
-        rootView.itemDidSelect = {
-            self.completion?($0)
+        rootView.itemDidSelect = { [weak self] in
+            self?.completion?($0)
         }
         view = rootView
     }

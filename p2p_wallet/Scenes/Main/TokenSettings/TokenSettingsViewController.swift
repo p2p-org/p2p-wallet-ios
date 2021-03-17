@@ -9,10 +9,18 @@ import Foundation
 import UIKit
 import Action
 
+@objc protocol TokenSettingsViewControllerDelegate: class {
+    @objc optional func tokenSettingsViewControllerDidCloseToken(_ vc: TokenSettingsViewController)
+}
+
 class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
+    let rootViewModel: RootViewModel
+    weak var delegate: TokenSettingsViewControllerDelegate?
+    
+    // MARK: - Subviews
     lazy var navigationBar: WLNavigationBar = {
         let navigationBar = WLNavigationBar(backgroundColor: .textWhite)
         navigationBar.backButton
@@ -22,9 +30,10 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     }()
     
     // MARK: - Initializer
-    init(viewModel: TokenSettingsViewModel)
+    init(viewModel: TokenSettingsViewModel, rootViewModel: RootViewModel)
     {
         self.viewModel = viewModel
+        self.rootViewModel = rootViewModel
         super.init()
     }
     
@@ -58,17 +67,35 @@ class TokenSettingsViewController: WLIndicatorModalVC {
             let vc = TokenSettingsCloseAccountConfirmationVC(symbol: symbol)
             vc.completion = {
                 vc.dismiss(animated: true) { [unowned self] in
-                    presentLocalAuthVC(accountStorage: self.viewModel.accountStorage) { [unowned self] in
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            self.viewModel.showProcessingAndClose()
-                        }
-                    }
+                    self.rootViewModel.authenticationSubject.onNext(
+                        .init(
+                            isRequired: false,
+                            isFullScreen: false,
+                            useBiometry: false,
+                            completion: {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                                    self?.viewModel.showProcessingAndClose()
+                                }
+                            })
+                    )
                 }
             }
             self.present(vc, animated: true, completion: nil)
         case .processTransaction:
             let vc = ProcessTransactionViewController(viewModel: viewModel.processTransactionViewModel)
+            vc.delegate = self
             self.present(vc, animated: true, completion: nil)
+        }
+    }
+}
+
+extension TokenSettingsViewController: ProcessTransactionViewControllerDelegate {
+    func processTransactionViewControllerDidComplete(_ vc: ProcessTransactionViewController) {
+        vc.dismiss(animated: true) { [weak self] in
+            self?.dismiss(animated: true, completion: { [weak self] in
+                guard let strongSelf = self else {return}
+                strongSelf.delegate?.tokenSettingsViewControllerDidCloseToken?(strongSelf)
+            })
         }
     }
 }

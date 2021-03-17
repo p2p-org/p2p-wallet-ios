@@ -47,6 +47,7 @@ class WalletDetailViewController: WLIndicatorModalVC {
         switch scene {
         case .settings:
             let vc = scenesFactory.makeTokenSettingsViewController(pubkey: viewModel.pubkey)
+            vc.delegate = self
             self.present(vc, animated: true, completion: nil)
         case .send:
             guard let wallet = viewModel.wallet.value else {return}
@@ -64,5 +65,11 @@ class WalletDetailViewController: WLIndicatorModalVC {
             let vc = TransactionInfoVC(transaction: transaction)
             present(vc, animated: true, completion: nil)
         }
+    }
+}
+
+extension WalletDetailViewController: TokenSettingsViewControllerDelegate {
+    func tokenSettingsViewControllerDidCloseToken(_ vc: TokenSettingsViewController) {
+        dismiss(animated: true, completion: nil)
     }
 }

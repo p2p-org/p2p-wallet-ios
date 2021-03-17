@@ -276,3 +276,5 @@
 "If you lose this device, you can recover your encrypted wallet backup from iCloud" = "Si vous perdez cet appareil, vous pouvez récupérer votre sauvegarde de portefeuille chiffrée à partir d'iCloud";
 "View recovery key" = "Afficher la clé de récupération";
 "Backup to iCloud" = "Sauvegarde sur iCloud";
+"We’ve locked your wallet, try again in %@" = "Nous avons verrouillé votre portefeuille, réessayez dans %@";
+"minutes" = "minutes";

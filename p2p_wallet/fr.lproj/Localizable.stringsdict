@@ -18,5 +18,21 @@
             <string>%d portefeuilles cachés</string>
         </dict>
     </dict>
+    <key>Wrong Pin-code, %d attempt(s) left</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@variable_0@</string>
+        <key>variable_0</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>d</string>
+            <key>one</key>
+            <string>Mauvais code PIN, %d tentative restante</string>
+            <key>other</key>
+            <string>Mauvais code PIN, %d tentatives restantes</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

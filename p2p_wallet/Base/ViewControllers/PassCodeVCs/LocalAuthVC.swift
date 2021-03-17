@@ -11,10 +11,30 @@ import RxSwift
 import LocalAuthentication
 
 class LocalAuthVC: PassCodeVC {
+    lazy var closeButton = UIButton.close()
+        .onTap(self, action: #selector(back))
+    
+    private lazy var blockingView: UIView = {
+        let view = UIView(forAutoLayout: ())
+        view.backgroundColor = .clear
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+    
     var remainingPinEntries = 3
     var reason: String?
-    var isIgnorable = false
+    var isIgnorable = false {
+        didSet {
+            closeButton.isHidden = !isIgnorable
+            isModalInPresentation = !isIgnorable
+        }
+    }
     var useBiometry = true
+    var isBlocked = false {
+        didSet {
+            blockingView.isHidden = !isBlocked
+        }
+    }
     let accountStorage: KeychainAccountStorage
     
     init(accountStorage: KeychainAccountStorage) {
@@ -41,11 +61,13 @@ class LocalAuthVC: PassCodeVC {
         }
         
         if isIgnorable {
-            let closeButton = UIButton.close()
-                .onTap(self, action: #selector(back))
             view.addSubview(closeButton)
             closeButton.autoPinToTopRightCornerOfSuperview(xInset: 16)
         }
+        
+        view.addSubview(blockingView)
+        blockingView.autoPinEdgesToSuperviewEdges()
+        blockingView.isHidden = true
     }
     
     @objc func authWithBiometric(isAuto: Bool = false) {
@@ -81,8 +103,14 @@ class LocalAuthVC: PassCodeVC {
 
     override func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
         guard let correctPin = accountStorage.pinCode else {return false}
-        if pin == correctPin {return true} else {
+        if pin == correctPin {
+            return true
+        } else {
             remainingPinEntries -= 1
+            embededPinVC.errorTitle = L10n.wrongPinCodeDAttemptSLeft(remainingPinEntries)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self?.embededPinVC.errorTitle = nil
+            }
             return false
         }
     }

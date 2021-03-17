@@ -7,3 +7,6 @@
 [submodule "LazySubject"]
 	path = LazySubject
 	url = git@github.com:bigearsenal/LazySubject.git
+[submodule "THPinViewController"]
+	path = THPinViewController
+	url = git@github.com:p2p-org/THPinViewController.git

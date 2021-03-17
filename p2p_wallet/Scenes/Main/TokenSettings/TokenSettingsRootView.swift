@@ -22,14 +22,14 @@ class TokenSettingsRootView: BEView {
                 horizontalInterItemSpacing: .fixed(0)
             )
         ])
-        collectionView.itemDidSelect = {
+        collectionView.itemDidSelect = { [weak self] in
             switch $0 {
             case .close:
-                guard let wallet = self.viewModel.wallet else {return}
+                guard let wallet = self?.viewModel.wallet else {return}
                 if let balance = wallet.amount, balance > 0 {
-                    self.viewModel.navigationSubject.onNext(.alert(title: L10n.error, description: L10n.nonNativeAccountCanOnlyBeClosedIfItsBalanceIsZero))
+                    self?.viewModel.navigationSubject.onNext(.alert(title: L10n.error, description: L10n.nonNativeAccountCanOnlyBeClosedIfItsBalanceIsZero))
                 } else {
-                    self.viewModel.navigationSubject.onNext(.closeConfirmation)
+                    self?.viewModel.navigationSubject.onNext(.closeConfirmation)
                 }
             default:
                 return
