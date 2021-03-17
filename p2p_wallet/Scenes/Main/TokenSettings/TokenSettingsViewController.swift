@@ -17,6 +17,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
+    let rootViewModel: RootViewModel
     weak var delegate: TokenSettingsViewControllerDelegate?
     
     // MARK: - Subviews
@@ -29,9 +30,10 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     }()
     
     // MARK: - Initializer
-    init(viewModel: TokenSettingsViewModel)
+    init(viewModel: TokenSettingsViewModel, rootViewModel: RootViewModel)
     {
         self.viewModel = viewModel
+        self.rootViewModel = rootViewModel
         super.init()
     }
     
@@ -65,11 +67,17 @@ class TokenSettingsViewController: WLIndicatorModalVC {
             let vc = TokenSettingsCloseAccountConfirmationVC(symbol: symbol)
             vc.completion = {
                 vc.dismiss(animated: true) { [unowned self] in
-                    presentLocalAuthVC(accountStorage: self.viewModel.accountStorage) { [unowned self] in
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            self.viewModel.showProcessingAndClose()
-                        }
-                    }
+                    self.rootViewModel.authenticationSubject.onNext(
+                        .init(
+                            isRequired: false,
+                            isFullScreen: false,
+                            useBiometry: false,
+                            completion: {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                                    self?.viewModel.showProcessingAndClose()
+                                }
+                            })
+                    )
                 }
             }
             self.present(vc, animated: true, completion: nil)
