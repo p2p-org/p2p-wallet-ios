@@ -14,6 +14,7 @@ protocol BackupScenesFactory {
 
 class BackupVC: ProfileVCBase {
     let accountStorage: KeychainAccountStorage
+    let rootViewModel: RootViewModel
     let scenesFactory: BackupScenesFactory
     
     lazy var isIcloudBackedUp = BehaviorRelay<Bool>(value: accountStorage.didBackupUsingIcloud)
@@ -25,8 +26,9 @@ class BackupVC: ProfileVCBase {
     lazy var backupUsingIcloudButton = WLButton.stepButton(type: .black, label: " " + L10n.backupUsingICloud)
     lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .f6f6f8, textColor: .textBlack, label: L10n.backupManually)
     
-    init(accountStorage: KeychainAccountStorage, scenesFactory: BackupScenesFactory) {
+    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel, scenesFactory: BackupScenesFactory) {
         self.accountStorage = accountStorage
+        self.rootViewModel = rootViewModel
         self.scenesFactory = scenesFactory
         super.init()
     }
@@ -103,20 +105,34 @@ class BackupVC: ProfileVCBase {
     
     @objc func buttonBackupUsingICloudDidTouch() {
         guard let account = accountStorage.account?.phrase else {return}
-        presentLocalAuthVC(accountStorage: accountStorage) { [weak self] in
-            self?.accountStorage.saveICloud(phrases: account.joined(separator: " "))
-            self?.isIcloudBackedUp.accept(true)
-            self?.backedUpIcloudCompletion?()
-        }
+        rootViewModel.authenticationSubject.onNext(
+            .init(
+                isRequired: false,
+                isFullScreen: false,
+                useBiometry: true,
+                completion: { [weak self] in
+                    self?.accountStorage.saveICloud(phrases: account.joined(separator: " "))
+                    self?.isIcloudBackedUp.accept(true)
+                    self?.backedUpIcloudCompletion?()
+                }
+            )
+        )
     }
     
     @objc func buttonBackupManuallyDidTouch() {
-        presentLocalAuthVC(accountStorage: accountStorage) { [weak self] in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                guard let vc = self?.scenesFactory.makeBackupManuallyVC()
-                else {return}
-                self?.present(vc, animated: true, completion: nil)
-            }
-        }
+        rootViewModel.authenticationSubject.onNext(
+            .init(
+                isRequired: false,
+                isFullScreen: false,
+                useBiometry: true,
+                completion: {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                        guard let vc = self?.scenesFactory.makeBackupManuallyVC()
+                        else {return}
+                        self?.present(vc, animated: true, completion: nil)
+                    }
+                }
+            )
+        )
     }
 }

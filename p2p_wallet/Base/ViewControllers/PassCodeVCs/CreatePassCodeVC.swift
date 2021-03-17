@@ -14,15 +14,6 @@ class BaseCreatePassCodeVC: PassCodeVC {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .hidden }
     var passcode: String?
     
-    var disableDismissAfterCompletion: Bool {
-        get {
-            embededPinVC.disableDismissAfterCompletion
-        }
-        set {
-            embededPinVC.disableDismissAfterCompletion = newValue
-        }
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(backButton)
