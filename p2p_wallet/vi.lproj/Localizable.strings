@@ -274,3 +274,5 @@
 "If you lose this device, you can recover your encrypted wallet backup from iCloud" = "Nếu bạn làm mất thiết bị này, bạn có thể khôi phục bản sao lưu ví đã mã hóa của mình từ iCloud";
 "View recovery key" = "Xem khóa khôi phục";
 "Backup to iCloud" = "Sao lưu vào iCloud";
+"We’ve locked your wallet, try again in %@" = "Chúng tôi đã khóa ví của bạn, hãy thử lại sau %@";
+"minutes" = "phút";
