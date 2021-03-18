@@ -103,7 +103,7 @@ class HomeViewController: BaseVC {
             .asDriver(onErrorJustReturn: false)
             .drive(onNext: {[weak self] isLoading in
                 if isLoading {
-                    self?.view.showLoadingIndicatorView()
+                    self?.view.showLoadingIndicatorView(presentationStyle: .fullScreen)
                 } else {
                     self?.view.hideLoadingIndicatorView()
                 }
