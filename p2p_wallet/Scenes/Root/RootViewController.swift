@@ -101,6 +101,7 @@ class RootViewController: BaseVC {
             setNeedsStatusBarAppearanceUpdate()
             
             let vc = scenesFactory.makeMainViewController()
+            isBoardingCompleted = true
             transition(to: vc)
         }
         view.bringSubviewToFront(blurEffectView)
