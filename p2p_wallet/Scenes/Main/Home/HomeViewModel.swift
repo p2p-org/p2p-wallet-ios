@@ -25,6 +25,7 @@ class HomeViewModel {
     // MARK: - Constants
     
     // MARK: - Properties
+    let walletsVM: WalletsVM
     let homeCollectionViewModel: HomeCollectionViewModel
     
     // MARK: - Subjects
@@ -35,6 +36,7 @@ class HomeViewModel {
     
     // MARK: - Initializers
     init(walletsVM: WalletsVM) {
+        self.walletsVM = walletsVM
         self.homeCollectionViewModel = HomeCollectionViewModel(walletsVM: walletsVM)
     }
     
