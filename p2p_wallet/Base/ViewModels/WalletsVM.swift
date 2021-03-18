@@ -21,6 +21,8 @@ class WalletsVM: ListViewModel<Wallet> {
     
     var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
     
+    var defaultsDisposables = [DefaultsDisposable]()
+    
     init(solanaSDK: SolanaSDK, socket: SolanaSDK.Socket, transactionManager: TransactionsManager? = nil) {
         self.solanaSDK = solanaSDK
         self.socket = socket
@@ -83,6 +85,31 @@ class WalletsVM: ListViewModel<Wallet> {
             })
             .disposed(by: disposeBag)
         
+        defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] update in
+            guard let strongSelf = self else {return}
+            let hideZeroBalances = update.newValue!
+            
+            switch strongSelf.state.value {
+            case .loaded(var wallets):
+                for index in 0..<wallets.count where wallets[index].amount == 0 && wallets[index].symbol != "SOL"
+                {
+                    var wallet = wallets[index]
+                    
+                    if hideZeroBalances {
+                        wallet.isHidden = true
+                    } else if !Defaults.hiddenWalletPubkey.contains(wallet.pubkey!) {
+                        wallet.isHidden = false
+                    }
+                    wallets[index] = wallet
+                }
+                
+                strongSelf.data = wallets
+                strongSelf.state.accept(.loaded(wallets))
+            default:
+                break
+            }
+        })
+        
         NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -103,7 +130,13 @@ class WalletsVM: ListViewModel<Wallet> {
                             }
                             // update visibility
                             if let pubkey = wallets[i].pubkey {
-                                wallets[i].isHidden = Defaults.hiddenWalletPubkey.contains(pubkey)
+                                if Defaults.hiddenWalletPubkey.contains(pubkey)
+                                {
+                                    // force hide
+                                    wallets[i].isHidden = true
+                                } else if Defaults.hideZeroBalances {
+                                    wallets[i].isHidden = wallets[i].amount == 0
+                                }
                             }
                         }
                         
