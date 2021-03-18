@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import MBProgressHUD
 
 extension UIView {
     func fittingHeight(targetWidth: CGFloat) -> CGFloat {
@@ -31,14 +30,11 @@ extension UIView {
         hideHud()
         
         // show new hud
-        let hud = MBProgressHUD.showAdded(to: self, animated: false)
-        hud.mode = MBProgressHUDMode.indeterminate
-        hud.isUserInteractionEnabled = true
-        hud.label.text = message
+        showLoadingIndicatorView(message: message)
     }
     
     func hideHud() {
-        MBProgressHUD.hide(for: self, animated: false)
+        hideLoadingIndicatorView()
     }
     
     func removeErrorView() {
