@@ -278,3 +278,4 @@
 "Backup to iCloud" = "Sao lưu vào iCloud";
 "We’ve locked your wallet, try again in %@" = "Chúng tôi đã khóa ví của bạn, hãy thử lại sau %@";
 "minutes" = "phút";
+"Hide zero balances" = "Ẩn ví rỗng";

@@ -26,4 +26,5 @@ extension DefaultsKeys {
     var hiddenWalletPubkey: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
     var isTermAndConditionsAccepted: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var isIntroductionViewed: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
+    var hideZeroBalances: DefaultsKey<Bool> {.init(#function, defaultValue: true)}
 }
