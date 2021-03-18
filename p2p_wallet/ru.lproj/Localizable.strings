@@ -276,3 +276,4 @@
 "Backup to iCloud" = "Резервнить в iCloud";
 "We’ve locked your wallet, try again in %@" = "Мы заблокировали ваш кошелек, попробуйте еще раз через %@";
 "minutes" = "минут";
+"Hide zero balances" = "Скрыть нулевые остатки";

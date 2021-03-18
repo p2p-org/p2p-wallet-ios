@@ -276,3 +276,4 @@
 "Backup to iCloud" = "Backup to iCloud";
 "We’ve locked your wallet, try again in %@" = "We’ve locked your wallet, try again in %@";
 "minutes" = "minutes";
+"Hide zero balances" = "Hide zero balances";

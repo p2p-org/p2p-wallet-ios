@@ -24,6 +24,12 @@ class ProfileVC: ProfileVCBase {
     lazy var activeLanguageLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var appearanceLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var networkLabel = UILabel(weight: .medium, textColor: .textSecondary)
+    lazy var hideZeroBalancesSwitcher: UISwitch = { [unowned self] in
+        let switcher = UISwitch()
+        switcher.onTintColor = .h5887ff
+        switcher.addTarget(self, action: #selector(switcherDidSwitch(sender:)), for: .valueChanged)
+        return switcher
+    }()
     
     var disposables = [DefaultsDisposable]()
     let accountStorage: KeychainAccountStorage
@@ -76,6 +82,7 @@ class ProfileVC: ProfileVCBase {
             )
                 .withTag(4)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
+            
             createCell(
                 image: .settingsAppearance,
                 text: L10n.appearance,
@@ -83,6 +90,13 @@ class ProfileVC: ProfileVCBase {
             )
                 .withTag(5)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
+            
+            createCell(
+                image: .visibilityHide,
+                text: L10n.hideZeroBalances,
+                descriptionView: hideZeroBalancesSwitcher,
+                showRightArrow: false
+            ),
             
             BEStackViewSpacing(10),
             
@@ -100,6 +114,8 @@ class ProfileVC: ProfileVCBase {
         setUp(network: Defaults.network)
         
         setUp(theme: AppDelegate.shared.window?.overrideUserInterfaceStyle)
+        
+        setUp(isZeroBalanceHidden: Defaults.hideZeroBalances)
         
         activeLanguageLabel.text = Locale.current.uiLanguageLocalizedString?.uppercaseFirst
     }
@@ -142,6 +158,10 @@ class ProfileVC: ProfileVCBase {
         appearanceLabel.text = theme?.localizedString
     }
     
+    func setUp(isZeroBalanceHidden: Bool) {
+        hideZeroBalancesSwitcher.isOn = isZeroBalanceHidden
+    }
+    
     // MARK: - Actions
     @objc func buttonLogoutDidTouch() {
         showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { (index) in
@@ -180,18 +200,22 @@ class ProfileVC: ProfileVCBase {
     }
     
     // MARK: - Helpers
-    private func createCell(image: UIImage?, text: String, descriptionView: UIView? = nil) -> UIView
+    private func createCell(image: UIImage?, text: String, descriptionView: UIView? = nil, showRightArrow: Bool = true) -> UIView
     {
         let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
             UIImageView(width: 24, height: 24, image: image, tintColor: .a3a5ba),
             UILabel(text: text, textSize: 17, numberOfLines: 0)
         ])
         if let descriptionView = descriptionView {
-            stackView.addArrangedSubviews([
+            stackView.addArrangedSubview(
                 descriptionView
-                    .withContentHuggingPriority(.required, for: .horizontal),
+                    .withContentHuggingPriority(.required, for: .horizontal)
+            )
+        }
+        if showRightArrow {
+            stackView.addArrangedSubview(
                 UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .textBlack)
-            ])
+            )
         }
         return stackView
             .padding(.init(x: 20, y: 16), backgroundColor: .textWhite)
@@ -202,5 +226,9 @@ class ProfileVC: ProfileVCBase {
         if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
             setUp(theme: traitCollection.userInterfaceStyle)
         }
+    }
+    
+    @objc func switcherDidSwitch(sender: UISwitch) {
+        Defaults.hideZeroBalances.toggle()
     }
 }

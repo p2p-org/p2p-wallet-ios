@@ -276,3 +276,4 @@
 "Backup to iCloud" = "Sauvegarde sur iCloud";
 "We’ve locked your wallet, try again in %@" = "Nous avons verrouillé votre portefeuille, réessayez dans %@";
 "minutes" = "minutes";
+"Hide zero balances" = "Masquer les soldes nuls";
