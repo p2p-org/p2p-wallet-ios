@@ -97,6 +97,19 @@ class HomeViewController: BaseVC {
     
     override func bind() {
         super.bind()
+        viewModel.walletsVM
+            .state
+            .map {$0 == .loading}
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: {[weak self] isLoading in
+                if isLoading {
+                    self?.view.showLoadingIndicatorView()
+                } else {
+                    self?.view.hideLoadingIndicatorView()
+                }
+            })
+            .disposed(by: disposeBag)
+        
         viewModel.navigationSubject
             .subscribe(onNext: {[unowned self] in self.navigate(to: $0)})
             .disposed(by: disposeBag)
