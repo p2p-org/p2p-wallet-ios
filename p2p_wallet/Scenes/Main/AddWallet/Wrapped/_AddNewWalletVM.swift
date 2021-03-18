@@ -58,7 +58,7 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
     
     override func offlineSearchPredicate(item: Wallet, lowercasedQuery query: String) -> Bool {
         item.name.lowercased().contains(query) ||
-        item.symbol.lowercased().contains(query)
+            item.symbol.lowercased().contains(query)
     }
     
     func tokenDidSelect(_ token: Wallet) {
@@ -93,50 +93,51 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
             
             // request
             self.solanaSDK.createTokenAccount(mintAddress: newWallet.mintAddress)
-//            return Single<(String, String)>.just(("", "")).delay(.seconds(5), scheduler: MainScheduler.instance)
-//                .map {_ -> (String, String) in
-//                    throw SolanaSDK.Error.other("example")
-//                }
+                //            return Single<(String, String)>.just(("", "")).delay(.seconds(5), scheduler: MainScheduler.instance)
+                //                .map {_ -> (String, String) in
+                //                    throw SolanaSDK.Error.other("example")
+                //                }
                 .subscribe(onSuccess: { (signature, newPubkey) in
-                        // remove suggestion from the list
-                        self.removeItem(where: {$0.mintAddress == newWallet.mintAddress})
-                        
-                        // cancel search if search result is empty
-                        if self.searchResult?.isEmpty == true
-                        {
-                            self.clearSearchBarSubject.onNext(())
-                        }
-                        
-                        // process transaction
-                        var newWallet = newWallet
-                        newWallet.pubkey = newPubkey
-                        newWallet.isProcessing = true
-                        let transaction = Transaction(
-                            signatureInfo: .init(signature: signature),
-                            type: .createAccount,
-                            amount: -(self.feeSubject.value ?? 0),
-                            symbol: "SOL",
-                            status: .processing,
-                            newWallet: newWallet
-                        )
-                        self.transactionManager.process(transaction)
+                    // remove suggestion from the list
+                    self.removeItem(where: {$0.mintAddress == newWallet.mintAddress})
+                    
+                    // cancel search if search result is empty
+                    if self.searchResult?.isEmpty == true
+                    {
+                        self.clearSearchBarSubject.onNext(())
+                    }
+                    
+                    // process transaction
+                    var newWallet = newWallet
+                    newWallet.pubkey = newPubkey
+                    newWallet.isProcessing = true
+                    newWallet.isHidden = Defaults.hideZeroBalances
+                    let transaction = Transaction(
+                        signatureInfo: .init(signature: signature),
+                        type: .createAccount,
+                        amount: -(self.feeSubject.value ?? 0),
+                        symbol: "SOL",
+                        status: .processing,
+                        newWallet: newWallet
+                    )
+                    self.transactionManager.process(transaction)
                     
                     // add to walletsVM
                     self.walletsVM.state.accept(.loaded(self.walletsVM.data + [newWallet]))
-                        
-                        // present wallet
+                    
+                    // present wallet
                     let vc = self.scenesFactory.makeWalletDetailViewController(pubkey: newPubkey, symbol: newWallet.symbol)
-                        self.navigatorSubject.onNext(.present(vc))
-                    },
-                    onFailure: { (error) in
-                        let description = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-                        self.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
-                            var wallet = $0
-                            wallet.isBeingCreated = nil
-                            wallet.creatingError = description
-                            return wallet
-                        })
-                    }
+                    self.navigatorSubject.onNext(.present(vc))
+                },
+                onFailure: { (error) in
+                    let description = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                    self.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
+                        var wallet = $0
+                        wallet.isBeingCreated = nil
+                        wallet.creatingError = description
+                        return wallet
+                    })
+                }
                 )
                 .disposed(by: self.disposeBag)
             return .just(())
