@@ -16,7 +16,16 @@ class EnterPhrasesVC: BaseVStackVC {
         let tv = SubviewAttachingTextView(forExpandable: ())
         tv.backgroundColor = .clear
         tv.font = .systemFont(ofSize: 15)
-        tv.typingAttributes = [.font: UIFont.systemFont(ofSize: 15)]
+        
+        // typing attributes
+        let font = UIFont.systemFont(ofSize: 15)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 10
+        
+        tv.typingAttributes = [
+            .font: font,
+            .paragraphStyle: paragraphStyle
+        ]
         tv.heightAnchor.constraint(greaterThanOrEqualToConstant: 70)
             .isActive = true
         tv.placeholder = L10n.enterSeedPhrasesInACorrectOrderToRecoverYourWallet
