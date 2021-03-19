@@ -179,7 +179,9 @@ extension EnterPhrasesVC: UITextViewDelegate {
             let range = text.range(of: phrase)
             
             // add attachment
-            textView.textStorage.replaceCharacters(in: range, with: attachment(phrase: phrase))
+            let aStr = NSMutableAttributedString()
+            aStr.append(attachment(phrase: phrase))
+            textView.textStorage.replaceCharacters(in: range, with: aStr)
             
             // diff of length, length become 1 when inserting attachment
             lengthDiff = aStr.length - phrase.count
