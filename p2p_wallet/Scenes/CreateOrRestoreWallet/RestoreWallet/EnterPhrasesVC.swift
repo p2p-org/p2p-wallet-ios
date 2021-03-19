@@ -111,7 +111,7 @@ class EnterPhrasesVC: BaseVStackVC {
     private func getPhrasesInTextView() -> [String] {
         var phrases = [String]()
         textView.attributedText.enumerateAttribute(.attachment, in: NSRange(location: 0, length: textView.attributedText.length)) { (att, _, _) in
-            if let att = att as? Attachment, let phrase = att.phrase {
+            if let att = att as? PhraseAttachment, let phrase = att.phrase {
                 phrases.append(phrase)
             }
         }
@@ -121,6 +121,14 @@ class EnterPhrasesVC: BaseVStackVC {
 
 extension EnterPhrasesVC: UITextViewDelegate {
     class Attachment: SubviewTextAttachment {
+        override func attachmentBounds(for textContainer: NSTextContainer?, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
+            var bounds = super.attachmentBounds(for: textContainer, proposedLineFragment: lineFrag, glyphPosition: position, characterIndex: charIndex)
+            bounds.origin.y -= 16
+            return bounds
+        }
+    }
+    
+    class PhraseAttachment: Attachment {
         var phrase: String?
     }
     
@@ -174,7 +182,7 @@ extension EnterPhrasesVC: UITextViewDelegate {
             textView.textStorage.replaceCharacters(in: range, with: attachment(phrase: phrase))
             
             // diff of length, length become 1 when inserting attachment
-            lengthDiff = 1 - phrase.count
+            lengthDiff = aStr.length - phrase.count
             
             if selectedLocation > range.location {
                 selectedLocation += lengthDiff
@@ -189,10 +197,9 @@ extension EnterPhrasesVC: UITextViewDelegate {
     }
     
     fileprivate func rearrangeTextView() {
-        // re-arrange attachment's order
         var count = 0
         textView.attributedText.enumerateAttribute(.attachment, in: NSRange(location: 0, length: textView.attributedText.length)) { (att, range, _) in
-            if let att = att as? Attachment, let phrase = att.phrase {
+            if let att = att as? PhraseAttachment, let phrase = att.phrase {
                 count += 1
                 textView.textStorage.replaceCharacters(in: range, with: attachment(phrase: phrase, index: count))
             }
@@ -214,7 +221,7 @@ extension EnterPhrasesVC: UITextViewDelegate {
         label.translatesAutoresizingMaskIntoConstraints = true
         
         // replace text by attachment
-        let attachment = Attachment(view: label)
+        let attachment = PhraseAttachment(view: label)
         attachment.phrase = phrase
         let attrString = NSMutableAttributedString(attachment: attachment)
         attrString.addAttributes(textView.typingAttributes, range: NSRange(location: 0, length: attrString.length))
