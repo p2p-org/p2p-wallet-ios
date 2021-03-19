@@ -126,7 +126,12 @@ extension EnterPhrasesVC: UITextViewDelegate {
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         // if deleting
-        if text.isEmpty { return true }
+        if text.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                self.rearrangeTextView()
+            }
+            return true
+        }
         
         // prevent dupplicated spaces
         if text.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -175,6 +180,15 @@ extension EnterPhrasesVC: UITextViewDelegate {
                 selectedLocation += lengthDiff
             }
         }
+        rearrangeTextView()
+        
+        // recalculate selected range
+        DispatchQueue.main.async {
+            self.textView.selectedRange = NSRange(location: selectedLocation, length: 0)
+        }
+    }
+    
+    fileprivate func rearrangeTextView() {
         // re-arrange attachment's order
         var count = 0
         textView.attributedText.enumerateAttribute(.attachment, in: NSRange(location: 0, length: textView.attributedText.length)) { (att, range, _) in
@@ -182,11 +196,6 @@ extension EnterPhrasesVC: UITextViewDelegate {
                 count += 1
                 textView.textStorage.replaceCharacters(in: range, with: attachment(phrase: phrase, index: count))
             }
-        }
-        
-        // recalculate selected range
-        DispatchQueue.main.async {
-            self.textView.selectedRange = NSRange(location: selectedLocation, length: 0)
         }
     }
     
