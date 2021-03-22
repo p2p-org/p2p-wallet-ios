@@ -44,10 +44,21 @@ class WLPhrasesTextView: SubviewAttachingTextView {
         delegate = self
         autocapitalizationType = .none
         autocorrectionType = .no
+        
+        // add first placeholder
+        addPlaceholderAttachment(at: 0)
+        selectedRange = NSRange(location: 1, length: 0)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func paste(_ sender: Any?) {
+        super.paste(sender)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.selectedRange.location = self?.attributedText.length ?? 0
+        }
     }
     
     // MARK: - Methods
@@ -59,6 +70,12 @@ class WLPhrasesTextView: SubviewAttachingTextView {
             }
         }
         return phrases
+    }
+    
+    override func closestPosition(to point: CGPoint) -> UITextPosition? {
+        let beginning = self.beginningOfDocument
+        let end = self.position(from: beginning, offset: attributedText.length)
+        return end
     }
 }
 
@@ -80,6 +97,17 @@ extension WLPhrasesTextView: UITextViewDelegate {
         
         // if deleting
         if text.isEmpty {
+            // check if remove all character
+            let newText = NSMutableAttributedString(attributedString: attributedText)
+            newText.replaceCharacters(in: range, with: text)
+            if newText.length == 0 {
+                textStorage.replaceCharacters(in: range, with: text)
+                addPlaceholderAttachment(at: 0)
+                selectedRange = NSRange(location: 1, length: 0)
+                return false
+            }
+            
+            // remove others
             self.shouldRearrange = true
             return true
         }
@@ -100,6 +128,7 @@ extension WLPhrasesTextView: UITextViewDelegate {
         if text.lowercased().rangeOfCharacter(from: invalidCharactersSet) == nil {
             // wrap phrase when found a space
             if text.contains(" ") {
+                removeAllPlaceholderAttachment()
                 shouldWrapPhrases = true
                 shouldRearrange = true
             }
@@ -136,7 +165,8 @@ extension WLPhrasesTextView: UITextViewDelegate {
         shouldWrapPhrases = false
         
         // recalculate selected range
-        selectedRange = NSRange(location: selectedLocation, length: 0)
+        addPlaceholderAttachment(at: selectedLocation)
+        selectedRange = NSRange(location: selectedLocation + 1, length: 0)
     }
     
     fileprivate func rearrangeAttachments() {
@@ -146,30 +176,11 @@ extension WLPhrasesTextView: UITextViewDelegate {
                 count += 1
                 textStorage.replaceCharacters(in: range, with: attachment(phrase: phrase, index: count))
             }
+            
+            if att is PlaceholderAttachment {
+                count += 1
+            }
         }
         shouldRearrange = false
-        
-    }
-    
-    fileprivate func attachment(phrase: String, index: Int? = nil) -> NSAttributedString {
-        let phrase = phrase.lowercased()
-        // replace phrase's range by attachment that is a uilabel
-        let label = { () -> UILabel in
-            let label = UILabel(textColor: .textBlack)
-            label.attributedText = NSMutableAttributedString()
-                .text("\(index != nil ? "\(index!)": ""). ", size: 15, color: .a3a5ba)
-                .text("\(phrase)", size: 15)
-            return label
-        }()
-            .padding(.init(x: 12, y: 12), backgroundColor: .textWhite, cornerRadius: 5)
-        label.border(width: 1, color: UIColor.a3a5ba.withAlphaComponent(0.5))
-        label.translatesAutoresizingMaskIntoConstraints = true
-        
-        // replace text by attachment
-        let attachment = PhraseAttachment(view: label)
-        attachment.phrase = phrase
-        let attrString = NSMutableAttributedString(attachment: attachment)
-        attrString.addAttributes(typingAttributes, range: NSRange(location: 0, length: attrString.length))
-        return attrString
     }
 }
