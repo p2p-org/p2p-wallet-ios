@@ -7,6 +7,19 @@
 
 import Foundation
 
+extension Optional where Wrapped == String {
+    public var orEmpty: String {
+        self ?? ""
+    }
+    static func + (left: String?, right: String?) -> String {
+        left.orEmpty + right.orEmpty
+    }
+    var double: Double? {
+        guard let string = self else {return nil}
+        return string.double
+    }
+}
+
 extension String {
     var firstCharacter: String {
         String(prefix(1))
@@ -25,6 +38,12 @@ extension String {
         let end = index(startIndex, offsetBy: bounds.upperBound)
         return String(self[start..<end])
     }
+    
+    // swiftlint:disable swiftgen_strings
+    func localized() -> String {
+        NSLocalizedString(self, comment: "")
+    }
+    // swiftlint:enable swiftgen_strings
 }
 
 extension String {

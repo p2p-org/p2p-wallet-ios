@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Group 101.png",
+      "filename" : "reload 3.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Group 101@2x.png",
+      "filename" : "reload 3@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Group 101@3x.png",
+      "filename" : "reload 3@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
@@ -19,5 +19,8 @@
   "info" : {
     "author" : "xcode",
     "version" : 1
+  },
+  "properties" : {
+    "template-rendering-intent" : "template"
   }
 }

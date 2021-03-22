@@ -22,13 +22,7 @@ class BaseVC: BEViewController {
         scrollViewAvoidingTabBar?.contentInset = scrollViewAvoidingTabBar?.contentInset.modifying(dBottom: 20) ?? .zero
     }
     
-    #if DEBUG //1
-    @objc func injected() { //2
-        for subview in self.view.subviews {
-            subview.removeFromSuperview()
-        }
-        
-        viewDidLoad() //4
+    func forceResizeModal() {
+        preferredContentSize.height += 1
     }
-    #endif
 }

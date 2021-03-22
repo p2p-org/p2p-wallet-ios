@@ -11,11 +11,11 @@ class BaseVStackVC: BaseVC {
     var padding: UIEdgeInsets { UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10) }
     lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: padding)
     lazy var stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
+    lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewDidTouch))
     
     override func setUp() {
         super.setUp()
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewDidTouch))
         view.addGestureRecognizer(tapGesture)
         // scroll view for flexible height
         view.addSubview(scrollView)
@@ -30,11 +30,4 @@ class BaseVStackVC: BaseVC {
     @objc func viewDidTouch() {
         view.endEditing(true)
     }
-    
-    #if DEBUG //1
-    @objc override func injected() { //2
-        super.injected()
-        stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
-    }
-    #endif
 }

@@ -22,4 +22,10 @@ extension UIButton {
         button.tintColor = tintColor
         return button
     }
+    
+    static func closeFill() -> UIButton {
+        let button = UIButton(width: 43, height: 43)
+        button.setImage(.closeFill, for: .normal)
+        return button
+    }
 }

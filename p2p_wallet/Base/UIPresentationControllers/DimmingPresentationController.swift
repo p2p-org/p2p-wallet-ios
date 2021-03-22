@@ -11,6 +11,7 @@ import UIKit
 class DimmingPresentationController: UIPresentationController {
     // MARK: - Properties
     var dimmingView: UIView!
+    var animateResizing = true
     
     // MARK: - Class Initialization
     override init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
@@ -35,7 +36,7 @@ class DimmingPresentationController: UIPresentationController {
             NSLayoutConstraint.constraints(withVisualFormat: "H:|[dimmingView]|",
                                            options: [], metrics: nil, views: ["dimmingView": dimmingView]))
         
-        //3
+        // 3
         guard let coordinator = presentedViewController.transitionCoordinator else {
             dimmingView.alpha = 1.0
             return
@@ -76,5 +77,19 @@ class DimmingPresentationController: UIPresentationController {
     // MARK: - Actions
     @objc func handleTap(recognizer: UITapGestureRecognizer) {
         presentingViewController.dismiss(animated: true)
+    }
+    
+    // MARK: - Events
+    override func preferredContentSizeDidChange(forChildContentContainer container: UIContentContainer) {
+        super.preferredContentSizeDidChange(forChildContentContainer: container)
+        self.containerView?.setNeedsLayout()
+        self.containerView?.subviews.forEach {$0.layoutIfNeeded()}
+        if animateResizing {
+            UIView.animate(withDuration: 0.3) {
+                self.containerView?.layoutIfNeeded()
+            }
+        } else {
+            self.containerView?.layoutIfNeeded()
+        }
     }
 }

@@ -11,8 +11,8 @@ import Action
 class MessageView: BEView {
     lazy var stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .center, distribution: .fill)
     lazy var titleLabel = UILabel(text: L10n.error.uppercaseFirst, textSize: 17, weight: .semibold, textAlignment: .center)
-    lazy var descriptionLabel = UILabel(text: L10n.somethingWentWrongPleaseTryAgainLater, textSize: 17, textColor: .secondary, numberOfLines: 0, textAlignment: .center)
-    lazy var actionButton = WLButton.stepButton(type: .main, label: L10n.tryAgain)
+    lazy var descriptionLabel = UILabel(text: L10n.somethingWentWrongPleaseTryAgainLater, textSize: 17, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
+    lazy var actionButton = WLButton.stepButton(type: .black, label: L10n.tryAgain)
     
     override func commonInit() {
         super.commonInit()
@@ -62,6 +62,7 @@ class ErrorView: MessageView {
     }
     
     func setUpWithError(_ error: Error) {
-        descriptionLabel.text = error.localizedDescription + "\n" + L10n.pleaseTryAgainLater.uppercaseFirst
+        let description = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        descriptionLabel.text = description + "\n" + L10n.pleaseTryAgainLater.uppercaseFirst
     }
 }

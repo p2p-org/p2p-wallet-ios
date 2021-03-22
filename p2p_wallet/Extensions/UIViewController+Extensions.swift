@@ -18,7 +18,7 @@ extension UIViewController {
         if allButtons.count == 0 {
             allButtons.append("OK")
         }
-
+        
         for index in 0..<allButtons.count {
             let buttonTitle = allButtons[index]
             let action = UIAlertAction(title: buttonTitle, style: .default, handler: { (_) in
@@ -35,10 +35,10 @@ extension UIViewController {
     }
     
     func showError(_ error: Error, showPleaseTryAgain: Bool = false, additionalMessage: String? = nil, completion: (() -> Void)? = nil) {
-        let message = error.localizedDescription
+        let description = error.readableDescription
         let vc = tabBarController ?? navigationController ?? parent ?? self
         
-        vc.showAlert(title: L10n.error.uppercaseFirst, message: message + (additionalMessage != nil ? "\n" + additionalMessage! : "") + (showPleaseTryAgain ? "\n" + L10n.pleaseTryAgainLater : ""), buttonTitles: [L10n.ok]) { (_) in
+        vc.showAlert(title: L10n.error.uppercaseFirst, message: description + (additionalMessage != nil ? "\n" + additionalMessage! : "") + (showPleaseTryAgain ? "\n" + L10n.pleaseTryAgainLater : ""), buttonTitles: [L10n.ok]) { (_) in
             completion?()
         }
     }
@@ -47,26 +47,16 @@ extension UIViewController {
         view.subviews.first(where: {$0 is ErrorView}) as? ErrorView
     }
     
+    func showErrorView(error: Error) {
+        view.showErrorView(error: error)
+    }
+    
     func showErrorView(title: String? = nil, description: String? = nil) {
-        removeErrorView()
-        let errorView = ErrorView(backgroundColor: .textWhite)
-        if let title = title {
-            errorView.titleLabel.text = title
-        }
-        if let description = description {
-            errorView.descriptionLabel.text = description
-        }
-        let spacer1 = UIView.spacer
-        let spacer2 = UIView.spacer
-        errorView.stackView.insertArrangedSubview(spacer1, at: 0)
-        errorView.stackView.addArrangedSubview(spacer2)
-        spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor).isActive = true
-        view.addSubview(errorView)
-        errorView.autoPinEdgesToSuperviewEdges()
+        view.showErrorView(title: title, description: description)
     }
     
     func removeErrorView() {
-        view.subviews.filter {$0 is ErrorView}.forEach {$0.removeFromSuperview()}
+        view.removeErrorView()
     }
     
     func topViewController() -> UIViewController {
@@ -88,17 +78,85 @@ extension UIViewController {
         if let url = URL(string: url) {
             let config = SFSafariViewController.Configuration()
             config.entersReaderIfAvailable = true
-
+            
             let safariVC = SFSafariViewController(url: url, configuration: config)
-
+            
             present(safariVC, animated: true)
         }
     }
     
-    func presentTransactionVC() -> TransactionVC {
-        let transactionVC = TransactionVC()
-        transactionVC.setUp(transaction: nil)
-        present(transactionVC, animated: true, completion: nil)
-        return transactionVC
+    // MARK: - HUDs
+    func showIndetermineHudWithMessage(_ message: String?) {
+        view.showIndetermineHudWithMessage(message)
+    }
+    
+    func hideHud() {
+        view.hideHud()
+    }
+    
+    // MARK: - Custom modal
+    func presentCustomModal(vc wrappedVC: UIViewController, title: String? = nil, titleImageView: UIView? = nil) {
+        let vc = makeCustomModalVC(wrappedVC: wrappedVC, title: title, titleImageView: titleImageView)
+        present(vc, animated: true, completion: nil)
+    }
+    
+    func makeCustomModalVC(wrappedVC: UIViewController, title: String? = nil, titleImageView: UIView? = nil) -> WLModalWrapperVC {
+        let vc = WLModalWrapperVC(wrapped: wrappedVC)
+        vc.title = title
+        vc.titleImageView = titleImageView
+        vc.modalPresentationStyle = wrappedVC.modalPresentationStyle
+        vc.transitioningDelegate = wrappedVC as? UIViewControllerTransitioningDelegate
+        return vc
+    }
+    
+    @objc func hideKeyboard() {
+        view.endEditing(true)
+    }
+    
+    // MARK: - ChildVCs
+    func add(child: UIViewController, to view: UIView? = nil) {
+        guard child.parent == nil else {
+            return
+        }
+        
+        addChild(child)
+        (view ?? self.view).addSubview(child.view)
+        child.view.configureForAutoLayout()
+        child.view.autoPinEdgesToSuperviewEdges()
+        
+        child.didMove(toParent: self)
+    }
+    
+    func removeAllChilds() {
+        for child in children {
+            child.willMove(toParent: nil)
+            child.view.removeFromSuperview()
+            child.removeFromParent()
+        }
+    }
+    
+    func transition(from oldVC: UIViewController? = nil, to newVC: UIViewController, in containerView: UIView? = nil) {
+        let oldVC = oldVC ?? children.last
+        let containerView = containerView ?? view
+        
+        oldVC?.willMove(toParent: nil)
+        oldVC?.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        addChild(newVC)
+        containerView?.addSubview(newVC.view)
+        newVC.view.configureForAutoLayout()
+        newVC.view.autoPinEdgesToSuperviewEdges()
+        
+        newVC.view.alpha = 0
+        newVC.view.layoutIfNeeded()
+        
+        UIView.animate(withDuration: 0.3) {
+            newVC.view.alpha = 1
+            oldVC?.view.alpha = 0
+        } completion: { _ in
+            oldVC?.view.removeFromSuperview()
+            oldVC?.removeFromParent()
+            newVC.didMove(toParent: self)
+        }
     }
 }

@@ -16,122 +16,65 @@ import Action
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    var shouldShowLocalAuth = true
-    var localAuthVCShown = false
-    let timeRequiredForAuthentication: Double = 10 // in seconds
-    var timestamp: TimeInterval!
+    let container = DependencyContainer()
     
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
     }
+    
+    func changeThemeTo(_ style: UIUserInterfaceStyle) {
+        Defaults.appearance = style
+        if #available(iOS 13.0, *) {
+            window?.overrideUserInterfaceStyle = style
+        }
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+        Bundle.swizzleLocalization()
         
         // fetch prices
-        PricesManager.bonfida.startObserving()
-        
-        #if DEBUG
-        Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/iOSInjection.bundle")?.load()
-//        //for tvOS:
-//        Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/tvOSInjection.bundle")?.load()
-//        //Or for macOS:
-//        Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/macOSInjection.bundle")?.load()
-        #endif
+        PricesManager.shared.startObserving()
         
         // BEPureLayoutConfiguration
         BEPureLayoutConfigs.defaultBackgroundColor = .background
         BEPureLayoutConfigs.defaultTextColor = .textBlack
-        BEPureLayoutConfigs.defaultNavigationBarColor = .background
+        BEPureLayoutConfigs.defaultNavigationBarColor = .textWhite
         BEPureLayoutConfigs.defaultNavigationBarTextFont = .systemFont(ofSize: 17, weight: .semibold)
         BEPureLayoutConfigs.defaultShadowColor = .textBlack
-        let image = UIImage.backButton.withRenderingMode(.alwaysOriginal)
-        BEPureLayoutConfigs.defaultBackButton = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
-        BEPureLayoutConfigs.defaultCheckBoxActiveColor = .textBlack
+//        let image = UIImage.backButton.withRenderingMode(.alwaysOriginal)
+//        BEPureLayoutConfigs.defaultBackButton = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
+        BEPureLayoutConfigs.defaultCheckBoxActiveColor = .h5887ff
         
         // THPinViewController
-        THPinInputCircleView.fillColor = .textBlack
+        THPinInputCircleView.fillColor = .passcodeHighlightColor
         THPinNumButton.textColor = .textBlack
+        THPinNumButton.textHighlightColor = .white
+        THPinNumButton.backgroundHighlightColor = .passcodeHighlightColor
         
         // Use Firebase library to configure APIs
         FirebaseApp.configure()
         
         // set window
         window = UIWindow(frame: UIScreen.main.bounds)
-        reloadRootVC()
+        if #available(iOS 13.0, *) {
+            window?.overrideUserInterfaceStyle = Defaults.appearance
+        }
+        
+        // set rootVC
+        let vc = container.makeRootViewController()
+        window?.rootViewController = vc
+        
         window?.makeKeyAndVisible()
         return true
     }
     
-    func reloadRootVC() {
-        let rootVC: UIViewController
-        if AccountStorage.shared.account == nil {
-            rootVC = BENavigationController(rootViewController: WelcomeVC())
-            shouldShowLocalAuth = false
-        } else {
-            if AccountStorage.shared.pinCode == nil {
-                rootVC = BENavigationController(rootViewController: SSPinCodeVC())
-                shouldShowLocalAuth = false
-            } else if !Defaults.didSetEnableBiometry {
-                rootVC = BENavigationController(rootViewController: EnableBiometryVC())
-                shouldShowLocalAuth = false
-            } else if !Defaults.didSetEnableNotifications {
-                rootVC = BENavigationController(rootViewController: EnableNotificationsVC())
-                shouldShowLocalAuth = false
-            } else {
-                shouldShowLocalAuth = true
-                WalletsVM.ofCurrentUser = WalletsVM()
-                rootVC = TabBarVC()
-            }
-        }
+    func applicationDidEnterBackground(_ application: UIApplication) {
         
-        window?.rootViewController = rootVC
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        let newTimestamp = Date().timeIntervalSince1970
-        if timestamp == nil {
-            timestamp = newTimestamp - timeRequiredForAuthentication
-        }
-        if shouldShowLocalAuth && !localAuthVCShown && timestamp + timeRequiredForAuthentication <= newTimestamp
-        {
-            
-            timestamp = newTimestamp
-            
-            showAuthentication()
-        }
-    }
-    
-    fileprivate func showAuthentication() {
-        let topVC = self.window?.rootViewController?.topViewController()
-        let localAuthVC = LocalAuthVC()
-        localAuthVC.completion = { [self] didSuccess in
-            localAuthVCShown = false
-            if !didSuccess {
-                topVC?.showErrorView()
-                // reset timestamp
-                timestamp = Date().timeIntervalSince1970
-                
-                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-                    topVC?.errorView?.descriptionLabel.text = L10n.authenticationFailed + "\n" + L10n.retryAfter + " \(Int(10 - Date().timeIntervalSince1970 + timestamp) + 1) " + L10n.seconds
-
-                    if Int(Date().timeIntervalSince1970) == Int(timestamp + timeRequiredForAuthentication) {
-                        topVC?.errorView?.descriptionLabel.text = L10n.tapButtonToRetry
-                        topVC?.errorView?.buttonAction = CocoaAction {
-                            showAuthentication()
-                            return .just(())
-                        }
-                        timer.invalidate()
-                    }
-                }
-            } else {
-                topVC?.removeErrorView()
-            }
-        }
-        localAuthVC.modalPresentationStyle = .fullScreen
-        self.window?.rootViewController?.topViewController()
-            .present(localAuthVC, animated: true, completion: nil)
-        localAuthVCShown = true
+        
     }
     
     func application(
