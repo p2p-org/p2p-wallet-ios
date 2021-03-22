@@ -279,3 +279,4 @@
 "We’ve locked your wallet, try again in %@" = "Мы заблокировали ваш кошелек, попробуйте еще раз через %@";
 "minutes" = "минут";
 "Hide zero balances" = "Скрыть нулевые остатки";
+"Wrong order or seed phrase, please check it and try again" = "Неправильный порядок или исходная фраза, пожалуйста, проверьте это и попробуйте еще раз";
