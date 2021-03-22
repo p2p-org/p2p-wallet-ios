@@ -29,6 +29,7 @@ class WLPhrasesTextView: SubviewAttachingTextView {
         isScrollEnabled = false
         
         backgroundColor = .clear
+        tintColor = .textBlack
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 10
@@ -76,6 +77,13 @@ class WLPhrasesTextView: SubviewAttachingTextView {
         let beginning = self.beginningOfDocument
         let end = self.position(from: beginning, offset: attributedText.length)
         return end
+    }
+    
+    override func caretRect(for position: UITextPosition) -> CGRect {
+        var original = super.caretRect(for: position)
+        original.origin.y += 12
+        original.size.height -= 24
+        return original
     }
 }
 
