@@ -50,4 +50,13 @@ extension UIImageView {
             }
         }
     }
+    
+    func with(urlString: String?) -> Self {
+        setImage(urlString: urlString)
+        return self
+    }
+    
+    static var p2pValidatorLogo: UIImageView {
+        UIImageView(width: 88, height: 31, image: .p2pValidatorLogo)
+    }
 }

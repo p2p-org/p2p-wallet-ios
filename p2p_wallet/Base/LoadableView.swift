@@ -9,20 +9,29 @@ import Foundation
 
 private var loadingHandle: UInt8 = 0
 
-protocol LoadableView {
+protocol LoadableView: UIView {
     var loadingViews: [UIView] {get}
 }
 
 extension LoadableView {
     func showLoading() {
         hideLoading()
+        layoutIfNeeded()
         loadingViews.forEach {
+            if let view = $0 as? LoadableView {
+                view.showLoading()
+                return
+            }
             self.addLoadingLayer(for: $0)
         }
     }
     
     func hideLoading() {
         loadingViews.forEach {
+            if let view = $0 as? LoadableView {
+                view.hideLoading()
+                return
+            }
             (objc_getAssociatedObject($0, &loadingHandle) as? CAGradientLayer)?.removeFromSuperlayer()
             $0.layer.sublayers?.forEach {$0.isHidden = false}
         }

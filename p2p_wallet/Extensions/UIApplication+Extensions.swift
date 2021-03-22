@@ -9,35 +9,21 @@ import Foundation
 import MBProgressHUD
 
 extension UIApplication {
-    func changeRootVC(to rootVC: UIViewController, withNaviationController: Bool = false) {
-        guard let window = keyWindow else {
-            return
-        }
-        window.rootViewController = withNaviationController ? BENavigationController(rootViewController: rootVC) : rootVC
-        
-        UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromLeft, animations: {})
+    private var kWindow: UIWindow? {
+        // keyWindow is deprecated
+        UIApplication.shared.windows.first { $0.isKeyWindow }
     }
     
     func showIndetermineHudWithMessage(_ message: String?) {
-        guard let keyWindow = keyWindow else {return}
-        
-        // Hide all previous hud
-        hideHud()
-        
-        // show new hud
-        let hud = MBProgressHUD.showAdded(to: keyWindow, animated: false)
-        hud.mode = MBProgressHUDMode.indeterminate
-        hud.isUserInteractionEnabled = true
-        hud.label.text = message
+        kWindow?.showIndetermineHudWithMessage(message)
     }
     
     func hideHud() {
-        guard let keyWindow = keyWindow else {return}
-        MBProgressHUD.hide(for: keyWindow, animated: false)
+        kWindow?.hideHud()
     }
     
     func showDone(_ message: String, completion: (() -> Void)? = nil) {
-        guard let keyWindow = keyWindow else {return}
+        guard let keyWindow = kWindow else {return}
         
         // Hide all previous hud
         hideHud()
@@ -60,6 +46,13 @@ extension UIApplication {
             if canOpenURL(appSettings) {
                 open(appSettings)
             }
+        }
+    }
+    
+    func copyToClipboard(_ text: String?, alert: Bool = true) {
+        UIPasteboard.general.string = text
+        if alert {
+            showDone(L10n.copiedToClipboard)
         }
     }
 }

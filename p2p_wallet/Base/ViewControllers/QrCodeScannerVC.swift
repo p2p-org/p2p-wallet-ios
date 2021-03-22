@@ -17,37 +17,32 @@ class QrCodeScannerVC: BaseVC {
     /// The callback for qr code recognizer, do any validation and return true if qr code valid
     var callback: ((String) -> Bool)?
     
-    lazy var cameraContainerView = UIView(backgroundColor: .black)
+    lazy var cameraContainerView = UIView(backgroundColor: .red, cornerRadius: 20)
 
     override func setUp() {
         super.setUp()
         
+        view.backgroundColor = .black
+        
         view.addSubview(cameraContainerView)
-        cameraContainerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
+        cameraContainerView.autoPinEdgesToSuperviewSafeArea(with: .init(x: 0, y: 44))
         
         let rangeImageView = UIImageView(width: scanSize.width, height: scanSize.height, image: .qrCodeRange)
         cameraContainerView.addSubview(rangeImageView)
         rangeImageView.autoCenterInSuperview()
         
-        let rangeLabel = UILabel(text: L10n.scanQRCode, textSize: 15, weight: .medium, textColor: .white, textAlignment: .center)
+        let overlayLayer = UIView(backgroundColor: UIColor.black.withAlphaComponent(0.35), cornerRadius: 16)
+        rangeImageView.addSubview(overlayLayer)
+        overlayLayer.autoPinEdgesToSuperviewEdges(with: .init(all: 10))
+        
+        let rangeLabel = UILabel(text: L10n.scanQRCode, weight: .medium, textColor: .white, textAlignment: .center)
         cameraContainerView.addSubview(rangeLabel)
         rangeLabel.autoCenterInSuperview()
         
-        let closeButton = UIButton.close(tintColor: .white)
+        let closeButton = UIButton.closeFill()
             .onTap(self, action: #selector(back))
-        view.addSubview(closeButton)
-        closeButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 20)
-        
-        let bottomView = UIView(backgroundColor: .background, cornerRadius: 16)
-        view.addSubview(bottomView)
-        bottomView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
-        bottomView.autoPinEdge(.top, to: .bottom, of: cameraContainerView, withOffset: -16)
-        
-        let stackView = UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill)
-        bottomView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(x: 16, y: 34))
-        
-        stackView.addArrangedSubview(UILabel(text: L10n.scanAnP2PAddress, textSize: 15, weight: .medium))
+        cameraContainerView.addSubview(closeButton)
+        closeButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 16)
         
         view.layoutIfNeeded()
         
@@ -55,7 +50,7 @@ class QrCodeScannerVC: BaseVC {
         
         cameraContainerView.bringSubviewToFront(rangeImageView)
         cameraContainerView.bringSubviewToFront(rangeLabel)
-        
+        cameraContainerView.bringSubviewToFront(closeButton)
     }
     
     override func viewDidLayoutSubviews() {
@@ -166,7 +161,12 @@ extension QrCodeScannerVC {
     private var cameraAuthorized: Bool {
         let status = AVCaptureDevice.authorizationStatus(for: .video)
         if status == .restricted || status == .denied {
-            showAlert(title: L10n.changeYourSettingsToUseCameraForScanningQrCode, message: L10n.ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode.pleaseEnableItInSettings, buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
+            showAlert(
+                title: L10n.changeYourSettingsToUseCameraForScanningQrCode,
+                message: L10n.ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode.pleaseEnableItInSettings,
+                buttonTitles: [L10n.ok, L10n.cancel],
+                highlightedButtonIndex: 0)
+            { (index) in
                 if index == 0 {
                     guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
                         return

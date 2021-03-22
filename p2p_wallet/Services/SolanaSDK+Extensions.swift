@@ -8,20 +8,44 @@
 import Foundation
 import RxSwift
 
-extension SolanaSDK {
-    #if DEBUG
-    static let network = "mainnet-beta"
-    static let endpoint = "https://api.\(network).solana.com"
-    #else
-    static let network = "mainnet-beta"
-    static let endpoint = "https://api.\(network).solana.com"
-    #endif
-    static let shared = SolanaSDK(endpoint: endpoint, accountStorage: AccountStorage.shared)
-}
-
 extension String: ListItemType {
     static func placeholder(at index: Int) -> String {
         "\(index)"
     }
     var id: String {self}
+}
+
+extension SolanaSDK.Error: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .unauthorized:
+            return L10n.unauthorized
+        case .notFound:
+            return L10n.notFound
+        case .invalidRequest(let reason):
+            var message = L10n.invalidRequest
+            if let reason = reason {
+                message = reason.localized()
+            }
+            return message
+        case .invalidResponse(let responseError):
+            var string = L10n.responseError
+            if let description = responseError.message {
+                string = description.localized()
+            }
+            return string
+        case .socket(let error):
+            var string = L10n.socketReturnsAnError + ": "
+            if let error = error as? LocalizedError {
+                string += error.errorDescription ?? error.localizedDescription
+            } else {
+                string += error.localizedDescription
+            }
+            return string
+        case .other(let string):
+            return string.localized()
+        case .unknown:
+            return L10n.unknownError
+        }
+    }
 }

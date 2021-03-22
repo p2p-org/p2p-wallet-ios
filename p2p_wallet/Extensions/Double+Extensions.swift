@@ -8,8 +8,8 @@
 import Foundation
 
 extension Optional where Wrapped == Double {
-    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false) -> String {
-        orZero.toString(maximumFractionDigits: maximumFractionDigits, showPlus: showPlus)
+    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false, groupingSeparator: String? = " ") -> String {
+        orZero.toString(maximumFractionDigits: maximumFractionDigits, showPlus: showPlus, groupingSeparator: groupingSeparator)
     }
     
     public var orZero: Double {
@@ -23,6 +23,20 @@ extension Optional where Wrapped == Double {
     static func + (left: Double?, right: Double?) -> Double {
         left.orZero + right.orZero
     }
+    
+    static func > (left: Double?, right: Double?) -> Bool {
+        left.orZero > right.orZero
+    }
+    
+    static func >= (left: Double?, right: Double?) -> Bool {
+        left.orZero >= right.orZero
+    }
+    
+    static func / (left: Double?, right: Double?) -> Double {
+        let right = right.orZero
+        if right == 0 {return 0}
+        return left.orZero / right
+    }
 }
 
 extension Double {
@@ -34,11 +48,14 @@ extension Double {
         return formatter.string(from: self as NSNumber) ?? "0"
     }
     
-    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false) -> String {
+    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false, groupingSeparator: String? = " ") -> String {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
-        formatter.groupingSeparator = " "
+        if let groupingSeparator = groupingSeparator {
+            formatter.groupingSeparator = groupingSeparator
+        }
+        
         formatter.locale = Locale.current
         if showPlus {
             formatter.positivePrefix = formatter.plusSign
@@ -53,5 +70,11 @@ extension Double {
         }
         
         return (formatter.string(from: self as NSNumber) ?? "0")
+    }
+    
+    func rounded(decimals: Int?) -> Double {
+        guard let decimals = decimals else {return self}
+        let realAmount = self.toString(maximumFractionDigits: decimals, groupingSeparator: nil)
+        return realAmount.double ?? self
     }
 }

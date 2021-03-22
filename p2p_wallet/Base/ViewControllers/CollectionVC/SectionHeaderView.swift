@@ -8,7 +8,7 @@
 import Foundation
 
 class SectionHeaderView: UICollectionReusableView {
-    lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .center, distribution: .fill)
+    lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
     lazy var headerLabel = UILabel(text: "Wallets", textSize: 17, weight: .bold, numberOfLines: 0)
     
@@ -17,20 +17,36 @@ class SectionHeaderView: UICollectionReusableView {
         commonInit()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    @available(*, unavailable,
+    message: "Loading this view from a nib is unsupported in favor of initializer dependency injection."
+    )
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("Loading this view controller from a nib is unsupported in favor of initializer dependency injection.")
     }
     
     func commonInit() {
-        addSubview(stackView)
-        stackView.autoPinEdge(toSuperviewEdge: .top, withInset: 16)
-        stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 16)
-        stackView.autoPinEdge(toSuperviewEdge: .leading)
-        stackView.autoPinEdge(toSuperviewEdge: .trailing)
-        
-        stackView.addArrangedSubview(headerLabel)
-        headerLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor)
-            .isActive = true
+        addStackView()
+        stackView.addArrangedSubview(headerLabel.padding(.init(x: .defaultPadding, y: 0)))
+    }
+    
+    func addStackView(completion: (() -> Void)? = nil) {
+        if stackView.superview == nil {
+            addSubview(stackView)
+            stackView.autoPinEdge(toSuperviewEdge: .top, withInset: 16)
+            stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 16)
+            stackView.autoPinEdge(toSuperviewEdge: .leading)
+            stackView.autoPinEdge(toSuperviewEdge: .trailing)
+            setNeedsLayout()
+            completion?()
+        }
+    }
+    
+    func removeStackView(completion: (() -> Void)? = nil) {
+        if stackView.superview != nil {
+            stackView.removeFromSuperview()
+            setNeedsLayout()
+            completion?()
+        }
     }
     
     func setUp(headerTitle: String, headerFont: UIFont = .systemFont(ofSize: 17, weight: .bold)) {
