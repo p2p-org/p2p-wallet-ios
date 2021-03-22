@@ -63,25 +63,13 @@ class WLPhrasesTextView: SubviewAttachingTextView {
 }
 
 extension WLPhrasesTextView: UITextViewDelegate {
-    class Attachment: SubviewTextAttachment {
-        override func attachmentBounds(for textContainer: NSTextContainer?, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
-            var bounds = super.attachmentBounds(for: textContainer, proposedLineFragment: lineFrag, glyphPosition: position, characterIndex: charIndex)
-            bounds.origin.y -= 15
-            return bounds
-        }
-    }
-    
-    class PhraseAttachment: Attachment {
-        var phrase: String?
-    }
-    
     func textViewDidChange(_ textView: UITextView) {
         if shouldWrapPhrases {
             wrapPhrase()
         }
         
         if shouldRearrange {
-            rearrangeTextView()
+            rearrangeAttachments()
         }
     }
     
@@ -150,7 +138,7 @@ extension WLPhrasesTextView: UITextViewDelegate {
         selectedRange = NSRange(location: selectedLocation, length: 0)
     }
     
-    fileprivate func rearrangeTextView() {
+    fileprivate func rearrangeAttachments() {
         var count = 0
         attributedText.enumerateAttribute(.attachment, in: NSRange(location: 0, length: attributedText.length)) { (att, range, _) in
             if let att = att as? PhraseAttachment, let phrase = att.phrase {
