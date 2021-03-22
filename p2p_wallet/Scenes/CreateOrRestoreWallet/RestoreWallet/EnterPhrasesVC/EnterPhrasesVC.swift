@@ -8,11 +8,17 @@
 import Foundation
 import UITextView_Placeholder
 import SubviewAttachingTextView
+import RxSwift
+import RxCocoa
 
 class EnterPhrasesVC: BaseVStackVC {
     override var padding: UIEdgeInsets {.init(all: 20)}
     
+    let error = BehaviorRelay<Error?>(value: nil)
+    
     lazy var textView = WLPhrasesTextView()
+    
+    lazy var errorLabel = UILabel(textColor: .alert, numberOfLines: 0, textAlignment: .center)
     
     lazy var tabBar: TabBar = {
         let tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
@@ -39,11 +45,13 @@ class EnterPhrasesVC: BaseVStackVC {
     override func setUp() {
         super.setUp()
         title = L10n.enterSecurityKeys
-        stackView.addArrangedSubview(
+        stackView.addArrangedSubviews([
             textView
                 .padding(.init(all: 10), backgroundColor: .lightGrayBackground, cornerRadius: 16)
-                .border(width: 1, color: .a3a5ba)
-        )
+                .border(width: 1, color: .a3a5ba),
+            BEStackViewSpacing(30),
+            errorLabel
+        ])
         
         // tabBar
         view.addSubview(tabBar)
@@ -59,10 +67,23 @@ class EnterPhrasesVC: BaseVStackVC {
     
     override func bind() {
         super.bind()
-        textView.rx.text
-            .map {_ in !self.textView.getPhrases().isEmpty}
+        Observable.combineLatest(
+            textView.rx.text
+                .map {_ in !self.textView.getPhrases().isEmpty},
+            error.map {$0 == nil}
+        )
+            .map {$0 && $1}
             .asDriver(onErrorJustReturn: false)
             .drive(nextButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        error.asDriver(onErrorJustReturn: nil)
+            .map { error -> String? in
+                if error == nil {return nil}
+                return L10n.wrongOrderOrSeedPhrasePleaseCheckItAndTryAgain
+            }
+            .asDriver(onErrorJustReturn: nil)
+            .drive(errorLabel.rx.text)
             .disposed(by: disposeBag)
     }
     
@@ -79,6 +100,7 @@ class EnterPhrasesVC: BaseVStackVC {
     
     private func handlePhrases()
     {
+        hideKeyboard()
         do {
             let phrases = textView.getPhrases()
             _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
@@ -86,7 +108,10 @@ class EnterPhrasesVC: BaseVStackVC {
                 self.restoreWalletViewModel.navigationSubject.onNext(.welcomeBack(phrases: phrases))
             }
         } catch {
-            showError(error)
+            self.error.accept(error)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                self.error.accept(nil)
+            }
         }
     }
 }

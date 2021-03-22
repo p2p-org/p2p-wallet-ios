@@ -31,8 +31,8 @@ extension WLPhrasesTextView {
         let label = { () -> UILabel in
             let label = UILabel(textColor: .textBlack)
             label.attributedText = NSMutableAttributedString()
-                .text("\(index != nil ? "\(index!)": ""). ", size: 15, color: .a3a5ba)
-                .text("\(phrase)", size: 15)
+                .text("\(index != nil ? "\(index!)": ""). ", size: 15, weight: .semibold, color: .a3a5ba)
+                .text("\(phrase)", size: 15, weight: .semibold)
             return label
         }()
             .padding(.init(x: 12, y: 12), backgroundColor: .textWhite, cornerRadius: 5)
@@ -49,7 +49,7 @@ extension WLPhrasesTextView {
     }
     
     func placeholderAttachment(at index: Int) -> NSMutableAttributedString {
-        let label = UILabel(text: "\(index + 1). ", textColor: .a3a5ba)
+        let label = UILabel(text: "\(index + 1). ", weight: .semibold, textColor: .a3a5ba)
             .padding(.init(top: 12, left: 12, bottom: 12, right: 0))
         label.translatesAutoresizingMaskIntoConstraints = true
         label.isUserInteractionEnabled = true
