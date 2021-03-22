@@ -125,6 +125,10 @@ extension WLPhrasesTextView: UITextViewDelegate {
         // get all phrases
         let phrases = text.components(separatedBy: " ")
         
+        // get length's difference after replacing text with attachment
+        var lengthDiff = 0
+        var selectedLocation = selectedRange.location
+        
         for phrase in phrases.map({$0.replacingOccurrences(of: "\u{fffc}", with: "")}).filter({!$0.isEmpty}) {
             let text = self.text as NSString
             let range = text.range(of: phrase)
@@ -133,6 +137,18 @@ extension WLPhrasesTextView: UITextViewDelegate {
             let aStr = NSMutableAttributedString()
             aStr.append(attachment(phrase: phrase))
             textStorage.replaceCharacters(in: range, with: aStr)
+            
+            // diff of length, length become 1 when inserting attachment
+            lengthDiff = aStr.length - phrase.count
+            
+            if selectedLocation > range.location {
+                selectedLocation += lengthDiff
+            }
+        }
+        
+        // recalculate selected range
+        DispatchQueue.main.async { [weak self] in
+            self?.selectedRange = NSRange(location: selectedLocation, length: 0)
         }
     }
     
