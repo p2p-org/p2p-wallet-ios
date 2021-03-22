@@ -11,6 +11,9 @@ import SubviewAttachingTextView
 class WLPhrasesTextView: SubviewAttachingTextView {
     // MARK: - Properties
     let defaultFont = UIFont.systemFont(ofSize: 15)
+    private var shouldWrapPhrases = false
+    private var shouldRearrange = false
+    
     override weak var delegate: UITextViewDelegate? {
         didSet {
             if !(delegate is Self) {
@@ -47,6 +50,7 @@ class WLPhrasesTextView: SubviewAttachingTextView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Methods
     func getPhrases() -> [String] {
         var phrases = [String]()
         attributedText.enumerateAttribute(.attachment, in: NSRange(location: 0, length: attributedText.length)) { (att, _, _) in
@@ -69,6 +73,16 @@ extension WLPhrasesTextView: UITextViewDelegate {
     
     class PhraseAttachment: Attachment {
         var phrase: String?
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        if shouldWrapPhrases {
+            wrapPhrase()
+        }
+        
+        if shouldRearrange {
+            rearrangeTextView()
+        }
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -96,9 +110,11 @@ extension WLPhrasesTextView: UITextViewDelegate {
         if text.lowercased().rangeOfCharacter(from: invalidCharactersSet) == nil {
             // wrap phrase when found a space
             if text.contains(" ") {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
-                    self?.wrapPhrase()
-                }
+                shouldWrapPhrases = true
+                shouldRearrange = true
+            } else {
+                shouldWrapPhrases = false
+                shouldRearrange = false
             }
             return true
         }
@@ -109,10 +125,6 @@ extension WLPhrasesTextView: UITextViewDelegate {
         // get all phrases
         let phrases = text.components(separatedBy: " ")
         
-        // get length's difference after replacing text with attachment
-        var lengthDiff = 0
-        var selectedLocation = selectedRange.location
-        
         for phrase in phrases.map({$0.replacingOccurrences(of: "\u{fffc}", with: "")}).filter({!$0.isEmpty}) {
             let text = self.text as NSString
             let range = text.range(of: phrase)
@@ -121,19 +133,6 @@ extension WLPhrasesTextView: UITextViewDelegate {
             let aStr = NSMutableAttributedString()
             aStr.append(attachment(phrase: phrase))
             textStorage.replaceCharacters(in: range, with: aStr)
-            
-            // diff of length, length become 1 when inserting attachment
-            lengthDiff = aStr.length - phrase.count
-            
-            if selectedLocation > range.location {
-                selectedLocation += lengthDiff
-            }
-        }
-        rearrangeTextView()
-        
-        // recalculate selected range
-        DispatchQueue.main.async { [weak self] in
-            self?.selectedRange = NSRange(location: selectedLocation, length: 0)
         }
     }
     
