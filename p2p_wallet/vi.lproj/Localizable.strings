@@ -277,3 +277,4 @@
 "We’ve locked your wallet, try again in %@" = "Chúng tôi đã khóa ví của bạn, hãy thử lại sau %@";
 "minutes" = "phút";
 "Hide zero balances" = "Ẩn ví rỗng";
+"Wrong order or seed phrase, please check it and try again" = "Sai thứ tự hoặc cụm từ bảo mật, vui lòng kiểm tra và thử lại";
