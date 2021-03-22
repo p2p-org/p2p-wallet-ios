@@ -51,7 +51,10 @@ class EnterPhrasesVC: BaseVStackVC {
         tabBar.autoPinEdge(toSuperviewEdge: .trailing)
         tabBar.autoPinBottomToSuperViewAvoidKeyboard()
         
+        view.removeGestureRecognizer(tapGesture)
+        
         textView.becomeFirstResponder()
+        textView.keyboardDismissMode = .onDrag
     }
     
     override func bind() {
