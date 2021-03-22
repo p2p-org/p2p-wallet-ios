@@ -279,3 +279,4 @@
 "We’ve locked your wallet, try again in %@" = "Nous avons verrouillé votre portefeuille, réessayez dans %@";
 "minutes" = "minutes";
 "Hide zero balances" = "Masquer les soldes nuls";
+"Wrong order or seed phrase, please check it and try again" = "Mauvaise commande ou phrase de départ, veuillez le vérifier et réessayer";
