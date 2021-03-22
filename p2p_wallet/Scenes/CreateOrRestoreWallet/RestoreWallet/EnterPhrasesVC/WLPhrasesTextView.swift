@@ -88,9 +88,7 @@ extension WLPhrasesTextView: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         // if deleting
         if text.isEmpty {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
-                self?.rearrangeTextView()
-            }
+            self.shouldRearrange = true
             return true
         }
         
