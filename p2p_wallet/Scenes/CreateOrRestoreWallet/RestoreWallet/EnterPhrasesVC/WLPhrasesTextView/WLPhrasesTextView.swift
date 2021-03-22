@@ -137,7 +137,7 @@ extension WLPhrasesTextView: UITextViewDelegate {
         return false
     }
     
-    func wrapPhrase() {
+    func wrapPhrase(addingPlaceholderAttachment: Bool = true) {
         // get all phrases
         let phrases = text.components(separatedBy: " ")
         
@@ -165,8 +165,10 @@ extension WLPhrasesTextView: UITextViewDelegate {
         shouldWrapPhrases = false
         
         // recalculate selected range
-        addPlaceholderAttachment(at: selectedLocation)
-        selectedRange = NSRange(location: selectedLocation + 1, length: 0)
+        if addingPlaceholderAttachment {
+            addPlaceholderAttachment(at: selectedLocation)
+            selectedRange = NSRange(location: selectedLocation + 1, length: 0)
+        }
     }
     
     fileprivate func rearrangeAttachments() {
