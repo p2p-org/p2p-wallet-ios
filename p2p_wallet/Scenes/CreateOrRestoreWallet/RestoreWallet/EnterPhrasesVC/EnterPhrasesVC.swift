@@ -67,7 +67,7 @@ class EnterPhrasesVC: BaseVStackVC {
     }
     
     @objc func buttonNextDidTouch() {
-        textView.wrapPhrase()
+        textView.wrapPhrase(addingPlaceholderAttachment: false)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.handlePhrases()
         }
