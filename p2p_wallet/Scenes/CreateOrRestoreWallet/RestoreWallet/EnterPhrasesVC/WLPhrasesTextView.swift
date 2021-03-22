@@ -144,10 +144,10 @@ extension WLPhrasesTextView: UITextViewDelegate {
             }
         }
         
+        shouldWrapPhrases = false
+        
         // recalculate selected range
-        DispatchQueue.main.async { [weak self] in
-            self?.selectedRange = NSRange(location: selectedLocation, length: 0)
-        }
+        selectedRange = NSRange(location: selectedLocation, length: 0)
     }
     
     fileprivate func rearrangeTextView() {
@@ -158,6 +158,8 @@ extension WLPhrasesTextView: UITextViewDelegate {
                 textStorage.replaceCharacters(in: range, with: attachment(phrase: phrase, index: count))
             }
         }
+        shouldRearrange = false
+        
     }
     
     fileprivate func attachment(phrase: String, index: Int? = nil) -> NSAttributedString {
