@@ -74,6 +74,10 @@ extension WLPhrasesTextView: UITextViewDelegate {
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        // disable
+        shouldWrapPhrases = false
+        shouldRearrange = false
+        
         // if deleting
         if text.isEmpty {
             self.shouldRearrange = true
@@ -98,9 +102,6 @@ extension WLPhrasesTextView: UITextViewDelegate {
             if text.contains(" ") {
                 shouldWrapPhrases = true
                 shouldRearrange = true
-            } else {
-                shouldWrapPhrases = false
-                shouldRearrange = false
             }
             return true
         }
