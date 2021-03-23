@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import BECollectionView
 
 extension WalletsVM: WalletsRepository {
     func getWallets() -> [Wallet] {
