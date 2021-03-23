@@ -104,7 +104,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
         walletDriver
             .map {wallet -> String? in
                 if let pubkey = wallet?.pubkey {
-                    return pubkey.prefix(4) + "..." + pubkey.prefix(4)
+                    return pubkey.prefix(4) + "..." + pubkey.suffix(4)
                 }
                 return nil
             }
