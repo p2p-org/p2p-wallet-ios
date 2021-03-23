@@ -10,3 +10,6 @@
 [submodule "THPinViewController"]
 	path = THPinViewController
 	url = git@github.com:p2p-org/THPinViewController.git
+[submodule "BECollectionView"]
+	path = BECollectionView
+	url = git@github.com:bigearsenal/BECollectionView.git
