@@ -27,7 +27,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
     
     // MARK: - Subviews
     private lazy var coinLogoImageView = CoinLogoImageView(width: 45, height: 45, cornerRadius: 12)
-    private lazy var symbolLabel = UILabel(text: "<Symbol>", weight: .medium)
+    private lazy var symbolLabel = UILabel(text: "<Symbol>", weight: .semibold)
     private lazy var shortAddresslabel = UILabel(text: "<address>", textSize: 13, textColor: .a3a5ba)
     private lazy var titleLabel = UILabel(text: "<Your address>", textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
     private lazy var qrCodeView = QrCodeView(size: 208, coinLogoSize: 50)
@@ -62,7 +62,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
                     symbolLabel,
                     shortAddresslabel
                 ]),
-                UIImageView(width: 13, height: 8, image: .downArrow, tintColor: .a3a5ba)
+                UIImageView(width: 13, height: 8, image: .downArrowLight, tintColor: .a3a5ba)
             ])
                 .padding(UIEdgeInsets(all: 8).modifying(dRight: 8), backgroundColor: .f6f6f8, cornerRadius: 12)
                 .onTap(viewModel, action: #selector(ReceiveTokenViewModel.selectWallet)),
@@ -94,6 +94,11 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .drive(onNext: {[weak self] wallet in
                 self?.coinLogoImageView.setUp(wallet: wallet)
             })
+            .disposed(by: disposeBag)
+        
+        walletDriver
+            .map {$0?.symbol}
+            .drive(symbolLabel.rx.text)
             .disposed(by: disposeBag)
         
         walletDriver

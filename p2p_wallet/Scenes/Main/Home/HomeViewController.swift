@@ -10,7 +10,7 @@ import UIKit
 
 protocol HomeScenesFactory {
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController
-    func makeReceiveTokenViewController() -> ReceiveTokenVC
+    func makeReceiveTokenViewController() -> ReceiveTokenViewController
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController
     func makeMyProductsViewController() -> MyProductsViewController
