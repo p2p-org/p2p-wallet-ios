@@ -8,7 +8,17 @@
 import UIKit
 import RxSwift
 
-class ReceiveTokenRootView: ScrollableVStackRootView {
+class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
+    var loadingViews: [UIView] {[
+        coinLogoImageView,
+        symbolLabel,
+        shortAddresslabel,
+        titleLabel,
+        qrCodeView,
+        addressLabel,
+        mintAddressLabel
+    ]}
+    
     // MARK: - Constants
     let disposeBag = DisposeBag()
     
