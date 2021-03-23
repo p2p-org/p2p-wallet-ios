@@ -36,9 +36,9 @@ class ReceiveTokenViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(walletsRepository: WalletsRepository) {
+    init(walletsRepository: WalletsRepository, pubkey: String? = nil) {
         self.repository = walletsRepository
-        self.wallet.accept(repository.wallets.first)
+        self.wallet.accept(repository.wallets.first(where: {$0.pubkey == pubkey}) ?? repository.wallets.first)
         bind()
     }
     

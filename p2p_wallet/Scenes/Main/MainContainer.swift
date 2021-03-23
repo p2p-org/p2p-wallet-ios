@@ -57,12 +57,8 @@ class MainContainer {
         return AddNewWalletVC(viewModel: vm)
     }
     
-    func makeReceiveTokenVC() -> ReceiveTokenVC {
-        ReceiveTokenVC(wallets: myWalletsVM.data)
-    }
-    
-    func makeReceiveTokenViewController() -> ReceiveTokenViewController {
-        let viewModel = ReceiveTokenViewModel(walletsRepository: myWalletsVM)
+    func makeReceiveTokenViewController(pubkey: String? = nil) -> ReceiveTokenViewController {
+        let viewModel = ReceiveTokenViewModel(walletsRepository: myWalletsVM, pubkey: pubkey)
         return ReceiveTokenViewController(viewModel: viewModel, scenesFactory: self)
     }
     
