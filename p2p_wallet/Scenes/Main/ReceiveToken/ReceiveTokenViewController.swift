@@ -44,7 +44,22 @@ class ReceiveTokenViewController: WLIndicatorModalVC {
     override func bind() {
         super.bind()
         viewModel.navigationSubject
-            .subscribe(onNext: {self.navigate(to: $0)})
+            .subscribe(onNext: {[weak self] in self?.navigate(to: $0)})
+            .disposed(by: disposeBag)
+        viewModel.repository
+            .stateObservable
+            .subscribe(onNext: {[weak self] state in
+                self?.rootView.removeErrorView()
+                switch state {
+                case .initializing, .loading:
+                    self?.rootView.showLoading()
+                case .error(let error):
+                    self?.rootView.hideLoading()
+                    self?.rootView.showErrorView(error: error)
+                default:
+                    self?.rootView.hideLoading()
+                }
+            })
             .disposed(by: disposeBag)
     }
     
