@@ -63,7 +63,7 @@ extension UIView {
         errorView.autoPinEdgesToSuperviewEdges()
     }
     
-    func showErrorView(error: Error, retryAction: CocoaAction? = nil) {
-        showErrorView(title: L10n.error, description: error.readableDescription, retryAction: retryAction)
+    func showErrorView(error: Error?, retryAction: CocoaAction? = nil) {
+        showErrorView(title: L10n.error, description: error?.readableDescription ?? L10n.somethingWentWrongPleaseTryAgainLater, retryAction: retryAction)
     }
 }

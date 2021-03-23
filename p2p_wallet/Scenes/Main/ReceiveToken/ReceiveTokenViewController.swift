@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import Action
 
 protocol ReceiveTokenSceneFactory {
     func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
@@ -53,15 +54,21 @@ class ReceiveTokenViewController: WLIndicatorModalVC {
             .subscribe(onNext: {[weak self] in self?.navigate(to: $0)})
             .disposed(by: disposeBag)
         viewModel.repository
-            .stateObservable
+            .stateObservable()
             .subscribe(onNext: {[weak self] state in
-                self?.rootView.removeErrorView()
+                self?.removeErrorView()
                 switch state {
                 case .initializing, .loading:
                     self?.rootView.showLoading()
-                case .error(let error):
+                case .error:
                     self?.rootView.hideLoading()
-                    self?.rootView.showErrorView(error: error)
+                    self?.showErrorView(
+                        error: self?.viewModel.repository.getError(),
+                        retryAction: CocoaAction { [weak self] in
+                            self?.viewModel.repository.reload()
+                            return .just(())
+                        }
+                    )
                 default:
                     self?.rootView.hideLoading()
                 }
@@ -75,7 +82,7 @@ class ReceiveTokenViewController: WLIndicatorModalVC {
         case .chooseWallet:
             let vc = scenesFactory.makeChooseWalletVC(customFilter: nil)
             vc.completion = { [weak self, weak vc] wallet in
-                let wallet = self?.viewModel.repository.wallets.first(where: {$0.pubkey == wallet.pubkey})
+                let wallet = self?.viewModel.repository.getWallets().first(where: {$0.pubkey == wallet.pubkey})
                 self?.viewModel.wallet.accept(wallet)
                 vc?.back()
             }
