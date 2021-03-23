@@ -57,8 +57,9 @@ class MainContainer {
         return AddNewWalletVC(viewModel: vm)
     }
     
-    func makeReceiveTokenViewController() -> ReceiveTokenVC {
-        ReceiveTokenVC(wallets: myWalletsVM.data)
+    func makeReceiveTokenViewController(pubkey: String? = nil) -> ReceiveTokenViewController {
+        let viewModel = ReceiveTokenViewModel(walletsRepository: myWalletsVM, pubkey: pubkey)
+        return ReceiveTokenViewController(viewModel: viewModel, scenesFactory: self)
     }
     
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController {
@@ -138,4 +139,5 @@ extension MainContainer: TabBarScenesFactory,
                          AddNewWalletScenesFactory,
                          HomeScenesFactory,
                          ChangeNetworkResponder,
+                         ReceiveTokenSceneFactory,
                          _MainScenesFactory {}
