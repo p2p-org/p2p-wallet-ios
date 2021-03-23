@@ -15,11 +15,6 @@ enum ReceiveTokenNavigatableScene {
     case share(pubkey: String)
 }
 
-protocol WalletsRepository {
-    var wallets: [Wallet] {get}
-    var stateObservable: Observable<FetcherState<[Wallet]>> {get}
-}
-
 class ReceiveTokenViewModel {
     // MARK: - Constants
     
@@ -38,13 +33,13 @@ class ReceiveTokenViewModel {
     // MARK: - Initializers
     init(walletsRepository: WalletsRepository, pubkey: String? = nil) {
         self.repository = walletsRepository
-        self.wallet.accept(repository.wallets.first(where: {$0.pubkey == pubkey}) ?? repository.wallets.first)
+        self.wallet.accept(repository.getWallets().first(where: {$0.pubkey == pubkey}) ?? repository.getWallets().first)
         bind()
     }
     
     private func bind() {
         // bind wallet
-        repository.stateObservable
+        repository.stateObservable()
             .filter { state in
                 switch state {
                 case .loaded:
@@ -55,9 +50,9 @@ class ReceiveTokenViewModel {
             }
             .map { [weak self] _ -> Wallet? in
                 if let currentWallet = self?.wallet.value {
-                    return self?.repository.wallets.first(where: {$0.pubkey == currentWallet.pubkey})
+                    return self?.repository.getWallets().first(where: {$0.pubkey == currentWallet.pubkey})
                 }
-                return self?.repository.wallets.first
+                return self?.repository.getWallets().first
             }
             .bind(to: wallet)
             .disposed(by: disposeBag)
