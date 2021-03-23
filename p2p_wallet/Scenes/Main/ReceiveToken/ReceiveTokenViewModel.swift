@@ -14,7 +14,7 @@ enum ReceiveTokenNavigatableScene {
 }
 
 protocol WalletsRepository {
-    
+    var stateObservable: Observable<FetcherState<[Wallet]>> {get}
 }
 
 class ReceiveTokenViewModel {
@@ -34,7 +34,6 @@ class ReceiveTokenViewModel {
     init(walletsRepository: WalletsRepository) {
         self.repository = walletsRepository
     }
-    
     
     // MARK: - Actions
     @objc func selectWallet() {
