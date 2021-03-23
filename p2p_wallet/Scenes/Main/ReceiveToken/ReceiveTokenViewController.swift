@@ -8,16 +8,22 @@
 import Foundation
 import UIKit
 
+protocol ReceiveTokenSceneFactory {
+    func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
+}
+
 class ReceiveTokenViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: ReceiveTokenViewModel
+    let scenesFactory: ReceiveTokenSceneFactory
     lazy var rootView = ReceiveTokenRootView(viewModel: viewModel)
     
     // MARK: - Initializer
-    init(viewModel: ReceiveTokenViewModel)
+    init(viewModel: ReceiveTokenViewModel, scenesFactory: ReceiveTokenSceneFactory)
     {
         self.viewModel = viewModel
+        self.scenesFactory = scenesFactory
         super.init()
     }
     
@@ -66,7 +72,16 @@ class ReceiveTokenViewController: WLIndicatorModalVC {
     // MARK: - Navigation
     private func navigate(to scene: ReceiveTokenNavigatableScene) {
         switch scene {
-        
+        case .chooseWallet:
+            let vc = scenesFactory.makeChooseWalletVC(customFilter: nil)
+            vc.completion = {wallet in
+                let wallet = self.viewModel.repository.wallets.first(where: {$0.pubkey == wallet.pubkey})
+                self.viewModel.wallet.accept(wallet)
+                vc.back()
+            }
+            presentCustomModal(vc: vc, title: L10n.selectWallet)
+        case .explorer(let url):
+            showWebsite(url: url)
         }
     }
 }

@@ -79,13 +79,55 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
                     mintAddressLabel,
                     UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
                         .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
-                        .onTap(viewModel, action: #selector(ReceiveTokenViewModel.copyToClipboard))
+                        .onTap(viewModel, action: #selector(ReceiveTokenViewModel.showMintInExplorer))
                 ])
             ])
         ])
     }
     
     private func bind() {
+        let walletDriver = viewModel.wallet
+            .asDriver()
+            .asDriver(onErrorJustReturn: nil)
         
+        walletDriver
+            .drive(onNext: {[weak self] wallet in
+                self?.coinLogoImageView.setUp(wallet: wallet)
+            })
+            .disposed(by: disposeBag)
+        
+        walletDriver
+            .map {wallet -> String? in
+                if let pubkey = wallet?.pubkey {
+                    return pubkey.prefix(4) + "..." + pubkey.prefix(4)
+                }
+                return nil
+            }
+            .drive(shortAddresslabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        walletDriver
+            .map { wallet -> String? in
+                if let symbol = wallet?.symbol {
+                    return L10n.yourPublicAddress(symbol)
+                }
+                return nil
+            }
+            .drive(titleLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        walletDriver
+            .drive(onNext: {[weak self] wallet in
+                self?.qrCodeView.setUp(wallet: wallet)
+            })
+            .disposed(by: disposeBag)
+        
+        walletDriver.map {$0?.pubkey}
+            .drive(addressLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        walletDriver.map {$0?.mintAddress}
+            .drive(mintAddressLabel.rx.text)
+            .disposed(by: disposeBag)
     }
 }

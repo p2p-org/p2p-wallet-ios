@@ -38,8 +38,8 @@ class QrCodeView: BEView {
         logoImageView.autoCenterInSuperview()
     }
     
-    func setUp(wallet: Wallet) {
-        qrCodeView.setQrCode(string: wallet.pubkey)
+    func setUp(wallet: Wallet?) {
+        qrCodeView.setQrCode(string: wallet?.pubkey)
         logoImageView.setUp(wallet: wallet)
     }
 }
