@@ -12,6 +12,7 @@ import RxCocoa
 enum ReceiveTokenNavigatableScene {
     case chooseWallet
     case explorer(url: String)
+    case share(pubkey: String)
 }
 
 protocol WalletsRepository {
@@ -74,6 +75,7 @@ class ReceiveTokenViewModel {
     }
     
     @objc func share() {
-        
+        guard let pubkey = wallet.value?.pubkey else {return}
+        navigationSubject.onNext(.share(pubkey: pubkey))
     }
 }
