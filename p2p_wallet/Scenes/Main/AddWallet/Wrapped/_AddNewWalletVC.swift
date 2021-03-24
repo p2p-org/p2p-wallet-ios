@@ -60,7 +60,7 @@ class _AddNewWalletVC: CollectionVC<Wallet> {
             }
             
             cell.createWalletAction = viewModel.addNewToken(newWallet: wallet)
-            cell.setUp(feeSubject: viewModel.feeSubject)
+            cell.buttonAddToken.setUp(feeSubject: viewModel.feeSubject)
         }
         return cell
     }

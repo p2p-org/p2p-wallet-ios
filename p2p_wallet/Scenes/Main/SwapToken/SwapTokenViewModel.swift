@@ -233,8 +233,8 @@ class SwapTokenViewModel {
             status: .processing
         )
         
-        self.processTransactionViewModel.transactionHandler.accept(
-            TransactionHandler(transaction: transaction)
+        self.processTransactionViewModel.transactionInfo.accept(
+            TransactionInfo(transaction: transaction)
         )
         
         solanaSDK.swap(
@@ -248,8 +248,8 @@ class SwapTokenViewModel {
         )
             .subscribe(onSuccess: { signature in
                 transaction.signatureInfo = .init(signature: signature)
-                self.processTransactionViewModel.transactionHandler.accept(
-                    TransactionHandler(transaction: transaction)
+                self.processTransactionViewModel.transactionInfo.accept(
+                    TransactionInfo(transaction: transaction)
                 )
                 self.transactionManager.process(transaction)
                 
@@ -262,8 +262,8 @@ class SwapTokenViewModel {
                 )
                 self.transactionManager.process(transaction2)
             }, onFailure: {error in
-                self.processTransactionViewModel.transactionHandler.accept(
-                    TransactionHandler(transaction: transaction, error: error)
+                self.processTransactionViewModel.transactionInfo.accept(
+                    TransactionInfo(transaction: transaction, error: error)
                 )
             })
             .disposed(by: disposeBag)

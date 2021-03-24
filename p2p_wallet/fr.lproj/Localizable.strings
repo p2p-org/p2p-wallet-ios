@@ -280,3 +280,7 @@
 "minutes" = "minutes";
 "Hide zero balances" = "Masquer les soldes nuls";
 "Wrong order or seed phrase, please check it and try again" = "Mauvaise commande ou phrase de départ, veuillez le vérifier et réessayer";
+"Your public %@ address" = "Votre adresse %@ publique";
+"Select token" = "Sélectionnez le jeton";
+"To see %@ wallet address, you must add this token to your token list" = "Pour voir l'adresse du portefeuille %@, vous devez ajouter ce jeton à votre liste de jetons";
+"Add token to see wallet address" = "Ajouter un jeton pour voir l'adresse du portefeuille";
