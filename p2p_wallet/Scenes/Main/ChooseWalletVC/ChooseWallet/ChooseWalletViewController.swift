@@ -27,8 +27,19 @@ class ChooseWalletViewController: WLIndicatorModalVC {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        containerView.addSubview(rootView)
-        rootView.autoPinEdgesToSuperviewEdges()
+        let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
+            UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
+                UILabel(text: L10n.selectToken, textSize: 17, weight: .semibold),
+                UILabel(text: L10n.close, textSize: 17, textColor: .h5887ff)
+                    .onTap(self, action: #selector(back))
+            ])
+                .padding(.init(all: 20)),
+            UIView.separator(height: 1, color: .separator),
+            rootView
+        ])
+        
+        containerView.addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges()
     }
     
     override func bind() {
