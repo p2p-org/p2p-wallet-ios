@@ -29,6 +29,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
     private lazy var coinLogoImageView = CoinLogoImageView(width: 45, height: 45, cornerRadius: 12)
     private lazy var symbolLabel = UILabel(text: "<Symbol>", weight: .semibold)
     private lazy var shortAddresslabel = UILabel(text: "<address>", textSize: 13, textColor: .a3a5ba, numberOfLines: 0)
+        .onTap(viewModel, action: #selector(ReceiveTokenViewModel.createWallet))
     private lazy var titleLabel = UILabel(text: "<Your address>", textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
     private lazy var qrCodeView = QrCodeView(size: 208, coinLogoSize: 50)
     private lazy var addressLabel = UILabel(text: "<address>", textSize: 13, numberOfLines: 0, textAlignment: .center)
@@ -115,6 +116,11 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
         walletDriver
             .map {$0?.pubkey == nil ? UIColor.h5887ff: UIColor.a3a5ba}
             .drive(shortAddresslabel.rx.textColor)
+            .disposed(by: disposeBag)
+        
+        walletDriver
+            .map {$0?.pubkey == nil}
+            .drive(shortAddresslabel.rx.isUserInteractionEnabled)
             .disposed(by: disposeBag)
         
         walletDriver
