@@ -13,7 +13,7 @@ class ChooseWalletCollectionView: BECollectionView {
     let viewModel: ChooseWalletViewModel
     
     // MARK: - Initializers
-    init(viewModel: ChooseWalletViewModel) {
+    init(viewModel: ChooseWalletViewModel, firstSectionFilter: ((AnyHashable) -> Bool)? = nil) {
         self.viewModel = viewModel
         super.init(sections: [
             BECollectionViewSection(
@@ -22,7 +22,8 @@ class ChooseWalletCollectionView: BECollectionView {
                     cellType: Cell.self,
                     interGroupSpacing: 16
                 ),
-                viewModel: viewModel.myWalletsViewModel
+                viewModel: viewModel.myWalletsViewModel,
+                customFilter: firstSectionFilter
             )
         ])
     }

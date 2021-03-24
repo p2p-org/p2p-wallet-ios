@@ -15,7 +15,14 @@ class ChooseWalletRootView: BEView {
     let viewModel: ChooseWalletViewModel
     
     // MARK: - Subviews
-    private lazy var collectionView = ChooseWalletCollectionView(viewModel: viewModel)
+    private lazy var collectionView: ChooseWalletCollectionView = {
+        let collectionView = ChooseWalletCollectionView(
+            viewModel: viewModel,
+            firstSectionFilter: viewModel.firstSectionFilter
+        )
+        collectionView.delegate = self
+        return collectionView
+    }()
     
     // MARK: - Initializers
     init(viewModel: ChooseWalletViewModel) {
@@ -43,5 +50,12 @@ class ChooseWalletRootView: BEView {
     
     private func bind() {
         
+    }
+}
+
+extension ChooseWalletRootView: BECollectionViewDelegate {
+    func beCollectionView(collectionView: BECollectionView, didSelect item: AnyHashable) {
+        guard let item = item as? Wallet else { return }
+        viewModel.selectedWallet.onNext(item)
     }
 }

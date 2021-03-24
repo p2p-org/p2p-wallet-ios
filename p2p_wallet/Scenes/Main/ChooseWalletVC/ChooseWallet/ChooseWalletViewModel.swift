@@ -10,10 +10,6 @@ import RxSwift
 import RxCocoa
 import BECollectionView
 
-enum ChooseWalletNavigatableScene {
-//    case detail
-}
-
 class ChooseWalletViewModel {
     // MARK: - Constants
     
@@ -21,17 +17,20 @@ class ChooseWalletViewModel {
     let disposeBag = DisposeBag()
     let myWalletsViewModel: BEListViewModelType
 //    let otherWalletsViewModel: BEListViewModelType
+    let firstSectionFilter: ((AnyHashable) -> Bool)?
     
     // MARK: - Subjects
-    let navigationSubject = PublishSubject<ChooseWalletNavigatableScene>()
+    let selectedWallet = PublishSubject<Wallet>()
     
     // MARK: - Initializer
     init(
-        myWalletsViewModel: BEListViewModelType
+        myWalletsViewModel: BEListViewModelType,
 //        otherWalletsViewModel: BEListViewModelType
+        firstSectionFilter: ((AnyHashable) -> Bool)? = nil
     ) {
         self.myWalletsViewModel = myWalletsViewModel
 //        self.otherWalletsViewModel = otherWalletsViewModel
+        self.firstSectionFilter = firstSectionFilter
     }
     
     // MARK: - Input

@@ -13,6 +13,7 @@ class ChooseWalletViewController: WLIndicatorModalVC {
     // MARK: - Properties
     let viewModel: ChooseWalletViewModel
     private lazy var rootView = ChooseWalletRootView(viewModel: viewModel)
+    var completion: ((Wallet) -> Void)?
     
     // MARK: - Initializer
     init(viewModel: ChooseWalletViewModel)
@@ -32,16 +33,12 @@ class ChooseWalletViewController: WLIndicatorModalVC {
     
     override func bind() {
         super.bind()
-        viewModel.navigationSubject
-            .subscribe(onNext: {self.navigate(to: $0)})
+        viewModel.selectedWallet
+            .subscribe(onNext: {[weak self] wallet in
+                self?.completion?(wallet)
+                self?.dismiss(animated: true, completion: nil)
+            })
             .disposed(by: disposeBag)
-    }
-    
-    // MARK: - Navigation
-    private func navigate(to scene: ChooseWalletNavigatableScene) {
-        switch scene {
-        
-        }
     }
 }
 
