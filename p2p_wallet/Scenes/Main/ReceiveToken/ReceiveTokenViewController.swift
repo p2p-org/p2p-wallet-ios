@@ -10,7 +10,7 @@ import UIKit
 import Action
 
 protocol ReceiveTokenSceneFactory {
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletViewController
+    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController
 }
 
 class ReceiveTokenViewController: WLIndicatorModalVC {
@@ -80,7 +80,7 @@ class ReceiveTokenViewController: WLIndicatorModalVC {
     private func navigate(to scene: ReceiveTokenNavigatableScene) {
         switch scene {
         case .chooseWallet:
-            let vc = scenesFactory.makeChooseWalletViewController(customFilter: nil)
+            let vc = scenesFactory.makeChooseWalletViewController(customFilter: nil, showOtherWallets: true)
             vc.completion = { [weak self, weak vc] wallet in
                 let wallet = self?.viewModel.repository.getWallets().first(where: {$0.pubkey == wallet.pubkey})
                 self?.viewModel.wallet.accept(wallet)

@@ -211,6 +211,7 @@
 		BCBE149E25EF3D110014BCE5 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE149525EF3D100014BCE5 /* HomeViewModel.swift */; };
 		BCBE149F25EF3D110014BCE5 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE149625EF3D100014BCE5 /* HomeViewController.swift */; };
 		BCBE14A025EF3D110014BCE5 /* HomeRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE149725EF3D100014BCE5 /* HomeRootView.swift */; };
+		BCC26518260AF71F00BBC902 /* OtherWalletsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC26517260AF71F00BBC902 /* OtherWalletsViewModel.swift */; };
 		BCD5E73A2551265300F51299 /* CollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E7392551265300F51299 /* CollectionVC.swift */; };
 		BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74825512D2500F51299 /* SectionHeaderView.swift */; };
 		BCD5E74E25512DA500F51299 /* InvestmentsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74D25512DA500F51299 /* InvestmentsVC.swift */; };
@@ -499,6 +500,7 @@
 		BCBE149525EF3D100014BCE5 /* HomeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		BCBE149625EF3D100014BCE5 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		BCBE149725EF3D100014BCE5 /* HomeRootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeRootView.swift; sourceTree = "<group>"; };
+		BCC26517260AF71F00BBC902 /* OtherWalletsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherWalletsViewModel.swift; sourceTree = "<group>"; };
 		BCD5E7392551265300F51299 /* CollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionVC.swift; sourceTree = "<group>"; };
 		BCD5E74825512D2500F51299 /* SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		BCD5E74D25512DA500F51299 /* InvestmentsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsVC.swift; sourceTree = "<group>"; };
@@ -914,6 +916,7 @@
 			isa = PBXGroup;
 			children = (
 				BC8F6951260AE9FA002FDCCD /* ChooseWalletCollectionView */,
+				BCC26517260AF71F00BBC902 /* OtherWalletsViewModel.swift */,
 				BC8F691A260ADF7D002FDCCD /* ChooseWalletViewModel.swift */,
 				BC8F691B260ADF7D002FDCCD /* ChooseWalletRootView.swift */,
 				BC8F691C260ADF7D002FDCCD /* ChooseWalletViewController.swift */,
@@ -1881,6 +1884,7 @@
 				BC2EC1CD2553ED1B006EEDA5 /* CardViewController.swift in Sources */,
 				BCBE149F25EF3D110014BCE5 /* HomeViewController.swift in Sources */,
 				BCEB205125E14E4F00B54FEF /* CreateWalletContainer.swift in Sources */,
+				BCC26518260AF71F00BBC902 /* OtherWalletsViewModel.swift in Sources */,
 				BCD5E73A2551265300F51299 /* CollectionVC.swift in Sources */,
 				BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */,
 				BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */,
