@@ -77,6 +77,18 @@ class MainContainer {
         ChooseWalletVC(viewModel: myWalletsVM, sceneFactory: self, customFilter: customFilter)
     }
     
+    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController {
+        let viewModel = ChooseWalletViewModel(
+            myWalletsViewModel: myWalletsVM,
+            showOtherWallets: showOtherWallets)
+        { (item) -> Bool in
+            guard let customFilter = customFilter else {return true}
+            guard let item = item as? Wallet else {return false}
+            return customFilter(item)
+        }
+        return ChooseWalletViewController(viewModel: viewModel)
+    }
+    
     func makeSwapChooseDestinationWalletVC(customFilter: ((Wallet) -> Bool)? = nil) -> SwapChooseDestinationWalletViewController {
         let vm = SwapChooseDestinationViewModel(solanaSDK: solanaSDK, socket: socket, walletsVM: myWalletsVM)
         let filter = customFilter ?? {_ in true}
