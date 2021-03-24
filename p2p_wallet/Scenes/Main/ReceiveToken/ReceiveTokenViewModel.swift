@@ -73,4 +73,8 @@ class ReceiveTokenViewModel {
         guard let pubkey = wallet.value?.pubkey else {return}
         navigationSubject.onNext(.share(pubkey: pubkey))
     }
+    
+    @objc func createWallet() {
+        
+    }
 }
