@@ -38,13 +38,18 @@ class WLAddTokenButton: WLLoadingView {
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 16, y: 10))
     }
     
-    func setUp(with item: Wallet) {
+    func setUp(with item: Wallet, showLoading: Bool = true) {
         if item.isBeingCreated == true {
-            setUp(loading: true)
+            if showLoading {
+                setUp(loading: true)
+            }
+            
             buttonAddTokenLabel.text = L10n.addingTokenToYourWallet
             feeLabel.isHidden = true
         } else {
-            setUp(loading: false)
+            if showLoading {
+                setUp(loading: false)
+            }
             buttonAddTokenLabel.text = L10n.addToken
             feeLabel.isHidden = false
         }

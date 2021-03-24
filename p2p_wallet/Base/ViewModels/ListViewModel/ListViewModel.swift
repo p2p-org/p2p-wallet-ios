@@ -119,8 +119,9 @@ class ListViewModel<T: Hashable>: BaseVM<[T]> {
     func insert(_ item: T, where predicate: (T) -> Bool, shouldUpdate: Bool = false)
     {
         guard let index = items.firstIndex(where: predicate) else {
+            var items = self.items
             items.append(item)
-            state.accept(.loaded(items))
+            handleNewData(items)
             return
         }
         if shouldUpdate && items[index] != item {
