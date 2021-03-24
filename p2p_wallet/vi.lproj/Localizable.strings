@@ -281,3 +281,4 @@
 "Your public %@ address" = "Địa chỉ %@ công khai của bạn";
 "Select token" = "Chọn token";
 "To see %@ wallet address, you must add this token to your token list" = "Để xem địa chỉ ví %@, bạn phải thêm token này vào danh sách token của bạn";
+"Add token to see wallet address" = "Thêm token để xem địa chỉ ví";
