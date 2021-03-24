@@ -15,17 +15,34 @@ class ChooseWalletCollectionView: BECollectionView {
     // MARK: - Initializers
     init(viewModel: ChooseWalletViewModel, firstSectionFilter: ((AnyHashable) -> Bool)? = nil) {
         self.viewModel = viewModel
-        super.init(sections: [
+        
+        var sections = [
             BECollectionViewSection(
                 layout: BECollectionViewSectionLayout(
-                    header: .init(viewClass: FirstSectionHeaderView.self),
+                    header: .init(viewClass: SecondSectionHeaderView.self),
                     cellType: Cell.self,
                     interGroupSpacing: 16
                 ),
                 viewModel: viewModel.myWalletsViewModel,
                 customFilter: firstSectionFilter
             )
-        ])
+        ]
+        
+        if let viewModel = viewModel.otherWalletsViewModel {
+            sections.append(
+                BECollectionViewSection(
+                    layout: BECollectionViewSectionLayout(
+                        header: .init(viewClass: FirstSectionHeaderView.self),
+                        cellType: OtherTokenCell.self,
+                        interGroupSpacing: 16
+                    ),
+                    viewModel: viewModel,
+                    customFilter: firstSectionFilter
+                )
+            )
+        }
+        
+        super.init(sections: sections)
     }
     
     required init?(coder: NSCoder) {

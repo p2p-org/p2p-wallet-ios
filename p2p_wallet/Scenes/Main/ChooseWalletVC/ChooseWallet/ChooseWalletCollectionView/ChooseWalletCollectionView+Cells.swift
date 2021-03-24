@@ -47,4 +47,14 @@ extension ChooseWalletCollectionView {
             setUp(with: item)
         }
     }
+    
+    class OtherTokenCell: Cell {
+        override func setUp(with item: Wallet) {
+            super.setUp(with: item)
+            addressLabel.text = item.symbol
+            
+            equityValueLabel.isHidden = true
+            tokenCountLabel.isHidden = true
+        }
+    }
 }

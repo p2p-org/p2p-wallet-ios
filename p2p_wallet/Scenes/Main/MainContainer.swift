@@ -77,9 +77,11 @@ class MainContainer {
         ChooseWalletVC(viewModel: myWalletsVM, sceneFactory: self, customFilter: customFilter)
     }
     
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletViewController {
+    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController {
         let viewModel = ChooseWalletViewModel(
-            myWalletsViewModel: myWalletsVM) { (item) -> Bool in
+            myWalletsViewModel: myWalletsVM,
+            showOtherWallets: showOtherWallets)
+        { (item) -> Bool in
             guard let customFilter = customFilter else {return true}
             guard let item = item as? Wallet else {return false}
             return customFilter(item)
