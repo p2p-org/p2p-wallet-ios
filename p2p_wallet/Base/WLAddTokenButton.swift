@@ -38,24 +38,13 @@ class WLAddTokenButton: WLLoadingView {
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 16, y: 10))
     }
     
-    lazy var buttonAddToken: WLLoadingView = {
-        let loadingView = WLLoadingView(height: 56, backgroundColor: .h5887ff, cornerRadius: 12)
-        let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-            buttonAddTokenLabel,
-            feeLabel
-        ])
-        loadingView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 16, y: 10))
-        return loadingView
-    }()
-    
     func setUp(with item: Wallet) {
         if item.isBeingCreated == true {
-            buttonAddToken.setUp(loading: true)
+            setUp(loading: true)
             buttonAddTokenLabel.text = L10n.addingTokenToYourWallet
             feeLabel.isHidden = true
         } else {
-            buttonAddToken.setUp(loading: false)
+            setUp(loading: false)
             buttonAddTokenLabel.text = L10n.addToken
             feeLabel.isHidden = false
         }
