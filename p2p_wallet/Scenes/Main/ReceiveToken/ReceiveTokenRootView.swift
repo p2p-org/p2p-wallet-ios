@@ -189,11 +189,11 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .disposed(by: disposeBag)
         
         walletDriver.map {$0?.isBeingCreated == true}
-            .drive(onNext: {[weak self] isBeingCreated in
+            .drive(onNext: {isBeingCreated in
                 if isBeingCreated {
-                    self?.showLoadingIndicatorView(presentationStyle: .fullScreen)
+                    UIApplication.shared.showLoadingIndicatorView()
                 } else {
-                    self?.hideLoadingIndicatorView()
+                    UIApplication.shared.hideLoadingIndicatorView()
                 }
             })
             .disposed(by: disposeBag)
