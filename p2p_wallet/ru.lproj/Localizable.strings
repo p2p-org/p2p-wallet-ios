@@ -280,3 +280,4 @@
 "Wrong order or seed phrase, please check it and try again" = "Неправильный порядок или исходная фраза, пожалуйста, проверьте это и попробуйте еще раз";
 "Your public %@ address" = "Ваш публичный %@ адрес";
 "Select token" = "Выбрать токен";
+"To see %@ wallet address, you must add this token to your token list" = "Чтобы увидеть адрес кошелька %@, вы должны добавить этот токен в свой список токенов.";

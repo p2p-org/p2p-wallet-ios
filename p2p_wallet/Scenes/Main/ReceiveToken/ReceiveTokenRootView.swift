@@ -114,7 +114,10 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
         walletDriver
             .map { wallet -> String? in
                 if let symbol = wallet?.symbol {
-                    return L10n.yourPublicAddress(symbol)
+                    if wallet?.pubkey != nil {
+                        return L10n.yourPublicAddress(symbol)
+                    }
+                    return L10n.toSeeWalletAddressYouMustAddThisTokenToYourTokenList(symbol)
                 }
                 return nil
             }
@@ -127,8 +130,17 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             })
             .disposed(by: disposeBag)
         
+        walletDriver
+            .map {$0?.pubkey == nil ? 0.05: 1}
+            .drive(qrCodeView.rx.alpha)
+            .disposed(by: disposeBag)
+        
         walletDriver.map {$0?.pubkey}
             .drive(addressLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        walletDriver.map {$0?.pubkey == nil}
+            .drive(addressLabel.rx.isHidden)
             .disposed(by: disposeBag)
         
         walletDriver.map {$0?.mintAddress}

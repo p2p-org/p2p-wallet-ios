@@ -24,7 +24,10 @@ extension UIImageView {
     }
     
     func setQrCode(string: String?) {
-        guard let string = string else {return}
+        guard let string = string else {
+            self.image = nil
+            return
+        }
         
         if let imageFromCache = UIImageView.qrCodeCache.object(forKey: string as NSString) {
             image = imageFromCache

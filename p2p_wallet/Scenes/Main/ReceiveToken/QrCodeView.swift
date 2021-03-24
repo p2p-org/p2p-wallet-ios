@@ -39,7 +39,13 @@ class QrCodeView: BEView {
     }
     
     func setUp(wallet: Wallet?) {
-        qrCodeView.setQrCode(string: wallet?.pubkey)
-        logoImageView.setUp(wallet: wallet)
+        if let pubkey = wallet?.pubkey {
+            qrCodeView.setQrCode(string: pubkey)
+            logoImageView.setUp(wallet: wallet)
+            logoImageView.isHidden = false
+        } else {
+            qrCodeView.setQrCode(string: "<placeholder>")
+            logoImageView.isHidden = true
+        }
     }
 }
