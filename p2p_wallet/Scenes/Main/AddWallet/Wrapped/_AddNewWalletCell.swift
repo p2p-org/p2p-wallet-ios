@@ -17,24 +17,7 @@ class _AddNewWalletCell: WalletCell {
     lazy var mintAddressLabel = UILabel(weight: .semibold, numberOfLines: 0)
     lazy var viewInBlockchainExplorerButton = UIButton(label: L10n.viewInBlockchainExplorer, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .a3a5ba)
     
-    lazy var buttonAddTokenLabel = UILabel(text: L10n.addToken, weight: .semibold, textColor: .white, textAlignment: .center)
-    
-    lazy var feeLabel: LazyLabel<Double> = {
-        let label = LazyLabel<Double>(textSize: 13, textColor: UIColor.white.withAlphaComponent(0.5), textAlignment: .center)
-        label.isUserInteractionEnabled = false
-        return label
-    }()
-    
-    lazy var buttonAddToken: WLLoadingView = {
-        let loadingView = WLLoadingView(height: 56, backgroundColor: .h5887ff, cornerRadius: 12)
-        let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-            buttonAddTokenLabel,
-            feeLabel
-        ])
-        loadingView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 16, y: 10))
-        return loadingView
-    }()
+    lazy var buttonAddToken = WLAddTokenButton()
     
     lazy var errorLabel = UILabel(textSize: 13, textColor: .red, numberOfLines: 0, textAlignment: .center)
     
@@ -106,34 +89,12 @@ class _AddNewWalletCell: WalletCell {
         mintAddressLabel.text = item.mintAddress
         contentView.backgroundColor = item.isExpanded == true ? .f6f6f8 : .clear
         
-        if item.isBeingCreated == true {
-            buttonAddToken.setUp(loading: true)
-            buttonAddTokenLabel.text = L10n.addingTokenToYourWallet
-            feeLabel.isHidden = true
-        } else {
-            buttonAddToken.setUp(loading: false)
-            buttonAddTokenLabel.text = L10n.addToken
-            feeLabel.isHidden = false
-        }
-        
         if item.creatingError != nil {
             errorLabel.isHidden = false
             errorLabel.text = L10n.WeCouldnTAddATokenToYourWallet.checkYourInternetConnectionAndTryAgain
         } else {
             errorLabel.isHidden = true
         }
-    }
-    
-    func setUp(feeSubject: LazySubject<Double>) {
-        if feeLabel.viewModel == nil {
-            feeLabel
-                .subscribed(to: feeSubject) {
-                    L10n.willCost + " " + $0.toString(maximumFractionDigits: 9) + " SOL"
-                }
-                .disposed(by: disposeBag)
-            feeLabel.isUserInteractionEnabled = false
-        }
-        
     }
     
     @objc func buttonCreateWalletDidTouch() {
