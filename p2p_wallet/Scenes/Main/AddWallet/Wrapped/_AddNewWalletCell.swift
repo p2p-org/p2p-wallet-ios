@@ -89,6 +89,8 @@ class _AddNewWalletCell: WalletCell {
         mintAddressLabel.text = item.mintAddress
         contentView.backgroundColor = item.isExpanded == true ? .f6f6f8 : .clear
         
+        buttonAddToken.setUp(with: item)
+        
         if item.creatingError != nil {
             errorLabel.isHidden = false
             errorLabel.text = L10n.WeCouldnTAddATokenToYourWallet.checkYourInternetConnectionAndTryAgain
