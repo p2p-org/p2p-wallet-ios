@@ -22,6 +22,14 @@ extension UIApplication {
         kWindow?.hideHud()
     }
     
+    func showLoadingIndicatorView(presentationStyle: WLLoadingIndicatorView.PresentationType = .fullScreen, isBlocking: Bool = true, message: String? = nil) {
+        kWindow?.showLoadingIndicatorView(presentationStyle: presentationStyle, isBlocking: isBlocking, message: message)
+    }
+    
+    func hideLoadingIndicatorView() {
+        kWindow?.hideLoadingIndicatorView()
+    }
+    
     func showDone(_ message: String, completion: (() -> Void)? = nil) {
         guard let keyWindow = kWindow else {return}
         
