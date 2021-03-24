@@ -11,6 +11,7 @@ import RxCocoa
 
 class BaseVM<T: Hashable> {
     let disposeBag = DisposeBag()
+    var requestDisposable: Disposable?
     var data: T
     let state = BehaviorRelay<FetcherState<T>>(value: .initializing)
     
@@ -23,15 +24,14 @@ class BaseVM<T: Hashable> {
     
     func reload() {
         if !shouldReload() {return}
+        requestDisposable?.dispose()
         state.accept(.loading)
-        request
+        requestDisposable = request
             .subscribe(onSuccess: {newData in
                 self.handleNewData(newData)
             }, onFailure: {error in
                 self.handleError(error)
             })
-            .disposed(by: disposeBag)
-        return
     }
     
     func shouldReload() -> Bool {
