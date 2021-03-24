@@ -38,6 +38,4 @@ extension WalletsVM: WalletsRepository {
             return nil
         }
     }
-    
-    
 }
