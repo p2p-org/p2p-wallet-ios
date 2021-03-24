@@ -22,7 +22,8 @@ class ReceiveTokenViewModel {
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     let repository: WalletsRepository
-    let handler: CreateTokenHandler
+    let createTokenHandler: CreateTokenHandler
+    let transactionHandler: TransactionHandler
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<ReceiveTokenNavigatableScene>()
@@ -30,7 +31,7 @@ class ReceiveTokenViewModel {
     let alert = PublishSubject<String>()
     lazy var feeSubject = LazySubject(
         value: Double(0),
-        request: handler.getCreatingTokenAccountFee()
+        request: createTokenHandler.getCreatingTokenAccountFee()
             .map {
                 Double($0) * pow(Double(10), -Double(9))
             }
@@ -40,9 +41,15 @@ class ReceiveTokenViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(handler: CreateTokenHandler, walletsRepository: WalletsRepository, pubkey: String? = nil) {
+    init(
+        createTokenHandler: CreateTokenHandler,
+        transactionHandler: TransactionHandler,
+        walletsRepository: WalletsRepository,
+        pubkey: String? = nil
+    ) {
         self.repository = walletsRepository
-        self.handler = handler
+        self.createTokenHandler = createTokenHandler
+        self.transactionHandler = transactionHandler
         self.wallet.accept(repository.getWallets().first(where: {$0.pubkey == pubkey}) ?? repository.getWallets().first)
         bind()
     }
@@ -58,6 +65,7 @@ class ReceiveTokenViewModel {
                     return false
                 }
             }
+            .take(1)
             .map { [weak self] _ -> Wallet? in
                 if let currentWallet = self?.wallet.value {
                     return self?.repository.getWallets().first(where: {$0.pubkey == currentWallet.pubkey})
@@ -85,6 +93,35 @@ class ReceiveTokenViewModel {
     }
     
     @objc func createWallet() {
+        guard var wallet = wallet.value else {return}
+        // insufficient funds
+        if self.feeSubject.value > (self.repository.solWallet?.amount ?? 0) {
+            wallet.creatingError = L10n.insufficientFunds
+            wallet.isBeingCreated = false
+            self.wallet.accept(wallet)
+            return
+        }
         
+        // set up loading
+        wallet.isBeingCreated = true
+        wallet.creatingError = nil
+        self.wallet.accept(wallet)
+        
+        // request
+        createTokenHandler.createTokenAccount(mintAddress: wallet.mintAddress, isSimulation: false)
+            .flatMap {
+                self.transactionHandler.observeTransactionCompletion(signature: $0.signature)
+                    .andThen(.just($0))
+            }
+            .subscribe(onSuccess: {
+                wallet.pubkey = $0.newPubkey
+                wallet.isBeingCreated = false
+                self.wallet.accept(wallet)
+            }, onFailure: {error in
+                wallet.creatingError = error.readableDescription
+                wallet.isBeingCreated = false
+                self.wallet.accept(wallet)
+            })
+            .disposed(by: disposeBag)
     }
 }

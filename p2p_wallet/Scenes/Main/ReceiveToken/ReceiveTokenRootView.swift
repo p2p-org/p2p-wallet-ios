@@ -159,11 +159,20 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .drive(addWalletButton.rx.isHidden)
             .disposed(by: disposeBag)
         
+        walletDriver
+            .drive(onNext: { [weak self] in
+                guard let wallet = $0 else {return}
+                self?.addWalletButton.setUp(with: wallet, showLoading: false)
+            })
+            .disposed(by: disposeBag)
+            
         addWalletButton.setUp(feeSubject: viewModel.feeSubject)
         
         walletDriver.map {
             if let pubkey = $0?.pubkey {
                 return pubkey
+            } else if $0?.creatingError != nil {
+                return L10n.WeCouldnTAddATokenToYourWallet.checkYourInternetConnectionAndTryAgain
             } else {
                 return L10n.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice
             }
@@ -171,12 +180,22 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .drive(addressLabel.rx.text)
             .disposed(by: disposeBag)
         
-        walletDriver.map {$0?.pubkey == nil ? UIColor.a3a5ba: UIColor.textBlack}
+        walletDriver.map {$0?.pubkey == nil ? ($0?.creatingError == nil ? UIColor.a3a5ba: UIColor.alert): UIColor.textBlack}
             .drive(addressLabel.rx.textColor)
             .disposed(by: disposeBag)
         
         walletDriver.map {$0?.mintAddress}
             .drive(mintAddressLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        walletDriver.map {$0?.isBeingCreated == true}
+            .drive(onNext: {[weak self] isBeingCreated in
+                if isBeingCreated {
+                    self?.showLoadingIndicatorView(presentationStyle: .fullScreen)
+                } else {
+                    self?.hideLoadingIndicatorView()
+                }
+            })
             .disposed(by: disposeBag)
     }
 }
