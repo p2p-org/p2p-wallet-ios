@@ -32,6 +32,8 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
         .onTap(viewModel, action: #selector(ReceiveTokenViewModel.createWallet))
     private lazy var titleLabel = UILabel(text: "<Your address>", textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
     private lazy var qrCodeView = QrCodeView(size: 208, coinLogoSize: 50)
+    private lazy var addWalletButton = WLAddTokenButton()
+        .onTap(viewModel, action: #selector(ReceiveTokenViewModel.createWallet))
     private lazy var addressLabel = UILabel(text: "<address>", textSize: 13, numberOfLines: 0, textAlignment: .center)
     private lazy var mintAddressLabel = UILabel(text: "<mint address>", textSize: 13, textColor: .a3a5ba, numberOfLines: 0)
     
@@ -50,7 +52,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
     
     override func didMoveToWindow() {
         super.didMoveToWindow()
-        
+        viewModel.feeSubject.reload()
     }
     
     // MARK: - Layout
@@ -84,6 +86,11 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
                 ])
             ])
         ])
+        
+        scrollView.contentView.addSubview(addWalletButton)
+        addWalletButton.autoPinEdge(.leading, to: .leading, of: stackView, withOffset: 20)
+        addWalletButton.autoPinEdge(.trailing, to: .trailing, of: stackView, withOffset: -20)
+        addWalletButton.autoPinEdge(.bottom, to: .bottom, of: qrCodeView, withOffset: 24)
     }
     
     private func bind() {
@@ -147,9 +154,25 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .drive(qrCodeView.rx.alpha)
             .disposed(by: disposeBag)
         
+        walletDriver
+            .map {$0?.pubkey != nil}
+            .drive(addWalletButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        walletDriver
+            .drive(onNext: { [weak self] in
+                guard let wallet = $0 else {return}
+                self?.addWalletButton.setUp(with: wallet, showLoading: false)
+            })
+            .disposed(by: disposeBag)
+            
+        addWalletButton.setUp(feeSubject: viewModel.feeSubject)
+        
         walletDriver.map {
             if let pubkey = $0?.pubkey {
                 return pubkey
+            } else if $0?.creatingError != nil {
+                return L10n.WeCouldnTAddATokenToYourWallet.checkYourInternetConnectionAndTryAgain
             } else {
                 return L10n.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice
             }
@@ -157,12 +180,22 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .drive(addressLabel.rx.text)
             .disposed(by: disposeBag)
         
-        walletDriver.map {$0?.pubkey == nil ? UIColor.a3a5ba: UIColor.textBlack}
+        walletDriver.map {$0?.pubkey == nil ? ($0?.creatingError == nil ? UIColor.a3a5ba: UIColor.alert): UIColor.textBlack}
             .drive(addressLabel.rx.textColor)
             .disposed(by: disposeBag)
         
         walletDriver.map {$0?.mintAddress}
             .drive(mintAddressLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        walletDriver.map {$0?.isBeingCreated == true}
+            .drive(onNext: {[weak self] isBeingCreated in
+                if isBeingCreated {
+                    self?.showLoadingIndicatorView(presentationStyle: .fullScreen)
+                } else {
+                    self?.hideLoadingIndicatorView()
+                }
+            })
             .disposed(by: disposeBag)
     }
 }

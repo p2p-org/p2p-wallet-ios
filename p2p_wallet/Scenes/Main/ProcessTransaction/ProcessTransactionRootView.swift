@@ -117,8 +117,8 @@ class ProcessTransactionRootView: BEView {
     }
     
     private func bind() {
-        viewModel.transactionHandler
-            .asDriver(onErrorJustReturn: TransactionHandler(transaction: nil, error: nil))
+        viewModel.transactionInfo
+            .asDriver(onErrorJustReturn: TransactionInfo(transaction: nil, error: nil))
             .drive(onNext: {[unowned self] transactionHandler in
                 self.amountLabel.isHidden = false
                 self.equityAmountLabel.isHidden = false
