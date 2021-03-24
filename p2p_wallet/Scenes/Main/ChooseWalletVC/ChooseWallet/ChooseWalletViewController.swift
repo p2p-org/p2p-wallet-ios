@@ -2,87 +2,58 @@
 //  ChooseWalletViewController.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 12/03/2021.
+//  Created by Chung Tran on 24/03/2021.
 //
 
 import Foundation
 import UIKit
 
-class ChooseWalletViewController: BaseVC {
+class ChooseWalletViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: ChooseWalletViewModel
-    let sceneFactory: MyWalletsScenesFactory
+    private lazy var rootView = ChooseWalletRootView(viewModel: viewModel)
     var completion: ((Wallet) -> Void)?
-    let customFilter: ((Wallet) -> Bool)
     
     // MARK: - Initializer
-    init(viewModel: ChooseWalletViewModel, sceneFactory: MyWalletsScenesFactory, customFilter: ((Wallet) -> Bool)? = nil)
+    init(viewModel: ChooseWalletViewModel)
     {
         self.viewModel = viewModel
-        self.sceneFactory = sceneFactory
-        self.customFilter = customFilter ?? {$0.symbol == "SOL" || $0.amount > 0}
         super.init()
         modalPresentationStyle = .custom
         transitioningDelegate = self
     }
     
     // MARK: - Methods
-    override func loadView() {
-        let rootView = ChooseWalletCollectionView(viewModel: viewModel.walletsVM, customFilter: customFilter)
-        rootView.itemDidSelect = { [weak self] in
-            self?.completion?($0)
-        }
-        view = rootView
-    }
-    
     override func setUp() {
         super.setUp()
+        let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
+            UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
+                UILabel(text: L10n.selectToken, textSize: 17, weight: .semibold),
+                UILabel(text: L10n.close, textSize: 17, textColor: .h5887ff)
+                    .onTap(self, action: #selector(back))
+            ])
+                .padding(.init(all: 20)),
+            UIView.separator(height: 1, color: .separator),
+            rootView
+        ])
+        
+        containerView.addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges()
     }
     
     override func bind() {
         super.bind()
+        viewModel.selectedWallet
+            .subscribe(onNext: {[weak self] wallet in
+                self?.completion?(wallet)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
 extension ChooseWalletViewController: UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         ExpandablePresentationController(presentedViewController: presented, presenting: presenting)
-    }
-}
-
-extension ChooseWalletViewController {
-    class Cell: WalletCell {
-        override var loadingViews: [UIView] {super.loadingViews + [addressLabel]}
-        lazy var addressLabel = UILabel(textSize: 13, textColor: .textSecondary)
-        
-        override func commonInit() {
-            super.commonInit()
-            stackView.alignment = .center
-            stackView.constraintToSuperviewWithAttribute(.bottom)?
-                .constant = -16
-            
-            coinNameLabel.font = .systemFont(ofSize: 17, weight: .semibold)
-            coinNameLabel.numberOfLines = 1
-            equityValueLabel.font = .systemFont(ofSize: 17, weight: .semibold)
-            tokenCountLabel.font = .systemFont(ofSize: 13)
-            
-            stackView.addArrangedSubviews([
-                coinLogoImageView,
-                UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [coinNameLabel, equityValueLabel]),
-                    UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [addressLabel, tokenCountLabel])
-                ])
-            ])
-        }
-        
-        override func setUp(with item: Wallet) {
-            super.setUp(with: item)
-            if let pubkey = item.pubkey {
-                addressLabel.text = pubkey.prefix(4) + "..." + pubkey.suffix(4)
-            } else {
-                addressLabel.text = nil
-            }
-        }
     }
 }

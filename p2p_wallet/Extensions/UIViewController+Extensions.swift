@@ -7,6 +7,7 @@
 
 import Foundation
 import SafariServices
+import Action
 
 extension UIViewController {
     @discardableResult
@@ -47,12 +48,12 @@ extension UIViewController {
         view.subviews.first(where: {$0 is ErrorView}) as? ErrorView
     }
     
-    func showErrorView(error: Error) {
-        view.showErrorView(error: error)
+    func showErrorView(error: Error?, retryAction: CocoaAction? = nil) {
+        view.showErrorView(error: error, retryAction: retryAction)
     }
     
-    func showErrorView(title: String? = nil, description: String? = nil) {
-        view.showErrorView(title: title, description: description)
+    func showErrorView(title: String? = nil, description: String? = nil, retryAction: CocoaAction? = nil) {
+        view.showErrorView(title: title, description: description, retryAction: retryAction)
     }
     
     func removeErrorView() {

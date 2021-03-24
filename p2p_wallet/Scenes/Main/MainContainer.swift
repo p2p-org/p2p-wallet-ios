@@ -49,12 +49,18 @@ class MainContainer {
     }
     
     func makeAddNewTokenVC() -> AddNewWalletVC {
-        let vm = _AddNewWalletVM(solanaSDK: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, scenesFactory: self)
+        let vm = _AddNewWalletVM(handler: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, scenesFactory: self)
         return AddNewWalletVC(viewModel: vm)
     }
     
-    func makeReceiveTokenViewController() -> ReceiveTokenVC {
-        ReceiveTokenVC(wallets: myWalletsVM.data)
+    func makeReceiveTokenViewController(pubkey: String? = nil) -> ReceiveTokenViewController {
+        let viewModel = ReceiveTokenViewModel(
+            createTokenHandler: solanaSDK,
+            transactionHandler: socket,
+            walletsRepository: myWalletsVM,
+            pubkey: pubkey
+        )
+        return ReceiveTokenViewController(viewModel: viewModel, scenesFactory: self)
     }
     
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController {
@@ -70,6 +76,18 @@ class MainContainer {
     
     func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)? = nil) -> ChooseWalletVC {
         ChooseWalletVC(viewModel: myWalletsVM, sceneFactory: self, customFilter: customFilter)
+    }
+    
+    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController {
+        let viewModel = ChooseWalletViewModel(
+            myWalletsViewModel: myWalletsVM,
+            showOtherWallets: showOtherWallets)
+        { (item) -> Bool in
+            guard let customFilter = customFilter else {return true}
+            guard let item = item as? Wallet else {return false}
+            return customFilter(item)
+        }
+        return ChooseWalletViewController(viewModel: viewModel)
     }
     
     func makeSwapChooseDestinationWalletVC(customFilter: ((Wallet) -> Bool)? = nil) -> SwapChooseDestinationWalletViewController {
@@ -134,4 +152,5 @@ extension MainContainer: TabBarScenesFactory,
                          AddNewWalletScenesFactory,
                          HomeScenesFactory,
                          ChangeNetworkResponder,
+                         ReceiveTokenSceneFactory,
                          _MainScenesFactory {}

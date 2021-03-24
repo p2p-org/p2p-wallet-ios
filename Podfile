@@ -14,6 +14,7 @@ target 'p2p_wallet' do
   pod 'BEPureLayout', :path => 'BEPureLayout'
   pod 'LazySubject', :path => 'LazySubject'
   pod 'THPinViewController', :path => 'THPinViewController'
+  pod 'BECollectionView', :path => 'BECollectionView'
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
   pod 'Action'

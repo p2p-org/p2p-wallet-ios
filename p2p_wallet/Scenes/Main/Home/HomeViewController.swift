@@ -10,7 +10,7 @@ import UIKit
 
 protocol HomeScenesFactory {
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController
-    func makeReceiveTokenViewController() -> ReceiveTokenVC
+    func makeReceiveTokenViewController(pubkey: String?) -> ReceiveTokenViewController
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController
     func makeMyProductsViewController() -> MyProductsViewController
@@ -119,7 +119,7 @@ class HomeViewController: BaseVC {
     private func navigate(to scene: HomeNavigatableScene) {
         switch scene {
         case .receiveToken:
-            let vc = self.scenesFactory.makeReceiveTokenViewController()
+            let vc = self.scenesFactory.makeReceiveTokenViewController(pubkey: nil)
             self.present(vc, animated: true, completion: nil)
         case .scanQr:
             break

@@ -4,6 +4,9 @@ PODS:
     - RxSwift (~> 6.0)
   - Alamofire (5.4.1)
   - ASKSecp256k1 (0.0.6)
+  - BECollectionView (0.1.0):
+    - PureLayout
+    - RxCocoa
   - BEPureLayout (0.2.1):
     - PureLayout
   - Charts (3.6.0):
@@ -131,6 +134,7 @@ PODS:
 
 DEPENDENCIES:
   - Action
+  - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
   - Charts
   - Firebase/Analytics
@@ -191,6 +195,8 @@ SPEC REPOS:
     - "UITextView+Placeholder"
 
 EXTERNAL SOURCES:
+  BECollectionView:
+    :path: BECollectionView
   BEPureLayout:
     :path: BEPureLayout
   LazySubject:
@@ -204,6 +210,7 @@ SPEC CHECKSUMS:
   Action: 9891cd1b0a9047557d7e58e8dfae743e19d08197
   Alamofire: 2291f7d21ca607c491dd17642e5d40fdcda0e65c
   ASKSecp256k1: 58eb44dfa57f9d29ac0b02fe5de5a312064517f2
+  BECollectionView: 9120725dd693271cef287447e3d1aa844f77535f
   BEPureLayout: 5421e716fb120f196677d9c875cd1fb305af2cea
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   CryptoSwift: 01b0f0cba1d5c212e5a335ff6c054fb75a204f00
@@ -241,6 +248,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 50d9f08342d2514de68f00406eb96aab1cb2b948
+PODFILE CHECKSUM: af82e60ee11be45c542858c84962c99090c427dd
 
 COCOAPODS: 1.10.1
