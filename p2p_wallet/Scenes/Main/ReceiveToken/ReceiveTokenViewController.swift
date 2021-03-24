@@ -81,11 +81,11 @@ class ReceiveTokenViewController: WLIndicatorModalVC {
         switch scene {
         case .chooseWallet:
             let vc = scenesFactory.makeChooseWalletViewController(customFilter: nil)
-//            vc.completion = { [weak self, weak vc] wallet in
-//                let wallet = self?.viewModel.repository.getWallets().first(where: {$0.pubkey == wallet.pubkey})
-//                self?.viewModel.wallet.accept(wallet)
-//                vc?.back()
-//            }
+            vc.completion = { [weak self, weak vc] wallet in
+                let wallet = self?.viewModel.repository.getWallets().first(where: {$0.pubkey == wallet.pubkey})
+                self?.viewModel.wallet.accept(wallet)
+                vc?.back()
+            }
             present(vc, animated: true, completion: nil)
         case .explorer(let url):
             showWebsite(url: url)
