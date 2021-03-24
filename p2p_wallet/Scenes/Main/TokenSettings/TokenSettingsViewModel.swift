@@ -90,8 +90,8 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
             status: .processing
         )
         
-        self.processTransactionViewModel.transactionHandler.accept(
-            TransactionHandler(transaction: transaction)
+        self.processTransactionViewModel.transactionInfo.accept(
+            TransactionInfo(transaction: transaction)
         )
         
         Single.zip(
@@ -101,14 +101,14 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
             .subscribe(onSuccess: { signature, fee in
                 transaction.amount = fee.convertToBalance(decimals: 9)
                 transaction.signatureInfo = .init(signature: signature)
-                self.processTransactionViewModel.transactionHandler.accept(
-                    TransactionHandler(transaction: transaction)
+                self.processTransactionViewModel.transactionInfo.accept(
+                    TransactionInfo(transaction: transaction)
                 )
                 self.transactionManager.process(transaction)
                 self.walletsVM.removeItem(where: {$0.pubkey == self.pubkey})
             }, onFailure: {error in
-                self.processTransactionViewModel.transactionHandler.accept(
-                    TransactionHandler(transaction: transaction, error: error)
+                self.processTransactionViewModel.transactionInfo.accept(
+                    TransactionInfo(transaction: transaction, error: error)
                 )
             })
             .disposed(by: disposeBag)
