@@ -28,7 +28,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
     // MARK: - Subviews
     private lazy var coinLogoImageView = CoinLogoImageView(width: 45, height: 45, cornerRadius: 12)
     private lazy var symbolLabel = UILabel(text: "<Symbol>", weight: .semibold)
-    private lazy var shortAddresslabel = UILabel(text: "<address>", textSize: 13, textColor: .a3a5ba)
+    private lazy var shortAddresslabel = UILabel(text: "<address>", textSize: 13, textColor: .a3a5ba, numberOfLines: 0)
     private lazy var titleLabel = UILabel(text: "<Your address>", textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
     private lazy var qrCodeView = QrCodeView(size: 208, coinLogoSize: 50)
     private lazy var addressLabel = UILabel(text: "<address>", textSize: 13, numberOfLines: 0, textAlignment: .center)
@@ -105,10 +105,16 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .map {wallet -> String? in
                 if let pubkey = wallet?.pubkey {
                     return pubkey.prefix(4) + "..." + pubkey.suffix(4)
+                } else {
+                    return L10n.addTokenToSeeWalletAddress
                 }
-                return nil
             }
             .drive(shortAddresslabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        walletDriver
+            .map {$0?.pubkey == nil ? UIColor.h5887ff: UIColor.a3a5ba}
+            .drive(shortAddresslabel.rx.textColor)
             .disposed(by: disposeBag)
         
         walletDriver
@@ -135,12 +141,18 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .drive(qrCodeView.rx.alpha)
             .disposed(by: disposeBag)
         
-        walletDriver.map {$0?.pubkey}
+        walletDriver.map {
+            if let pubkey = $0?.pubkey {
+                return pubkey
+            } else {
+                return L10n.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice
+            }
+        }
             .drive(addressLabel.rx.text)
             .disposed(by: disposeBag)
         
-        walletDriver.map {$0?.pubkey == nil}
-            .drive(addressLabel.rx.isHidden)
+        walletDriver.map {$0?.pubkey == nil ? UIColor.a3a5ba: UIColor.textBlack}
+            .drive(addressLabel.rx.textColor)
             .disposed(by: disposeBag)
         
         walletDriver.map {$0?.mintAddress}

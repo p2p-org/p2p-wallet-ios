@@ -281,3 +281,4 @@
 "Your public %@ address" = "Your public %@ address";
 "Select token" = "Select token";
 "To see %@ wallet address, you must add this token to your token list" = "To see %@ wallet address, you must add this token to your token list";
+"Add token to see wallet address" = "Add token to see wallet address";
