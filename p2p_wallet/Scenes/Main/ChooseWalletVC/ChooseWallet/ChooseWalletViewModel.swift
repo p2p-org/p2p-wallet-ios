@@ -16,26 +16,51 @@ class ChooseWalletViewModel {
     // MARK: - Properties
     let disposeBag = DisposeBag()
     let myWalletsViewModel: BEListViewModelType
-//    let otherWalletsViewModel: BEListViewModelType
+    let otherWalletsViewModel: OtherWalletsViewModel?
     let firstSectionFilter: ((AnyHashable) -> Bool)?
     
     // MARK: - Subjects
     let selectedWallet = PublishSubject<Wallet>()
     
-    // MARK: - Initializer
-    init(
-        myWalletsViewModel: BEListViewModelType,
-//        otherWalletsViewModel: BEListViewModelType
-        firstSectionFilter: ((AnyHashable) -> Bool)? = nil
-    ) {
-        self.myWalletsViewModel = myWalletsViewModel
-//        self.otherWalletsViewModel = otherWalletsViewModel
-        self.firstSectionFilter = firstSectionFilter
-    }
-    
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
+    // MARK: - Initializer
+    init(
+        myWalletsViewModel: BEListViewModelType,
+        showOtherWallets: Bool,
+        firstSectionFilter: ((AnyHashable) -> Bool)? = nil
+    ) {
+        self.myWalletsViewModel = myWalletsViewModel
+        if showOtherWallets {
+            otherWalletsViewModel = OtherWalletsViewModel()
+        } else {
+            otherWalletsViewModel = nil
+        }
+        self.firstSectionFilter = firstSectionFilter
+        
+        otherWalletsViewModel?.customFilter = { [weak self] wallet in
+            guard let strongSelf = self else {return true}
+            if strongSelf.myWalletsViewModel
+                .getData(type: Wallet.self)
+                .contains(where: { $0.symbol == wallet.symbol })
+            {
+                return false
+            }
+            return true
+        }
+        bind()
+    }
+    
+    func bind() {
+        myWalletsViewModel.dataDidChange
+            .map {[weak self] in self?.myWalletsViewModel.currentState == .loaded}
+            .filter {$0}
+            .subscribe(onNext: { [weak self] _ in
+                self?.otherWalletsViewModel?.reload()
+            })
+            .disposed(by: disposeBag)
+    }
     
     // MARK: - Actions
 //    @objc func showDetail() {
