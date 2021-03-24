@@ -36,7 +36,6 @@ class ChooseWalletViewController: WLIndicatorModalVC {
         viewModel.selectedWallet
             .subscribe(onNext: {[weak self] wallet in
                 self?.completion?(wallet)
-                self?.dismiss(animated: true, completion: nil)
             })
             .disposed(by: disposeBag)
     }
