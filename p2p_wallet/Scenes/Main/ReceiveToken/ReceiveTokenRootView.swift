@@ -32,6 +32,8 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
         .onTap(viewModel, action: #selector(ReceiveTokenViewModel.createWallet))
     private lazy var titleLabel = UILabel(text: "<Your address>", textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
     private lazy var qrCodeView = QrCodeView(size: 208, coinLogoSize: 50)
+    private lazy var addWalletButton = WLAddTokenButton()
+        .onTap(viewModel, action: #selector(ReceiveTokenViewModel.createWallet))
     private lazy var addressLabel = UILabel(text: "<address>", textSize: 13, numberOfLines: 0, textAlignment: .center)
     private lazy var mintAddressLabel = UILabel(text: "<mint address>", textSize: 13, textColor: .a3a5ba, numberOfLines: 0)
     
@@ -50,7 +52,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
     
     override func didMoveToWindow() {
         super.didMoveToWindow()
-        
+        viewModel.feeSubject.reload()
     }
     
     // MARK: - Layout
@@ -84,6 +86,11 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
                 ])
             ])
         ])
+        
+        scrollView.contentView.addSubview(addWalletButton)
+        addWalletButton.autoPinEdge(.leading, to: .leading, of: stackView, withOffset: 20)
+        addWalletButton.autoPinEdge(.trailing, to: .trailing, of: stackView, withOffset: -20)
+        addWalletButton.autoPinEdge(.bottom, to: .bottom, of: qrCodeView, withOffset: 24)
     }
     
     private func bind() {
@@ -146,6 +153,13 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .map {$0?.pubkey == nil ? 0.05: 1}
             .drive(qrCodeView.rx.alpha)
             .disposed(by: disposeBag)
+        
+        walletDriver
+            .map {$0?.pubkey != nil}
+            .drive(addWalletButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        addWalletButton.setUp(feeSubject: viewModel.feeSubject)
         
         walletDriver.map {
             if let pubkey = $0?.pubkey {
