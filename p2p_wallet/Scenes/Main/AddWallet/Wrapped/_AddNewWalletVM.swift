@@ -11,13 +11,13 @@ import LazySubject
 import Action
 
 class _AddNewWalletVM: ListViewModel<Wallet> {
-    let solanaSDK: SolanaSDK
+    let handler: CreateTokenHandler
     let walletsVM: WalletsVM
     let transactionManager: TransactionsManager
     let scenesFactory: AddNewWalletScenesFactory
     lazy var feeSubject = LazySubject(
         value: Double(0),
-        request: solanaSDK.getCreatingTokenAccountFee()
+        request: handler.getCreatingTokenAccountFee()
             .map {
                 let decimals = self.walletsVM.items.solWallet?.decimals ?? 9
                 return Double($0) * pow(Double(10), -Double(decimals))
@@ -27,8 +27,8 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
     let navigatorSubject = PublishSubject<Navigation>()
     let clearSearchBarSubject = PublishSubject<Void>()
     
-    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, transactionManager: TransactionsManager, scenesFactory: AddNewWalletScenesFactory) {
-        self.solanaSDK = solanaSDK
+    init(handler: CreateTokenHandler, walletsVM: WalletsVM, transactionManager: TransactionsManager, scenesFactory: AddNewWalletScenesFactory) {
+        self.handler = handler
         self.walletsVM = walletsVM
         self.transactionManager = transactionManager
         self.scenesFactory = scenesFactory
@@ -92,7 +92,7 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
             })
             
             // request
-            self.solanaSDK.createTokenAccount(mintAddress: newWallet.mintAddress)
+            self.handler.createTokenAccount(mintAddress: newWallet.mintAddress, isSimulation: false)
                 //            return Single<(String, String)>.just(("", "")).delay(.seconds(5), scheduler: MainScheduler.instance)
                 //                .map {_ -> (String, String) in
                 //                    throw SolanaSDK.Error.other("example")

@@ -16,7 +16,7 @@ enum ProcessTransactionNavigatableScene {
     case cancel
 }
 
-struct TransactionHandler {
+struct TransactionInfo {
     var transaction: Transaction?
     var error: Error?
 }
@@ -29,13 +29,13 @@ class ProcessTransactionViewModel {
     let transactionsManager: TransactionsManager
     var tryAgainAction: CocoaAction?
     
-    var transaction: Transaction? {transactionHandler.value.transaction}
-    var error: Error? {transactionHandler.value.error}
+    var transaction: Transaction? {transactionInfo.value.transaction}
+    var error: Error? {transactionInfo.value.error}
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<ProcessTransactionNavigatableScene>()
     
-    let transactionHandler = BehaviorRelay<TransactionHandler>(value: TransactionHandler())
+    let transactionInfo = BehaviorRelay<TransactionInfo>(value: TransactionInfo())
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
@@ -53,7 +53,7 @@ class ProcessTransactionViewModel {
             .subscribe(onNext: {[unowned self] transaction in
                 if var transaction = self.transaction {
                     transaction.status = .confirmed
-                    self.transactionHandler.accept(TransactionHandler(transaction: transaction, error: self.error))
+                    self.transactionInfo.accept(TransactionInfo(transaction: transaction, error: self.error))
                 }
             })
             .disposed(by: disposeBag)
@@ -65,7 +65,7 @@ class ProcessTransactionViewModel {
     }
     
     @objc func viewInExplorer() {
-        guard let signature = transactionHandler.value.transaction?.signature else {return}
+        guard let signature = transactionInfo.value.transaction?.signature else {return}
         navigationSubject.onNext(.viewInExplorer(signature: signature))
     }
     

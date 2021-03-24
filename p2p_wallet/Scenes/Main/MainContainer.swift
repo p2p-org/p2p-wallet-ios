@@ -53,12 +53,17 @@ class MainContainer {
     }
     
     func makeAddNewTokenVC() -> AddNewWalletVC {
-        let vm = _AddNewWalletVM(solanaSDK: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, scenesFactory: self)
+        let vm = _AddNewWalletVM(handler: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, scenesFactory: self)
         return AddNewWalletVC(viewModel: vm)
     }
     
     func makeReceiveTokenViewController(pubkey: String? = nil) -> ReceiveTokenViewController {
-        let viewModel = ReceiveTokenViewModel(walletsRepository: myWalletsVM, pubkey: pubkey)
+        let viewModel = ReceiveTokenViewModel(
+            createTokenHandler: solanaSDK,
+            transactionHandler: socket,
+            walletsRepository: myWalletsVM,
+            pubkey: pubkey
+        )
         return ReceiveTokenViewController(viewModel: viewModel, scenesFactory: self)
     }
     
