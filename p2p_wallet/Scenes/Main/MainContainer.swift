@@ -58,7 +58,12 @@ class MainContainer {
     }
     
     func makeReceiveTokenViewController(pubkey: String? = nil) -> ReceiveTokenViewController {
-        let viewModel = ReceiveTokenViewModel(handler: solanaSDK, walletsRepository: myWalletsVM, pubkey: pubkey)
+        let viewModel = ReceiveTokenViewModel(
+            createTokenHandler: solanaSDK,
+            transactionHandler: socket,
+            walletsRepository: myWalletsVM,
+            pubkey: pubkey
+        )
         return ReceiveTokenViewController(viewModel: viewModel, scenesFactory: self)
     }
     

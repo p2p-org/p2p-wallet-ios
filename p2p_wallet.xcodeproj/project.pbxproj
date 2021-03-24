@@ -57,6 +57,7 @@
 		BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC290A04256BA36F002A727C /* TokenAmountTextField.swift */; };
 		BC2DA294260B079100B50738 /* WLAddTokenButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2DA293260B079100B50738 /* WLAddTokenButton.swift */; };
 		BC2DA29A260B0AD700B50738 /* CreateTokenHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2DA299260B0AD700B50738 /* CreateTokenHandler.swift */; };
+		BC2DA2A2260B245400B50738 /* TransactionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2DA2A1260B245400B50738 /* TransactionHandler.swift */; };
 		BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EB61E26032BD8006CE170 /* WLLoadingIndicatorView.swift */; };
 		BC2EC1802553B1F7006EEDA5 /* SectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */; };
 		BC2EC1852553B326006EEDA5 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */; };
@@ -338,6 +339,7 @@
 		BC290A04256BA36F002A727C /* TokenAmountTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAmountTextField.swift; sourceTree = "<group>"; };
 		BC2DA293260B079100B50738 /* WLAddTokenButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLAddTokenButton.swift; sourceTree = "<group>"; };
 		BC2DA299260B0AD700B50738 /* CreateTokenHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTokenHandler.swift; sourceTree = "<group>"; };
+		BC2DA2A1260B245400B50738 /* TransactionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHandler.swift; sourceTree = "<group>"; };
 		BC2EB61E26032BD8006CE170 /* WLLoadingIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLLoadingIndicatorView.swift; sourceTree = "<group>"; };
 		BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFooterView.swift; sourceTree = "<group>"; };
 		BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
@@ -670,6 +672,7 @@
 			isa = PBXGroup;
 			children = (
 				BC2DA299260B0AD700B50738 /* CreateTokenHandler.swift */,
+				BC2DA2A1260B245400B50738 /* TransactionHandler.swift */,
 			);
 			path = Handlers;
 			sourceTree = "<group>";
@@ -1746,6 +1749,7 @@
 				BCE42DF725DF9C7A0021540E /* OnboardingViewController.swift in Sources */,
 				BC490CB0256CB1B0006E7AC9 /* ChooseWalletVC.swift in Sources */,
 				BCEB206125E1532C00B54FEF /* OnboardingContainer.swift in Sources */,
+				BC2DA2A2260B245400B50738 /* TransactionHandler.swift in Sources */,
 				BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */,
 				BC5DB15B25F75E59003D00BE /* ProcessTransactionRootView.swift in Sources */,
 				BCBE14A025EF3D110014BCE5 /* HomeRootView.swift in Sources */,
