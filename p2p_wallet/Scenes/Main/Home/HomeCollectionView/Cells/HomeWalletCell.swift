@@ -17,7 +17,8 @@ class HomeWalletCell: EditableWalletCell {
     
     override func commonInit() {
         super.commonInit()
-        equityValueLabel.font = .boldSystemFont(ofSize: 15)
+        coinNameLabel.font = .systemFont(ofSize: 17, weight: .medium)
+        equityValueLabel.font = .systemFont(ofSize: 17, weight: .medium)
         equityValueLabel.setContentHuggingPriority(.required, for: .horizontal)
         tokenCountLabel.setContentHuggingPriority(.required, for: .horizontal)
         let vStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
