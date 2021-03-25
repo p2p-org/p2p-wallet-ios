@@ -36,7 +36,6 @@ class HomeViewController: BaseVC {
     lazy var tabBar: TabBar = {
         let tabBar = TabBar(cornerRadius: .defaultPadding, contentInset: UIEdgeInsets(top: 20, left: 0, bottom: 8, right: 0))
         tabBar.backgroundColor = .background2
-        tabBar.alpha = 0
         return tabBar
     }()
     
@@ -90,9 +89,6 @@ class HomeViewController: BaseVC {
                 .onTap(viewModel, action: #selector(HomeViewModel.swapToken)),
             .spacer
         ])
-        
-        // delegate
-        homeRootView.collectionView.delegate = self
     }
     
     override func bind() {
@@ -213,13 +209,5 @@ extension HomeViewController: UIViewControllerTransitioningDelegate {
     
     func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         return interactor.hasStarted ? interactor : nil
-    }
-}
-
-extension HomeViewController: CollectionViewDelegate {
-    func dataDidLoad() {
-        UIView.animate(withDuration: 0.3) {
-            self.tabBar.alpha = self.viewModel.homeCollectionViewModel.walletsVM.data.isEmpty ? 0 : 1
-        }
     }
 }
