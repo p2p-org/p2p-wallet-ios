@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "SUSHI.png",
+      "filename" : "Property 1=SUSHI.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Property 1=SUSHI@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "Property 1=SUSHI@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -17,7 +17,6 @@ struct Wallet: FiatConvertable {
     var lamports: UInt64?
     var price: CurrentPrice?
     var decimals: Int?
-    var indicatorColor: UIColor
     var isHidden = false
     let isLiquidity: Bool
     
@@ -37,9 +36,9 @@ struct Wallet: FiatConvertable {
     var isBeingCreated: Bool?
     var creatingError: String?
     
-    var backgroundColor: UIColor {
+    var indicatorColor: UIColor {
         // swiftlint:disable swiftgen_assets
-        UIColor(named: symbol) ?? UIColor.coinGenericBackground
+        UIColor(named: symbol) ?? UIColor.random
         // swiftlint:enable swiftgen_assets
     }
     
@@ -65,14 +64,11 @@ extension Wallet: ListItemType {
         self.lamports = programAccount.lamports
         self.pubkey = programAccount.pubkey
         self.decimals = programAccount.decimals
-        // swiftlint:disable swiftgen_assets
-        self.indicatorColor = UIColor(named: symbol) ?? UIColor.random
-        // swiftlint:enable swiftgen_assets
         self.isLiquidity = programAccount.isLiquidity
     }
     
     static func placeholder(at index: Int) -> Wallet {
-        Wallet(id: placeholderId(at: index), name: "<placeholder>", mintAddress: "placeholder-mintaddress", pubkey: "<pubkey>", symbol: "<PLHD\(index)>", lamports: nil, decimals: nil, indicatorColor: .clear, isLiquidity: false)
+        Wallet(id: placeholderId(at: index), name: "<placeholder>", mintAddress: "placeholder-mintaddress", pubkey: "<pubkey>", symbol: "<PLHD\(index)>", lamports: nil, decimals: nil, isLiquidity: false)
     }
 }
 
