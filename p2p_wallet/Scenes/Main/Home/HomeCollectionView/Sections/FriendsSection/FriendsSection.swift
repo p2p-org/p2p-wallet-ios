@@ -7,8 +7,13 @@
 
 import Foundation
 import BECollectionView
+import Action
 
 class FriendsSection: BECollectionViewSection {
+    var receiveAction: CocoaAction?
+    var sendAction: CocoaAction?
+    var swapAction: CocoaAction?
+    
     init(index: Int, viewModel: FriendsViewModel) {
         super.init(
             index: index,
@@ -30,6 +35,14 @@ class FriendsSection: BECollectionViewSection {
             ),
             viewModel: viewModel
         )
+    }
+    
+    override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
+        let headerView = super.configureHeader(indexPath: indexPath) as? HeaderView
+        headerView?.receiveAction = receiveAction
+        headerView?.sendAction = sendAction
+        headerView?.swapAction = swapAction
+        return headerView
     }
     
     private static func groupLayoutForFriendSection() -> NSCollectionLayoutGroup {
