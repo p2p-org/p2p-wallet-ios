@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import BECollectionView
 
 class HomeWalletCell: EditableWalletCell {
     lazy var addressLabel = UILabel(text: "<public key>", textSize: 13, textColor: .textSecondary, numberOfLines: 1)
@@ -61,5 +62,12 @@ class HomeWalletCell: EditableWalletCell {
         let stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing)
         stackView.addArrangedSubviews(arrangedSubviews)
         return stackView
+    }
+}
+
+extension HomeWalletCell: BECollectionViewCell {
+    func setUp(with item: AnyHashable?) {
+        guard let wallet = item as? Wallet else {return}
+        setUp(with: wallet)
     }
 }
