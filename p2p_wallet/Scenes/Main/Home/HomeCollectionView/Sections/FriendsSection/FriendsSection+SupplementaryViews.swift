@@ -1,15 +1,14 @@
 //
-//  HomeCollectionView+SupplementaryViews.swift
+//  FriendsSection+SupplementaryViews.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 03/03/2021.
+//  Created by Chung Tran on 25/03/2021.
 //
 
 import Foundation
 import Action
 
-extension HomeCollectionView {
-    
+extension FriendsSection {
     class FriendsSectionBackgroundView: SectionBackgroundView {
         lazy var backgroundView = UIView(backgroundColor: .white)
         
@@ -27,7 +26,7 @@ extension HomeCollectionView {
         }
     }
     
-    class FriendsSectionHeaderView: SectionHeaderView {
+    class HeaderView: SectionHeaderView {
         var receiveAction: CocoaAction?
         var sendAction: CocoaAction?
         var swapAction: CocoaAction?
