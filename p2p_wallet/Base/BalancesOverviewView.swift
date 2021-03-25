@@ -28,7 +28,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
     
     init(textColor: UIColor = .textBlack) {
         self.textColor = textColor
-        super.init(shadowColor: UIColor.black.withAlphaComponent(0.07), radius: 24, offset: CGSize(width: 0, height: 4), opacity: 1, cornerRadius: 12, contentInset: .init(x: 16, y: 14))
+        super.init(shadowColor: UIColor.black.withAlphaComponent(0.05), radius: 24, offset: CGSize(width: 0, height: 8), opacity: 1, cornerRadius: 12, contentInset: .init(x: 16, y: 14))
     }
     
     override func commonInit() {
