@@ -21,12 +21,13 @@ class HomeRootView: BEView {
             guard let wallet = item.wallet else {return}
             self?.viewModel.navigationSubject.onNext(.walletDetail(wallet: wallet))
         }
-        collectionView.showAllProductsAction = viewModel.navigationAction(scene: .allProducts)
+//        collectionView.showAllProductsAction = viewModel.navigationAction(scene: .allProducts)
         collectionView.addNewWalletAction = viewModel.navigationAction(scene: .addToken)
         collectionView.walletCellEditAction = Action<Wallet, Void> {wallet in
             self.viewModel.navigationSubject.onNext(.walletSettings(wallet: wallet))
             return .just(())
         }
+        collectionView.collectionView.contentInset.modify(dBottom: 16)
         return collectionView
     }()
     
