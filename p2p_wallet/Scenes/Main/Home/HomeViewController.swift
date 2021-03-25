@@ -30,7 +30,7 @@ class HomeViewController: BaseVC {
     let interactor = MenuInteractor()
     
     // MARK: - Tabbar
-    lazy var avatarImageView = UIImageView(width: 30, height: 30, image: .settings, tintColor: .textSecondary)
+    lazy var avatarImageView = UIImageView(width: 45, height: 45, image: .settings, tintColor: .textSecondary)
         .onTap(viewModel, action: #selector(HomeViewModel.showSettings))
     lazy var homeRootView = HomeRootView(viewModel: viewModel)
     lazy var tabBar: TabBar = {
@@ -57,7 +57,7 @@ class HomeViewController: BaseVC {
         let headerView = UIView(forAutoLayout: ())
         headerView.row([
             {
-                let qrScannerView = UIImageView(width: 25, height: 25, image: .scanQr, tintColor: .textSecondary
+                let qrScannerView = UIImageView(width: 45, height: 45, image: .scanQr, tintColor: .textSecondary
                 )
                     .onTap(self, action: #selector(qrScannerDidTouch))
                 qrScannerView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
