@@ -26,7 +26,6 @@ class HomeViewModel {
     
     // MARK: - Properties
     let walletsVM: WalletsVM
-    let homeCollectionViewModel: HomeCollectionViewModel
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<HomeNavigatableScene>()
@@ -37,7 +36,6 @@ class HomeViewModel {
     // MARK: - Initializers
     init(walletsVM: WalletsVM) {
         self.walletsVM = walletsVM
-        self.homeCollectionViewModel = HomeCollectionViewModel(walletsVM: walletsVM)
     }
     
     // MARK: - Actions
