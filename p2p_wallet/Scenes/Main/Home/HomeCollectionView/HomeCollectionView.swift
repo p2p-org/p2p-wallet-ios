@@ -36,7 +36,8 @@ class HomeCollectionView: BECollectionView {
         self.activeWalletsSection = ActiveWalletsSection(index: 0, viewModel: viewModel)
         super.init(sections: [
             activeWalletsSection,
-            HiddenWalletsSection(index: 1, viewModel: viewModel)
+            HiddenWalletsSection(index: 1, viewModel: viewModel),
+            FriendsSection(index: 2, viewModel: FriendsViewModel())
         ])
     }
 }
