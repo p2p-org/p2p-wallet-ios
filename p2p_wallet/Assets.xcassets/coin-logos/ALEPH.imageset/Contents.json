@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "ALEPH.png",
+      "filename" : "Property 1=Aleph.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Property 1=Aleph@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "Property 1=Aleph@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

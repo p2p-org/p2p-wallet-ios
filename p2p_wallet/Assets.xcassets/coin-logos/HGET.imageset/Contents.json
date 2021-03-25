@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Hedget.png",
+      "filename" : "Property 1=HGET.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Property 1=HGET@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "Property 1=HGET@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
