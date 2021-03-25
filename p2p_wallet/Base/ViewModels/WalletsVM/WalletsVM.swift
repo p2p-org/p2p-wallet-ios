@@ -149,7 +149,6 @@ class WalletsVM: ListViewModel<Wallet> {
                             lamports: balance,
                             price: PricesManager.shared.solPrice,
                             decimals: 9,
-                            indicatorColor: .black,
                             isLiquidity: false
                         )
                         wallets.insert(solWallet, at: 0)
