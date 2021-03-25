@@ -7,8 +7,11 @@
 
 import Foundation
 import BECollectionView
+import Action
 
 class ActiveWalletsSection: BECollectionViewSection {
+    var openProfileAction: CocoaAction?
+    
     init(index: Int, viewModel: BEListViewModelType) {
         super.init(
             index: index,
@@ -29,5 +32,11 @@ class ActiveWalletsSection: BECollectionViewSection {
                 Array($0.prefix(4))
             }
         )
+    }
+    
+    override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
+        let view = super.configureHeader(indexPath: indexPath) as? HeaderView
+        view?.openProfileAction = openProfileAction
+        return view
     }
 }

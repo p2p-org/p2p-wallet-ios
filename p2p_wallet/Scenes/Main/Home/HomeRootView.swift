@@ -42,10 +42,6 @@ class HomeRootView: BEView {
         super.commonInit()
         layout()
         bind()
-    }
-    
-    override func didMoveToWindow() {
-        super.didMoveToWindow()
         collectionView.refresh()
     }
     
