@@ -27,7 +27,7 @@ class WalletDetailRootView: BEView {
         return tf
     }()
     
-    lazy var settingsButton = UIImageView(width: 25, height: 25, image: .settings, tintColor: .a3a5ba)
+    lazy var settingsButton = UIImageView(width: 45, height: 45, image: .settings, tintColor: .a3a5ba)
     
     lazy var collectionView: TransactionsCollectionView = {
         let collectionView = TransactionsCollectionView(viewModel: viewModel.transactionsVM, sections: [
