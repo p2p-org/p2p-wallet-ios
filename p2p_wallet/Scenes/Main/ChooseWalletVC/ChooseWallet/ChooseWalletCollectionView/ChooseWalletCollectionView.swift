@@ -18,6 +18,7 @@ class ChooseWalletCollectionView: BECollectionView {
         
         var sections = [
             BECollectionViewSection(
+                index: 0,
                 layout: BECollectionViewSectionLayout(
                     header: .init(viewClass: SecondSectionHeaderView.self),
                     cellType: Cell.self,
@@ -31,6 +32,7 @@ class ChooseWalletCollectionView: BECollectionView {
         if let viewModel = viewModel.otherWalletsViewModel {
             sections.append(
                 BECollectionViewSection(
+                    index: 1,
                     layout: BECollectionViewSectionLayout(
                         header: .init(viewClass: FirstSectionHeaderView.self),
                         cellType: OtherTokenCell.self,
@@ -43,9 +45,5 @@ class ChooseWalletCollectionView: BECollectionView {
         }
         
         super.init(sections: sections)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
