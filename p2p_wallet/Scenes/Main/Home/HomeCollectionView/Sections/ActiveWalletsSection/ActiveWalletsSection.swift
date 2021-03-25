@@ -20,10 +20,14 @@ class ActiveWalletsSection: BECollectionViewSection {
                 cellType: HomeWalletCell.self,
                 interGroupSpacing: 30,
                 itemHeight: .absolute(45),
+                contentInsets: NSDirectionalEdgeInsets(top: 0, leading: .defaultPadding, bottom: 0, trailing: .defaultPadding),
                 horizontalInterItemSpacing: .fixed(16),
                 background: BackgroundView.self
             ),
-            viewModel: viewModel
+            viewModel: viewModel,
+            limit: {
+                Array($0.prefix(4))
+            }
         )
     }
 }

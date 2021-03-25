@@ -24,6 +24,7 @@ class HiddenWalletsSection: BECollectionViewSection {
                 cellType: HomeWalletCell.self,
                 interGroupSpacing: 30,
                 itemHeight: .absolute(45),
+                contentInsets: NSDirectionalEdgeInsets(top: 0, leading: .defaultPadding, bottom: .defaultPadding, trailing: .defaultPadding),
                 horizontalInterItemSpacing: .fixed(16),
                 background: BackgroundView.self
             ),
@@ -31,6 +32,9 @@ class HiddenWalletsSection: BECollectionViewSection {
             customFilter: { item in
                 guard let wallet = item as? Wallet else {return false}
                 return wallet.isHidden
+            },
+            limit: {
+                Array($0.prefix(4))
             }
         )
     }
