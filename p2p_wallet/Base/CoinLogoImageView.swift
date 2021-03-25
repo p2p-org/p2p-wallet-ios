@@ -13,10 +13,9 @@ class CoinLogoImageView: BEView {
     
     override func commonInit() {
         super.commonInit()
+        backgroundColor = .gray
         addSubview(imageView)
-        imageView.autoCenterInSuperview()
-        imageView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.66).isActive = true
-        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        imageView.autoPinEdgesToSuperviewEdges()
     }
     
     func setUp(wallet: Wallet? = nil) {
@@ -25,12 +24,9 @@ class CoinLogoImageView: BEView {
         backgroundColor = .clear
         if let wallet = wallet {
             imageView.image = wallet.image
-            backgroundColor = wallet.backgroundColor
         } else if let placeholder = placeholder {
             placeholder.isHidden = false
             imageView.isHidden = true
-        } else {
-            backgroundColor = .gray
         }
     }
     
