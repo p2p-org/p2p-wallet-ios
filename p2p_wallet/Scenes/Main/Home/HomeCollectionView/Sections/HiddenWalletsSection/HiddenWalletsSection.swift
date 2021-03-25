@@ -7,8 +7,11 @@
 
 import Foundation
 import BECollectionView
+import Action
 
 class HiddenWalletsSection: BECollectionViewSection {
+    var showAllProductsAction: CocoaAction?
+    
     init(index: Int, viewModel: WalletsListViewModelType) {
         super.init(
             index: index,
@@ -37,6 +40,12 @@ class HiddenWalletsSection: BECollectionViewSection {
                 Array($0.prefix(4))
             }
         )
+    }
+    
+    override func configureFooter(indexPath: IndexPath) -> UICollectionReusableView? {
+        let view = super.configureFooter(indexPath: indexPath) as? FooterView
+        view?.showProductsAction = showAllProductsAction
+        return view
     }
     
     override func dataDidLoad() {

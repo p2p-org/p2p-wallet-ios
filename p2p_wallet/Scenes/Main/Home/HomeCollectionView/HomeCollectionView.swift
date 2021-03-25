@@ -16,6 +16,8 @@ class HomeCollectionView: BECollectionView {
     
     // MARK: - Sections
     private let activeWalletsSection: ActiveWalletsSection
+    private let hiddenWalletsSection: HiddenWalletsSection
+    private let friendSection: FriendsSection
     
     // MARK: - Actions
     var openProfileAction: CocoaAction? {
@@ -23,10 +25,26 @@ class HomeCollectionView: BECollectionView {
             self.activeWalletsSection.openProfileAction = openProfileAction
         }
     }
-    var receiveAction: CocoaAction?
-    var sendAction: CocoaAction?
-    var swapAction: CocoaAction?
-    var showAllProductsAction: CocoaAction?
+    var receiveAction: CocoaAction? {
+        didSet {
+            friendSection.receiveAction = receiveAction
+        }
+    }
+    var sendAction: CocoaAction? {
+        didSet {
+            friendSection.sendAction = sendAction
+        }
+    }
+    var swapAction: CocoaAction? {
+        didSet {
+            friendSection.swapAction = swapAction
+        }
+    }
+    var showAllProductsAction: CocoaAction? {
+        didSet {
+            self.hiddenWalletsSection.showAllProductsAction = showAllProductsAction
+        }
+    }
     
     var walletCellEditAction: Action<Wallet, Void>?
     
@@ -34,10 +52,13 @@ class HomeCollectionView: BECollectionView {
     init(viewModel: WalletsListViewModelType) {
         self.viewModel = viewModel
         self.activeWalletsSection = ActiveWalletsSection(index: 0, viewModel: viewModel)
+        self.hiddenWalletsSection = HiddenWalletsSection(index: 1, viewModel: viewModel)
+        self.friendSection = FriendsSection(index: 2, viewModel: FriendsViewModel())
+        
         super.init(sections: [
             activeWalletsSection,
-            HiddenWalletsSection(index: 1, viewModel: viewModel),
-            FriendsSection(index: 2, viewModel: FriendsViewModel())
+            hiddenWalletsSection,
+            friendSection
         ])
     }
 }
