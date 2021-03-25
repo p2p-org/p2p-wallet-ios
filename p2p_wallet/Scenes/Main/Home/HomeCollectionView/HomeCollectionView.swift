@@ -12,9 +12,17 @@ import BECollectionView
 class HomeCollectionView: BECollectionView {
     // MARK: - Constants
     let numberOfWalletsToShow = 4
+    let viewModel: WalletsListViewModelType
+    
+    // MARK: - Sections
+    private let activeWalletsSection: ActiveWalletsSection
     
     // MARK: - Actions
-    var openProfileAction: CocoaAction?
+    var openProfileAction: CocoaAction? {
+        didSet {
+            self.activeWalletsSection.openProfileAction = openProfileAction
+        }
+    }
     var receiveAction: CocoaAction?
     var sendAction: CocoaAction?
     var swapAction: CocoaAction?
@@ -24,8 +32,10 @@ class HomeCollectionView: BECollectionView {
     
     // MARK: - Initializers
     init(viewModel: WalletsListViewModelType) {
+        self.viewModel = viewModel
+        self.activeWalletsSection = ActiveWalletsSection(index: 0, viewModel: viewModel)
         super.init(sections: [
-            ActiveWalletsSection(index: 0, viewModel: viewModel),
+            activeWalletsSection,
             HiddenWalletsSection(index: 1, viewModel: viewModel)
         ])
     }
