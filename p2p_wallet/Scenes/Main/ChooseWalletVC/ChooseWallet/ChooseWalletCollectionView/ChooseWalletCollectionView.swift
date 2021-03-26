@@ -20,7 +20,7 @@ class ChooseWalletCollectionView: BECollectionView {
             BECollectionViewSection(
                 index: 0,
                 layout: BECollectionViewSectionLayout(
-                    header: .init(viewClass: SecondSectionHeaderView.self),
+                    header: .init(viewClass: FirstSectionHeaderView.self),
                     cellType: Cell.self,
                     interGroupSpacing: 16
                 ),
@@ -34,7 +34,7 @@ class ChooseWalletCollectionView: BECollectionView {
                 BECollectionViewSection(
                     index: 1,
                     layout: BECollectionViewSectionLayout(
-                        header: .init(viewClass: FirstSectionHeaderView.self),
+                        header: .init(viewClass: SecondSectionHeaderView.self),
                         cellType: OtherTokenCell.self,
                         interGroupSpacing: 16
                     ),
