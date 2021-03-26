@@ -55,6 +55,15 @@ class HiddenWalletsSection: HomeWalletsSection {
         return view
     }
     
+    override func mapDataToCollectionViewItems() -> [BECollectionViewItem] {
+        let viewModel = self.viewModel as? WalletsListViewModelType
+        if viewModel?.isHiddenWalletsShown.value == true {
+            return super.mapDataToCollectionViewItems()
+        } else {
+            return []
+        }
+    }
+    
     override func dataDidLoad() {
         super.dataDidLoad()
         let viewModel = self.viewModel as! WalletsListViewModelType
