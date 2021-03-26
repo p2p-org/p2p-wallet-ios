@@ -8,7 +8,7 @@
 import Foundation
 import Action
 
-extension ActiveWalletsSection {
+extension HomeCollectionView.ActiveWalletsSection {
     class HeaderView: SectionHeaderView {
         lazy var avatarImageView = UIImageView(width: 30, height: 30, backgroundColor: .c4c4c4, cornerRadius: 15)
             .onTap(self, action: #selector(avatarImageViewDidTouch))
