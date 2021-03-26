@@ -49,15 +49,15 @@ class WLAddTokenButton: WLLoadingView {
         if item.isBeingCreated == true {
             if showLoading {
                 setUp(loading: true)
+                titleLabel.text = L10n.addingTokenToYourWallet
             }
             
-            titleLabel.text = L10n.addingTokenToYourWallet
             feeLabel.isHidden = true
         } else {
             if showLoading {
                 setUp(loading: false)
+                titleLabel.text = L10n.addToken
             }
-            titleLabel.text = L10n.addToken
             feeLabel.isHidden = false
         }
     }
