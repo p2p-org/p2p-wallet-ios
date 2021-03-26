@@ -111,7 +111,8 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
                     var newWallet = newWallet
                     newWallet.pubkey = newPubkey
                     newWallet.isProcessing = true
-                    newWallet.isHidden = Defaults.hideZeroBalances
+                    newWallet.lamports = 0
+                    newWallet.updateVisibility()
                     let transaction = Transaction(
                         signatureInfo: .init(signature: signature),
                         type: .createAccount,

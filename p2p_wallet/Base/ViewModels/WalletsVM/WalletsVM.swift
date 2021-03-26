@@ -85,21 +85,14 @@ class WalletsVM: ListViewModel<Wallet> {
             })
             .disposed(by: disposeBag)
         
-        defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] update in
+        defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] _ in
             guard let strongSelf = self else {return}
-            let hideZeroBalances = update.newValue!
-            
             switch strongSelf.state.value {
             case .loaded(var wallets):
                 for index in 0..<wallets.count where wallets[index].amount == 0 && wallets[index].symbol != "SOL"
                 {
                     var wallet = wallets[index]
-                    
-                    if hideZeroBalances {
-                        wallet.isHidden = true
-                    } else if !Defaults.hiddenWalletPubkey.contains(wallet.pubkey!) {
-                        wallet.isHidden = false
-                    }
+                    wallet.updateVisibility()
                     wallets[index] = wallet
                 }
                 
@@ -129,15 +122,7 @@ class WalletsVM: ListViewModel<Wallet> {
                                 wallets[i].price = price
                             }
                             // update visibility
-                            if let pubkey = wallets[i].pubkey {
-                                if Defaults.hiddenWalletPubkey.contains(pubkey)
-                                {
-                                    // force hide
-                                    wallets[i].isHidden = true
-                                } else if Defaults.hideZeroBalances {
-                                    wallets[i].isHidden = wallets[i].amount == 0
-                                }
-                            }
+                            wallets[i].updateVisibility()
                         }
                         
                         let solWallet = Wallet(
@@ -165,23 +150,25 @@ class WalletsVM: ListViewModel<Wallet> {
     }
     
     func hideWallet(_ wallet: Wallet) {
+        Defaults.unhiddenWalletPubkey.removeAll(where: {$0 == wallet.pubkey})
         Defaults.hiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
         self.updateItem(where: {
             $0.pubkey == wallet.pubkey
         }) { wallet -> Wallet? in
             var wallet = wallet
-            wallet.isHidden = true
+            wallet.updateVisibility()
             return wallet
         }
     }
     
     func unhideWallet(_ wallet: Wallet) {
+        Defaults.unhiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
         Defaults.hiddenWalletPubkey.removeAll(where: {$0 == wallet.pubkey})
         self.updateItem(where: {
             $0.pubkey == wallet.pubkey
         }) { wallet -> Wallet? in
             var wallet = wallet
-            wallet.isHidden = false
+            wallet.updateVisibility()
             return wallet
         }
     }

@@ -7,6 +7,7 @@
 
 import UIKit
 import Action
+import BECollectionView
 
 class HomeRootView: BEView {
     // MARK: - Constants
@@ -16,13 +17,8 @@ class HomeRootView: BEView {
     
     // MARK: - Subviews
     lazy var collectionView: HomeCollectionView = {
-        let collectionView = HomeCollectionView(viewModel: viewModel.homeCollectionViewModel)
-        collectionView.itemDidSelect = { [weak self] item in
-            guard let wallet = item.wallet else {return}
-            self?.viewModel.navigationSubject.onNext(.walletDetail(wallet: wallet))
-        }
-//        collectionView.showAllProductsAction = viewModel.navigationAction(scene: .allProducts)
-        collectionView.addNewWalletAction = viewModel.navigationAction(scene: .addToken)
+        let collectionView = HomeCollectionView(viewModel: viewModel.walletsVM)
+        collectionView.delegate = self
         collectionView.walletCellEditAction = Action<Wallet, Void> {wallet in
             self.viewModel.navigationSubject.onNext(.walletSettings(wallet: wallet))
             return .just(())
@@ -42,11 +38,7 @@ class HomeRootView: BEView {
         super.commonInit()
         layout()
         bind()
-    }
-    
-    override func didMoveToWindow() {
-        super.didMoveToWindow()
-        
+        collectionView.refresh()
     }
     
     // MARK: - Layout
@@ -58,5 +50,12 @@ class HomeRootView: BEView {
     
     private func bind() {
         
+    }
+}
+
+extension HomeRootView: BECollectionViewDelegate {
+    func beCollectionView(collectionView: BECollectionView, didSelect item: AnyHashable) {
+        guard let wallet = item as? Wallet else {return}
+        viewModel.navigationSubject.onNext(.walletDetail(wallet: wallet))
     }
 }
