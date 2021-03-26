@@ -178,7 +178,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .disposed(by: disposeBag)
         
         hasEnoughSOLToPay
-            .map {$0 ? L10n.addToken: L10n.addToken + " (\(L10n.insufficientFunds.lowercased())"}
+            .map {$0 ? L10n.addToken: L10n.addToken + " (\(L10n.insufficientFunds.lowercased()))"}
             .drive(addWalletButton.titleLabel.rx.text)
             .disposed(by: disposeBag)
         
