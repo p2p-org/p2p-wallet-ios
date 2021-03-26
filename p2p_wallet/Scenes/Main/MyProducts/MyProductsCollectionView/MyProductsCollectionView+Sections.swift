@@ -14,21 +14,10 @@ extension MyProductsCollectionView {
         init(index: Int, viewModel: WalletsListViewModelType) {
             super.init(
                 index: index,
-                layout: .init(
-                    header: .init(
-                        viewClass: FirstSectionHeaderView.self
-                    ),
-                    cellType: HomeWalletCell.self,
-                    interGroupSpacing: 30,
-                    itemHeight: .estimated(45),
-                    contentInsets: NSDirectionalEdgeInsets(top: 0, leading: .defaultPadding, bottom: .defaultPadding, trailing: .defaultPadding),
-                    horizontalInterItemSpacing: .fixed(16)
-                ),
                 viewModel: viewModel,
-                customFilter: { item in
-                    guard let wallet = item as? Wallet else {return false}
-                    return !wallet.isHidden
-                }
+                header: .init(
+                    viewClass: FirstSectionHeaderView.self
+                )
             )
         }
         
@@ -49,17 +38,10 @@ extension MyProductsCollectionView {
         init(index: Int, viewModel: WalletsListViewModelType) {
             super.init(
                 index: index,
-                layout: .init(
-                    header: .init(
-                        viewClass: HiddenWalletsSectionHeaderView.self
-                    ),
-                    cellType: HomeWalletCell.self,
-                    interGroupSpacing: 30,
-                    itemHeight: .absolute(45),
-                    contentInsets: NSDirectionalEdgeInsets(top: 0, leading: .defaultPadding, bottom: .defaultPadding, trailing: .defaultPadding),
-                    horizontalInterItemSpacing: .fixed(16)
-                ),
                 viewModel: viewModel,
+                header: .init(
+                    viewClass: HiddenWalletsSectionHeaderView.self
+                ),
                 customFilter: { item in
                     guard let wallet = item as? Wallet else {return false}
                     return wallet.isHidden

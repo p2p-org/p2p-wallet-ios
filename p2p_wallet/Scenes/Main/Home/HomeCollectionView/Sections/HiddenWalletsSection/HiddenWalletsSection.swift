@@ -16,18 +16,11 @@ extension HomeCollectionView {
         init(index: Int, viewModel: WalletsListViewModelType) {
             super.init(
                 index: index,
-                layout: .init(
-                    header: .init(
-                        identifier: "HiddenWalletsSectionHeaderView",
-                        viewClass: HeaderView.self
-                    ),
-                    cellType: HomeWalletCell.self,
-                    interGroupSpacing: 30,
-                    itemHeight: .absolute(45),
-                    contentInsets: NSDirectionalEdgeInsets(top: 0, leading: .defaultPadding, bottom: .defaultPadding, trailing: .defaultPadding),
-                    horizontalInterItemSpacing: .fixed(16)
-                ),
                 viewModel: viewModel,
+                header: .init(
+                    identifier: "HiddenWalletsSectionHeaderView",
+                    viewClass: HeaderView.self
+                ),
                 customFilter: { item in
                     guard let wallet = item as? Wallet else {return false}
                     return wallet.isHidden
