@@ -33,20 +33,4 @@ extension MyProductsCollectionView {
             view?.balancesOverviewView.setUp(state: viewModel.currentState, data: viewModel.getData(type: Wallet.self))
         }
     }
-    
-    class HiddenWalletSection: BaseHiddenWalletsSection {
-        init(index: Int, viewModel: WalletsListViewModelType) {
-            super.init(
-                index: index,
-                viewModel: viewModel,
-                header: .init(
-                    viewClass: HiddenWalletsSectionHeaderView.self
-                ),
-                customFilter: { item in
-                    guard let wallet = item as? Wallet else {return false}
-                    return wallet.isHidden
-                }
-            )
-        }
-    }
 }

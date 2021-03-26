@@ -17,7 +17,7 @@ class HomeCollectionView: BECollectionView {
     
     // MARK: - Sections
     private let activeWalletsSection: ActiveWalletsSection
-    private let hiddenWalletsSection: HiddenWalletsSection
+    private let hiddenWalletsSection: HomeHiddenWalletsSection
     private let friendSection: FriendsSection
     
     // MARK: - Actions
@@ -64,7 +64,7 @@ class HomeCollectionView: BECollectionView {
     init(viewModel: WalletsListViewModelType) {
         self.viewModel = viewModel
         self.activeWalletsSection = ActiveWalletsSection(index: 0, viewModel: viewModel)
-        self.hiddenWalletsSection = HiddenWalletsSection(index: 1, viewModel: viewModel)
+        self.hiddenWalletsSection = HomeHiddenWalletsSection(index: 1, viewModel: viewModel)
         self.friendSection = FriendsSection(index: 2, viewModel: FriendsViewModel())
         
         super.init(sections: [

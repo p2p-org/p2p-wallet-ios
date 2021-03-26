@@ -13,7 +13,7 @@ import RxSwift
 class MyProductsCollectionView: BECollectionView {
     private let walletsViewModel: WalletsListViewModelType
     private let activeWalletsSection: ActiveWalletSection
-    private let hiddenWalletsSection: HiddenWalletSection
+    private let hiddenWalletsSection: HiddenWalletsSection
     
     var showHideHiddenWalletsAction: CocoaAction? {
         didSet {
@@ -31,7 +31,7 @@ class MyProductsCollectionView: BECollectionView {
     init(walletsViewModel: WalletsListViewModelType) {
         self.walletsViewModel = walletsViewModel
         activeWalletsSection = ActiveWalletSection(index: 0, viewModel: walletsViewModel)
-        hiddenWalletsSection = HiddenWalletSection(index: 1, viewModel: walletsViewModel)
+        hiddenWalletsSection = HiddenWalletsSection(index: 1, viewModel: walletsViewModel)
         super.init(sections: [
             activeWalletsSection,
             hiddenWalletsSection
