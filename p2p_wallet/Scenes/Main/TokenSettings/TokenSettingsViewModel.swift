@@ -71,11 +71,7 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     // MARK: - Actions
     @objc func toggleHideWallet() {
         guard let wallet = wallet else {return}
-        if wallet.isHidden {
-            walletsVM.unhideWallet(wallet)
-        } else {
-            walletsVM.hideWallet(wallet)
-        }
+        walletsVM.toggleWalletVisibility(wallet)
     }
     
     @objc func showProcessingAndClose() {

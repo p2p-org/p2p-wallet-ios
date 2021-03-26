@@ -54,11 +54,7 @@ class WalletsCollectionView: CollectionView<Wallet, WalletsVM> {
         }
         (cell as? EditableWalletCell)?.hideAction = CocoaAction { [unowned self] in
             if let wallet = wallet {
-                if wallet.isHidden {
-                    self.viewModel.unhideWallet(wallet)
-                } else {
-                    self.viewModel.hideWallet(wallet)
-                }
+                self.viewModel.toggleWalletVisibility(wallet)
             }
             return .just(())
         }

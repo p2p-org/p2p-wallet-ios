@@ -8,6 +8,7 @@
 import Foundation
 import Action
 import BECollectionView
+import RxSwift
 
 class HomeCollectionView: BECollectionView {
     // MARK: - Constants
@@ -46,7 +47,18 @@ class HomeCollectionView: BECollectionView {
         }
     }
     
-    var walletCellEditAction: Action<Wallet, Void>?
+    var showHideHiddenWalletsAction: CocoaAction? {
+        didSet {
+            hiddenWalletsSection.showHideHiddenWalletsAction = showHideHiddenWalletsAction
+        }
+    }
+    
+    var walletCellEditAction: Action<Wallet, Void>? {
+        didSet {
+            activeWalletsSection.walletCellEditAction = walletCellEditAction
+            hiddenWalletsSection.walletCellEditAction = walletCellEditAction
+        }
+    }
     
     // MARK: - Initializers
     init(viewModel: WalletsListViewModelType) {
@@ -60,5 +72,9 @@ class HomeCollectionView: BECollectionView {
             hiddenWalletsSection,
             friendSection
         ])
+    }
+    
+    override func dataDidChangeObservable() -> Observable<Void> {
+        viewModel.dataDidChange
     }
 }
