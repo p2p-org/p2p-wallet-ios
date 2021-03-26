@@ -50,6 +50,7 @@ class BaseHiddenWalletsSection: WalletsSection {
         let view = super.configureHeader(indexPath: indexPath)
         if let view = view as? HiddenWalletsSectionHeaderView {
             view.showHideHiddenWalletsAction = showHideHiddenWalletsAction
+            updateHeader(headerView: view)
         }
         return view
     }
@@ -65,28 +66,39 @@ class BaseHiddenWalletsSection: WalletsSection {
     
     override func dataDidLoad() {
         super.dataDidLoad()
-        let viewModel = self.viewModel as! WalletsListViewModelType
         if let headerView = self.headerView() as? HiddenWalletsSectionHeaderView {
-            if viewModel.isHiddenWalletsShown.value {
-                headerView.imageView.tintColor = .textBlack
-                headerView.imageView.image = .visibilityHide
-                headerView.headerLabel.textColor = .textBlack
-                headerView.headerLabel.text = L10n.hide
-            } else {
-                headerView.imageView.tintColor = .textSecondary
-                headerView.imageView.image = .visibilityShow
-                headerView.headerLabel.textColor = .textSecondary
-                headerView.headerLabel.text = L10n.dHiddenWallet(viewModel.hiddenWallets().count)
+            updateHeader(headerView: headerView)
+        }
+    }
+    
+    private func updateHeader(headerView: HiddenWalletsSectionHeaderView) {
+        let viewModel = self.viewModel as! WalletsListViewModelType
+        
+        if viewModel.isHiddenWalletsShown.value {
+            headerView.imageView.tintColor = .textBlack
+            headerView.imageView.image = .visibilityHide
+            headerView.headerLabel.textColor = .textBlack
+            headerView.headerLabel.text = L10n.hide
+        } else {
+            headerView.imageView.tintColor = .textSecondary
+            headerView.imageView.image = .visibilityShow
+            headerView.headerLabel.textColor = .textSecondary
+            headerView.headerLabel.text = L10n.dHiddenWallet(viewModel.hiddenWallets().count)
+        }
+        var shouldRelayout = false
+        if viewModel.hiddenWallets().isEmpty {
+            if headerView.stackView.isDescendant(of: headerView) {
+                shouldRelayout = true
+                headerView.removeStackView()
             }
-            if viewModel.hiddenWallets().isEmpty {
-                headerView.removeStackView { [weak self] in
-                    self?.collectionViewLayout?.invalidateLayout()
-                }
-            } else {
-                headerView.addStackView { [weak self] in
-                    self?.collectionViewLayout?.invalidateLayout()
-                }
+        } else {
+            if !headerView.stackView.isDescendant(of: headerView) {
+                shouldRelayout = true
+                headerView.addStackView()
             }
+        }
+        if shouldRelayout {
+            collectionView?.relayout()
         }
     }
 }
