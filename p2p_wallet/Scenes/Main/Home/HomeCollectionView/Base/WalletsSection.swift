@@ -31,7 +31,7 @@ class WalletsSection: BECollectionViewSection {
                 footer: footer,
                 cellType: HomeWalletCell.self,
                 interGroupSpacing: 30,
-                itemHeight: .absolute(45),
+                itemHeight: .estimated(45),
                 contentInsets: NSDirectionalEdgeInsets(top: 0, leading: .defaultPadding, bottom: 0, trailing: .defaultPadding),
                 horizontalInterItemSpacing: .fixed(16),
                 background: background
