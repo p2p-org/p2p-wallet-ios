@@ -284,3 +284,4 @@
 "Select token" = "Выбрать токен";
 "To see %@ wallet address, you must add this token to your token list" = "Чтобы увидеть адрес кошелька %@, вы должны добавить этот токен в свой список токенов.";
 "Add token to see wallet address" = "Добавьте токен, чтобы увидеть адрес кошелька";
+"%@ mint address" = "%@ mint адрес";
