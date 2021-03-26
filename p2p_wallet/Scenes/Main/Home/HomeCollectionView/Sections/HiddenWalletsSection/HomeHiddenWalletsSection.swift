@@ -10,7 +10,7 @@ import BECollectionView
 import Action
 
 extension HomeCollectionView {
-    class HiddenWalletsSection: BaseHiddenWalletsSection {
+    class HomeHiddenWalletsSection: HiddenWalletsSection {
         var showAllProductsAction: CocoaAction?
         
         init(index: Int, viewModel: WalletsListViewModelType) {
@@ -18,18 +18,13 @@ extension HomeCollectionView {
                 index: index,
                 viewModel: viewModel,
                 header: .init(
-                    identifier: "HiddenWalletsSectionHeaderView",
-                    viewClass: HeaderView.self
+                    viewClass: HiddenWalletsSectionHeaderView.self
                 ),
                 footer: .init(
                     identifier: "HiddenWalletsSectionFooterView",
                     viewClass: FooterView.self
                 ),
                 background: BackgroundView.self,
-                customFilter: { item in
-                    guard let wallet = item as? Wallet else {return false}
-                    return wallet.isHidden
-                },
                 limit: 4
             )
         }
