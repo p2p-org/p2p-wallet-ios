@@ -24,8 +24,12 @@ class HomeRootView: BEView {
         collectionView.sendAction = viewModel.navigationAction(scene: .scanQr)
         collectionView.swapAction = viewModel.navigationAction(scene: .swapToken)
         collectionView.showAllProductsAction = viewModel.navigationAction(scene: .allProducts)
-        collectionView.walletCellEditAction = Action<Wallet, Void> {wallet in
-            self.viewModel.navigationSubject.onNext(.walletSettings(wallet: wallet))
+        collectionView.walletCellEditAction = Action<Wallet, Void> { [weak self] wallet in
+            self?.viewModel.navigationSubject.onNext(.walletSettings(wallet: wallet))
+            return .just(())
+        }
+        collectionView.showHideHiddenWalletsAction = CocoaAction { [weak self] in
+            self?.viewModel.walletsVM.toggleIsHiddenWalletShown()
             return .just(())
         }
         return collectionView
