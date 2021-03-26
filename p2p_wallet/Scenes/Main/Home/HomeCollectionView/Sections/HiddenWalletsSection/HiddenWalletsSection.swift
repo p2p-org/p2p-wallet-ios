@@ -50,13 +50,13 @@ extension HomeCollectionView {
                         if topConstraint.constant != 0 {
                             topConstraint.constant = 0
                             footerView.setNeedsLayout()
-                            collectionViewLayout?.invalidateLayout()
+                            collectionView?.relayout()
                         }
                     } else {
                         if topConstraint.constant != 30 {
                             topConstraint.constant = 30
                             footerView.setNeedsLayout()
-                            collectionViewLayout?.invalidateLayout()
+                            collectionView?.relayout()
                         }
                     }
                 }

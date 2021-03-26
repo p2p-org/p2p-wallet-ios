@@ -90,7 +90,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         case .initializing:
             equityValueLabel.text = " "
             changeLabel.text = " "
-            hideLoading()
+            showLoading()
         case .loading:
             equityValueLabel.text = L10n.loading + "..."
             changeLabel.text = L10n.loading + "..."
