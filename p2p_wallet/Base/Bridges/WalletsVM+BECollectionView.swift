@@ -13,6 +13,8 @@ protocol WalletsListViewModelType: BEListViewModelType {
     var state: BehaviorRelay<FetcherState<[Wallet]>> {get}
     var isHiddenWalletsShown: BehaviorRelay<Bool> {get}
     func hiddenWallets() -> [Wallet]
+    func toggleIsHiddenWalletShown()
+    func toggleWalletVisibility(_ wallet: Wallet)
 }
 
 extension WalletsVM: WalletsListViewModelType {}

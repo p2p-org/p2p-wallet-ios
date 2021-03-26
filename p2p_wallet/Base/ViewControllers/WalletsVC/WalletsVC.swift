@@ -38,11 +38,7 @@ class MyWalletsVC: CollectionVC<Wallet> {
         }
         (cell as? EditableWalletCell)?.hideAction = CocoaAction {
             let walletsVM = (self.viewModel as? WalletsVM)
-            if item.isHidden {
-                walletsVM?.unhideWallet(item)
-            } else {
-                walletsVM?.hideWallet(item)
-            }
+            walletsVM?.toggleWalletVisibility(item)
             return .just(())
         }
     }

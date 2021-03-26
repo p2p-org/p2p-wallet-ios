@@ -149,7 +149,15 @@ class WalletsVM: ListViewModel<Wallet> {
             .map {_ in ()}
     }
     
-    func hideWallet(_ wallet: Wallet) {
+    func toggleWalletVisibility(_ wallet: Wallet) {
+        if wallet.isHidden {
+            unhideWallet(wallet)
+        } else {
+            hideWallet(wallet)
+        }
+    }
+    
+    private func hideWallet(_ wallet: Wallet) {
         Defaults.unhiddenWalletPubkey.removeAll(where: {$0 == wallet.pubkey})
         Defaults.hiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
         self.updateItem(where: {
@@ -161,7 +169,7 @@ class WalletsVM: ListViewModel<Wallet> {
         }
     }
     
-    func unhideWallet(_ wallet: Wallet) {
+    private func unhideWallet(_ wallet: Wallet) {
         Defaults.unhiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
         Defaults.hiddenWalletPubkey.removeAll(where: {$0 == wallet.pubkey})
         self.updateItem(where: {
