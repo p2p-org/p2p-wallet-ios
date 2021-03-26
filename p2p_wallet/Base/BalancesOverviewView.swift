@@ -7,6 +7,7 @@
 
 import Foundation
 import Charts
+import BECollectionView
 
 class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
     lazy var equityValueLabel = UILabel(text: " ", textSize: 21, weight: .bold)
@@ -50,6 +51,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         ])
     }
     
+    /// deprecated
     func setUp(with state: FetcherState<[Wallet]>) {
         switch state {
         case .initializing:
@@ -76,6 +78,29 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
             hideLoading()
         case .error(let error):
             debugPrint(error)
+            equityValueLabel.text = L10n.error.uppercaseFirst
+            changeLabel.text = L10n.error.uppercaseFirst
+            hideLoading()
+        }
+    }
+    
+    func setUp(state: BEFetcherState, data: [Wallet]) {
+        switch state {
+        case .initializing:
+            equityValueLabel.text = " "
+            changeLabel.text = " "
+            hideLoading()
+        case .loading:
+            equityValueLabel.text = L10n.loading + "..."
+            changeLabel.text = L10n.loading + "..."
+            showLoading()
+        case .loaded:
+            let equityValue = data.reduce(0) { $0 + $1.amountInUSD }
+            equityValueLabel.text = "$ \(equityValue.toString(maximumFractionDigits: 2))"
+            changeLabel.text = L10n.allTokens // FIXME: - temporarily, remove later
+            setUpChartView(wallets: data)
+            hideLoading()
+        case .error:
             equityValueLabel.text = L10n.error.uppercaseFirst
             changeLabel.text = L10n.error.uppercaseFirst
             hideLoading()
