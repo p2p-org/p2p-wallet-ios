@@ -9,10 +9,9 @@ import Foundation
 import BECollectionView
 import Action
 
-class HiddenWalletsSection: BECollectionViewSection {
+class HiddenWalletsSection: HomeWalletsSection {
     var showAllProductsAction: CocoaAction?
     var showHideHiddenWalletsAction: CocoaAction?
-    var walletCellEditAction: Action<Wallet, Void>?
     
     init(index: Int, viewModel: WalletsListViewModelType) {
         super.init(
@@ -54,20 +53,6 @@ class HiddenWalletsSection: BECollectionViewSection {
         let view = super.configureFooter(indexPath: indexPath) as? FooterView
         view?.showProductsAction = showAllProductsAction
         return view
-    }
-    
-    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> BECollectionViewCell {
-        let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item) as! HomeWalletCell
-        cell.editAction = CocoaAction { [weak self] in
-            self?.walletCellEditAction?.execute(item.value as! Wallet)
-            return .just(())
-        }
-        cell.hideAction = CocoaAction { [weak self] in
-            let viewModel = self?.viewModel as? WalletsListViewModelType
-            viewModel?.toggleWalletVisibility(item.value as! Wallet)
-            return .just(())
-        }
-        return cell
     }
     
     override func dataDidLoad() {
