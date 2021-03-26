@@ -8,7 +8,7 @@
 import Foundation
 import Action
 
-extension ActiveWalletsSection {
+extension HomeCollectionView.ActiveWalletsSection {
     class HeaderView: SectionHeaderView {
         var showAllBalancesAction: CocoaAction?
         

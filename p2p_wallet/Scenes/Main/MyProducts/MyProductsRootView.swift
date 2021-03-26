@@ -7,6 +7,7 @@
 
 import UIKit
 import Action
+import BECollectionView
 
 class MyProductsRootView: BEView {
     // MARK: - Constants
@@ -16,11 +17,8 @@ class MyProductsRootView: BEView {
     
     // MARK: - Subviews
     lazy var collectionView: MyProductsCollectionView = {
-        let collectionView = MyProductsCollectionView(viewModel: viewModel.walletsVM)
-        collectionView.itemDidSelect = {[unowned self] wallet in
-            guard let pubkey = wallet.pubkey else {return}
-            self.viewModel.showWalletDetail(pubkey: pubkey, symbol: wallet.symbol)
-        }
+        let collectionView = MyProductsCollectionView(walletsViewModel: viewModel.walletsVM)
+        collectionView.delegate = self
         collectionView.walletCellEditAction = Action<Wallet, Void> {[unowned self] wallet in
             self.viewModel.showWalletSettings(wallet: wallet)
             return .just(())
@@ -65,5 +63,12 @@ class MyProductsRootView: BEView {
     
     private func bind() {
         
+    }
+}
+
+extension MyProductsRootView: BECollectionViewDelegate {
+    func beCollectionView(collectionView: BECollectionView, didSelect item: AnyHashable) {
+        guard let wallet = item as? Wallet, let pubkey = wallet.pubkey else {return}
+        self.viewModel.showWalletDetail(pubkey: pubkey, symbol: wallet.symbol)
     }
 }
