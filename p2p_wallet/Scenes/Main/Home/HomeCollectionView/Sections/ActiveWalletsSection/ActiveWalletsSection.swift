@@ -28,6 +28,10 @@ class ActiveWalletsSection: HomeWalletsSection {
                 background: BackgroundView.self
             ),
             viewModel: viewModel,
+            customFilter: { item in
+                guard let wallet = item as? Wallet else {return false}
+                return !wallet.isHidden
+            },
             limit: {
                 Array($0.prefix(4))
             }
