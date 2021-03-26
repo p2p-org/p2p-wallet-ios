@@ -8,9 +8,7 @@
 import Foundation
 import Action
 
-extension HomeCollectionView.HiddenWalletsSection {
-    class HeaderView: HiddenWalletsSectionHeaderView {}
-    
+extension HomeCollectionView.HomeHiddenWalletsSection {
     class FooterView: SectionFooterView {
         var showProductsAction: CocoaAction?
         
