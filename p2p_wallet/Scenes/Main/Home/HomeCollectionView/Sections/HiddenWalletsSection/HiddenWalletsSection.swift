@@ -9,7 +9,7 @@ import Foundation
 import BECollectionView
 import Action
 
-class HiddenWalletsSection: BECollectionViewSection {
+class HiddenWalletsSection: HomeWalletsSection {
     var showHideHiddenWalletsAction: CocoaAction?
     
     init(index: Int, viewModel: WalletsListViewModelType) {
@@ -35,9 +35,18 @@ class HiddenWalletsSection: BECollectionViewSection {
     }
     
     override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
-        let headerView = super.configureHeader(indexPath: indexPath) as? HeaderView
-        headerView?.showHideHiddenWalletsAction = showHideHiddenWalletsAction
-        return headerView
+        let view = super.configureHeader(indexPath: indexPath) as? HeaderView
+        view?.showHideHiddenWalletsAction = showHideHiddenWalletsAction
+        return view
+    }
+    
+    override func mapDataToCollectionViewItems() -> [BECollectionViewItem] {
+        let viewModel = self.viewModel as? WalletsListViewModelType
+        if viewModel?.isHiddenWalletsShown.value == true {
+            return super.mapDataToCollectionViewItems()
+        } else {
+            return []
+        }
     }
     
     override func dataDidLoad() {
