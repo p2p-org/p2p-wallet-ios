@@ -23,6 +23,10 @@ class MyProductsRootView: BEView {
             self.viewModel.showWalletSettings(wallet: wallet)
             return .just(())
         }
+        collectionView.showHideHiddenWalletsAction = CocoaAction { [weak self] in
+            self?.viewModel.walletsVM.toggleIsHiddenWalletShown()
+            return .just(())
+        }
         return collectionView
     }()
     

@@ -10,43 +10,23 @@ import Action
 import BECollectionView
 import RxSwift
 
-class HomeCollectionView: BECollectionView {
+class HomeCollectionView: WalletsCollectionView {
     // MARK: - Constants
     let viewModel: WalletsListViewModelType
     
     // MARK: - Sections
-    private let activeWalletsSection: ActiveWalletsSection
-    private let hiddenWalletsSection: HiddenWalletsSection
     private let friendSection: FriendsSection
     
     // MARK: - Actions
-    var showHideHiddenWalletsAction: CocoaAction? {
-        didSet {
-            hiddenWalletsSection.showHideHiddenWalletsAction = showHideHiddenWalletsAction
-        }
-    }
-    
-    var walletCellEditAction: Action<Wallet, Void>? {
-        didSet {
-            activeWalletsSection.walletCellEditAction = walletCellEditAction
-            hiddenWalletsSection.walletCellEditAction = walletCellEditAction
-        }
-    }
     // MARK: - Initializers
     init(viewModel: WalletsListViewModelType) {
         self.viewModel = viewModel
-        self.activeWalletsSection = ActiveWalletsSection(index: 0, viewModel: viewModel)
-        self.hiddenWalletsSection = HiddenWalletsSection(index: 1, viewModel: viewModel)
         self.friendSection = FriendsSection(index: 2, viewModel: FriendsViewModel())
-        
-        super.init(sections: [
-            activeWalletsSection,
-            hiddenWalletsSection,
-//            friendSection
-        ])
-    }
-    
-    override func dataDidChangeObservable() -> Observable<Void> {
-        viewModel.dataDidChange
+        super.init(
+            walletsViewModel: viewModel,
+            activeWalletsSection: ActiveWalletsSection(index: 0, viewModel: viewModel),
+            hiddenWalletsSection: HiddenWalletsSection(index: 1, viewModel: viewModel),
+            additionalSections: [/*friendSection*/]
+        )
     }
 }

@@ -43,8 +43,32 @@ class HiddenWalletsSectionHeaderView: SectionHeaderView {
     }
 }
 
-class BaseHiddenWalletsSection: WalletsSection {
+class HiddenWalletsSection: WalletsSection {
     var showHideHiddenWalletsAction: CocoaAction?
+    
+    init(
+        index: Int,
+        viewModel: WalletsListViewModelType,
+        header: BECollectionViewSectionLayout.Header = .init(
+            viewClass: HiddenWalletsSectionHeaderView.self
+        ),
+        footer: BECollectionViewSectionLayout.Footer? = nil,
+        background: UICollectionReusableView.Type? = nil,
+        limit: Int? = nil
+    ) {
+        super.init(
+            index: index,
+            viewModel: viewModel,
+            header: header,
+            footer: footer,
+            background: background,
+            customFilter: { item in
+                guard let wallet = item as? Wallet else {return false}
+                return wallet.isHidden
+            },
+            limit: 4
+        )
+    }
     
     override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
         let view = super.configureHeader(indexPath: indexPath)
