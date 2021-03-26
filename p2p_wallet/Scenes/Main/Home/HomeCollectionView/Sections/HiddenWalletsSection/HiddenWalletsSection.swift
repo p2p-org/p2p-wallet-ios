@@ -16,30 +16,21 @@ extension HomeCollectionView {
         init(index: Int, viewModel: WalletsListViewModelType) {
             super.init(
                 index: index,
-                layout: .init(
-                    header: .init(
-                        identifier: "HiddenWalletsSectionHeaderView",
-                        viewClass: HeaderView.self
-                    ),
-                    footer: .init(
-                        identifier: "HiddenWalletsSectionFooterView",
-                        viewClass: FooterView.self
-                    ),
-                    cellType: HomeWalletCell.self,
-                    interGroupSpacing: 30,
-                    itemHeight: .absolute(45),
-                    contentInsets: NSDirectionalEdgeInsets(top: 0, leading: .defaultPadding, bottom: .defaultPadding, trailing: .defaultPadding),
-                    horizontalInterItemSpacing: .fixed(16),
-                    background: BackgroundView.self
-                ),
                 viewModel: viewModel,
+                header: .init(
+                    identifier: "HiddenWalletsSectionHeaderView",
+                    viewClass: HeaderView.self
+                ),
+                footer: .init(
+                    identifier: "HiddenWalletsSectionFooterView",
+                    viewClass: FooterView.self
+                ),
+                background: BackgroundView.self,
                 customFilter: { item in
                     guard let wallet = item as? Wallet else {return false}
                     return wallet.isHidden
                 },
-                limit: {
-                    Array($0.prefix(4))
-                }
+                limit: 4
             )
         }
         
