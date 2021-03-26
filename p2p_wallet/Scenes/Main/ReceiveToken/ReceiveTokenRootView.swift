@@ -29,12 +29,13 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
     private lazy var coinLogoImageView = CoinLogoImageView(width: 45, height: 45, cornerRadius: 12)
     private lazy var symbolLabel = UILabel(text: "<Symbol>", weight: .semibold)
     private lazy var shortAddresslabel = UILabel(text: "<address>", textSize: 13, textColor: .a3a5ba, numberOfLines: 0)
-        .onTap(viewModel, action: #selector(ReceiveTokenViewModel.createWallet))
+//        .onTap(viewModel, action: #selector(ReceiveTokenViewModel.createWallet))
     private lazy var titleLabel = UILabel(text: "<Your address>", textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
     private lazy var qrCodeView = QrCodeView(size: 208, coinLogoSize: 50)
     private lazy var addWalletButton = WLAddTokenButton()
         .onTap(viewModel, action: #selector(ReceiveTokenViewModel.createWallet))
     private lazy var addressLabel = UILabel(text: "<address>", textSize: 13, numberOfLines: 0, textAlignment: .center)
+    private lazy var mintAddressTitleLabel = UILabel(text: L10n.mintAddress, weight: .semibold)
     private lazy var mintAddressLabel = UILabel(text: "<mint address>", textSize: 13, textColor: .a3a5ba, numberOfLines: 0)
     
     // MARK: - Initializers
@@ -77,7 +78,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
                 .padding(.init(x: 20, y: 30), backgroundColor: .f6f6f8, cornerRadius: 12),
             UIView.separator(height: 1, color: .separator),
             UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.mintAddress, weight: .semibold),
+                mintAddressTitleLabel,
                 UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
                     mintAddressLabel,
                     UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
@@ -125,10 +126,10 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .drive(shortAddresslabel.rx.textColor)
             .disposed(by: disposeBag)
         
-        walletDriver
-            .map {$0?.pubkey == nil}
-            .drive(shortAddresslabel.rx.isUserInteractionEnabled)
-            .disposed(by: disposeBag)
+//        walletDriver
+//            .map {$0?.pubkey == nil}
+//            .drive(shortAddresslabel.rx.isUserInteractionEnabled)
+//            .disposed(by: disposeBag)
         
         walletDriver
             .map { wallet -> String? in
@@ -159,6 +160,28 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .drive(addWalletButton.rx.isHidden)
             .disposed(by: disposeBag)
         
+        let hasEnoughSOLToPay = Observable.combineLatest(
+            viewModel.repository
+                .dataDidChange
+                .map {[weak self] in
+                    self?.viewModel.repository.solWallet?.amount ?? 0
+                },
+            viewModel.feeSubject
+                .observable
+                .map {[weak self] _ in self?.viewModel.feeSubject.value ?? 0}
+        )
+            .map {$0 > $1}
+            .asDriver(onErrorJustReturn: true)
+            
+        hasEnoughSOLToPay
+            .drive(addWalletButton.rx.isActive)
+            .disposed(by: disposeBag)
+        
+        hasEnoughSOLToPay
+            .map {$0 ? L10n.addToken: L10n.addToken + " (\(L10n.insufficientFunds))"}
+            .drive(addWalletButton.titleLabel.rx.text)
+            .disposed(by: disposeBag)
+        
         walletDriver
             .drive(onNext: { [weak self] in
                 guard let wallet = $0 else {return}
@@ -182,6 +205,10 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
         
         walletDriver.map {$0?.pubkey == nil ? ($0?.creatingError == nil ? UIColor.a3a5ba: UIColor.alert): UIColor.textBlack}
             .drive(addressLabel.rx.textColor)
+            .disposed(by: disposeBag)
+        
+        walletDriver.map {L10n.mintAddress($0?.symbol ?? "")}
+            .drive(mintAddressTitleLabel.rx.text)
             .disposed(by: disposeBag)
         
         walletDriver.map {$0?.mintAddress}

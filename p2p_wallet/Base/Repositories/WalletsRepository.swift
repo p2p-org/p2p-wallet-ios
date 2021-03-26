@@ -13,6 +13,7 @@ protocol WalletsRepository {
     var solWallet: Wallet? {get}
     func getWallets() -> [Wallet]
     func stateObservable() -> Observable<BEFetcherState>
+    var dataDidChange: Observable<Void> {get}
     func getError() -> Error?
     func reload()
     func insert(_ item: Wallet, where predicate: (Wallet) -> Bool, shouldUpdate: Bool)

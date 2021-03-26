@@ -11,13 +11,20 @@ import RxSwift
 
 class WLAddTokenButton: WLLoadingView {
     let disposeBag = DisposeBag()
-    lazy var buttonAddTokenLabel = UILabel(text: L10n.addToken, weight: .semibold, textColor: .white, textAlignment: .center)
+    lazy var titleLabel = UILabel(text: L10n.addToken, weight: .semibold, textColor: .white, textAlignment: .center)
     
     lazy var feeLabel: LazyLabel<Double> = {
         let label = LazyLabel<Double>(textSize: 13, textColor: UIColor.white.withAlphaComponent(0.5), textAlignment: .center)
         label.isUserInteractionEnabled = false
         return label
     }()
+    
+    var isActive: Bool = true {
+        didSet {
+            backgroundColor = isActive ? .h5887ff: .a3a5ba
+            isUserInteractionEnabled = isActive
+        }
+    }
     
     init() {
         super.init(frame: .zero)
@@ -31,7 +38,7 @@ class WLAddTokenButton: WLLoadingView {
     override func commonInit() {
         super.commonInit()
         let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-            buttonAddTokenLabel,
+            titleLabel,
             feeLabel
         ])
         addSubview(stackView)
@@ -44,13 +51,13 @@ class WLAddTokenButton: WLLoadingView {
                 setUp(loading: true)
             }
             
-            buttonAddTokenLabel.text = L10n.addingTokenToYourWallet
+            titleLabel.text = L10n.addingTokenToYourWallet
             feeLabel.isHidden = true
         } else {
             if showLoading {
                 setUp(loading: false)
             }
-            buttonAddTokenLabel.text = L10n.addToken
+            titleLabel.text = L10n.addToken
             feeLabel.isHidden = false
         }
     }
@@ -65,5 +72,14 @@ class WLAddTokenButton: WLLoadingView {
             feeLabel.isUserInteractionEnabled = false
         }
         
+    }
+}
+
+extension Reactive where Base: WLAddTokenButton {
+    /// Reactive wrapper for `setTitle(_:for:)`
+    var isActive: Binder<Bool> {
+        Binder(self.base) { button, isActive in
+            button.isActive = isActive
+        }
     }
 }
