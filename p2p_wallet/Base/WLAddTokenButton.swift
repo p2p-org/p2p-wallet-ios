@@ -21,7 +21,7 @@ class WLAddTokenButton: WLLoadingView {
     
     var isActive: Bool = true {
         didSet {
-            backgroundColor = isActive ? .h5887ff: .a3a5ba
+            backgroundColor = isActive ? .h5887ff: .a3a5baStatic
             isUserInteractionEnabled = isActive
         }
     }
