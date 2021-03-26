@@ -10,20 +10,18 @@ import Action
 import BECollectionView
 import RxSwift
 
-class HomeCollectionView: BECollectionView {
+class HomeCollectionView: WalletsCollectionView {
     // MARK: - Constants
     let numberOfWalletsToShow = 4
     let viewModel: WalletsListViewModelType
     
     // MARK: - Sections
-    private let activeWalletsSection: ActiveWalletsSection
-    private let hiddenWalletsSection: HomeHiddenWalletsSection
     private let friendSection: FriendsSection
     
     // MARK: - Actions
     var openProfileAction: CocoaAction? {
         didSet {
-            self.activeWalletsSection.openProfileAction = openProfileAction
+            (self.activeWalletsSection as! ActiveWalletsSection).openProfileAction = openProfileAction
         }
     }
     var receiveAction: CocoaAction? {
@@ -43,38 +41,19 @@ class HomeCollectionView: BECollectionView {
     }
     var showAllProductsAction: CocoaAction? {
         didSet {
-            self.hiddenWalletsSection.showAllProductsAction = showAllProductsAction
-        }
-    }
-    
-    var showHideHiddenWalletsAction: CocoaAction? {
-        didSet {
-            hiddenWalletsSection.showHideHiddenWalletsAction = showHideHiddenWalletsAction
-        }
-    }
-    
-    var walletCellEditAction: Action<Wallet, Void>? {
-        didSet {
-            activeWalletsSection.walletCellEditAction = walletCellEditAction
-            hiddenWalletsSection.walletCellEditAction = walletCellEditAction
+            (self.hiddenWalletsSection as! HomeHiddenWalletsSection).showAllProductsAction = showAllProductsAction
         }
     }
     
     // MARK: - Initializers
     init(viewModel: WalletsListViewModelType) {
         self.viewModel = viewModel
-        self.activeWalletsSection = ActiveWalletsSection(index: 0, viewModel: viewModel)
-        self.hiddenWalletsSection = HomeHiddenWalletsSection(index: 1, viewModel: viewModel)
         self.friendSection = FriendsSection(index: 2, viewModel: FriendsViewModel())
-        
-        super.init(sections: [
-            activeWalletsSection,
-            hiddenWalletsSection,
-            friendSection
-        ])
-    }
-    
-    override func dataDidChangeObservable() -> Observable<Void> {
-        viewModel.dataDidChange
+        super.init(
+            walletsViewModel: viewModel,
+            activeWalletsSection: ActiveWalletsSection(index: 0, viewModel: viewModel),
+            hiddenWalletsSection: HomeHiddenWalletsSection(index: 1, viewModel: viewModel),
+            additionalSections: [friendSection]
+        )
     }
 }
