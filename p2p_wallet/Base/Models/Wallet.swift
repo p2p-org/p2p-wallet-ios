@@ -9,6 +9,38 @@ import Foundation
 
 // wrapper of 
 struct Wallet: FiatConvertable {
+    init(
+        id: String,
+        name: String,
+        mintAddress: String,
+        pubkey: String? = nil,
+        symbol: String,
+        lamports: UInt64? = nil,
+        price: CurrentPrice? = nil,
+        decimals: Int? = nil,
+        isLiquidity: Bool,
+        isExpanded: Bool? = nil,
+        isProcessing: Bool? = nil,
+        isBeingCreated: Bool? = nil,
+        creatingError: String? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.mintAddress = mintAddress
+        self.pubkey = pubkey
+        self.symbol = symbol
+        self.lamports = lamports
+        self.price = price
+        self.decimals = decimals
+        self.isLiquidity = isLiquidity
+        self.isExpanded = isExpanded
+        self.isProcessing = isProcessing
+        self.isBeingCreated = isBeingCreated
+        self.creatingError = creatingError
+        
+        updateVisibility()
+    }
+    
     let id: String
     var name: String
     let mintAddress: String
@@ -17,8 +49,8 @@ struct Wallet: FiatConvertable {
     var lamports: UInt64?
     var price: CurrentPrice?
     var decimals: Int?
-    var isHidden = false
     let isLiquidity: Bool
+    private var _isHidden = false
     
     // MARK: - Additional properties
     var isExpanded: Bool?
@@ -46,6 +78,23 @@ struct Wallet: FiatConvertable {
         // swiftlint:disable swiftgen_assets
         UIImage(named: symbol)
         // swiftlint:enable swiftgen_assets
+    }
+    
+    var isHidden: Bool {
+        if symbol == "SOL" {return false}
+        guard let pubkey = self.pubkey else {return false}
+        if Defaults.hiddenWalletPubkey.contains(pubkey) {
+            return true
+        } else if Defaults.unhiddenWalletPubkey.contains(pubkey) {
+            return false
+        } else if Defaults.hideZeroBalances, amount == 0 {
+            return true
+        }
+        return false
+    }
+    
+    mutating func updateVisibility() {
+        _isHidden = isHidden
     }
 }
 

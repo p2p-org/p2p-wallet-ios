@@ -7,154 +7,40 @@
 
 import Foundation
 import Action
+import BECollectionView
 
-class HomeCollectionView: CollectionView<HomeItem, HomeCollectionViewModel> {
+class HomeCollectionView: BECollectionView {
     // MARK: - Constants
+    let viewModel: WalletsListViewModelType
+    
+    // MARK: - Sections
+    private let activeWalletsSection: ActiveWalletsSection
+    private let hiddenWalletsSection: HiddenWalletsSection
+    private let friendSection: FriendsSection
     
     // MARK: - Actions
-//    var openProfileAction: CocoaAction?
-//    var receiveAction: CocoaAction?
-//    var sendAction: CocoaAction?
-//    var swapAction: CocoaAction?
-    var showAllProductsAction: CocoaAction?
-    var addNewWalletAction: CocoaAction?
+    var showHideHiddenWalletsAction = CocoaAction { [weak self] in
+        self?.viewModel.walletsVM.toggleIsHiddenWalletShown()
+        return .just(())
+    }
     
-    var walletCellEditAction: Action<Wallet, Void>?
+    var walletCellEditAction: Action<Wallet, Void>? {
+        didSet {
+            
+        }
+    }
     
     // MARK: - Initializers
-    init(viewModel: HomeCollectionViewModel) {
-        super.init(viewModel: viewModel, sections: [
-            CollectionViewSection(
-                header: CollectionViewSection.Header(viewClass: ActiveWalletsSectionHeaderView.self, title: "", titleFont: .systemFont(ofSize: 15, weight: .medium)),
-                cellType: HomeWalletCell.self,
-                interGroupSpacing: 30,
-                itemHeight: .absolute(45),
-                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16)
-            ),
-            CollectionViewSection(
-                header: CollectionViewSection.Header(
-                    viewClass: HiddenWalletsSectionHeaderView.self, title: L10n.hiddenWallets
-                ),
-                cellType: HomeWalletCell.self,
-                interGroupSpacing: 30,
-                itemHeight: .absolute(45),
-                horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(16)
-            )
+    init(viewModel: WalletsListViewModelType) {
+        self.viewModel = viewModel
+        self.activeWalletsSection = ActiveWalletsSection(index: 0, viewModel: viewModel)
+        self.hiddenWalletsSection = HiddenWalletsSection(index: 1, viewModel: viewModel)
+        self.friendSection = FriendsSection(index: 2, viewModel: FriendsViewModel())
+        
+        super.init(sections: [
+            activeWalletsSection,
+            hiddenWalletsSection,
+            friendSection
         ])
-    }
-    
-    override func dataDidLoad() {
-        super.dataDidLoad()
-        if let headerView = headerForSection(0) as? ActiveWalletsSectionHeaderView
-        {
-            headerView.balancesOverviewView.setUp(with: viewModel.walletsVM.state.value)
-        }
-        
-        if let headerView = headerForSection(1) as? HiddenWalletsSectionHeaderView {
-            if viewModel.walletsVM.isHiddenWalletsShown.value {
-                headerView.imageView.tintColor = .textBlack
-                headerView.imageView.image = .visibilityHide
-                headerView.headerLabel.textColor = .textBlack
-                headerView.headerLabel.text = L10n.hide
-            } else {
-                headerView.imageView.tintColor = .textSecondary
-                headerView.imageView.image = .visibilityShow
-                headerView.headerLabel.textColor = .textSecondary
-                headerView.headerLabel.text = L10n.dHiddenWallet(viewModel.walletsVM.hiddenWallets().count)
-            }
-            if viewModel.walletsVM.hiddenWallets().isEmpty {
-                headerView.removeStackView {
-                    self.collectionView.collectionViewLayout.invalidateLayout()
-                }
-            } else {
-                headerView.addStackView {
-                    self.collectionView.collectionViewLayout.invalidateLayout()
-                }
-            }
-        }
-    }
-    
-    // MARK: - Methods
-    override func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<String, CollectionViewItem<HomeItem>> {
-        // initial snapshot
-        var snapshot = NSDiffableDataSourceSnapshot<String, CollectionViewItem<HomeItem>>()
-        
-        // activeWallet
-        let activeWalletSections = L10n.wallets
-        snapshot.appendSections([activeWalletSections])
-        
-        var items = viewModel.walletsVM.shownWallets()
-            .map {HomeItem.wallet($0)}
-            .map {CollectionViewItem(value: $0)}
-        switch viewModel.walletsVM.state.value {
-        case .loading:
-            items += [
-                CollectionViewItem(placeholderIndex: 0),
-                CollectionViewItem(placeholderIndex: 1)
-            ]
-        case .loaded, .error, .initializing:
-            break
-        }
-        snapshot.appendItems(items, toSection: activeWalletSections)
-        
-        // hiddenWallet
-        let hiddenWalletSections = sections[1].header?.title ?? "Hidden"
-        var hiddenItems = [CollectionViewItem<HomeItem>]()
-        if viewModel.walletsVM.isHiddenWalletsShown.value {
-            hiddenItems = viewModel.walletsVM.hiddenWallets()
-                .map {HomeItem.wallet($0)}
-                .map {CollectionViewItem(value: $0)}
-        }
-        snapshot.appendSections([hiddenWalletSections])
-        snapshot.appendItems(hiddenItems, toSection: hiddenWalletSections)
-        
-        return snapshot
-    }
-    
-    override func setUpCell(cell: UICollectionViewCell, withItem item: HomeItem?) {
-        switch item {
-        case .wallet(let wallet):
-            (cell as! HomeWalletCell).setUp(with: wallet)
-            (cell as! HomeWalletCell).editAction = CocoaAction {
-                self.walletCellEditAction?.execute(wallet)
-                return .just(())
-            }
-            (cell as! HomeWalletCell).hideAction = CocoaAction {
-                if let wallet = item?.wallet {
-                    let walletsVM = self.viewModel.walletsVM
-                    if wallet.isHidden {
-                        walletsVM.unhideWallet(wallet)
-                    } else {
-                        walletsVM.hideWallet(wallet)
-                    }
-                }
-                return .just(())
-            }
-        default:
-            break
-        }
-    }
-    
-    override func configureHeaderForSectionAtIndexPath(_ indexPath: IndexPath, inCollectionView collectionView: UICollectionView) -> UICollectionReusableView? {
-        let header = super.configureHeaderForSectionAtIndexPath(indexPath, inCollectionView: collectionView)
-        
-        switch indexPath.section {
-        case 0:
-            if let view = header as? ActiveWalletsSectionHeaderView {
-                view.balancesOverviewView.setUp(with: viewModel.walletsVM.state.value)
-//                view.showAllBalancesAction = showAllProductsAction
-            }
-        case 1:
-            if let view = header as? HiddenWalletsSectionHeaderView {
-                view.showHideHiddenWalletsAction = CocoaAction { [weak self] in
-                    self?.viewModel.walletsVM.toggleIsHiddenWalletShown()
-                    return .just(())
-                }
-            }
-        default:
-            break
-        }
-        
-        return header
     }
 }
