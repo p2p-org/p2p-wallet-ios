@@ -11,8 +11,9 @@ import Action
 
 class ActiveWalletsSection: BECollectionViewSection {
     var openProfileAction: CocoaAction?
+    var walletCellEditAction: Action<Wallet, Void>?
     
-    init(index: Int, viewModel: BEListViewModelType) {
+    init(index: Int, viewModel: WalletsListViewModelType) {
         super.init(
             index: index,
             layout: .init(
@@ -38,5 +39,19 @@ class ActiveWalletsSection: BECollectionViewSection {
         let view = super.configureHeader(indexPath: indexPath) as? HeaderView
         view?.openProfileAction = openProfileAction
         return view
+    }
+    
+    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> BECollectionViewCell {
+        let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item) as! HomeWalletCell
+        cell.editAction = CocoaAction { [weak self] in
+            self?.walletCellEditAction?.execute(item.value as! Wallet)
+            return .just(())
+        }
+        cell.hideAction = CocoaAction { [weak self] in
+            let viewModel = self?.viewModel as? WalletsListViewModelType
+            viewModel?.toggleWalletVisibility(item.value as! Wallet)
+            return .just(())
+        }
+        return cell
     }
 }
