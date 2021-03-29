@@ -285,3 +285,5 @@
 "%@ mint address" = "Địa chỉ mint %@";
 "Token's mint address is not valid" = "Địa chỉ mint của token không hợp lệ";
 "Powered by Project Serum" = "Được cung cấp bởi Project Serum";
+"PIN-code changed!" = "Mã PIN đã thay đổi!";
+"Go back to profile" = "Quay lại hồ sơ";
