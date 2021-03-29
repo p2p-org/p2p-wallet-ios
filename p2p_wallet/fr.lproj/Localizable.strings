@@ -286,3 +286,8 @@
 "Add token to see wallet address" = "Ajouter un jeton pour voir l'adresse du portefeuille";
 "%@ mint address" = "%@ adresse mint";
 "Token's mint address is not valid" = "L'adresse d'atelier du jeton n'est pas valide";
+"Powered by Project Serum" = "Propulsé par Project Serum";
+"PIN-code changed!" = "Code PIN changé!";
+"Go back to profile" = "Revenir au profil";
+"Enter current PIN-code" = "Entrez le code PIN actuel";
+"Reset and try again" = "Réinitialiser et réessayer";
