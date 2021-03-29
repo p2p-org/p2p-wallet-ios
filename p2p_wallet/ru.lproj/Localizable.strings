@@ -284,3 +284,4 @@
 "Add token to see wallet address" = "Добавьте токен, чтобы увидеть адрес кошелька";
 "%@ mint address" = "%@ mint адрес";
 "Token's mint address is not valid" = "Адрес mint токена недействителен";
+"Powered by Project Serum" = "При поддержке Project Serum";
