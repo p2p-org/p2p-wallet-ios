@@ -78,10 +78,6 @@ class MainContainer {
         return SwapTokenViewController(viewModel: vm, scenesFactory: self)
     }
     
-    func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)? = nil) -> ChooseWalletVC {
-        ChooseWalletVC(viewModel: myWalletsVM, sceneFactory: self, customFilter: customFilter)
-    }
-    
     func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController {
         let viewModel = ChooseWalletViewModel(
             myWalletsViewModel: myWalletsVM,
@@ -92,14 +88,6 @@ class MainContainer {
             return customFilter(item)
         }
         return ChooseWalletViewController(viewModel: viewModel)
-    }
-    
-    func makeSwapChooseDestinationWalletVC(customFilter: ((Wallet) -> Bool)? = nil) -> SwapChooseDestinationWalletViewController {
-        let vm = SwapChooseDestinationViewModel(solanaSDK: solanaSDK, socket: socket, walletsVM: myWalletsVM)
-        let filter = customFilter ?? {_ in true}
-        let vc = SwapChooseDestinationWalletViewController(viewModel: vm, sceneFactory: self, customFilter: filter)
-        vm.reload()
-        return vc
     }
     
     // MARK: - Profile VCs
