@@ -25,4 +25,17 @@ extension WalletsVM: BEListViewModelType {
     func convertDataToAnyHashable() -> [AnyHashable] {
         data as [AnyHashable]
     }
+    
+    func setState(_ state: BEFetcherState, withData data: [AnyHashable]?) {
+        switch state {
+        case .initializing:
+            self.state.accept(.initializing)
+        case .loading:
+            self.state.accept(.loading)
+        case .loaded:
+            self.state.accept(.loaded((data as? [Wallet]) ?? []))
+        case .error:
+            self.state.accept(.error(SolanaSDK.Error.unknown))
+        }
+    }
 }
