@@ -285,3 +285,5 @@
 "%@ mint address" = "%@ mint address";
 "Token's mint address is not valid" = "Token's mint address is not valid";
 "Powered by Project Serum" = "Powered by Project Serum";
+"PIN-code changed!" = "PIN-code changed!";
+"Go back to profile" = "Go back to profile";

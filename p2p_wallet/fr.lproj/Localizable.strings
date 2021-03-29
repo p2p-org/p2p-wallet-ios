@@ -285,3 +285,5 @@
 "%@ mint address" = "%@ adresse mint";
 "Token's mint address is not valid" = "L'adresse d'atelier du jeton n'est pas valide";
 "Powered by Project Serum" = "Propulsé par Project Serum";
+"PIN-code changed!" = "Code PIN changé!";
+"Go back to profile" = "Revenir au profil";
