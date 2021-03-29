@@ -16,6 +16,7 @@ enum SwapTokenNavigatableScene {
     case chooseDestinationWallet
     case chooseSlippage
     case processTransaction
+    case loading(Bool)
 }
 
 class SwapTokenViewModel {
@@ -208,6 +209,35 @@ class SwapTokenViewModel {
     @objc func showSwapSceneAndSwap() {
         navigationSubject.onNext(.processTransaction)
         swap()
+    }
+    
+    func destinationWalletDidSelect(_ wallet: Wallet) {
+        // check if wallet has required data
+        if wallet.pubkey != nil && wallet.decimals != nil {
+            destinationWallet.accept(wallet)
+            return
+        }
+        
+        // fetch needed data
+        navigationSubject.onNext(.loading(true))
+        if let mint = try? SolanaSDK.PublicKey(string: wallet.mintAddress) {
+            solanaSDK.getMintData(mintAddress: mint)
+                .map {Int($0.decimals)}
+                .subscribe(onSuccess: {[weak self] decimals in
+                    self?.navigationSubject.onNext(.loading(false))
+                    var wallet = wallet
+                    wallet.decimals = decimals
+                    self?.destinationWallet.accept(wallet)
+                }, onFailure: {[weak self] error in
+                    self?.navigationSubject.onNext(.loading(false))
+                    self?.errorSubject.accept(error.readableDescription)
+                })
+                .disposed(by: disposeBag)
+        } else {
+            navigationSubject.onNext(.loading(false))
+            errorSubject.accept(L10n.tokenSMintAddressIsNotValid)
+        }
+        
     }
     
     private func swap() {
