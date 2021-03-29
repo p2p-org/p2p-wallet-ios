@@ -18,7 +18,8 @@ extension HomeCollectionView {
                 header: .init(
                     identifier: "ActiveWalletsSectionHeaderView",
                     viewClass: HeaderView.self
-                )
+                ),
+                cellType: HomeWalletCell.self
             )
         }
         

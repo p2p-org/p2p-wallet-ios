@@ -62,6 +62,7 @@ class HiddenWalletsSection: WalletsSection {
             header: header,
             footer: footer,
             background: background,
+            cellType: HomeWalletCell.self,
             customFilter: { item in
                 guard let wallet = item as? Wallet else {return false}
                 return wallet.isHidden

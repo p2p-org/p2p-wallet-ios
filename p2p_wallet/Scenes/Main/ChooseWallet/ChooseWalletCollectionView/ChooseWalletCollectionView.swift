@@ -46,4 +46,8 @@ class ChooseWalletCollectionView: BECollectionView {
         
         super.init(sections: sections)
     }
+    
+    override func refreshAllSections() {
+        sections.first?.reload()
+    }
 }
