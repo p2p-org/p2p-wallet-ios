@@ -10,8 +10,7 @@ import UIKit
 import Action
 
 protocol SwapScenesFactory {
-    func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
-    func makeSwapChooseDestinationWalletVC(customFilter: ((Wallet) -> Bool)?) -> SwapChooseDestinationWalletViewController
+    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController
 }
 
 class SwapTokenViewController: WLIndicatorModalVC {
@@ -61,28 +60,36 @@ class SwapTokenViewController: WLIndicatorModalVC {
     private func navigate(to scene: SwapTokenNavigatableScene) {
         switch scene {
         case .chooseSourceWallet:
-            let vc = self.scenesFactory.makeChooseWalletVC(customFilter: nil)
-            vc.completion = {wallet in
-                let wallet = self.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey})
-                self.viewModel.sourceWallet.accept(wallet)
-//                        self.sourceWalletView.amountTextField.becomeFirstResponder()
-                vc.back()
+            let vc = scenesFactory.makeChooseWalletViewController(customFilter: nil, showOtherWallets: false)
+            vc.completion = {[weak self, weak vc] wallet in
+                if let wallet = self?.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey}) {
+                    self?.viewModel.sourceWallet.accept(wallet)
+                }
+                vc?.back()
             }
-            self.presentCustomModal(vc: vc, title: L10n.selectWallet)
+            self.present(vc, animated: true, completion: nil)
         case .chooseDestinationWallet:
-            let vc = self.scenesFactory.makeSwapChooseDestinationWalletVC
-            {
-                let sourceWalletPubkey = self.viewModel.sourceWallet.value?.pubkey
-                let sourceWalletMint = self.viewModel.sourceWallet.value?.mintAddress
+            
+            let sourceWalletPubkey = viewModel.sourceWallet.value?.pubkey
+            let sourceWalletMint = viewModel.sourceWallet.value?.mintAddress
+            var validDestinationMints: Set<String> = Set(viewModel.pools.value?
+                .filter {$0.swapData.mintA.base58EncodedString == sourceWalletMint}
+                .map {$0.swapData.mintB.base58EncodedString} ?? [])
+            
+            validDestinationMints = validDestinationMints.union(Set(viewModel.pools.value?
+                .filter {$0.swapData.mintB.base58EncodedString == sourceWalletMint}
+                .map {$0.swapData.mintA.base58EncodedString} ?? []))
+            
+            let vc = scenesFactory.makeChooseWalletViewController(customFilter: {
                 return $0.pubkey != sourceWalletPubkey &&
-                    self.viewModel.pools.value?.matchedPool(sourceMint: sourceWalletMint, destinationMint: $0.mintAddress) != nil
+                    validDestinationMints.contains($0.mintAddress)
+            }, showOtherWallets: true)
+            vc.completion = {[weak vc] wallet in
+                vc?.dismiss(animated: true, completion: { [weak self] in
+                    self?.viewModel.destinationWalletDidSelect(wallet)
+                })
             }
-            vc.completion = {wallet in
-                self.viewModel.destinationWallet.accept(wallet)
-//                        self.destination.amountTextField.becomeFirstResponder()
-                vc.back()
-            }
-            self.presentCustomModal(vc: vc, title: L10n.selectWallet)
+            self.present(vc, animated: true, completion: nil)
         case .chooseSlippage:
             let vc = SwapSlippageSettingsVC(slippage: Defaults.slippage * 100)
             vc.completion = {slippage in
@@ -93,6 +100,12 @@ class SwapTokenViewController: WLIndicatorModalVC {
         case .processTransaction:
             let vc = ProcessTransactionViewController(viewModel: self.viewModel.processTransactionViewModel)
             self.present(vc, animated: true, completion: nil)
+        case .loading(let isLoading):
+            if isLoading {
+                showIndetermineHudWithMessage(nil)
+            } else {
+                hideHud()
+            }
         }
     }
 }

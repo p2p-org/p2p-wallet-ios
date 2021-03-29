@@ -283,3 +283,4 @@
 "To see %@ wallet address, you must add this token to your token list" = "Để xem địa chỉ ví %@, bạn phải thêm token này vào danh sách token của bạn";
 "Add token to see wallet address" = "Thêm token để xem địa chỉ ví";
 "%@ mint address" = "Địa chỉ mint %@";
+"Token's mint address is not valid" = "Địa chỉ mint của token không hợp lệ";

@@ -11,7 +11,7 @@ import SwiftUI
 import Action
 
 protocol SendTokenScenesFactory {
-    func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)?) -> ChooseWalletVC
+    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController
 }
 
 class SendTokenViewController: WLIndicatorModalVC {
@@ -60,13 +60,13 @@ class SendTokenViewController: WLIndicatorModalVC {
     private func navigate(to scene: SendTokenNavigatableScene) {
         switch scene {
         case .chooseWallet:
-            let vc = self.scenesFactory.makeChooseWalletVC(customFilter: nil)
-            vc.completion = {wallet in
-                guard let wallet = self.viewModel.walletsVM.data.first(where: {$0.pubkey == wallet.pubkey}) else {return}
-                vc.back()
-                self.viewModel.currentWallet.accept(wallet)
+            let vc = self.scenesFactory.makeChooseWalletViewController(customFilter: {$0.amount > 0}, showOtherWallets: false)
+            vc.completion = { [weak self, weak vc] wallet in
+                guard let wallet = self?.viewModel.walletsVM.data.first(where: {$0.pubkey == wallet.pubkey}) else {return}
+                vc?.back()
+                self?.viewModel.currentWallet.accept(wallet)
             }
-            self.presentCustomModal(vc: vc, title: L10n.selectWallet)
+            self.present(vc, animated: true, completion: nil)
         case .chooseAddress:
             break
         case .scanQrCode:
