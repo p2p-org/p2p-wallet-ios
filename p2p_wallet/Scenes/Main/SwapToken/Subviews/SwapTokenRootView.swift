@@ -129,7 +129,12 @@ private extension SwapTokenRootView {
             ])
             .onTap(viewModel, action: #selector(SwapTokenViewModel.chooseSlippage)),
             errorLabel,
-            swapButton
+            swapButton,
+            UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
+                UILabel(text: L10n.poweredByProjectSerum, textSize: 13, textColor: .textSecondary, textAlignment: .center),
+                UIImageView(width: 24, height: 24, image: .serumLogo)
+            ])
+                .centeredHorizontallyView
         ])
     }
     
