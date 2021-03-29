@@ -65,8 +65,7 @@ class HiddenWalletsSection: WalletsSection {
             customFilter: { item in
                 guard let wallet = item as? Wallet else {return false}
                 return wallet.isHidden
-            },
-            limit: 4
+            }
         )
     }
     
