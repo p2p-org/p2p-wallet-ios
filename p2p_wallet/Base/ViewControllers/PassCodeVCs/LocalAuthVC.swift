@@ -44,7 +44,6 @@ class LocalAuthVC: PassCodeVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        promptTitle = L10n.enterPasscode
         
         // face id, touch id button
         if LABiometryType.isEnabled && useBiometry {
