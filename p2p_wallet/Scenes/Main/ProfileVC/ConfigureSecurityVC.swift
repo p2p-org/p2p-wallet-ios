@@ -102,6 +102,7 @@ class ConfigureSecurityVC: ProfileVCBase {
     @objc func buttonChangePinCodeDidTouch() {
         rootViewModel.authenticationSubject.onNext(
             .init(
+                title: L10n.enterCurrentPINCode,
                 isRequired: false,
                 isFullScreen: false,
                 useBiometry: false,

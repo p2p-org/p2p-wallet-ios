@@ -113,6 +113,7 @@ class RootViewController: BaseVC {
         
         // create localAuthVC
         localAuthVC = scenesFactory.makeLocalAuthVC()
+        localAuthVC?.embededPinVC.promptTitle = authStyle.title
         localAuthVC?.isIgnorable = !authStyle.isRequired
         localAuthVC?.useBiometry = authStyle.useBiometry
         if authStyle.isFullScreen {
