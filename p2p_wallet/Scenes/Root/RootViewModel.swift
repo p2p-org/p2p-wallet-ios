@@ -19,6 +19,7 @@ enum RootNavigatableScene: Equatable {
 }
 
 struct AuthenticationPresentationStyle {
+    var title: String = L10n.enterPasscode
     let isRequired: Bool
     let isFullScreen: Bool
     var useBiometry: Bool
