@@ -35,6 +35,8 @@ class EnterPhrasesVC: BaseVStackVC {
         .onTap(self, action: #selector(buttonNextDidTouch))
     lazy var pasteButton = WLButton(backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12, label: L10n.paste, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .white, contentInsets: .init(x: 16, y: 10))
         .onTap(self, action: #selector(buttonPasteDidTouch))
+    lazy var retryButton = WLButton.stepButton(type: .black, label: L10n.resetAndTryAgain)
+        .onTap(self, action: #selector(resetAndTryAgainButtonDidTouch))
     
     let restoreWalletViewModel: RestoreWalletViewModel
     init(restoreWalletViewModel: RestoreWalletViewModel) {
@@ -59,10 +61,16 @@ class EnterPhrasesVC: BaseVStackVC {
         tabBar.autoPinEdge(toSuperviewEdge: .trailing)
         tabBar.autoPinBottomToSuperViewAvoidKeyboard()
         
+        view.addSubview(retryButton)
+        retryButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
+        retryButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
+        retryButton.autoPinEdge(.bottom, to: .top, of: tabBar, withOffset: -20)
+        
         view.removeGestureRecognizer(tapGesture)
         
         textView.becomeFirstResponder()
         textView.keyboardDismissMode = .onDrag
+        textView.forwardedDelegate = self
     }
     
     override func bind() {
@@ -82,8 +90,17 @@ class EnterPhrasesVC: BaseVStackVC {
                 if error == nil {return nil}
                 return L10n.wrongOrderOrSeedPhrasePleaseCheckItAndTryAgain
             }
-            .asDriver(onErrorJustReturn: nil)
             .drive(errorLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        error.asDriver(onErrorJustReturn: nil)
+            .map {$0 == nil}
+            .drive(retryButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        error.asDriver(onErrorJustReturn: nil)
+            .map {$0 != nil}
+            .drive(tabBar.rx.isHidden)
             .disposed(by: disposeBag)
     }
     
@@ -98,6 +115,11 @@ class EnterPhrasesVC: BaseVStackVC {
         textView.paste(nil)
     }
     
+    @objc func resetAndTryAgainButtonDidTouch() {
+        textView.clear()
+        textView.becomeFirstResponder()
+    }
+    
     private func handlePhrases()
     {
         hideKeyboard()
@@ -109,9 +131,12 @@ class EnterPhrasesVC: BaseVStackVC {
             }
         } catch {
             self.error.accept(error)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.error.accept(nil)
-            }
         }
+    }
+}
+
+extension EnterPhrasesVC: WLPhrasesTextViewDelegate {
+    func wlPhrasesTextViewDidBeginEditing(_ textView: WLPhrasesTextView) {
+        self.error.accept(nil)
     }
 }

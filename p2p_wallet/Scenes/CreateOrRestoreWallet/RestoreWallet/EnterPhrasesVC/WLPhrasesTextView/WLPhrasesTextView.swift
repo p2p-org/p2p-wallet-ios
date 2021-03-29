@@ -8,11 +8,17 @@
 import Foundation
 import SubviewAttachingTextView
 
+protocol WLPhrasesTextViewDelegate: class {
+    func wlPhrasesTextViewDidBeginEditing(_ textView: WLPhrasesTextView)
+}
+
 class WLPhrasesTextView: SubviewAttachingTextView {
     // MARK: - Properties
     let defaultFont = UIFont.systemFont(ofSize: 15)
     private var shouldWrapPhrases = false
     private var shouldRearrange = false
+    
+    weak var forwardedDelegate: WLPhrasesTextViewDelegate?
     
     override weak var delegate: UITextViewDelegate? {
         didSet {
@@ -73,6 +79,12 @@ class WLPhrasesTextView: SubviewAttachingTextView {
         return phrases
     }
     
+    func clear() {
+        text = nil
+        addPlaceholderAttachment(at: 0)
+        selectedRange = NSRange(location: 1, length: 0)
+    }
+    
     override func closestPosition(to point: CGPoint) -> UITextPosition? {
         let beginning = self.beginningOfDocument
         let end = self.position(from: beginning, offset: attributedText.length)
@@ -88,6 +100,10 @@ class WLPhrasesTextView: SubviewAttachingTextView {
 }
 
 extension WLPhrasesTextView: UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        forwardedDelegate?.wlPhrasesTextViewDidBeginEditing(self)
+    }
+    
     func textViewDidChange(_ textView: UITextView) {
         if shouldWrapPhrases {
             wrapPhrase()

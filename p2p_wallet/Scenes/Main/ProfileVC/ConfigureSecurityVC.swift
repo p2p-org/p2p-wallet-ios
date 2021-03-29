@@ -102,6 +102,7 @@ class ConfigureSecurityVC: ProfileVCBase {
     @objc func buttonChangePinCodeDidTouch() {
         rootViewModel.authenticationSubject.onNext(
             .init(
+                title: L10n.enterCurrentPINCode,
                 isRequired: false,
                 isFullScreen: false,
                 useBiometry: false,
@@ -109,24 +110,55 @@ class ConfigureSecurityVC: ProfileVCBase {
                     // pin code vc
                     let vc = CreatePassCodeVC(promptTitle: L10n.newPINCode)
                     vc.disableDismissAfterCompletion = true
-                    vc.completion = {_ in
-                        guard let pincode = vc.passcode else {return}
+                    vc.completion = {[weak self, weak vc] _ in
+                        guard let pincode = vc?.passcode else {return}
                         self?.accountStorage.save(pincode)
-                        vc.dismiss(animated: true, completion: nil)
+                        vc?.dismiss(animated: true) { [weak self] in
+                            let vc = PinCodeChangedVC()
+                            self?.present(vc, animated: true, completion: nil)
+                        }
                     }
-                    
+
                     // navigation
                     let nc = BENavigationController()
                     nc.viewControllers = [vc]
-                    
+
                     // modal
                     let modalVC = WLIndicatorModalVC()
                     modalVC.add(child: nc, to: modalVC.containerView)
-                    
+
     //                modalVC.isModalInPresentation = true
                     self?.present(modalVC, animated: true, completion: nil)
                 }
             )
         )
+    }
+}
+
+private class PinCodeChangedVC: FlexibleHeightVC {
+    override var padding: UIEdgeInsets { UIEdgeInsets(all: 20).modifying(dBottom: -20) }
+    override var margin: UIEdgeInsets {UIEdgeInsets(all: 16).modifying(dBottom: -12)}
+    init() {
+        super.init(position: .center)
+    }
+    
+    override func setUp() {
+        super.setUp()
+        stackView.addArrangedSubviews([
+            UIImageView(width: 95+60, height: 95+60, image: .passcodeChanged)
+                .centeredHorizontallyView,
+            BEStackViewSpacing(0),
+            UILabel(text: L10n.pinCodeChanged, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center),
+            BEStackViewSpacing(30),
+            WLButton.stepButton(type: .blue, label: L10n.goBackToProfile)
+                .onTap(self, action: #selector(back))
+        ])
+    }
+    
+    override func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        let pc = super.presentationController(forPresented: presented, presenting: presenting, source: source) as! PresentationController
+        pc.roundedCorner = .allCorners
+        pc.cornerRadius = 24
+        return pc
     }
 }
