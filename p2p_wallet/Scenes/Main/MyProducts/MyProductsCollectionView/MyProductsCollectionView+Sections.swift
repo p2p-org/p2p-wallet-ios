@@ -17,7 +17,8 @@ extension MyProductsCollectionView {
                 viewModel: viewModel,
                 header: .init(
                     viewClass: FirstSectionHeaderView.self
-                )
+                ),
+                cellType: HomeWalletCell.self
             )
         }
         

@@ -22,6 +22,7 @@ extension HomeCollectionView {
                     viewClass: HeaderView.self
                 ),
                 background: BackgroundView.self,
+                cellType: HomeWalletCell.self,
                 limit: 4
             )
         }

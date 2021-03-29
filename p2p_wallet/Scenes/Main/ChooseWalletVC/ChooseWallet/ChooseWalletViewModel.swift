@@ -54,10 +54,14 @@ class ChooseWalletViewModel {
     
     func bind() {
         myWalletsViewModel.dataDidChange
-            .map {[weak self] in self?.myWalletsViewModel.currentState == .loaded}
-            .filter {$0}
-            .subscribe(onNext: { [weak self] _ in
-                self?.otherWalletsViewModel?.reload()
+            .map {self.myWalletsViewModel.currentState}
+            .subscribe(onNext: {[weak self] state in
+                switch state {
+                case .initializing, .loading, .error:
+                    self?.otherWalletsViewModel?.setState(state, withData: [])
+                case .loaded:
+                    self?.otherWalletsViewModel?.reload()
+                }
             })
             .disposed(by: disposeBag)
     }
