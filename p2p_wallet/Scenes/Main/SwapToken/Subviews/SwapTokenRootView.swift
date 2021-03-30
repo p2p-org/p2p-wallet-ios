@@ -99,7 +99,7 @@ private extension SwapTokenRootView {
             sourceWalletView,
             BEStackViewSpacing(8),
             swapSourceAndDestinationView(),
-            BEStackViewSpacing(16),
+            BEStackViewSpacing(8),
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 UILabel(text: L10n.to, weight: .semibold),
                 destinationBalanceLabel
@@ -129,7 +129,9 @@ private extension SwapTokenRootView {
             ])
             .onTap(viewModel, action: #selector(SwapTokenViewModel.chooseSlippage)),
             errorLabel,
+            BEStackViewSpacing(16),
             swapButton,
+            BEStackViewSpacing(12),
             UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
                 UILabel(text: L10n.poweredByProjectSerum, textSize: 13, textColor: .textSecondary, textAlignment: .center),
                 UIImageView(width: 24, height: 24, image: .serumLogo)
@@ -355,6 +357,12 @@ private extension SwapTokenRootView {
         viewModel.errorSubject
             .asDriver()
             .drive(errorLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.errorSubject
+            .map {$0 == nil}
+            .asDriver(onErrorJustReturn: true)
+            .drive(errorLabel.rx.isHidden)
             .disposed(by: disposeBag)
         
         // swap button
