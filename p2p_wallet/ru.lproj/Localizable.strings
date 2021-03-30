@@ -26,7 +26,6 @@
 "we've created some security keywords for you." = "мы создали для вас несколько ключевых слов безопасности.";
 "save to Keychain" = "сохранить в кейчейн";
 "Create a PIN-code to protect your wallet" = "Создайте PIN-код для защиты вашего кошелька";
-"confirm PIN code" = "подтвердить PIN-код";
 "passcodes do not match" = "коды доступа не совпадают";
 "Use your FaceID for quick access?" = "Использовать FaceID для быстрого доступа?";
 "Use FaceId" = "Использовать FaceId";
@@ -87,7 +86,6 @@
 "Add a token to your wallet.\nThis will cost" = "Добавьте токен в свой кошелек.\nЭто будет стоить";
 "Getting creation fee" = "Получение платы за создание";
 "Error when retrieving creation fee.\nTap to try again" = "Ошибка при получении платы за создание.\nНажмите, чтобы повторить попытку.";
-"Enter passcode" = "Введите пароль";
 "Close" = "Закрыть";
 "Confirm it's you" = "Подтвердите, что это вы";
 "Warning" = "Предупреждение";
@@ -291,3 +289,6 @@
 "Go back to profile" = "Вернуться к профилю";
 "Enter current PIN-code" = "Введите текущий PIN-код";
 "Reset and try again" = "Сбросить и попробовать еще раз";
+"Confirm PIN-code" = "Подтвердите PIN-код";
+"Enter PIN-code" = "Введите PIN-код";
+"Enter a seed phrase from your account" = "Введите начальную фразу из своего аккаунта";
