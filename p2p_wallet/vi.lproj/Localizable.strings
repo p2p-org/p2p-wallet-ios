@@ -26,7 +26,6 @@
 "we've created some security keywords for you." = "chúng tôi đã tạo một số từ khóa bảo mật cho bạn.";
 "save to Keychain" = "lưu vào Keychain";
 "Create a PIN-code to protect your wallet" = "Tạo mã PIN để bảo vệ ví của bạn";
-"confirm PIN code" = "xác nhận mã PIN";
 "passcodes do not match" = "mật mã không khớp";
 "Use your FaceID for quick access?" = "Sử dụng FaceID của bạn để truy cập nhanh?";
 "Use FaceId" = "Sử dụng FaceId";
@@ -87,7 +86,6 @@
 "Add a token to your wallet.\nThis will cost" = "Thêm token vào ví của bạn.\nPhí giao dịch:";
 "Getting creation fee" = "Tải phí khởi tạo";
 "Error when retrieving creation fee.\nTap to try again" = "Lỗi tải phí khởi tạo.\nNhấn để thử lại";
-"Enter passcode" = "Nhập mật mã";
 "Close" = "Đóng";
 "Confirm it's you" = "Xác nhận đó là bạn";
 "Warning" = "Cảnh báo";
@@ -291,3 +289,6 @@
 "Go back to profile" = "Quay lại hồ sơ";
 "Enter current PIN-code" = "Nhập mã PIN hiện tại";
 "Reset and try again" = "Đặt lại và thử lại";
+"Confirm PIN-code" = "Xác nhận mã PIN";
+"Enter PIN-code" = "Nhập mã PIN";
+"Enter a seed phrase from your account" = "Nhập một cụm từ bảo mật từ tài khoản của bạn";

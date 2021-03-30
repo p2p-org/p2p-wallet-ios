@@ -38,6 +38,8 @@ class EnterPhrasesVC: BaseVStackVC {
     lazy var retryButton = WLButton.stepButton(type: .black, label: L10n.resetAndTryAgain)
         .onTap(self, action: #selector(resetAndTryAgainButtonDidTouch))
     
+    lazy var descriptionLabel = UILabel(text: L10n.enterASeedPhraseFromYourAccount, textSize: 17, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
+    
     let restoreWalletViewModel: RestoreWalletViewModel
     init(restoreWalletViewModel: RestoreWalletViewModel) {
         self.restoreWalletViewModel = restoreWalletViewModel
@@ -61,10 +63,15 @@ class EnterPhrasesVC: BaseVStackVC {
         tabBar.autoPinEdge(toSuperviewEdge: .trailing)
         tabBar.autoPinBottomToSuperViewAvoidKeyboard()
         
+        view.addSubview(descriptionLabel)
+        descriptionLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
+        descriptionLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
+        descriptionLabel.autoPinEdge(.bottom, to: .top, of: tabBar, withOffset: -20)
+        
         view.addSubview(retryButton)
         retryButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
         retryButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-        retryButton.autoPinEdge(.bottom, to: .top, of: tabBar, withOffset: -20)
+        retryButton.autoPinEdge(.bottom, to: .top, of: descriptionLabel, withOffset: -30)
         
         view.removeGestureRecognizer(tapGesture)
         
@@ -85,7 +92,9 @@ class EnterPhrasesVC: BaseVStackVC {
             .drive(nextButton.rx.isEnabled)
             .disposed(by: disposeBag)
         
-        error.asDriver(onErrorJustReturn: nil)
+        let errorDriver = error.asDriver(onErrorJustReturn: nil)
+            
+        errorDriver
             .map { error -> String? in
                 if error == nil {return nil}
                 return L10n.wrongOrderOrSeedPhrasePleaseCheckItAndTryAgain
@@ -93,12 +102,17 @@ class EnterPhrasesVC: BaseVStackVC {
             .drive(errorLabel.rx.text)
             .disposed(by: disposeBag)
         
-        error.asDriver(onErrorJustReturn: nil)
+        errorDriver
             .map {$0 == nil}
             .drive(retryButton.rx.isHidden)
             .disposed(by: disposeBag)
         
-        error.asDriver(onErrorJustReturn: nil)
+        errorDriver
+            .map {$0 == nil}
+            .drive(descriptionLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        errorDriver
             .map {$0 != nil}
             .drive(tabBar.rx.isHidden)
             .disposed(by: disposeBag)
