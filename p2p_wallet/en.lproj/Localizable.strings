@@ -26,7 +26,6 @@
 "we've created some security keywords for you." = "we've created some security keywords for you.";
 "save to Keychain" = "save to Keychain";
 "Create a PIN-code to protect your wallet" = "Create a PIN-code to protect your wallet";
-"confirm PIN code" = "confirm PIN code";
 "passcodes do not match" = "passcodes do not match";
 "Use your FaceID for quick access?" = "Use your FaceID for quick access?";
 "Use FaceId" = "Use FaceId";
@@ -87,7 +86,6 @@
 "Add a token to your wallet.\nThis will cost" = "Add a token to your wallet.\nThis will cost";
 "Getting creation fee" = "Getting creation fee";
 "Error when retrieving creation fee.\nTap to try again" = "Error when retrieving creation fee.\nTap to try again";
-"Enter passcode" = "Enter passcode";
 "Close" = "Close";
 "Confirm it's you" = "Confirm it's you";
 "Warning" = "Warning";
@@ -289,3 +287,5 @@
 "Go back to profile" = "Go back to profile";
 "Enter current PIN-code" = "Enter current PIN-code";
 "Reset and try again" = "Reset and try again";
+"Confirm PIN-code" = "Confirm PIN-code";
+"Enter PIN-code" = "Enter PIN-code";

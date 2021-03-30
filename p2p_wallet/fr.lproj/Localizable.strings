@@ -26,7 +26,6 @@
 "we've created some security keywords for you." = "nous avons créé des mots clés de sécurité pour vous.";
 "save to Keychain" = "enregistrer dans le trousseau";
 "Create a PIN-code to protect your wallet" = "Créez un code PIN pour protéger votre portefeuille";
-"confirm PIN code" = "confirmer le code PIN";
 "passcodes do not match" = "les codes d'accès ne correspondent pas";
 "Use your FaceID for quick access?" = "Utilisez votre FaceID pour un accès rapide?";
 "Use FaceId" = "Utiliser FaceId";
@@ -87,7 +86,6 @@
 "Add a token to your wallet.\nThis will cost" = "Ajoutez un jeton à votre portefeuille.\nCela coûtera";
 "Getting creation fee" = "Obtenir des frais de création";
 "Error when retrieving creation fee.\nTap to try again" = "Erreur lors de la récupération des frais de création.\nTapez pour réessayer";
-"Enter passcode" = "Entrer le mot de passe";
 "Close" = "proche";
 "Confirm it's you" = "Confirmez que c'est vous";
 "Warning" = "Attention";
@@ -289,3 +287,5 @@
 "Go back to profile" = "Revenir au profil";
 "Enter current PIN-code" = "Entrez le code PIN actuel";
 "Reset and try again" = "Réinitialiser et réessayer";
+"Confirm PIN-code" = "Confirmer le code PIN";
+"Enter PIN-code" = "Entrez le code PIN";
