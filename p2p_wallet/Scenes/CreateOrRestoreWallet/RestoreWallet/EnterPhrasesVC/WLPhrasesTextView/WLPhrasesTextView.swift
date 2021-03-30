@@ -53,8 +53,8 @@ class WLPhrasesTextView: SubviewAttachingTextView {
         autocorrectionType = .no
         
         // add first placeholder
-        addPlaceholderAttachment(at: 0)
-        selectedRange = NSRange(location: 1, length: 0)
+//        addPlaceholderAttachment(at: 0)
+//        selectedRange = NSRange(location: 1, length: 0)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -81,8 +81,8 @@ class WLPhrasesTextView: SubviewAttachingTextView {
     
     func clear() {
         text = nil
-        addPlaceholderAttachment(at: 0)
-        selectedRange = NSRange(location: 1, length: 0)
+//        addPlaceholderAttachment(at: 0)
+//        selectedRange = NSRange(location: 1, length: 0)
     }
     
     override func closestPosition(to point: CGPoint) -> UITextPosition? {
@@ -93,8 +93,9 @@ class WLPhrasesTextView: SubviewAttachingTextView {
     
     override func caretRect(for position: UITextPosition) -> CGRect {
         var original = super.caretRect(for: position)
-        original.origin.y += 12
-        original.size.height -= 24
+        let height: CGFloat = 20
+        original.origin.y += (original.size.height - 20) / 2
+        original.size.height = height
         return original
     }
 }
