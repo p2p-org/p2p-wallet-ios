@@ -13,7 +13,7 @@ class QrCodeView: BEView {
     
     private lazy var qrCodeView = UIImageView(backgroundColor: .white)
     private lazy var logoImageView: CoinLogoImageView = {
-        let imageView = CoinLogoImageView(cornerRadius: 12)
+        let imageView = CoinLogoImageView(forAutoLayout: ())
         imageView.layer.borderWidth = 3
         imageView.layer.borderColor = UIColor.textWhite.cgColor
         return imageView
