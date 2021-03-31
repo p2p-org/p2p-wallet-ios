@@ -290,3 +290,4 @@
 "Confirm PIN-code" = "Подтвердите PIN-код";
 "Enter PIN-code" = "Введите PIN-код";
 "Enter a seed phrase from your account" = "Введите начальную фразу из своего аккаунта";
+"Wrapped %@ by %@" = "Wrapped %@ с %@";
