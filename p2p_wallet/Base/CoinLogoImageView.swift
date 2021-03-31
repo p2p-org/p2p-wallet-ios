@@ -9,6 +9,7 @@ import Foundation
 
 class CoinLogoImageView: BEView {
     lazy var imageView = UIImageView(tintColor: .textBlack)
+    lazy var wrappedByFTXIcon = UIImageView(width: 12, height: 12, image: .wrappedByFTX)
     private var placeholder: UIView?
     
     override func commonInit() {
@@ -16,17 +17,36 @@ class CoinLogoImageView: BEView {
         backgroundColor = .gray
         addSubview(imageView)
         imageView.autoPinEdgesToSuperviewEdges()
+        let wrappedByView: UIImageView = {
+            let imageView = UIImageView(width: 16, height: 16, image: .wrappedByBackground)
+            imageView.addSubview(wrappedByFTXIcon)
+            wrappedByFTXIcon.autoCenterInSuperview()
+            return imageView
+        }()
+        addSubview(wrappedByView)
+        wrappedByView.autoPinEdge(toSuperviewEdge: .trailing)
+        wrappedByView.autoPinEdge(toSuperviewEdge: .bottom)
+        wrappedByView.alpha = 0 // UNKNOWN: isHidden not working
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        wrappedByFTXIcon.superview?.addShadow(ofColor: UIColor.textWhite.withAlphaComponent(0.25), radius: 2, offset: CGSize(width: 0, height: 2), opacity: 1)
     }
     
     func setUp(wallet: Wallet? = nil) {
         placeholder?.isHidden = true
         imageView.isHidden = false
+        wrappedByFTXIcon.superview?.alpha = 0
         backgroundColor = .clear
         if let wallet = wallet {
             imageView.image = wallet.image
         } else if let placeholder = placeholder {
             placeholder.isHidden = false
             imageView.isHidden = true
+        }
+        if wallet?.wrappedBy != nil {
+            wrappedByFTXIcon.superview?.alpha = 1
         }
     }
     
