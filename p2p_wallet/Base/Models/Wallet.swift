@@ -9,9 +9,8 @@ import Foundation
 
 // wrapper of 
 struct Wallet: FiatConvertable {
-    init(
+    private init(
         id: String,
-        name: String,
         mintAddress: String,
         pubkey: String? = nil,
         symbol: String,
@@ -19,13 +18,13 @@ struct Wallet: FiatConvertable {
         price: CurrentPrice? = nil,
         decimals: Int? = nil,
         isLiquidity: Bool,
+        wrappedBy: String?,
         isExpanded: Bool? = nil,
         isProcessing: Bool? = nil,
         isBeingCreated: Bool? = nil,
         creatingError: String? = nil
     ) {
         self.id = id
-        self.name = name
         self.mintAddress = mintAddress
         self.pubkey = pubkey
         self.symbol = symbol
@@ -33,6 +32,7 @@ struct Wallet: FiatConvertable {
         self.price = price
         self.decimals = decimals
         self.isLiquidity = isLiquidity
+        self.wrappedBy = wrappedBy
         self.isExpanded = isExpanded
         self.isProcessing = isProcessing
         self.isBeingCreated = isBeingCreated
@@ -42,7 +42,6 @@ struct Wallet: FiatConvertable {
     }
     
     let id: String
-    var name: String
     let mintAddress: String
     var pubkey: String?
     let symbol: String
@@ -50,7 +49,9 @@ struct Wallet: FiatConvertable {
     var price: CurrentPrice?
     var decimals: Int?
     let isLiquidity: Bool
+    let wrappedBy: String?
     private var _isHidden = false
+    private var _customName: String?
     
     // MARK: - Additional properties
     var isExpanded: Bool?
@@ -93,31 +94,48 @@ struct Wallet: FiatConvertable {
         return false
     }
     
+    var name: String {
+        guard let pubkey = pubkey else {return symbol}
+        return Defaults.walletName[pubkey] ?? symbol
+    }
+    
     mutating func updateVisibility() {
         _isHidden = isHidden
+    }
+    
+    mutating func setName(_ name: String) {
+        _customName = name
+    }
+    
+    static func createSOLWallet(pubkey: String?, lamports: UInt64, price: CurrentPrice?) -> Wallet {
+        Wallet(
+            id: pubkey ?? "SOL",
+            mintAddress: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString,
+            pubkey: pubkey,
+            symbol: "SOL",
+            lamports: lamports,
+            price: price,
+            decimals: 9,
+            isLiquidity: false,
+            wrappedBy: nil
+        )
     }
 }
 
 extension Wallet: ListItemType {
     init(programAccount: SolanaSDK.Token) {
         self.id = programAccount.pubkey ?? ""
-        var name = programAccount.name
-        if let pubkey = programAccount.pubkey,
-           let n = Defaults.walletName[pubkey]
-        {
-            name = n
-        }
-        self.name = name
         self.mintAddress = programAccount.mintAddress
         self.symbol = programAccount.symbol
         self.lamports = programAccount.lamports
         self.pubkey = programAccount.pubkey
         self.decimals = programAccount.decimals
         self.isLiquidity = programAccount.isLiquidity
+        self.wrappedBy = programAccount.wrappedBy
     }
     
     static func placeholder(at index: Int) -> Wallet {
-        Wallet(id: placeholderId(at: index), name: "<placeholder>", mintAddress: "placeholder-mintaddress", pubkey: "<pubkey>", symbol: "<PLHD\(index)>", lamports: nil, decimals: nil, isLiquidity: false)
+        Wallet(id: placeholderId(at: index), mintAddress: "placeholder-mintaddress", pubkey: "<pubkey>", symbol: "<PLHD\(index)>", lamports: nil, decimals: nil, isLiquidity: false, wrappedBy: nil)
     }
 }
 

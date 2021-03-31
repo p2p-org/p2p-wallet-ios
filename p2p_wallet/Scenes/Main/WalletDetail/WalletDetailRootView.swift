@@ -19,7 +19,7 @@ class WalletDetailRootView: BEView {
     // MARK: - Subviews
     lazy var headerStackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
     
-    lazy var coinLogoImageView = CoinLogoImageView(width: 35, height: 35, cornerRadius: 12)
+    lazy var coinLogoImageView = CoinLogoImageView(width: 35, height: 35)
     
     lazy var walletNameTextField: UITextField = {
         let tf = UITextField(font: .systemFont(ofSize: 19, weight: .semibold), placeholder: "A", autocorrectionType: .no)
