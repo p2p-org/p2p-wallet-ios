@@ -290,3 +290,4 @@
 "Confirm PIN-code" = "Confirm PIN-code";
 "Enter PIN-code" = "Enter PIN-code";
 "Enter a seed phrase from your account" = "Enter a seed phrase from your account";
+"Wrapped %@ by %@" = "Wrapped %@ by %@";

@@ -107,6 +107,16 @@ struct Wallet: FiatConvertable {
         _customName = name
     }
     
+    var description: String {
+        if symbol == "SOL" {
+            return "Solana"
+        }
+        if let wrappedBy = self.wrappedBy {
+            return L10n.wrappedBy(symbol, wrappedBy)
+        }
+        return symbol
+    }
+    
     static func createSOLWallet(pubkey: String?, lamports: UInt64, price: CurrentPrice?) -> Wallet {
         Wallet(
             id: pubkey ?? "SOL",
