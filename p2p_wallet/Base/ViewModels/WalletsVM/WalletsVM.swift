@@ -125,16 +125,10 @@ class WalletsVM: ListViewModel<Wallet> {
                             wallets[i].updateVisibility()
                         }
                         
-                        let solWallet = Wallet(
-                            id: self.solanaSDK.accountStorage.account?.publicKey.base58EncodedString ?? "Solana",
-                            name: Defaults.walletName["SOL"] ?? "Solana",
-                            mintAddress: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString,
+                        let solWallet = Wallet.createSOLWallet(
                             pubkey: self.solanaSDK.accountStorage.account?.publicKey.base58EncodedString,
-                            symbol: "SOL",
                             lamports: balance,
-                            price: PricesManager.shared.solPrice,
-                            decimals: 9,
-                            isLiquidity: false
+                            price: PricesManager.shared.solPrice
                         )
                         wallets.insert(solWallet, at: 0)
                         return wallets
@@ -185,7 +179,7 @@ class WalletsVM: ListViewModel<Wallet> {
         Defaults.walletName[wallet.pubkey!] = name
         updateItem(where: {wallet.pubkey == $0.pubkey}, transform: {
             var newItem = $0
-            newItem.name = name
+            newItem.setName(name)
             return newItem
         })
     }

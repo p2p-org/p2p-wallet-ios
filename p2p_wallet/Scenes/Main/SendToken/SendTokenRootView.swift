@@ -19,7 +19,7 @@ class SendTokenRootView: ScrollableVStackRootView {
     // MARK: - Subviews
     lazy var balanceLabel = UILabel(text: "0", weight: .medium)
         .onTap(viewModel, action: #selector(SendTokenViewModel.useAllBalance))
-    lazy var coinImageView = CoinLogoImageView(width: 44, height: 44, cornerRadius: 12)
+    lazy var coinImageView = CoinLogoImageView(width: 44, height: 44)
         .onTap(viewModel, action: #selector(SendTokenViewModel.chooseWallet))
     lazy var amountTextField = TokenAmountTextField(
         font: .systemFont(ofSize: 27, weight: .semibold),
