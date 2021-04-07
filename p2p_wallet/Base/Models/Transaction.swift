@@ -9,7 +9,7 @@ import Foundation
 
 struct Transaction: FiatConvertable, ListItemType {
     var id: String { signatureInfo?.signature ?? UUID().uuidString }
-    var signatureInfo: SolanaSDK.Transaction.SignatureInfo?
+    var signatureInfo: SolanaSDK.SignatureInfo?
     var signature: String? {signatureInfo?.signature}
     var slot: UInt64?
     var fee: Double?
@@ -24,7 +24,7 @@ struct Transaction: FiatConvertable, ListItemType {
     var subscription: UInt64?
     var newWallet: Wallet? // new wallet when type == .createAccount
     static func placeholder(at index: Int) -> Transaction {
-        Transaction(signatureInfo: SolanaSDK.Transaction.SignatureInfo(signature: placeholderId(at: index)), type: .createAccount, amount: 10, symbol: "SOL", timestamp: Date(), status: .confirmed)
+        Transaction(signatureInfo: SolanaSDK.SignatureInfo(signature: placeholderId(at: index)), type: .createAccount, amount: 10, symbol: "SOL", timestamp: Date(), status: .confirmed)
     }
 }
 
@@ -66,7 +66,7 @@ extension Transaction {
         }
     }
     
-    mutating func confirm(by confirmedTransaction: SolanaSDK.Transaction.Info, walletsVM: WalletsVM, myAccountPubkey: SolanaSDK.PublicKey)
+    mutating func confirm(by confirmedTransaction: SolanaSDK.TransactionInfo, walletsVM: WalletsVM, myAccountPubkey: SolanaSDK.PublicKey)
     {
         let message = confirmedTransaction.transaction.message
         

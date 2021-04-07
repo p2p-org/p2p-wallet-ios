@@ -120,7 +120,7 @@ struct Wallet: FiatConvertable {
     static func createSOLWallet(pubkey: String?, lamports: UInt64, price: CurrentPrice?) -> Wallet {
         Wallet(
             id: pubkey ?? "SOL",
-            mintAddress: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString,
+            mintAddress: "",
             pubkey: pubkey,
             symbol: "SOL",
             lamports: lamports,
