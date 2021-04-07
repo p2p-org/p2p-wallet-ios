@@ -17,7 +17,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     init(account: String, repository: TransactionsRepository) {
         self.account = account
         self.repository = repository
-        super.init()
+        super.init(isPaginationEnabled: true, limit: 10)
     }
     
     override func createRequest() -> Single<[SolanaSDK.AnyTransaction]> {
@@ -31,6 +31,10 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
                     self.before = transactions.last?.signature
                 }
             )
-            
+    }
+    
+    override func flush() {
+        before = nil
+        super.flush()
     }
 }

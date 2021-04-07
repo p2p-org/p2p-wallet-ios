@@ -38,7 +38,12 @@ class WalletDetailTransactionsSection: BECollectionViewSection {
     
     override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
         let header = super.configureHeader(indexPath: indexPath)
-        if let header = header as? WDVCSectionHeaderView {
+        reloadHeader(header: header)
+        return header
+    }
+    
+    func reloadHeader(header: UICollectionReusableView? = nil) {
+        if let header = (header ?? self.headerView()) as? WDVCSectionHeaderView {
             if let wallet = wallet {
                 header.setUp(wallet: wallet)
             }
@@ -48,7 +53,6 @@ class WalletDetailTransactionsSection: BECollectionViewSection {
             header.chartPicker.delegate = self
             header.scanQrCodeAction = scanQrCodeAction
         }
-        return header
     }
 }
 
