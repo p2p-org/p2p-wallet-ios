@@ -31,7 +31,7 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
     override func commonInit() {
         super.commonInit()
         contentView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges()
+        stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 20))
         
         stackView.addArrangedSubviews([
             imageView,
