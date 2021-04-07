@@ -44,7 +44,7 @@ class WalletDetailTransactionsSection: BECollectionViewSection {
     
     func reloadHeader(header: UICollectionReusableView? = nil) {
         if let header = (header ?? self.headerView()) as? WDVCSectionHeaderView {
-            header.headerLabel.text = L10n.activities
+            header.headerLabel.text = L10n.activity
             if let wallet = wallet {
                 header.setUp(wallet: wallet)
             }
