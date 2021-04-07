@@ -135,7 +135,7 @@ class MainContainer {
 }
 
 extension MainContainer: TabBarScenesFactory,
-                         MyWalletsScenesFactory,
+                         MyProductsScenesFactory,
                          ProfileScenesFactory,
                          SwapScenesFactory,
                          WalletDetailScenesFactory,
