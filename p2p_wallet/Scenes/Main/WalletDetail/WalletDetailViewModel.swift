@@ -18,25 +18,6 @@ enum WalletDetailNavigatableScene {
     case transactionInfo(_ transaction: Transaction)
 }
 
-class WalletDetailTransactionsVM: WalletTransactionsVM, BEListViewModelType {
-    let graphVM: WalletGraphVM
-    
-    override init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, pubkey: String, symbol: String) {
-        graphVM = WalletGraphVM(symbol: symbol)
-        super.init(solanaSDK: solanaSDK, walletsVM: walletsVM, pubkey: pubkey, symbol: symbol)
-    }
-    
-    override func reload() {
-        graphVM.reload()
-        super.reload()
-    }
-    
-    override func refresh() {
-        super.refresh()
-        walletsVM.reload()
-    }
-}
-
 class WalletDetailViewModel {
     // MARK: - Constants
     
@@ -45,8 +26,9 @@ class WalletDetailViewModel {
     let solanaSDK: SolanaSDK
     let walletsVM: WalletsVM
     let pubkey: String
+    let graphViewModel: WalletGraphVM
     
-    let transactionsVM: WalletDetailTransactionsVM
+    let transactionsViewModel: TransactionsViewModel
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<WalletDetailNavigatableScene>()
@@ -56,11 +38,17 @@ class WalletDetailViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, walletPubkey: String, walletSymbol: String) {
+    init(
+        solanaSDK: SolanaSDK,
+        walletsVM: WalletsVM,
+        walletPubkey: String,
+        walletSymbol: String
+    ) {
         self.solanaSDK = solanaSDK
         self.walletsVM = walletsVM
         self.pubkey = walletPubkey
-        self.transactionsVM = WalletDetailTransactionsVM(solanaSDK: solanaSDK, walletsVM: walletsVM, pubkey: pubkey, symbol: walletSymbol)
+        self.transactionsViewModel = TransactionsViewModel(account: walletPubkey, repository: solanaSDK)
+        self.graphViewModel = WalletGraphVM(symbol: walletSymbol)
         bind()
     }
     
@@ -68,6 +56,13 @@ class WalletDetailViewModel {
         walletsVM.dataObservable
             .map {$0?.first(where: {$0.pubkey == self.pubkey})}
             .bind(to: wallet)
+            .disposed(by: disposeBag)
+        
+        transactionsViewModel.stateObservable
+            .map {$0 == .loading}
+            .subscribe(onNext: {[weak self] _ in
+                self?.graphViewModel.reload()
+            })
             .disposed(by: disposeBag)
     }
     // MARK: - Actions
