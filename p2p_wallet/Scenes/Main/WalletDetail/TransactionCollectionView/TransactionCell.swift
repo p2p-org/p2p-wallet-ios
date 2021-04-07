@@ -51,6 +51,18 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
 
 extension TransactionCell: BECollectionViewCell {
     func setUp(with item: AnyHashable?) {
-        
+        guard let transaction = item as? SolanaSDK.AnyTransaction else {return}
+        switch transaction.value {
+        case let transaction as SolanaSDK.CreateAccountTransaction:
+            transactionTypeLabel.text = L10n.addToken
+        case let transaction as SolanaSDK.CloseAccountTransaction:
+            transactionTypeLabel.text = L10n.closeTokenAccount
+        case let transaction as SolanaSDK.TransferTransaction:
+            transactionTypeLabel.text = L10n.transfer
+        case let transaction as SolanaSDK.SwapTransaction:
+            transactionTypeLabel.text = L10n.swap
+        default:
+            transactionTypeLabel.text = L10n.transaction
+        }
     }
 }

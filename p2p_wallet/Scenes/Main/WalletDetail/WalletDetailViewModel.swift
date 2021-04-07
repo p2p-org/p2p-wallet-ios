@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import BECollectionView
 
 enum WalletDetailNavigatableScene {
     case settings
@@ -17,7 +18,7 @@ enum WalletDetailNavigatableScene {
     case transactionInfo(_ transaction: Transaction)
 }
 
-class WalletDetailTransactionsVM: WalletTransactionsVM {
+class WalletDetailTransactionsVM: WalletTransactionsVM, BEListViewModelType {
     let graphVM: WalletGraphVM
     
     override init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, pubkey: String, symbol: String) {

@@ -95,7 +95,6 @@
 		BC54DCAD25831EAD00A65566 /* BonfidaAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCAC25831EAD00A65566 /* BonfidaAPITests.swift */; };
 		BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCED25837CD600A65566 /* ChartMarker.swift */; };
 		BC54DCF92587089700A65566 /* WalletGraphVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCF82587089700A65566 /* WalletGraphVM.swift */; };
-		BC54DCFE258708B000A65566 /* WalletTransactionsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCFD258708B000A65566 /* WalletTransactionsVM.swift */; };
 		BC54DD062587098800A65566 /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD052587098800A65566 /* LazyView.swift */; };
 		BC54DD232587169400A65566 /* ValueByDateChartMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD222587169400A65566 /* ValueByDateChartMarker.swift */; };
 		BC54DD8E25872FE500A65566 /* HorizontalPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD8D25872FE500A65566 /* HorizontalPicker.swift */; };
@@ -123,6 +122,9 @@
 		BC65DFEF261D695200E436C7 /* TransactionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DFEE261D695200E436C7 /* TransactionCell.swift */; };
 		BC65DFF4261D6AD400E436C7 /* TransactionImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DFF3261D6AD400E436C7 /* TransactionImageView.swift */; };
 		BC65DFFA261D6D3F00E436C7 /* SwapTransactionImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DFF9261D6D3F00E436C7 /* SwapTransactionImageView.swift */; };
+		BC65DFFF261D6FB900E436C7 /* WalletDetailTransactionsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DFFE261D6FB900E436C7 /* WalletDetailTransactionsSection.swift */; };
+		BC65E004261D711900E436C7 /* TransactionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E003261D711900E436C7 /* TransactionsViewModel.swift */; };
+		BC65E037261D72B200E436C7 /* TransactionsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E036261D72B200E436C7 /* TransactionsRepository.swift */; };
 		BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9B82542B98D005F50CE /* BaseVC.swift */; };
 		BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */; };
 		BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9E22542BE43005F50CE /* String+Extensions.swift */; };
@@ -382,7 +384,6 @@
 		BC54DCAC25831EAD00A65566 /* BonfidaAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonfidaAPITests.swift; sourceTree = "<group>"; };
 		BC54DCED25837CD600A65566 /* ChartMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartMarker.swift; sourceTree = "<group>"; };
 		BC54DCF82587089700A65566 /* WalletGraphVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletGraphVM.swift; sourceTree = "<group>"; };
-		BC54DCFD258708B000A65566 /* WalletTransactionsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTransactionsVM.swift; sourceTree = "<group>"; };
 		BC54DD052587098800A65566 /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		BC54DD222587169400A65566 /* ValueByDateChartMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueByDateChartMarker.swift; sourceTree = "<group>"; };
 		BC54DD8D25872FE500A65566 /* HorizontalPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalPicker.swift; sourceTree = "<group>"; };
@@ -413,6 +414,9 @@
 		BC65DFEE261D695200E436C7 /* TransactionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionCell.swift; sourceTree = "<group>"; };
 		BC65DFF3261D6AD400E436C7 /* TransactionImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionImageView.swift; sourceTree = "<group>"; };
 		BC65DFF9261D6D3F00E436C7 /* SwapTransactionImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTransactionImageView.swift; sourceTree = "<group>"; };
+		BC65DFFE261D6FB900E436C7 /* WalletDetailTransactionsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetailTransactionsSection.swift; sourceTree = "<group>"; };
+		BC65E003261D711900E436C7 /* TransactionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsViewModel.swift; sourceTree = "<group>"; };
+		BC65E036261D72B200E436C7 /* TransactionsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsRepository.swift; sourceTree = "<group>"; };
 		BC65E9B82542B98D005F50CE /* BaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVC.swift; sourceTree = "<group>"; };
 		BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVStackVC.swift; sourceTree = "<group>"; };
 		BC65E9E22542BE43005F50CE /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
@@ -653,7 +657,7 @@
 				BCD5E82D25525DD800F51299 /* ListViewModel */,
 				BC8F683F2609D3D2002FDCCD /* WalletsVM */,
 				BC54DCF82587089700A65566 /* WalletGraphVM.swift */,
-				BC54DCFD258708B000A65566 /* WalletTransactionsVM.swift */,
+				BC65E003261D711900E436C7 /* TransactionsViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -860,6 +864,7 @@
 				BC65DFF8261D6D2800E436C7 /* Subviews */,
 				BC65DFE9261D693500E436C7 /* WDVCSectionHeaderView.swift */,
 				BC65DFEE261D695200E436C7 /* TransactionCell.swift */,
+				BC65DFFE261D6FB900E436C7 /* WalletDetailTransactionsSection.swift */,
 			);
 			path = TransactionCollectionView;
 			sourceTree = "<group>";
@@ -1012,6 +1017,7 @@
 			isa = PBXGroup;
 			children = (
 				BC8F684C2609D866002FDCCD /* WalletsRepository.swift */,
+				BC65E036261D72B200E436C7 /* TransactionsRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -1831,6 +1837,7 @@
 				BC8F682B260986EE002FDCCD /* ReceiveTokenViewController.swift in Sources */,
 				BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */,
 				BC3ADE8D2570B832002B3B16 /* WLCenterSheet.swift in Sources */,
+				BC65E004261D711900E436C7 /* TransactionsViewModel.swift in Sources */,
 				BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */,
 				BC54DD062587098800A65566 /* LazyView.swift in Sources */,
 				BC65DFFA261D6D3F00E436C7 /* SwapTransactionImageView.swift in Sources */,
@@ -1847,7 +1854,6 @@
 				BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */,
 				BC123E7F25B181B60043178E /* NSObject+Extensions.swift in Sources */,
 				BCA93F4025E762A70081DDF6 /* CollectionViewModel.swift in Sources */,
-				BC54DCFE258708B000A65566 /* WalletTransactionsVM.swift in Sources */,
 				BC2EC1D02553ED1B006EEDA5 /* DimmingPresentationController.swift in Sources */,
 				BC54DD232587169400A65566 /* ValueByDateChartMarker.swift in Sources */,
 				BCAB212B25DF5D1C004F4F9D /* RootViewModel.swift in Sources */,
@@ -1959,6 +1965,7 @@
 				BC8F67742608738D002FDCCD /* WLPhrasesTextView+Attachments.swift in Sources */,
 				BC3B3DAA258C653000C6117E /* WLModalVC.swift in Sources */,
 				BC22A5D425D2715C00F7026D /* SendTokenViewController.swift in Sources */,
+				BC65DFFF261D6FB900E436C7 /* WalletDetailTransactionsSection.swift in Sources */,
 				BC8F6953260AEA12002FDCCD /* ChooseWalletCollectionView.swift in Sources */,
 				BC2EC1CD2553ED1B006EEDA5 /* CardViewController.swift in Sources */,
 				BCBE149F25EF3D110014BCE5 /* HomeViewController.swift in Sources */,
@@ -2004,6 +2011,7 @@
 				BC11CA122591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift in Sources */,
 				BC8F691D260ADF7D002FDCCD /* ChooseWalletViewModel.swift in Sources */,
 				BC05891325D3CD7C00632993 /* SwapTokenViewModel.swift in Sources */,
+				BC65E037261D72B200E436C7 /* TransactionsRepository.swift in Sources */,
 				BC2EC1D12553ED1B006EEDA5 /* FittingSizePresentationController.swift in Sources */,
 				BCB92B7525B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift in Sources */,
 				BC7BCB7B2562807E0018DECA /* Double+Extensions.swift in Sources */,
