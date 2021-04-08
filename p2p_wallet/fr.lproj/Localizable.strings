@@ -294,3 +294,6 @@
 "Transfer" = "Transfert";
 "Create account" = "Créer un compte";
 "Close account" = "Fermer le compte";
+"%@ to %@" = "%@ à %@";
+"%@ closed" = "%@ fermé";
+"%@ Created" = "%@ Créé";
