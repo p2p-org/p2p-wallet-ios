@@ -32,7 +32,7 @@ class WalletDetailRootView: BEView {
     
     lazy var settingsButton = UIImageView(width: 25, height: 25, image: .settings, tintColor: .a3a5ba)
     
-    lazy var collectionView: WalletDetailTransactionsCollectionView = {
+    lazy var collectionView: WalletDetailTransactionsCollectionView = { [weak self] in
         let collectionView = WalletDetailTransactionsCollectionView(
             transactionViewModel: viewModel.transactionsViewModel,
             graphViewModel: viewModel.graphViewModel
@@ -40,8 +40,8 @@ class WalletDetailRootView: BEView {
         
         collectionView.delegate = self
         
-        collectionView.scanQrCodeAction = CocoaAction { [unowned self] in
-            self.viewModel.receiveTokens()
+        collectionView.scanQrCodeAction = CocoaAction { [weak self] in
+            self?.viewModel.receiveTokens()
             return .just(())
         }
         return collectionView
@@ -164,7 +164,7 @@ class WalletDetailRootView: BEView {
                         // fall back to wallet name
                         newName = wallet.name
                     }
-                    self.viewModel.walletsVM.updateWallet(wallet, withName: newName)
+                    self.viewModel.walletsRepository.updateWallet(wallet, withName: newName)
                 }
                 
             })
