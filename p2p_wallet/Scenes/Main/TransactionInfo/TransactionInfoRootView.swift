@@ -59,6 +59,9 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         addSubview(headerView)
         headerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
         
+        scrollView.contentInset.left = 0
+        scrollView.contentInset.right = 0
+        
         scrollView.constraintToSuperviewWithAttribute(.top)?.isActive = false
         headerView.autoPinEdge(.bottom, to: .top, of: scrollView)
         
