@@ -42,6 +42,16 @@ class MainContainer {
         return HomeViewController(viewModel: vm, scenesFactory: self)
     }
     
+    func makeInvestmentsViewController() -> InvestmentsViewController {
+        let newsViewModel = NewsViewModel()
+        let defisViewModel = DefisViewModel()
+        let investmentsViewModel = InvestmentsViewModel(
+            newsViewModel: newsViewModel,
+            defisViewModel: defisViewModel
+        )
+        return InvestmentsViewController(viewModel: investmentsViewModel)
+    }
+    
     func makeMyProductsViewController() -> MyProductsViewController {
         let viewModel = MyProductsViewModel(walletsVM: myWalletsVM)
         return MyProductsViewController(viewModel: viewModel, scenesFactory: self)
