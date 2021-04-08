@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Action
+import BECollectionView
 
 enum TokenSettingsNavigatableScene {
     case alert(title: String?, description: String)
@@ -16,8 +17,9 @@ enum TokenSettingsNavigatableScene {
     case processTransaction
 }
 
-class TokenSettingsViewModel: ListViewModel<TokenSettings> {
+class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     // MARK: - Properties
+    let disposeBag = DisposeBag()
     let walletsVM: WalletsVM
     let pubkey: String
     let solanaSDK: SolanaSDK
@@ -60,8 +62,7 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
             }
             .asDriver(onErrorJustReturn: [])
             .drive(onNext: { [weak self] (settings) in
-                self?.items = settings
-                self?.state.accept(.loaded(settings))
+                self?.overrideData(by: settings)
             })
             .disposed(by: disposeBag)
     }

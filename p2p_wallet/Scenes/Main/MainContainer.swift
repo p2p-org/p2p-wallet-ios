@@ -14,6 +14,7 @@ class MainContainer {
     var solanaSDK: SolanaSDK
     var socket: SolanaSDK.Socket
     let transactionManager: TransactionsManager
+    let pricesManager: PricesManager
     private(set) var myWalletsVM: WalletsVM
     
     init(rootViewModel: RootViewModel, accountStorage: KeychainAccountStorage) {
@@ -23,6 +24,7 @@ class MainContainer {
         self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: accountStorage.account?.publicKey)
         self.transactionManager = TransactionsManager(socket: socket)
         myWalletsVM = WalletsVM(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager)
+        pricesManager = PricesManager.shared
         
         defer {
             socket.connect()
@@ -38,14 +40,36 @@ class MainContainer {
         return HomeViewController(viewModel: vm, scenesFactory: self)
     }
     
+    func makeInvestmentsViewController() -> InvestmentsViewController {
+        let newsViewModel = NewsViewModel()
+        let defisViewModel = DefisViewModel()
+        let investmentsViewModel = InvestmentsViewModel(
+            newsViewModel: newsViewModel,
+            defisViewModel: defisViewModel
+        )
+        return InvestmentsViewController(viewModel: investmentsViewModel)
+    }
+    
     func makeMyProductsViewController() -> MyProductsViewController {
         let viewModel = MyProductsViewModel(walletsVM: myWalletsVM)
         return MyProductsViewController(viewModel: viewModel, scenesFactory: self)
     }
     
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController {
-        let viewModel = WalletDetailViewModel(solanaSDK: solanaSDK, walletsVM: myWalletsVM, walletPubkey: pubkey, walletSymbol: symbol)
+        let viewModel = WalletDetailViewModel(
+            walletPubkey: pubkey,
+            walletSymbol: symbol,
+            solanaSDK: solanaSDK,
+            walletsRepository: myWalletsVM,
+            pricesRepository: pricesManager
+        )
         return WalletDetailViewController(viewModel: viewModel, scenesFactory: self)
+    }
+    
+    func makeTransactionInfoViewController(transaction: SolanaSDK.AnyTransaction) -> TransactionInfoViewController
+    {
+        let viewModel = TransactionInfoViewModel(transaction: transaction)
+        return TransactionInfoViewController(viewModel: viewModel)
     }
     
     func makeAddNewTokenVC() -> AddNewWalletVC {
@@ -131,7 +155,7 @@ class MainContainer {
 }
 
 extension MainContainer: TabBarScenesFactory,
-                         MyWalletsScenesFactory,
+                         MyProductsScenesFactory,
                          ProfileScenesFactory,
                          SwapScenesFactory,
                          WalletDetailScenesFactory,
