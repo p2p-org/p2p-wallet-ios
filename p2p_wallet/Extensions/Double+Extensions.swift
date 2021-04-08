@@ -48,7 +48,7 @@ extension Double {
         return formatter.string(from: self as NSNumber) ?? "0"
     }
     
-    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false, groupingSeparator: String? = " ") -> String {
+    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false, showMinus: Bool = true, groupingSeparator: String? = " ") -> String {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
@@ -69,7 +69,9 @@ extension Double {
             formatter.maximumFractionDigits = 2
         }
         
-        return (formatter.string(from: self as NSNumber) ?? "0")
+        let number = showMinus ? self: abs(self)
+        
+        return (formatter.string(from: number as NSNumber) ?? "0")
     }
     
     func rounded(decimals: Int?) -> Double {
