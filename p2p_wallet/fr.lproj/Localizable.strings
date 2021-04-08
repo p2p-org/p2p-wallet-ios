@@ -297,3 +297,5 @@
 "%@ to %@" = "%@ à %@";
 "%@ closed" = "%@ fermé";
 "%@ Created" = "%@ Créé";
+"To %@" = "À %@";
+"From token %@" = "De %@";

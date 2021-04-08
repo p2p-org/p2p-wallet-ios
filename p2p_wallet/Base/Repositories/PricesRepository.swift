@@ -1,0 +1,26 @@
+//
+//  PricesRepository.swift
+//  p2p_wallet
+//
+//  Created by Chung Tran on 08/04/2021.
+//
+
+import Foundation
+import RxSwift
+
+protocol PricesRepository {
+    func currentPrice(for coinName: String) -> CurrentPrice?
+    func pricesObservable() -> Observable<[String: CurrentPrice]>
+    func observePrice(of coinName: String) -> Observable<CurrentPrice?>
+}
+
+extension PricesManager: PricesRepository {
+    func pricesObservable() -> Observable<[String : CurrentPrice]> {
+        currentPrices.asObservable()
+    }
+    
+    func observePrice(of coinName: String) -> Observable<CurrentPrice?> {
+        pricesObservable()
+            .map {[weak self] _ in self?.currentPrice(for: coinName)}
+    }
+}

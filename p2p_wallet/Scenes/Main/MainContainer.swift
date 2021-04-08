@@ -14,6 +14,7 @@ class MainContainer {
     var solanaSDK: SolanaSDK
     var socket: SolanaSDK.Socket
     let transactionManager: TransactionsManager
+    let pricesManager: PricesManager
     private(set) var myWalletsVM: WalletsVM
     
     init(rootViewModel: RootViewModel, accountStorage: KeychainAccountStorage) {
@@ -23,6 +24,7 @@ class MainContainer {
         self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: accountStorage.account?.publicKey)
         self.transactionManager = TransactionsManager(socket: socket)
         myWalletsVM = WalletsVM(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager)
+        pricesManager = PricesManager.shared
         
         defer {
             socket.connect()
@@ -58,7 +60,7 @@ class MainContainer {
     }
     
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController {
-        let viewModel = WalletDetailViewModel(solanaSDK: solanaSDK, walletsVM: myWalletsVM, walletPubkey: pubkey, walletSymbol: symbol)
+        let viewModel = WalletDetailViewModel(solanaSDK: solanaSDK, walletsVM: myWalletsVM, walletPubkey: pubkey, walletSymbol: symbol, pricesRepository: pricesManager)
         return WalletDetailViewController(viewModel: viewModel, scenesFactory: self)
     }
     
