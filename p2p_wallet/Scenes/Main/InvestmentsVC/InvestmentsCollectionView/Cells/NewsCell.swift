@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import BECollectionView
 
-class NewsCell: BaseCollectionViewCell {
+class NewsCell: BaseCollectionViewCell, LoadableView {
     lazy var imageView = UIImageView(backgroundColor: .gray)
     lazy var titleLabel = UILabel(text: "How it works", textSize: 21, weight: .semibold, textColor: .textWhite, numberOfLines: 0)
     lazy var descriptionLabel = UILabel(text: "The most important info you should know before investing", textSize: 17, textColor: .textWhite, numberOfLines: 0)
@@ -32,7 +33,11 @@ class NewsCell: BaseCollectionViewCell {
         textStackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 16), excludingEdge: .top)
         
     }
-    func setUp(with item: News) {
+}
+
+extension NewsCell: BECollectionViewCell {
+    func setUp(with item: AnyHashable?) {
+        guard let item = item as? News else {return}
         titleLabel.text = item.title
         descriptionLabel.text = item.subtitle
     }
