@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import Action
+import BECollectionView
 
 class WalletDetailRootView: BEView {
     // MARK: - Constants
@@ -31,23 +32,16 @@ class WalletDetailRootView: BEView {
     
     lazy var settingsButton = UIImageView(width: 25, height: 25, image: .settings, tintColor: .a3a5ba)
     
-    lazy var collectionView: TransactionsCollectionView = {
-        let collectionView = TransactionsCollectionView(viewModel: viewModel.transactionsVM, sections: [
-            CollectionViewSection(
-                header: CollectionViewSection.Header(
-                    viewClass: WDVCSectionHeaderView.self,
-                    title: L10n.activity
-                ),
-                cellType: TransactionCell.self,
-                interGroupSpacing: 2,
-                itemHeight: .absolute(71)
-            )
-        ])
-        collectionView.itemDidSelect = { [unowned self] in
-            self.viewModel.navigationSubject.onNext(.transactionInfo($0))
-        }
-        collectionView.receiveAction = CocoaAction { [unowned self] in
-            self.viewModel.receiveTokens()
+    lazy var collectionView: WalletDetailTransactionsCollectionView = { [weak self] in
+        let collectionView = WalletDetailTransactionsCollectionView(
+            transactionViewModel: viewModel.transactionsViewModel,
+            graphViewModel: viewModel.graphViewModel
+        )
+        
+        collectionView.delegate = self
+        
+        collectionView.scanQrCodeAction = CocoaAction { [weak self] in
+            self?.viewModel.receiveTokens()
             return .just(())
         }
         return collectionView
@@ -71,6 +65,7 @@ class WalletDetailRootView: BEView {
         backgroundColor = .vcBackground
         layout()
         bind()
+        collectionView.refresh()
     }
     
     // MARK: - Layout
@@ -153,10 +148,7 @@ class WalletDetailRootView: BEView {
         walletDriver
             .drive(onNext: {[unowned self] wallet in
                 self.collectionView.wallet = wallet
-                if let header = self.collectionView.headerForSection(0) as? WDVCSectionHeaderView
-                {
-                    self.collectionView.reloadHeader(header)
-                }
+                self.collectionView.transactionsSection.reloadHeader()
             })
             .disposed(by: disposeBag)
         
@@ -172,7 +164,7 @@ class WalletDetailRootView: BEView {
                         // fall back to wallet name
                         newName = wallet.name
                     }
-                    self.viewModel.walletsVM.updateWallet(wallet, withName: newName)
+                    self.viewModel.walletsRepository.updateWallet(wallet, withName: newName)
                 }
                 
             })
@@ -186,5 +178,12 @@ extension WalletDetailRootView: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         walletNameTextField.isUserInteractionEnabled = false
         return true
+    }
+}
+
+extension WalletDetailRootView: BECollectionViewDelegate {
+    func beCollectionView(collectionView: BECollectionView, didSelect item: AnyHashable) {
+        guard let transaction = item as? SolanaSDK.AnyTransaction else {return}
+        self.viewModel.navigationSubject.onNext(.transactionInfo(transaction))
     }
 }

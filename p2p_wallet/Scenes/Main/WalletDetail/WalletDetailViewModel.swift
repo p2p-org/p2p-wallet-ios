@@ -8,44 +8,28 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import BECollectionView
 
 enum WalletDetailNavigatableScene {
     case settings
     case send
     case receive
     case swap
-    case transactionInfo(_ transaction: Transaction)
-}
-
-class WalletDetailTransactionsVM: WalletTransactionsVM {
-    let graphVM: WalletGraphVM
-    
-    override init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, pubkey: String, symbol: String) {
-        graphVM = WalletGraphVM(symbol: symbol)
-        super.init(solanaSDK: solanaSDK, walletsVM: walletsVM, pubkey: pubkey, symbol: symbol)
-    }
-    
-    override func reload() {
-        graphVM.reload()
-        super.reload()
-    }
-    
-    override func refresh() {
-        super.refresh()
-        walletsVM.reload()
-    }
+    case transactionInfo(_ transaction: SolanaSDK.AnyTransaction)
 }
 
 class WalletDetailViewModel {
     // MARK: - Constants
+    let disposeBag = DisposeBag()
     
     // MARK: - Properties
-    let disposeBag = DisposeBag()
     let solanaSDK: SolanaSDK
-    let walletsVM: WalletsVM
+    let walletsRepository: WalletsRepository
     let pubkey: String
+    let symbol: String
+    let graphViewModel: WalletGraphVM
     
-    let transactionsVM: WalletDetailTransactionsVM
+    let transactionsViewModel: TransactionsViewModel
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<WalletDetailNavigatableScene>()
@@ -55,18 +39,33 @@ class WalletDetailViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, walletPubkey: String, walletSymbol: String) {
+    init(
+        walletPubkey: String,
+        walletSymbol: String,
+        solanaSDK: SolanaSDK,
+        walletsRepository: WalletsRepository,
+        pricesRepository: PricesRepository
+    ) {
         self.solanaSDK = solanaSDK
-        self.walletsVM = walletsVM
+        self.walletsRepository = walletsRepository
         self.pubkey = walletPubkey
-        self.transactionsVM = WalletDetailTransactionsVM(solanaSDK: solanaSDK, walletsVM: walletsVM, pubkey: pubkey, symbol: walletSymbol)
+        self.symbol = walletSymbol
+        self.transactionsViewModel = TransactionsViewModel(account: walletPubkey, repository: solanaSDK, pricesRepository: pricesRepository)
+        self.graphViewModel = WalletGraphVM(symbol: walletSymbol)
         bind()
     }
     
     func bind() {
-        walletsVM.dataObservable
+        walletsRepository.dataObservable
             .map {$0?.first(where: {$0.pubkey == self.pubkey})}
             .bind(to: wallet)
+            .disposed(by: disposeBag)
+        
+        transactionsViewModel.stateObservable
+            .map {$0 == .loading}
+            .subscribe(onNext: {[weak self] _ in
+                self?.graphViewModel.reload()
+            })
             .disposed(by: disposeBag)
     }
     // MARK: - Actions
