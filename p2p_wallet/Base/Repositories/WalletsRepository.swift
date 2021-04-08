@@ -14,7 +14,9 @@ protocol WalletsRepository {
     func getWallets() -> [Wallet]
     func stateObservable() -> Observable<BEFetcherState>
     var dataDidChange: Observable<Void> {get}
+    var dataObservable: Observable<[Wallet]?> {get}
     func getError() -> Error?
     func reload()
     func insert(_ item: Wallet, where predicate: (Wallet) -> Bool, shouldUpdate: Bool)
+    func updateWallet(_ wallet: Wallet, withName name: String)
 }
