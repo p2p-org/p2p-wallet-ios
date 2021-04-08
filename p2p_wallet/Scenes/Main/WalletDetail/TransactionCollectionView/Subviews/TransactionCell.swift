@@ -65,5 +65,6 @@ extension TransactionCell: BECollectionViewCell {
         default:
             transactionTypeLabel.text = L10n.transaction
         }
+        imageView.setUp(transaction: transaction)
     }
 }
