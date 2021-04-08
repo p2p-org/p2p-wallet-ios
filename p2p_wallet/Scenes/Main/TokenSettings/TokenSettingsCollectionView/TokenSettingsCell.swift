@@ -7,12 +7,20 @@
 
 import Foundation
 import Action
+import BECollectionView
 
 protocol TokenSettingsCellDelegate: class {
     func tokenSettingsCellDidToggleVisibility(_ cell: TokenSettingsCell)
 }
 
-class TokenSettingsCell: ListCollectionCell<TokenSettings> {
+class TokenSettingsCell: BaseCollectionViewCell, LoadableView {
+    var loadingViews: [UIView] {[
+        iconImageView,
+        descriptionLabel,
+        mainLabel,
+        isVisibleSwitcher
+    ]}
+    
     // MARK: - Subviews
     lazy var iconImageView = UIImageView(width: 24, height: 24, image: .buttonEdit, tintColor: .a3a5ba)
     lazy var descriptionLabel = UILabel(textSize: 13, weight: .semibold, textColor: .textSecondary)
@@ -40,7 +48,16 @@ class TokenSettingsCell: ListCollectionCell<TokenSettings> {
         isVisibleSwitcher.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged)
     }
     
-    override func setUp(with item: TokenSettings) {
+    @objc func switchChanged(_ mySwitch: UISwitch) {
+        delegate?.tokenSettingsCellDidToggleVisibility(self)
+    }
+}
+
+extension TokenSettingsCell: BECollectionViewCell {
+    func setUp(with item: AnyHashable?) {
+        guard let item = item as? TokenSettings else {
+            return
+        }
         descriptionLabel.isHidden = false
         isVisibleSwitcher.isHidden = true
         switch item {
@@ -55,9 +72,5 @@ class TokenSettingsCell: ListCollectionCell<TokenSettings> {
             descriptionLabel.isHidden = true
             mainLabel.text = L10n.closeTokenAccount
         }
-    }
-    
-    @objc func switchChanged(_ mySwitch: UISwitch) {
-        delegate?.tokenSettingsCellDidToggleVisibility(self)
     }
 }
