@@ -13,6 +13,7 @@ protocol WalletDetailScenesFactory {
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController
     func makeSwapTokenViewController(fromWallet: Wallet?) -> SwapTokenViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
+    func makeTransactionInfoViewController(transaction: SolanaSDK.AnyTransaction) -> TransactionInfoViewController
 }
 
 class WalletDetailViewController: WLIndicatorModalVC {
@@ -62,9 +63,8 @@ class WalletDetailViewController: WLIndicatorModalVC {
             let vc = scenesFactory.makeSwapTokenViewController(fromWallet: wallet)
             self.show(vc, sender: nil)
         case .transactionInfo(let transaction):
-//            let vc = TransactionInfoVC(transaction: transaction)
-//            present(vc, animated: true, completion: nil)
-            break
+            let vc = scenesFactory.makeTransactionInfoViewController(transaction: transaction)
+            present(vc, animated: true, completion: nil)
         }
     }
 }

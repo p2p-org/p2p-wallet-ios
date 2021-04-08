@@ -70,6 +70,12 @@ class MainContainer {
         return WalletDetailViewController(viewModel: viewModel, scenesFactory: self)
     }
     
+    func makeTransactionInfoViewController(transaction: SolanaSDK.AnyTransaction) -> TransactionInfoViewController
+    {
+        let viewModel = TransactionInfoViewModel(transaction: transaction)
+        return TransactionInfoViewController(viewModel: viewModel)
+    }
+    
     func makeAddNewTokenVC() -> AddNewWalletVC {
         let vm = _AddNewWalletVM(handler: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, scenesFactory: self)
         return AddNewWalletVC(viewModel: vm)
