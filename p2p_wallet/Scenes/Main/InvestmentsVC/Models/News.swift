@@ -7,10 +7,7 @@
 
 import Foundation
 
-struct News: ListItemType {
-    static func placeholder(at index: Int) -> News {
-        News(id: placeholderId(at: index), title: "News #\(index)", subtitle: nil, imageUrl: nil)
-    }
+struct News: Hashable {
     let id: String
     let title: String
     let subtitle: String?
