@@ -294,3 +294,6 @@
 "Transfer" = "Chuyển khoản";
 "Create account" = "Tạo tài khoản";
 "Close account" = "Đóng tài khoản";
+"%@ to %@" = "%@ đến %@";
+"%@ closed" = "%@ đã đóng";
+"%@ Created" = "Tạo token %@";
