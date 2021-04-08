@@ -164,7 +164,7 @@ class WalletDetailRootView: BEView {
                         // fall back to wallet name
                         newName = wallet.name
                     }
-                    self.viewModel.walletsVM.updateWallet(wallet, withName: newName)
+                    self.viewModel.walletsRepository.updateWallet(wallet, withName: newName)
                 }
                 
             })
