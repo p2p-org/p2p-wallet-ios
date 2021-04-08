@@ -54,10 +54,11 @@ extension TransactionCell: BECollectionViewCell {
         guard let transaction = item as? SolanaSDK.AnyTransaction else {return}
         switch transaction.value {
         case let transaction as SolanaSDK.CreateAccountTransaction:
-            transactionTypeLabel.text = L10n.addToken
+            transactionTypeLabel.text = L10n.createAccount
         case let transaction as SolanaSDK.CloseAccountTransaction:
-            transactionTypeLabel.text = L10n.closeTokenAccount
+            transactionTypeLabel.text = L10n.closeAccount
         case let transaction as SolanaSDK.TransferTransaction:
+            // TODO: - Send, receive
             transactionTypeLabel.text = L10n.transfer
         case let transaction as SolanaSDK.SwapTransaction:
             transactionTypeLabel.text = L10n.swap
