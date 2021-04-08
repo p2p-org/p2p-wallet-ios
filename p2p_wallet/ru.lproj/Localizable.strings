@@ -292,3 +292,5 @@
 "Enter a seed phrase from your account" = "Введите начальную фразу из своего аккаунта";
 "Wrapped %@ by %@" = "Wrapped %@ с %@";
 "Transfer" = "Передача";
+"Create account" = "Зарегистрироваться";
+"Close account" = "Закрыть аккаунт";
