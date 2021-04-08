@@ -21,7 +21,7 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
     
     // MARK: - Subviews
     private lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
-    private lazy var imageView = TransactionImageView(width: 45, height: 45, backgroundColor: .f6f6f8, cornerRadius: 12)
+    private lazy var imageView = TransactionImageView(size: 45, backgroundColor: .f6f6f8, cornerRadius: 12)
     private lazy var transactionTypeLabel = UILabel(textSize: 17, weight: .semibold)
     private lazy var amountInFiatLabel = UILabel(textSize: 15, weight: .semibold, textAlignment: .right)
     private lazy var descriptionLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
