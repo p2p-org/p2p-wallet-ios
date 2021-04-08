@@ -50,6 +50,10 @@ class CoinLogoImageView: BEView {
         }
     }
     
+    func setUp(token: SolanaSDK.Token? = nil) {
+        setUp(wallet: token != nil ? Wallet(programAccount: token!): nil)
+    }
+    
     func with(wallet: Wallet) -> Self {
         setUp(wallet: wallet)
         return self
@@ -60,7 +64,7 @@ class CoinLogoImageView: BEView {
         self.placeholder = placeholder
         insertSubview(placeholder, at: 0)
         placeholder.autoPinEdgesToSuperviewEdges()
-        setUp()
+        setUp(wallet: nil)
         return self
     }
 }

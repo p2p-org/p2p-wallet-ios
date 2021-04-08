@@ -42,6 +42,12 @@ class WalletDetailTransactionsSection: BECollectionViewSection {
         return header
     }
     
+    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> BECollectionViewCell {
+        let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item) as! TransactionCell
+        cell.currentWallet = wallet
+        return cell
+    }
+    
     func reloadHeader(header: UICollectionReusableView? = nil) {
         if let header = (header ?? self.headerView()) as? WDVCSectionHeaderView {
             header.headerLabel.text = L10n.activity

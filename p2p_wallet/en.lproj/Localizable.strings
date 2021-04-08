@@ -292,3 +292,10 @@
 "Enter a seed phrase from your account" = "Enter a seed phrase from your account";
 "Wrapped %@ by %@" = "Wrapped %@ by %@";
 "Transfer" = "Transfer";
+"Create account" = "Create account";
+"Close account" = "Close account";
+"%@ to %@" = "%@ to %@";
+"%@ closed" = "%@ closed";
+"%@ Created" = "%@ Created";
+"To %@" = "To %@";
+"From token %@" = "From %@";

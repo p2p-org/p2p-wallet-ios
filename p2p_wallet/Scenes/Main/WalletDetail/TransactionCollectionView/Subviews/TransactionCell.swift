@@ -18,10 +18,15 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
         amountInTokenLabel,
         swapTransactionImageView
     ]}
+    var currentWallet: Wallet? {
+        didSet {
+            imageView.currentWallet = currentWallet
+        }
+    }
     
     // MARK: - Subviews
     private lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
-    private lazy var imageView = TransactionImageView(width: 45, height: 45, backgroundColor: .f6f6f8, cornerRadius: 12)
+    private lazy var imageView = TransactionImageView(size: 45, backgroundColor: .f6f6f8, cornerRadius: 12)
     private lazy var transactionTypeLabel = UILabel(textSize: 17, weight: .semibold)
     private lazy var amountInFiatLabel = UILabel(textSize: 15, weight: .semibold, textAlignment: .right)
     private lazy var descriptionLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
@@ -45,6 +50,10 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
             ])
         ])
         
+        let separator = UIView.separator(height: 1, color: .separator)
+        contentView.addSubview(separator)
+        separator.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets.init(all: 20).modifying(dBottom: -20), excludingEdge: .top)
+        
         swapTransactionImageView.isHidden = true
     }
 }
@@ -52,17 +61,78 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
 extension TransactionCell: BECollectionViewCell {
     func setUp(with item: AnyHashable?) {
         guard let transaction = item as? SolanaSDK.AnyTransaction else {return}
+        // clear
+        descriptionLabel.text = nil
+        
+        // specify texts
         switch transaction.value {
         case let transaction as SolanaSDK.CreateAccountTransaction:
-            transactionTypeLabel.text = L10n.addToken
+            transactionTypeLabel.text = L10n.createAccount
+            if let newToken = transaction.newToken {
+                descriptionLabel.text = L10n.created(newToken.symbol)
+            }
         case let transaction as SolanaSDK.CloseAccountTransaction:
-            transactionTypeLabel.text = L10n.closeTokenAccount
+            transactionTypeLabel.text = L10n.closeAccount
+            if let closedToken = transaction.closedToken {
+                descriptionLabel.text = L10n.closed(closedToken.symbol)
+            }
         case let transaction as SolanaSDK.TransferTransaction:
             transactionTypeLabel.text = L10n.transfer
+            
+            // Send
+            if currentWallet?.pubkey == transaction.source?.pubkey
+            {
+                transactionTypeLabel.text = L10n.send
+                if let destination = transaction.destination?.pubkey
+                {
+                    descriptionLabel.text = L10n.to(destination.prefix(4) + "..." + destination.suffix(4))
+                }
+            }
+            
+            // Receive
+            if currentWallet?.pubkey == transaction.destination?.pubkey
+            {
+                transactionTypeLabel.text = L10n.receive
+                if let source = transaction.source?.pubkey
+                {
+                    descriptionLabel.text = L10n.fromToken(source.prefix(4) + "..." + source.suffix(4))
+                }
+            }
+            
         case let transaction as SolanaSDK.SwapTransaction:
             transactionTypeLabel.text = L10n.swap
+            if let source = transaction.source,
+                  let destination = transaction.destination
+            {
+                descriptionLabel.text = L10n.to(source.symbol, destination.symbol)
+            }
+            
         default:
             transactionTypeLabel.text = L10n.transaction
+            descriptionLabel.text = nil
         }
+        
+        // set up icon
+        imageView.setUp(transaction: transaction)
+        
+        // amount in fiat
+        amountInFiatLabel.text = nil
+        amountInFiatLabel.textColor = .textBlack
+        if let amountInFiat = transaction.amountInFiat
+        {
+            var amountText = "$\(abs(amountInFiat).toString(maximumFractionDigits: 4, showMinus: false))"
+            var textColor = UIColor.textBlack
+            if transaction.amount < 0 {
+                amountText = "- " + amountText
+            } else {
+                amountText = "+ " + amountText
+                textColor = .attentionGreen
+            }
+            amountInFiatLabel.text = amountText
+            amountInFiatLabel.textColor = textColor
+        }
+        
+        // amount
+        amountInTokenLabel.text = "\(transaction.amount.toString(maximumFractionDigits: 9, showPlus: true)) \(transaction.symbol)"
     }
 }

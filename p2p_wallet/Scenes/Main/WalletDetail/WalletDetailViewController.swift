@@ -62,8 +62,9 @@ class WalletDetailViewController: WLIndicatorModalVC {
             let vc = scenesFactory.makeSwapTokenViewController(fromWallet: wallet)
             self.show(vc, sender: nil)
         case .transactionInfo(let transaction):
-            let vc = TransactionInfoVC(transaction: transaction)
-            present(vc, animated: true, completion: nil)
+//            let vc = TransactionInfoVC(transaction: transaction)
+//            present(vc, animated: true, completion: nil)
+            break
         }
     }
 }
