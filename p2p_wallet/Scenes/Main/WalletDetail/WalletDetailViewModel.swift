@@ -15,16 +15,16 @@ enum WalletDetailNavigatableScene {
     case send
     case receive
     case swap
-    case transactionInfo(_ transaction: Transaction)
+    case transactionInfo(_ transaction: SolanaSDK.AnyTransaction)
 }
 
 class WalletDetailViewModel {
     // MARK: - Constants
+    let disposeBag = DisposeBag()
     
     // MARK: - Properties
-    let disposeBag = DisposeBag()
     let solanaSDK: SolanaSDK
-    let walletsVM: WalletsVM
+    let walletsRepository: WalletsRepository
     let pubkey: String
     let symbol: String
     let graphViewModel: WalletGraphVM
@@ -40,14 +40,14 @@ class WalletDetailViewModel {
     
     // MARK: - Initializers
     init(
-        solanaSDK: SolanaSDK,
-        walletsVM: WalletsVM,
         walletPubkey: String,
         walletSymbol: String,
+        solanaSDK: SolanaSDK,
+        walletsRepository: WalletsRepository,
         pricesRepository: PricesRepository
     ) {
         self.solanaSDK = solanaSDK
-        self.walletsVM = walletsVM
+        self.walletsRepository = walletsRepository
         self.pubkey = walletPubkey
         self.symbol = walletSymbol
         self.transactionsViewModel = TransactionsViewModel(account: walletPubkey, repository: solanaSDK, pricesRepository: pricesRepository)
@@ -56,7 +56,7 @@ class WalletDetailViewModel {
     }
     
     func bind() {
-        walletsVM.dataObservable
+        walletsRepository.dataObservable
             .map {$0?.first(where: {$0.pubkey == self.pubkey})}
             .bind(to: wallet)
             .disposed(by: disposeBag)
