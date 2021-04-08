@@ -23,6 +23,11 @@ extension SolanaSDK: TransactionsRepository {
                     self.getTransaction(signature: $0, parser: parser)
                 })
             }
+            .do(onSuccess: {transactions in
+                print(transactions.count)
+            }, onError: {
+                print($0)
+            })
     }
     
     func getTransaction(signature: String, parser: SolanaSDK.TransactionParser) -> Single<AnyTransaction> {
@@ -30,5 +35,6 @@ extension SolanaSDK: TransactionsRepository {
             .flatMap { info in
                 parser.parse(signature: signature, transactionInfo: info)
             }
+            .catchAndReturn(AnyTransaction(signature: signature, value: nil))
     }
 }
