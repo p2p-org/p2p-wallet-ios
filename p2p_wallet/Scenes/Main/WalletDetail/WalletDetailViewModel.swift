@@ -26,6 +26,7 @@ class WalletDetailViewModel {
     let solanaSDK: SolanaSDK
     let walletsVM: WalletsVM
     let pubkey: String
+    let symbol: String
     let graphViewModel: WalletGraphVM
     
     let transactionsViewModel: TransactionsViewModel
@@ -42,12 +43,14 @@ class WalletDetailViewModel {
         solanaSDK: SolanaSDK,
         walletsVM: WalletsVM,
         walletPubkey: String,
-        walletSymbol: String
+        walletSymbol: String,
+        pricesRepository: PricesRepository
     ) {
         self.solanaSDK = solanaSDK
         self.walletsVM = walletsVM
         self.pubkey = walletPubkey
-        self.transactionsViewModel = TransactionsViewModel(account: walletPubkey, repository: solanaSDK)
+        self.symbol = walletSymbol
+        self.transactionsViewModel = TransactionsViewModel(account: walletPubkey, repository: solanaSDK, pricesRepository: pricesRepository)
         self.graphViewModel = WalletGraphVM(symbol: walletSymbol)
         bind()
     }

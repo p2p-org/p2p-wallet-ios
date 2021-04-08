@@ -297,3 +297,5 @@
 "%@ to %@" = "%@ đến %@";
 "%@ closed" = "%@ đã đóng";
 "%@ Created" = "Tạo token %@";
+"To %@" = "Đến %@";
+"From token %@" = "Từ %@";

@@ -10,6 +10,7 @@ import Foundation
 class TransactionImageView: BEView {
     private let _backgroundColor: UIColor?
     private let _cornerRadius: CGFloat?
+    var currentWallet: Wallet?
     
     private lazy var basicIconImageView = UIImageView(width: 24.38, height: 24.38, tintColor: .a3a5ba)
     private lazy var fromTokenImageView = CoinLogoImageView(width: 30, height: 30)
@@ -56,6 +57,12 @@ class TransactionImageView: BEView {
         case let transaction as SolanaSDK.TransferTransaction:
             // TODO: - Send, receive
             basicIconImageView.isHidden = false
+            if currentWallet?.pubkey == transaction.source?.pubkey {
+                basicIconImageView.image = .transactionSend
+            }
+            if currentWallet?.pubkey == transaction.destination?.pubkey {
+                basicIconImageView.image = .transactionReceive
+            }
             
         case let transaction as SolanaSDK.SwapTransaction:
             basicIconImageView.isHidden = true
