@@ -6,25 +6,33 @@
 //
 
 import UIKit
+import RxSwift
 
 class TransactionInfoRootView: ScrollableVStackRootView {
     // MARK: - Constants
     
     // MARK: - Properties
     let viewModel: TransactionInfoViewModel
+    let disposeBag = DisposeBag()
     
-    // MARK: - Subviews
+    // MARK: - Headers
     private lazy var transactionTypeLabel = UILabel(textSize: 21, weight: .medium, textAlignment: .center)
     private lazy var transactionTimestampLabel = UILabel(textSize: 13, weight: .medium, textColor: .textSecondary, textAlignment: .center)
     private lazy var transactionIconImageView = UIImageView(width: 24, height: 24, tintColor: .white)
     private lazy var amountInFiatLabel = UILabel(textSize: 27, weight: .bold, textAlignment: .center)
     private lazy var amountInTokenLabel = UILabel(weight: .medium, textAlignment: .center)
     private lazy var statusLabel = UILabel(textSize: 12, weight: .bold, textColor: .textGreen)
-    private lazy var sourcePubkeyLabel = UILabel(weight: .semibold)
-    private lazy var destinationPubkeyLabel = UILabel(weight: .semibold)
-    private lazy var amountDetailLabel = sectionContent()
-    private lazy var valueLabel = sectionContent()
-    private lazy var blockNumLabel = sectionContent()
+    
+    // MARK: - Sections
+    private lazy var transactionIdSection = createTransactionIdSection(signatureLabel: signatureLabel)
+    
+    private lazy var transactionFromSection = createLabelsOnlySection(title: L10n.from)
+    
+//    private lazy var sourcePubkeyLabel = UILabel(weight: .semibold)
+//    private lazy var destinationPubkeyLabel = UILabel(weight: .semibold)
+//    private lazy var amountDetailLabel = sectionContent()
+//    private lazy var valueLabel = sectionContent()
+//    private lazy var blockNumLabel = sectionContent()
     private lazy var signatureLabel = UILabel(weight: .semibold, numberOfLines: 0)
     
     // MARK: - Initializers
@@ -73,6 +81,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         scrollView.contentInset.modify(dTop: 58)
         
         // setup content
+        stackView.spacing = 0
         
         stackView.addArrangedSubviews([
             // amount in usd
@@ -91,78 +100,12 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                 .centeredHorizontallyView,
             BEStackViewSpacing(30),
             
-            separator(),
-            BEStackViewSpacing(20),
+            // sections
+            transactionFromSection,
+            transactionIdSection,
             
-            // from
-            sectionTitle(L10n.from),
-            BEStackViewSpacing(20),
-            UIView.row([
-                UIView(width: 55, height: 55, backgroundColor: .c4c4c4, cornerRadius: 12),
-                sourcePubkeyLabel,
-                UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .a3a5ba)
-                    .padding(.init(all: 6), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
-                    .onTap(viewModel, action: #selector(TransactionInfoViewModel.copySourceAddressToClipboard))
-            ])
-                .with(spacing: 16, distribution: .fill)
-                .padding(.init(x: 20, y: 0)),
-            BEStackViewSpacing(20),
-            
-            separator(),
-            BEStackViewSpacing(20),
-            
-            sectionTitle(L10n.to),
-            BEStackViewSpacing(20),
-            UIView.row([
-                UIView(width: 55, height: 55, backgroundColor: .c4c4c4, cornerRadius: 12),
-                destinationPubkeyLabel,
-                UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .a3a5ba)
-                    .padding(.init(all: 6), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
-                    .onTap(viewModel, action: #selector(TransactionInfoViewModel.copyDestinationAddressToClipboard))
-            ])
-                .with(spacing: 16, distribution: .fill)
-                .padding(.init(x: 20, y: 0)),
-            BEStackViewSpacing(20),
-            
-            separator(),
-            BEStackViewSpacing(20),
-            
-            sectionTitle(L10n.amount.uppercaseFirst),
-            BEStackViewSpacing(8),
-            amountDetailLabel,
-            BEStackViewSpacing(20),
-            
-            separator(),
-            BEStackViewSpacing(20),
-            
-            sectionTitle(L10n.value),
-            BEStackViewSpacing(8),
-            valueLabel,
-            BEStackViewSpacing(20),
-            
-            separator(),
-            BEStackViewSpacing(20),
-            
-            sectionTitle(L10n.blockNumber),
-            BEStackViewSpacing(8),
-            blockNumLabel,
-            BEStackViewSpacing(20),
-            
-            separator(),
-            BEStackViewSpacing(20),
-            
-            sectionTitle(L10n.transactionID),
-            BEStackViewSpacing(8),
-            UIView.row([
-                signatureLabel,
-                UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .textBlack)
-                    .onTap(viewModel, action: #selector(TransactionInfoViewModel.copySignatureToClipboard))
-            ])
-                .with(distribution: .fill)
-                .padding(.init(x: 20, y: 0)),
-            BEStackViewSpacing(20),
-            
-            separator(),
+            // buttons
+            UIView.separator(height: 1, color: .separator),
             BEStackViewSpacing(20),
             
             WLButton.stepButton(enabledColor: .f6f6f8, textColor: .a3a5ba, label: L10n.viewInBlockchainExplorer)
@@ -172,21 +115,54 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     }
     
     private func bind() {
+        let transactionDriver = viewModel.transaction.asDriver()
         
+        transactionDriver
+            .map {$0.symbol}
+            .drive(transactionFromSection.contentView.rx.text)
+            .disposed(by: disposeBag)
+        
+        transactionDriver
+            .map {$0.signature}
+            .drive(signatureLabel.rx.text)
+            .disposed(by: disposeBag)
+    }
+}
+
+// MARK: - View builders
+extension TransactionInfoRootView {
+    func createLabelsOnlySection(title: String) -> TransactionInfoSection<UILabel, UILabel>
+    {
+        TransactionInfoSection(
+            titleView: createSectionTitle(title),
+            contentView: createContentLabel()
+        )
     }
     
-    // MARK: - View builders
-    fileprivate func separator() -> UIView {
-        .separator(height: 1, color: UIColor.textBlack.withAlphaComponent(0.1))
+    func createTransactionIdSection(signatureLabel: UILabel) -> TransactionInfoSection<UILabel, UIStackView>
+    {
+        TransactionInfoSection(
+            titleView: createSectionTitle(L10n.transactionID),
+            contentView: UIStackView(
+                axis: .horizontal,
+                spacing: 16,
+                alignment: .center,
+                distribution: .fill,
+                arrangedSubviews: [
+                    signatureLabel,
+                    UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
+                        .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                        .onTap(viewModel, action: #selector(TransactionInfoViewModel.showExplorer))
+                ]
+            )
+        )
     }
     
-    fileprivate func sectionTitle(_ title: String?) -> UIView {
+    private func createSectionTitle(_ title: String?) -> UILabel {
         UILabel(text: title, textSize: 12, weight: .semibold, textColor: .textSecondary)
-            .padding(.init(x: 20, y: 0))
     }
     
-    fileprivate func sectionContent() -> UIView {
+    private func createContentLabel() -> UILabel {
         UILabel(weight: .semibold)
-            .padding(.init(x: 20, y: 0))
     }
 }
