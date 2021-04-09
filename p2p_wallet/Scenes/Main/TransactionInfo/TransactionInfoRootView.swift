@@ -18,15 +18,19 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     // MARK: - Headers
     private lazy var transactionTypeLabel = UILabel(textSize: 21, weight: .medium, textAlignment: .center)
     private lazy var transactionTimestampLabel = UILabel(textSize: 13, weight: .medium, textColor: .textSecondary, textAlignment: .center)
-    private lazy var transactionIconImageView = UIImageView(width: 24, height: 24, tintColor: .white)
-    private lazy var amountInFiatLabel = UILabel(textSize: 27, weight: .bold, textAlignment: .center)
-    private lazy var amountInTokenLabel = UILabel(weight: .medium, textAlignment: .center)
-    private lazy var statusLabel = UILabel(textSize: 12, weight: .bold, textColor: .textGreen)
+    private lazy var transactionIconImageView = UIImageView(width: 30, height: 30, tintColor: .white)
+    
+    // MARK: - SummaryViews
+    private lazy var defaultSummaryView = DefaultSummaryView(forAutoLayout: ())
+    private lazy var swapSummaryView = SwapSummaryView(forAutoLayout: ())
+    
+    // MARK: - Status view
+    private lazy var statusView = TransactionStatusView()
     
     // MARK: - Sections
     private lazy var transactionIdSection = createTransactionIdSection(signatureLabel: signatureLabel)
     
-    private lazy var transactionFromSection = createLabelsOnlySection(title: L10n.from)
+//    private lazy var transactionFromSection = createLabelsOnlySection(title: L10n.from)
     
 //    private lazy var sourcePubkeyLabel = UILabel(weight: .semibold)
 //    private lazy var destinationPubkeyLabel = UILabel(weight: .semibold)
@@ -57,7 +61,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             // timestamp
             transactionTimestampLabel
         ])
-            .padding(.init(top: 30, left: 20, bottom: 54, right: 20), backgroundColor: .f6f6f8)
+            .padding(.init(top: 30, left: 20, bottom: 54, right: 20))
         
         addSubview(headerView)
         headerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
@@ -69,13 +73,19 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         headerView.autoPinEdge(.bottom, to: .top, of: scrollView)
         
         // icon
-        
         addSubview(
             transactionIconImageView
                 .padding(.init(all: 16), backgroundColor: .h5887ff, cornerRadius: 12)
         )
         transactionIconImageView.wrapper?.autoAlignAxis(toSuperviewAxis: .vertical)
         transactionIconImageView.wrapper?.autoPinEdge(.top, to: .bottom, of: headerView, withOffset: -28)
+        
+        // separator
+        let separator = UIView.separator(height: 1, color: .separator)
+        addSubview(separator)
+        separator.autoPinEdge(toSuperviewEdge: .leading)
+        separator.autoPinEdge(toSuperviewEdge: .trailing)
+        separator.autoAlignAxis(.horizontal, toSameAxisOf: transactionIconImageView)
         
         // content inset
         scrollView.contentInset.modify(dTop: 58)
@@ -85,23 +95,17 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         
         stackView.addArrangedSubviews([
             // amount in usd
-            amountInFiatLabel
-                .padding(.init(x: 20, y: 0)),
-            BEStackViewSpacing(5),
+            swapSummaryView
+                .centeredHorizontallyView,
             
-            // amount
-            amountInTokenLabel
-                .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(20),
             
             // status
-            statusLabel
-                .padding(.init(x: 16, y: 8), backgroundColor: UIColor.attentionGreen.withAlphaComponent(0.3), cornerRadius: 10)
-                .centeredHorizontallyView,
+            statusView.centeredHorizontallyView,
+            
             BEStackViewSpacing(30),
             
             // sections
-            transactionFromSection,
             transactionIdSection,
             
             // buttons
@@ -117,9 +121,13 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     private func bind() {
         let transactionDriver = viewModel.transaction.asDriver()
         
+        // header
         transactionDriver
-            .map {$0.symbol}
-            .drive(transactionFromSection.contentView.rx.text)
+            .drive(onNext: {[weak self] transaction in
+                self?.transactionTypeLabel.text = transaction.label
+                // TODO: - Date
+                self?.transactionIconImageView.image = transaction.icon
+            })
             .disposed(by: disposeBag)
         
         transactionDriver
