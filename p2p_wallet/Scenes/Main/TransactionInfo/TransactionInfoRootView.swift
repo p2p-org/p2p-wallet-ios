@@ -94,12 +94,6 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         stackView.spacing = 0
         
         stackView.addArrangedSubviews([
-            // amount in usd
-            swapSummaryView
-                .centeredHorizontallyView,
-            
-            BEStackViewSpacing(20),
-            
             // status
             statusView.centeredHorizontallyView,
             
@@ -130,10 +124,51 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             })
             .disposed(by: disposeBag)
         
+        // summary
+        transactionDriver
+            .drive(onNext: {[weak self] transaction in
+                self?.setUpSummaryView(transaction: transaction)
+            })
+            .disposed(by: disposeBag)
+        
         transactionDriver
             .map {$0.signature}
             .drive(signatureLabel.rx.text)
             .disposed(by: disposeBag)
+    }
+    
+    private func setUpSummaryView(transaction: SolanaSDK.AnyTransaction) {
+        if let summaryView = stackView.arrangedSubviews.first as? SummaryView
+        {
+            summaryView.superview?.removeFromSuperview()
+        }
+        switch transaction.value {
+        case let transaction as SolanaSDK.SwapTransaction:
+            var index = 0
+            stackView.insertArrangedSubviewsWithCustomSpacing(
+                [
+                    swapSummaryView,
+                    BEStackViewSpacing(24)
+                ],
+                at: &index
+            )
+            swapSummaryView.sourceIconImageView.setUp(token: transaction.source)
+            swapSummaryView.sourceAmountLabel.text = transaction.sourceAmount?.toString(maximumFractionDigits: 4, showPlus: true)
+            swapSummaryView.sourceSymbolLabel.text = transaction.source?.symbol
+            
+            swapSummaryView.destinationIconImageView.setUp(token: transaction.destination)
+            swapSummaryView.destinationAmountLabel.text = transaction.destinationAmount?.toString(maximumFractionDigits: 4, showPlus: true)
+            swapSummaryView.destinationSymbolLabel.text = transaction.destination?.symbol
+        default:
+            var index = 0
+            stackView.insertArrangedSubviewsWithCustomSpacing(
+                [
+                    defaultSummaryView,
+                    BEStackViewSpacing(24)
+                ],
+                at: &index
+            )
+        }
     }
 }
 
@@ -167,7 +202,7 @@ extension TransactionInfoRootView {
     }
     
     private func createSectionTitle(_ title: String?) -> UILabel {
-        UILabel(text: title, textSize: 12, weight: .semibold, textColor: .textSecondary)
+        UILabel(text: title, textSize: 13, weight: .medium, textColor: .textSecondary)
     }
     
     private func createContentLabel() -> UILabel {
