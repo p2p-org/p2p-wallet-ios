@@ -40,11 +40,6 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         bind()
     }
     
-    override func didMoveToWindow() {
-        super.didMoveToWindow()
-        
-    }
-    
     // MARK: - Layout
     private func layout() {
         // header
