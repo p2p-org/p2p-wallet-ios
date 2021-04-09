@@ -301,3 +301,4 @@
 "From token %@" = "С %@";
 "Completed" = "Завершенный";
 "Show transaction details" = "Показать детали транзакции";
+"Hide transaction details" = "Скрыть детали транзакции";

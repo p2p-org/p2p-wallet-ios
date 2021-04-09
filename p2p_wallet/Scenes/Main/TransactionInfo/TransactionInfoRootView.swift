@@ -28,6 +28,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     private lazy var statusView = TransactionStatusView()
     
     // MARK: - Sections
+    private lazy var transactionDetailView = UIView(forAutoLayout: ())
     private lazy var transactionIdSection = createTransactionIdSection(signatureLabel: signatureLabel)
     
 //    private lazy var transactionFromSection = createLabelsOnlySection(title: L10n.from)
@@ -38,6 +39,8 @@ class TransactionInfoRootView: ScrollableVStackRootView {
 //    private lazy var valueLabel = sectionContent()
 //    private lazy var blockNumLabel = sectionContent()
     private lazy var signatureLabel = UILabel(weight: .semibold, numberOfLines: 0)
+    
+    private lazy var toggleShowHideTransactionDetailsButton = WLButton.stepButton(enabledColor: .f6f6f8, textColor: .a3a5ba, label: L10n.showTransactionDetails)
     
     // MARK: - Initializers
     init(viewModel: TransactionInfoViewModel) {
@@ -66,6 +69,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         addSubview(headerView)
         headerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
         
+        // configure scroll view
         scrollView.contentInset.left = 0
         scrollView.contentInset.right = 0
         scrollView.contentInset.top = 56
@@ -97,6 +101,9 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             
             BEStackViewSpacing(30),
             
+            // detail
+            transactionDetailView,
+            
             // sections
             transactionIdSection,
             
@@ -104,7 +111,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             UIView.separator(height: 1, color: .separator),
             BEStackViewSpacing(20),
             
-            WLButton.stepButton(enabledColor: .f6f6f8, textColor: .a3a5ba, label: L10n.showTransactionDetails)
+            toggleShowHideTransactionDetailsButton
                 .onTap(viewModel, action: #selector(TransactionInfoViewModel.toggleShowDetailTransaction))
                 .padding(.init(x: 20, y: 0))
         ])
@@ -112,6 +119,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     
     private func bind() {
         let transactionDriver = viewModel.transaction.asDriver()
+        let showDetailTransactionDriver = viewModel.showDetailTransaction.asDriver()
         
         // header
         transactionDriver
@@ -129,6 +137,18 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             })
             .disposed(by: disposeBag)
         
+        // detail
+        showDetailTransactionDriver
+            .map {!$0}
+            .drive(transactionDetailView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        showDetailTransactionDriver
+            .map {$0 ? L10n.hideTransactionDetails: L10n.showTransactionDetails}
+            .drive(toggleShowHideTransactionDetailsButton.rx.title(for: .normal))
+            .disposed(by: disposeBag)
+        
+        // signature
         transactionDriver
             .map {$0.signature}
             .drive(signatureLabel.rx.text)

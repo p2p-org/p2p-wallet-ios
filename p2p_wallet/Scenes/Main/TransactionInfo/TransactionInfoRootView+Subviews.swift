@@ -1,5 +1,5 @@
 //
-//  TransactionRootView+Subviews.swift
+//  TransactionInfoRootView+Subviews.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 09/04/2021.
