@@ -36,6 +36,10 @@ class TransactionInfoViewModel {
         navigationSubject.onNext(.explorer)
     }
     
+    @objc func toggleShowDetailTransaction() {
+        showDetailTransaction.accept(!showDetailTransaction.value)
+    }
+    
     @objc func copySignatureToClipboard() {
         UIApplication.shared.copyToClipboard(transaction.value.signature)
     }
