@@ -141,37 +141,45 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             summaryView.superview?.removeFromSuperview()
         }
         switch transaction.value {
-        // SWAP
         case let transaction as SolanaSDK.SwapTransaction:
-            var index = 0
-            stackView.insertArrangedSubviewsWithCustomSpacing(
-                [
-                    swapSummaryView,
-                    BEStackViewSpacing(24)
-                ],
-                at: &index
-            )
-            swapSummaryView.sourceIconImageView.setUp(token: transaction.source)
-            swapSummaryView.sourceAmountLabel.text = transaction.sourceAmount?.toString(maximumFractionDigits: 4, showPlus: true)
-            swapSummaryView.sourceSymbolLabel.text = transaction.source?.symbol
-            
-            swapSummaryView.destinationIconImageView.setUp(token: transaction.destination)
-            swapSummaryView.destinationAmountLabel.text = transaction.destinationAmount?.toString(maximumFractionDigits: 4, showPlus: true)
-            swapSummaryView.destinationSymbolLabel.text = transaction.destination?.symbol
-        // DEFAULT
+            setUpWithSwapTransaction(transaction)
         default:
-            var index = 0
-            stackView.insertArrangedSubviewsWithCustomSpacing(
-                [
-                    defaultSummaryView,
-                    BEStackViewSpacing(24)
-                ],
-                at: &index
-            )
-            
-            defaultSummaryView.amountInFiatLabel.text = transaction.amountInFiat.toString(maximumFractionDigits: 4, showPlus: true) + " $"
-            defaultSummaryView.amountInTokenLabel.text = transaction.amount.toString(maximumFractionDigits: 4, showPlus: true) + " " + transaction.symbol
+            setUpWithOtherTransaction(transaction)
         }
+    }
+    
+    private func setUpWithSwapTransaction(_ transaction: SolanaSDK.SwapTransaction)
+    {
+        var index = 0
+        stackView.insertArrangedSubviewsWithCustomSpacing(
+            [
+                swapSummaryView,
+                BEStackViewSpacing(24)
+            ],
+            at: &index
+        )
+        swapSummaryView.sourceIconImageView.setUp(token: transaction.source)
+        swapSummaryView.sourceAmountLabel.text = transaction.sourceAmount?.toString(maximumFractionDigits: 4, showPlus: true)
+        swapSummaryView.sourceSymbolLabel.text = transaction.source?.symbol
+        
+        swapSummaryView.destinationIconImageView.setUp(token: transaction.destination)
+        swapSummaryView.destinationAmountLabel.text = transaction.destinationAmount?.toString(maximumFractionDigits: 4, showPlus: true)
+        swapSummaryView.destinationSymbolLabel.text = transaction.destination?.symbol
+    }
+    
+    private func setUpWithOtherTransaction(_ transaction: SolanaSDK.AnyTransaction)
+    {
+        var index = 0
+        stackView.insertArrangedSubviewsWithCustomSpacing(
+            [
+                defaultSummaryView,
+                BEStackViewSpacing(24)
+            ],
+            at: &index
+        )
+        
+        defaultSummaryView.amountInFiatLabel.text = transaction.amountInFiat.toString(maximumFractionDigits: 4, showPlus: true) + " $"
+        defaultSummaryView.amountInTokenLabel.text = transaction.amount.toString(maximumFractionDigits: 4, showPlus: true) + " " + transaction.symbol
     }
 }
 
