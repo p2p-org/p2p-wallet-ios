@@ -292,11 +292,12 @@
 "Enter a seed phrase from your account" = "Saisissez une phrase de départ de votre compte";
 "Wrapped %@ by %@" = "Wrapped %@ par %@";
 "Transfer" = "Transfert";
-"Create account" = "Créer un compte";
-"Close account" = "Fermer le compte";
+"Create account" = "Créer un Compte";
+"Close account" = "Fermer le Compte";
 "%@ to %@" = "%@ à %@";
 "%@ closed" = "%@ fermé";
 "%@ Created" = "%@ Créé";
 "To %@" = "À %@";
 "From token %@" = "De %@";
 "Completed" = "Complété";
+"Show transaction details" = "Afficher les détails de la transaction";
