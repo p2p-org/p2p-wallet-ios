@@ -11,6 +11,7 @@ import RxSwift
 
 class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     let account: String
+    let accountSymbol: String
     var before: String?
     let repository: TransactionsRepository
     let pricesRepository: PricesRepository
@@ -18,10 +19,12 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     
     init(
         account: String,
+        accountSymbol: String,
         repository: TransactionsRepository,
         pricesRepository: PricesRepository
     ) {
         self.account = account
+        self.accountSymbol = accountSymbol
         self.repository = repository
         self.pricesRepository = pricesRepository
         super.init(isPaginationEnabled: true, limit: 10)
@@ -38,6 +41,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     override func createRequest() -> Single<[SolanaSDK.AnyTransaction]> {
         repository.getTransactionsHistory(
             account: account,
+            accountSymbol: accountSymbol,
             before: before,
             limit: limit
         )

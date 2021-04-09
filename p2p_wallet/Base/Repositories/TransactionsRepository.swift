@@ -9,18 +9,18 @@ import Foundation
 import RxSwift
 
 protocol TransactionsRepository {
-    func getTransactionsHistory(account: String, before: String?, limit: Int) -> Single<[SolanaSDK.AnyTransaction]>
-    func getTransaction(signature: String, parser: SolanaSDK.TransactionParser) -> Single<SolanaSDK.AnyTransaction>
+    func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int) -> Single<[SolanaSDK.AnyTransaction]>
+    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDK.TransactionParser) -> Single<SolanaSDK.AnyTransaction>
 }
 
 extension SolanaSDK: TransactionsRepository {
-    func getTransactionsHistory(account: String, before: String?, limit: Int) -> Single<[AnyTransaction]> {
+    func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int) -> Single<[AnyTransaction]> {
         getConfirmedSignaturesForAddress2(account: account, configs: RequestConfiguration(limit: limit, before: before))
             .flatMap {activities in
                 let signatures = activities.map {$0.signature}
                 let parser = SolanaSDK.TransactionParser(solanaSDK: self)
                 return Single.zip(signatures.map {
-                    self.getTransaction(signature: $0, parser: parser)
+                    self.getTransaction(account: account, accountSymbol: accountSymbol, signature: $0, parser: parser)
                 })
             }
             .do(onSuccess: {transactions in
@@ -30,10 +30,10 @@ extension SolanaSDK: TransactionsRepository {
             })
     }
     
-    func getTransaction(signature: String, parser: SolanaSDK.TransactionParser) -> Single<AnyTransaction> {
+    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDK.TransactionParser) -> Single<AnyTransaction> {
         getConfirmedTransaction(transactionSignature: signature)
             .flatMap { info in
-                parser.parse(signature: signature, transactionInfo: info)
+                parser.parse(signature: signature, transactionInfo: info, myAccount: account, myAccountSymbol: accountSymbol)
             }
             .catchAndReturn(AnyTransaction(signature: signature, value: nil))
     }

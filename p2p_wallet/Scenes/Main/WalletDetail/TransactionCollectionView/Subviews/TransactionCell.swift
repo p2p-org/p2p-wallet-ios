@@ -18,11 +18,6 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
         amountInTokenLabel,
         swapTransactionImageView
     ]}
-    var currentWallet: Wallet? {
-        didSet {
-            imageView.currentWallet = currentWallet
-        }
-    }
     
     // MARK: - Subviews
     private lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
@@ -79,24 +74,21 @@ extension TransactionCell: BECollectionViewCell {
         case let transaction as SolanaSDK.TransferTransaction:
             transactionTypeLabel.text = L10n.transfer
             
-            // Send
-            if currentWallet?.pubkey == transaction.source?.pubkey
-            {
+            switch transaction.transferType {
+            case .send:
                 transactionTypeLabel.text = L10n.send
                 if let destination = transaction.destination?.pubkey
                 {
                     descriptionLabel.text = L10n.to(destination.prefix(4) + "..." + destination.suffix(4))
                 }
-            }
-            
-            // Receive
-            if currentWallet?.pubkey == transaction.destination?.pubkey
-            {
+            case .receive:
                 transactionTypeLabel.text = L10n.receive
                 if let source = transaction.source?.pubkey
                 {
                     descriptionLabel.text = L10n.fromToken(source.prefix(4) + "..." + source.suffix(4))
                 }
+            default:
+                break
             }
             
         case let transaction as SolanaSDK.SwapTransaction:

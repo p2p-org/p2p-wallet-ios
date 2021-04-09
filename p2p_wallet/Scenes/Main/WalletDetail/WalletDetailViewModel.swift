@@ -50,7 +50,7 @@ class WalletDetailViewModel {
         self.walletsRepository = walletsRepository
         self.pubkey = walletPubkey
         self.symbol = walletSymbol
-        self.transactionsViewModel = TransactionsViewModel(account: walletPubkey, repository: solanaSDK, pricesRepository: pricesRepository)
+        self.transactionsViewModel = TransactionsViewModel(account: walletPubkey, accountSymbol: walletSymbol, repository: solanaSDK, pricesRepository: pricesRepository)
         self.graphViewModel = WalletGraphVM(symbol: walletSymbol)
         bind()
     }
