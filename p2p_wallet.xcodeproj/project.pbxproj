@@ -137,7 +137,7 @@
 		BC65E256261EF34B00E436C7 /* TransactionInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E253261EF34B00E436C7 /* TransactionInfoViewModel.swift */; };
 		BC65E257261EF34B00E436C7 /* TransactionInfoRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E254261EF34B00E436C7 /* TransactionInfoRootView.swift */; };
 		BC65E258261EF34B00E436C7 /* TransactionInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E255261EF34B00E436C7 /* TransactionInfoViewController.swift */; };
-		BC65E2772620058700E436C7 /* TransactionRootView+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E2762620058700E436C7 /* TransactionRootView+Subviews.swift */; };
+		BC65E2772620058700E436C7 /* TransactionInfoRootView+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E2762620058700E436C7 /* TransactionInfoRootView+Subviews.swift */; };
 		BC65E27F2620341B00E436C7 /* SolanaSDK.AnyTransaction+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E27E2620341B00E436C7 /* SolanaSDK.AnyTransaction+Extensions.swift */; };
 		BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9B82542B98D005F50CE /* BaseVC.swift */; };
 		BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */; };
@@ -440,7 +440,7 @@
 		BC65E253261EF34B00E436C7 /* TransactionInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionInfoViewModel.swift; sourceTree = "<group>"; };
 		BC65E254261EF34B00E436C7 /* TransactionInfoRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionInfoRootView.swift; sourceTree = "<group>"; };
 		BC65E255261EF34B00E436C7 /* TransactionInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionInfoViewController.swift; sourceTree = "<group>"; };
-		BC65E2762620058700E436C7 /* TransactionRootView+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransactionRootView+Subviews.swift"; sourceTree = "<group>"; };
+		BC65E2762620058700E436C7 /* TransactionInfoRootView+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransactionInfoRootView+Subviews.swift"; sourceTree = "<group>"; };
 		BC65E27E2620341B00E436C7 /* SolanaSDK.AnyTransaction+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.AnyTransaction+Extensions.swift"; sourceTree = "<group>"; };
 		BC65E9B82542B98D005F50CE /* BaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVC.swift; sourceTree = "<group>"; };
 		BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVStackVC.swift; sourceTree = "<group>"; };
@@ -931,7 +931,7 @@
 		BC65E252261EF32900E436C7 /* TransactionInfo */ = {
 			isa = PBXGroup;
 			children = (
-				BC65E2762620058700E436C7 /* TransactionRootView+Subviews.swift */,
+				BC65E2762620058700E436C7 /* TransactionInfoRootView+Subviews.swift */,
 				BC65E254261EF34B00E436C7 /* TransactionInfoRootView.swift */,
 				BC65E253261EF34B00E436C7 /* TransactionInfoViewModel.swift */,
 				BC65E255261EF34B00E436C7 /* TransactionInfoViewController.swift */,
@@ -2084,7 +2084,7 @@
 				BC5ED749256237AB0030572D /* EmptyView.swift in Sources */,
 				BC6EE77D254BB8F400FE1025 /* Settings.swift in Sources */,
 				BC11CA122591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift in Sources */,
-				BC65E2772620058700E436C7 /* TransactionRootView+Subviews.swift in Sources */,
+				BC65E2772620058700E436C7 /* TransactionInfoRootView+Subviews.swift in Sources */,
 				BC8F691D260ADF7D002FDCCD /* ChooseWalletViewModel.swift in Sources */,
 				BC05891325D3CD7C00632993 /* SwapTokenViewModel.swift in Sources */,
 				BC65E037261D72B200E436C7 /* TransactionsRepository.swift in Sources */,
