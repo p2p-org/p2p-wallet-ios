@@ -68,6 +68,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         
         scrollView.contentInset.left = 0
         scrollView.contentInset.right = 0
+        scrollView.contentInset.top = 56
         
         scrollView.constraintToSuperviewWithAttribute(.top)?.isActive = false
         headerView.autoPinEdge(.bottom, to: .top, of: scrollView)
@@ -86,9 +87,6 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         separator.autoPinEdge(toSuperviewEdge: .leading)
         separator.autoPinEdge(toSuperviewEdge: .trailing)
         separator.autoAlignAxis(.horizontal, toSameAxisOf: transactionIconImageView)
-        
-        // content inset
-        scrollView.contentInset.modify(dTop: 58)
         
         // setup content
         stackView.spacing = 0
@@ -168,6 +166,9 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                 ],
                 at: &index
             )
+            
+            defaultSummaryView.amountInFiatLabel.text = transaction.amountInFiat.toString(maximumFractionDigits: 4, showPlus: true) + " $"
+            defaultSummaryView.amountInTokenLabel.text = transaction.amount.toString(maximumFractionDigits: 4, showPlus: true) + " " + transaction.symbol
         }
     }
 }
