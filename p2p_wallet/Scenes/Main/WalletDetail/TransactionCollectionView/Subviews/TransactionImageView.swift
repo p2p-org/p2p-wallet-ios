@@ -43,27 +43,13 @@ class TransactionImageView: BEView {
     }
     
     func setUp(transaction: SolanaSDK.AnyTransaction) {
-        basicIconImageView.image = nil
         fromTokenImageView.alpha = 0
         toTokenImageView.alpha = 0
+        
+        basicIconImageView.isHidden = false
+        basicIconImageView.image = transaction.icon
+        
         switch transaction.value {
-        case let transaction as SolanaSDK.CreateAccountTransaction:
-            basicIconImageView.isHidden = false
-            basicIconImageView.image = .transactionCreateAccount
-        case let transaction as SolanaSDK.CloseAccountTransaction:
-            basicIconImageView.isHidden = false
-            basicIconImageView.image = .transactionCloseAccount
-        case let transaction as SolanaSDK.TransferTransaction:
-            basicIconImageView.isHidden = false
-            
-            switch transaction.transferType {
-            case .send:
-                basicIconImageView.image = .transactionSend
-            case .receive:
-                basicIconImageView.image = .transactionReceive
-            default:
-                break
-            }
         case let transaction as SolanaSDK.SwapTransaction:
             basicIconImageView.isHidden = true
             
@@ -73,8 +59,7 @@ class TransactionImageView: BEView {
             fromTokenImageView.setUp(token: transaction.source)
             toTokenImageView.setUp(token: transaction.destination)
         default:
-            basicIconImageView.isHidden = false
-            basicIconImageView.image = .transactionSwap
+            break
         }
     }
 }
