@@ -70,23 +70,45 @@ extension TransactionInfoRootView {
             
             stackView.axis = .horizontal
             stackView.alignment = .top
-            stackView.distribution = .equalCentering
+            stackView.distribution = .equalSpacing
             stackView.spacing = 22
             
+            let swapIconImageView = UIImageView(width: 24, height: 24, image: .transactionSwap, tintColor: .a3a5ba)
+                .padding(.init(all: 6), backgroundColor: .f6f6f8, cornerRadius: 12)
+            
             stackView.addArrangedSubviews([
-                UIStackView(axis: .vertical, alignment: .center, distribution: .fill, arrangedSubviews: [
-                    sourceIconImageView,
-                    sourceAmountLabel,
-                    sourceSymbolLabel
+                UIView.spacer,
+                sourceIconImageView,
+                UIStackView(axis: .vertical, arrangedSubviews: [
+                    UIView.spacer,
+                    swapIconImageView
                 ]),
-                UIImageView(width: 24, height: 24, image: .transactionSwap, tintColor: .a3a5ba)
-                    .padding(.init(all: 6), backgroundColor: .f6f6f8, cornerRadius: 12),
-                UIStackView(axis: .vertical, alignment: .center, distribution: .fill, arrangedSubviews: [
-                    destinationIconImageView,
-                    destinationAmountLabel,
-                    destinationSymbolLabel
-                ])
+                destinationIconImageView,
+                UIView.spacer
             ])
+            
+            swapIconImageView.autoAlignAxis(.horizontal, toSameAxisOf: sourceIconImageView)
+            
+            stackView.constraintToSuperviewWithAttribute(.bottom)?.isActive = false
+            
+            addSubview(sourceAmountLabel)
+            sourceAmountLabel.autoPinEdge(.top, to: .bottom, of: sourceIconImageView, withOffset: 20)
+            sourceAmountLabel.autoAlignAxis(.vertical, toSameAxisOf: sourceIconImageView)
+            
+            addSubview(sourceSymbolLabel)
+            sourceSymbolLabel.autoPinEdge(.top, to: .bottom, of: sourceAmountLabel, withOffset: 4)
+            sourceSymbolLabel.autoAlignAxis(.vertical, toSameAxisOf: sourceIconImageView)
+            
+            addSubview(destinationAmountLabel)
+            destinationAmountLabel.autoPinEdge(.top, to: .bottom, of: destinationIconImageView, withOffset: 20)
+            destinationAmountLabel.autoAlignAxis(.vertical, toSameAxisOf: destinationIconImageView)
+            
+            addSubview(destinationSymbolLabel)
+            destinationSymbolLabel.autoPinEdge(.top, to: .bottom, of: destinationAmountLabel, withOffset: 4)
+            destinationSymbolLabel.autoAlignAxis(.vertical, toSameAxisOf: destinationIconImageView)
+            
+            // pin bottom
+            sourceSymbolLabel.autoPinEdge(toSuperviewEdge: .bottom)
         }
         
         private func createAmountLabel() -> UILabel {
@@ -94,7 +116,7 @@ extension TransactionInfoRootView {
         }
         
         private func createSymbolLabel() -> UILabel {
-            UILabel(textSize: 21, weight: .semibold, textColor: .textSecondary, textAlignment: .center)
+            UILabel(textSize: 17, weight: .semibold, textColor: .textSecondary, textAlignment: .center)
         }
     }
     
