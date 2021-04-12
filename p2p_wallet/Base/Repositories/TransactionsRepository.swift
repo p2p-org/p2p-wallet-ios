@@ -10,17 +10,28 @@ import RxSwift
 
 protocol TransactionsRepository {
     func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int) -> Single<[SolanaSDK.AnyTransaction]>
-    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDK.TransactionParser) -> Single<SolanaSDK.AnyTransaction>
+    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType) -> Single<SolanaSDK.AnyTransaction>
 }
 
 extension SolanaSDK: TransactionsRepository {
     func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int) -> Single<[AnyTransaction]> {
         getConfirmedSignaturesForAddress2(account: account, configs: RequestConfiguration(limit: limit, before: before))
             .flatMap {activities in
-                let signatures = activities.map {$0.signature}
+                
+                // construct parser
                 let parser = SolanaSDK.TransactionParser(solanaSDK: self)
-                return Single.zip(signatures.map {
-                    self.getTransaction(account: account, accountSymbol: accountSymbol, signature: $0, parser: parser)
+                
+                // parse
+                return Single.zip(activities.map { activity in
+                    self.getTransaction(account: account, accountSymbol: accountSymbol, signature: activity.signature, parser: parser)
+                        .map {
+                            AnyTransaction(
+                                signature: $0.signature,
+                                value: $0.value,
+                                slot: activity.slot,
+                                blockTime: $0.blockTime
+                            )
+                        }
                 })
             }
             .do(onSuccess: {transactions in
@@ -30,11 +41,35 @@ extension SolanaSDK: TransactionsRepository {
             })
     }
     
-    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDK.TransactionParser) -> Single<AnyTransaction> {
+    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType) -> Single<AnyTransaction> {
         getConfirmedTransaction(transactionSignature: signature)
             .flatMap { info in
-                parser.parse(signature: signature, transactionInfo: info, myAccount: account, myAccountSymbol: accountSymbol)
+                let time = info.blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(info.blockTime!)): nil
+                
+                return parser.parse(transactionInfo: info, myAccount: account, myAccountSymbol: accountSymbol)
+                    .map {
+                        AnyTransaction(
+                            signature: signature,
+                            value: $0.value,
+                            slot: nil,
+                            blockTime: time)
+                    }
+                    .catchAndReturn(
+                        AnyTransaction(
+                            signature: signature,
+                            value: nil,
+                            slot: nil,
+                            blockTime: time
+                        )
+                    )
             }
-            .catchAndReturn(AnyTransaction(signature: signature, value: nil))
+            .catchAndReturn(
+                AnyTransaction(
+                    signature: signature,
+                    value: nil,
+                    slot: nil,
+                    blockTime: nil
+                )
+            )
     }
 }
