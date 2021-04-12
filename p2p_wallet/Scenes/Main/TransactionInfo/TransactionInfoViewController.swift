@@ -56,6 +56,9 @@ class TransactionInfoViewController: WLIndicatorModalVC {
 
 extension TransactionInfoViewController: UIViewControllerTransitioningDelegate {
     private class PresentationController: FlexibleHeightPresentationController {
+        var originFrame: CGRect?
+        var state: UIPanGestureRecognizer.State?
+        
         override func calculateFittingHeightOfPresentedView(targetWidth: CGFloat) -> CGFloat {
             var height = super.calculateFittingHeightOfPresentedView(targetWidth: targetWidth)
             
@@ -63,6 +66,25 @@ extension TransactionInfoViewController: UIViewControllerTransitioningDelegate {
                 .rootView.intrinsicContentSize.height
             
             return height
+        }
+        
+        override var frameOfPresentedViewInContainerView: CGRect {
+            if state == .ended, let frame = originFrame {
+                originFrame = nil
+                return frame
+            }
+            return super.frameOfPresentedViewInContainerView
+        }
+        
+        override func presentedViewDidSwipe(gestureRecognizer: UIPanGestureRecognizer) {
+            guard let view = gestureRecognizer.view else {return}
+            state = gestureRecognizer.state
+            
+            if state == .began {
+                originFrame = view.frame
+            }
+            
+            super.presentedViewDidSwipe(gestureRecognizer: gestureRecognizer)
         }
     }
     
