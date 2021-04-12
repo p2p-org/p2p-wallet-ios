@@ -8,7 +8,7 @@
 import UIKit
 import RxSwift
 
-class TransactionInfoRootView: ScrollableVStackRootView {
+class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
     // MARK: - Constants
     
     // MARK: - Properties
