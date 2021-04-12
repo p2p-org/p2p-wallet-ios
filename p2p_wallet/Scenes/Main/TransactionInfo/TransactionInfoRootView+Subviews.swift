@@ -44,7 +44,7 @@ extension TransactionInfoRootView {
     
     class DefaultSummaryView: SummaryView {
         lazy var amountInFiatLabel = UILabel(textSize: 27, weight: .bold, textAlignment: .center)
-        lazy var amountInTokenLabel = UILabel(weight: .medium, textAlignment: .center)
+        lazy var amountInTokenLabel = UILabel(weight: .semibold, textColor: .textSecondary, textAlignment: .center)
         
         override func commonInit() {
             super.commonInit()
