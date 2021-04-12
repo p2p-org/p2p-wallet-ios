@@ -181,7 +181,6 @@
 		BC8F6945260AE69E002FDCCD /* WLSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F6944260AE69E002FDCCD /* WLSectionHeaderView.swift */; };
 		BC8F694D260AE956002FDCCD /* ChooseWalletCollectionView+SupplementaryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F694C260AE956002FDCCD /* ChooseWalletCollectionView+SupplementaryViews.swift */; };
 		BC8F6953260AEA12002FDCCD /* ChooseWalletCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F6952260AEA12002FDCCD /* ChooseWalletCollectionView.swift */; };
-		BC932B3C257E095B007F1C29 /* TransactionInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC932B3B257E095B007F1C29 /* TransactionInfoVC.swift */; };
 		BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */; };
 		BCA93F5325E77C240081DDF6 /* TokenSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5025E77C240081DDF6 /* TokenSettingsViewModel.swift */; };
 		BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5125E77C240081DDF6 /* TokenSettingsRootView.swift */; };
@@ -485,7 +484,6 @@
 		BC8F6944260AE69E002FDCCD /* WLSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLSectionHeaderView.swift; sourceTree = "<group>"; };
 		BC8F694C260AE956002FDCCD /* ChooseWalletCollectionView+SupplementaryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChooseWalletCollectionView+SupplementaryViews.swift"; sourceTree = "<group>"; };
 		BC8F6952260AEA12002FDCCD /* ChooseWalletCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWalletCollectionView.swift; sourceTree = "<group>"; };
-		BC932B3B257E095B007F1C29 /* TransactionInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionInfoVC.swift; sourceTree = "<group>"; };
 		BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		BCA93F5025E77C240081DDF6 /* TokenSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsViewModel.swift; sourceTree = "<group>"; };
 		BCA93F5125E77C240081DDF6 /* TokenSettingsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsRootView.swift; sourceTree = "<group>"; };
@@ -1302,7 +1300,6 @@
 				BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */,
 				BC3122372580B36D00F3B14F /* PassCodeVCs */,
 				BCD5E74425512D1500F51299 /* CollectionVC */,
-				BC932B3B257E095B007F1C29 /* TransactionInfoVC.swift */,
 				BC3B3DA9258C653000C6117E /* WLModalVC.swift */,
 				BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */,
 				BC11CA192591E30200E399A9 /* WLModalWrapperVC.swift */,
@@ -1886,7 +1883,6 @@
 				BC8F691E260ADF7D002FDCCD /* ChooseWalletRootView.swift in Sources */,
 				BC8F684D2609D866002FDCCD /* WalletsRepository.swift in Sources */,
 				BC0E7DC725B178BF009AD08B /* SelectLanguageVC.swift in Sources */,
-				BC932B3C257E095B007F1C29 /* TransactionInfoVC.swift in Sources */,
 				BCE42E0425DFA0B50021540E /* CreateWalletViewController.swift in Sources */,
 				BC22ABE12552A4B70071C69F /* DismissMenuAnimator.swift in Sources */,
 				BCA93FA425ECD16E0081DDF6 /* TokenSettingsSection.swift in Sources */,

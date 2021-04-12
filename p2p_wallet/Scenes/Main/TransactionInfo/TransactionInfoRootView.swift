@@ -234,7 +234,76 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
         defaultSummaryView.amountInFiatLabel.text = transaction.amountInFiat.toString(maximumFractionDigits: 4, showPlus: true) + " $"
         defaultSummaryView.amountInTokenLabel.text = transaction.amount.toString(maximumFractionDigits: 4, showPlus: true) + " " + transaction.symbol
         
+        switch transaction.value {
+        case let transferTransaction as SolanaSDK.TransferTransaction:
+            var fromIconView: UIView
+            var toIconView: UIView
+            let coinLogoImageView = CoinLogoImageView(width: 45, height: 45)
+            
+            switch transferTransaction.transferType {
+            case .send:
+                coinLogoImageView.setUp(token: transferTransaction.source)
+                
+                fromIconView = coinLogoImageView
+                toIconView = UIImageView(width: 25, height: 25, image: .walletIcon, tintColor: .a3a5ba)
+                    .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
+                
+            case .receive:
+                fromIconView = UIImageView(width: 25, height: 25, image: .walletIcon, tintColor: .a3a5ba)
+                    .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
+                coinLogoImageView.setUp(token: transferTransaction.destination)
+                toIconView = coinLogoImageView
+            default:
+                fromIconView = UIView()
+                toIconView = UIView()
+            }
+            
+            transactionDetailView.addArrangedSubviews([
+                createTokenInfo(
+                    title: L10n.from,
+                    iconView: fromIconView,
+                    token: transferTransaction.source,
+                    selector: #selector(
+                        TransactionInfoViewModel.copySourceAddressToClipboard
+                    )
+                ),
+                createTokenInfo(
+                    title: L10n.to,
+                    iconView: toIconView,
+                    token: transferTransaction.destination,
+                    selector: #selector(
+                        TransactionInfoViewModel.copyDestinationAddressToClipboard
+                    )
+                )
+            ])
+            
+        case let createAccountTransaction as SolanaSDK.CreateAccountTransaction:
+            transactionDetailView.addArrangedSubviews([
+                createTokenInfo(
+                    title: L10n.newWallet,
+                    iconView: CoinLogoImageView(width: 45, height: 45)
+                        .with(token: createAccountTransaction.newToken),
+                    token: createAccountTransaction.newToken,
+                    selector: #selector(
+                        TransactionInfoViewModel.copyDestinationAddressToClipboard
+                    )
+                )
+            ])
+        case let transaction as SolanaSDK.CloseAccountTransaction:
+            break
+        default:
+            break
+        }
+        
         transactionDetailView.addArrangedSubviews([
+            createLabelsOnlySection(
+                title: L10n.amount.uppercaseFirst,
+                content: transaction.amount.toString(maximumFractionDigits: 9, showMinus: false) + " " + transaction.symbol
+            ),
+            createLabelsOnlySection(
+                title: L10n.value,
+                content: "\(Defaults.fiat.symbol) " + transaction.amountInFiat?.toString(maximumFractionDigits: 9, showMinus: false)
+            ),
             blockNumSection
         ])
     }
@@ -242,12 +311,14 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
 
 // MARK: - View builders
 private extension TransactionInfoRootView {
-    func createLabelsOnlySection(title: String) -> TransactionInfoSection<UILabel, UILabel>
+    func createLabelsOnlySection(title: String, content: String? = nil) -> TransactionInfoSection<UILabel, UILabel>
     {
-        TransactionInfoSection(
+        let section = TransactionInfoSection(
             titleView: createSectionTitle(title),
             contentView: createContentLabel()
         )
+        section.contentView.text = content
+        return section
     }
     
     func createTransactionIdSection(signatureLabel: UILabel) -> TransactionInfoSection<UILabel, UIStackView>
@@ -267,6 +338,35 @@ private extension TransactionInfoRootView {
                 ]
             )
         )
+    }
+    
+    func createTokenInfo(
+        title: String,
+        iconView: UIView,
+        token: SolanaSDK.Token?,
+        selector: Selector
+    ) -> TransactionInfoSection<UILabel, UIStackView> {
+        let section = TransactionInfoSection(
+            titleView: createSectionTitle(title),
+            contentView: UIStackView(
+                axis: .horizontal,
+                spacing: 16,
+                alignment: .center,
+                distribution: .fill,
+                arrangedSubviews: [
+                    iconView,
+                    UIStackView(axis: .vertical, spacing: 7, alignment: .fill, distribution: .fill, arrangedSubviews: [
+                        UILabel(text: token?.symbol, textSize: 17, weight: .semibold),
+                        UILabel(text: token?.shortPubkey, weight: .semibold, textColor: .textSecondary)
+                    ]),
+                    UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .a3a5ba)
+                        .padding(.init(all: 6), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                        .onTap(viewModel, action: selector)
+                ]
+            )
+        )
+        section.spacing = 20
+        return section
     }
     
     func createSectionTitle(_ title: String?) -> UILabel {
