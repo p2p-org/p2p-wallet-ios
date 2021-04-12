@@ -60,13 +60,6 @@ class WalletDetailViewModel {
             .map {$0?.first(where: {$0.pubkey == self.pubkey})}
             .bind(to: wallet)
             .disposed(by: disposeBag)
-        
-        transactionsViewModel.stateObservable
-            .map {$0 == .loading}
-            .subscribe(onNext: {[weak self] _ in
-                self?.graphViewModel.reload()
-            })
-            .disposed(by: disposeBag)
     }
     // MARK: - Actions
     @objc func showWalletSettings() {

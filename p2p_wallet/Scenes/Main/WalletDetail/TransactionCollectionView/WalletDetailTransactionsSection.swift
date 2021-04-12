@@ -42,6 +42,11 @@ class WalletDetailTransactionsSection: BECollectionViewSection {
         return header
     }
     
+    override func reload() {
+        super.reload()
+        graphViewModel.reload()
+    }
+    
     func reloadHeader(header: UICollectionReusableView? = nil) {
         if let header = (header ?? self.headerView()) as? WDVCSectionHeaderView {
             header.headerLabel.text = L10n.activity
