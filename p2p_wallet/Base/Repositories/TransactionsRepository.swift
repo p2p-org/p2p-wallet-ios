@@ -9,32 +9,72 @@ import Foundation
 import RxSwift
 
 protocol TransactionsRepository {
-    func getTransactionsHistory(account: String, before: String?, limit: Int) -> Single<[SolanaSDK.AnyTransaction]>
-    func getTransaction(signature: String, parser: SolanaSDK.TransactionParser) -> Single<SolanaSDK.AnyTransaction>
+    func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int) -> Single<[SolanaSDK.AnyTransaction]>
+    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType) -> Single<SolanaSDK.AnyTransaction>
 }
 
 extension SolanaSDK: TransactionsRepository {
-    func getTransactionsHistory(account: String, before: String?, limit: Int) -> Single<[AnyTransaction]> {
+    func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int) -> Single<[AnyTransaction]> {
         getConfirmedSignaturesForAddress2(account: account, configs: RequestConfiguration(limit: limit, before: before))
             .flatMap {activities in
-                let signatures = activities.map {$0.signature}
+                
+                // construct parser
                 let parser = SolanaSDK.TransactionParser(solanaSDK: self)
-                return Single.zip(signatures.map {
-                    self.getTransaction(signature: $0, parser: parser)
+                
+                // parse
+                return Single.zip(activities.map { activity in
+                    self.getTransaction(account: account, accountSymbol: accountSymbol, signature: activity.signature, parser: parser)
+                        .map {
+                            AnyTransaction(
+                                signature: $0.signature,
+                                value: $0.value,
+                                slot: activity.slot,
+                                blockTime: $0.blockTime,
+                                fee: $0.fee
+                            )
+                        }
                 })
             }
             .do(onSuccess: {transactions in
-                print(transactions.count)
+                Logger.log(message: "Fetched \(transactions.count) transactions", event: .debug)
             }, onError: {
-                print($0)
+                Logger.log(message: $0.readableDescription ?? "\($0)", event: .debug)
             })
     }
     
-    func getTransaction(signature: String, parser: SolanaSDK.TransactionParser) -> Single<AnyTransaction> {
+    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType) -> Single<AnyTransaction> {
         getConfirmedTransaction(transactionSignature: signature)
             .flatMap { info in
-                parser.parse(signature: signature, transactionInfo: info)
+                let time = info.blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(info.blockTime!)): nil
+                
+                return parser.parse(transactionInfo: info, myAccount: account, myAccountSymbol: accountSymbol)
+                    .map {
+                        AnyTransaction(
+                            signature: signature,
+                            value: $0.value,
+                            slot: nil,
+                            blockTime: time,
+                            fee: $0.fee
+                        )
+                    }
+                    .catchAndReturn(
+                        AnyTransaction(
+                            signature: signature,
+                            value: nil,
+                            slot: nil,
+                            blockTime: time,
+                            fee: info.meta?.fee
+                        )
+                    )
             }
-            .catchAndReturn(AnyTransaction(signature: signature, value: nil))
+            .catchAndReturn(
+                AnyTransaction(
+                    signature: signature,
+                    value: nil,
+                    slot: nil,
+                    blockTime: nil,
+                    fee: nil
+                )
+            )
     }
 }

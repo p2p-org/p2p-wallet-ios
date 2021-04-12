@@ -8,7 +8,7 @@
 import Foundation
 
 class ScrollableVStackRootView: BEView {
-    lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: UIEdgeInsets(top: .defaultPadding, left: .defaultPadding, bottom: 0, right: .defaultPadding))
+    lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: UIEdgeInsets(top: .defaultPadding, left: .defaultPadding, bottom: 24, right: .defaultPadding))
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
     override func commonInit() {
@@ -17,10 +17,18 @@ class ScrollableVStackRootView: BEView {
         addSubview(scrollView)
         scrollView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
         scrollView.autoPinBottomToSuperViewAvoidKeyboard()
-        scrollView.contentInset.modify(dBottom: 24)
         
         // stackView
         scrollView.contentView.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
+    }
+}
+
+class IntrinsicScrollableVStackRootView: ScrollableVStackRootView {
+    override var intrinsicContentSize: CGSize {
+        .init(
+            width: scrollView.contentSize.width + scrollView.contentInset.left + scrollView.contentInset.right,
+            height: scrollView.contentSize.height + scrollView.contentInset.top + scrollView.contentInset.bottom
+        )
     }
 }

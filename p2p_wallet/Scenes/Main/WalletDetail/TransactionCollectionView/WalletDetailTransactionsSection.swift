@@ -42,10 +42,9 @@ class WalletDetailTransactionsSection: BECollectionViewSection {
         return header
     }
     
-    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> BECollectionViewCell {
-        let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item) as! TransactionCell
-        cell.currentWallet = wallet
-        return cell
+    override func reload() {
+        super.reload()
+        graphViewModel.reload()
     }
     
     func reloadHeader(header: UICollectionReusableView? = nil) {

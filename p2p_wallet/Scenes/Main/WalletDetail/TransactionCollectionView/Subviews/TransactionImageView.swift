@@ -10,7 +10,6 @@ import Foundation
 class TransactionImageView: BEView {
     private let _backgroundColor: UIColor?
     private let _cornerRadius: CGFloat?
-    var currentWallet: Wallet?
     
     private lazy var basicIconImageView = UIImageView(width: 24.38, height: 24.38, tintColor: .a3a5ba)
     private lazy var fromTokenImageView = CoinLogoImageView(width: 30, height: 30)
@@ -44,26 +43,13 @@ class TransactionImageView: BEView {
     }
     
     func setUp(transaction: SolanaSDK.AnyTransaction) {
-        basicIconImageView.image = nil
         fromTokenImageView.alpha = 0
         toTokenImageView.alpha = 0
+        
+        basicIconImageView.isHidden = false
+        basicIconImageView.image = transaction.icon
+        
         switch transaction.value {
-        case let transaction as SolanaSDK.CreateAccountTransaction:
-            basicIconImageView.isHidden = false
-            basicIconImageView.image = .transactionCreateAccount
-        case let transaction as SolanaSDK.CloseAccountTransaction:
-            basicIconImageView.isHidden = false
-            basicIconImageView.image = .transactionCloseAccount
-        case let transaction as SolanaSDK.TransferTransaction:
-            // TODO: - Send, receive
-            basicIconImageView.isHidden = false
-            if currentWallet?.pubkey == transaction.source?.pubkey {
-                basicIconImageView.image = .transactionSend
-            }
-            if currentWallet?.pubkey == transaction.destination?.pubkey {
-                basicIconImageView.image = .transactionReceive
-            }
-            
         case let transaction as SolanaSDK.SwapTransaction:
             basicIconImageView.isHidden = true
             
@@ -73,8 +59,7 @@ class TransactionImageView: BEView {
             fromTokenImageView.setUp(token: transaction.source)
             toTokenImageView.setUp(token: transaction.destination)
         default:
-            basicIconImageView.isHidden = false
-            basicIconImageView.image = .transactionSwap
+            break
         }
     }
 }

@@ -294,10 +294,15 @@
 "Enter a seed phrase from your account" = "Nhập một cụm từ bảo mật từ tài khoản của bạn";
 "Wrapped %@ by %@" = "Wrapped %@ bởi %@";
 "Transfer" = "Chuyển khoản";
-"Create account" = "Tạo tài khoản";
-"Close account" = "Đóng tài khoản";
+"Create account" = "Tạo Tài khoản";
+"Close account" = "Đóng Tài khoản";
 "%@ to %@" = "%@ đến %@";
 "%@ closed" = "%@ đã đóng";
 "%@ Created" = "Tạo token %@";
 "To %@" = "Đến %@";
 "From token %@" = "Từ %@";
+"Completed" = "Đã hoàn thành";
+"Show transaction details" = "Hiển thị chi tiết giao dịch";
+"Hide transaction details" = "Ẩn chi tiết giao dịch";
+"New wallet" = "Ví mới";
+"Closed wallet" = "Ví đã đóng";
