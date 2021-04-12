@@ -213,6 +213,8 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
             + " \(L10n.to.lowercased()) "
             + transaction.destinationAmount
                 .toString(maximumFractionDigits: 4, showMinus: false)
+            + " "
+            + transaction.destination?.symbol
         
         transactionDetailView.addArrangedSubviews([
             fromSection,
