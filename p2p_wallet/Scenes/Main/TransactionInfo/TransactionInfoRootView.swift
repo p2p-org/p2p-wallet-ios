@@ -289,8 +289,15 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
                     )
                 )
             ])
-        case let transaction as SolanaSDK.CloseAccountTransaction:
-            break
+        case let closedAccountTransaction as SolanaSDK.CloseAccountTransaction:
+            transactionDetailView.addArrangedSubviews([
+                createTokenInfo(
+                    title: L10n.closedWallet,
+                    iconView: CoinLogoImageView(width: 45, height: 45)
+                        .with(token: closedAccountTransaction.closedToken),
+                    token: closedAccountTransaction.closedToken
+                )
+            ])
         default:
             break
         }
@@ -344,8 +351,22 @@ private extension TransactionInfoRootView {
         title: String,
         iconView: UIView,
         token: SolanaSDK.Token?,
-        selector: Selector
+        selector: Selector? = nil
     ) -> TransactionInfoSection<UILabel, UIStackView> {
+        var arrangedSubviews: [BEStackViewElement] = [
+            iconView,
+            UIStackView(axis: .vertical, spacing: 7, alignment: .fill, distribution: .fill, arrangedSubviews: [
+                UILabel(text: token?.symbol, textSize: 17, weight: .semibold),
+                UILabel(text: token?.shortPubkey, weight: .semibold, textColor: .textSecondary)
+            ])
+        ]
+        if let selector = selector {
+            arrangedSubviews.append(
+                UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .a3a5ba)
+                    .padding(.init(all: 6), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                    .onTap(viewModel, action: selector)
+            )
+        }
         let section = TransactionInfoSection(
             titleView: createSectionTitle(title),
             contentView: UIStackView(
@@ -353,16 +374,7 @@ private extension TransactionInfoRootView {
                 spacing: 16,
                 alignment: .center,
                 distribution: .fill,
-                arrangedSubviews: [
-                    iconView,
-                    UIStackView(axis: .vertical, spacing: 7, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                        UILabel(text: token?.symbol, textSize: 17, weight: .semibold),
-                        UILabel(text: token?.shortPubkey, weight: .semibold, textColor: .textSecondary)
-                    ]),
-                    UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .a3a5ba)
-                        .padding(.init(all: 6), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
-                        .onTap(viewModel, action: selector)
-                ]
+                arrangedSubviews: arrangedSubviews
             )
         )
         section.spacing = 20
