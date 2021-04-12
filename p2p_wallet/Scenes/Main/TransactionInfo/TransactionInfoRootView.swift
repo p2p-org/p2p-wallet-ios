@@ -205,16 +205,18 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
         toSection.contentView.text = transaction.destination?.pubkey
         
         let amountSection = createLabelsOnlySection(title: L10n.amount.uppercaseFirst)
-        amountSection.contentView.text =
-            transaction.sourceAmount
-                .toString(maximumFractionDigits: 4, showMinus: false)
-            + " "
-            + transaction.source?.symbol
-            + " \(L10n.to.lowercased()) "
-            + transaction.destinationAmount
-                .toString(maximumFractionDigits: 4, showMinus: false)
-            + " "
-            + transaction.destination?.symbol
+        var amountText: String = transaction.sourceAmount
+            .toString(maximumFractionDigits: 4, showMinus: false)
+        
+        amountText += " "
+        amountText += transaction.source?.symbol ?? ""
+        amountText += " \(L10n.to.lowercased()) "
+        amountText += transaction.destinationAmount
+            .toString(maximumFractionDigits: 4, showMinus: false)
+        amountText += " "
+        amountText += transaction.destination?.symbol ?? ""
+        
+        amountSection.contentView.text = amountText
         
         transactionDetailView.addArrangedSubviews([
             fromSection,
