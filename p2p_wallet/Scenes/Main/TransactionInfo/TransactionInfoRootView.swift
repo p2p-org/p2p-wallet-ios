@@ -30,6 +30,7 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
     // MARK: - Sections
     private lazy var transactionDetailView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
     private lazy var transactionIdSection = createTransactionIdSection(signatureLabel: signatureLabel)
+    private lazy var blockNumSection = createLabelsOnlySection(title: L10n.blockNumber)
     
 //    private lazy var transactionFromSection = createLabelsOnlySection(title: L10n.from)
     
@@ -125,7 +126,7 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
         transactionDriver
             .drive(onNext: {[weak self] transaction in
                 self?.transactionTypeLabel.text = transaction.label
-                // TODO: - Date
+                self?.transactionTimestampLabel.text = transaction.blockTime?.string(withFormat: "dd MMM yyyy @ HH:mm a")
                 self?.transactionIconImageView.image = transaction.icon
             })
             .disposed(by: disposeBag)
@@ -156,11 +157,19 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
     }
     
     private func setUp(transaction: SolanaSDK.AnyTransaction) {
+        // summary
         if let summaryView = stackView.arrangedSubviews.first as? SummaryView
         {
             summaryView.superview?.removeFromSuperview()
         }
+        
+        // transaction detail view
         transactionDetailView.arrangedSubviews.forEach {$0.removeFromSuperview()}
+        
+        // if detail shown
+        blockNumSection.contentView.text = "#\(transaction.slot ?? 0)"
+        
+        // modify
         switch transaction.value {
         case let transaction as SolanaSDK.SwapTransaction:
             setUpWithSwapTransaction(transaction)
@@ -206,7 +215,8 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
         transactionDetailView.addArrangedSubviews([
             fromSection,
             toSection,
-            amountSection
+            amountSection,
+            blockNumSection
         ])
     }
     
@@ -225,7 +235,7 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
         defaultSummaryView.amountInTokenLabel.text = transaction.amount.toString(maximumFractionDigits: 4, showPlus: true) + " " + transaction.symbol
         
         transactionDetailView.addArrangedSubviews([
-            
+            blockNumSection
         ])
     }
 }
