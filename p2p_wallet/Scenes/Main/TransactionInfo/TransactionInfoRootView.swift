@@ -31,6 +31,7 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
     private lazy var transactionDetailView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
     private lazy var transactionIdSection = createTransactionIdSection(signatureLabel: signatureLabel)
     private lazy var blockNumSection = createLabelsOnlySection(title: L10n.blockNumber)
+    private lazy var feeSection = createLabelsOnlySection(title: L10n.fee)
     
 //    private lazy var transactionFromSection = createLabelsOnlySection(title: L10n.from)
     
@@ -168,6 +169,7 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
         
         // if detail shown
         blockNumSection.contentView.text = "#\(transaction.slot ?? 0)"
+        feeSection.contentView.text = "\(transaction.fee ?? 0)"
         
         // modify
         switch transaction.value {
@@ -200,7 +202,7 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
         fromSection.contentView.text = transaction.source?.pubkey
         
         let toSection = createLabelsOnlySection(title: L10n.to)
-        toSection.contentView.text = transaction.destination?.pubkey
+        toSection.contentView.text = transaction.destination?.pubkey + " lamports"
         
         let amountSection = createLabelsOnlySection(title: L10n.amount.uppercaseFirst)
         amountSection.contentView.text =
@@ -216,6 +218,7 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
             fromSection,
             toSection,
             amountSection,
+            feeSection,
             blockNumSection
         ])
     }
@@ -234,6 +237,9 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
         defaultSummaryView.amountInFiatLabel.text = transaction.amountInFiat.toString(maximumFractionDigits: 4, showPlus: true) + " $"
         defaultSummaryView.amountInTokenLabel.text = transaction.amount.toString(maximumFractionDigits: 4, showPlus: true) + " " + transaction.symbol
         
+        // disable fee for receive action
+        var shouldAddFeeSection = true
+        
         switch transaction.value {
         case let transferTransaction as SolanaSDK.TransferTransaction:
             var fromIconView: UIView
@@ -249,6 +255,7 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
                     .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
                 
             case .receive:
+                shouldAddFeeSection = false
                 fromIconView = UIImageView(width: 25, height: 25, image: .walletIcon, tintColor: .a3a5ba)
                     .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
                 coinLogoImageView.setUp(token: transferTransaction.destination)
@@ -310,9 +317,13 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
             createLabelsOnlySection(
                 title: L10n.value,
                 content: "\(Defaults.fiat.symbol) " + transaction.amountInFiat?.toString(maximumFractionDigits: 9, showMinus: false)
-            ),
-            blockNumSection
+            )
         ])
+        
+        if shouldAddFeeSection {
+            transactionDetailView.addArrangedSubview(feeSection)
+        }
+        transactionDetailView.addArrangedSubview(blockNumSection)
     }
 }
 
