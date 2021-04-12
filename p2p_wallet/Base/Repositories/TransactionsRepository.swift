@@ -29,7 +29,8 @@ extension SolanaSDK: TransactionsRepository {
                                 signature: $0.signature,
                                 value: $0.value,
                                 slot: activity.slot,
-                                blockTime: $0.blockTime
+                                blockTime: $0.blockTime,
+                                fee: $0.fee
                             )
                         }
                 })
@@ -52,14 +53,17 @@ extension SolanaSDK: TransactionsRepository {
                             signature: signature,
                             value: $0.value,
                             slot: nil,
-                            blockTime: time)
+                            blockTime: time,
+                            fee: $0.fee
+                        )
                     }
                     .catchAndReturn(
                         AnyTransaction(
                             signature: signature,
                             value: nil,
                             slot: nil,
-                            blockTime: time
+                            blockTime: time,
+                            fee: info.meta?.fee
                         )
                     )
             }
@@ -68,7 +72,8 @@ extension SolanaSDK: TransactionsRepository {
                     signature: signature,
                     value: nil,
                     slot: nil,
-                    blockTime: nil
+                    blockTime: nil,
+                    fee: nil
                 )
             )
     }
