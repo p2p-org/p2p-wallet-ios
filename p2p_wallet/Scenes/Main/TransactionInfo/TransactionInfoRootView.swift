@@ -169,7 +169,7 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
         
         // if detail shown
         blockNumSection.contentView.text = "#\(transaction.slot ?? 0)"
-        feeSection.contentView.text = "\(transaction.fee ?? 0)"
+        feeSection.contentView.text = "\(transaction.fee ?? 0)" + " lamports"
         
         // modify
         switch transaction.value {
@@ -202,7 +202,7 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
         fromSection.contentView.text = transaction.source?.pubkey
         
         let toSection = createLabelsOnlySection(title: L10n.to)
-        toSection.contentView.text = transaction.destination?.pubkey + " lamports"
+        toSection.contentView.text = transaction.destination?.pubkey
         
         let amountSection = createLabelsOnlySection(title: L10n.amount.uppercaseFirst)
         amountSection.contentView.text =
