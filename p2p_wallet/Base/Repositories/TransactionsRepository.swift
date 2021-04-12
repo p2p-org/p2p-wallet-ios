@@ -24,9 +24,9 @@ extension SolanaSDK: TransactionsRepository {
                 })
             }
             .do(onSuccess: {transactions in
-                print(transactions.count)
+                Logger.log(message: "Fetched \(transactions.count) transactions", event: .debug)
             }, onError: {
-                print($0)
+                Logger.log(message: $0.readableDescription ?? "\($0)", event: .debug)
             })
     }
     
