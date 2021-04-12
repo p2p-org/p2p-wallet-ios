@@ -28,7 +28,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     private lazy var statusView = TransactionStatusView()
     
     // MARK: - Sections
-    private lazy var transactionDetailView = UIView(forAutoLayout: ())
+    private lazy var transactionDetailView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
     private lazy var transactionIdSection = createTransactionIdSection(signatureLabel: signatureLabel)
     
 //    private lazy var transactionFromSection = createLabelsOnlySection(title: L10n.from)
@@ -160,6 +160,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         {
             summaryView.superview?.removeFromSuperview()
         }
+        transactionDetailView.arrangedSubviews.forEach {$0.removeFromSuperview()}
         switch transaction.value {
         case let transaction as SolanaSDK.SwapTransaction:
             setUpWithSwapTransaction(transaction)
@@ -185,6 +186,28 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         swapSummaryView.destinationIconImageView.setUp(token: transaction.destination)
         swapSummaryView.destinationAmountLabel.text = transaction.destinationAmount?.toString(maximumFractionDigits: 4, showPlus: true)
         swapSummaryView.destinationSymbolLabel.text = transaction.destination?.symbol
+        
+        let fromSection = createLabelsOnlySection(title: L10n.from)
+        fromSection.contentView.text = transaction.source?.pubkey
+        
+        let toSection = createLabelsOnlySection(title: L10n.to)
+        toSection.contentView.text = transaction.destination?.pubkey
+        
+        let amountSection = createLabelsOnlySection(title: L10n.amount.uppercaseFirst)
+        amountSection.contentView.text =
+            transaction.sourceAmount
+                .toString(maximumFractionDigits: 4, showMinus: false)
+            + " "
+            + transaction.source?.symbol
+            + " \(L10n.to.lowercased()) "
+            + transaction.destinationAmount
+                .toString(maximumFractionDigits: 4, showMinus: false)
+        
+        transactionDetailView.addArrangedSubviews([
+            fromSection,
+            toSection,
+            amountSection
+        ])
     }
     
     private func setUpWithOtherTransaction(_ transaction: SolanaSDK.AnyTransaction)
@@ -200,6 +223,10 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         
         defaultSummaryView.amountInFiatLabel.text = transaction.amountInFiat.toString(maximumFractionDigits: 4, showPlus: true) + " $"
         defaultSummaryView.amountInTokenLabel.text = transaction.amount.toString(maximumFractionDigits: 4, showPlus: true) + " " + transaction.symbol
+        
+        transactionDetailView.addArrangedSubviews([
+            
+        ])
     }
 }
 
@@ -237,6 +264,6 @@ private extension TransactionInfoRootView {
     }
     
     func createContentLabel() -> UILabel {
-        UILabel(weight: .semibold)
+        UILabel(weight: .semibold, numberOfLines: 0)
     }
 }
