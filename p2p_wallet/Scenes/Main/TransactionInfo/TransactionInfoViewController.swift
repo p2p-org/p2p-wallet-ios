@@ -13,14 +13,15 @@ class TransactionInfoViewController: WLIndicatorModalVC {
     // MARK: - Properties
     let viewModel: TransactionInfoViewModel
     lazy var rootView = TransactionInfoRootView(viewModel: viewModel)
+    var viewTranslation = CGPoint(x: 0, y: 0)
     
     // MARK: - Initializer
     init(viewModel: TransactionInfoViewModel)
     {
         self.viewModel = viewModel
         super.init()
-//        modalPresentationStyle = .custom
-//        transitioningDelegate = self
+        modalPresentationStyle = .custom
+        transitioningDelegate = self
     }
     
     // MARK: - Methods
@@ -37,9 +38,9 @@ class TransactionInfoViewController: WLIndicatorModalVC {
             .disposed(by: disposeBag)
         
         viewModel.showDetailTransaction
-            .asDriver()
-            .drive(onNext: {[weak self] show in
-                
+            .distinctUntilChanged()
+            .subscribe(onNext: {[weak self] _ in
+                self?.forceResizeModal()
             })
             .disposed(by: disposeBag)
     }
@@ -48,13 +49,46 @@ class TransactionInfoViewController: WLIndicatorModalVC {
     private func navigate(to scene: TransactionInfoNavigatableScene) {
         switch scene {
         case .explorer:
-            showWebsite(url: "https://explorer.solana.com/tx/\(viewModel.transaction.value.signature)")
+            showWebsite(url: "https://explorer.solana.com/tx/\(viewModel.transaction.value.signature ?? "")")
         }
     }
 }
 
 extension TransactionInfoViewController: UIViewControllerTransitioningDelegate {
+    private class PresentationController: FlexibleHeightPresentationController {
+        var originFrame: CGRect?
+        var state: UIPanGestureRecognizer.State?
+        
+        override func calculateFittingHeightOfPresentedView(targetWidth: CGFloat) -> CGFloat {
+            var height = super.calculateFittingHeightOfPresentedView(targetWidth: targetWidth)
+            
+            height += (presentedViewController as! TransactionInfoViewController)
+                .rootView.intrinsicContentSize.height
+            
+            return height
+        }
+        
+        override var frameOfPresentedViewInContainerView: CGRect {
+            if state == .ended, let frame = originFrame {
+                originFrame = nil
+                return frame
+            }
+            return super.frameOfPresentedViewInContainerView
+        }
+        
+        override func presentedViewDidSwipe(gestureRecognizer: UIPanGestureRecognizer) {
+            guard let view = gestureRecognizer.view else {return}
+            state = gestureRecognizer.state
+            
+            if state == .began {
+                originFrame = view.frame
+            }
+            
+            super.presentedViewDidSwipe(gestureRecognizer: gestureRecognizer)
+        }
+    }
+    
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        FlexibleHeightPresentationController(position: .bottom, presentedViewController: presented, presenting: presenting)
+        PresentationController(position: .bottom, presentedViewController: presented, presenting: presenting)
     }
 }

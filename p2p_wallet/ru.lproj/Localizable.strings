@@ -295,9 +295,14 @@
 "Wrapped %@ by %@" = "Wrapped %@ с %@";
 "Transfer" = "Передача";
 "Create account" = "Зарегистрироваться";
-"Close account" = "Закрыть аккаунт";
+"Close account" = "Закрыть Аккаунт";
 "%@ to %@" = "%@ на %@";
 "%@ closed" = "%@ закрыто";
 "%@ Created" = "%@ Создан";
 "To %@" = "На %@";
 "From token %@" = "С %@";
+"Completed" = "Завершенный";
+"Show transaction details" = "Показать детали транзакции";
+"Hide transaction details" = "Скрыть детали транзакции";
+"New wallet" = "Новый кошелек";
+"Closed wallet" = "Закрытый кошелек";

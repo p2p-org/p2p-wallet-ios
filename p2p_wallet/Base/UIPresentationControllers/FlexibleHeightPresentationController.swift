@@ -30,27 +30,32 @@ class FlexibleHeightPresentationController: DimmingPresentationController, Resiz
         guard var frame = containerView?.bounds else { return .zero }
         
         let targetWidth = frame.width
+        var targetHeight: CGFloat
         
-        var targetHeight = calculateFittingHeightOfPresentedView(targetWidth: targetWidth)
-        
-        if targetHeight > frame.size.height {
-            return frame
+        // if swipe gesture is being called
+        if position == .bottom,
+           let currentTop = presentedViewCurrentTop,
+           let fixedFrame = presentedViewFixedFrame,
+           currentTop > fixedFrame.origin.y
+        {
+            frame.origin.y = currentTop
+            targetHeight = fixedFrame.height
         }
         
-        switch position {
-        case .bottom:
-            // swipe down
-            if let currentTop = presentedViewCurrentTop,
-               let fixedFrame = presentedViewFixedFrame,
-               currentTop > fixedFrame.origin.y
-            {
-                frame.origin.y = currentTop
-                targetHeight = fixedFrame.height
-            } else {
-                frame.origin.y += frame.size.height - targetHeight
+        // if no geture is being called
+        else {
+            targetHeight = calculateFittingHeightOfPresentedView(targetWidth: targetWidth)
+            
+            if targetHeight > frame.size.height {
+                return frame
             }
-        case .center:
-            frame.origin.y += (frame.size.height - targetHeight) / 2
+            
+            switch position {
+            case .bottom:
+                frame.origin.y += frame.size.height - targetHeight
+            case .center:
+                frame.origin.y += (frame.size.height - targetHeight) / 2
+            }
         }
         
         frame.size.width = targetWidth
@@ -82,16 +87,19 @@ class FlexibleHeightPresentationController: DimmingPresentationController, Resiz
             (presentedViewController as? BaseVC)?.forceResizeModal()
         case .ended:
             // calculate distances
-            let distanceToBottom = abs(containerView!.bounds.height - presentedViewCurrentTop!)
-            let distanceToTop = abs(presentedViewFixedFrame!.origin.y - presentedViewCurrentTop!)
-            
-            // Dismiss when presentedView is close to bottom
-            if distanceToBottom < distanceToTop * 5 {
-                presentedViewController
-                    .dismiss(animated: true, completion: nil)
-                return
+            if let presentedViewCurrentTop = presentedViewCurrentTop,
+               let presentedViewFixedFrame = presentedViewFixedFrame
+            {
+                let distanceToBottom = abs(containerView!.bounds.height - presentedViewCurrentTop)
+                let distanceToTop = abs(presentedViewFixedFrame.origin.y - presentedViewCurrentTop)
+                if distanceToBottom < distanceToTop * 5 {
+                    presentedViewController
+                        .dismiss(animated: true, completion: nil)
+                    return
+                }
             }
             
+            // Dismiss when presentedView is close to bottom
             presentedViewCurrentTop = nil
             animateResizing = true
             (presentedViewController as? BaseVC)?.forceResizeModal()

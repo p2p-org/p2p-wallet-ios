@@ -13,4 +13,11 @@ enum Fiat: String {
     var code: String {
         rawValue.uppercased()
     }
+    
+    var symbol: String {
+        switch self {
+        case .usd:
+            return "$"
+        }
+    }
 }

@@ -50,7 +50,7 @@ class WalletDetailViewModel {
         self.walletsRepository = walletsRepository
         self.pubkey = walletPubkey
         self.symbol = walletSymbol
-        self.transactionsViewModel = TransactionsViewModel(account: walletPubkey, repository: solanaSDK, pricesRepository: pricesRepository)
+        self.transactionsViewModel = TransactionsViewModel(account: walletPubkey, accountSymbol: walletSymbol, repository: solanaSDK, pricesRepository: pricesRepository)
         self.graphViewModel = WalletGraphVM(symbol: walletSymbol)
         bind()
     }
@@ -59,13 +59,6 @@ class WalletDetailViewModel {
         walletsRepository.dataObservable
             .map {$0?.first(where: {$0.pubkey == self.pubkey})}
             .bind(to: wallet)
-            .disposed(by: disposeBag)
-        
-        transactionsViewModel.stateObservable
-            .map {$0 == .loading}
-            .subscribe(onNext: {[weak self] _ in
-                self?.graphViewModel.reload()
-            })
             .disposed(by: disposeBag)
     }
     // MARK: - Actions
