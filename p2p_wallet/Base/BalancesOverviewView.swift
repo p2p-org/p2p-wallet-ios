@@ -66,7 +66,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
             showLoading()
         case .loaded(let wallets):
             let equityValue = wallets.reduce(0) { $0 + $1.amountInUSD }
-            equityValueLabel.text = "$ \(equityValue.toString(maximumFractionDigits: 2))"
+            equityValueLabel.text = "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             let changeValue = PricesManager.shared.solPrice?.change24h?.percentage * 100
             var color = UIColor.attentionGreen
             if changeValue < 0 {
@@ -97,7 +97,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
             showLoading()
         case .loaded:
             let equityValue = data.reduce(0) { $0 + $1.amountInUSD }
-            equityValueLabel.text = "$ \(equityValue.toString(maximumFractionDigits: 2))"
+            equityValueLabel.text = "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             changeLabel.text = L10n.allTokens // FIXME: - temporarily, remove later
             setUpChartView(wallets: data)
             hideLoading()
