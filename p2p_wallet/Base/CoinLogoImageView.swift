@@ -59,6 +59,11 @@ class CoinLogoImageView: BEView {
         return self
     }
     
+    func with(token: SolanaSDK.Token?) -> Self {
+        setUp(token: token)
+        return self
+    }
+    
     func with(placeholder: UIView) -> Self {
         self.placeholder?.removeFromSuperview()
         self.placeholder = placeholder

@@ -9,10 +9,19 @@ import Foundation
 
 extension TransactionInfoRootView {
     class TransactionInfoSection<TitleView: UIView, ContentView: UIView>: BEView {
-        lazy var stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [titleView, contentView])
+        lazy var stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [titleView, contentView])
         
         let titleView: TitleView
         let contentView: ContentView
+        
+        var spacing: CGFloat {
+            get {
+                stackView.spacing
+            }
+            set {
+                stackView.spacing = newValue
+            }
+        }
         
         init(titleView: TitleView, contentView: ContentView) {
             self.titleView = titleView
