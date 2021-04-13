@@ -295,7 +295,7 @@
 "Create account" = "Tạo Tài khoản";
 "Close account" = "Đóng Tài khoản";
 "%@ to %@" = "%@ đến %@";
-"%@ closed" = "%@ đã đóng";
+"%@ Сlosed" = "%@ Đã đóng";
 "%@ Created" = "Tạo token %@";
 "To %@" = "Đến %@";
 "From token %@" = "Từ %@";
