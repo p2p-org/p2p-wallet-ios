@@ -29,6 +29,7 @@ class WalletDetailTransactionsSection: BECollectionViewSection {
                     viewClass: WDVCSectionHeaderView.self
                 ),
                 cellType: TransactionCell.self,
+                emptyCellType: WLEmptyCell.self,
                 interGroupSpacing: 1,
                 itemHeight: .estimated(85)
             ),
@@ -40,6 +41,16 @@ class WalletDetailTransactionsSection: BECollectionViewSection {
         let header = super.configureHeader(indexPath: indexPath)
         reloadHeader(header: header)
         return header
+    }
+    
+    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
+        let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
+        if let cell = cell as? WLEmptyCell {
+            cell.titleLabel.text = L10n.noTransactionsYet
+            cell.subtitleLabel.text = L10n.youHaveNotMadeAnyTransactionYet
+            cell.imageView.image = .transactionEmpty
+        }
+        return cell
     }
     
     override func reload() {

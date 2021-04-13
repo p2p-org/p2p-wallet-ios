@@ -12,6 +12,7 @@ import Firebase
 @_exported import SwiftyUserDefaults
 import THPinViewController
 import Action
+import BECollectionView
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
