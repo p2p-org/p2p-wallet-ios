@@ -60,7 +60,7 @@ class SwapTokenViewController: WLIndicatorModalVC {
     private func navigate(to scene: SwapTokenNavigatableScene) {
         switch scene {
         case .chooseSourceWallet:
-            let vc = scenesFactory.makeChooseWalletViewController(customFilter: nil, showOtherWallets: false)
+            let vc = scenesFactory.makeChooseWalletViewController(customFilter: {$0.amount > 0}, showOtherWallets: false)
             vc.completion = {[weak self, weak vc] wallet in
                 if let wallet = self?.viewModel.wallets.first(where: {$0.pubkey == wallet.pubkey}) {
                     self?.viewModel.sourceWallet.accept(wallet)

@@ -75,7 +75,6 @@ extension TransactionCell: BECollectionViewCell {
         case let transaction as SolanaSDK.TransferTransaction:
             switch transaction.transferType {
             case .send:
-                transactionTypeLabel.text = L10n.send
                 if let destination = transaction.destination?.pubkey
                 {
                     descriptionLabel.text = L10n.to(destination.prefix(4) + "..." + destination.suffix(4))
