@@ -312,3 +312,8 @@
 "Check entered account info for sending. It should be account in Solana network" = "Vérifiez les informations de compte saisies pour l'envoi. \nIl devrait être compte dans le réseau Solana";
 "Wallet address is not valid" = "L'adresse du portefeuille n'est pas valide";
 "It must be an %@ wallet address " = "Il doit s'agir d'une adresse %@ wallet";
+"Slippage error" = "Erreur de glissement";
+"Swap instruction exceeds desired slippage limit.\nSet another slippage and try again." = "L'instruction de permutation dépasse la limite de glissement souhaitée.\nDéfinissez un autre glissement et réessayez.";
+"The fee calculation failed due to overflow, underflow or unexpected 0" = "Le calcul des frais a échoué en raison d'un dépassement de capacité, d'un dépassement inférieur ou inattendu 0";
+"Error processing instruction 0:custom program error: 0x1" = "Erreur de traitement de l'instruction 0: erreur de programme personnalisé: 0x1";
+"System error" = "Erreur système";

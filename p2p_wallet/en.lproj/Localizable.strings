@@ -312,3 +312,8 @@
 "Check entered account info for sending. It should be account in Solana network" = "Check entered account info for sending.\nIt should be account in Solana network";
 "Wallet address is not valid" = "Wallet address is not valid";
 "It must be an %@ wallet address " = "It must be an %@ wallet address";
+"Slippage error" = "Slippage error";
+"Swap instruction exceeds desired slippage limit.\nSet another slippage and try again." = "Swap instruction exceeds desired slippage limit.\nSet another slippage and try again.";
+"The fee calculation failed due to overflow, underflow or unexpected 0" = "The fee calculation failed due to overflow, underflow or unexpected 0";
+"Error processing instruction 0:custom program error: 0x1" = "Error processing instruction 0:custom program error: 0x1";
+"System error" = "System error";

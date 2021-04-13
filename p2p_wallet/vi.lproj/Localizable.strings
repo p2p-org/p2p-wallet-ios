@@ -312,3 +312,8 @@
 "Check entered account info for sending. It should be account in Solana network" = "Kiểm tra thông tin tài khoản đã nhập để gửi. \nNó phải là tài khoản trong mạng Solana";
 "Wallet address is not valid" = "Địa chỉ ví không hợp lệ";
 "It must be an %@ wallet address " = "Nó phải là một địa chỉ ví %@";
+"Slippage error" = "Lỗi trượt giá";
+"Swap instruction exceeds desired slippage limit.\nSet another slippage and try again." = "Lệnh hoán đổi vượt quá giới hạn trượt mong muốn.\nĐặt một lần trượt khác và thử lại.";
+"The fee calculation failed due to overflow, underflow or unexpected 0" = "Tính toán phí không thành công do tràn, thiếu hoặc 0 không mong muốn";
+"Error processing instruction 0:custom program error: 0x1" = "Hướng dẫn xử lý lỗi 0: lỗi chương trình tùy chỉnh: 0x1";
+"System error" = "Lỗi hệ thống";
