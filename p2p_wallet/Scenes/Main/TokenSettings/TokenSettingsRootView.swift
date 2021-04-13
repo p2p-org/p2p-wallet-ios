@@ -69,11 +69,8 @@ extension TokenSettingsRootView: BECollectionViewDelegate {
             return
         }
         switch item {
-        case .close:
-            guard let wallet = viewModel.wallet else {return}
-            if let balance = wallet.amount, balance > 0 {
-                viewModel.navigationSubject.onNext(.alert(title: L10n.error, description: L10n.nonNativeAccountCanOnlyBeClosedIfItsBalanceIsZero))
-            } else {
+        case .close(let isEnabled):
+            if isEnabled {
                 viewModel.navigationSubject.onNext(.closeConfirmation)
             }
         default:

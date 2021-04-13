@@ -297,7 +297,7 @@
 "Create account" = "Зарегистрироваться";
 "Close account" = "Закрыть Аккаунт";
 "%@ to %@" = "%@ на %@";
-"%@ closed" = "%@ закрыто";
+"%@ Closed" = "%@ Закрыто";
 "%@ Created" = "%@ Создан";
 "To %@" = "На %@";
 "From token %@" = "С %@";
@@ -306,3 +306,17 @@
 "Hide transaction details" = "Скрыть детали транзакции";
 "New wallet" = "Новый кошелек";
 "Closed wallet" = "Закрытый кошелек";
+"Nothing found" = "Ничего не найдено";
+"Change your search phrase" = "Измените поисковую фразу";
+"No transactions yet" = "Пока транзакций нет";
+"You have not made any transaction yet" = "Вы еще не совершили никаких транзакций";
+"The list is empty" = "Список пуст";
+"Check entered account info for sending. It should be account in Solana network" = "Проверьте введенную информацию об учетной записи для отправки. \nЭто должен быть аккаунт в сети Solana.";
+"Wallet address is not valid" = "Адрес кошелька недействителен";
+"It must be an %@ wallet address " = "Это должен быть адрес кошелька %@.";
+"Slippage error" = "Ошибка проскальзывания";
+"Swap instruction exceeds desired slippage limit.\nSet another slippage and try again." = "Инструкция по свопу превышает желаемый предел проскальзывания.\nУстановите другое проскальзывание и попробуйте еще раз.";
+"The fee calculation failed due to overflow, underflow or unexpected 0" = "Сбой при расчете комиссии из-за переполнения, недостаточного количества или непредвиденного значения 0";
+"Error processing instruction 0:custom program error: 0x1" = "Инструкция обработки ошибки 0: ошибка пользовательской программы: 0x1";
+"System error" = "Системная ошибка";
+"Token balance must be empty" = "Баланс токена должен быть пустым";

@@ -40,6 +40,8 @@ class WalletDetailRootView: BEView {
         
         collectionView.delegate = self
         
+        collectionView.contentInset.modify(dBottom: 50)
+        
         collectionView.scanQrCodeAction = CocoaAction { [weak self] in
             self?.viewModel.receiveTokens()
             return .just(())

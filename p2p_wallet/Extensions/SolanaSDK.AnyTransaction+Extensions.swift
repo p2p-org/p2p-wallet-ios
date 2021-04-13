@@ -17,7 +17,7 @@ extension SolanaSDK.AnyTransaction {
         case let transaction as SolanaSDK.TransferTransaction:
             switch transaction.transferType {
             case .send:
-                return L10n.send
+                return L10n.transfer
             case .receive:
                 return L10n.receive
             default:

@@ -297,7 +297,7 @@
 "Create account" = "Tạo Tài khoản";
 "Close account" = "Đóng Tài khoản";
 "%@ to %@" = "%@ đến %@";
-"%@ closed" = "%@ đã đóng";
+"%@ Сlosed" = "%@ Đã đóng";
 "%@ Created" = "Tạo token %@";
 "To %@" = "Đến %@";
 "From token %@" = "Từ %@";
@@ -306,3 +306,17 @@
 "Hide transaction details" = "Ẩn chi tiết giao dịch";
 "New wallet" = "Ví mới";
 "Closed wallet" = "Ví đã đóng";
+"Nothing found" = "Không tìm thấy thứ gì";
+"Change your search phrase" = "Thay đổi cụm từ tìm kiếm của bạn";
+"No transactions yet" = "Chưa có giao dịch nào";
+"You have not made any transaction yet" = "Bạn chưa thực hiện bất kỳ giao dịch nào";
+"The list is empty" = "Danh sách trống";
+"Check entered account info for sending. It should be account in Solana network" = "Kiểm tra thông tin tài khoản đã nhập để gửi. \nNó phải là tài khoản trong mạng Solana";
+"Wallet address is not valid" = "Địa chỉ ví không hợp lệ";
+"It must be an %@ wallet address " = "Nó phải là một địa chỉ ví %@";
+"Slippage error" = "Lỗi trượt giá";
+"Swap instruction exceeds desired slippage limit.\nSet another slippage and try again." = "Lệnh hoán đổi vượt quá giới hạn trượt mong muốn.\nĐặt một lần trượt khác và thử lại.";
+"The fee calculation failed due to overflow, underflow or unexpected 0" = "Tính toán phí không thành công do tràn, thiếu hoặc 0 không mong muốn";
+"Error processing instruction 0:custom program error: 0x1" = "Hướng dẫn xử lý lỗi 0: lỗi chương trình tùy chỉnh: 0x1";
+"System error" = "Lỗi hệ thống";
+"Token balance must be empty" = "Số dư ví phải bằng 0";
