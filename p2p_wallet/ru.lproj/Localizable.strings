@@ -309,3 +309,6 @@
 "No transactions yet" = "Пока транзакций нет";
 "You have not made any transaction yet" = "Вы еще не совершили никаких транзакций";
 "The list is empty" = "Список пуст";
+"Check entered account info for sending. It should be account in Solana network" = "Проверьте введенную информацию об учетной записи для отправки. \nЭто должен быть аккаунт в сети Solana.";
+"Wallet address is not valid" = "Адрес кошелька недействителен";
+"It must be an %@ wallet address " = "Это должен быть адрес кошелька %@.";

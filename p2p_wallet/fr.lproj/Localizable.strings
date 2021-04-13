@@ -309,3 +309,6 @@
 "No transactions yet" = "Aucune transaction pour le moment";
 "You have not made any transaction yet" = "Vous n'avez encore effectué aucune transaction";
 "The list is empty" = "La liste est vide";
+"Check entered account info for sending. It should be account in Solana network" = "Vérifiez les informations de compte saisies pour l'envoi. \nIl devrait être compte dans le réseau Solana";
+"Wallet address is not valid" = "L'adresse du portefeuille n'est pas valide";
+"It must be an %@ wallet address " = "Il doit s'agir d'une adresse %@ wallet";

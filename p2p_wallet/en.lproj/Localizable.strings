@@ -309,3 +309,6 @@
 "No transactions yet" = "No transactions yet";
 "You have not made any transaction yet" = "You have not made any transaction yet";
 "The list is empty" = "The list is empty";
+"Check entered account info for sending. It should be account in Solana network" = "Check entered account info for sending.\nIt should be account in Solana network";
+"Wallet address is not valid" = "Wallet address is not valid";
+"It must be an %@ wallet address " = "It must be an %@ wallet address";
