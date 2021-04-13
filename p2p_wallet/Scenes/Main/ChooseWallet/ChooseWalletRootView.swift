@@ -15,6 +15,7 @@ class ChooseWalletRootView: BEView {
     let viewModel: ChooseWalletViewModel
     
     // MARK: - Subviews
+    private lazy var searchBar = BESearchBar(forAutoLayout: ())
     private lazy var collectionView: ChooseWalletCollectionView = {
         let collectionView = ChooseWalletCollectionView(
             viewModel: viewModel,
@@ -44,8 +45,12 @@ class ChooseWalletRootView: BEView {
     
     // MARK: - Layout
     private func layout() {
+        addSubview(searchBar)
+        searchBar.autoPinEdgesToSuperviewEdges(with: .init(top: .defaultPadding, left: 16, bottom: 0, right: 16), excludingEdge: .bottom)
+        
         addSubview(collectionView)
-        collectionView.autoPinEdgesToSuperviewEdges(with: .init(x: .defaultPadding, y: 0))
+        collectionView.autoPinEdgesToSuperviewEdges(with: .init(x: .defaultPadding, y: 0), excludingEdge: .top)
+        collectionView.autoPinEdge(.top, to: .bottom, of: searchBar)
     }
     
     private func bind() {
