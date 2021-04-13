@@ -10,5 +10,5 @@ import Foundation
 enum TokenSettings: Hashable {
 //    case rename
     case visibility(Bool)
-    case close
+    case close(enabled: Bool)
 }
