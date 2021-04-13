@@ -317,3 +317,4 @@
 "The fee calculation failed due to overflow, underflow or unexpected 0" = "Сбой при расчете комиссии из-за переполнения, недостаточного количества или непредвиденного значения 0";
 "Error processing instruction 0:custom program error: 0x1" = "Инструкция обработки ошибки 0: ошибка пользовательской программы: 0x1";
 "System error" = "Системная ошибка";
+"Token balance must be empty" = "Баланс токена должен быть пустым";
