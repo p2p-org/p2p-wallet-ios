@@ -57,7 +57,7 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
             .map {wallet -> [TokenSettings] in
                 [
                     .visibility(!(wallet?.isHidden ?? false)),
-                    .close
+                    .close(enabled: wallet?.amount == 0)
                 ]
             }
             .asDriver(onErrorJustReturn: [])

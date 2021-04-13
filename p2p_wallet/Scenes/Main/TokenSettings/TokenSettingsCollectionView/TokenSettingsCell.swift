@@ -22,6 +22,15 @@ class TokenSettingsCell: BaseCollectionViewCell, LoadableView {
     ]}
     
     // MARK: - Subviews
+    lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
+        iconImageView
+            .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12),
+        UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
+            descriptionLabel,
+            mainLabel
+        ]),
+        isVisibleSwitcher
+    ])
     lazy var iconImageView = UIImageView(width: 24, height: 24, image: .buttonEdit, tintColor: .a3a5ba)
     lazy var descriptionLabel = UILabel(textSize: 13, weight: .semibold, textColor: .textSecondary)
     lazy var mainLabel = UILabel(textSize: 17, weight: .semibold)
@@ -33,15 +42,6 @@ class TokenSettingsCell: BaseCollectionViewCell, LoadableView {
     override func commonInit() {
         super.commonInit()
         backgroundColor = .textWhite
-        let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            iconImageView
-                .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12),
-            UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                descriptionLabel,
-                mainLabel
-            ]),
-            isVisibleSwitcher
-        ])
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 14))
         
@@ -60,6 +60,7 @@ extension TokenSettingsCell: BECollectionViewCell {
         }
         descriptionLabel.isHidden = false
         isVisibleSwitcher.isHidden = true
+        stackView.alpha = 1
         switch item {
         case .visibility(let isVisible):
             isVisibleSwitcher.isHidden = false
@@ -67,9 +68,14 @@ extension TokenSettingsCell: BECollectionViewCell {
             descriptionLabel.text = L10n.visibilityInTokenList
             mainLabel.text = isVisible ? L10n.visible: L10n.hidden
             isVisibleSwitcher.isOn = isVisible
-        case .close:
+        case .close(let isEnabled):
             iconImageView.image = .closeToken
-            descriptionLabel.isHidden = true
+            if isEnabled {
+                descriptionLabel.isHidden = true
+            } else {
+                descriptionLabel.text = L10n.tokenBalanceMustBeEmpty
+                stackView.alpha = 0.5
+            }
             mainLabel.text = L10n.closeTokenAccount
         }
     }
