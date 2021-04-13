@@ -16,7 +16,7 @@ class WLEmptyCell: BaseCollectionViewCell {
     override func commonInit() {
         super.commonInit()
         contentView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: .init(top: 50, left: 20, bottom: 50, right: 20))
+        stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 20))
         
         stackView.addArrangedSubviews([
             imageView,
