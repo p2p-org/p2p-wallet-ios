@@ -304,3 +304,8 @@
 "Hide transaction details" = "Hide transaction details";
 "New wallet" = "New wallet";
 "Closed wallet" = "Closed wallet";
+"Nothing found" = "Nothing found";
+"Change your search phrase" = "Change your search phrase";
+"No transactions yet" = "No transactions yet";
+"You have not made any transaction yet" = "You have not made any transaction yet";
+"The list is empty" = "The list is empty";

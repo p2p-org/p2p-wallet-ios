@@ -10,7 +10,7 @@ import Action
 import BECollectionView
 
 class TokenSettingsSection: BECollectionViewSection {
-    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> BECollectionViewCell {
+    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         (cell as? TokenSettingsCell)?.delegate = self
         return cell

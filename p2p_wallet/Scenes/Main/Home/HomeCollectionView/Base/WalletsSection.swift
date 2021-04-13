@@ -48,7 +48,7 @@ class WalletsSection: BECollectionViewSection {
         )
     }
     
-    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> BECollectionViewCell {
+    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         if let cell = cell as? EditableWalletCell {
             cell.editAction = CocoaAction { [weak self] in
