@@ -309,3 +309,6 @@
 "No transactions yet" = "Chưa có giao dịch nào";
 "You have not made any transaction yet" = "Bạn chưa thực hiện bất kỳ giao dịch nào";
 "The list is empty" = "Danh sách trống";
+"Check entered account info for sending. It should be account in Solana network" = "Kiểm tra thông tin tài khoản đã nhập để gửi. \nNó phải là tài khoản trong mạng Solana";
+"Wallet address is not valid" = "Địa chỉ ví không hợp lệ";
+"It must be an %@ wallet address " = "Nó phải là một địa chỉ ví %@";
