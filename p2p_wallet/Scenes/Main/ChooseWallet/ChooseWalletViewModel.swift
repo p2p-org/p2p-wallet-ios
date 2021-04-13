@@ -19,6 +19,9 @@ class ChooseWalletViewModel {
     let otherWalletsViewModel: OtherWalletsViewModel?
     let firstSectionFilter: ((AnyHashable) -> Bool)?
     
+    var originalMyWallets: [Wallet]?
+    var originalOtherWallets: [Wallet]?
+    
     // MARK: - Subjects
     let selectedWallet = PublishSubject<Wallet>()
     
@@ -64,6 +67,44 @@ class ChooseWalletViewModel {
                 }
             })
             .disposed(by: disposeBag)
+    }
+    
+    func searchDidBegin() {
+        originalMyWallets = myWalletsViewModel.getData(type: Wallet.self)
+        originalOtherWallets = otherWalletsViewModel?.getData(type: Wallet.self)
+    }
+    
+    func search(keyword: String) {
+        // if search field was cleared
+        if keyword.isEmpty {
+            searchDidEnd()
+            return
+        }
+        
+        // mark
+        let filter: (Wallet) -> Bool = {wallet in
+            wallet.symbol.lowercased().hasPrefix(keyword.lowercased())
+        }
+        
+        // apply search
+        let myWallets = myWalletsViewModel.getData(type: Wallet.self)
+            .filter(filter)
+        myWalletsViewModel.setState(.loaded, withData: myWallets)
+        
+        let otherWallets = otherWalletsViewModel?.getData(type: Wallet.self)
+            .filter(filter)
+        otherWalletsViewModel?.setState(.loaded, withData: otherWallets)
+    }
+    
+    func searchDidEnd() {
+        if let wallets = originalMyWallets {
+            myWalletsViewModel.setState(.loaded, withData: wallets)
+        }
+        if let wallets = originalOtherWallets {
+            otherWalletsViewModel?.setState(.loaded, withData: wallets)
+        }
+        originalMyWallets = nil
+        originalOtherWallets = nil
     }
     
     // MARK: - Actions
