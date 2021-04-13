@@ -295,7 +295,7 @@
 "Create account" = "Créer un Compte";
 "Close account" = "Fermer le Compte";
 "%@ to %@" = "%@ à %@";
-"%@ closed" = "%@ fermé";
+"%@ Closed" = "%@ Fermé";
 "%@ Created" = "%@ Créé";
 "To %@" = "À %@";
 "From token %@" = "De %@";

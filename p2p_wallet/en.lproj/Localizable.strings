@@ -295,7 +295,7 @@
 "Create account" = "Create Account";
 "Close account" = "Close Account";
 "%@ to %@" = "%@ to %@";
-"%@ closed" = "%@ closed";
+"%@ Closed" = "%@ Closed";
 "%@ Created" = "%@ Created";
 "To %@" = "To %@";
 "From token %@" = "From %@";
