@@ -306,3 +306,6 @@
 "Closed wallet" = "Ví đã đóng";
 "Nothing found" = "Không tìm thấy thứ gì";
 "Change your search phrase" = "Thay đổi cụm từ tìm kiếm của bạn";
+"No transactions yet" = "Chưa có giao dịch nào";
+"You have not made any transaction yet" = "Bạn chưa thực hiện bất kỳ giao dịch nào";
+"The list is empty" = "Danh sách trống";
