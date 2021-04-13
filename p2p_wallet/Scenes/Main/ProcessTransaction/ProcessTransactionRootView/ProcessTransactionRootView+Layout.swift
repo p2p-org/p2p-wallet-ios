@@ -39,6 +39,32 @@ extension ProcessTransactionRootView {
                 subtitleLabel.text = L10n.itMustBeAnWalletAddress(transactionHandler.transaction?.symbol ?? "")
             }
             
+            // When a user entered an incorrect recipient address
+            else if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
+                layoutWithSpecificError(
+                    image: .transactionErrorSlippageExceeded
+                )
+                
+                titleLabel.text = L10n.slippageError
+                subtitleLabel.text = L10n.SwapInstructionExceedsDesiredSlippageLimit.setAnotherSlippageAndTryAgain
+            }
+            
+            // System error
+            else if [
+                L10n.theFeeCalculationFailedDueToOverflowUnderflowOrUnexpected0,
+                L10n.errorProcessingInstruction0CustomProgramError0x1,
+                L10n.blockhashNotFound
+            ]
+                .contains(error.readableDescription)
+            {
+                layoutWithSpecificError(
+                    image: .transactionErrorSystem
+                )
+                
+                titleLabel.text = L10n.systemError
+                subtitleLabel.text = error.readableDescription
+            }
+            
             // generic errors
             else {
                 self.titleLabel.text = L10n.somethingWentWrong
