@@ -53,11 +53,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         THPinNumButton.textHighlightColor = .white
         THPinNumButton.backgroundHighlightColor = .passcodeHighlightColor
         
-        // BECollectionView
-        BECollectionViewSectionLayout.options = .init(
-            defaultEmptyCellType: WLEmptyCell.self
-        )
-        
         // Use Firebase library to configure APIs
         FirebaseApp.configure()
         

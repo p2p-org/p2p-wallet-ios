@@ -29,6 +29,7 @@ class WalletDetailTransactionsSection: BECollectionViewSection {
                     viewClass: WDVCSectionHeaderView.self
                 ),
                 cellType: TransactionCell.self,
+                emptyCellType: WLEmptyCell.self,
                 interGroupSpacing: 1,
                 itemHeight: .estimated(85)
             ),
