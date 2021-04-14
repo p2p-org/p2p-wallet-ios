@@ -8,7 +8,7 @@
 import Foundation
 
 // wrapper of 
-struct Wallet: FiatConvertable {
+struct Wallet: Hashable, FiatConvertable {
     private init(
         id: String,
         mintAddress: String,
@@ -132,7 +132,7 @@ struct Wallet: FiatConvertable {
     }
 }
 
-extension Wallet: ListItemType {
+extension Wallet {
     init(programAccount: SolanaSDK.Token) {
         self.id = programAccount.pubkey ?? ""
         self.mintAddress = programAccount.mintAddress
@@ -142,15 +142,5 @@ extension Wallet: ListItemType {
         self.decimals = programAccount.decimals
         self.isLiquidity = programAccount.isLiquidity
         self.wrappedBy = programAccount.wrappedBy
-    }
-    
-    static func placeholder(at index: Int) -> Wallet {
-        Wallet(id: placeholderId(at: index), mintAddress: "placeholder-mintaddress", pubkey: "<pubkey>", symbol: "<PLHD\(index)>", lamports: nil, decimals: nil, isLiquidity: false, wrappedBy: nil)
-    }
-}
-
-extension Array where Element == Wallet {
-    var solWallet: Wallet? {
-        first(where: {$0.symbol == "SOL"})
     }
 }

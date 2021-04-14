@@ -15,7 +15,7 @@ class MainContainer {
     var socket: SolanaSDK.Socket
     let transactionManager: TransactionsManager
     let pricesManager: PricesManager
-    private(set) var myWalletsVM: WalletsVM
+    private(set) var walletsViewModel: WalletsViewModel
     
     init(rootViewModel: RootViewModel, accountStorage: KeychainAccountStorage) {
         self.rootViewModel = rootViewModel
@@ -23,8 +23,9 @@ class MainContainer {
         self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: accountStorage)
         self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: accountStorage.account?.publicKey)
         self.transactionManager = TransactionsManager(socket: socket)
-        myWalletsVM = WalletsVM(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager)
-        pricesManager = PricesManager.shared
+        self.pricesManager = PricesManager.shared
+        
+        self.walletsViewModel = WalletsViewModel(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager, pricesRepository: pricesManager)
         
         defer {
             socket.connect()
@@ -36,7 +37,7 @@ class MainContainer {
     }
     
     func makeHomeViewController() -> HomeViewController {
-        let vm = HomeViewModel(walletsViewModel: myWalletsVM)
+        let vm = HomeViewModel(walletsRepository: walletsViewModel)
         return HomeViewController(viewModel: vm, scenesFactory: self)
     }
     
@@ -51,7 +52,7 @@ class MainContainer {
     }
     
     func makeMyProductsViewController() -> MyProductsViewController {
-        let viewModel = MyProductsViewModel(walletsViewModel: myWalletsVM)
+        let viewModel = MyProductsViewModel(walletsRepository: walletsViewModel)
         return MyProductsViewController(viewModel: viewModel, scenesFactory: self)
     }
     
@@ -60,7 +61,7 @@ class MainContainer {
             walletPubkey: pubkey,
             walletSymbol: symbol,
             solanaSDK: solanaSDK,
-            walletsRepository: myWalletsVM,
+            walletsRepository: walletsViewModel,
             pricesRepository: pricesManager
         )
         return WalletDetailViewController(viewModel: viewModel, scenesFactory: self)
@@ -76,26 +77,26 @@ class MainContainer {
         let viewModel = ReceiveTokenViewModel(
             createTokenHandler: solanaSDK,
             transactionHandler: socket,
-            walletsRepository: myWalletsVM,
+            walletsRepository: walletsViewModel,
             pubkey: pubkey
         )
         return ReceiveTokenViewController(viewModel: viewModel, scenesFactory: self)
     }
     
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController {
-        let vm = SendTokenViewModel(solanaSDK: solanaSDK, walletsRepository: myWalletsVM, transactionManager: transactionManager, activeWallet: activeWallet, destinationAddress: destinationAddress)
+        let vm = SendTokenViewModel(solanaSDK: solanaSDK, walletsRepository: walletsViewModel, transactionManager: transactionManager, activeWallet: activeWallet, destinationAddress: destinationAddress)
         let vc = SendTokenViewController(viewModel: vm, scenesFactory: self)
         return vc
     }
     
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController {
-        let vm = SwapTokenViewModel(solanaSDK: solanaSDK, transactionManager: transactionManager, wallets: myWalletsVM.data, fromWallet: wallet)
+        let vm = SwapTokenViewModel(solanaSDK: solanaSDK, transactionManager: transactionManager, wallets: walletsViewModel.data, fromWallet: wallet)
         return SwapTokenViewController(viewModel: vm, scenesFactory: self)
     }
     
     func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController {
         let viewModel = ChooseWalletViewModel(
-            myWalletsViewModel: myWalletsVM,
+            myWalletsViewModel: walletsViewModel,
             showOtherWallets: showOtherWallets)
         { (item) -> Bool in
             guard let customFilter = customFilter else {return true}
@@ -136,7 +137,7 @@ class MainContainer {
     
     // MARK: - Token edit
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController {
-        TokenSettingsViewController(viewModel: TokenSettingsViewModel(walletsRepository: myWalletsVM, pubkey: pubkey, solanaSDK: solanaSDK, transactionManager: transactionManager, accountStorage: accountStorage), rootViewModel: rootViewModel)
+        TokenSettingsViewController(viewModel: TokenSettingsViewModel(walletsRepository: walletsViewModel, pubkey: pubkey, solanaSDK: solanaSDK, transactionManager: transactionManager, accountStorage: accountStorage), rootViewModel: rootViewModel)
     }
     
     // MARK: - Helpers

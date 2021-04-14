@@ -12,10 +12,11 @@ protocol PricesRepository {
     func currentPrice(for coinName: String) -> CurrentPrice?
     func pricesObservable() -> Observable<[String: CurrentPrice]>
     func observePrice(of coinName: String) -> Observable<CurrentPrice?>
+    func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
 }
 
 extension PricesManager: PricesRepository {
-    func pricesObservable() -> Observable<[String : CurrentPrice]> {
+    func pricesObservable() -> Observable<[String: CurrentPrice]> {
         currentPrices.asObservable()
     }
     

@@ -17,7 +17,7 @@ class HomeRootView: BEView {
     
     // MARK: - Subviews
     lazy var collectionView: HomeCollectionView = {
-        let collectionView = HomeCollectionView(viewModel: viewModel.walletsViewModel)
+        let collectionView = HomeCollectionView(walletsRepository: viewModel.walletsRepository)
         collectionView.delegate = self
 
         collectionView.walletCellEditAction = Action<Wallet, Void> { [weak self] wallet in
@@ -25,7 +25,7 @@ class HomeRootView: BEView {
             return .just(())
         }
         collectionView.showHideHiddenWalletsAction = CocoaAction { [weak self] in
-            self?.viewModel.walletsViewModel.toggleIsHiddenWalletShown()
+            self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
             return .just(())
         }
         collectionView.collectionView.contentInset.modify(dBottom: 16)

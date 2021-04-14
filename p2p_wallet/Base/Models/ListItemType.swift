@@ -1,20 +1,20 @@
+////
+////  ListItemType.swift
+////  p2p_wallet
+////
+////  Created by Chung Tran on 11/3/20.
+////
 //
-//  ListItemType.swift
-//  p2p_wallet
+//import Foundation
+//import RxSwift
 //
-//  Created by Chung Tran on 11/3/20.
+//protocol ListItemType: Hashable {
+//    static func placeholder(at index: Int) -> Self
+//    var id: String {get}
+//}
 //
-
-import Foundation
-import RxSwift
-
-protocol ListItemType: Hashable {
-    static func placeholder(at index: Int) -> Self
-    var id: String {get}
-}
-
-extension ListItemType {
-    static func placeholderId(at index: Int) -> String {
-        "placeholder#\(index)"
-    }
-}
+//extension ListItemType {
+//    static func placeholderId(at index: Int) -> String {
+//        "placeholder#\(index)"
+//    }
+//}
