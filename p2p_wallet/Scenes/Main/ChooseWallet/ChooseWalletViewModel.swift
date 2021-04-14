@@ -20,7 +20,8 @@ class ChooseWalletViewModel {
     let firstSectionFilter: ((AnyHashable) -> Bool)?
     
     var originalMyWallets: [Wallet]?
-    var originalOtherWallets: [Wallet]?
+    
+    var keyword: String?
     
     // MARK: - Subjects
     let selectedWallet = PublishSubject<Wallet>()
@@ -50,6 +51,10 @@ class ChooseWalletViewModel {
             {
                 return false
             }
+            if let keyword = strongSelf.keyword {
+                return wallet.symbol.lowercased().hasPrefix(keyword.lowercased()) ||
+                    wallet.symbol.lowercased().contains(keyword.lowercased())
+            }
             return true
         }
         bind()
@@ -71,29 +76,27 @@ class ChooseWalletViewModel {
     
     func searchDidBegin() {
         originalMyWallets = myWalletsViewModel.getData(type: Wallet.self)
-        originalOtherWallets = otherWalletsViewModel?.getData(type: Wallet.self)
     }
     
     func search(keyword: String) {
         // if search field was cleared
         if keyword.isEmpty {
+            self.keyword = nil
             myWalletsViewModel.setState(.loaded, withData: originalMyWallets ?? [])
-            otherWalletsViewModel?.setState(.loaded, withData: originalOtherWallets ?? [])
             return
         }
         
+        self.keyword = keyword
+        
         // mark
         let filter: (Wallet) -> Bool = {wallet in
-            wallet.symbol.lowercased().hasPrefix(keyword.lowercased())
+            wallet.symbol.lowercased().hasPrefix(keyword.lowercased()) ||
+                wallet.symbol.lowercased().contains(keyword.lowercased())
         }
         
         // apply search
         if let wallets = originalMyWallets {
             myWalletsViewModel.setState(.loaded, withData: wallets.filter(filter))
-        }
-        
-        if let wallets = originalOtherWallets {
-            otherWalletsViewModel?.setState(.loaded, withData: wallets.filter(filter))
         }
     }
     
@@ -101,11 +104,8 @@ class ChooseWalletViewModel {
         if let wallets = originalMyWallets {
             myWalletsViewModel.setState(.loaded, withData: wallets)
         }
-        if let wallets = originalOtherWallets {
-            otherWalletsViewModel?.setState(.loaded, withData: wallets)
-        }
         originalMyWallets = nil
-        originalOtherWallets = nil
+        keyword = nil
     }
     
     // MARK: - Actions

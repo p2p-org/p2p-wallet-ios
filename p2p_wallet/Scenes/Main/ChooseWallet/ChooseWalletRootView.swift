@@ -101,5 +101,6 @@ extension ChooseWalletRootView: BESearchBarDelegate {
     func beSearchBarDidCancelSearching(_ searchBar: BESearchBar) {
         print("searchBar: searchDidEnd: searchDidCancel")
         viewModel.searchDidEnd()
+        searchBar.clear(notify: false)
     }
 }
