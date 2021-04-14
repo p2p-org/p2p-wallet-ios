@@ -20,7 +20,7 @@ class MyProductsViewModel {
     
     // MARK: - Properties
     let disposeBag = DisposeBag()
-    let walletsVM: WalletsVM
+    let walletsViewModel: WalletsListViewModelType
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<MyProductsNavigatableScene>()
@@ -29,8 +29,8 @@ class MyProductsViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Methods
-    init(walletsVM: WalletsVM) {
-        self.walletsVM = walletsVM
+    init(walletsViewModel: WalletsListViewModelType) {
+        self.walletsViewModel = walletsViewModel
     }
     
     // MARK: - Actions

@@ -16,7 +16,6 @@ protocol HomeScenesFactory {
     func makeMyProductsViewController() -> MyProductsViewController
     func makeProfileVC() -> ProfileVC
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
-    func makeAddNewTokenVC() -> AddNewWalletVC
 }
 
 class HomeViewController: BaseVC {
@@ -93,8 +92,8 @@ class HomeViewController: BaseVC {
     
     override func bind() {
         super.bind()
-        viewModel.walletsVM
-            .state
+        viewModel.walletsViewModel
+            .stateObservable
             .map {$0 == .loading}
             .asDriver(onErrorJustReturn: false)
             .drive(onNext: {[weak self] isLoading in
@@ -141,8 +140,9 @@ class HomeViewController: BaseVC {
             let vc = self.scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
             self.present(vc, animated: true, completion: nil)
         case .addToken:
-            let vc = self.scenesFactory.makeAddNewTokenVC()
-            self.present(vc, animated: true, completion: nil)
+//            let vc = self.scenesFactory.makeAddNewTokenVC()
+//            self.present(vc, animated: true, completion: nil)
+            break
         }
     }
     

@@ -320,3 +320,4 @@
 "Error processing instruction 0:custom program error: 0x1" = "Erreur de traitement de l'instruction 0: erreur de programme personnalisé: 0x1";
 "System error" = "Erreur système";
 "Token balance must be empty" = "Le solde du jeton doit être vide";
+"Token account should be zero" = "Le compte de jeton doit être égal à zéro";
