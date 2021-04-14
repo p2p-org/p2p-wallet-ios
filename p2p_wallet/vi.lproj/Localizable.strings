@@ -318,3 +318,4 @@
 "Error processing instruction 0:custom program error: 0x1" = "Hướng dẫn xử lý lỗi 0: lỗi chương trình tùy chỉnh: 0x1";
 "System error" = "Lỗi hệ thống";
 "Token balance must be empty" = "Số dư ví phải bằng 0";
+"Token account should be zero" = "Tài khoản token phải bằng 0";

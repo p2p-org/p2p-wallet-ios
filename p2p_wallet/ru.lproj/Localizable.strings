@@ -318,3 +318,4 @@
 "Error processing instruction 0:custom program error: 0x1" = "Инструкция обработки ошибки 0: ошибка пользовательской программы: 0x1";
 "System error" = "Системная ошибка";
 "Token balance must be empty" = "Баланс токена должен быть пустым";
+"Token account should be zero" = "Аккаунт токена должен быть нулевым";
