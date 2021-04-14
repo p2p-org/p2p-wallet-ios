@@ -11,7 +11,7 @@ import Action
 
 extension MyProductsCollectionView {
     class ActiveWalletSection: WalletsSection {
-        init(index: Int, viewModel: WalletsListViewModelType) {
+        init(index: Int, viewModel: WalletsRepository) {
             super.init(
                 index: index,
                 viewModel: viewModel,

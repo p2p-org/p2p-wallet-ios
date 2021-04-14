@@ -13,7 +13,6 @@ import RxSwift
 class HomeCollectionView: WalletsCollectionView {
     // MARK: - Constants
     let numberOfWalletsToShow = 4
-    let viewModel: WalletsListViewModelType
     
     // MARK: - Sections
     private let friendSection: FriendsSection
@@ -46,13 +45,12 @@ class HomeCollectionView: WalletsCollectionView {
     }
     
     // MARK: - Initializers
-    init(viewModel: WalletsListViewModelType) {
-        self.viewModel = viewModel
+    init(walletsRepository: WalletsRepository) {
         self.friendSection = FriendsSection(index: 2, viewModel: FriendsViewModel())
         super.init(
-            walletsViewModel: viewModel,
-            activeWalletsSection: ActiveWalletsSection(index: 0, viewModel: viewModel),
-            hiddenWalletsSection: HomeHiddenWalletsSection(index: 1, viewModel: viewModel),
+            walletsRepository: walletsRepository,
+            activeWalletsSection: ActiveWalletsSection(index: 0, viewModel: walletsRepository),
+            hiddenWalletsSection: HomeHiddenWalletsSection(index: 1, viewModel: walletsRepository),
             additionalSections: [friendSection]
         )
     }
