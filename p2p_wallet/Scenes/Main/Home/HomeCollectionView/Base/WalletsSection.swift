@@ -14,7 +14,7 @@ class WalletsSection: BECollectionViewSection {
     
     init(
         index: Int,
-        viewModel: WalletsListViewModelType,
+        viewModel: WalletsRepository,
         header: BECollectionViewSectionLayout.Header? = nil,
         footer: BECollectionViewSectionLayout.Footer? = nil,
         background: UICollectionReusableView.Type? = nil,
@@ -56,7 +56,7 @@ class WalletsSection: BECollectionViewSection {
                 return .just(())
             }
             cell.hideAction = CocoaAction { [weak self] in
-                let viewModel = self?.viewModel as? WalletsListViewModelType
+                let viewModel = self?.viewModel as? WalletsRepository
                 viewModel?.toggleWalletVisibility(item.value as! Wallet)
                 return .just(())
             }
