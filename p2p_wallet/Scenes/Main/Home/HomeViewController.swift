@@ -92,7 +92,7 @@ class HomeViewController: BaseVC {
     
     override func bind() {
         super.bind()
-        viewModel.walletsViewModel
+        viewModel.walletsRepository
             .stateObservable
             .map {$0 == .loading}
             .asDriver(onErrorJustReturn: false)
