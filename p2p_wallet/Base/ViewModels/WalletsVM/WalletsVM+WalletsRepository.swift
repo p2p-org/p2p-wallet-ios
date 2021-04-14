@@ -14,7 +14,7 @@ extension WalletsVM: WalletsRepository {
         items
     }
     
-    func stateObservable() -> Observable<BEFetcherState> {
+    var stateObservable: Observable<BEFetcherState> {
         state.asObservable()
             .map { state -> BEFetcherState in
                 switch state {

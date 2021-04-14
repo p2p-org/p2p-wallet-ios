@@ -12,11 +12,14 @@ import BECollectionView
 protocol WalletsRepository {
     var solWallet: Wallet? {get}
     func getWallets() -> [Wallet]
-    func stateObservable() -> Observable<BEFetcherState>
+    var stateObservable: Observable<BEFetcherState> {get}
     var dataDidChange: Observable<Void> {get}
     var dataObservable: Observable<[Wallet]?> {get}
     func getError() -> Error?
     func reload()
     func insert(_ item: Wallet, where predicate: (Wallet) -> Bool, shouldUpdate: Bool)
     func updateWallet(_ wallet: Wallet, withName name: String)
+    func toggleWalletVisibility(_ wallet: Wallet)
+    func removeItem(where predicate: (Wallet) -> Bool) -> Wallet?
+    func setState(_ state: BEFetcherState, withData data: [AnyHashable]?)
 }

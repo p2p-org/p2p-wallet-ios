@@ -8,12 +8,14 @@
 import Foundation
 import BECollectionView
 import RxCocoa
+import RxSwift
 
 protocol WalletsListViewModelType: BEListViewModelType {
     var isHiddenWalletsShown: BehaviorRelay<Bool> {get}
     func hiddenWallets() -> [Wallet]
     func toggleIsHiddenWalletShown()
     func toggleWalletVisibility(_ wallet: Wallet)
+    var stateObservable: Observable<BEFetcherState> {get}
 }
 
 extension WalletsVM: WalletsListViewModelType {}
