@@ -17,14 +17,14 @@ class MyProductsRootView: BEView {
     
     // MARK: - Subviews
     lazy var collectionView: MyProductsCollectionView = {
-        let collectionView = MyProductsCollectionView(walletsViewModel: viewModel.walletsVM)
+        let collectionView = MyProductsCollectionView(walletsViewModel: viewModel.walletsViewModel)
         collectionView.delegate = self
         collectionView.walletCellEditAction = Action<Wallet, Void> {[unowned self] wallet in
             self.viewModel.showWalletSettings(wallet: wallet)
             return .just(())
         }
         collectionView.showHideHiddenWalletsAction = CocoaAction { [weak self] in
-            self?.viewModel.walletsVM.toggleIsHiddenWalletShown()
+            self?.viewModel.walletsViewModel.toggleIsHiddenWalletShown()
             return .just(())
         }
         return collectionView
