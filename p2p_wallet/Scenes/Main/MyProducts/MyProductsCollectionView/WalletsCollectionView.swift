@@ -11,7 +11,7 @@ import Action
 import RxSwift
 
 class WalletsCollectionView: BECollectionView {
-    let walletsViewModel: WalletsListViewModelType
+    let walletsRepository: WalletsRepository
     let activeWalletsSection: WalletsSection
     let hiddenWalletsSection: HiddenWalletsSection
     
@@ -29,12 +29,12 @@ class WalletsCollectionView: BECollectionView {
     }
     
     init(
-        walletsViewModel: WalletsListViewModelType,
+        walletsRepository: WalletsRepository,
         activeWalletsSection: WalletsSection,
         hiddenWalletsSection: HiddenWalletsSection,
         additionalSections: [BECollectionViewSection] = []
     ) {
-        self.walletsViewModel = walletsViewModel
+        self.walletsRepository = walletsRepository
         self.activeWalletsSection = activeWalletsSection
         self.hiddenWalletsSection = hiddenWalletsSection
         super.init(sections: [
@@ -44,6 +44,6 @@ class WalletsCollectionView: BECollectionView {
     }
     
     override func dataDidChangeObservable() -> Observable<Void> {
-        walletsViewModel.dataDidChange
+        walletsRepository.dataDidChange
     }
 }
