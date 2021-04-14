@@ -30,7 +30,7 @@ class WalletDetailTransactionsCollectionView: BECollectionView {
         }
     }
     
-    init(transactionViewModel: BEListViewModelType, graphViewModel: WalletGraphVM) {
+    init(transactionViewModel: BEListViewModelType, graphViewModel: WalletGraphViewModel) {
         transactionsSection = .init(
             index: 0,
             viewModel: transactionViewModel,
