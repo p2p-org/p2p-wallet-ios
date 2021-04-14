@@ -73,7 +73,7 @@ extension TokenSettingsCell: BECollectionViewCell {
             if isEnabled {
                 descriptionLabel.isHidden = true
             } else {
-                descriptionLabel.text = L10n.tokenBalanceMustBeEmpty
+                descriptionLabel.text = L10n.tokenAccountShouldBeZero
                 stackView.alpha = 0.5
             }
             mainLabel.text = L10n.closeTokenAccount
