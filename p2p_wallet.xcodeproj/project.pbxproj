@@ -916,13 +916,11 @@
 			isa = PBXGroup;
 			children = (
 				BC7A8EB1255BCE360023C918 /* Models */,
-				BC8F684B2609D851002FDCCD /* Repositories */,
-				BC2DA298260B0AC600B50738 /* Handlers */,
+				BCEE522B2626D3F900271AB9 /* Views */,
 				BC1ABC37255BD0B8002FCE65 /* ViewModels */,
 				BCB58370255D28E100B10F65 /* ViewControllers */,
 				BC2EC1C12553ED1B006EEDA5 /* UIPresentationControllers */,
 				BCD83E7D25677673006DD29F /* UIViewControllerAnimatedTransitioning */,
-				BCEE522B2626D3F900271AB9 /* UIViews */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -1016,6 +1014,7 @@
 		BC8F684B2609D851002FDCCD /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				BC2DA298260B0AC600B50738 /* Handlers */,
 				BC8F684C2609D866002FDCCD /* WalletsRepository.swift */,
 				BC65E036261D72B200E436C7 /* TransactionsRepository.swift */,
 				BC65E243261EE04B00E436C7 /* PricesRepository.swift */,
@@ -1192,6 +1191,7 @@
 				BCB2231825412AF8002D997F /* AppDelegate.swift */,
 				BCAB206E25DE0563004F4F9D /* DependencyContainer.swift */,
 				BCB22370254137C2002D997F /* Services */,
+				BC8F684B2609D851002FDCCD /* Repositories */,
 				BC65E9B72542B983005F50CE /* Base */,
 				BC9DFA152541F777009DB93E /* Extensions */,
 				BC65E9D52542BD1F005F50CE /* Scenes */,
@@ -1436,7 +1436,7 @@
 			path = ProcessTransactionRootView;
 			sourceTree = "<group>";
 		};
-		BCEE522B2626D3F900271AB9 /* UIViews */ = {
+		BCEE522B2626D3F900271AB9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				BC65E085261DB21600E436C7 /* WalletCells */,
@@ -1468,7 +1468,7 @@
 				BC2DA293260B079100B50738 /* WLAddTokenButton.swift */,
 				BCEE508426244B6300271AB9 /* WLEmptyCell.swift */,
 			);
-			path = UIViews;
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
