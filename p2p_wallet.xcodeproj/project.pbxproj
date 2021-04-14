@@ -235,7 +235,6 @@
 		BCD5E770255130DD00F51299 /* News.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E76F255130DD00F51299 /* News.swift */; };
 		BCD5E7962551332200F51299 /* DefiCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E7952551332200F51299 /* DefiCell.swift */; };
 		BCD5E82425525C6E00F51299 /* WalletsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E82325525C6E00F51299 /* WalletsViewModel.swift */; };
-		BCD5E82925525D3D00F51299 /* ListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E82825525D3D00F51299 /* ListViewModel.swift */; };
 		BCD5E82F25525DE600F51299 /* FetcherState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E82E25525DE600F51299 /* FetcherState.swift */; };
 		BCE3D55B25F212960092F91B /* WalletDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE3D55825F212960092F91B /* WalletDetailViewModel.swift */; };
 		BCE3D55C25F212960092F91B /* WalletDetailRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE3D55925F212960092F91B /* WalletDetailRootView.swift */; };
@@ -539,7 +538,6 @@
 		BCD5E76F255130DD00F51299 /* News.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = News.swift; sourceTree = "<group>"; };
 		BCD5E7952551332200F51299 /* DefiCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefiCell.swift; sourceTree = "<group>"; };
 		BCD5E82325525C6E00F51299 /* WalletsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletsViewModel.swift; sourceTree = "<group>"; };
-		BCD5E82825525D3D00F51299 /* ListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewModel.swift; sourceTree = "<group>"; };
 		BCD5E82E25525DE600F51299 /* FetcherState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherState.swift; sourceTree = "<group>"; };
 		BCE3D55825F212960092F91B /* WalletDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetailViewModel.swift; sourceTree = "<group>"; };
 		BCE3D55925F212960092F91B /* WalletDetailRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetailRootView.swift; sourceTree = "<group>"; };
@@ -665,8 +663,6 @@
 			children = (
 				BCD5E82325525C6E00F51299 /* WalletsViewModel.swift */,
 				BCB5835F255D231400B10F65 /* BaseVM.swift */,
-				BCD5E82D25525DD800F51299 /* ListViewModel */,
-				BC8F683F2609D3D2002FDCCD /* WalletsVM */,
 				BC54DCF82587089700A65566 /* WalletGraphVM.swift */,
 				BC65E003261D711900E436C7 /* TransactionsViewModel.swift */,
 			);
@@ -1048,13 +1044,6 @@
 			path = WLPhrasesTextView;
 			sourceTree = "<group>";
 		};
-		BC8F683F2609D3D2002FDCCD /* WalletsVM */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = WalletsVM;
-			sourceTree = "<group>";
-		};
 		BC8F684B2609D851002FDCCD /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
@@ -1352,14 +1341,6 @@
 				BC65E16F261E9FB600E436C7 /* Defi.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		BCD5E82D25525DD800F51299 /* ListViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				BCD5E82825525D3D00F51299 /* ListViewModel.swift */,
-			);
-			path = ListViewModel;
 			sourceTree = "<group>";
 		};
 		BCD83E7D25677673006DD29F /* UIViewControllerAnimatedTransitioning */ = {
@@ -2022,7 +2003,6 @@
 				BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */,
 				BCFC768825E2EAB800FBE148 /* MainViewController.swift in Sources */,
 				BC10511E258884D800398EA2 /* ConfigureSecurityVC.swift in Sources */,
-				BCD5E82925525D3D00F51299 /* ListViewModel.swift in Sources */,
 				BC2EC1D22553ED1B006EEDA5 /* FlexibleHeightPresentationController.swift in Sources */,
 				BC89ADB825E0FCB3001A6791 /* BaseOnboardingVC.swift in Sources */,
 				BC65E256261EF34B00E436C7 /* TransactionInfoViewModel.swift in Sources */,
