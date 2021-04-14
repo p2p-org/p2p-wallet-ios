@@ -320,3 +320,4 @@
 "Error processing instruction 0:custom program error: 0x1" = "Error processing instruction 0:custom program error: 0x1";
 "System error" = "System error";
 "Token balance must be empty" = "Token balance must be empty";
+"Token account should be zero" = "Token account should be zero";

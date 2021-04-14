@@ -54,7 +54,7 @@ class ReceiveTokenViewController: WLIndicatorModalVC {
             .subscribe(onNext: {[weak self] in self?.navigate(to: $0)})
             .disposed(by: disposeBag)
         viewModel.repository
-            .stateObservable()
+            .stateObservable
             .subscribe(onNext: {[weak self] state in
                 self?.removeErrorView()
                 switch state {

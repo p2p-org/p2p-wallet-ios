@@ -26,7 +26,7 @@ class HomeViewModel {
     // MARK: - Constants
     
     // MARK: - Properties
-    let walletsVM: WalletsVM
+    let walletsViewModel: WalletsListViewModelType
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<HomeNavigatableScene>()
@@ -35,8 +35,8 @@ class HomeViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(walletsVM: WalletsVM) {
-        self.walletsVM = walletsVM
+    init(walletsViewModel: WalletsListViewModelType) {
+        self.walletsViewModel = walletsViewModel
     }
     
     // MARK: - Actions
