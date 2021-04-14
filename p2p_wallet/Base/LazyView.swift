@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import BECollectionView
 
 private var key: UInt8 = 0
 protocol LazyView: UIView {
@@ -40,6 +41,35 @@ extension LazyView {
                 case .error(let error):
                     self.subviews.filter {$0 is Indicator}.forEach {$0.removeFromSuperview()}
                     self.handleError(error)
+                }
+            })
+    }
+    
+    func subscribed(
+        to viewModel: BEViewModel<T>,
+        onError: ((Error) -> Void)? = nil
+    ) -> Disposable {
+        self.isUserInteractionEnabled = true
+//        self.onTap(self, action: #selector(retry))
+        return viewModel.stateObservable
+            .subscribe(onNext: {[weak self] state in
+                guard let self = self else {return}
+                switch state {
+                case .loading, .initializing:
+                    let spinner = Indicator(style: .medium)
+                    spinner.color = .textBlack
+                    spinner.translatesAutoresizingMaskIntoConstraints = false
+                    self.addSubview(spinner)
+                    spinner.autoCenterInSuperview()
+                    spinner.startAnimating()
+                case .loaded:
+                    self.subviews.filter {$0 is Indicator}.forEach {$0.removeFromSuperview()}
+                    self.handleDataLoaded(viewModel.data)
+                case .error:
+                    self.subviews.filter {$0 is Indicator}.forEach {$0.removeFromSuperview()}
+                    if let error = viewModel.error {
+                        self.handleError(error)
+                    }
                 }
             })
     }
