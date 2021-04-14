@@ -91,18 +91,17 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             .flatMap {balance in
                 self.solanaSDK.getTokensInfo()
                     .map {$0.map {Wallet(programAccount: $0)}}
+                    // map prices
+                    .map {[weak self] wallets in
+                        self?.mapPrices(wallets: wallets) ?? []
+                    }
+                    // update visibility
+                    .map {[weak self] wallets in
+                        self?.mapVisibility(wallets: wallets) ?? []
+                    }
+                    // add sol wallet on top
                     .map {wallets in
                         var wallets = wallets
-                        for i in 0..<wallets.count {
-                            // update prices
-                            if let price = PricesManager.shared.currentPrice(for: wallets[i].symbol)
-                            {
-                                wallets[i].price = price
-                            }
-                            // update visibility
-                            wallets[i].updateVisibility()
-                        }
-                        
                         let solWallet = Wallet.createSOLWallet(
                             pubkey: self.solanaSDK.accountStorage.account?.publicKey.base58EncodedString,
                             lamports: balance,
@@ -175,28 +174,37 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         })
     }
     
-    // MARK: - Helpers
-    private func updatePrices() {
-        guard currentState == .loaded else {return}
-        var wallets = self.data
+    // MARK: - Mappers
+    private func mapPrices(wallets: [Wallet]) -> [Wallet] {
+        var wallets = wallets
         for i in 0..<wallets.count {
-            if let price = pricesRepository.currentPrice(for: wallets[i].symbol) {
+            if let price = pricesRepository.currentPrice(for: wallets[i].symbol)
+            {
                 wallets[i].price = price
             }
         }
+        return wallets
+    }
+    
+    private func mapVisibility(wallets: [Wallet]) -> [Wallet] {
+        var wallets = wallets
+        for i in 0..<wallets.count {
+            // update visibility
+            wallets[i].updateVisibility()
+        }
+        return wallets
+    }
+    
+    // MARK: - Helpers
+    private func updatePrices() {
+        guard currentState == .loaded else {return}
+        let wallets = mapPrices(wallets: data)
         overrideData(by: wallets)
     }
     
     private func updateWalletsVisibility() {
         guard currentState == .loaded else {return}
-        var wallets = data
-        for index in 0..<wallets.count where wallets[index].amount == 0 && wallets[index].symbol != "SOL"
-        {
-            var wallet = wallets[index]
-            wallet.updateVisibility()
-            wallets[index] = wallet
-        }
-        
+        let wallets = mapVisibility(wallets: data)
         overrideData(by: wallets)
     }
     

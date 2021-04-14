@@ -63,7 +63,7 @@ class WLAddTokenButton: WLLoadingView {
     }
     
     func setUp(feeSubject: LazySubject<Double>) {
-        if feeLabel.viewModel == nil {
+        if feeLabel.subject == nil {
             feeLabel
                 .subscribed(to: feeSubject) {
                     L10n.willCost + " " + $0.toString(maximumFractionDigits: 9) + " SOL"
@@ -71,7 +71,6 @@ class WLAddTokenButton: WLLoadingView {
                 .disposed(by: disposeBag)
             feeLabel.isUserInteractionEnabled = false
         }
-        
     }
 }
 
