@@ -35,12 +35,15 @@ class ChooseWalletCollectionView: BECollectionView {
         var snapshot = super.mapDataToSnapshot()
         
         let firstSectionCount = snapshot.numberOfItems(inSection: 0)
-        let secondSectionCount = snapshot.numberOfItems(inSection: 1)
         
-        if firstSectionCount == 1 && secondSectionCount > 0 {
-            if let firstSectionItem = snapshot.itemIdentifiers(inSection: 0).first
-            {
-                snapshot.deleteItems([firstSectionItem])
+        if viewModel.otherWalletsViewModel != nil {
+            let secondSectionCount = snapshot.numberOfItems(inSection: 1)
+            
+            if firstSectionCount == 1 && secondSectionCount > 0 {
+                if let firstSectionItem = snapshot.itemIdentifiers(inSection: 0).first
+                {
+                    snapshot.deleteItems([firstSectionItem])
+                }
             }
         }
         
