@@ -48,7 +48,7 @@ class HiddenWalletsSection: WalletsSection {
     
     init(
         index: Int,
-        viewModel: WalletsListViewModelType,
+        viewModel: WalletsRepository,
         header: BECollectionViewSectionLayout.Header = .init(
             viewClass: HiddenWalletsSectionHeaderView.self
         ),
@@ -81,7 +81,7 @@ class HiddenWalletsSection: WalletsSection {
     }
     
     override func mapDataToCollectionViewItems() -> [BECollectionViewItem] {
-        let viewModel = self.viewModel as? WalletsListViewModelType
+        let viewModel = self.viewModel as? WalletsRepository
         if viewModel?.isHiddenWalletsShown.value == true {
             return super.mapDataToCollectionViewItems()
         } else {
@@ -97,7 +97,7 @@ class HiddenWalletsSection: WalletsSection {
     }
     
     private func updateHeader(headerView: HiddenWalletsSectionHeaderView) {
-        let viewModel = self.viewModel as! WalletsListViewModelType
+        let viewModel = self.viewModel as! WalletsRepository
         
         if viewModel.isHiddenWalletsShown.value {
             headerView.imageView.tintColor = .textBlack
