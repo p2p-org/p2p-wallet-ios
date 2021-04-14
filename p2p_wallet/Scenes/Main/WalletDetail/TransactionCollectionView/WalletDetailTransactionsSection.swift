@@ -13,13 +13,13 @@ import Action
 class WalletDetailTransactionsSection: BECollectionViewSection {
     var wallet: Wallet?
     let disposeBag = DisposeBag()
-    let graphViewModel: WalletGraphVM
+    let graphViewModel: WalletGraphViewModel
     var scanQrCodeAction: CocoaAction?
     
     init(
         index: Int,
         viewModel: BEListViewModelType,
-        graphViewModel: WalletGraphVM
+        graphViewModel: WalletGraphViewModel
     ) {
         self.graphViewModel = graphViewModel
         super.init(

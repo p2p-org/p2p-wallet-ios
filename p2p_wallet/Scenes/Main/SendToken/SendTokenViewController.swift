@@ -62,7 +62,7 @@ class SendTokenViewController: WLIndicatorModalVC {
         case .chooseWallet:
             let vc = self.scenesFactory.makeChooseWalletViewController(customFilter: {$0.amount > 0}, showOtherWallets: false)
             vc.completion = { [weak self, weak vc] wallet in
-                guard let wallet = self?.viewModel.walletsVM.data.first(where: {$0.pubkey == wallet.pubkey}) else {return}
+                guard let wallet = self?.viewModel.walletsRepository.getWallets().first(where: {$0.pubkey == wallet.pubkey}) else {return}
                 vc?.back()
                 self?.viewModel.currentWallet.accept(wallet)
             }

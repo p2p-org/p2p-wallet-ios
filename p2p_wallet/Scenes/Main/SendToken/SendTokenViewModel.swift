@@ -22,7 +22,7 @@ class SendTokenViewModel {
     // MARK: - Constants
     
     // MARK: - Properties
-    let walletsVM: WalletsVM
+    let walletsRepository: WalletsRepository
     let disposeBag = DisposeBag()
     let solanaSDK: SolanaSDK
     let transactionManager: TransactionsManager
@@ -44,7 +44,7 @@ class SendTokenViewModel {
         request: solanaSDK.getFees()
             .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
             .map {
-                let decimals = self.walletsVM.items.first(where: {$0.symbol == "SOL"})?.decimals ?? 9
+                let decimals = self.walletsRepository.getWallets().first(where: {$0.symbol == "SOL"})?.decimals ?? 9
                 return Double($0) * pow(Double(10), -Double(decimals))
             }
     )
@@ -55,11 +55,11 @@ class SendTokenViewModel {
     let destinationAddressInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(solanaSDK: SolanaSDK, walletsVM: WalletsVM, transactionManager: TransactionsManager, activeWallet: Wallet? = nil, destinationAddress: String? = nil) {
+    init(solanaSDK: SolanaSDK, walletsRepository: WalletsRepository, transactionManager: TransactionsManager, activeWallet: Wallet? = nil, destinationAddress: String? = nil) {
         self.solanaSDK = solanaSDK
-        self.walletsVM = walletsVM
+        self.walletsRepository = walletsRepository
         self.transactionManager = transactionManager
-        self.currentWallet.accept(activeWallet ?? walletsVM.data.first)
+        self.currentWallet.accept(activeWallet ?? walletsRepository.getWallets().first)
         self.destinationAddressInput.accept(destinationAddress)
         fee.reload()
         bind()
@@ -97,7 +97,7 @@ class SendTokenViewModel {
                     return L10n.amountIsNotValid
                 }
                 
-                guard let solWallet = self.walletsVM.data.solWallet,
+                guard let solWallet = self.walletsRepository.solWallet,
                       (self.fee.value ?? 0) <= (solWallet.amount ?? 0)
                 else {
                     return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
