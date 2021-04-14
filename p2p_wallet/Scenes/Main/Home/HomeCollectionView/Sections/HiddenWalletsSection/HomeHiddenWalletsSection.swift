@@ -13,7 +13,7 @@ extension HomeCollectionView {
     class HomeHiddenWalletsSection: HiddenWalletsSection {
         var showAllProductsAction: CocoaAction?
         
-        init(index: Int, viewModel: WalletsListViewModelType) {
+        init(index: Int, viewModel: WalletsRepository) {
             super.init(
                 index: index,
                 viewModel: viewModel,
@@ -37,7 +37,7 @@ extension HomeCollectionView {
         
         override func dataDidLoad() {
             super.dataDidLoad()
-            let viewModel = self.viewModel as! WalletsListViewModelType
+            let viewModel = self.viewModel as! WalletsRepository
             if let footerView = footerView() as? FooterView {
                 if let topConstraint = footerView.button.constraintToSuperviewWithAttribute(.top)
                 {

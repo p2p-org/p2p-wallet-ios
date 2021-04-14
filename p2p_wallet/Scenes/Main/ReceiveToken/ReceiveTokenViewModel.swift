@@ -56,7 +56,7 @@ class ReceiveTokenViewModel {
     
     private func bind() {
         // bind wallet
-        repository.stateObservable()
+        repository.stateObservable
             .filter { state in
                 switch state {
                 case .loaded:
