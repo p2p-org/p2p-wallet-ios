@@ -77,7 +77,8 @@ class ChooseWalletViewModel {
     func search(keyword: String) {
         // if search field was cleared
         if keyword.isEmpty {
-            searchDidEnd()
+            myWalletsViewModel.setState(.loaded, withData: originalMyWallets ?? [])
+            otherWalletsViewModel?.setState(.loaded, withData: originalOtherWallets ?? [])
             return
         }
         
@@ -87,13 +88,13 @@ class ChooseWalletViewModel {
         }
         
         // apply search
-        let myWallets = myWalletsViewModel.getData(type: Wallet.self)
-            .filter(filter)
-        myWalletsViewModel.setState(.loaded, withData: myWallets)
+        if let wallets = originalMyWallets {
+            myWalletsViewModel.setState(.loaded, withData: wallets.filter(filter))
+        }
         
-        let otherWallets = otherWalletsViewModel?.getData(type: Wallet.self)
-            .filter(filter)
-        otherWalletsViewModel?.setState(.loaded, withData: otherWallets)
+        if let wallets = originalOtherWallets {
+            otherWalletsViewModel?.setState(.loaded, withData: wallets.filter(filter))
+        }
     }
     
     func searchDidEnd() {

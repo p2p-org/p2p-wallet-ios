@@ -33,7 +33,9 @@ extension WalletsVM: BEListViewModelType {
         case .loading:
             self.state.accept(.loading)
         case .loaded:
-            self.state.accept(.loaded((data as? [Wallet]) ?? []))
+            guard let data = data as? [Wallet] else {return}
+            self.data = data
+            self.state.accept(.loaded(data))
         case .error:
             self.state.accept(.error(SolanaSDK.Error.unknown))
         }
