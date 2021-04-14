@@ -9,6 +9,31 @@ import Foundation
 import BECollectionView
 
 extension ChooseWalletCollectionView {
+    class FirstSection: BECollectionViewSection {
+        init(viewModel: ChooseWalletViewModel, filter: ((AnyHashable) -> Bool)? = nil) {
+            super.init(
+                index: 0,
+                layout: BECollectionViewSectionLayout(
+                    header: .init(viewClass: FirstSectionHeaderView.self),
+                    cellType: Cell.self,
+                    emptyCellType: WLEmptyCell.self,
+                    interGroupSpacing: 16
+                ),
+                viewModel: viewModel.myWalletsViewModel,
+                customFilter: filter
+            )
+        }
+        
+        override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
+            let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
+            if let cell = cell as? WLEmptyCell {
+                cell.titleLabel.text = L10n.nothingFound
+                cell.subtitleLabel.text = L10n.changeYourSearchPhrase
+            }
+            return cell
+        }
+    }
+    
     class Cell: WalletCell, BECollectionViewCell {
         override var loadingViews: [UIView] {super.loadingViews + [addressLabel]}
         lazy var addressLabel = UILabel(textSize: 13, textColor: .textSecondary)

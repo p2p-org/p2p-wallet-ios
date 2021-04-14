@@ -16,18 +16,7 @@ class ChooseWalletCollectionView: BECollectionView {
     init(viewModel: ChooseWalletViewModel, firstSectionFilter: ((AnyHashable) -> Bool)? = nil) {
         self.viewModel = viewModel
         
-        var sections = [
-            BECollectionViewSection(
-                index: 0,
-                layout: BECollectionViewSectionLayout(
-                    header: .init(viewClass: FirstSectionHeaderView.self),
-                    cellType: Cell.self,
-                    interGroupSpacing: 16
-                ),
-                viewModel: viewModel.myWalletsViewModel,
-                customFilter: firstSectionFilter
-            )
-        ]
+        var sections: [BECollectionViewSection] = [ FirstSection(viewModel: viewModel, filter: firstSectionFilter) ]
         
         if let viewModel = viewModel.otherWalletsViewModel {
             sections.append(
@@ -49,5 +38,21 @@ class ChooseWalletCollectionView: BECollectionView {
     
     override func refreshAllSections() {
         sections.first?.reload()
+    }
+    
+    override func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<AnyHashable, BECollectionViewItem> {
+        var snapshot = super.mapDataToSnapshot()
+        
+        let firstSectionCount = snapshot.numberOfItems(inSection: 0)
+        let secondSectionCount = snapshot.numberOfItems(inSection: 1)
+        
+        if firstSectionCount == 1 && secondSectionCount > 0 {
+            if let firstSectionItem = snapshot.itemIdentifiers(inSection: 0).first
+            {
+                snapshot.deleteItems([firstSectionItem])
+            }
+        }
+        
+        return snapshot
     }
 }
