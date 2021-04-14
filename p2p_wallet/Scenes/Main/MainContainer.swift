@@ -76,11 +76,6 @@ class MainContainer {
         return TransactionInfoViewController(viewModel: viewModel)
     }
     
-    func makeAddNewTokenVC() -> AddNewWalletVC {
-        let vm = _AddNewWalletVM(handler: solanaSDK, walletsRepository: myWalletsVM, transactionManager: transactionManager, scenesFactory: self)
-        return AddNewWalletVC(viewModel: vm)
-    }
-    
     func makeReceiveTokenViewController(pubkey: String? = nil) -> ReceiveTokenViewController {
         let viewModel = ReceiveTokenViewModel(
             createTokenHandler: solanaSDK,
@@ -165,7 +160,6 @@ extension MainContainer: TabBarScenesFactory,
                          WalletDetailScenesFactory,
                          SendTokenScenesFactory,
                          BackupScenesFactory,
-                         AddNewWalletScenesFactory,
                          HomeScenesFactory,
                          ChangeNetworkResponder,
                          ReceiveTokenSceneFactory,
