@@ -9,7 +9,20 @@ import Foundation
 import BECollectionView
 
 extension ChooseWalletCollectionView {
-    class FirstSection: BECollectionViewSection {
+    class BaseSection: BECollectionViewSection {
+        override func dataDidLoad() {
+            super.dataDidLoad()
+            if let header = headerView() as? WLSectionHeaderView {
+                if viewModel.getData(type: Wallet.self).count == 0 {
+                    header.headerLabel.isHidden = true
+                } else {
+                    header.headerLabel.isHidden = false
+                }
+            }
+        }
+    }
+    
+    class FirstSection: BaseSection {
         init(viewModel: ChooseWalletViewModel, filter: ((AnyHashable) -> Bool)? = nil) {
             super.init(
                 index: 0,
@@ -31,6 +44,21 @@ extension ChooseWalletCollectionView {
                 cell.subtitleLabel.text = L10n.changeYourSearchPhrase
             }
             return cell
+        }
+    }
+    
+    class SecondSection: BaseSection {
+        init(viewModel: OtherWalletsViewModel, firstSectionFilter: ((AnyHashable) -> Bool)? = nil) {
+            super.init(
+                index: 1,
+                layout: BECollectionViewSectionLayout(
+                    header: .init(viewClass: SecondSectionHeaderView.self),
+                    cellType: OtherTokenCell.self,
+                    interGroupSpacing: 16
+                ),
+                viewModel: viewModel,
+                customFilter: firstSectionFilter
+            )
         }
     }
     

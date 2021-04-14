@@ -20,16 +20,7 @@ class ChooseWalletCollectionView: BECollectionView {
         
         if let viewModel = viewModel.otherWalletsViewModel {
             sections.append(
-                BECollectionViewSection(
-                    index: 1,
-                    layout: BECollectionViewSectionLayout(
-                        header: .init(viewClass: SecondSectionHeaderView.self),
-                        cellType: OtherTokenCell.self,
-                        interGroupSpacing: 16
-                    ),
-                    viewModel: viewModel,
-                    customFilter: firstSectionFilter
-                )
+                SecondSection(viewModel: viewModel, firstSectionFilter: firstSectionFilter)
             )
         }
         
