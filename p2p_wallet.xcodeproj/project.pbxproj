@@ -922,34 +922,7 @@
 				BCB58370255D28E100B10F65 /* ViewControllers */,
 				BC2EC1C12553ED1B006EEDA5 /* UIPresentationControllers */,
 				BCD83E7D25677673006DD29F /* UIViewControllerAnimatedTransitioning */,
-				BC65E085261DB21600E436C7 /* WalletCells */,
-				BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */,
-				BCD5E74825512D2500F51299 /* SectionHeaderView.swift */,
-				BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */,
-				BC11C9D72590987D00E399A9 /* SectionBackgroundView.swift */,
-				BCAEF2C3255E159200F3491F /* LoadableView.swift */,
-				BC3EA480254FD3CE00FB1FEA /* BaseCollectionViewCell.swift */,
-				BC7AD0E7254A540700B4A070 /* WLButton.swift */,
-				BC2EC1F82553FF6A006EEDA5 /* DashedButton.swift */,
-				BCF7D952256220F100961D31 /* ErrorView.swift */,
-				BC5ED748256237AB0030572D /* EmptyView.swift */,
-				BC290A04256BA36F002A727C /* TokenAmountTextField.swift */,
-				BC2EC1DB2553EFC6006EEDA5 /* SwipeDownInteractor.swift */,
-				BC54DD052587098800A65566 /* LazyView.swift */,
-				BC7533A9257F31D3007A00D9 /* LazyLabel.swift */,
-				BC54DD1E2587164F00A65566 /* ChartMarkers */,
-				BC54DD8D25872FE500A65566 /* HorizontalPicker.swift */,
-				BC11CA242592FEA300E399A9 /* BalancesOverviewView.swift */,
-				BC104A7A259974CE0048C834 /* WLLoadingView.swift */,
-				BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */,
-				BC22A5E725D2726700F7026D /* ScrollableVStackRootView.swift */,
-				BCA93F6925E78D8A0081DDF6 /* WLNavigationBar.swift */,
-				BC699AB325F9DE3400F57209 /* WLRadioButton.swift */,
-				BC699AB825F9E69B00F57209 /* WLPhrasesListView.swift */,
-				BC2EB61E26032BD8006CE170 /* WLLoadingIndicatorView.swift */,
-				BC8F6944260AE69E002FDCCD /* WLSectionHeaderView.swift */,
-				BC2DA293260B079100B50738 /* WLAddTokenButton.swift */,
-				BCEE508426244B6300271AB9 /* WLEmptyCell.swift */,
+				BCEE522B2626D3F900271AB9 /* UIViews */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -1461,6 +1434,41 @@
 				BCEE513B2625428E00271AB9 /* ProcessTransactionRootView+Layout.swift */,
 			);
 			path = ProcessTransactionRootView;
+			sourceTree = "<group>";
+		};
+		BCEE522B2626D3F900271AB9 /* UIViews */ = {
+			isa = PBXGroup;
+			children = (
+				BC65E085261DB21600E436C7 /* WalletCells */,
+				BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */,
+				BCD5E74825512D2500F51299 /* SectionHeaderView.swift */,
+				BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */,
+				BC11C9D72590987D00E399A9 /* SectionBackgroundView.swift */,
+				BCAEF2C3255E159200F3491F /* LoadableView.swift */,
+				BC3EA480254FD3CE00FB1FEA /* BaseCollectionViewCell.swift */,
+				BC7AD0E7254A540700B4A070 /* WLButton.swift */,
+				BC2EC1F82553FF6A006EEDA5 /* DashedButton.swift */,
+				BCF7D952256220F100961D31 /* ErrorView.swift */,
+				BC5ED748256237AB0030572D /* EmptyView.swift */,
+				BC290A04256BA36F002A727C /* TokenAmountTextField.swift */,
+				BC2EC1DB2553EFC6006EEDA5 /* SwipeDownInteractor.swift */,
+				BC54DD052587098800A65566 /* LazyView.swift */,
+				BC7533A9257F31D3007A00D9 /* LazyLabel.swift */,
+				BC54DD1E2587164F00A65566 /* ChartMarkers */,
+				BC54DD8D25872FE500A65566 /* HorizontalPicker.swift */,
+				BC11CA242592FEA300E399A9 /* BalancesOverviewView.swift */,
+				BC104A7A259974CE0048C834 /* WLLoadingView.swift */,
+				BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */,
+				BC22A5E725D2726700F7026D /* ScrollableVStackRootView.swift */,
+				BCA93F6925E78D8A0081DDF6 /* WLNavigationBar.swift */,
+				BC699AB325F9DE3400F57209 /* WLRadioButton.swift */,
+				BC699AB825F9E69B00F57209 /* WLPhrasesListView.swift */,
+				BC2EB61E26032BD8006CE170 /* WLLoadingIndicatorView.swift */,
+				BC8F6944260AE69E002FDCCD /* WLSectionHeaderView.swift */,
+				BC2DA293260B079100B50738 /* WLAddTokenButton.swift */,
+				BCEE508426244B6300271AB9 /* WLEmptyCell.swift */,
+			);
+			path = UIViews;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
