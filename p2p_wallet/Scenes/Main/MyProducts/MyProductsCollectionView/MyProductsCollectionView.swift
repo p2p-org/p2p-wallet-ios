@@ -11,11 +11,11 @@ import BECollectionView
 import RxSwift
 
 class MyProductsCollectionView: WalletsCollectionView {
-    init(walletsViewModel: WalletsListViewModelType) {
+    init(repository: WalletsRepository) {
         super.init(
-            walletsViewModel: walletsViewModel,
-            activeWalletsSection: ActiveWalletSection(index: 0, viewModel: walletsViewModel),
-            hiddenWalletsSection: HiddenWalletsSection(index: 1, viewModel: walletsViewModel, limit: 4)
+            walletsRepository: repository,
+            activeWalletsSection: ActiveWalletSection(index: 0, viewModel: repository),
+            hiddenWalletsSection: HiddenWalletsSection(index: 1, viewModel: repository, limit: 4)
         )
     }
 }
