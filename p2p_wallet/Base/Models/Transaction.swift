@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Transaction: FiatConvertable, ListItemType {
+struct Transaction: FiatConvertable {
     var id: String { signatureInfo?.signature ?? UUID().uuidString }
     var signatureInfo: SolanaSDK.SignatureInfo?
     var signature: String? {signatureInfo?.signature}
@@ -23,9 +23,6 @@ struct Transaction: FiatConvertable, ListItemType {
     var status: Status
     var subscription: UInt64?
     var newWallet: Wallet? // new wallet when type == .createAccount
-    static func placeholder(at index: Int) -> Transaction {
-        Transaction(signatureInfo: SolanaSDK.SignatureInfo(signature: placeholderId(at: index)), type: .createAccount, amount: 10, symbol: "SOL", timestamp: Date(), status: .confirmed)
-    }
 }
 
 extension Transaction {
