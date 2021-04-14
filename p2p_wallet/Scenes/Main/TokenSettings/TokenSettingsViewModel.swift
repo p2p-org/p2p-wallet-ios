@@ -20,12 +20,12 @@ enum TokenSettingsNavigatableScene {
 class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     // MARK: - Properties
     let disposeBag = DisposeBag()
-    let walletsVM: WalletsVM
+    let walletsRepository: WalletsRepository
     let pubkey: String
     let solanaSDK: SolanaSDK
     let transactionManager: TransactionsManager
     let accountStorage: KeychainAccountStorage
-    var wallet: Wallet? {walletsVM.items.first(where: {$0.pubkey == pubkey})}
+    var wallet: Wallet? {walletsRepository.getWallets().first(where: {$0.pubkey == pubkey})}
     lazy var processTransactionViewModel: ProcessTransactionViewModel = {
         let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager)
         viewModel.tryAgainAction = CocoaAction {
@@ -41,8 +41,8 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
-    init(walletsVM: WalletsVM, pubkey: String, solanaSDK: SolanaSDK, transactionManager: TransactionsManager, accountStorage: KeychainAccountStorage) {
-        self.walletsVM = walletsVM
+    init(walletsRepository: WalletsRepository, pubkey: String, solanaSDK: SolanaSDK, transactionManager: TransactionsManager, accountStorage: KeychainAccountStorage) {
+        self.walletsRepository = walletsRepository
         self.pubkey = pubkey
         self.solanaSDK = solanaSDK
         self.transactionManager = transactionManager
@@ -52,7 +52,7 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     
     override func bind() {
         super.bind()
-        walletsVM.dataObservable
+        walletsRepository.dataObservable
             .map {$0?.first(where: {$0.pubkey == self.pubkey})}
             .map {wallet -> [TokenSettings] in
                 [
@@ -72,7 +72,7 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     // MARK: - Actions
     @objc func toggleHideWallet() {
         guard let wallet = wallet else {return}
-        walletsVM.toggleWalletVisibility(wallet)
+        walletsRepository.toggleWalletVisibility(wallet)
     }
     
     @objc func showProcessingAndClose() {
@@ -102,7 +102,7 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
                     TransactionInfo(transaction: transaction)
                 )
                 self.transactionManager.process(transaction)
-                self.walletsVM.removeItem(where: {$0.pubkey == self.pubkey})
+                _ = self.walletsRepository.removeItem(where: {$0.pubkey == self.pubkey})
             }, onFailure: {error in
                 self.processTransactionViewModel.transactionInfo.accept(
                     TransactionInfo(transaction: transaction, error: error)

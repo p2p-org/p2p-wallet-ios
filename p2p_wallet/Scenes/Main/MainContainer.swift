@@ -40,7 +40,7 @@ class MainContainer {
     }
     
     func makeHomeViewController() -> HomeViewController {
-        let vm = HomeViewModel(walletsVM: myWalletsVM)
+        let vm = HomeViewModel(walletsViewModel: myWalletsVM)
         return HomeViewController(viewModel: vm, scenesFactory: self)
     }
     
@@ -55,7 +55,7 @@ class MainContainer {
     }
     
     func makeMyProductsViewController() -> MyProductsViewController {
-        let viewModel = MyProductsViewModel(walletsVM: myWalletsVM)
+        let viewModel = MyProductsViewModel(walletsViewModel: myWalletsVM)
         return MyProductsViewController(viewModel: viewModel, scenesFactory: self)
     }
     
@@ -77,7 +77,7 @@ class MainContainer {
     }
     
     func makeAddNewTokenVC() -> AddNewWalletVC {
-        let vm = _AddNewWalletVM(handler: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, scenesFactory: self)
+        let vm = _AddNewWalletVM(handler: solanaSDK, walletsRepository: myWalletsVM, transactionManager: transactionManager, scenesFactory: self)
         return AddNewWalletVC(viewModel: vm)
     }
     
@@ -92,7 +92,7 @@ class MainContainer {
     }
     
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController {
-        let vm = SendTokenViewModel(solanaSDK: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, activeWallet: activeWallet, destinationAddress: destinationAddress)
+        let vm = SendTokenViewModel(solanaSDK: solanaSDK, walletsRepository: myWalletsVM, transactionManager: transactionManager, activeWallet: activeWallet, destinationAddress: destinationAddress)
         let vc = SendTokenViewController(viewModel: vm, scenesFactory: self)
         return vc
     }
@@ -145,7 +145,7 @@ class MainContainer {
     
     // MARK: - Token edit
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController {
-        TokenSettingsViewController(viewModel: TokenSettingsViewModel(walletsVM: myWalletsVM, pubkey: pubkey, solanaSDK: solanaSDK, transactionManager: transactionManager, accountStorage: accountStorage), rootViewModel: rootViewModel)
+        TokenSettingsViewController(viewModel: TokenSettingsViewModel(walletsRepository: myWalletsVM, pubkey: pubkey, solanaSDK: solanaSDK, transactionManager: transactionManager, accountStorage: accountStorage), rootViewModel: rootViewModel)
     }
     
     // MARK: - Helpers

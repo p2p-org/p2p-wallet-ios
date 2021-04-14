@@ -47,8 +47,8 @@ class HomeViewController: BaseVC {
     
     override func bind() {
         super.bind()
-        viewModel.walletsVM
-            .state
+        viewModel.walletsViewModel
+            .stateObservable
             .map {$0 == .loading}
             .asDriver(onErrorJustReturn: false)
             .drive(onNext: {[weak self] isLoading in

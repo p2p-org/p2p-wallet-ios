@@ -12,14 +12,14 @@ import Action
 
 class _AddNewWalletVM: ListViewModel<Wallet> {
     let handler: CreateTokenHandler
-    let walletsVM: WalletsVM
+    let walletsRepository: WalletsRepository
     let transactionManager: TransactionsManager
     let scenesFactory: AddNewWalletScenesFactory
     lazy var feeSubject = LazySubject(
         value: Double(0),
         request: handler.getCreatingTokenAccountFee()
             .map {
-                let decimals = self.walletsVM.items.solWallet?.decimals ?? 9
+                let decimals = self.walletsRepository.solWallet?.decimals ?? 9
                 return Double($0) * pow(Double(10), -Double(decimals))
             }
     )
@@ -27,9 +27,9 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
     let navigatorSubject = PublishSubject<Navigation>()
     let clearSearchBarSubject = PublishSubject<Void>()
     
-    init(handler: CreateTokenHandler, walletsVM: WalletsVM, transactionManager: TransactionsManager, scenesFactory: AddNewWalletScenesFactory) {
+    init(handler: CreateTokenHandler, walletsRepository: WalletsRepository, transactionManager: TransactionsManager, scenesFactory: AddNewWalletScenesFactory) {
         self.handler = handler
-        self.walletsVM = walletsVM
+        self.walletsRepository = walletsRepository
         self.transactionManager = transactionManager
         self.scenesFactory = scenesFactory
     }
@@ -47,7 +47,7 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
         
         data = wallets
             .filter { newWallet in
-                !walletsVM.data.contains(where: {$0.mintAddress == newWallet.mintAddress})
+                !walletsRepository.getWallets().contains(where: {$0.mintAddress == newWallet.mintAddress})
             }
         state.accept(.loaded(data))
         
@@ -72,7 +72,7 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
     func addNewToken(newWallet: Wallet) -> CocoaAction {
         CocoaAction {
             // catching error
-            if self.feeSubject.value > (self.walletsVM.solWallet?.amount ?? 0)
+            if self.feeSubject.value > (self.walletsRepository.solWallet?.amount ?? 0)
             {
                 self.updateItem(where: {$0.mintAddress == newWallet.mintAddress}, transform: {
                     var wallet = $0
@@ -123,8 +123,8 @@ class _AddNewWalletVM: ListViewModel<Wallet> {
                     )
                     self.transactionManager.process(transaction)
                     
-                    // add to walletsVM
-                    self.walletsVM.state.accept(.loaded(self.walletsVM.data + [newWallet]))
+                    // add to wallets repository
+                    self.walletsRepository.setState(.loaded, withData: self.walletsRepository.getWallets() + [newWallet])
                     
                     // present wallet
                     let vc = self.scenesFactory.makeWalletDetailViewController(pubkey: newPubkey, symbol: newWallet.symbol)
