@@ -13,7 +13,7 @@ extension HomeCollectionView {
     class ActiveWalletsSection: WalletsSection {
         var openProfileAction: CocoaAction?
         
-        init(index: Int, viewModel: WalletsListViewModelType) {
+        init(index: Int, viewModel: WalletsRepository) {
             super.init(
                 index: index,
                 viewModel: viewModel,
