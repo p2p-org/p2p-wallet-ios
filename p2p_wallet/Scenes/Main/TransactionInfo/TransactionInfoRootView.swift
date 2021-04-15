@@ -8,7 +8,7 @@
 import UIKit
 import RxSwift
 
-class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
+class TransactionInfoRootView: ScrollableVStackRootView {
     // MARK: - Constants
     
     // MARK: - Properties
@@ -16,6 +16,13 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
     let disposeBag = DisposeBag()
     
     // MARK: - Headers
+    lazy var headerView = UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
+        // type
+        transactionTypeLabel,
+        // timestamp
+        transactionTimestampLabel
+    ])
+        .padding(.init(top: 30, left: 20, bottom: 54, right: 20))
     private lazy var transactionTypeLabel = UILabel(textSize: 21, weight: .medium, textAlignment: .center)
     private lazy var transactionTimestampLabel = UILabel(textSize: 13, weight: .medium, textColor: .textSecondary, textAlignment: .center)
     private lazy var transactionIconImageView = UIImageView(width: 30, height: 30, tintColor: .white)
@@ -60,14 +67,6 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
     // MARK: - Layout
     private func layout() {
         // header
-        let headerView = UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            // type
-            transactionTypeLabel,
-            // timestamp
-            transactionTimestampLabel
-        ])
-            .padding(.init(top: 30, left: 20, bottom: 54, right: 20))
-        
         addSubview(headerView)
         headerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
         
@@ -75,6 +74,7 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
         scrollView.contentInset.left = 0
         scrollView.contentInset.right = 0
         scrollView.contentInset.top = 56
+        scrollView.contentInset.bottom = 20
         
         scrollView.constraintToSuperviewWithAttribute(.top)?.isActive = false
         headerView.autoPinEdge(.bottom, to: .top, of: scrollView)
