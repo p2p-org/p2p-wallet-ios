@@ -60,10 +60,15 @@ extension TransactionInfoViewController: UIViewControllerTransitioningDelegate {
         var state: UIPanGestureRecognizer.State?
         
         override func calculateFittingHeightOfPresentedView(targetWidth: CGFloat) -> CGFloat {
-            var height = super.calculateFittingHeightOfPresentedView(targetWidth: targetWidth)
             
-            height += (presentedViewController as! TransactionInfoViewController)
-                .rootView.intrinsicContentSize.height
+            let rootView = (presentedViewController as! TransactionInfoViewController)
+                .rootView
+            
+            var height = rootView.headerView.fittingHeight(targetWidth: targetWidth) + 14
+            
+            height += rootView.scrollView.contentSize.height
+            height += rootView.scrollView.contentInset.top
+            height += rootView.scrollView.contentInset.bottom
             
             return height
         }
