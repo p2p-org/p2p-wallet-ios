@@ -20,8 +20,8 @@ class ChooseWalletViewController: WLIndicatorModalVC {
     {
         self.viewModel = viewModel
         super.init()
-        modalPresentationStyle = .custom
-        transitioningDelegate = self
+//        modalPresentationStyle = .custom
+//        transitioningDelegate = self
     }
     
     // MARK: - Methods
@@ -52,8 +52,8 @@ class ChooseWalletViewController: WLIndicatorModalVC {
     }
 }
 
-extension ChooseWalletViewController: UIViewControllerTransitioningDelegate {
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        ExpandablePresentationController(presentedViewController: presented, presenting: presenting)
-    }
-}
+//extension ChooseWalletViewController: UIViewControllerTransitioningDelegate {
+//    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+//        ExpandablePresentationController(presentedViewController: presented, presenting: presenting)
+//    }
+//}
