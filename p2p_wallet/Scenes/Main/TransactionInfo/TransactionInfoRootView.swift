@@ -191,7 +191,7 @@ class TransactionInfoRootView: IntrinsicScrollableVStackRootView {
             at: &index
         )
         swapSummaryView.sourceIconImageView.setUp(token: transaction.source)
-        swapSummaryView.sourceAmountLabel.text = transaction.sourceAmount?.toString(maximumFractionDigits: 4, showPlus: true)
+        swapSummaryView.sourceAmountLabel.text = (-(transaction.sourceAmount ?? 0)).toString(maximumFractionDigits: 4)
         swapSummaryView.sourceSymbolLabel.text = transaction.source?.symbol
         
         swapSummaryView.destinationIconImageView.setUp(token: transaction.destination)
