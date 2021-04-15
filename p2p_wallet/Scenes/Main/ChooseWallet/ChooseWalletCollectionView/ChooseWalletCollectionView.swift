@@ -32,19 +32,14 @@ class ChooseWalletCollectionView: BECollectionView {
     }
     
     override func mapDataToSnapshot() -> NSDiffableDataSourceSnapshot<AnyHashable, BECollectionViewItem> {
+        // get snapshot to modify
         var snapshot = super.mapDataToSnapshot()
         
-        let firstSectionCount = snapshot.numberOfItems(inSection: 0)
-        
-        if viewModel.otherWalletsViewModel != nil {
-            let secondSectionCount = snapshot.numberOfItems(inSection: 1)
-            
-            if firstSectionCount == 1 && secondSectionCount > 0 {
-                if let firstSectionItem = snapshot.itemIdentifiers(inSection: 0).first
-                {
-                    snapshot.deleteItems([firstSectionItem])
-                }
-            }
+        // if firstSection isEmpty but secondSection is not, then remove EmptyCell
+        if snapshot.isSectionEmpty(sectionIdentifier: 0) &&
+            !snapshot.isSectionEmpty(sectionIdentifier: 1)
+        {
+            snapshot.deleteItems(snapshot.itemIdentifiers(inSection: 0))
         }
         
         return snapshot
