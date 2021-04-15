@@ -9,20 +9,7 @@ import Foundation
 import BECollectionView
 
 extension ChooseWalletCollectionView {
-    class BaseSection: BECollectionViewSection {
-        override func dataDidLoad() {
-            super.dataDidLoad()
-            if let header = headerView() as? WLSectionHeaderView {
-                if viewModel.getData(type: Wallet.self).count == 0 {
-                    header.headerLabel.isHidden = true
-                } else {
-                    header.headerLabel.isHidden = false
-                }
-            }
-        }
-    }
-    
-    class FirstSection: BaseSection {
+    class FirstSection: BECollectionViewSection {
         init(viewModel: ChooseWalletViewModel, filter: ((AnyHashable) -> Bool)? = nil) {
             super.init(
                 index: 0,
@@ -47,7 +34,7 @@ extension ChooseWalletCollectionView {
         }
     }
     
-    class SecondSection: BaseSection {
+    class SecondSection: BECollectionViewSection {
         init(viewModel: OtherWalletsViewModel, firstSectionFilter: ((AnyHashable) -> Bool)? = nil) {
             super.init(
                 index: 1,
@@ -59,6 +46,17 @@ extension ChooseWalletCollectionView {
                 viewModel: viewModel,
                 customFilter: firstSectionFilter
             )
+        }
+        
+        override func dataDidLoad() {
+            super.dataDidLoad()
+            if let header = headerView() as? WLSectionHeaderView {
+                if viewModel.getData(type: Wallet.self).count == 0 {
+                    header.headerLabel.isHidden = true
+                } else {
+                    header.headerLabel.isHidden = false
+                }
+            }
         }
     }
     
