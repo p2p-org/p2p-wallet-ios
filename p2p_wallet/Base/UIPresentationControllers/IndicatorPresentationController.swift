@@ -83,3 +83,9 @@ class IndicatorPresentationController: BEDimmingPresentationController {
         presentedViewController.view.autoPinEdgesToSuperviewEdges()
     }
 }
+
+final class IndicatorPresenting: NSObject, UIViewControllerTransitioningDelegate {
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        IndicatorPresentationController(presentedViewController: presented, presenting: presenting)
+    }
+}
