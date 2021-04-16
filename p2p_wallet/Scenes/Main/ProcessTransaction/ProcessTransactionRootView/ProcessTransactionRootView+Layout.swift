@@ -161,7 +161,8 @@ extension ProcessTransactionRootView {
         stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
         buttonStackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
         stackView.addArrangedSubviews([
-            titleLabel,
+            titleLabel
+                .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(5),
             subtitleLabel
                 .padding(.init(x: 20, y: 0)),
@@ -189,9 +190,11 @@ extension ProcessTransactionRootView {
         stackView.addArrangedSubviews([
             createTransactionStatusView(image: image),
             BEStackViewSpacing(30),
-            titleLabel,
+            titleLabel
+                .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(5),
-            subtitleLabel,
+            subtitleLabel
+                .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(64),
             buttonStackView
                 .padding(.init(x: 20, y: 0))
