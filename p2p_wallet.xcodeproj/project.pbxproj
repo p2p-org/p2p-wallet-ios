@@ -43,7 +43,7 @@
 		BC1FFED3262975200014F027 /* ResetPinCodeWithSeedPhrasesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFED0262975200014F027 /* ResetPinCodeWithSeedPhrasesViewController.swift */; };
 		BC1FFEE8262977940014F027 /* WLEnterPhrasesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFEE7262977940014F027 /* WLEnterPhrasesVC.swift */; };
 		BC1FFEF326297BEB0014F027 /* ResetPinCodeWithSeedPhrasesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFEF226297BEB0014F027 /* ResetPinCodeWithSeedPhrasesContainer.swift */; };
-		BC1FFEFB26297F180014F027 /* ResetPinCodeEnterPhrasesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFEFA26297F180014F027 /* ResetPinCodeEnterPhrasesVC.swift */; };
+		BC1FFF0626298D6C0014F027 /* AccountRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFF0526298D6C0014F027 /* AccountRepository.swift */; };
 		BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC2288022542E1CC0028CE8F /* Localizable.strings */; };
 		BC22A5D225D2715C00F7026D /* SendTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22A5CF25D2715C00F7026D /* SendTokenViewModel.swift */; };
 		BC22A5D325D2715C00F7026D /* SendTokenRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22A5D025D2715C00F7026D /* SendTokenRootView.swift */; };
@@ -333,7 +333,7 @@
 		BC1FFED0262975200014F027 /* ResetPinCodeWithSeedPhrasesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPinCodeWithSeedPhrasesViewController.swift; sourceTree = "<group>"; };
 		BC1FFEE7262977940014F027 /* WLEnterPhrasesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLEnterPhrasesVC.swift; sourceTree = "<group>"; };
 		BC1FFEF226297BEB0014F027 /* ResetPinCodeWithSeedPhrasesContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPinCodeWithSeedPhrasesContainer.swift; sourceTree = "<group>"; };
-		BC1FFEFA26297F180014F027 /* ResetPinCodeEnterPhrasesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPinCodeEnterPhrasesVC.swift; sourceTree = "<group>"; };
+		BC1FFF0526298D6C0014F027 /* AccountRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRepository.swift; sourceTree = "<group>"; };
 		BC2287FA2542E1A30028CE8F /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		BC2287FE2542E1B90028CE8F /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		BC2287FF2542E1C20028CE8F /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
@@ -689,7 +689,6 @@
 				BC1FFEF226297BEB0014F027 /* ResetPinCodeWithSeedPhrasesContainer.swift */,
 				BC1FFECE262975200014F027 /* ResetPinCodeWithSeedPhrasesViewModel.swift */,
 				BC1FFED0262975200014F027 /* ResetPinCodeWithSeedPhrasesViewController.swift */,
-				BC1FFEFA26297F180014F027 /* ResetPinCodeEnterPhrasesVC.swift */,
 			);
 			path = ResetPinCodeWithSeedPhrases;
 			sourceTree = "<group>";
@@ -1026,10 +1025,11 @@
 		BC8F684B2609D851002FDCCD /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
-				BC2DA298260B0AC600B50738 /* Handlers */,
+				BC1FFF0526298D6C0014F027 /* AccountRepository.swift */,
 				BC8F684C2609D866002FDCCD /* WalletsRepository.swift */,
 				BC65E036261D72B200E436C7 /* TransactionsRepository.swift */,
 				BC65E243261EE04B00E436C7 /* PricesRepository.swift */,
+				BC2DA298260B0AC600B50738 /* Handlers */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -1845,6 +1845,7 @@
 				BCE42E0425DFA0B50021540E /* CreateWalletViewController.swift in Sources */,
 				BC22ABE12552A4B70071C69F /* DismissMenuAnimator.swift in Sources */,
 				BCA93FA425ECD16E0081DDF6 /* TokenSettingsSection.swift in Sources */,
+				BC1FFF0626298D6C0014F027 /* AccountRepository.swift in Sources */,
 				BC2EC1852553B326006EEDA5 /* UIColor+Extensions.swift in Sources */,
 				BC5A97BB260D9967009674C4 /* MyProductsCollectionView+Sections.swift in Sources */,
 				BC2EC1DE2553EFC6006EEDA5 /* SwipeDownInteractor.swift in Sources */,
@@ -1882,7 +1883,6 @@
 				BCAB212B25DF5D1C004F4F9D /* RootViewModel.swift in Sources */,
 				BCE42DF525DF9C7A0021540E /* OnboardingViewModel.swift in Sources */,
 				BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */,
-				BC1FFEFB26297F180014F027 /* ResetPinCodeEnterPhrasesVC.swift in Sources */,
 				BC8F6829260986EE002FDCCD /* ReceiveTokenViewModel.swift in Sources */,
 				BC32A356254A69EA002156F0 /* WelcomeVC.swift in Sources */,
 				BC1FFED3262975200014F027 /* ResetPinCodeWithSeedPhrasesViewController.swift in Sources */,

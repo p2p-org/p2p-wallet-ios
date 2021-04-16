@@ -7,8 +7,16 @@
 
 import Foundation
 
-struct ResetPinCodeWithSeedPhrasesContainer {
-    let viewModel = ResetPinCodeWithSeedPhrasesViewModel()
+class ResetPinCodeWithSeedPhrasesContainer {
+    let accountRepository: AccountRepository
+    lazy var viewModel = ResetPinCodeWithSeedPhrasesViewModel(accountRepository: accountRepository)
+    
+    init(
+        accountRepository: AccountRepository
+    ) {
+        self.accountRepository = accountRepository
+        
+    }
     
     func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
     {

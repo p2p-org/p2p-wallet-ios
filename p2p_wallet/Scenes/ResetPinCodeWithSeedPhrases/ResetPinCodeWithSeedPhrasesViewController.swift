@@ -20,6 +20,9 @@ class ResetPinCodeWithSeedPhrasesViewController: WLIndicatorModalVC {
     let scenesFactory: ResetPinCodeWithSeedPhrasesScenesFactory
     var childNavigationController: BENavigationController!
     
+    // MARK: - ChildVC
+    lazy var enterPhrasesVC = scenesFactory.makeEnterPhrasesVC()
+    
     // MARK: - Initializer
     init(
         viewModel: ResetPinCodeWithSeedPhrasesViewModel,
@@ -44,13 +47,17 @@ class ResetPinCodeWithSeedPhrasesViewController: WLIndicatorModalVC {
         viewModel.navigationSubject
             .subscribe(onNext: {self.navigate(to: $0)})
             .disposed(by: disposeBag)
+        
+        viewModel.error
+            .bind(to: enterPhrasesVC.error)
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Navigation
     private func navigate(to scene: ResetPinCodeWithSeedPhrasesNavigatableScene) {
         switch scene {
         case .enterSeedPhrases:
-            childNavigationController.pushViewController(scenesFactory.makeEnterPhrasesVC(), animated: true)
+            childNavigationController.pushViewController(enterPhrasesVC, animated: true)
         case .createNewPasscode:
             childNavigationController.pushViewController(scenesFactory.makeCreatePassCodeVC(), animated: true)
         }
