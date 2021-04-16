@@ -23,12 +23,3 @@ class ScrollableVStackRootView: BEView {
         stackView.autoPinEdgesToSuperviewEdges()
     }
 }
-
-class IntrinsicScrollableVStackRootView: ScrollableVStackRootView {
-    override var intrinsicContentSize: CGSize {
-        .init(
-            width: scrollView.contentSize.width + scrollView.contentInset.left + scrollView.contentInset.right,
-            height: scrollView.contentSize.height + scrollView.contentInset.top + scrollView.contentInset.bottom
-        )
-    }
-}

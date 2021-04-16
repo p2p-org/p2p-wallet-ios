@@ -165,7 +165,7 @@ class SendTokenRootView: ScrollableVStackRootView {
         
         // available amount color
         viewModel.errorSubject
-            .map {($0 == L10n.insufficientFunds || $0 == L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee) ? UIColor.red: UIColor.h5887ff}
+            .map {($0 == L10n.insufficientFunds || $0 == L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee || $0 == L10n.amountIsNotValid) ? UIColor.red: UIColor.h5887ff}
             .subscribe(onNext: {color in
                 self.balanceLabel.textColor = color
             })
@@ -255,7 +255,8 @@ class SendTokenRootView: ScrollableVStackRootView {
         // error
         viewModel.errorSubject
             .map {
-                if $0 == L10n.insufficientFunds {
+                if $0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid
+                {
                     return nil
                 }
                 return $0
@@ -265,7 +266,12 @@ class SendTokenRootView: ScrollableVStackRootView {
             .disposed(by: disposeBag)
         
         // send button
-        viewModel.errorSubject.map {$0 == nil}
+        Observable.combineLatest(
+            viewModel.errorSubject.map {$0 == nil},
+            viewModel.amountInput.map {$0?.double != nil},
+            viewModel.destinationAddressInput.map {$0 != nil && !$0!.isEmpty}
+        )
+            .map {$0 && $1 && $2}
             .asDriver(onErrorJustReturn: false)
             .drive(sendButton.rx.isEnabled)
             .disposed(by: disposeBag)

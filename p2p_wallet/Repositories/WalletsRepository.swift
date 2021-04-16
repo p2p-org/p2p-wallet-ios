@@ -26,6 +26,7 @@ protocol WalletsRepository: BEListViewModelType {
     func toggleIsHiddenWalletShown()
     var isHiddenWalletsShown: BehaviorRelay<Bool> {get}
     func hiddenWallets() -> [Wallet]
+    func refreshUI()
 }
 
 extension WalletsViewModel: WalletsRepository {

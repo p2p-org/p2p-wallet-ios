@@ -321,3 +321,5 @@
 "System error" = "Erreur système";
 "Token balance must be empty" = "Le solde du jeton doit être vide";
 "Token account should be zero" = "Le compte de jeton doit être égal à zéro";
+"Wrong wallet address" = "Mauvaise adresse de portefeuille";
+"Check enterred wallet address and try again." = "Vérifiez l'adresse de votre portefeuille et réessayez.";

@@ -39,6 +39,7 @@ class ChooseWalletRootView: BEView {
             firstSectionFilter: viewModel.firstSectionFilter
         )
         collectionView.delegate = self
+        collectionView.keyboardDismissMode = .onDrag
         return collectionView
     }()
     
@@ -84,23 +85,18 @@ extension ChooseWalletRootView: BECollectionViewDelegate {
 
 extension ChooseWalletRootView: BESearchBarDelegate {
     func beSearchBar(_ searchBar: BESearchBar, searchWithKeyword keyword: String) {
-        print("searchBar: searchWithKeyword: \(keyword)")
         viewModel.search(keyword: keyword)
     }
     
     func beSearchBarDidBeginSearching(_ searchBar: BESearchBar) {
-        print("searchBar: searchDidBegin")
-        viewModel.searchDidBegin()
+        
     }
     
     func beSearchBarDidEndSearching(_ searchBar: BESearchBar) {
-        print("searchBar: searchDidEnd")
-        viewModel.searchDidEnd()
+        
     }
     
     func beSearchBarDidCancelSearching(_ searchBar: BESearchBar) {
-        print("searchBar: searchDidEnd: searchDidCancel")
-        viewModel.searchDidEnd()
-        searchBar.clear(notify: false)
+        searchBar.clear()
     }
 }

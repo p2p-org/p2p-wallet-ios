@@ -18,7 +18,7 @@ class ProcessTransactionRootView: BEView {
     
     // MARK: - Subviews
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
-    lazy var titleLabel = UILabel(textSize: 21, weight: .semibold, textAlignment: .center)
+    lazy var titleLabel = UILabel(textSize: 21, weight: .semibold, numberOfLines: 0, textAlignment: .center)
     lazy var subtitleLabel = UILabel(weight: .medium, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
     lazy var transactionStatusImageView = UIImageView(width: 65, height: 65, image: .transactionProcessing)
     lazy var transactionIndicatorView: TransactionIndicatorView = {
