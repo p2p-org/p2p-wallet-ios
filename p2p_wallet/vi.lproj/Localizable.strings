@@ -319,3 +319,5 @@
 "System error" = "Lỗi hệ thống";
 "Token balance must be empty" = "Số dư ví phải bằng 0";
 "Token account should be zero" = "Tài khoản token phải bằng 0";
+"Wrong wallet address" = "Địa chỉ ví sai";
+"Check enterred wallet address and try again." = "Kiểm tra địa chỉ ví đã nhập và thử lại.";
