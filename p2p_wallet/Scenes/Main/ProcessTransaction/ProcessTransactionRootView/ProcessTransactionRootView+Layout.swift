@@ -40,7 +40,19 @@ extension ProcessTransactionRootView {
             }
             
             // When a user entered an incorrect recipient address
-            else if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
+            else if error.readableDescription == L10n.wrongWalletAddress
+            {
+                layoutWithSpecificError(
+                    image: .transactionErrorWrongWallet
+                )
+                
+                titleLabel.text = L10n.wrongWalletAddress
+                subtitleLabel.text = L10n.checkEnterredWalletAddressAndTryAgain
+            }
+            
+            // When the user needs to correct the slippage value
+            else if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit
+            {
                 layoutWithSpecificError(
                     image: .transactionErrorSlippageExceeded
                 )
