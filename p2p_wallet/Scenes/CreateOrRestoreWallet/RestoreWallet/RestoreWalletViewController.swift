@@ -65,7 +65,7 @@ class RestoreWalletViewController: WLIntroVC {
     private func navigate(to scene: RestoreWalletNavigatableScene) {
         switch scene {
         case .enterPhrases:
-            let vc = scenesFactory.makeEnterPhrasesVC()
+            let vc = WLModalWrapperVC(wrapped: scenesFactory.makeEnterPhrasesVC())
             present(vc, animated: true, completion: nil)
         case .welcomeBack(phrases: let phrases):
             let vc = scenesFactory.makeWelcomeBackVC(phrases: phrases)
