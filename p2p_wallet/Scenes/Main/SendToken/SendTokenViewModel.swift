@@ -162,6 +162,30 @@ class SendTokenViewModel {
             navigationSubject.onNext(.processTransaction)
         }
         
+        var transaction = Transaction(
+            signatureInfo: nil,
+            type: .send,
+            amount: -amount,
+            symbol: currentWallet.symbol,
+            status: .processing
+        )
+        
+        // Verify address
+        if !NSRegularExpression.publicKey.matches(receiver)
+        {
+            self.processTransactionViewModel.transactionInfo.accept(
+                .init(
+                    transaction: transaction,
+                    error: SolanaSDK.Error.other(L10n.wrongWalletAddress)
+                )
+            )
+            return
+        } else {
+            self.processTransactionViewModel.transactionInfo.accept(
+                TransactionInfo(transaction: transaction)
+            )
+        }
+        
         // prepare amount
         let lamport = amount.toLamport(decimals: decimals)
         
@@ -174,18 +198,6 @@ class SendTokenViewModel {
             // other tokens
             request = solanaSDK.sendSPLTokens(mintAddress: currentWallet.mintAddress, from: sender, to: receiver, amount: lamport)
         }
-        
-        var transaction = Transaction(
-            signatureInfo: nil,
-            type: .send,
-            amount: -amount,
-            symbol: currentWallet.symbol,
-            status: .processing
-        )
-        
-        self.processTransactionViewModel.transactionInfo.accept(
-            TransactionInfo(transaction: transaction)
-        )
         
         request
             .subscribe(onSuccess: { signature in
@@ -207,7 +219,6 @@ class SendTokenViewModel {
     private func verifyError() -> String? {
         let wallet = self.currentWallet.value
         let amountInput = self.amountInput.value
-        let addressInput = self.destinationAddressInput.value
         let fee = self.fee.value
         
         // Verify wallet
@@ -238,13 +249,6 @@ class SendTokenViewModel {
             {
                 return L10n.insufficientFunds
             }
-        }
-        
-        // Verify address if it has been entered
-        if let addressInput = addressInput,
-           addressInput.isEmpty
-        {
-            return L10n.theAddressIsNotValid
         }
         
         return nil
