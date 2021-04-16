@@ -321,3 +321,5 @@
 "System error" = "Системная ошибка";
 "Token balance must be empty" = "Баланс токена должен быть пустым";
 "Token account should be zero" = "Аккаунт токена должен быть нулевым";
+"Wrong wallet address" = "Неверный адрес кошелька";
+"Check enterred wallet address and try again." = "Проверьте введенный адрес кошелька и попробуйте еще раз.";

@@ -136,40 +136,7 @@ class SwapTokenViewModel {
             sourceAmountInput,
             slippage
         )
-            .map {_, pool, sourceWallet, destinationWallet, sourceAmountInput, slippage -> String? in
-                var errorText: String?
-                if pool != nil {
-                    // supported
-                    if let input = sourceAmountInput.double {
-                        if input <= 0 {
-                            errorText = L10n.amountIsNotValid
-                        } else if input.rounded(decimals: sourceWallet?.decimals) > sourceWallet?.amount?.rounded(decimals: sourceWallet?.decimals)
-                        {
-                            errorText = L10n.insufficientFunds
-                        } else if !self.isSlippageValid(slippage: slippage) {
-                            errorText = L10n.slippageIsnTValid
-                        }
-                    }
-                } else {
-                    // unsupported
-                    if let pools = self.pools.value,
-                       !pools.isEmpty
-                    {
-                        if let sourceWallet = sourceWallet,
-                           let destinationWallet = destinationWallet
-                        {
-                            if sourceWallet.symbol == destinationWallet.symbol {
-                                errorText = L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.symbol)
-                            } else {
-                                errorText = L10n.swappingFromToIsCurrentlyUnsupported(sourceWallet.symbol, destinationWallet.symbol)
-                            }
-                        }
-                    } else {
-                        errorText = L10n.swappingIsCurrentlyUnavailable
-                    }
-                }
-                return errorText
-            }
+            .map {_ in self.verifyError()}
             .bind(to: errorSubject)
             .disposed(by: disposeBag)
     }
@@ -297,5 +264,59 @@ class SwapTokenViewModel {
                 )
             })
             .disposed(by: disposeBag)
+    }
+    
+    /// Verify current context
+    /// - Returns: Error string, nil if no error appear
+    private func verifyError() -> String? {
+        // get variables
+        let sourceAmountInput = self.sourceAmountInput.value
+        let sourceWallet = self.sourceWallet.value
+        let destinationWallet = self.destinationWallet.value
+        let pool = self.currentPool.value
+        let slippage = self.slippage.value
+        
+        // Verify amount
+        if let input = sourceAmountInput.double {
+            // amount is empty
+            if input <= 0, pool != nil {
+                return L10n.amountIsNotValid
+            }
+            
+            // insufficient funds
+            if input.rounded(decimals: sourceWallet?.decimals) > sourceWallet?.amount?.rounded(decimals: sourceWallet?.decimals)
+            {
+                return L10n.insufficientFunds
+            }
+        }
+        
+        // Verify slippage
+        if !isSlippageValid(slippage: slippage) {
+            return L10n.slippageIsnTValid
+        }
+        
+        // Verify pool
+        if pool == nil {
+            // if there are pools, but there is no pool for current pairs
+            if let pools = self.pools.value,
+               !pools.isEmpty
+            {
+                if let sourceWallet = sourceWallet,
+                   let destinationWallet = destinationWallet
+                {
+                    if sourceWallet.symbol == destinationWallet.symbol {
+                        return L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.symbol)
+                    } else {
+                        return L10n.swappingFromToIsCurrentlyUnsupported(sourceWallet.symbol, destinationWallet.symbol)
+                    }
+                }
+            }
+            // if there is no pools at all
+            else {
+                return L10n.swappingIsCurrentlyUnavailable
+            }
+        }
+        
+        return nil
     }
 }

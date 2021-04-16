@@ -360,9 +360,16 @@ private extension SwapTokenRootView {
             .disposed(by: disposeBag)
         
         viewModel.errorSubject
-            .map {$0 == nil}
+            .map {$0 == nil || $0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid}
             .asDriver(onErrorJustReturn: true)
             .drive(errorLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.errorSubject
+            .map {$0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid}
+            .map {$0 ? UIColor.alert: UIColor.h5887ff}
+            .asDriver(onErrorJustReturn: .h5887ff)
+            .drive(availableSourceBalanceLabel.rx.textColor)
             .disposed(by: disposeBag)
         
         // swap button

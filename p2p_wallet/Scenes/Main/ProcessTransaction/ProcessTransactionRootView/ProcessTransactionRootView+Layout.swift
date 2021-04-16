@@ -40,7 +40,19 @@ extension ProcessTransactionRootView {
             }
             
             // When a user entered an incorrect recipient address
-            else if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
+            else if error.readableDescription == L10n.wrongWalletAddress
+            {
+                layoutWithSpecificError(
+                    image: .transactionErrorWrongWallet
+                )
+                
+                titleLabel.text = L10n.wrongWalletAddress
+                subtitleLabel.text = L10n.checkEnterredWalletAddressAndTryAgain
+            }
+            
+            // When the user needs to correct the slippage value
+            else if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit
+            {
                 layoutWithSpecificError(
                     image: .transactionErrorSlippageExceeded
                 )
@@ -149,7 +161,8 @@ extension ProcessTransactionRootView {
         stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
         buttonStackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
         stackView.addArrangedSubviews([
-            titleLabel,
+            titleLabel
+                .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(5),
             subtitleLabel
                 .padding(.init(x: 20, y: 0)),
@@ -177,9 +190,11 @@ extension ProcessTransactionRootView {
         stackView.addArrangedSubviews([
             createTransactionStatusView(image: image),
             BEStackViewSpacing(30),
-            titleLabel,
+            titleLabel
+                .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(5),
-            subtitleLabel,
+            subtitleLabel
+                .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(64),
             buttonStackView
                 .padding(.init(x: 20, y: 0))

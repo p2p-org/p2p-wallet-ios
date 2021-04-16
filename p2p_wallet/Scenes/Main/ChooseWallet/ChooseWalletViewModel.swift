@@ -17,9 +17,7 @@ class ChooseWalletViewModel {
     let disposeBag = DisposeBag()
     let myWalletsViewModel: BEListViewModelType
     let otherWalletsViewModel: OtherWalletsViewModel?
-    let firstSectionFilter: ((AnyHashable) -> Bool)?
-    
-    var originalMyWallets: [Wallet]?
+    var firstSectionFilter: ((AnyHashable) -> Bool)?
     
     var keyword: String?
     
@@ -41,7 +39,6 @@ class ChooseWalletViewModel {
         } else {
             otherWalletsViewModel = nil
         }
-        self.firstSectionFilter = firstSectionFilter
         
         otherWalletsViewModel?.customFilter = { [weak self] wallet in
             guard let strongSelf = self else {return true}
@@ -52,11 +49,23 @@ class ChooseWalletViewModel {
                 return false
             }
             if let keyword = strongSelf.keyword {
-                return wallet.symbol.lowercased().hasPrefix(keyword.lowercased()) ||
-                    wallet.symbol.lowercased().contains(keyword.lowercased())
+                return wallet.hasKeyword(keyword)
             }
             return true
         }
+        
+        let fFilter: ((AnyHashable) -> Bool)? = {[weak self] wallet in
+            guard let strongSelf = self,
+                let wallet = wallet as? Wallet
+            else {return true}
+            var isValid = firstSectionFilter?(wallet) ?? true
+            if let keyword = strongSelf.keyword {
+                isValid = isValid && wallet.hasKeyword(keyword)
+            }
+            return isValid
+        }
+        self.firstSectionFilter = fFilter
+        
         bind()
     }
     
@@ -74,42 +83,28 @@ class ChooseWalletViewModel {
             .disposed(by: disposeBag)
     }
     
-    func searchDidBegin() {
-        originalMyWallets = myWalletsViewModel.getData(type: Wallet.self)
-    }
-    
     func search(keyword: String) {
         // if search field was cleared
         if keyword.isEmpty {
             self.keyword = nil
-            myWalletsViewModel.setState(.loaded, withData: originalMyWallets ?? [])
-            return
+        } else {
+            self.keyword = keyword
         }
         
-        self.keyword = keyword
-        
-        // mark
-        let filter: (Wallet) -> Bool = {wallet in
-            wallet.symbol.lowercased().hasPrefix(keyword.lowercased()) ||
-                wallet.symbol.lowercased().contains(keyword.lowercased())
-        }
-        
-        // apply search
-        if let wallets = originalMyWallets {
-            myWalletsViewModel.setState(.loaded, withData: wallets.filter(filter))
-        }
-    }
-    
-    func searchDidEnd() {
-        if let wallets = originalMyWallets {
-            myWalletsViewModel.setState(.loaded, withData: wallets)
-        }
-        originalMyWallets = nil
-        keyword = nil
+        // Update
+        myWalletsViewModel.refreshUI()
+        otherWalletsViewModel?.refreshUI()
     }
     
     // MARK: - Actions
 //    @objc func showDetail() {
 //        
 //    }
+}
+
+private extension Wallet {
+    func hasKeyword(_ keyword: String) -> Bool {
+        symbol.lowercased().hasPrefix(keyword.lowercased()) ||
+            symbol.lowercased().contains(keyword.lowercased())
+    }
 }

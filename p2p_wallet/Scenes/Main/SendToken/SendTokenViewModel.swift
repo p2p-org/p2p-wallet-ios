@@ -86,36 +86,7 @@ class SendTokenViewModel {
             isUSDMode.distinctUntilChanged(),
             fee.observable.distinctUntilChanged()
         )
-            .map { (wallet, amountInput, addressInput, _, _) -> String? in
-                guard wallet != nil else {
-                    return L10n.youMustSelectAWalletToSend
-                }
-                
-                guard let amount = amountInput.double,
-                      amount > 0
-                else {
-                    return L10n.amountIsNotValid
-                }
-                
-                guard let solWallet = self.walletsRepository.solWallet,
-                      (self.fee.value ?? 0) <= (solWallet.amount ?? 0)
-                else {
-                    return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
-                }
-                
-                let amountToCompare = self.availableAmount.value
-                
-                if amount.rounded(decimals: wallet?.decimals) > amountToCompare.rounded(decimals: wallet?.decimals)
-                {
-                    return L10n.insufficientFunds
-                }
-                
-                if addressInput == nil || !NSRegularExpression.publicKey.matches(addressInput!)
-                {
-                    return L10n.theAddressIsNotValid
-                }
-                return nil
-            }
+            .map {_ in self.verifyError()}
             .bind(to: errorSubject)
             .disposed(by: disposeBag)
     }
@@ -191,6 +162,30 @@ class SendTokenViewModel {
             navigationSubject.onNext(.processTransaction)
         }
         
+        var transaction = Transaction(
+            signatureInfo: nil,
+            type: .send,
+            amount: -amount,
+            symbol: currentWallet.symbol,
+            status: .processing
+        )
+        
+        // Verify address
+        if !NSRegularExpression.publicKey.matches(receiver)
+        {
+            self.processTransactionViewModel.transactionInfo.accept(
+                .init(
+                    transaction: transaction,
+                    error: SolanaSDK.Error.other(L10n.wrongWalletAddress)
+                )
+            )
+            return
+        } else {
+            self.processTransactionViewModel.transactionInfo.accept(
+                TransactionInfo(transaction: transaction)
+            )
+        }
+        
         // prepare amount
         let lamport = amount.toLamport(decimals: decimals)
         
@@ -203,18 +198,6 @@ class SendTokenViewModel {
             // other tokens
             request = solanaSDK.sendSPLTokens(mintAddress: currentWallet.mintAddress, from: sender, to: receiver, amount: lamport)
         }
-        
-        var transaction = Transaction(
-            signatureInfo: nil,
-            type: .send,
-            amount: -amount,
-            symbol: currentWallet.symbol,
-            status: .processing
-        )
-        
-        self.processTransactionViewModel.transactionInfo.accept(
-            TransactionInfo(transaction: transaction)
-        )
         
         request
             .subscribe(onSuccess: { signature in
@@ -229,5 +212,45 @@ class SendTokenViewModel {
                 )
             })
             .disposed(by: disposeBag)
+    }
+    
+    /// Verify current context
+    /// - Returns: Error string, nil if no error appear
+    private func verifyError() -> String? {
+        let wallet = self.currentWallet.value
+        let amountInput = self.amountInput.value
+        let fee = self.fee.value
+        
+        // Verify wallet
+        guard wallet != nil else {
+            return L10n.youMustSelectAWalletToSend
+        }
+        
+        // Verify amount if it has been entered
+        if let amountInput = amountInput,
+           let amount = amountInput.double
+        {
+            // Amount is not valid
+            if amount <= 0 {
+                return L10n.amountIsNotValid
+            }
+            
+            // Verify with fee
+            if let fee = fee,
+               let solAmount = self.walletsRepository.solWallet?.amount,
+               fee > solAmount
+            {
+                return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
+            }
+            
+            // Verify amount
+            let amountToCompare = self.availableAmount.value
+            if amount.rounded(decimals: wallet?.decimals) > amountToCompare.rounded(decimals: wallet?.decimals)
+            {
+                return L10n.insufficientFunds
+            }
+        }
+        
+        return nil
     }
 }

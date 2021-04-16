@@ -321,3 +321,5 @@
 "System error" = "System error";
 "Token balance must be empty" = "Token balance must be empty";
 "Token account should be zero" = "Token account should be zero";
+"Wrong wallet address" = "Wrong wallet address";
+"Check enterred wallet address and try again." = "Check enterred wallet address and try again.";
