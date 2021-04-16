@@ -15,7 +15,11 @@ protocol PhrasesCreationHandler {
     func handlePhrases(_ phrases: [String])
 }
 
-class WLEnterPhrasesVC: WLIndicatorModalVC {
+class WLEnterPhrasesVC: BaseVC {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+        .hidden
+    }
+    
     // MARK: - Properties
     let error = BehaviorRelay<Error?>(value: nil)
     let handler: PhrasesCreationHandler
@@ -56,10 +60,9 @@ class WLEnterPhrasesVC: WLIndicatorModalVC {
     
     override func setUp() {
         super.setUp()
-        title = L10n.enterSecurityKeys
         
         // scroll view for flexible height
-        containerView.addSubview(scrollView)
+        view.addSubview(scrollView)
         scrollView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
         scrollView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
         
