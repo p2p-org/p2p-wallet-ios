@@ -96,7 +96,7 @@ class WLEnterPhrasesVC: BaseVC {
         view.addSubview(descriptionLabel)
         descriptionLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
         descriptionLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-        descriptionLabel.autoPinEdge(.bottom, to: .top, of: tabBar, withOffset: -20)
+        descriptionLabel.autoPinEdge(.bottom, to: .bottom, of: tabBar, withOffset: -20)
         
         view.addSubview(retryButton)
         retryButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
