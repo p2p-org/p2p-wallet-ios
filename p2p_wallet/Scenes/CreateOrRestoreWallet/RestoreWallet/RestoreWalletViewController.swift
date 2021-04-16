@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol RestoreWalletScenesFactory {
-    func makeEnterPhrasesVC() -> EnterPhrasesVC
+    func makeEnterPhrasesVC() -> WLEnterPhrasesVC
     func makeWelcomeBackVC(phrases: [String]) -> WelcomeBackVC
 }
 
@@ -66,9 +66,7 @@ class RestoreWalletViewController: WLIntroVC {
         switch scene {
         case .enterPhrases:
             let vc = scenesFactory.makeEnterPhrasesVC()
-            let titleImageView = UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white)
-
-            presentCustomModal(vc: vc, title: L10n.securityKey.uppercaseFirst, titleImageView: titleImageView)
+            present(vc, animated: true, completion: nil)
         case .welcomeBack(phrases: let phrases):
             let vc = scenesFactory.makeWelcomeBackVC(phrases: phrases)
             transition(to: vc)
