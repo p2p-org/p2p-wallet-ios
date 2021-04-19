@@ -109,8 +109,8 @@ class RootViewController: BaseVC {
             setNeedsStatusBarAppearanceUpdate()
             
             let vc = scenesFactory.makeResetPinCodeWithSeedPhrasesViewController()
-            vc.completion = {[weak self] completed in
-                self?.localAuthVC?.completion?(completed)
+            vc.completion = {[weak self] in
+                self?.localAuthVC?.completion?(true)
             }
             isBoardingCompleted = true
             localAuthVC?.present(vc, animated: true, completion: nil)

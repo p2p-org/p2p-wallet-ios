@@ -32,9 +32,9 @@ class ResetPinCodeWithSeedPhrasesViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Actions
-//    @objc func showDetail() {
-//        
-//    }
+    @objc func savePincode(_ code: String) {
+        accountRepository.save(code)
+    }
 }
 
 extension ResetPinCodeWithSeedPhrasesViewModel: PhrasesCreationHandler {

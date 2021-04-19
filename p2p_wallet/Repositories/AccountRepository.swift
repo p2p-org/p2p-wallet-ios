@@ -10,6 +10,7 @@ import Foundation
 protocol AccountRepository {
     func phrasesFromICloud() -> String?
     var phrases: [String]? {get}
+    func save(_ pinCode: String)
 }
 
 extension KeychainAccountStorage: AccountRepository {}
