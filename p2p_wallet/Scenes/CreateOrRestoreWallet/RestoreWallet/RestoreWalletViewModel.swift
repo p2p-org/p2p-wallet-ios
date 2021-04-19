@@ -62,3 +62,9 @@ class RestoreWalletViewModel {
         }
     }
 }
+
+extension RestoreWalletViewModel: PhrasesCreationHandler {
+    func handlePhrases(_ phrases: [String]) {
+        navigationSubject.onNext(.welcomeBack(phrases: phrases))
+    }
+}

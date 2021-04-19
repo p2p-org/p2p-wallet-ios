@@ -29,8 +29,8 @@ class RestoreWalletContainer {
         RestoreWalletViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeEnterPhrasesVC() -> EnterPhrasesVC {
-        EnterPhrasesVC(restoreWalletViewModel: viewModel)
+    func makeEnterPhrasesVC() -> WLEnterPhrasesVC {
+        WLEnterPhrasesVC(handler: viewModel)
     }
     
     func makeWelcomeBackVC(phrases: [String]) -> WelcomeBackVC {

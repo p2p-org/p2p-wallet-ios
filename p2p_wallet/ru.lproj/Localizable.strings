@@ -321,3 +321,5 @@
 "Token account should be zero" = "Аккаунт токена должен быть нулевым";
 "Wrong wallet address" = "Неверный адрес кошелька";
 "Check enterred wallet address and try again." = "Проверьте введенный адрес кошелька и попробуйте еще раз.";
+"or reset it with a seed phrase" = "или сбросить его с помощью seed-фразы";
+"Reset PIN with a seed phrase" = "Сбросить PIN-код с начальной фразой";
