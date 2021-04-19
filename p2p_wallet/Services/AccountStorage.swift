@@ -31,6 +31,10 @@ class KeychainAccountStorage: SolanaSDKAccountStorage {
         phrasesFromICloud() == account?.phrase.joined(separator: " ")
     }
     
+    var phrases: [String]? {
+        account?.phrase
+    }
+    
     // MARK: - Pincode
     func save(_ pinCode: String) {
         keychain.set(pinCode, forKey: pincodeKey)
