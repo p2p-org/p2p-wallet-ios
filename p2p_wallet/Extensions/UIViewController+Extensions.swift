@@ -95,21 +95,7 @@ extension UIViewController {
         view.hideHud()
     }
     
-    // MARK: - Custom modal
-    func presentCustomModal(vc wrappedVC: UIViewController, title: String? = nil, titleImageView: UIView? = nil) {
-        let vc = makeCustomModalVC(wrappedVC: wrappedVC, title: title, titleImageView: titleImageView)
-        present(vc, animated: true, completion: nil)
-    }
-    
-    func makeCustomModalVC(wrappedVC: UIViewController, title: String? = nil, titleImageView: UIView? = nil) -> WLModalWrapperVC {
-        let vc = WLModalWrapperVC(wrapped: wrappedVC)
-        vc.title = title
-        vc.titleImageView = titleImageView
-        vc.modalPresentationStyle = wrappedVC.modalPresentationStyle
-        vc.transitioningDelegate = wrappedVC as? UIViewControllerTransitioningDelegate
-        return vc
-    }
-    
+    // MARK: - Keyboard
     @objc func hideKeyboard() {
         view.endEditing(true)
     }
