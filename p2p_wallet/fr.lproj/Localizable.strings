@@ -321,3 +321,5 @@
 "Token account should be zero" = "Le compte de jeton doit être égal à zéro";
 "Wrong wallet address" = "Mauvaise adresse de portefeuille";
 "Check enterred wallet address and try again." = "Vérifiez l'adresse de votre portefeuille et réessayez.";
+"or reset it with a seed phrase" = "ou réinitialisez-le avec une phrase de départ";
+"Reset PIN with a seed phrase" = "Réinitialiser le code PIN avec une phrase de départ";
