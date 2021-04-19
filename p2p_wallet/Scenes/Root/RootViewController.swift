@@ -15,6 +15,7 @@ protocol RootViewControllerScenesFactory {
     func makeMainViewController() -> MainViewController
     func makeLocalAuthVC() -> LocalAuthVC
     func makeWellDoneVC() -> WellDoneVC
+    func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
 }
 
 class RootViewController: BaseVC {
@@ -103,6 +104,16 @@ class RootViewController: BaseVC {
             let vc = scenesFactory.makeMainViewController()
             isBoardingCompleted = true
             transition(to: vc)
+        case .resetPincodeWithASeedPhrase:
+            isLightStatusBarStyle = true
+            setNeedsStatusBarAppearanceUpdate()
+            
+            let vc = scenesFactory.makeResetPinCodeWithSeedPhrasesViewController()
+            vc.completion = {[weak self] completed in
+                self?.localAuthVC?.completion?(completed)
+            }
+            isBoardingCompleted = true
+            localAuthVC?.present(vc, animated: true, completion: nil)
         }
         view.bringSubviewToFront(blurEffectView)
     }
@@ -124,6 +135,10 @@ class RootViewController: BaseVC {
             viewModel.markAsIsAuthenticating(false)
         } else {
             viewModel.markAsIsAuthenticating(true)
+        }
+        // reset with a seed phrase
+        localAuthVC?.resetPincodeWithASeedPhrasesHandler = {[weak self] in
+            self?.viewModel.resetPinCodeWithASeedPhrase()
         }
         
         // completion
