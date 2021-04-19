@@ -11,16 +11,7 @@ import RxSwift
 import LocalAuthentication
 
 class LocalAuthVC: PassCodeVC {
-    lazy var closeButton = UIButton.close()
-        .onTap(self, action: #selector(back))
-    
-    private lazy var blockingView: UIView = {
-        let view = UIView(forAutoLayout: ())
-        view.backgroundColor = .clear
-        view.isUserInteractionEnabled = true
-        return view
-    }()
-    
+    // MARK: - Properties
     var remainingPinEntries = 3
     var reason: String?
     var isIgnorable = false {
@@ -36,12 +27,44 @@ class LocalAuthVC: PassCodeVC {
         }
     }
     let accountStorage: KeychainAccountStorage
+    var resetPincodeWithASeedPhrasesHandler: (() -> Void)?
     
+    var isResetPinCodeWithASeedPhrasesShown = false {
+        didSet {
+            inputCircleView?.isHidden = isResetPinCodeWithASeedPhrasesShown
+            resetPinCodeWithASeedPhraseButton.isHidden = !isResetPinCodeWithASeedPhrasesShown
+        }
+    }
+    
+    // MARK: - Additional subviews
+    lazy var closeButton = UIButton.close()
+        .onTap(self, action: #selector(back))
+    
+    private lazy var blockingView: UIView = {
+        let view = UIView(forAutoLayout: ())
+        view.backgroundColor = .clear
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+    
+    private lazy var resetPinCodeWithASeedPhraseButton: UIView = {
+        let button = UILabel(text: L10n.resetPINWithASeedPhrase, textSize: 13, weight: .semibold, textColor: .textSecondary, textAlignment: .center)
+            .padding(.init(top: 8, left: 19, bottom: 8, right: 19), backgroundColor: .f6f6f8, cornerRadius: 12)
+            .onTap(self, action: #selector(resetPincodeWithASeedPhrases))
+        return button
+    }()
+    
+    private var inputCircleView: UIView? {
+        embededPinVC.pinView.stackView.arrangedSubviews.first
+    }
+    
+    // MARK: - Initializers
     init(accountStorage: KeychainAccountStorage) {
         self.accountStorage = accountStorage
         super.init()
     }
     
+    // MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -67,8 +90,15 @@ class LocalAuthVC: PassCodeVC {
         view.addSubview(blockingView)
         blockingView.autoPinEdgesToSuperviewEdges()
         blockingView.isHidden = true
+        
+        embededPinVC.pinView.stackView.insertArrangedSubview(resetPinCodeWithASeedPhraseButton, at: 1)
+        resetPinCodeWithASeedPhraseButton.isHidden = true
+        
+        embededPinVC.pinView.stackView
+            .setCustomSpacing(16, after: resetPinCodeWithASeedPhraseButton)
     }
     
+    // MARK: - Actions
     @objc func authWithBiometric(isAuto: Bool = false) {
         let myContext = LAContext()
         let myReason = reason ?? L10n.confirmItSYou
@@ -99,7 +129,12 @@ class LocalAuthVC: PassCodeVC {
             }
         }
     }
+    
+    @objc func resetPincodeWithASeedPhrases() {
+        resetPincodeWithASeedPhrasesHandler?()
+    }
 
+    // MARK: - Delegate
     override func pinViewController(_ pinViewController: THPinViewController, isPinValid pin: String) -> Bool {
         guard let correctPin = accountStorage.pinCode else {return false}
         if pin == correctPin {

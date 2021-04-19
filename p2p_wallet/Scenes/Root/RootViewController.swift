@@ -147,6 +147,7 @@ class RootViewController: BaseVC {
     }
     
     private func lockScreen(_ isLocked: Bool, retryAuthStyle: AuthenticationPresentationStyle) {
+        localAuthVC?.isResetPinCodeWithASeedPhrasesShown = false
         if isLocked {
             // lock screen
             blurEffectView.isHidden = false
@@ -163,12 +164,14 @@ class RootViewController: BaseVC {
                 let minutes = minutesAndSeconds.0
                 let seconds = minutesAndSeconds.1
                 
-                self?.localAuthVC?.embededPinVC.errorTitle = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)")
+                self?.localAuthVC?.embededPinVC.errorTitle = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)") + " " + L10n.orResetItWithASeedPhrase
+                self?.localAuthVC?.isResetPinCodeWithASeedPhrasesShown = true
                 
                 if strongSelf.viewModel.isSessionExpired {
                     self?.localAuthVC?.embededPinVC.errorTitle = nil
                     self?.localAuthVC?.isBlocked = false
                     self?.localAuthVC?.remainingPinEntries = 3
+                    self?.localAuthVC?.isResetPinCodeWithASeedPhrasesShown = false
                     timer.invalidate()
                 }
             }
