@@ -16,6 +16,7 @@ enum RootNavigatableScene: Equatable {
     case onboarding
     case onboardingDone
     case main
+    case resetPincodeWithASeedPhrase
 }
 
 struct AuthenticationPresentationStyle {
@@ -98,10 +99,15 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
         navigationSubject.accept(.main)
     }
     
+    @objc func resetPinCodeWithASeedPhrase() {
+        navigationSubject.accept(.resetPincodeWithASeedPhrase)
+    }
+    
     func observeAppNotifications() {
         UIApplication.shared.rx.applicationDidBecomeActive
             .subscribe(onNext: {[weak self] _ in
-                guard let strongSelf = self, !strongSelf.isAuthenticating, strongSelf.isSessionExpired, strongSelf.navigationSubject.value == .main else {return}
+                guard let strongSelf = self, !strongSelf.isAuthenticating, strongSelf.isSessionExpired
+                else {return}
                 strongSelf.authenticationSubject
                     .onNext(
                         AuthenticationPresentationStyle(

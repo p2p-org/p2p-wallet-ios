@@ -329,7 +329,7 @@ private extension SwapTokenRootView {
                       let amount = pool.fee(forInputAmount: lamports)
                 else {return nil}
                 
-                return amount.toString(maximumFractionDigits: 5) + " " + "SOL"
+                return amount.toString(maximumFractionDigits: 5) + " " + sourceWallet?.symbol
             }
             .asDriver(onErrorJustReturn: nil)
             .drive(feeLabel.rx.text)

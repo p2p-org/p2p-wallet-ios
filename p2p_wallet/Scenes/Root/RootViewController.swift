@@ -15,6 +15,7 @@ protocol RootViewControllerScenesFactory {
     func makeMainViewController() -> MainViewController
     func makeLocalAuthVC() -> LocalAuthVC
     func makeWellDoneVC() -> WellDoneVC
+    func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
 }
 
 class RootViewController: BaseVC {
@@ -103,6 +104,16 @@ class RootViewController: BaseVC {
             let vc = scenesFactory.makeMainViewController()
             isBoardingCompleted = true
             transition(to: vc)
+        case .resetPincodeWithASeedPhrase:
+            isLightStatusBarStyle = true
+            setNeedsStatusBarAppearanceUpdate()
+            
+            let vc = scenesFactory.makeResetPinCodeWithSeedPhrasesViewController()
+            vc.completion = {[weak self] in
+                self?.localAuthVC?.completion?(true)
+            }
+            isBoardingCompleted = true
+            localAuthVC?.present(vc, animated: true, completion: nil)
         }
         view.bringSubviewToFront(blurEffectView)
     }
@@ -124,6 +135,10 @@ class RootViewController: BaseVC {
             viewModel.markAsIsAuthenticating(false)
         } else {
             viewModel.markAsIsAuthenticating(true)
+        }
+        // reset with a seed phrase
+        localAuthVC?.resetPincodeWithASeedPhrasesHandler = {[weak self] in
+            self?.viewModel.resetPinCodeWithASeedPhrase()
         }
         
         // completion
@@ -147,6 +162,7 @@ class RootViewController: BaseVC {
     }
     
     private func lockScreen(_ isLocked: Bool, retryAuthStyle: AuthenticationPresentationStyle) {
+        localAuthVC?.isResetPinCodeWithASeedPhrasesShown = false
         if isLocked {
             // lock screen
             blurEffectView.isHidden = false
@@ -163,12 +179,14 @@ class RootViewController: BaseVC {
                 let minutes = minutesAndSeconds.0
                 let seconds = minutesAndSeconds.1
                 
-                self?.localAuthVC?.embededPinVC.errorTitle = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)")
+                self?.localAuthVC?.embededPinVC.errorTitle = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)") + " " + L10n.orResetItWithASeedPhrase
+                self?.localAuthVC?.isResetPinCodeWithASeedPhrasesShown = true
                 
                 if strongSelf.viewModel.isSessionExpired {
                     self?.localAuthVC?.embededPinVC.errorTitle = nil
                     self?.localAuthVC?.isBlocked = false
                     self?.localAuthVC?.remainingPinEntries = 3
+                    self?.localAuthVC?.isResetPinCodeWithASeedPhrasesShown = false
                     timer.invalidate()
                 }
             }
