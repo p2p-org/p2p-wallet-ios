@@ -87,15 +87,16 @@ class LocalAuthVC: PassCodeVC {
             closeButton.autoPinToTopRightCornerOfSuperview(xInset: 16)
         }
         
-        view.addSubview(blockingView)
-        blockingView.autoPinEdgesToSuperviewEdges()
-        blockingView.isHidden = true
-        
         embededPinVC.pinView.stackView.insertArrangedSubview(resetPinCodeWithASeedPhraseButton, at: 1)
         resetPinCodeWithASeedPhraseButton.isHidden = true
         
         embededPinVC.pinView.stackView
             .setCustomSpacing(16, after: resetPinCodeWithASeedPhraseButton)
+        
+        embededPinVC.pinView.addSubview(blockingView)
+        blockingView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        blockingView.autoPinEdge(.top, to: .bottom, of: resetPinCodeWithASeedPhraseButton)
+        blockingView.isHidden = true
     }
     
     // MARK: - Actions

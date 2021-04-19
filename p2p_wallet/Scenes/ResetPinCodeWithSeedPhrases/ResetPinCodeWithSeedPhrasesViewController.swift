@@ -19,9 +19,14 @@ class ResetPinCodeWithSeedPhrasesViewController: WLIndicatorModalVC {
     let viewModel: ResetPinCodeWithSeedPhrasesViewModel
     let scenesFactory: ResetPinCodeWithSeedPhrasesScenesFactory
     var childNavigationController: BENavigationController!
+    var completion: ((Bool) -> Void)?
     
     // MARK: - ChildVC
-    lazy var enterPhrasesVC = scenesFactory.makeEnterPhrasesVC()
+    lazy var enterPhrasesVC: WLEnterPhrasesVC = {
+        let vc = scenesFactory.makeEnterPhrasesVC()
+        vc.dismissAfterCompletion = false
+        return vc
+    }()
     
     // MARK: - Initializer
     init(
@@ -59,6 +64,8 @@ class ResetPinCodeWithSeedPhrasesViewController: WLIndicatorModalVC {
         case .enterSeedPhrases:
             childNavigationController.pushViewController(enterPhrasesVC, animated: true)
         case .createNewPasscode:
+            let vc = scenesFactory.makeCreatePassCodeVC()
+            vc.completion = completion
             childNavigationController.pushViewController(scenesFactory.makeCreatePassCodeVC(), animated: true)
         }
     }

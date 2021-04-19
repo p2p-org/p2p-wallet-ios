@@ -23,6 +23,7 @@ class WLEnterPhrasesVC: BaseVC {
     // MARK: - Properties
     let error = BehaviorRelay<Error?>(value: nil)
     let handler: PhrasesCreationHandler
+    var dismissAfterCompletion = true
     
     // MARK: - Subviews
     lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical)
@@ -168,9 +169,14 @@ class WLEnterPhrasesVC: BaseVC {
         do {
             let phrases = textView.getPhrases()
             _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
-            dismiss(animated: true) {
-                self.handler.handlePhrases(phrases)
+            if dismissAfterCompletion {
+                dismiss(animated: true) {
+                    self.handler.handlePhrases(phrases)
+                }
+            } else {
+                handler.handlePhrases(phrases)
             }
+            
         } catch {
             self.error.accept(error)
         }
