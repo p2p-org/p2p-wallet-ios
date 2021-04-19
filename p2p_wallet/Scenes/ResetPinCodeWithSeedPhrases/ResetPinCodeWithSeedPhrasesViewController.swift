@@ -65,6 +65,7 @@ class ResetPinCodeWithSeedPhrasesViewController: WLIndicatorModalVC {
             childNavigationController.pushViewController(enterPhrasesVC, animated: true)
         case .createNewPasscode:
             let vc = scenesFactory.makeCreatePassCodeVC()
+            vc.disableDismissAfterCompletion = true
             vc.completion = completion
             childNavigationController.pushViewController(scenesFactory.makeCreatePassCodeVC(), animated: true)
         }
