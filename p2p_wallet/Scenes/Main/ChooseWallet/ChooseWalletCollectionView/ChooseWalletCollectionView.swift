@@ -36,10 +36,14 @@ class ChooseWalletCollectionView: BECollectionView {
         var snapshot = super.mapDataToSnapshot()
         
         // if firstSection isEmpty but secondSection is not, then remove EmptyCell
-        if snapshot.isSectionEmpty(sectionIdentifier: 0) &&
-            !snapshot.isSectionEmpty(sectionIdentifier: 1)
+        if snapshot.sectionIdentifiers.contains(0) &&
+            snapshot.sectionIdentifiers.contains(1)
         {
-            snapshot.deleteItems(snapshot.itemIdentifiers(inSection: 0))
+            if snapshot.isSectionEmpty(sectionIdentifier: 0) &&
+                !snapshot.isSectionEmpty(sectionIdentifier: 1)
+            {
+                snapshot.deleteItems(snapshot.itemIdentifiers(inSection: 0))
+            }
         }
         
         return snapshot
