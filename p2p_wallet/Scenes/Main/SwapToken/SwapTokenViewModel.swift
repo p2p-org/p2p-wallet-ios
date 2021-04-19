@@ -87,25 +87,11 @@ class SwapTokenViewModel {
             .disposed(by: disposeBag)
         
         // estimated amount
-        let estimatedAmountLamports = Observable.combineLatest(
+        Observable.combineLatest(
             currentPool.distinctUntilChanged(),
             sourceAmountInput.distinctUntilChanged()
         )
-            .map {(pool, amount) -> UInt64? in
-                guard let amount = amount.double,
-                      amount > 0,
-                      let sourceDecimals = self.sourceWallet.value?.decimals,
-                      let estimatedAmountLamports = pool?.estimatedAmount(forInputAmount: amount.toLamport(decimals: sourceDecimals))
-                else {return nil}
-                return estimatedAmountLamports
-            }
-            
-        estimatedAmountLamports
-            .map {lamports -> Double? in
-                guard let destinationDecimals = self.destinationWallet.value?.decimals
-                else {return nil}
-                return lamports?.convertToBalance(decimals: destinationDecimals)
-            }
+            .map {[weak self] _ in self?.calculateEstimatedAmount()}
             .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: nil)}
             .bind(to: destinationAmountInput)
             .disposed(by: disposeBag)
@@ -114,16 +100,11 @@ class SwapTokenViewModel {
         
         // minimum receive
         Observable.combineLatest(
-            estimatedAmountLamports.distinctUntilChanged(),
+            currentPool.distinctUntilChanged(),
+            sourceAmountInput.distinctUntilChanged(),
             slippage.distinctUntilChanged()
         )
-            .map {(estimatedAmountLamports, slippage) -> Double? in
-                guard let estimatedAmountLamports = estimatedAmountLamports,
-                      let lamports = self.currentPool.value?.minimumReceiveAmount(estimatedAmount: estimatedAmountLamports, slippage: slippage),
-                      let destinationDecimals = self.destinationWallet.value?.decimals
-                else {return nil}
-                return lamports.convertToBalance(decimals: destinationDecimals)
-            }
+            .map {[weak self] _ in self?.calculateMinimumReceiveAmount()}
             .bind(to: minimumReceiveAmount)
             .disposed(by: disposeBag)
         
@@ -266,6 +247,8 @@ class SwapTokenViewModel {
             .disposed(by: disposeBag)
     }
     
+    // MARK: - Helpers
+    
     /// Verify current context
     /// - Returns: Error string, nil if no error appear
     private func verifyError() -> String? {
@@ -318,5 +301,30 @@ class SwapTokenViewModel {
         }
         
         return nil
+    }
+    
+    /// Calculate estimated amount for an input amount
+    /// - Returns: estimated amount from input amount
+    private func calculateEstimatedAmount() -> Double? {
+        guard let amount = sourceAmountInput.value?.double,
+              amount > 0,
+              let sourceDecimals = self.sourceWallet.value?.decimals,
+              let destinationDecimals = self.destinationWallet.value?.decimals,
+              let estimatedAmountLamports = currentPool.value?.estimatedAmount(forInputAmount: amount.toLamport(decimals: sourceDecimals))
+        else {return nil}
+        return estimatedAmountLamports.convertToBalance(decimals: destinationDecimals)
+    }
+    
+    /// Calculate minimum receive amount from input amount
+    /// - Returns: minimum receive amount
+    private func calculateMinimumReceiveAmount() -> Double? {
+        guard let amount = sourceAmountInput.value?.double,
+              amount > 0,
+              let sourceDecimals = self.sourceWallet.value?.decimals,
+              let destinationDecimals = self.destinationWallet.value?.decimals,
+              let estimatedAmountLamports = currentPool.value?.estimatedAmount(forInputAmount: amount.toLamport(decimals: sourceDecimals)),
+              let lamports = currentPool.value?.minimumReceiveAmount(estimatedAmount: estimatedAmountLamports, slippage: slippage.value)
+        else {return nil}
+        return lamports.convertToBalance(decimals: destinationDecimals)
     }
 }
