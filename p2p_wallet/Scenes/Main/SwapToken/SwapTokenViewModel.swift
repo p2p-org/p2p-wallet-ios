@@ -114,16 +114,11 @@ class SwapTokenViewModel {
         
         // minimum receive
         Observable.combineLatest(
-            estimatedAmountLamports.distinctUntilChanged(),
+            currentPool.distinctUntilChanged(),
+            sourceAmountInput.distinctUntilChanged(),
             slippage.distinctUntilChanged()
         )
-            .map {(estimatedAmountLamports, slippage) -> Double? in
-                guard let estimatedAmountLamports = estimatedAmountLamports,
-                      let lamports = self.currentPool.value?.minimumReceiveAmount(estimatedAmount: estimatedAmountLamports, slippage: slippage),
-                      let destinationDecimals = self.destinationWallet.value?.decimals
-                else {return nil}
-                return lamports.convertToBalance(decimals: destinationDecimals)
-            }
+            .map {[weak self] _ in self?.calculateMinimumReceiveAmount()}
             .bind(to: minimumReceiveAmount)
             .disposed(by: disposeBag)
         
@@ -266,6 +261,8 @@ class SwapTokenViewModel {
             .disposed(by: disposeBag)
     }
     
+    // MARK: - Helpers
+    
     /// Verify current context
     /// - Returns: Error string, nil if no error appear
     private func verifyError() -> String? {
@@ -318,5 +315,16 @@ class SwapTokenViewModel {
         }
         
         return nil
+    }
+    
+    private func calculateMinimumReceiveAmount() -> Double? {
+        guard let amount = sourceAmountInput.value?.double,
+              amount > 0,
+              let sourceDecimals = self.sourceWallet.value?.decimals,
+              let destinationDecimals = self.destinationWallet.value?.decimals,
+              let estimatedAmountLamports = currentPool.value?.estimatedAmount(forInputAmount: amount.toLamport(decimals: sourceDecimals)),
+              let lamports = currentPool.value?.minimumReceiveAmount(estimatedAmount: estimatedAmountLamports, slippage: slippage.value)
+        else {return nil}
+        return lamports.convertToBalance(decimals: destinationDecimals)
     }
 }
