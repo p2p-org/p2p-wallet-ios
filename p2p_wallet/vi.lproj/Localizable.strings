@@ -321,3 +321,5 @@
 "Token account should be zero" = "Tài khoản token phải bằng 0";
 "Wrong wallet address" = "Địa chỉ ví sai";
 "Check enterred wallet address and try again." = "Kiểm tra địa chỉ ví đã nhập và thử lại.";
+"or reset it with a seed phrase" = "hoặc đặt lại nó bằng một cụm từ bảo mật";
+"Reset PIN with a seed phrase" = "Đặt lại mã PIN bằng một cụm từ bảo mật";

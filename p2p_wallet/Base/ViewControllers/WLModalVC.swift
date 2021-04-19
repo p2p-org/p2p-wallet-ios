@@ -60,3 +60,16 @@ class WLModalVC: WLIndicatorModalVC {
         stackView.autoPinEdgesToSuperviewEdges(with: padding)
     }
 }
+
+class WLModalWrapperVC: WLIndicatorModalVC {
+    var vc: UIViewController
+    init(wrapped: UIViewController) {
+        vc = wrapped
+        super.init()
+    }
+
+    override func setUp() {
+        super.setUp()
+        add(child: vc, to: containerView)
+    }
+}

@@ -1,8 +1,8 @@
 //
-//  EnterPhrasesVC.swift
+//  WLEnterPhrasesVC.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 08/12/2020.
+//  Created by Chung Tran on 16/04/2021.
 //
 
 import Foundation
@@ -11,10 +11,23 @@ import SubviewAttachingTextView
 import RxSwift
 import RxCocoa
 
-class EnterPhrasesVC: BaseVStackVC {
-    override var padding: UIEdgeInsets {.init(all: 20)}
+protocol PhrasesCreationHandler {
+    func handlePhrases(_ phrases: [String])
+}
+
+class WLEnterPhrasesVC: BaseVC {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+        .hidden
+    }
     
+    // MARK: - Properties
     let error = BehaviorRelay<Error?>(value: nil)
+    let handler: PhrasesCreationHandler
+    var dismissAfterCompletion = true
+    
+    // MARK: - Subviews
+    lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical)
+    lazy var stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
     
     lazy var textView = WLPhrasesTextView()
     
@@ -40,21 +53,39 @@ class EnterPhrasesVC: BaseVStackVC {
     
     lazy var descriptionLabel = UILabel(text: L10n.enterASeedPhraseFromYourAccount, textSize: 17, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
     
-    let restoreWalletViewModel: RestoreWalletViewModel
-    init(restoreWalletViewModel: RestoreWalletViewModel) {
-        self.restoreWalletViewModel = restoreWalletViewModel
+    // MARK: - Initializers
+    init(handler: PhrasesCreationHandler) {
+        self.handler = handler
         super.init()
     }
     
     override func setUp() {
         super.setUp()
-        title = L10n.enterSecurityKeys
+        
+        // scroll view for flexible height
+        view.addSubview(scrollView)
+        scrollView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+        scrollView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
+        
+        // stackView
+        scrollView.contentView.addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges()
+        
+        // arranged subviews
         stackView.addArrangedSubviews([
+            UIStackView(axis: .horizontal, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
+                UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white),
+                UILabel(text: L10n.securityKey.uppercaseFirst, textSize: 21, weight: .semibold)
+            ])
+                .padding(.init(all: 20)),
+            UIView.separator(height: 1, color: .separator),
             textView
                 .padding(.init(all: 10), backgroundColor: .lightGrayBackground, cornerRadius: 16)
-                .border(width: 1, color: .a3a5ba),
+                .border(width: 1, color: .a3a5ba)
+                .padding(.init(all: 20, excludingEdge: .bottom)),
             BEStackViewSpacing(30),
             errorLabel
+                .padding(.init(x: 20, y: 0))
         ])
         
         // tabBar
@@ -66,14 +97,12 @@ class EnterPhrasesVC: BaseVStackVC {
         view.addSubview(descriptionLabel)
         descriptionLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
         descriptionLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-        descriptionLabel.autoPinEdge(.bottom, to: .top, of: tabBar, withOffset: -20)
+        descriptionLabel.autoPinEdge(.bottom, to: .bottom, of: tabBar, withOffset: -20)
         
         view.addSubview(retryButton)
         retryButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
         retryButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
         retryButton.autoPinEdge(.bottom, to: .top, of: descriptionLabel, withOffset: -30)
-        
-        view.removeGestureRecognizer(tapGesture)
         
         textView.becomeFirstResponder()
         textView.keyboardDismissMode = .onDrag
@@ -140,16 +169,21 @@ class EnterPhrasesVC: BaseVStackVC {
         do {
             let phrases = textView.getPhrases()
             _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
-            dismiss(animated: true) {
-                self.restoreWalletViewModel.navigationSubject.onNext(.welcomeBack(phrases: phrases))
+            if dismissAfterCompletion {
+                dismiss(animated: true) {
+                    self.handler.handlePhrases(phrases)
+                }
+            } else {
+                handler.handlePhrases(phrases)
             }
+            
         } catch {
             self.error.accept(error)
         }
     }
 }
 
-extension EnterPhrasesVC: WLPhrasesTextViewDelegate {
+extension WLEnterPhrasesVC: WLPhrasesTextViewDelegate {
     func wlPhrasesTextViewDidBeginEditing(_ textView: WLPhrasesTextView) {
         self.error.accept(nil)
     }
