@@ -16,6 +16,7 @@ enum RootNavigatableScene: Equatable {
     case onboarding
     case onboardingDone
     case main
+    case resetPincodeWithASeedPhrase
 }
 
 struct AuthenticationPresentationStyle {
@@ -96,6 +97,10 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     
     @objc func navigateToMain() {
         navigationSubject.accept(.main)
+    }
+    
+    @objc func resetPinCodeWithASeedPhrase() {
+        navigationSubject.accept(.resetPincodeWithASeedPhrase)
     }
     
     func observeAppNotifications() {
