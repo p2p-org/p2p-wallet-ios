@@ -106,7 +106,8 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     func observeAppNotifications() {
         UIApplication.shared.rx.applicationDidBecomeActive
             .subscribe(onNext: {[weak self] _ in
-                guard let strongSelf = self, !strongSelf.isAuthenticating, strongSelf.isSessionExpired, strongSelf.navigationSubject.value == .main else {return}
+                guard let strongSelf = self, !strongSelf.isAuthenticating, strongSelf.isSessionExpired
+                else {return}
                 strongSelf.authenticationSubject
                     .onNext(
                         AuthenticationPresentationStyle(
