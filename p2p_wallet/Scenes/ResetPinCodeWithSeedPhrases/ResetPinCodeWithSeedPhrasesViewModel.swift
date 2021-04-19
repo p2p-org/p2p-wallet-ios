@@ -39,8 +39,7 @@ class ResetPinCodeWithSeedPhrasesViewModel {
 
 extension ResetPinCodeWithSeedPhrasesViewModel: PhrasesCreationHandler {
     func handlePhrases(_ phrases: [String]) {
-        guard accountRepository.phrasesFromICloud() == phrases.joined(separator: " ")
-        else {
+        guard accountRepository.phrases == phrases else {
             error.accept(SolanaSDK.Error.other("Seed phrases is not correct"))
             return
         }
