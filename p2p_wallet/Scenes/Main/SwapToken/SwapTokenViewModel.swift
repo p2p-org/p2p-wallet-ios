@@ -91,7 +91,7 @@ class SwapTokenViewModel {
             currentPool.distinctUntilChanged(),
             sourceAmountInput.distinctUntilChanged()
         )
-            .map {[weak self] _ in self?.calculateEstimatedAmount()}
+            .map {[weak self] in self?.calculateEstimatedAmount(forInputAmount: $1.double)}
             .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: nil)}
             .bind(to: destinationAmountInput)
             .disposed(by: disposeBag)
@@ -302,22 +302,50 @@ class SwapTokenViewModel {
         
         return nil
     }
+}
+
+private extension SwapTokenViewModel {
+    // MARK: - Calculator
+    private var sourceDecimals: Int? {
+        sourceWallet.value?.decimals
+    }
+    
+    private var destinationDecimals: Int? {
+        destinationWallet.value?.decimals
+    }
+    
+    private var slippageValue: Double {
+        slippage.value
+    }
+    
+    /// Calculate input amount for receving expected amount
+    /// - Parameter expectedAmount: expected amount of receiver
+    /// - Returns: input amount for receiving expected amount
+    func calculateInputAmount(forExpectedAmount expectedAmount: Double?) -> Double? {
+        guard let expectedAmount = expectedAmount,
+              expectedAmount > 0,
+              let sourceDecimals = sourceDecimals,
+              let destinationDecimals = destinationDecimals,
+              let inputAmountLamports = currentPool.value?.inputAmount(forEstimatedAmount: expectedAmount.toLamport(decimals: destinationDecimals))
+        else {return nil}
+        return inputAmountLamports.convertToBalance(decimals: sourceDecimals)
+    }
     
     /// Calculate estimated amount for an input amount
     /// - Returns: estimated amount from input amount
-    private func calculateEstimatedAmount() -> Double? {
-        guard let amount = sourceAmountInput.value?.double,
-              amount > 0,
-              let sourceDecimals = self.sourceWallet.value?.decimals,
-              let destinationDecimals = self.destinationWallet.value?.decimals,
-              let estimatedAmountLamports = currentPool.value?.estimatedAmount(forInputAmount: amount.toLamport(decimals: sourceDecimals))
+    func calculateEstimatedAmount(forInputAmount inputAmount: Double?) -> Double? {
+        guard let inputAmount = inputAmount,
+              inputAmount > 0,
+              let sourceDecimals = sourceDecimals,
+              let destinationDecimals = destinationDecimals,
+              let estimatedAmountLamports = currentPool.value?.estimatedAmount(forInputAmount: inputAmount.toLamport(decimals: sourceDecimals))
         else {return nil}
         return estimatedAmountLamports.convertToBalance(decimals: destinationDecimals)
     }
     
     /// Calculate minimum receive amount from input amount
     /// - Returns: minimum receive amount
-    private func calculateMinimumReceiveAmount() -> Double? {
+    func calculateMinimumReceiveAmount() -> Double? {
         guard let amount = sourceAmountInput.value?.double,
               amount > 0,
               let sourceDecimals = self.sourceWallet.value?.decimals,
