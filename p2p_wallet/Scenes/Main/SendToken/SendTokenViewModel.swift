@@ -43,9 +43,9 @@ class SendTokenViewModel {
     lazy var fee = LazySubject<Double>(
         request: solanaSDK.getFees()
             .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
-            .map {
-                let decimals = self.walletsRepository.getWallets().first(where: {$0.symbol == "SOL"})?.decimals ?? 9
-                return Double($0) * pow(Double(10), -Double(decimals))
+            .map { [weak self] in
+                let decimals = self?.solanaSDK.solDecimals
+                return $0.convertToBalance(decimals: decimals)
             }
     )
     let errorSubject = BehaviorRelay<String?>(value: nil)
