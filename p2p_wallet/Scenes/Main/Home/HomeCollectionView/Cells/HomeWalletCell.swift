@@ -46,7 +46,7 @@ class HomeWalletCell: EditableWalletCell {
     override func setUp(with item: Wallet) {
         super.setUp(with: item)
         if item.pubkey != nil {
-            addressLabel.text = item.pubkeyShort()
+            addressLabel.text = item.shortPubkey()
         } else {
             addressLabel.text = nil
         }

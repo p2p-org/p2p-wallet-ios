@@ -73,3 +73,8 @@ extension SolanaSDK.Wallet {
 //    }
 }
 
+extension Wallet: FiatConvertable {
+    var symbol: String {
+        token.symbol
+    }
+}
