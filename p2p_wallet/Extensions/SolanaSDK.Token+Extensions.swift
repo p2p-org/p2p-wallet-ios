@@ -16,6 +16,13 @@ extension SolanaSDK.Token {
         // swiftlint:enable swiftgen_assets
         if color == nil {
             color = .random
+            // get unique colors
+            while SolanaSDK.Token.cachedIndicatorColors.values
+                    .contains(where: {$0 == color})
+            {
+                color = .random
+            }
+            // save
             SolanaSDK.Token.cachedIndicatorColors[symbol] = color
         }
         return color!
