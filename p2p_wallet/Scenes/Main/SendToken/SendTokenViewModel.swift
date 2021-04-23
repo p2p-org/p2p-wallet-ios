@@ -26,8 +26,9 @@ class SendTokenViewModel {
     let disposeBag = DisposeBag()
     let solanaSDK: SolanaSDK
     let transactionManager: TransactionsManager
+    let pricesRepository: PricesRepository
     lazy var processTransactionViewModel: ProcessTransactionViewModel = {
-        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager)
+        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager, pricesRepository: pricesRepository)
         viewModel.tryAgainAction = CocoaAction {
             self.send()
             return .just(())
@@ -43,9 +44,9 @@ class SendTokenViewModel {
     lazy var fee = LazySubject<Double>(
         request: solanaSDK.getFees()
             .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
-            .map {
-                let decimals = self.walletsRepository.getWallets().first(where: {$0.symbol == "SOL"})?.decimals ?? 9
-                return Double($0) * pow(Double(10), -Double(decimals))
+            .map { [weak self] in
+                let decimals = self?.solanaSDK.solDecimals
+                return $0.convertToBalance(decimals: decimals)
             }
     )
     let errorSubject = BehaviorRelay<String?>(value: nil)
@@ -55,10 +56,18 @@ class SendTokenViewModel {
     let destinationAddressInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(solanaSDK: SolanaSDK, walletsRepository: WalletsRepository, transactionManager: TransactionsManager, activeWallet: Wallet? = nil, destinationAddress: String? = nil) {
+    init(
+        solanaSDK: SolanaSDK,
+        walletsRepository: WalletsRepository,
+        transactionManager: TransactionsManager,
+        pricesRepository: PricesRepository,
+        activeWallet: Wallet? = nil,
+        destinationAddress: String? = nil
+    ) {
         self.solanaSDK = solanaSDK
         self.walletsRepository = walletsRepository
         self.transactionManager = transactionManager
+        self.pricesRepository = pricesRepository
         self.currentWallet.accept(activeWallet ?? walletsRepository.getWallets().first)
         self.destinationAddressInput.accept(destinationAddress)
         fee.reload()
@@ -102,7 +111,7 @@ class SendTokenViewModel {
                 fee = fee * priceInUSD
                 amount = wallet.amountInUSD
             }
-            if wallet.symbol == "SOL" {
+            if wallet.token.symbol == "SOL" {
                 amount -= fee
                 if amount < 0 {
                     amount = 0
@@ -149,11 +158,13 @@ class SendTokenViewModel {
               let receiver = destinationAddressInput.value,
               let price = currentWallet.priceInUSD,
               price > 0,
-              var amount = amountInput.value.double,
-              let decimals = currentWallet.decimals
+              var amount = amountInput.value.double
         else {
             return
         }
+        
+        let decimals = currentWallet.token.decimals
+        
         let isUSDMode = self.isUSDMode.value
         
         if isUSDMode { amount = amount / price }
@@ -166,7 +177,7 @@ class SendTokenViewModel {
             signatureInfo: nil,
             type: .send,
             amount: -amount,
-            symbol: currentWallet.symbol,
+            symbol: currentWallet.token.symbol,
             status: .processing
         )
         
@@ -191,7 +202,7 @@ class SendTokenViewModel {
         
         // define token
         var request: Single<String>!
-        if currentWallet.symbol == "SOL" {
+        if currentWallet.token.symbol == "SOL" {
             // SOLANA
             request = solanaSDK.sendSOL(to: receiver, amount: lamport)
         } else {
@@ -245,7 +256,7 @@ class SendTokenViewModel {
             
             // Verify amount
             let amountToCompare = self.availableAmount.value
-            if amount.rounded(decimals: wallet?.decimals) > amountToCompare.rounded(decimals: wallet?.decimals)
+            if amount.rounded(decimals: Int(wallet?.token.decimals ?? 0)) > amountToCompare.rounded(decimals: Int(wallet?.token.decimals ?? 0))
             {
                 return L10n.insufficientFunds
             }

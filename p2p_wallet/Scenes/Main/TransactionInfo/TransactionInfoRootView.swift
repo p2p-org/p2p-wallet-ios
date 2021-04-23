@@ -190,13 +190,13 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             ],
             at: &index
         )
-        swapSummaryView.sourceIconImageView.setUp(token: transaction.source)
+        swapSummaryView.sourceIconImageView.setUp(token: transaction.source?.token)
         swapSummaryView.sourceAmountLabel.text = (-(transaction.sourceAmount ?? 0)).toString(maximumFractionDigits: 4)
-        swapSummaryView.sourceSymbolLabel.text = transaction.source?.symbol
+        swapSummaryView.sourceSymbolLabel.text = transaction.source?.token.symbol
         
-        swapSummaryView.destinationIconImageView.setUp(token: transaction.destination)
+        swapSummaryView.destinationIconImageView.setUp(token: transaction.destination?.token)
         swapSummaryView.destinationAmountLabel.text = transaction.destinationAmount?.toString(maximumFractionDigits: 4, showPlus: true)
-        swapSummaryView.destinationSymbolLabel.text = transaction.destination?.symbol
+        swapSummaryView.destinationSymbolLabel.text = transaction.destination?.token.symbol
         
         let fromSection = createLabelsOnlySection(title: L10n.from)
         fromSection.contentView.text = transaction.source?.pubkey
@@ -209,12 +209,12 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             .toString(maximumFractionDigits: 4, showMinus: false)
         
         amountText += " "
-        amountText += transaction.source?.symbol ?? ""
+        amountText += transaction.source?.token.symbol ?? ""
         amountText += " \(L10n.to.lowercased()) "
         amountText += transaction.destinationAmount
             .toString(maximumFractionDigits: 4, showMinus: false)
         amountText += " "
-        amountText += transaction.destination?.symbol ?? ""
+        amountText += transaction.destination?.token.symbol ?? ""
         
         amountSection.contentView.text = amountText
         
@@ -248,11 +248,11 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         case let transferTransaction as SolanaSDK.TransferTransaction:
             var fromIconView: UIView
             var toIconView: UIView
-            let coinLogoImageView = CoinLogoImageView(width: 45, height: 45)
+            let coinLogoImageView = CoinLogoImageView(size: 45)
             
             switch transferTransaction.transferType {
             case .send:
-                coinLogoImageView.setUp(token: transferTransaction.source)
+                coinLogoImageView.setUp(token: transferTransaction.source?.token)
                 
                 fromIconView = coinLogoImageView
                 toIconView = UIImageView(width: 25, height: 25, image: .walletIcon, tintColor: .a3a5ba)
@@ -262,7 +262,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                 shouldAddFeeSection = false
                 fromIconView = UIImageView(width: 25, height: 25, image: .walletIcon, tintColor: .a3a5ba)
                     .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
-                coinLogoImageView.setUp(token: transferTransaction.destination)
+                coinLogoImageView.setUp(token: transferTransaction.destination?.token)
                 toIconView = coinLogoImageView
             default:
                 fromIconView = UIView()
@@ -270,18 +270,18 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             }
             
             transactionDetailView.addArrangedSubviews([
-                createTokenInfo(
+                createWalletInfo(
                     title: L10n.from,
                     iconView: fromIconView,
-                    token: transferTransaction.source,
+                    wallet: transferTransaction.source,
                     selector: #selector(
                         TransactionInfoViewModel.copySourceAddressToClipboard
                     )
                 ),
-                createTokenInfo(
+                createWalletInfo(
                     title: L10n.to,
                     iconView: toIconView,
-                    token: transferTransaction.destination,
+                    wallet: transferTransaction.destination,
                     selector: #selector(
                         TransactionInfoViewModel.copyDestinationAddressToClipboard
                     )
@@ -290,11 +290,11 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             
         case let createAccountTransaction as SolanaSDK.CreateAccountTransaction:
             transactionDetailView.addArrangedSubviews([
-                createTokenInfo(
+                createWalletInfo(
                     title: L10n.newWallet,
-                    iconView: CoinLogoImageView(width: 45, height: 45)
-                        .with(token: createAccountTransaction.newToken),
-                    token: createAccountTransaction.newToken,
+                    iconView: CoinLogoImageView(size: 45)
+                        .with(token: createAccountTransaction.newWallet?.token),
+                    wallet: createAccountTransaction.newWallet,
                     selector: #selector(
                         TransactionInfoViewModel.copyDestinationAddressToClipboard
                     )
@@ -302,11 +302,11 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             ])
         case let closedAccountTransaction as SolanaSDK.CloseAccountTransaction:
             transactionDetailView.addArrangedSubviews([
-                createTokenInfo(
+                createWalletInfo(
                     title: L10n.closedWallet,
-                    iconView: CoinLogoImageView(width: 45, height: 45)
-                        .with(token: closedAccountTransaction.closedToken),
-                    token: closedAccountTransaction.closedToken
+                    iconView: CoinLogoImageView(size: 45)
+                        .with(token: closedAccountTransaction.closedWallet?.token),
+                    wallet: closedAccountTransaction.closedWallet
                 )
             ])
         default:
@@ -362,17 +362,17 @@ private extension TransactionInfoRootView {
         )
     }
     
-    func createTokenInfo(
+    func createWalletInfo(
         title: String,
         iconView: UIView,
-        token: SolanaSDK.Token?,
+        wallet: Wallet?,
         selector: Selector? = nil
     ) -> TransactionInfoSection<UILabel, UIStackView> {
         var arrangedSubviews: [BEStackViewElement] = [
             iconView,
             UIStackView(axis: .vertical, spacing: 7, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UILabel(text: token?.symbol, textSize: 17, weight: .semibold),
-                UILabel(text: token?.shortPubkey, weight: .semibold, textColor: .textSecondary)
+                UILabel(text: wallet?.token.symbol, textSize: 17, weight: .semibold),
+                UILabel(text: wallet?.shortPubkey(), weight: .semibold, textColor: .textSecondary)
             ])
         ]
         if let selector = selector {
