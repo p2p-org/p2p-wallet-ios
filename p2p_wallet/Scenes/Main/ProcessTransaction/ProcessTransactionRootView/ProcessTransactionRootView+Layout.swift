@@ -125,9 +125,9 @@ extension ProcessTransactionRootView {
         
         // amount & equity value
         if let amount = transactionHandler.transaction?.amount,
-           let equityValue = transactionHandler.transaction?.amountInUSD,
            let symbol = transactionHandler.transaction?.symbol
         {
+            let equityValue = amount * viewModel.pricesRepository.currentPrice(for: symbol)?.value
             self.amountLabel.text = "\(amount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
             self.equityAmountLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) $"
         } else {

@@ -27,9 +27,10 @@ class SwapTokenViewModel {
     let disposeBag = DisposeBag()
     let solanaSDK: SolanaSDK
     let transactionManager: TransactionsManager
+    let pricesRepository: PricesRepository
     let wallets: [Wallet]
     lazy var processTransactionViewModel: ProcessTransactionViewModel = {
-        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager)
+        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager, pricesRepository: pricesRepository)
         viewModel.tryAgainAction = CocoaAction {
             self.swap()
             return .just(())
@@ -53,9 +54,17 @@ class SwapTokenViewModel {
     let isReversedExchangeRate = BehaviorRelay<Bool>(value: false)
     
     // MARK: - Initializer
-    init(solanaSDK: SolanaSDK, transactionManager: TransactionsManager, wallets: [Wallet], fromWallet: Wallet? = nil, toWallet: Wallet? = nil) {
+    init(
+        solanaSDK: SolanaSDK,
+        transactionManager: TransactionsManager,
+        pricesRepository: PricesRepository,
+        wallets: [Wallet],
+        fromWallet: Wallet? = nil,
+        toWallet: Wallet? = nil
+    ) {
         self.solanaSDK = solanaSDK
         self.transactionManager = transactionManager
+        self.pricesRepository = pricesRepository
         self.wallets = wallets
         pools.reload()
         

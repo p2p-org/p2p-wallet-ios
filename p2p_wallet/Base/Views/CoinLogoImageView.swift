@@ -10,8 +10,22 @@ import Foundation
 class CoinLogoImageView: BEView {
     // MARK: - Subviews
     lazy var tokenIcon = UIImageView(tintColor: .textBlack)
-    lazy var wrappingTokenIcon = UIImageView(width: 16, height: 16)
-        .border(width: 3, color: .h464646)
+    lazy var wrappingTokenIcon = UIImageView(width: 16, height: 16, cornerRadius: 4)
+        .border(width: 1, color: .h464646)
+    lazy var wrappingView: BERoundedCornerShadowView = {
+        let view = BERoundedCornerShadowView(
+            shadowColor: UIColor.textWhite.withAlphaComponent(0.25),
+            radius: 2,
+            offset: CGSize(width: 0, height: 2),
+            opacity: 1,
+            cornerRadius: 4
+        )
+        
+        view.addSubview(wrappingTokenIcon)
+        wrappingTokenIcon.autoPinEdgesToSuperviewEdges()
+        
+        return view
+    }()
     private var placeholder: UIView?
     
     // MARK: - Initializer
@@ -31,21 +45,6 @@ class CoinLogoImageView: BEView {
         addSubview(tokenIcon)
         tokenIcon.autoPinEdgesToSuperviewEdges()
         
-        let wrappingView: BERoundedCornerShadowView = {
-            let view = BERoundedCornerShadowView(
-                shadowColor: UIColor.textWhite.withAlphaComponent(0.25),
-                radius: 2,
-                offset: CGSize(width: 0, height: 2),
-                opacity: 1,
-                cornerRadius: 1
-            )
-            
-            view.addSubview(wrappingTokenIcon)
-            wrappingTokenIcon.autoPinEdgesToSuperviewEdges()
-            
-            return view
-        }()
-        
         addSubview(wrappingView)
         wrappingView.autoPinEdge(toSuperviewEdge: .trailing)
         wrappingView.autoPinEdge(toSuperviewEdge: .bottom)
@@ -60,7 +59,7 @@ class CoinLogoImageView: BEView {
         // default
         placeholder?.isHidden = true
         tokenIcon.isHidden = false
-        wrappingTokenIcon.superview?.alpha = 0
+        wrappingView.alpha = 0
         backgroundColor = .clear
         
         // with token
@@ -73,7 +72,7 @@ class CoinLogoImageView: BEView {
         
         // wrapped by
         if let wrappedBy = token?.wrappedBy {
-            wrappingTokenIcon.superview?.alpha = 1
+            wrappingView.alpha = 1
             wrappingTokenIcon.image = wrappedBy.image
         }
     }
