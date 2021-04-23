@@ -24,4 +24,8 @@ extension PricesManager: PricesRepository {
         pricesObservable()
             .map {[weak self] _ in self?.currentPrice(for: coinName)}
     }
+    
+    var solPrice: CurrentPrice? {
+        currentPrice(for: "SOL")
+    }
 }
