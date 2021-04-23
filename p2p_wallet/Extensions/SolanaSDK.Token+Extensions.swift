@@ -19,4 +19,14 @@ extension SolanaSDK.Token {
         UIImage(named: symbol)
         // swiftlint:enable swiftgen_assets
     }
+    
+    var description: String {
+        if symbol == "SOL" {
+            return "Solana"
+        }
+        if let wrappedBy = wrappedBy {
+            return L10n.wrappedBy(symbol, wrappedBy.rawValue)
+        }
+        return name
+    }
 }

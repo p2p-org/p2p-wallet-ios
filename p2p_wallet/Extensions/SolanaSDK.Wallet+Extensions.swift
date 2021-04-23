@@ -74,6 +74,17 @@ extension SolanaSDK.Wallet {
         }
     }
     
+    var price: CurrentPrice? {
+        get {
+            getParsedUserInfo().price
+        }
+        set {
+            var userInfo = getParsedUserInfo()
+            userInfo.price = newValue
+            self.userInfo = userInfo
+        }
+    }
+    
     mutating func updateVisibility() {
         var userInfo = getParsedUserInfo()
         userInfo._isHidden = isHidden
@@ -89,17 +100,6 @@ extension SolanaSDK.Wallet {
     func getParsedUserInfo() -> SolanaWalletUserInfo {
         userInfo as? SolanaWalletUserInfo ?? SolanaWalletUserInfo()
     }
-    
-    // TODO: - Wrapped by
-//    var description: String {
-//        if symbol == "SOL" {
-//            return "Solana"
-//        }
-//        if let wrappedBy = self.wrappedBy {
-//            return L10n.wrappedBy(symbol, wrappedBy)
-//        }
-//        return symbol
-//    }
 }
 
 extension Wallet: FiatConvertable {
