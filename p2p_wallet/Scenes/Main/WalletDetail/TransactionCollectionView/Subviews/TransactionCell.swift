@@ -75,14 +75,14 @@ extension TransactionCell: BECollectionViewCell {
         case let transaction as SolanaSDK.TransferTransaction:
             switch transaction.transferType {
             case .send:
-                if let destination = transaction.destination?.pubkey
+                if let destination = transaction.destination
                 {
-                    descriptionLabel.text = L10n.to(destination.prefix(4) + "..." + destination.suffix(4))
+                    descriptionLabel.text = L10n.to(destination.shortPubkey())
                 }
             case .receive:
-                if let source = transaction.source?.pubkey
+                if let source = transaction.source
                 {
-                    descriptionLabel.text = L10n.fromToken(source.prefix(4) + "..." + source.suffix(4))
+                    descriptionLabel.text = L10n.fromToken(source.shortPubkey())
                 }
             default:
                 break
@@ -96,7 +96,9 @@ extension TransactionCell: BECollectionViewCell {
             }
             
         default:
-            descriptionLabel.text = nil
+            if let signature = transaction.signature {
+                descriptionLabel.text = signature.prefix(4) + "..." + signature.suffix(4)
+            }
         }
         
         // set up icon
@@ -111,15 +113,19 @@ extension TransactionCell: BECollectionViewCell {
             var textColor = UIColor.textBlack
             if transaction.amount < 0 {
                 amountText = "- " + amountText
-            } else {
+            } else if transaction.amount > 0 {
                 amountText = "+ " + amountText
                 textColor = .attentionGreen
+            } else {
+                amountText = ""
             }
             amountInFiatLabel.text = amountText
             amountInFiatLabel.textColor = textColor
         }
         
         // amount
-        amountInTokenLabel.text = "\(transaction.amount.toString(maximumFractionDigits: 9, showPlus: true)) \(transaction.symbol)"
+        if transaction.amount != 0 {
+            amountInTokenLabel.text = "\(transaction.amount.toString(maximumFractionDigits: 9, showPlus: true)) \(transaction.symbol)"
+        }
     }
 }
