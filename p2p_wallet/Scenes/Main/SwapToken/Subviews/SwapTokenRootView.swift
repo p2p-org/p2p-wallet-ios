@@ -286,13 +286,15 @@ private extension SwapTokenRootView {
                     swap(&fromDecimals, &toDecimals)
                 }
                 
-                return rate.toString(maximumFractionDigits: toDecimals)
-                    + " "
-                    + toSymbol
-                    + " "
-                    + L10n.per
-                    + " "
-                    + fromSymbol
+                var string = rate.toString(maximumFractionDigits: Int(toDecimals))
+                string += " "
+                string += toSymbol
+                string += " "
+                string += L10n.per
+                string += " "
+                string += fromSymbol
+                
+                return string
             }
             .asDriver(onErrorJustReturn: nil)
             .drive(exchangeRateLabel.rx.text)

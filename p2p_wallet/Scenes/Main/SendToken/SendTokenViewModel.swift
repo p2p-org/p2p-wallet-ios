@@ -26,8 +26,9 @@ class SendTokenViewModel {
     let disposeBag = DisposeBag()
     let solanaSDK: SolanaSDK
     let transactionManager: TransactionsManager
+    let pricesRepository: PricesRepository
     lazy var processTransactionViewModel: ProcessTransactionViewModel = {
-        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager)
+        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager, pricesRepository: pricesRepository)
         viewModel.tryAgainAction = CocoaAction {
             self.send()
             return .just(())
@@ -55,10 +56,18 @@ class SendTokenViewModel {
     let destinationAddressInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(solanaSDK: SolanaSDK, walletsRepository: WalletsRepository, transactionManager: TransactionsManager, activeWallet: Wallet? = nil, destinationAddress: String? = nil) {
+    init(
+        solanaSDK: SolanaSDK,
+        walletsRepository: WalletsRepository,
+        transactionManager: TransactionsManager,
+        pricesRepository: PricesRepository,
+        activeWallet: Wallet? = nil,
+        destinationAddress: String? = nil
+    ) {
         self.solanaSDK = solanaSDK
         self.walletsRepository = walletsRepository
         self.transactionManager = transactionManager
+        self.pricesRepository = pricesRepository
         self.currentWallet.accept(activeWallet ?? walletsRepository.getWallets().first)
         self.destinationAddressInput.accept(destinationAddress)
         fee.reload()
