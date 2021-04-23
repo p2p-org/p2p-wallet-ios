@@ -323,4 +323,4 @@
 "Check enterred wallet address and try again." = "Kiểm tra địa chỉ ví đã nhập và thử lại.";
 "or reset it with a seed phrase" = "hoặc đặt lại nó bằng một cụm từ bảo mật";
 "Reset PIN with a seed phrase" = "Đặt lại mã PIN bằng một cụm từ bảo mật";
-"Your %@ address will be disabled.\nThis action can not be undone" = "Địa chỉ %@ của bạn sẽ bị vô hiệu hóa.\nKhông thể hoàn tác hành động này";
+"Your %@ address will be disabled. This action can not be undone" = "Địa chỉ %@ của bạn sẽ bị vô hiệu hóa. Không thể hoàn tác hành động này";
