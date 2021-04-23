@@ -98,7 +98,7 @@ extension Transaction {
             }
             
             if bytes.count >= 12, let lamport = Array(bytes[4..<12]).toUInt64() {
-                var decimals = wallet?.decimals ?? 0
+                var decimals = wallet?.token.decimals ?? 0
                 if type == .createAccount {
                     decimals = 9
                 }
