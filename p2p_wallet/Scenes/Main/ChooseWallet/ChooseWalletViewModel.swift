@@ -30,12 +30,13 @@ class ChooseWalletViewModel {
     // MARK: - Initializer
     init(
         myWalletsViewModel: BEListViewModelType,
+        tokensRepository: TokensRepository,
         showOtherWallets: Bool,
         firstSectionFilter: ((AnyHashable) -> Bool)? = nil
     ) {
         self.myWalletsViewModel = myWalletsViewModel
         if showOtherWallets {
-            otherWalletsViewModel = OtherWalletsViewModel()
+            otherWalletsViewModel = OtherWalletsViewModel(tokensRepository: tokensRepository)
         } else {
             otherWalletsViewModel = nil
         }
