@@ -65,12 +65,12 @@ extension TransactionCell: BECollectionViewCell {
         // description texts
         switch transaction.value {
         case let transaction as SolanaSDK.CreateAccountTransaction:
-            if let newToken = transaction.newToken {
-                descriptionLabel.text = L10n.created(newToken.symbol)
+            if let newWallet = transaction.newWallet {
+                descriptionLabel.text = L10n.created(newWallet.token.symbol)
             }
         case let transaction as SolanaSDK.CloseAccountTransaction:
-            if let closedToken = transaction.closedToken {
-                descriptionLabel.text = L10n.closed(closedToken.symbol)
+            if let closedWallet = transaction.closedWallet {
+                descriptionLabel.text = L10n.closed(closedWallet.token.symbol)
             }
         case let transaction as SolanaSDK.TransferTransaction:
             switch transaction.transferType {
@@ -92,7 +92,7 @@ extension TransactionCell: BECollectionViewCell {
             if let source = transaction.source,
                   let destination = transaction.destination
             {
-                descriptionLabel.text = L10n.to(source.symbol, destination.symbol)
+                descriptionLabel.text = L10n.to(source.token.symbol, destination.token.symbol)
             }
             
         default:

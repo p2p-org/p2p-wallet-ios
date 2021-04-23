@@ -19,7 +19,7 @@ class SendTokenRootView: ScrollableVStackRootView {
     // MARK: - Subviews
     lazy var balanceLabel = UILabel(text: "0", weight: .medium)
         .onTap(viewModel, action: #selector(SendTokenViewModel.useAllBalance))
-    lazy var coinImageView = CoinLogoImageView(width: 44, height: 44)
+    lazy var coinImageView = CoinLogoImageView(size: 44)
         .onTap(viewModel, action: #selector(SendTokenViewModel.chooseWallet))
     lazy var amountTextField = TokenAmountTextField(
         font: .systemFont(ofSize: 27, weight: .semibold),
@@ -152,7 +152,7 @@ class SendTokenRootView: ScrollableVStackRootView {
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: 0)
             .drive(onNext: {availableAmount in
-                guard let symbol = self.viewModel.isUSDMode.value ? "USD": self.viewModel.currentWallet.value?.symbol
+                guard let symbol = self.viewModel.isUSDMode.value ? "USD": self.viewModel.currentWallet.value?.token.symbol
                 else {return}
                 self.balanceLabel.text =
                     L10n.available +
@@ -176,7 +176,7 @@ class SendTokenRootView: ScrollableVStackRootView {
             .subscribe(onNext: {wallet in
                 guard let wallet = wallet else {return}
                 self.coinImageView.setUp(wallet: wallet)
-                self.symbolLabel.text = wallet.symbol
+                self.symbolLabel.text = wallet.token.symbol
             })
             .disposed(by: disposeBag)
         
@@ -191,7 +191,7 @@ class SendTokenRootView: ScrollableVStackRootView {
                 var equityValueSymbol = "USD"
                 if isUSDMode {
                     equityValue = amount.double / wallet.priceInUSD
-                    equityValueSymbol = wallet.symbol
+                    equityValueSymbol = wallet.token.symbol
                 }
                 return "≈ " + equityValue.toString(maximumFractionDigits: 9) + " " + equityValueSymbol
             }
@@ -203,13 +203,13 @@ class SendTokenRootView: ScrollableVStackRootView {
             viewModel.currentWallet.distinctUntilChanged(),
             viewModel.isUSDMode.distinctUntilChanged()
         )
-            .map { $0.1 ? "USD": ($0.0?.symbol ?? "")}
+            .map { $0.1 ? "USD": ($0.0?.token.symbol ?? "")}
             .asDriver(onErrorJustReturn: "")
             .drive(changeModeButton.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.currentWallet.distinctUntilChanged()
-            .map {$0?.symbol ?? ""}
+            .map {$0?.token.symbol ?? ""}
             .asDriver(onErrorJustReturn: "")
             .map {"1 \($0):"}
             .drive(coinSymbolPriceLabel.rx.text)
