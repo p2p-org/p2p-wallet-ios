@@ -8,10 +8,17 @@
 import Foundation
 
 extension SolanaSDK.Token {
+    private static var cachedIndicatorColors = [String: UIColor]()
+    
     var indicatorColor: UIColor {
         // swiftlint:disable swiftgen_assets
-        UIColor(named: symbol) ?? .random
+        var color = UIColor(named: symbol) ?? SolanaSDK.Token.cachedIndicatorColors[symbol]
         // swiftlint:enable swiftgen_assets
+        if color == nil {
+            color = .random
+            SolanaSDK.Token.cachedIndicatorColors[symbol] = color
+        }
+        return color!
     }
     
     var image: UIImage? {
