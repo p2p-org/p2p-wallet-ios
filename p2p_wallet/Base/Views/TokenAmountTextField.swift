@@ -26,7 +26,7 @@ class TokenAmountTextField: BEDecimalTextField {
         var updatedText = currentText.replacingCharacters(in: stringRange, with: string)
         if let dotIndex = updatedText.firstIndex(of: Locale.current.decimalSeparator?.first ?? ".") {
             let offset = updatedText.distance(from: dotIndex, to: updatedText.endIndex) - 1
-            let decimals = wallet?.decimals ?? 9
+            let decimals = Int(wallet?.token.decimals ?? 9)
             if offset > decimals {
                 let endIndex = updatedText.index(dotIndex, offsetBy: decimals)
                 updatedText = String(updatedText[updatedText.startIndex...endIndex])
