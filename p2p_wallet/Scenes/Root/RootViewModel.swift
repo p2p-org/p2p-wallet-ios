@@ -51,6 +51,8 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
         Int(Date().timeIntervalSince1970) >= lastAuthenticationTimestamp + timeRequiredForAuthentication
     }
     
+    var didResetPinCodeWithSeedPhrases = false
+    
     // MARK: - Subjects
     let navigationSubject = BehaviorRelay<RootNavigatableScene>(value: .initializing)
     let authenticationSubject = PublishSubject<AuthenticationPresentationStyle>()
