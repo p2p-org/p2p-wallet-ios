@@ -77,7 +77,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
         self.wallet = wallet
         let usdAmount = String(format: "%.02f", wallet.amountInUSD)
         amountLabel.text = "\(Defaults.fiat.symbol) " + usdAmount
-        tokenCountLabel.text = "\(wallet.symbol) \(wallet.amount.toString(maximumFractionDigits: 9))"
+        tokenCountLabel.text = "\(wallet.token.symbol) \(wallet.amount.toString(maximumFractionDigits: 9))"
         changeLabel.text = "\(wallet.price?.change24h?.percentage?.toString(maximumFractionDigits: 2, showPlus: true) ?? "")% \(L10n._24Hours)"
         
         if wallet.price?.change24h?.percentage >= 0 {

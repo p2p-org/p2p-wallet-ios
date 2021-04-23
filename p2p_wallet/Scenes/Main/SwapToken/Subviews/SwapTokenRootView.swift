@@ -182,7 +182,7 @@ private extension SwapTokenRootView {
         viewModel.sourceWallet
             .map {$0?.amount ?? 0}
             .map {$0.toString(maximumFractionDigits: 9)}
-            .map {"\(L10n.available): \($0) \(self.viewModel.sourceWallet.value?.symbol ?? "")"}
+            .map {"\(L10n.available): \($0) \(self.viewModel.sourceWallet.value?.token.symbol ?? "")"}
             .asDriver(onErrorJustReturn: "")
             .drive(availableSourceBalanceLabel.rx.text)
             .disposed(by: disposeBag)
@@ -199,7 +199,7 @@ private extension SwapTokenRootView {
             .subscribe(onNext: { [weak self] wallet in
                 self?.destinationWalletView.setUp(wallet: wallet)
                 if let amount = wallet?.amount?.toString(maximumFractionDigits: 9) {
-                    self?.destinationBalanceLabel.text = L10n.balance + ": " + amount + " " + "\(wallet?.symbol ?? "")"
+                    self?.destinationBalanceLabel.text = L10n.balance + ": " + amount + " " + "\(wallet?.token.symbol ?? "")"
                 } else {
                     self?.destinationBalanceLabel.text = nil
                 }
@@ -266,8 +266,8 @@ private extension SwapTokenRootView {
                 }()
                 
                 guard let pool = pool,
-                      var fromSymbol = sourceWallet?.symbol,
-                      var toSymbol = destinationWallet?.symbol,
+                      var fromSymbol = sourceWallet?.token.symbol,
+                      var toSymbol = destinationWallet?.token.symbol,
                       var fromDecimals = sourceWallet?.token.decimals,
                       var toDecimals = destinationWallet?.token.decimals
                 else {
@@ -286,9 +286,12 @@ private extension SwapTokenRootView {
                     swap(&fromDecimals, &toDecimals)
                 }
                 
-                return rate.toString(maximumFractionDigits: toDecimals) + " "
-                    + toSymbol + " "
-                    + L10n.per + " "
+                return rate.toString(maximumFractionDigits: toDecimals)
+                    + " "
+                    + toSymbol
+                    + " "
+                    + L10n.per
+                    + " "
                     + fromSymbol
             }
             .asDriver(onErrorJustReturn: nil)
@@ -305,7 +308,7 @@ private extension SwapTokenRootView {
             viewModel.destinationWallet
         )
             .map {minReceiveAmount, wallet -> String? in
-                guard let symbol = wallet?.symbol else {return nil}
+                guard let symbol = wallet?.token.symbol else {return nil}
                 return minReceiveAmount?.toString(maximumFractionDigits: 9) + " " + symbol
             }
             .asDriver(onErrorJustReturn: nil)
@@ -329,7 +332,7 @@ private extension SwapTokenRootView {
                       let amount = pool.fee(forInputAmount: lamports)
                 else {return nil}
                 
-                return amount.toString(maximumFractionDigits: 5) + " " + sourceWallet?.symbol
+                return amount.toString(maximumFractionDigits: 5) + " " + sourceWallet?.token.symbol
             }
             .asDriver(onErrorJustReturn: nil)
             .drive(feeLabel.rx.text)

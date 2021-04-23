@@ -102,7 +102,7 @@ extension ChooseWalletCollectionView {
     class OtherTokenCell: Cell {
         override func setUp(with item: Wallet) {
             super.setUp(with: item)
-            addressLabel.text = item.symbol
+            addressLabel.text = item.token.symbol
             
             equityValueLabel.isHidden = true
             tokenCountLabel.isHidden = true

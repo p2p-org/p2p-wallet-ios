@@ -45,7 +45,7 @@ class ChooseWalletViewModel {
             guard let strongSelf = self else {return true}
             if strongSelf.myWalletsViewModel
                 .getData(type: Wallet.self)
-                .contains(where: { $0.symbol == wallet.symbol })
+                .contains(where: { $0.token.symbol == wallet.token.symbol })
             {
                 return false
             }
@@ -105,7 +105,7 @@ class ChooseWalletViewModel {
 
 private extension Wallet {
     func hasKeyword(_ keyword: String) -> Bool {
-        symbol.lowercased().hasPrefix(keyword.lowercased()) ||
-            symbol.lowercased().contains(keyword.lowercased())
+        token.symbol.lowercased().hasPrefix(keyword.lowercased()) ||
+            token.symbol.lowercased().contains(keyword.lowercased())
     }
 }

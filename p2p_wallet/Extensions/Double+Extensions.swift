@@ -79,4 +79,9 @@ extension Double {
         let realAmount = self.toString(maximumFractionDigits: decimals, groupingSeparator: nil)
         return realAmount.double ?? self
     }
+    
+    func rounded(decimals: UInt8?) -> Double {
+        guard let decimals = decimals else {return self}
+        return rounded(decimals: Int(decimals))
+    }
 }

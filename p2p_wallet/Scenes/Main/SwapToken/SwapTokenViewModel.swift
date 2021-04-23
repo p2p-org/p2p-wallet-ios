@@ -59,7 +59,7 @@ class SwapTokenViewModel {
         self.wallets = wallets
         pools.reload()
         
-        sourceWallet.accept(fromWallet ?? wallets.first(where: {$0.symbol == "SOL"}))
+        sourceWallet.accept(fromWallet ?? wallets.first(where: {$0.token.symbol == "SOL"}))
         destinationWallet.accept(toWallet)
         bind()
     }
@@ -161,31 +161,10 @@ class SwapTokenViewModel {
     
     func destinationWalletDidSelect(_ wallet: Wallet) {
         // check if wallet has required data
-        if wallet.pubkey != nil && wallet.token.decimals != nil {
+        if wallet.pubkey != nil {
             destinationWallet.accept(wallet)
             return
         }
-        
-        // fetch needed data
-        navigationSubject.onNext(.loading(true))
-        if let mint = try? SolanaSDK.PublicKey(string: wallet.mintAddress) {
-            solanaSDK.getMintData(mintAddress: mint)
-                .map {Int($0.decimals)}
-                .subscribe(onSuccess: {[weak self] decimals in
-                    self?.navigationSubject.onNext(.loading(false))
-                    var wallet = wallet
-                    wallet.token.decimals = decimals
-                    self?.destinationWallet.accept(wallet)
-                }, onFailure: {[weak self] error in
-                    self?.navigationSubject.onNext(.loading(false))
-                    self?.errorSubject.accept(error.readableDescription)
-                })
-                .disposed(by: disposeBag)
-        } else {
-            navigationSubject.onNext(.loading(false))
-            errorSubject.accept(L10n.tokenSMintAddressIsNotValid)
-        }
-        
     }
     
     private func swap() {
@@ -194,12 +173,12 @@ class SwapTokenViewModel {
               let sourceMint = try? SolanaSDK.PublicKey(string: sourceWallet.mintAddress),
               let destinationWallet = destinationWallet.value,
               let destinationMint = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress),
-              
-              let sourceDecimals = sourceWallet.decimals,
               let amountDouble = sourceAmountInput.value.double
         else {
             return
         }
+        
+        let sourceDecimals = sourceWallet.token.decimals
         
         let lamports = amountDouble.toLamport(decimals: sourceDecimals)
         let destinationPubkey = try? SolanaSDK.PublicKey(string: destinationWallet.pubkey ?? "")
@@ -207,7 +186,7 @@ class SwapTokenViewModel {
         var transaction = Transaction(
             type: .send,
             amount: +(self.destinationAmountInput.value.double ?? 0),
-            symbol: destinationWallet.symbol,
+            symbol: destinationWallet.token.symbol,
             status: .processing
         )
         
@@ -235,7 +214,7 @@ class SwapTokenViewModel {
                     signatureInfo: .init(signature: signature),
                     type: .send,
                     amount: -amountDouble,
-                    symbol: sourceWallet.symbol,
+                    symbol: sourceWallet.token.symbol,
                     status: .processing
                 )
                 self.transactionManager.process(transaction2)
@@ -267,7 +246,7 @@ class SwapTokenViewModel {
             }
             
             // insufficient funds
-            if input.rounded(decimals: sourceWallet?.decimals) > sourceWallet?.amount?.rounded(decimals: sourceWallet?.decimals)
+            if input.rounded(decimals: sourceDecimals) > sourceWallet?.amount?.rounded(decimals: sourceDecimals)
             {
                 return L10n.insufficientFunds
             }
@@ -287,10 +266,10 @@ class SwapTokenViewModel {
                 if let sourceWallet = sourceWallet,
                    let destinationWallet = destinationWallet
                 {
-                    if sourceWallet.symbol == destinationWallet.symbol {
-                        return L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.symbol)
+                    if sourceWallet.token.symbol == destinationWallet.token.symbol {
+                        return L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.token.symbol)
                     } else {
-                        return L10n.swappingFromToIsCurrentlyUnsupported(sourceWallet.symbol, destinationWallet.symbol)
+                        return L10n.swappingFromToIsCurrentlyUnsupported(sourceWallet.token.symbol, destinationWallet.token.symbol)
                     }
                 }
             }
@@ -306,12 +285,12 @@ class SwapTokenViewModel {
 
 private extension SwapTokenViewModel {
     // MARK: - Calculator
-    private var sourceDecimals: Int? {
-        sourceWallet.value?.decimals
+    private var sourceDecimals: UInt8? {
+        sourceWallet.value?.token.decimals
     }
     
-    private var destinationDecimals: Int? {
-        destinationWallet.value?.decimals
+    private var destinationDecimals: UInt8? {
+        destinationWallet.value?.token.decimals
     }
     
     private var slippageValue: Double {
@@ -348,8 +327,8 @@ private extension SwapTokenViewModel {
     func calculateMinimumReceiveAmount() -> Double? {
         guard let amount = sourceAmountInput.value?.double,
               amount > 0,
-              let sourceDecimals = self.sourceWallet.value?.decimals,
-              let destinationDecimals = self.destinationWallet.value?.decimals,
+              let sourceDecimals = sourceDecimals,
+              let destinationDecimals = destinationDecimals,
               let estimatedAmountLamports = currentPool.value?.estimatedAmount(forInputAmount: amount.toLamport(decimals: sourceDecimals)),
               let lamports = currentPool.value?.minimumReceiveAmount(estimatedAmount: estimatedAmountLamports, slippage: slippage.value)
         else {return nil}

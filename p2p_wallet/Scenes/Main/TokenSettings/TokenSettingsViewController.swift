@@ -63,7 +63,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
         case .alert(let title, let description):
             showAlert(title: title?.uppercaseFirst, message: description)
         case .closeConfirmation:
-            guard let symbol = viewModel.wallet?.symbol else {return}
+            guard let symbol = viewModel.wallet?.token.symbol else {return}
             let vc = TokenSettingsCloseAccountConfirmationVC(symbol: symbol)
             vc.completion = {
                 vc.dismiss(animated: true) { [unowned self] in

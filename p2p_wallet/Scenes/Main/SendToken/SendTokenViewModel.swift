@@ -102,7 +102,7 @@ class SendTokenViewModel {
                 fee = fee * priceInUSD
                 amount = wallet.amountInUSD
             }
-            if wallet.symbol == "SOL" {
+            if wallet.token.symbol == "SOL" {
                 amount -= fee
                 if amount < 0 {
                     amount = 0
@@ -168,7 +168,7 @@ class SendTokenViewModel {
             signatureInfo: nil,
             type: .send,
             amount: -amount,
-            symbol: currentWallet.symbol,
+            symbol: currentWallet.token.symbol,
             status: .processing
         )
         
@@ -193,7 +193,7 @@ class SendTokenViewModel {
         
         // define token
         var request: Single<String>!
-        if currentWallet.symbol == "SOL" {
+        if currentWallet.token.symbol == "SOL" {
             // SOLANA
             request = solanaSDK.sendSOL(to: receiver, amount: lamport)
         } else {
