@@ -24,10 +24,11 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     let pubkey: String
     let solanaSDK: SolanaSDK
     let transactionManager: TransactionsManager
+    let pricesRepository: PricesRepository
     let accountStorage: KeychainAccountStorage
     var wallet: Wallet? {walletsRepository.getWallets().first(where: {$0.pubkey == pubkey})}
     lazy var processTransactionViewModel: ProcessTransactionViewModel = {
-        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager)
+        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager, pricesRepository: pricesRepository)
         viewModel.tryAgainAction = CocoaAction {
             self.closeWallet()
             return .just(())
@@ -41,12 +42,20 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
-    init(walletsRepository: WalletsRepository, pubkey: String, solanaSDK: SolanaSDK, transactionManager: TransactionsManager, accountStorage: KeychainAccountStorage) {
+    init(
+        walletsRepository: WalletsRepository,
+        pubkey: String,
+        solanaSDK: SolanaSDK,
+        transactionManager: TransactionsManager,
+        pricesRepository: PricesRepository,
+        accountStorage: KeychainAccountStorage
+    ) {
         self.walletsRepository = walletsRepository
         self.pubkey = pubkey
         self.solanaSDK = solanaSDK
         self.transactionManager = transactionManager
         self.accountStorage = accountStorage
+        self.pricesRepository = pricesRepository
         super.init()
     }
     

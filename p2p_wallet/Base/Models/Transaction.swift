@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Transaction: FiatConvertable {
+struct Transaction {
     var id: String { signatureInfo?.signature ?? UUID().uuidString }
     var signatureInfo: SolanaSDK.SignatureInfo?
     var signature: String? {signatureInfo?.signature}
@@ -71,7 +71,7 @@ extension Transaction {
            let dataString = instruction.data
         {
             let bytes = Base58.decode(dataString)
-            let wallet = walletRepository.getWallets().first(where: {$0.symbol == symbol})
+            let wallet = walletRepository.getWallets().first(where: {$0.token.symbol == symbol})
             
             if bytes.count >= 4 {
                 let typeIndex = bytes.toUInt32()
@@ -98,7 +98,7 @@ extension Transaction {
             }
             
             if bytes.count >= 12, let lamport = Array(bytes[4..<12]).toUInt64() {
-                var decimals = wallet?.decimals ?? 0
+                var decimals = wallet?.token.decimals ?? 0
                 if type == .createAccount {
                     decimals = 9
                 }

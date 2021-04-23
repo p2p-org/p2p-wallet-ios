@@ -58,7 +58,7 @@ class TransactionInfoViewModel {
         case let transferTransaction as SolanaSDK.TransferTransaction:
             UIApplication.shared.copyToClipboard(transferTransaction.destination?.pubkey)
         case let createAccountTransaction as SolanaSDK.CreateAccountTransaction:
-            UIApplication.shared.copyToClipboard(createAccountTransaction.newToken?.pubkey)
+            UIApplication.shared.copyToClipboard(createAccountTransaction.newWallet?.pubkey)
         default:
             return
         }

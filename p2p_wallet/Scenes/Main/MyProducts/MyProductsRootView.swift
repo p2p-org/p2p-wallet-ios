@@ -73,6 +73,6 @@ class MyProductsRootView: BEView {
 extension MyProductsRootView: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionView, didSelect item: AnyHashable) {
         guard let wallet = item as? Wallet, let pubkey = wallet.pubkey else {return}
-        self.viewModel.showWalletDetail(pubkey: pubkey, symbol: wallet.symbol)
+        self.viewModel.showWalletDetail(pubkey: pubkey, symbol: wallet.token.symbol)
     }
 }

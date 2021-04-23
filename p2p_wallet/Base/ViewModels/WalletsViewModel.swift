@@ -22,7 +22,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private var disposeBag = DisposeBag()
     
     // MARK: - Getters
-    var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
+    var solWallet: Wallet? {data.first(where: {$0.token.symbol == "SOL"})}
     
     // MARK: - Subjects
     let isHiddenWalletsShown = BehaviorRelay<Bool>(value: false)
@@ -56,7 +56,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         // observe SOL balance
         socket.observeAccountNotification()
             .subscribe(onNext: {[weak self] notification in
-                self?.updateItem(where: {$0.symbol == "SOL"}) { wallet in
+                self?.updateItem(where: {$0.token.symbol == "SOL"}) { wallet in
                     var wallet = wallet
                     wallet.lamports = notification.value.lamports
                     return wallet
@@ -89,27 +89,29 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     override func createRequest() -> Single<[Wallet]> {
         solanaSDK.getBalance()
             .flatMap {balance in
-                self.solanaSDK.getTokensInfo()
-                    .map {$0.map {Wallet(programAccount: $0)}}
-                    // map prices
-                    .map {[weak self] wallets in
-                        self?.mapPrices(wallets: wallets) ?? []
-                    }
+                self.solanaSDK.getTokenWallets()
                     // update visibility
                     .map {[weak self] wallets in
                         self?.mapVisibility(wallets: wallets) ?? []
                     }
                     // add sol wallet on top
-                    .map {wallets in
+                    .map {[weak self] wallets in
                         var wallets = wallets
-                        let solWallet = Wallet.createSOLWallet(
-                            pubkey: self.solanaSDK.accountStorage.account?.publicKey.base58EncodedString,
-                            lamports: balance,
-                            price: PricesManager.shared.solPrice
+                        let solWallet = Wallet.nativeSolana(
+                            pubkey: self?.solanaSDK.accountStorage.account?.publicKey.base58EncodedString,
+                            lamport: balance
                         )
                         wallets.insert(solWallet, at: 0)
                         return wallets
                     }
+                    // map prices
+                    .map {[weak self] wallets in
+                        self?.mapPrices(wallets: wallets) ?? []
+                    }
+                    // update prices
+                    .do(afterSuccess: {[weak self] wallets in
+                        self?.pricesRepository.fetchCurrentPrices(coins: wallets.map {$0.token.symbol})
+                    })
             }
     }
     
@@ -127,8 +129,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                 if lhs.amount != rhs.amount {
                     return lhs.amount.orZero > rhs.amount.orZero
                 }
-                if lhs.symbol != rhs.symbol {
-                    return lhs.symbol < rhs.symbol
+                if lhs.token.symbol != rhs.token.symbol {
+                    return lhs.token.symbol < rhs.token.symbol
                 }
                 return lhs.mintAddress < rhs.mintAddress
             })
@@ -178,7 +180,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private func mapPrices(wallets: [Wallet]) -> [Wallet] {
         var wallets = wallets
         for i in 0..<wallets.count {
-            if let price = pricesRepository.currentPrice(for: wallets[i].symbol)
+            if let price = pricesRepository.currentPrice(for: wallets[i].token.symbol)
             {
                 wallets[i].price = price
             }
