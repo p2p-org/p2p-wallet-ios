@@ -12,8 +12,8 @@ class TransactionImageView: BEView {
     private let _cornerRadius: CGFloat?
     
     private lazy var basicIconImageView = UIImageView(width: 24.38, height: 24.38, tintColor: .a3a5ba)
-    private lazy var fromTokenImageView = CoinLogoImageView(width: 30, height: 30)
-    private lazy var toTokenImageView = CoinLogoImageView(width: 30, height: 30)
+    private lazy var fromTokenImageView = CoinLogoImageView(size: 30)
+    private lazy var toTokenImageView = CoinLogoImageView(size: 30)
     
     init(size: CGFloat, backgroundColor: UIColor? = nil, cornerRadius: CGFloat? = nil) {
         _backgroundColor = backgroundColor
@@ -56,8 +56,8 @@ class TransactionImageView: BEView {
             fromTokenImageView.alpha = 1
             toTokenImageView.alpha = 1
             
-            fromTokenImageView.setUp(token: transaction.source)
-            toTokenImageView.setUp(token: transaction.destination)
+            fromTokenImageView.setUp(token: transaction.source?.token)
+            toTokenImageView.setUp(token: transaction.destination?.token)
         default:
             break
         }

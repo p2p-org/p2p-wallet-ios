@@ -65,8 +65,8 @@ extension TransactionInfoRootView {
     }
     
     class SwapSummaryView: SummaryView {
-        lazy var sourceIconImageView = CoinLogoImageView(width: 44, height: 44)
-        lazy var destinationIconImageView = CoinLogoImageView(width: 44, height: 44)
+        lazy var sourceIconImageView = CoinLogoImageView(size: 44)
+        lazy var destinationIconImageView = CoinLogoImageView(size: 44)
         
         lazy var sourceAmountLabel = createAmountLabel()
         lazy var destinationAmountLabel = createAmountLabel()

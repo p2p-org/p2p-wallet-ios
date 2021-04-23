@@ -52,7 +52,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
     }
     
     /// deprecated
-    func setUp(with state: FetcherState<[Wallet]>) {
+    func setUp(with state: FetcherState<[Wallet]>, solPrice: CurrentPrice?) {
         switch state {
         case .initializing:
             equityValueLabel.text = " "
@@ -65,7 +65,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         case .loaded(let wallets):
             let equityValue = wallets.reduce(0) { $0 + $1.amountInUSD }
             equityValueLabel.text = "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
-//            let changeValue = PricesManager.shared.solPrice?.change24h?.percentage * 100
+//            let changeValue = solPrice?.change24h?.percentage * 100
 //            var color = UIColor.attentionGreen
 //            if changeValue < 0 {
 //                color = .red
@@ -122,7 +122,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         set.drawValuesEnabled = false
         set.selectionShift = 0
         
-        set.colors = wallets.map {$0.indicatorColor}
+        set.colors = wallets.map {$0.token.indicatorColor}
         
         let data = PieChartData(dataSet: set)
         data.setValueTextColor(.clear)

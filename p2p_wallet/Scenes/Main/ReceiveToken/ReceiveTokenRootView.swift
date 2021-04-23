@@ -26,7 +26,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
     let viewModel: ReceiveTokenViewModel
     
     // MARK: - Subviews
-    private lazy var coinLogoImageView = CoinLogoImageView(width: 45, height: 45)
+    private lazy var coinLogoImageView = CoinLogoImageView(size: 45)
     private lazy var symbolLabel = UILabel(text: "<Symbol>", weight: .semibold)
     private lazy var shortAddresslabel = UILabel(text: "<address>", textSize: 13, textColor: .a3a5ba, numberOfLines: 0)
 //        .onTap(viewModel, action: #selector(ReceiveTokenViewModel.createWallet))
@@ -106,7 +106,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .disposed(by: disposeBag)
         
         walletDriver
-            .map {$0?.symbol}
+            .map {$0?.token.symbol}
             .drive(symbolLabel.rx.text)
             .disposed(by: disposeBag)
         
@@ -133,7 +133,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
         
         walletDriver
             .map { wallet -> String? in
-                if let symbol = wallet?.symbol {
+                if let symbol = wallet?.token.symbol {
                     if wallet?.pubkey != nil {
                         return L10n.yourPublicAddress(symbol)
                     }
@@ -207,7 +207,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
             .drive(addressLabel.rx.textColor)
             .disposed(by: disposeBag)
         
-        walletDriver.map {L10n.mintAddress($0?.symbol ?? "")}
+        walletDriver.map {L10n.mintAddress($0?.token.symbol ?? "")}
             .drive(mintAddressTitleLabel.rx.text)
             .disposed(by: disposeBag)
         

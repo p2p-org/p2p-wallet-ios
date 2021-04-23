@@ -20,7 +20,7 @@ class WalletDetailRootView: BEView {
     // MARK: - Subviews
     lazy var headerStackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
     
-    lazy var coinLogoImageView = CoinLogoImageView(width: 35, height: 35)
+    lazy var coinLogoImageView = CoinLogoImageView(size: 35)
     
     lazy var walletNameTextField: UITextField = {
         let tf = UITextField(font: .systemFont(ofSize: 19, weight: .semibold), placeholder: "A", autocorrectionType: .no)
@@ -127,7 +127,7 @@ class WalletDetailRootView: BEView {
             .map {$0!}
         
         walletDriver
-            .map {$0.symbol == "SOL"}
+            .map {$0.token.symbol == "SOL"}
             .drive(settingsButton.rx.isHidden)
             .disposed(by: disposeBag)
         
@@ -137,7 +137,7 @@ class WalletDetailRootView: BEView {
             .disposed(by: disposeBag)
         
         walletDriver
-            .map {$0.description}
+            .map {$0.token.description}
             .drive(walletDescriptionLabel.rx.text)
             .disposed(by: disposeBag)
         
