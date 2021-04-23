@@ -161,7 +161,7 @@ class SwapTokenViewModel {
     
     func destinationWalletDidSelect(_ wallet: Wallet) {
         // check if wallet has required data
-        if wallet.pubkey != nil && wallet.decimals != nil {
+        if wallet.pubkey != nil && wallet.token.decimals != nil {
             destinationWallet.accept(wallet)
             return
         }
@@ -174,7 +174,7 @@ class SwapTokenViewModel {
                 .subscribe(onSuccess: {[weak self] decimals in
                     self?.navigationSubject.onNext(.loading(false))
                     var wallet = wallet
-                    wallet.decimals = decimals
+                    wallet.token.decimals = decimals
                     self?.destinationWallet.accept(wallet)
                 }, onFailure: {[weak self] error in
                     self?.navigationSubject.onNext(.loading(false))

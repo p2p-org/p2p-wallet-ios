@@ -17,7 +17,6 @@ class PricesManager {
     
     private var refreshInterval: TimeInterval // Refresh
     private var timer: Timer?
-    var solPrice: CurrentPrice? {currentPrices.value["SOL"]}
     
     // MARK: - Subjects
     let currentPrices = BehaviorRelay<[String: CurrentPrice]>(value: [:])
@@ -76,7 +75,7 @@ class PricesManager {
 }
 
 extension PricesManager {
-    func updateCurrentPrices(_ newPrices: [Coin: CurrentPrice?]) {
+    func updateCurrentPrices(_ newPrices: [String: CurrentPrice?]) {
         var prices = currentPrices.value
         for newPrice in newPrices {
             prices[newPrice.key] = newPrice.value

@@ -102,6 +102,7 @@ class MainContainer {
     func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController {
         let viewModel = ChooseWalletViewModel(
             myWalletsViewModel: walletsViewModel,
+            tokensRepository: solanaSDK,
             showOtherWallets: showOtherWallets)
         { (item) -> Bool in
             guard let customFilter = customFilter else {return true}

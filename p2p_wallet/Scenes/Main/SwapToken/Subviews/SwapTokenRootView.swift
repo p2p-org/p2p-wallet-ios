@@ -268,8 +268,8 @@ private extension SwapTokenRootView {
                 guard let pool = pool,
                       var fromSymbol = sourceWallet?.symbol,
                       var toSymbol = destinationWallet?.symbol,
-                      var fromDecimals = sourceWallet?.decimals,
-                      var toDecimals = destinationWallet?.decimals
+                      var fromDecimals = sourceWallet?.token.decimals,
+                      var toDecimals = destinationWallet?.token.decimals
                 else {
                     return nil
                 }
@@ -324,7 +324,7 @@ private extension SwapTokenRootView {
         )
             .map {pool, sourceWallet, amountInput -> String? in
                 guard let pool = pool,
-                      let decimals = sourceWallet?.decimals,
+                      let decimals = sourceWallet?.token.decimals,
                       let lamports = amountInput.double?.toLamport(decimals: decimals),
                       let amount = pool.fee(forInputAmount: lamports)
                 else {return nil}

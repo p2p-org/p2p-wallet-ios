@@ -26,7 +26,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
     let viewModel: ReceiveTokenViewModel
     
     // MARK: - Subviews
-    private lazy var coinLogoImageView = CoinLogoImageView(width: 45, height: 45)
+    private lazy var coinLogoImageView = CoinLogoImageView(size: 45)
     private lazy var symbolLabel = UILabel(text: "<Symbol>", weight: .semibold)
     private lazy var shortAddresslabel = UILabel(text: "<address>", textSize: 13, textColor: .a3a5ba, numberOfLines: 0)
 //        .onTap(viewModel, action: #selector(ReceiveTokenViewModel.createWallet))
