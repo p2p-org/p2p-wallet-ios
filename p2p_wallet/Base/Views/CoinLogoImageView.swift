@@ -10,7 +10,8 @@ import Foundation
 class CoinLogoImageView: BEView {
     // MARK: - Subviews
     lazy var tokenIcon = UIImageView(tintColor: .textBlack)
-    lazy var wrappingTokenIcon = UIImageView(width: 12, height: 12)
+    lazy var wrappingTokenIcon = UIImageView(width: 16, height: 16)
+        .border(width: 3, color: .h464646)
     private var placeholder: UIView?
     
     // MARK: - Initializer
@@ -70,8 +71,11 @@ class CoinLogoImageView: BEView {
             tokenIcon.isHidden = true
         }
         
-        // TODO: - wrapped by
-        
+        // wrapped by
+        if let wrappedBy = token?.wrappedBy {
+            wrappingTokenIcon.superview?.alpha = 1
+            wrappingTokenIcon.image = wrappedBy.image
+        }
     }
     
     func with(wallet: Wallet) -> Self {
