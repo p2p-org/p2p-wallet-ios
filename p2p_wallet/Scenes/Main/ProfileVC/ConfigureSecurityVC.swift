@@ -107,6 +107,10 @@ class ConfigureSecurityVC: ProfileVCBase {
                 isFullScreen: false,
                 useBiometry: false,
                 completion: { [weak self] in
+                    if self?.rootViewModel.didResetPinCodeWithSeedPhrases == true {
+                        return
+                    }
+                    
                     // pin code vc
                     let vc = CreatePassCodeVC(promptTitle: L10n.newPINCode)
                     vc.disableDismissAfterCompletion = true
