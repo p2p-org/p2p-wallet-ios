@@ -48,8 +48,12 @@ class PricesManager {
     }
     
     // get supported coin
-    @objc func fetchCurrentPrices() {
-        fetcher.getCurrentPrices(coins: tokensRepository.supportedTokens.map {$0.symbol}, toFiat: Defaults.fiat.code)
+    @objc func fetchCurrentPrices(coins: [String] = []) {
+        var coins = coins
+        if coins.isEmpty {
+            coins = tokensRepository.supportedTokens.map {$0.symbol}
+        }
+        fetcher.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
             .subscribe(onSuccess: {[weak self] prices in
                 guard let self = self else {return}
                 self.updateCurrentPrices(prices)
