@@ -85,6 +85,14 @@ extension SolanaSDK.Wallet {
         }
     }
     
+    var priceInUSD: Double? {
+        price?.value
+    }
+    
+    var amountInUSD: Double {
+        amount * priceInUSD
+    }
+    
     mutating func updateVisibility() {
         var userInfo = getParsedUserInfo()
         userInfo._isHidden = isHidden
@@ -99,11 +107,5 @@ extension SolanaSDK.Wallet {
     
     func getParsedUserInfo() -> SolanaWalletUserInfo {
         userInfo as? SolanaWalletUserInfo ?? SolanaWalletUserInfo()
-    }
-}
-
-extension Wallet: FiatConvertable {
-    var symbol: String {
-        token.symbol
     }
 }

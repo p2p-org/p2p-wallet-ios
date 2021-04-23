@@ -127,7 +127,7 @@ class WalletDetailRootView: BEView {
             .map {$0!}
         
         walletDriver
-            .map {$0.symbol == "SOL"}
+            .map {$0.token.symbol == "SOL"}
             .drive(settingsButton.rx.isHidden)
             .disposed(by: disposeBag)
         
