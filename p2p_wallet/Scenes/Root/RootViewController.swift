@@ -107,6 +107,7 @@ class RootViewController: BaseVC {
         case .resetPincodeWithASeedPhrase:
             let vc = scenesFactory.makeResetPinCodeWithSeedPhrasesViewController()
             vc.completion = {[weak self] in
+                self?.viewModel.didResetPinCodeWithSeedPhrases = true
                 self?.localAuthVC?.completion?(true)
             }
             localAuthVC?.present(vc, animated: true, completion: nil)
@@ -115,6 +116,8 @@ class RootViewController: BaseVC {
     }
     
     private func authenticate(_ authStyle: AuthenticationPresentationStyle) {
+        viewModel.didResetPinCodeWithSeedPhrases = false
+        
         // check if view is fully loaded
         if viewIfLoaded?.window == nil || !isBoardingCompleted || (presentedViewController is LocalAuthVC) {return}
         

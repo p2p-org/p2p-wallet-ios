@@ -325,3 +325,4 @@
 "Check enterred wallet address and try again." = "Check enterred wallet address and try again.";
 "or reset it with a seed phrase" = "or reset it with a seed phrase";
 "Reset PIN with a seed phrase" = "Reset PIN with a seed phrase";
+"Your %@ address will be disabled. This action can not be undone" = "Your %@ address will be disabled. This action can not be undone";

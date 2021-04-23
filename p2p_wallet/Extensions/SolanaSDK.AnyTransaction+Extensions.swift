@@ -33,7 +33,7 @@ extension SolanaSDK.AnyTransaction {
         return L10n.transaction
     }
     
-    var icon: UIImage? {
+    var icon: UIImage {
         switch value {
         case is SolanaSDK.CreateAccountTransaction:
             return .transactionCreateAccount
@@ -53,6 +53,6 @@ extension SolanaSDK.AnyTransaction {
         default:
             break
         }
-        return nil
+        return .transactionUndefined
     }
 }
