@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "wUSDT.svg",
+      "filename" : "Property 1=USDT.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Property 1=USDT@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "Property 1=USDT@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

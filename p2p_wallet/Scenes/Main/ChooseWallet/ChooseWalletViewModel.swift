@@ -16,6 +16,7 @@ class ChooseWalletViewModel {
     // MARK: - Properties
     let disposeBag = DisposeBag()
     let myWalletsViewModel: BEListViewModelType
+    let pricesRepository: PricesRepository
     let otherWalletsViewModel: OtherWalletsViewModel?
     var firstSectionFilter: ((AnyHashable) -> Bool)?
     
@@ -31,10 +32,12 @@ class ChooseWalletViewModel {
     init(
         myWalletsViewModel: BEListViewModelType,
         tokensRepository: TokensRepository,
+        pricesRepository: PricesRepository,
         showOtherWallets: Bool,
         firstSectionFilter: ((AnyHashable) -> Bool)? = nil
     ) {
         self.myWalletsViewModel = myWalletsViewModel
+        self.pricesRepository = pricesRepository
         if showOtherWallets {
             otherWalletsViewModel = OtherWalletsViewModel(tokensRepository: tokensRepository)
         } else {
@@ -106,6 +109,8 @@ class ChooseWalletViewModel {
 private extension Wallet {
     func hasKeyword(_ keyword: String) -> Bool {
         token.symbol.lowercased().hasPrefix(keyword.lowercased()) ||
-            token.symbol.lowercased().contains(keyword.lowercased())
+            token.symbol.lowercased().contains(keyword.lowercased()) ||
+            token.name.lowercased().hasPrefix(keyword.lowercased()) ||
+            token.name.lowercased().contains(keyword.lowercased())
     }
 }

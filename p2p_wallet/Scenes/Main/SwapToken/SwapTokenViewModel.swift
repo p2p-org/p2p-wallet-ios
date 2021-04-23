@@ -169,11 +169,7 @@ class SwapTokenViewModel {
     }
     
     func destinationWalletDidSelect(_ wallet: Wallet) {
-        // check if wallet has required data
-        if wallet.pubkey != nil {
-            destinationWallet.accept(wallet)
-            return
-        }
+        destinationWallet.accept(wallet)
     }
     
     private func swap() {

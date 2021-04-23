@@ -29,7 +29,7 @@ class MainContainer {
         
         defer {
             socket.connect()
-            pricesManager.startObserving()
+//            pricesManager.startObserving()
         }
     }
     
@@ -103,6 +103,7 @@ class MainContainer {
         let viewModel = ChooseWalletViewModel(
             myWalletsViewModel: walletsViewModel,
             tokensRepository: solanaSDK,
+            pricesRepository: pricesManager,
             showOtherWallets: showOtherWallets)
         { (item) -> Bool in
             guard let customFilter = customFilter else {return true}
