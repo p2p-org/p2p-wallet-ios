@@ -65,7 +65,7 @@ class SwapTokenWalletView: BEView {
         iconImageView.setUp(wallet: wallet)
         if let wallet = wallet {
             tokenSymbolLabel.alpha = 1
-            tokenSymbolLabel.text = wallet.symbol
+            tokenSymbolLabel.text = wallet.token.symbol
         } else {
             tokenSymbolLabel.alpha = 0
             tokenSymbolLabel.text = nil

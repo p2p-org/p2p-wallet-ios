@@ -157,7 +157,6 @@
 		BC6EE7C5254BBEC000FE1025 /* EnableNotificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE7C4254BBEC000FE1025 /* EnableNotificationsVC.swift */; };
 		BC6EE7CA254BBF8900FE1025 /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE7C9254BBF8900FE1025 /* UIApplication+Extensions.swift */; };
 		BC6EE7E2254BD23700FE1025 /* WellDoneVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE7E1254BD23700FE1025 /* WellDoneVC.swift */; };
-		BC75334D257E1A5B007A00D9 /* FiatConvertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75334C257E1A5B007A00D9 /* FiatConvertable.swift */; };
 		BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75339B257F2953007A00D9 /* Date+Extensions.swift */; };
 		BC7533AA257F31D3007A00D9 /* LazyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7533A9257F31D3007A00D9 /* LazyLabel.swift */; };
 		BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7AD0E7254A540700B4A070 /* WLButton.swift */; };
@@ -459,7 +458,6 @@
 		BC6EE7C9254BBF8900FE1025 /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
 		BC6EE7E1254BD23700FE1025 /* WellDoneVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellDoneVC.swift; sourceTree = "<group>"; };
 		BC6EE7E6254BD30600FE1025 /* p2p_wallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = p2p_wallet.entitlements; sourceTree = "<group>"; };
-		BC75334C257E1A5B007A00D9 /* FiatConvertable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiatConvertable.swift; sourceTree = "<group>"; };
 		BC75339B257F2953007A00D9 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		BC7533A9257F31D3007A00D9 /* LazyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyLabel.swift; sourceTree = "<group>"; };
 		BC7AD0E7254A540700B4A070 /* WLButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLButton.swift; sourceTree = "<group>"; };
@@ -978,7 +976,6 @@
 		BC7A8EB1255BCE360023C918 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				BC75334C257E1A5B007A00D9 /* FiatConvertable.swift */,
 				BCD5E82E25525DE600F51299 /* FetcherState.swift */,
 				BC3ADE9F2570E1B9002B3B16 /* Transaction.swift */,
 				BC5257E625CBACEA0076317E /* Fiat.swift */,
@@ -2026,7 +2023,6 @@
 				BCF7D953256220F100961D31 /* ErrorView.swift in Sources */,
 				BC0E7DCC25B17AB2009AD08B /* Bundle+Extensions.swift in Sources */,
 				BC8F6830260989F8002FDCCD /* QrCodeView.swift in Sources */,
-				BC75334D257E1A5B007A00D9 /* FiatConvertable.swift in Sources */,
 				BC54DD8E25872FE500A65566 /* HorizontalPicker.swift in Sources */,
 				BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */,
 				BCFC768825E2EAB800FBE148 /* MainViewController.swift in Sources */,

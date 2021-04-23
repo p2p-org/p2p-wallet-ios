@@ -22,7 +22,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private var disposeBag = DisposeBag()
     
     // MARK: - Getters
-    var solWallet: Wallet? {data.first(where: {$0.symbol == "SOL"})}
+    var solWallet: Wallet? {data.first(where: {$0.token.symbol == "SOL"})}
     
     // MARK: - Subjects
     let isHiddenWalletsShown = BehaviorRelay<Bool>(value: false)
@@ -56,7 +56,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         // observe SOL balance
         socket.observeAccountNotification()
             .subscribe(onNext: {[weak self] notification in
-                self?.updateItem(where: {$0.symbol == "SOL"}) { wallet in
+                self?.updateItem(where: {$0.token.symbol == "SOL"}) { wallet in
                     var wallet = wallet
                     wallet.lamports = notification.value.lamports
                     return wallet
@@ -125,8 +125,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                 if lhs.amount != rhs.amount {
                     return lhs.amount.orZero > rhs.amount.orZero
                 }
-                if lhs.symbol != rhs.symbol {
-                    return lhs.symbol < rhs.symbol
+                if lhs.token.symbol != rhs.token.symbol {
+                    return lhs.token.symbol < rhs.token.symbol
                 }
                 return lhs.mintAddress < rhs.mintAddress
             })
@@ -176,7 +176,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private func mapPrices(wallets: [Wallet]) -> [Wallet] {
         var wallets = wallets
         for i in 0..<wallets.count {
-            if let price = pricesRepository.currentPrice(for: wallets[i].symbol)
+            if let price = pricesRepository.currentPrice(for: wallets[i].token.symbol)
             {
                 wallets[i].price = price
             }

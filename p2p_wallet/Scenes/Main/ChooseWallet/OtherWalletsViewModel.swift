@@ -25,7 +25,7 @@ class OtherWalletsViewModel: BEListViewModel<Wallet> {
                         Wallet(pubkey: nil, lamports: nil, token: $0, liquidity: false)
                     }
                     .filter {
-                        $0.symbol != "SOL"
+                        $0.token.symbol != "SOL"
                     }
                 
                 observer(.success(wallets))
