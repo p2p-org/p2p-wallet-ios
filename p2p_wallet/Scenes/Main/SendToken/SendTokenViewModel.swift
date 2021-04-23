@@ -149,11 +149,13 @@ class SendTokenViewModel {
               let receiver = destinationAddressInput.value,
               let price = currentWallet.priceInUSD,
               price > 0,
-              var amount = amountInput.value.double,
-              let decimals = currentWallet.decimals
+              var amount = amountInput.value.double
         else {
             return
         }
+        
+        let decimals = currentWallet.token.decimals
+        
         let isUSDMode = self.isUSDMode.value
         
         if isUSDMode { amount = amount / price }
@@ -245,7 +247,7 @@ class SendTokenViewModel {
             
             // Verify amount
             let amountToCompare = self.availableAmount.value
-            if amount.rounded(decimals: wallet?.decimals) > amountToCompare.rounded(decimals: wallet?.decimals)
+            if amount.rounded(decimals: Int(wallet?.token.decimals ?? 0)) > amountToCompare.rounded(decimals: Int(wallet?.token.decimals ?? 0))
             {
                 return L10n.insufficientFunds
             }

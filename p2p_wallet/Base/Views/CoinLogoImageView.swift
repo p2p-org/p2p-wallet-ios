@@ -8,50 +8,70 @@
 import Foundation
 
 class CoinLogoImageView: BEView {
-    lazy var imageView = UIImageView(tintColor: .textBlack)
-    lazy var wrappedByFTXIcon = UIImageView(width: 12, height: 12, image: .wrappedByFTX)
+    // MARK: - Subviews
+    lazy var tokenIcon = UIImageView(tintColor: .textBlack)
+    lazy var wrappingTokenIcon = UIImageView(width: 12, height: 12)
     private var placeholder: UIView?
+    
+    // MARK: - Initializer
+    init(size: CGFloat, cornerRadius: CGFloat = 12) {
+        super.init(frame: .zero)
+        configureForAutoLayout()
+        autoSetDimensions(to: .init(width: size, height: size))
+        
+        tokenIcon.layer.cornerRadius = cornerRadius
+        tokenIcon.layer.masksToBounds = true
+    }
     
     override func commonInit() {
         super.commonInit()
         backgroundColor = .gray
-        addSubview(imageView)
-        imageView.autoPinEdgesToSuperviewEdges()
-        let wrappedByView: UIImageView = {
-            let imageView = UIImageView(width: 16, height: 16, image: .wrappedByBackground)
-            imageView.addSubview(wrappedByFTXIcon)
-            wrappedByFTXIcon.autoCenterInSuperview()
-            return imageView
+        
+        addSubview(tokenIcon)
+        tokenIcon.autoPinEdgesToSuperviewEdges()
+        
+        let wrappingView: BERoundedCornerShadowView = {
+            let view = BERoundedCornerShadowView(
+                shadowColor: UIColor.textWhite.withAlphaComponent(0.25),
+                radius: 2,
+                offset: CGSize(width: 0, height: 2),
+                opacity: 1,
+                cornerRadius: 1
+            )
+            
+            view.addSubview(wrappingTokenIcon)
+            wrappingTokenIcon.autoPinEdgesToSuperviewEdges()
+            
+            return view
         }()
-        addSubview(wrappedByView)
-        wrappedByView.autoPinEdge(toSuperviewEdge: .trailing)
-        wrappedByView.autoPinEdge(toSuperviewEdge: .bottom)
-        wrappedByView.alpha = 0 // UNKNOWN: isHidden not working
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        wrappedByFTXIcon.superview?.addShadow(ofColor: UIColor.textWhite.withAlphaComponent(0.25), radius: 2, offset: CGSize(width: 0, height: 2), opacity: 1)
+        
+        addSubview(wrappingView)
+        wrappingView.autoPinEdge(toSuperviewEdge: .trailing)
+        wrappingView.autoPinEdge(toSuperviewEdge: .bottom)
+        wrappingView.alpha = 0 // UNKNOWN: isHidden not working
     }
     
     func setUp(wallet: Wallet? = nil) {
-        placeholder?.isHidden = true
-        imageView.isHidden = false
-        wrappedByFTXIcon.superview?.alpha = 0
-        backgroundColor = .clear
-        if let wallet = wallet {
-            imageView.image = wallet.image
-        } else if let placeholder = placeholder {
-            placeholder.isHidden = false
-            imageView.isHidden = true
-        }
-        if wallet?.wrappedBy != nil {
-            wrappedByFTXIcon.superview?.alpha = 1
-        }
+        setUp(token: wallet?.token)
     }
     
     func setUp(token: SolanaSDK.Token? = nil) {
-        setUp(wallet: token != nil ? Wallet(programAccount: token!): nil)
+        // default
+        placeholder?.isHidden = true
+        tokenIcon.isHidden = false
+        wrappingTokenIcon.superview?.alpha = 0
+        backgroundColor = .clear
+        
+        // with token
+        if let token = token {
+            tokenIcon.image = token.image
+        } else if let placeholder = placeholder {
+            placeholder.isHidden = false
+            tokenIcon.isHidden = true
+        }
+        
+        // TODO: - wrapped by
+        
     }
     
     func with(wallet: Wallet) -> Self {
