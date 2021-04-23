@@ -89,13 +89,13 @@ class MainContainer {
     }
     
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController {
-        let vm = SendTokenViewModel(solanaSDK: solanaSDK, walletsRepository: walletsViewModel, transactionManager: transactionManager, activeWallet: activeWallet, destinationAddress: destinationAddress)
+        let vm = SendTokenViewModel(solanaSDK: solanaSDK, walletsRepository: walletsViewModel, transactionManager: transactionManager, pricesRepository: pricesManager, activeWallet: activeWallet, destinationAddress: destinationAddress)
         let vc = SendTokenViewController(viewModel: vm, scenesFactory: self)
         return vc
     }
     
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController {
-        let vm = SwapTokenViewModel(solanaSDK: solanaSDK, transactionManager: transactionManager, wallets: walletsViewModel.data, fromWallet: wallet)
+        let vm = SwapTokenViewModel(solanaSDK: solanaSDK, transactionManager: transactionManager, pricesRepository: pricesManager, wallets: walletsViewModel.data, fromWallet: wallet)
         return SwapTokenViewController(viewModel: vm, scenesFactory: self)
     }
     
@@ -143,7 +143,17 @@ class MainContainer {
     
     // MARK: - Token edit
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController {
-        TokenSettingsViewController(viewModel: TokenSettingsViewModel(walletsRepository: walletsViewModel, pubkey: pubkey, solanaSDK: solanaSDK, transactionManager: transactionManager, accountStorage: accountStorage), rootViewModel: rootViewModel)
+        TokenSettingsViewController(
+            viewModel: TokenSettingsViewModel(
+                walletsRepository: walletsViewModel,
+                pubkey: pubkey,
+                solanaSDK: solanaSDK,
+                transactionManager: transactionManager,
+                pricesRepository: pricesManager,
+                accountStorage: accountStorage
+            ),
+            rootViewModel: rootViewModel
+        )
     }
     
     // MARK: - Helpers

@@ -27,6 +27,7 @@ class ProcessTransactionViewModel {
     // MARK: - Properties
     let disposeBag = DisposeBag()
     let transactionsManager: TransactionsManager
+    let pricesRepository: PricesRepository
     var tryAgainAction: CocoaAction?
     
     var transaction: Transaction? {transactionInfo.value.transaction}
@@ -41,8 +42,12 @@ class ProcessTransactionViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(transactionsManager: TransactionsManager) {
+    init(
+        transactionsManager: TransactionsManager,
+        pricesRepository: PricesRepository
+    ) {
         self.transactionsManager = transactionsManager
+        self.pricesRepository = pricesRepository
         bind()
     }
     
