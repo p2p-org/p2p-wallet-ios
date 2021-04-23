@@ -23,12 +23,13 @@ class MainContainer {
         self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: accountStorage)
         self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: accountStorage.account?.publicKey)
         self.transactionManager = TransactionsManager(socket: socket)
-        self.pricesManager = PricesManager.shared
+        self.pricesManager = PricesManager(tokensRepository: solanaSDK, fetcher: CryptoComparePricesFetcher(), refreshAfter: 10 * 1000) // 10minutes
         
         self.walletsViewModel = WalletsViewModel(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager, pricesRepository: pricesManager)
         
         defer {
             socket.connect()
+            pricesManager.startObserving()
         }
     }
     

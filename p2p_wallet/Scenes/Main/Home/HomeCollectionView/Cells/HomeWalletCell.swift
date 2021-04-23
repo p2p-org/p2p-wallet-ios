@@ -54,7 +54,7 @@ class HomeWalletCell: EditableWalletCell {
         if item.amountInUSD == 0 {
             indicatorColorView.backgroundColor = .clear
         } else {
-            indicatorColorView.backgroundColor = item.indicatorColor
+            indicatorColorView.backgroundColor = item.token.indicatorColor
         }
     }
     

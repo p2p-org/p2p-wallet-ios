@@ -19,16 +19,13 @@ struct SolanaWalletUserInfo: Hashable {
 }
 
 extension SolanaSDK.Wallet {
-    var indicatorColor: UIColor {
-        // swiftlint:disable swiftgen_assets
-        UIColor(named: token.symbol) ?? .random
-        // swiftlint:enable swiftgen_assets
+    var name: String {
+        guard let pubkey = pubkey else {return token.symbol}
+        return Defaults.walletName[pubkey] ?? token.symbol
     }
     
-    var image: UIImage? {
-        // swiftlint:disable swiftgen_assets
-        UIImage(named: token.symbol)
-        // swiftlint:enable swiftgen_assets
+    var mintAddress: String {
+        token.address
     }
     
     var isHidden: Bool {
@@ -44,21 +41,53 @@ extension SolanaSDK.Wallet {
         return false
     }
     
-    var name: String {
-        guard let pubkey = pubkey else {return token.symbol}
-        return Defaults.walletName[pubkey] ?? token.symbol
+    var isBeingCreated: Bool? {
+        get {
+            getParsedUserInfo().isBeingCreated
+        }
+        set {
+            var userInfo = getParsedUserInfo()
+            userInfo.isBeingCreated = newValue
+            self.userInfo = userInfo
+        }
+    }
+    
+    var creatingError: String? {
+        get {
+            getParsedUserInfo().creatingError
+        }
+        set {
+            var userInfo = getParsedUserInfo()
+            userInfo.creatingError = newValue
+            self.userInfo = userInfo
+        }
+    }
+    
+    var isProcessing: Bool? {
+        get {
+            getParsedUserInfo().isProcessing
+        }
+        set {
+            var userInfo = getParsedUserInfo()
+            userInfo.isProcessing = newValue
+            self.userInfo = userInfo
+        }
     }
     
     mutating func updateVisibility() {
-        var userInfo = self.userInfo as? SolanaWalletUserInfo
-        userInfo?._isHidden = isHidden
+        var userInfo = getParsedUserInfo()
+        userInfo._isHidden = isHidden
         self.userInfo = userInfo
     }
     
     mutating func setName(_ name: String) {
-        var userInfo = self.userInfo as? SolanaWalletUserInfo
-        userInfo?._customName = name
+        var userInfo = getParsedUserInfo()
+        userInfo._customName = name
         self.userInfo = userInfo
+    }
+    
+    func getParsedUserInfo() -> SolanaWalletUserInfo {
+        userInfo as? SolanaWalletUserInfo ?? SolanaWalletUserInfo()
     }
     
     // TODO: - Wrapped by

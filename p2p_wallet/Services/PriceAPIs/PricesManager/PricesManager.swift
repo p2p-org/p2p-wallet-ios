@@ -10,9 +10,8 @@ import RxSwift
 import RxCocoa
 
 class PricesManager {
-    typealias Coin = String
-    
     // MARK: - Properties
+    var tokensRepository: TokensRepository
     var fetcher: PricesFetcher
     private let disposeBag = DisposeBag()
     
@@ -20,17 +19,12 @@ class PricesManager {
     private var timer: Timer?
     var solPrice: CurrentPrice? {currentPrices.value["SOL"]}
     
-    private lazy var supportedCoins: [String] = {
-        var pairs = SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.Network.mainnetBeta)?.map {$0.symbol} ?? [String]()
-        pairs.append("SOL")
-        return pairs
-    }()
-    
     // MARK: - Subjects
-    let currentPrices = BehaviorRelay<[Coin: CurrentPrice]>(value: [:])
+    let currentPrices = BehaviorRelay<[String: CurrentPrice]>(value: [:])
     
     // MARK: - Initializer
-    init(fetcher: PricesFetcher, refreshAfter seconds: TimeInterval = 30) {
+    init(tokensRepository: TokensRepository, fetcher: PricesFetcher, refreshAfter seconds: TimeInterval = 30) {
+        self.tokensRepository = tokensRepository
         self.fetcher = fetcher
         self.refreshInterval = seconds
     }
@@ -56,7 +50,7 @@ class PricesManager {
     
     // get supported coin
     @objc func fetchCurrentPrices() {
-        fetcher.getCurrentPrices(coins: supportedCoins, toFiat: Defaults.fiat.code)
+        fetcher.getCurrentPrices(coins: tokensRepository.supportedTokens.map {$0.symbol}, toFiat: Defaults.fiat.code)
             .subscribe(onSuccess: {[weak self] prices in
                 guard let self = self else {return}
                 self.updateCurrentPrices(prices)

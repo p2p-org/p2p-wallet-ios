@@ -9,7 +9,7 @@ import Foundation
 
 class WalletCell: BaseCollectionViewCell, LoadableView {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
-    lazy var coinLogoImageView = CoinLogoImageView(width: 45, height: 45)
+    lazy var coinLogoImageView = CoinLogoImageView(size: 45)
     lazy var coinNameLabel = UILabel(text: "<Coin name>", weight: .semibold, numberOfLines: 0)
     lazy var coinPriceLabel = UILabel(text: "<12 US$>", textSize: 13)
     lazy var tokenCountLabel = UILabel(text: "<0,00344 Tkns>", textSize: 13, textColor: .textSecondary)
