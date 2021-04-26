@@ -59,6 +59,7 @@
 		BC22ABE12552A4B70071C69F /* DismissMenuAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABE02552A4B70071C69F /* DismissMenuAnimator.swift */; };
 		BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */; };
 		BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */; };
+		BC274540263699F500D37CD1 /* SelectFiatVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC27453F263699F500D37CD1 /* SelectFiatVC.swift */; };
 		BC290A00256B9C95002A727C /* SwapTokenWalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2909FF256B9C95002A727C /* SwapTokenWalletView.swift */; };
 		BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC290A04256BA36F002A727C /* TokenAmountTextField.swift */; };
 		BC2DA294260B079100B50738 /* WLAddTokenButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2DA293260B079100B50738 /* WLAddTokenButton.swift */; };
@@ -355,6 +356,7 @@
 		BC22ABE02552A4B70071C69F /* DismissMenuAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissMenuAnimator.swift; sourceTree = "<group>"; };
 		BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeScannerVC.swift; sourceTree = "<group>"; };
 		BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionView.swift; sourceTree = "<group>"; };
+		BC27453F263699F500D37CD1 /* SelectFiatVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectFiatVC.swift; sourceTree = "<group>"; };
 		BC2909FF256B9C95002A727C /* SwapTokenWalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenWalletView.swift; sourceTree = "<group>"; };
 		BC290A04256BA36F002A727C /* TokenAmountTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAmountTextField.swift; sourceTree = "<group>"; };
 		BC2DA293260B079100B50738 /* WLAddTokenButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLAddTokenButton.swift; sourceTree = "<group>"; };
@@ -1168,6 +1170,7 @@
 				BC10512F258B05DF00398EA2 /* BackupManuallyVC.swift */,
 				BC105118258884AA00398EA2 /* SelectNetworkVC.swift */,
 				BC0E7DC625B178BF009AD08B /* SelectLanguageVC.swift */,
+				BC27453F263699F500D37CD1 /* SelectFiatVC.swift */,
 				BCB92B6F25B5311500FF615E /* SelectAppearanceVC.swift */,
 				BC10511D258884D800398EA2 /* ConfigureSecurityVC.swift */,
 			);
@@ -1984,6 +1987,7 @@
 				BCA93F8125E883A50081DDF6 /* Array+Extensions.swift in Sources */,
 				BC2EC1F92553FF6A006EEDA5 /* DashedButton.swift in Sources */,
 				BC05891525D3CD7C00632993 /* SwapTokenViewController.swift in Sources */,
+				BC274540263699F500D37CD1 /* SelectFiatVC.swift in Sources */,
 				BC03791625FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift in Sources */,
 				BCBE149925EF3D110014BCE5 /* HomeFriendCell.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */,

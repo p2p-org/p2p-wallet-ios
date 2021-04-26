@@ -327,3 +327,11 @@
 "Reset PIN with a seed phrase" = "Reset PIN with a seed phrase";
 "Your %@ address will be disabled. This action can not be undone" = "Your %@ address will be disabled. This action can not be undone";
 "Switching network..." = "Switching network...";
+"Currency" = "Currency";
+"United States Dollar" = "United States Dollar";
+"Euro" = "Euro";
+"Changing currency" = "Changing currency";
+"Chinese Yuan" = "Chinese Yuan";
+"Russian Ruble" = "Russian Ruble";
+"Vietnamese Dong" = "Vietnamese Dong";
+"French Franc" = "French Franc";
