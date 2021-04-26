@@ -39,7 +39,7 @@ extension SolanaSDK.Token {
             return "Solana"
         }
         if let wrappedBy = wrappedBy {
-            return L10n.wrappedBy(symbol, wrappedBy.rawValue)
+            return L10n.wrappedBy(symbol, wrappedBy.rawValue.uppercaseFirst)
         }
         return name
     }
