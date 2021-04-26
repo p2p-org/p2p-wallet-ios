@@ -12,6 +12,7 @@ import SwiftUI
 
 protocol ProfileScenesFactory {
     func makeBackupVC() -> BackupVC
+    func makeSelectFiatVC() -> SelectFiatVC
     func makeSelectNetworkVC() -> SelectNetworkVC
     func makeConfigureSecurityVC() -> ConfigureSecurityVC
     func makeSelectLanguageVC() -> SelectLanguageVC
@@ -20,6 +21,7 @@ protocol ProfileScenesFactory {
 
 class ProfileVC: ProfileVCBase {
     lazy var backupShieldImageView = UIImageView(width: 17, height: 21, image: .backupShield)
+    lazy var fiatLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var secureMethodsLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var activeLanguageLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var appearanceLabel = UILabel(weight: .medium, textColor: .textSecondary)
@@ -60,11 +62,19 @@ class ProfileVC: ProfileVCBase {
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             createCell(
+                image: nil,
+                text: L10n.currency,
+                descriptionView: fiatLabel
+            )
+                .withTag(2)
+                .onTap(self, action: #selector(cellDidTouch(_:))),
+            
+            createCell(
                 image: .settingsNetwork,
                 text: L10n.network,
                 descriptionView: networkLabel
             )
-                .withTag(2)
+                .withTag(3)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             createCell(
@@ -72,7 +82,7 @@ class ProfileVC: ProfileVCBase {
                 text: L10n.security,
                 descriptionView: secureMethodsLabel
             )
-                .withTag(3)
+                .withTag(4)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             createCell(
@@ -80,7 +90,7 @@ class ProfileVC: ProfileVCBase {
                 text: L10n.language,
                 descriptionView: activeLanguageLabel
             )
-                .withTag(4)
+                .withTag(5)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             createCell(
@@ -88,7 +98,7 @@ class ProfileVC: ProfileVCBase {
                 text: L10n.appearance,
                 descriptionView: appearanceLabel
             )
-                .withTag(5)
+                .withTag(6)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             createCell(
@@ -109,6 +119,8 @@ class ProfileVC: ProfileVCBase {
         
         setUpBackupShield()
         
+        setUp(fiat: Defaults.fiat)
+        
         setUp(enabledBiometry: Defaults.isBiometryEnabled)
         
         setUp(endpoint: Defaults.apiEndPoint)
@@ -123,12 +135,16 @@ class ProfileVC: ProfileVCBase {
     override func bind() {
         super.bind()
         
-        disposables.append(Defaults.observe(\.isBiometryEnabled) { update in
-            self.setUp(enabledBiometry: update.newValue)
+        disposables.append(Defaults.observe(\.isBiometryEnabled) { [weak self] update in
+            self?.setUp(enabledBiometry: update.newValue)
         })
         
-        disposables.append(Defaults.observe(\.apiEndPoint){ update in
-            self.setUp(endpoint: update.newValue)
+        disposables.append(Defaults.observe(\.apiEndPoint){ [weak self] update in
+            self?.setUp(endpoint: update.newValue)
+        })
+        
+        disposables.append(Defaults.observe(\.fiat){ [weak self] update in
+            self?.setUp(fiat: update.newValue)
         })
     }
     
@@ -139,6 +155,10 @@ class ProfileVC: ProfileVCBase {
             shieldColor = .attentionGreen
         }
         backupShieldImageView.tintColor = shieldColor
+    }
+    
+    func setUp(fiat: Fiat?) {
+        fiatLabel.text = fiat?.name
     }
     
     func setUp(enabledBiometry: Bool?) {
@@ -183,15 +203,18 @@ class ProfileVC: ProfileVCBase {
             }
             show(vc, sender: nil)
         case 2:
-            let vc = scenesFactory.makeSelectNetworkVC()
+            let vc = scenesFactory.makeSelectFiatVC()
             show(vc, sender: nil)
         case 3:
-            let vc = scenesFactory.makeConfigureSecurityVC()
+            let vc = scenesFactory.makeSelectNetworkVC()
             show(vc, sender: nil)
         case 4:
-            let vc = scenesFactory.makeSelectLanguageVC()
+            let vc = scenesFactory.makeConfigureSecurityVC()
             show(vc, sender: nil)
         case 5:
+            let vc = scenesFactory.makeSelectLanguageVC()
+            show(vc, sender: nil)
+        case 6:
             let vc = scenesFactory.makeSelectAppearanceVC()
             show(vc, sender: nil)
         default:
