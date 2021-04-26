@@ -40,7 +40,7 @@ class SendTokenViewModel {
     let navigationSubject = PublishSubject<SendTokenNavigatableScene>()
     let currentWallet = BehaviorRelay<Wallet?>(value: nil)
     let availableAmount = BehaviorRelay<Double>(value: 0)
-    let isUSDMode = BehaviorRelay<Bool>(value: false)
+    let isFiatMode = BehaviorRelay<Bool>(value: false)
     lazy var fee = LazySubject<Double>(
         request: solanaSDK.getFees()
             .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
@@ -79,7 +79,7 @@ class SendTokenViewModel {
         // available amount
         Observable.combineLatest(
             currentWallet.distinctUntilChanged(),
-            isUSDMode.distinctUntilChanged(),
+            isFiatMode.distinctUntilChanged(),
             fee.observable.distinctUntilChanged()
         )
             .subscribe(onNext: {[weak self] _ in
@@ -92,7 +92,7 @@ class SendTokenViewModel {
             currentWallet.distinctUntilChanged(),
             amountInput.distinctUntilChanged(),
             destinationAddressInput.distinctUntilChanged(),
-            isUSDMode.distinctUntilChanged(),
+            isFiatMode.distinctUntilChanged(),
             fee.observable.distinctUntilChanged()
         )
             .map {_ in self.verifyError()}
@@ -105,11 +105,11 @@ class SendTokenViewModel {
         if let wallet = currentWallet.value,
            var amount = wallet.amount,
            var fee = fee.value,
-           let priceInUSD = wallet.priceInUSD
+           let priceInCurrentFiat = wallet.priceInCurrentFiat
         {
-            if isUSDMode.value {
-                fee = fee * priceInUSD
-                amount = wallet.amountInUSD
+            if isFiatMode.value {
+                fee = fee * priceInCurrentFiat
+                amount = wallet.amountInCurrentFiat
             }
             if wallet.token.symbol == "SOL" {
                 amount -= fee
@@ -136,7 +136,7 @@ class SendTokenViewModel {
     }
     
     @objc func switchMode() {
-        isUSDMode.accept(!isUSDMode.value)
+        isFiatMode.accept(!isFiatMode.value)
     }
     
     @objc func scanQrCode() {
@@ -156,7 +156,7 @@ class SendTokenViewModel {
               let currentWallet = currentWallet.value,
               let sender = currentWallet.pubkey,
               let receiver = destinationAddressInput.value,
-              let price = currentWallet.priceInUSD,
+              let price = currentWallet.priceInCurrentFiat,
               price > 0,
               var amount = amountInput.value.double
         else {
@@ -165,9 +165,9 @@ class SendTokenViewModel {
         
         let decimals = currentWallet.token.decimals
         
-        let isUSDMode = self.isUSDMode.value
+        let isFiatMode = self.isFiatMode.value
         
-        if isUSDMode { amount = amount / price }
+        if isFiatMode { amount = amount / price }
         
         if showScene {
             navigationSubject.onNext(.processTransaction)
