@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 class MainContainer {
     let rootViewModel: RootViewModel
@@ -127,7 +128,7 @@ class MainContainer {
     }
     
     func makeSelectNetworkVC() -> SelectNetworkVC {
-        SelectNetworkVC(accountStorage: accountStorage, rootViewModel: rootViewModel, changeNetworkResponder: self)
+        SelectNetworkVC(changeNetworkResponder: self)
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {
@@ -158,12 +159,34 @@ class MainContainer {
     }
     
     // MARK: - Helpers
-    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) {
-        Defaults.apiEndPoint = endpoint
-        
-        self.socket.disconnect()
-        self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
-        self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl, publicKey: accountStorage.account?.publicKey)
+    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) -> Completable {
+        Completable.create {observer in
+            DispatchQueue.global().async { [unowned self] in
+                do {
+                    let account = try SolanaSDK.Account(phrase: self.accountStorage.account!.phrase, network: endpoint.network)
+                    try self.accountStorage.save(account)
+                    DispatchQueue.main.async {
+                        Defaults.apiEndPoint = endpoint
+                        self.socket.disconnect()
+                        self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
+                        self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl, publicKey: accountStorage.account?.publicKey)
+                        observer(.completed)
+                        self.rootViewModel.reload()
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        observer(.error(error))
+                    }
+                }
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func changeFiat(to fiat: Fiat) {
+        Defaults.fiat = fiat
+        pricesManager.currentPrices.accept([:])
+        rootViewModel.reload()
     }
 }
 
@@ -176,5 +199,6 @@ extension MainContainer: TabBarScenesFactory,
                          BackupScenesFactory,
                          HomeScenesFactory,
                          ChangeNetworkResponder,
+                         ChangeFiatResponder,
                          ReceiveTokenSceneFactory,
                          _MainScenesFactory {}
