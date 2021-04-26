@@ -50,7 +50,7 @@ class CreateSecurityKeysViewModel {
         UIApplication.shared.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
         DispatchQueue.global().async {
             do {
-                let account = try SolanaSDK.Account(phrase: self.phrasesSubject.value, network: Defaults.network)
+                let account = try SolanaSDK.Account(phrase: self.phrasesSubject.value, network: Defaults.apiEndPoint.network)
                 try self.accountStorage.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()

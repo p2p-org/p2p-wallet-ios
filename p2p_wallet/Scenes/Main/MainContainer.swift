@@ -20,8 +20,8 @@ class MainContainer {
     init(rootViewModel: RootViewModel, accountStorage: KeychainAccountStorage) {
         self.rootViewModel = rootViewModel
         self.accountStorage = accountStorage
-        self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: accountStorage)
-        self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: accountStorage.account?.publicKey)
+        self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
+        self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl, publicKey: accountStorage.account?.publicKey)
         self.transactionManager = TransactionsManager(socket: socket)
         self.pricesManager = PricesManager(tokensRepository: solanaSDK, fetcher: CryptoComparePricesFetcher(), refreshAfter: 10 * 1000) // 10minutes
         
@@ -158,12 +158,12 @@ class MainContainer {
     }
     
     // MARK: - Helpers
-    func changeNetwork(to network: SolanaSDK.Network) {
-        Defaults.network = network
+    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) {
+        Defaults.apiEndPoint = endpoint
         
         self.socket.disconnect()
-        self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: accountStorage)
-        self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: accountStorage.account?.publicKey)
+        self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
+        self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl, publicKey: accountStorage.account?.publicKey)
     }
 }
 
