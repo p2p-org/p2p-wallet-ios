@@ -6,21 +6,18 @@
 //
 
 import Foundation
+import RxSwift
 
 protocol ChangeNetworkResponder {
-    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint)
+    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) -> Completable
 }
 
 class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
     override var dataDidChange: Bool {selectedItem != Defaults.apiEndPoint}
-    var accountStorage: SolanaSDKAccountStorage
-    let rootViewModel: RootViewModel
-    let changeNetworkResponder: ChangeNetworkResponder
+    let responder: ChangeNetworkResponder
     
-    init(accountStorage: SolanaSDKAccountStorage, rootViewModel: RootViewModel, changeNetworkResponder: ChangeNetworkResponder) {
-        self.accountStorage = accountStorage
-        self.rootViewModel = rootViewModel
-        self.changeNetworkResponder = changeNetworkResponder
+    init(changeNetworkResponder: ChangeNetworkResponder) {
+        self.responder = changeNetworkResponder
         super.init()
         // initial data
         SolanaSDK.APIEndPoint.definedEndpoints
@@ -45,25 +42,21 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
     }
     
     @objc func saveChange() {
-        showAlert(title: L10n.switchNetwork, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem.url + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
+        showAlert(title: L10n.switchNetwork, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem.url + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { [weak self] (index) in
             if index != 0 {return}
-            UIApplication.shared.showIndetermineHudWithMessage(L10n.switchingNetwork)
-            DispatchQueue.global().async {
-                do {
-                    let account = try SolanaSDK.Account(phrase: self.accountStorage.account!.phrase, network: self.selectedItem.network)
-                    try self.accountStorage.save(account)
-                    DispatchQueue.main.async {
-                        UIApplication.shared.hideHud()
-                        self.changeNetworkResponder.changeAPIEndpoint(to: self.selectedItem)
-                        self.rootViewModel.reload()
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        UIApplication.shared.hideHud()
-                        self.showError(error, additionalMessage: L10n.pleaseTryAgainLater)
-                    }
-                }
-            }
+            self?.changeNetworkToSelectedNetwork()
         }
+    }
+    
+    func changeNetworkToSelectedNetwork() {
+        UIApplication.shared.showIndetermineHudWithMessage(L10n.switchingNetwork)
+        responder.changeAPIEndpoint(to: selectedItem)
+            .subscribe(onCompleted: {
+                UIApplication.shared.hideHud()
+            }, onError: {[weak self] error in
+                UIApplication.shared.hideHud()
+                self?.showError(error, additionalMessage: L10n.pleaseTryAgainLater)
+            })
+            .disposed(by: disposeBag)
     }
 }
