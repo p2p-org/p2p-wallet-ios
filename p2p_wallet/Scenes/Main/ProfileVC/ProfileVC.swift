@@ -62,7 +62,7 @@ class ProfileVC: ProfileVCBase {
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             createCell(
-                image: nil,
+                image: .settingsCurrency,
                 text: L10n.currency,
                 descriptionView: fiatLabel
             )
