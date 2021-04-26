@@ -10,6 +10,10 @@ import Foundation
 enum Fiat: String, CaseIterable {
     case usd
     case eur
+    case cny
+    case vnd
+    case rub
+    case frf
     
     var code: String {
         rawValue.uppercased()
@@ -21,6 +25,14 @@ enum Fiat: String, CaseIterable {
             return "$"
         case .eur:
             return "€"
+        case .cny:
+            return "¥"
+        case .vnd:
+            return "₫"
+        case .rub:
+            return "₽"
+        case .frf:
+            return "₣"
         }
     }
     
@@ -30,6 +42,14 @@ enum Fiat: String, CaseIterable {
             return L10n.unitedStatesDollar
         case .eur:
             return L10n.euro
+        case .cny:
+            return L10n.chineseYuan
+        case .vnd:
+            return L10n.vietnameseDong
+        case .rub:
+            return L10n.russianRuble
+        case .frf:
+            return L10n.frenchFranc
         }
     }
 }
