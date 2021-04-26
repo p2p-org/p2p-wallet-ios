@@ -30,7 +30,8 @@ extension SolanaSDK: TransactionsRepository {
                                 value: $0.value,
                                 slot: activity.slot,
                                 blockTime: $0.blockTime,
-                                fee: $0.fee
+                                fee: $0.fee,
+                                blockhash: $0.blockhash
                             )
                         }
                 })
@@ -54,7 +55,8 @@ extension SolanaSDK: TransactionsRepository {
                             value: $0.value,
                             slot: nil,
                             blockTime: time,
-                            fee: $0.fee
+                            fee: $0.fee,
+                            blockhash: $0.blockhash
                         )
                     }
                     .catchAndReturn(
@@ -63,7 +65,8 @@ extension SolanaSDK: TransactionsRepository {
                             value: nil,
                             slot: nil,
                             blockTime: time,
-                            fee: info.meta?.fee
+                            fee: info.meta?.fee,
+                            blockhash: info.transaction.message.recentBlockhash
                         )
                     )
             }
@@ -73,7 +76,8 @@ extension SolanaSDK: TransactionsRepository {
                     value: nil,
                     slot: nil,
                     blockTime: nil,
-                    fee: nil
+                    fee: nil,
+                    blockhash: nil
                 )
             )
     }
