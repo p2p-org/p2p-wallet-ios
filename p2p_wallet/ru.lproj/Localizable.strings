@@ -325,3 +325,11 @@
 "Reset PIN with a seed phrase" = "Сбросить PIN-код с начальной фразой";
 "Your %@ address will be disabled. This action can not be undone" = "Ваш %@ адрес будет отключен. Это действие нельзя отменить";
 "Switching network..." = "Переключение сети...";
+"Currency" = "Валюта";
+"United States Dollar" = "Доллар США";
+"Euro" = "Евро";
+"Changing currency" = "Смена валюты";
+"Chinese Yuan" = "Китайский юань";
+"Russian Ruble" = "Русский рубль";
+"Vietnamese Dong" = "Вьетнамский донг";
+"French Franc" = "Французский франк";

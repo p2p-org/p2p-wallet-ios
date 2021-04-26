@@ -325,3 +325,11 @@
 "Reset PIN with a seed phrase" = "Đặt lại mã PIN bằng một cụm từ bảo mật";
 "Your %@ address will be disabled. This action can not be undone" = "Địa chỉ %@ của bạn sẽ bị vô hiệu hóa. Không thể hoàn tác hành động này";
 "Switching network..." = "Đang chuyển mạng...";
+"Currency" = "Tiền tệ";
+"United States Dollar" = "Đô la Mĩ";
+"Euro" = "Euro";
+"Changing currency" = "Đang thay đổi loại tiền tệ";
+"Chinese Yuan" = "Nhân dân tệ Trung Quốc";
+"Russian Ruble" = "Đồng rúp Nga";
+"Vietnamese Dong" = "Việt nam Đồng";
+"French Franc" = "Franc Pháp";
