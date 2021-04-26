@@ -127,6 +127,10 @@ class MainContainer {
         BackupManuallyVC(accountStorage: accountStorage)
     }
     
+    func makeSelectFiatVC() -> SelectFiatVC {
+        SelectFiatVC(responder: self)
+    }
+    
     func makeSelectNetworkVC() -> SelectNetworkVC {
         SelectNetworkVC(changeNetworkResponder: self)
     }
