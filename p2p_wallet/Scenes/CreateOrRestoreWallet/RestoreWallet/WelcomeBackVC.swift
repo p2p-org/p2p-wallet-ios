@@ -49,7 +49,7 @@ class WelcomeBackVC: WLIntroVC {
         UIApplication.shared.showIndetermineHudWithMessage(L10n.restoringWallet)
         DispatchQueue.global().async {
             do {
-                let account = try SolanaSDK.Account(phrase: self.phrases, network: Defaults.network)
+                let account = try SolanaSDK.Account(phrase: self.phrases, network: Defaults.apiEndPoint.network)
                 try self.accountStorage.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()

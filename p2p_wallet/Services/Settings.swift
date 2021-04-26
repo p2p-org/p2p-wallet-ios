@@ -9,15 +9,23 @@ import Foundation
 
 extension UIUserInterfaceStyle: DefaultsSerializable {}
 
-extension SolanaSDK.Network: DefaultsSerializable {}
-
 extension Fiat: DefaultsSerializable {}
+
+extension SolanaSDK.APIEndPoint: DefaultsSerializable {}
 
 extension DefaultsKeys {
     var didSetEnableBiometry: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var isBiometryEnabled: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var didSetEnableNotifications: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
-    var network: DefaultsKey<SolanaSDK.Network> {.init(#function, defaultValue: .mainnetBeta)}
+    var apiEndPoint: DefaultsKey<SolanaSDK.APIEndPoint> {
+        .init(
+            #function,
+            defaultValue: SolanaSDK.APIEndPoint(
+                url: "https://api.mainnet-beta.solana.com",
+                network: .mainnetBeta
+            )
+        )
+    }
     var walletName: DefaultsKey<[String: String]> {.init(#function, defaultValue: [:])}
     var localizedLanguage: DefaultsKey<LocalizedLanguage> {.init(#function, defaultValue: LocalizedLanguage(code: String(Locale.preferredLanguages[0].prefix(2))))}
     var appearance: DefaultsKey<UIUserInterfaceStyle> {.init(#function, defaultValue: .unspecified)}
