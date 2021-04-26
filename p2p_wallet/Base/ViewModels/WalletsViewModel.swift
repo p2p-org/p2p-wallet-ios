@@ -39,6 +39,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         self.transactionManager = transactionManager
         self.pricesRepository = pricesRepository
         super.init()
+        
+        self.customSorter = Wallet.defaultSorter
         bind()
     }
     
@@ -113,28 +115,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                         self?.pricesRepository.fetchCurrentPrices(coins: wallets.map {$0.token.symbol})
                     })
             }
-    }
-    
-    override func join(_ newItems: [Wallet]) -> [Wallet] {
-        var wallets = super.join(newItems)
-        let solWallet = wallets.removeFirst()
-        wallets = wallets
-            .sorted(by: { lhs, rhs -> Bool in
-                if lhs.isLiquidity != rhs.isLiquidity {
-                    return !lhs.isLiquidity
-                }
-                if lhs.amountInCurrentFiat != rhs.amountInCurrentFiat {
-                    return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
-                }
-                if lhs.amount != rhs.amount {
-                    return lhs.amount.orZero > rhs.amount.orZero
-                }
-                if lhs.token.symbol != rhs.token.symbol {
-                    return lhs.token.symbol < rhs.token.symbol
-                }
-                return lhs.mintAddress < rhs.mintAddress
-            })
-        return [solWallet] + wallets
     }
     
     override var dataDidChange: Observable<Void> {
@@ -246,5 +226,31 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     
     private func appDidEnterBackground() {
         shouldUpdateBalance = true
+    }
+}
+
+fileprivate extension Wallet {
+    static var defaultSorter: (Wallet, Wallet) -> Bool {
+        { lhs, rhs in
+            // Solana
+            if lhs.token.symbol == "SOL" || rhs.token.symbol == "SOL" {
+                return lhs.token.symbol == "SOL"
+            }
+            
+            if lhs.isLiquidity != rhs.isLiquidity {
+                return !lhs.isLiquidity
+            }
+            if lhs.amountInCurrentFiat != rhs.amountInCurrentFiat {
+                return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
+            }
+            if lhs.amount != rhs.amount {
+                return lhs.amount.orZero > rhs.amount.orZero
+            }
+            if lhs.token.symbol != rhs.token.symbol {
+                return lhs.token.symbol < rhs.token.symbol
+            }
+            
+            return lhs.name < rhs.name
+        }
     }
 }
