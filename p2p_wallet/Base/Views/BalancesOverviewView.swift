@@ -63,7 +63,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
             changeLabel.text = L10n.loading + "..."
             showLoading()
         case .loaded(let wallets):
-            let equityValue = wallets.reduce(0) { $0 + $1.amountInUSD }
+            let equityValue = wallets.reduce(0) { $0 + $1.amountInCurrentFiat }
             equityValueLabel.text = "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
 //            let changeValue = solPrice?.change24h?.percentage * 100
 //            var color = UIColor.attentionGreen
@@ -95,7 +95,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
             changeLabel.text = L10n.loading + "..."
             showLoading()
         case .loaded:
-            let equityValue = data.reduce(0) { $0 + $1.amountInUSD }
+            let equityValue = data.reduce(0) { $0 + $1.amountInCurrentFiat }
             equityValueLabel.text = "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             changeLabel.text = L10n.allTokens // FIXME: - temporarily, remove later
             setUpChartView(wallets: data)
@@ -110,11 +110,11 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
     func setUpChartView(wallets: [Wallet]) {
         // filter
         let wallets = wallets
-            .filter { $0.amountInUSD > 0}
+            .filter { $0.amountInCurrentFiat > 0}
         
         // get entries
         let entries = wallets
-            .map { $0.amountInUSD}
+            .map { $0.amountInCurrentFiat}
             .map {PieChartDataEntry(value: $0)}
         
         let set = PieChartDataSet(entries: entries)

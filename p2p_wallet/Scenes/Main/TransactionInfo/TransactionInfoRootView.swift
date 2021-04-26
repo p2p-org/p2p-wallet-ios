@@ -238,7 +238,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             at: &index
         )
         
-        defaultSummaryView.amountInFiatLabel.text = transaction.amountInFiat.toString(maximumFractionDigits: 4, showPlus: true) + " $"
+        defaultSummaryView.amountInFiatLabel.text = transaction.amountInFiat.toString(maximumFractionDigits: 4, showPlus: true) + " " + Defaults.fiat.symbol
         defaultSummaryView.amountInTokenLabel.text = transaction.amount.toString(maximumFractionDigits: 4, showPlus: true) + " " + transaction.symbol
         
         // disable fee for receive action

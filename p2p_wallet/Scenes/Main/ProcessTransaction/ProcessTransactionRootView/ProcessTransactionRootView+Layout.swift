@@ -129,7 +129,7 @@ extension ProcessTransactionRootView {
         {
             let equityValue = amount * viewModel.pricesRepository.currentPrice(for: symbol)?.value
             self.amountLabel.text = "\(amount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
-            self.equityAmountLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) $"
+            self.equityAmountLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
         } else {
             self.amountLabel.isHidden = true
             self.equityAmountLabel.isHidden = true

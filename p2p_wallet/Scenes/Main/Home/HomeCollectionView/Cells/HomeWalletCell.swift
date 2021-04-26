@@ -47,7 +47,7 @@ class HomeWalletCell: EditableWalletCell {
             addressLabel.text = nil
         }
         
-        if item.amountInUSD == 0 {
+        if item.amountInCurrentFiat == 0 {
             indicatorColorView.backgroundColor = .clear
         } else {
             indicatorColorView.backgroundColor = item.token.indicatorColor

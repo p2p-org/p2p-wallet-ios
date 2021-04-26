@@ -220,8 +220,8 @@ private extension SwapTokenRootView {
         )
             .map {sourceAmountInput, sourceWallet in
                 if let sourceWallet = sourceWallet {
-                    let value = sourceAmountInput.double * sourceWallet.priceInUSD
-                    return "≈ \(value.toString(maximumFractionDigits: 9)) $"
+                    let value = sourceAmountInput.double * sourceWallet.priceInCurrentFiat
+                    return "≈ \(value.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
                 } else {
                     return L10n.selectCurrency
                 }

@@ -152,7 +152,7 @@ class SendTokenRootView: ScrollableVStackRootView {
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: 0)
             .drive(onNext: {availableAmount in
-                guard let symbol = self.viewModel.isUSDMode.value ? "USD": self.viewModel.currentWallet.value?.token.symbol
+                guard let symbol = self.viewModel.isFiatMode.value ? Defaults.fiat.code: self.viewModel.currentWallet.value?.token.symbol
                 else {return}
                 self.balanceLabel.text =
                     L10n.available +
@@ -182,15 +182,15 @@ class SendTokenRootView: ScrollableVStackRootView {
         
         Observable.combineLatest(
             viewModel.currentWallet.distinctUntilChanged(),
-            viewModel.isUSDMode.distinctUntilChanged(),
+            viewModel.isFiatMode.distinctUntilChanged(),
             viewModel.amountInput.distinctUntilChanged()
         )
-            .map { (wallet, isUSDMode, amount) -> String in
+            .map { (wallet, isFiatMode, amount) -> String in
                 guard let wallet = wallet else {return ""}
-                var equityValue = amount.double * wallet.priceInUSD
-                var equityValueSymbol = "USD"
-                if isUSDMode {
-                    equityValue = amount.double / wallet.priceInUSD
+                var equityValue = amount.double * wallet.priceInCurrentFiat
+                var equityValueSymbol = Defaults.fiat.code
+                if isFiatMode {
+                    equityValue = amount.double / wallet.priceInCurrentFiat
                     equityValueSymbol = wallet.token.symbol
                 }
                 return "≈ " + equityValue.toString(maximumFractionDigits: 9) + " " + equityValueSymbol
@@ -201,9 +201,9 @@ class SendTokenRootView: ScrollableVStackRootView {
         
         Observable.combineLatest(
             viewModel.currentWallet.distinctUntilChanged(),
-            viewModel.isUSDMode.distinctUntilChanged()
+            viewModel.isFiatMode.distinctUntilChanged()
         )
-            .map { $0.1 ? "USD": ($0.0?.token.symbol ?? "")}
+            .map { $0.1 ? Defaults.fiat.code: ($0.0?.token.symbol ?? "")}
             .asDriver(onErrorJustReturn: "")
             .drive(changeModeButton.rx.text)
             .disposed(by: disposeBag)
@@ -216,7 +216,7 @@ class SendTokenRootView: ScrollableVStackRootView {
             .disposed(by: disposeBag)
         
         viewModel.currentWallet.distinctUntilChanged()
-            .map {$0?.priceInUSD ?? 0}
+            .map {$0?.priceInCurrentFiat ?? 0}
             .asDriver(onErrorJustReturn: 0)
             .map {"\($0.toString(maximumFractionDigits: 9)) US$"}
             .drive(coinPriceLabel.rx.text)
