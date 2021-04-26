@@ -26,7 +26,7 @@ class SwapTokenWalletView: BEView {
         autocorrectionType: .no/*, rightView: useAllBalanceButton, rightViewMode: .always*/
     )
     
-    lazy var equityValueLabel = UILabel(text: "≈ 0.00 $", weight: .semibold, textColor: .textSecondary)
+    lazy var equityValueLabel = UILabel(text: "≈ 0.00 \(Defaults.fiat.symbol)", weight: .semibold, textColor: .textSecondary)
     
 //    lazy var useAllBalanceButton = UIButton(label: L10n.max, labelFont: .systemFont(ofSize: 12, weight: .semibold), textColor: .secondary)
 //        .onTap(self, action: #selector(buttonUseAllBalanceDidTouch))

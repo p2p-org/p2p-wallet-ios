@@ -123,8 +123,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                 if lhs.isLiquidity != rhs.isLiquidity {
                     return !lhs.isLiquidity
                 }
-                if lhs.amountInUSD != rhs.amountInUSD {
-                    return lhs.amountInUSD > rhs.amountInUSD
+                if lhs.amountInCurrentFiat != rhs.amountInCurrentFiat {
+                    return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
                 }
                 if lhs.amount != rhs.amount {
                     return lhs.amount.orZero > rhs.amount.orZero
