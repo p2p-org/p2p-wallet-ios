@@ -63,6 +63,7 @@ extension TransactionCell: BECollectionViewCell {
         transactionTypeLabel.text = transaction.label
         
         // description texts
+        var isUndefinedTransaction = false
         switch transaction.value {
         case let transaction as SolanaSDK.CreateAccountTransaction:
             if let newWallet = transaction.newWallet {
@@ -99,6 +100,7 @@ extension TransactionCell: BECollectionViewCell {
             if let signature = transaction.signature {
                 descriptionLabel.text = signature.prefix(4) + "..." + signature.suffix(4)
             }
+            isUndefinedTransaction = true
         }
         
         // set up icon
@@ -124,8 +126,12 @@ extension TransactionCell: BECollectionViewCell {
         }
         
         // amount
-        if transaction.amount != 0 {
-            amountInTokenLabel.text = "\(transaction.amount.toString(maximumFractionDigits: 9, showPlus: true)) \(transaction.symbol)"
+        if !isUndefinedTransaction {
+            if transaction.amount != 0 {
+                amountInTokenLabel.text = "\(transaction.amount.toString(maximumFractionDigits: 9, showPlus: true)) \(transaction.symbol)"
+            }
+        } else if let blockhash = transaction.blockhash {
+            amountInTokenLabel.text = "#" + blockhash.prefix(4) + "..." + blockhash.suffix(4)
         }
     }
 }
