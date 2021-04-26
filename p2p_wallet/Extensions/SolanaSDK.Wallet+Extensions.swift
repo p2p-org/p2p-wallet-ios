@@ -85,12 +85,12 @@ extension SolanaSDK.Wallet {
         }
     }
     
-    var priceInUSD: Double? {
+    var priceInCurrentFiat: Double? {
         price?.value
     }
     
-    var amountInUSD: Double {
-        amount * priceInUSD
+    var amountInCurrentFiat: Double {
+        amount * priceInCurrentFiat
     }
     
     mutating func updateVisibility() {
