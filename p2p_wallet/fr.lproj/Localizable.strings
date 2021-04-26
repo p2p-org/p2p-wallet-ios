@@ -326,3 +326,4 @@
 "or reset it with a seed phrase" = "ou réinitialisez-le avec une phrase de départ";
 "Reset PIN with a seed phrase" = "Réinitialiser le code PIN avec une phrase de départ";
 "Your %@ address will be disabled. This action can not be undone" = "Votre adresse %@ sera désactivée. Cette action ne peut pas être annulée";
+"Switching network..." = "Changement de réseau...";
