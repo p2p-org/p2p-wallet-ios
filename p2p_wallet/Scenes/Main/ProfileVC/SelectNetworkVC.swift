@@ -8,11 +8,11 @@
 import Foundation
 
 protocol ChangeNetworkResponder {
-    func changeNetwork(to network: SolanaSDK.Network)
+    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint)
 }
 
-class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
-    override var dataDidChange: Bool {selectedItem != Defaults.network}
+class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
+    override var dataDidChange: Bool {selectedItem != Defaults.apiEndPoint}
     var accountStorage: SolanaSDKAccountStorage
     let rootViewModel: RootViewModel
     let changeNetworkResponder: ChangeNetworkResponder
@@ -23,9 +23,10 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
         self.changeNetworkResponder = changeNetworkResponder
         super.init()
         // initial data
-        SolanaSDK.Network.allCases.forEach {
-            data[$0] = ($0 == Defaults.network)
-        }
+        SolanaSDK.APIEndPoint.definedEndpoints
+            .forEach {
+                data[$0] = ($0 == Defaults.apiEndPoint)
+            }
     }
     
     override func setUp() {
@@ -37,23 +38,23 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.Network> {
         ])
     }
     
-    override func createCell(item: SolanaSDK.Network) -> Cell<SolanaSDK.Network> {
+    override func createCell(item: SolanaSDK.APIEndPoint) -> Cell<SolanaSDK.APIEndPoint> {
         let cell = super.createCell(item: item)
-        cell.label.text = item.endpoint
+        cell.label.text = item.url
         return cell
     }
     
     @objc func saveChange() {
-        showAlert(title: L10n.switchNetwork, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem.cluster + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
+        showAlert(title: L10n.switchNetwork, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem.url + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
             if index != 0 {return}
-            UIApplication.shared.showIndetermineHudWithMessage(L10n.switchingTo + " \"" + self.selectedItem.cluster + "\"")
+            UIApplication.shared.showIndetermineHudWithMessage(L10n.switchingNetwork)
             DispatchQueue.global().async {
                 do {
-                    let account = try SolanaSDK.Account(phrase: self.accountStorage.account!.phrase, network: self.selectedItem)
+                    let account = try SolanaSDK.Account(phrase: self.accountStorage.account!.phrase, network: self.selectedItem.network)
                     try self.accountStorage.save(account)
                     DispatchQueue.main.async {
                         UIApplication.shared.hideHud()
-                        self.changeNetworkResponder.changeNetwork(to: self.selectedItem)
+                        self.changeNetworkResponder.changeAPIEndpoint(to: self.selectedItem)
                         self.rootViewModel.reload()
                     }
                 } catch {

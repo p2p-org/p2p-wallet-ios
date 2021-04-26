@@ -111,7 +111,7 @@ class ProfileVC: ProfileVCBase {
         
         setUp(enabledBiometry: Defaults.isBiometryEnabled)
         
-        setUp(network: Defaults.network)
+        setUp(endpoint: Defaults.apiEndPoint)
         
         setUp(theme: AppDelegate.shared.window?.overrideUserInterfaceStyle)
         
@@ -127,8 +127,8 @@ class ProfileVC: ProfileVCBase {
             self.setUp(enabledBiometry: update.newValue)
         })
         
-        disposables.append(Defaults.observe(\.network){ update in
-            self.setUp(network: update.newValue)
+        disposables.append(Defaults.observe(\.apiEndPoint){ update in
+            self.setUp(endpoint: update.newValue)
         })
     }
     
@@ -150,8 +150,8 @@ class ProfileVC: ProfileVCBase {
         secureMethodsLabel.text = text
     }
     
-    func setUp(network: SolanaSDK.Network?) {
-        networkLabel.text = network?.cluster
+    func setUp(endpoint: SolanaSDK.APIEndPoint?) {
+        networkLabel.text = endpoint?.network.cluster
     }
     
     func setUp(theme: UIUserInterfaceStyle?) {
