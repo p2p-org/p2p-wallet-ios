@@ -13,7 +13,7 @@ enum Fiat: String, CaseIterable {
     case cny
     case vnd
     case rub
-    case frn
+    case gbp
     
     var code: String {
         rawValue.uppercased()
@@ -31,8 +31,8 @@ enum Fiat: String, CaseIterable {
             return "₫"
         case .rub:
             return "₽"
-        case .frn:
-            return "₣"
+        case .gbp:
+            return "£"
         }
     }
     
@@ -48,8 +48,8 @@ enum Fiat: String, CaseIterable {
             return L10n.vietnameseDong
         case .rub:
             return L10n.russianRuble
-        case .frn:
-            return L10n.frenchFranc
+        case .gbp:
+            return L10n.britishPoundSterling
         }
     }
 }
