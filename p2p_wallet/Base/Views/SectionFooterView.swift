@@ -38,19 +38,4 @@ class SectionFooterView: UICollectionReusableView {
             .isActive = true
         emptyView.wrapper?.isHidden = true
     }
-    
-    func setUp<T: Hashable>(state: FetcherState<T>, isListEmpty: Bool) {
-        switch state {
-        case .loading, .initializing:
-            stackView.arrangedSubviews.forEach { ($0.wrapper ?? $0).isHidden = true}
-        case .loaded:
-            stackView.arrangedSubviews.forEach {($0.wrapper ?? $0).isHidden = false}
-            errorView.wrapper?.isHidden = true
-            emptyView.wrapper?.isHidden = !isListEmpty
-        case .error(let error):
-            stackView.arrangedSubviews.forEach {($0.wrapper ?? $0).isHidden = true}
-            errorView.wrapper?.isHidden = false
-            errorView.setUpWithError(error)
-        }
-    }
 }
