@@ -218,7 +218,7 @@ class SendTokenRootView: ScrollableVStackRootView {
         viewModel.currentWallet.distinctUntilChanged()
             .map {$0?.priceInCurrentFiat ?? 0}
             .asDriver(onErrorJustReturn: 0)
-            .map {"\($0.toString(maximumFractionDigits: 9)) US$"}
+            .map {"\($0.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"}
             .drive(coinPriceLabel.rx.text)
             .disposed(by: disposeBag)
         
