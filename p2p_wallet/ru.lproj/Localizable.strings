@@ -334,3 +334,4 @@
 "Vietnamese Dong" = "Вьетнамский донг";
 "French Franc" = "Французский франк";
 "British pound sterling" = "Британский фунт стерлингов";
+"Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet." = "Вы уверены, что хотите удалить этот токен-аккаунт?  Это навсегда отключит передачу токенов на этот адрес и удалит их из вашего кошелька.";
