@@ -336,3 +336,4 @@
 "Vietnamese Dong" = "Vietnamese Dong";
 "French Franc" = "French Franc";
 "British pound sterling" = "British pound sterling";
+"Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet." = "Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet.";

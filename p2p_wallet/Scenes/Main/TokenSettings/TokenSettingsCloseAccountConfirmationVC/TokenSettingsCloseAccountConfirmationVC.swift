@@ -24,7 +24,7 @@ class TokenSettingsCloseAccountConfirmationVC: WLModalVC {
                 .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(5),
             UILabel(
-                text: L10n.YourAddressWillBeDisabled.thisActionCanNotBeUndone(symbol),
+                text: L10n.areYouSureYouWantToDeleteThisTokenAccountThisWillPermanentlyDisableTokenTransfersToThisAddressAndRemoveItFromYourWallet,
                 weight: .medium,
                 textColor: .textSecondary,
                 numberOfLines: 0
