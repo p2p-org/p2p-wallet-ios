@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-@objc protocol ProcessTransactionViewControllerDelegate: class {
+@objc protocol ProcessTransactionViewControllerDelegate: AnyObject {
     func processTransactionViewControllerDidComplete(_ vc: ProcessTransactionViewController)
 }
 

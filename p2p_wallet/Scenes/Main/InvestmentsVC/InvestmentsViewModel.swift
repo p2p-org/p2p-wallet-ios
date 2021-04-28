@@ -36,7 +36,6 @@ class InvestmentsViewModel {
         self.defisViewModel = defisViewModel
     }
     
-    
     // MARK: - Actions
     @objc func reload() {
         newsViewModel.reload()

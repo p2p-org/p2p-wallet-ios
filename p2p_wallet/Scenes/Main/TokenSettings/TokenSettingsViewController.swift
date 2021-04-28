@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import Action
 
-@objc protocol TokenSettingsViewControllerDelegate: class {
+@objc protocol TokenSettingsViewControllerDelegate: AnyObject {
     @objc optional func tokenSettingsViewControllerDidCloseToken(_ vc: TokenSettingsViewController)
 }
 
