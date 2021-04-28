@@ -8,7 +8,7 @@
 import Foundation
 import SubviewAttachingTextView
 
-protocol WLPhrasesTextViewDelegate: class {
+protocol WLPhrasesTextViewDelegate: AnyObject {
     func wlPhrasesTextViewDidBeginEditing(_ textView: WLPhrasesTextView)
 }
 

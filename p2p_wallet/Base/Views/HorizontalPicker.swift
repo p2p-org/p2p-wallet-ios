@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol HorizontalPickerDelegate: class {
+protocol HorizontalPickerDelegate: AnyObject {
     func picker(_ picker: HorizontalPicker, didSelectOptionAtIndex index: Int)
 }
 class HorizontalPicker: BEView {
