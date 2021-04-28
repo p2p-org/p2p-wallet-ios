@@ -7,7 +7,7 @@ PODS:
   - BECollectionView (0.1.0):
     - PureLayout
     - RxCocoa
-  - BEPureLayout (0.2.1):
+  - BEPureLayout (0.3.0):
     - PureLayout
   - Charts (3.6.0):
     - Charts/Core (= 3.6.0)
@@ -211,7 +211,7 @@ SPEC CHECKSUMS:
   Alamofire: 2291f7d21ca607c491dd17642e5d40fdcda0e65c
   ASKSecp256k1: 58eb44dfa57f9d29ac0b02fe5de5a312064517f2
   BECollectionView: 9120725dd693271cef287447e3d1aa844f77535f
-  BEPureLayout: 5421e716fb120f196677d9c875cd1fb305af2cea
+  BEPureLayout: ecb9d52780a665b9ea751b4e82f95df8dc2bc73b
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   CryptoSwift: 01b0f0cba1d5c212e5a335ff6c054fb75a204f00
   Firebase: d59ad4129167f9f0d2a4f6c1f0c462254b6002c8

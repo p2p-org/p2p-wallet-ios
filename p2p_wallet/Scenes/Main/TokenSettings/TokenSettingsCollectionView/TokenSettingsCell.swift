@@ -9,7 +9,7 @@ import Foundation
 import Action
 import BECollectionView
 
-protocol TokenSettingsCellDelegate: class {
+protocol TokenSettingsCellDelegate: AnyObject {
     func tokenSettingsCellDidToggleVisibility(_ cell: TokenSettingsCell)
 }
 
