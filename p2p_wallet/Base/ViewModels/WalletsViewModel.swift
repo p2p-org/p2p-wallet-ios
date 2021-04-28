@@ -111,7 +111,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                         self?.mapPrices(wallets: wallets) ?? []
                     }
                     // update prices
-                    .do(afterSuccess: {[weak self] wallets in
+                    .do(onSuccess: {[weak self] wallets in
                         self?.pricesRepository.fetchCurrentPrices(coins: wallets.map {$0.token.symbol})
                     })
             }
