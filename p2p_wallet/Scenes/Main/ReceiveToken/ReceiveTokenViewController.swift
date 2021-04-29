@@ -82,7 +82,7 @@ class ReceiveTokenViewController: WLIndicatorModalVC {
         case .chooseWallet:
             let vc = scenesFactory.makeChooseWalletViewController(customFilter: nil, showOtherWallets: true)
             vc.completion = { [weak self, weak vc] wallet in
-                self?.viewModel.wallet.accept(wallet)
+                self?.viewModel.setCurrentWallet(wallet)
                 vc?.back()
             }
             present(vc, animated: true, completion: nil)
