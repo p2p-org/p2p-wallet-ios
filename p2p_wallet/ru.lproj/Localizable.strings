@@ -336,3 +336,6 @@
 "British pound sterling" = "Британский фунт стерлингов";
 "Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet." = "Вы уверены, что хотите удалить этот токен-аккаунт?  Это навсегда отключит передачу токенов на этот адрес и удалит их из вашего кошелька.";
 "Powered by" = "Питаться от";
+"Connection problem" = "Проблема соединения";
+"Your connection to the Internet has been interrupted." = "Ваше подключение к Интернету было прервано.";
+"Refresh" = "Обновить";
