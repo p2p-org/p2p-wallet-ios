@@ -87,8 +87,8 @@ extension UIViewController {
     }
     
     // MARK: - HUDs
-    func showIndetermineHudWithMessage(_ message: String?) {
-        view.showIndetermineHudWithMessage(message)
+    func showIndetermineHud(_ message: String?) {
+        view.showIndetermineHud()
     }
     
     func hideHud() {

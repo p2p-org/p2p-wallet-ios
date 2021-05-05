@@ -14,16 +14,16 @@ extension UIApplication {
         UIApplication.shared.windows.first { $0.isKeyWindow }
     }
     
-    func showIndetermineHudWithMessage(_ message: String?) {
-        kWindow?.showIndetermineHudWithMessage(message)
+    func showIndetermineHud() {
+        kWindow?.showIndetermineHud()
     }
     
     func hideHud() {
         kWindow?.hideHud()
     }
     
-    func showLoadingIndicatorView(presentationStyle: WLLoadingIndicatorView.PresentationType = .fullScreen, isBlocking: Bool = true, message: String? = nil) {
-        kWindow?.showLoadingIndicatorView(presentationStyle: presentationStyle, isBlocking: isBlocking, message: message)
+    func showLoadingIndicatorView(isBlocking: Bool = true) {
+        kWindow?.showLoadingIndicatorView(isBlocking: isBlocking)
     }
     
     func hideLoadingIndicatorView() {

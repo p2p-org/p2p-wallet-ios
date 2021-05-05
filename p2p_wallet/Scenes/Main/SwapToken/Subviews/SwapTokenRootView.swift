@@ -166,7 +166,7 @@ private extension SwapTokenRootView {
                 self?.stackView.isHidden = true
                 switch state {
                 case .initializing, .loading:
-                    self?.showIndetermineHudWithMessage(L10n.loading)
+                    self?.showIndetermineHud()
                 case .loaded:
                     self?.stackView.isHidden = false
                     if self?.viewModel.pools.value?.isEmpty == true {
