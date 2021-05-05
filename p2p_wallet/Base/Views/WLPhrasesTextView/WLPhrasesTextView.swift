@@ -147,24 +147,20 @@ extension WLPhrasesTextView: UITextViewDelegate {
             }
         }
         
-        // ignore invalid characters
-        let invalidCharactersSet = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz ").inverted
-        
-        if text.lowercased().rangeOfCharacter(from: invalidCharactersSet) == nil {
-            // wrap phrase when found a space
-            if text.contains(" ") {
-                removeAllPlaceholderAttachment()
-                shouldWrapPhrases = true
-                shouldRearrange = true
-            }
-            return true
+        // wrap phrase when found a space
+        if text.contains(" ") {
+            removeAllPlaceholderAttachment()
+            shouldWrapPhrases = true
+            shouldRearrange = true
         }
-        return false
+        return true
     }
     
     func wrapPhrase(addingPlaceholderAttachment: Bool = true) {
         // get all phrases
-        let phrases = text.components(separatedBy: " ")
+        let phrases = text
+            .replacingOccurrences(of: "\n", with: " ")
+            .components(separatedBy: " ")
         
         // get length's difference after replacing text with attachment
         var lengthDiff = 0
@@ -176,7 +172,11 @@ extension WLPhrasesTextView: UITextViewDelegate {
             
             // add attachment
             let aStr = NSMutableAttributedString()
-            aStr.append(attachment(phrase: phrase))
+            if let att = attachment(phrase: phrase) {
+                aStr.append(att)
+            } else {
+                aStr.append(NSAttributedString(string: " "))
+            }
             textStorage.replaceCharacters(in: range, with: aStr)
             
             // diff of length, length become 1 when inserting attachment
@@ -201,7 +201,11 @@ extension WLPhrasesTextView: UITextViewDelegate {
         attributedText.enumerateAttribute(.attachment, in: NSRange(location: 0, length: attributedText.length)) { (att, range, _) in
             if let att = att as? PhraseAttachment, let phrase = att.phrase {
                 count += 1
-                textStorage.replaceCharacters(in: range, with: attachment(phrase: phrase, index: count))
+                if let att = attachment(phrase: phrase, index: count) {
+                    textStorage.replaceCharacters(in: range, with: att)
+                } else {
+                    textStorage.replaceCharacters(in: range, with: " ")
+                }
             }
             
             if att is PlaceholderAttachment {
