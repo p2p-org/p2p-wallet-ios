@@ -47,7 +47,7 @@ class CreateSecurityKeysViewModel {
     }
     
     @objc func next() {
-        UIApplication.shared.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
+        UIApplication.shared.showIndetermineHud()
         DispatchQueue.global().async {
             do {
                 let account = try SolanaSDK.Account(phrase: self.phrasesSubject.value, network: Defaults.apiEndPoint.network)
