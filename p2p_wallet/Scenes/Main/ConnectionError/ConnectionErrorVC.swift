@@ -60,7 +60,7 @@ class ConnectionErrorView: BEView {
     override func commonInit() {
         super.commonInit()
         // dimming view
-        let dimmingView = UIView(backgroundColor: .white.withAlphaComponent(0.5))
+        let dimmingView = UIView(backgroundColor: .black.withAlphaComponent(0.5))
         addSubview(dimmingView)
         dimmingView.autoPinEdgesToSuperviewEdges()
         
