@@ -338,3 +338,6 @@
 "British pound sterling" = "Đồng bảng Anh";
 "Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet." = "Bạn có chắc chắn muốn xóa tài khoản token này không? Việc chuyển token đến địa chỉ này sẽ bị huỷ bỏ vĩnh viễn và tài khoản token sẽ bị xóa khỏi ví của bạn.";
 "Powered by" = "Được cung cấp bởi";
+"Connection problem" = "Lỗi kết nối";
+"Your connection to the Internet has been interrupted." = "Kết nối của bạn với Internet đã bị gián đoạn.";
+"Refresh" = "Làm tươi";
