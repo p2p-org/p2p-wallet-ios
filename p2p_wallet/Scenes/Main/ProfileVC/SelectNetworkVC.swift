@@ -49,7 +49,7 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
     }
     
     func changeNetworkToSelectedNetwork() {
-        UIApplication.shared.showIndetermineHudWithMessage(L10n.switchingNetwork)
+        UIApplication.shared.showIndetermineHud()
         responder.changeAPIEndpoint(to: selectedItem)
             .subscribe(onCompleted: {
                 UIApplication.shared.hideHud()
