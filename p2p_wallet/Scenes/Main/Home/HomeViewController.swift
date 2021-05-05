@@ -92,15 +92,30 @@ class HomeViewController: BaseVC {
     
     override func bind() {
         super.bind()
-        viewModel.walletsRepository
+        
+        let stateDriver = viewModel.walletsRepository
             .stateObservable
+            .asDriver(onErrorJustReturn: .initializing)
+        
+        stateDriver
             .map {$0 == .loading}
-            .asDriver(onErrorJustReturn: false)
             .drive(onNext: {[weak self] isLoading in
                 if isLoading {
                     self?.view.showLoadingIndicatorView()
                 } else {
                     self?.view.hideLoadingIndicatorView()
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        stateDriver
+            .map {$0 == .error}
+            .map {[weak self] _ in self?.viewModel.walletsRepository.getError()}
+            .drive(onNext: {[weak self] error in
+                if error?.asAFError != nil {
+                    self?.view.showConnectionErrorView()
+                } else {
+                    self?.view.hideConnectionErrorView()
                 }
             })
             .disposed(by: disposeBag)
