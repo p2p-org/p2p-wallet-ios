@@ -46,7 +46,7 @@ class WelcomeBackVC: WLIntroVC {
     }
     
     @objc func buttonGoToWalletDidTouch() {
-        UIApplication.shared.showIndetermineHudWithMessage(L10n.restoringWallet)
+        UIApplication.shared.showIndetermineHud()
         DispatchQueue.global().async {
             do {
                 let account = try SolanaSDK.Account(phrase: self.phrases, network: Defaults.apiEndPoint.network)

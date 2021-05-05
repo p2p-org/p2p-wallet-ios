@@ -26,12 +26,12 @@ extension UIView {
         ])
     }
     
-    func showIndetermineHudWithMessage(_ message: String?) {
+    func showIndetermineHud() {
         // Hide all previous hud
         hideHud()
         
         // show new hud
-        showLoadingIndicatorView(message: message)
+        showLoadingIndicatorView()
     }
     
     func hideHud() {

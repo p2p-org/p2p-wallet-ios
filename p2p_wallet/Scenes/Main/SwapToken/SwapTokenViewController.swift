@@ -102,7 +102,7 @@ class SwapTokenViewController: WLIndicatorModalVC {
             self.present(vc, animated: true, completion: nil)
         case .loading(let isLoading):
             if isLoading {
-                showIndetermineHudWithMessage(nil)
+                showIndetermineHud(nil)
             } else {
                 hideHud()
             }
