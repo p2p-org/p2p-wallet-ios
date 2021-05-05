@@ -25,8 +25,16 @@ extension WLPhrasesTextView {
     class PlaceholderAttachment: Attachment {}
     
     // MARK: - Methods
-    func attachment(phrase: String, index: Int? = nil) -> NSAttributedString {
-        let phrase = phrase.lowercased()
+    func attachment(phrase: String, index: Int? = nil) -> NSAttributedString? {
+        // ignore invalid characters
+        let invalidCharactersSet = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz").inverted
+        
+        let phrase = phrase.lowercased().components(separatedBy: invalidCharactersSet).joined(separator: " ").trimmingCharacters(in: .whitespaces)
+        
+        if phrase.isEmpty {
+            return nil
+        }
+        
         // replace phrase's range by attachment that is a uilabel
         let label = { () -> UILabel in
             let label = UILabel(textColor: .textBlack)
