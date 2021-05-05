@@ -137,7 +137,7 @@ class WalletDetailRootView: BEView {
             .disposed(by: disposeBag)
         
         walletDriver
-            .map {$0.token.description}
+            .map {$0.token.name}
             .drive(walletDescriptionLabel.rx.text)
             .disposed(by: disposeBag)
         

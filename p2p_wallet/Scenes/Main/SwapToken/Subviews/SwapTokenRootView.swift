@@ -132,9 +132,9 @@ private extension SwapTokenRootView {
             BEStackViewSpacing(16),
             swapButton,
             BEStackViewSpacing(12),
-            UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-                UILabel(text: L10n.poweredByProjectSerum, textSize: 13, textColor: .textSecondary, textAlignment: .center),
-                UIImageView(width: 24, height: 24, image: .serumLogo)
+            UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill, arrangedSubviews: [
+                UILabel(text: L10n.poweredBy, textSize: 13, textColor: .textSecondary, textAlignment: .center),
+                UIImageView(width: 94, height: 24, image: .orcaLogo)
             ])
                 .centeredHorizontallyView
         ])
