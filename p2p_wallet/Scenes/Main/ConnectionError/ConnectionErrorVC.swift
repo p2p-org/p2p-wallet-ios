@@ -6,13 +6,15 @@
 //
 
 import Foundation
+import Action
 
 extension UIView {
     @discardableResult
-    func showConnectionErrorView() -> ConnectionErrorView {
+    func showConnectionErrorView(refreshAction: CocoaAction? = nil) -> ConnectionErrorView {
         hideConnectionErrorView()
         
         let errorView = ConnectionErrorView()
+        errorView.refreshAction = refreshAction
         addSubview(errorView)
         errorView.autoPinEdgesToSuperviewEdges()
         return errorView
@@ -25,6 +27,8 @@ extension UIView {
 
 class ConnectionErrorView: BEView {
     // MARK: - Subviews
+    private lazy var refreshButton = WLButton.stepButton(enabledColor: .eff3ff, textColor: .h5887ff, label: L10n.refresh)
+    
     private lazy var contentView: UIView = {
         let view = UIView(backgroundColor: .white)
         let imageView = UIImageView(width: 65, height: 65, image: .connectionError)
@@ -41,7 +45,7 @@ class ConnectionErrorView: BEView {
             
             BEStackViewSpacing(66)
             
-            WLButton.stepButton(enabledColor: .eff3ff, textColor: .h5887ff, label: L10n.refresh)
+            refreshButton
         }
         
         view.addSubview(stackView)
@@ -55,6 +59,12 @@ class ConnectionErrorView: BEView {
         separator.autoAlignAxis(.horizontal, toSameAxisOf: imageView)
         return view
     }()
+    
+    var refreshAction: CocoaAction? {
+        didSet {
+            refreshButton.rx.action = refreshAction
+        }
+    }
     
     // MARK: - Methods
     override func commonInit() {

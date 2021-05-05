@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import Action
 
 protocol HomeScenesFactory {
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController
@@ -65,10 +66,13 @@ class HomeViewController: BaseVC {
         
         stateDriver
             .map {$0 == .error}
-            .map {[weak self] _ in self?.viewModel.walletsRepository.getError()}
-            .drive(onNext: {[weak self] error in
-                if error?.asAFError != nil {
-                    self?.view.showConnectionErrorView()
+            .drive(onNext: {[weak self] hasError in
+                if hasError, self?.viewModel.walletsRepository.getError()?.asAFError != nil
+                {
+                    self?.view.showConnectionErrorView(refreshAction: CocoaAction { [weak self] in
+                        self?.viewModel.walletsRepository.reload()
+                        return .just(())
+                    })
                 } else {
                     self?.view.hideConnectionErrorView()
                 }
