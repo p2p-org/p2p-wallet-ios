@@ -51,6 +51,7 @@ class HomeViewController: BaseVC {
         
         let stateDriver = viewModel.walletsRepository
             .stateObservable
+            .distinctUntilChanged()
             .asDriver(onErrorJustReturn: .initializing)
         
         stateDriver
