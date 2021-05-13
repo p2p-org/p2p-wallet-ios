@@ -29,7 +29,13 @@ class ProfileVC: ProfileVCBase {
     lazy var hideZeroBalancesSwitcher: UISwitch = { [unowned self] in
         let switcher = UISwitch()
         switcher.onTintColor = .h5887ff
-        switcher.addTarget(self, action: #selector(switcherDidSwitch(sender:)), for: .valueChanged)
+        switcher.addTarget(self, action: #selector(hideZeroBalancesSwitcherDidSwitch(sender:)), for: .valueChanged)
+        return switcher
+    }()
+    lazy var useFreeTransactionsSwitcher: UISwitch = {[unowned self] in
+        let switcher = UISwitch()
+        switcher.onTintColor = .h5887ff
+        switcher.addTarget(self, action: #selector(useFreeTransactionsSwitcherDidSwitch(sender:)), for: .valueChanged)
         return switcher
     }()
     
@@ -108,6 +114,13 @@ class ProfileVC: ProfileVCBase {
                 showRightArrow: false
             ),
             
+            createCell(
+                image: .settingsFreeTransactions,
+                text: L10n.useFreeTransactions,
+                descriptionView: useFreeTransactionsSwitcher,
+                showRightArrow: false
+            ),
+            
             BEStackViewSpacing(10),
             
             createCell(
@@ -128,6 +141,8 @@ class ProfileVC: ProfileVCBase {
         setUp(theme: AppDelegate.shared.window?.overrideUserInterfaceStyle)
         
         setUp(isZeroBalanceHidden: Defaults.hideZeroBalances)
+        
+        setUp(isUsingFreeTransactions: Defaults.useFreeTransaction)
         
         activeLanguageLabel.text = Locale.current.uiLanguageLocalizedString?.uppercaseFirst
     }
@@ -180,6 +195,10 @@ class ProfileVC: ProfileVCBase {
     
     func setUp(isZeroBalanceHidden: Bool) {
         hideZeroBalancesSwitcher.isOn = isZeroBalanceHidden
+    }
+    
+    func setUp(isUsingFreeTransactions: Bool) {
+        useFreeTransactionsSwitcher.isOn = isUsingFreeTransactions
     }
     
     // MARK: - Actions
@@ -251,7 +270,11 @@ class ProfileVC: ProfileVCBase {
         }
     }
     
-    @objc func switcherDidSwitch(sender: UISwitch) {
+    @objc func hideZeroBalancesSwitcherDidSwitch(sender: UISwitch) {
         Defaults.hideZeroBalances.toggle()
+    }
+    
+    @objc func useFreeTransactionsSwitcherDidSwitch(sender: UISwitch) {
+        Defaults.useFreeTransaction.toggle()
     }
 }
