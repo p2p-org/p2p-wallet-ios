@@ -42,7 +42,7 @@ class SendTokenViewModel {
     let availableAmount = BehaviorRelay<Double>(value: 0)
     let isFiatMode = BehaviorRelay<Bool>(value: false)
     lazy var fee = LazySubject<Double>(
-        request: solanaSDK.getFees()
+        request: Defaults.useFreeTransaction ? .just(0) : solanaSDK.getFees()
             .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
             .map { [weak self] in
                 let decimals = self?.solanaSDK.solDecimals
@@ -202,12 +202,24 @@ class SendTokenViewModel {
         
         // define token
         var request: Single<String>!
-        if currentWallet.token.symbol == "SOL" {
+        let isSendingSOL = currentWallet.token.symbol == "SOL"
+        if isSendingSOL {
             // SOLANA
-            request = solanaSDK.sendSOL(to: receiver, amount: lamport)
+            request = solanaSDK.sendSOL(
+                to: receiver,
+                amount: lamport,
+                withoutFee: Defaults.useFreeTransaction
+            )
         } else {
             // other tokens
-            request = solanaSDK.sendSPLTokens(mintAddress: currentWallet.mintAddress, from: sender, to: receiver, amount: lamport)
+            request = solanaSDK.sendSPLTokens(
+                mintAddress: currentWallet.mintAddress,
+                decimals: currentWallet.token.decimals,
+                from: sender,
+                to: receiver,
+                amount: lamport,
+                withoutFee: Defaults.useFreeTransaction
+            )
         }
         
         request
@@ -216,7 +228,9 @@ class SendTokenViewModel {
                 self.processTransactionViewModel.transactionInfo.accept(
                     TransactionInfo(transaction: transaction)
                 )
-                self.transactionManager.process(transaction)
+                if !isSendingSOL {
+                    self.transactionManager.process(transaction)
+                }
             }, onFailure: {error in
                 self.processTransactionViewModel.transactionInfo.accept(
                     TransactionInfo(transaction: transaction, error: error)
