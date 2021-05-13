@@ -202,12 +202,19 @@ class SendTokenViewModel {
         
         // define token
         var request: Single<String>!
-        if currentWallet.token.symbol == "SOL" {
+        let isSendingSOL = currentWallet.token.symbol == "SOL"
+        if isSendingSOL {
             // SOLANA
             request = solanaSDK.sendSOL(to: receiver, amount: lamport)
         } else {
             // other tokens
-            request = solanaSDK.sendSPLTokens(mintAddress: currentWallet.mintAddress, from: sender, to: receiver, amount: lamport)
+            request = solanaSDK.sendSPLTokens(
+                mintAddress: currentWallet.mintAddress,
+                decimals: currentWallet.token.decimals,
+                from: sender,
+                to: receiver,
+                amount: lamport
+            )
         }
         
         request
@@ -216,7 +223,9 @@ class SendTokenViewModel {
                 self.processTransactionViewModel.transactionInfo.accept(
                     TransactionInfo(transaction: transaction)
                 )
-                self.transactionManager.process(transaction)
+                if !isSendingSOL {
+                    self.transactionManager.process(transaction)
+                }
             }, onFailure: {error in
                 self.processTransactionViewModel.transactionInfo.accept(
                     TransactionInfo(transaction: transaction, error: error)
