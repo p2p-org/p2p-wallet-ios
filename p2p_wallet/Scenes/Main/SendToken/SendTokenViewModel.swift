@@ -42,7 +42,7 @@ class SendTokenViewModel {
     let availableAmount = BehaviorRelay<Double>(value: 0)
     let isFiatMode = BehaviorRelay<Bool>(value: false)
     lazy var fee = LazySubject<Double>(
-        request: solanaSDK.getFees()
+        request: Defaults.useFreeTransaction ? .just(0) : solanaSDK.getFees()
             .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
             .map { [weak self] in
                 let decimals = self?.solanaSDK.solDecimals
@@ -205,7 +205,11 @@ class SendTokenViewModel {
         let isSendingSOL = currentWallet.token.symbol == "SOL"
         if isSendingSOL {
             // SOLANA
-            request = solanaSDK.sendSOL(to: receiver, amount: lamport)
+            request = solanaSDK.sendSOL(
+                to: receiver,
+                amount: lamport,
+                withoutFee: Defaults.useFreeTransaction
+            )
         } else {
             // other tokens
             request = solanaSDK.sendSPLTokens(
@@ -213,7 +217,8 @@ class SendTokenViewModel {
                 decimals: currentWallet.token.decimals,
                 from: sender,
                 to: receiver,
-                amount: lamport
+                amount: lamport,
+                withoutFee: Defaults.useFreeTransaction
             )
         }
         
