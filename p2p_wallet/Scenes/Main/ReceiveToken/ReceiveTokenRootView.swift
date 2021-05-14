@@ -115,7 +115,8 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
                 if let pubkey = wallet?.pubkey {
                     return pubkey.prefix(4) + "..." + pubkey.suffix(4)
                 } else {
-                    return L10n.addTokenToSeeWalletAddress
+                    return L10n.receiveTokenUsingSOLWalletSAddress
+//                    return L10n.addTokenToSeeWalletAddress
                 }
             }
             .drive(shortAddresslabel.rx.text)
@@ -137,7 +138,7 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
                     if wallet?.pubkey != nil {
                         return L10n.yourPublicAddress(symbol)
                     }
-                    return L10n.toSeeWalletAddressYouMustAddThisTokenToYourTokenList(symbol)
+                    return L10n.YourWalletHasNotBeenCreatedYet.butYouCanReceiveByUsingYourSOLWalletSAddressBelow(symbol, symbol)
                 }
                 return nil
             }
@@ -146,19 +147,21 @@ class ReceiveTokenRootView: ScrollableVStackRootView, LoadableView {
         
         walletDriver
             .drive(onNext: {[weak self] wallet in
+                let wallet = wallet?.pubkey != nil ? wallet: self?.viewModel.repository.solWallet
                 self?.qrCodeView.setUp(wallet: wallet)
             })
             .disposed(by: disposeBag)
         
-        walletDriver
-            .map {$0?.pubkey == nil ? 0.05: 1}
-            .drive(qrCodeView.rx.alpha)
-            .disposed(by: disposeBag)
+//        walletDriver
+//            .map {$0?.pubkey == nil ? 0.05: 1}
+//            .drive(qrCodeView.rx.alpha)
+//            .disposed(by: disposeBag)
         
-        walletDriver
-            .map {$0?.pubkey != nil}
-            .drive(addWalletButton.rx.isHidden)
-            .disposed(by: disposeBag)
+//        walletDriver
+//            .map {$0?.pubkey != nil}
+//            .drive(addWalletButton.rx.isHidden)
+//            .disposed(by: disposeBag)
+        addWalletButton.isHidden = true
         
         let hasEnoughSOLToPay = Observable.combineLatest(
             viewModel.repository

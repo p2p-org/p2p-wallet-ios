@@ -127,18 +127,6 @@ class ReceiveTokenViewModel {
     
     func setCurrentWallet(_ wallet: Wallet) {
         var wallet = wallet
-        if wallet.pubkey == nil,
-           let solPubkeyString = repository.solWallet?.pubkey,
-           let solPubkey = try? SolanaSDK.PublicKey(string: solPubkeyString),
-           let mint = try? SolanaSDK.PublicKey(string: wallet.token.address)
-        {
-            let associatedTokenAddress =
-                try? SolanaSDK.PublicKey.associatedTokenAddress(
-                    walletAddress: solPubkey,
-                    tokenMintAddress: mint
-                )
-            wallet.pubkey = associatedTokenAddress?.base58EncodedString
-        }
         self.wallet.accept(wallet)
     }
 }
