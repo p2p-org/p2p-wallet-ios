@@ -12,7 +12,8 @@ import Action
 
 enum HomeNavigatableScene {
     case receiveToken
-    case scanQr
+    case scanQrWithSwiper(progress: CGFloat, state: UIGestureRecognizer.State)
+    case scanQrCodeWithTap
     case sendToken(address: String? = nil)
     case swapToken
     case addToken

@@ -8,14 +8,33 @@
 import UIKit
 import Action
 import BECollectionView
+import RxSwift
 
 class HomeRootView: BEView {
     // MARK: - Constants
+    private let disposeBag = DisposeBag()
     
     // MARK: - Properties
     let viewModel: HomeViewModel
     
     // MARK: - Subviews
+    lazy var headerView: UIView = {
+        let stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing) {
+            UIImageView(width: 45, height: 45, image: .scanQr, tintColor: .textSecondary
+            )
+                .onTap(self, action: #selector(qrScannerDidTouch))
+                .onSwipe(self, action: #selector(qrScannerDidSwipe(sender:)))
+            
+            UIImageView(width: 25, height: 25, image: .settings, tintColor: .textSecondary)
+                .onTap(viewModel, action: #selector(HomeViewModel.showSettings))
+        }
+        
+        let view = UIView(backgroundColor: .background)
+        view.addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges(with: .init(top: 10, left: 16, bottom: 6, right: 16))
+        return view
+    }()
+    
     lazy var collectionView: HomeCollectionView = {
         let collectionView = HomeCollectionView(walletsRepository: viewModel.walletsRepository)
         collectionView.delegate = self
@@ -28,8 +47,24 @@ class HomeRootView: BEView {
             self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
             return .just(())
         }
-        collectionView.collectionView.contentInset.modify(dBottom: 16)
         return collectionView
+    }()
+    
+    lazy var tabBar: TabBar = {
+        let tabBar = TabBar(cornerRadius: .defaultPadding, contentInset: UIEdgeInsets(top: 20, left: 0, bottom: 8, right: 0))
+        tabBar.backgroundColor = .background2
+        tabBar.stackView.addArrangedSubviews([
+            .spacer,
+//                    createButton(image: .walletAdd, title: L10n.buy),
+            createButton(image: .walletReceive, title: L10n.receive)
+                .onTap(viewModel, action: #selector(HomeViewModel.receiveToken)),
+            createButton(image: .walletSend, title: L10n.send)
+                .onTap(viewModel, action: #selector(HomeViewModel.sendToken)),
+            createButton(image: .walletSwap, title: L10n.swap)
+                .onTap(viewModel, action: #selector(HomeViewModel.swapToken)),
+            .spacer
+        ])
+        return tabBar
     }()
     
     // MARK: - Initializers
@@ -41,6 +76,7 @@ class HomeRootView: BEView {
     // MARK: - Methods
     override func commonInit() {
         super.commonInit()
+        backgroundColor = .background
         layout()
         bind()
         collectionView.refresh()
@@ -48,13 +84,77 @@ class HomeRootView: BEView {
     
     // MARK: - Layout
     private func layout() {
-        // configure header
+        // collection view
         addSubview(collectionView)
         collectionView.autoPinEdgesToSuperviewEdges()
+        
+        // header view
+        addSubview(headerView)
+        headerView.autoPinEdgesToSuperviewEdges(with: .init(top: 10, left: 0, bottom: 0, right: 0), excludingEdge: .bottom)
+        
+        // tabbar
+        addSubview(tabBar)
+        tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        
+        // collectionView modifier
+        collectionView.collectionView.contentInset = .init(top: 45, left: 0, bottom: 120, right: 0)
     }
     
     private func bind() {
+        let stateDriver = viewModel.walletsRepository
+            .stateObservable
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: .initializing)
         
+        stateDriver
+            .map {$0 == .loading}
+            .drive(onNext: {[weak self] isLoading in
+                if isLoading {
+                    self?.showLoadingIndicatorView()
+                } else {
+                    self?.hideLoadingIndicatorView()
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        stateDriver
+            .map {$0 == .error}
+            .drive(onNext: {[weak self] hasError in
+                if hasError, self?.viewModel.walletsRepository.getError()?.asAFError != nil
+                {
+                    self?.showConnectionErrorView(refreshAction: CocoaAction { [weak self] in
+                        self?.viewModel.walletsRepository.reload()
+                        return .just(())
+                    })
+                } else {
+                    self?.hideConnectionErrorView()
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    // MARK: - Helpers
+    private func createButton(image: UIImage, title: String) -> UIStackView {
+        let button = UIButton(width: 56, height: 56, backgroundColor: .h5887ff, cornerRadius: 12, label: title, contentInsets: .init(all: 16))
+        button.setImage(image, for: .normal)
+        button.isUserInteractionEnabled = false
+        button.tintColor = .white
+        return UIStackView(axis: .vertical, spacing: 8, alignment: .center, distribution: .fill, arrangedSubviews: [
+            button,
+            UILabel(text: title, textSize: 12, textColor: .textSecondary)
+        ])
+    }
+    
+    // MARK: - Actions
+    @objc func qrScannerDidSwipe(sender: UIPanGestureRecognizer) {
+        let translation = sender.translation(in: self)
+        let progress = MenuHelper.calculateProgress(translationInView: translation, viewBounds: bounds, direction: .right
+        )
+        viewModel.navigationSubject.onNext(.scanQrWithSwiper(progress: progress, state: sender.state))
+    }
+    
+    @objc func qrScannerDidTouch() {
+        viewModel.navigationSubject.onNext(.scanQrCodeWithTap)
     }
 }
 
