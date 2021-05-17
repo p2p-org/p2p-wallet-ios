@@ -342,3 +342,5 @@
 "Your connection to the Internet has been interrupted." = "Ваше подключение к Интернету было прервано.";
 "Refresh" = "Обновить";
 "Use free transactions" = "Используйте бесплатные транзакции";
+"Your %@ wallet has not been created yet.\nBut you can receive %@ by using your SOL wallet's address below" = "Ваш %@ кошелек пока еще не создан.\nНо вы можете получить %@, используя адрес своего кошелька SOL ниже.";
+"Receive token using SOL wallet's address" = "Получить токен с адреса кошелька SOL";

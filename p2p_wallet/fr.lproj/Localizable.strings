@@ -342,3 +342,5 @@
 "Your connection to the Internet has been interrupted." = "Votre connexion à Internet a été interrompue.";
 "Refresh" = "Rafraîchir";
 "Use free transactions" = "Utilisez des transactions gratuites";
+"Your %@ wallet has not been created yet.\nBut you can receive %@ by using your SOL wallet's address below" = "Votre portefeuille %@ n'a pas encore été créé.\nMais vous pouvez recevoir %@ en utilisant l'adresse de votre portefeuille SOL ci-dessous";
+"Receive token using SOL wallet's address" = "Recevoir un jeton en utilisant l'adresse du portefeuille SOL";
