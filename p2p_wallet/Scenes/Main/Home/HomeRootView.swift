@@ -16,6 +16,7 @@ class HomeRootView: BEView {
     
     // MARK: - Properties
     let viewModel: HomeViewModel
+    var headerViewTopConstraint: NSLayoutConstraint!
     
     // MARK: - Subviews
     lazy var headerView: UIView = {
@@ -90,7 +91,9 @@ class HomeRootView: BEView {
         
         // header view
         addSubview(headerView)
-        headerView.autoPinEdgesToSuperviewEdges(with: .init(top: 10, left: 0, bottom: 0, right: 0), excludingEdge: .bottom)
+        headerViewTopConstraint = headerView.autoPinEdge(toSuperviewEdge: .top, withInset: 10)
+        headerView.autoPinEdge(toSuperviewEdge: .leading)
+        headerView.autoPinEdge(toSuperviewEdge: .trailing)
         
         // tabbar
         addSubview(tabBar)
@@ -131,6 +134,12 @@ class HomeRootView: BEView {
                 }
             })
             .disposed(by: disposeBag)
+        
+        collectionView.collectionView.rx.didEndDragging
+            .subscribe(onNext: { [weak self] _ in
+                self?.toggleHeaderViewVisibility()
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Helpers
@@ -143,6 +152,23 @@ class HomeRootView: BEView {
             button,
             UILabel(text: title, textSize: 12, textColor: .textSecondary)
         ])
+    }
+    
+    private func toggleHeaderViewVisibility() {
+        layoutIfNeeded()
+        let translation = collectionView.collectionView.panGestureRecognizer.translation(in: collectionView)
+        
+        if translation.y <= 0 {
+            // hide header view
+            headerViewTopConstraint.constant = -100
+        } else {
+            // show header view
+            headerViewTopConstraint.constant = 10
+        }
+        
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.layoutIfNeeded()
+        }
     }
     
     // MARK: - Actions
