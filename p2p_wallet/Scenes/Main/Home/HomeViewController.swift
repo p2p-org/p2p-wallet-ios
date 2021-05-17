@@ -27,17 +27,10 @@ class HomeViewController: BaseVC {
     // MARK: - Properties
     let viewModel: HomeViewModel
     let scenesFactory: HomeScenesFactory
-    let interactor = MenuInteractor()
+    fileprivate let interactor = MenuInteractor()
     
     // MARK: - Tabbar
-    lazy var avatarImageView = UIImageView(width: 25, height: 25, image: .settings, tintColor: .textSecondary)
-        .onTap(viewModel, action: #selector(HomeViewModel.showSettings))
     lazy var homeRootView = HomeRootView(viewModel: viewModel)
-    lazy var tabBar: TabBar = {
-        let tabBar = TabBar(cornerRadius: .defaultPadding, contentInset: UIEdgeInsets(top: 20, left: 0, bottom: 8, right: 0))
-        tabBar.backgroundColor = .background2
-        return tabBar
-    }()
     
     // MARK: - Initializer
     init(viewModel: HomeViewModel, scenesFactory: HomeScenesFactory)
@@ -47,83 +40,18 @@ class HomeViewController: BaseVC {
         super.init()
     }
     
+    override func loadView() {
+        self.view = homeRootView
+    }
+    
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .background
         setStatusBarColor(view.backgroundColor!)
-        
-        let headerView = UIView(forAutoLayout: ())
-        headerView.row([
-            {
-                let qrScannerView = UIImageView(width: 45, height: 45, image: .scanQr, tintColor: .textSecondary
-                )
-                    .onTap(self, action: #selector(qrScannerDidTouch))
-                qrScannerView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(qrScannerDidSwipe(sender:))))
-                return qrScannerView
-            }(),
-            avatarImageView
-        ], padding: .init(x: .defaultPadding, y: 10))
-        view.addSubview(headerView)
-        headerView.autoPinEdge(toSuperviewEdge: .leading)
-        headerView.autoPinEdge(toSuperviewEdge: .trailing)
-        headerView.autoPinEdge(toSuperviewSafeArea: .top)
-        
-        view.addSubview(homeRootView)
-        homeRootView.autoPinEdge(.top, to: .bottom, of: headerView)
-        homeRootView.autoPinEdge(toSuperviewEdge: .leading)
-        homeRootView.autoPinEdge(toSuperviewEdge: .trailing)
-        
-        // tabBar
-        view.addSubview(tabBar)
-        tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-        tabBar.autoPinEdge(.top, to: .bottom, of: homeRootView)
-        tabBar.stackView.addArrangedSubviews([
-            .spacer,
-//                    createButton(image: .walletAdd, title: L10n.buy),
-            createButton(image: .walletReceive, title: L10n.receive)
-                .onTap(viewModel, action: #selector(HomeViewModel.receiveToken)),
-            createButton(image: .walletSend, title: L10n.send)
-                .onTap(viewModel, action: #selector(HomeViewModel.sendToken)),
-            createButton(image: .walletSwap, title: L10n.swap)
-                .onTap(viewModel, action: #selector(HomeViewModel.swapToken)),
-            .spacer
-        ])
     }
     
     override func bind() {
         super.bind()
-        
-        let stateDriver = viewModel.walletsRepository
-            .stateObservable
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: .initializing)
-        
-        stateDriver
-            .map {$0 == .loading}
-            .drive(onNext: {[weak self] isLoading in
-                if isLoading {
-                    self?.view.showLoadingIndicatorView()
-                } else {
-                    self?.view.hideLoadingIndicatorView()
-                }
-            })
-            .disposed(by: disposeBag)
-        
-        stateDriver
-            .map {$0 == .error}
-            .drive(onNext: {[weak self] hasError in
-                if hasError, self?.viewModel.walletsRepository.getError()?.asAFError != nil
-                {
-                    self?.view.showConnectionErrorView(refreshAction: CocoaAction { [weak self] in
-                        self?.viewModel.walletsRepository.reload()
-                        return .just(())
-                    })
-                } else {
-                    self?.view.hideConnectionErrorView()
-                }
-            })
-            .disposed(by: disposeBag)
         
         viewModel.navigationSubject
             .subscribe(onNext: {[unowned self] in self.navigate(to: $0)})
@@ -136,8 +64,23 @@ class HomeViewController: BaseVC {
         case .receiveToken:
             let vc = self.scenesFactory.makeReceiveTokenViewController(pubkey: nil)
             self.present(vc, animated: true, completion: nil)
-        case .scanQr:
-            break
+        case .scanQrWithSwiper(let progress, let state):
+            MenuHelper.mapGestureStateToInteractor(
+                gestureState: state,
+                progress: progress,
+                interactor: interactor)
+            {
+                let vc = QrCodeScannerVC()
+                vc.callback = qrCodeScannerHandler(code:)
+                vc.transitioningDelegate = self
+                vc.modalPresentationStyle = .custom
+                self.present(vc, animated: true, completion: nil)
+            }
+        case .scanQrCodeWithTap:
+            let vc = QrCodeScannerVC()
+            vc.callback = qrCodeScannerHandler(code:)
+            vc.modalPresentationStyle = .fullScreen
+            self.present(vc, animated: true, completion: nil)
         case .sendToken(let address):
             let vc = self.scenesFactory
                 .makeSendTokenViewController(activeWallet: nil, destinationAddress: address)
@@ -166,55 +109,14 @@ class HomeViewController: BaseVC {
         }
     }
     
-    @objc func qrScannerDidSwipe(sender: UIPanGestureRecognizer) {
-        let translation = sender.translation(in: view)
-        let progress = MenuHelper.calculateProgress(translationInView: translation, viewBounds: view.bounds, direction: .right
-        )
-        MenuHelper.mapGestureStateToInteractor(
-            gestureState: sender.state,
-            progress: progress,
-            interactor: interactor)
-        {
-            let vc = QrCodeScannerVC()
-            vc.callback = { code in
-                if NSRegularExpression.publicKey.matches(code) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.viewModel.navigationSubject.onNext(.sendToken(address: code))
-                    }
-                    return true
-                }
-                return false
+    private func qrCodeScannerHandler(code: String) -> Bool {
+        if NSRegularExpression.publicKey.matches(code) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.viewModel.navigationSubject.onNext(.sendToken(address: code))
             }
-            vc.transitioningDelegate = self
-            vc.modalPresentationStyle = .custom
-            self.present(vc, animated: true, completion: nil)
+            return true
         }
-    }
-    
-    @objc func qrScannerDidTouch() {
-        let vc = QrCodeScannerVC()
-        vc.callback = { code in
-            if NSRegularExpression.publicKey.matches(code) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.viewModel.navigationSubject.onNext(.sendToken(address: code))
-                }
-                return true
-            }
-            return false
-        }
-        vc.modalPresentationStyle = .fullScreen
-        self.present(vc, animated: true, completion: nil)
-    }
-    
-    private func createButton(image: UIImage, title: String) -> UIStackView {
-        let button = UIButton(width: 56, height: 56, backgroundColor: .h5887ff, cornerRadius: 12, label: title, contentInsets: .init(all: 16))
-        button.setImage(image, for: .normal)
-        button.isUserInteractionEnabled = false
-        button.tintColor = .white
-        return UIStackView(axis: .vertical, spacing: 8, alignment: .center, distribution: .fill, arrangedSubviews: [
-            button,
-            UILabel(text: title, textSize: 12, textColor: .textSecondary)
-        ])
+        return false
     }
 }
 
