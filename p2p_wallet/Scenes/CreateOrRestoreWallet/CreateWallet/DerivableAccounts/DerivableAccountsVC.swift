@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class DerivableAccountsVC: BaseVC {
+final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     // MARK: - Properties
     private let viewModel: DerivableAccountsViewModel
     
@@ -73,13 +73,14 @@ final class DerivableAccountsVC: BaseVC {
         case .selectDerivationPath:
             guard let path = viewModel.output.selectedDerivationPath.value else {return}
             let vc = DerivablePathsVC(currentPath: path)
-            vc.completion = {[weak self, weak vc] path in
-                guard self?.viewModel.output.selectedDerivationPath.value != path
-                else {return}
-                self?.viewModel.input.derivationPath.onNext(path)
-                vc?.dismiss(animated: true, completion: nil)
-            }
+            vc.delegate = self
             present(vc, animated: true, completion: nil)
+        }
+    }
+    
+    func derivablePathsVC(_ vc: DerivablePathsVC, didSelectPath path: SolanaSDK.DerivablePath) {
+        vc.dismiss(animated: true) { [weak self] in
+            self?.viewModel.input.derivationPath.onNext(path)
         }
     }
 }
