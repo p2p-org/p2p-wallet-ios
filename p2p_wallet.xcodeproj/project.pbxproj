@@ -38,6 +38,8 @@
 		BC11CA252592FEA300E399A9 /* BalancesOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA242592FEA300E399A9 /* BalancesOverviewView.swift */; };
 		BC123E7F25B181B60043178E /* NSObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC123E7E25B181B60043178E /* NSObject+Extensions.swift */; };
 		BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC123E8325B181D80043178E /* Locale+Extensions.swift */; };
+		BC1255092653A2E400695A2B /* DerivationPathsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1255082653A2E400695A2B /* DerivationPathsVC.swift */; };
+		BC12550B2653A61C00695A2B /* SelectableDerivablePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */; };
 		BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */; };
 		BC18CA8A263265680054E624 /* SolanaSDK.Token+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */; };
 		BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8E2632694F0054E624 /* TokensRepository.swift */; };
@@ -331,6 +333,8 @@
 		BC11CA242592FEA300E399A9 /* BalancesOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalancesOverviewView.swift; sourceTree = "<group>"; };
 		BC123E7E25B181B60043178E /* NSObject+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSObject+Extensions.swift"; sourceTree = "<group>"; };
 		BC123E8325B181D80043178E /* Locale+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Locale+Extensions.swift"; sourceTree = "<group>"; };
+		BC1255082653A2E400695A2B /* DerivationPathsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivationPathsVC.swift; sourceTree = "<group>"; };
+		BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableDerivablePath.swift; sourceTree = "<group>"; };
 		BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Wallet+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Token+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA8E2632694F0054E624 /* TokensRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokensRepository.swift; sourceTree = "<group>"; };
@@ -991,6 +995,7 @@
 			children = (
 				BC3ADE9F2570E1B9002B3B16 /* Transaction.swift */,
 				BC5257E625CBACEA0076317E /* Fiat.swift */,
+				BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1423,6 +1428,7 @@
 		BCE77E6426536F77000B68BB /* DerivableAccounts */ = {
 			isa = PBXGroup;
 			children = (
+				BC1255082653A2E400695A2B /* DerivationPathsVC.swift */,
 				BCE77E6526537067000B68BB /* DerivableAccountsViewModel.swift */,
 				BCE77E6226536817000B68BB /* DerivableAccountsVC.swift */,
 			);
@@ -1921,6 +1927,7 @@
 				BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */,
 				BC22ABD22552A2FC0071C69F /* MenuInteractor.swift in Sources */,
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
+				BC1255092653A2E400695A2B /* DerivationPathsVC.swift in Sources */,
 				BC105119258884AA00398EA2 /* SelectNetworkVC.swift in Sources */,
 				BCE77E6626537067000B68BB /* DerivableAccountsViewModel.swift in Sources */,
 				BC460ABF257A44310035F6AA /* TransactionsManager.swift in Sources */,
@@ -2029,6 +2036,7 @@
 				BC65E257261EF34B00E436C7 /* TransactionInfoRootView.swift in Sources */,
 				BC2EC1CD2553ED1B006EEDA5 /* CardViewController.swift in Sources */,
 				BCBE149F25EF3D110014BCE5 /* HomeViewController.swift in Sources */,
+				BC12550B2653A61C00695A2B /* SelectableDerivablePath.swift in Sources */,
 				BCEB205125E14E4F00B54FEF /* CreateWalletContainer.swift in Sources */,
 				BCC26518260AF71F00BBC902 /* OtherWalletsViewModel.swift in Sources */,
 				BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */,
