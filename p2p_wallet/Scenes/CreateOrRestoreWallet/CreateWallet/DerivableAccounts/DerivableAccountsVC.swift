@@ -33,6 +33,11 @@ final class DerivableAccountsVC: BaseVC {
         super.init()
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.input.derivationPath.onNext(.default)
+    }
+    
     override func setUp() {
         super.setUp()
         view.addSubview(headerView)
@@ -57,7 +62,8 @@ final class DerivableAccountsVC: BaseVC {
             .disposed(by: disposeBag)
         
         viewModel.output.selectedDerivationPath
-            .map {$0.rawValue}
+            .map {$0?.rawValue}
+            .asDriver(onErrorJustReturn: nil)
             .drive(derivationPathLabel.rx.text)
             .disposed(by: disposeBag)
     }
@@ -65,7 +71,14 @@ final class DerivableAccountsVC: BaseVC {
     private func navigate(to scene: DerivableAccountsNavigatableScene) {
         switch scene {
         case .selectDerivationPath:
-            let vc = BaseVC()
+            guard let path = viewModel.output.selectedDerivationPath.value else {return}
+            let vc = DerivablePathsVC(currentPath: path)
+            vc.completion = {[weak self, weak vc] path in
+                guard self?.viewModel.output.selectedDerivationPath.value != path
+                else {return}
+                self?.viewModel.input.derivationPath.onNext(path)
+                vc?.dismiss(animated: true, completion: nil)
+            }
             present(vc, animated: true, completion: nil)
         }
     }
