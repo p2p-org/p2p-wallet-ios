@@ -50,11 +50,15 @@ class DerivablePathsViewModel: BEListViewModel<SelectableDerivablePath> {
     }
 }
 
+protocol DerivablePathsVCDelegate: AnyObject {
+    func derivablePathsVC(_ vc: DerivablePathsVC, didSelectPath path: SolanaSDK.DerivablePath)
+}
+
 class DerivablePathsVC: BaseVC, BECollectionViewDelegate {
     // MARK: - Properties
     private let initPath: SolanaSDK.DerivablePath
     private let viewModel: DerivablePathsViewModel
-    var completion: ((SolanaSDK.DerivablePath) -> Void)?
+    weak var delegate: DerivablePathsVCDelegate?
     
     // MARK: - Subviews
     private lazy var collectionView = BECollectionView(
@@ -63,7 +67,7 @@ class DerivablePathsVC: BaseVC, BECollectionViewDelegate {
                 index: 0,
                 layout: .init(
                     cellType: DerivablePathCell.self,
-                    itemHeight: .estimated(20)
+                    itemHeight: .estimated(64)
                 ),
                 viewModel: viewModel
             )
@@ -99,6 +103,6 @@ class DerivablePathsVC: BaseVC, BECollectionViewDelegate {
             }
         }
         viewModel.overrideData(by: paths)
-        completion?(path.path)
+        delegate?.derivablePathsVC(self, didSelectPath: path.path)
     }
 }
