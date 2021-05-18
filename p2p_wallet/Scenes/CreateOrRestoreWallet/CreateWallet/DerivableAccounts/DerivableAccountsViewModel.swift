@@ -8,6 +8,7 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import BECollectionView
 
 enum DerivableAccountsNavigatableScene {
     case selectDerivationPath
@@ -15,7 +16,7 @@ enum DerivableAccountsNavigatableScene {
 
 class DerivableAccountsViewModel: ViewModelType {
     // MARK: - Nested type
-    typealias Path = SolanaSDK.DerivationPath
+    typealias Path = SolanaSDK.DerivablePath
     typealias Account = SolanaSDK.Account
     
     struct Input {
@@ -23,12 +24,14 @@ class DerivableAccountsViewModel: ViewModelType {
         let derivationPath = PublishSubject<Path>()
     }
     struct Output {
+        let accountsViewModel = BEListViewModel<Account>()
+        let selectedDerivationPath = BehaviorRelay<Path?>(value: nil)
+        
         let navigatingScene: Driver<DerivableAccountsNavigatableScene>
-        let selectedDerivationPath: Driver<Path>
-        let accounts: Driver<[Account]>
     }
     
     // MARK: - Properties
+    private let disposeBag = DisposeBag()
     private let phrases: [String]
     let input: Input
     let output: Output
@@ -43,13 +46,23 @@ class DerivableAccountsViewModel: ViewModelType {
         self.output = Output(
             navigatingScene: input.selectDerivationPath
                 .map {_ in DerivableAccountsNavigatableScene.selectDerivationPath}
-                .asDriver(onErrorJustReturn: .selectDerivationPath),
-            selectedDerivationPath: input.derivationPath
-                .asDriver(onErrorJustReturn: .bip44),
-            accounts: input.derivationPath
-                .map {[try Account(phrase: phrases, network: Defaults.apiEndPoint.network, derivationPath: $0)]}
-                .asDriver(onErrorJustReturn: [])
+                .asDriver(onErrorJustReturn: .selectDerivationPath)
         )
+        
+        bind()
+    }
+    
+    func bind() {
+        input.derivationPath
+            .map {[try Account(phrase: self.phrases, network: Defaults.apiEndPoint.network, derivationPath: $0)]}
+            .subscribe(onNext: {[weak self] accounts in
+                self?.output.accountsViewModel.overrideData(by: accounts)
+            })
+            .disposed(by: disposeBag)
+        
+        input.derivationPath
+            .bind(to: output.selectedDerivationPath)
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Actions
