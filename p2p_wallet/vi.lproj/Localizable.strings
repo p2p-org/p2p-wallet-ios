@@ -342,3 +342,4 @@
 "Use free transactions" = "Sử dụng các giao dịch miễn phí";
 "Your %@ wallet has not been created yet.\nBut you can receive %@ by using your SOL wallet's address below" = "Ví %@ của bạn chưa được tạo.\nNhưng bạn có thể nhận %@ bằng cách sử dụng địa chỉ ví SOL của bạn bên dưới";
 "Receive token using SOL wallet's address" = "Nhận token bằng địa chỉ của ví SOL";
+"Derivable Accounts" = "Các tài khoản có thể có";
