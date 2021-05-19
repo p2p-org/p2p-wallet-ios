@@ -13,6 +13,10 @@ enum DerivableAccountsNavigatableScene {
     case selectDerivationPath
 }
 
+protocol CreateDerivableAccountHandler {
+    func createDerivableAccount(phrases: [String], derivablePath: SolanaSDK.DerivablePath)
+}
+
 class DerivableAccountsViewModel: ViewModelType {
     // MARK: - Nested type
     typealias Path = SolanaSDK.DerivablePath
@@ -31,14 +35,16 @@ class DerivableAccountsViewModel: ViewModelType {
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private let phrases: [String]
+    private let handler: CreateDerivableAccountHandler
     let input: Input
     let output: Output
     
     // MARK: - Subjects
     
     // MARK: - Initializer
-    init(phrases: [String], pricesFetcher: PricesFetcher) {
+    init(phrases: [String], pricesFetcher: PricesFetcher, handler: CreateDerivableAccountHandler) {
         self.phrases = phrases
+        self.handler = handler
         
         self.input = Input()
         self.output = Output(
@@ -67,5 +73,10 @@ class DerivableAccountsViewModel: ViewModelType {
     // MARK: - Actions
     @objc func selectDerivationPath() {
         input.selectDerivationPath.onNext(())
+    }
+    
+    @objc func createAccount() {
+        guard let path = output.selectedDerivationPath.value else {return}
+        handler.createDerivableAccount(phrases: phrases, derivablePath: path)
     }
 }
