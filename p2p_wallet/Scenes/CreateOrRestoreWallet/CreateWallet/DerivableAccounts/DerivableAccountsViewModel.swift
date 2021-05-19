@@ -19,12 +19,40 @@ class DerivableAccountsViewModel: ViewModelType {
     typealias Path = SolanaSDK.DerivablePath
     typealias Account = SolanaSDK.Account
     
+    class AccountsListViewModel: BEListViewModel<Account> {
+        private let phrases: [String]
+        var derivablePath: Path?
+        init(phrases: [String]) {
+            self.phrases = phrases
+            super.init(initialData: [])
+        }
+        override func createRequest() -> Single<[DerivableAccountsViewModel.Account]> {
+            Single.create { [weak self] observer in
+                guard let strongSelf = self else {
+                    observer(.failure(SolanaSDK.Error.unknown))
+                    return Disposables.create()
+                }
+                do {
+                    let accounts = [
+                        try Account(phrase: strongSelf.phrases, network: Defaults.apiEndPoint.network, derivablePath: strongSelf.derivablePath)
+                    ]
+                    observer(.success(accounts))
+                } catch {
+                    observer(.failure(error))
+                }
+                return Disposables.create()
+            }
+                .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+                .observe(on: MainScheduler.instance)
+        }
+    }
+    
     struct Input {
         let selectDerivationPath = PublishSubject<Void>()
         let derivationPath = PublishSubject<Path>()
     }
     struct Output {
-        let accountsViewModel = BEListViewModel<Account>()
+        let accountsViewModel: AccountsListViewModel
         let selectedDerivationPath = BehaviorRelay<Path?>(value: nil)
         
         let navigatingScene: Driver<DerivableAccountsNavigatableScene>
@@ -44,6 +72,7 @@ class DerivableAccountsViewModel: ViewModelType {
         
         self.input = Input()
         self.output = Output(
+            accountsViewModel: .init(phrases: phrases),
             navigatingScene: input.selectDerivationPath
                 .map {_ in DerivableAccountsNavigatableScene.selectDerivationPath}
                 .asDriver(onErrorJustReturn: .selectDerivationPath)
@@ -54,14 +83,14 @@ class DerivableAccountsViewModel: ViewModelType {
     
     func bind() {
         input.derivationPath
-            .map {[try Account(phrase: self.phrases, network: Defaults.apiEndPoint.network, derivationPath: $0)]}
-            .subscribe(onNext: {[weak self] accounts in
-                self?.output.accountsViewModel.overrideData(by: accounts)
-            })
+            .bind(to: output.selectedDerivationPath)
             .disposed(by: disposeBag)
         
         input.derivationPath
-            .bind(to: output.selectedDerivationPath)
+            .subscribe(onNext: {[weak self] derivablePath in
+                self?.output.accountsViewModel.derivablePath = derivablePath
+                self?.output.accountsViewModel.reload()
+            })
             .disposed(by: disposeBag)
     }
     

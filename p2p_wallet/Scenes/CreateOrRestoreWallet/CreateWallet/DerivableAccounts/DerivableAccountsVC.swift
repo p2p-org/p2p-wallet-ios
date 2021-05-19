@@ -79,8 +79,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     }
     
     func derivablePathsVC(_ vc: DerivablePathsVC, didSelectPath path: SolanaSDK.DerivablePath) {
-        vc.dismiss(animated: true) { [weak self] in
-            self?.viewModel.input.derivationPath.onNext(path)
-        }
+        viewModel.input.derivationPath.onNext(path)
+        vc.dismiss(animated: true, completion: nil)
     }
 }
