@@ -13,10 +13,12 @@ class WelcomeBackVC: WLIntroVC {
         .onTap(self, action: #selector(buttonGoToWalletDidTouch))
     
     let phrases: [String]
+    let derivablePath: SolanaSDK.DerivablePath
     let accountStorage: KeychainAccountStorage
     let restoreWalletViewModel: RestoreWalletViewModel
-    init(phrases: [String], accountStorage: KeychainAccountStorage, restoreWalletViewModel: RestoreWalletViewModel) {
+    init(phrases: [String], derivablePath: SolanaSDK.DerivablePath, accountStorage: KeychainAccountStorage, restoreWalletViewModel: RestoreWalletViewModel) {
         self.phrases = phrases
+        self.derivablePath = derivablePath
         self.accountStorage = accountStorage
         self.restoreWalletViewModel = restoreWalletViewModel
         super.init()
@@ -49,7 +51,7 @@ class WelcomeBackVC: WLIntroVC {
         UIApplication.shared.showIndetermineHud()
         DispatchQueue.global().async {
             do {
-                let account = try SolanaSDK.Account(phrase: self.phrases, network: Defaults.apiEndPoint.network)
+                let account = try SolanaSDK.Account(phrase: self.phrases, network: Defaults.apiEndPoint.network, derivablePath: self.derivablePath)
                 try self.accountStorage.save(account)
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
