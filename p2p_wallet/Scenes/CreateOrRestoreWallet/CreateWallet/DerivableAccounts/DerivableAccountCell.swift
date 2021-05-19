@@ -13,7 +13,7 @@ class DerivableAccountCell: BaseCollectionViewCell, LoadableView, BECollectionVi
     
     lazy var logoImageView = CoinLogoImageView(size: 45)
     lazy var symbolLabel = UILabel(text: "SOL", textSize: 17, weight: .medium)
-    lazy var addressLabel = UILabel(textSize: 13, weight: .medium, textColor: .textSecondary)
+    lazy var addressLabel = UILabel(text: "7YVp...4XwL", textSize: 13, weight: .medium, textColor: .textSecondary)
     lazy var balanceInFiatLabel = UILabel(textSize: 17, weight: .medium)
     lazy var balanceLabel = UILabel(textSize: 13, weight: .medium, textColor: .textSecondary)
     
@@ -53,5 +53,9 @@ class DerivableAccountCell: BaseCollectionViewCell, LoadableView, BECollectionVi
         )
         logoImageView.setUp(token: token)
         addressLabel.text = account.publicKey.short()
+        
+        // TODO: - Balances
+        balanceInFiatLabel.text = nil
+        balanceLabel.text = nil
     }
 }

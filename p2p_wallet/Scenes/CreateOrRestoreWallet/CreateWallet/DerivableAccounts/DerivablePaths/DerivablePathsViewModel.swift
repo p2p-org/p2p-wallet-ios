@@ -16,7 +16,9 @@ class DerivablePathsViewModel: BEListViewModel<SelectableDerivablePath> {
     }
     
     override func createRequest() -> Single<[SelectableDerivablePath]> {
-        let paths = SolanaSDK.DerivablePath.allCases
+        let paths = SolanaSDK.DerivablePath.DerivableType
+            .allCases
+            .map {SolanaSDK.DerivablePath(type: $0, walletIndex: 0, accountIndex: 0)}
             .map {
                 SelectableDerivablePath(
                     path: $0,

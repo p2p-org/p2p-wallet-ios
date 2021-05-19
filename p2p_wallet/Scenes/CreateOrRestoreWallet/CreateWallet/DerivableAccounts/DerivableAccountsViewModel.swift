@@ -8,7 +8,6 @@
 import Foundation
 import RxCocoa
 import RxSwift
-import BECollectionView
 
 enum DerivableAccountsNavigatableScene {
     case selectDerivationPath
@@ -18,35 +17,6 @@ class DerivableAccountsViewModel: ViewModelType {
     // MARK: - Nested type
     typealias Path = SolanaSDK.DerivablePath
     typealias Account = SolanaSDK.Account
-    
-    class AccountsListViewModel: BEListViewModel<Account> {
-        private let phrases: [String]
-        var derivablePath: Path?
-        init(phrases: [String]) {
-            self.phrases = phrases
-            super.init(initialData: [])
-        }
-        override func createRequest() -> Single<[Account]> {
-            Single.create { [weak self] observer in
-                DispatchQueue.global(qos: .default).async { [weak self] in
-                    guard let strongSelf = self else {
-                        observer(.failure(SolanaSDK.Error.unknown))
-                        return
-                    }
-                    do {
-                        let accounts = [
-                            try Account(phrase: strongSelf.phrases, network: Defaults.apiEndPoint.network, derivablePath: strongSelf.derivablePath)
-                        ]
-                        observer(.success(accounts))
-                    } catch {
-                        observer(.failure(error))
-                    }
-                }
-                return Disposables.create()
-            }
-                .observe(on: MainScheduler.instance)
-        }
-    }
     
     struct Input {
         let selectDerivationPath = PublishSubject<Void>()
