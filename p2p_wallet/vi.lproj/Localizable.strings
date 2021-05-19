@@ -343,3 +343,7 @@
 "Your %@ wallet has not been created yet.\nBut you can receive %@ by using your SOL wallet's address below" = "Ví %@ của bạn chưa được tạo.\nNhưng bạn có thể nhận %@ bằng cách sử dụng địa chỉ ví SOL của bạn bên dưới";
 "Receive token using SOL wallet's address" = "Nhận token bằng địa chỉ của ví SOL";
 "Derivable Accounts" = "Các tài khoản có thể có";
+"Select Derivable Path" = "Chọn đường dẫn có thể phát sinh";
+"Restore" = "Khôi phục";
+"Info" = "Thông tin";
+"By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet." = "Theo mặc định, ví P2P sẽ sử dụng m/44'/501'/0'/0' làm đường dẫn dẫn xuất cho ví chính.  Để sử dụng một đường dẫn thay thế, hãy thử khôi phục ví hiện có.";

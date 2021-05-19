@@ -12,7 +12,7 @@ protocol DerivablePathsVCDelegate: AnyObject {
     func derivablePathsVC(_ vc: DerivablePathsVC, didSelectPath path: SolanaSDK.DerivablePath)
 }
 
-class DerivablePathsVC: BaseVC, BECollectionViewDelegate {
+class DerivablePathsVC: WLIndicatorModalVC, BECollectionViewDelegate {
     // MARK: - Properties
     private let initPath: SolanaSDK.DerivablePath
     private let viewModel: DerivablePathsViewModel
@@ -37,6 +37,8 @@ class DerivablePathsVC: BaseVC, BECollectionViewDelegate {
         self.initPath = currentPath
         viewModel = DerivablePathsViewModel(currentPath: currentPath)
         super.init()
+        modalPresentationStyle = .custom
+        transitioningDelegate = self
     }
     
     override func viewDidLoad() {
@@ -46,8 +48,23 @@ class DerivablePathsVC: BaseVC, BECollectionViewDelegate {
     
     override func setUp() {
         super.setUp()
-        view.addSubview(collectionView)
-        collectionView.autoPinEdgesToSuperviewEdges()
+        let headerStackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
+            UILabel(text: L10n.selectDerivablePath, textSize: 17, weight: .semibold)
+            UIImageView(width: 26.67, height: 26.67, image: .questionMarkCircle, tintColor: .a3a5ba)
+                .onTap(self, action: #selector(questionMarkDidTouch))
+        }
+        containerView.addSubview(headerStackView)
+        headerStackView.autoPinEdgesToSuperviewEdges(with: .init(all: 20), excludingEdge: .bottom)
+        
+        let separator = UIView.separator(height: 1, color: .separator)
+        containerView.addSubview(separator)
+        separator.autoPinEdge(.top, to: .bottom, of: headerStackView, withOffset: 20)
+        separator.autoPinEdge(toSuperviewEdge: .leading)
+        separator.autoPinEdge(toSuperviewEdge: .trailing)
+        
+        containerView.addSubview(collectionView)
+        collectionView.autoPinEdge(.top, to: .bottom, of: separator)
+        collectionView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         collectionView.delegate = self
     }
     
@@ -62,5 +79,19 @@ class DerivablePathsVC: BaseVC, BECollectionViewDelegate {
         }
         viewModel.overrideData(by: paths)
         delegate?.derivablePathsVC(self, didSelectPath: path.path)
+    }
+    
+    @objc func questionMarkDidTouch() {
+        showAlert(title: L10n.info, message: L10n.ByDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet.toUseAnAlternativePathTryRestoringAnExistingWallet)
+    }
+}
+
+extension DerivablePathsVC: UIViewControllerTransitioningDelegate {
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        CustomHeightPresentationController(
+            height: { 268 },
+            presentedViewController: presented,
+            presenting: presenting
+        )
     }
 }

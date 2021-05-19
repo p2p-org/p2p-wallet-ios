@@ -343,3 +343,7 @@
 "Your %@ wallet has not been created yet.\nBut you can receive %@ by using your SOL wallet's address below" = "Your %@ wallet has not been created yet.\nBut you can receive %@ by using your SOL wallet's address below";
 "Receive token using SOL wallet's address" = "Receive token using SOL wallet's address";
 "Derivable Accounts" = "Derivable Accounts";
+"Select Derivable Path" = "Select Derivable Path";
+"Restore" = "Restore";
+"Info" = "Info";
+"By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet." = "By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet.";
