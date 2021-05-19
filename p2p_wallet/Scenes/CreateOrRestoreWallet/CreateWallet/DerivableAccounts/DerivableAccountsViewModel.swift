@@ -16,10 +16,6 @@ enum DerivableAccountsNavigatableScene {
 class DerivableAccountsViewModel: ViewModelType {
     // MARK: - Nested type
     typealias Path = SolanaSDK.DerivablePath
-    struct DerivableAccount: Hashable {
-        let info: SolanaSDK.Account
-        var amount: Double
-    }
     
     struct Input {
         let selectDerivationPath = PublishSubject<Void>()
