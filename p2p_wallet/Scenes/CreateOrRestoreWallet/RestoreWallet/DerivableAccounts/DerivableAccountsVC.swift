@@ -27,18 +27,23 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     }
     
     private lazy var derivationPathLabel = UILabel(textSize: 17, weight: .semibold)
-    private lazy var accountsCollectionView = BECollectionView(
-        sections: [
-            .init(
-                index: 0,
-                layout: .init(
-                    cellType: DerivableAccountCell.self,
-                    itemHeight: .estimated(75)
-                ),
-                viewModel: viewModel.output.accountsViewModel
-            )
-        ]
-    )
+    private lazy var accountsCollectionView: BECollectionView = {
+        let collectionView = BECollectionView(
+            sections: [
+                .init(
+                    index: 0,
+                    layout: .init(
+                        cellType: DerivableAccountCell.self,
+                        itemHeight: .estimated(75)
+                    ),
+                    viewModel: viewModel.output.accountsViewModel
+                )
+            ]
+        )
+        collectionView.isUserInteractionEnabled = false
+        collectionView.collectionView.contentInset.modify(dTop: 15, dBottom: 15)
+        return collectionView
+    }()
     
     // MARK: - Methods
     init(viewModel: DerivableAccountsViewModel) {
@@ -62,7 +67,6 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
         separator.autoPinEdge(toSuperviewEdge: .leading)
         separator.autoPinEdge(toSuperviewEdge: .trailing)
         
-        accountsCollectionView.collectionView.contentInset.modify(dTop: 15, dBottom: 15)
         view.addSubview(accountsCollectionView)
         accountsCollectionView.autoPinEdge(.top, to: .bottom, of: separator)
         accountsCollectionView.autoPinEdge(toSuperviewSafeArea: .leading)
@@ -81,6 +85,13 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
         button.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
         button.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
         button.autoPinEdge(toSuperviewEdge: .bottom, withInset: 30)
+        
+        // blur view
+        let blurView = UIView(height: 150, backgroundColor: .white.withAlphaComponent(0.5))
+        view.addSubview(blurView)
+        blurView.autoPinEdge(toSuperviewEdge: .leading)
+        blurView.autoPinEdge(toSuperviewEdge: .trailing)
+        blurView.autoPinEdge(.bottom, to: .top, of: separator2)
     }
     
     override func bind() {
