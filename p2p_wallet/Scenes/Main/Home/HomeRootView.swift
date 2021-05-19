@@ -91,7 +91,7 @@ class HomeRootView: BEView {
         
         // header view
         addSubview(headerView)
-        headerViewTopConstraint = headerView.autoPinEdge(toSuperviewEdge: .top, withInset: 10)
+        headerViewTopConstraint = headerView.autoPinEdge(toSuperviewSafeArea: .top)
         headerView.autoPinEdge(toSuperviewEdge: .leading)
         headerView.autoPinEdge(toSuperviewEdge: .trailing)
         
@@ -100,7 +100,7 @@ class HomeRootView: BEView {
         tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         
         // collectionView modifier
-        collectionView.collectionView.contentInset = .init(top: 45, left: 0, bottom: 120, right: 0)
+        collectionView.collectionView.contentInset = .init(top: 50 + safeAreaInsets.top, left: 0, bottom: 120, right: 0)
     }
     
     private func bind() {
@@ -135,7 +135,8 @@ class HomeRootView: BEView {
             })
             .disposed(by: disposeBag)
         
-        collectionView.collectionView.rx.didEndDragging
+        collectionView.collectionView.rx.willEndDragging
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 self?.toggleHeaderViewVisibility()
             })
@@ -155,19 +156,23 @@ class HomeRootView: BEView {
     }
     
     private func toggleHeaderViewVisibility() {
-        layoutIfNeeded()
         let translation = collectionView.collectionView.panGestureRecognizer.translation(in: collectionView)
+        
+        var constant = headerViewTopConstraint.constant
         
         if translation.y <= 0 {
             // hide header view
-            headerViewTopConstraint.constant = -100
+            constant = -100
         } else {
             // show header view
-            headerViewTopConstraint.constant = 10
+            constant = 0
         }
         
-        UIView.animate(withDuration: 0.3) { [weak self] in
-            self?.layoutIfNeeded()
+        if constant != headerViewTopConstraint.constant {
+            headerViewTopConstraint.constant = constant
+            UIView.animate(withDuration: 0.3) { [weak self] in
+                self?.layoutIfNeeded()
+            }
         }
     }
     
