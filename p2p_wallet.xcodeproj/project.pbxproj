@@ -1429,7 +1429,6 @@
 				BCE42DFF25DFA0B50021540E /* CreateWalletViewModel.swift */,
 				BCE42E0125DFA0B50021540E /* CreateWalletViewController.swift */,
 				BC105135258B2A2A00398EA2 /* TermsAndConditionsVC.swift */,
-				BCE77E6426536F77000B68BB /* DerivableAccounts */,
 				BC7B2C7625E384FE00833656 /* CreateSecurityKeys */,
 			);
 			path = CreateWallet;
@@ -1441,6 +1440,7 @@
 				BCEB205825E1519600B54FEF /* RestoreWalletContainer.swift */,
 				BCE42E1525DFA5100021540E /* RestoreWalletViewModel.swift */,
 				BCE42E1725DFA5100021540E /* RestoreWalletViewController.swift */,
+				BCE77E6426536F77000B68BB /* DerivableAccounts */,
 				BC1DAFCF254BE9170002BEBC /* WelcomeBackVC.swift */,
 			);
 			path = RestoreWallet;

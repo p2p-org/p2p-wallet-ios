@@ -33,8 +33,17 @@ class RestoreWalletContainer {
         WLEnterPhrasesVC(handler: viewModel)
     }
     
-    func makeWelcomeBackVC(phrases: [String]) -> WelcomeBackVC {
-        WelcomeBackVC(phrases: phrases, accountStorage: accountStorage, restoreWalletViewModel: viewModel)
+    func makeDerivableAccountsVC(phrases: [String]) -> DerivableAccountsVC {
+        let viewModel = DerivableAccountsViewModel(
+            phrases: phrases,
+            pricesFetcher: CryptoComparePricesFetcher(),
+            handler: viewModel
+        )
+        return DerivableAccountsVC(viewModel: viewModel)
+    }
+    
+    func makeWelcomeBackVC(phrases: [String], derivablePath: SolanaSDK.DerivablePath) -> WelcomeBackVC {
+        WelcomeBackVC(phrases: phrases, derivablePath: derivablePath, accountStorage: accountStorage, restoreWalletViewModel: viewModel)
     }
 }
 
