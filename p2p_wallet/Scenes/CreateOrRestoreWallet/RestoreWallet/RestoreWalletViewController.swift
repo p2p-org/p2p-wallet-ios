@@ -10,7 +10,8 @@ import UIKit
 
 protocol RestoreWalletScenesFactory {
     func makeEnterPhrasesVC() -> WLEnterPhrasesVC
-    func makeWelcomeBackVC(phrases: [String]) -> WelcomeBackVC
+    func makeWelcomeBackVC(phrases: [String], derivablePath: SolanaSDK.DerivablePath) -> WelcomeBackVC
+    func makeDerivableAccountsVC(phrases: [String]) -> DerivableAccountsVC
 }
 
 class RestoreWalletViewController: WLIntroVC {
@@ -67,8 +68,11 @@ class RestoreWalletViewController: WLIntroVC {
         case .enterPhrases:
             let vc = WLModalWrapperVC(wrapped: scenesFactory.makeEnterPhrasesVC())
             present(vc, animated: true, completion: nil)
-        case .welcomeBack(phrases: let phrases):
-            let vc = scenesFactory.makeWelcomeBackVC(phrases: phrases)
+        case .derivableAccounts(let phrases):
+            let vc = WLModalWrapperVC(wrapped: scenesFactory.makeDerivableAccountsVC(phrases: phrases))
+            present(vc, animated: true, completion: nil)
+        case .welcomeBack(let phrases, let derivablePath):
+            let vc = scenesFactory.makeWelcomeBackVC(phrases: phrases, derivablePath: derivablePath)
             transition(to: vc)
         }
     }
