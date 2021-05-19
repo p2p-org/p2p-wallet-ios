@@ -16,7 +16,10 @@ enum DerivableAccountsNavigatableScene {
 class DerivableAccountsViewModel: ViewModelType {
     // MARK: - Nested type
     typealias Path = SolanaSDK.DerivablePath
-    typealias Account = SolanaSDK.Account
+    struct DerivableAccount: Hashable {
+        let info: SolanaSDK.Account
+        var amount: Double
+    }
     
     struct Input {
         let selectDerivationPath = PublishSubject<Void>()
@@ -38,12 +41,12 @@ class DerivableAccountsViewModel: ViewModelType {
     // MARK: - Subjects
     
     // MARK: - Initializer
-    init(phrases: [String]) {
+    init(phrases: [String], pricesFetcher: PricesFetcher) {
         self.phrases = phrases
         
         self.input = Input()
         self.output = Output(
-            accountsViewModel: .init(phrases: phrases),
+            accountsViewModel: .init(phrases: phrases, pricesFetcher: pricesFetcher),
             navigatingScene: input.selectDerivationPath
                 .map {_ in DerivableAccountsNavigatableScene.selectDerivationPath}
                 .asDriver(onErrorJustReturn: .selectDerivationPath)
