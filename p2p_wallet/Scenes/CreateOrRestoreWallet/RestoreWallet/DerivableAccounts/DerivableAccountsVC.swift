@@ -74,7 +74,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
         separator2.autoPinEdge(toSuperviewEdge: .leading)
         separator2.autoPinEdge(toSuperviewEdge: .trailing)
         
-        let button = WLButton.stepButton(type: .black, label: L10n.restoreManually)
+        let button = WLButton.stepButton(type: .black, label: L10n.restore)
             .onTap(self, action: #selector(dismissAndCompleteRestoring))
         view.addSubview(button)
         button.autoPinEdge(.top, to: .bottom, of: separator2, withOffset: 16)
