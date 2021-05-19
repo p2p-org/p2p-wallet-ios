@@ -62,10 +62,25 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
         separator.autoPinEdge(toSuperviewEdge: .leading)
         separator.autoPinEdge(toSuperviewEdge: .trailing)
         
-        accountsCollectionView.collectionView.contentInset.modify(dTop: 15)
+        accountsCollectionView.collectionView.contentInset.modify(dTop: 15, dBottom: 15)
         view.addSubview(accountsCollectionView)
         accountsCollectionView.autoPinEdge(.top, to: .bottom, of: separator)
-        accountsCollectionView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
+        accountsCollectionView.autoPinEdge(toSuperviewSafeArea: .leading)
+        accountsCollectionView.autoPinEdge(toSuperviewSafeArea: .trailing)
+        
+        let separator2 = UIView.separator(height: 1, color: .separator)
+        view.addSubview(separator2)
+        separator2.autoPinEdge(.top, to: .bottom, of: accountsCollectionView)
+        separator2.autoPinEdge(toSuperviewEdge: .leading)
+        separator2.autoPinEdge(toSuperviewEdge: .trailing)
+        
+        let button = WLButton.stepButton(type: .black, label: L10n.restoreManually)
+            .onTap(self, action: #selector(dismissAndCompleteRestoring))
+        view.addSubview(button)
+        button.autoPinEdge(.top, to: .bottom, of: separator2, withOffset: 16)
+        button.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
+        button.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
+        button.autoPinEdge(toSuperviewEdge: .bottom, withInset: 30)
     }
     
     override func bind() {
@@ -97,5 +112,11 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     func derivablePathsVC(_ vc: DerivablePathsVC, didSelectPath path: SolanaSDK.DerivablePath) {
         viewModel.input.derivationPath.onNext(path)
         vc.dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func dismissAndCompleteRestoring() {
+        dismiss(animated: true) { [weak self] in
+            self?.viewModel.createAccount()
+        }
     }
 }

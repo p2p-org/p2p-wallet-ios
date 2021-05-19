@@ -25,7 +25,7 @@ extension DerivableAccountsViewModel {
             super.init(initialData: [])
         }
         override func createRequest() -> Single<[DerivableAccount]> {
-            Single.zip(Array(0..<10)
+            Single.zip(Array(0..<5)
                 .map {
                     createAccountSingle(index: $0)
                         .map {
