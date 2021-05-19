@@ -26,23 +26,24 @@ class DerivableAccountsViewModel: ViewModelType {
             self.phrases = phrases
             super.init(initialData: [])
         }
-        override func createRequest() -> Single<[DerivableAccountsViewModel.Account]> {
+        override func createRequest() -> Single<[Account]> {
             Single.create { [weak self] observer in
-                guard let strongSelf = self else {
-                    observer(.failure(SolanaSDK.Error.unknown))
-                    return Disposables.create()
-                }
-                do {
-                    let accounts = [
-                        try Account(phrase: strongSelf.phrases, network: Defaults.apiEndPoint.network, derivablePath: strongSelf.derivablePath)
-                    ]
-                    observer(.success(accounts))
-                } catch {
-                    observer(.failure(error))
+                DispatchQueue.global(qos: .default).async { [weak self] in
+                    guard let strongSelf = self else {
+                        observer(.failure(SolanaSDK.Error.unknown))
+                        return
+                    }
+                    do {
+                        let accounts = [
+                            try Account(phrase: strongSelf.phrases, network: Defaults.apiEndPoint.network, derivablePath: strongSelf.derivablePath)
+                        ]
+                        observer(.success(accounts))
+                    } catch {
+                        observer(.failure(error))
+                    }
                 }
                 return Disposables.create()
             }
-                .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
                 .observe(on: MainScheduler.instance)
         }
     }

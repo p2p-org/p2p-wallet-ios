@@ -38,7 +38,7 @@
 		BC11CA252592FEA300E399A9 /* BalancesOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA242592FEA300E399A9 /* BalancesOverviewView.swift */; };
 		BC123E7F25B181B60043178E /* NSObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC123E7E25B181B60043178E /* NSObject+Extensions.swift */; };
 		BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC123E8325B181D80043178E /* Locale+Extensions.swift */; };
-		BC1255092653A2E400695A2B /* DerivationPathsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1255082653A2E400695A2B /* DerivationPathsVC.swift */; };
+		BC1255092653A2E400695A2B /* DerivablePathsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1255082653A2E400695A2B /* DerivablePathsVC.swift */; };
 		BC12550B2653A61C00695A2B /* SelectableDerivablePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */; };
 		BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */; };
 		BC18CA8A263265680054E624 /* SolanaSDK.Token+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */; };
@@ -100,6 +100,9 @@
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */; };
 		BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */; };
+		BC53E21E2654BF88005624CC /* DerivablePathCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E21D2654BF88005624CC /* DerivablePathCell.swift */; };
+		BC53E2202654BFAA005624CC /* DerivablePathsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E21F2654BFAA005624CC /* DerivablePathsViewModel.swift */; };
+		BC53E2222654C018005624CC /* DerivableAccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E2212654C018005624CC /* DerivableAccountCell.swift */; };
 		BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCED25837CD600A65566 /* ChartMarker.swift */; };
 		BC54DCF92587089700A65566 /* WalletGraphViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DCF82587089700A65566 /* WalletGraphViewModel.swift */; };
 		BC54DD062587098800A65566 /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD052587098800A65566 /* LazyView.swift */; };
@@ -333,7 +336,7 @@
 		BC11CA242592FEA300E399A9 /* BalancesOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalancesOverviewView.swift; sourceTree = "<group>"; };
 		BC123E7E25B181B60043178E /* NSObject+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSObject+Extensions.swift"; sourceTree = "<group>"; };
 		BC123E8325B181D80043178E /* Locale+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Locale+Extensions.swift"; sourceTree = "<group>"; };
-		BC1255082653A2E400695A2B /* DerivationPathsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivationPathsVC.swift; sourceTree = "<group>"; };
+		BC1255082653A2E400695A2B /* DerivablePathsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePathsVC.swift; sourceTree = "<group>"; };
 		BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableDerivablePath.swift; sourceTree = "<group>"; };
 		BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Wallet+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Token+Extensions.swift"; sourceTree = "<group>"; };
@@ -401,6 +404,9 @@
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcher.swift; sourceTree = "<group>"; };
 		BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoComparePricesFetcher+Models.swift"; sourceTree = "<group>"; };
+		BC53E21D2654BF88005624CC /* DerivablePathCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePathCell.swift; sourceTree = "<group>"; };
+		BC53E21F2654BFAA005624CC /* DerivablePathsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePathsViewModel.swift; sourceTree = "<group>"; };
+		BC53E2212654C018005624CC /* DerivableAccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivableAccountCell.swift; sourceTree = "<group>"; };
 		BC54DCED25837CD600A65566 /* ChartMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartMarker.swift; sourceTree = "<group>"; };
 		BC54DCF82587089700A65566 /* WalletGraphViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletGraphViewModel.swift; sourceTree = "<group>"; };
 		BC54DD052587098800A65566 /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
@@ -783,6 +789,16 @@
 				BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */,
 			);
 			path = CryptoCompare;
+			sourceTree = "<group>";
+		};
+		BC53E21C2654BF5B005624CC /* DerivablePaths */ = {
+			isa = PBXGroup;
+			children = (
+				BC53E21D2654BF88005624CC /* DerivablePathCell.swift */,
+				BC53E21F2654BFAA005624CC /* DerivablePathsViewModel.swift */,
+				BC1255082653A2E400695A2B /* DerivablePathsVC.swift */,
+			);
+			path = DerivablePaths;
 			sourceTree = "<group>";
 		};
 		BC54DD1E2587164F00A65566 /* ChartMarkers */ = {
@@ -1428,7 +1444,8 @@
 		BCE77E6426536F77000B68BB /* DerivableAccounts */ = {
 			isa = PBXGroup;
 			children = (
-				BC1255082653A2E400695A2B /* DerivationPathsVC.swift */,
+				BC53E21C2654BF5B005624CC /* DerivablePaths */,
+				BC53E2212654C018005624CC /* DerivableAccountCell.swift */,
 				BCE77E6526537067000B68BB /* DerivableAccountsViewModel.swift */,
 				BCE77E6226536817000B68BB /* DerivableAccountsVC.swift */,
 			);
@@ -1855,6 +1872,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC53E2222654C018005624CC /* DerivableAccountCell.swift in Sources */,
 				BC7B2C7225E384F700833656 /* CreateSecurityKeysViewController.swift in Sources */,
 				BC11CA252592FEA300E399A9 /* BalancesOverviewView.swift in Sources */,
 				BCAB206F25DE0563004F4F9D /* DependencyContainer.swift in Sources */,
@@ -1926,8 +1944,9 @@
 				BC2EC1CE2553ED1B006EEDA5 /* CardPresentationController.swift in Sources */,
 				BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */,
 				BC22ABD22552A2FC0071C69F /* MenuInteractor.swift in Sources */,
+				BC53E21E2654BF88005624CC /* DerivablePathCell.swift in Sources */,
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
-				BC1255092653A2E400695A2B /* DerivationPathsVC.swift in Sources */,
+				BC1255092653A2E400695A2B /* DerivablePathsVC.swift in Sources */,
 				BC105119258884AA00398EA2 /* SelectNetworkVC.swift in Sources */,
 				BCE77E6626537067000B68BB /* DerivableAccountsViewModel.swift in Sources */,
 				BC460ABF257A44310035F6AA /* TransactionsManager.swift in Sources */,
@@ -2024,6 +2043,7 @@
 				BC05891525D3CD7C00632993 /* SwapTokenViewController.swift in Sources */,
 				BC274540263699F500D37CD1 /* SelectFiatVC.swift in Sources */,
 				BC03791625FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift in Sources */,
+				BC53E2202654BFAA005624CC /* DerivablePathsViewModel.swift in Sources */,
 				BCBE149925EF3D110014BCE5 /* HomeFriendCell.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */,
 				BC6EE777254AF6E600FE1025 /* EnableBiometryVC.swift in Sources */,
