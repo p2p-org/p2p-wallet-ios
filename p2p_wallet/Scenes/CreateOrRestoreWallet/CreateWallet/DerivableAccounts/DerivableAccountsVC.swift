@@ -65,7 +65,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
         accountsCollectionView.collectionView.contentInset.modify(dTop: 15)
         view.addSubview(accountsCollectionView)
         accountsCollectionView.autoPinEdge(.top, to: .bottom, of: separator)
-        accountsCollectionView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        accountsCollectionView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
     }
     
     override func bind() {

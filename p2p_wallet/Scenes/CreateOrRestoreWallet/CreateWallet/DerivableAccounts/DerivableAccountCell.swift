@@ -54,8 +54,9 @@ class DerivableAccountCell: BaseCollectionViewCell, LoadableView, BECollectionVi
         logoImageView.setUp(token: token)
         addressLabel.text = account.info.publicKey.short()
         
-        // TODO: - Balances
-        balanceInFiatLabel.text = nil
-        balanceLabel.text = nil
+        balanceInFiatLabel.text = (account.amount * account.price)
+            .toString(maximumFractionDigits: 4, groupingSeparator: " ")
+            + Defaults.fiat.symbol
+        balanceLabel.text = account.amount?.toString(maximumFractionDigits: 9) + " " + "SOL"
     }
 }
