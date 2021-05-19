@@ -344,3 +344,8 @@
 "Use free transactions" = "Используйте бесплатные транзакции";
 "Your %@ wallet has not been created yet.\nBut you can receive %@ by using your SOL wallet's address below" = "Ваш %@ кошелек пока еще не создан.\nНо вы можете получить %@, используя адрес своего кошелька SOL ниже.";
 "Receive token using SOL wallet's address" = "Получить токен с адреса кошелька SOL";
+"Derivable Accounts" = "Производные счета";
+"Select Derivable Path" = "Выберите производный путь";
+"Restore" = "Восстановить";
+"Info" = "Информация";
+"By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet." = "По умолчанию кошелек P2P будет использовать m/44'/501'/0'/0' в качестве пути деривации для основного кошелька.  Чтобы использовать альтернативный путь, попробуйте восстановить существующий кошелек.";
