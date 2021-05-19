@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import BECollectionView
 
 final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     // MARK: - Properties
@@ -26,6 +27,18 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     }
     
     private lazy var derivationPathLabel = UILabel(textSize: 17, weight: .semibold)
+    private lazy var accountsCollectionView = BECollectionView(
+        sections: [
+            .init(
+                index: 0,
+                layout: .init(
+                    cellType: DerivableAccountCell.self,
+                    itemHeight: .estimated(75)
+                ),
+                viewModel: viewModel.output.accountsViewModel
+            )
+        ]
+    )
     
     // MARK: - Methods
     init(viewModel: DerivableAccountsViewModel) {
@@ -49,7 +62,10 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
         separator.autoPinEdge(toSuperviewEdge: .leading)
         separator.autoPinEdge(toSuperviewEdge: .trailing)
         
-        // TODO: - List view
+        accountsCollectionView.collectionView.contentInset.modify(dTop: 15)
+        view.addSubview(accountsCollectionView)
+        accountsCollectionView.autoPinEdge(.top, to: .bottom, of: separator)
+        accountsCollectionView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
     }
     
     override func bind() {
