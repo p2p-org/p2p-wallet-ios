@@ -11,7 +11,8 @@ import RxCocoa
 
 enum RestoreWalletNavigatableScene {
     case enterPhrases
-    case welcomeBack(phrases: [String])
+    case derivableAccounts(phrases: [String])
+    case welcomeBack(phrases: [String], derivablePath: SolanaSDK.DerivablePath)
 }
 
 class RestoreWalletViewModel {
@@ -43,28 +44,22 @@ class RestoreWalletViewModel {
             errorMessage.onNext(L10n.thereIsNoP2PWalletSavedInYourICloud)
             return
         }
-        handlePhrases(phrases)
+        handlePhrases(phrases.components(separatedBy: " "))
     }
     
     @objc func restoreManually() {
         navigationSubject.onNext(.enterPhrases)
     }
-    
-    private func handlePhrases(_ text: String)
-    {
-        do {
-            let phrases = text.components(separatedBy: " ")
-            _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
-            navigationSubject.onNext(.welcomeBack(phrases: phrases))
-        } catch {
-            let message = (error as? SolanaSDK.Error)?.errorDescription ?? error.localizedDescription
-            errorMessage.onNext(message)
-        }
-    }
 }
 
 extension RestoreWalletViewModel: PhrasesCreationHandler {
     func handlePhrases(_ phrases: [String]) {
-        navigationSubject.onNext(.welcomeBack(phrases: phrases))
+        navigationSubject.onNext(.derivableAccounts(phrases: phrases))
+    }
+}
+
+extension RestoreWalletViewModel: CreateDerivableAccountHandler {
+    func createDerivableAccount(phrases: [String], derivablePath: SolanaSDK.DerivablePath) {
+        navigationSubject.onNext(.welcomeBack(phrases: phrases, derivablePath: derivablePath))
     }
 }
