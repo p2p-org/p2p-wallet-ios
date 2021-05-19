@@ -9,5 +9,6 @@ import Foundation
 
 struct DerivableAccount: Hashable {
     let info: SolanaSDK.Account
-    var amount: Double
+    var amount: Double?
+    var price: Double?
 }
