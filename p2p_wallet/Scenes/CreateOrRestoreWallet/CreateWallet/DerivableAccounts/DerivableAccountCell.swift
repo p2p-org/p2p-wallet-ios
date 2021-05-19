@@ -40,7 +40,7 @@ class DerivableAccountCell: BaseCollectionViewCell, LoadableView, BECollectionVi
     }
     
     func setUp(with item: AnyHashable?) {
-        guard let account = item as? SolanaSDK.Account else {return}
+        guard let account = item as? DerivableAccount else {return}
         let token = SolanaSDK.Token(
             _tags: [],
             chainId: 101,
@@ -52,7 +52,7 @@ class DerivableAccountCell: BaseCollectionViewCell, LoadableView, BECollectionVi
             extensions: nil
         )
         logoImageView.setUp(token: token)
-        addressLabel.text = account.publicKey.short()
+        addressLabel.text = account.info.publicKey.short()
         
         // TODO: - Balances
         balanceInFiatLabel.text = nil
