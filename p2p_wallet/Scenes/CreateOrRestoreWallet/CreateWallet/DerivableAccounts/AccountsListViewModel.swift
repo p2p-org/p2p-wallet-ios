@@ -10,19 +10,27 @@ import RxSwift
 import BECollectionView
 
 extension DerivableAccountsViewModel {
-    class AccountsListViewModel: BEListViewModel<Account> {
+    class AccountsListViewModel: BEListViewModel<DerivableAccount> {
         private let phrases: [String]
+        private let pricesFetcher: PricesFetcher
         var derivablePath: Path?
-        init(phrases: [String]) {
+        
+        init(phrases: [String], pricesFetcher: PricesFetcher) {
             self.phrases = phrases
+            self.pricesFetcher = pricesFetcher
             super.init(initialData: [])
         }
-        override func createRequest() -> Single<[Account]> {
-            Single.zip(Array(0..<10).map {createAccountSingle(index: $0)})
+        override func createRequest() -> Single<[DerivableAccount]> {
+            Single.zip(Array(0..<10)
+                .map {
+                    createAccountSingle(index: $0)
+                        .map {DerivableAccount(info: $0, amount: 0)}
+                }
+            )
                 .observe(on: MainScheduler.instance)
         }
         
-        private func createAccountSingle(index: Int) -> Single<Account> {
+        private func createAccountSingle(index: Int) -> Single<SolanaSDK.Account> {
             Single.create { [weak self] observer in
                 DispatchQueue(label: "createAccount#\(index)")
                     .async { [weak self] in
@@ -33,7 +41,7 @@ extension DerivableAccountsViewModel {
                         }
                         
                         do {
-                            let account = try Account(
+                            let account = try SolanaSDK.Account(
                                 phrase: strongSelf.phrases,
                                 network: Defaults.apiEndPoint.network,
                                 derivablePath: Path(type: path.type, walletIndex: index)
@@ -48,5 +56,6 @@ extension DerivableAccountsViewModel {
                 return Disposables.create()
             }
         }
+        
     }
 }
