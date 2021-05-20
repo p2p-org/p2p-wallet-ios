@@ -41,6 +41,9 @@ class DerivableAccountCell: BaseCollectionViewCell, LoadableView, BECollectionVi
     
     func setUp(with item: AnyHashable?) {
         guard let account = item as? DerivableAccount else {return}
+        
+        contentView.alpha = account.isBlured == true ? 0.5: 1
+        
         let token = SolanaSDK.Token(
             _tags: [],
             chainId: 101,
