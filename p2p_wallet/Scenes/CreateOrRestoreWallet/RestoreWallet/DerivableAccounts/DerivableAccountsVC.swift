@@ -85,13 +85,6 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
         button.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
         button.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
         button.autoPinEdge(toSuperviewEdge: .bottom, withInset: 30)
-        
-        // blur view
-        let blurView = UIView(height: 150, backgroundColor: .white.withAlphaComponent(0.5))
-        view.addSubview(blurView)
-        blurView.autoPinEdge(toSuperviewEdge: .leading)
-        blurView.autoPinEdge(toSuperviewEdge: .trailing)
-        blurView.autoPinEdge(.bottom, to: .top, of: separator2)
     }
     
     override func bind() {
