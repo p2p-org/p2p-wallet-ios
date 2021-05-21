@@ -19,14 +19,6 @@ enum RootNavigatableScene: Equatable {
     case resetPincodeWithASeedPhrase
 }
 
-struct AuthenticationPresentationStyle {
-    var title: String = L10n.enterPINCode
-    let isRequired: Bool
-    let isFullScreen: Bool
-    var useBiometry: Bool
-    var completion: (() -> Void)?
-}
-
 protocol CreateOrRestoreWalletHandler {
     func creatingWalletDidComplete()
     func restoringWalletDidComplete()
@@ -38,7 +30,7 @@ protocol OnboardingHandler {
     func onboardingDidComplete()
 }
 
-class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
+class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler, AuthenticationHandler {
     // MARK: - Constants
     private var timeRequiredForAuthentication = 10 // in seconds
     
@@ -112,6 +104,10 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     
     @objc func navigateToMain() {
         navigationSubject.accept(.main)
+    }
+    
+    func authenticate(presentationStyle: AuthenticationPresentationStyle) {
+        authenticationSubject.onNext(presentationStyle)
     }
     
     @objc func resetPinCodeWithASeedPhrase() {

@@ -14,7 +14,7 @@ protocol BackupScenesFactory {
 
 class BackupVC: ProfileVCBase {
     let accountStorage: KeychainAccountStorage
-    let rootViewModel: RootViewModel
+    let authenticationHandler: AuthenticationHandler
     let scenesFactory: BackupScenesFactory
     
     lazy var isIcloudBackedUp = BehaviorRelay<Bool>(value: accountStorage.didBackupUsingIcloud)
@@ -26,9 +26,9 @@ class BackupVC: ProfileVCBase {
     lazy var backupUsingIcloudButton = WLButton.stepButton(type: .black, label: " " + L10n.backupUsingICloud)
     lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .f6f6f8, textColor: .textBlack, label: L10n.backupManually)
     
-    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel, scenesFactory: BackupScenesFactory) {
+    init(accountStorage: KeychainAccountStorage, authenticationHandler: AuthenticationHandler, scenesFactory: BackupScenesFactory) {
         self.accountStorage = accountStorage
-        self.rootViewModel = rootViewModel
+        self.authenticationHandler = authenticationHandler
         self.scenesFactory = scenesFactory
         super.init()
     }
@@ -105,8 +105,8 @@ class BackupVC: ProfileVCBase {
     
     @objc func buttonBackupUsingICloudDidTouch() {
         guard let account = accountStorage.account?.phrase else {return}
-        rootViewModel.authenticationSubject.onNext(
-            .init(
+        authenticationHandler.authenticate(
+            presentationStyle: .init(
                 isRequired: false,
                 isFullScreen: false,
                 useBiometry: true,
@@ -120,12 +120,12 @@ class BackupVC: ProfileVCBase {
     }
     
     @objc func buttonBackupManuallyDidTouch() {
-        rootViewModel.authenticationSubject.onNext(
-            .init(
+        authenticationHandler.authenticate(
+            presentationStyle: .init(
                 isRequired: false,
                 isFullScreen: false,
                 useBiometry: true,
-                completion: {
+                completion: { [weak self] in
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                         guard let vc = self?.scenesFactory.makeBackupManuallyVC()
                         else {return}
