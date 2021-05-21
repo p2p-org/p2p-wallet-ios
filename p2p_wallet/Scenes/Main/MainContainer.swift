@@ -104,7 +104,14 @@ class MainContainer {
     }
     
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController {
-        let vm = SwapTokenViewModel(solanaSDK: solanaSDK, transactionManager: transactionManager, pricesRepository: pricesManager, wallets: walletsViewModel.data, fromWallet: wallet)
+        let vm = SwapTokenViewModel(
+            solanaSDK: solanaSDK,
+            transactionManager: transactionManager,
+            pricesRepository: pricesManager,
+            wallets: walletsViewModel.data,
+            fromWallet: wallet,
+            authenticationHandler: rootViewModel
+        )
         return SwapTokenViewController(viewModel: vm, scenesFactory: self)
     }
     
