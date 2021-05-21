@@ -102,7 +102,7 @@ extension WelcomeVC {
     
     class SecondVC: SlideVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .embeded
+            .hidden
         }
         
         override func setUp() {
