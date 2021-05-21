@@ -120,7 +120,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     
     @objc func dismissAndCompleteRestoring() {
         dismiss(animated: true) { [weak self] in
-            self?.viewModel.createAccount()
+            self?.viewModel.restoreAccount()
         }
     }
 }

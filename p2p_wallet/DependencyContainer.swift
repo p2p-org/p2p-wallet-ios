@@ -40,6 +40,10 @@ class DependencyContainer {
         WellDoneVC(viewModel: sharedRootViewModel)
     }
     
+    func makeWelcomeBackVC() -> WelcomeBackVC {
+        WelcomeBackVC(viewModel: sharedRootViewModel)
+    }
+    
     // MARK: - Main
     func makeMainViewController() -> MainViewController {
         let container = MainContainer(rootViewModel: sharedRootViewModel, accountStorage: sharedAccountStorage)

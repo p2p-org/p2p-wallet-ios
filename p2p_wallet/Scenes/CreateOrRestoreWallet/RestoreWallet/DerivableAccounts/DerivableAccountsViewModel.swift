@@ -13,8 +13,9 @@ enum DerivableAccountsNavigatableScene {
     case selectDerivationPath
 }
 
-protocol CreateDerivableAccountHandler {
-    func createDerivableAccount(phrases: [String], derivablePath: SolanaSDK.DerivablePath)
+protocol AccountRestorationHandler {
+    func accountDidRestore(_ account: SolanaSDK.Account)
+    func accountRestoreFailed(_ error: Error)
 }
 
 class DerivableAccountsViewModel: ViewModelType {
@@ -35,14 +36,15 @@ class DerivableAccountsViewModel: ViewModelType {
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private let phrases: [String]
-    private let handler: CreateDerivableAccountHandler
+    private let handler: AccountRestorationHandler
+    
     let input: Input
     let output: Output
     
     // MARK: - Subjects
     
     // MARK: - Initializer
-    init(phrases: [String], pricesFetcher: PricesFetcher, handler: CreateDerivableAccountHandler) {
+    init(phrases: [String], pricesFetcher: PricesFetcher, handler: AccountRestorationHandler) {
         self.phrases = phrases
         self.handler = handler
         
@@ -75,8 +77,34 @@ class DerivableAccountsViewModel: ViewModelType {
         input.selectDerivationPath.onNext(())
     }
     
-    @objc func createAccount() {
-        guard let path = output.selectedDerivationPath.value else {return}
-        handler.createDerivableAccount(phrases: phrases, derivablePath: path)
+    @objc func restoreAccount() {
+        // if account is successfully loaded
+        if let account = output.accountsViewModel.data.first?.info {
+            handler.accountDidRestore(account)
+            return
+        }
+        
+        // load account
+        UIApplication.shared.showIndetermineHud()
+        DispatchQueue.global().async { [weak self] in
+            guard let phrases = self?.phrases,
+                  let path = self?.output.selectedDerivationPath.value,
+                  let handler = self?.handler
+            else {
+                return
+            }
+            do {
+                let account = try SolanaSDK.Account(phrase: phrases, network: Defaults.apiEndPoint.network, derivablePath: path)
+                DispatchQueue.main.async {
+                    UIApplication.shared.hideHud()
+                    handler.accountDidRestore(account)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    UIApplication.shared.hideHud()
+                    handler.accountRestoreFailed(error)
+                }
+            }
+        }
     }
 }
