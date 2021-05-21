@@ -90,7 +90,15 @@ class MainContainer {
     }
     
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController {
-        let vm = SendTokenViewModel(solanaSDK: solanaSDK, walletsRepository: walletsViewModel, transactionManager: transactionManager, pricesRepository: pricesManager, activeWallet: activeWallet, destinationAddress: destinationAddress)
+        let vm = SendTokenViewModel(
+            solanaSDK: solanaSDK,
+            walletsRepository: walletsViewModel,
+            transactionManager: transactionManager,
+            pricesRepository: pricesManager,
+            activeWallet: activeWallet,
+            destinationAddress: destinationAddress,
+            authenticationHandler: rootViewModel
+        )
         let vc = SendTokenViewController(viewModel: vm, scenesFactory: self)
         return vc
     }
@@ -120,7 +128,7 @@ class MainContainer {
     }
     
     func makeBackupVC() -> BackupVC {
-        BackupVC(accountStorage: accountStorage, rootViewModel: rootViewModel, scenesFactory: self)
+        BackupVC(accountStorage: accountStorage, authenticationHandler: rootViewModel, scenesFactory: self)
     }
     
     func makeBackupManuallyVC() -> BackupManuallyVC {
