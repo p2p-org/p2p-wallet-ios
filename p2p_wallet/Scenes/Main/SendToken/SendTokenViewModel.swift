@@ -22,6 +22,7 @@ class SendTokenViewModel {
     // MARK: - Constants
     
     // MARK: - Properties
+    let authenticationHandler: AuthenticationHandler
     let walletsRepository: WalletsRepository
     let disposeBag = DisposeBag()
     let solanaSDK: SolanaSDK
@@ -62,7 +63,8 @@ class SendTokenViewModel {
         transactionManager: TransactionsManager,
         pricesRepository: PricesRepository,
         activeWallet: Wallet? = nil,
-        destinationAddress: String? = nil
+        destinationAddress: String? = nil,
+        authenticationHandler: AuthenticationHandler
     ) {
         self.solanaSDK = solanaSDK
         self.walletsRepository = walletsRepository
@@ -70,6 +72,7 @@ class SendTokenViewModel {
         self.pricesRepository = pricesRepository
         self.currentWallet.accept(activeWallet ?? walletsRepository.getWallets().first)
         self.destinationAddressInput.accept(destinationAddress)
+        self.authenticationHandler = authenticationHandler
         fee.reload()
         bind()
     }
@@ -148,7 +151,21 @@ class SendTokenViewModel {
     }
     
     @objc func sendAndShowProcessTransactionScene() {
-        send(showScene: true)
+        authenticateAndSend(showScene: true)
+    }
+    
+    private func authenticateAndSend(showScene: Bool = false) {
+        authenticationHandler.authenticate(
+            presentationStyle:
+                .init(
+                    isRequired: false,
+                    isFullScreen: false,
+                    useBiometry: true,
+                    completion: { [weak self] in
+                        self?.send(showScene: showScene)
+                    }
+                )
+        )
     }
     
     private func send(showScene: Bool = false) {

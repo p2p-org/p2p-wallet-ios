@@ -39,6 +39,6 @@ class CreateWalletViewModel {
     
     func finish() {
         navigationSubject.onNext(.dismiss)
-        handler.creatingOrRestoringWalletDidComplete()
+        handler.creatingWalletDidComplete()
     }
 }

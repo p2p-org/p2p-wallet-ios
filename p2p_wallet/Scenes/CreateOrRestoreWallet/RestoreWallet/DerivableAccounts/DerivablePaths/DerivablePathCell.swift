@@ -27,6 +27,10 @@ class DerivablePathCell: BaseCollectionViewCell, LoadableView, BECollectionViewC
     func setUp(with item: AnyHashable?) {
         guard let path = item as? SelectableDerivablePath else {return}
         radioButton.isSelected = path.isSelected
-        titleLabel.text = path.path.rawValue
+        var pathTitle = path.path.rawValue
+        if path.path.type == .deprecated {
+            pathTitle += " (\(L10n.deprecated))"
+        }
+        titleLabel.text = pathTitle
     }
 }

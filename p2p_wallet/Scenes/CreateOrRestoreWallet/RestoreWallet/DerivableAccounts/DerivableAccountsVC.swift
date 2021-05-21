@@ -119,8 +119,17 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     }
     
     @objc func dismissAndCompleteRestoring() {
-        dismiss(animated: true) { [weak self] in
-            self?.viewModel.createAccount()
-        }
+        UIApplication.shared.showIndetermineHud()
+        viewModel.restoreAccount()
+            .subscribe(onSuccess: { [weak self] account in
+                UIApplication.shared.hideHud()
+                self?.dismiss(animated: true) { [weak self] in
+                    self?.viewModel.restoringDidComplete(account: account)
+                }
+            }, onFailure: {[weak self] error in
+                UIApplication.shared.hideHud()
+                self?.showError(error)
+            })
+            .disposed(by: disposeBag)
     }
 }
