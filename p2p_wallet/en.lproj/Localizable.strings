@@ -348,3 +348,4 @@
 "Info" = "Info";
 "By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet." = "By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet.";
 "Could not retrieve account info" = "Could not retrieve account info";
+"deprecated" = "deprecated";
