@@ -155,7 +155,6 @@
 		BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */; };
 		BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9E22542BE43005F50CE /* String+Extensions.swift */; };
 		BC65E9F92542C181005F50CE /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC65E9F82542C181005F50CE /* Colors.xcassets */; };
-		BC699A7325F8705100F57209 /* Error+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC699A7225F8705100F57209 /* Error+Extensions.swift */; };
 		BC699AB425F9DE3400F57209 /* WLRadioButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC699AB325F9DE3400F57209 /* WLRadioButton.swift */; };
 		BC699AB925F9E69B00F57209 /* WLPhrasesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC699AB825F9E69B00F57209 /* WLPhrasesListView.swift */; };
 		BC699ACA25FB114D00F57209 /* UINavigationController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC699AC925FB114D00F57209 /* UINavigationController+Extensions.swift */; };
@@ -464,7 +463,6 @@
 		BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVStackVC.swift; sourceTree = "<group>"; };
 		BC65E9E22542BE43005F50CE /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		BC65E9F82542C181005F50CE /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
-		BC699A7225F8705100F57209 /* Error+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+Extensions.swift"; sourceTree = "<group>"; };
 		BC699AB325F9DE3400F57209 /* WLRadioButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLRadioButton.swift; sourceTree = "<group>"; };
 		BC699AB825F9E69B00F57209 /* WLPhrasesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLPhrasesListView.swift; sourceTree = "<group>"; };
 		BC699AC925FB114D00F57209 /* UINavigationController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extensions.swift"; sourceTree = "<group>"; };
@@ -1117,7 +1115,6 @@
 				BC123E8325B181D80043178E /* Locale+Extensions.swift */,
 				BCB92B7425B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift */,
 				BCA93F8025E883A50081DDF6 /* Array+Extensions.swift */,
-				BC699A7225F8705100F57209 /* Error+Extensions.swift */,
 				BC699AC925FB114D00F57209 /* UINavigationController+Extensions.swift */,
 				BC65E27E2620341B00E436C7 /* SolanaSDK.AnyTransaction+Extensions.swift */,
 				BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */,
@@ -2014,7 +2011,6 @@
 				BCA93F6225E77EF50081DDF6 /* TokenSettingsCell.swift in Sources */,
 				BCEB205925E1519600B54FEF /* RestoreWalletContainer.swift in Sources */,
 				BC5257E725CBACEA0076317E /* Fiat.swift in Sources */,
-				BC699A7325F8705100F57209 /* Error+Extensions.swift in Sources */,
 				BC290A00256B9C95002A727C /* SwapTokenWalletView.swift in Sources */,
 				BC3ADEA02570E1B9002B3B16 /* Transaction.swift in Sources */,
 				BC2DA294260B079100B50738 /* WLAddTokenButton.swift in Sources */,
