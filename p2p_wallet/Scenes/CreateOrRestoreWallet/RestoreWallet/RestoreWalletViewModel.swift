@@ -57,13 +57,12 @@ extension RestoreWalletViewModel: AccountRestorationHandler {
     func accountDidRestore(_ account: SolanaSDK.Account) {
         do {
             try accountStorage.save(account)
-            handler.creatingOrRestoringWalletDidComplete(isRestoration: true)
+            handler.restoringWalletDidComplete()
         } catch {
-            accountRestoreFailed(error)
+            errorMessage.onNext(error.readableDescription)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                self?.handler.creatingOrRestoringWalletDidCancel()
+            }
         }
-    }
-    
-    func accountRestoreFailed(_ error: Error) {
-        errorMessage.onNext(error.readableDescription)
     }
 }
