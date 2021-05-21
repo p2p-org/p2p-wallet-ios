@@ -43,7 +43,8 @@ class CreateOrRestoreWalletViewController: BaseVC {
         switch scene {
         case .welcome:
             removeAllChilds()
-            add(child: WelcomeVC(createOrRestoreWalletViewModel: viewModel))
+//            add(child: WelcomeVC(createOrRestoreWalletViewModel: viewModel))
+            add(child: WelcomeVC.SecondVC(createOrRestoreWalletViewModel: viewModel))
         case .createWallet:
             let vc = scenesFactory.makeCreateWalletViewController()
             vc.isModalInPresentation = true
