@@ -15,6 +15,7 @@ protocol RootViewControllerScenesFactory {
     func makeMainViewController() -> MainViewController
     func makeLocalAuthVC() -> LocalAuthVC
     func makeWellDoneVC() -> WellDoneVC
+    func makeWelcomeBackVC() -> WelcomeBackVC
     func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
 }
 
@@ -90,11 +91,11 @@ class RootViewController: BaseVC {
             let vc = scenesFactory.makeOnboardingViewController()
             isBoardingCompleted = false
             transition(to: vc)
-        case .onboardingDone:
+        case .onboardingDone(let isRestoration):
             isLightStatusBarStyle = true
             setNeedsStatusBarAppearanceUpdate()
             
-            let vc = scenesFactory.makeWellDoneVC()
+            let vc: UIViewController = isRestoration ? scenesFactory.makeWelcomeBackVC(): scenesFactory.makeWellDoneVC()
             isBoardingCompleted = false
             transition(to: vc)
         case .main:

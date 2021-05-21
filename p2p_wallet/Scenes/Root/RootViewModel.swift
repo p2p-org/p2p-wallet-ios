@@ -14,7 +14,7 @@ enum RootNavigatableScene: Equatable {
     case initializing
     case createOrRestoreWallet
     case onboarding
-    case onboardingDone
+    case onboardingDone(isRestoration: Bool)
     case main
     case resetPincodeWithASeedPhrase
 }
@@ -28,7 +28,7 @@ struct AuthenticationPresentationStyle {
 }
 
 protocol CreateOrRestoreWalletHandler {
-    func creatingOrRestoringWalletDidComplete()
+    func creatingOrRestoringWalletDidComplete(isRestoration: Bool)
 }
 
 protocol OnboardingHandler {
@@ -45,6 +45,7 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     private let accountStorage: KeychainAccountStorage
     
     private(set) var isAuthenticating = false
+    private var isRestoration = false
     lazy var lastAuthenticationTimestamp = Int(Date().timeIntervalSince1970) - timeRequiredForAuthentication
     
     var isSessionExpired: Bool {
@@ -85,7 +86,8 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     }
     
     // MARK: - Handler
-    func creatingOrRestoringWalletDidComplete() {
+    func creatingOrRestoringWalletDidComplete(isRestoration: Bool) {
+        self.isRestoration = isRestoration
         navigationSubject.accept(.onboarding)
     }
     
@@ -94,7 +96,7 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     }
     
     @objc func onboardingDidComplete() {
-        navigationSubject.accept(.onboardingDone)
+        navigationSubject.accept(.onboardingDone(isRestoration: isRestoration))
     }
     
     @objc func navigateToMain() {
