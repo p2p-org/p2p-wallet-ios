@@ -15,7 +15,6 @@ enum DerivableAccountsNavigatableScene {
 
 protocol AccountRestorationHandler {
     func accountDidRestore(_ account: SolanaSDK.Account)
-    func accountRestoreFailed(_ error: Error)
 }
 
 class DerivableAccountsViewModel: ViewModelType {
@@ -77,34 +76,37 @@ class DerivableAccountsViewModel: ViewModelType {
         input.selectDerivationPath.onNext(())
     }
     
-    @objc func restoreAccount() {
+    func restoreAccount() -> Single<SolanaSDK.Account> {
+        // cancel any requests
+        output.accountsViewModel.cancelRequest()
+        
         // if account is successfully loaded
         if let account = output.accountsViewModel.data.first?.info {
-            handler.accountDidRestore(account)
-            return
+            return .just(account)
         }
         
         // load account
-        UIApplication.shared.showIndetermineHud()
-        DispatchQueue.global().async { [weak self] in
-            guard let phrases = self?.phrases,
-                  let path = self?.output.selectedDerivationPath.value,
-                  let handler = self?.handler
-            else {
-                return
-            }
-            do {
-                let account = try SolanaSDK.Account(phrase: phrases, network: Defaults.apiEndPoint.network, derivablePath: path)
-                DispatchQueue.main.async {
-                    UIApplication.shared.hideHud()
-                    handler.accountDidRestore(account)
+        return Single.create { observer in
+            DispatchQueue.global().async { [weak self] in
+                guard let phrases = self?.phrases,
+                      let path = self?.output.selectedDerivationPath.value
+                else {
+                    observer(.failure(SolanaSDK.Error.unknown))
+                    return
                 }
-            } catch {
-                DispatchQueue.main.async {
-                    UIApplication.shared.hideHud()
-                    handler.accountRestoreFailed(error)
+                do {
+                    let account = try SolanaSDK.Account(phrase: phrases, network: Defaults.apiEndPoint.network, derivablePath: path)
+                    observer(.success(account))
+                } catch {
+                    observer(.failure(error))
                 }
             }
+            return Disposables.create()
         }
+            .observe(on: MainScheduler.instance)
+    }
+    
+    func restoringDidComplete(account: SolanaSDK.Account) {
+        handler.accountDidRestore(account)
     }
 }

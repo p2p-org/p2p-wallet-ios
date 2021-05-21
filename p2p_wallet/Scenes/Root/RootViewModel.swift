@@ -28,7 +28,9 @@ struct AuthenticationPresentationStyle {
 }
 
 protocol CreateOrRestoreWalletHandler {
-    func creatingOrRestoringWalletDidComplete(isRestoration: Bool)
+    func creatingWalletDidComplete()
+    func restoringWalletDidComplete()
+    func creatingOrRestoringWalletDidCancel()
 }
 
 protocol OnboardingHandler {
@@ -86,9 +88,18 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     }
     
     // MARK: - Handler
-    func creatingOrRestoringWalletDidComplete(isRestoration: Bool) {
-        self.isRestoration = isRestoration
+    func creatingWalletDidComplete() {
+        self.isRestoration = false
         navigationSubject.accept(.onboarding)
+    }
+    
+    func restoringWalletDidComplete() {
+        self.isRestoration = true
+        navigationSubject.accept(.onboarding)
+    }
+    
+    func creatingOrRestoringWalletDidCancel() {
+        logout()
     }
     
     func onboardingDidCancel() {
