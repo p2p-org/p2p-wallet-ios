@@ -28,6 +28,7 @@ class SwapTokenViewModel {
     let solanaSDK: SolanaSDK
     let transactionManager: TransactionsManager
     let pricesRepository: PricesRepository
+    let authenticationHandler: AuthenticationHandler
     let wallets: [Wallet]
     lazy var processTransactionViewModel: ProcessTransactionViewModel = {
         let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager, pricesRepository: pricesRepository)
@@ -60,12 +61,14 @@ class SwapTokenViewModel {
         pricesRepository: PricesRepository,
         wallets: [Wallet],
         fromWallet: Wallet? = nil,
-        toWallet: Wallet? = nil
+        toWallet: Wallet? = nil,
+        authenticationHandler: AuthenticationHandler
     ) {
         self.solanaSDK = solanaSDK
         self.transactionManager = transactionManager
         self.pricesRepository = pricesRepository
         self.wallets = wallets
+        self.authenticationHandler = authenticationHandler
         pools.reload()
         
         sourceWallet.accept(fromWallet ?? wallets.first(where: {$0.token.symbol == "SOL"}))
@@ -164,8 +167,18 @@ class SwapTokenViewModel {
     }
     
     @objc func showSwapSceneAndSwap() {
-        navigationSubject.onNext(.processTransaction)
-        swap()
+        authenticationHandler.authenticate(
+            presentationStyle:
+                .init(
+                    isRequired: false,
+                    isFullScreen: false,
+                    useBiometry: true,
+                    completion: { [weak self] in
+                        self?.navigationSubject.onNext(.processTransaction)
+                        self?.swap()
+                    }
+                )
+        )
     }
     
     func destinationWalletDidSelect(_ wallet: Wallet) {

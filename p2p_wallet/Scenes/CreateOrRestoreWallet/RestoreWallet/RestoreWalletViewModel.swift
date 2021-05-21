@@ -12,7 +12,6 @@ import RxCocoa
 enum RestoreWalletNavigatableScene {
     case enterPhrases
     case derivableAccounts(phrases: [String])
-    case welcomeBack(phrases: [String], derivablePath: SolanaSDK.DerivablePath)
 }
 
 class RestoreWalletViewModel {
@@ -31,10 +30,6 @@ class RestoreWalletViewModel {
     init(accountStorage: KeychainAccountStorage, handler: CreateOrRestoreWalletHandler) {
         self.accountStorage = accountStorage
         self.handler = handler
-    }
-    
-    func finish() {
-        handler.creatingOrRestoringWalletDidComplete()
     }
     
     // MARK: - Actions
@@ -58,8 +53,16 @@ extension RestoreWalletViewModel: PhrasesCreationHandler {
     }
 }
 
-extension RestoreWalletViewModel: CreateDerivableAccountHandler {
-    func createDerivableAccount(phrases: [String], derivablePath: SolanaSDK.DerivablePath) {
-        navigationSubject.onNext(.welcomeBack(phrases: phrases, derivablePath: derivablePath))
+extension RestoreWalletViewModel: AccountRestorationHandler {
+    func accountDidRestore(_ account: SolanaSDK.Account) {
+        do {
+            try accountStorage.save(account)
+            handler.restoringWalletDidComplete()
+        } catch {
+            errorMessage.onNext(error.readableDescription)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                self?.handler.creatingOrRestoringWalletDidCancel()
+            }
+        }
     }
 }

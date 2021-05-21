@@ -20,7 +20,9 @@ extension ProcessTransactionRootView {
             // specific errors
             
             // When trying to send a wrapped token to a new SOL wallet (which is not yet in the blockchain)
-            if error.readableDescription == L10n.invalidAccountInfo {
+            if error.readableDescription == L10n.invalidAccountInfo ||
+                error.readableDescription == L10n.couldNotRetrieveAccountInfo
+            {
                 layoutWithSpecificError(
                     image: .transactionErrorInvalidAccountInfo
                 )

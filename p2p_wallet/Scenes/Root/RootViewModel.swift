@@ -14,21 +14,15 @@ enum RootNavigatableScene: Equatable {
     case initializing
     case createOrRestoreWallet
     case onboarding
-    case onboardingDone
+    case onboardingDone(isRestoration: Bool)
     case main
     case resetPincodeWithASeedPhrase
 }
 
-struct AuthenticationPresentationStyle {
-    var title: String = L10n.enterPINCode
-    let isRequired: Bool
-    let isFullScreen: Bool
-    var useBiometry: Bool
-    var completion: (() -> Void)?
-}
-
 protocol CreateOrRestoreWalletHandler {
-    func creatingOrRestoringWalletDidComplete()
+    func creatingWalletDidComplete()
+    func restoringWalletDidComplete()
+    func creatingOrRestoringWalletDidCancel()
 }
 
 protocol OnboardingHandler {
@@ -36,7 +30,7 @@ protocol OnboardingHandler {
     func onboardingDidComplete()
 }
 
-class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
+class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler, AuthenticationHandler {
     // MARK: - Constants
     private var timeRequiredForAuthentication = 10 // in seconds
     
@@ -45,6 +39,7 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     private let accountStorage: KeychainAccountStorage
     
     private(set) var isAuthenticating = false
+    private var isRestoration = false
     lazy var lastAuthenticationTimestamp = Int(Date().timeIntervalSince1970) - timeRequiredForAuthentication
     
     var isSessionExpired: Bool {
@@ -85,8 +80,18 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     }
     
     // MARK: - Handler
-    func creatingOrRestoringWalletDidComplete() {
+    func creatingWalletDidComplete() {
+        self.isRestoration = false
         navigationSubject.accept(.onboarding)
+    }
+    
+    func restoringWalletDidComplete() {
+        self.isRestoration = true
+        navigationSubject.accept(.onboarding)
+    }
+    
+    func creatingOrRestoringWalletDidCancel() {
+        logout()
     }
     
     func onboardingDidCancel() {
@@ -94,11 +99,15 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler {
     }
     
     @objc func onboardingDidComplete() {
-        navigationSubject.accept(.onboardingDone)
+        navigationSubject.accept(.onboardingDone(isRestoration: isRestoration))
     }
     
     @objc func navigateToMain() {
         navigationSubject.accept(.main)
+    }
+    
+    func authenticate(presentationStyle: AuthenticationPresentationStyle) {
+        authenticationSubject.onNext(presentationStyle)
     }
     
     @objc func resetPinCodeWithASeedPhrase() {

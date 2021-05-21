@@ -41,10 +41,6 @@ class RestoreWalletContainer {
         )
         return DerivableAccountsVC(viewModel: viewModel)
     }
-    
-    func makeWelcomeBackVC(phrases: [String], derivablePath: SolanaSDK.DerivablePath) -> WelcomeBackVC {
-        WelcomeBackVC(phrases: phrases, derivablePath: derivablePath, accountStorage: accountStorage, restoreWalletViewModel: viewModel)
-    }
 }
 
 extension RestoreWalletContainer: RestoreWalletScenesFactory {}
