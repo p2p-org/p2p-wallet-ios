@@ -323,7 +323,7 @@ private extension SwapTokenViewModel {
               expectedAmount > 0,
               let sourceDecimals = sourceDecimals,
               let destinationDecimals = destinationDecimals,
-              let inputAmountLamports = currentPool.value?.inputAmount(forEstimatedAmount: expectedAmount.toLamport(decimals: destinationDecimals))
+              let inputAmountLamports = currentPool.value?.inputAmount(forEstimatedAmount: expectedAmount.toLamport(decimals: destinationDecimals), includeFees: true)
         else {return nil}
         return inputAmountLamports.convertToBalance(decimals: sourceDecimals)
     }
@@ -335,7 +335,7 @@ private extension SwapTokenViewModel {
               inputAmount > 0,
               let sourceDecimals = sourceDecimals,
               let destinationDecimals = destinationDecimals,
-              let estimatedAmountLamports = currentPool.value?.estimatedAmount(forInputAmount: inputAmount.toLamport(decimals: sourceDecimals))
+              let estimatedAmountLamports = currentPool.value?.estimatedAmount(forInputAmount: inputAmount.toLamport(decimals: sourceDecimals), includeFees: true)
         else {return nil}
         return estimatedAmountLamports.convertToBalance(decimals: destinationDecimals)
     }
@@ -347,7 +347,7 @@ private extension SwapTokenViewModel {
               amount > 0,
               let sourceDecimals = sourceDecimals,
               let destinationDecimals = destinationDecimals,
-              let estimatedAmountLamports = currentPool.value?.estimatedAmount(forInputAmount: amount.toLamport(decimals: sourceDecimals)),
+              let estimatedAmountLamports = currentPool.value?.estimatedAmount(forInputAmount: amount.toLamport(decimals: sourceDecimals), includeFees: true),
               let lamports = currentPool.value?.minimumReceiveAmount(estimatedAmount: estimatedAmountLamports, slippage: slippage.value)
         else {return nil}
         return lamports.convertToBalance(decimals: destinationDecimals)

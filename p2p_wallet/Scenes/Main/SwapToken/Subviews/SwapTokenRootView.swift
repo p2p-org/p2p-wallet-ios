@@ -273,7 +273,7 @@ private extension SwapTokenRootView {
                 else {
                     return nil
                 }
-                let amountOut = pool.estimatedAmount(forInputAmount: amountIn.toLamport(decimals: fromDecimals))?.convertToBalance(decimals: toDecimals)
+                let amountOut = pool.estimatedAmount(forInputAmount: amountIn.toLamport(decimals: fromDecimals), includeFees: true)?.convertToBalance(decimals: toDecimals)
                 
                 var rate = amountOut / amountIn
                 if isReversed {
@@ -324,17 +324,17 @@ private extension SwapTokenRootView {
         
         Observable.combineLatest(
             viewModel.currentPool,
-            viewModel.sourceWallet,
+            viewModel.destinationWallet,
             viewModel.sourceAmountInput
         )
-            .map {pool, sourceWallet, amountInput -> String? in
+            .map {pool, wallet, amountInput -> String? in
                 guard let pool = pool,
-                      let decimals = sourceWallet?.token.decimals,
+                      let decimals = wallet?.token.decimals,
                       let lamports = amountInput.double?.toLamport(decimals: decimals),
                       let amount = pool.fee(forInputAmount: lamports)
                 else {return nil}
                 
-                return amount.toString(maximumFractionDigits: 5) + " " + sourceWallet?.token.symbol
+                return amount.toString(maximumFractionDigits: 5) + " " + wallet?.token.symbol
             }
             .asDriver(onErrorJustReturn: nil)
             .drive(feeLabel.rx.text)
