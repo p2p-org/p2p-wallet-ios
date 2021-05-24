@@ -32,7 +32,7 @@ class HomeRootView: BEView {
         
         let view = UIView(backgroundColor: .background)
         view.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: .init(top: 10, left: 16, bottom: 6, right: 16))
+        stackView.autoPinEdgesToSuperviewEdges(with: .init(top: 10, left: 16, bottom: 6, right: 20))
         return view
     }()
     
