@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 enum CreateWalletNavigatableScene {
-    case termsAndConditions
+//    case termsAndConditions
     case createPhrases
     case dismiss
 }
@@ -30,11 +30,11 @@ class CreateWalletViewModel {
     }
     
     func kickOff() {
-        if !Defaults.isTermAndConditionsAccepted {
-            navigationSubject.onNext(.termsAndConditions)
-        } else {
+//        if !Defaults.isTermAndConditionsAccepted {
+//            navigationSubject.onNext(.termsAndConditions)
+//        } else {
             navigationSubject.onNext(.createPhrases)
-        }
+//        }
     }
     
     func finish() {
