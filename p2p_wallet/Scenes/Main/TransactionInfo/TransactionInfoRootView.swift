@@ -38,7 +38,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     private lazy var transactionDetailView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
     private lazy var transactionIdSection = createTransactionIdSection(signatureLabel: signatureLabel)
     private lazy var blockNumSection = createLabelsOnlySection(title: L10n.blockNumber)
-    private lazy var feeSection = createLabelsOnlySection(title: L10n.fee)
+    private lazy var feeSection = createFeeSection()
     
 //    private lazy var transactionFromSection = createLabelsOnlySection(title: L10n.from)
     
@@ -243,12 +243,14 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         
         // disable fee for receive action
         var shouldAddFeeSection = true
+        var wasPaidByP2POrg = false
         
         switch transaction.value {
         case let transferTransaction as SolanaSDK.TransferTransaction:
             var fromIconView: UIView
             var toIconView: UIView
             let coinLogoImageView = CoinLogoImageView(size: 45)
+            wasPaidByP2POrg = transferTransaction.wasPaidByP2POrg
             
             switch transferTransaction.transferType {
             case .send:
@@ -326,6 +328,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         
         if shouldAddFeeSection {
             transactionDetailView.addArrangedSubview(feeSection)
+            feeSection.titleView.arrangedSubviews.first(where: {$0.tag == 2})?.isHidden = !wasPaidByP2POrg
         }
         transactionDetailView.addArrangedSubview(blockNumSection)
     }
@@ -341,6 +344,20 @@ private extension TransactionInfoRootView {
         )
         section.contentView.text = content
         return section
+    }
+    
+    func createFeeSection() -> TransactionInfoSection<UIStackView, UILabel>
+    {
+        return TransactionInfoSection(
+            titleView: UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, builder: {
+                createSectionTitle(L10n.fee)
+                
+                UILabel(text: L10n.PaidByP2p.org, textSize: 13, weight: .semibold, textColor: .h5887ff)
+                    .padding(.init(x: 8, y: 2), backgroundColor: .eff3ff, cornerRadius: 4)
+                    .withTag(2)
+            }),
+            contentView: createContentLabel()
+        )
     }
     
     func createTransactionIdSection(signatureLabel: UILabel) -> TransactionInfoSection<UILabel, UIStackView>
