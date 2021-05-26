@@ -114,12 +114,12 @@ class ProfileVC: ProfileVCBase {
                 showRightArrow: false
             ),
             
-            createCell(
-                image: .settingsFreeTransactions,
-                text: L10n.useFreeTransactions,
-                descriptionView: useFreeTransactionsSwitcher,
-                showRightArrow: false
-            ),
+//            createCell(
+//                image: .settingsFreeTransactions,
+//                text: L10n.useFreeTransactions,
+//                descriptionView: useFreeTransactionsSwitcher,
+//                showRightArrow: false
+//            ),
             
             BEStackViewSpacing(10),
             
