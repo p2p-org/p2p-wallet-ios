@@ -98,26 +98,20 @@ extension ProcessTransactionRootView {
                 self.titleLabel.text = L10n.sending + "..."
                 self.subtitleLabel.text = L10n.transactionProcessing
                 self.transactionStatusImageView.image = .transactionProcessing
-                self.buttonStackView.addArrangedSubviews([
-                    WLButton.stepButton(enabledColor: .f6f6f8, textColor: .a3a5baStatic, label: L10n.viewInBlockchainExplorer)
-                        .enableIf(self.viewModel.transaction?.signature != nil)
-                        .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.viewInExplorer)),
+                self.buttonStackView.addArrangedSubview(
                     WLButton.stepButton(type: .blue, label: L10n.done)
                         .enableIf(self.viewModel.transaction?.signature != nil)
                         .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.done))
-                ])
+                )
             case .confirmed:
                 self.titleLabel.text = L10n.success
                 self.subtitleLabel.text = L10n.transactionHasBeenConfirmed
                 self.transactionStatusImageView.image = .transactionSuccess
-                self.buttonStackView.addArrangedSubviews([
-                    WLButton.stepButton(enabledColor: .f6f6f8, textColor: .a3a5baStatic, label: L10n.viewInBlockchainExplorer)
-                        .enableIf(self.viewModel.transaction?.signature != nil)
-                        .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.viewInExplorer)),
+                self.buttonStackView.addArrangedSubview(
                     WLButton.stepButton(type: .blue, label: L10n.done)
                         .enableIf(self.viewModel.transaction?.signature != nil)
                         .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.done))
-                ])
+                )
             }
         } else {
             self.titleLabel.text = L10n.sending + "..."
