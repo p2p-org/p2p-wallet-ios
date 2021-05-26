@@ -16,6 +16,7 @@ enum SendTokenNavigatableScene {
     case chooseAddress
     case scanQrCode
     case processTransaction
+    case feeInfo
 }
 
 class SendTokenViewModel {
@@ -152,6 +153,10 @@ class SendTokenViewModel {
     
     @objc func sendAndShowProcessTransactionScene() {
         authenticateAndSend(showScene: true)
+    }
+    
+    @objc func showFeeInfo() {
+        navigationSubject.onNext(.feeInfo)
     }
     
     private func authenticateAndSend(showScene: Bool = false) {

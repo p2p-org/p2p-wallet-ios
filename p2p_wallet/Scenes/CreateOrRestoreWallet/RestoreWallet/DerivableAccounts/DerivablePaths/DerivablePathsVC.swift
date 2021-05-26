@@ -48,10 +48,9 @@ class DerivablePathsVC: WLIndicatorModalVC, BECollectionViewDelegate {
     
     override func setUp() {
         super.setUp()
-        let headerStackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
+        let headerStackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
             UILabel(text: L10n.selectDerivablePath, textSize: 17, weight: .semibold)
-            UIImageView(width: 26.67, height: 26.67, image: .questionMarkCircle, tintColor: .a3a5ba)
-                .onTap(self, action: #selector(questionMarkDidTouch))
+            UILabel(text: L10n.ByDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet.toUseAnAlternativePathTryRestoringAnExistingWallet, textSize: 15, textColor: .textSecondary, numberOfLines: 0)
         }
         containerView.addSubview(headerStackView)
         headerStackView.autoPinEdgesToSuperviewEdges(with: .init(all: 20), excludingEdge: .bottom)
@@ -80,16 +79,12 @@ class DerivablePathsVC: WLIndicatorModalVC, BECollectionViewDelegate {
         viewModel.overrideData(by: paths)
         delegate?.derivablePathsVC(self, didSelectPath: path.path)
     }
-    
-    @objc func questionMarkDidTouch() {
-        showAlert(title: L10n.info, message: L10n.ByDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet.toUseAnAlternativePathTryRestoringAnExistingWallet)
-    }
 }
 
 extension DerivablePathsVC: UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         CustomHeightPresentationController(
-            height: { 268 },
+            height: { 362 },
             presentedViewController: presented,
             presenting: presenting
         )

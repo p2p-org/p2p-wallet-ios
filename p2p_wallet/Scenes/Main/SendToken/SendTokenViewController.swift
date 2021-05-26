@@ -83,6 +83,9 @@ class SendTokenViewController: WLIndicatorModalVC {
         case .processTransaction:
             let vc = ProcessTransactionViewController(viewModel: self.viewModel.processTransactionViewModel)
             self.present(vc, animated: true, completion: nil)
+        case .feeInfo:
+            let vc = FreeTransactionInfoVC(position: .bottom)
+            self.present(vc, animated: true, completion: nil)
         }
     }
 }
