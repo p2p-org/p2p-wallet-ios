@@ -351,3 +351,6 @@
 "By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet." = "По умолчанию кошелек P2P будет использовать m/44'/501'/0'/0' в качестве пути деривации для основного кошелька.  Чтобы использовать альтернативный путь, попробуйте восстановить существующий кошелек.";
 "Could not retrieve account info" = "Не удалось получить информацию об аккаунте";
 "deprecated" = "устаревший";
+"Will be paid by p2p.org\nWe take care of all transfers costs." = "Оплачивается p2p.org\nМы берем на себя все расходы по переводу.";
+"Great!" = "Отлично!";
+"Paid by p2p.org" = "Заплачена p2p.org";

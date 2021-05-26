@@ -62,6 +62,20 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
         super.flush()
     }
     
+    override func join(_ newItems: [SolanaSDK.AnyTransaction]) -> [SolanaSDK.AnyTransaction] {
+        let filteredItems = newItems
+            .filter {
+                // filter out undefined Transfer transaction
+                if let transferTransaction = $0.value as? SolanaSDK.TransferTransaction,
+                   transferTransaction.transferType == nil
+                {
+                    return false
+                }
+                return true
+            }
+        return super.join(filteredItems)
+    }
+    
     // MARK: - Helpers
     private func updatePrices() {
         let newData = updatedTransactionsWithPrices(transactions: data)

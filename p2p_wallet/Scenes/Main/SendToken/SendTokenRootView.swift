@@ -49,6 +49,9 @@ class SendTokenRootView: ScrollableVStackRootView {
     
     lazy var feeLabel = LazyLabel<Double>(textColor: .textSecondary)
     
+    lazy var feeInfoButton = UIImageView(width: 16.67, height: 16.67, image: .infoCircle, tintColor: .a3a5ba)
+        .onTap(viewModel, action: #selector(SendTokenViewModel.showFeeInfo))
+    
     lazy var sendButton = WLButton.stepButton(type: .blue, label: L10n.sendNow)
         .onTap(viewModel, action: #selector(SendTokenViewModel.sendAndShowProcessTransactionScene))
     
@@ -103,16 +106,21 @@ class SendTokenRootView: ScrollableVStackRootView {
             UIView.separator(height: 1, color: .separator),
             BEStackViewSpacing(20),
             
-            UIView.col([
-                .row([
-                    coinSymbolPriceLabel,
+            UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing) {
+                    coinSymbolPriceLabel
                     coinPriceLabel
-                ]),
-                .row([
-                    UILabel(text: L10n.fee + ":", textColor: .textSecondary),
+                }
+                
+                UIStackView(axis: .horizontal, spacing: 6.67, alignment: .center, distribution: .fill) {
+                    UILabel(text: L10n.fee + ":", textColor: .textSecondary)
                     feeLabel
-                ])
-            ]),
+                        .withContentHuggingPriority(.required, for: .horizontal)
+                    feeInfoButton
+                        .withContentHuggingPriority(.required, for: .horizontal)
+                }
+            },
+            
             BEStackViewSpacing(20),
             
             UIView.separator(height: 1, color: .separator),
@@ -138,6 +146,8 @@ class SendTokenRootView: ScrollableVStackRootView {
         scrollView.contentView.addSubview(symbolLabel)
         symbolLabel.centerXAnchor.constraint(equalTo: coinImageView.centerXAnchor).isActive = true
         symbolLabel.centerYAnchor.constraint(equalTo: equityValueLabel.centerYAnchor).isActive = true
+        
+        feeInfoButton.isHidden = !Defaults.useFreeTransaction
     }
     
     func bind() {
