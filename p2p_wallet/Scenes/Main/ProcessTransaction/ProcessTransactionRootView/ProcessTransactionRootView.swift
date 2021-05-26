@@ -28,14 +28,20 @@ class ProcessTransactionRootView: BEView {
     }()
     lazy var amountLabel = UILabel(textSize: 27, weight: .bold, textAlignment: .center)
     lazy var equityAmountLabel = UILabel(textColor: .textSecondary, textAlignment: .center)
-    lazy var transactionIDLabel = UILabel(weight: .semibold)
+    lazy var transactionIDLabel = UILabel(weight: .semibold, numberOfLines: 2)
     
     // MARK: - Substackviews
     lazy var transactionIDStackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
         UILabel(text: L10n.transactionID, textSize: 13, weight: .medium, textColor: .textSecondary)
             .padding(.init(x: 20, y: 0)),
         BEStackViewSpacing(8),
-        transactionIDLabel
+        UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
+            transactionIDLabel
+            
+            UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
+                .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                .onTap(viewModel, action: #selector(ProcessTransactionViewModel.viewInExplorer))
+        }
             .padding(.init(x: 20, y: 0)),
         BEStackViewSpacing(20),
         UIView.separator(height: 1, color: .separator)
