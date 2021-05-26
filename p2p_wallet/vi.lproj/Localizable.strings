@@ -349,3 +349,5 @@
 "By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet." = "Theo mặc định, ví P2P sẽ sử dụng m/44'/501'/0'/0' làm đường dẫn dẫn xuất cho ví chính.  Để sử dụng một đường dẫn thay thế, hãy thử khôi phục ví hiện có.";
 "Could not retrieve account info" = "Không thể truy xuất thông tin tài khoản";
 "deprecated" = "đã lỗi thời";
+"Will be paid by p2p.org\nWe take care of all transfers costs." = "Sẽ do p2p.org thanh toán\nChúng tôi sẽ lo mọi chi phí chuyển tiền.";
+"Great!" = "Tuyệt quá!";

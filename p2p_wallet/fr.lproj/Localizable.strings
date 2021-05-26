@@ -349,3 +349,5 @@
 "By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet." = "Par défaut, le portefeuille P2P utilisera m/44'/501'/0'/0' comme chemin de dérivation pour le portefeuille principal.  Pour utiliser un autre chemin, essayez de restaurer un portefeuille existant.";
 "Could not retrieve account info" = "Impossible de récupérer les informations du compte";
 "deprecated" = "obsolète";
+"Will be paid by p2p.org\nWe take care of all transfers costs." = "Sera payé par p2p.org\nNous prenons en charge tous les frais de transfert.";
+"Great!" = "Génial!";
