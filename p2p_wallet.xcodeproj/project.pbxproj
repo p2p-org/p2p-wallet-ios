@@ -191,6 +191,7 @@
 		BC8F6953260AEA12002FDCCD /* ChooseWalletCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F6952260AEA12002FDCCD /* ChooseWalletCollectionView.swift */; };
 		BC9DC0D4265F79F900BA39E9 /* PendingTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DC0D3265F79F900BA39E9 /* PendingTransaction.swift */; };
 		BC9DC0D6265F7ABB00BA39E9 /* PendingTransactionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DC0D5265F7ABB00BA39E9 /* PendingTransactionsManager.swift */; };
+		BC9DC0DF265F8E8600BA39E9 /* ProcessingTransactionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9DC0DE265F8E8600BA39E9 /* ProcessingTransactionViewModel.swift */; };
 		BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */; };
 		BCA93F5325E77C240081DDF6 /* TokenSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5025E77C240081DDF6 /* TokenSettingsViewModel.swift */; };
 		BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5125E77C240081DDF6 /* TokenSettingsRootView.swift */; };
@@ -504,6 +505,7 @@
 		BC8F6952260AEA12002FDCCD /* ChooseWalletCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWalletCollectionView.swift; sourceTree = "<group>"; };
 		BC9DC0D3265F79F900BA39E9 /* PendingTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingTransaction.swift; sourceTree = "<group>"; };
 		BC9DC0D5265F7ABB00BA39E9 /* PendingTransactionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingTransactionsManager.swift; sourceTree = "<group>"; };
+		BC9DC0DE265F8E8600BA39E9 /* ProcessingTransactionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingTransactionViewModel.swift; sourceTree = "<group>"; };
 		BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		BCA93F5025E77C240081DDF6 /* TokenSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsViewModel.swift; sourceTree = "<group>"; };
 		BCA93F5125E77C240081DDF6 /* TokenSettingsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsRootView.swift; sourceTree = "<group>"; };
@@ -874,6 +876,7 @@
 		BC5DB15625F75E33003D00BE /* ProcessTransaction */ = {
 			isa = PBXGroup;
 			children = (
+				BC9DC0DD265F8E5500BA39E9 /* ProcessingTransaction */,
 				BC5DB15725F75E59003D00BE /* ProcessTransactionViewModel.swift */,
 				BCEE51322625424800271AB9 /* ProcessTransactionRootView */,
 				BC5DB15925F75E59003D00BE /* ProcessTransactionViewController.swift */,
@@ -1100,6 +1103,14 @@
 				BC8F694C260AE956002FDCCD /* ChooseWalletCollectionView+SupplementaryViews.swift */,
 			);
 			path = ChooseWalletCollectionView;
+			sourceTree = "<group>";
+		};
+		BC9DC0DD265F8E5500BA39E9 /* ProcessingTransaction */ = {
+			isa = PBXGroup;
+			children = (
+				BC9DC0DE265F8E8600BA39E9 /* ProcessingTransactionViewModel.swift */,
+			);
+			path = ProcessingTransaction;
 			sourceTree = "<group>";
 		};
 		BC9DFA152541F777009DB93E /* Extensions */ = {
@@ -2121,6 +2132,7 @@
 				BC7BCB7B2562807E0018DECA /* Double+Extensions.swift in Sources */,
 				BC2EC1802553B1F7006EEDA5 /* SectionFooterView.swift in Sources */,
 				BCA93F6A25E78D8A0081DDF6 /* WLNavigationBar.swift in Sources */,
+				BC9DC0DF265F8E8600BA39E9 /* ProcessingTransactionViewModel.swift in Sources */,
 				BC2EC1CF2553ED1B006EEDA5 /* HalfSizePresentationController.swift in Sources */,
 				BCD5E76525512EDC00F51299 /* NewsCell.swift in Sources */,
 				BC5A97E2260DC977009674C4 /* WalletsCollectionView.swift in Sources */,
