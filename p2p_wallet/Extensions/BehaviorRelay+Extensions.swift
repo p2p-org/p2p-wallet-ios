@@ -9,10 +9,10 @@ import Foundation
 import RxCocoa
 
 extension BehaviorRelay where Element: RangeReplaceableCollection {
-    func insert(_ element: Element.Element, where condition: ((Element.Element) throws -> Bool), shouldUpdate: Bool = false)
+    func insert(_ element: Element.Element, where condition: ((Element.Element) throws -> Bool)? = nil, shouldUpdate: Bool = false)
     {
         var newArray = value
-        guard let index = try? newArray.firstIndex(where: condition) else {
+        guard let condition = condition, let index = try? newArray.firstIndex(where: condition) else {
             newArray.append(element)
             accept(newArray)
             return

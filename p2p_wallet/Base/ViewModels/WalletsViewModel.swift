@@ -15,7 +15,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Properties
     private let solanaSDK: SolanaSDK
     private let socket: SolanaSDK.Socket
-    private let transactionManager: TransactionsManager?
+    private let transactionManager: TransactionsManagerType
     private let pricesRepository: PricesRepository
     
     private var defaultsDisposables = [DefaultsDisposable]()
@@ -31,7 +31,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     init(
         solanaSDK: SolanaSDK,
         socket: SolanaSDK.Socket,
-        transactionManager: TransactionsManager? = nil,
+        transactionManager: TransactionsManagerType,
         pricesRepository: PricesRepository
     ) {
         self.solanaSDK = solanaSDK
@@ -63,6 +63,13 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                     wallet.lamports = notification.value.lamports
                     return wallet
                 }
+            })
+            .disposed(by: disposeBag)
+        
+        // transactions manager
+        transactionManager.pendingTransactionsObservable
+            .subscribe(onNext: {[weak self] pendingTransactions in
+                self?.updateWithPendingTransactions()
             })
             .disposed(by: disposeBag)
         
@@ -109,6 +116,10 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                     // map prices
                     .map {[weak self] wallets in
                         self?.mapPrices(wallets: wallets) ?? []
+                    }
+                    // map pending transaction
+                    .map {[weak self] wallets in
+                        self?.mapPendingTransaction(wallets: wallets) ?? []
                     }
                     // update prices
                     .do(onSuccess: {[weak self] wallets in
@@ -177,6 +188,17 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         return wallets
     }
     
+    private func mapPendingTransaction(wallets: [Wallet]) -> [Wallet] {
+        var wallets = wallets
+        for pendingTransaction in transactionManager.pendingTransactions {
+            if let index = wallets.firstIndex(where: {$0.pubkey == pendingTransaction.walletAddress})
+            {
+                wallets[index].lamports = (wallets[index].lamports ?? 0) + pendingTransaction.changeInLamports
+            }
+        }
+        return wallets
+    }
+    
     // MARK: - Helpers
     private func updatePrices() {
         guard currentState == .loaded else {return}
@@ -187,6 +209,12 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private func updateWalletsVisibility() {
         guard currentState == .loaded else {return}
         let wallets = mapVisibility(wallets: data)
+        overrideData(by: wallets)
+    }
+    
+    private func updateWithPendingTransactions() {
+        guard currentState == .loaded else {return}
+        let wallets = mapPendingTransaction(wallets: data)
         overrideData(by: wallets)
     }
     

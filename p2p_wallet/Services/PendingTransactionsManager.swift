@@ -7,10 +7,11 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 protocol TransactionsManagerType {
     var pendingTransactions: [PendingTransaction] {get}
-    var transactionDidConfirm: PublishSubject<PendingTransaction> {get}
+    var pendingTransactionsObservable: Observable<[PendingTransaction]> {get}
     func processPendingTransaction(_ transaction: PendingTransaction)
 }
 
@@ -21,8 +22,14 @@ class PendingTransactionsManager: TransactionsManagerType {
     // MARK: - Properties
     private let handler: TransactionHandler
     
-    private(set) var pendingTransactions = [PendingTransaction]()
-    let transactionDidConfirm = PublishSubject<PendingTransaction>()
+    private let pendingTransactionsRelay = BehaviorRelay<[PendingTransaction]>(value: [])
+    
+    var pendingTransactions: [PendingTransaction] {
+        pendingTransactionsRelay.value
+    }
+    var pendingTransactionsObservable: Observable<[PendingTransaction]> {
+        pendingTransactionsRelay.asObservable()
+    }
     
     // MARK: - Initializer
     init(handler: TransactionHandler) {
@@ -32,13 +39,24 @@ class PendingTransactionsManager: TransactionsManagerType {
     // MARK: - Methods
     func processPendingTransaction(_ transaction: PendingTransaction) {
         guard !pendingTransactions.contains(transaction) else {return}
-        pendingTransactions.append(transaction)
+        
+        // modify transactions
+        var transactions = pendingTransactions
+        transactions.append(transaction)
+        pendingTransactionsRelay.accept(transactions)
+        
+        // handle transaction
         handler.observeTransactionCompletion(signature: transaction.signature)
             .subscribe(onCompleted: { [weak self] in
-                self?.pendingTransactions.removeAll(where: {$0 == transaction})
-                self?.transactionDidConfirm.onNext(transaction)
+                guard let strongSelf = self else {return}
+                var transactions = strongSelf.pendingTransactions
+                transactions.removeAll(where: {$0 == transaction})
+                strongSelf.pendingTransactionsRelay.accept(transactions)
             }, onError: { [weak self] _ in
-                self?.pendingTransactions.removeAll(where: {$0 == transaction})
+                guard let strongSelf = self else {return}
+                var transactions = strongSelf.pendingTransactions
+                transactions.removeAll(where: {$0 == transaction})
+                strongSelf.pendingTransactionsRelay.accept(transactions)
             })
             .disposed(by: bag)
     }

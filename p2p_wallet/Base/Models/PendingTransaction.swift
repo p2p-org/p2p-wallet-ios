@@ -10,5 +10,5 @@ import Foundation
 struct PendingTransaction: Equatable {
     let signature: String
     let walletAddress: String
-    let change: Double // change in amount
+    let changeInLamports: SolanaSDK.Lamports // change in amount
 }
