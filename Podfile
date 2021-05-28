@@ -28,6 +28,7 @@ target 'p2p_wallet' do
   pod 'Charts'
   pod 'RxBiBinding'
   pod "RxAppState"
+  pod 'JazziconSwift'
   
   # Firebase
   pod 'Firebase/Analytics'

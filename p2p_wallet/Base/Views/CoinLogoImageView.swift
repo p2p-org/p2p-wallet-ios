@@ -6,8 +6,13 @@
 //
 
 import Foundation
+import JazziconSwift
 
 class CoinLogoImageView: BEView {
+    // MARK: - Properties
+    private let size: CGFloat
+    static var cachedJazziconSeeds = [String: UInt64]()
+    
     // MARK: - Subviews
     lazy var tokenIcon = UIImageView(tintColor: .textBlack)
     lazy var wrappingTokenIcon = UIImageView(width: 16, height: 16, cornerRadius: 4)
@@ -26,10 +31,10 @@ class CoinLogoImageView: BEView {
         
         return view
     }()
-    private var placeholder: UIView?
     
     // MARK: - Initializer
     init(size: CGFloat, cornerRadius: CGFloat = 12) {
+        self.size = size
         super.init(frame: .zero)
         configureForAutoLayout()
         autoSetDimensions(to: .init(width: size, height: size))
@@ -57,17 +62,26 @@ class CoinLogoImageView: BEView {
     
     func setUp(token: SolanaSDK.Token? = nil) {
         // default
-        placeholder?.isHidden = true
-        tokenIcon.isHidden = false
         wrappingView.alpha = 0
         backgroundColor = .clear
         
         // with token
-        if let token = token {
-            tokenIcon.image = token.image
-        } else if let placeholder = placeholder {
-            placeholder.isHidden = false
-            tokenIcon.isHidden = true
+        if let image = token?.image {
+            tokenIcon.image = image
+        } else {
+            let jazzicon: Jazzicon
+            if let token = token {
+                var seed = Self.cachedJazziconSeeds[token.symbol]
+                if seed == nil {
+                    seed = UInt64.random(in: 0..<10000000)
+                    Self.cachedJazziconSeeds[token.symbol] = seed
+                }
+                
+                jazzicon = Jazzicon(seed: seed!)
+            } else {
+                jazzicon = Jazzicon()
+            }
+            tokenIcon.image = jazzicon.generateImage(size: size)
         }
         
         // wrapped by
@@ -84,15 +98,6 @@ class CoinLogoImageView: BEView {
     
     func with(token: SolanaSDK.Token?) -> Self {
         setUp(token: token)
-        return self
-    }
-    
-    func with(placeholder: UIView) -> Self {
-        self.placeholder?.removeFromSuperview()
-        self.placeholder = placeholder
-        insertSubview(placeholder, at: 0)
-        placeholder.autoPinEdgesToSuperviewEdges()
-        setUp(wallet: nil)
         return self
     }
 }
