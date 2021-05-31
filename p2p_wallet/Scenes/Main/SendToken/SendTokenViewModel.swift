@@ -245,16 +245,20 @@ class SendTokenViewModel {
         }
         
         request
-            .subscribe(onSuccess: { signature in
+            .subscribe(onSuccess: { [weak self] signature in
                 transaction.signatureInfo = .init(signature: signature)
-                self.processTransactionViewModel.transactionInfo.accept(
+                self?.processTransactionViewModel.transactionInfo.accept(
                     TransactionInfo(transaction: transaction)
                 )
-                if !isSendingSOL {
-                    self.transactionManager.process(transaction)
-                }
-            }, onFailure: {error in
-                self.processTransactionViewModel.transactionInfo.accept(
+                self?.transactionManager.process(transaction)
+                self?.walletsRepository.updateWallet(where: {$0.pubkey == currentWallet.pubkey}, transform: {
+                    var wallet = $0
+                    wallet.lamports = (wallet.lamports ?? 0) - lamport
+                    return wallet
+                })
+                
+            }, onFailure: {[weak self] error in
+                self?.processTransactionViewModel.transactionInfo.accept(
                     TransactionInfo(transaction: transaction, error: error)
                 )
             })

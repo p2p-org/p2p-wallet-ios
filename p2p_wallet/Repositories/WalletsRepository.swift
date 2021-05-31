@@ -27,9 +27,16 @@ protocol WalletsRepository: BEListViewModelType {
     var isHiddenWalletsShown: BehaviorRelay<Bool> {get}
     func hiddenWallets() -> [Wallet]
     func refreshUI()
+    
+    @discardableResult
+    func updateWallet(where predicate: (Wallet) -> Bool, transform: (Wallet) -> Wallet?) -> Bool
 }
 
 extension WalletsViewModel: WalletsRepository {
+    func updateWallet(where predicate: (Wallet) -> Bool, transform: (Wallet) -> Wallet?) -> Bool {
+        updateItem(where: predicate, transform: transform)
+    }
+    
     func getWallets() -> [Wallet] {
         data
     }

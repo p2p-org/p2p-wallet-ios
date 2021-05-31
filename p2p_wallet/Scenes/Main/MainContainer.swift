@@ -22,7 +22,7 @@ class MainContainer {
         self.rootViewModel = rootViewModel
         self.accountStorage = accountStorage
         self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
-        self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl, publicKey: accountStorage.account?.publicKey)
+        self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
         self.transactionManager = TransactionsManager(socket: socket)
         self.pricesManager = PricesManager(tokensRepository: solanaSDK, fetcher: CryptoComparePricesFetcher(), refreshAfter: 10 * 1000) // 10minutes
         
@@ -184,7 +184,7 @@ class MainContainer {
                         Defaults.apiEndPoint = endpoint
                         self.socket.disconnect()
                         self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
-                        self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl, publicKey: accountStorage.account?.publicKey)
+                        self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
                         observer(.completed)
                         self.rootViewModel.reload()
                     }
