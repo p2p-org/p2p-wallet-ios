@@ -15,7 +15,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Properties
     private let solanaSDK: SolanaSDK
     private let socket: SolanaSDK.Socket
-    private let transactionManager: TransactionsManager?
+    private let transactionManager: TransactionsManager
     private let pricesRepository: PricesRepository
     
     private var defaultsDisposables = [DefaultsDisposable]()
@@ -31,7 +31,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     init(
         solanaSDK: SolanaSDK,
         socket: SolanaSDK.Socket,
-        transactionManager: TransactionsManager? = nil,
+        transactionManager: TransactionsManager,
         pricesRepository: PricesRepository
     ) {
         self.solanaSDK = solanaSDK
@@ -121,6 +121,14 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                         }
                     })
             }
+    }
+    
+    override func reload() {
+        // disable refreshing when there is a transaction in progress
+        if transactionManager.processingTransaction.count > 0 {
+            return
+        }
+        super.reload()
     }
     
     override var dataDidChange: Observable<Void> {
