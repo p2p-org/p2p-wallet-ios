@@ -14,6 +14,9 @@ struct TransactionsManager {
     
     let disposeBag = DisposeBag()
     let socket: SolanaSDK.Socket
+    var processingTransaction: [Transaction] {
+        transactions.value.filter {$0.status != .confirmed}
+    }
     
     init(socket: SolanaSDK.Socket) {
         self.socket = socket
@@ -23,6 +26,8 @@ struct TransactionsManager {
         guard transaction.status != .confirmed, let signature = transaction.signature else {return}
         transactions.insert(transaction, where: {$0.signature == signature}, shouldUpdate: true)
         socket.observeSignatureNotification(signature: signature)
+            .timeout(.seconds(5*60), scheduler: MainScheduler.instance)
+            .catch {_ in .empty()}
             .subscribe(onCompleted: {
                 var transaction = transaction
                 transaction.status = .confirmed
