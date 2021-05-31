@@ -55,14 +55,14 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             })
             .disposed(by: disposeBag)
         
-        // observe SOL balance
-        socket.observeAccountNotification()
+        // observe tokens' balance
+        socket.observeAccountNotifications()
             .subscribe(onNext: {[weak self] notification in
-                self?.updateItem(where: {$0.token.symbol == "SOL"}) { wallet in
+                self?.updateItem(where: {$0.pubkey == notification.pubkey}, transform: { wallet in
                     var wallet = wallet
-                    wallet.lamports = notification.value.lamports
+                    wallet.lamports = notification.lamports
                     return wallet
-                }
+                })
             })
             .disposed(by: disposeBag)
         
@@ -113,6 +113,12 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                     // update prices
                     .do(onSuccess: {[weak self] wallets in
                         self?.pricesRepository.fetchCurrentPrices(coins: wallets.map {$0.token.symbol})
+                    })
+                    // accountSubscribe
+                    .do(onSuccess: {[weak self] wallets in
+                        for wallet in wallets where wallet.pubkey != nil {
+                            self?.socket.subscribeAccountNotification(account: wallet.pubkey!)
+                        }
                     })
             }
     }
