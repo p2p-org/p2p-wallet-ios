@@ -250,9 +250,7 @@ class SendTokenViewModel {
                 self.processTransactionViewModel.transactionInfo.accept(
                     TransactionInfo(transaction: transaction)
                 )
-                if !isSendingSOL {
-                    self.transactionManager.process(transaction)
-                }
+                self.transactionManager.process(transaction)
             }, onFailure: {error in
                 self.processTransactionViewModel.transactionInfo.accept(
                     TransactionInfo(transaction: transaction, error: error)
