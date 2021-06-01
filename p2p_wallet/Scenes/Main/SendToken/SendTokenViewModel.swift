@@ -196,8 +196,6 @@ class SendTokenViewModel {
               let currentWallet = currentWallet.value,
               let sender = currentWallet.pubkey,
               let receiver = destinationAddressInput.value,
-              let price = currentWallet.priceInCurrentFiat,
-              price > 0,
               var amount = amountInput.value.double
         else {
             return
@@ -207,7 +205,10 @@ class SendTokenViewModel {
         
         let isFiatMode = self.isFiatMode.value
         
-        if isFiatMode { amount = amount / price }
+        if isFiatMode,
+           let price = currentWallet.priceInCurrentFiat,
+           price > 0
+        { amount = amount / price }
         
         if showScene {
             navigationSubject.onNext(.processTransaction)
