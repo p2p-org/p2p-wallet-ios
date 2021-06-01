@@ -231,6 +231,10 @@
 		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58359255CE96B00B10F65 /* ProfileVC.swift */; };
 		BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58379255D29C500B10F65 /* WLBottomSheet.swift */; };
+		BCB7C7C62665EEC400FEC68E /* Send.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C22665EEC400FEC68E /* Send.swift */; };
+		BCB7C7C72665EEC400FEC68E /* SendViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C32665EEC400FEC68E /* SendViewModel.swift */; };
+		BCB7C7C82665EEC400FEC68E /* SendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C42665EEC400FEC68E /* SendViewController.swift */; };
+		BCB7C7C92665EEC400FEC68E /* SendRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C52665EEC400FEC68E /* SendRootView.swift */; };
 		BCB92B7025B5311500FF615E /* SelectAppearanceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B6F25B5311500FF615E /* SelectAppearanceVC.swift */; };
 		BCB92B7525B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B7425B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift */; };
 		BCB92B8025B5386F00FF615E /* WLIntroVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B7F25B5386F00FF615E /* WLIntroVC.swift */; };
@@ -548,6 +552,10 @@
 		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58359255CE96B00B10F65 /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
 		BCB58379255D29C500B10F65 /* WLBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBottomSheet.swift; sourceTree = "<group>"; };
+		BCB7C7C22665EEC400FEC68E /* Send.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Send.swift; sourceTree = "<group>"; };
+		BCB7C7C32665EEC400FEC68E /* SendViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendViewModel.swift; sourceTree = "<group>"; };
+		BCB7C7C42665EEC400FEC68E /* SendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendViewController.swift; sourceTree = "<group>"; };
+		BCB7C7C52665EEC400FEC68E /* SendRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendRootView.swift; sourceTree = "<group>"; };
 		BCB92B6F25B5311500FF615E /* SelectAppearanceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAppearanceVC.swift; sourceTree = "<group>"; };
 		BCB92B7425B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIUserInterfaceStyle+Extensions.swift"; sourceTree = "<group>"; };
 		BCB92B7F25B5386F00FF615E /* WLIntroVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLIntroVC.swift; sourceTree = "<group>"; };
@@ -719,6 +727,7 @@
 		BC22A5D825D2716400F7026D /* SendToken */ = {
 			isa = PBXGroup;
 			children = (
+				BCB7C7B12665ECE700FEC68E /* Send */,
 				BC22A5CF25D2715C00F7026D /* SendTokenViewModel.swift */,
 				BC22A5D025D2715C00F7026D /* SendTokenRootView.swift */,
 				BC22A5D125D2715C00F7026D /* SendTokenViewController.swift */,
@@ -1303,6 +1312,17 @@
 				BC1FFEE7262977940014F027 /* WLEnterPhrasesVC.swift */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		BCB7C7B12665ECE700FEC68E /* Send */ = {
+			isa = PBXGroup;
+			children = (
+				BCB7C7C22665EEC400FEC68E /* Send.swift */,
+				BCB7C7C32665EEC400FEC68E /* SendViewModel.swift */,
+				BCB7C7C42665EEC400FEC68E /* SendViewController.swift */,
+				BCB7C7C52665EEC400FEC68E /* SendRootView.swift */,
+			);
+			path = Send;
 			sourceTree = "<group>";
 		};
 		BCBBE1822563C0F400533F6B /* ReceiveToken */ = {
@@ -1892,6 +1912,7 @@
 				BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */,
 				BC5DB15B25F75E59003D00BE /* ProcessTransactionRootView.swift in Sources */,
 				BCBE14A025EF3D110014BCE5 /* HomeRootView.swift in Sources */,
+				BCB7C7C62665EEC400FEC68E /* Send.swift in Sources */,
 				BCE3D55B25F212960092F91B /* WalletDetailViewModel.swift in Sources */,
 				BC22A5D325D2715C00F7026D /* SendTokenRootView.swift in Sources */,
 				BC5A971E260C6D42009674C4 /* ActiveWalletsSection.swift in Sources */,
@@ -1978,6 +1999,7 @@
 				BC65DFEF261D695200E436C7 /* TransactionCell.swift in Sources */,
 				BCA9941F25AE93D5005BD8FB /* Fonts+Generated.swift in Sources */,
 				BCBE149C25EF3D110014BCE5 /* HomeCollectionView.swift in Sources */,
+				BCB7C7C82665EEC400FEC68E /* SendViewController.swift in Sources */,
 				BCEE508526244B6300271AB9 /* WLEmptyCell.swift in Sources */,
 				BCE42E0225DFA0B50021540E /* CreateWalletViewModel.swift in Sources */,
 				BC54DCF92587089700A65566 /* WalletGraphViewModel.swift in Sources */,
@@ -2089,8 +2111,10 @@
 				BC8F6830260989F8002FDCCD /* QrCodeView.swift in Sources */,
 				BC54DD8E25872FE500A65566 /* HorizontalPicker.swift in Sources */,
 				BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */,
+				BCB7C7C72665EEC400FEC68E /* SendViewModel.swift in Sources */,
 				BCFC768825E2EAB800FBE148 /* MainViewController.swift in Sources */,
 				BC10511E258884D800398EA2 /* ConfigureSecurityVC.swift in Sources */,
+				BCB7C7C92665EEC400FEC68E /* SendRootView.swift in Sources */,
 				BC2EC1D22553ED1B006EEDA5 /* FlexibleHeightPresentationController.swift in Sources */,
 				BC89ADB825E0FCB3001A6791 /* BaseOnboardingVC.swift in Sources */,
 				BC65E256261EF34B00E436C7 /* TransactionInfoViewModel.swift in Sources */,
