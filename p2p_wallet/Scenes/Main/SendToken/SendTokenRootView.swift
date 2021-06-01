@@ -190,6 +190,14 @@ class SendTokenRootView: ScrollableVStackRootView {
             })
             .disposed(by: disposeBag)
         
+        // equity label
+        viewModel.currentWallet.distinctUntilChanged()
+            .map {$0?.priceInCurrentFiat == nil}
+            .map {$0 ? 0: 1}
+            .asDriver(onErrorJustReturn: 1)
+            .drive(equityValueLabel.rx.alpha)
+            .disposed(by: disposeBag)
+        
         Observable.combineLatest(
             viewModel.currentWallet.distinctUntilChanged(),
             viewModel.isFiatMode.distinctUntilChanged(),
