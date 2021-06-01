@@ -102,21 +102,33 @@ class SendTokenViewModel {
             .map {_ in self.verifyError()}
             .bind(to: errorSubject)
             .disposed(by: disposeBag)
+        
+        // detect if price is unavailable
+        currentWallet.distinctUntilChanged()
+            .subscribe(onNext: {[weak self] wallet in
+                if wallet?.priceInCurrentFiat == nil && self?.isFiatMode.value == true
+                {
+                    self?.isFiatMode.accept(false)
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     private func bindAvailableAmount() {
         // available amount
         if let wallet = currentWallet.value,
-           var amount = wallet.amount,
-           var fee = fee.value,
-           let priceInCurrentFiat = wallet.priceInCurrentFiat
+           var amount = wallet.amount
         {
+            var fee = fee.value
+            let priceInCurrentFiat = wallet.priceInCurrentFiat
+            
             if isFiatMode.value {
                 fee = fee * priceInCurrentFiat
                 amount = wallet.amountInCurrentFiat
             }
+            
             if wallet.token.symbol == "SOL" {
-                amount -= fee
+                amount -= (fee ?? 0)
                 if amount < 0 {
                     amount = 0
                 }
@@ -140,7 +152,13 @@ class SendTokenViewModel {
     }
     
     @objc func switchMode() {
-        isFiatMode.accept(!isFiatMode.value)
+        if currentWallet.value?.priceInCurrentFiat == nil {
+            if isFiatMode.value {
+                isFiatMode.accept(false)
+            }
+        } else {
+            isFiatMode.accept(!isFiatMode.value)
+        }
     }
     
     @objc func scanQrCode() {
