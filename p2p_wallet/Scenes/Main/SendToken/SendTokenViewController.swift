@@ -7,11 +7,12 @@
 
 import Foundation
 import UIKit
-import SwiftUI
+import RxSwift
 import Action
 
 protocol SendTokenScenesFactory {
     func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController
+    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<SolanaSDK.TransactionID>) -> ProcessTransaction.ViewController
 }
 
 class SendTokenViewController: WLIndicatorModalVC {
@@ -80,8 +81,12 @@ class SendTokenViewController: WLIndicatorModalVC {
             }
             vc.modalPresentationStyle = .custom
             self.present(vc, animated: true, completion: nil)
-        case .processTransaction:
-            let vc = ProcessTransactionViewController(viewModel: self.viewModel.processTransactionViewModel)
+        case .processTransaction(let request):
+            guard let wallet = viewModel.currentWallet.value,
+                  let receiver = viewModel.destinationAddressInput.value,
+                  let amount = viewModel.amountInput.value?.double
+            else {return}
+            let vc = scenesFactory.makeProcessTransactionViewController(transactionType: .send(from: wallet, to: receiver, amount: amount), request: request)
             self.present(vc, animated: true, completion: nil)
         case .feeInfo:
             let vc = FreeTransactionInfoVC(position: .bottom)

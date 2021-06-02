@@ -42,7 +42,7 @@ extension ProcessTransaction {
                 
                 UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
                     .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
-                    .onTap(viewModel, action: #selector(ProcessTransactionViewModel.viewInExplorer))
+                    .onTap(viewModel, action: #selector(ViewModel.showExplorer))
             }
                 .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(20),
@@ -85,6 +85,7 @@ extension ProcessTransaction {
                     guard let transactionType = self?.viewModel.output.transactionType
                     else {return}
                     self?.layoutWithTransactionType(transactionType, transactionId: transactionId, transactionStatus: transactionStatus)
+                    self?.transactionStatusDidChange?()
                 })
                 .disposed(by: disposeBag)
         }

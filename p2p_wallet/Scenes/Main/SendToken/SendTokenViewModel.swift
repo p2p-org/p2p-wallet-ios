@@ -15,7 +15,7 @@ enum SendTokenNavigatableScene {
     case chooseWallet
     case chooseAddress
     case scanQrCode
-    case processTransaction
+    case processTransaction(request: Single<SolanaSDK.TransactionID>)
     case feeInfo
 }
 
@@ -27,16 +27,6 @@ class SendTokenViewModel {
     let walletsRepository: WalletsRepository
     let disposeBag = DisposeBag()
     let solanaSDK: SolanaSDK
-    let transactionManager: TransactionsManager
-    let pricesRepository: PricesRepository
-    lazy var processTransactionViewModel: ProcessTransactionViewModel = {
-        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager, pricesRepository: pricesRepository)
-        viewModel.tryAgainAction = CocoaAction {
-            self.send()
-            return .just(())
-        }
-        return viewModel
-    }()
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<SendTokenNavigatableScene>()
@@ -61,16 +51,12 @@ class SendTokenViewModel {
     init(
         solanaSDK: SolanaSDK,
         walletsRepository: WalletsRepository,
-        transactionManager: TransactionsManager,
-        pricesRepository: PricesRepository,
         activeWallet: Wallet? = nil,
         destinationAddress: String? = nil,
         authenticationHandler: AuthenticationHandler
     ) {
         self.solanaSDK = solanaSDK
         self.walletsRepository = walletsRepository
-        self.transactionManager = transactionManager
-        self.pricesRepository = pricesRepository
         self.currentWallet.accept(activeWallet ?? walletsRepository.getWallets().first)
         self.destinationAddressInput.accept(destinationAddress)
         self.authenticationHandler = authenticationHandler
@@ -210,34 +196,6 @@ class SendTokenViewModel {
            price > 0
         { amount = amount / price }
         
-        if showScene {
-            navigationSubject.onNext(.processTransaction)
-        }
-        
-        var transaction = Transaction(
-            signatureInfo: nil,
-            type: .send,
-            amount: -amount,
-            symbol: currentWallet.token.symbol,
-            status: .processing
-        )
-        
-        // Verify address
-        if !NSRegularExpression.publicKey.matches(receiver)
-        {
-            self.processTransactionViewModel.transactionInfo.accept(
-                .init(
-                    transaction: transaction,
-                    error: SolanaSDK.Error.other(L10n.wrongWalletAddress)
-                )
-            )
-            return
-        } else {
-            self.processTransactionViewModel.transactionInfo.accept(
-                TransactionInfo(transaction: transaction)
-            )
-        }
-        
         // prepare amount
         let lamport = amount.toLamport(decimals: decimals)
         
@@ -263,25 +221,10 @@ class SendTokenViewModel {
             )
         }
         
-        request
-            .subscribe(onSuccess: { [weak self] signature in
-                transaction.signatureInfo = .init(signature: signature)
-                self?.processTransactionViewModel.transactionInfo.accept(
-                    TransactionInfo(transaction: transaction)
-                )
-                self?.transactionManager.process(transaction)
-                self?.walletsRepository.updateWallet(where: {$0.pubkey == currentWallet.pubkey}, transform: {
-                    var wallet = $0
-                    wallet.lamports = (wallet.lamports ?? 0) - lamport
-                    return wallet
-                })
-                
-            }, onFailure: {[weak self] error in
-                self?.processTransactionViewModel.transactionInfo.accept(
-                    TransactionInfo(transaction: transaction, error: error)
-                )
-            })
-            .disposed(by: disposeBag)
+        // show processing scene
+        navigationSubject.onNext(
+            .processTransaction(request: request)
+        )
     }
     
     /// Verify current context
