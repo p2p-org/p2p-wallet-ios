@@ -34,7 +34,7 @@ extension SendToken {
         case chooseWallet
         case chooseAddress
         case scanQrCode
-        case processTransaction(request: Single<SolanaSDK.TransactionID>)
+        case processTransaction(request: Single<SolanaSDK.TransactionID>, transactionType: ProcessTransaction.TransactionType)
         case feeInfo
     }
     
@@ -347,7 +347,7 @@ extension SendToken {
             
             // show processing scene
             navigationSubject.onNext(
-                .processTransaction(request: request)
+                .processTransaction(request: request, transactionType: .send(from: wallet, to: receiver, amount: amount))
             )
         }
     }

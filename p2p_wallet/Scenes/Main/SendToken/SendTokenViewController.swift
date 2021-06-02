@@ -10,11 +10,6 @@ import UIKit
 import RxSwift
 import Action
 
-protocol SendTokenScenesFactory {
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<SolanaSDK.TransactionID>) -> ProcessTransaction.ViewController
-}
-
 class SendTokenViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
