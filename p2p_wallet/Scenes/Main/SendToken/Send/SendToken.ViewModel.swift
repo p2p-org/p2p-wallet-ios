@@ -162,6 +162,18 @@ extension SendToken {
                 })
                 .disposed(by: disposeBag)
             
+            // available amount
+            Observable.combineLatest(
+                walletSubject.asObservable(),
+                currencyModeSubject.asObservable()
+            )
+                .map {(wallet, currencyMode) -> Double? in
+                    guard let wallet = wallet else {return nil}
+                    return Self.calculateAvailableAmount(wallet: wallet, currencyMode: currencyMode)
+                }
+                .bind(to: availableAmountSubject)
+                .disposed(by: disposeBag)
+            
             // error subject
             Observable.combineLatest(
                 walletSubject.distinctUntilChanged(),
@@ -233,6 +245,17 @@ extension SendToken {
         }
         
         // MARK: - Helpers
+        private static func calculateAvailableAmount(
+            wallet: Wallet?,
+            currencyMode: CurrencyMode
+        ) -> Double? {
+            switch currencyMode {
+            case .token:
+                return wallet?.amount
+            case .fiat:
+                return wallet?.priceInCurrentFiat == nil ? nil: wallet?.priceInCurrentFiat
+            }
+        }
         
         /// Verify current context
         /// - Returns: Error string, nil if no error appear
