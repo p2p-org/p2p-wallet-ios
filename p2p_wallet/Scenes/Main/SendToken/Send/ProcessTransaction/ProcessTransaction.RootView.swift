@@ -19,6 +19,36 @@ extension ProcessTransaction {
         var transactionStatusDidChange: (() -> Void)?
         
         // MARK: - Subviews
+        lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
+        lazy var titleLabel = UILabel(textSize: 21, weight: .semibold, numberOfLines: 0, textAlignment: .center)
+        lazy var subtitleLabel = UILabel(weight: .medium, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
+        lazy var transactionStatusImageView = UIImageView(width: 65, height: 65, image: .transactionProcessing)
+        lazy var transactionIndicatorView: TransactionIndicatorView = {
+            let indicatorView = TransactionIndicatorView(height: 1, backgroundColor: .separator)
+            indicatorView.tintColor = .h5887ff
+            return indicatorView
+        }()
+        lazy var amountLabel = UILabel(textSize: 27, weight: .bold, textAlignment: .center)
+        lazy var equityAmountLabel = UILabel(textColor: .textSecondary, textAlignment: .center)
+        lazy var transactionIDLabel = UILabel(weight: .semibold, numberOfLines: 2)
+        
+        // MARK: - Substackviews
+        lazy var transactionIDStackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
+            UILabel(text: L10n.transactionID, textSize: 13, weight: .medium, textColor: .textSecondary)
+                .padding(.init(x: 20, y: 0)),
+            BEStackViewSpacing(8),
+            UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
+                transactionIDLabel
+                
+                UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
+                    .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                    .onTap(viewModel, action: #selector(ProcessTransactionViewModel.viewInExplorer))
+            }
+                .padding(.init(x: 20, y: 0)),
+            BEStackViewSpacing(20),
+            UIView.separator(height: 1, color: .separator)
+        ])
+        lazy var buttonStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
         
         // MARK: - Initializers
         init(viewModel: ViewModel) {
@@ -40,11 +70,20 @@ extension ProcessTransaction {
         
         // MARK: - Layout
         private func layout() {
+            addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 0, y: 30))
             
+            stackView.spacing = 0
         }
         
         private func bind() {
-            
+//            viewModel.transactionInfo
+//                .asDriver(onErrorJustReturn: TransactionInfo(transaction: nil, error: nil))
+//                .drive(onNext: {[weak self] transactionHandler in
+//                    self?.layout(transactionHandler: transactionHandler)
+//                    self?.transactionDidChange?()
+//                })
+//                .disposed(by: disposeBag)
         }
     }
 }
