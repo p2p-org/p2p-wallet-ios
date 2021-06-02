@@ -24,6 +24,7 @@ extension ProcessTransaction {
             let transactionId: Driver<SolanaSDK.TransactionID?>
             let transactionType: TransactionType
             let transactionStatus: Driver<TransactionStatus>
+            let pricesRepository: PricesRepository
         }
         
         // MARK: - Properties
@@ -48,7 +49,8 @@ extension ProcessTransaction {
             request: Single<SolanaSDK.TransactionID>,
             transactionHandler: TransactionHandler,
             transactionManager: TransactionsManager,
-            walletsRepository: WalletsRepository
+            walletsRepository: WalletsRepository,
+            pricesRepository: PricesRepository
         ) {
             self.transactionType = transactionType
             self.request = request
@@ -64,7 +66,8 @@ extension ProcessTransaction {
                     .asDriver(),
                 transactionType: transactionType,
                 transactionStatus: transactionStatusSubject
-                    .asDriver()
+                    .asDriver(),
+                pricesRepository: pricesRepository
             )
             
             executeRequest()

@@ -7,7 +7,7 @@
 
 import UIKit
 import RxSwift
-//import SwiftUI
+import RxCocoa
 
 extension ProcessTransaction {
     class RootView: BEView {
@@ -77,27 +77,16 @@ extension ProcessTransaction {
         }
         
         private func bind() {
-//            viewModel.transactionInfo
-//                .asDriver(onErrorJustReturn: TransactionInfo(transaction: nil, error: nil))
-//                .drive(onNext: {[weak self] transactionHandler in
-//                    self?.layout(transactionHandler: transactionHandler)
-//                    self?.transactionDidChange?()
-//                })
-//                .disposed(by: disposeBag)
+            Driver.combineLatest(
+                viewModel.output.transactionId,
+                viewModel.output.transactionStatus
+            )
+                .drive(onNext: { [weak self] (transactionId, transactionStatus) in
+                    guard let transactionType = self?.viewModel.output.transactionType
+                    else {return}
+                    self?.layoutWithTransactionType(transactionType, transactionId: transactionId, transactionStatus: transactionStatus)
+                })
+                .disposed(by: disposeBag)
         }
     }
 }
-
-
-//@available(iOS 13, *)
-//struct ProcessTransactionRootView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Group {
-//            UIViewPreview {
-//                ProcessTransaction.RootView(viewModel: ProcessTransaction.ViewModel())
-//            }
-//            .previewDevice("iPhone SE (2nd generation)")
-//        }
-//    }
-//}
-

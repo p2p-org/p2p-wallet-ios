@@ -9,8 +9,8 @@ import Foundation
 
 extension ProcessTransaction.RootView {
     // MARK: - Main layout function
-    func layout(
-        transactionType: ProcessTransaction.TransactionType,
+    func layoutWithTransactionType(
+        _ transactionType: ProcessTransaction.TransactionType,
         transactionId: SolanaSDK.TransactionID?,
         transactionStatus: ProcessTransaction.TransactionStatus
     ) {
@@ -21,13 +21,34 @@ extension ProcessTransaction.RootView {
         
         layoutByDefault()
         
+        // title, subtitle, image, button
         switch transactionStatus {
         case .processing:
-            layoutProcessingTransaction()
+            layoutProcessingTransaction(enableDoneButtonWhen: transactionId != nil)
         case .confirmed:
             layoutConfirmedTransaction()
         case .error(let error):
             layoutTransactionError(error, transactionType: transactionType)
+        }
+        
+        // amount & equity value
+        var symbol = ""
+        var amount = 0.0
+        switch transactionType {
+        case .send(let fromWallet, _, let sentAmount):
+            symbol = fromWallet.token.symbol
+            amount = sentAmount
+        }
+        
+        let equityValue = amount * viewModel.output.pricesRepository.currentPrice(for: symbol)?.value
+        self.amountLabel.text = "\(amount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
+        self.equityAmountLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
+        
+        // transaction id
+        if let signature = transactionId {
+            self.transactionIDLabel.text = signature
+        } else {
+            self.transactionIDStackView.isHidden = true
         }
     }
     
@@ -57,12 +78,25 @@ extension ProcessTransaction.RootView {
         ])
     }
     
-    private func layoutProcessingTransaction() {
-        
+    private func layoutProcessingTransaction(enableDoneButtonWhen condition: Bool) {
+        self.titleLabel.text = L10n.sending + "..."
+        self.subtitleLabel.text = L10n.transactionProcessing
+        self.transactionStatusImageView.image = .transactionProcessing
+        self.buttonStackView.addArrangedSubview(
+            WLButton.stepButton(type: .blue, label: L10n.done)
+                .enableIf(condition)
+                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.done))
+        )
     }
     
     private func layoutConfirmedTransaction() {
-        
+        self.titleLabel.text = L10n.success
+        self.subtitleLabel.text = L10n.transactionHasBeenConfirmed
+        self.transactionStatusImageView.image = .transactionSuccess
+        self.buttonStackView.addArrangedSubview(
+            WLButton.stepButton(type: .blue, label: L10n.done)
+                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.done))
+        )
     }
     
     private func layoutTransactionError(_ error: Error, transactionType: ProcessTransaction.TransactionType) {
