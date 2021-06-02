@@ -65,6 +65,7 @@ extension SendToken {
             let isValid: Driver<Bool>
             let error: Driver<String?>
             let useAllBalanceDidTouch: Driver<Double?>
+            let receiverAddress: Driver<String?>
         }
         
         // MARK: - Properties
@@ -124,6 +125,8 @@ extension SendToken {
                 error: errorSubject
                     .asDriver(onErrorJustReturn: nil),
                 useAllBalanceDidTouch: useAllBalanceDidTouchSubject
+                    .asDriver(onErrorJustReturn: nil),
+                receiverAddress: addressSubject
                     .asDriver(onErrorJustReturn: nil)
             )
             
@@ -207,9 +210,10 @@ extension SendToken {
             Observable.combineLatest(
                 errorSubject.map {$0 == nil},
                 walletSubject.map {$0 != nil},
-                addressSubject.map {$0 != nil}
+                addressSubject.map {$0 != nil && !$0!.isEmpty},
+                amountSubject.map {$0 != nil}
             )
-                .map {$0.0 && $0.1 && $0.2}
+                .map {$0.0 && $0.1 && $0.2 && $0.3}
                 .bind(to: isValidSubject)
                 .disposed(by: disposeBag)
         }
@@ -277,7 +281,7 @@ extension SendToken {
             case .token:
                 return wallet?.amount
             case .fiat:
-                return wallet?.priceInCurrentFiat == nil ? nil: wallet?.priceInCurrentFiat
+                return wallet?.amountInCurrentFiat
             }
         }
         

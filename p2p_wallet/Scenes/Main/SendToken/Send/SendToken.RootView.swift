@@ -30,7 +30,6 @@ extension SendToken {
             autocorrectionType: .no
         )
         lazy var changeModeButton = UILabel(weight: .semibold, textColor: .textSecondary)
-            .onTap(viewModel, action: #selector(ViewModel.switchCurrencyMode))
         lazy var symbolLabel = UILabel(weight: .semibold)
         lazy var equityValueLabel = UILabel(text: "≈", textColor: .textSecondary)
         lazy var coinSymbolPriceLabel = UILabel(textColor: .textSecondary)
@@ -92,6 +91,7 @@ extension SendToken {
                     changeModeButton
                         .withContentHuggingPriority(.required, for: .horizontal)
                         .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
+                        .onTap(viewModel, action: #selector(ViewModel.switchCurrencyMode))
                 ]),
                 BEStackViewSpacing(6),
                 
@@ -150,6 +150,10 @@ extension SendToken {
         
         private func bind() {
             // bind viewModel's input to controls
+            viewModel.input.amount
+                .subscribe(onNext: {print($0)})
+                .disposed(by: disposeBag)
+            
             viewModel.input.address
                 .bind(to: addressTextField.rx.text)
                 .disposed(by: disposeBag)
@@ -269,6 +273,44 @@ extension SendToken {
             feeLabel.subscribed(to: viewModel.output.fee) {
                 "\($0.toString(maximumFractionDigits: 9)) SOL"
             }
+                .disposed(by: disposeBag)
+            
+            // receiver address
+            viewModel.output.receiverAddress
+                .map {!NSRegularExpression.publicKey.matches($0 ?? "")}
+                .drive(walletIconView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            let destinationAddressInputEmpty = viewModel.output.receiverAddress
+                .map {$0 == nil || $0!.isEmpty}
+            
+            destinationAddressInputEmpty
+                .drive(clearAddressButton.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            let destinationAddressInputNotEmpty = destinationAddressInputEmpty
+                .map {!$0}
+            
+            destinationAddressInputNotEmpty
+                .drive(qrCodeImageView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            // error
+            viewModel.output.error
+                .map {
+                    if $0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid
+                    {
+                        return nil
+                    }
+                    return $0
+                }
+                .asDriver(onErrorJustReturn: nil)
+                .drive(errorLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // send button
+            viewModel.output.isValid
+                .drive(sendButton.rx.isEnabled)
                 .disposed(by: disposeBag)
         }
     }
