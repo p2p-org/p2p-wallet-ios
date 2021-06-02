@@ -101,6 +101,18 @@ class MainContainer {
         return vc
     }
     
+    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController {
+        let vm = SendToken.ViewModel(
+            repository: walletsViewModel,
+            walletPubkey: walletPubkey,
+            destinationAddress: destinationAddress,
+            apiClient: solanaSDK,
+            authenticationHandler: rootViewModel
+        )
+        let vc = SendToken.ViewController(viewModel: vm, scenesFactory: self)
+        return vc
+    }
+    
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController {
         let vm = SwapTokenViewModel(
             solanaSDK: solanaSDK,
