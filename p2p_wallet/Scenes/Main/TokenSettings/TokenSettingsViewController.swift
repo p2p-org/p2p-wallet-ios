@@ -90,7 +90,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
 }
 
 extension TokenSettingsViewController: ProcessTransactionViewControllerDelegate {
-    func processTransactionViewControllerDidComplete(_ vc: ProcessTransactionViewController) {
+    func processTransactionViewControllerDidComplete(_ vc: UIViewController) {
         vc.dismiss(animated: true) { [weak self] in
             self?.dismiss(animated: true, completion: { [weak self] in
                 guard let strongSelf = self else {return}
