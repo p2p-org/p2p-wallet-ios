@@ -89,17 +89,15 @@ class MainContainer {
         return ReceiveTokenViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController {
-        let vm = SendTokenViewModel(
-            solanaSDK: solanaSDK,
-            walletsRepository: walletsViewModel,
-            transactionManager: transactionManager,
-            pricesRepository: pricesManager,
-            activeWallet: activeWallet,
+    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController {
+        let vm = SendToken.ViewModel(
+            repository: walletsViewModel,
+            walletPubkey: walletPubkey,
             destinationAddress: destinationAddress,
+            apiClient: solanaSDK,
             authenticationHandler: rootViewModel
         )
-        let vc = SendTokenViewController(viewModel: vm, scenesFactory: self)
+        let vc = SendToken.ViewController(viewModel: vm, scenesFactory: self)
         return vc
     }
     
@@ -127,6 +125,18 @@ class MainContainer {
             return customFilter(item)
         }
         return ChooseWalletViewController(viewModel: viewModel)
+    }
+    
+    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<SolanaSDK.TransactionID>) -> ProcessTransaction.ViewController {
+        let viewModel = ProcessTransaction.ViewModel(
+            transactionType: transactionType,
+            request: request,
+            transactionHandler: socket,
+            transactionManager: transactionManager,
+            walletsRepository: walletsViewModel,
+            pricesRepository: pricesManager
+        )
+        return ProcessTransaction.ViewController(viewModel: viewModel)
     }
     
     // MARK: - Profile VCs

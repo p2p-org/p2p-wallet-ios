@@ -12,7 +12,7 @@ import Action
 protocol HomeScenesFactory {
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController
     func makeReceiveTokenViewController(pubkey: String?) -> ReceiveTokenViewController
-    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController
+    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController
     func makeMyProductsViewController() -> MyProductsViewController
     func makeProfileVC() -> ProfileVC
@@ -95,7 +95,7 @@ class HomeViewController: BaseVC {
             break
         case .sendToken(let address):
             let vc = self.scenesFactory
-                .makeSendTokenViewController(activeWallet: nil, destinationAddress: address)
+                .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
             self.present(vc, animated: true, completion: nil)
         case .swapToken:
             let vc = self.scenesFactory.makeSwapTokenViewController(fromWallet: nil)
