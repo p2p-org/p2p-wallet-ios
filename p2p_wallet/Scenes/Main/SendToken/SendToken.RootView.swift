@@ -149,11 +149,6 @@ extension SendToken {
         }
         
         private func bind() {
-            // bind viewModel's input to controls
-            viewModel.input.address
-                .bind(to: addressTextField.rx.text)
-                .disposed(by: disposeBag)
-            
             // bind control to viewModel's input
             amountTextField.rx.text
                 .map {$0?.double}
@@ -162,6 +157,7 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             addressTextField.rx.text
+                .skip(while: {$0?.isEmpty == true})
                 .bind(to: viewModel.input.address)
                 .disposed(by: disposeBag)
             
@@ -272,6 +268,10 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             // receiver address
+            viewModel.output.receiverAddress
+                .drive(addressTextField.rx.text)
+                .disposed(by: disposeBag)
+            
             viewModel.output.receiverAddress
                 .map {!NSRegularExpression.publicKey.matches($0 ?? "")}
                 .drive(walletIconView.rx.isHidden)
