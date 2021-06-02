@@ -1538,7 +1538,6 @@
 			isa = PBXGroup;
 			children = (
 				BC5DB15825F75E59003D00BE /* ProcessTransactionRootView.swift */,
-				BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */,
 				BCEE513B2625428E00271AB9 /* ProcessTransactionRootView+Layout.swift */,
 			);
 			path = ProcessTransactionRootView;
@@ -1576,6 +1575,7 @@
 				BC8F6944260AE69E002FDCCD /* WLSectionHeaderView.swift */,
 				BC2DA293260B079100B50738 /* WLAddTokenButton.swift */,
 				BCEE508426244B6300271AB9 /* WLEmptyCell.swift */,
+				BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
