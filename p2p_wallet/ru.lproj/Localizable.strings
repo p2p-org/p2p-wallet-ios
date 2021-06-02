@@ -352,3 +352,4 @@
 "Will be paid by p2p.org\nWe take care of all transfers costs." = "Оплачивается p2p.org\nМы берем на себя все расходы по переводу.";
 "Great!" = "Отлично!";
 "Paid by p2p.org" = "Заплачена p2p.org";
+"Connection rate limits exceeded" = "Превышены пределы скорости подключения";
