@@ -64,6 +64,7 @@ extension SendToken {
             let availableAmount: Driver<Double?>
             let isValid: Driver<Bool>
             let error: Driver<String?>
+            let useAllBalanceDidTouch: Driver<Double?>
         }
         
         // MARK: - Properties
@@ -85,6 +86,7 @@ extension SendToken {
         private let availableAmountSubject = BehaviorRelay<Double?>(value: nil)
         private let isValidSubject = BehaviorRelay<Bool>(value: false)
         private let errorSubject = BehaviorRelay<String?>(value: nil)
+        private let useAllBalanceDidTouchSubject = PublishSubject<Double?>()
         
         // MARK: - Initializer
         init(
@@ -120,6 +122,8 @@ extension SendToken {
                 isValid: isValidSubject
                     .asDriver(onErrorJustReturn: false),
                 error: errorSubject
+                    .asDriver(onErrorJustReturn: nil),
+                useAllBalanceDidTouch: useAllBalanceDidTouchSubject
                     .asDriver(onErrorJustReturn: nil)
             )
             
@@ -213,6 +217,7 @@ extension SendToken {
         // MARK: - Actions
         @objc func useAllBalance() {
             input.amount.onNext(availableAmountSubject.value)
+            useAllBalanceDidTouchSubject.onNext(availableAmountSubject.value)
         }
         
         @objc func clearDestinationAddress() {

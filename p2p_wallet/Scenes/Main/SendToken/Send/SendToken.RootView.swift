@@ -150,11 +150,6 @@ extension SendToken {
         
         private func bind() {
             // bind viewModel's input to controls
-            viewModel.input.amount
-                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
-                .bind(to: amountTextField.rx.text)
-                .disposed(by: disposeBag)
-            
             viewModel.input.address
                 .bind(to: addressTextField.rx.text)
                 .disposed(by: disposeBag)
@@ -162,6 +157,7 @@ extension SendToken {
             // bind control to viewModel's input
             amountTextField.rx.text
                 .map {$0?.double}
+                .distinctUntilChanged()
                 .bind(to: viewModel.input.amount)
                 .disposed(by: disposeBag)
             
@@ -170,6 +166,12 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             // bind viewModel's output
+            
+            // use all balance did touch
+            viewModel.output.useAllBalanceDidTouch
+                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
+                .drive(amountTextField.rx.text)
+                .disposed(by: disposeBag)
             
             // available amount
             Driver.combineLatest(
