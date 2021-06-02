@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 //import SwiftUI
 
-extension Send {
+extension SendToken {
     class RootView: BEView {
         // MARK: - Constants
         let disposeBag = DisposeBag()
