@@ -170,6 +170,8 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             // bind viewModel's output
+            
+            // available amount
             Driver.combineLatest(
                 viewModel.output.currentWallet,
                 viewModel.output.availableAmount,
@@ -188,6 +190,12 @@ extension SendToken {
                     return string
                 }
                 .drive(balanceLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // available amount's color
+            viewModel.output.error
+                .map {($0 == L10n.insufficientFunds || $0 == L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee || $0 == L10n.amountIsNotValid) ? UIColor.red: UIColor.h5887ff}
+                .drive(balanceLabel.rx.textColor)
                 .disposed(by: disposeBag)
         }
     }
