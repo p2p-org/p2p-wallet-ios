@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+@available(*, deprecated, message: "This transaction manager need to be rewritten")
 struct TransactionsManager {
     public let transactions = BehaviorRelay<[Transaction]>(value: [])
     
