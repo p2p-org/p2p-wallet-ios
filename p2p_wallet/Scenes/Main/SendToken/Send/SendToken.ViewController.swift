@@ -16,7 +16,7 @@ import UIKit
 //
 //}
 
-extension Send {
+extension SendToken {
     class ViewController: BaseVC {
         
         // MARK: - Properties

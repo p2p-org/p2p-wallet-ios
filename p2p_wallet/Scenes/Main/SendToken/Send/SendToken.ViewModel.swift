@@ -29,7 +29,7 @@ protocol SendTokenAPIClient {
     ) -> Single<SolanaSDK.TransactionID>
 }
 
-extension Send {
+extension SendToken {
     enum NavigatableScene {
         case chooseWallet
         case chooseAddress
