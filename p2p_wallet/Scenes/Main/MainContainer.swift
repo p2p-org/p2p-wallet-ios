@@ -89,18 +89,6 @@ class MainContainer {
         return ReceiveTokenViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController {
-        let vm = SendTokenViewModel(
-            solanaSDK: solanaSDK,
-            walletsRepository: walletsViewModel,
-            activeWallet: activeWallet,
-            destinationAddress: destinationAddress,
-            authenticationHandler: rootViewModel
-        )
-        let vc = SendTokenViewController(viewModel: vm, scenesFactory: self)
-        return vc
-    }
-    
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController {
         let vm = SendToken.ViewModel(
             repository: walletsViewModel,

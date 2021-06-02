@@ -86,7 +86,7 @@ extension SendToken {
                 UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
                     coinImageView,
                     UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textBlack)
-                        .onTap(viewModel, action: #selector(SendTokenViewModel.chooseWallet)),
+                        .onTap(viewModel, action: #selector(ViewModel.chooseWallet)),
                     amountTextField,
                     changeModeButton
                         .withContentHuggingPriority(.required, for: .horizontal)
@@ -150,10 +150,6 @@ extension SendToken {
         
         private func bind() {
             // bind viewModel's input to controls
-            viewModel.input.amount
-                .subscribe(onNext: {print($0)})
-                .disposed(by: disposeBag)
-            
             viewModel.input.address
                 .bind(to: addressTextField.rx.text)
                 .disposed(by: disposeBag)
