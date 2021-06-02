@@ -10,7 +10,7 @@ import UIKit
 
 protocol WalletDetailScenesFactory {
     func makeReceiveTokenViewController(pubkey: String?) -> ReceiveTokenViewController
-    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController
+    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(fromWallet: Wallet?) -> SwapTokenViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
     func makeTransactionInfoViewController(transaction: SolanaSDK.AnyTransaction) -> TransactionInfoViewController
@@ -53,7 +53,7 @@ class WalletDetailViewController: WLIndicatorModalVC {
             self.present(vc, animated: true, completion: nil)
         case .send:
             guard let wallet = viewModel.wallet.value else {return}
-            let vc = scenesFactory.makeSendTokenViewController(activeWallet: wallet, destinationAddress: nil)
+            let vc = scenesFactory.makeSendTokenViewController(walletPubkey: wallet.pubkey, destinationAddress: nil)
             self.present(vc, animated: true, completion: nil)
         case .receive:
             let vc = scenesFactory.makeReceiveTokenViewController(pubkey: viewModel.wallet.value?.pubkey)

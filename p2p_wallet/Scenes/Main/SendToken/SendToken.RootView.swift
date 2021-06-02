@@ -1,0 +1,322 @@
+//
+//  SendRootView.swift
+//  p2p_wallet
+//
+//  Created by Chung Tran on 01/06/2021.
+//
+
+import UIKit
+import RxSwift
+import RxCocoa
+
+extension SendToken {
+    class RootView: ScrollableVStackRootView {
+        // MARK: - Constants
+        let disposeBag = DisposeBag()
+        
+        // MARK: - Properties
+        let viewModel: ViewModel
+        
+        // MARK: - Subviews
+        lazy var balanceLabel = UILabel(text: "0", weight: .medium)
+            .onTap(viewModel, action: #selector(ViewModel.useAllBalance))
+        lazy var coinImageView = CoinLogoImageView(size: 44)
+            .onTap(viewModel, action: #selector(ViewModel.chooseWallet))
+        lazy var amountTextField = TokenAmountTextField(
+            font: .systemFont(ofSize: 27, weight: .semibold),
+            textColor: .textBlack,
+            keyboardType: .decimalPad,
+            placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+            autocorrectionType: .no
+        )
+        lazy var changeModeButton = UILabel(weight: .semibold, textColor: .textSecondary)
+        lazy var symbolLabel = UILabel(weight: .semibold)
+        lazy var equityValueLabel = UILabel(text: "≈", textColor: .textSecondary)
+        lazy var coinSymbolPriceLabel = UILabel(textColor: .textSecondary)
+        lazy var coinPriceLabel = UILabel(textColor: .textSecondary)
+        
+        lazy var addressStackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
+            walletIconView, addressTextField, clearAddressButton, qrCodeImageView
+        ])
+        lazy var walletIconView = UIImageView(width: 24, height: 24, image: .walletIcon, tintColor: .a3a5ba)
+            .padding(.init(all: 10), backgroundColor: .textWhite, cornerRadius: 12)
+        lazy var addressTextField = UITextField(height: 44, backgroundColor: .clear, placeholder: L10n.walletAddress, autocorrectionType: .none, autocapitalizationType: UITextAutocapitalizationType.none, spellCheckingType: .no, horizontalPadding: 8)
+        lazy var clearAddressButton = UIImageView(width: 24, height: 24, image: .closeFill, tintColor: UIColor.black.withAlphaComponent(0.6))
+            .onTap(viewModel, action: #selector(ViewModel.clearDestinationAddress))
+        lazy var qrCodeImageView = UIImageView(width: 35, height: 35, image: .scanQr3, tintColor: .a3a5ba)
+            .onTap(viewModel, action: #selector(ViewModel.scanQrCode))
+        lazy var errorLabel = UILabel(text: " ", textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
+        
+        lazy var feeLabel = LazyLabel<Double>(textColor: .textSecondary)
+        
+        lazy var feeInfoButton = UIImageView(width: 16.67, height: 16.67, image: .infoCircle, tintColor: .a3a5ba)
+            .onTap(viewModel, action: #selector(ViewModel.showFeeInfo))
+        
+        lazy var sendButton = WLButton.stepButton(type: .blue, label: L10n.sendNow)
+            .onTap(viewModel, action: #selector(ViewModel.authenticateAndSend))
+        
+        // MARK: - Initializers
+        init(viewModel: ViewModel) {
+            self.viewModel = viewModel
+            super.init(frame: .zero)
+        }
+        
+        // MARK: - Methods
+        override func commonInit() {
+            super.commonInit()
+            layout()
+            bind()
+            amountTextField.delegate = self
+        }
+        
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            
+        }
+        
+        // MARK: - Layout
+        private func layout() {
+            stackView.addArrangedSubviews([
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
+                    UILabel(text: L10n.from, weight: .bold),
+                    balanceLabel
+                ]),
+                BEStackViewSpacing(30),
+                
+                UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
+                    coinImageView,
+                    UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textBlack)
+                        .onTap(viewModel, action: #selector(ViewModel.chooseWallet)),
+                    amountTextField,
+                    changeModeButton
+                        .withContentHuggingPriority(.required, for: .horizontal)
+                        .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
+                        .onTap(viewModel, action: #selector(ViewModel.switchCurrencyMode))
+                ]),
+                BEStackViewSpacing(6),
+                
+                UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
+                    UIView(),
+                    equityValueLabel
+                ]),
+                BEStackViewSpacing(20),
+                
+                UIView.separator(height: 1, color: .separator),
+                BEStackViewSpacing(20),
+                
+                UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
+                    UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing) {
+                        coinSymbolPriceLabel
+                        coinPriceLabel
+                    }
+                    
+                    UIStackView(axis: .horizontal, spacing: 6.67, alignment: .center, distribution: .fill) {
+                        UILabel(text: L10n.fee + ":", textColor: .textSecondary)
+                        feeLabel
+                            .withContentHuggingPriority(.required, for: .horizontal)
+                        feeInfoButton
+                            .withContentHuggingPriority(.required, for: .horizontal)
+                    }
+                },
+                
+                BEStackViewSpacing(20),
+                
+                UIView.separator(height: 1, color: .separator),
+                BEStackViewSpacing(20),
+                
+                UILabel(text: L10n.sendTo, weight: .bold),
+                addressStackView
+                    .padding(.init(all: 8), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12),
+                
+                BEStackViewSpacing(19),
+                
+                errorLabel,
+                
+                BEStackViewSpacing(20),
+                UIView.separator(height: 1, color: .separator),
+                BEStackViewSpacing(20),
+                
+                sendButton
+            ])
+            
+            equityValueLabel.autoPinEdge(.leading, to: .leading, of: amountTextField)
+            
+            scrollView.contentView.addSubview(symbolLabel)
+            symbolLabel.centerXAnchor.constraint(equalTo: coinImageView.centerXAnchor).isActive = true
+            symbolLabel.centerYAnchor.constraint(equalTo: equityValueLabel.centerYAnchor).isActive = true
+            
+            feeInfoButton.isHidden = !Defaults.useFreeTransaction
+        }
+        
+        private func bind() {
+            // bind viewModel's input to controls
+            viewModel.input.address
+                .bind(to: addressTextField.rx.text)
+                .disposed(by: disposeBag)
+            
+            // bind control to viewModel's input
+            amountTextField.rx.text
+                .map {$0?.double}
+                .distinctUntilChanged()
+                .bind(to: viewModel.input.amount)
+                .disposed(by: disposeBag)
+            
+            addressTextField.rx.text
+                .bind(to: viewModel.input.address)
+                .disposed(by: disposeBag)
+            
+            // bind viewModel's output
+            
+            // use all balance did touch
+            viewModel.output.useAllBalanceDidTouch
+                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
+                .drive(amountTextField.rx.text)
+                .disposed(by: disposeBag)
+            
+            // available amount
+            Driver.combineLatest(
+                viewModel.output.currentWallet,
+                viewModel.output.availableAmount,
+                viewModel.output.currencyMode
+            )
+            .map { (wallet, amount, mode) -> String? in
+                guard let wallet = wallet, let amount = amount else {return nil}
+                var string = L10n.available + ": "
+                string += amount.toString(maximumFractionDigits: 9)
+                string += " "
+                if mode == .fiat {
+                    string += Defaults.fiat.code
+                } else {
+                    string += wallet.token.symbol
+                }
+                return string
+            }
+            .drive(balanceLabel.rx.text)
+            .disposed(by: disposeBag)
+            
+            // available amount's color
+            viewModel.output.error
+                .map {($0 == L10n.insufficientFunds || $0 == L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee || $0 == L10n.amountIsNotValid) ? UIColor.red: UIColor.h5887ff}
+                .drive(balanceLabel.rx.textColor)
+                .disposed(by: disposeBag)
+            
+            // current wallet
+            viewModel.output.currentWallet
+                .drive(onNext: {[weak self] wallet in
+                    self?.coinImageView.setUp(wallet: wallet)
+                    self?.symbolLabel.text = wallet?.token.symbol
+                })
+                .disposed(by: disposeBag)
+            
+            // equity label
+            viewModel.output.currentWallet
+                .map {$0?.priceInCurrentFiat == nil}
+                .map {$0 ? 0: 1}
+                .asDriver(onErrorJustReturn: 1)
+                .drive(equityValueLabel.rx.alpha)
+                .disposed(by: disposeBag)
+            
+            Driver.combineLatest(
+                viewModel.output.currentWallet,
+                viewModel.output.currencyMode,
+                viewModel.input.amount.asDriver(onErrorJustReturn: nil)
+            )
+                .map { (wallet, currencyMode, amount) -> String in
+                    guard let wallet = wallet else {return ""}
+                    var equityValue = amount * wallet.priceInCurrentFiat
+                    var equityValueSymbol = Defaults.fiat.code
+                    if currencyMode == .fiat {
+                        if wallet.priceInCurrentFiat > 0 {
+                            equityValue = amount / wallet.priceInCurrentFiat
+                        } else {
+                            equityValue = 0
+                        }
+                        equityValueSymbol = wallet.token.symbol
+                    }
+                    return "≈ " + equityValue.toString(maximumFractionDigits: 9) + " " + equityValueSymbol
+                }
+                .drive(equityValueLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // change currency mode button
+            Driver.combineLatest(
+                viewModel.output.currentWallet,
+                viewModel.output.currencyMode
+            )
+                .map {(wallet, currencyMode) -> String? in
+                    if currencyMode == .fiat {
+                        return Defaults.fiat.code
+                    } else {
+                        return wallet?.token.symbol
+                    }
+                }
+                .drive(changeModeButton.rx.text)
+                .disposed(by: disposeBag)
+            
+            // price labels
+            viewModel.output.currentWallet
+                .map {$0?.token.symbol != nil ? "1 \($0!.token.symbol):": nil}
+                .drive(coinSymbolPriceLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.currentWallet
+                .map {$0?.priceInCurrentFiat ?? 0}
+                .map {"\($0.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"}
+                .drive(coinPriceLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // fee
+            feeLabel.subscribed(to: viewModel.output.fee) {
+                "\($0.toString(maximumFractionDigits: 9)) SOL"
+            }
+                .disposed(by: disposeBag)
+            
+            // receiver address
+            viewModel.output.receiverAddress
+                .map {!NSRegularExpression.publicKey.matches($0 ?? "")}
+                .drive(walletIconView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            let destinationAddressInputEmpty = viewModel.output.receiverAddress
+                .map {$0 == nil || $0!.isEmpty}
+            
+            destinationAddressInputEmpty
+                .drive(clearAddressButton.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            let destinationAddressInputNotEmpty = destinationAddressInputEmpty
+                .map {!$0}
+            
+            destinationAddressInputNotEmpty
+                .drive(qrCodeImageView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            // error
+            viewModel.output.error
+                .map {
+                    if $0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid
+                    {
+                        return nil
+                    }
+                    return $0
+                }
+                .asDriver(onErrorJustReturn: nil)
+                .drive(errorLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // send button
+            viewModel.output.isValid
+                .drive(sendButton.rx.isEnabled)
+                .disposed(by: disposeBag)
+        }
+    }
+}
+
+extension SendToken.RootView: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if let textField = textField as? TokenAmountTextField {
+            return textField.shouldChangeCharactersInRange(range, replacementString: string)
+        }
+        return true
+    }
+}
