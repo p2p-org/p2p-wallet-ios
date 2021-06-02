@@ -34,7 +34,7 @@ extension Send {
         case chooseWallet
         case chooseAddress
         case scanQrCode
-        case processTransaction(_ transaction: Transaction, request: Single<SolanaSDK.TransactionID>)
+        case processTransaction(request: Single<SolanaSDK.TransactionID>)
         case feeInfo
     }
     
@@ -116,6 +116,7 @@ extension Send {
             )
             
             bind()
+            feeSubject.reload()
         }
         
         /// Bind output into input
@@ -293,15 +294,6 @@ extension Send {
                 amount = amount / price
             }
             
-            // form transction
-            let transaction = Transaction(
-                signatureInfo: nil,
-                type: .send,
-                amount: -amount,
-                symbol: wallet.token.symbol,
-                status: .processing
-            )
-            
             // form request
             // prepare amount
             let lamport = amount.toLamport(decimals: decimals)
@@ -332,7 +324,7 @@ extension Send {
             
             // show processing scene
             navigationSubject.onNext(
-                .processTransaction(transaction, request: request)
+                .processTransaction(request: request)
             )
         }
     }
