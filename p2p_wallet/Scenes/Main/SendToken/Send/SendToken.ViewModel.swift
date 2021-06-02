@@ -200,6 +200,14 @@ extension SendToken {
         }
         
         // MARK: - Actions
+        @objc func useAllBalance() {
+            input.amount.onNext(availableAmountSubject.value)
+        }
+        
+        @objc func clearDestinationAddress() {
+            input.address.onNext(nil)
+        }
+        
         @objc func chooseWallet() {
             navigationSubject.onNext(.chooseWallet)
         }
