@@ -71,7 +71,7 @@ extension SendToken {
         
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            
+            amountTextField.becomeFirstResponder()
         }
         
         // MARK: - Layout

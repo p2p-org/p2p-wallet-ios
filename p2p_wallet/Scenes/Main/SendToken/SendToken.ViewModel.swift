@@ -121,7 +121,7 @@ extension SendToken {
             bind()
             feeSubject.reload()
             
-            input.walletPubkey.onNext(walletPubkey)
+            input.walletPubkey.onNext(walletPubkey ?? repository.getWallets().first?.pubkey)
             input.address.onNext(destinationAddress)
         }
         
