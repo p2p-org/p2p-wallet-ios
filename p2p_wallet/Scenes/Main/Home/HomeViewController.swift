@@ -13,6 +13,7 @@ protocol HomeScenesFactory {
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController
     func makeReceiveTokenViewController(pubkey: String?) -> ReceiveTokenViewController
     func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController
+    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController
     func makeMyProductsViewController() -> MyProductsViewController
     func makeProfileVC() -> ProfileVC
