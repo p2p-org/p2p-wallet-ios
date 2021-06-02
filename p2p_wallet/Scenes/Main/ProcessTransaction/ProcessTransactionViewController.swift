@@ -8,10 +8,6 @@
 import Foundation
 import UIKit
 
-@objc protocol ProcessTransactionViewControllerDelegate: AnyObject {
-    func processTransactionViewControllerDidComplete(_ vc: ProcessTransactionViewController)
-}
-
 class ProcessTransactionViewController: WLIndicatorModalVC {
     
     // MARK: - Properties

@@ -235,6 +235,10 @@
 		BCB7C7C72665EEC400FEC68E /* SendViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C32665EEC400FEC68E /* SendViewModel.swift */; };
 		BCB7C7C82665EEC400FEC68E /* SendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C42665EEC400FEC68E /* SendViewController.swift */; };
 		BCB7C7C92665EEC400FEC68E /* SendRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C52665EEC400FEC68E /* SendRootView.swift */; };
+		BCB7C7D02667336800FEC68E /* ProcessTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7CC2667336800FEC68E /* ProcessTransaction.swift */; };
+		BCB7C7D12667336800FEC68E /* ProcessTransaction.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7CD2667336800FEC68E /* ProcessTransaction.ViewController.swift */; };
+		BCB7C7D22667336800FEC68E /* ProcessTransaction.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7CE2667336800FEC68E /* ProcessTransaction.ViewModel.swift */; };
+		BCB7C7D32667336800FEC68E /* ProcessTransaction.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7CF2667336800FEC68E /* ProcessTransaction.RootView.swift */; };
 		BCB92B7025B5311500FF615E /* SelectAppearanceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B6F25B5311500FF615E /* SelectAppearanceVC.swift */; };
 		BCB92B7525B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B7425B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift */; };
 		BCB92B8025B5386F00FF615E /* WLIntroVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B7F25B5386F00FF615E /* WLIntroVC.swift */; };
@@ -556,6 +560,10 @@
 		BCB7C7C32665EEC400FEC68E /* SendViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendViewModel.swift; sourceTree = "<group>"; };
 		BCB7C7C42665EEC400FEC68E /* SendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendViewController.swift; sourceTree = "<group>"; };
 		BCB7C7C52665EEC400FEC68E /* SendRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendRootView.swift; sourceTree = "<group>"; };
+		BCB7C7CC2667336800FEC68E /* ProcessTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.swift; sourceTree = "<group>"; };
+		BCB7C7CD2667336800FEC68E /* ProcessTransaction.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewController.swift; sourceTree = "<group>"; };
+		BCB7C7CE2667336800FEC68E /* ProcessTransaction.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewModel.swift; sourceTree = "<group>"; };
+		BCB7C7CF2667336800FEC68E /* ProcessTransaction.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.RootView.swift; sourceTree = "<group>"; };
 		BCB92B6F25B5311500FF615E /* SelectAppearanceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAppearanceVC.swift; sourceTree = "<group>"; };
 		BCB92B7425B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIUserInterfaceStyle+Extensions.swift"; sourceTree = "<group>"; };
 		BCB92B7F25B5386F00FF615E /* WLIntroVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLIntroVC.swift; sourceTree = "<group>"; };
@@ -1321,8 +1329,20 @@
 				BCB7C7C32665EEC400FEC68E /* SendViewModel.swift */,
 				BCB7C7C42665EEC400FEC68E /* SendViewController.swift */,
 				BCB7C7C52665EEC400FEC68E /* SendRootView.swift */,
+				BCB7C7CB2667335300FEC68E /* ProcessTransaction */,
 			);
 			path = Send;
+			sourceTree = "<group>";
+		};
+		BCB7C7CB2667335300FEC68E /* ProcessTransaction */ = {
+			isa = PBXGroup;
+			children = (
+				BCB7C7CC2667336800FEC68E /* ProcessTransaction.swift */,
+				BCB7C7CE2667336800FEC68E /* ProcessTransaction.ViewModel.swift */,
+				BCB7C7CD2667336800FEC68E /* ProcessTransaction.ViewController.swift */,
+				BCB7C7CF2667336800FEC68E /* ProcessTransaction.RootView.swift */,
+			);
+			path = ProcessTransaction;
 			sourceTree = "<group>";
 		};
 		BCBBE1822563C0F400533F6B /* ReceiveToken */ = {
@@ -1957,6 +1977,7 @@
 				BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */,
 				BCEE51372625425E00271AB9 /* TransactionIndicatorView.swift in Sources */,
 				BC123E7F25B181B60043178E /* NSObject+Extensions.swift in Sources */,
+				BCB7C7D02667336800FEC68E /* ProcessTransaction.swift in Sources */,
 				BC2EC1D02553ED1B006EEDA5 /* DimmingPresentationController.swift in Sources */,
 				BC54DD232587169400A65566 /* ValueByDateChartMarker.swift in Sources */,
 				BCAB212B25DF5D1C004F4F9D /* RootViewModel.swift in Sources */,
@@ -2028,6 +2049,7 @@
 				BC699AB425F9DE3400F57209 /* WLRadioButton.swift in Sources */,
 				BCB92B8025B5386F00FF615E /* WLIntroVC.swift in Sources */,
 				BC65E17A261EA0A300E436C7 /* NewsViewModel.swift in Sources */,
+				BCB7C7D22667336800FEC68E /* ProcessTransaction.ViewModel.swift in Sources */,
 				BC5A974D260C8588009674C4 /* FriendsSection.swift in Sources */,
 				BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */,
 				BCE77E6326536817000B68BB /* DerivableAccountsVC.swift in Sources */,
@@ -2102,6 +2124,7 @@
 				BC5A9739260C6F47009674C4 /* HiddenWalletsSection+SupplementaryViews.swift in Sources */,
 				BC105136258B2A2A00398EA2 /* TermsAndConditionsVC.swift in Sources */,
 				BC7B2C7025E384F700833656 /* CreateSecurityKeysViewModel.swift in Sources */,
+				BCB7C7D12667336800FEC68E /* ProcessTransaction.ViewController.swift in Sources */,
 				BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */,
 				BC65E19F261EA75600E436C7 /* InvestmentsViewController.swift in Sources */,
 				BC0978E825AEDEE200DB02E9 /* ResizablePresentationController.swift in Sources */,
@@ -2138,6 +2161,7 @@
 				BC7BCB7B2562807E0018DECA /* Double+Extensions.swift in Sources */,
 				BC2EC1802553B1F7006EEDA5 /* SectionFooterView.swift in Sources */,
 				BCA93F6A25E78D8A0081DDF6 /* WLNavigationBar.swift in Sources */,
+				BCB7C7D32667336800FEC68E /* ProcessTransaction.RootView.swift in Sources */,
 				BC2EC1CF2553ED1B006EEDA5 /* HalfSizePresentationController.swift in Sources */,
 				BCD5E76525512EDC00F51299 /* NewsCell.swift in Sources */,
 				BC5A97E2260DC977009674C4 /* WalletsCollectionView.swift in Sources */,
