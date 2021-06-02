@@ -239,6 +239,7 @@
 		BCB7C7D12667336800FEC68E /* ProcessTransaction.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7CD2667336800FEC68E /* ProcessTransaction.ViewController.swift */; };
 		BCB7C7D22667336800FEC68E /* ProcessTransaction.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7CE2667336800FEC68E /* ProcessTransaction.ViewModel.swift */; };
 		BCB7C7D32667336800FEC68E /* ProcessTransaction.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7CF2667336800FEC68E /* ProcessTransaction.RootView.swift */; };
+		BCB7C7D6266743AC00FEC68E /* ProcessTransaction.RootView+Layouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7D5266743AC00FEC68E /* ProcessTransaction.RootView+Layouts.swift */; };
 		BCB92B7025B5311500FF615E /* SelectAppearanceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B6F25B5311500FF615E /* SelectAppearanceVC.swift */; };
 		BCB92B7525B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B7425B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift */; };
 		BCB92B8025B5386F00FF615E /* WLIntroVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B7F25B5386F00FF615E /* WLIntroVC.swift */; };
@@ -564,6 +565,7 @@
 		BCB7C7CD2667336800FEC68E /* ProcessTransaction.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewController.swift; sourceTree = "<group>"; };
 		BCB7C7CE2667336800FEC68E /* ProcessTransaction.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewModel.swift; sourceTree = "<group>"; };
 		BCB7C7CF2667336800FEC68E /* ProcessTransaction.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.RootView.swift; sourceTree = "<group>"; };
+		BCB7C7D5266743AC00FEC68E /* ProcessTransaction.RootView+Layouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessTransaction.RootView+Layouts.swift"; sourceTree = "<group>"; };
 		BCB92B6F25B5311500FF615E /* SelectAppearanceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAppearanceVC.swift; sourceTree = "<group>"; };
 		BCB92B7425B534D900FF615E /* UIUserInterfaceStyle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIUserInterfaceStyle+Extensions.swift"; sourceTree = "<group>"; };
 		BCB92B7F25B5386F00FF615E /* WLIntroVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLIntroVC.swift; sourceTree = "<group>"; };
@@ -1340,9 +1342,18 @@
 				BCB7C7CC2667336800FEC68E /* ProcessTransaction.swift */,
 				BCB7C7CE2667336800FEC68E /* ProcessTransaction.ViewModel.swift */,
 				BCB7C7CD2667336800FEC68E /* ProcessTransaction.ViewController.swift */,
-				BCB7C7CF2667336800FEC68E /* ProcessTransaction.RootView.swift */,
+				BCB7C7D42667439200FEC68E /* RootView */,
 			);
 			path = ProcessTransaction;
+			sourceTree = "<group>";
+		};
+		BCB7C7D42667439200FEC68E /* RootView */ = {
+			isa = PBXGroup;
+			children = (
+				BCB7C7CF2667336800FEC68E /* ProcessTransaction.RootView.swift */,
+				BCB7C7D5266743AC00FEC68E /* ProcessTransaction.RootView+Layouts.swift */,
+			);
+			path = RootView;
 			sourceTree = "<group>";
 		};
 		BCBBE1822563C0F400533F6B /* ReceiveToken */ = {
@@ -2071,6 +2082,7 @@
 				BCA93F5525E77C240081DDF6 /* TokenSettingsViewController.swift in Sources */,
 				BC6EE7CA254BBF8900FE1025 /* UIApplication+Extensions.swift in Sources */,
 				BC5A97D1260DA82B009674C4 /* WalletsSection.swift in Sources */,
+				BCB7C7D6266743AC00FEC68E /* ProcessTransaction.RootView+Layouts.swift in Sources */,
 				BC11C9C225908F3700E399A9 /* CGFloat+Extensions.swift in Sources */,
 				BCA9948725AEA1C0005BD8FB /* ExpandablePresentationController.swift in Sources */,
 				BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */,
