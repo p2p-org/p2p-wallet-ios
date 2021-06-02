@@ -85,7 +85,7 @@ extension ProcessTransaction.RootView {
         self.buttonStackView.addArrangedSubview(
             WLButton.stepButton(type: .blue, label: L10n.done)
                 .enableIf(condition)
-                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.done))
+                .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.done))
         )
     }
     
@@ -95,7 +95,7 @@ extension ProcessTransaction.RootView {
         self.transactionStatusImageView.image = .transactionSuccess
         self.buttonStackView.addArrangedSubview(
             WLButton.stepButton(type: .blue, label: L10n.done)
-                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.done))
+                .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.done))
         )
     }
     
@@ -176,9 +176,9 @@ extension ProcessTransaction.RootView {
             self.transactionStatusImageView.image = .transactionError
             self.buttonStackView.addArrangedSubviews([
                 WLButton.stepButton(type: .blue, label: L10n.tryAgain)
-                    .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.tryAgain)),
+                    .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.executeRequest)),
                 WLButton.stepButton(enabledColor: .eff3ff, textColor: .h5887ff, label: L10n.cancel)
-                    .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.cancel))
+                    .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.cancel))
             ])
         }
     }
@@ -203,7 +203,7 @@ extension ProcessTransaction.RootView {
         
         buttonStackView.addArrangedSubview(
             WLButton.stepButton(enabledColor: .eff3ff, textColor: .h5887ff, label: L10n.ok)
-                .onTap(self.viewModel, action: #selector(ProcessTransactionViewModel.cancel))
+                .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.cancel))
         )
     }
     
