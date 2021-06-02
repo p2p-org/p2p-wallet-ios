@@ -36,18 +36,6 @@ extension SolanaSDK: SendTokenAPIClient {
 }
 
 extension SendToken {
-    enum NavigatableScene {
-        case chooseWallet
-        case chooseAddress
-        case scanQrCode
-        case processTransaction(request: Single<SolanaSDK.TransactionID>, transactionType: ProcessTransaction.TransactionType)
-        case feeInfo
-    }
-    
-    enum CurrencyMode {
-        case token, fiat
-    }
-    
     class ViewModel: ViewModelType {
         // MARK: - Nested type
         struct Input {
