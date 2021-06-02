@@ -103,6 +103,10 @@ extension ProcessTransaction {
                 return
             }
             
+            // clean up
+            self.transactionStatusSubject.accept(.processing)
+            self.transactionIdSubject.accept(nil)
+            
             // request
             request
                 .flatMapCompletable { [weak self] transactionId in
