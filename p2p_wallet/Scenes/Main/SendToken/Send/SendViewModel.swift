@@ -65,7 +65,6 @@ extension Send {
         private let repository: WalletsRepository
         private let apiClient: SendTokenAPIClient
         private let authenticationHandler: AuthenticationHandler
-        private let transactionHandler: SendTokenTransactionHandler
         
         let input: Input
         let output: Output
@@ -85,13 +84,11 @@ extension Send {
         init(
             repository: WalletsRepository,
             apiClient: SendTokenAPIClient,
-            authenticationHandler: AuthenticationHandler,
-            transactionHandler: SendTokenTransactionHandler
+            authenticationHandler: AuthenticationHandler
         ) {
             self.repository = repository
             self.apiClient = apiClient
             self.authenticationHandler = authenticationHandler
-            self.transactionHandler = transactionHandler
             
             self.feeSubject = LazySubject<Double>(
                 request: Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
