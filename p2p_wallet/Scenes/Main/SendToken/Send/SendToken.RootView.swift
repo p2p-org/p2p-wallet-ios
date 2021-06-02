@@ -179,26 +179,66 @@ extension SendToken {
                 viewModel.output.availableAmount,
                 viewModel.output.currencyMode
             )
-                .map { (wallet, amount, mode) -> String? in
-                    guard let wallet = wallet, let amount = amount else {return nil}
-                    var string = L10n.available + ": "
-                    string += amount.toString(maximumFractionDigits: 9)
-                    string += " "
-                    if mode == .fiat {
-                        string += Defaults.fiat.code
-                    } else {
-                        string += wallet.token.symbol
-                    }
-                    return string
+            .map { (wallet, amount, mode) -> String? in
+                guard let wallet = wallet, let amount = amount else {return nil}
+                var string = L10n.available + ": "
+                string += amount.toString(maximumFractionDigits: 9)
+                string += " "
+                if mode == .fiat {
+                    string += Defaults.fiat.code
+                } else {
+                    string += wallet.token.symbol
                 }
-                .drive(balanceLabel.rx.text)
-                .disposed(by: disposeBag)
+                return string
+            }
+            .drive(balanceLabel.rx.text)
+            .disposed(by: disposeBag)
             
             // available amount's color
             viewModel.output.error
                 .map {($0 == L10n.insufficientFunds || $0 == L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee || $0 == L10n.amountIsNotValid) ? UIColor.red: UIColor.h5887ff}
                 .drive(balanceLabel.rx.textColor)
                 .disposed(by: disposeBag)
+            
+            // current wallet
+            viewModel.output.currentWallet
+                .drive(onNext: {[weak self] wallet in
+                    self?.coinImageView.setUp(wallet: wallet)
+                    self?.symbolLabel.text = wallet?.token.symbol
+                })
+                .disposed(by: disposeBag)
+            
+            // equity label
+            viewModel.output.currentWallet
+                .map {$0?.priceInCurrentFiat == nil}
+                .map {$0 ? 0: 1}
+                .asDriver(onErrorJustReturn: 1)
+                .drive(equityValueLabel.rx.alpha)
+                .disposed(by: disposeBag)
+            
+            Driver.combineLatest(
+                viewModel.output.currentWallet,
+                viewModel.output.currencyMode,
+                viewModel.input.amount.asDriver(onErrorJustReturn: nil)
+            )
+                .map { (wallet, currencyMode, amount) -> String in
+                    guard let wallet = wallet else {return ""}
+                    var equityValue = amount * wallet.priceInCurrentFiat
+                    var equityValueSymbol = Defaults.fiat.code
+                    if currencyMode == .fiat {
+                        if wallet.priceInCurrentFiat > 0 {
+                            equityValue = amount / wallet.priceInCurrentFiat
+                        } else {
+                            equityValue = 0
+                        }
+                        equityValueSymbol = wallet.token.symbol
+                    }
+                    return "≈ " + equityValue.toString(maximumFractionDigits: 9) + " " + equityValueSymbol
+                }
+                .drive(equityValueLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            
         }
     }
 }
