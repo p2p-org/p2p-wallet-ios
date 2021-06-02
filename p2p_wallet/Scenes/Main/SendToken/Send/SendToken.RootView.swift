@@ -238,7 +238,38 @@ extension SendToken {
                 .drive(equityValueLabel.rx.text)
                 .disposed(by: disposeBag)
             
+            // change currency mode button
+            Driver.combineLatest(
+                viewModel.output.currentWallet,
+                viewModel.output.currencyMode
+            )
+                .map {(wallet, currencyMode) -> String? in
+                    if currencyMode == .fiat {
+                        return Defaults.fiat.code
+                    } else {
+                        return wallet?.token.symbol
+                    }
+                }
+                .drive(changeModeButton.rx.text)
+                .disposed(by: disposeBag)
             
+            // price labels
+            viewModel.output.currentWallet
+                .map {$0?.token.symbol != nil ? "1 \($0!.token.symbol):": nil}
+                .drive(coinSymbolPriceLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.currentWallet
+                .map {$0?.priceInCurrentFiat ?? 0}
+                .map {"\($0.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"}
+                .drive(coinPriceLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // fee
+            feeLabel.subscribed(to: viewModel.output.fee) {
+                "\($0.toString(maximumFractionDigits: 9)) SOL"
+            }
+                .disposed(by: disposeBag)
         }
     }
 }
