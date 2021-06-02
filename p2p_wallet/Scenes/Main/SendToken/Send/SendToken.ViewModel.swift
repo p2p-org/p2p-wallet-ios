@@ -29,6 +29,12 @@ protocol SendTokenAPIClient {
     ) -> Single<SolanaSDK.TransactionID>
 }
 
+extension SolanaSDK: SendTokenAPIClient {
+    func getFees() -> Single<Fee> {
+        getFees(commitment: nil)
+    }
+}
+
 extension SendToken {
     enum NavigatableScene {
         case chooseWallet
@@ -83,6 +89,8 @@ extension SendToken {
         // MARK: - Initializer
         init(
             repository: WalletsRepository,
+            walletPubkey: String?,
+            destinationAddress: String?,
             apiClient: SendTokenAPIClient,
             authenticationHandler: AuthenticationHandler
         ) {
@@ -117,6 +125,9 @@ extension SendToken {
             
             bind()
             feeSubject.reload()
+            
+            input.walletPubkey.onNext(walletPubkey)
+            input.address.onNext(destinationAddress)
         }
         
         /// Bind output into input

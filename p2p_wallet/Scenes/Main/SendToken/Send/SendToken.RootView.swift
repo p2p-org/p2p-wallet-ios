@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 extension SendToken {
     class RootView: ScrollableVStackRootView {
@@ -148,7 +149,46 @@ extension SendToken {
         }
         
         private func bind() {
-            // textfield
+            // bind viewModel's input to controls
+            viewModel.input.amount
+                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
+                .bind(to: amountTextField.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.input.address
+                .bind(to: addressTextField.rx.text)
+                .disposed(by: disposeBag)
+            
+            // bind control to viewModel's input
+            amountTextField.rx.text
+                .map {$0?.double}
+                .bind(to: viewModel.input.amount)
+                .disposed(by: disposeBag)
+            
+            addressTextField.rx.text
+                .bind(to: viewModel.input.address)
+                .disposed(by: disposeBag)
+            
+            // bind viewModel's output
+            Driver.combineLatest(
+                viewModel.output.currentWallet,
+                viewModel.output.availableAmount,
+                viewModel.output.currencyMode
+            )
+                .map { (wallet, amount, mode) -> String? in
+                    guard let wallet = wallet, let amount = amount else {return nil}
+                    var string = L10n.available + ": "
+                    string += amount.toString(maximumFractionDigits: 9)
+                    string += " "
+                    if mode == .fiat {
+                        string += Defaults.fiat.code
+                    } else {
+                        string += wallet.token.symbol
+                    }
+                    return string
+                }
+                .drive(balanceLabel.rx.text)
+                .disposed(by: disposeBag)
         }
     }
 }
