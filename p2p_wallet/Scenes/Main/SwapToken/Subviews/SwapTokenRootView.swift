@@ -387,5 +387,16 @@ private extension SwapTokenRootView {
             .asDriver(onErrorJustReturn: false)
             .drive(swapButton.rx.isEnabled)
             .disposed(by: disposeBag)
+        
+        // loading
+        viewModel.loadingSubject
+            .subscribe(onNext: {[weak self] isLoading in
+                if isLoading {
+                    self?.showIndetermineHud()
+                } else {
+                    self?.hideHud()
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }
