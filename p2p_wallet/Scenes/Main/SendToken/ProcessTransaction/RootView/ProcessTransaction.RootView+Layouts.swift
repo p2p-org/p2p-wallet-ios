@@ -37,7 +37,7 @@ extension ProcessTransaction.RootView {
         switch transactionType {
         case .send(let fromWallet, _, let sentAmount):
             symbol = fromWallet.token.symbol
-            amount = sentAmount
+            amount = -sentAmount
         }
         
         let equityValue = amount * viewModel.output.pricesRepository.currentPrice(for: symbol)?.value
