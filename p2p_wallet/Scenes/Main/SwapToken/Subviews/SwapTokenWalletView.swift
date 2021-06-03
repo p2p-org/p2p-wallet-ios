@@ -14,6 +14,14 @@ class SwapTokenWalletView: BEView {
     let disposeBag = DisposeBag()
     
     lazy var iconImageView = CoinLogoImageView(size: 44)
+        .with(
+            placeholder: UIImageView(
+                width: 24,
+                height: 24,
+                image: .walletIcon,
+                tintColor: .white
+            ).padding(.init(all: 10), backgroundColor: .h5887ff, cornerRadius: 12)
+        )
     
     lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
     
