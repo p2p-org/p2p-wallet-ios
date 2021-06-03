@@ -355,3 +355,4 @@
 "Great!" = "Great!";
 "Paid by p2p.org" = "Paid by p2p.org";
 "Connection rate limits exceeded" = "Connection rate limits exceeded";
+"Could not retrieve balances for this tokens pair. Please try selecting again!" = "Could not retrieve balances for this tokens pair. Please try selecting again!";

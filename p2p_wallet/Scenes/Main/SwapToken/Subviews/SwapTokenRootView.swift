@@ -324,17 +324,18 @@ private extension SwapTokenRootView {
         
         Observable.combineLatest(
             viewModel.currentPool,
-            viewModel.destinationWallet,
-            viewModel.sourceAmountInput
+            viewModel.sourceWallet,
+            viewModel.sourceAmountInput,
+            viewModel.destinationWallet
         )
-            .map {pool, wallet, amountInput -> String? in
+            .map {pool, sourceWallet, amountInput, destinationWallet -> String? in
                 guard let pool = pool,
-                      let decimals = wallet?.token.decimals,
+                      let decimals = sourceWallet?.token.decimals,
                       let lamports = amountInput.double?.toLamport(decimals: decimals),
                       let amount = pool.fee(forInputAmount: lamports)
                 else {return nil}
                 
-                return amount.toString(maximumFractionDigits: 5) + " " + wallet?.token.symbol
+                return amount.toString(maximumFractionDigits: 5) + " " + destinationWallet?.token.symbol
             }
             .asDriver(onErrorJustReturn: nil)
             .drive(feeLabel.rx.text)
@@ -386,6 +387,17 @@ private extension SwapTokenRootView {
             .map {$0 != nil && $1.double > 0 && $2}
             .asDriver(onErrorJustReturn: false)
             .drive(swapButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        // loading
+        viewModel.loadingSubject
+            .subscribe(onNext: {[weak self] isLoading in
+                if isLoading {
+                    self?.showIndetermineHud()
+                } else {
+                    self?.hideHud()
+                }
+            })
             .disposed(by: disposeBag)
     }
 }
