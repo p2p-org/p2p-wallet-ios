@@ -66,16 +66,24 @@ extension SwapToken {
         }
         
         private func bindInputIntoSubjects() {
-            input.sourceWalletPubkey
-                .map {[weak self] pubkey in
-                    self?.repository.getWallets().first(where: {$0.pubkey == pubkey})
+            // source wallet
+            Observable.combineLatest(
+                repository.dataObservable,
+                input.sourceWalletPubkey
+            )
+                .map {wallets, pubkey in
+                    return wallets?.first(where: {$0.pubkey == pubkey})
                 }
                 .bind(to: sourceWalletSubject)
                 .disposed(by: disposeBag)
             
-            input.destinationWalletPubkey
-                .map {[weak self] pubkey in
-                    self?.repository.getWallets().first(where: {$0.pubkey == pubkey})
+            // destination wallet
+            Observable.combineLatest(
+                repository.dataObservable,
+                input.destinationWalletPubkey
+            )
+                .map {wallets, pubkey in
+                    return wallets?.first(where: {$0.pubkey == pubkey})
                 }
                 .bind(to: sourceWalletSubject)
                 .disposed(by: disposeBag)
@@ -88,7 +96,6 @@ extension SwapToken {
                 .map {!$0}
                 .bind(to: isLoadingSubject)
                 .disposed(by: disposeBag)
-            
             
         }
         
