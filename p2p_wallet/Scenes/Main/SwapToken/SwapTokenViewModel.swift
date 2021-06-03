@@ -45,6 +45,7 @@ class SwapTokenViewModel {
     let currentPool = BehaviorRelay<Pool?>(value: nil)
     let minimumReceiveAmount = BehaviorRelay<Double?>(value: nil)
     let errorSubject = BehaviorRelay<String?>(value: nil)
+    let loadingSubject = BehaviorRelay<Bool>(value: false)
     
     // MARK: - Input
     let sourceAmountInput = BehaviorRelay<String?>(value: nil)
@@ -95,8 +96,22 @@ class SwapTokenViewModel {
                     destinationMint: destinationWallet?.mintAddress
                 )
             }
+            .flatMap { [weak self] pool -> Single<Pool?> in
+                guard let pool = pool, let strongSelf = self else {return .just(nil)}
+                strongSelf.loadingSubject.accept(true)
+                return strongSelf.solanaSDK.getPoolWithTokenBalances(pool: pool)
+                    .map {$0 as Pool?}
+                    .do(afterSuccess: { [weak self] _ in
+                        self?.loadingSubject.accept(false)
+                    }, afterError: {[weak self] error in
+                        self?.loadingSubject.accept(false)
+                        self?.destinationWallet.accept(nil)
+                        self?.errorSubject.accept(L10n.CouldNotRetrieveBalancesForThisTokensPair.pleaseTrySelectingAgain)
+                    })
+            }
             .bind(to: currentPool)
             .disposed(by: disposeBag)
+        
         
         // estimated amount
         Observable.combineLatest(
