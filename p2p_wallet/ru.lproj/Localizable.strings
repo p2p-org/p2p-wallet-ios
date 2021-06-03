@@ -353,3 +353,4 @@
 "Great!" = "Отлично!";
 "Paid by p2p.org" = "Заплачена p2p.org";
 "Connection rate limits exceeded" = "Превышены пределы скорости подключения";
+"Could not retrieve balances for this tokens pair. Please try selecting again!" = "Не удалось получить балансы для этой пары токенов.  Пожалуйста, попробуйте выбрать еще раз!";
