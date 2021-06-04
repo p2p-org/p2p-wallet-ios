@@ -38,6 +38,16 @@ extension ProcessTransaction.RootView {
             sv.amountInFiatLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
             
             summaryView = sv
+        case .closeAccount:
+            let amount = viewModel.output.reimbursedAmount ?? 0
+            let symbol = "SOL"
+            
+            let sv = DefaultTransactionSummaryView(forAutoLayout: ())
+            let equityValue = amount * viewModel.output.pricesRepository.currentPrice(for: symbol)?.value
+            sv.amountInTokenLabel.text = "\(amount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
+            sv.amountInFiatLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
+            
+            summaryView = sv
         }
         transactionIDStackView.isHidden = false
         
@@ -88,7 +98,7 @@ extension ProcessTransaction.RootView {
     
     private func layoutProcessingTransaction(enableDoneButtonWhen condition: Bool) {
         switch viewModel.output.transactionType {
-        case .send:
+        case .send, .closeAccount:
             self.titleLabel.text = L10n.sending + "..."
             self.subtitleLabel.text = L10n.transactionProcessing
         case .swap:
@@ -142,7 +152,7 @@ extension ProcessTransaction.RootView {
             switch transactionType {
             case .send(let fromWallet, _, _):
                 symbol = fromWallet.token.symbol
-            case .swap:
+            case .swap, .closeAccount:
                 break
             }
             
