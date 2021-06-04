@@ -35,6 +35,9 @@ extension SwapToken {
             let destinationWallet: Driver<Wallet?>
             let amount: Driver<Double?>
             let estimatedAmount: Driver<Double?>
+            let minimumReceiveAmount: Driver<Double?>
+            let useAllBalanceDidTap: Driver<Double?>
+            let isExchageRateReversed: Driver<Bool>
         }
         
         // MARK: - Dependencies
@@ -55,11 +58,12 @@ extension SwapToken {
         private let sourceWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let destinationWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let currentPoolSubject = BehaviorRelay<SolanaSDK.Pool?>(value: nil)
-        
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         private let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
-        
         private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
+        private let minimumReceiveAmountSubject = BehaviorRelay<Double?>(value: nil)
+        private let useAllBalanceDidTapSubject = PublishRelay<Double?>()
+        private let isExchageRateReversedSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
         init(repository: WalletsRepository, apiClient: SwapTokenAPIClient) {
@@ -81,6 +85,12 @@ extension SwapToken {
                 amount: amountSubject
                     .asDriver(),
                 estimatedAmount: estimatedAmountSubject
+                    .asDriver(),
+                minimumReceiveAmount: minimumReceiveAmountSubject
+                    .asDriver(),
+                useAllBalanceDidTap: useAllBalanceDidTapSubject
+                    .asDriver(onErrorJustReturn: nil),
+                isExchageRateReversed: isExchageRateReversedSubject
                     .asDriver()
             )
             
@@ -179,7 +189,7 @@ extension SwapToken {
                         .do(afterSuccess: { [weak self] _ in
                             self?.isLoadingSubject.accept(false)
                             self?.errorSubject.accept(nil)
-                        }, afterError: {[weak self] error in
+                        }, afterError: {[weak self] _ in
                             self?.isLoadingSubject.accept(false)
                             self?.errorSubject.accept(L10n.CouldNotRetrieveBalancesForThisTokensPair.pleaseTrySelectingAgain)
                         })
@@ -187,12 +197,46 @@ extension SwapToken {
                 .bind(to: currentPoolSubject)
                 .disposed(by: disposeBag)
             
-            // estimated amount
+            // estimated amount from input amount
             Observable.combineLatest(
                 currentPoolSubject.distinctUntilChanged(),
                 input.amount.map {$0?.double}
             )
+                .map {[weak self] in self?.calculateEstimatedAmount(forInputAmount: $1)}
+                .bind(to: estimatedAmountSubject)
+                .disposed(by: disposeBag)
+            
+            // input amount from estimated amount
+            Observable.combineLatest(
+                currentPoolSubject.distinctUntilChanged(),
+                input.estimatedAmount.map {$0?.double}
+            )
+                .map {[weak self] in self?.calculateInputAmount(forExpectedAmount: $1)}
+                .bind(to: amountSubject)
+                .disposed(by: disposeBag)
+            
+            // minimum receive amount
+            Observable.combineLatest(
+                currentPoolSubject.distinctUntilChanged(),
+                amountSubject.distinctUntilChanged(),
+                slippageSubject.distinctUntilChanged()
+            )
+                .map {[weak self] _ in self?.calculateMinimumReceiveAmount()}
+                .bind(to: minimumReceiveAmountSubject)
+                .disposed(by: disposeBag)
                 
+            // error subject
+            Observable.combineLatest(
+                poolsSubject.observable,
+                currentPoolSubject,
+                sourceWalletSubject,
+                destinationWalletSubject,
+                amountSubject,
+                slippageSubject
+            )
+                .map {_ in self.verifyError()}
+                .bind(to: errorSubject)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Actions
@@ -200,12 +244,92 @@ extension SwapToken {
             poolsSubject.reload()
         }
         
+        @objc func useAllBalance() {
+            let amount = sourceWalletSubject.value?.amount
+            input.amount.accept(amount?.toString(maximumFractionDigits: 9, groupingSeparator: nil))
+            useAllBalanceDidTapSubject.accept(amount)
+        }
+        
         @objc func chooseSourceWallet() {
             navigationSubject.accept(.chooseSourceWallet)
         }
         
-        // MARK: - Helpers
+        @objc func chooseDestinationWallet() {
+            navigationSubject.accept(.chooseDestinationWallet)
+        }
         
+        @objc func swapSourceAndDestination() {
+            let tempWallet = sourceWalletSubject.value
+            sourceWalletSubject.accept(destinationWalletSubject.value)
+            destinationWalletSubject.accept(tempWallet)
+        }
+        
+        @objc func reverseExchangeRate() {
+            isExchageRateReversedSubject.accept(!isExchageRateReversedSubject.value)
+        }
+        
+        @objc func chooseSlippage() {
+            navigationSubject.accept(.chooseSlippage)
+        }
+        
+        // MARK: - Helpers
+        /// Verify current context
+        /// - Returns: Error string, nil if no error appear
+        private func verifyError() -> String? {
+            // get variables
+            let sourceAmountInput = amountSubject.value
+            let sourceWallet = sourceWalletSubject.value
+            let destinationWallet = destinationWalletSubject.value
+            let pool = currentPoolSubject.value
+            let slippage = slippageValue
+            
+            // Verify amount
+            if let input = sourceAmountInput {
+                // amount is empty
+                if input <= 0, pool != nil {
+                    return L10n.amountIsNotValid
+                }
+                
+                // insufficient funds
+                if input.rounded(decimals: sourceDecimals) > sourceWallet?.amount?.rounded(decimals: sourceDecimals)
+                {
+                    return L10n.insufficientFunds
+                }
+            }
+            
+            // Verify slippage
+            if !isSlippageValid(slippage: slippage) {
+                return L10n.slippageIsnTValid
+            }
+            
+            // Verify pool
+            if pool == nil {
+                // if there are pools, but there is no pool for current pairs
+                if let pools = self.poolsSubject.value,
+                   !pools.isEmpty
+                {
+                    if let sourceWallet = sourceWallet,
+                       let destinationWallet = destinationWallet
+                    {
+                        if sourceWallet.token.symbol == destinationWallet.token.symbol {
+                            return L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.token.symbol)
+                        } else {
+                            return L10n.swappingFromToIsCurrentlyUnsupported(sourceWallet.token.symbol, destinationWallet.token.symbol)
+                        }
+                    }
+                }
+                // if there is no pools at all
+                else {
+                    return L10n.swappingIsCurrentlyUnavailable
+                }
+            }
+            
+            return nil
+        }
+        
+        private func isSlippageValid(slippage: Double) -> Bool {
+            slippage <= 0.2 && slippage > 0
+        }
     }
 }
 
