@@ -44,9 +44,11 @@ extension SwapToken {
             let error: Driver<String?>
             let isValid: Driver<Bool>
             let sourceWallet: Driver<Wallet?>
+            let availableAmount: Driver<Double?>
             let destinationWallet: Driver<Wallet?>
             let amount: Driver<Double?>
             let estimatedAmount: Driver<Double?>
+            let fee: Driver<Double?>
             let minimumReceiveAmount: Driver<Double?>
             let useAllBalanceDidTap: Driver<Double?>
             let isExchageRateReversed: Driver<Bool>
@@ -70,10 +72,12 @@ extension SwapToken {
         private let errorSubject = PublishRelay<String?>()
         private let isValidSubject = BehaviorRelay<Bool>(value: false)
         private let sourceWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        private let availableAmountSubject = BehaviorRelay<Double?>(value: nil)
         private let destinationWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let currentPoolSubject = BehaviorRelay<SolanaSDK.Pool?>(value: nil)
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         private let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
+        private let feeSubject = BehaviorRelay<Double?>(value: nil)
         private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
         private let minimumReceiveAmountSubject = BehaviorRelay<Double?>(value: nil)
         private let useAllBalanceDidTapSubject = PublishRelay<Double?>()
@@ -101,11 +105,15 @@ extension SwapToken {
                     .asDriver(),
                 sourceWallet: sourceWalletSubject
                     .asDriver(),
+                availableAmount: availableAmountSubject
+                    .asDriver(),
                 destinationWallet: destinationWalletSubject
                     .asDriver(),
                 amount: amountSubject
                     .asDriver(),
                 estimatedAmount: estimatedAmountSubject
+                    .asDriver(),
+                fee: feeSubject
                     .asDriver(),
                 minimumReceiveAmount: minimumReceiveAmountSubject
                     .asDriver(),
@@ -177,9 +185,9 @@ extension SwapToken {
                     case .loaded:
                         self?.isLoadingSubject.accept(false)
                         self?.errorSubject.accept(nil)
-                    case .error(let error):
+                    case .error:
                         self?.isLoadingSubject.accept(false)
-                        self?.errorSubject.accept(error.readableDescription)
+                        self?.errorSubject.accept(L10n.swappingIsCurrentlyUnavailable)
                     }
                 })
                 .disposed(by: disposeBag)
@@ -235,6 +243,25 @@ extension SwapToken {
                 .map {[weak self] in self?.calculateInputAmount(forExpectedAmount: $1)}
                 .bind(to: amountSubject)
                 .disposed(by: disposeBag)
+            
+            // fee
+            Observable.combineLatest(
+                currentPoolSubject.distinctUntilChanged(),
+                amountSubject.distinctUntilChanged()
+            )
+                .map {calculateFee(forInputAmount: $1, in: $0)}
+                .bind(to: feeSubject)
+                .disposed(by: disposeBag)
+            
+            // available amount
+            Observable.combineLatest(
+                currentPoolSubject.distinctUntilChanged(),
+                sourceWalletSubject.distinctUntilChanged()
+            )
+                .map {(pool, wallet) in wallet?.amount}
+                .bind(to: availableAmountSubject)
+                .disposed(by: disposeBag)
+            
             
             // minimum receive amount
             Observable.combineLatest(
@@ -326,7 +353,7 @@ extension SwapToken {
             let sourceWallet = sourceWalletSubject.value
             let destinationWallet = destinationWalletSubject.value
             let pool = currentPoolSubject.value
-            let slippage = slippageValue
+            let slippage = slippageSubject.value
             
             // Verify amount
             if let input = sourceAmountInput {
@@ -410,7 +437,7 @@ extension SwapToken {
                 sourceMint: sourceMint,
                 destination: destinationPubkey,
                 destinationMint: destinationMint,
-                slippage: slippageValue,
+                slippage: slippageSubject.value,
                 amount: lamports,
                 isSimulation: false
             )
@@ -439,10 +466,6 @@ private extension SwapToken.ViewModel {
     
     private var destinationDecimals: UInt8? {
         destinationWalletSubject.value?.token.decimals
-    }
-    
-    private var slippageValue: Double {
-        slippageSubject.value
     }
     
     /// Calculate input amount for receving expected amount
@@ -478,8 +501,13 @@ private extension SwapToken.ViewModel {
               let sourceDecimals = sourceDecimals,
               let destinationDecimals = destinationDecimals,
               let estimatedAmountLamports = currentPoolSubject.value?.estimatedAmount(forInputAmount: amount.toLamport(decimals: sourceDecimals), includeFees: true),
-              let lamports = currentPoolSubject.value?.minimumReceiveAmount(estimatedAmount: estimatedAmountLamports, slippage: slippageValue)
+              let lamports = currentPoolSubject.value?.minimumReceiveAmount(estimatedAmount: estimatedAmountLamports, slippage: slippageSubject.value)
         else {return nil}
         return lamports.convertToBalance(decimals: destinationDecimals)
     }
+}
+
+private func calculateFee(forInputAmount inputAmount: Double?, in pool: SolanaSDK.Pool?) -> Double? {
+    guard let inputAmount = inputAmount, let pool = pool else {return nil}
+    return pool.fee(forInputAmount: inputAmount)
 }
