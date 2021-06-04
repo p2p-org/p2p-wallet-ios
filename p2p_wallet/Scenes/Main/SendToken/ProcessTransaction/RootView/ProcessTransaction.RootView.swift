@@ -28,8 +28,7 @@ extension ProcessTransaction {
             indicatorView.tintColor = .h5887ff
             return indicatorView
         }()
-        lazy var amountLabel = UILabel(textSize: 27, weight: .bold, textAlignment: .center)
-        lazy var equityAmountLabel = UILabel(textColor: .textSecondary, textAlignment: .center)
+        var summaryView: TransactionSummaryView!
         lazy var transactionIDLabel = UILabel(weight: .semibold, numberOfLines: 2)
         
         // MARK: - Substackviews
