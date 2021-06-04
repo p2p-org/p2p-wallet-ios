@@ -7,7 +7,6 @@
 
 import UIKit
 import RxSwift
-//import SwiftUI
 
 extension SwapToken {
     class RootView: BEView {
@@ -47,17 +46,3 @@ extension SwapToken {
         }
     }
 }
-
-
-//@available(iOS 13, *)
-//struct SwapTokenRootView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Group {
-//            UIViewPreview {
-//                SwapToken.RootView(viewModel: SwapToken.ViewModel())
-//            }
-//            .previewDevice("iPhone SE (2nd generation)")
-//        }
-//    }
-//}
-
