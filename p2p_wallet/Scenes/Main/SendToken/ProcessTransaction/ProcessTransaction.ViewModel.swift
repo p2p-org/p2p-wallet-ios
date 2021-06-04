@@ -78,6 +78,8 @@ extension ProcessTransaction {
             switch transactionType {
             case .send(let fromWallet, let receiver, let amount):
                 executeSend(fromWallet: fromWallet, receiver: receiver, amount: amount)
+            case .swap(let from, let to, let inputAmount, let estimatedAmount):
+                executeSwap(from: from, to: to, inputAmount: inputAmount, estimatedAmount: estimatedAmount)
             }
         }
         
@@ -95,7 +97,11 @@ extension ProcessTransaction {
         }
         
         // MARK: - Helpers
-        func executeSend(fromWallet: Wallet, receiver: String, amount: Double) {
+        private func executeSend(
+            fromWallet: Wallet,
+            receiver: String,
+            amount: Double
+        ) {
             // Verify address
             guard NSRegularExpression.publicKey.matches(receiver) else {
                 transactionStatusSubject
@@ -103,6 +109,64 @@ extension ProcessTransaction {
                 return
             }
             
+            // Execute request
+            executeRequest(request) { [weak self] transactionId in
+                // update wallet
+                self?.walletsRepository.updateWallet(where: {$0.pubkey == fromWallet.pubkey}, transform: {
+                    var wallet = $0
+                    let lamports = amount.toLamport(decimals: fromWallet.token.decimals)
+                    wallet.lamports = (wallet.lamports ?? 0) - lamports
+                    return wallet
+                })
+                
+                // FIX ME: - Remove transactionManager
+                let transaction = Transaction(
+                    signatureInfo: .init(signature: transactionId),
+                    type: .send,
+                    amount: -amount,
+                    symbol: fromWallet.token.symbol,
+                    status: .processing
+                )
+                self?.transactionManager.process(transaction)
+            }
+        }
+        
+        private func executeSwap(
+            from: Wallet,
+            to: Wallet,
+            inputAmount: Double,
+            estimatedAmount: Double
+        ) {
+            executeRequest(request) { [weak self] transactionId in
+                // update source wallet
+                self?.walletsRepository.updateWallet(where: {$0.pubkey == from.pubkey}, transform: {
+                    var wallet = $0
+                    let lamports = inputAmount.toLamport(decimals: from.token.decimals)
+                    wallet.lamports = (wallet.lamports ?? 0) - lamports
+                    return wallet
+                })
+                
+                // update destination wallet
+                self?.walletsRepository.updateWallet(where: {$0.pubkey == to.pubkey}, transform: {
+                    var wallet = $0
+                    let lamports = estimatedAmount.toLamport(decimals: to.token.decimals)
+                    wallet.lamports = (wallet.lamports ?? 0) + lamports
+                    return wallet
+                })
+                
+                // FIX ME: - Remove transactionManager
+                let transaction = Transaction(
+                    signatureInfo: .init(signature: transactionId),
+                    type: .send,
+                    amount: -inputAmount,
+                    symbol: from.token.symbol,
+                    status: .processing
+                )
+                self?.transactionManager.process(transaction)
+            }
+        }
+        
+        private func executeRequest(_ request: Single<SolanaSDK.TransactionID>, completion: @escaping (SolanaSDK.TransactionID) -> Void) {
             // clean up
             self.transactionStatusSubject.accept(.processing)
             self.transactionIdSubject.accept(nil)
@@ -114,23 +178,7 @@ extension ProcessTransaction {
                     self?.transactionStatusSubject.accept(.processing)
                     self?.transactionIdSubject.accept(transactionId)
                     
-                    // update wallet
-                    self?.walletsRepository.updateWallet(where: {$0.pubkey == fromWallet.pubkey}, transform: {
-                        var wallet = $0
-                        let lamports = amount.toLamport(decimals: fromWallet.token.decimals)
-                        wallet.lamports = (wallet.lamports ?? 0) - lamports
-                        return wallet
-                    })
-                    
-                    // FIX ME: - Remove transactionManager
-                    let transaction = Transaction(
-                        signatureInfo: .init(signature: transactionId),
-                        type: .send,
-                        amount: -amount,
-                        symbol: fromWallet.token.symbol,
-                        status: .processing
-                    )
-                    self?.transactionManager.process(transaction)
+                    completion(transactionId)
                     
                     // observe confimation status
                     return self?.transactionHandler.observeTransactionCompletion(signature: transactionId) ?? .empty()
