@@ -127,9 +127,26 @@ extension SwapToken {
         }
         
         private func bind() {
-            // isLoading
-            
-            // error
+            // loaded
+            viewModel.output.error
+                .map { $0 == L10n.swappingIsCurrentlyUnavailable }
+                .drive(onNext: {[weak self] isUnavailable in
+                    self?.removeErrorView()
+                    self?.stackView.isHidden = false
+                    
+                    if isUnavailable {
+                        self?.stackView.isHidden = true
+                        self?.showErrorView(
+                            title: L10n.swappingIsCurrentlyUnavailable,
+                            description: L10n.swappingPoolsNotFound + "\n" + L10n.pleaseTryAgainLater,
+                            retryAction: CocoaAction { [weak self] in
+                                self?.viewModel.reload()
+                                return .just(())
+                            }
+                        )
+                    }
+                })
+                .disposed(by: disposeBag)
             
             // available amount
             Driver.combineLatest(
@@ -140,6 +157,12 @@ extension SwapToken {
                     L10n.available + ": " + amount?.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
                 }
                 .drive(availableSourceBalanceLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.error
+                .map {$0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid}
+                .map {$0 ? UIColor.alert: UIColor.h5887ff}
+                .drive(availableSourceBalanceLabel.rx.textColor)
                 .disposed(by: disposeBag)
             
             // source wallet
@@ -178,6 +201,14 @@ extension SwapToken {
             viewModel.output.estimatedAmount
                 .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
                 .drive(destinationWalletView.amountTextField.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.useAllBalanceDidTap
+                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
+                .drive(onNext: {[weak self] in
+                    // write text without notifying
+                    self?.sourceWalletView.amountTextField.text = $0
+                })
                 .disposed(by: disposeBag)
             
             // equity value label
@@ -303,6 +334,21 @@ extension SwapToken {
                         self?.slippageLabel.text = (slippage * 100).toString() + " %"
                     }
                 })
+                .disposed(by: disposeBag)
+            
+            // error
+            viewModel.output.error
+                .drive(errorLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.error
+                .map {$0 == nil || $0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid}
+                .drive(errorLabel.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            // swap button
+            viewModel.output.isValid
+                .drive(swapButton.rx.isEnabled)
                 .disposed(by: disposeBag)
         }
         
