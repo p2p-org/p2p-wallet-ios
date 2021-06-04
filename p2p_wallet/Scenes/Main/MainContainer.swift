@@ -133,7 +133,8 @@ class MainContainer {
             transactionHandler: socket,
             transactionManager: transactionManager,
             walletsRepository: walletsViewModel,
-            pricesRepository: pricesManager
+            pricesRepository: pricesManager,
+            apiClient: solanaSDK
         )
         return ProcessTransaction.ViewController(viewModel: viewModel)
     }
@@ -178,11 +179,11 @@ class MainContainer {
                 walletsRepository: walletsViewModel,
                 pubkey: pubkey,
                 solanaSDK: solanaSDK,
-                transactionManager: transactionManager,
                 pricesRepository: pricesManager,
                 accountStorage: accountStorage
             ),
-            rootViewModel: rootViewModel
+            rootViewModel: rootViewModel,
+            scenesFactory: self
         )
     }
     
@@ -229,4 +230,5 @@ extension MainContainer: TabBarScenesFactory,
                          ChangeNetworkResponder,
                          ChangeFiatResponder,
                          ReceiveTokenSceneFactory,
+                         TokenSettingsScenesFactory,
                          _MainScenesFactory {}

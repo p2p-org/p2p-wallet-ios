@@ -8,9 +8,14 @@
 import Foundation
 import UIKit
 import Action
+import RxSwift
 
 @objc protocol TokenSettingsViewControllerDelegate: AnyObject {
     @objc optional func tokenSettingsViewControllerDidCloseToken(_ vc: TokenSettingsViewController)
+}
+
+protocol TokenSettingsScenesFactory {
+    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<SolanaSDK.TransactionID>) -> ProcessTransaction.ViewController
 }
 
 class TokenSettingsViewController: WLIndicatorModalVC {
@@ -18,6 +23,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
     let rootViewModel: RootViewModel
+    let scenesFactory: TokenSettingsScenesFactory
     weak var delegate: TokenSettingsViewControllerDelegate?
     
     // MARK: - Subviews
@@ -30,10 +36,11 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     }()
     
     // MARK: - Initializer
-    init(viewModel: TokenSettingsViewModel, rootViewModel: RootViewModel)
+    init(viewModel: TokenSettingsViewModel, rootViewModel: RootViewModel, scenesFactory: TokenSettingsScenesFactory)
     {
         self.viewModel = viewModel
         self.rootViewModel = rootViewModel
+        self.scenesFactory = scenesFactory
         super.init()
     }
     
@@ -74,15 +81,15 @@ class TokenSettingsViewController: WLIndicatorModalVC {
                             useBiometry: false,
                             completion: {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                                    self?.viewModel.showProcessingAndClose()
+                                    self?.viewModel.closeAccount()
                                 }
                             })
                     )
                 }
             }
             self.present(vc, animated: true, completion: nil)
-        case .processTransaction:
-            let vc = ProcessTransactionViewController(viewModel: viewModel.processTransactionViewModel)
+        case .processTransaction(let request, let transactionType):
+            let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
             vc.delegate = self
             self.present(vc, animated: true, completion: nil)
         }

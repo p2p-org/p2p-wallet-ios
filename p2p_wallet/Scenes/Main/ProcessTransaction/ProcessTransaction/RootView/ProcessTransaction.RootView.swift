@@ -76,6 +76,19 @@ extension ProcessTransaction {
         }
         
         private func bind() {
+            switch viewModel.output.transactionType {
+            case .closeAccount:
+                viewModel.fetchReimbursedAmountForClosingTransaction()
+                    .subscribe(onSuccess: {[weak self] _ in
+                        self?.bindLayout()
+                    })
+                    .disposed(by: disposeBag)
+            default:
+                bindLayout()
+            }
+        }
+        
+        private func bindLayout() {
             Driver.combineLatest(
                 viewModel.output.transactionId,
                 viewModel.output.transactionStatus

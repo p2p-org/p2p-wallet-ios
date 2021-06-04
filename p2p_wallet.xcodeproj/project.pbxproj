@@ -741,7 +741,6 @@
 				BCB7C7C32665EEC400FEC68E /* SendToken.ViewModel.swift */,
 				BCB7C7C42665EEC400FEC68E /* SendToken.ViewController.swift */,
 				BCB7C7C52665EEC400FEC68E /* SendToken.RootView.swift */,
-				BCB7C7CB2667335300FEC68E /* ProcessTransaction */,
 			);
 			path = SendToken;
 			sourceTree = "<group>";
@@ -889,6 +888,7 @@
 		BC5DB15625F75E33003D00BE /* ProcessTransaction */ = {
 			isa = PBXGroup;
 			children = (
+				BCB7C7CB2667335300FEC68E /* ProcessTransaction */,
 				BC5DB15725F75E59003D00BE /* ProcessTransactionViewModel.swift */,
 				BCEE51322625424800271AB9 /* ProcessTransactionRootView */,
 				BC5DB15925F75E59003D00BE /* ProcessTransactionViewController.swift */,
