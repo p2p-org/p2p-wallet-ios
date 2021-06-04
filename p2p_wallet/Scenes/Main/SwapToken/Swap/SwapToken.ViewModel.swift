@@ -89,7 +89,8 @@ extension SwapToken {
         init(
             repository: WalletsRepository,
             apiClient: SwapTokenAPIClient,
-            authenticationHandler: AuthenticationHandler
+            authenticationHandler: AuthenticationHandler,
+            fromWalletPubkey: String?
         ) {
             self.repository = repository
             self.apiClient = apiClient
@@ -131,6 +132,8 @@ extension SwapToken {
             
             bind()
             reload()
+            
+            input.sourceWalletPubkey.accept(fromWalletPubkey)
         }
         
         /// Bind subjects
@@ -159,7 +162,7 @@ extension SwapToken {
                 .map {wallets, pubkey in
                     return wallets?.first(where: {$0.pubkey == pubkey})
                 }
-                .bind(to: sourceWalletSubject)
+                .bind(to: destinationWalletSubject)
                 .disposed(by: disposeBag)
             
             // amount
@@ -260,11 +263,9 @@ extension SwapToken {
                 .disposed(by: disposeBag)
             
             // available amount
-            Observable.combineLatest(
-                currentPoolSubject.distinctUntilChanged(),
-                sourceWalletSubject.distinctUntilChanged()
-            )
-                .map {(pool, wallet) in wallet?.amount}
+            currentPoolSubject
+                .withLatestFrom(sourceWalletSubject)
+                .map {$0?.amount}
                 .bind(to: availableAmountSubject)
                 .disposed(by: disposeBag)
             
