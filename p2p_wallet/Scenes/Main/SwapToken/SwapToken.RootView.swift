@@ -162,34 +162,6 @@ extension SwapToken {
                 })
                 .disposed(by: disposeBag)
             
-            // equity value label
-            // FIXME: - price observing
-            Driver.combineLatest(
-                viewModel.output.amount,
-                viewModel.output.sourceWallet
-            )
-                .map {amount, wallet in
-                    if let wallet = wallet {
-                        let value = amount * wallet.priceInCurrentFiat
-                        return "≈ \(value.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
-                    } else {
-                        return L10n.selectCurrency
-                    }
-                }
-                .drive(self.sourceWalletView.equityValueLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            viewModel.output.destinationWallet
-                .map {destinationWallet -> String? in
-                    if destinationWallet != nil {
-                        return nil
-                    } else {
-                        return L10n.selectCurrency
-                    }
-                }
-                .drive(self.sourceWalletView.equityValueLabel.rx.text)
-                .disposed(by: disposeBag)
-            
             // pool
             let isNoPoolAvailable = viewModel.output.pool.map {$0 == nil}
             

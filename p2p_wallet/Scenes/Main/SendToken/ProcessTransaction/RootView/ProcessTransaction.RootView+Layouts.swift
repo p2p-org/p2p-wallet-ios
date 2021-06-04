@@ -9,15 +9,14 @@ import Foundation
 
 extension ProcessTransaction.RootView {
     // MARK: - Main layout function
-    func layoutWithTransactionType(
-        _ transactionType: ProcessTransaction.TransactionType,
+    func layout(
         transactionId: SolanaSDK.TransactionID?,
         transactionStatus: ProcessTransaction.TransactionStatus
     ) {
         // summary view
         summaryView?.removeFromSuperview()
         
-        switch transactionType {
+        switch viewModel.output.transactionType {
         case .swap(let from, let to, let inputAmount, let estimatedAmount):
             let sv = SwapTransactionSummaryView(forAutoLayout: ())
             sv.sourceIconImageView.setUp(token: from.token)
@@ -52,7 +51,7 @@ extension ProcessTransaction.RootView {
         case .confirmed:
             layoutConfirmedTransaction()
         case .error(let error):
-            layoutTransactionError(error, transactionType: transactionType)
+            layoutTransactionError(error)
         }
         
         // transaction id
@@ -88,8 +87,15 @@ extension ProcessTransaction.RootView {
     }
     
     private func layoutProcessingTransaction(enableDoneButtonWhen condition: Bool) {
-        self.titleLabel.text = L10n.sending + "..."
-        self.subtitleLabel.text = L10n.transactionProcessing
+        switch viewModel.output.transactionType {
+        case .send:
+            self.titleLabel.text = L10n.sending + "..."
+            self.subtitleLabel.text = L10n.transactionProcessing
+        case .swap:
+            self.titleLabel.text = L10n.swapping + "..."
+            self.subtitleLabel.text = L10n.transactionProcessing
+        }
+        
         self.transactionStatusImageView.image = .transactionProcessing
         self.buttonStackView.addArrangedSubview(
             WLButton.stepButton(type: .blue, label: L10n.done)
@@ -108,7 +114,8 @@ extension ProcessTransaction.RootView {
         )
     }
     
-    private func layoutTransactionError(_ error: Error, transactionType: ProcessTransaction.TransactionType) {
+    private func layoutTransactionError(_ error: Error) {
+        let transactionType = viewModel.output.transactionType
         // specific errors
         
         // When trying to send a wrapped token to a new SOL wallet (which is not yet in the blockchain)

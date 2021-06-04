@@ -81,9 +81,7 @@ extension ProcessTransaction {
                 viewModel.output.transactionStatus
             )
                 .drive(onNext: { [weak self] (transactionId, transactionStatus) in
-                    guard let transactionType = self?.viewModel.output.transactionType
-                    else {return}
-                    self?.layoutWithTransactionType(transactionType, transactionId: transactionId, transactionStatus: transactionStatus)
+                    self?.layout(transactionId: transactionId, transactionStatus: transactionStatus)
                     self?.transactionStatusDidChange?()
                 })
                 .disposed(by: disposeBag)
