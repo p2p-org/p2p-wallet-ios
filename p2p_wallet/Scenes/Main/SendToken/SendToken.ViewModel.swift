@@ -56,11 +56,13 @@ extension SendToken {
             let receiverAddress: Driver<String?>
         }
         
-        // MARK: - Properties
-        private let disposeBag = DisposeBag()
+        // MARK: - Dependencies
         private let repository: WalletsRepository
         private let apiClient: SendTokenAPIClient
         private let authenticationHandler: AuthenticationHandler
+        
+        // MARK: - Properties
+        private let disposeBag = DisposeBag()
         
         let input: Input
         let output: Output
