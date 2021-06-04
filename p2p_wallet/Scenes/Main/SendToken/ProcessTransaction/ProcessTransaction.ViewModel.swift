@@ -27,13 +27,15 @@ extension ProcessTransaction {
             let pricesRepository: PricesRepository
         }
         
-        // MARK: - Properties
-        private let disposeBag = DisposeBag()
+        // MARK: - Dependencies
         private let transactionType: TransactionType
         private let request: Single<SolanaSDK.TransactionID>
         private let transactionHandler: TransactionHandler
         private let transactionManager: TransactionsManager
         private let walletsRepository: WalletsRepository
+        
+        // MARK: - Properties
+        private let disposeBag = DisposeBag()
         
         let input: Input
         let output: Output
