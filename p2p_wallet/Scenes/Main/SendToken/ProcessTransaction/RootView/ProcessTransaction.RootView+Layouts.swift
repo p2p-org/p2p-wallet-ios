@@ -14,11 +14,35 @@ extension ProcessTransaction.RootView {
         transactionId: SolanaSDK.TransactionID?,
         transactionStatus: ProcessTransaction.TransactionStatus
     ) {
-        // clean up
-        amountLabel.isHidden = false
-        equityAmountLabel.isHidden = false
+        // summary view
+        summaryView?.removeFromSuperview()
+        
+        switch transactionType {
+        case .swap(let from, let to, let inputAmount, let estimatedAmount):
+            let sv = SwapTransactionSummaryView(forAutoLayout: ())
+            sv.sourceIconImageView.setUp(token: from.token)
+            sv.sourceAmountLabel.text = (-(inputAmount)).toString(maximumFractionDigits: 4)
+            sv.sourceSymbolLabel.text = from.token.symbol
+            
+            sv.destinationIconImageView.setUp(token: to.token)
+            sv.destinationAmountLabel.text = estimatedAmount.toString(maximumFractionDigits: 4, showPlus: true)
+            sv.destinationSymbolLabel.text = to.token.symbol
+            
+            summaryView = sv
+        case .send(let fromWallet, _, let sentAmount):
+            let sentAmount = -sentAmount
+            let symbol = fromWallet.token.symbol
+            
+            let sv = DefaultTransactionSummaryView(forAutoLayout: ())
+            let equityValue = sentAmount * viewModel.output.pricesRepository.currentPrice(for: symbol)?.value
+            sv.amountInTokenLabel.text = "\(sentAmount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
+            sv.amountInFiatLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
+            
+            summaryView = sv
+        }
         transactionIDStackView.isHidden = false
         
+        // default layout
         layoutByDefault()
         
         // title, subtitle, image, button
@@ -30,19 +54,6 @@ extension ProcessTransaction.RootView {
         case .error(let error):
             layoutTransactionError(error, transactionType: transactionType)
         }
-        
-        // amount & equity value
-        var symbol = ""
-        var amount = 0.0
-        switch transactionType {
-        case .send(let fromWallet, _, let sentAmount):
-            symbol = fromWallet.token.symbol
-            amount = -sentAmount
-        }
-        
-        let equityValue = amount * viewModel.output.pricesRepository.currentPrice(for: symbol)?.value
-        self.amountLabel.text = "\(amount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
-        self.equityAmountLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
         
         // transaction id
         if let signature = transactionId {
@@ -65,9 +76,7 @@ extension ProcessTransaction.RootView {
             BEStackViewSpacing(20),
             createTransactionStatusView(),
             BEStackViewSpacing(15),
-            amountLabel,
-            BEStackViewSpacing(5),
-            equityAmountLabel,
+            summaryView,
             BEStackViewSpacing(30),
             UIView.separator(height: 1, color: .separator),
             BEStackViewSpacing(20),
@@ -126,6 +135,8 @@ extension ProcessTransaction.RootView {
             switch transactionType {
             case .send(let fromWallet, _, _):
                 symbol = fromWallet.token.symbol
+            case .swap:
+                break
             }
             
             subtitleLabel.text = L10n.itMustBeAnWalletAddress(symbol)
