@@ -15,9 +15,6 @@
 		BC03791125FB570900D10EAE /* MyProductsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03791025FB570900D10EAE /* MyProductsCollectionView.swift */; };
 		BC03791625FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03791525FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift */; };
 		BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */; };
-		BC05891325D3CD7C00632993 /* SwapTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC05891025D3CD7C00632993 /* SwapTokenViewModel.swift */; };
-		BC05891425D3CD7C00632993 /* SwapTokenRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC05891125D3CD7C00632993 /* SwapTokenRootView.swift */; };
-		BC05891525D3CD7C00632993 /* SwapTokenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC05891225D3CD7C00632993 /* SwapTokenViewController.swift */; };
 		BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */; };
 		BC0978E825AEDEE200DB02E9 /* ResizablePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */; };
 		BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */; };
@@ -327,9 +324,6 @@
 		BC03791025FB570900D10EAE /* MyProductsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsCollectionView.swift; sourceTree = "<group>"; };
 		BC03791525FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MyProductsCollectionView+SupplementaryViews.swift"; sourceTree = "<group>"; };
 		BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LABiometryType+Extensions.swift"; sourceTree = "<group>"; };
-		BC05891025D3CD7C00632993 /* SwapTokenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenViewModel.swift; sourceTree = "<group>"; };
-		BC05891125D3CD7C00632993 /* SwapTokenRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenRootView.swift; sourceTree = "<group>"; };
-		BC05891225D3CD7C00632993 /* SwapTokenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenViewController.swift; sourceTree = "<group>"; };
 		BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLResizableModalVC.swift; sourceTree = "<group>"; };
 		BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizablePresentationController.swift; sourceTree = "<group>"; };
 		BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinLogoImageView.swift; sourceTree = "<group>"; };
@@ -721,10 +715,11 @@
 		BC1D2ACA256B6E7A0064E595 /* SwapToken */ = {
 			isa = PBXGroup;
 			children = (
-				BCB7C7D82668D26600FEC68E /* Swap */,
-				BC5FB0C325DA03D90021DFF3 /* Subviews */,
-				BC05891025D3CD7C00632993 /* SwapTokenViewModel.swift */,
-				BC05891225D3CD7C00632993 /* SwapTokenViewController.swift */,
+				BCB7C7D92668D29500FEC68E /* SwapToken.swift */,
+				BCB7C7DB2668D29500FEC68E /* SwapToken.ViewModel.swift */,
+				BCB7C7DA2668D29500FEC68E /* SwapToken.ViewController.swift */,
+				BCB7C7DC2668D29500FEC68E /* SwapToken.RootView.swift */,
+				BC2909FF256B9C95002A727C /* SwapToken.WalletView.swift */,
 			);
 			path = SwapToken;
 			sourceTree = "<group>";
@@ -899,14 +894,6 @@
 				BC5DB15925F75E59003D00BE /* ProcessTransactionViewController.swift */,
 			);
 			path = ProcessTransaction;
-			sourceTree = "<group>";
-		};
-		BC5FB0C325DA03D90021DFF3 /* Subviews */ = {
-			isa = PBXGroup;
-			children = (
-				BC05891125D3CD7C00632993 /* SwapTokenRootView.swift */,
-			);
-			path = Subviews;
 			sourceTree = "<group>";
 		};
 		BC5FB0C425DA03FB0021DFF3 /* SwapSlippageSettings */ = {
@@ -1347,18 +1334,6 @@
 				BCB7C7D5266743AC00FEC68E /* ProcessTransaction.RootView+Layouts.swift */,
 			);
 			path = RootView;
-			sourceTree = "<group>";
-		};
-		BCB7C7D82668D26600FEC68E /* Swap */ = {
-			isa = PBXGroup;
-			children = (
-				BCB7C7D92668D29500FEC68E /* SwapToken.swift */,
-				BCB7C7DB2668D29500FEC68E /* SwapToken.ViewModel.swift */,
-				BCB7C7DA2668D29500FEC68E /* SwapToken.ViewController.swift */,
-				BCB7C7DC2668D29500FEC68E /* SwapToken.RootView.swift */,
-				BC2909FF256B9C95002A727C /* SwapToken.WalletView.swift */,
-			);
-			path = Swap;
 			sourceTree = "<group>";
 		};
 		BCBBE1822563C0F400533F6B /* ReceiveToken */ = {
@@ -2100,7 +2075,6 @@
 				BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */,
 				BC65DFEA261D693500E436C7 /* WDVCSectionHeaderView.swift in Sources */,
 				BC8F682A260986EE002FDCCD /* ReceiveTokenRootView.swift in Sources */,
-				BC05891425D3CD7C00632993 /* SwapTokenRootView.swift in Sources */,
 				BC3122332580B34B00F3B14F /* PassCodeVC.swift in Sources */,
 				BC0378FA25FB538D00D10EAE /* MyProductsViewController.swift in Sources */,
 				BCE42E1825DFA5100021540E /* RestoreWalletViewModel.swift in Sources */,
@@ -2112,7 +2086,6 @@
 				BC1FFEE8262977940014F027 /* WLEnterPhrasesVC.swift in Sources */,
 				BCA93F8125E883A50081DDF6 /* Array+Extensions.swift in Sources */,
 				BC2EC1F92553FF6A006EEDA5 /* DashedButton.swift in Sources */,
-				BC05891525D3CD7C00632993 /* SwapTokenViewController.swift in Sources */,
 				BC274540263699F500D37CD1 /* SelectFiatVC.swift in Sources */,
 				BC03791625FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift in Sources */,
 				BC53E2202654BFAA005624CC /* DerivablePathsViewModel.swift in Sources */,
@@ -2172,7 +2145,6 @@
 				BC11CA122591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift in Sources */,
 				BC65E2772620058700E436C7 /* TransactionInfoRootView+Subviews.swift in Sources */,
 				BC8F691D260ADF7D002FDCCD /* ChooseWalletViewModel.swift in Sources */,
-				BC05891325D3CD7C00632993 /* SwapTokenViewModel.swift in Sources */,
 				BCB7C7DD2668D29500FEC68E /* SwapToken.swift in Sources */,
 				BC65E037261D72B200E436C7 /* TransactionsRepository.swift in Sources */,
 				BC2EC1D12553ED1B006EEDA5 /* FittingSizePresentationController.swift in Sources */,

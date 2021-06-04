@@ -22,8 +22,8 @@ extension SwapToken {
         lazy var availableSourceBalanceLabel = UILabel(text: "Available", weight: .medium, textColor: .h5887ff)
             .onTap(viewModel, action: #selector(ViewModel.useAllBalance))
         lazy var destinationBalanceLabel = UILabel(weight: .medium, textColor: .textSecondary)
-        lazy var sourceWalletView = SwapToken.WalletView(forAutoLayout: ())
-        lazy var destinationWalletView = SwapToken.WalletView(forAutoLayout: ())
+        lazy var sourceWalletView = WalletView(viewModel: viewModel, type: .source)
+        lazy var destinationWalletView = SwapToken.WalletView(viewModel: viewModel, type: .destination)
         
         lazy var exchangeRateLabel = UILabel(text: nil)
         lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
@@ -53,20 +53,6 @@ extension SwapToken {
             backgroundColor = .vcBackground
             layout()
             bind()
-            
-            // setup actions
-            sourceWalletView.chooseTokenAction = CocoaAction { [weak self] in
-                self?.viewModel.chooseSourceWallet()
-                return .just(())
-            }
-            
-            destinationWalletView.chooseTokenAction = CocoaAction { [weak self] in
-                self?.viewModel.chooseDestinationWallet()
-                return .just(())
-            }
-            
-            // set up textfields
-            sourceWalletView.amountTextField.delegate = self
         }
         
         override func didMoveToWindow() {
@@ -165,49 +151,14 @@ extension SwapToken {
                 .drive(availableSourceBalanceLabel.rx.textColor)
                 .disposed(by: disposeBag)
             
-            // source wallet
-            viewModel.output.sourceWallet
-                .drive(onNext: {[weak self] wallet in
-                    self?.sourceWalletView.setUp(wallet: wallet)
-                })
-                .disposed(by: disposeBag)
-            
             // destination wallet
             viewModel.output.destinationWallet
                 .drive(onNext: { [weak self] wallet in
-                    self?.destinationWalletView.setUp(wallet: wallet)
                     if let amount = wallet?.amount?.toString(maximumFractionDigits: 9) {
                         self?.destinationBalanceLabel.text = L10n.balance + ": " + amount + " " + "\(wallet?.token.symbol ?? "")"
                     } else {
                         self?.destinationBalanceLabel.text = nil
                     }
-                })
-                .disposed(by: disposeBag)
-            
-            // textFields
-            sourceWalletView.amountTextField.rx.text
-                .bind(to: viewModel.input.amount)
-                .disposed(by: disposeBag)
-            
-            destinationWalletView.amountTextField.rx.text
-                .bind(to: viewModel.input.estimatedAmount)
-                .disposed(by: disposeBag)
-            
-            viewModel.output.amount
-                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
-                .drive(sourceWalletView.amountTextField.rx.text)
-                .disposed(by: disposeBag)
-            
-            viewModel.output.estimatedAmount
-                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
-                .drive(destinationWalletView.amountTextField.rx.text)
-                .disposed(by: disposeBag)
-            
-            viewModel.output.useAllBalanceDidTap
-                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
-                .drive(onNext: {[weak self] in
-                    // write text without notifying
-                    self?.sourceWalletView.amountTextField.text = $0
                 })
                 .disposed(by: disposeBag)
             
@@ -366,15 +317,5 @@ extension SwapToken {
             
             return view
         }
-    }
-}
-
-// MARK: - TextField delegate
-extension SwapToken.RootView: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if let textField = textField as? TokenAmountTextField {
-            return textField.shouldChangeCharactersInRange(range, replacementString: string)
-        }
-        return true
     }
 }
