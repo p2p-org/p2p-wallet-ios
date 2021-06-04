@@ -14,7 +14,7 @@ import BECollectionView
 enum TokenSettingsNavigatableScene {
     case alert(title: String?, description: String)
     case closeConfirmation
-    case processTransaction
+    case processTransaction(request: Single<SolanaSDK.TransactionID>, transactionType: ProcessTransaction.TransactionType)
 }
 
 class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
@@ -23,18 +23,9 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     let walletsRepository: WalletsRepository
     let pubkey: String
     let solanaSDK: SolanaSDK
-    let transactionManager: TransactionsManager
     let pricesRepository: PricesRepository
     let accountStorage: KeychainAccountStorage
     var wallet: Wallet? {walletsRepository.getWallets().first(where: {$0.pubkey == pubkey})}
-    lazy var processTransactionViewModel: ProcessTransactionViewModel = {
-        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager, pricesRepository: pricesRepository)
-        viewModel.tryAgainAction = CocoaAction {
-            self.closeWallet()
-            return .just(())
-        }
-        return viewModel
-    }()
     
     // MARK: - Subject
     let navigationSubject = PublishSubject<TokenSettingsNavigatableScene>()
@@ -46,14 +37,12 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
         walletsRepository: WalletsRepository,
         pubkey: String,
         solanaSDK: SolanaSDK,
-        transactionManager: TransactionsManager,
         pricesRepository: PricesRepository,
         accountStorage: KeychainAccountStorage
     ) {
         self.walletsRepository = walletsRepository
         self.pubkey = pubkey
         self.solanaSDK = solanaSDK
-        self.transactionManager = transactionManager
         self.accountStorage = accountStorage
         self.pricesRepository = pricesRepository
         super.init()
@@ -84,39 +73,9 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
         walletsRepository.toggleWalletVisibility(wallet)
     }
     
-    @objc func showProcessingAndClose() {
-        navigationSubject.onNext(.processTransaction)
-        closeWallet()
-    }
-    
-    private func closeWallet() {
-        var transaction = Transaction(
-            type: .send,
-            symbol: "SOL",
-            status: .processing
-        )
-        
-        self.processTransactionViewModel.transactionInfo.accept(
-            TransactionInfo(transaction: transaction)
-        )
-        
-        Single.zip(
-            solanaSDK.closeTokenAccount(tokenPubkey: pubkey),
-            solanaSDK.getCreatingTokenAccountFee().catchAndReturn(0)
-        )
-            .subscribe(onSuccess: { signature, fee in
-                transaction.amount = fee.convertToBalance(decimals: 9)
-                transaction.signatureInfo = .init(signature: signature)
-                self.processTransactionViewModel.transactionInfo.accept(
-                    TransactionInfo(transaction: transaction)
-                )
-                self.transactionManager.process(transaction)
-                _ = self.walletsRepository.removeItem(where: {$0.pubkey == self.pubkey})
-            }, onFailure: {error in
-                self.processTransactionViewModel.transactionInfo.accept(
-                    TransactionInfo(transaction: transaction, error: error)
-                )
-            })
-            .disposed(by: disposeBag)
+    @objc func closeAccount() {
+        guard let wallet = wallet else {return}
+        let request = solanaSDK.closeTokenAccount(tokenPubkey: pubkey)
+        navigationSubject.onNext(.processTransaction(request: request, transactionType: .closeAccount(wallet)))
     }
 }
