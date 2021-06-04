@@ -31,6 +31,7 @@ extension SwapToken {
             let navigationScene: Driver<NavigatableScene?>
             let isLoading: Driver<Bool>
             let error: Driver<String?>
+            let isValid: Driver<Bool>
             let sourceWallet: Driver<Wallet?>
             let destinationWallet: Driver<Wallet?>
             let amount: Driver<Double?>
@@ -55,6 +56,7 @@ extension SwapToken {
         private lazy var poolsSubject = LazySubject<[SolanaSDK.Pool]>(request: apiClient.getSwapPools())
         private let isLoadingSubject = PublishRelay<Bool>()
         private let errorSubject = PublishRelay<String?>()
+        private let isValidSubject = BehaviorRelay<Bool>(value: false)
         private let sourceWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let destinationWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let currentPoolSubject = BehaviorRelay<SolanaSDK.Pool?>(value: nil)
@@ -78,6 +80,8 @@ extension SwapToken {
                     .asDriver(onErrorJustReturn: false),
                 error: errorSubject
                     .asDriver(onErrorJustReturn: nil),
+                isValid: isValidSubject
+                    .asDriver(),
                 sourceWallet: sourceWalletSubject
                     .asDriver(),
                 destinationWallet: destinationWalletSubject
@@ -236,6 +240,16 @@ extension SwapToken {
             )
                 .map {_ in self.verifyError()}
                 .bind(to: errorSubject)
+                .disposed(by: disposeBag)
+            
+            // isValid subject
+            Observable.combineLatest(
+                currentPoolSubject,
+                amountSubject,
+                errorSubject.map {$0 == nil}
+            )
+                .map {$0 != nil && $1 > 0 && $2}
+                .bind(to: isValidSubject)
                 .disposed(by: disposeBag)
         }
         
