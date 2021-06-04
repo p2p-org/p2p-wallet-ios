@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import Action
+import RxCocoa
 
 extension SwapToken {
     class RootView: ScrollableVStackRootView {
@@ -126,8 +127,183 @@ extension SwapToken {
         }
         
         private func bind() {
+            // isLoading
+            
             // error
-            viewModel.output.
+            
+            // available amount
+            Driver.combineLatest(
+                viewModel.output.availableAmount,
+                viewModel.output.sourceWallet
+            )
+                .map {amount, wallet in
+                    L10n.available + ": " + amount?.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
+                }
+                .drive(availableSourceBalanceLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // source wallet
+            viewModel.output.sourceWallet
+                .drive(onNext: {[weak self] wallet in
+                    self?.sourceWalletView.setUp(wallet: wallet)
+                })
+                .disposed(by: disposeBag)
+            
+            // destination wallet
+            viewModel.output.destinationWallet
+                .drive(onNext: { [weak self] wallet in
+                    self?.destinationWalletView.setUp(wallet: wallet)
+                    if let amount = wallet?.amount?.toString(maximumFractionDigits: 9) {
+                        self?.destinationBalanceLabel.text = L10n.balance + ": " + amount + " " + "\(wallet?.token.symbol ?? "")"
+                    } else {
+                        self?.destinationBalanceLabel.text = nil
+                    }
+                })
+                .disposed(by: disposeBag)
+            
+            // textFields
+            sourceWalletView.amountTextField.rx.text
+                .bind(to: viewModel.input.amount)
+                .disposed(by: disposeBag)
+            
+            destinationWalletView.amountTextField.rx.text
+                .bind(to: viewModel.input.estimatedAmount)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.amount
+                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
+                .drive(sourceWalletView.amountTextField.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.estimatedAmount
+                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
+                .drive(destinationWalletView.amountTextField.rx.text)
+                .disposed(by: disposeBag)
+            
+            // equity value label
+            // FIXME: - price observing
+            Driver.combineLatest(
+                viewModel.output.amount,
+                viewModel.output.sourceWallet
+            )
+                .map {amount, wallet in
+                    if let wallet = wallet {
+                        let value = amount * wallet.priceInCurrentFiat
+                        return "≈ \(value.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
+                    } else {
+                        return L10n.selectCurrency
+                    }
+                }
+                .drive(self.sourceWalletView.equityValueLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.destinationWallet
+                .map {destinationWallet -> String? in
+                    if destinationWallet != nil {
+                        return nil
+                    } else {
+                        return L10n.selectCurrency
+                    }
+                }
+                .drive(self.sourceWalletView.equityValueLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // pool
+            let isNoPoolAvailable = viewModel.output.pool.map {$0 == nil}
+            
+            isNoPoolAvailable
+                .drive(exchangeRateLabel.superview!.superview!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isNoPoolAvailable
+                .drive(minimumReceiveLabel.superview!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isNoPoolAvailable
+                .drive(feeLabel.superview!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isNoPoolAvailable
+                .drive(slippageLabel.superview!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            // exchange rate label
+            Driver.combineLatest(
+                viewModel.output.amount,
+                viewModel.output.estimatedAmount,
+                viewModel.output.isExchageRateReversed,
+                viewModel.output.sourceWallet.map {$0?.token.symbol},
+                viewModel.output.destinationWallet.map {$0?.token.symbol}
+            )
+                .map {amount, estimatedAmount, isReversed, sourceSymbol, destinationSymbol -> String? in
+                    guard let amount = amount, let estimatedAmount = estimatedAmount, let sourceSymbol = sourceSymbol, let destinationSymbol = destinationSymbol
+                    else {return nil}
+                    
+                    let rate: Double
+                    let fromSymbol: String
+                    let toSymbol: String
+                    if isReversed {
+                        guard amount != 0 else {return nil}
+                        rate = estimatedAmount / amount
+                        fromSymbol = destinationSymbol
+                        toSymbol = sourceSymbol
+                    } else {
+                        guard estimatedAmount != 0 else {return nil}
+                        rate = amount / estimatedAmount
+                        fromSymbol = sourceSymbol
+                        toSymbol = destinationSymbol
+                    }
+                    
+                    var string = rate.toString(maximumFractionDigits: 9)
+                    string += " "
+                    string += toSymbol
+                    string += " "
+                    string += L10n.per
+                    string += " "
+                    string += fromSymbol
+                    
+                    return string
+                }
+                .drive(exchangeRateLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // minimum receive amount
+            Driver.combineLatest(
+                viewModel.output.minimumReceiveAmount,
+                viewModel.output.destinationWallet
+            )
+                .map {minReceiveAmount, wallet -> String? in
+                    guard let symbol = wallet?.token.symbol else {return nil}
+                    return minReceiveAmount?.toString(maximumFractionDigits: 9) + " " + symbol
+                }
+                .drive(minimumReceiveLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // fee
+            Driver.combineLatest(
+                viewModel.output.fee,
+                viewModel.output.destinationWallet.map {$0?.token.symbol}
+            )
+                .map {fee, symbol -> String? in
+                    guard let fee = fee, let symbol = symbol else {return nil}
+                    return fee.toString(maximumFractionDigits: 9) + " " + symbol
+                }
+                .drive(feeLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // slippage
+            viewModel.output.slippage
+                .drive(onNext: {[weak self] slippage in
+                    if !(self?.viewModel.isSlippageValid(slippage: slippage) ?? true) {
+                        self?.slippageLabel.attributedText = NSMutableAttributedString()
+                            .text((slippage * 100).toString() + " %", color: .red)
+                            .text(" ")
+                            .text("(\(L10n.max). 20%)", color: .textSecondary)
+                    } else {
+                        self?.slippageLabel.text = (slippage * 100).toString() + " %"
+                    }
+                })
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Helpers

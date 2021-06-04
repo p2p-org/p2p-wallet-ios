@@ -40,6 +40,7 @@ extension SwapToken {
         }
         struct Output {
             let navigationScene: Driver<NavigatableScene?>
+            let pool: Driver<SolanaSDK.Pool?>
             let isLoading: Driver<Bool>
             let error: Driver<String?>
             let isValid: Driver<Bool>
@@ -49,6 +50,7 @@ extension SwapToken {
             let amount: Driver<Double?>
             let estimatedAmount: Driver<Double?>
             let fee: Driver<Double?>
+            let slippage: Driver<Double>
             let minimumReceiveAmount: Driver<Double?>
             let useAllBalanceDidTap: Driver<Double?>
             let isExchageRateReversed: Driver<Bool>
@@ -97,6 +99,8 @@ extension SwapToken {
             self.output = Output(
                 navigationScene: navigationSubject
                     .asDriver(onErrorJustReturn: nil),
+                pool: currentPoolSubject
+                    .asDriver(),
                 isLoading: isLoadingSubject
                     .asDriver(onErrorJustReturn: false),
                 error: errorSubject
@@ -114,6 +118,8 @@ extension SwapToken {
                 estimatedAmount: estimatedAmountSubject
                     .asDriver(),
                 fee: feeSubject
+                    .asDriver(),
+                slippage: slippageSubject
                     .asDriver(),
                 minimumReceiveAmount: minimumReceiveAmountSubject
                     .asDriver(),
@@ -262,7 +268,6 @@ extension SwapToken {
                 .bind(to: availableAmountSubject)
                 .disposed(by: disposeBag)
             
-            
             // minimum receive amount
             Observable.combineLatest(
                 currentPoolSubject.distinctUntilChanged(),
@@ -399,7 +404,7 @@ extension SwapToken {
             return nil
         }
         
-        private func isSlippageValid(slippage: Double) -> Bool {
+        func isSlippageValid(slippage: Double) -> Bool {
             slippage <= 0.2 && slippage > 0
         }
         
