@@ -269,7 +269,7 @@ extension SwapToken {
         }
         
         @objc func chooseDestinationWallet() {
-            navigationSubject.accept(.chooseDestinationWallet)
+            navigationSubject.accept(.chooseDestinationWallet(validMints: getValidDestinationWalletMints(), excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey))
         }
         
         @objc func swapSourceAndDestination() {
@@ -343,6 +343,18 @@ extension SwapToken {
         
         private func isSlippageValid(slippage: Double) -> Bool {
             slippage <= 0.2 && slippage > 0
+        }
+        
+        private func getValidDestinationWalletMints() -> Set<String> {
+            let sourceWalletMint = sourceWalletSubject.value?.mintAddress
+            var validDestinationMints: Set<String> = Set(poolsSubject.value?
+                .filter {$0.swapData.mintA.base58EncodedString == sourceWalletMint}
+                .map {$0.swapData.mintB.base58EncodedString} ?? [])
+            
+            validDestinationMints = validDestinationMints.union(Set(poolsSubject.value?
+                .filter {$0.swapData.mintB.base58EncodedString == sourceWalletMint}
+                .map {$0.swapData.mintA.base58EncodedString} ?? []))
+            return validDestinationMints
         }
     }
 }
