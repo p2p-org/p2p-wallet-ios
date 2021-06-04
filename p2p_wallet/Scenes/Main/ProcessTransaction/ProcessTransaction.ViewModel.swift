@@ -185,6 +185,8 @@ extension ProcessTransaction {
                     return wallet
                 })
                 
+                self?.walletsRepository.removeItem(where: {$0.pubkey == wallet.pubkey})
+                
                 // FIXME: - Remove transactionManager
                 let transaction = Transaction(
                     type: .send,
