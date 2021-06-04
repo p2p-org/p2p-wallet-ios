@@ -8,13 +8,9 @@
 import Foundation
 import UIKit
 
-//protocol SwapTokenScenesFactory {
-//    func makeSwapTokenDetailViewController() -> SwapTokenDetailViewController
-//}
-//
-//@objc protocol SwapTokenViewControllerDelegate {
-//
-//}
+protocol SwapTokenScenesFactory {
+    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController
+}
 
 extension SwapToken {
     class ViewController: BaseVC {

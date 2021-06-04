@@ -9,20 +9,16 @@ import Foundation
 import UIKit
 import Action
 
-protocol SwapScenesFactory {
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController
-}
-
 class SwapTokenViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: SwapTokenViewModel
-    let scenesFactory: SwapScenesFactory
+    let scenesFactory: SwapTokenScenesFactory
     
     lazy var rootView = SwapTokenRootView(viewModel: viewModel)
     
     // MARK: - Initializer
-    init(viewModel: SwapTokenViewModel, scenesFactory: SwapScenesFactory)
+    init(viewModel: SwapTokenViewModel, scenesFactory: SwapTokenScenesFactory)
     {
         self.viewModel = viewModel
         self.scenesFactory = scenesFactory

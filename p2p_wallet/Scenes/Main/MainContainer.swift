@@ -222,7 +222,7 @@ class MainContainer {
 extension MainContainer: TabBarScenesFactory,
                          MyProductsScenesFactory,
                          ProfileScenesFactory,
-                         SwapScenesFactory,
+                         SwapTokenScenesFactory,
                          WalletDetailScenesFactory,
                          SendTokenScenesFactory,
                          BackupScenesFactory,
