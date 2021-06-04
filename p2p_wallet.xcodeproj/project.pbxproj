@@ -116,9 +116,6 @@
 		BC5A97D1260DA82B009674C4 /* WalletsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5A97CF260DA82B009674C4 /* WalletsSection.swift */; };
 		BC5A97E2260DC977009674C4 /* WalletsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5A97E1260DC977009674C4 /* WalletsCollectionView.swift */; };
 		BC5DB13225F739F9003D00BE /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = BC5DB13425F739F9003D00BE /* Localizable.stringsdict */; };
-		BC5DB15A25F75E59003D00BE /* ProcessTransactionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5DB15725F75E59003D00BE /* ProcessTransactionViewModel.swift */; };
-		BC5DB15B25F75E59003D00BE /* ProcessTransactionRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5DB15825F75E59003D00BE /* ProcessTransactionRootView.swift */; };
-		BC5DB15C25F75E59003D00BE /* ProcessTransactionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5DB15925F75E59003D00BE /* ProcessTransactionViewController.swift */; };
 		BC5ED749256237AB0030572D /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED748256237AB0030572D /* EmptyView.swift */; };
 		BC5ED7532562687F0030572D /* PricesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED7522562687F0030572D /* PricesManager.swift */; };
 		BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED757256269FE0030572D /* PriceFetcher.swift */; };
@@ -281,7 +278,6 @@
 		BCEB207225E1563B00B54FEF /* MainContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB207125E1563B00B54FEF /* MainContainer.swift */; };
 		BCEE508526244B6300271AB9 /* WLEmptyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE508426244B6300271AB9 /* WLEmptyCell.swift */; };
 		BCEE51372625425E00271AB9 /* TransactionIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */; };
-		BCEE513C2625428E00271AB9 /* ProcessTransactionRootView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE513B2625428E00271AB9 /* ProcessTransactionRootView+Layout.swift */; };
 		BCEE530026282DEE00271AB9 /* IndicatorPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE52FF26282DEE00271AB9 /* IndicatorPresentationController.swift */; };
 		BCF7D953256220F100961D31 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF7D952256220F100961D31 /* ErrorView.swift */; };
 		BCFC768825E2EAB800FBE148 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFC768525E2EAB800FBE148 /* MainViewController.swift */; };
@@ -434,9 +430,6 @@
 		BC5DB13825F739FD003D00BE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		BC5DB13925F739FF003D00BE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		BC5DB13A25F73A01003D00BE /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = vi; path = vi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		BC5DB15725F75E59003D00BE /* ProcessTransactionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransactionViewModel.swift; sourceTree = "<group>"; };
-		BC5DB15825F75E59003D00BE /* ProcessTransactionRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransactionRootView.swift; sourceTree = "<group>"; };
-		BC5DB15925F75E59003D00BE /* ProcessTransactionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransactionViewController.swift; sourceTree = "<group>"; };
 		BC5ED748256237AB0030572D /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		BC5ED7522562687F0030572D /* PricesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricesManager.swift; sourceTree = "<group>"; };
 		BC5ED757256269FE0030572D /* PriceFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceFetcher.swift; sourceTree = "<group>"; };
@@ -606,7 +599,6 @@
 		BCEB207125E1563B00B54FEF /* MainContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContainer.swift; sourceTree = "<group>"; };
 		BCEE508426244B6300271AB9 /* WLEmptyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLEmptyCell.swift; sourceTree = "<group>"; };
 		BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionIndicatorView.swift; sourceTree = "<group>"; };
-		BCEE513B2625428E00271AB9 /* ProcessTransactionRootView+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessTransactionRootView+Layout.swift"; sourceTree = "<group>"; };
 		BCEE52FF26282DEE00271AB9 /* IndicatorPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorPresentationController.swift; sourceTree = "<group>"; };
 		BCF7D952256220F100961D31 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		BCFC768525E2EAB800FBE148 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -888,10 +880,10 @@
 		BC5DB15625F75E33003D00BE /* ProcessTransaction */ = {
 			isa = PBXGroup;
 			children = (
-				BCB7C7CB2667335300FEC68E /* ProcessTransaction */,
-				BC5DB15725F75E59003D00BE /* ProcessTransactionViewModel.swift */,
-				BCEE51322625424800271AB9 /* ProcessTransactionRootView */,
-				BC5DB15925F75E59003D00BE /* ProcessTransactionViewController.swift */,
+				BCB7C7CC2667336800FEC68E /* ProcessTransaction.swift */,
+				BCB7C7CE2667336800FEC68E /* ProcessTransaction.ViewModel.swift */,
+				BCB7C7CD2667336800FEC68E /* ProcessTransaction.ViewController.swift */,
+				BCB7C7D42667439200FEC68E /* RootView */,
 			);
 			path = ProcessTransaction;
 			sourceTree = "<group>";
@@ -1316,17 +1308,6 @@
 			path = ViewControllers;
 			sourceTree = "<group>";
 		};
-		BCB7C7CB2667335300FEC68E /* ProcessTransaction */ = {
-			isa = PBXGroup;
-			children = (
-				BCB7C7CC2667336800FEC68E /* ProcessTransaction.swift */,
-				BCB7C7CE2667336800FEC68E /* ProcessTransaction.ViewModel.swift */,
-				BCB7C7CD2667336800FEC68E /* ProcessTransaction.ViewController.swift */,
-				BCB7C7D42667439200FEC68E /* RootView */,
-			);
-			path = ProcessTransaction;
-			sourceTree = "<group>";
-		};
 		BCB7C7D42667439200FEC68E /* RootView */ = {
 			isa = PBXGroup;
 			children = (
@@ -1523,15 +1504,6 @@
 				BCEB206B25E1561200B54FEF /* TabBar.swift */,
 			);
 			path = TabBarVC;
-			sourceTree = "<group>";
-		};
-		BCEE51322625424800271AB9 /* ProcessTransactionRootView */ = {
-			isa = PBXGroup;
-			children = (
-				BC5DB15825F75E59003D00BE /* ProcessTransactionRootView.swift */,
-				BCEE513B2625428E00271AB9 /* ProcessTransactionRootView+Layout.swift */,
-			);
-			path = ProcessTransactionRootView;
 			sourceTree = "<group>";
 		};
 		BCEE522B2626D3F900271AB9 /* Views */ = {
@@ -1922,7 +1894,6 @@
 				BCEB206125E1532C00B54FEF /* OnboardingContainer.swift in Sources */,
 				BC2DA2A2260B245400B50738 /* TransactionHandler.swift in Sources */,
 				BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */,
-				BC5DB15B25F75E59003D00BE /* ProcessTransactionRootView.swift in Sources */,
 				BCBE14A025EF3D110014BCE5 /* HomeRootView.swift in Sources */,
 				BCB7C7C62665EEC400FEC68E /* SendToken.swift in Sources */,
 				BCE3D55B25F212960092F91B /* WalletDetailViewModel.swift in Sources */,
@@ -1963,7 +1934,6 @@
 				BC8F6945260AE69E002FDCCD /* WLSectionHeaderView.swift in Sources */,
 				BCBE148725EF3CF90014BCE5 /* EditableWalletCell.swift in Sources */,
 				BC8F676B26083B18002FDCCD /* WLPhrasesTextView.swift in Sources */,
-				BC5DB15C25F75E59003D00BE /* ProcessTransactionViewController.swift in Sources */,
 				BC65E191261EA4B100E436C7 /* NewsSection.swift in Sources */,
 				BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */,
 				BCEE51372625425E00271AB9 /* TransactionIndicatorView.swift in Sources */,
@@ -2024,13 +1994,11 @@
 				BCD5E770255130DD00F51299 /* News.swift in Sources */,
 				BC65E258261EF34B00E436C7 /* TransactionInfoViewController.swift in Sources */,
 				BCE42DE525DF9BDA0021540E /* CreateOrRestoreWalletViewModel.swift in Sources */,
-				BC5DB15A25F75E59003D00BE /* ProcessTransactionViewModel.swift in Sources */,
 				BC0378F925FB538D00D10EAE /* MyProductsRootView.swift in Sources */,
 				BC8F691F260ADF7D002FDCCD /* ChooseWalletViewController.swift in Sources */,
 				BCEB204725E148C400B54FEF /* CreateOrRestoreWalletContainer.swift in Sources */,
 				BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */,
 				BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */,
-				BCEE513C2625428E00271AB9 /* ProcessTransactionRootView+Layout.swift in Sources */,
 				BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,
