@@ -13,6 +13,17 @@ import LazySubject
 protocol SwapTokenAPIClient {
     func getSwapPools() -> Single<[SolanaSDK.Pool]>
     func getPoolWithTokenBalances(pool: SolanaSDK.Pool) -> Single<SolanaSDK.Pool>
+    func swap(
+        account: SolanaSDK.Account?,
+        pool: SolanaSDK.Pool?,
+        source: SolanaSDK.PublicKey,
+        sourceMint: SolanaSDK.PublicKey,
+        destination: SolanaSDK.PublicKey?,
+        destinationMint: SolanaSDK.PublicKey,
+        slippage: Double,
+        amount: UInt64,
+        isSimulation: Bool
+    ) -> Single<SolanaSDK.TransactionID>
 }
 
 extension SolanaSDK: SwapTokenAPIClient {}
@@ -44,6 +55,7 @@ extension SwapToken {
         // MARK: - Dependencies
         private let repository: WalletsRepository
         private let apiClient: SwapTokenAPIClient
+        private let authenticationHandler: AuthenticationHandler
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -68,9 +80,14 @@ extension SwapToken {
         private let isExchageRateReversedSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
-        init(repository: WalletsRepository, apiClient: SwapTokenAPIClient) {
+        init(
+            repository: WalletsRepository,
+            apiClient: SwapTokenAPIClient,
+            authenticationHandler: AuthenticationHandler
+        ) {
             self.repository = repository
             self.apiClient = apiClient
+            self.authenticationHandler = authenticationHandler
             
             self.input = Input()
             self.output = Output(
@@ -286,6 +303,20 @@ extension SwapToken {
             navigationSubject.accept(.chooseSlippage)
         }
         
+        @objc func authenticateAndSwap() {
+            authenticationHandler.authenticate(
+                presentationStyle:
+                    .init(
+                        isRequired: false,
+                        isFullScreen: false,
+                        useBiometry: true,
+                        completion: { [weak self] in
+                            self?.swap()
+                        }
+                    )
+            )
+        }
+        
         // MARK: - Helpers
         /// Verify current context
         /// - Returns: Error string, nil if no error appear
@@ -355,6 +386,47 @@ extension SwapToken {
                 .filter {$0.swapData.mintB.base58EncodedString == sourceWalletMint}
                 .map {$0.swapData.mintA.base58EncodedString} ?? []))
             return validDestinationMints
+        }
+        
+        private func swap() {
+            guard let sourceWallet = sourceWalletSubject.value,
+                  let sourcePubkey = try? SolanaSDK.PublicKey(string: sourceWallet.pubkey ?? ""),
+                  let sourceMint = try? SolanaSDK.PublicKey(string: sourceWallet.mintAddress),
+                  let destinationWallet = destinationWalletSubject.value,
+                  let destinationMint = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress),
+                  let amountDouble = amountSubject.value
+            else {
+                return
+            }
+            
+            let sourceDecimals = sourceWallet.token.decimals
+            let lamports = amountDouble.toLamport(decimals: sourceDecimals)
+            let destinationPubkey = try? SolanaSDK.PublicKey(string: destinationWallet.pubkey ?? "")
+            
+            let request = apiClient.swap(
+                account: nil,
+                pool: currentPoolSubject.value,
+                source: sourcePubkey,
+                sourceMint: sourceMint,
+                destination: destinationPubkey,
+                destinationMint: destinationMint,
+                slippage: slippageValue,
+                amount: lamports,
+                isSimulation: false
+            )
+            
+            // show processing scene
+            navigationSubject.accept(
+                .processTransaction(
+                    request: request,
+                    transactionType: .swap(
+                        from: sourceWallet,
+                        to: destinationWallet,
+                        inputAmount: amountDouble,
+                        estimatedAmount: estimatedAmountSubject.value ?? 0
+                    )
+                )
+            )
         }
     }
 }
