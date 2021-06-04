@@ -328,11 +328,10 @@ private extension SwapTokenRootView {
             viewModel.sourceAmountInput,
             viewModel.destinationWallet
         )
-            .map {pool, sourceWallet, amountInput, destinationWallet -> String? in
+            .map {pool, _, amountInput, destinationWallet -> String? in
                 guard let pool = pool,
-                      let decimals = sourceWallet?.token.decimals,
-                      let lamports = amountInput.double?.toLamport(decimals: decimals),
-                      let amount = pool.fee(forInputAmount: lamports)
+                      let amount = amountInput.double,
+                      let amount = pool.fee(forInputAmount: amount)
                 else {return nil}
                 
                 return amount.toString(maximumFractionDigits: 5) + " " + destinationWallet?.token.symbol
