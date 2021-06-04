@@ -20,7 +20,7 @@ extension ProcessTransaction {
     class ViewController: WLIndicatorModalVC {
         
         // MARK: - Properties
-        let viewModel: ViewModel
+        private let viewModel: ViewModel
         weak var delegate: ProcessTransactionViewControllerDelegate?
         
         // MARK: - Initializer
