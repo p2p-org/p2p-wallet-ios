@@ -197,13 +197,13 @@ extension SwapToken {
                     let fromSymbol: String
                     let toSymbol: String
                     if isReversed {
-                        guard amount != 0 else {return nil}
-                        rate = estimatedAmount / amount
+                        guard estimatedAmount != 0 else {return nil}
+                        rate = amount / estimatedAmount
                         fromSymbol = destinationSymbol
                         toSymbol = sourceSymbol
                     } else {
-                        guard estimatedAmount != 0 else {return nil}
-                        rate = amount / estimatedAmount
+                        guard amount != 0 else {return nil}
+                        rate = estimatedAmount / amount
                         fromSymbol = sourceSymbol
                         toSymbol = destinationSymbol
                     }
