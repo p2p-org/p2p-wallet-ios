@@ -8,6 +8,7 @@
 import Foundation
 import Action
 import RxSwift
+import RxCocoa
 
 extension SwapToken {
     class WalletView: BEView {
@@ -16,11 +17,11 @@ extension SwapToken {
         }
         
         var wallet: Wallet?
-        let disposeBag = DisposeBag()
-        let viewModel: ViewModel
-        let type: WalletType
+        private let disposeBag = DisposeBag()
+        private let viewModel: ViewModel
+        private let type: WalletType
         
-        lazy var iconImageView = CoinLogoImageView(size: 44)
+        private lazy var iconImageView = CoinLogoImageView(size: 44)
             .with(
                 placeholder: UIImageView(
                     width: 24,
@@ -30,7 +31,7 @@ extension SwapToken {
                 ).padding(.init(all: 10), backgroundColor: .h5887ff, cornerRadius: 12)
             )
         
-        lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
+        private lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
         
         private lazy var amountTextField = TokenAmountTextField(
             font: .systemFont(ofSize: 27, weight: .semibold),
@@ -40,15 +41,21 @@ extension SwapToken {
             autocorrectionType: .no/*, rightView: useAllBalanceButton, rightViewMode: .always*/
         )
         
-        lazy var equityValueLabel = UILabel(text: "≈ 0.00 \(Defaults.fiat.symbol)", weight: .semibold, textColor: .textSecondary)
+        private lazy var equityValueLabel = UILabel(text: "≈ 0.00 \(Defaults.fiat.symbol)", weight: .semibold, textColor: .textSecondary)
         
         init(viewModel: ViewModel, type: WalletType) {
             self.viewModel = viewModel
             self.type = type
             super.init(frame: .zero)
             configureForAutoLayout()
+            
             bind()
             amountTextField.delegate = self
+            
+            // FIXME: - disable input in destination wallet, re-enable later
+            if type == .destination {
+                amountTextField.isUserInteractionEnabled = false
+            }
         }
         
         override func commonInit() {
@@ -85,19 +92,16 @@ extension SwapToken {
             // textFields
             switch type {
             case .source:
-                amountTextField.rx.text
-                    .bind(to: viewModel.input.amount)
-                    .disposed(by: disposeBag)
-                
+                // wallet
                 viewModel.output.sourceWallet
                     .drive(onNext: {[weak self] wallet in
                         self?.setUp(wallet: wallet)
                     })
                     .disposed(by: disposeBag)
                 
-                viewModel.output.amount
-                    .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
-                    .drive(amountTextField.rx.text)
+                // text field
+                amountTextField.rx.text
+                    .bind(to: viewModel.input.amount)
                     .disposed(by: disposeBag)
                 
                 viewModel.output.useAllBalanceDidTap
@@ -108,20 +112,57 @@ extension SwapToken {
                     })
                     .disposed(by: disposeBag)
                 
-            case .destination:
-                amountTextField.rx.text
-                    .bind(to: viewModel.input.estimatedAmount)
+                // FIXME: - BiBinding
+                //                viewModel.output.amount
+                //                    .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
+                //                    .drive(amountTextField.rx.text)
+                //                    .disposed(by: disposeBag)
+                
+                // equity value label
+                // FIXME: - price observing
+                Driver.combineLatest(
+                    viewModel.output.amount,
+                    viewModel.output.sourceWallet
+                )
+                    .map {amount, wallet in
+                        if let wallet = wallet {
+                            let value = amount * wallet.priceInCurrentFiat
+                            return "≈ \(value.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
+                        } else {
+                            return L10n.selectCurrency
+                        }
+                    }
+                    .drive(equityValueLabel.rx.text)
                     .disposed(by: disposeBag)
                 
+            case .destination:
+                // wallet
                 viewModel.output.destinationWallet
                     .drive(onNext: { [weak self] wallet in
                         self?.setUp(wallet: wallet)
                     })
                     .disposed(by: disposeBag)
                 
+                // textField
+//                amountTextField.rx.text
+//                    .bind(to: viewModel.input.estimatedAmount)
+//                    .disposed(by: disposeBag)
+                
                 viewModel.output.estimatedAmount
                     .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
                     .drive(amountTextField.rx.text)
+                    .disposed(by: disposeBag)
+                
+                // equity value label
+                viewModel.output.destinationWallet
+                    .map {destinationWallet -> String? in
+                        if destinationWallet != nil {
+                            return nil
+                        } else {
+                            return L10n.selectCurrency
+                        }
+                    }
+                    .drive(equityValueLabel.rx.text)
                     .disposed(by: disposeBag)
             }
         }

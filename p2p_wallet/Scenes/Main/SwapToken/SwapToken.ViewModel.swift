@@ -221,15 +221,13 @@ extension SwapToken {
                 .flatMap { [weak self] pool -> Single<SolanaSDK.Pool?> in
                     guard let pool = pool, let strongSelf = self else {return .just(nil)}
                     strongSelf.isLoadingSubject.accept(true)
-                    strongSelf.errorSubject.accept(nil)
                     return strongSelf.apiClient.getPoolWithTokenBalances(pool: pool)
                         .map(Optional.init)
                         .do(afterSuccess: { [weak self] _ in
                             self?.isLoadingSubject.accept(false)
-                            self?.errorSubject.accept(nil)
                         }, afterError: {[weak self] _ in
                             self?.isLoadingSubject.accept(false)
-                            self?.errorSubject.accept(L10n.CouldNotRetrieveBalancesForThisTokensPair.pleaseTrySelectingAgain)
+                            self?.errorSubject.accept(L10n.swappingIsCurrentlyUnavailable)
                         })
                 }
                 .bind(to: currentPoolSubject)
@@ -262,9 +260,8 @@ extension SwapToken {
                 .bind(to: feeSubject)
                 .disposed(by: disposeBag)
             
-            // available amount
-            currentPoolSubject
-                .withLatestFrom(sourceWalletSubject)
+            // FIXME: - available amount
+            sourceWalletSubject
                 .map {$0?.amount}
                 .bind(to: availableAmountSubject)
                 .disposed(by: disposeBag)
