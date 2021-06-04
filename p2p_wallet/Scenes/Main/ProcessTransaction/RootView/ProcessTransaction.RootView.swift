@@ -28,8 +28,7 @@ extension ProcessTransaction {
             indicatorView.tintColor = .h5887ff
             return indicatorView
         }()
-        lazy var amountLabel = UILabel(textSize: 27, weight: .bold, textAlignment: .center)
-        lazy var equityAmountLabel = UILabel(textColor: .textSecondary, textAlignment: .center)
+        var summaryView: TransactionSummaryView!
         lazy var transactionIDLabel = UILabel(weight: .semibold, numberOfLines: 2)
         
         // MARK: - Substackviews
@@ -77,14 +76,25 @@ extension ProcessTransaction {
         }
         
         private func bind() {
+            switch viewModel.output.transactionType {
+            case .closeAccount:
+                viewModel.fetchReimbursedAmountForClosingTransaction()
+                    .subscribe(onSuccess: {[weak self] _ in
+                        self?.bindLayout()
+                    })
+                    .disposed(by: disposeBag)
+            default:
+                bindLayout()
+            }
+        }
+        
+        private func bindLayout() {
             Driver.combineLatest(
                 viewModel.output.transactionId,
                 viewModel.output.transactionStatus
             )
                 .drive(onNext: { [weak self] (transactionId, transactionStatus) in
-                    guard let transactionType = self?.viewModel.output.transactionType
-                    else {return}
-                    self?.layoutWithTransactionType(transactionType, transactionId: transactionId, transactionStatus: transactionStatus)
+                    self?.layout(transactionId: transactionId, transactionStatus: transactionStatus)
                     self?.transactionStatusDidChange?()
                 })
                 .disposed(by: disposeBag)
