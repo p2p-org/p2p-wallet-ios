@@ -10,12 +10,6 @@ import RxSwift
 import RxCocoa
 
 extension ProcessTransaction {
-    enum NavigatableScene {
-        case showExplorer(transactionID: String)
-        case done
-        case cancel
-    }
-    
     class ViewModel: ViewModelType {
         // MARK: - Nested type
         struct Input {}
@@ -25,6 +19,7 @@ extension ProcessTransaction {
             let transactionType: TransactionType
             let transactionStatus: Driver<TransactionStatus>
             let pricesRepository: PricesRepository
+            var reimbursedAmount: Double?
         }
         
         // MARK: - Dependencies
@@ -33,12 +28,13 @@ extension ProcessTransaction {
         private let transactionHandler: TransactionHandler
         private let transactionManager: TransactionsManager
         private let walletsRepository: WalletsRepository
+        private let apiClient: ProcessTransactionAPIClient
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         
         let input: Input
-        let output: Output
+        var output: Output
         
         // MARK: - Subject
         private let navigationSubject = PublishSubject<NavigatableScene>()
@@ -52,13 +48,15 @@ extension ProcessTransaction {
             transactionHandler: TransactionHandler,
             transactionManager: TransactionsManager,
             walletsRepository: WalletsRepository,
-            pricesRepository: PricesRepository
+            pricesRepository: PricesRepository,
+            apiClient: ProcessTransactionAPIClient
         ) {
             self.transactionType = transactionType
             self.request = request
             self.transactionHandler = transactionHandler
             self.transactionManager = transactionManager
             self.walletsRepository = walletsRepository
+            self.apiClient = apiClient
             
             self.input = Input()
             self.output = Output(
@@ -76,10 +74,22 @@ extension ProcessTransaction {
         }
         
         // MARK: - Actions
+        func fetchReimbursedAmountForClosingTransaction() -> Single<Double> {
+            apiClient.getReimbursedAmountForClosingToken()
+                .catchAndReturn(0)
+                .do(onSuccess: {[weak self] amount in
+                    self?.output.reimbursedAmount = amount
+                })
+        }
+        
         @objc func executeRequest() {
             switch transactionType {
             case .send(let fromWallet, let receiver, let amount):
                 executeSend(fromWallet: fromWallet, receiver: receiver, amount: amount)
+            case .swap(let from, let to, let inputAmount, let estimatedAmount):
+                executeSwap(from: from, to: to, inputAmount: inputAmount, estimatedAmount: estimatedAmount)
+            case .closeAccount(let wallet):
+                executeCloseAccount(wallet)
             }
         }
         
@@ -97,7 +107,11 @@ extension ProcessTransaction {
         }
         
         // MARK: - Helpers
-        func executeSend(fromWallet: Wallet, receiver: String, amount: Double) {
+        private func executeSend(
+            fromWallet: Wallet,
+            receiver: String,
+            amount: Double
+        ) {
             // Verify address
             guard NSRegularExpression.publicKey.matches(receiver) else {
                 transactionStatusSubject
@@ -105,6 +119,83 @@ extension ProcessTransaction {
                 return
             }
             
+            // Execute request
+            executeRequest { [weak self] transactionId in
+                // update wallet
+                self?.walletsRepository.updateWallet(where: {$0.pubkey == fromWallet.pubkey}, transform: {
+                    var wallet = $0
+                    let lamports = amount.toLamport(decimals: fromWallet.token.decimals)
+                    wallet.lamports = (wallet.lamports ?? 0) - lamports
+                    return wallet
+                })
+                
+                // FIXME: - Remove transactionManager
+                let transaction = Transaction(
+                    signatureInfo: .init(signature: transactionId),
+                    type: .send,
+                    amount: -amount,
+                    symbol: fromWallet.token.symbol,
+                    status: .processing
+                )
+                self?.transactionManager.process(transaction)
+            }
+        }
+        
+        private func executeSwap(
+            from: Wallet,
+            to: Wallet,
+            inputAmount: Double,
+            estimatedAmount: Double
+        ) {
+            executeRequest { [weak self] transactionId in
+                // update source wallet
+                self?.walletsRepository.updateWallet(where: {$0.pubkey == from.pubkey}, transform: {
+                    var wallet = $0
+                    let lamports = inputAmount.toLamport(decimals: from.token.decimals)
+                    wallet.lamports = (wallet.lamports ?? 0) - lamports
+                    return wallet
+                })
+                
+                // update destination wallet
+                self?.walletsRepository.updateWallet(where: {$0.pubkey == to.pubkey}, transform: {
+                    var wallet = $0
+                    let lamports = estimatedAmount.toLamport(decimals: to.token.decimals)
+                    wallet.lamports = (wallet.lamports ?? 0) + lamports
+                    return wallet
+                })
+                
+                // FIXME: - Remove transactionManager
+                let transaction = Transaction(
+                    signatureInfo: .init(signature: transactionId),
+                    type: .send,
+                    amount: -inputAmount,
+                    symbol: from.token.symbol,
+                    status: .processing
+                )
+                self?.transactionManager.process(transaction)
+            }
+        }
+        
+        private func executeCloseAccount(_ wallet: Wallet) {
+            executeRequest { [weak self] transactionId in
+                self?.walletsRepository.updateWallet(where: {$0.token.symbol == "SOL"}, transform: { [weak self] in
+                    var wallet = $0
+                    let lamports = self?.output.reimbursedAmount?.toLamport(decimals: wallet.token.decimals) ?? 0
+                    wallet.lamports = (wallet.lamports ?? 0) + lamports
+                    return wallet
+                })
+                
+                // FIXME: - Remove transactionManager
+                let transaction = Transaction(
+                    type: .send,
+                    symbol: "SOL",
+                    status: .processing
+                )
+                self?.transactionManager.process(transaction)
+            }
+        }
+        
+        private func executeRequest(completion: @escaping (SolanaSDK.TransactionID) -> Void) {
             // clean up
             self.transactionStatusSubject.accept(.processing)
             self.transactionIdSubject.accept(nil)
@@ -116,23 +207,7 @@ extension ProcessTransaction {
                     self?.transactionStatusSubject.accept(.processing)
                     self?.transactionIdSubject.accept(transactionId)
                     
-                    // update wallet
-                    self?.walletsRepository.updateWallet(where: {$0.pubkey == fromWallet.pubkey}, transform: {
-                        var wallet = $0
-                        let lamports = amount.toLamport(decimals: fromWallet.token.decimals)
-                        wallet.lamports = (wallet.lamports ?? 0) - lamports
-                        return wallet
-                    })
-                    
-                    // FIX ME: - Remove transactionManager
-                    let transaction = Transaction(
-                        signatureInfo: .init(signature: transactionId),
-                        type: .send,
-                        amount: -amount,
-                        symbol: fromWallet.token.symbol,
-                        status: .processing
-                    )
-                    self?.transactionManager.process(transaction)
+                    completion(transactionId)
                     
                     // observe confimation status
                     return self?.transactionHandler.observeTransactionCompletion(signature: transactionId) ?? .empty()

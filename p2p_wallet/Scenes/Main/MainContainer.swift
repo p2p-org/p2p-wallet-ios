@@ -101,16 +101,15 @@ class MainContainer {
         return vc
     }
     
-    func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController {
-        let vm = SwapTokenViewModel(
-            solanaSDK: solanaSDK,
-            transactionManager: transactionManager,
-            pricesRepository: pricesManager,
-            wallets: walletsViewModel.data,
-            fromWallet: wallet,
-            authenticationHandler: rootViewModel
+    func makeSwapTokenViewController(fromWalletPubkey pubkey: String?) -> SwapToken.ViewController
+    {
+        let vm = SwapToken.ViewModel(
+            repository: walletsViewModel,
+            apiClient: solanaSDK,
+            authenticationHandler: rootViewModel,
+            fromWalletPubkey: pubkey
         )
-        return SwapTokenViewController(viewModel: vm, scenesFactory: self)
+        return SwapToken.ViewController(viewModel: vm, scenesFactory: self)
     }
     
     func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController {
@@ -134,7 +133,8 @@ class MainContainer {
             transactionHandler: socket,
             transactionManager: transactionManager,
             walletsRepository: walletsViewModel,
-            pricesRepository: pricesManager
+            pricesRepository: pricesManager,
+            apiClient: solanaSDK
         )
         return ProcessTransaction.ViewController(viewModel: viewModel)
     }
@@ -179,11 +179,11 @@ class MainContainer {
                 walletsRepository: walletsViewModel,
                 pubkey: pubkey,
                 solanaSDK: solanaSDK,
-                transactionManager: transactionManager,
                 pricesRepository: pricesManager,
                 accountStorage: accountStorage
             ),
-            rootViewModel: rootViewModel
+            rootViewModel: rootViewModel,
+            scenesFactory: self
         )
     }
     
@@ -222,7 +222,7 @@ class MainContainer {
 extension MainContainer: TabBarScenesFactory,
                          MyProductsScenesFactory,
                          ProfileScenesFactory,
-                         SwapScenesFactory,
+                         SwapTokenScenesFactory,
                          WalletDetailScenesFactory,
                          SendTokenScenesFactory,
                          BackupScenesFactory,
@@ -230,4 +230,5 @@ extension MainContainer: TabBarScenesFactory,
                          ChangeNetworkResponder,
                          ChangeFiatResponder,
                          ReceiveTokenSceneFactory,
+                         TokenSettingsScenesFactory,
                          _MainScenesFactory {}

@@ -28,8 +28,8 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     private lazy var transactionIconImageView = UIImageView(width: 30, height: 30, tintColor: .white)
     
     // MARK: - SummaryViews
-    private lazy var defaultSummaryView = DefaultSummaryView(forAutoLayout: ())
-    private lazy var swapSummaryView = SwapSummaryView(forAutoLayout: ())
+    private lazy var defaultSummaryView = DefaultTransactionSummaryView(forAutoLayout: ())
+    private lazy var swapSummaryView = SwapTransactionSummaryView(forAutoLayout: ())
     
     // MARK: - Status view
     private lazy var statusView = TransactionStatusView()
@@ -159,7 +159,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     
     private func setUp(transaction: SolanaSDK.AnyTransaction) {
         // summary
-        if let summaryView = stackView.arrangedSubviews.first as? SummaryView
+        if let summaryView = stackView.arrangedSubviews.first as? TransactionSummaryView
         {
             summaryView.superview?.removeFromSuperview()
         }
