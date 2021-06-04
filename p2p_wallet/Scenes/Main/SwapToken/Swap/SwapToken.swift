@@ -11,7 +11,7 @@ import RxSwift
 struct SwapToken {
     enum NavigatableScene {
         case chooseSourceWallet
-        case chooseDestinationWallet
+        case chooseDestinationWallet(validMints: Set<String>, excludedSourceWalletPubkey: String?)
         case chooseSlippage
         case processTransaction(request: Single<SolanaSDK.TransactionID>, transactionType: ProcessTransaction.TransactionType)
     }
