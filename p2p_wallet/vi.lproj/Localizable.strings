@@ -356,3 +356,8 @@
 "Paid by p2p.org" = "Đã thanh toán bởi p2p.org";
 "Connection rate limits exceeded" = "Vượt quá giới hạn tốc độ kết nối";
 "Could not retrieve balances for this tokens pair. Please try selecting again!" = "Không thể truy xuất số dư cho cặp tokens này.  Vui lòng thử chọn lại!";
+"Scan or copy QR code" = "Quét hoặc sao chép mã QR";
+"Direct %@ address" = "Địa chỉ %@ trực tiếp";
+"View in explorer" = "Xem trong explorer";
+"Show address detail" = "Hiển thị chi tiết địa chỉ";
+"Hide address detail" = "Ẩn chi tiết địa chỉ";

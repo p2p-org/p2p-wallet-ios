@@ -15,7 +15,7 @@ import RxSwift
 }
 
 protocol TokenSettingsScenesFactory {
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<SolanaSDK.TransactionID>) -> ProcessTransaction.ViewController
+    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
 
 class TokenSettingsViewController: WLIndicatorModalVC {

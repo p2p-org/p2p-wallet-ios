@@ -11,9 +11,9 @@ import Action
 
 protocol HomeScenesFactory {
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController
-    func makeReceiveTokenViewController(pubkey: String?) -> ReceiveTokenViewController
+    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
-    func makeSwapTokenViewController(fromWalletPubkey pubkey: String?) -> SwapToken.ViewController
+    func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapToken.ViewController
     func makeMyProductsViewController() -> MyProductsViewController
     func makeProfileVC() -> ProfileVC
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
@@ -62,8 +62,10 @@ class HomeViewController: BaseVC {
     private func navigate(to scene: HomeNavigatableScene) {
         switch scene {
         case .receiveToken:
-            let vc = self.scenesFactory.makeReceiveTokenViewController(pubkey: nil)
-            self.present(vc, animated: true, completion: nil)
+            if let vc = self.scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: nil)
+            {
+                self.present(vc, animated: true, completion: nil)
+            }
         case .scanQrWithSwiper(let progress, let state):
             MenuHelper.mapGestureStateToInteractor(
                 gestureState: state,
@@ -86,7 +88,7 @@ class HomeViewController: BaseVC {
                 .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
             self.present(vc, animated: true, completion: nil)
         case .swapToken:
-            let vc = self.scenesFactory.makeSwapTokenViewController(fromWalletPubkey: nil)
+            let vc = self.scenesFactory.makeSwapTokenViewController(fromWallet: nil)
             self.present(vc, animated: true, completion: nil)
         case .allProducts:
             let vc = self.scenesFactory.makeMyProductsViewController()

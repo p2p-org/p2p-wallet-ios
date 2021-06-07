@@ -9,9 +9,9 @@ import Foundation
 import UIKit
 
 protocol WalletDetailScenesFactory {
-    func makeReceiveTokenViewController(pubkey: String?) -> ReceiveTokenViewController
+    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
-    func makeSwapTokenViewController(fromWalletPubkey pubkey: String?) -> SwapToken.ViewController
+    func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapToken.ViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
     func makeTransactionInfoViewController(transaction: SolanaSDK.AnyTransaction) -> TransactionInfoViewController
 }
@@ -56,11 +56,12 @@ class WalletDetailViewController: WLIndicatorModalVC {
             let vc = scenesFactory.makeSendTokenViewController(walletPubkey: wallet.pubkey, destinationAddress: nil)
             self.present(vc, animated: true, completion: nil)
         case .receive:
-            let vc = scenesFactory.makeReceiveTokenViewController(pubkey: viewModel.wallet.value?.pubkey)
-            self.show(vc, sender: nil)
+            if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: viewModel.wallet.value?.pubkey)
+            {
+                self.show(vc, sender: nil)
+            }
         case .swap:
-            guard let pubkey = viewModel.wallet.value?.pubkey else {return}
-            let vc = scenesFactory.makeSwapTokenViewController(fromWalletPubkey: pubkey)
+            let vc = scenesFactory.makeSwapTokenViewController(fromWallet: viewModel.wallet.value)
             self.show(vc, sender: nil)
         case .transactionInfo(let transaction):
             let vc = scenesFactory.makeTransactionInfoViewController(transaction: transaction)

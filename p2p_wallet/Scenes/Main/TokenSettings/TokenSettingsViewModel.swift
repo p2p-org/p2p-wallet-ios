@@ -14,7 +14,7 @@ import BECollectionView
 enum TokenSettingsNavigatableScene {
     case alert(title: String?, description: String)
     case closeConfirmation
-    case processTransaction(request: Single<SolanaSDK.TransactionID>, transactionType: ProcessTransaction.TransactionType)
+    case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
 }
 
 class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
@@ -76,6 +76,7 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     @objc func closeAccount() {
         guard let wallet = wallet else {return}
         let request = solanaSDK.closeTokenAccount(tokenPubkey: pubkey)
+            .map {$0 as ProcessTransactionResponseType}
         navigationSubject.onNext(.processTransaction(request: request, transactionType: .closeAccount(wallet)))
     }
 }
