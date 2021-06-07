@@ -172,7 +172,7 @@
 		BC89ADB825E0FCB3001A6791 /* BaseOnboardingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC89ADB725E0FCB3001A6791 /* BaseOnboardingVC.swift */; };
 		BC8F676B26083B18002FDCCD /* WLPhrasesTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F676A26083B18002FDCCD /* WLPhrasesTextView.swift */; };
 		BC8F67742608738D002FDCCD /* WLPhrasesTextView+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F67732608738D002FDCCD /* WLPhrasesTextView+Attachments.swift */; };
-		BC8F6830260989F8002FDCCD /* QrCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F682F260989F8002FDCCD /* QrCodeView.swift */; };
+		BC8F6830260989F8002FDCCD /* ReceiveToken.QrCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F682F260989F8002FDCCD /* ReceiveToken.QrCodeView.swift */; };
 		BC8F684D2609D866002FDCCD /* WalletsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F684C2609D866002FDCCD /* WalletsRepository.swift */; };
 		BC8F691D260ADF7D002FDCCD /* ChooseWalletViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F691A260ADF7D002FDCCD /* ChooseWalletViewModel.swift */; };
 		BC8F691E260ADF7D002FDCCD /* ChooseWalletRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F691B260ADF7D002FDCCD /* ChooseWalletRootView.swift */; };
@@ -488,7 +488,7 @@
 		BC89ADB725E0FCB3001A6791 /* BaseOnboardingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseOnboardingVC.swift; sourceTree = "<group>"; };
 		BC8F676A26083B18002FDCCD /* WLPhrasesTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLPhrasesTextView.swift; sourceTree = "<group>"; };
 		BC8F67732608738D002FDCCD /* WLPhrasesTextView+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WLPhrasesTextView+Attachments.swift"; sourceTree = "<group>"; };
-		BC8F682F260989F8002FDCCD /* QrCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeView.swift; sourceTree = "<group>"; };
+		BC8F682F260989F8002FDCCD /* ReceiveToken.QrCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeView.swift; sourceTree = "<group>"; };
 		BC8F684C2609D866002FDCCD /* WalletsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletsRepository.swift; sourceTree = "<group>"; };
 		BC8F691A260ADF7D002FDCCD /* ChooseWalletViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWalletViewModel.swift; sourceTree = "<group>"; };
 		BC8F691B260ADF7D002FDCCD /* ChooseWalletRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWalletRootView.swift; sourceTree = "<group>"; };
@@ -1322,11 +1322,11 @@
 		BCBBE1822563C0F400533F6B /* ReceiveToken */ = {
 			isa = PBXGroup;
 			children = (
-				BC8F682F260989F8002FDCCD /* QrCodeView.swift */,
 				BC85EA62266E1324005006D5 /* ReceiveToken.swift */,
 				BC85EA64266E1324005006D5 /* ReceiveToken.ViewModel.swift */,
 				BC85EA63266E1324005006D5 /* ReceiveToken.ViewController.swift */,
 				BC85EA65266E1324005006D5 /* ReceiveToken.RootView.swift */,
+				BC8F682F260989F8002FDCCD /* ReceiveToken.QrCodeView.swift */,
 			);
 			path = ReceiveToken;
 			sourceTree = "<group>";
@@ -2092,7 +2092,7 @@
 				BCF7D953256220F100961D31 /* ErrorView.swift in Sources */,
 				BC85EA67266E1324005006D5 /* ReceiveToken.ViewController.swift in Sources */,
 				BC0E7DCC25B17AB2009AD08B /* Bundle+Extensions.swift in Sources */,
-				BC8F6830260989F8002FDCCD /* QrCodeView.swift in Sources */,
+				BC8F6830260989F8002FDCCD /* ReceiveToken.QrCodeView.swift in Sources */,
 				BC54DD8E25872FE500A65566 /* HorizontalPicker.swift in Sources */,
 				BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */,
 				BCB7C7C72665EEC400FEC68E /* SendToken.ViewModel.swift in Sources */,
