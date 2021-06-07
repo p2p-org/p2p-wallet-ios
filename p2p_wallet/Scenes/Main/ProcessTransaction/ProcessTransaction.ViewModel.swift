@@ -33,6 +33,7 @@ extension ProcessTransaction {
         private let transactionManager: TransactionsManager
         private let walletsRepository: WalletsRepository
         private let apiClient: ProcessTransactionAPIClient
+        private let pricesRepository: PricesRepository
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -61,6 +62,7 @@ extension ProcessTransaction {
             self.transactionManager = transactionManager
             self.walletsRepository = walletsRepository
             self.apiClient = apiClient
+            self.pricesRepository = pricesRepository
             
             self.input = Input()
             self.output = Output(
@@ -181,6 +183,8 @@ extension ProcessTransaction {
                     wallet.lamports = estimatedAmount.toLamport(decimals: wallet.token.decimals)
                     
                     _ = self?.walletsRepository.insert(wallet)
+                    
+                    self?.pricesRepository.fetchCurrentPrices(coins: [wallet.token.symbol])
                 }
                 
                 // FIXME: - Remove transactionManager
