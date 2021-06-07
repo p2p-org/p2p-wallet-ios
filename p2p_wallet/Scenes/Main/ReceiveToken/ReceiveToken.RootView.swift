@@ -84,7 +84,7 @@ extension ReceiveToken {
                 UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
                     UILabel(text: L10n.directAddress(viewModel.output.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
                     
-                    UILabel(text: viewModel.output.tokenWallet?.pubkey, textSize: 15, weight: .medium)
+                    UILabel(text: viewModel.output.tokenWallet?.pubkey, textSize: 15, weight: .medium, numberOfLines: 0)
                 }
                     .padding(.init(x: 20, y: 0))
                 
