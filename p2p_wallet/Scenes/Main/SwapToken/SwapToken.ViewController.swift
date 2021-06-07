@@ -75,9 +75,7 @@ extension SwapToken {
             case .chooseSourceWallet:
                 let vc = scenesFactory.makeChooseWalletViewController(customFilter: {$0.amount > 0}, showOtherWallets: false)
                 vc.completion = {[weak self, weak vc] wallet in
-                    if let pubkey = wallet.pubkey {
-                        self?.viewModel.input.sourceWalletPubkey.accept(pubkey)
-                    }
+                    self?.viewModel.input.sourceWallet.accept(wallet)
                     vc?.back()
                 }
                 self.present(vc, animated: true, completion: nil)
@@ -89,9 +87,7 @@ extension SwapToken {
                 }, showOtherWallets: true)
                 
                 vc.completion = {[weak self, weak vc] wallet in
-                    if let pubkey = wallet.pubkey {
-                        self?.viewModel.input.destinationWalletPubkey.accept(pubkey)
-                    }
+                    self?.viewModel.input.destinationWallet.accept(wallet)
                     vc?.back()
                 }
                 self.present(vc, animated: true, completion: nil)

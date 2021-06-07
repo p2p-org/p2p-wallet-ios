@@ -32,8 +32,8 @@ extension SwapToken {
     class ViewModel: ViewModelType {
         // MARK: - Nested type
         struct Input {
-            let sourceWalletPubkey = PublishRelay<String?>()
-            let destinationWalletPubkey = PublishRelay<String?>()
+            let sourceWallet = PublishRelay<Wallet?>()
+            let destinationWallet = PublishRelay<Wallet?>()
             let amount = PublishRelay<String?>()
             let estimatedAmount = PublishRelay<String?>()
             let slippage = PublishRelay<Double>()
@@ -57,7 +57,6 @@ extension SwapToken {
         }
         
         // MARK: - Dependencies
-        private let repository: WalletsRepository
         private let apiClient: SwapTokenAPIClient
         private let authenticationHandler: AuthenticationHandler
         
@@ -87,12 +86,9 @@ extension SwapToken {
         
         // MARK: - Initializer
         init(
-            repository: WalletsRepository,
             apiClient: SwapTokenAPIClient,
-            authenticationHandler: AuthenticationHandler,
-            fromWalletPubkey: String?
+            authenticationHandler: AuthenticationHandler
         ) {
-            self.repository = repository
             self.apiClient = apiClient
             self.authenticationHandler = authenticationHandler
             
@@ -132,8 +128,6 @@ extension SwapToken {
             
             bind()
             reload()
-            
-            input.sourceWalletPubkey.accept(fromWalletPubkey)
         }
         
         /// Bind subjects
@@ -144,24 +138,12 @@ extension SwapToken {
         
         private func bindInputIntoSubjects() {
             // source wallet
-            Observable.combineLatest(
-                repository.dataObservable,
-                input.sourceWalletPubkey
-            )
-                .map {wallets, pubkey in
-                    return wallets?.first(where: {$0.pubkey == pubkey})
-                }
+            input.sourceWallet
                 .bind(to: sourceWalletSubject)
                 .disposed(by: disposeBag)
             
             // destination wallet
-            Observable.combineLatest(
-                repository.dataObservable,
-                input.destinationWalletPubkey
-            )
-                .map {wallets, pubkey in
-                    return wallets?.first(where: {$0.pubkey == pubkey})
-                }
+            input.destinationWallet
                 .bind(to: destinationWalletSubject)
                 .disposed(by: disposeBag)
             
