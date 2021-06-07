@@ -11,7 +11,7 @@ import RxSwift
 
 protocol SendTokenScenesFactory {
     func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<SolanaSDK.TransactionID>) -> ProcessTransaction.ViewController
+    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
 
 extension SendToken {

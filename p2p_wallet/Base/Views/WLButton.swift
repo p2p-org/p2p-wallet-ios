@@ -42,8 +42,8 @@ class WLButton: UIButton {
         }
     }
     
-    static func stepButton(type: StepButtonType, label: String?, labelFont: UIFont = UIFont.systemFont(ofSize: 17, weight: .semibold)) -> WLButton {
-        let button = WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: labelFont, textColor: type.textColor)
+    static func stepButton(type: StepButtonType, label: String?, labelFont: UIFont = UIFont.systemFont(ofSize: 17, weight: .semibold), labelColor: UIColor? = nil) -> WLButton {
+        let button = WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: labelFont, textColor: labelColor != nil ? labelColor!: type.textColor)
         button.enabledColor = type.backgroundColor
         button.disabledColor = type.disabledColor
         return button

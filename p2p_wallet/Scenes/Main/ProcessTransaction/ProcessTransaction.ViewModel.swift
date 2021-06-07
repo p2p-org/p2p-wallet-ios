@@ -9,6 +9,10 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+protocol ProcessTransactionResponseType {}
+extension SolanaSDK.TransactionID: ProcessTransactionResponseType {}
+extension SolanaSDK.SwapResponse: ProcessTransactionResponseType {}
+
 extension ProcessTransaction {
     class ViewModel: ViewModelType {
         // MARK: - Nested type
@@ -24,11 +28,12 @@ extension ProcessTransaction {
         
         // MARK: - Dependencies
         private let transactionType: TransactionType
-        private let request: Single<SolanaSDK.TransactionID>
+        private let request: Single<ProcessTransactionResponseType>
         private let transactionHandler: TransactionHandler
         private let transactionManager: TransactionsManager
         private let walletsRepository: WalletsRepository
         private let apiClient: ProcessTransactionAPIClient
+        private let pricesRepository: PricesRepository
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -44,7 +49,7 @@ extension ProcessTransaction {
         // MARK: - Initializer
         init(
             transactionType: TransactionType,
-            request: Single<SolanaSDK.TransactionID>,
+            request: Single<ProcessTransactionResponseType>,
             transactionHandler: TransactionHandler,
             transactionManager: TransactionsManager,
             walletsRepository: WalletsRepository,
@@ -57,6 +62,7 @@ extension ProcessTransaction {
             self.transactionManager = transactionManager
             self.walletsRepository = walletsRepository
             self.apiClient = apiClient
+            self.pricesRepository = pricesRepository
             
             self.input = Input()
             self.output = Output(
@@ -120,7 +126,10 @@ extension ProcessTransaction {
             }
             
             // Execute request
-            executeRequest { [weak self] transactionId in
+            executeRequest { [weak self] response in
+                // cast type
+                let transactionId = response as! SolanaSDK.TransactionID
+                
                 // update wallet
                 self?.walletsRepository.updateWallet(where: {$0.pubkey == fromWallet.pubkey}, transform: {
                     var wallet = $0
@@ -147,7 +156,10 @@ extension ProcessTransaction {
             inputAmount: Double,
             estimatedAmount: Double
         ) {
-            executeRequest { [weak self] transactionId in
+            executeRequest { [weak self] response in
+                // cast type
+                let response = response as! SolanaSDK.SwapResponse
+                
                 // update source wallet
                 self?.walletsRepository.updateWallet(where: {$0.pubkey == from.pubkey}, transform: {
                     var wallet = $0
@@ -157,16 +169,27 @@ extension ProcessTransaction {
                 })
                 
                 // update destination wallet
-                self?.walletsRepository.updateWallet(where: {$0.pubkey == to.pubkey}, transform: {
-                    var wallet = $0
-                    let lamports = estimatedAmount.toLamport(decimals: to.token.decimals)
-                    wallet.lamports = (wallet.lamports ?? 0) + lamports
-                    return wallet
-                })
+                if self?.walletsRepository.getWallets().contains(where: {$0.pubkey == to.pubkey}) == true
+                {
+                    self?.walletsRepository.updateWallet(where: {$0.pubkey == to.pubkey}, transform: {
+                        var wallet = $0
+                        let lamports = estimatedAmount.toLamport(decimals: to.token.decimals)
+                        wallet.lamports = (wallet.lamports ?? 0) + lamports
+                        return wallet
+                    })
+                } else if let pubkey = response.newWalletPubkey {
+                    var wallet = to
+                    wallet.pubkey = pubkey
+                    wallet.lamports = estimatedAmount.toLamport(decimals: wallet.token.decimals)
+                    
+                    _ = self?.walletsRepository.insert(wallet)
+                    
+                    self?.pricesRepository.fetchCurrentPrices(coins: [wallet.token.symbol])
+                }
                 
                 // FIXME: - Remove transactionManager
                 let transaction = Transaction(
-                    signatureInfo: .init(signature: transactionId),
+                    signatureInfo: .init(signature: response.transactionId),
                     type: .send,
                     amount: -inputAmount,
                     symbol: from.token.symbol,
@@ -177,7 +200,10 @@ extension ProcessTransaction {
         }
         
         private func executeCloseAccount(_ wallet: Wallet) {
-            executeRequest { [weak self] transactionId in
+            executeRequest { [weak self] response in
+                // cast type
+                let transactionId = response as! SolanaSDK.TransactionID
+                
                 self?.walletsRepository.updateWallet(where: {$0.token.symbol == "SOL"}, transform: { [weak self] in
                     var wallet = $0
                     let lamports = self?.output.reimbursedAmount?.toLamport(decimals: wallet.token.decimals) ?? 0
@@ -185,10 +211,11 @@ extension ProcessTransaction {
                     return wallet
                 })
                 
-                self?.walletsRepository.removeItem(where: {$0.pubkey == wallet.pubkey})
+                _ = self?.walletsRepository.removeItem(where: {$0.pubkey == wallet.pubkey})
                 
                 // FIXME: - Remove transactionManager
                 let transaction = Transaction(
+                    signatureInfo: .init(signature: transactionId),
                     type: .send,
                     symbol: "SOL",
                     status: .processing
@@ -197,19 +224,30 @@ extension ProcessTransaction {
             }
         }
         
-        private func executeRequest(completion: @escaping (SolanaSDK.TransactionID) -> Void) {
+        private func executeRequest(completion: @escaping (ProcessTransactionResponseType) -> Void) {
             // clean up
             self.transactionStatusSubject.accept(.processing)
             self.transactionIdSubject.accept(nil)
             
             // request
             request
+                .map { response -> String in
+                    if let swapResponse = response as? SolanaSDK.SwapResponse {
+                        completion(swapResponse)
+                        return swapResponse.transactionId
+                    }
+                    
+                    if let response = response as? SolanaSDK.TransactionID {
+                        completion(response)
+                        return response
+                    }
+                    
+                    throw SolanaSDK.Error.unknown
+                }
                 .flatMapCompletable { [weak self] transactionId in
                     // update status
                     self?.transactionStatusSubject.accept(.processing)
                     self?.transactionIdSubject.accept(transactionId)
-                    
-                    completion(transactionId)
                     
                     // observe confimation status
                     return self?.transactionHandler.observeTransactionCompletion(signature: transactionId) ?? .empty()

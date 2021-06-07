@@ -75,14 +75,11 @@ class MainContainer {
         return TransactionInfoViewController(viewModel: viewModel)
     }
     
-    func makeReceiveTokenViewController(pubkey: String? = nil) -> ReceiveTokenViewController {
-        let viewModel = ReceiveTokenViewModel(
-            createTokenHandler: solanaSDK,
-            transactionHandler: socket,
-            walletsRepository: walletsViewModel,
-            pubkey: pubkey
-        )
-        return ReceiveTokenViewController(viewModel: viewModel, scenesFactory: self)
+    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController? {
+        guard let pubkey = walletsViewModel.solWallet?.pubkey else {return nil}
+        let tokenWallet = walletsViewModel.getWallets().first(where: {$0.pubkey == tokenWalletPubkey})
+        let viewModel = ReceiveToken.ViewModel(pubkey: pubkey, tokenWallet: tokenWallet)
+        return ReceiveToken.ViewController(viewModel: viewModel)
     }
     
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController {
@@ -97,14 +94,13 @@ class MainContainer {
         return vc
     }
     
-    func makeSwapTokenViewController(fromWalletPubkey pubkey: String?) -> SwapToken.ViewController
+    func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapToken.ViewController
     {
         let vm = SwapToken.ViewModel(
-            repository: walletsViewModel,
             apiClient: solanaSDK,
-            authenticationHandler: rootViewModel,
-            fromWalletPubkey: pubkey
+            authenticationHandler: rootViewModel
         )
+        vm.input.sourceWallet.accept(wallet ?? walletsViewModel.solWallet)
         return SwapToken.ViewController(viewModel: vm, scenesFactory: self)
     }
     
@@ -122,7 +118,7 @@ class MainContainer {
         return ChooseWalletViewController(viewModel: viewModel)
     }
     
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<SolanaSDK.TransactionID>) -> ProcessTransaction.ViewController {
+    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController {
         let viewModel = ProcessTransaction.ViewModel(
             transactionType: transactionType,
             request: request,
@@ -225,6 +221,5 @@ extension MainContainer: TabBarScenesFactory,
                          HomeScenesFactory,
                          ChangeNetworkResponder,
                          ChangeFiatResponder,
-                         ReceiveTokenSceneFactory,
                          TokenSettingsScenesFactory,
                          _MainScenesFactory {}

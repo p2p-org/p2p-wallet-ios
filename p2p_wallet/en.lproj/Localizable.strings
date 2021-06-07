@@ -356,3 +356,8 @@
 "Paid by p2p.org" = "Paid by p2p.org";
 "Connection rate limits exceeded" = "Connection rate limits exceeded";
 "Could not retrieve balances for this tokens pair. Please try selecting again!" = "Could not retrieve balances for this tokens pair. Please try selecting again!";
+"Scan or copy QR code" = "Scan or copy QR code";
+"Direct %@ address" = "Direct %@ address";
+"View in explorer" = "View in explorer";
+"Show address detail" = "Show address detail";
+"Hide address detail" = "Hide address detail";
