@@ -13,6 +13,6 @@ struct SwapToken {
         case chooseSourceWallet
         case chooseDestinationWallet(validMints: Set<String>, excludedSourceWalletPubkey: String?)
         case chooseSlippage
-        case processTransaction(request: Single<SolanaSDK.TransactionID>, transactionType: ProcessTransaction.TransactionType)
+        case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
     }
 }

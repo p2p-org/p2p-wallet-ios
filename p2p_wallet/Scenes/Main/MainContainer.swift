@@ -125,7 +125,7 @@ class MainContainer {
         return ChooseWalletViewController(viewModel: viewModel)
     }
     
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<SolanaSDK.TransactionID>) -> ProcessTransaction.ViewController {
+    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController {
         let viewModel = ProcessTransaction.ViewModel(
             transactionType: transactionType,
             request: request,

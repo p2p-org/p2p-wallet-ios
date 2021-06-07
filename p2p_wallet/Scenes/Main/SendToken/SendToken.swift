@@ -13,7 +13,7 @@ struct SendToken {
         case chooseWallet
         case chooseAddress
         case scanQrCode
-        case processTransaction(request: Single<SolanaSDK.TransactionID>, transactionType: ProcessTransaction.TransactionType)
+        case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
         case feeInfo
     }
     
