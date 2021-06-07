@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol WalletDetailScenesFactory {
-    func makeReceiveTokenViewController(pubkey: String?) -> ReceiveTokenViewController
+    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapToken.ViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
@@ -56,8 +56,10 @@ class WalletDetailViewController: WLIndicatorModalVC {
             let vc = scenesFactory.makeSendTokenViewController(walletPubkey: wallet.pubkey, destinationAddress: nil)
             self.present(vc, animated: true, completion: nil)
         case .receive:
-            let vc = scenesFactory.makeReceiveTokenViewController(pubkey: viewModel.wallet.value?.pubkey)
-            self.show(vc, sender: nil)
+            if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: viewModel.wallet.value?.pubkey)
+            {
+                self.show(vc, sender: nil)
+            }
         case .swap:
             let vc = scenesFactory.makeSwapTokenViewController(fromWallet: viewModel.wallet.value)
             self.show(vc, sender: nil)
