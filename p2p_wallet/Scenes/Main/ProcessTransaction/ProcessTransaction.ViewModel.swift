@@ -211,10 +211,11 @@ extension ProcessTransaction {
                     return wallet
                 })
                 
-                self?.walletsRepository.removeItem(where: {$0.pubkey == wallet.pubkey})
+                _ = self?.walletsRepository.removeItem(where: {$0.pubkey == wallet.pubkey})
                 
                 // FIXME: - Remove transactionManager
                 let transaction = Transaction(
+                    signatureInfo: .init(signature: transactionId),
                     type: .send,
                     symbol: "SOL",
                     status: .processing
