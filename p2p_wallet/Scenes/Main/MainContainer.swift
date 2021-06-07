@@ -107,7 +107,7 @@ class MainContainer {
             apiClient: solanaSDK,
             authenticationHandler: rootViewModel
         )
-        vm.input.sourceWallet.accept(wallet)
+        vm.input.sourceWallet.accept(wallet ?? walletsViewModel.solWallet)
         return SwapToken.ViewController(viewModel: vm, scenesFactory: self)
     }
     
