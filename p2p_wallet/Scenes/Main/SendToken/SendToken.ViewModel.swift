@@ -365,7 +365,10 @@ extension SendToken {
             
             // show processing scene
             navigationSubject.onNext(
-                .processTransaction(request: request, transactionType: .send(from: wallet, to: receiver, amount: amount))
+                .processTransaction(
+                    request: request.map {$0 as ProcessTransactionResponseType},
+                    transactionType: .send(from: wallet, to: receiver, amount: amount)
+                )
             )
         }
     }

@@ -23,7 +23,7 @@ protocol SwapTokenAPIClient {
         slippage: Double,
         amount: UInt64,
         isSimulation: Bool
-    ) -> Single<SolanaSDK.TransactionID>
+    ) -> Single<SolanaSDK.SwapResponse>
 }
 
 extension SolanaSDK: SwapTokenAPIClient {}
@@ -426,6 +426,7 @@ extension SwapToken {
                 amount: lamports,
                 isSimulation: false
             )
+                .map {$0 as ProcessTransactionResponseType}
             
             // show processing scene
             navigationSubject.accept(
