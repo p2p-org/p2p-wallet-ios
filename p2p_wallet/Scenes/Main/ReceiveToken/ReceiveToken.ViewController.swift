@@ -29,7 +29,7 @@ extension ReceiveToken {
                 UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
                     UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
                         .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
-                    UILabel(text: L10n.receive, textSize: 17, weight: .semibold),
+                    UILabel(text: L10n.receive + " " + viewModel.output.tokenWallet?.token.symbol, textSize: 17, weight: .semibold),
                     UIImageView(width: 32, height: 32, image: .share, tintColor: .a3a5ba)
                         .onTap(viewModel, action: #selector(ViewModel.share))
                 ])
