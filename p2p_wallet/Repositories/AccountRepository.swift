@@ -6,11 +6,16 @@
 //
 
 import Foundation
+import RxSwift
 
 protocol AccountRepository {
     func phrasesFromICloud() -> String?
-    var phrases: [String]? {get}
+    func getCurrentPhrases() -> Single<[String]?>
     func save(_ pinCode: String)
 }
 
-extension KeychainAccountStorage: AccountRepository {}
+extension KeychainAccountStorage: AccountRepository {
+    func getCurrentPhrases() -> Single<[String]?> {
+        getCurrentAccount().map {$0?.phrase}
+    }
+}

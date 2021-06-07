@@ -47,21 +47,14 @@ class CreateSecurityKeysViewModel {
     }
     
     @objc func next() {
-        UIApplication.shared.showIndetermineHud()
-        DispatchQueue.global().async {
-            do {
-                let account = try SolanaSDK.Account(phrase: self.phrasesSubject.value, network: Defaults.apiEndPoint.network)
-                try self.accountStorage.save(account)
-                DispatchQueue.main.async {
-                    UIApplication.shared.hideHud()
-                    self.createWalletViewModel.finish()
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    UIApplication.shared.hideHud()
-                    self.errorSubject.onNext((error as? SolanaSDK.Error)?.errorDescription ?? error.localizedDescription)
-                }
-            }
+        do {
+            try accountStorage.save(seedPhrases: self.phrasesSubject.value)
+            let derivablePath = SolanaSDK.DerivablePath.default
+            try accountStorage.save(derivableType: derivablePath.type)
+            try accountStorage.save(selectedWalletIndex: derivablePath.walletIndex)
+            createWalletViewModel.finish()
+        } catch {
+            self.errorSubject.onNext((error as? SolanaSDK.Error)?.errorDescription ?? error.localizedDescription)
         }
     }
 }

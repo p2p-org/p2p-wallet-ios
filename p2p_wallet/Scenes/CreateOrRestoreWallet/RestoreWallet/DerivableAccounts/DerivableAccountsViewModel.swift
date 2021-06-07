@@ -14,7 +14,7 @@ enum DerivableAccountsNavigatableScene {
 }
 
 protocol AccountRestorationHandler {
-    func accountDidRestore(_ account: SolanaSDK.Account)
+    func accountDidRestore(phrases: [String], derivableType: SolanaSDK.DerivablePath.DerivableType, walletIndex: Int)
 }
 
 class DerivableAccountsViewModel: ViewModelType {
@@ -76,37 +76,13 @@ class DerivableAccountsViewModel: ViewModelType {
         input.selectDerivationPath.onNext(())
     }
     
-    func restoreAccount() -> Single<SolanaSDK.Account> {
+    @objc func restoreAccount() {
+        guard let derivablePath = output.selectedDerivationPath.value else {return}
+        
         // cancel any requests
         output.accountsViewModel.cancelRequest()
         
         // if account is successfully loaded
-        if let account = output.accountsViewModel.data.first?.info {
-            return .just(account)
-        }
-        
-        // load account
-        return Single.create { observer in
-            DispatchQueue.global().async { [weak self] in
-                guard let phrases = self?.phrases,
-                      let path = self?.output.selectedDerivationPath.value
-                else {
-                    observer(.failure(SolanaSDK.Error.unknown))
-                    return
-                }
-                do {
-                    let account = try SolanaSDK.Account(phrase: phrases, network: Defaults.apiEndPoint.network, derivablePath: path)
-                    observer(.success(account))
-                } catch {
-                    observer(.failure(error))
-                }
-            }
-            return Disposables.create()
-        }
-            .observe(on: MainScheduler.instance)
-    }
-    
-    func restoringDidComplete(account: SolanaSDK.Account) {
-        handler.accountDidRestore(account)
+        handler.accountDidRestore(phrases: phrases, derivableType: derivablePath.type, walletIndex: derivablePath.walletIndex)
     }
 }

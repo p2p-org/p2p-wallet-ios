@@ -104,19 +104,31 @@ class BackupVC: ProfileVCBase {
     }
     
     @objc func buttonBackupUsingICloudDidTouch() {
-        guard let account = accountStorage.account?.phrase else {return}
+        
         authenticationHandler.authenticate(
             presentationStyle: .init(
                 isRequired: false,
                 isFullScreen: false,
                 useBiometry: true,
                 completion: { [weak self] in
-                    self?.accountStorage.saveICloud(phrases: account.joined(separator: " "))
-                    self?.isIcloudBackedUp.accept(true)
-                    self?.backedUpIcloudCompletion?()
+                    self?.retrieveSeedPhrasesAndBackup()
+                    
                 }
             )
         )
+    }
+    
+    func retrieveSeedPhrasesAndBackup() {
+        accountStorage.getCurrentAccount()
+            .map {$0?.phrase}
+            .subscribe(onSuccess: {[weak self] phrases in
+                guard let phrases = phrases else {return}
+                self?.accountStorage.saveICloud(phrases: phrases.joined(separator: " "))
+                self?.isIcloudBackedUp.accept(true)
+                self?.backedUpIcloudCompletion?()
+                
+            })
+            .disposed(by: disposeBag)
     }
     
     @objc func buttonBackupManuallyDidTouch() {

@@ -19,30 +19,35 @@ class ResetPinCodeWithSeedPhrasesViewModel {
     
     // MARK: - Properties
     let disposeBag = DisposeBag()
-    let accountRepository: AccountRepository
+    let accountStorage: KeychainAccountStorage
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<ResetPinCodeWithSeedPhrasesNavigatableScene>()
     let error = BehaviorRelay<Error?>(value: nil)
     
     // MARK: - Input
-    init(accountRepository: AccountRepository) {
-        self.accountRepository = accountRepository
+    init(accountStorage: KeychainAccountStorage) {
+        self.accountStorage = accountStorage
     }
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Actions
     @objc func savePincode(_ code: String) {
-        accountRepository.save(code)
+        accountStorage.save(code)
     }
 }
 
 extension ResetPinCodeWithSeedPhrasesViewModel: PhrasesCreationHandler {
     func handlePhrases(_ phrases: [String]) {
-        guard accountRepository.phrases == phrases else {
-            error.accept(SolanaSDK.Error.other("Seed phrases is not correct"))
-            return
-        }
-        navigationSubject.onNext(.createNewPasscode)
+        accountStorage.getCurrentAccount()
+            .map {$0?.phrase}
+            .subscribe(onSuccess: {[weak self] myPhrases in
+                guard phrases == myPhrases else {
+                    self?.error.accept(SolanaSDK.Error.other("Seed phrases is not correct"))
+                    return
+                }
+                self?.navigationSubject.onNext(.createNewPasscode)
+            })
+            .disposed(by: disposeBag)
     }
 }

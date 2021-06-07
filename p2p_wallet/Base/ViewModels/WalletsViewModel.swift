@@ -89,18 +89,21 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     
     // MARK: - Methods
     override func createRequest() -> Single<[Wallet]> {
-        solanaSDK.getBalance()
-            .flatMap {balance in
+        Single.zip(
+            solanaSDK.getCurrentAccount(),
+            solanaSDK.getBalance()
+        )
+            .flatMap {account, balance in
                 self.solanaSDK.getTokenWallets()
                     // update visibility
                     .map {[weak self] wallets in
                         self?.mapVisibility(wallets: wallets) ?? []
                     }
                     // add sol wallet on top
-                    .map {[weak self] wallets in
+                    .map {wallets in
                         var wallets = wallets
                         let solWallet = Wallet.nativeSolana(
-                            pubkey: self?.solanaSDK.accountStorage.account?.publicKey.base58EncodedString,
+                            pubkey: account.publicKey.base58EncodedString,
                             lamport: balance
                         )
                         wallets.insert(solWallet, at: 0)

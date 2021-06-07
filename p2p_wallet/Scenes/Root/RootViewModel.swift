@@ -51,6 +51,7 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler, Authentica
     // MARK: - Subjects
     let navigationSubject = BehaviorRelay<RootNavigatableScene>(value: .initializing)
     let authenticationSubject = PublishSubject<AuthenticationPresentationStyle>()
+    let loadingSubject = BehaviorRelay<Bool>(value: false)
     
     // MARK: - Methods
     init(accountStorage: KeychainAccountStorage) {
@@ -59,16 +60,26 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler, Authentica
     }
     
     func reload() {
-        if accountStorage.account == nil {
-            navigationSubject.accept(.createOrRestoreWallet)
-        } else if accountStorage.pinCode == nil ||
-                    !Defaults.didSetEnableBiometry ||
-                    !Defaults.didSetEnableNotifications
-        {
-            navigationSubject.accept(.onboarding)
-        } else {
-            navigationSubject.accept(.main)
-        }
+        // loading
+        loadingSubject.accept(true)
+        
+        accountStorage.getCurrentAccount()
+            .subscribe(onSuccess: {[weak self] account in
+                self?.loadingSubject.accept(false)
+                
+                if account == nil {
+                    self?.navigationSubject.accept(.createOrRestoreWallet)
+                } else if self?.accountStorage.pinCode == nil ||
+                            !Defaults.didSetEnableBiometry ||
+                            !Defaults.didSetEnableNotifications
+                {
+                    self?.navigationSubject.accept(.onboarding)
+                } else {
+                    self?.navigationSubject.accept(.main)
+                }
+            })
+            .disposed(by: disposeBag)
+        
     }
     
     func logout() {

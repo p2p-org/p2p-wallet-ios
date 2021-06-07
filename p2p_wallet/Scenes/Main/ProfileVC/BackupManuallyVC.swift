@@ -7,10 +7,13 @@
 
 import Foundation
 import Action
+import RxCocoa
 
 class BackupManuallyVC: WLIndicatorModalVC {
     
-    let phrases: [String]
+    let accountStorage: SolanaSDKAccountStorage
+    
+    let phrases = BehaviorRelay<[String]>(value: [])
     lazy var rootView = ScrollableVStackRootView(forAutoLayout: ())
     
     lazy var phrasesListView: WLPhrasesListView = {
@@ -23,7 +26,8 @@ class BackupManuallyVC: WLIndicatorModalVC {
     }()
     
     init(accountStorage: SolanaSDKAccountStorage) {
-        self.phrases = accountStorage.account?.phrase ?? []
+        self.accountStorage = accountStorage
+        super.init()
     }
     
     override func setUp() {
@@ -52,11 +56,16 @@ class BackupManuallyVC: WLIndicatorModalVC {
             phrasesListView
         ])
         
-        phrasesListView.setUp(phrases: phrases)
+        accountStorage.getCurrentAccount()
+            .subscribe(onSuccess: {[weak self] account in
+                guard let phrase = account?.phrase else {return}
+                self?.phrasesListView.setUp(phrases: phrase)
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Actions
     func buttonCopyToClipboardDidTouch() {
-        UIApplication.shared.copyToClipboard(phrases.joined(separator: " "))
+        UIApplication.shared.copyToClipboard(phrases.value.joined(separator: " "))
     }
 }

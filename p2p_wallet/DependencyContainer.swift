@@ -58,7 +58,7 @@ class DependencyContainer {
     // MARK: - Reset pincode with seed phrases
     func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
     {
-        let container = ResetPinCodeWithSeedPhrasesContainer(accountRepository: sharedAccountStorage)
+        let container = ResetPinCodeWithSeedPhrasesContainer(accountStorage: sharedAccountStorage)
         return container.makeResetPinCodeWithSeedPhrasesViewController()
     }
 }

@@ -7,32 +7,66 @@
 
 import Foundation
 import KeychainSwift
+import RxSwift
 
 class KeychainAccountStorage: SolanaSDKAccountStorage {
-    let tokenKey = "Keychain.Token"
-    let pincodeKey = "Keychain.Pincode"
-    let phrasesKey = "Keychain.Phrases"
+    // MARK: - Constants
+    private let phrasesKey = "Keychain.Phrases"
+    private let derivableType = "Keychain.DerivableType"
+    private let selectedWalletIndex = "Keychain.SelectedWalletIndex"
+    
+    private let pincodeKey = "Keychain.Pincode"
         
-    let keychain = KeychainSwift()
-    let iCloudStore = NSUbiquitousKeyValueStore()
+    private let keychain = KeychainSwift()
+    private let iCloudStore = NSUbiquitousKeyValueStore()
     
-    // MARK: - Account
-    func save(_ account: SolanaSDK.Account) throws {
-        let data = try JSONEncoder().encode(account)
-        keychain.set(data, forKey: tokenKey)
+    private var cachedAccount: SolanaSDK.Account?
+    
+    // MARK: - SolanaSDKAccountStorage
+    func save(seedPhrases: [String]) throws {
+        keychain.set(seedPhrases.joined(separator: " "), forKey: phrasesKey)
+        cachedAccount = nil
     }
     
-    var account: SolanaSDK.Account? {
-        guard let data = keychain.getData(tokenKey) else {return nil}
-        return try? JSONDecoder().decode(SolanaSDK.Account.self, from: data)
+    func save(derivableType: SolanaSDK.DerivablePath.DerivableType) throws {
+        keychain.set(derivableType.rawValue, forKey: self.derivableType)
+        cachedAccount = nil
     }
     
-    var didBackupUsingIcloud: Bool {
-        phrasesFromICloud() == account?.phrase.joined(separator: " ")
+    func save(selectedWalletIndex: Int) throws {
+        keychain.set("\(selectedWalletIndex)", forKey: self.selectedWalletIndex)
+        cachedAccount = nil
     }
     
-    var phrases: [String]? {
-        account?.phrase
+    func getCurrentAccount() -> Single<SolanaSDK.Account?> {
+        Single<SolanaSDK.Account?>.create {observer in
+            if let account = self.cachedAccount {
+                observer(.success(account))
+            } else if let seedPhrases = self.keychain.get(self.phrasesKey)?.components(separatedBy: " "),
+                      let derivableTypeRaw = self.keychain.get(self.derivableType),
+                      let derivableType = SolanaSDK.DerivablePath.DerivableType(rawValue: derivableTypeRaw),
+                      let selectedWalletIndexRaw = self.keychain.get(self.selectedWalletIndex),
+                      let selectedWalletIndex = Int(selectedWalletIndexRaw)
+            {
+                DispatchQueue.global(qos: .userInteractive).async {
+                    let account = try? SolanaSDK.Account(phrase: seedPhrases, network: Defaults.apiEndPoint.network, derivablePath: .init(type: derivableType, walletIndex: selectedWalletIndex))
+                    observer(.success(account))
+                }
+            } else {
+                observer(.success(nil))
+            }
+            
+            return Disposables.create()
+        }
+            .do(onSuccess: { [weak self] account in
+                self?.cachedAccount = account
+            })
+            .observe(on: MainScheduler.instance)
+    }
+    
+    func clear() {
+        cachedAccount = nil
+        keychain.clear()
     }
     
     // MARK: - Pincode
@@ -45,16 +79,15 @@ class KeychainAccountStorage: SolanaSDKAccountStorage {
     }
     
     // MARK: - iCloud
+    var didBackupUsingIcloud: Bool {
+        phrasesFromICloud() == keychain.get(phrasesKey)
+    }
+    
     func saveICloud(phrases: String) {
         iCloudStore.set(phrases, forKey: phrasesKey)
     }
     
     func phrasesFromICloud() -> String? {
         iCloudStore.string(forKey: phrasesKey)
-    }
-    
-    // MARK: - Clearance
-    func clear() {
-        keychain.clear()
     }
 }

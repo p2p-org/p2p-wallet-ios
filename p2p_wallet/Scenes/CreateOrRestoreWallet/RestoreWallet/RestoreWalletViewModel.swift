@@ -54,15 +54,15 @@ extension RestoreWalletViewModel: PhrasesCreationHandler {
 }
 
 extension RestoreWalletViewModel: AccountRestorationHandler {
-    func accountDidRestore(_ account: SolanaSDK.Account) {
+    func accountDidRestore(phrases: [String], derivableType: SolanaSDK.DerivablePath.DerivableType, walletIndex: Int) {
         do {
-            try accountStorage.save(account)
+            try accountStorage.save(seedPhrases: phrases)
+            try accountStorage.save(derivableType: derivableType)
+            try accountStorage.save(selectedWalletIndex: walletIndex)
             handler.restoringWalletDidComplete()
         } catch {
-            errorMessage.onNext(error.readableDescription)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-                self?.handler.creatingOrRestoringWalletDidCancel()
-            }
+            print(error.readableDescription)
+            return
         }
     }
 }

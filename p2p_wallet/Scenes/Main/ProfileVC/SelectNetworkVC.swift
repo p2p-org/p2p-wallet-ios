@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 
 protocol ChangeNetworkResponder {
-    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) -> Completable
+    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint)
 }
 
 class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
@@ -49,14 +49,6 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
     }
     
     func changeNetworkToSelectedNetwork() {
-        UIApplication.shared.showIndetermineHud()
         responder.changeAPIEndpoint(to: selectedItem)
-            .subscribe(onCompleted: {
-                UIApplication.shared.hideHud()
-            }, onError: {[weak self] error in
-                UIApplication.shared.hideHud()
-                self?.showError(error, additionalMessage: L10n.pleaseTryAgainLater)
-            })
-            .disposed(by: disposeBag)
     }
 }

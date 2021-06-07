@@ -14,7 +14,6 @@ protocol SwapTokenAPIClient {
     func getSwapPools() -> Single<[SolanaSDK.Pool]>
     func getPoolWithTokenBalances(pool: SolanaSDK.Pool) -> Single<SolanaSDK.Pool>
     func swap(
-        account: SolanaSDK.Account?,
         pool: SolanaSDK.Pool?,
         source: SolanaSDK.PublicKey,
         sourceMint: SolanaSDK.PublicKey,
@@ -416,7 +415,6 @@ extension SwapToken {
             let destinationPubkey = try? SolanaSDK.PublicKey(string: destinationWallet.pubkey ?? "")
             
             let request = apiClient.swap(
-                account: nil,
                 pool: currentPoolSubject.value,
                 source: sourcePubkey,
                 sourceMint: sourceMint,

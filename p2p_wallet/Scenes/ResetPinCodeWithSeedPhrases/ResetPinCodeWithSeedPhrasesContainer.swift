@@ -8,13 +8,13 @@
 import Foundation
 
 class ResetPinCodeWithSeedPhrasesContainer {
-    let accountRepository: AccountRepository
-    lazy var viewModel = ResetPinCodeWithSeedPhrasesViewModel(accountRepository: accountRepository)
+    let accountStorage: KeychainAccountStorage
+    lazy var viewModel = ResetPinCodeWithSeedPhrasesViewModel(accountStorage: accountStorage)
     
     init(
-        accountRepository: AccountRepository
+        accountStorage: KeychainAccountStorage
     ) {
-        self.accountRepository = accountRepository
+        self.accountStorage = accountStorage
         
     }
     

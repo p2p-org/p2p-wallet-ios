@@ -69,6 +69,16 @@ class RootViewController: BaseVC {
         viewModel.authenticationSubject
             .subscribe(onNext: {[unowned self] in self.authenticate($0)})
             .disposed(by: disposeBag)
+        
+        viewModel.loadingSubject
+            .subscribe(onNext: {[weak self] isLoading in
+                if isLoading {
+                    self?.showIndetermineHud(nil)
+                } else {
+                    self?.hideHud()
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Navigation
