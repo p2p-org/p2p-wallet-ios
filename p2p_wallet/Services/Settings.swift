@@ -20,10 +20,7 @@ extension DefaultsKeys {
     var apiEndPoint: DefaultsKey<SolanaSDK.APIEndPoint> {
         .init(
             #function,
-            defaultValue: SolanaSDK.APIEndPoint(
-                url: "https://api.mainnet-beta.solana.com",
-                network: .mainnetBeta
-            )
+            defaultValue: .definedEndpoints.first!
         )
     }
     var walletName: DefaultsKey<[String: String]> {.init(#function, defaultValue: [:])}
