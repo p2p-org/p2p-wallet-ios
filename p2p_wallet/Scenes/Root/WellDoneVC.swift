@@ -9,14 +9,14 @@ import Foundation
 import SwiftUI
 
 class WellDoneVC: WLIntroVC {
-    let viewModel: RootViewModel
-    init(viewModel: RootViewModel) {
+    let viewModel: Root.ViewModel
+    init(viewModel: Root.ViewModel) {
         self.viewModel = viewModel
         super.init()
     }
     
     lazy var acceptButton = WLButton.stepButton(type: .blue, label: nil)
-        .onTap(viewModel, action: #selector(RootViewModel.navigateToMain))
+        .onTap(viewModel, action: #selector(Root.ViewModel.navigateToMain))
     
     override func setUp() {
         super.setUp()

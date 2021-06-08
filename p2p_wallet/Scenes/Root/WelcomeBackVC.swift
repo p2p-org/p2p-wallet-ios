@@ -10,10 +10,10 @@ import SwiftUI
 
 class WelcomeBackVC: WLIntroVC {
     lazy var goToWalletButton = WLButton.stepButton(type: .blue, label: L10n.goToWallet)
-        .onTap(viewModel, action: #selector(RootViewModel.navigateToMain))
+        .onTap(viewModel, action: #selector(Root.ViewModel.navigateToMain))
     
-    let viewModel: RootViewModel
-    init(viewModel: RootViewModel) {
+    let viewModel: Root.ViewModel
+    init(viewModel: Root.ViewModel) {
         self.viewModel = viewModel
         super.init()
     }
