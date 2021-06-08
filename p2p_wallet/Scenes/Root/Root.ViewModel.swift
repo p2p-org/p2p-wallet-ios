@@ -129,13 +129,11 @@ extension Root {
         // MARK: - Helpers
         private func mapInputIntoAuthenticationStatus() {
             input.authenticationStatus
-                .withPrevious()
-                .filter {status in
-                    let previous = status.0
-                    let current = status.1
+                .filter { [weak self] status in
+                    let previous = self?.authenticationStatusSubject.value
+                    let current = status
                     return (previous == nil && current != nil) || (previous != nil && current == nil)
                 }
-                .map {$0.1}
                 .map {[weak self] status -> AuthenticationPresentationStyle? in
                     // dismiss
                     if status == nil {return nil}
