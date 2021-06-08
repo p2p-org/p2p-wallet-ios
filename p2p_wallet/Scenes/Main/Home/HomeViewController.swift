@@ -10,7 +10,7 @@ import UIKit
 import Action
 
 protocol HomeScenesFactory {
-    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController
+    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapToken.ViewController
