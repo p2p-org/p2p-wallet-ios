@@ -77,8 +77,9 @@ extension Root {
         
         private func bindSubjectsIntoSubjects() {
             authenticationStatusSubject
+                .skip(while: {$0 == nil})
                 .subscribe(onNext: {[weak self] status in
-                    if status != nil {
+                    if status == nil {
                         self?.lastAuthenticationTimeStamp = Int(Date().timeIntervalSince1970)
                     }
                 })
