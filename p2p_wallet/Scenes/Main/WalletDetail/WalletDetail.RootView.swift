@@ -127,6 +127,15 @@ extension WalletDetail {
         }
         
         private func bind() {
+            // bind controls to viewModel's input
+            walletNameTextField.rx.text.orEmpty
+                .skip(1)
+                .map {$0.trimmingCharacters(in: .whitespacesAndNewlines)}
+                .distinctUntilChanged()
+                .bind(to: viewModel.input.walletName)
+                .disposed(by: disposeBag)
+            
+            // bind viewModel's output to controls
             viewModel.output.wallet
                 .map {$0?.token.symbol == "SOL"}
                 .drive(settingsButton.rx.isHidden)
@@ -152,16 +161,6 @@ extension WalletDetail {
                 .drive(onNext: {[weak self] wallet in
                     self?.collectionView.wallet = wallet
                     self?.collectionView.transactionsSection.reloadHeader()
-                })
-                .disposed(by: disposeBag)
-            
-            // bind controls to view model
-            walletNameTextField.rx.text.orEmpty
-                .skip(1)
-                .map {$0.trimmingCharacters(in: .whitespacesAndNewlines)}
-                .distinctUntilChanged()
-                .subscribe(onNext: {[weak self] in
-                    self?.viewModel.renameWallet(to: $0)
                 })
                 .disposed(by: disposeBag)
         }

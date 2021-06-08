@@ -13,7 +13,7 @@ extension WalletDetail {
     class ViewModel: ViewModelType {
         // MARK: - Nested type
         struct Input {
-            
+            let walletName = PublishRelay<String>()
         }
         struct Output {
             let navigationScene: Driver<NavigatableScene?>
@@ -77,7 +77,11 @@ extension WalletDetail {
         }
         
         private func bindInputIntoSubjects() {
-            
+            input.walletName
+                .subscribe(onNext: {[weak self] newName in
+                    self?.renameWallet(to: newName)
+                })
+                .disposed(by: disposeBag)
         }
         
         private func bindSubjectsIntoSubjects() {
@@ -113,7 +117,8 @@ extension WalletDetail {
             navigationSubject.accept(.transactionInfo(transaction))
         }
         
-        func renameWallet(to newName: String) {
+        // MARK: - Helpers
+        private func renameWallet(to newName: String) {
             guard let wallet = walletSubject.value else {return}
             
             var newName = newName
