@@ -57,12 +57,17 @@ extension ReceiveToken {
         }
         
         // MARK: - Actions
-        @objc func showInExplorer() {
+        @objc func showSOLAddressInExplorer() {
+            navigationSubject.accept(.showInExplorer(address: pubkey))
+        }
+        
+        @objc func showTokenMintAddressInExplorer() {
             guard let mintAddress = tokenWallet?.token.address else {return}
             navigationSubject.accept(.showInExplorer(address: mintAddress))
         }
         
-        @objc func showSOLAddressInExplorer() {
+        @objc func showTokenPubkeyAddressInExplorer() {
+            guard let pubkey = tokenWallet?.pubkey else {return}
             navigationSubject.accept(.showInExplorer(address: pubkey))
         }
         
