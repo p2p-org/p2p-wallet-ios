@@ -84,7 +84,13 @@ extension ReceiveToken {
                 UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
                     UILabel(text: L10n.directAddress(viewModel.output.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
                     
-                    UILabel(text: viewModel.output.tokenWallet?.pubkey, textSize: 15, weight: .medium, numberOfLines: 0)
+                    UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
+                        UILabel(text: viewModel.output.tokenWallet?.pubkey, textSize: 15, weight: .medium, numberOfLines: 0)
+                        
+                        UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
+                            .padding(.init(all: 10), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                            .onTap(viewModel, action: #selector(ViewModel.showTokenPubkeyAddressInExplorer))
+                    }
                 }
                     .padding(.init(x: 20, y: 0))
                 
@@ -97,8 +103,8 @@ extension ReceiveToken {
                         UILabel(text: viewModel.output.tokenWallet?.token.address, textSize: 15, weight: .medium, numberOfLines: 0)
                         
                         UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
-                            .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
-                            .onTap(viewModel, action: #selector(ViewModel.showInExplorer))
+                            .padding(.init(all: 10), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                            .onTap(viewModel, action: #selector(ViewModel.showTokenMintAddressInExplorer))
                     }
                 }
                     .padding(.init(x: 20, y: 0))
