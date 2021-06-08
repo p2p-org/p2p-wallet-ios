@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import RxAppState
 
 extension Root {
     class ViewModel: ViewModelType {
@@ -55,6 +56,7 @@ extension Root {
         private func bind() {
             bindInputIntoSubjects()
             bindSubjectsIntoSubjects()
+            observeAppNotifications()
         }
         
         private func bindInputIntoSubjects() {
@@ -67,6 +69,21 @@ extension Root {
                     if status != nil {
                         self?.lastAuthenticationTimeStamp = Int(Date().timeIntervalSince1970)
                     }
+                })
+                .disposed(by: disposeBag)
+        }
+        
+        private func observeAppNotifications() {
+            UIApplication.shared.rx.applicationDidBecomeActive
+                .subscribe(onNext: {[weak self] _ in
+                    self?.input.authenticationStatus.accept(
+                        AuthenticationPresentationStyle(
+                            isRequired: true,
+                            isFullScreen: true,
+                            useBiometry: true,
+                            completion: nil
+                        )
+                    )
                 })
                 .disposed(by: disposeBag)
         }
@@ -153,6 +170,6 @@ extension Root.ViewModel: OnboardingHandler {
 
 extension Root.ViewModel: AuthenticationHandler {
     func authenticate(presentationStyle: AuthenticationPresentationStyle) {
-        authenticationStatusSubject.accept(presentationStyle)
+        input.authenticationStatus.accept(presentationStyle)
     }
 }
