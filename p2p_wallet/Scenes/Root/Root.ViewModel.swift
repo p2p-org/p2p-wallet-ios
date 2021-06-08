@@ -30,6 +30,8 @@ extension Root {
         private var lastAuthenticationTimeStamp = 0
         private var isRestoration = false
         
+        private var isAuthenticationPaused = false
+        
         let input: Input
         private(set) var output: Output
         
@@ -112,8 +114,16 @@ extension Root {
             reload()
         }
         
+        func pauseAuthentication(_ isPaused: Bool) {
+            isAuthenticationPaused = isPaused
+        }
+        
         @objc func resetPinCodeWithASeedPhrase() {
             navigationSubject.accept(.resetPincodeWithASeedPhrase)
+        }
+        
+        @objc func navigateToMain() {
+            navigationSubject.accept(.main)
         }
         
         // MARK: - Helpers
@@ -143,6 +153,7 @@ extension Root {
         
         private func canPerformAuthentication() -> Bool {
             navigationSubject.value == .main // disable authentication on other scenes
+                && !isAuthenticationPaused
         }
     }
 }

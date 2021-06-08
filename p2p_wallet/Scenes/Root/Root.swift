@@ -21,7 +21,7 @@ struct Root {
     enum NavigatableScene: Equatable {
         case createOrRestoreWallet
         case onboarding
-        case onboardingDone(isRestoration: Bool) // FIXME: - Remove later
+        case onboardingDone(isRestoration: Bool)
         case main
         case resetPincodeWithASeedPhrase
     }
