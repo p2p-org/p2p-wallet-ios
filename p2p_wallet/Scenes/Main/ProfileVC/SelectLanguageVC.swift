@@ -18,8 +18,8 @@ struct LocalizedLanguage: Hashable, Codable, DefaultsSerializable {
 class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
     override var dataDidChange: Bool {selectedItem != Defaults.localizedLanguage}
     
-    let rootViewModel: RootViewModel
-    init(rootViewModel: RootViewModel) {
+    let rootViewModel: Root.ViewModel
+    init(rootViewModel: Root.ViewModel) {
         self.rootViewModel = rootViewModel
         super.init()
         data = [LocalizedLanguage: Bool]()

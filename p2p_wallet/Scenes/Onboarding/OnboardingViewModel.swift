@@ -16,6 +16,11 @@ enum OnboardingNavigatableScene {
     case dismiss
 }
 
+protocol OnboardingHandler {
+    func onboardingDidCancel()
+    func onboardingDidComplete()
+}
+
 class OnboardingViewModel {
     // MARK: - Constants
     

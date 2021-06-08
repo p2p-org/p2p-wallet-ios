@@ -17,4 +17,5 @@ struct AuthenticationPresentationStyle {
 
 protocol AuthenticationHandler {
     func authenticate(presentationStyle: AuthenticationPresentationStyle)
+    func pauseAuthentication(_ isPaused: Bool)
 }

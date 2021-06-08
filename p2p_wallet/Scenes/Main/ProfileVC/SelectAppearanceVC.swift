@@ -12,9 +12,9 @@ class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
     var interfaceStyle: UIUserInterfaceStyle { AppDelegate.shared.window?.overrideUserInterfaceStyle ?? .unspecified }
     override var dataDidChange: Bool {selectedItem != interfaceStyle}
     
-    let rootViewModel: RootViewModel
+    let rootViewModel: Root.ViewModel
     
-    init(rootViewModel: RootViewModel) {
+    init(rootViewModel: Root.ViewModel) {
         self.rootViewModel = rootViewModel
         super.init()
         data = [

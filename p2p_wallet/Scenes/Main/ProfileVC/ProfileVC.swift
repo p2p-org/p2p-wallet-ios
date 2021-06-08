@@ -41,10 +41,10 @@ class ProfileVC: ProfileVCBase {
     
     var disposables = [DefaultsDisposable]()
     let accountStorage: KeychainAccountStorage
-    let rootViewModel: RootViewModel
+    let rootViewModel: Root.ViewModel
     let scenesFactory: ProfileScenesFactory
     
-    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel, scenesFactory: ProfileScenesFactory) {
+    init(accountStorage: KeychainAccountStorage, rootViewModel: Root.ViewModel, scenesFactory: ProfileScenesFactory) {
         self.accountStorage = accountStorage
         self.scenesFactory = scenesFactory
         self.rootViewModel = rootViewModel
