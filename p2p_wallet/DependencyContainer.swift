@@ -11,16 +11,16 @@ import SolanaSwift
 class DependencyContainer {
     // MARK: - Long lived dependency
     let sharedAccountStorage: KeychainAccountStorage
-    let sharedRootViewModel: RootViewModel
+    let sharedRootViewModel: Root.ViewModel
     
     init() {
         self.sharedAccountStorage = KeychainAccountStorage()
-        self.sharedRootViewModel = RootViewModel(accountStorage: sharedAccountStorage)
+        self.sharedRootViewModel = Root.ViewModel(accountStorage: sharedAccountStorage)
     }
     
     // MARK: - Root
-    func makeRootViewController() -> RootViewController {
-        return RootViewController(viewModel: sharedRootViewModel, scenesFactory: self)
+    func makeRootViewController() -> Root.ViewController {
+        return .init(viewModel: sharedRootViewModel, scenesFactory: self)
     }
     
     // MARK: - CreateOrRestore wallet

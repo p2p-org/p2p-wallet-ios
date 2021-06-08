@@ -122,7 +122,7 @@ extension UIViewController {
         }
     }
     
-    func transition(from oldVC: UIViewController? = nil, to newVC: UIViewController, in containerView: UIView? = nil) {
+    func transition(from oldVC: UIViewController? = nil, to newVC: UIViewController, in containerView: UIView? = nil, completion: (() -> Void)? = nil) {
         let oldVC = oldVC ?? children.last
         let containerView = containerView ?? view
         
@@ -144,6 +144,7 @@ extension UIViewController {
             oldVC?.view.removeFromSuperview()
             oldVC?.removeFromParent()
             newVC.didMove(toParent: self)
+            completion?()
         }
     }
 }

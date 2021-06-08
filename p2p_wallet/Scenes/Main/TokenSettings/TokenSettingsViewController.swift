@@ -22,7 +22,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
-    let rootViewModel: RootViewModel
+    let authenticationHandler: AuthenticationHandler
     let scenesFactory: TokenSettingsScenesFactory
     weak var delegate: TokenSettingsViewControllerDelegate?
     
@@ -36,10 +36,13 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     }()
     
     // MARK: - Initializer
-    init(viewModel: TokenSettingsViewModel, rootViewModel: RootViewModel, scenesFactory: TokenSettingsScenesFactory)
-    {
+    init(
+        viewModel: TokenSettingsViewModel,
+        authenticationHandler: AuthenticationHandler,
+        scenesFactory: TokenSettingsScenesFactory
+    ) {
         self.viewModel = viewModel
-        self.rootViewModel = rootViewModel
+        self.authenticationHandler = authenticationHandler
         self.scenesFactory = scenesFactory
         super.init()
     }
@@ -74,8 +77,8 @@ class TokenSettingsViewController: WLIndicatorModalVC {
             let vc = TokenSettingsCloseAccountConfirmationVC(symbol: symbol)
             vc.completion = {
                 vc.dismiss(animated: true) { [unowned self] in
-                    self.rootViewModel.authenticationSubject.onNext(
-                        .init(
+                    self.authenticationHandler.authenticate(
+                        presentationStyle: .init(
                             isRequired: false,
                             isFullScreen: false,
                             useBiometry: false,
@@ -83,7 +86,8 @@ class TokenSettingsViewController: WLIndicatorModalVC {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                                     self?.viewModel.closeAccount()
                                 }
-                            })
+                            }
+                        )
                     )
                 }
             }
