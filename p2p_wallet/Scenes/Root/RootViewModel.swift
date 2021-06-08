@@ -19,18 +19,7 @@ enum RootNavigatableScene: Equatable {
     case resetPincodeWithASeedPhrase
 }
 
-protocol CreateOrRestoreWalletHandler {
-    func creatingWalletDidComplete()
-    func restoringWalletDidComplete()
-    func creatingOrRestoringWalletDidCancel()
-}
-
-protocol OnboardingHandler {
-    func onboardingDidCancel()
-    func onboardingDidComplete()
-}
-
-class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler, AuthenticationHandler {
+class RootViewModel {
     // MARK: - Constants
     private var timeRequiredForAuthentication = 10 // in seconds
     
@@ -80,34 +69,9 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler, Authentica
     }
     
     // MARK: - Handler
-    func creatingWalletDidComplete() {
-        self.isRestoration = false
-        navigationSubject.accept(.onboarding)
-    }
-    
-    func restoringWalletDidComplete() {
-        self.isRestoration = true
-        navigationSubject.accept(.onboarding)
-    }
-    
-    func creatingOrRestoringWalletDidCancel() {
-        logout()
-    }
-    
-    func onboardingDidCancel() {
-        logout()
-    }
-    
-    @objc func onboardingDidComplete() {
-        navigationSubject.accept(.onboardingDone(isRestoration: isRestoration))
-    }
     
     @objc func navigateToMain() {
         navigationSubject.accept(.main)
-    }
-    
-    func authenticate(presentationStyle: AuthenticationPresentationStyle) {
-        authenticationSubject.onNext(presentationStyle)
     }
     
     @objc func resetPinCodeWithASeedPhrase() {
@@ -138,5 +102,37 @@ class RootViewModel: CreateOrRestoreWalletHandler, OnboardingHandler, Authentica
     
     func markAsIsAuthenticating(_ bool: Bool = true) {
         isAuthenticating = bool
+    }
+}
+
+extension RootViewModel: CreateOrRestoreWalletHandler {
+    func creatingWalletDidComplete() {
+        self.isRestoration = false
+        navigationSubject.accept(.onboarding)
+    }
+    
+    func restoringWalletDidComplete() {
+        self.isRestoration = true
+        navigationSubject.accept(.onboarding)
+    }
+    
+    func creatingOrRestoringWalletDidCancel() {
+        logout()
+    }
+}
+
+extension RootViewModel: OnboardingHandler {
+    func onboardingDidCancel() {
+        logout()
+    }
+    
+    @objc func onboardingDidComplete() {
+        navigationSubject.accept(.onboardingDone(isRestoration: isRestoration))
+    }
+}
+
+extension RootViewModel: AuthenticationHandler {
+    func authenticate(presentationStyle: AuthenticationPresentationStyle) {
+        authenticationSubject.onNext(presentationStyle)
     }
 }

@@ -15,6 +15,12 @@ enum CreateOrRestoreWalletNavigatableScene {
     case restoreWallet
 }
 
+protocol CreateOrRestoreWalletHandler {
+    func creatingWalletDidComplete()
+    func restoringWalletDidComplete()
+    func creatingOrRestoringWalletDidCancel()
+}
+
 class CreateOrRestoreWalletViewModel {
     // MARK: - Constants
     
