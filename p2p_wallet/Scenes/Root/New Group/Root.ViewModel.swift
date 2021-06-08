@@ -76,7 +76,9 @@ extension Root {
         private func observeAppNotifications() {
             UIApplication.shared.rx.applicationDidBecomeActive
                 .subscribe(onNext: {[weak self] _ in
-                    self?.input.authenticationStatus.accept(
+                    guard let strongSelf = self else {return}
+                    guard (Int(Date().timeIntervalSince1970) >= strongSelf.lastAuthenticationTimeStamp + strongSelf.timeRequiredForAuthentication) else {return}
+                    strongSelf.input.authenticationStatus.accept(
                         AuthenticationPresentationStyle(
                             isRequired: true,
                             isFullScreen: true,
@@ -110,6 +112,10 @@ extension Root {
             reload()
         }
         
+        @objc func resetPinCodeWithASeedPhrase() {
+            navigationSubject.accept(.resetPincodeWithASeedPhrase)
+        }
+        
         // MARK: - Helpers
         private func mapInputIntoAuthenticationStatus() {
             input.authenticationStatus
@@ -137,7 +143,6 @@ extension Root {
         
         private func canPerformAuthentication() -> Bool {
             navigationSubject.value == .main // disable authentication on other scenes
-                && (Int(Date().timeIntervalSince1970) >= lastAuthenticationTimeStamp + timeRequiredForAuthentication)
         }
     }
 }

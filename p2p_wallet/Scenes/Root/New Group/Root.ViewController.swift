@@ -8,11 +8,6 @@
 import Foundation
 import UIKit
 
-
-//@objc protocol RootViewControllerDelegate {
-//
-//}
-
 extension Root {
     class ViewController: BaseVC {
         override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -24,6 +19,7 @@ extension Root {
         private let scenesFactory: RootViewControllerScenesFactory
         
         private var isLightStatusBarStyle = false
+        private var localAuthVC: LocalAuthVC?
         
         // MARK: - Subviews
         lazy var blurEffectView: UIVisualEffectView = {
@@ -61,6 +57,12 @@ extension Root {
             viewModel.output.currentAuthenticationStatus
                 .drive(onNext: {[weak self] in self?.handleAuthenticationStatus($0)})
                 .disposed(by: disposeBag)
+            
+            // blurEffectView
+            viewModel.output.currentAuthenticationStatus
+                .map {$0 == nil}
+                .drive(blurEffectView.rx.isHidden)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Navigation
@@ -69,13 +71,85 @@ extension Root {
         }
         
         private func handleAuthenticationStatus(_ status: AuthenticationPresentationStyle?) {
+            // dismiss
+            guard let authStyle = status else {
+                localAuthVC?.dismiss(animated: true) { [weak self] in
+                    status?.completion?()
+                    self?.localAuthVC = nil
+                }
+                return
+            }
             
+            // clean
+            localAuthVC?.dismiss(animated: false, completion: nil)
+            localAuthVC = scenesFactory.makeLocalAuthVC()
+            localAuthVC?.embededPinVC.promptTitle = authStyle.title
+            localAuthVC?.isIgnorable = !authStyle.isRequired
+            localAuthVC?.useBiometry = authStyle.useBiometry
+            
+            if authStyle.isFullScreen {
+                localAuthVC?.modalPresentationStyle = .fullScreen
+            }
+            localAuthVC?.disableDismissAfterCompletion = true
+            
+//            if localAuthVC?.isIgnorable == true {
+//                viewModel.markAsIsAuthenticating(false)
+//            } else {
+//                viewModel.markAsIsAuthenticating(true)
+//            }
+            
+            // reset with a seed phrase
+            localAuthVC?.resetPincodeWithASeedPhrasesHandler = {[weak self] in
+                self?.viewModel.resetPinCodeWithASeedPhrase()
+            }
+            
+            // completion
+            localAuthVC?.completion = {[weak self] didSuccess in
+                if didSuccess {
+                    self?.viewModel.input.authenticationStatus.accept(nil)
+                } else {
+                    self?.lock(authStyle: authStyle)
+                }
+            }
         }
         
         // MARK: - Helpers
+        private func lock(authStyle: AuthenticationPresentationStyle?) {
+            localAuthVC?.isIgnorable = false
+            localAuthVC?.isBlocked = true
+            localAuthVC?.embededPinVC.clear()
+            
+            var secondsLeft = 10
+            
+            // Count down to next
+            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+                
+                secondsLeft -= 1
+                
+                let minutesAndSeconds = secondsToMinutesSeconds(seconds: secondsLeft)
+                let minutes = minutesAndSeconds.0
+                let seconds = minutesAndSeconds.1
+                
+                self?.localAuthVC?.embededPinVC.errorTitle = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)") + " " + L10n.orResetItWithASeedPhrase
+                self?.localAuthVC?.isResetPinCodeWithASeedPhrasesShown = true
+                
+                if secondsLeft == 0 {
+                    self?.localAuthVC?.embededPinVC.errorTitle = nil
+                    self?.localAuthVC?.isBlocked = false
+                    self?.localAuthVC?.remainingPinEntries = 3
+                    self?.localAuthVC?.isResetPinCodeWithASeedPhrasesShown = false
+                    timer.invalidate()
+                }
+            }
+        }
+        
         private func transitionAndMoveBlurViewToFront(to vc: UIViewController) {
             transition(to: vc)
             view.bringSubviewToFront(blurEffectView)
         }
     }
+}
+
+private func secondsToMinutesSeconds (seconds: Int) -> (Int, Int) {
+    return ((seconds % 3600) / 60, (seconds % 3600) % 60)
 }
