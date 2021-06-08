@@ -66,9 +66,9 @@ class MainContainer {
         let viewModel = WalletDetailViewModel(
             walletPubkey: pubkey,
             walletSymbol: symbol,
-            solanaSDK: solanaSDK,
             walletsRepository: walletsViewModel,
-            pricesRepository: pricesManager
+            pricesRepository: pricesManager,
+            transactionsRepository: solanaSDK
         )
         return WalletDetailViewController(viewModel: viewModel, scenesFactory: self)
     }
