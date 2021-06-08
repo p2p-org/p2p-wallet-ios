@@ -93,7 +93,6 @@
 		BC460762266F40F400A12E07 /* Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC46075E266F40F400A12E07 /* Root.swift */; };
 		BC460763266F40F400A12E07 /* Root.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC46075F266F40F400A12E07 /* Root.ViewController.swift */; };
 		BC460764266F40F400A12E07 /* Root.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460760266F40F400A12E07 /* Root.ViewModel.swift */; };
-		BC460765266F40F400A12E07 /* Root.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460761266F40F400A12E07 /* Root.RootView.swift */; };
 		BC460768266F4B3200A12E07 /* ObservableType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460767266F4B3200A12E07 /* ObservableType+Extensions.swift */; };
 		BC460ABF257A44310035F6AA /* TransactionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460ABE257A44310035F6AA /* TransactionsManager.swift */; };
 		BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */; };
@@ -411,7 +410,6 @@
 		BC46075E266F40F400A12E07 /* Root.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.swift; sourceTree = "<group>"; };
 		BC46075F266F40F400A12E07 /* Root.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.ViewController.swift; sourceTree = "<group>"; };
 		BC460760266F40F400A12E07 /* Root.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.ViewModel.swift; sourceTree = "<group>"; };
-		BC460761266F40F400A12E07 /* Root.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.RootView.swift; sourceTree = "<group>"; };
 		BC460767266F4B3200A12E07 /* ObservableType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ObservableType+Extensions.swift"; sourceTree = "<group>"; };
 		BC460ABE257A44310035F6AA /* TransactionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsManager.swift; sourceTree = "<group>"; };
 		BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BehaviorRelay+Extensions.swift"; sourceTree = "<group>"; };
@@ -811,7 +809,6 @@
 				BC46075E266F40F400A12E07 /* Root.swift */,
 				BC460760266F40F400A12E07 /* Root.ViewModel.swift */,
 				BC46075F266F40F400A12E07 /* Root.ViewController.swift */,
-				BC460761266F40F400A12E07 /* Root.RootView.swift */,
 			);
 			path = "New Group";
 			sourceTree = "<group>";
@@ -1922,7 +1919,6 @@
 				BCE42DF725DF9C7A0021540E /* OnboardingViewController.swift in Sources */,
 				BCEB206125E1532C00B54FEF /* OnboardingContainer.swift in Sources */,
 				BC2DA2A2260B245400B50738 /* TransactionHandler.swift in Sources */,
-				BC460765266F40F400A12E07 /* Root.RootView.swift in Sources */,
 				BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */,
 				BCBE14A025EF3D110014BCE5 /* HomeRootView.swift in Sources */,
 				BCB7C7C62665EEC400FEC68E /* SendToken.swift in Sources */,
