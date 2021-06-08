@@ -7,9 +7,15 @@
 
 import Foundation
 
-//protocol RootScenesFactory {
-//    func makeRootDetailViewController() -> RootDetailViewController
-//}
+protocol RootViewControllerScenesFactory {
+    func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
+    func makeOnboardingViewController() -> OnboardingViewController
+    func makeMainViewController() -> MainViewController
+    func makeLocalAuthVC() -> LocalAuthVC
+    func makeWellDoneVC() -> WellDoneVC
+    func makeWelcomeBackVC() -> WelcomeBackVC
+    func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
+}
 
 struct Root {
     enum NavigatableScene: Equatable {

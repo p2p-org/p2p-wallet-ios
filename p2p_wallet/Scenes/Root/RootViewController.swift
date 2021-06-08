@@ -9,16 +9,6 @@ import Foundation
 import UIKit
 import Action
 
-protocol RootViewControllerScenesFactory {
-    func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
-    func makeOnboardingViewController() -> OnboardingViewController
-    func makeMainViewController() -> MainViewController
-    func makeLocalAuthVC() -> LocalAuthVC
-    func makeWellDoneVC() -> WellDoneVC
-    func makeWelcomeBackVC() -> WelcomeBackVC
-    func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
-}
-
 class RootViewController: BaseVC {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         isLightStatusBarStyle ? .lightContent: .darkContent
