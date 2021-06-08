@@ -106,7 +106,7 @@ extension Root {
             case .resetPincodeWithASeedPhrase:
                 let vc = scenesFactory.makeResetPinCodeWithSeedPhrasesViewController()
                 vc.completion = {[weak self] in
-//                    self?.viewModel.didResetPinCodeWithSeedPhrases = true
+                    self?.viewModel.handleResetPasscodeWithASeedPhrase()
                     self?.localAuthVC?.completion?(true)
                 }
                 localAuthVC?.present(vc, animated: true, completion: nil)
@@ -120,7 +120,6 @@ extension Root {
             // dismiss
             guard let authStyle = status else {
                 localAuthVC?.dismiss(animated: true) { [weak self] in
-                    status?.completion?()
                     self?.localAuthVC = nil
                 }
                 return
@@ -153,6 +152,9 @@ extension Root {
             localAuthVC?.completion = {[weak self] didSuccess in
                 if didSuccess {
                     self?.viewModel.input.authenticationStatus.accept(nil)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        authStyle.completion?()
+                    }
                 } else {
                     self?.lock(authStyle: authStyle)
                 }

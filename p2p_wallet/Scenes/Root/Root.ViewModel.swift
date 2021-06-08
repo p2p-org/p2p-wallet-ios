@@ -46,6 +46,16 @@ extension Root {
             self.input = Input()
             self.output = Output(
                 navigationScene: navigationSubject
+                    .withPrevious()
+                    .filter {previous, current in
+                        switch (previous, current) {
+                        case (.resetPincodeWithASeedPhrase, .main):
+                            return false
+                        default:
+                            return true
+                        }
+                    }
+                    .map {$0.1}
                     .asDriver(onErrorJustReturn: nil),
                 currentAuthenticationStatus: authenticationStatusSubject
                     .asDriver(onErrorJustReturn: nil)
@@ -79,7 +89,8 @@ extension Root {
             UIApplication.shared.rx.applicationDidBecomeActive
                 .subscribe(onNext: {[weak self] _ in
                     guard let strongSelf = self else {return}
-                    guard (Int(Date().timeIntervalSince1970) >= strongSelf.lastAuthenticationTimeStamp + strongSelf.timeRequiredForAuthentication) else {return}
+                    guard Int(Date().timeIntervalSince1970) >= strongSelf.lastAuthenticationTimeStamp + strongSelf.timeRequiredForAuthentication
+                    else {return}
                     strongSelf.input.authenticationStatus.accept(
                         AuthenticationPresentationStyle(
                             isRequired: true,
@@ -116,6 +127,10 @@ extension Root {
         
         func pauseAuthentication(_ isPaused: Bool) {
             isAuthenticationPaused = isPaused
+        }
+        
+        func handleResetPasscodeWithASeedPhrase() {
+            navigationSubject.accept(.main)
         }
         
         @objc func resetPinCodeWithASeedPhrase() {
