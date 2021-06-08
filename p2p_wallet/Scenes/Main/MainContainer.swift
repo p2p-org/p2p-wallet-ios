@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 
 class MainContainer {
-    let rootViewModel: RootViewModel
+    let rootViewModel: Root.ViewModel
     
     let accountStorage: KeychainAccountStorage
     var solanaSDK: SolanaSDK
@@ -18,7 +18,7 @@ class MainContainer {
     let pricesManager: PricesManager
     private(set) var walletsViewModel: WalletsViewModel
     
-    init(rootViewModel: RootViewModel, accountStorage: KeychainAccountStorage) {
+    init(rootViewModel: Root.ViewModel, accountStorage: KeychainAccountStorage) {
         self.rootViewModel = rootViewModel
         self.accountStorage = accountStorage
         self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
@@ -154,7 +154,7 @@ class MainContainer {
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {
-        ConfigureSecurityVC(accountStorage: accountStorage, rootViewModel: rootViewModel)
+        ConfigureSecurityVC(accountStorage: accountStorage, authenticationHandler: rootViewModel)
     }
     
     func makeSelectLanguageVC() -> SelectLanguageVC {
@@ -175,7 +175,7 @@ class MainContainer {
                 pricesRepository: pricesManager,
                 accountStorage: accountStorage
             ),
-            rootViewModel: rootViewModel,
+            authenticationHandler: rootViewModel,
             scenesFactory: self
         )
     }
