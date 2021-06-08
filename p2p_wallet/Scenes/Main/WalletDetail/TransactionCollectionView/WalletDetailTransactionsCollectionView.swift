@@ -30,6 +30,15 @@ class WalletDetailTransactionsCollectionView: BECollectionView {
         }
     }
     
+    var solPubkey: String? {
+        get {
+            transactionsSection.solPubkey
+        }
+        set {
+            transactionsSection.solPubkey = newValue
+        }
+    }
+    
     init(transactionViewModel: BEListViewModelType, graphViewModel: WalletGraphViewModel) {
         transactionsSection = .init(
             index: 0,

@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol MyProductsScenesFactory {
-    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController
+    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
 }
 

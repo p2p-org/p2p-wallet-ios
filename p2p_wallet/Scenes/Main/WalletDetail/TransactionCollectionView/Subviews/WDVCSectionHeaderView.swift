@@ -11,6 +11,7 @@ import Action
 
 class WDVCSectionHeaderView: SectionHeaderView {
     var wallet: Wallet?
+    var solPubkey: String?
     
     lazy var amountLabel = UILabel(text: "$120,00", textSize: 27, weight: .bold)
     lazy var tokenCountLabel = UILabel(text: "0 SOL", textColor: .textSecondary)
@@ -73,8 +74,9 @@ class WDVCSectionHeaderView: SectionHeaderView {
         headerLabel.font = .systemFont(ofSize: 21, weight: .semibold)
     }
     
-    func setUp(wallet: Wallet) {
+    func setUp(wallet: Wallet, solPubkey: String?) {
         self.wallet = wallet
+        self.solPubkey = solPubkey
         let fiatAmount = String(format: "%.02f", wallet.amountInCurrentFiat)
         amountLabel.text = Defaults.fiat.symbol + " " + fiatAmount
         tokenCountLabel.text = "\(wallet.token.symbol) \(wallet.amount.toString(maximumFractionDigits: 9))"
@@ -85,7 +87,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
         } else {
             changeLabel.textColor = .red
         }
-        pubkeyLabel.text = wallet.pubkey
+        pubkeyLabel.text = solPubkey
     }
     
     @objc private func buttonScanQrCodeDidTouch() {
@@ -93,7 +95,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
     }
     
     @objc private func buttonCopyToClipboardDidTouch() {
-        UIApplication.shared.copyToClipboard(wallet?.pubkey, alert: false)
+        UIApplication.shared.copyToClipboard(solPubkey, alert: false)
         
         walletAddressLabel.text = L10n.addressCopied
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
