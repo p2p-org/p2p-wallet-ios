@@ -23,7 +23,6 @@ class WalletDetailViewModel {
     let disposeBag = DisposeBag()
     
     // MARK: - Properties
-    let solanaSDK: SolanaSDK
     let walletsRepository: WalletsRepository
     let pubkey: String
     let symbol: String
@@ -42,15 +41,14 @@ class WalletDetailViewModel {
     init(
         walletPubkey: String,
         walletSymbol: String,
-        solanaSDK: SolanaSDK,
         walletsRepository: WalletsRepository,
-        pricesRepository: PricesRepository
+        pricesRepository: PricesRepository,
+        transactionsRepository: TransactionsRepository
     ) {
-        self.solanaSDK = solanaSDK
         self.walletsRepository = walletsRepository
         self.pubkey = walletPubkey
         self.symbol = walletSymbol
-        self.transactionsViewModel = TransactionsViewModel(account: walletPubkey, accountSymbol: walletSymbol, repository: solanaSDK, pricesRepository: pricesRepository)
+        self.transactionsViewModel = TransactionsViewModel(account: walletPubkey, accountSymbol: walletSymbol, repository: transactionsRepository, pricesRepository: pricesRepository)
         self.graphViewModel = WalletGraphViewModel(symbol: walletSymbol, pricesRepository: pricesRepository)
         bind()
     }
