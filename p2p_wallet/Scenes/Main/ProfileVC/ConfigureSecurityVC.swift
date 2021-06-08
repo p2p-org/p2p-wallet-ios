@@ -22,10 +22,14 @@ class ConfigureSecurityVC: ProfileVCBase {
     }()
     
     let accountStorage: KeychainAccountStorage
-    let rootViewModel: RootViewModel
-    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel) {
+    let authenticationHandler: AuthenticationHandler
+    
+    init(
+        accountStorage: KeychainAccountStorage,
+        authenticationHandler: AuthenticationHandler
+    ) {
         self.accountStorage = accountStorage
-        self.rootViewModel = rootViewModel
+        self.authenticationHandler = authenticationHandler
     }
     
     override func setUp() {
@@ -69,14 +73,7 @@ class ConfigureSecurityVC: ProfileVCBase {
     }
     
     @objc func switcherDidChange(_ switcher: UISwitch) {
-        // prevent default's localAuth action
-        let isAuthenticating = rootViewModel.isAuthenticating
-        guard !isAuthenticating else {
-            switcher.isOn.toggle()
-            return
-        }
-        
-        rootViewModel.markAsIsAuthenticating()
+        authenticationHandler.pauseAuthentication(true)
         
         // get context
         let context = LAContext()
@@ -93,24 +90,20 @@ class ConfigureSecurityVC: ProfileVCBase {
                 }
             }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self?.rootViewModel.markAsIsAuthenticating(isAuthenticating)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self?.authenticationHandler.pauseAuthentication(false)
             }
         }
     }
     
     @objc func buttonChangePinCodeDidTouch() {
-        rootViewModel.authenticationSubject.onNext(
-            .init(
+        authenticationHandler.authenticate(
+            presentationStyle: .init(
                 title: L10n.enterCurrentPINCode,
                 isRequired: false,
                 isFullScreen: false,
                 useBiometry: false,
                 completion: { [weak self] in
-                    if self?.rootViewModel.didResetPinCodeWithSeedPhrases == true {
-                        return
-                    }
-                    
                     // pin code vc
                     let vc = CreatePassCodeVC(promptTitle: L10n.newPINCode)
                     vc.disableDismissAfterCompletion = true
