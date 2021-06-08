@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 import Action
 import BECollectionView
 
@@ -157,9 +158,13 @@ extension WalletDetail {
                 })
                 .disposed(by: disposeBag)
             
-            viewModel.output.wallet
-                .drive(onNext: {[weak self] wallet in
+            Driver.combineLatest(
+                viewModel.output.wallet,
+                viewModel.output.solPubkey
+            )
+                .drive(onNext: {[weak self] wallet, solPubkey in
                     self?.collectionView.wallet = wallet
+                    self?.collectionView.solPubkey = solPubkey
                     self?.collectionView.transactionsSection.reloadHeader()
                 })
                 .disposed(by: disposeBag)

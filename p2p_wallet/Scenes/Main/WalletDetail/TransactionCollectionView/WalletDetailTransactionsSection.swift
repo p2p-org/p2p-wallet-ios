@@ -12,6 +12,7 @@ import Action
 
 class WalletDetailTransactionsSection: BECollectionViewSection {
     var wallet: Wallet?
+    var solPubkey: String?
     let disposeBag = DisposeBag()
     let graphViewModel: WalletGraphViewModel
     var scanQrCodeAction: CocoaAction?
@@ -62,7 +63,7 @@ class WalletDetailTransactionsSection: BECollectionViewSection {
         if let header = (header ?? self.headerView()) as? WDVCSectionHeaderView {
             header.headerLabel.text = L10n.activity
             if let wallet = wallet {
-                header.setUp(wallet: wallet)
+                header.setUp(wallet: wallet, solPubkey: solPubkey)
             }
             header.lineChartView
                 .subscribed(to: graphViewModel)
