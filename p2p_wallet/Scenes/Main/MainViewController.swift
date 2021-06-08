@@ -16,11 +16,11 @@ protocol _MainScenesFactory {
 class MainViewController: BaseVC {
     
     // MARK: - Properties
-    let rootViewModel: RootViewModel
+    let rootViewModel: Root.ViewModel
     let scenesFactory: _MainScenesFactory
     
     // MARK: - Initializer
-    init(rootViewModel: RootViewModel, scenesFactory: _MainScenesFactory)
+    init(rootViewModel: Root.ViewModel, scenesFactory: _MainScenesFactory)
     {
         self.rootViewModel = rootViewModel
         self.scenesFactory = scenesFactory
