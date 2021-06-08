@@ -19,6 +19,7 @@ extension Root {
         private let scenesFactory: RootViewControllerScenesFactory
         
         private var isLightStatusBarStyle = false
+        private var isBoardingCompleted = true
         private var localAuthVC: LocalAuthVC?
         
         // MARK: - Subviews
@@ -67,7 +68,52 @@ extension Root {
         
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
+            switch scene {
             
+            case .createOrRestoreWallet:
+                isLightStatusBarStyle = true
+                setNeedsStatusBarAppearanceUpdate()
+                
+                let vc = scenesFactory.makeCreateOrRestoreWalletViewController()
+                let nc = BENavigationController(rootViewController: vc)
+                isBoardingCompleted = false
+                transitionAndMoveBlurViewToFront(to: nc)
+                
+            case .onboarding:
+                isLightStatusBarStyle = true
+                setNeedsStatusBarAppearanceUpdate()
+                
+                let vc = scenesFactory.makeOnboardingViewController()
+                isBoardingCompleted = false
+                transitionAndMoveBlurViewToFront(to: vc)
+                
+            case .onboardingDone(let isRestoration):
+                isLightStatusBarStyle = true
+                setNeedsStatusBarAppearanceUpdate()
+                
+                let vc: UIViewController = isRestoration ? scenesFactory.makeWelcomeBackVC(): scenesFactory.makeWellDoneVC()
+                isBoardingCompleted = false
+                transitionAndMoveBlurViewToFront(to: vc)
+                
+            case .main:
+                isLightStatusBarStyle = false
+                setNeedsStatusBarAppearanceUpdate()
+                
+                let vc = scenesFactory.makeMainViewController()
+                isBoardingCompleted = true
+                transitionAndMoveBlurViewToFront(to: vc)
+                
+            case .resetPincodeWithASeedPhrase:
+                let vc = scenesFactory.makeResetPinCodeWithSeedPhrasesViewController()
+                vc.completion = {[weak self] in
+//                    self?.viewModel.didResetPinCodeWithSeedPhrases = true
+                    self?.localAuthVC?.completion?(true)
+                }
+                localAuthVC?.present(vc, animated: true, completion: nil)
+                
+            default:
+                break
+            }
         }
         
         private func handleAuthenticationStatus(_ status: AuthenticationPresentationStyle?) {
@@ -144,8 +190,10 @@ extension Root {
         }
         
         private func transitionAndMoveBlurViewToFront(to vc: UIViewController) {
-            transition(to: vc)
-            view.bringSubviewToFront(blurEffectView)
+            transition(to: vc) { [weak self] in
+                guard let view = self?.blurEffectView else {return}
+                self?.view.bringSubviewToFront(view)
+            }
         }
     }
 }
