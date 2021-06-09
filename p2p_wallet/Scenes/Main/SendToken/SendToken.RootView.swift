@@ -52,6 +52,34 @@ extension SendToken {
         lazy var feeInfoButton = UIImageView(width: 16.67, height: 16.67, image: .infoCircle, tintColor: .a3a5ba)
             .onTap(viewModel, action: #selector(ViewModel.showFeeInfo))
         
+        lazy var checkingAddressValidityView = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fill) {
+            checkingAddressValidityIndicatorView
+            
+            UILabel(text: L10n.checkingAddressValidity, textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0)
+                .padding(.init(x: 20, y: 0))
+        }
+        
+        lazy var checkingAddressValidityIndicatorView = UIActivityIndicatorView()
+        
+        lazy var noFundAddressView = UIStackView(axis: .vertical, spacing: 12, alignment: .fill, distribution: .fill) {
+            noFundAddressViewLabel
+                .padding(.init(x: 20, y: 0))
+            
+            UIView.separator(height: 1, color: .separator)
+            
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill) {
+                UILabel(text: L10n.imSureItSCorrect, textSize: 15, weight: .semibold)
+                ignoreNoFundAddressSwitch
+            }
+                .padding(.init(x: 20, y: 0))
+            
+        }
+            .padding(.init(x: 0, y: 12), backgroundColor: .fbfbfd, cornerRadius: 12)
+        
+        lazy var noFundAddressViewLabel = UILabel(text: L10n.ThisAddressHasNoFunds.areYouSureItSCorrect, textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0)
+        
+        lazy var ignoreNoFundAddressSwitch = UISwitch()
+        
         lazy var sendButton = WLButton.stepButton(type: .blue, label: L10n.sendNow)
             .onTap(viewModel, action: #selector(ViewModel.authenticateAndSend))
         
@@ -128,14 +156,14 @@ extension SendToken {
                 addressStackView
                     .padding(.init(all: 8), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12),
                 
-                BEStackViewSpacing(19),
+                BEStackViewSpacing(10),
                 
                 errorLabel,
                 
-                BEStackViewSpacing(20),
-                UIView.separator(height: 1, color: .separator),
-                BEStackViewSpacing(20),
+                checkingAddressValidityView,
+                noFundAddressView,
                 
+                BEStackViewSpacing(30),
                 sendButton
             ])
             
@@ -146,6 +174,8 @@ extension SendToken {
             symbolLabel.centerYAnchor.constraint(equalTo: equityValueLabel.centerYAnchor).isActive = true
             
             feeInfoButton.isHidden = !Defaults.useFreeTransaction
+            
+            checkingAddressValidityIndicatorView.startAnimating()
         }
         
         private func bind() {
@@ -159,6 +189,11 @@ extension SendToken {
             addressTextField.rx.text
                 .skip(while: {$0?.isEmpty == true})
                 .bind(to: viewModel.input.address)
+                .disposed(by: disposeBag)
+            
+            ignoreNoFundAddressSwitch.rx.isOn
+                .skip(while: {!$0})
+                .bind(to: viewModel.input.noFundsConfirmation)
                 .disposed(by: disposeBag)
             
             // bind viewModel's output
@@ -302,6 +337,33 @@ extension SendToken {
                 }
                 .asDriver(onErrorJustReturn: nil)
                 .drive(errorLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // no fund
+            viewModel.output.addressValidationStatus
+                .map {$0 == .uncheck || $0 == .valid || $0 == .fetching}
+                .drive(noFundAddressView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.addressValidationStatus
+                .map {$0 != .fetching}
+                .drive(checkingAddressValidityView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.addressValidationStatus
+                .map {
+                    if $0 == .fetchingError {
+                        return L10n.ErrorCheckingAddressValidity.areYouSureItSCorrect
+                    }
+                    return L10n.ThisAddressHasNoFunds.areYouSureItSCorrect
+                }
+                .drive(noFundAddressViewLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.addressValidationStatus
+                .filter {$0 != .invalidIgnored}
+                .map {_ in false}
+                .drive(ignoreNoFundAddressSwitch.rx.isOn)
                 .disposed(by: disposeBag)
             
             // send button
