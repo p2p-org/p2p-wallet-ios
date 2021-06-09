@@ -61,13 +61,14 @@ extension Double {
             formatter.positivePrefix = formatter.plusSign
         }
 
-        if self > 1000 {
-            formatter.maximumFractionDigits = 2
-        } else if self < 100 {
-            formatter.maximumFractionDigits = maximumFractionDigits
-        } else {
-            formatter.maximumFractionDigits = 2
-        }
+        formatter.maximumFractionDigits = maximumFractionDigits
+//        if self > 1000 {
+//            formatter.maximumFractionDigits = 2
+//        } else if self < 100 {
+//            formatter.maximumFractionDigits = maximumFractionDigits
+//        } else {
+//            formatter.maximumFractionDigits = 2
+//        }
         
         let number = showMinus ? self: abs(self)
         
