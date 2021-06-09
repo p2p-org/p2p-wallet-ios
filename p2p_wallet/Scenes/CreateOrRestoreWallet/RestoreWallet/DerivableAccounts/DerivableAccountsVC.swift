@@ -79,7 +79,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
         separator2.autoPinEdge(toSuperviewEdge: .trailing)
         
         let button = WLButton.stepButton(type: .black, label: L10n.restore)
-            .onTap(self, action: #selector(dismissAndCompleteRestoring))
+            .onTap(self, action: #selector(dismissAndRestore))
         view.addSubview(button)
         button.autoPinEdge(.top, to: .bottom, of: separator2, withOffset: 16)
         button.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
@@ -118,18 +118,9 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
         vc.dismiss(animated: true, completion: nil)
     }
     
-    @objc func dismissAndCompleteRestoring() {
-        UIApplication.shared.showIndetermineHud()
-        viewModel.restoreAccount()
-            .subscribe(onSuccess: { [weak self] account in
-                UIApplication.shared.hideHud()
-                self?.dismiss(animated: true) { [weak self] in
-                    self?.viewModel.restoringDidComplete(account: account)
-                }
-            }, onFailure: {[weak self] error in
-                UIApplication.shared.hideHud()
-                self?.showError(error)
-            })
-            .disposed(by: disposeBag)
+    @objc func dismissAndRestore() {
+        self.dismiss(animated: true) { [weak self] in
+            self?.viewModel.restoreAccount()
+        }
     }
 }
