@@ -359,3 +359,7 @@
 "View in explorer" = "View in explorer";
 "Show address detail" = "Show address detail";
 "Hide address detail" = "Hide address detail";
+"This address has no funds. Are you sure it's correct?" = "This address has no funds. Are you sure it's correct?";
+"I'm sure, It's correct" = "I'm sure, It's correct";
+"Checking address' validity" = "Checking address' validity";
+"Error checking address' validity. Are you sure it's correct?" = "Error checking address' validity. Are you sure it's correct?";
