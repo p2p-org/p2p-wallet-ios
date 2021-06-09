@@ -22,6 +22,8 @@ class RestoreWalletViewModel {
     let accountStorage: KeychainAccountStorage
     let handler: CreateOrRestoreWalletHandler
     
+    private var phrases: [String]?
+    
     // MARK: - Subjects
     let navigationSubject = PublishSubject<RestoreWalletNavigatableScene>()
     let errorMessage = PublishSubject<String?>()
@@ -49,14 +51,22 @@ class RestoreWalletViewModel {
 
 extension RestoreWalletViewModel: PhrasesCreationHandler {
     func handlePhrases(_ phrases: [String]) {
+        self.phrases = phrases
         navigationSubject.onNext(.derivableAccounts(phrases: phrases))
     }
 }
 
 extension RestoreWalletViewModel: AccountRestorationHandler {
-    func accountDidRestore(_ account: SolanaSDK.Account) {
+    func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath) {
         do {
-            try accountStorage.save(account)
+            guard let phrases = self.phrases else {
+                handler.creatingOrRestoringWalletDidCancel()
+                return
+            }
+            try accountStorage.save(phrases: phrases)
+            try accountStorage.save(derivableType: derivablePath.type)
+            try accountStorage.save(walletIndex: derivablePath.walletIndex)
+            
             handler.restoringWalletDidComplete()
         } catch {
             errorMessage.onNext(error.readableDescription)

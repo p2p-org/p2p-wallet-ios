@@ -361,3 +361,7 @@
 "View in explorer" = "Посмотреть в проводнике";
 "Show address detail" = "Показать детали адреса";
 "Hide address detail" = "Скрыть детали адреса";
+"This address has no funds. Are you sure it's correct?" = "На этом адресе нет средств. Вы уверены, что это правильно?";
+"I'm sure, It's correct" = "Я уверен, это правильно";
+"Checking address' validity" = "Проверка действительности адреса";
+"Error checking address' validity. Are you sure it's correct?" = "Ошибка проверки действительности адреса.  Вы уверены, что это правильно?";
