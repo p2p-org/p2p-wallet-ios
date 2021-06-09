@@ -12,6 +12,7 @@ import LazySubject
 
 protocol SendTokenAPIClient {
     func getFees() -> Single<SolanaSDK.Fee>
+    func checkAccountValidation(account: String) -> Single<Bool>
     func sendSOL(
         to destination: String,
         amount: UInt64,
@@ -37,12 +38,22 @@ extension SolanaSDK: SendTokenAPIClient {
 
 extension SendToken {
     class ViewModel: ViewModelType {
+        enum AddressValidationStatus {
+            case uncheck
+            case fetching
+            case valid
+            case invalid
+            case fetchingError
+            case invalidIgnored
+        }
+        
         // MARK: - Nested type
         struct Input {
             let walletPubkey = PublishSubject<String?>()
             let amount = PublishSubject<Double?>()
             let address = PublishSubject<String?>()
             let currencyMode = PublishSubject<CurrencyMode>()
+            let noFundsConfirmation = PublishSubject<Bool>()
         }
         struct Output {
             let navigationScene: Driver<NavigatableScene>
@@ -54,6 +65,7 @@ extension SendToken {
             let error: Driver<String?>
             let useAllBalanceDidTouch: Driver<Double?>
             let receiverAddress: Driver<String?>
+            let addressValidationStatus: Driver<AddressValidationStatus>
         }
         
         // MARK: - Dependencies
@@ -78,6 +90,7 @@ extension SendToken {
         private let isValidSubject = BehaviorRelay<Bool>(value: false)
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let useAllBalanceDidTouchSubject = PublishSubject<Double?>()
+        private let addressValidationStatusSubject = BehaviorRelay<AddressValidationStatus>(value: .fetching)
         
         // MARK: - Initializer
         init(
@@ -117,7 +130,9 @@ extension SendToken {
                 useAllBalanceDidTouch: useAllBalanceDidTouchSubject
                     .asDriver(onErrorJustReturn: nil),
                 receiverAddress: addressSubject
-                    .asDriver(onErrorJustReturn: nil)
+                    .asDriver(onErrorJustReturn: nil),
+                addressValidationStatus: addressValidationStatusSubject
+                    .asDriver()
             )
             
             bind()
@@ -156,6 +171,17 @@ extension SendToken {
             // currency mode
             input.currencyMode
                 .bind(to: currencyModeSubject)
+                .disposed(by: disposeBag)
+            
+            // no funds confirmation
+            input.noFundsConfirmation
+                .map {isIgnoring -> AddressValidationStatus in
+                    if isIgnoring {
+                        return .invalidIgnored
+                    }
+                    return .invalid
+                }
+                .bind(to: addressValidationStatusSubject)
                 .disposed(by: disposeBag)
         }
         
@@ -196,14 +222,39 @@ extension SendToken {
                 .bind(to: errorSubject)
                 .disposed(by: disposeBag)
             
+            // address info
+            addressSubject
+                .distinctUntilChanged()
+                .do(onNext: { [weak self] _ in
+                    self?.addressValidationStatusSubject.accept(.fetching)
+                })
+                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+                .flatMap {[weak self] address -> Single<AddressValidationStatus> in
+                    guard let address = address, !address.isEmpty else {
+                        return .just(.uncheck)
+                    }
+                    self?.addressValidationStatusSubject.accept(.fetching)
+                    return (self?.apiClient.checkAccountValidation(account: address) ?? .just(false))
+                        .map {isValid -> AddressValidationStatus in
+                            isValid ? .valid: .invalid
+                        }
+                        .catchAndReturn(.fetchingError)
+                }
+                
+                .bind(to: addressValidationStatusSubject)
+                .disposed(by: disposeBag)
+            
             // is valid subject
-            Observable.combineLatest(
+            let observables: [Observable<Bool>] = [
                 errorSubject.map {$0 == nil},
                 walletSubject.map {$0 != nil},
                 addressSubject.map {$0 != nil && !$0!.isEmpty},
-                amountSubject.map {$0 != nil}
-            )
-                .map {$0.0 && $0.1 && $0.2 && $0.3}
+                amountSubject.map {$0 != nil},
+                addressValidationStatusSubject.map {$0 == .valid || $0 == .invalidIgnored}
+            ]
+            
+            Observable.combineLatest(observables)
+                .map {$0.allSatisfy {$0}}
                 .bind(to: isValidSubject)
                 .disposed(by: disposeBag)
         }
