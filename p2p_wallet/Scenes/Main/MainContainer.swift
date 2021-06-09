@@ -181,28 +181,15 @@ class MainContainer {
     }
     
     // MARK: - Helpers
-    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) -> Completable {
-        Completable.create {observer in
-            DispatchQueue.global().async { [unowned self] in
-                do {
-                    let account = try SolanaSDK.Account(phrase: self.accountStorage.account!.phrase, network: endpoint.network)
-                    try self.accountStorage.save(account)
-                    DispatchQueue.main.async {
-                        Defaults.apiEndPoint = endpoint
-                        self.socket.disconnect()
-                        self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
-                        self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
-                        observer(.completed)
-                        self.rootViewModel.reload()
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        observer(.error(error))
-                    }
-                }
-            }
-            return Disposables.create()
-        }
+    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) {
+        Defaults.apiEndPoint = endpoint
+        accountStorage.removeAccountCache()
+        
+        socket.disconnect()
+        solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
+        socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
+        
+        rootViewModel.reload()
     }
     
     func changeFiat(to fiat: Fiat) {

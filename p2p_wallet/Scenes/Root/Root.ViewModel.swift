@@ -18,7 +18,8 @@ extension Root {
         }
         struct Output {
             let navigationScene: Driver<NavigatableScene?>
-            fileprivate(set) var currentAuthenticationStatus: Driver<AuthenticationPresentationStyle?> // nil if non authentication process is processing
+            let currentAuthenticationStatus: Driver<AuthenticationPresentationStyle?> // nil if non authentication process is processing
+            let isLoading: Driver<Bool>
         }
         
         // MARK: - Dependencies
@@ -38,6 +39,7 @@ extension Root {
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let authenticationStatusSubject = BehaviorRelay<AuthenticationPresentationStyle?>(value: nil)
+        private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
         init(accountStorage: KeychainAccountStorage) {
@@ -58,7 +60,9 @@ extension Root {
                     .map {$0.1}
                     .asDriver(onErrorJustReturn: nil),
                 currentAuthenticationStatus: authenticationStatusSubject
-                    .asDriver(onErrorJustReturn: nil)
+                    .asDriver(onErrorJustReturn: nil),
+                isLoading: isLoadingSubject
+                    .asDriver()
             )
             
             bind()
@@ -106,15 +110,22 @@ extension Root {
         
         // MARK: - Actions
         func reload() {
-            if accountStorage.account == nil {
-                navigationSubject.accept(.createOrRestoreWallet)
-            } else if accountStorage.pinCode == nil ||
-                        !Defaults.didSetEnableBiometry ||
-                        !Defaults.didSetEnableNotifications
-            {
-                navigationSubject.accept(.onboarding)
-            } else {
-                navigationSubject.accept(.main)
+            isLoadingSubject.accept(true)
+            
+            DispatchQueue.global(qos: .userInteractive).async {
+                let account = self.accountStorage.account
+                DispatchQueue.main.async {
+                    if account == nil {
+                        self.navigationSubject.accept(.createOrRestoreWallet)
+                    } else if self.accountStorage.pinCode == nil ||
+                                !Defaults.didSetEnableBiometry ||
+                                !Defaults.didSetEnableNotifications
+                    {
+                        self.navigationSubject.accept(.onboarding)
+                    } else {
+                        self.navigationSubject.accept(.main)
+                    }
+                }
             }
         }
         
@@ -139,7 +150,7 @@ extension Root {
         }
         
         @objc func navigateToMain() {
-            navigationSubject.accept(.main)
+            reload()
         }
         
         // MARK: - Helpers
