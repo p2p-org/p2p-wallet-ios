@@ -64,6 +64,17 @@ extension Root {
                 .map {$0 == nil}
                 .drive(blurEffectView.rx.isHidden)
                 .disposed(by: disposeBag)
+            
+            // loadingView
+            viewModel.output.isLoading
+                .drive(onNext: { [weak self] isLoading in
+                    if isLoading {
+                        self?.showIndetermineHud()
+                    } else {
+                        self?.hideHud()
+                    }
+                })
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Navigation
