@@ -39,6 +39,7 @@ extension SolanaSDK: SendTokenAPIClient {
 extension SendToken {
     class ViewModel: ViewModelType {
         enum AddressValidationStatus {
+            case uncheck
             case fetching
             case valid
             case invalid
@@ -223,16 +224,23 @@ extension SendToken {
             
             // address info
             addressSubject
-                .filter {$0 != nil && !$0!.isEmpty}
-                .map {$0!}
                 .distinctUntilChanged()
-                .flatMap {[weak self] address -> Single<Bool> in
+                .do(onNext: { [weak self] _ in
                     self?.addressValidationStatusSubject.accept(.fetching)
-                    return self?.apiClient.checkAccountValidation(account: address) ?? .just(false)
+                })
+                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+                .flatMap {[weak self] address -> Single<AddressValidationStatus> in
+                    guard let address = address, !address.isEmpty else {
+                        return .just(.uncheck)
+                    }
+                    self?.addressValidationStatusSubject.accept(.fetching)
+                    return (self?.apiClient.checkAccountValidation(account: address) ?? .just(false))
+                        .map {isValid -> AddressValidationStatus in
+                            isValid ? .valid: .invalid
+                        }
+                        .catchAndReturn(.fetchingError)
                 }
-                .map {isValid -> AddressValidationStatus in
-                    isValid ? .valid: .invalid
-                }
+                
                 .bind(to: addressValidationStatusSubject)
                 .disposed(by: disposeBag)
             
