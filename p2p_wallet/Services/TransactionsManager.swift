@@ -27,7 +27,7 @@ struct TransactionsManager {
         guard transaction.status != .confirmed, let signature = transaction.signature else {return}
         transactions.insert(transaction, where: {$0.signature == signature}, shouldUpdate: true)
         socket.observeSignatureNotification(signature: signature)
-            .timeout(.seconds(1*60), scheduler: MainScheduler.instance)
+            .timeout(.seconds(30), scheduler: MainScheduler.instance)
             .catch {_ in .empty()}
             .subscribe(onCompleted: {
                 var transaction = transaction
