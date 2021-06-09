@@ -50,8 +50,12 @@ class CreateSecurityKeysViewModel {
         UIApplication.shared.showIndetermineHud()
         DispatchQueue.global().async {
             do {
-                let account = try SolanaSDK.Account(phrase: self.phrasesSubject.value, network: Defaults.apiEndPoint.network)
-                try self.accountStorage.save(account)
+                try self.accountStorage.save(phrases: self.phrasesSubject.value)
+                
+                let derivablePath = SolanaSDK.DerivablePath.default
+                try self.accountStorage.save(derivableType: derivablePath.type)
+                try self.accountStorage.save(walletIndex: derivablePath.walletIndex)
+                
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
                     self.createWalletViewModel.finish()
