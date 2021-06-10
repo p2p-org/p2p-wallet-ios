@@ -160,7 +160,7 @@ class HomeRootView: BEView {
         
         var constant = headerViewTopConstraint.constant
         
-        if translation.y <= 0 {
+        if translation.y < 0 {
             // hide header view
             constant = -100
         } else {
