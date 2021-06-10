@@ -21,6 +21,9 @@ extension ReceiveToken {
         private lazy var showHideDetailButton = WLButton.stepButton(type: .gray, label: nil, labelColor: .a3a5ba)
             .onTap(viewModel, action: #selector(ViewModel.toggleIsShowingDetail))
         
+        private lazy var directAddressHeaderLabel = UILabel(text: L10n.directAddress(viewModel.output.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
+        private lazy var mintAddressHeaderLabel = UILabel(text: L10n.mintAddress(viewModel.output.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
+        
         // MARK: - Initializers
         init(viewModel: ViewModel) {
             self.viewModel = viewModel
@@ -82,10 +85,11 @@ extension ReceiveToken {
                 UIView.separator(height: 1, color: .separator)
                 
                 UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
-                    UILabel(text: L10n.directAddress(viewModel.output.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
+                    directAddressHeaderLabel
                     
                     UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
                         UILabel(text: viewModel.output.tokenWallet?.pubkey, textSize: 15, weight: .medium, numberOfLines: 0)
+                            .onTap(self, action: #selector(copyTokenPubKeyToClipboard))
                         
                         UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
                             .padding(.init(all: 10), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
@@ -97,10 +101,11 @@ extension ReceiveToken {
                 UIView.separator(height: 1, color: .separator)
                 
                 UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
-                    UILabel(text: L10n.mintAddress(viewModel.output.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
+                    mintAddressHeaderLabel
                     
                     UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
                         UILabel(text: viewModel.output.tokenWallet?.token.address, textSize: 15, weight: .medium, numberOfLines: 0)
+                            .onTap(self, action: #selector(copyTokenMintToClipboard))
                         
                         UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
                             .padding(.init(all: 10), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
@@ -110,6 +115,28 @@ extension ReceiveToken {
                     .padding(.init(x: 20, y: 0))
                 
                 UIView.separator(height: 1, color: .separator)
+            }
+        }
+        
+        @objc private func copyTokenPubKeyToClipboard() {
+            guard let pubkey = viewModel.output.tokenWallet?.pubkey else {return}
+            UIApplication.shared.copyToClipboard(pubkey, alert: false)
+            
+            let originalText = directAddressHeaderLabel.text
+            directAddressHeaderLabel.text = L10n.addressCopied
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                self?.directAddressHeaderLabel.text = originalText
+            }
+        }
+        
+        @objc private func copyTokenMintToClipboard() {
+            guard let mint = viewModel.output.tokenWallet?.token.address else {return}
+            UIApplication.shared.copyToClipboard(mint, alert: false)
+            
+            let originalText = mintAddressHeaderLabel.text
+            mintAddressHeaderLabel.text = L10n.addressCopied
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                self?.mintAddressHeaderLabel.text = originalText
             }
         }
     }
