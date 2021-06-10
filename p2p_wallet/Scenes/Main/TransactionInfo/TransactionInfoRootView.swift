@@ -348,13 +348,14 @@ private extension TransactionInfoRootView {
     
     func createFeeSection() -> TransactionInfoSection<UIStackView, UILabel>
     {
-        return TransactionInfoSection(
+        TransactionInfoSection(
             titleView: UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, builder: {
                 createSectionTitle(L10n.fee)
                 
                 UILabel(text: L10n.PaidByP2p.org, textSize: 13, weight: .semibold, textColor: .h5887ff)
                     .padding(.init(x: 8, y: 2), backgroundColor: .eff3ff, cornerRadius: 4)
                     .withTag(2)
+                    .hidden()
             }),
             contentView: createContentLabel()
         )
