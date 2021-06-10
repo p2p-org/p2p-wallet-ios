@@ -3,6 +3,7 @@ PODS:
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
   - Alamofire (5.4.3)
+  - Amplitude (8.3.0)
   - ASKSecp256k1 (0.0.6)
   - BECollectionView (0.1.0):
     - PureLayout
@@ -163,6 +164,7 @@ PODS:
 
 DEPENDENCIES:
   - Action
+  - Amplitude (~> 8.3.0)
   - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
   - Charts
@@ -190,6 +192,7 @@ SPEC REPOS:
   trunk:
     - Action
     - Alamofire
+    - Amplitude
     - ASKSecp256k1
     - Charts
     - CryptoSwift
@@ -241,6 +244,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Action: 9891cd1b0a9047557d7e58e8dfae743e19d08197
   Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
+  Amplitude: 5627b4574e36d789a75c1656ba39b3278edf1ade
   ASKSecp256k1: 58eb44dfa57f9d29ac0b02fe5de5a312064517f2
   BECollectionView: 9120725dd693271cef287447e3d1aa844f77535f
   BEPureLayout: ecb9d52780a665b9ea751b4e82f95df8dc2bc73b
@@ -282,6 +286,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 7fb495a837ae9dcbd8de27548020265c25dc6024
+PODFILE CHECKSUM: e5932ae46d5ca3d8aec0cb9753437c62a9063058
 
 COCOAPODS: 1.10.1
