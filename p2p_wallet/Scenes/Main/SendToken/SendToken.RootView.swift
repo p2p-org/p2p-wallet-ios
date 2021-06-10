@@ -92,6 +92,7 @@ extension SendToken {
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
+            backgroundColor = .vcBackground
             layout()
             bind()
             amountTextField.delegate = self
