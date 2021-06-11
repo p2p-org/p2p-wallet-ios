@@ -13,7 +13,6 @@ import Firebase
 import THPinViewController
 import Action
 import BECollectionView
-@_exported import Amplitude
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -54,9 +53,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use Firebase library to configure APIs
         FirebaseApp.configure()
         
-        // Configure Amplitude
-        configureAmplitude()
-        
         // set window
         window = UIWindow(frame: UIScreen.main.bounds)
         if #available(iOS 13.0, *) {
@@ -93,17 +89,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         print("Failed to register: \(error)")
-    }
-    
-    // MARK: - Helpers
-    private func configureAmplitude() {
-        // Enable sending automatic session events
-        Amplitude.instance().trackingSessionEvents = true
-        // Initialize SDK
-        Amplitude.instance().initializeApiKey("4abe05246f7563e62b5c0f1625ad5189")
-        // FIXME: Set userId later
-//        Amplitude.instance().setUserId("userId")
-        // Log an event
-        Amplitude.instance().logEvent("app_start")
     }
 }
