@@ -15,6 +15,9 @@ protocol OnboardingScenesFactory {
 }
 
 class OnboardingViewController: WLIntroVC {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
+    }
     
     // MARK: - Properties
     let viewModel: OnboardingViewModel
