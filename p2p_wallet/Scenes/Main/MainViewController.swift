@@ -14,6 +14,9 @@ protocol _MainScenesFactory {
 }
 
 class MainViewController: BaseVC {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        traitCollection.userInterfaceStyle == .dark ? .lightContent: .darkContent
+    }
     
     // MARK: - Properties
     let rootViewModel: Root.ViewModel

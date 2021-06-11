@@ -10,15 +10,10 @@ import UIKit
 
 extension Root {
     class ViewController: BaseVC {
-        override var preferredStatusBarStyle: UIStatusBarStyle {
-            isLightStatusBarStyle ? .lightContent: .darkContent
-        }
-        
         // MARK: - Properties
         private let viewModel: ViewModel
         private let scenesFactory: RootViewControllerScenesFactory
         
-        private var isLightStatusBarStyle = false
         private var isBoardingCompleted = true
         private var localAuthVC: LocalAuthVC?
         
@@ -77,39 +72,32 @@ extension Root {
                 .disposed(by: disposeBag)
         }
         
+        override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+            super.traitCollectionDidChange(previousTraitCollection)
+            setNeedsStatusBarAppearanceUpdate()
+        }
+        
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             
             case .createOrRestoreWallet:
-                isLightStatusBarStyle = true
-                setNeedsStatusBarAppearanceUpdate()
-                
                 let vc = scenesFactory.makeCreateOrRestoreWalletViewController()
                 let nc = BENavigationController(rootViewController: vc)
                 isBoardingCompleted = false
                 transitionAndMoveBlurViewToFront(to: nc)
                 
             case .onboarding:
-                isLightStatusBarStyle = true
-                setNeedsStatusBarAppearanceUpdate()
-                
                 let vc = scenesFactory.makeOnboardingViewController()
                 isBoardingCompleted = false
                 transitionAndMoveBlurViewToFront(to: vc)
                 
             case .onboardingDone(let isRestoration):
-                isLightStatusBarStyle = true
-                setNeedsStatusBarAppearanceUpdate()
-                
                 let vc: UIViewController = isRestoration ? scenesFactory.makeWelcomeBackVC(): scenesFactory.makeWellDoneVC()
                 isBoardingCompleted = false
                 transitionAndMoveBlurViewToFront(to: vc)
                 
             case .main:
-                isLightStatusBarStyle = false
-                setNeedsStatusBarAppearanceUpdate()
-                
                 let vc = scenesFactory.makeMainViewController()
                 isBoardingCompleted = true
                 transitionAndMoveBlurViewToFront(to: vc)
@@ -125,6 +113,8 @@ extension Root {
             default:
                 break
             }
+            
+            setNeedsStatusBarAppearanceUpdate()
         }
         
         private func handleAuthenticationStatus(_ status: AuthenticationPresentationStyle?) {

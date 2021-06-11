@@ -9,6 +9,10 @@ import Foundation
 import SwiftUI
 
 class WelcomeBackVC: WLIntroVC {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
+    }
+    
     lazy var goToWalletButton = WLButton.stepButton(type: .blue, label: L10n.goToWallet)
         .onTap(viewModel, action: #selector(Root.ViewModel.navigateToMain))
     
