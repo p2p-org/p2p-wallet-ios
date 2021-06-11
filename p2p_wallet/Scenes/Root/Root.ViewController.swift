@@ -161,6 +161,13 @@ extension Root {
                 }
             }
             
+            // cancelledCompletion
+            if !authStyle.isRequired {
+                localAuthVC?.cancelledCompletion = {[weak self] in
+                    self?.viewModel.input.authenticationStatus.accept(nil)
+                }
+            }
+            
             // present on top
             let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
             if var topController = keyWindow?.rootViewController {
