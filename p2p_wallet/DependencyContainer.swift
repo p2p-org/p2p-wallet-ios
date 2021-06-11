@@ -12,15 +12,17 @@ class DependencyContainer {
     // MARK: - Long lived dependency
     let sharedAccountStorage: KeychainAccountStorage
     let sharedRootViewModel: Root.ViewModel
+    let analyticsManager: AnalyticsManager
     
     init() {
         self.sharedAccountStorage = KeychainAccountStorage()
         self.sharedRootViewModel = Root.ViewModel(accountStorage: sharedAccountStorage)
+        self.analyticsManager = AnalyticsManager()
     }
     
     // MARK: - Root
     func makeRootViewController() -> Root.ViewController {
-        return .init(viewModel: sharedRootViewModel, scenesFactory: self)
+        .init(viewModel: sharedRootViewModel, scenesFactory: self)
     }
     
     // MARK: - CreateOrRestore wallet
