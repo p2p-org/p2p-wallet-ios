@@ -17,6 +17,9 @@ extension ReceiveToken {
         let viewModel: ViewModel
         
         // MARK: - Subviews
+        private lazy var addressLabel = UILabel(text: viewModel.output.pubkey, textSize: 15, weight: .semibold, textAlignment: .center)
+            .lineBreakMode(.byTruncatingMiddle)
+        
         private lazy var detailView = createDetailView()
         private lazy var showHideDetailButton = WLButton.stepButton(type: .gray, label: nil, labelColor: .a3a5ba)
             .onTap(viewModel, action: #selector(ViewModel.toggleIsShowingDetail))
@@ -33,6 +36,7 @@ extension ReceiveToken {
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
+            backgroundColor = .vcBackground
             layout()
             bind()
         }
@@ -41,15 +45,26 @@ extension ReceiveToken {
         private func layout() {
             scrollView.contentInset.modify(dLeft: -.defaultPadding, dRight: -.defaultPadding)
             
-            stackView.spacing = 20
+            stackView.spacing = 30
             stackView.addArrangedSubviews {
-                UIStackView(axis: .vertical, spacing: 39, alignment: .center, distribution: .fill, arrangedSubviews: [
-                    UILabel(text: L10n.scanOrCopyQRCode, textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center),
-                    QrCodeView(size: 208, coinLogoSize: 50)
-                        .with(string: viewModel.output.pubkey),
-                    UILabel(text: viewModel.output.pubkey, textSize: 15, weight: .semibold, numberOfLines: 0, textAlignment: .center)
-                ])
-                    .padding(.init(x: 20, y: 30), backgroundColor: .f6f6f8, cornerRadius: 12)
+                UILabel(text: L10n.scanOrCopyQRCode, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
+                
+                UIImageView(width: 207, height: 207, image: .receiveQrCodeFrame, tintColor: .f6f6f8.onDarkMode(.white))
+                    .withCenteredChild(
+                        QrCodeView(size: 190, coinLogoSize: 50)
+                            .with(string: viewModel.output.pubkey)
+                    )
+                    .centeredHorizontallyView
+                
+                UIStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill, builder: {
+                    addressLabel
+                        .padding(.init(all: 20), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
+                    
+                    UIImageView(width: 32, height: 32, image: .share, tintColor: .a3a5ba)
+                        .onTap(viewModel, action: #selector(ViewModel.share))
+                        .padding(.init(all: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
+                })
+                    .padding(.zero, cornerRadius: 12)
                     .padding(.init(x: 20, y: 0))
             }
             
