@@ -21,10 +21,11 @@ class MainViewController: BaseVC {
     }
     
     // MARK: - Properties
-    let scenesFactory: _MainScenesFactory
-    let viewModel: MainViewModel
+    private let scenesFactory: _MainScenesFactory
+    private let viewModel: MainViewModel
     private var localAuthVC: LocalAuthVC?
     private var resetPinCodeWithASeedPhrasesVC: ResetPinCodeWithSeedPhrasesViewController?
+    private let authenticateWhenAppears: Bool
     
     // MARK: - Subviews
     lazy var blurEffectView: UIVisualEffectView = {
@@ -34,11 +35,19 @@ class MainViewController: BaseVC {
     }()
     
     // MARK: - Initializer
-    init(viewModel: MainViewModel, scenesFactory: _MainScenesFactory)
+    init(viewModel: MainViewModel, scenesFactory: _MainScenesFactory, authenticateWhenAppears: Bool)
     {
         self.viewModel = viewModel
         self.scenesFactory = scenesFactory
+        self.authenticateWhenAppears = authenticateWhenAppears
         super.init()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        if authenticateWhenAppears {
+            viewModel.input.authenticationStatus.accept(.login())
+        }
     }
     
     // MARK: - Methods

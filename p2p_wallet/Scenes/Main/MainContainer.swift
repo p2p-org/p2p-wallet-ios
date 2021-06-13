@@ -38,8 +38,8 @@ class MainContainer {
         }
     }
     
-    func makeMainViewController() -> MainViewController {
-        MainViewController(viewModel: mainViewModel, scenesFactory: self)
+    func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController {
+        MainViewController(viewModel: mainViewModel, scenesFactory: self, authenticateWhenAppears: authenticateWhenAppears)
     }
     
     func makeTabBarVC() -> TabBarVC {

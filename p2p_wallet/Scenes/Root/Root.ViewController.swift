@@ -13,8 +13,7 @@ extension Root {
         // MARK: - Properties
         private let viewModel: ViewModel
         private let scenesFactory: RootViewControllerScenesFactory
-        
-        private var isBoardingCompleted = true
+        private var authenticateWhenAppears = true
         
         // MARK: - Initializer
         init(
@@ -59,26 +58,24 @@ extension Root {
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
-            
             case .createOrRestoreWallet:
                 let vc = scenesFactory.makeCreateOrRestoreWalletViewController()
                 let nc = BENavigationController(rootViewController: vc)
-                isBoardingCompleted = false
+                authenticateWhenAppears = false
                 transition(to: nc)
                 
             case .onboarding:
                 let vc = scenesFactory.makeOnboardingViewController()
-                isBoardingCompleted = false
+                authenticateWhenAppears = false
                 transition(to: vc)
                 
             case .onboardingDone(let isRestoration):
                 let vc: UIViewController = isRestoration ? scenesFactory.makeWelcomeBackVC(): scenesFactory.makeWellDoneVC()
-                isBoardingCompleted = false
+                authenticateWhenAppears = false
                 transition(to: vc)
                 
             case .main:
-                let vc = scenesFactory.makeMainViewController()
-                isBoardingCompleted = true
+                let vc = scenesFactory.makeMainViewController(authenticateWhenAppears: authenticateWhenAppears)
                 transition(to: vc)
                 
             default:
