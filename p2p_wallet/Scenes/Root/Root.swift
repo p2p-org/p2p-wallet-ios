@@ -10,7 +10,7 @@ import Foundation
 protocol RootViewControllerScenesFactory {
     func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
     func makeOnboardingViewController() -> OnboardingViewController
-    func makeMainViewController() -> MainViewController
+    func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController
     func makeWellDoneVC() -> WellDoneVC
     func makeWelcomeBackVC() -> WelcomeBackVC
 }
