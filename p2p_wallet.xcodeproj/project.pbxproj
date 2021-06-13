@@ -283,6 +283,7 @@
 		BCEE508526244B6300271AB9 /* WLEmptyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE508426244B6300271AB9 /* WLEmptyCell.swift */; };
 		BCEE51372625425E00271AB9 /* TransactionIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */; };
 		BCEE530026282DEE00271AB9 /* IndicatorPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE52FF26282DEE00271AB9 /* IndicatorPresentationController.swift */; };
+		BCF241212676548200C9F158 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF241202676548200C9F158 /* MainViewModel.swift */; };
 		BCF7D953256220F100961D31 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF7D952256220F100961D31 /* ErrorView.swift */; };
 		BCFC768825E2EAB800FBE148 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFC768525E2EAB800FBE148 /* MainViewController.swift */; };
 		C1BC9C27F85EDDFE51E0FDB8 /* Pods_p2p_walletTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A342CCD45E7CDE0BA60EFBB2 /* Pods_p2p_walletTests.framework */; };
@@ -608,6 +609,7 @@
 		BCEE508426244B6300271AB9 /* WLEmptyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLEmptyCell.swift; sourceTree = "<group>"; };
 		BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionIndicatorView.swift; sourceTree = "<group>"; };
 		BCEE52FF26282DEE00271AB9 /* IndicatorPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorPresentationController.swift; sourceTree = "<group>"; };
+		BCF241202676548200C9F158 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		BCF7D952256220F100961D31 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		BCFC768525E2EAB800FBE148 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		CCD9F8F81880F7B23634EBE4 /* Pods-p2p_wallet-p2p_walletUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -1488,6 +1490,7 @@
 			isa = PBXGroup;
 			children = (
 				BCEB207125E1563B00B54FEF /* MainContainer.swift */,
+				BCF241202676548200C9F158 /* MainViewModel.swift */,
 				BCFC768525E2EAB800FBE148 /* MainViewController.swift */,
 				BCEB206925E1561200B54FEF /* TabBarVC */,
 				BCBE148B25EF3D100014BCE5 /* Home */,
@@ -1931,6 +1934,7 @@
 				BC65E004261D711900E436C7 /* TransactionsViewModel.swift in Sources */,
 				BC65E19D261EA75600E436C7 /* InvestmentsViewModel.swift in Sources */,
 				BC65E27F2620341B00E436C7 /* SolanaSDK.AnyTransaction+Extensions.swift in Sources */,
+				BCF241212676548200C9F158 /* MainViewModel.swift in Sources */,
 				BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */,
 				BC54DD062587098800A65566 /* LazyView.swift in Sources */,
 				BC65DFFA261D6D3F00E436C7 /* SwapTransactionImageView.swift in Sources */,

@@ -10,11 +10,9 @@ import Foundation
 protocol RootViewControllerScenesFactory {
     func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
     func makeOnboardingViewController() -> OnboardingViewController
-    func makeMainViewController() -> MainViewController
-    func makeLocalAuthVC() -> LocalAuthVC
+    func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController
     func makeWellDoneVC() -> WellDoneVC
     func makeWelcomeBackVC() -> WelcomeBackVC
-    func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
 }
 
 struct Root {
@@ -23,6 +21,5 @@ struct Root {
         case onboarding
         case onboardingDone(isRestoration: Bool)
         case main
-        case resetPincodeWithASeedPhrase
     }
 }
