@@ -19,13 +19,11 @@ class MainViewController: BaseVC {
     }
     
     // MARK: - Properties
-    let rootViewModel: Root.ViewModel
     let scenesFactory: _MainScenesFactory
     
     // MARK: - Initializer
-    init(rootViewModel: Root.ViewModel, scenesFactory: _MainScenesFactory)
+    init(scenesFactory: _MainScenesFactory)
     {
-        self.rootViewModel = rootViewModel
         self.scenesFactory = scenesFactory
         super.init()
     }
