@@ -49,18 +49,6 @@ class DependencyContainer {
         let container = MainContainer(rootViewModel: sharedRootViewModel, accountStorage: sharedAccountStorage)
         return container.makeMainViewController()
     }
-    
-    // MARK: - Authentication
-    func makeLocalAuthVC() -> LocalAuthVC {
-        LocalAuthVC(accountStorage: sharedAccountStorage)
-    }
-    
-    // MARK: - Reset pincode with seed phrases
-    func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
-    {
-        let container = ResetPinCodeWithSeedPhrasesContainer(accountRepository: sharedAccountStorage)
-        return container.makeResetPinCodeWithSeedPhrasesViewController()
-    }
 }
 
 extension DependencyContainer: RootViewControllerScenesFactory {}
