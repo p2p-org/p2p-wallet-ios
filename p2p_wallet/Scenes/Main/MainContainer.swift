@@ -35,7 +35,7 @@ class MainContainer {
     }
     
     func makeMainViewController() -> MainViewController {
-        MainViewController(rootViewModel: rootViewModel, scenesFactory: self)
+        MainViewController(scenesFactory: self)
     }
     
     func makeHomeViewController() -> HomeViewController {
