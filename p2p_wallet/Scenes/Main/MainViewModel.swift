@@ -76,14 +76,7 @@ class MainViewModel: ViewModelType {
                 guard let strongSelf = self else {return}
                 guard Int(Date().timeIntervalSince1970) >= strongSelf.lastAuthenticationTimeStamp + strongSelf.timeRequiredForAuthentication
                 else {return}
-                strongSelf.input.authenticationStatus.accept(
-                    AuthenticationPresentationStyle(
-                        isRequired: true,
-                        isFullScreen: true,
-                        useBiometry: true,
-                        completion: nil
-                    )
-                )
+                strongSelf.input.authenticationStatus.accept(.login())
             })
             .disposed(by: disposeBag)
     }
