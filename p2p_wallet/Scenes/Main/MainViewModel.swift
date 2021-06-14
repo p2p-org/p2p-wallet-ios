@@ -88,6 +88,9 @@ class MainViewModel: ViewModelType {
     
     func handleResetPasscodeWithASeedPhrase() {
         isResettingPasscodeWithSeedPhrasesSubject.accept(false)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.authenticationStatusSubject.accept(nil)
+        }
     }
     
     @objc func resetPinCodeWithASeedPhrase() {
