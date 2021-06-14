@@ -140,12 +140,17 @@ class MainViewController: BaseVC {
     }
     
     private func showResetPincodeWithASeedPhrasesVC(_ isShowing: Bool) {
-        let vc = scenesFactory.makeResetPinCodeWithSeedPhrasesViewController()
-        vc.completion = {[weak self] in
-            self?.viewModel.handleResetPasscodeWithASeedPhrase()
-            self?.localAuthVC?.completion?(true)
+        if isShowing {
+            resetPinCodeWithASeedPhrasesVC = scenesFactory.makeResetPinCodeWithSeedPhrasesViewController()
+            resetPinCodeWithASeedPhrasesVC!.completion = {[weak self] in
+                self?.viewModel.handleResetPasscodeWithASeedPhrase()
+                self?.localAuthVC?.completion?(true)
+            }
+            localAuthVC?.present(resetPinCodeWithASeedPhrasesVC!, animated: true, completion: nil)
+        } else {
+            resetPinCodeWithASeedPhrasesVC?.back()
+            resetPinCodeWithASeedPhrasesVC = nil
         }
-        localAuthVC?.present(vc, animated: true, completion: nil)
     }
     
     // MARK: - Helpers
