@@ -14,7 +14,7 @@ class MainContainer {
     let accountStorage: KeychainAccountStorage
     var solanaSDK: SolanaSDK
     var socket: SolanaSDK.Socket
-    let transactionManager: TransactionsManager
+    let processingTransactionsManager: ProcessingTransactionsManager
     let pricesManager: PricesManager
     private(set) var walletsViewModel: WalletsViewModel
     
@@ -25,10 +25,15 @@ class MainContainer {
         self.accountStorage = accountStorage
         self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
         self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
-        self.transactionManager = TransactionsManager(socket: socket)
+        self.processingTransactionsManager = ProcessingTransactionsManager(handler: socket)
         self.pricesManager = PricesManager(tokensRepository: solanaSDK, fetcher: CryptoComparePricesFetcher(), refreshAfter: 10 * 1000) // 10minutes
         
-        self.walletsViewModel = WalletsViewModel(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager, pricesRepository: pricesManager)
+        self.walletsViewModel = WalletsViewModel(
+            solanaSDK: solanaSDK,
+            socket: socket,
+            processingTransactionRepository: processingTransactionsManager,
+            pricesRepository: pricesManager
+        )
         
         self.mainViewModel = MainViewModel()
         
@@ -139,8 +144,7 @@ class MainContainer {
         let viewModel = ProcessTransaction.ViewModel(
             transactionType: transactionType,
             request: request,
-            transactionHandler: socket,
-            transactionManager: transactionManager,
+            transactionHandler: processingTransactionsManager,
             walletsRepository: walletsViewModel,
             pricesRepository: pricesManager,
             apiClient: solanaSDK

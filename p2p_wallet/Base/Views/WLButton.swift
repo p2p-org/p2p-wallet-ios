@@ -35,7 +35,7 @@ class WLButton: UIButton {
         var textColor: UIColor {
             switch self {
             case .gray:
-                return .black
+                return .textBlack
             case .sub, .blue, .black:
                 return .white
             }
