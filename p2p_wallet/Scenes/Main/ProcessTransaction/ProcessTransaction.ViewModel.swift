@@ -141,7 +141,6 @@ extension ProcessTransaction {
                 // FIXME: - Remove transactionManager
                 let transaction = Transaction(
                     signatureInfo: .init(signature: transactionId),
-                    type: .send,
                     amount: -amount,
                     symbol: fromWallet.token.symbol,
                     status: .processing
@@ -190,7 +189,6 @@ extension ProcessTransaction {
                 // FIXME: - Remove transactionManager
                 let transaction = Transaction(
                     signatureInfo: .init(signature: response.transactionId),
-                    type: .send,
                     amount: -inputAmount,
                     symbol: from.token.symbol,
                     status: .processing
@@ -216,7 +214,6 @@ extension ProcessTransaction {
                 // FIXME: - Remove transactionManager
                 let transaction = Transaction(
                     signatureInfo: .init(signature: transactionId),
-                    type: .send,
                     symbol: "SOL",
                     status: .processing
                 )
