@@ -14,19 +14,19 @@ struct TransactionsManager {
     public let transactions = BehaviorRelay<[Transaction]>(value: [])
     
     let disposeBag = DisposeBag()
-    let socket: SolanaSDK.Socket
+    let handler: TransactionHandler
     var processingTransaction: [Transaction] {
         transactions.value.filter {$0.status != .confirmed}
     }
     
-    init(socket: SolanaSDK.Socket) {
-        self.socket = socket
+    init(handler: TransactionHandler) {
+        self.handler = handler
     }
     
     func process(_ transaction: Transaction) {
         guard transaction.status != .confirmed, let signature = transaction.signature else {return}
         transactions.insert(transaction, where: {$0.signature == signature}, shouldUpdate: true)
-        socket.observeSignatureNotification(signature: signature)
+        handler.observeTransactionCompletion(signature: signature)
             .timeout(.seconds(30), scheduler: MainScheduler.instance)
             .catch {_ in .empty()}
             .subscribe(onCompleted: {
