@@ -22,7 +22,7 @@ class SwapSlippageSettingsVC: WLModalVC {
         alignment: .fill,
         distribution: .equalSpacing,
         arrangedSubviews:
-            quickSelectableSlippages.enumerated().map {createButton(text: "\($1)%", tag: $0)} +
+            quickSelectableSlippages.enumerated().map {createButton(text: "\($1.toString(groupingSeparator: nil))%", tag: $0)} +
             [
                 UIImageView(width: 25, height: 24, image: .slippageEdit)
                     .padding(.init(all: 11), backgroundColor: .f6f6f8, cornerRadius: 12)
@@ -34,7 +34,6 @@ class SwapSlippageSettingsVC: WLModalVC {
         backgroundColor: .f6f6f8,
         cornerRadius: 12,
         font: .systemFont(ofSize: 17),
-        textColor: .black,
         placeholder: nil,
         autocorrectionType: .no,
         autocapitalizationType: UITextAutocapitalizationType.none,
@@ -119,7 +118,7 @@ class SwapSlippageSettingsVC: WLModalVC {
     
     // MARK: - Helpers
     func createButton(text: String, tag: Int) -> UIView {
-        UILabel(text: text, weight: .medium, textColor: .a3a5ba)
+        UILabel(text: text, weight: .medium, textColor: .a3a5baStatic)
             .padding(.init(x: 10, y: 14), backgroundColor: .f6f6f8, cornerRadius: 12)
             .withTag(tag)
             .onTap(self, action: #selector(buttonSelectableSlippageDidTouch(_:)))
