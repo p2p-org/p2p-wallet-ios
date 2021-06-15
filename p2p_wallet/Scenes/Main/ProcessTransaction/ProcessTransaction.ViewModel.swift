@@ -29,8 +29,7 @@ extension ProcessTransaction {
         // MARK: - Dependencies
         private let transactionType: TransactionType
         private let request: Single<ProcessTransactionResponseType>
-        private let transactionHandler: TransactionHandler
-        private let transactionManager: TransactionsManager
+        private let transactionHandler: ProcessingTransactionsRepository
         private let walletsRepository: WalletsRepository
         private let apiClient: ProcessTransactionAPIClient
         private let pricesRepository: PricesRepository
@@ -50,8 +49,7 @@ extension ProcessTransaction {
         init(
             transactionType: TransactionType,
             request: Single<ProcessTransactionResponseType>,
-            transactionHandler: TransactionHandler,
-            transactionManager: TransactionsManager,
+            transactionHandler: ProcessingTransactionsRepository,
             walletsRepository: WalletsRepository,
             pricesRepository: PricesRepository,
             apiClient: ProcessTransactionAPIClient
@@ -59,7 +57,6 @@ extension ProcessTransaction {
             self.transactionType = transactionType
             self.request = request
             self.transactionHandler = transactionHandler
-            self.transactionManager = transactionManager
             self.walletsRepository = walletsRepository
             self.apiClient = apiClient
             self.pricesRepository = pricesRepository
@@ -126,10 +123,7 @@ extension ProcessTransaction {
             }
             
             // Execute request
-            executeRequest { [weak self] response in
-                // cast type
-                let transactionId = response as! SolanaSDK.TransactionID
-                
+            executeRequest { [weak self] _ in
                 // update wallet
                 self?.walletsRepository.updateWallet(where: {$0.pubkey == fromWallet.pubkey}, transform: {
                     var wallet = $0
@@ -137,15 +131,6 @@ extension ProcessTransaction {
                     wallet.lamports = (wallet.lamports ?? 0) - lamports
                     return wallet
                 })
-                
-                // FIXME: - Remove transactionManager
-                let transaction = Transaction(
-                    signatureInfo: .init(signature: transactionId),
-                    amount: -amount,
-                    symbol: fromWallet.token.symbol,
-                    status: .processing
-                )
-                self?.transactionManager.process(transaction)
             }
         }
         
@@ -185,23 +170,11 @@ extension ProcessTransaction {
                     
                     self?.pricesRepository.fetchCurrentPrices(coins: [wallet.token.symbol])
                 }
-                
-                // FIXME: - Remove transactionManager
-                let transaction = Transaction(
-                    signatureInfo: .init(signature: response.transactionId),
-                    amount: -inputAmount,
-                    symbol: from.token.symbol,
-                    status: .processing
-                )
-                self?.transactionManager.process(transaction)
             }
         }
         
         private func executeCloseAccount(_ wallet: Wallet) {
-            executeRequest { [weak self] response in
-                // cast type
-                let transactionId = response as! SolanaSDK.TransactionID
-                
+            executeRequest { [weak self] _ in
                 self?.walletsRepository.updateWallet(where: {$0.token.symbol == "SOL"}, transform: { [weak self] in
                     var wallet = $0
                     let lamports = self?.output.reimbursedAmount?.toLamport(decimals: wallet.token.decimals) ?? 0
@@ -210,14 +183,6 @@ extension ProcessTransaction {
                 })
                 
                 _ = self?.walletsRepository.removeItem(where: {$0.pubkey == wallet.pubkey})
-                
-                // FIXME: - Remove transactionManager
-                let transaction = Transaction(
-                    signatureInfo: .init(signature: transactionId),
-                    symbol: "SOL",
-                    status: .processing
-                )
-                self?.transactionManager.process(transaction)
             }
         }
         
@@ -247,7 +212,7 @@ extension ProcessTransaction {
                     self?.transactionIdSubject.accept(transactionId)
                     
                     // observe confimation status
-                    return self?.transactionHandler.observeTransactionCompletion(signature: transactionId) ?? .empty()
+                    return self?.transactionHandler.process(signature: transactionId) ?? .empty()
                 }
                 .subscribe(onCompleted: { [weak self] in
                     self?.transactionStatusSubject.accept(.confirmed)
