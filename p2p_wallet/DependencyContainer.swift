@@ -43,7 +43,7 @@ class DependencyContainer {
     }
     
     func makeWelcomeBackVC() -> WelcomeBackVC {
-        WelcomeBackVC(viewModel: sharedRootViewModel)
+        WelcomeBackVC(viewModel: sharedRootViewModel, analyticsManager: analyticsManager)
     }
     
     // MARK: - Main
