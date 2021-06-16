@@ -24,9 +24,14 @@ protocol SwapTokenAPIClient {
         amount: UInt64,
         isSimulation: Bool
     ) -> Single<SolanaSDK.SwapResponse>
+    func getLamportsPerSignature() -> Single<SolanaSDK.Lamports>
 }
 
-extension SolanaSDK: SwapTokenAPIClient {}
+extension SolanaSDK: SwapTokenAPIClient {
+    func getLamportsPerSignature() -> Single<Lamports> {
+        getFees().map {$0.feeCalculator?.lamportsPerSignature}.map {$0 ?? 0}
+    }
+}
 
 extension SwapToken {
     class ViewModel: ViewModelType {
@@ -69,6 +74,7 @@ extension SwapToken {
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private lazy var poolsSubject = LazySubject<[SolanaSDK.Pool]>(request: apiClient.getSwapPools())
+        private lazy var lamportsPerSignatureSubject = LazySubject<SolanaSDK.Lamports>(request: apiClient.getLamportsPerSignature())
         private let isLoadingSubject = PublishRelay<Bool>()
         private let errorSubject = PublishRelay<String?>()
         private let isValidSubject = BehaviorRelay<Bool>(value: false)
@@ -83,6 +89,7 @@ extension SwapToken {
         private let minimumReceiveAmountSubject = BehaviorRelay<Double?>(value: nil)
         private let useAllBalanceDidTapSubject = PublishRelay<Double?>()
         private let isExchageRateReversedSubject = BehaviorRelay<Bool>(value: false)
+        private let feeInLamportsSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
         
         // MARK: - Initializer
         init(
@@ -166,8 +173,31 @@ extension SwapToken {
         }
         
         private func bindSubjectsIntoSubjects() {
+            let combinedState = Observable.combineLatest(
+                poolsSubject.observable,
+                lamportsPerSignatureSubject.observable
+            )
+                .map {state1, state2 -> LazySubjectState in
+                    let combinedState: LazySubjectState
+                    if state1 == state2 {
+                        combinedState = state1
+                    } else {
+                        switch (state1, state2) {
+                        case (.error(let error), _):
+                            combinedState = .error(error)
+                        case (_, .error(let error)):
+                            combinedState = .error(error)
+                        case (.initializing, _), (.loading, _), (_, .initializing), (_, .loading):
+                            combinedState = .loading
+                        default:
+                            return .loaded
+                        }
+                    }
+                    return combinedState
+                }
+            
             // pools
-            poolsSubject.observable
+            combinedState
                 .subscribe(onNext: {[weak self] state in
                     switch state {
                     case .initializing, .loading:
@@ -184,13 +214,13 @@ extension SwapToken {
                 .disposed(by: disposeBag)
             
             // pools loaded
-            let poolsLoaded = poolsSubject.observable
+            let dataLoaded = combinedState
                 .filter {$0 == .loaded}
                 .map {[weak self] _ in self?.poolsSubject.value}
             
             // current pool
             Observable.combineLatest(
-                poolsLoaded,
+                dataLoaded,
                 sourceWalletSubject.distinctUntilChanged(),
                 destinationWalletSubject.distinctUntilChanged()
             )
@@ -242,9 +272,27 @@ extension SwapToken {
                 .bind(to: feeSubject)
                 .disposed(by: disposeBag)
             
-            // FIXME: - available amount
-            sourceWalletSubject
-                .map {$0?.amount}
+            // fee in lamports
+            Observable.combineLatest(
+                sourceWalletSubject,
+                destinationWalletSubject,
+                lamportsPerSignatureSubject.observable
+                    .map {[weak self] _ in self?.lamportsPerSignatureSubject.value}
+            )
+                .map {sourceWallet, destinationWallet, lamportsPerSignature in
+                    calculateFeeInLamport(sourceWallet: sourceWallet, destinationWallet: destinationWallet, lamportsPerSignature: lamportsPerSignature)
+                }
+                .bind(to: feeInLamportsSubject)
+                .disposed(by: disposeBag)
+            
+            // available amount
+            Observable.combineLatest(
+                sourceWalletSubject,
+                feeInLamportsSubject
+            )
+                .map {sourceWallet, feeInLamports -> Double? in
+                    calculateAvailableAmount(sourceWallet: sourceWallet, feeInLamports: feeInLamports)
+                }
                 .bind(to: availableAmountSubject)
                 .disposed(by: disposeBag)
             
@@ -285,10 +333,11 @@ extension SwapToken {
         // MARK: - Actions
         @objc func reload() {
             poolsSubject.reload()
+            lamportsPerSignatureSubject.reload()
         }
         
         @objc func useAllBalance() {
-            let amount = sourceWalletSubject.value?.amount
+            let amount = availableAmountSubject.value
             input.amount.accept(amount?.toString(maximumFractionDigits: 9, groupingSeparator: nil))
             useAllBalanceDidTapSubject.accept(amount)
         }
@@ -321,7 +370,6 @@ extension SwapToken {
                     .init(
                         isRequired: false,
                         isFullScreen: false,
-                        useBiometry: true,
                         completion: { [weak self] in
                             self?.swap()
                         }
@@ -336,6 +384,7 @@ extension SwapToken {
             // get variables
             let sourceAmountInput = amountSubject.value
             let sourceWallet = sourceWalletSubject.value
+            let availableAmount = availableAmountSubject.value
             let destinationWallet = destinationWalletSubject.value
             let pool = currentPoolSubject.value
             let slippage = slippageSubject.value
@@ -348,7 +397,7 @@ extension SwapToken {
                 }
                 
                 // insufficient funds
-                if input.rounded(decimals: sourceDecimals) > sourceWallet?.amount?.rounded(decimals: sourceDecimals)
+                if input.rounded(decimals: sourceDecimals) > availableAmount?.rounded(decimals: sourceDecimals)
                 {
                     return L10n.insufficientFunds
                 }
@@ -380,6 +429,9 @@ extension SwapToken {
                     return L10n.swappingIsCurrentlyUnavailable
                 }
             }
+            
+            // FIXME: - Verify feeInLamports
+//            L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
             
             return nil
         }
@@ -435,7 +487,7 @@ extension SwapToken {
                     transactionType: .swap(
                         from: sourceWallet,
                         to: destinationWallet,
-                        inputAmount: amountDouble,
+                        inputAmount: amountDouble + feeInLamportsSubject.value?.convertToBalance(decimals: sourceWallet.token.decimals),
                         estimatedAmount: estimatedAmountSubject.value ?? 0
                     )
                 )
@@ -496,4 +548,46 @@ private extension SwapToken.ViewModel {
 private func calculateFee(forInputAmount inputAmount: Double?, in pool: SolanaSDK.Pool?) -> Double? {
     guard let inputAmount = inputAmount, let pool = pool else {return nil}
     return pool.fee(forInputAmount: inputAmount)
+}
+
+private func calculateFeeInLamport(sourceWallet: Wallet?, destinationWallet: Wallet?, lamportsPerSignature: SolanaSDK.Lamports?) -> SolanaSDK.Lamports?
+{
+    guard let lPS = lamportsPerSignature else {return nil}
+    
+    // default fee
+    var feeInLamports = lPS * 2
+    
+    guard let sourceWallet = sourceWallet
+    else {return feeInLamports}
+    
+    // if token is native, a fee for creating wrapped SOL is needed
+    if sourceWallet.token.isNative {
+        feeInLamports += lPS
+    }
+    
+    // if destination wallet has not yet created, a fee for creating it is needed
+    if destinationWallet?.pubkey == nil {
+        feeInLamports += lPS
+    }
+    
+    // if destination wallet is also a wrapped sol, a fee for creating wrapped SOL is needed
+    else if destinationWallet?.token.address == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+    {
+        feeInLamports += lPS
+    }
+    
+    return feeInLamports
+}
+
+private func calculateAvailableAmount(sourceWallet wallet: Wallet?, feeInLamports: SolanaSDK.Lamports?) -> Double?
+{
+    guard let sourceWallet = wallet,
+          let feeInLamports = feeInLamports
+    else {return wallet?.amount}
+    
+    // if token is not nativeSolana
+    if !sourceWallet.token.isNative {return sourceWallet.amount}
+    
+    let availableAmount = (sourceWallet.amount ?? 0) - feeInLamports.convertToBalance(decimals: sourceWallet.token.decimals)
+    return availableAmount > 0 ? availableAmount: 0
 }

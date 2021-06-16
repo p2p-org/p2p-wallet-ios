@@ -305,7 +305,6 @@ extension SendToken {
                     .init(
                         isRequired: false,
                         isFullScreen: false,
-                        useBiometry: true,
                         completion: { [weak self] in
                             self?.send()
                         }
