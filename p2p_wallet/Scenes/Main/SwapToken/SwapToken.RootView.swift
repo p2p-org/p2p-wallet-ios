@@ -32,9 +32,9 @@ extension SwapToken {
         lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
             .onTap(viewModel, action: #selector(ViewModel.swapSourceAndDestination))
         
-        lazy var minimumReceiveLabel = UILabel(textColor: .textSecondary)
-        lazy var feeLabel = UILabel(textColor: .textSecondary)
-        lazy var slippageLabel = UILabel(textColor: .textSecondary)
+        lazy var minimumReceiveLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
+        lazy var feeLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
+        lazy var slippageLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
         
         lazy var errorLabel = UILabel(textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
         
@@ -85,17 +85,22 @@ extension SwapToken {
                 ])
                     .padding(.init(all: 8), backgroundColor: .f6f6f8, cornerRadius: 12),
                 UIView.separator(height: 1, color: .separator),
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
                     UILabel(text: L10n.minimumReceive + ": ", textColor: .textSecondary),
                     minimumReceiveLabel
                 ]),
                 BEStackViewSpacing(16),
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
-                    UILabel(text: L10n.fee + ": ", textColor: .textSecondary),
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .top, distribution: .fill, arrangedSubviews: [
+                    UILabel(text: L10n.liquidityProviderFee + ":", textColor: .textSecondary)
+                        .adjustsFontSizeToFitWidth()
+                        .withContentHuggingPriority(.defaultLow, for: .horizontal)
+                        .withContentCompressionResistancePriority(.defaultLow, for: .horizontal),
                     feeLabel
+                        .withContentHuggingPriority(.required, for: .horizontal)
+                        .withContentCompressionResistancePriority(.required, for: .horizontal)
                 ]),
                 BEStackViewSpacing(16),
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
                     UILabel(text: L10n.slippage + ": ", textColor: .textSecondary),
                     slippageLabel
                 ])
