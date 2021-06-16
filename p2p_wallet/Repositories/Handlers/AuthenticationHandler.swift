@@ -11,8 +11,16 @@ struct AuthenticationPresentationStyle {
     var title: String = L10n.enterPINCode
     let isRequired: Bool
     let isFullScreen: Bool
-    var useBiometry: Bool
+    var useBiometry: Bool = true
     var completion: (() -> Void)?
+    
+    static func login() -> Self {
+        .init(
+            isRequired: true,
+            isFullScreen: true,
+            completion: nil
+        )
+    }
 }
 
 protocol AuthenticationHandler {

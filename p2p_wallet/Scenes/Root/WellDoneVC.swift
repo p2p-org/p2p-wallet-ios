@@ -9,6 +9,10 @@ import Foundation
 import SwiftUI
 
 class WellDoneVC: WLIntroVC {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
+    }
+    
     let viewModel: Root.ViewModel
     init(viewModel: Root.ViewModel) {
         self.viewModel = viewModel
