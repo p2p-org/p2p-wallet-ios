@@ -48,7 +48,7 @@ class DependencyContainer {
     
     // MARK: - Main
     func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController {
-        let container = MainContainer(rootViewModel: sharedRootViewModel, accountStorage: sharedAccountStorage)
+        let container = MainContainer(rootViewModel: sharedRootViewModel, accountStorage: sharedAccountStorage, analyticsManager: analyticsManager)
         return container.makeMainViewController(authenticateWhenAppears: authenticateWhenAppears)
     }
 }

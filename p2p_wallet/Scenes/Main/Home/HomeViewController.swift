@@ -27,18 +27,25 @@ class HomeViewController: BaseVC {
     // MARK: - Properties
     let viewModel: HomeViewModel
     let scenesFactory: HomeScenesFactory
+    let analyticsManager: AnalyticsManagerType
     
     // MARK: - Initializer
-    init(viewModel: HomeViewModel, scenesFactory: HomeScenesFactory)
+    init(viewModel: HomeViewModel, scenesFactory: HomeScenesFactory, analyticsManager: AnalyticsManagerType)
     {
         self.viewModel = viewModel
         self.scenesFactory = scenesFactory
+        self.analyticsManager = analyticsManager
         super.init()
     }
     
     // MARK: - Methods
     override func loadView() {
         view = HomeRootView(viewModel: viewModel)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        analyticsManager.log(event: .walletsOpen)
     }
     
     override func setUp() {

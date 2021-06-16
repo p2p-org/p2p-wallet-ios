@@ -19,8 +19,9 @@ class MainContainer {
     private(set) var walletsViewModel: WalletsViewModel
     
     let mainViewModel: MainViewModel
+    let analyticsManager: AnalyticsManagerType
     
-    init(rootViewModel: Root.ViewModel, accountStorage: KeychainAccountStorage) {
+    init(rootViewModel: Root.ViewModel, accountStorage: KeychainAccountStorage, analyticsManager: AnalyticsManagerType) {
         self.rootViewModel = rootViewModel
         self.accountStorage = accountStorage
         self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
@@ -36,6 +37,7 @@ class MainContainer {
         )
         
         self.mainViewModel = MainViewModel()
+        self.analyticsManager = analyticsManager
         
         defer {
             socket.connect()
@@ -65,7 +67,7 @@ class MainContainer {
     
     func makeHomeViewController() -> HomeViewController {
         let vm = HomeViewModel(walletsRepository: walletsViewModel)
-        return HomeViewController(viewModel: vm, scenesFactory: self)
+        return HomeViewController(viewModel: vm, scenesFactory: self, analyticsManager: analyticsManager)
     }
     
     func makeInvestmentsViewController() -> InvestmentsViewController {
