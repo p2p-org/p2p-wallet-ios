@@ -91,7 +91,8 @@ class MainContainer {
             symbol: symbol,
             walletsRepository: walletsViewModel,
             pricesRepository: pricesManager,
-            transactionsRepository: solanaSDK
+            transactionsRepository: solanaSDK,
+            analyticsManager: analyticsManager
         )
         
         return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)

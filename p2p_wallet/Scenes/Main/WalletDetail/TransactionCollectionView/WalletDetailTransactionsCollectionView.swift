@@ -11,6 +11,7 @@ import Action
 
 class WalletDetailTransactionsCollectionView: BECollectionView {
     let transactionsSection: WalletDetailTransactionsSection
+    let analyticsManager: AnalyticsManagerType
     
     var scanQrCodeAction: CocoaAction? {
         get {
@@ -39,7 +40,8 @@ class WalletDetailTransactionsCollectionView: BECollectionView {
         }
     }
     
-    init(transactionViewModel: BEListViewModelType, graphViewModel: WalletGraphViewModel) {
+    init(transactionViewModel: BEListViewModelType, graphViewModel: WalletGraphViewModel, analyticsManager: AnalyticsManagerType) {
+        self.analyticsManager = analyticsManager
         transactionsSection = .init(
             index: 0,
             viewModel: transactionViewModel,
