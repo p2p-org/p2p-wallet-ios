@@ -21,6 +21,7 @@ class RestoreWalletViewModel {
     let bag = DisposeBag()
     let accountStorage: KeychainAccountStorage
     let handler: CreateOrRestoreWalletHandler
+    let analyticsManager: AnalyticsManagerType
     
     private var phrases: [String]?
     
@@ -29,9 +30,10 @@ class RestoreWalletViewModel {
     let errorMessage = PublishSubject<String?>()
     
     // MARK: - Initializer
-    init(accountStorage: KeychainAccountStorage, handler: CreateOrRestoreWalletHandler) {
+    init(accountStorage: KeychainAccountStorage, handler: CreateOrRestoreWalletHandler, analyticsManager: AnalyticsManagerType) {
         self.accountStorage = accountStorage
         self.handler = handler
+        self.analyticsManager = analyticsManager
     }
     
     // MARK: - Actions
@@ -51,6 +53,9 @@ class RestoreWalletViewModel {
 
 extension RestoreWalletViewModel: PhrasesCreationHandler {
     func handlePhrases(_ phrases: [String]) {
+        if self.phrases != phrases {
+            analyticsManager.log(event: .loginSeedKeydown)
+        }
         self.phrases = phrases
         navigationSubject.onNext(.derivableAccounts(phrases: phrases))
     }
@@ -66,6 +71,8 @@ extension RestoreWalletViewModel: AccountRestorationHandler {
             try accountStorage.save(phrases: phrases)
             try accountStorage.save(derivableType: derivablePath.type)
             try accountStorage.save(walletIndex: derivablePath.walletIndex)
+            
+            analyticsManager.log(event: .loginContinueDerivationPathClick, params: ["derivationPath": derivablePath.rawValue])
             
             handler.restoringWalletDidComplete()
         } catch {
