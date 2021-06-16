@@ -27,6 +27,7 @@ extension WalletDetail {
         private let walletsRepository: WalletsRepository
         private let pubkey: String
         private let symbol: String
+        let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -44,11 +45,13 @@ extension WalletDetail {
             symbol: String,
             walletsRepository: WalletsRepository,
             pricesRepository: PricesRepository,
-            transactionsRepository: TransactionsRepository
+            transactionsRepository: TransactionsRepository,
+            analyticsManager: AnalyticsManagerType
         ) {
             self.pubkey = pubkey
             self.symbol = symbol
             self.walletsRepository = walletsRepository
+            self.analyticsManager = analyticsManager
             
             self.input = Input()
             self.output = Output(
@@ -110,6 +113,7 @@ extension WalletDetail {
         
         @objc func receiveTokens() {
             guard let pubkey = walletSubject.value?.pubkey else {return}
+            analyticsManager.log(event: .walletQrClick)
             navigationSubject.accept(.receive(walletPubkey: pubkey))
         }
         

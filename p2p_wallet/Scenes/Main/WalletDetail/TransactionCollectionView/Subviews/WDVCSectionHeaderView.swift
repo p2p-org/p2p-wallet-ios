@@ -12,6 +12,7 @@ import Action
 class WDVCSectionHeaderView: SectionHeaderView {
     var wallet: Wallet?
     var solPubkey: String?
+    var analyticsManager: AnalyticsManagerType?
     
     lazy var amountLabel = UILabel(text: "$120,00", textSize: 27, weight: .bold)
     lazy var tokenCountLabel = UILabel(text: "0 SOL", textColor: .textSecondary)
@@ -96,6 +97,8 @@ class WDVCSectionHeaderView: SectionHeaderView {
     
     @objc private func buttonCopyToClipboardDidTouch() {
         UIApplication.shared.copyToClipboard(solPubkey, alert: false)
+        
+        analyticsManager?.log(event: .walletSolAddressCopy)
         
         walletAddressLabel.text = L10n.addressCopied
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
