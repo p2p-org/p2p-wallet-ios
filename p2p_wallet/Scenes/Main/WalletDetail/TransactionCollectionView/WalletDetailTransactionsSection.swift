@@ -16,13 +16,16 @@ class WalletDetailTransactionsSection: BECollectionViewSection {
     let disposeBag = DisposeBag()
     let graphViewModel: WalletGraphViewModel
     var scanQrCodeAction: CocoaAction?
+    let analyticsManager: AnalyticsManagerType
     
     init(
         index: Int,
         viewModel: BEListViewModelType,
-        graphViewModel: WalletGraphViewModel
+        graphViewModel: WalletGraphViewModel,
+        analyticsManager: AnalyticsManagerType
     ) {
         self.graphViewModel = graphViewModel
+        self.analyticsManager = analyticsManager
         super.init(
             index: index,
             layout: .init(
@@ -62,6 +65,7 @@ class WalletDetailTransactionsSection: BECollectionViewSection {
     func reloadHeader(header: UICollectionReusableView? = nil) {
         if let header = (header ?? self.headerView()) as? WDVCSectionHeaderView {
             header.headerLabel.text = L10n.activity
+            header.analyticsManager = analyticsManager
             if let wallet = wallet {
                 header.setUp(wallet: wallet, solPubkey: solPubkey)
             }
