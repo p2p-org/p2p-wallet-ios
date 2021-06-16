@@ -81,7 +81,6 @@ class TokenSettingsViewController: WLIndicatorModalVC {
                         presentationStyle: .init(
                             isRequired: false,
                             isFullScreen: false,
-                            useBiometry: true,
                             completion: {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                                     self?.viewModel.closeAccount()
