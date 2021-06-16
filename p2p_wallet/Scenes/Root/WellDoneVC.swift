@@ -14,13 +14,20 @@ class WellDoneVC: WLIntroVC {
     }
     
     let viewModel: Root.ViewModel
-    init(viewModel: Root.ViewModel) {
+    let analyticsManager: AnalyticsManagerType
+    init(viewModel: Root.ViewModel, analyticsManager: AnalyticsManagerType) {
         self.viewModel = viewModel
+        self.analyticsManager = analyticsManager
         super.init()
     }
     
     lazy var acceptButton = WLButton.stepButton(type: .blue, label: nil)
-        .onTap(viewModel, action: #selector(Root.ViewModel.navigateToMain))
+        .onTap(self, action: #selector(finishSetup))
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        analyticsManager.log(event: .signupWalletReadyOpen)
+    }
     
     override func setUp() {
         super.setUp()
@@ -29,5 +36,10 @@ class WellDoneVC: WLIntroVC {
         
         stackView.addArrangedSubviews([acceptButton, UIView(height: 56)])
         acceptButton.setTitle(L10n.finishSetup, for: .normal)
+    }
+    
+    @objc func finishSetup() {
+        analyticsManager.log(event: .signupFinishSetupClick)
+        viewModel.navigateToMain()
     }
 }
