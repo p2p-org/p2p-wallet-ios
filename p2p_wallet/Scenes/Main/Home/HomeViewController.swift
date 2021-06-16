@@ -118,6 +118,9 @@ class HomeViewController: BaseVC {
             self.show(profileVC, sender: nil)
         case .walletDetail(let wallet):
             guard let pubkey = wallet.pubkey else {return}
+            
+            analyticsManager.log(event: .walletOpen, params: ["tokenTicker": wallet.token.address])
+            
             let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey, symbol: wallet.token.symbol)
             present(vc, animated: true, completion: nil)
         case .walletSettings(let wallet):
