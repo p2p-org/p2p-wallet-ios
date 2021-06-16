@@ -9,8 +9,8 @@ import Foundation
 import Amplitude
 
 protocol AnalyticsManagerType {
-    func log(event: String)
-    func log(event: String, params: [AnyHashable: Any])
+    func log(event: AnalyticsEvent)
+    func log(event: AnalyticsEvent, params: [AnyHashable: Any])
 }
 
 struct AnalyticsManager: AnalyticsManagerType {
@@ -23,11 +23,12 @@ struct AnalyticsManager: AnalyticsManagerType {
 //        Amplitude.instance().setUserId("userId")
     }
     
-    func log(event: String) {
-        Amplitude.instance().logEvent("app_start")
+    func log(event: AnalyticsEvent) {
+        // Amplitude
+        Amplitude.instance().logEvent(event.rawValue)
     }
     
-    func log(event: String, params: [AnyHashable: Any]) {
-        Amplitude.instance().logEvent(event, withEventProperties: params)
+    func log(event: AnalyticsEvent, params: [AnyHashable: Any]) {
+        Amplitude.instance().logEvent(event.rawValue, withEventProperties: params)
     }
 }
