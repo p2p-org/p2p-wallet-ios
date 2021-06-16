@@ -39,7 +39,7 @@ class DependencyContainer {
     }
     
     func makeWellDoneVC() -> WellDoneVC {
-        WellDoneVC(viewModel: sharedRootViewModel)
+        WellDoneVC(viewModel: sharedRootViewModel, analyticsManager: analyticsManager)
     }
     
     func makeWelcomeBackVC() -> WelcomeBackVC {
