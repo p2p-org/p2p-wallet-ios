@@ -337,7 +337,7 @@ extension SwapToken {
         }
         
         @objc func useAllBalance() {
-            let amount = sourceWalletSubject.value?.amount
+            let amount = availableAmountSubject.value
             input.amount.accept(amount?.toString(maximumFractionDigits: 9, groupingSeparator: nil))
             useAllBalanceDidTapSubject.accept(amount)
         }
@@ -384,6 +384,7 @@ extension SwapToken {
             // get variables
             let sourceAmountInput = amountSubject.value
             let sourceWallet = sourceWalletSubject.value
+            let availableAmount = availableAmountSubject.value
             let destinationWallet = destinationWalletSubject.value
             let pool = currentPoolSubject.value
             let slippage = slippageSubject.value
@@ -396,7 +397,7 @@ extension SwapToken {
                 }
                 
                 // insufficient funds
-                if input.rounded(decimals: sourceDecimals) > sourceWallet?.amount?.rounded(decimals: sourceDecimals)
+                if input.rounded(decimals: sourceDecimals) > availableAmount?.rounded(decimals: sourceDecimals)
                 {
                     return L10n.insufficientFunds
                 }
@@ -486,7 +487,7 @@ extension SwapToken {
                     transactionType: .swap(
                         from: sourceWallet,
                         to: destinationWallet,
-                        inputAmount: amountDouble,
+                        inputAmount: amountDouble + feeInLamportsSubject.value?.convertToBalance(decimals: sourceWallet.token.decimals),
                         estimatedAmount: estimatedAmountSubject.value ?? 0
                     )
                 )
@@ -570,7 +571,7 @@ private func calculateFeeInLamport(sourceWallet: Wallet?, destinationWallet: Wal
     }
     
     // if destination wallet is also a wrapped sol, a fee for creating wrapped SOL is needed
-    else if sourceWallet.token.address == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+    else if destinationWallet?.token.address == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
     {
         feeInLamports += lPS
     }

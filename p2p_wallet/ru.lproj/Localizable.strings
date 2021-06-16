@@ -364,3 +364,4 @@
 "Checking address' validity" = "Проверка действительности адреса";
 "Error checking address' validity. Are you sure it's correct?" = "Ошибка проверки действительности адреса.  Вы уверены, что это правильно?";
 "Address copied to clipboard!" = "Адрес скопирован в буфер обмена!";
+"Liquidity provider fee" = "Комиссия поставщика ликвидности";
