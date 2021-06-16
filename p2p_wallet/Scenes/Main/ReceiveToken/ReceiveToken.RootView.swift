@@ -15,14 +15,20 @@ extension ReceiveToken {
         
         // MARK: - Properties
         let viewModel: ViewModel
+        var isCopying = false
         
         // MARK: - Subviews
+        private lazy var addressLabel = UILabel(text: viewModel.output.pubkey, textSize: 15, weight: .semibold, textAlignment: .center)
+            .lineBreakMode(.byTruncatingMiddle)
+        
         private lazy var detailView = createDetailView()
         private lazy var showHideDetailButton = WLButton.stepButton(type: .gray, label: nil, labelColor: .a3a5ba)
             .onTap(viewModel, action: #selector(ViewModel.toggleIsShowingDetail))
         
         private lazy var directAddressHeaderLabel = UILabel(text: L10n.directAddress(viewModel.output.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
         private lazy var mintAddressHeaderLabel = UILabel(text: L10n.mintAddress(viewModel.output.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
+        
+        private var copiedToClipboardToastBottomConstraint: NSLayoutConstraint!
         
         // MARK: - Initializers
         init(viewModel: ViewModel) {
@@ -33,6 +39,7 @@ extension ReceiveToken {
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
+            backgroundColor = .vcBackground
             layout()
             bind()
         }
@@ -41,15 +48,27 @@ extension ReceiveToken {
         private func layout() {
             scrollView.contentInset.modify(dLeft: -.defaultPadding, dRight: -.defaultPadding)
             
-            stackView.spacing = 20
+            stackView.spacing = 30
             stackView.addArrangedSubviews {
-                UIStackView(axis: .vertical, spacing: 39, alignment: .center, distribution: .fill, arrangedSubviews: [
-                    UILabel(text: L10n.scanOrCopyQRCode, textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center),
-                    QrCodeView(size: 208, coinLogoSize: 50)
-                        .with(string: viewModel.output.pubkey),
-                    UILabel(text: viewModel.output.pubkey, textSize: 15, weight: .semibold, numberOfLines: 0, textAlignment: .center)
-                ])
-                    .padding(.init(x: 20, y: 30), backgroundColor: .f6f6f8, cornerRadius: 12)
+                UILabel(text: L10n.scanOrCopyQRCode, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
+                
+                UIImageView(width: 207, height: 207, image: .receiveQrCodeFrame, tintColor: .f6f6f8.onDarkMode(.white))
+                    .withCenteredChild(
+                        QrCodeView(size: 190, coinLogoSize: 50)
+                            .with(string: viewModel.output.pubkey)
+                    )
+                    .centeredHorizontallyView
+                
+                UIStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill, builder: {
+                    addressLabel
+                        .padding(.init(all: 20), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
+                        .onTap(self, action: #selector(copyMainPubkeyToClipboard))
+                    
+                    UIImageView(width: 32, height: 32, image: .share, tintColor: .a3a5ba)
+                        .onTap(viewModel, action: #selector(ViewModel.share))
+                        .padding(.init(all: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
+                })
+                    .padding(.zero, cornerRadius: 12)
                     .padding(.init(x: 20, y: 0))
             }
             
@@ -64,6 +83,18 @@ extension ReceiveToken {
                         .padding(.init(x: 20, y: 9))
                 )
             }
+            
+            // Toast
+            let copiedToClipboardToast = BERoundedCornerShadowView(shadowColor: .white.withAlphaComponent(0.15), radius: 16, offset: .zero, opacity: 1, cornerRadius: 12, contentInset: .init(x: 20, y: 10))
+            copiedToClipboardToast.mainView.backgroundColor = .h202020.onDarkMode(.h202020)
+            copiedToClipboardToast.stackView.addArrangedSubview(
+                UILabel(text: L10n.addressCopiedToClipboard, textSize: 15, weight: .semibold, textColor: .white, numberOfLines: 0, textAlignment: .center)
+            )
+            copiedToClipboardToast.autoSetDimension(.width, toSize: 335)
+            
+            addSubview(copiedToClipboardToast)
+            copiedToClipboardToast.autoAlignAxis(toSuperviewAxis: .vertical)
+            copiedToClipboardToastBottomConstraint = copiedToClipboardToast.autoPinEdge(toSuperviewEdge: .bottom, withInset: -100)
         }
         
         private func bind() {
@@ -119,24 +150,52 @@ extension ReceiveToken {
         }
         
         @objc private func copyTokenPubKeyToClipboard() {
-            guard let pubkey = viewModel.output.tokenWallet?.pubkey else {return}
+            guard !isCopying, let pubkey = viewModel.output.tokenWallet?.pubkey else {return}
+            isCopying = true
             UIApplication.shared.copyToClipboard(pubkey, alert: false)
             
             let originalText = directAddressHeaderLabel.text
             directAddressHeaderLabel.text = L10n.addressCopied
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
                 self?.directAddressHeaderLabel.text = originalText
+                self?.isCopying = false
             }
         }
         
         @objc private func copyTokenMintToClipboard() {
-            guard let mint = viewModel.output.tokenWallet?.token.address else {return}
+            guard !isCopying, let mint = viewModel.output.tokenWallet?.token.address else {return}
+            isCopying = true
             UIApplication.shared.copyToClipboard(mint, alert: false)
             
             let originalText = mintAddressHeaderLabel.text
             mintAddressHeaderLabel.text = L10n.addressCopied
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
                 self?.mintAddressHeaderLabel.text = originalText
+                self?.isCopying = false
+            }
+        }
+        
+        @objc private func copyMainPubkeyToClipboard() {
+            guard !isCopying else {return}
+            isCopying = true
+            UIApplication.shared.copyToClipboard(viewModel.output.pubkey, alert: false)
+            
+            let addressLabelOriginalColor = addressLabel.textColor
+            addressLabel.textColor = .h5887ff
+            copiedToClipboardToastBottomConstraint.constant = -30
+            
+            UIView.animate(withDuration: 0.3) {
+                self.layoutIfNeeded()
+            } completion: { _ in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                    self?.addressLabel.textColor = addressLabelOriginalColor
+                    self?.copiedToClipboardToastBottomConstraint.constant = 100
+
+                    UIView.animate(withDuration: 0.3) {
+                        self?.layoutIfNeeded()
+                        self?.isCopying = false
+                    }
+                }
             }
         }
     }

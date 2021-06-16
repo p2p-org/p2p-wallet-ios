@@ -14,19 +14,28 @@ class MainContainer {
     let accountStorage: KeychainAccountStorage
     var solanaSDK: SolanaSDK
     var socket: SolanaSDK.Socket
-    let transactionManager: TransactionsManager
+    let processingTransactionsManager: ProcessingTransactionsManager
     let pricesManager: PricesManager
     private(set) var walletsViewModel: WalletsViewModel
+    
+    let mainViewModel: MainViewModel
     
     init(rootViewModel: Root.ViewModel, accountStorage: KeychainAccountStorage) {
         self.rootViewModel = rootViewModel
         self.accountStorage = accountStorage
         self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
         self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
-        self.transactionManager = TransactionsManager(socket: socket)
+        self.processingTransactionsManager = ProcessingTransactionsManager(handler: socket)
         self.pricesManager = PricesManager(tokensRepository: solanaSDK, fetcher: CryptoComparePricesFetcher(), refreshAfter: 10 * 1000) // 10minutes
         
-        self.walletsViewModel = WalletsViewModel(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager, pricesRepository: pricesManager)
+        self.walletsViewModel = WalletsViewModel(
+            solanaSDK: solanaSDK,
+            socket: socket,
+            processingTransactionRepository: processingTransactionsManager,
+            pricesRepository: pricesManager
+        )
+        
+        self.mainViewModel = MainViewModel()
         
         defer {
             socket.connect()
@@ -34,12 +43,24 @@ class MainContainer {
         }
     }
     
-    func makeMainViewController() -> MainViewController {
-        MainViewController(rootViewModel: rootViewModel, scenesFactory: self)
+    func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController {
+        MainViewController(viewModel: mainViewModel, scenesFactory: self, authenticateWhenAppears: authenticateWhenAppears)
     }
     
     func makeTabBarVC() -> TabBarVC {
         TabBarVC(scenesFactory: self)
+    }
+    
+    // MARK: - Authentication
+    func makeLocalAuthVC() -> LocalAuthVC {
+        LocalAuthVC(accountStorage: accountStorage)
+    }
+    
+    // MARK: - Reset pincode with seed phrases
+    func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
+    {
+        let container = ResetPinCodeWithSeedPhrasesContainer(accountRepository: accountStorage)
+        return container.makeResetPinCodeWithSeedPhrasesViewController()
     }
     
     func makeHomeViewController() -> HomeViewController {
@@ -93,7 +114,7 @@ class MainContainer {
             walletPubkey: walletPubkey,
             destinationAddress: destinationAddress,
             apiClient: solanaSDK,
-            authenticationHandler: rootViewModel
+            authenticationHandler: mainViewModel
         )
         let vc = SendToken.ViewController(viewModel: vm, scenesFactory: self)
         return vc
@@ -103,7 +124,7 @@ class MainContainer {
     {
         let vm = SwapToken.ViewModel(
             apiClient: solanaSDK,
-            authenticationHandler: rootViewModel
+            authenticationHandler: mainViewModel
         )
         vm.input.sourceWallet.accept(wallet ?? walletsViewModel.solWallet)
         return SwapToken.ViewController(viewModel: vm, scenesFactory: self)
@@ -127,8 +148,7 @@ class MainContainer {
         let viewModel = ProcessTransaction.ViewModel(
             transactionType: transactionType,
             request: request,
-            transactionHandler: socket,
-            transactionManager: transactionManager,
+            transactionHandler: processingTransactionsManager,
             walletsRepository: walletsViewModel,
             pricesRepository: pricesManager,
             apiClient: solanaSDK
@@ -142,7 +162,7 @@ class MainContainer {
     }
     
     func makeBackupVC() -> BackupVC {
-        BackupVC(accountStorage: accountStorage, authenticationHandler: rootViewModel, scenesFactory: self)
+        BackupVC(accountStorage: accountStorage, authenticationHandler: mainViewModel, scenesFactory: self)
     }
     
     func makeBackupManuallyVC() -> BackupManuallyVC {
@@ -158,7 +178,7 @@ class MainContainer {
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {
-        ConfigureSecurityVC(accountStorage: accountStorage, authenticationHandler: rootViewModel)
+        ConfigureSecurityVC(accountStorage: accountStorage, authenticationHandler: mainViewModel)
     }
     
     func makeSelectLanguageVC() -> SelectLanguageVC {
@@ -179,7 +199,7 @@ class MainContainer {
                 pricesRepository: pricesManager,
                 accountStorage: accountStorage
             ),
-            authenticationHandler: rootViewModel,
+            authenticationHandler: mainViewModel,
             scenesFactory: self
         )
     }

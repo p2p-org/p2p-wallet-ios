@@ -38,7 +38,7 @@ class LocalAuthVC: PassCodeVC {
     
     // MARK: - Additional subviews
     lazy var closeButton = UIButton.close()
-        .onTap(self, action: #selector(back))
+        .onTap(self, action: #selector(closeButtonDidTouch))
     
     private lazy var blockingView: UIView = {
         let view = UIView(forAutoLayout: ())
@@ -133,6 +133,11 @@ class LocalAuthVC: PassCodeVC {
     
     @objc func resetPincodeWithASeedPhrases() {
         resetPincodeWithASeedPhrasesHandler?()
+    }
+    
+    @objc func closeButtonDidTouch() {
+        cancelledCompletion?()
+        back()
     }
 
     // MARK: - Delegate
