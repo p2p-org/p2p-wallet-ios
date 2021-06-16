@@ -39,7 +39,7 @@ class CreateOrRestoreWalletContainer {
     
     func makeRestoreWalletViewController() -> RestoreWalletViewController
     {
-        let container = RestoreWalletContainer(accountStorage: accountStorage, handler: handler)
+        let container = RestoreWalletContainer(accountStorage: accountStorage, handler: handler, analyticsManager: analyticsManager)
         return container.makeRestoreWalletViewController()
     }
 }
