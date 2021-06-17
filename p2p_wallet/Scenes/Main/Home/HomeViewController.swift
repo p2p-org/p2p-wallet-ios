@@ -98,6 +98,7 @@ class HomeViewController: BaseVC {
         case .receiveToken:
             if let vc = self.scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: nil)
             {
+                analyticsManager.log(event: .receiveOpen, params: ["fromPage": "wallets"])
                 self.present(vc, animated: true, completion: nil)
             }
             
@@ -106,6 +107,7 @@ class HomeViewController: BaseVC {
         case .sendToken(let address):
             let vc = self.scenesFactory
                 .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
+            analyticsManager.log(event: .sendOpen, params: ["fromPage": "wallets"])
             self.present(vc, animated: true, completion: nil)
         case .swapToken:
             let vc = self.scenesFactory.makeSwapTokenViewController(fromWallet: nil)

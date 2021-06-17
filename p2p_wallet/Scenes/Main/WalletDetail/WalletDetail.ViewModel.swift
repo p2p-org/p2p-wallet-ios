@@ -109,12 +109,14 @@ extension WalletDetail {
         @objc func sendTokens() {
             guard let wallet = walletSubject.value else {return}
             analyticsManager.log(event: .walletSendClick)
+            analyticsManager.log(event: .sendOpen, params: ["fromPage": "wallet"])
             navigationSubject.accept(.send(wallet: wallet))
         }
         
         @objc func receiveTokens() {
             guard let pubkey = walletSubject.value?.pubkey else {return}
             analyticsManager.log(event: .walletQrClick)
+            analyticsManager.log(event: .receiveOpen, params: ["fromPage": "wallet"])
             navigationSubject.accept(.receive(walletPubkey: pubkey))
         }
         
