@@ -27,7 +27,7 @@ extension WalletDetail {
         private let walletsRepository: WalletsRepository
         private let pubkey: String
         private let symbol: String
-        let analyticsManager: AnalyticsManagerType
+        private let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -108,6 +108,7 @@ extension WalletDetail {
         
         @objc func sendTokens() {
             guard let wallet = walletSubject.value else {return}
+            analyticsManager.log(event: .walletSendClick)
             navigationSubject.accept(.send(wallet: wallet))
         }
         
@@ -119,10 +120,12 @@ extension WalletDetail {
         
         @objc func swapTokens() {
             guard let wallet = walletSubject.value else {return}
+            analyticsManager.log(event: .walletSwapClick)
             navigationSubject.accept(.swap(fromWallet: wallet))
         }
         
         func showTransaction(_ transaction: SolanaSDK.AnyTransaction) {
+            analyticsManager.log(event: .walletTransactionDetailsOpen)
             navigationSubject.accept(.transactionInfo(transaction))
         }
         

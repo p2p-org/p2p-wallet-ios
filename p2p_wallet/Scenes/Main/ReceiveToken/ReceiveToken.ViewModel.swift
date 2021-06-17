@@ -83,6 +83,9 @@ extension ReceiveToken {
         
         func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
             UIApplication.shared.copyToClipboard(address, alert: false)
+            if logEvent == .walletSolAddressCopy {
+                analyticsManager.log(event: .receiveAddressCopy)
+            }
             analyticsManager.log(event: logEvent)
         }
     }
