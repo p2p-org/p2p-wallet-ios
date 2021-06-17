@@ -72,6 +72,7 @@ extension SendToken {
         private let repository: WalletsRepository
         private let apiClient: SendTokenAPIClient
         private let authenticationHandler: AuthenticationHandler
+        private let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -98,11 +99,13 @@ extension SendToken {
             walletPubkey: String?,
             destinationAddress: String?,
             apiClient: SendTokenAPIClient,
-            authenticationHandler: AuthenticationHandler
+            authenticationHandler: AuthenticationHandler,
+            analyticsManager: AnalyticsManagerType
         ) {
             self.repository = repository
             self.apiClient = apiClient
             self.authenticationHandler = authenticationHandler
+            self.analyticsManager = analyticsManager
             
             self.feeSubject = LazySubject<Double>(
                 request: Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
@@ -155,6 +158,10 @@ extension SendToken {
                 .map {pubkey in
                     self.repository.getWallets().first(where: {$0.pubkey == pubkey})
                 }
+                .do(onNext: {[weak self] wallet in
+                    guard let symbol = wallet?.token.symbol else {return}
+                    self?.analyticsManager.log(event: .sendSelectTokenClick, params: ["tokenTicker": symbol])
+                })
                 .bind(to: walletSubject)
                 .disposed(by: disposeBag)
             
@@ -182,6 +189,23 @@ extension SendToken {
                     return .invalid
                 }
                 .bind(to: addressValidationStatusSubject)
+                .disposed(by: disposeBag)
+            
+            // log keydown
+            input.amount
+                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+                .subscribe(onNext: {[weak self] amount in
+                    guard let amount = amount else {return}
+                    self?.analyticsManager.log(event: .sendAmountKeydown, params: ["sum": amount])
+                })
+                .disposed(by: disposeBag)
+            
+            input.address
+                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+                .subscribe(onNext: {[weak self] address in
+                    guard let address = address else {return}
+                    self?.analyticsManager.log(event: .sendAddressKeydown, params: ["sum": address])
+                })
                 .disposed(by: disposeBag)
         }
         
@@ -261,8 +285,10 @@ extension SendToken {
         
         // MARK: - Actions
         @objc func useAllBalance() {
-            input.amount.onNext(availableAmountSubject.value)
-            useAllBalanceDidTouchSubject.onNext(availableAmountSubject.value)
+            let amount = availableAmountSubject.value
+            input.amount.onNext(amount)
+            analyticsManager.log(event: .sendAvailableClick, params: ["sum": amount])
+            useAllBalanceDidTouchSubject.onNext(amount)
         }
         
         @objc func clearDestinationAddress() {
