@@ -19,8 +19,9 @@ class MainContainer {
     private(set) var walletsViewModel: WalletsViewModel
     
     let mainViewModel: MainViewModel
+    let analyticsManager: AnalyticsManagerType
     
-    init(rootViewModel: Root.ViewModel, accountStorage: KeychainAccountStorage) {
+    init(rootViewModel: Root.ViewModel, accountStorage: KeychainAccountStorage, analyticsManager: AnalyticsManagerType) {
         self.rootViewModel = rootViewModel
         self.accountStorage = accountStorage
         self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
@@ -36,6 +37,7 @@ class MainContainer {
         )
         
         self.mainViewModel = MainViewModel()
+        self.analyticsManager = analyticsManager
         
         defer {
             socket.connect()
@@ -61,7 +63,7 @@ class MainContainer {
     
     func makeHomeViewController() -> HomeViewController {
         let vm = HomeViewModel(walletsRepository: walletsViewModel)
-        return HomeViewController(viewModel: vm, scenesFactory: self)
+        return HomeViewController(viewModel: vm, scenesFactory: self, analyticsManager: analyticsManager)
     }
     
     func makeInvestmentsViewController() -> InvestmentsViewController {
@@ -85,7 +87,8 @@ class MainContainer {
             symbol: symbol,
             walletsRepository: walletsViewModel,
             pricesRepository: pricesManager,
-            transactionsRepository: solanaSDK
+            transactionsRepository: solanaSDK,
+            analyticsManager: analyticsManager
         )
         
         return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)
@@ -100,7 +103,7 @@ class MainContainer {
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController? {
         guard let pubkey = walletsViewModel.solWallet?.pubkey else {return nil}
         let tokenWallet = walletsViewModel.getWallets().first(where: {$0.pubkey == tokenWalletPubkey})
-        let viewModel = ReceiveToken.ViewModel(pubkey: pubkey, tokenWallet: tokenWallet)
+        let viewModel = ReceiveToken.ViewModel(pubkey: pubkey, tokenWallet: tokenWallet, analyticsManager: analyticsManager)
         return ReceiveToken.ViewController(viewModel: viewModel)
     }
     
@@ -110,7 +113,8 @@ class MainContainer {
             walletPubkey: walletPubkey,
             destinationAddress: destinationAddress,
             apiClient: solanaSDK,
-            authenticationHandler: mainViewModel
+            authenticationHandler: mainViewModel,
+            analyticsManager: analyticsManager
         )
         let vc = SendToken.ViewController(viewModel: vm, scenesFactory: self)
         return vc
@@ -120,7 +124,8 @@ class MainContainer {
     {
         let vm = SwapToken.ViewModel(
             apiClient: solanaSDK,
-            authenticationHandler: mainViewModel
+            authenticationHandler: mainViewModel,
+            analyticsManager: analyticsManager
         )
         vm.input.sourceWallet.accept(wallet ?? walletsViewModel.solWallet)
         return SwapToken.ViewController(viewModel: vm, scenesFactory: self)
@@ -147,14 +152,15 @@ class MainContainer {
             transactionHandler: processingTransactionsManager,
             walletsRepository: walletsViewModel,
             pricesRepository: pricesManager,
-            apiClient: solanaSDK
+            apiClient: solanaSDK,
+            analyticsManager: analyticsManager
         )
         return ProcessTransaction.ViewController(viewModel: viewModel)
     }
     
     // MARK: - Profile VCs
     func makeProfileVC() -> ProfileVC {
-        ProfileVC(accountStorage: accountStorage, rootViewModel: rootViewModel, scenesFactory: self)
+        ProfileVC(accountStorage: accountStorage, rootViewModel: rootViewModel, scenesFactory: self, analyticsManager: analyticsManager)
     }
     
     func makeBackupVC() -> BackupVC {
@@ -170,7 +176,7 @@ class MainContainer {
     }
     
     func makeSelectNetworkVC() -> SelectNetworkVC {
-        SelectNetworkVC(changeNetworkResponder: self)
+        SelectNetworkVC(changeNetworkResponder: self, analyticsManger: analyticsManager)
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {

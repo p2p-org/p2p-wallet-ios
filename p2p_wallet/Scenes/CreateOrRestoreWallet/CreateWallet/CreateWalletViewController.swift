@@ -42,8 +42,8 @@ class CreateWalletViewController: WLIndicatorModalVC {
     
     override func bind() {
         super.bind()
-        viewModel.navigationSubject
-            .subscribe(onNext: {[unowned self] in self.navigate(to: $0)})
+        viewModel.output.navigation
+            .drive(onNext: {[weak self] in self?.navigate(to: $0)})
             .disposed(by: disposeBag)
     }
     
