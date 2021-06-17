@@ -64,6 +64,7 @@ extension SwapToken {
         // MARK: - Dependencies
         private let apiClient: SwapTokenAPIClient
         private let authenticationHandler: AuthenticationHandler
+        let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -94,10 +95,12 @@ extension SwapToken {
         // MARK: - Initializer
         init(
             apiClient: SwapTokenAPIClient,
-            authenticationHandler: AuthenticationHandler
+            authenticationHandler: AuthenticationHandler,
+            analyticsManager: AnalyticsManagerType
         ) {
             self.apiClient = apiClient
             self.authenticationHandler = authenticationHandler
+            self.analyticsManager = analyticsManager
             
             self.input = Input()
             self.output = Output(
@@ -168,6 +171,9 @@ extension SwapToken {
             
             // slippage
             input.slippage
+                .do(onNext: {[weak self] slippage in
+                    self?.analyticsManager.log(event: .swapSlippageDoneClick, params: ["slippage": slippage])
+                })
                 .bind(to: slippageSubject)
                 .disposed(by: disposeBag)
         }
@@ -338,6 +344,11 @@ extension SwapToken {
         
         @objc func useAllBalance() {
             let amount = availableAmountSubject.value
+            
+            if let amount = amount {
+                analyticsManager.log(event: .swapAvailableClick, params: ["sum": amount])
+            }
+            
             input.amount.accept(amount?.toString(maximumFractionDigits: 9, groupingSeparator: nil))
             useAllBalanceDidTapSubject.accept(amount)
         }
@@ -351,6 +362,8 @@ extension SwapToken {
         }
         
         @objc func swapSourceAndDestination() {
+            analyticsManager.log(event: .swapReverseClick)
+            
             let tempWallet = sourceWalletSubject.value
             sourceWalletSubject.accept(destinationWalletSubject.value)
             destinationWalletSubject.accept(tempWallet)
@@ -361,6 +374,8 @@ extension SwapToken {
         }
         
         @objc func chooseSlippage() {
+            analyticsManager.log(event: .swapSlippageClick)
+            
             navigationSubject.accept(.chooseSlippage)
         }
         
@@ -480,6 +495,18 @@ extension SwapToken {
             )
                 .map {$0 as ProcessTransactionResponseType}
             
+            // calculate amount
+            let inputAmount = amountDouble
+            let estimatedAmount = estimatedAmountSubject.value ?? 0
+            
+            // log
+            analyticsManager.log(event: .swapSwapClick, params: [
+                "tokenTickerA": sourceWallet.token.symbol,
+                "tokenTickerB": destinationWallet.token.symbol,
+                "sumA": inputAmount,
+                "sumB": estimatedAmount
+            ])
+            
             // show processing scene
             navigationSubject.accept(
                 .processTransaction(
@@ -487,8 +514,8 @@ extension SwapToken {
                     transactionType: .swap(
                         from: sourceWallet,
                         to: destinationWallet,
-                        inputAmount: amountDouble + feeInLamportsSubject.value?.convertToBalance(decimals: sourceWallet.token.decimals),
-                        estimatedAmount: estimatedAmountSubject.value ?? 0
+                        inputAmount: inputAmount + feeInLamportsSubject.value?.convertToBalance(decimals: sourceWallet.token.decimals),
+                        estimatedAmount: estimatedAmount
                     )
                 )
             )
