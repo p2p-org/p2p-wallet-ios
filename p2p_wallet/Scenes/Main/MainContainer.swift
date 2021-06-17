@@ -188,11 +188,11 @@ class MainContainer {
     }
     
     func makeSelectLanguageVC() -> SelectLanguageVC {
-        SelectLanguageVC(rootViewModel: rootViewModel)
+        SelectLanguageVC(responder: rootViewModel)
     }
     
     func makeSelectAppearanceVC() -> SelectAppearanceVC {
-        SelectAppearanceVC(rootViewModel: rootViewModel)
+        SelectAppearanceVC()
     }
     
     // MARK: - Token edit

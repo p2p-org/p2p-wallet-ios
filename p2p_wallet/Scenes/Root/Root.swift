@@ -20,6 +20,6 @@ struct Root {
         case createOrRestoreWallet
         case onboarding
         case onboardingDone(isRestoration: Bool)
-        case main
+        case main(showAuthenticationWhenAppears: Bool)
     }
 }
