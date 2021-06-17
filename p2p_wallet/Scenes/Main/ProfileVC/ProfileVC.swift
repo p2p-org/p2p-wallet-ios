@@ -43,11 +43,13 @@ class ProfileVC: ProfileVCBase {
     let accountStorage: KeychainAccountStorage
     let rootViewModel: Root.ViewModel
     let scenesFactory: ProfileScenesFactory
+    let analyticsManager: AnalyticsManagerType
     
-    init(accountStorage: KeychainAccountStorage, rootViewModel: Root.ViewModel, scenesFactory: ProfileScenesFactory) {
+    init(accountStorage: KeychainAccountStorage, rootViewModel: Root.ViewModel, scenesFactory: ProfileScenesFactory, analyticsManager: AnalyticsManagerType) {
         self.accountStorage = accountStorage
         self.scenesFactory = scenesFactory
         self.rootViewModel = rootViewModel
+        self.analyticsManager = analyticsManager
     }
     
     deinit {
@@ -203,11 +205,11 @@ class ProfileVC: ProfileVCBase {
     
     // MARK: - Actions
     @objc func buttonLogoutDidTouch() {
-        showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { (index) in
-            if index == 0 {
-                self.dismiss(animated: true) {
-                    self.rootViewModel.logout()
-                }
+        showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { [weak self] (index) in
+            guard index == 0 else {return}
+            self?.analyticsManager.log(event: .settingsLogoutClick)
+            self?.dismiss(animated: true) {
+                self?.rootViewModel.logout()
             }
         }
     }
@@ -272,6 +274,7 @@ class ProfileVC: ProfileVCBase {
     
     @objc func hideZeroBalancesSwitcherDidSwitch(sender: UISwitch) {
         Defaults.hideZeroBalances.toggle()
+        analyticsManager.log(event: .settingsHideZeroBalancesClick, params: ["hide": Defaults.hideZeroBalances])
     }
     
     @objc func useFreeTransactionsSwitcherDidSwitch(sender: UISwitch) {

@@ -104,6 +104,14 @@ extension SwapToken {
                     .bind(to: viewModel.input.amount)
                     .disposed(by: disposeBag)
                 
+                amountTextField.rx.controlEvent([.editingDidEnd])
+                    .asObservable()
+                    .subscribe(onNext: { [weak self] _ in
+                        guard let amount = self?.amountTextField.text?.double else {return}
+                        self?.viewModel.analyticsManager.log(event: .swapTokenAAmountKeydown, params: ["sum": amount])
+                    })
+                    .disposed(by: disposeBag)
+                
                 viewModel.output.useAllBalanceDidTap
                     .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
                     .drive(onNext: {[weak self] in
@@ -146,6 +154,14 @@ extension SwapToken {
                 // textField
 //                amountTextField.rx.text
 //                    .bind(to: viewModel.input.estimatedAmount)
+//                    .disposed(by: disposeBag)
+                
+//                amountTextField.rx.controlEvent([.editingDidEnd])
+//                    .asObservable()
+//                    .subscribe(onNext: { [weak self] _ in
+//                        guard let amount = self?.amountTextField.text?.double else {return}
+//                        self?.viewModel.analyticsManager.log(event: .swapTokenBAmountKeydown, params: ["sum": amount])
+//                    })
 //                    .disposed(by: disposeBag)
                 
                 viewModel.output.estimatedAmount

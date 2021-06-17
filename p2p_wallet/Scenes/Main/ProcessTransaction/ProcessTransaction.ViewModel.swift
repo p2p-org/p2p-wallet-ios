@@ -33,6 +33,7 @@ extension ProcessTransaction {
         private let walletsRepository: WalletsRepository
         private let apiClient: ProcessTransactionAPIClient
         private let pricesRepository: PricesRepository
+        private let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -52,7 +53,8 @@ extension ProcessTransaction {
             transactionHandler: ProcessingTransactionsRepository,
             walletsRepository: WalletsRepository,
             pricesRepository: PricesRepository,
-            apiClient: ProcessTransactionAPIClient
+            apiClient: ProcessTransactionAPIClient,
+            analyticsManager: AnalyticsManagerType
         ) {
             self.transactionType = transactionType
             self.request = request
@@ -60,6 +62,7 @@ extension ProcessTransaction {
             self.walletsRepository = walletsRepository
             self.apiClient = apiClient
             self.pricesRepository = pricesRepository
+            self.analyticsManager = analyticsManager
             
             self.input = Input()
             self.output = Output(
@@ -96,16 +99,83 @@ extension ProcessTransaction {
             }
         }
         
+        @objc func tryAgain() {
+            // log
+            var event: AnalyticsEvent?
+            switch transactionType {
+            case .send:
+                event = .sendTryAgainClick
+            case .swap:
+                event = .swapTryAgainClick
+            case .closeAccount:
+                break
+            }
+            
+            if let event = event,
+               let error = transactionStatusSubject.value.getError()?.readableDescription
+            {
+                analyticsManager.log(event: event, params: ["error": error])
+            }
+            
+            // execute
+            executeRequest()
+        }
+        
         @objc func showExplorer() {
             guard let id = transactionIdSubject.value else {return}
+            
+            // log
+            let transactionConfirmed = (transactionStatusSubject.value == .confirmed)
+            switch transactionType {
+            case .send:
+                analyticsManager.log(event: .sendExplorerClick, params: ["transactionConfirmed": transactionConfirmed])
+            case .swap:
+                analyticsManager.log(event: .swapExplorerClick, params: ["transactionConfirmed": transactionConfirmed])
+            case .closeAccount:
+                break
+            }
+            
+            // navigate
             navigationSubject.onNext(.showExplorer(transactionID: id))
         }
         
         @objc func done() {
+            // log
+            let transactionConfirmed = (transactionStatusSubject.value == .confirmed)
+            switch transactionType {
+            case .send:
+                analyticsManager.log(event: .sendCloseClick, params: ["transactionConfirmed": transactionConfirmed])
+                analyticsManager.log(event: .sendDoneClick, params: ["transactionConfirmed": transactionConfirmed])
+            case .swap:
+                analyticsManager.log(event: .swapCloseClick, params: ["transactionConfirmed": transactionConfirmed])
+                analyticsManager.log(event: .swapDoneClick, params: ["transactionConfirmed": transactionConfirmed])
+            case .closeAccount:
+                break
+            }
+            
+            // navigate
             navigationSubject.onNext(.done)
         }
         
         @objc func cancel() {
+            // log
+            var event: AnalyticsEvent?
+            switch transactionType {
+            case .send:
+                event = .sendCancelClick
+            case .swap:
+                event = .swapCancelClick
+            case .closeAccount:
+                break
+            }
+            
+            if let event = event,
+               let error = transactionStatusSubject.value.getError()?.readableDescription
+            {
+                analyticsManager.log(event: event, params: ["error": error])
+            }
+            
+            // cancel
             navigationSubject.onNext(.cancel)
         }
         

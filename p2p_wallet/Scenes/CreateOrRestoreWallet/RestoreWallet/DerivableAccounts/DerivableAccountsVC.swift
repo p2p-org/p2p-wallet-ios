@@ -11,6 +11,7 @@ import BECollectionView
 final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     // MARK: - Properties
     private let viewModel: DerivableAccountsViewModel
+    private let analyticsManager: AnalyticsManagerType
     
     // MARK: - Subviews
     private lazy var headerView = UIStackView(axis: .vertical, spacing: 20, alignment: .leading, distribution: .fill) {
@@ -46,8 +47,9 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     }()
     
     // MARK: - Methods
-    init(viewModel: DerivableAccountsViewModel) {
+    init(viewModel: DerivableAccountsViewModel, analyticsManager: AnalyticsManagerType) {
         self.viewModel = viewModel
+        self.analyticsManager = analyticsManager
         super.init()
     }
     
@@ -115,6 +117,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     
     func derivablePathsVC(_ vc: DerivablePathsVC, didSelectPath path: SolanaSDK.DerivablePath) {
         viewModel.input.derivationPath.onNext(path)
+        analyticsManager.log(event: .loginSelectDerivationPathClick, params: ["derivationPath": path.rawValue])
         vc.dismiss(animated: true, completion: nil)
     }
     

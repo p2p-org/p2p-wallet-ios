@@ -27,6 +27,7 @@ extension WalletDetail {
         private let walletsRepository: WalletsRepository
         private let pubkey: String
         private let symbol: String
+        let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -44,11 +45,13 @@ extension WalletDetail {
             symbol: String,
             walletsRepository: WalletsRepository,
             pricesRepository: PricesRepository,
-            transactionsRepository: TransactionsRepository
+            transactionsRepository: TransactionsRepository,
+            analyticsManager: AnalyticsManagerType
         ) {
             self.pubkey = pubkey
             self.symbol = symbol
             self.walletsRepository = walletsRepository
+            self.analyticsManager = analyticsManager
             
             self.input = Input()
             self.output = Output(
@@ -105,20 +108,27 @@ extension WalletDetail {
         
         @objc func sendTokens() {
             guard let wallet = walletSubject.value else {return}
+            analyticsManager.log(event: .walletSendClick)
+            analyticsManager.log(event: .sendOpen, params: ["fromPage": "wallet"])
             navigationSubject.accept(.send(wallet: wallet))
         }
         
         @objc func receiveTokens() {
             guard let pubkey = walletSubject.value?.pubkey else {return}
+            analyticsManager.log(event: .walletQrClick)
+            analyticsManager.log(event: .receiveOpen, params: ["fromPage": "wallet"])
             navigationSubject.accept(.receive(walletPubkey: pubkey))
         }
         
         @objc func swapTokens() {
             guard let wallet = walletSubject.value else {return}
+            analyticsManager.log(event: .walletSwapClick)
+            analyticsManager.log(event: .swapOpen, params: ["fromPage": "wallet"])
             navigationSubject.accept(.swap(fromWallet: wallet))
         }
         
         func showTransaction(_ transaction: SolanaSDK.AnyTransaction) {
+            analyticsManager.log(event: .walletTransactionDetailsOpen)
             navigationSubject.accept(.transactionInfo(transaction))
         }
         

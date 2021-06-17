@@ -37,7 +37,8 @@ extension WalletDetail {
         lazy var collectionView: WalletDetailTransactionsCollectionView = { [weak self] in
             let collectionView = WalletDetailTransactionsCollectionView(
                 transactionViewModel: viewModel.output.transactionsViewModel,
-                graphViewModel: viewModel.output.graphViewModel
+                graphViewModel: viewModel.output.graphViewModel,
+                analyticsManager: viewModel.analyticsManager
             )
             
             collectionView.delegate = self
@@ -166,6 +167,16 @@ extension WalletDetail {
                     self?.collectionView.wallet = wallet
                     self?.collectionView.solPubkey = solPubkey
                     self?.collectionView.transactionsSection.reloadHeader()
+                })
+                .disposed(by: disposeBag)
+            
+            // log
+            collectionView.dataDidChangeObservable()
+                .map {[weak self] in self?.collectionView.sections.first?.viewModel.getCurrentPage()}
+                .distinctUntilChanged()
+                .subscribe(onNext: {[weak self] currentPage in
+                    guard let currentPage = currentPage else {return}
+                    self?.viewModel.analyticsManager.log(event: .walletActivityScroll, params: ["pageNum": currentPage])
                 })
                 .disposed(by: disposeBag)
         }

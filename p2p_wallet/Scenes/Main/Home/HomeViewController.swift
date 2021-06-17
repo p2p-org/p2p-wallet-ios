@@ -27,18 +27,25 @@ class HomeViewController: BaseVC {
     // MARK: - Properties
     let viewModel: HomeViewModel
     let scenesFactory: HomeScenesFactory
+    let analyticsManager: AnalyticsManagerType
     
     // MARK: - Initializer
-    init(viewModel: HomeViewModel, scenesFactory: HomeScenesFactory)
+    init(viewModel: HomeViewModel, scenesFactory: HomeScenesFactory, analyticsManager: AnalyticsManagerType)
     {
         self.viewModel = viewModel
         self.scenesFactory = scenesFactory
+        self.analyticsManager = analyticsManager
         super.init()
     }
     
     // MARK: - Methods
     override func loadView() {
         view = HomeRootView(viewModel: viewModel)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        analyticsManager.log(event: .walletsOpen)
     }
     
     override func setUp() {
@@ -91,6 +98,7 @@ class HomeViewController: BaseVC {
         case .receiveToken:
             if let vc = self.scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: nil)
             {
+                analyticsManager.log(event: .receiveOpen, params: ["fromPage": "wallets"])
                 self.present(vc, animated: true, completion: nil)
             }
             
@@ -99,18 +107,24 @@ class HomeViewController: BaseVC {
         case .sendToken(let address):
             let vc = self.scenesFactory
                 .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
+            analyticsManager.log(event: .sendOpen, params: ["fromPage": "wallets"])
             self.present(vc, animated: true, completion: nil)
         case .swapToken:
             let vc = self.scenesFactory.makeSwapTokenViewController(fromWallet: nil)
+            analyticsManager.log(event: .swapOpen, params: ["fromPage": "wallets"])
             self.present(vc, animated: true, completion: nil)
         case .allProducts:
             let vc = self.scenesFactory.makeMyProductsViewController()
             self.present(vc, animated: true, completion: nil)
         case .profile:
+            analyticsManager.log(event: .settingsOpen, params: ["fromPage": "wallets"])
             let profileVC = self.scenesFactory.makeProfileVC()
             self.show(profileVC, sender: nil)
         case .walletDetail(let wallet):
             guard let pubkey = wallet.pubkey else {return}
+            
+            analyticsManager.log(event: .walletOpen, params: ["tokenTicker": wallet.token.symbol])
+            
             let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey, symbol: wallet.token.symbol)
             present(vc, animated: true, completion: nil)
         case .walletSettings(let wallet):
