@@ -13,7 +13,6 @@ extension Root {
         // MARK: - Properties
         private let viewModel: ViewModel
         private let scenesFactory: RootViewControllerScenesFactory
-        private var authenticateWhenAppears = true
         
         // MARK: - Initializer
         init(
@@ -61,21 +60,18 @@ extension Root {
             case .createOrRestoreWallet:
                 let vc = scenesFactory.makeCreateOrRestoreWalletViewController()
                 let nc = BENavigationController(rootViewController: vc)
-                authenticateWhenAppears = false
                 transition(to: nc)
                 
             case .onboarding:
                 let vc = scenesFactory.makeOnboardingViewController()
-                authenticateWhenAppears = false
                 transition(to: vc)
                 
             case .onboardingDone(let isRestoration):
                 let vc: UIViewController = isRestoration ? scenesFactory.makeWelcomeBackVC(): scenesFactory.makeWellDoneVC()
-                authenticateWhenAppears = false
                 transition(to: vc)
                 
-            case .main:
-                let vc = scenesFactory.makeMainViewController(authenticateWhenAppears: authenticateWhenAppears)
+            case .main(let showAuthenticationWhenAppears):
+                let vc = scenesFactory.makeMainViewController(authenticateWhenAppears: showAuthenticationWhenAppears)
                 transition(to: vc)
                 
             default:
