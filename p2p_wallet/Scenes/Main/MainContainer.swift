@@ -155,7 +155,8 @@ class MainContainer {
             transactionHandler: processingTransactionsManager,
             walletsRepository: walletsViewModel,
             pricesRepository: pricesManager,
-            apiClient: solanaSDK
+            apiClient: solanaSDK,
+            analyticsManager: analyticsManager
         )
         return ProcessTransaction.ViewController(viewModel: viewModel)
     }
