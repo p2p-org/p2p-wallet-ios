@@ -29,6 +29,7 @@ target 'p2p_wallet' do
   pod 'RxBiBinding'
   pod "RxAppState"
   pod 'JazziconSwift'
+  pod 'Amplitude', '~> 8.3.0'
   
   # Firebase
   pod 'Firebase/Analytics'

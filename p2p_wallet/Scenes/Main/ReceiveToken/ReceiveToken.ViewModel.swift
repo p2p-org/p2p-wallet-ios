@@ -25,6 +25,7 @@ extension ReceiveToken {
         // MARK: - Dependencies
         private let pubkey: String
         private let tokenWallet: Wallet?
+        private let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -37,8 +38,9 @@ extension ReceiveToken {
         private let isShowingDetailSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
-        init(pubkey: String, tokenWallet: Wallet? = nil) {
+        init(pubkey: String, tokenWallet: Wallet? = nil, analyticsManager: AnalyticsManagerType) {
             self.pubkey = pubkey
+            self.analyticsManager = analyticsManager
             var tokenWallet = tokenWallet
             if tokenWallet?.pubkey == pubkey {
                 tokenWallet = nil
@@ -77,6 +79,14 @@ extension ReceiveToken {
         
         @objc func toggleIsShowingDetail() {
             isShowingDetailSubject.accept(!isShowingDetailSubject.value)
+        }
+        
+        func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
+            UIApplication.shared.copyToClipboard(address, alert: false)
+            if logEvent == .walletSolAddressCopy {
+                analyticsManager.log(event: .receiveAddressCopy)
+            }
+            analyticsManager.log(event: logEvent)
         }
     }
 }
