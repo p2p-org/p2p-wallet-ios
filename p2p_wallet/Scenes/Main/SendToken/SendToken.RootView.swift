@@ -187,9 +187,24 @@ extension SendToken {
                 .bind(to: viewModel.input.amount)
                 .disposed(by: disposeBag)
             
+            amountTextField.rx.controlEvent([.editingDidEnd])
+                .asObservable()
+                .subscribe(onNext: { [weak self] _ in
+                    guard let amount = self?.amountTextField.text?.double else {return}
+                    self?.viewModel.analyticsManager.log(event: .sendAmountKeydown, params: ["sum": amount])
+                })
+                .disposed(by: disposeBag)
+            
             addressTextField.rx.text
                 .skip(while: {$0?.isEmpty == true})
                 .bind(to: viewModel.input.address)
+                .disposed(by: disposeBag)
+            
+            addressTextField.rx.controlEvent([.editingDidEnd])
+                .asObservable()
+                .subscribe(onNext: { [weak self] _ in
+                    self?.viewModel.analyticsManager.log(event: .sendAddressKeydown)
+                })
                 .disposed(by: disposeBag)
             
             ignoreNoFundAddressSwitch.rx.isOn

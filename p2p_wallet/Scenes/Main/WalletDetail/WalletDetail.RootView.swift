@@ -169,6 +169,16 @@ extension WalletDetail {
                     self?.collectionView.transactionsSection.reloadHeader()
                 })
                 .disposed(by: disposeBag)
+            
+            // log
+            collectionView.dataDidChangeObservable()
+                .map {[weak self] in self?.collectionView.sections.first?.viewModel.getCurrentPage()}
+                .distinctUntilChanged()
+                .subscribe(onNext: {[weak self] currentPage in
+                    guard let currentPage = currentPage else {return}
+                    self?.viewModel.analyticsManager.log(event: .walletActivityScroll, params: ["pageNum": currentPage])
+                })
+                .disposed(by: disposeBag)
         }
     }
 }
