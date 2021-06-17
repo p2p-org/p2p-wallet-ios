@@ -11,7 +11,7 @@ import RxCocoa
 import RxAppState
 
 extension Root {
-    class ViewModel: ViewModelType {
+    class ViewModel: ViewModelType, ChangeNetworkResponder, ChangeLanguageResponder {
         // MARK: - Nested type
         struct Input {
             
@@ -27,6 +27,7 @@ extension Root {
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         private var isRestoration = false
+        private var showAuthenticationOnMainOnAppear = true
         
         let input: Input
         private(set) var output: Output
@@ -72,14 +73,16 @@ extension Root {
                 let account = self.accountStorage.account
                 DispatchQueue.main.async {
                     if account == nil {
+                        self.showAuthenticationOnMainOnAppear = false
                         self.navigationSubject.accept(.createOrRestoreWallet)
                     } else if self.accountStorage.pinCode == nil ||
                                 !Defaults.didSetEnableBiometry ||
                                 !Defaults.didSetEnableNotifications
                     {
+                        self.showAuthenticationOnMainOnAppear = false
                         self.navigationSubject.accept(.onboarding)
                     } else {
-                        self.navigationSubject.accept(.main)
+                        self.navigationSubject.accept(.main(showAuthenticationWhenAppears: self.showAuthenticationOnMainOnAppear))
                     }
                 }
             }
@@ -93,7 +96,22 @@ extension Root {
             reload()
         }
         
-        @objc func navigateToMain() {
+        @objc func finishSetup() {
+            reload()
+        }
+        
+        // MARK: - Responder
+        func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) {
+            Defaults.apiEndPoint = endpoint
+            
+            showAuthenticationOnMainOnAppear = false
+            reload()
+        }
+        
+        func languageDidChange(to language: LocalizedLanguage) {
+            UIApplication.changeLanguage(to: language)
+            
+            showAuthenticationOnMainOnAppear = false
             reload()
         }
     }

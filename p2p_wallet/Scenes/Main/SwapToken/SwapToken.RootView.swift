@@ -33,6 +33,7 @@ extension SwapToken {
             .onTap(viewModel, action: #selector(ViewModel.swapSourceAndDestination))
         
         lazy var minimumReceiveLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
+        lazy var liquidityProviderFeeLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
         lazy var feeLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
         lazy var slippageLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
         
@@ -92,6 +93,16 @@ extension SwapToken {
                 BEStackViewSpacing(16),
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .top, distribution: .fill, arrangedSubviews: [
                     UILabel(text: L10n.liquidityProviderFee + ":", textColor: .textSecondary)
+                        .adjustsFontSizeToFitWidth()
+                        .withContentHuggingPriority(.defaultLow, for: .horizontal)
+                        .withContentCompressionResistancePriority(.defaultLow, for: .horizontal),
+                    liquidityProviderFeeLabel
+                        .withContentHuggingPriority(.required, for: .horizontal)
+                        .withContentCompressionResistancePriority(.required, for: .horizontal)
+                ]),
+                BEStackViewSpacing(16),
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .top, distribution: .fill, arrangedSubviews: [
+                    UILabel(text: L10n.fee + ":", textColor: .textSecondary)
                         .adjustsFontSizeToFitWidth()
                         .withContentHuggingPriority(.defaultLow, for: .horizontal)
                         .withContentCompressionResistancePriority(.defaultLow, for: .horizontal),
@@ -179,6 +190,10 @@ extension SwapToken {
                 .disposed(by: disposeBag)
             
             isNoPoolAvailable
+                .drive(liquidityProviderFeeLabel.superview!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isNoPoolAvailable
                 .drive(feeLabel.superview!.rx.isHidden)
                 .disposed(by: disposeBag)
             
@@ -240,12 +255,20 @@ extension SwapToken {
             
             // fee
             Driver.combineLatest(
-                viewModel.output.fee,
+                viewModel.output.liquidityProviderFee,
                 viewModel.output.destinationWallet.map {$0?.token.symbol}
             )
                 .map {fee, symbol -> String? in
                     guard let fee = fee, let symbol = symbol else {return nil}
                     return fee.toString(maximumFractionDigits: 9) + " " + symbol
+                }
+                .drive(liquidityProviderFeeLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.feeInLamports
+                .map {lamports -> String? in
+                    guard let lamports = lamports else {return nil}
+                    return lamports.convertToBalance(decimals: 9).toString(maximumFractionDigits: 9) + " SOL"
                 }
                 .drive(feeLabel.rx.text)
                 .disposed(by: disposeBag)

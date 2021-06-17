@@ -54,7 +54,8 @@ extension SwapToken {
             let destinationWallet: Driver<Wallet?>
             let amount: Driver<Double?>
             let estimatedAmount: Driver<Double?>
-            let fee: Driver<Double?>
+            let liquidityProviderFee: Driver<Double?>
+            let feeInLamports: Driver<SolanaSDK.Lamports?>
             let slippage: Driver<Double>
             let minimumReceiveAmount: Driver<Double?>
             let useAllBalanceDidTap: Driver<Double?>
@@ -85,7 +86,7 @@ extension SwapToken {
         private let currentPoolSubject = BehaviorRelay<SolanaSDK.Pool?>(value: nil)
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         private let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
-        private let feeSubject = BehaviorRelay<Double?>(value: nil)
+        private let liquidityProviderFeeSubject = BehaviorRelay<Double?>(value: nil)
         private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
         private let minimumReceiveAmountSubject = BehaviorRelay<Double?>(value: nil)
         private let useAllBalanceDidTapSubject = PublishRelay<Double?>()
@@ -124,7 +125,9 @@ extension SwapToken {
                     .asDriver(),
                 estimatedAmount: estimatedAmountSubject
                     .asDriver(),
-                fee: feeSubject
+                liquidityProviderFee: liquidityProviderFeeSubject
+                    .asDriver(),
+                feeInLamports: feeInLamportsSubject
                     .asDriver(),
                 slippage: slippageSubject
                     .asDriver(),
@@ -275,7 +278,7 @@ extension SwapToken {
                 amountSubject.distinctUntilChanged()
             )
                 .map {calculateFee(forInputAmount: $1, in: $0)}
-                .bind(to: feeSubject)
+                .bind(to: liquidityProviderFeeSubject)
                 .disposed(by: disposeBag)
             
             // fee in lamports

@@ -15,12 +15,16 @@ struct LocalizedLanguage: Hashable, Codable, DefaultsSerializable {
     }
 }
 
+protocol ChangeLanguageResponder {
+    func languageDidChange(to: LocalizedLanguage)
+}
+
 class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
     override var dataDidChange: Bool {selectedItem != Defaults.localizedLanguage}
     
-    let rootViewModel: Root.ViewModel
-    init(rootViewModel: Root.ViewModel) {
-        self.rootViewModel = rootViewModel
+    let responder: ChangeLanguageResponder
+    init(responder: ChangeLanguageResponder) {
+        self.responder = responder
         super.init()
         data = [LocalizedLanguage: Bool]()
         Bundle.main.localizations.filter({$0 != "Base"}).forEach {
@@ -45,15 +49,9 @@ class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
     }
     
     @objc func saveChange() {
-        showAlert(title: L10n.switchLanguage, message: L10n.doYouReallyWantToSwitchTo + " " + selectedItem.localizedName?.uppercaseFirst + "?", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { (index) in
-            if index != 0 {return}
-            UIApplication.changeLanguage(to: self.selectedItem)
-            
-            let rootVC = self.presentingViewController?.presentingViewController
-            self.presentingViewController?.dismiss(animated: false) {
-                rootVC?.dismiss(animated: true, completion: nil)
-            }
-            self.rootViewModel.reload()
+        showAlert(title: L10n.switchLanguage, message: L10n.doYouReallyWantToSwitchTo + " " + selectedItem.localizedName?.uppercaseFirst + "?", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { [weak self] (index) in
+            guard index == 0, let language = self?.selectedItem else {return}
+            self?.responder.languageDidChange(to: language)
         }
     }
 }
