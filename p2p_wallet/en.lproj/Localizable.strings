@@ -365,3 +365,5 @@
 "Error checking address' validity. Are you sure it's correct?" = "Error checking address' validity. Are you sure it's correct?";
 "Address copied to clipboard!" = "Address copied to clipboard!";
 "Liquidity provider fee" = "Liquidity provider fee";
+"Currency changed" = "Currency changed";
+"Network changed" = "Network changed";

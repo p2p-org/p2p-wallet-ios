@@ -40,6 +40,6 @@ class WellDoneVC: WLIntroVC {
     
     @objc func finishSetup() {
         analyticsManager.log(event: .signupFinishSetupClick)
-        viewModel.navigateToMain()
+        viewModel.finishSetup()
     }
 }

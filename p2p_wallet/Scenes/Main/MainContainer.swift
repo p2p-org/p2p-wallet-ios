@@ -180,7 +180,7 @@ class MainContainer {
     }
     
     func makeSelectNetworkVC() -> SelectNetworkVC {
-        SelectNetworkVC(changeNetworkResponder: self, analyticsManger: analyticsManager)
+        SelectNetworkVC(changeNetworkResponder: rootViewModel, analyticsManger: analyticsManager)
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {
@@ -211,21 +211,10 @@ class MainContainer {
     }
     
     // MARK: - Helpers
-    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) {
-        Defaults.apiEndPoint = endpoint
-        accountStorage.removeAccountCache()
-        
-        socket.disconnect()
-        solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
-        socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
-        
-        rootViewModel.reload()
-    }
-    
     func changeFiat(to fiat: Fiat) {
         Defaults.fiat = fiat
         pricesManager.currentPrices.accept([:])
-        rootViewModel.reload()
+        pricesManager.fetchCurrentPrices(coins: walletsViewModel.getWallets().map {$0.token.symbol})
     }
 }
 
@@ -237,7 +226,6 @@ extension MainContainer: TabBarScenesFactory,
                          SendTokenScenesFactory,
                          BackupScenesFactory,
                          HomeScenesFactory,
-                         ChangeNetworkResponder,
                          ChangeFiatResponder,
                          TokenSettingsScenesFactory,
                          _MainScenesFactory {}

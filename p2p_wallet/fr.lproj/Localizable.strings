@@ -365,3 +365,5 @@
 "Error checking address' validity. Are you sure it's correct?" = "Erreur lors de la vérification de la validité de l'adresse.  Êtes-vous sûr que c'est correct?";
 "Address copied to clipboard!" = "Adresse copiée dans le presse-papiers !";
 "Liquidity provider fee" = "Commission du fournisseur de liquidité";
+"Currency changed" = "La devise a changé";
+"Network changed" = "Réseau modifié";
