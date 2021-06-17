@@ -14,12 +14,19 @@ class WelcomeBackVC: WLIntroVC {
     }
     
     lazy var goToWalletButton = WLButton.stepButton(type: .blue, label: L10n.goToWallet)
-        .onTap(viewModel, action: #selector(Root.ViewModel.navigateToMain))
+        .onTap(self, action: #selector(goToWalletButtonDidTouch))
     
     let viewModel: Root.ViewModel
-    init(viewModel: Root.ViewModel) {
+    let analyticsManager: AnalyticsManagerType
+    init(viewModel: Root.ViewModel, analyticsManager: AnalyticsManagerType) {
         self.viewModel = viewModel
+        self.analyticsManager = analyticsManager
         super.init()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        analyticsManager.log(event: .restoreWelcomeBackOpen)
     }
     
     override func setUp() {
@@ -43,5 +50,11 @@ class WelcomeBackVC: WLIntroVC {
             goToWalletButton,
             UIView(height: 56)
         ])
+    }
+    
+    @objc func goToWalletButtonDidTouch() {
+        analyticsManager.log(event: .restoreAccessViaSeedClick)
+        analyticsManager.log(event: .loginFinishSetupClick)
+        viewModel.navigateToMain()
     }
 }

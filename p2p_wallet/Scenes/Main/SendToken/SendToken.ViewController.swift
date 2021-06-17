@@ -61,6 +61,7 @@ extension SendToken {
             case .chooseWallet:
                 let vc = self.scenesFactory.makeChooseWalletViewController(customFilter: {$0.amount > 0}, showOtherWallets: false)
                 vc.completion = { [weak self, weak vc] wallet in
+                    self?.viewModel.analyticsManager.log(event: .sendSelectTokenClick, params: ["tokenTicker": wallet.token.symbol])
                     self?.viewModel.input.walletPubkey.onNext(wallet.pubkey)
                     vc?.back()
                 }

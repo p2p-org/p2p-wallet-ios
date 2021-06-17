@@ -152,7 +152,8 @@ extension ReceiveToken {
         @objc private func copyTokenPubKeyToClipboard() {
             guard !isCopying, let pubkey = viewModel.output.tokenWallet?.pubkey else {return}
             isCopying = true
-            UIApplication.shared.copyToClipboard(pubkey, alert: false)
+            
+            viewModel.copyToClipboard(address: pubkey, logEvent: .walletTokenAddressCopy)
             
             let originalText = directAddressHeaderLabel.text
             directAddressHeaderLabel.text = L10n.addressCopied
@@ -165,7 +166,8 @@ extension ReceiveToken {
         @objc private func copyTokenMintToClipboard() {
             guard !isCopying, let mint = viewModel.output.tokenWallet?.token.address else {return}
             isCopying = true
-            UIApplication.shared.copyToClipboard(mint, alert: false)
+            
+            viewModel.copyToClipboard(address: mint, logEvent: .walletMintAddressCopy)
             
             let originalText = mintAddressHeaderLabel.text
             mintAddressHeaderLabel.text = L10n.addressCopied
@@ -178,7 +180,8 @@ extension ReceiveToken {
         @objc private func copyMainPubkeyToClipboard() {
             guard !isCopying else {return}
             isCopying = true
-            UIApplication.shared.copyToClipboard(viewModel.output.pubkey, alert: false)
+            
+            viewModel.copyToClipboard(address: viewModel.output.pubkey, logEvent: .walletSolAddressCopy)
             
             let addressLabelOriginalColor = addressLabel.textColor
             addressLabel.textColor = .h5887ff

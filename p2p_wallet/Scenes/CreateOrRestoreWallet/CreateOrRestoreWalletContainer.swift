@@ -11,17 +11,20 @@ class CreateOrRestoreWalletContainer {
     // from parent
     let handler: CreateOrRestoreWalletHandler
     let accountStorage: KeychainAccountStorage
+    let analyticsManager: AnalyticsManagerType
     
     // longlived dependency
     let viewModel: CreateOrRestoreWalletViewModel
     
     init(
         accountStorage: KeychainAccountStorage,
-        handler: CreateOrRestoreWalletHandler
+        handler: CreateOrRestoreWalletHandler,
+        analyticsManager: AnalyticsManagerType
     ) {
-        self.viewModel = CreateOrRestoreWalletViewModel()
+        self.viewModel = CreateOrRestoreWalletViewModel(analyticsManager: analyticsManager)
         self.accountStorage = accountStorage
         self.handler = handler
+        self.analyticsManager = analyticsManager
     }
     
     func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController {
@@ -30,13 +33,13 @@ class CreateOrRestoreWalletContainer {
     
     func makeCreateWalletViewController() -> CreateWalletViewController
     {
-        let container = CreateWalletContainer(accountStorage: accountStorage, handler: handler)
+        let container = CreateWalletContainer(accountStorage: accountStorage, handler: handler, analyticsManager: analyticsManager)
         return container.makeCreateWalletViewController()
     }
     
     func makeRestoreWalletViewController() -> RestoreWalletViewController
     {
-        let container = RestoreWalletContainer(accountStorage: accountStorage, handler: handler)
+        let container = RestoreWalletContainer(accountStorage: accountStorage, handler: handler, analyticsManager: analyticsManager)
         return container.makeRestoreWalletViewController()
     }
 }

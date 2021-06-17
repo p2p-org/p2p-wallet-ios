@@ -21,12 +21,43 @@ protocol CreateOrRestoreWalletHandler {
     func creatingOrRestoringWalletDidCancel()
 }
 
-class CreateOrRestoreWalletViewModel {
-    // MARK: - Constants
+class CreateOrRestoreWalletViewModel: ViewModelType {
+    // MARK: - NestedType
+    struct Input {
+        
+    }
+    struct Output {
+        let navigation: Driver<CreateOrRestoreWalletNavigatableScene>
+    }
+    
+    // MARK: - Dependencies
+    let analyticsManager: AnalyticsManagerType
     
     // MARK: - Properties
-    let bag = DisposeBag()
+    private let bag = DisposeBag()
+    let input: Input
+    let output: Output
+    
+    // MARK: - Initializer
+    init(analyticsManager: AnalyticsManagerType) {
+        self.analyticsManager = analyticsManager
+        self.input = Input()
+        self.output = Output(
+            navigation: navigationSubject.asDriver()
+        )
+    }
     
     // MARK: - Subjects
-    let navigationSubject = BehaviorRelay<CreateOrRestoreWalletNavigatableScene>(value: .welcome)
+    private let navigationSubject = BehaviorRelay<CreateOrRestoreWalletNavigatableScene>(value: .welcome)
+    
+    // MARK: - Actions
+    @objc func navigateToCreateWallet() {
+        analyticsManager.log(event: .landingCreateWalletClick)
+        navigationSubject.accept(.createWallet)
+    }
+    
+    @objc func navigateToRestoreWallet() {
+        analyticsManager.log(event: .landingIHaveWalletClick)
+        navigationSubject.accept(.restoreWallet)
+    }
 }
