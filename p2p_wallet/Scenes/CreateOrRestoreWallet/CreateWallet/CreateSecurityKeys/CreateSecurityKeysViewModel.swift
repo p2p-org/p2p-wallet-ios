@@ -16,6 +16,7 @@ class CreateSecurityKeysViewModel {
     let disposeBag = DisposeBag()
     let accountStorage: KeychainAccountStorage
     let createWalletViewModel: CreateWalletViewModel
+    let analyticsManager: AnalyticsManagerType
     
     // MARK: - Subjects
     let phrasesSubject = BehaviorRelay<[String]>(value: [])
@@ -24,9 +25,10 @@ class CreateSecurityKeysViewModel {
     // MARK: - Input
     let checkBoxIsSelectedInput = BehaviorRelay<Bool>(value: false)
     
-    init(accountStorage: KeychainAccountStorage, createWalletViewModel: CreateWalletViewModel) {
+    init(accountStorage: KeychainAccountStorage, createWalletViewModel: CreateWalletViewModel, analyticsManager: AnalyticsManagerType) {
         self.accountStorage = accountStorage
         self.createWalletViewModel = createWalletViewModel
+        self.analyticsManager = analyticsManager
         createPhrases()
     }
     
@@ -47,6 +49,11 @@ class CreateSecurityKeysViewModel {
     }
     
     @objc func next() {
+        if checkBoxIsSelectedInput.value {
+            analyticsManager.log(event: .signupIHaveSavedWordsClick)
+        }
+        analyticsManager.log(event: .signupContinueMnemonicClick)
+        
         UIApplication.shared.showIndetermineHud()
         DispatchQueue.global().async {
             do {

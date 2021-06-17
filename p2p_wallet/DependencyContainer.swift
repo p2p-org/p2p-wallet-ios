@@ -12,21 +12,23 @@ class DependencyContainer {
     // MARK: - Long lived dependency
     let sharedAccountStorage: KeychainAccountStorage
     let sharedRootViewModel: Root.ViewModel
+    let analyticsManager: AnalyticsManagerType
     
     init() {
         self.sharedAccountStorage = KeychainAccountStorage()
         self.sharedRootViewModel = Root.ViewModel(accountStorage: sharedAccountStorage)
+        self.analyticsManager = AnalyticsManager()
     }
     
     // MARK: - Root
     func makeRootViewController() -> Root.ViewController {
-        return .init(viewModel: sharedRootViewModel, scenesFactory: self)
+        .init(viewModel: sharedRootViewModel, scenesFactory: self)
     }
     
     // MARK: - CreateOrRestore wallet
     func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
     {
-        let container = CreateOrRestoreWalletContainer(accountStorage: sharedAccountStorage, handler: sharedRootViewModel)
+        let container = CreateOrRestoreWalletContainer(accountStorage: sharedAccountStorage, handler: sharedRootViewModel, analyticsManager: analyticsManager)
         return container.makeCreateOrRestoreWalletViewController()
     }
     
@@ -37,16 +39,16 @@ class DependencyContainer {
     }
     
     func makeWellDoneVC() -> WellDoneVC {
-        WellDoneVC(viewModel: sharedRootViewModel)
+        WellDoneVC(viewModel: sharedRootViewModel, analyticsManager: analyticsManager)
     }
     
     func makeWelcomeBackVC() -> WelcomeBackVC {
-        WelcomeBackVC(viewModel: sharedRootViewModel)
+        WelcomeBackVC(viewModel: sharedRootViewModel, analyticsManager: analyticsManager)
     }
     
     // MARK: - Main
     func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController {
-        let container = MainContainer(rootViewModel: sharedRootViewModel, accountStorage: sharedAccountStorage)
+        let container = MainContainer(rootViewModel: sharedRootViewModel, accountStorage: sharedAccountStorage, analyticsManager: analyticsManager)
         return container.makeMainViewController(authenticateWhenAppears: authenticateWhenAppears)
     }
 }
