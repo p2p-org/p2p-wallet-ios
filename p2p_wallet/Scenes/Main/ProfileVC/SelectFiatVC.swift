@@ -49,5 +49,6 @@ class SelectFiatVC: ProfileSingleSelectionVC<Fiat> {
     
     private func changeFiatToSelectedItem() {
         responder.changeFiat(to: selectedItem)
+        UIApplication.shared.showDone(L10n.currencyChanged)
     }
 }

@@ -11,7 +11,7 @@ import RxCocoa
 import RxAppState
 
 extension Root {
-    class ViewModel: ViewModelType {
+    class ViewModel: ViewModelType, ChangeNetworkResponder {
         // MARK: - Nested type
         struct Input {
             
@@ -93,7 +93,13 @@ extension Root {
             reload()
         }
         
-        @objc func navigateToMain() {
+        @objc func finishSetup() {
+            reload()
+        }
+        
+        // MARK: - Responder
+        func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) {
+            Defaults.apiEndPoint = endpoint
             reload()
         }
     }

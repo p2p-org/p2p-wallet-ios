@@ -365,3 +365,5 @@
 "Error checking address' validity. Are you sure it's correct?" = "Lỗi khi kiểm tra tính hợp lệ của địa chỉ.  Bạn có chắc là nó chính xác?";
 "Address copied to clipboard!" = "Đã sao chép địa chỉ!";
 "Liquidity provider fee" = "Phí nhà cung cấp thanh khoản";
+"Currency changed" = "Loại tiền tệ đã thay đổi";
+"Network changed" = "Mạng đã thay đổi";
