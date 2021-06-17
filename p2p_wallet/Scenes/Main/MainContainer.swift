@@ -107,7 +107,7 @@ class MainContainer {
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController? {
         guard let pubkey = walletsViewModel.solWallet?.pubkey else {return nil}
         let tokenWallet = walletsViewModel.getWallets().first(where: {$0.pubkey == tokenWalletPubkey})
-        let viewModel = ReceiveToken.ViewModel(pubkey: pubkey, tokenWallet: tokenWallet)
+        let viewModel = ReceiveToken.ViewModel(pubkey: pubkey, tokenWallet: tokenWallet, analyticsManager: analyticsManager)
         return ReceiveToken.ViewController(viewModel: viewModel)
     }
     
@@ -117,7 +117,8 @@ class MainContainer {
             walletPubkey: walletPubkey,
             destinationAddress: destinationAddress,
             apiClient: solanaSDK,
-            authenticationHandler: mainViewModel
+            authenticationHandler: mainViewModel,
+            analyticsManager: analyticsManager
         )
         let vc = SendToken.ViewController(viewModel: vm, scenesFactory: self)
         return vc

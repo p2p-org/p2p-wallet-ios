@@ -37,7 +37,8 @@ extension WalletDetail {
         lazy var collectionView: WalletDetailTransactionsCollectionView = { [weak self] in
             let collectionView = WalletDetailTransactionsCollectionView(
                 transactionViewModel: viewModel.output.transactionsViewModel,
-                graphViewModel: viewModel.output.graphViewModel
+                graphViewModel: viewModel.output.graphViewModel,
+                analyticsManager: viewModel.analyticsManager
             )
             
             collectionView.delegate = self

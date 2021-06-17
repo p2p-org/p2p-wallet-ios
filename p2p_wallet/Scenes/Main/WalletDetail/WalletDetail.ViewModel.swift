@@ -27,7 +27,7 @@ extension WalletDetail {
         private let walletsRepository: WalletsRepository
         private let pubkey: String
         private let symbol: String
-        private let analyticsManager: AnalyticsManagerType
+        let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
