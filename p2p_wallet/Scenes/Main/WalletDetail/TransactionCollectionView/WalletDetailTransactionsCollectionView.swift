@@ -45,7 +45,8 @@ class WalletDetailTransactionsCollectionView: BECollectionView {
         transactionsSection = .init(
             index: 0,
             viewModel: transactionViewModel,
-            graphViewModel: graphViewModel
+            graphViewModel: graphViewModel,
+            analyticsManager: analyticsManager
         )
         super.init(sections: [
             transactionsSection
