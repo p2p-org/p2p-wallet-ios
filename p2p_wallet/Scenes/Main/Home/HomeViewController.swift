@@ -111,6 +111,7 @@ class HomeViewController: BaseVC {
             self.present(vc, animated: true, completion: nil)
         case .swapToken:
             let vc = self.scenesFactory.makeSwapTokenViewController(fromWallet: nil)
+            analyticsManager.log(event: .swapOpen, params: ["fromPage": "wallets"])
             self.present(vc, animated: true, completion: nil)
         case .allProducts:
             let vc = self.scenesFactory.makeMyProductsViewController()
@@ -121,7 +122,7 @@ class HomeViewController: BaseVC {
         case .walletDetail(let wallet):
             guard let pubkey = wallet.pubkey else {return}
             
-            analyticsManager.log(event: .walletOpen, params: ["tokenTicker": wallet.token.address])
+            analyticsManager.log(event: .walletOpen, params: ["tokenTicker": wallet.token.symbol])
             
             let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey, symbol: wallet.token.symbol)
             present(vc, animated: true, completion: nil)

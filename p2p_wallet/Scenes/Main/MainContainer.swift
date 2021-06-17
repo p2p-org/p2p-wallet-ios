@@ -128,7 +128,8 @@ class MainContainer {
     {
         let vm = SwapToken.ViewModel(
             apiClient: solanaSDK,
-            authenticationHandler: mainViewModel
+            authenticationHandler: mainViewModel,
+            analyticsManager: analyticsManager
         )
         vm.input.sourceWallet.accept(wallet ?? walletsViewModel.solWallet)
         return SwapToken.ViewController(viewModel: vm, scenesFactory: self)

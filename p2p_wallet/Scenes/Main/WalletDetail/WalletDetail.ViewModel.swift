@@ -123,6 +123,7 @@ extension WalletDetail {
         @objc func swapTokens() {
             guard let wallet = walletSubject.value else {return}
             analyticsManager.log(event: .walletSwapClick)
+            analyticsManager.log(event: .swapOpen, params: ["fromPage": "wallet"])
             navigationSubject.accept(.swap(fromWallet: wallet))
         }
         
