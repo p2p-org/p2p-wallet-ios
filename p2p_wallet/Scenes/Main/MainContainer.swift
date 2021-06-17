@@ -164,7 +164,7 @@ class MainContainer {
     
     // MARK: - Profile VCs
     func makeProfileVC() -> ProfileVC {
-        ProfileVC(accountStorage: accountStorage, rootViewModel: rootViewModel, scenesFactory: self)
+        ProfileVC(accountStorage: accountStorage, rootViewModel: rootViewModel, scenesFactory: self, analyticsManager: analyticsManager)
     }
     
     func makeBackupVC() -> BackupVC {
@@ -180,7 +180,7 @@ class MainContainer {
     }
     
     func makeSelectNetworkVC() -> SelectNetworkVC {
-        SelectNetworkVC(changeNetworkResponder: self)
+        SelectNetworkVC(changeNetworkResponder: self, analyticsManger: analyticsManager)
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {

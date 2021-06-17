@@ -117,6 +117,7 @@ class HomeViewController: BaseVC {
             let vc = self.scenesFactory.makeMyProductsViewController()
             self.present(vc, animated: true, completion: nil)
         case .profile:
+            analyticsManager.log(event: .settingsOpen, params: ["fromPage": "wallets"])
             let profileVC = self.scenesFactory.makeProfileVC()
             self.show(profileVC, sender: nil)
         case .walletDetail(let wallet):

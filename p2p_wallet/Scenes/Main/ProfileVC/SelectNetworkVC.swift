@@ -15,9 +15,11 @@ protocol ChangeNetworkResponder {
 class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
     override var dataDidChange: Bool {selectedItem != Defaults.apiEndPoint}
     let responder: ChangeNetworkResponder
+    let analyticsManger: AnalyticsManagerType
     
-    init(changeNetworkResponder: ChangeNetworkResponder) {
+    init(changeNetworkResponder: ChangeNetworkResponder, analyticsManger: AnalyticsManagerType) {
         self.responder = changeNetworkResponder
+        self.analyticsManger = analyticsManger
         super.init()
         // initial data
         SolanaSDK.APIEndPoint.definedEndpoints
@@ -44,6 +46,10 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
     @objc func saveChange() {
         showAlert(title: L10n.switchNetwork, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem.url + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { [weak self] (index) in
             if index != 0 {return}
+            if let url = self?.selectedItem.url {
+                self?.analyticsManger.log(event: .settingsNetworkClick, params: ["endpoint": url])
+            }
+            
             self?.changeNetworkToSelectedNetwork()
         }
     }
