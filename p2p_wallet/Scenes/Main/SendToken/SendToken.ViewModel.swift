@@ -287,7 +287,9 @@ extension SendToken {
         @objc func useAllBalance() {
             let amount = availableAmountSubject.value
             input.amount.onNext(amount)
-            analyticsManager.log(event: .sendAvailableClick, params: ["sum": amount])
+            if let amount = amount {
+                analyticsManager.log(event: .sendAvailableClick, params: ["sum": amount])
+            }
             useAllBalanceDidTouchSubject.onNext(amount)
         }
         
@@ -438,6 +440,9 @@ extension SendToken {
                     isSimulation: false
                 )
             }
+            
+            // log
+            analyticsManager.log(event: .sendSendClick, params: ["tokenTicker": wallet.token.address, "sum": lamport.convertToBalance(decimals: wallet.token.decimals)])
             
             // show processing scene
             navigationSubject.onNext(
