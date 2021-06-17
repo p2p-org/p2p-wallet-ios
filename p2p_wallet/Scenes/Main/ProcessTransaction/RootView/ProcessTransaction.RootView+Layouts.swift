@@ -204,7 +204,7 @@ extension ProcessTransaction.RootView {
             self.transactionStatusImageView.image = .transactionError
             self.buttonStackView.addArrangedSubviews([
                 WLButton.stepButton(type: .blue, label: L10n.tryAgain)
-                    .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.executeRequest)),
+                    .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.tryAgain)),
                 WLButton.stepButton(enabledColor: .eff3ff, textColor: .h5887ff, label: L10n.cancel)
                     .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.cancel))
             ])
