@@ -58,7 +58,7 @@ extension AnalyticsEvent {
         case .tokenDetailsSendClick: return nil
         case .tokenDetailsSwapClick: return nil
         case .tokenDetailsAddressCopy: return nil
-        case .tokenDetailsActivityScroll: return nil
+        case .tokenDetailsActivityScroll(let pageNum): return ["pageNum": pageNum]
         case .tokenDetailsDetailsOpen: return nil
         // receive
         case .receiveOpen(let fromPage): return ["fromPage": fromPage]

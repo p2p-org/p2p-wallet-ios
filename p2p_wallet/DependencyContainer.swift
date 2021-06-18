@@ -16,8 +16,8 @@ class DependencyContainer {
     
     init() {
         self.sharedAccountStorage = KeychainAccountStorage()
-        self.sharedRootViewModel = Root.ViewModel(accountStorage: sharedAccountStorage)
         self.analyticsManager = AnalyticsManager()
+        self.sharedRootViewModel = Root.ViewModel(accountStorage: sharedAccountStorage, analyticsManager: analyticsManager)
     }
     
     // MARK: - Root
@@ -34,7 +34,7 @@ class DependencyContainer {
     
     // MARK: - Onboarding
     func makeOnboardingViewController() -> OnboardingViewController {
-        let container = OnboardingContainer(accountStorage: sharedAccountStorage, handler: sharedRootViewModel)
+        let container = OnboardingContainer(accountStorage: sharedAccountStorage, handler: sharedRootViewModel, analyticsManager: analyticsManager)
         return container.makeOnboardingViewController()
     }
     
