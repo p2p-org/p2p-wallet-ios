@@ -99,6 +99,7 @@ class HomeViewController: BaseVC {
             if let vc = self.scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: nil)
             {
                 analyticsManager.log(event: .mainScreenReceiveOpen)
+                analyticsManager.log(event: .receiveOpen(fromPage: "main_screen"))
                 self.present(vc, animated: true, completion: nil)
             }
             
