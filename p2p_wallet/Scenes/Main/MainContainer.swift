@@ -127,6 +127,7 @@ class MainContainer {
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapToken.ViewController
     {
         let vm = SwapToken.ViewModel(
+            solWallet: walletsViewModel.solWallet,
             apiClient: solanaSDK,
             authenticationHandler: mainViewModel,
             analyticsManager: analyticsManager
