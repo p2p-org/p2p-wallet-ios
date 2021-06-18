@@ -23,6 +23,7 @@ extension Root {
         
         // MARK: - Dependencies
         private let accountStorage: KeychainAccountStorage
+        private let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -37,8 +38,9 @@ extension Root {
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
-        init(accountStorage: KeychainAccountStorage) {
+        init(accountStorage: KeychainAccountStorage, analyticsManager: AnalyticsManagerType) {
             self.accountStorage = accountStorage
+            self.analyticsManager = analyticsManager
             
             self.input = Input()
             self.output = Output(
@@ -139,6 +141,11 @@ extension Root.ViewModel: OnboardingHandler {
     }
     
     @objc func onboardingDidComplete() {
+        // log
+        let fromPage = isRestoration ? "recovery": "create_wallet"
+        analyticsManager.log(event: .setupOpen(fromPage: fromPage))
+        
+        // navigate
         navigationSubject.accept(.onboardingDone(isRestoration: isRestoration))
     }
 }

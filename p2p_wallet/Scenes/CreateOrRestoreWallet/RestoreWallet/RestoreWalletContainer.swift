@@ -32,8 +32,8 @@ class RestoreWalletContainer {
         RestoreWalletViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeEnterPhrasesVC() -> WLEnterPhrasesVC {
-        WLEnterPhrasesVC(handler: viewModel)
+    func makeEnterPhrasesVC() -> RecoveryEnterSeedsViewController {
+        RecoveryEnterSeedsViewController(handler: viewModel, analyticsManager: analyticsManager)
     }
     
     func makeDerivableAccountsVC(phrases: [String]) -> DerivableAccountsVC {
