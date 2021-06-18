@@ -286,6 +286,7 @@ extension SendToken {
         
         @objc func scanQrCode() {
             analyticsManager.log(event: .sendScanQrClick)
+            analyticsManager.log(event: .scanQrOpen(fromPage: "send"))
             navigationSubject.onNext(.scanQrCode)
         }
         

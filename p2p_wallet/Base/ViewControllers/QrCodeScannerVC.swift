@@ -10,6 +10,8 @@ import AVFoundation
 import UIKit
 
 class QrCodeScannerVC: BaseVC {
+    let analyticsManager: AnalyticsManagerType
+    
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     let scanSize = CGSize(width: 200.0, height: 200.0)
@@ -18,6 +20,10 @@ class QrCodeScannerVC: BaseVC {
     var callback: ((String) -> Bool)?
     
     lazy var cameraContainerView = UIView(backgroundColor: .red, cornerRadius: 20)
+    
+    init(analyticsManager: AnalyticsManagerType) {
+        self.analyticsManager = analyticsManager
+    }
 
     override func setUp() {
         super.setUp()
@@ -40,7 +46,7 @@ class QrCodeScannerVC: BaseVC {
         rangeLabel.autoCenterInSuperview()
         
         let closeButton = UIButton.closeFill()
-            .onTap(self, action: #selector(back))
+            .onTap(self, action: #selector(closeButtonDidTouch))
         cameraContainerView.addSubview(closeButton)
         closeButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 16)
         
@@ -70,9 +76,9 @@ class QrCodeScannerVC: BaseVC {
 
     func found(code: String) {
         if callback?(code) == true {
-            captureSession.stopRunning()
+            analyticsManager.log(event: .scanQrSuccess)
+            back()
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
-            dismiss(animated: true)
         }
         print(code)
     }
@@ -85,6 +91,10 @@ class QrCodeScannerVC: BaseVC {
         return .portrait
     }
     
+    @objc func closeButtonDidTouch() {
+        analyticsManager.log(event: .scanQrClose)
+        back()
+    }
     override func back() {
         captureSession?.stopRunning()
         super.back()

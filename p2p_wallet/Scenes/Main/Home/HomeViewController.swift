@@ -104,6 +104,8 @@ class HomeViewController: BaseVC {
             }
             
         case .scanQr:
+            analyticsManager.log(event: .mainScreenQrOpen)
+            analyticsManager.log(event: .scanQrOpen(fromPage: "main_screen"))
             break
         case .sendToken(let address):
             let vc = self.scenesFactory
