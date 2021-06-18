@@ -23,15 +23,6 @@ class RecoveryEnterSeedsViewController: WLEnterPhrasesVC {
         analyticsManager.log(event: .recoveryEnterSeedOpen)
     }
     
-    override func bind() {
-        super.bind()
-        textView.rx.didEndEditing
-            .subscribe(onNext: { [weak self] _ in
-                self?.analyticsManager.log(event: .recoveryEnterSeedKeydown)
-            })
-            .disposed(by: disposeBag)
-    }
-    
     override func buttonPasteDidTouch() {
         analyticsManager.log(event: .recoveryEnterSeedPaste)
         super.buttonPasteDidTouch()
