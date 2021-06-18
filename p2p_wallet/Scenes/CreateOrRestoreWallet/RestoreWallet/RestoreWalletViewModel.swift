@@ -43,19 +43,18 @@ class RestoreWalletViewModel {
             errorMessage.onNext(L10n.thereIsNoP2PWalletSavedInYourICloud)
             return
         }
+        analyticsManager.log(event: .recoveryRestoreIcloudClick)
         handlePhrases(phrases.components(separatedBy: " "))
     }
     
     @objc func restoreManually() {
+        analyticsManager.log(event: .recoveryRestoreManualyClick)
         navigationSubject.onNext(.enterPhrases)
     }
 }
 
 extension RestoreWalletViewModel: PhrasesCreationHandler {
     func handlePhrases(_ phrases: [String]) {
-        if self.phrases != phrases {
-            analyticsManager.log(event: .loginSeedKeydown)
-        }
         self.phrases = phrases
         navigationSubject.onNext(.derivableAccounts(phrases: phrases))
     }
@@ -63,6 +62,8 @@ extension RestoreWalletViewModel: PhrasesCreationHandler {
 
 extension RestoreWalletViewModel: AccountRestorationHandler {
     func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath) {
+        analyticsManager.log(event: .recoveryRestoreClick)
+        
         do {
             guard let phrases = self.phrases else {
                 handler.creatingOrRestoringWalletDidCancel()
@@ -71,8 +72,6 @@ extension RestoreWalletViewModel: AccountRestorationHandler {
             try accountStorage.save(phrases: phrases)
             try accountStorage.save(derivableType: derivablePath.type)
             try accountStorage.save(walletIndex: derivablePath.walletIndex)
-            
-            analyticsManager.log(event: .loginContinueDerivationPathClick, params: ["derivationPath": derivablePath.rawValue])
             
             handler.restoringWalletDidComplete()
         } catch {

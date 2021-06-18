@@ -40,19 +40,21 @@ class CreateSecurityKeysViewModel {
     }
     
     @objc func copyToClipboard() {
+        analyticsManager.log(event: .createWalletCopySeedClick)
         UIApplication.shared.copyToClipboard(phrasesSubject.value.joined(separator: " "))
     }
     
     @objc func saveToICloud() {
+        analyticsManager.log(event: .createWalletBackupToIcloudClick)
         accountStorage.saveICloud(phrases: phrasesSubject.value.joined(separator: " "))
         UIApplication.shared.showDone(L10n.savedToICloud)
     }
     
     @objc func next() {
         if checkBoxIsSelectedInput.value {
-            analyticsManager.log(event: .signupIHaveSavedWordsClick)
+            analyticsManager.log(event: .createWalletIHaveSavedWordsClick)
         }
-        analyticsManager.log(event: .signupContinueMnemonicClick)
+        analyticsManager.log(event: .createWalletNextClick)
         
         UIApplication.shared.showIndetermineHud()
         DispatchQueue.global().async {

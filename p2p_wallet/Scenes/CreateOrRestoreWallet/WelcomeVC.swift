@@ -13,9 +13,11 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
     }
     
     let createOrRestoreWalletViewModel: CreateOrRestoreWalletViewModel
-    init(createOrRestoreWalletViewModel: CreateOrRestoreWalletViewModel)
+    let analyticsManager: AnalyticsManagerType
+    init(createOrRestoreWalletViewModel: CreateOrRestoreWalletViewModel, analyticsManager: AnalyticsManagerType)
     {
         self.createOrRestoreWalletViewModel = createOrRestoreWalletViewModel
+        self.analyticsManager = analyticsManager
     }
     
     override func viewDidLoad() {
@@ -24,6 +26,7 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
             moveToPage(viewControllers.count - 1)
             pageControl.isHidden = true
         }
+        analyticsManager.log(event: .firstInOpen)
     }
     
     override func setUp() {
