@@ -15,7 +15,7 @@ protocol PhrasesCreationHandler {
     func handlePhrases(_ phrases: [String])
 }
 
-class WLEnterPhrasesVC: BaseVC {
+class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
         .hidden
     }
@@ -181,9 +181,7 @@ class WLEnterPhrasesVC: BaseVC {
             self.error.accept(error)
         }
     }
-}
-
-extension WLEnterPhrasesVC: WLPhrasesTextViewDelegate {
+    
     func wlPhrasesTextViewDidBeginEditing(_ textView: WLPhrasesTextView) {
         self.error.accept(nil)
     }
