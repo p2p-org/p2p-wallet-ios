@@ -109,6 +109,7 @@ class HomeViewController: BaseVC {
             let vc = self.scenesFactory
                 .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
             analyticsManager.log(event: .mainScreenSendOpen)
+            analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
             self.present(vc, animated: true, completion: nil)
         case .swapToken:
             let vc = self.scenesFactory.makeSwapTokenViewController(fromWallet: nil)
