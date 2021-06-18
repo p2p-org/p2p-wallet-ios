@@ -113,6 +113,7 @@ extension WalletDetail {
         @objc func sendTokens() {
             guard let wallet = walletSubject.value else {return}
             analyticsManager.log(event: .tokenDetailsSendClick)
+            analyticsManager.log(event: .sendOpen(fromPage: "token_details"))
             navigationSubject.accept(.send(wallet: wallet))
         }
         

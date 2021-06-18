@@ -267,7 +267,7 @@ extension SendToken {
             let amount = availableAmountSubject.value
             input.amount.onNext(amount)
             if let amount = amount {
-                analyticsManager.log(event: .sendAvailableClick, params: ["sum": amount])
+                analyticsManager.log(event: .sendAvailableClick(sum: amount))
             }
             useAllBalanceDidTouchSubject.onNext(amount)
         }
@@ -285,6 +285,7 @@ extension SendToken {
         }
         
         @objc func scanQrCode() {
+            analyticsManager.log(event: .sendScanQrClick)
             navigationSubject.onNext(.scanQrCode)
         }
         
@@ -304,6 +305,8 @@ extension SendToken {
                     currencyModeSubject.accept(.fiat)
                 }
             }
+            
+            analyticsManager.log(event: .sendChangeInputMode(selectedValue: currencyModeSubject.value == .token ? "token": "fiat"))
         }
         
         @objc func authenticateAndSend() {
@@ -421,7 +424,12 @@ extension SendToken {
             }
             
             // log
-            analyticsManager.log(event: .sendSendClick, params: ["tokenTicker": wallet.token.symbol, "sum": lamport.convertToBalance(decimals: wallet.token.decimals)])
+            analyticsManager.log(
+                event: .sendSendClick(
+                    tokenTicker: wallet.token.symbol,
+                    sum: lamport.convertToBalance(decimals: wallet.token.decimals)
+                )
+            )
             
             // show processing scene
             navigationSubject.onNext(
