@@ -121,6 +121,7 @@ class HomeViewController: BaseVC {
             self.present(vc, animated: true, completion: nil)
         case .profile:
             analyticsManager.log(event: .mainScreenSettingsOpen)
+            analyticsManager.log(event: .settingsOpen(fromPage: "main_screen"))
             let profileVC = self.scenesFactory.makeProfileVC()
             self.show(profileVC, sender: nil)
         case .walletDetail(let wallet):

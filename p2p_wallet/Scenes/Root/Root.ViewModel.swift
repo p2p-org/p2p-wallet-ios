@@ -112,6 +112,7 @@ extension Root {
         
         func languageDidChange(to language: LocalizedLanguage) {
             UIApplication.changeLanguage(to: language)
+            analyticsManager.log(event: .settingsLanguageSelected(language: language.code))
             
             showAuthenticationOnMainOnAppear = false
             reload()

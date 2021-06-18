@@ -56,7 +56,7 @@ enum AnalyticsEvent {
     case tokenDetailsSendClick
     case tokenDetailsSwapClick
     case tokenDetailsAddressCopy
-    case tokenDetailsActivityScroll
+    case tokenDetailsActivityScroll(pageNum: Int)
     case tokenDetailsDetailsOpen
     // receive
     case receiveOpen(fromPage: String)
