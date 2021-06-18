@@ -41,4 +41,9 @@ class RecoveryEnterSeedsViewController: WLEnterPhrasesVC {
         analyticsManager.log(event: .recoveryDoneClick)
         super.buttonNextDidTouch()
     }
+    
+    override func wlPhrasesTextViewDidBeginEditing(_ textView: WLPhrasesTextView) {
+        analyticsManager.log(event: .recoveryEnterSeedKeydown)
+        super.wlPhrasesTextViewDidBeginEditing(textView)
+    }
 }
