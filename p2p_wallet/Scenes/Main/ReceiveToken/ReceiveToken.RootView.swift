@@ -153,7 +153,7 @@ extension ReceiveToken {
             guard !isCopying, let pubkey = viewModel.output.tokenWallet?.pubkey else {return}
             isCopying = true
             
-            viewModel.copyToClipboard(address: pubkey, logEvent: .walletTokenAddressCopy)
+            viewModel.copyToClipboard(address: pubkey, logEvent: .receiveAddressCopy)
             
             let originalText = directAddressHeaderLabel.text
             directAddressHeaderLabel.text = L10n.addressCopied
@@ -167,7 +167,7 @@ extension ReceiveToken {
             guard !isCopying, let mint = viewModel.output.tokenWallet?.token.address else {return}
             isCopying = true
             
-            viewModel.copyToClipboard(address: mint, logEvent: .walletMintAddressCopy)
+            viewModel.copyToClipboard(address: mint, logEvent: .receiveAddressCopy)
             
             let originalText = mintAddressHeaderLabel.text
             mintAddressHeaderLabel.text = L10n.addressCopied
@@ -181,7 +181,7 @@ extension ReceiveToken {
             guard !isCopying else {return}
             isCopying = true
             
-            viewModel.copyToClipboard(address: viewModel.output.pubkey, logEvent: .walletSolAddressCopy)
+            viewModel.copyToClipboard(address: viewModel.output.pubkey, logEvent: .receiveAddressCopy)
             
             let addressLabelOriginalColor = addressLabel.textColor
             addressLabel.textColor = .h5887ff

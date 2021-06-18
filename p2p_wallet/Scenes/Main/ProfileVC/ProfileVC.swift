@@ -274,7 +274,7 @@ class ProfileVC: ProfileVCBase {
     
     @objc func hideZeroBalancesSwitcherDidSwitch(sender: UISwitch) {
         Defaults.hideZeroBalances.toggle()
-        analyticsManager.log(event: .settingsHideZeroBalancesClick, params: ["hide": Defaults.hideZeroBalances])
+        analyticsManager.log(event: .settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
     }
     
     @objc func useFreeTransactionsSwitcherDidSwitch(sender: UISwitch) {

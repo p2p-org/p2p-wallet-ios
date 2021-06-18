@@ -24,7 +24,7 @@ class CreateWalletViewModel: ViewModelType {
     
     // MARK: - Dependencies
     private let handler: CreateOrRestoreWalletHandler
-    private let analyticsManager: AnalyticsManagerType
+    let analyticsManager: AnalyticsManagerType
     
     // MARK: - Properties
     private let bag = DisposeBag()
@@ -72,7 +72,7 @@ class CreateWalletViewModel: ViewModelType {
     }
     
     @objc func navigateToCreatePhrases() {
-        analyticsManager.log(event: .signupOpen)
+        analyticsManager.log(event: .createWalletOpen)
         navigationSubject.onNext(.createPhrases)
     }
 }

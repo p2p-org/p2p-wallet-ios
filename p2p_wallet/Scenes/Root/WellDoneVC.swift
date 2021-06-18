@@ -26,7 +26,7 @@ class WellDoneVC: WLIntroVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        analyticsManager.log(event: .signupWalletReadyOpen)
+        analyticsManager.log(event: .setupFinishOpen)
     }
     
     override func setUp() {
@@ -39,7 +39,7 @@ class WellDoneVC: WLIntroVC {
     }
     
     @objc func finishSetup() {
-        analyticsManager.log(event: .signupFinishSetupClick)
+        analyticsManager.log(event: .setupFinishClick)
         viewModel.finishSetup()
     }
 }

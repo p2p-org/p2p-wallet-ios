@@ -26,7 +26,7 @@ class WelcomeBackVC: WLIntroVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        analyticsManager.log(event: .restoreWelcomeBackOpen)
+        analyticsManager.log(event: .setupWelcomeBackOpen)
     }
     
     override func setUp() {
@@ -53,8 +53,6 @@ class WelcomeBackVC: WLIntroVC {
     }
     
     @objc func goToWalletButtonDidTouch() {
-        analyticsManager.log(event: .restoreAccessViaSeedClick)
-        analyticsManager.log(event: .loginFinishSetupClick)
         viewModel.finishSetup()
     }
 }

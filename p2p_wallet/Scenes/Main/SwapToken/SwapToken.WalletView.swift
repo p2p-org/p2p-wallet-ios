@@ -108,7 +108,7 @@ extension SwapToken {
                     .asObservable()
                     .subscribe(onNext: { [weak self] _ in
                         guard let amount = self?.amountTextField.text?.double else {return}
-                        self?.viewModel.analyticsManager.log(event: .swapTokenAAmountKeydown, params: ["sum": amount])
+                        self?.viewModel.analyticsManager.log(event: .swapTokenAAmountKeydown(sum: amount))
                     })
                     .disposed(by: disposeBag)
                 
