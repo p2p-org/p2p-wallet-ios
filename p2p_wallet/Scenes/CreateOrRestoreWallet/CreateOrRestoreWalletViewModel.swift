@@ -52,12 +52,12 @@ class CreateOrRestoreWalletViewModel: ViewModelType {
     
     // MARK: - Actions
     @objc func navigateToCreateWallet() {
-        analyticsManager.log(event: .landingCreateWalletClick)
+        analyticsManager.log(event: .createWalletOpen)
         navigationSubject.accept(.createWallet)
     }
     
     @objc func navigateToRestoreWallet() {
-        analyticsManager.log(event: .landingIHaveWalletClick)
+        analyticsManager.log(event: .firstInIHaveWalletClick)
         navigationSubject.accept(.restoreWallet)
     }
 }

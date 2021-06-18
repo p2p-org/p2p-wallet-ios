@@ -26,7 +26,7 @@ class WelcomeBackVC: WLIntroVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        analyticsManager.log(event: .restoreWelcomeBackOpen)
+        analyticsManager.log(event: .setupWelcomeBackOpen)
     }
     
     override func setUp() {
