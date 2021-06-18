@@ -120,6 +120,7 @@ extension WalletDetail {
             guard let pubkey = walletSubject.value?.pubkey else {return}
             analyticsManager.log(event: .tokenDetailQrClick)
             analyticsManager.log(event: .tokenDetailsReceiveClick)
+            analyticsManager.log(event: .receiveOpen(fromPage: "token_details"))
             navigationSubject.accept(.receive(walletPubkey: pubkey))
         }
         
