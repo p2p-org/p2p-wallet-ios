@@ -53,8 +53,6 @@ class WelcomeBackVC: WLIntroVC {
     }
     
     @objc func goToWalletButtonDidTouch() {
-        analyticsManager.log(event: .restoreAccessViaSeedClick)
-        analyticsManager.log(event: .loginFinishSetupClick)
         viewModel.finishSetup()
     }
 }

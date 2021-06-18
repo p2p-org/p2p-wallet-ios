@@ -123,11 +123,13 @@ extension Root.ViewModel: CreateOrRestoreWalletHandler {
     func creatingWalletDidComplete() {
         self.isRestoration = false
         navigationSubject.accept(.onboarding)
+        analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
     }
     
     func restoringWalletDidComplete() {
         self.isRestoration = true
         navigationSubject.accept(.onboarding)
+        analyticsManager.log(event: .setupOpen(fromPage: "recovery"))
     }
     
     func creatingOrRestoringWalletDidCancel() {
@@ -141,11 +143,6 @@ extension Root.ViewModel: OnboardingHandler {
     }
     
     @objc func onboardingDidComplete() {
-        // log
-        let fromPage = isRestoration ? "recovery": "create_wallet"
-        analyticsManager.log(event: .setupOpen(fromPage: fromPage))
-        
-        // navigate
         navigationSubject.accept(.onboardingDone(isRestoration: isRestoration))
     }
 }
