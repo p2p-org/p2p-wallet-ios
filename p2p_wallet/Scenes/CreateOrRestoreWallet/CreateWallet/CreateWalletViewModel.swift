@@ -72,7 +72,7 @@ class CreateWalletViewModel: ViewModelType {
     }
     
     @objc func navigateToCreatePhrases() {
-        analyticsManager.log(event: .signupOpen)
+        analyticsManager.log(event: .createWalletOpen)
         navigationSubject.onNext(.createPhrases)
     }
 }
