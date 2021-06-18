@@ -23,6 +23,11 @@ class EnableBiometryVC: BaseOnboardingVC {
         super.init()
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        onboardingViewModel.analyticsManager.log(event: .setupFaceidOpen)
+    }
+    
     override func setUp() {
         super.setUp()
         

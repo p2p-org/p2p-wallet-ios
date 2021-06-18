@@ -14,8 +14,10 @@ protocol ChangeFiatResponder {
 class SelectFiatVC: ProfileSingleSelectionVC<Fiat> {
     override var dataDidChange: Bool {selectedItem != Defaults.fiat}
     let responder: ChangeFiatResponder
-    init(responder: ChangeFiatResponder) {
+    let analyticsManager: AnalyticsManagerType
+    init(responder: ChangeFiatResponder, analyticsManager: AnalyticsManagerType) {
         self.responder = responder
+        self.analyticsManager = analyticsManager
         super.init()
         
         // init data
@@ -48,6 +50,7 @@ class SelectFiatVC: ProfileSingleSelectionVC<Fiat> {
     }
     
     private func changeFiatToSelectedItem() {
+        analyticsManager.log(event: .settingsСurrencySelected(сurrency: selectedItem.code))
         responder.changeFiat(to: selectedItem)
         UIApplication.shared.showDone(L10n.currencyChanged)
     }

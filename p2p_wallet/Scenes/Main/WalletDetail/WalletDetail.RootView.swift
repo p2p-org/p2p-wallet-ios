@@ -176,7 +176,7 @@ extension WalletDetail {
                 .distinctUntilChanged()
                 .subscribe(onNext: {[weak self] currentPage in
                     guard let currentPage = currentPage else {return}
-                    self?.viewModel.analyticsManager.log(event: .walletActivityScroll, params: ["pageNum": currentPage])
+                    self?.viewModel.analyticsManager.log(event: .tokenDetailsActivityScroll(pageNum: currentPage))
                 })
                 .disposed(by: disposeBag)
         }

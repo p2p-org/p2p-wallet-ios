@@ -98,7 +98,7 @@ class WDVCSectionHeaderView: SectionHeaderView {
     @objc private func buttonCopyToClipboardDidTouch() {
         UIApplication.shared.copyToClipboard(solPubkey, alert: false)
         
-        analyticsManager?.log(event: .walletSolAddressCopy)
+        analyticsManager?.log(event: .tokenDetailsAddressCopy)
         
         walletAddressLabel.text = L10n.addressCopied
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in

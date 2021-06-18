@@ -19,6 +19,11 @@ class EnableNotificationsVC: BaseOnboardingVC {
     }
     
     // MARK: - Methods
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        onboardingViewModel.analyticsManager.log(event: .setupAllowPushOpen)
+    }
+    
     override func setUp() {
         super.setUp()
         acceptButton.setTitle(L10n.allowNotifications, for: .normal)
@@ -47,15 +52,17 @@ class EnableNotificationsVC: BaseOnboardingVC {
     
     // MARK: - Helpers
     private func getNotificationSettings() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
+        UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
             print("Notification settings: \(settings)")
+            self?.onboardingViewModel.analyticsManager.log(event: .setupAllowPushSelected(push: settings.authorizationStatus == .authorized))
+            
             guard settings.authorizationStatus == .authorized else {
                 UIApplication.shared.openAppSettings()
                 return
             }
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
                 UIApplication.shared.registerForRemoteNotifications()
-                self.onboardingViewModel.markNotificationsAsSet()
+                self?.onboardingViewModel.markNotificationsAsSet()
             }
         }
     }
