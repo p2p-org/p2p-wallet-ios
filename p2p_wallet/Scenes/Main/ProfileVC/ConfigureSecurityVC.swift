@@ -23,13 +23,16 @@ class ConfigureSecurityVC: ProfileVCBase {
     
     let accountStorage: KeychainAccountStorage
     let authenticationHandler: AuthenticationHandler
+    let analyticsManager: AnalyticsManagerType
     
     init(
         accountStorage: KeychainAccountStorage,
-        authenticationHandler: AuthenticationHandler
+        authenticationHandler: AuthenticationHandler,
+        analyticsManager: AnalyticsManagerType
     ) {
         self.accountStorage = accountStorage
         self.authenticationHandler = authenticationHandler
+        self.analyticsManager = analyticsManager
     }
     
     override func setUp() {
@@ -84,6 +87,7 @@ class ConfigureSecurityVC: ProfileVCBase {
             DispatchQueue.main.async {
                 if success {
                     Defaults.isBiometryEnabled.toggle()
+                    self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
                 } else {
                     self?.showError(authenticationError ?? Error.unknown)
                     switcher.isOn.toggle()

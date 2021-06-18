@@ -60,20 +60,24 @@ extension ReceiveToken {
         
         // MARK: - Actions
         @objc func showSOLAddressInExplorer() {
+            analyticsManager.log(event: .receiveViewExplorerOpen)
             navigationSubject.accept(.showInExplorer(address: pubkey))
         }
         
         @objc func showTokenMintAddressInExplorer() {
             guard let mintAddress = tokenWallet?.token.address else {return}
+            analyticsManager.log(event: .receiveViewExplorerOpen)
             navigationSubject.accept(.showInExplorer(address: mintAddress))
         }
         
         @objc func showTokenPubkeyAddressInExplorer() {
             guard let pubkey = tokenWallet?.pubkey else {return}
+            analyticsManager.log(event: .receiveViewExplorerOpen)
             navigationSubject.accept(.showInExplorer(address: pubkey))
         }
         
         @objc func share() {
+            analyticsManager.log(event: .receiveAddressShare)
             navigationSubject.accept(.share(address: pubkey))
         }
         
@@ -83,9 +87,6 @@ extension ReceiveToken {
         
         func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
             UIApplication.shared.copyToClipboard(address, alert: false)
-            if logEvent == .walletSolAddressCopy {
-                analyticsManager.log(event: .receiveAddressCopy)
-            }
             analyticsManager.log(event: logEvent)
         }
     }

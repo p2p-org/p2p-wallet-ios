@@ -56,6 +56,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.input.derivationPath.onNext(.default)
+        analyticsManager.log(event: .recoveryDerivableAccountsOpen)
     }
     
     override func setUp() {
@@ -117,7 +118,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     
     func derivablePathsVC(_ vc: DerivablePathsVC, didSelectPath path: SolanaSDK.DerivablePath) {
         viewModel.input.derivationPath.onNext(path)
-        analyticsManager.log(event: .loginSelectDerivationPathClick, params: ["derivationPath": path.rawValue])
+        analyticsManager.log(event: .recoveryDerivableAccountsPathSelected(path: path.rawValue))
         vc.dismiss(animated: true, completion: nil)
     }
     

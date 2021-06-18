@@ -42,6 +42,10 @@ class CreatePassCodeVC: BaseCreatePassCodeVC {
     }
     
     override func pinViewControllerWillDismiss(afterPinEntryWasSuccessful pinViewController: THPinViewController) {
+        showConfirmPassCodeVC()
+    }
+    
+    func showConfirmPassCodeVC() {
         // show confirm
         confirmPasscodeVC = ConfirmPasscodeVC(currentPasscode: passcode!)
         confirmPasscodeVC!.completion = completion
