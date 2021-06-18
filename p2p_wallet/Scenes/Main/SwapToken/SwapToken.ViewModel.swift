@@ -175,7 +175,7 @@ extension SwapToken {
             // slippage
             input.slippage
                 .do(onNext: {[weak self] slippage in
-                    self?.analyticsManager.log(event: .swapSlippageDoneClick, params: ["slippage": slippage])
+                    self?.analyticsManager.log(event: .swapSlippageKeydown(slippage: slippage))
                 })
                 .bind(to: slippageSubject)
                 .disposed(by: disposeBag)
@@ -349,7 +349,7 @@ extension SwapToken {
             let amount = availableAmountSubject.value
             
             if let amount = amount {
-                analyticsManager.log(event: .swapAvailableClick, params: ["sum": amount])
+                analyticsManager.log(event: .swapAvailableClick(sum: amount))
             }
             
             input.amount.accept(amount?.toString(maximumFractionDigits: 9, groupingSeparator: nil))
@@ -503,12 +503,7 @@ extension SwapToken {
             let estimatedAmount = estimatedAmountSubject.value ?? 0
             
             // log
-            analyticsManager.log(event: .swapSwapClick, params: [
-                "tokenTickerA": sourceWallet.token.symbol,
-                "tokenTickerB": destinationWallet.token.symbol,
-                "sumA": inputAmount,
-                "sumB": estimatedAmount
-            ])
+            analyticsManager.log(event: .swapSwapClick(tokenA: sourceWallet.token.symbol, tokenB: destinationWallet.token.symbol, sumA: inputAmount, sumB: estimatedAmount))
             
             // show processing scene
             navigationSubject.accept(
