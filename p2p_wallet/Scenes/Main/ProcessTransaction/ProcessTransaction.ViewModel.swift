@@ -102,19 +102,21 @@ extension ProcessTransaction {
         @objc func tryAgain() {
             // log
             var event: AnalyticsEvent?
-            switch transactionType {
-            case .send:
-                event = .sendTryAgainClick
-            case .swap:
-                event = .swapTryAgainClick
-            case .closeAccount:
-                break
+            
+            if let error = transactionStatusSubject.value.getError()?.readableDescription
+            {
+                switch transactionType {
+                case .send:
+                    event = .sendTryAgainClick(error: error)
+                case .swap:
+                    event = .swapTryAgainClick(error: error)
+                case .closeAccount:
+                    break
+                }
             }
             
-            if let event = event,
-               let error = transactionStatusSubject.value.getError()?.readableDescription
-            {
-                analyticsManager.log(event: event, params: ["error": error])
+            if let event = event {
+                analyticsManager.log(event: event)
             }
             
             // execute
@@ -125,12 +127,12 @@ extension ProcessTransaction {
             guard let id = transactionIdSubject.value else {return}
             
             // log
-            let transactionConfirmed = (transactionStatusSubject.value == .confirmed)
+            let transactionStatus = transactionStatusSubject.value.rawValue
             switch transactionType {
             case .send:
-                analyticsManager.log(event: .sendExplorerClick, params: ["transactionConfirmed": transactionConfirmed])
+                analyticsManager.log(event: .sendExplorerClick(txStatus: transactionStatus))
             case .swap:
-                analyticsManager.log(event: .swapExplorerClick, params: ["transactionConfirmed": transactionConfirmed])
+                analyticsManager.log(event: .swapExplorerClick(txStatus: transactionStatus))
             case .closeAccount:
                 break
             }
@@ -141,14 +143,12 @@ extension ProcessTransaction {
         
         @objc func done() {
             // log
-            let transactionConfirmed = (transactionStatusSubject.value == .confirmed)
+            let transactionStatus = transactionStatusSubject.value.rawValue
             switch transactionType {
             case .send:
-                analyticsManager.log(event: .sendCloseClick, params: ["transactionConfirmed": transactionConfirmed])
-                analyticsManager.log(event: .sendDoneClick, params: ["transactionConfirmed": transactionConfirmed])
+                analyticsManager.log(event: .sendDoneClick(txStatus: transactionStatus))
             case .swap:
-                analyticsManager.log(event: .swapCloseClick, params: ["transactionConfirmed": transactionConfirmed])
-                analyticsManager.log(event: .swapDoneClick, params: ["transactionConfirmed": transactionConfirmed])
+                analyticsManager.log(event: .swapDoneClick(txStatus: transactionStatus))
             case .closeAccount:
                 break
             }
@@ -160,19 +160,21 @@ extension ProcessTransaction {
         @objc func cancel() {
             // log
             var event: AnalyticsEvent?
-            switch transactionType {
-            case .send:
-                event = .sendCancelClick
-            case .swap:
-                event = .swapCancelClick
-            case .closeAccount:
-                break
+            
+            if let error = transactionStatusSubject.value.getError()?.readableDescription
+            {
+                switch transactionType {
+                case .send:
+                    event = .sendCancelClick(error: error)
+                case .swap:
+                    event = .swapCancelClick(error: error)
+                case .closeAccount:
+                    break
+                }
             }
             
-            if let event = event,
-               let error = transactionStatusSubject.value.getError()?.readableDescription
-            {
-                analyticsManager.log(event: event, params: ["error": error])
+            if let event = event {
+                analyticsManager.log(event: event)
             }
             
             // cancel

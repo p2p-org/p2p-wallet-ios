@@ -49,7 +49,7 @@ class HomeViewController: BaseVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        analyticsManager.log(event: .walletsOpen)
+        analyticsManager.log(event: .mainScreenWalletsOpen)
     }
     
     override func setUp() {
@@ -71,7 +71,8 @@ class HomeViewController: BaseVC {
         case .receiveToken:
             if let vc = self.scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: nil)
             {
-                analyticsManager.log(event: .receiveOpen, params: ["fromPage": "wallets"])
+                analyticsManager.log(event: .mainScreenReceiveOpen)
+                analyticsManager.log(event: .receiveOpen(fromPage: "main_screen"))
                 self.present(vc, animated: true, completion: nil)
             }
         case .scanQrWithSwiper(let progress, let state):
@@ -79,38 +80,46 @@ class HomeViewController: BaseVC {
                 gestureState: state,
                 progress: progress,
                 interactor: interactor)
-            {
-                let vc = QrCodeScannerVC()
+            { [weak self] in
+                guard let `self` = self else {return}
+                self.analyticsManager.log(event: .mainScreenQrOpen)
+                self.analyticsManager.log(event: .scanQrOpen(fromPage: "main_screen"))
+                let vc = QrCodeScannerVC(analyticsManager: self.analyticsManager)
                 vc.callback = qrCodeScannerHandler(code:)
                 vc.transitioningDelegate = self
                 vc.modalPresentationStyle = .custom
                 self.present(vc, animated: true, completion: nil)
             }
         case .scanQrCodeWithTap:
-            let vc = QrCodeScannerVC()
+            analyticsManager.log(event: .mainScreenQrOpen)
+            analyticsManager.log(event: .scanQrOpen(fromPage: "main_screen"))
+            let vc = QrCodeScannerVC(analyticsManager: analyticsManager)
             vc.callback = qrCodeScannerHandler(code:)
             vc.modalPresentationStyle = .fullScreen
             self.present(vc, animated: true, completion: nil)
         case .sendToken(let address):
             let vc = self.scenesFactory
                 .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
-            analyticsManager.log(event: .sendOpen, params: ["fromPage": "wallets"])
+            analyticsManager.log(event: .mainScreenSendOpen)
+            analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
             self.present(vc, animated: true, completion: nil)
         case .swapToken:
             let vc = self.scenesFactory.makeSwapTokenViewController(fromWallet: nil)
-            analyticsManager.log(event: .swapOpen, params: ["fromPage": "wallets"])
+            analyticsManager.log(event: .mainScreenSwapOpen)
+            analyticsManager.log(event: .swapOpen(fromPage: "main_screen"))
             self.present(vc, animated: true, completion: nil)
         case .allProducts:
             let vc = self.scenesFactory.makeMyProductsViewController()
             self.present(vc, animated: true, completion: nil)
         case .profile:
-            analyticsManager.log(event: .settingsOpen, params: ["fromPage": "wallets"])
+            analyticsManager.log(event: .mainScreenSettingsOpen)
+            analyticsManager.log(event: .settingsOpen(fromPage: "main_screen"))
             let profileVC = self.scenesFactory.makeProfileVC()
             self.show(profileVC, sender: nil)
         case .walletDetail(let wallet):
             guard let pubkey = wallet.pubkey else {return}
             
-            analyticsManager.log(event: .walletOpen, params: ["tokenTicker": wallet.token.symbol])
+            analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: wallet.token.symbol))
             
             let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey, symbol: wallet.token.symbol)
             present(vc, animated: true, completion: nil)

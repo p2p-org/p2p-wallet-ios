@@ -23,6 +23,7 @@ extension Root {
         
         // MARK: - Dependencies
         private let accountStorage: KeychainAccountStorage
+        private let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -37,8 +38,9 @@ extension Root {
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
-        init(accountStorage: KeychainAccountStorage) {
+        init(accountStorage: KeychainAccountStorage, analyticsManager: AnalyticsManagerType) {
             self.accountStorage = accountStorage
+            self.analyticsManager = analyticsManager
             
             self.input = Input()
             self.output = Output(
@@ -110,6 +112,7 @@ extension Root {
         
         func languageDidChange(to language: LocalizedLanguage) {
             UIApplication.changeLanguage(to: language)
+            analyticsManager.log(event: .settingsLanguageSelected(language: language.code))
             
             showAuthenticationOnMainOnAppear = false
             reload()
@@ -121,11 +124,13 @@ extension Root.ViewModel: CreateOrRestoreWalletHandler {
     func creatingWalletDidComplete() {
         self.isRestoration = false
         navigationSubject.accept(.onboarding)
+        analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
     }
     
     func restoringWalletDidComplete() {
         self.isRestoration = true
         navigationSubject.accept(.onboarding)
+        analyticsManager.log(event: .setupOpen(fromPage: "recovery"))
     }
     
     func creatingOrRestoringWalletDidCancel() {

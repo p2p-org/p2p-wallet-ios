@@ -15,9 +15,10 @@ class OnboardingContainer {
     
     init(
         accountStorage: KeychainAccountStorage,
-        handler: OnboardingHandler
+        handler: OnboardingHandler,
+        analyticsManager: AnalyticsManagerType
     ) {
-        self.viewModel = OnboardingViewModel(accountStorage: accountStorage, handler: handler)
+        self.viewModel = OnboardingViewModel(accountStorage: accountStorage, handler: handler, analyticsManager: analyticsManager)
         self.accountStorage = accountStorage
         self.handler = handler
     }

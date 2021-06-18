@@ -72,9 +72,10 @@ class OnboardingViewController: WLIntroVC {
             let pincodeVC = scenesFactory.makeOnboardingCreatePassCodeVC()
             pincodeVC.disableDismissAfterCompletion = true
 
-            pincodeVC.completion = {_ in
-                guard let pincode = pincodeVC.passcode else {return}
-                self.viewModel.savePincode(pincode)
+            pincodeVC.completion = { [weak self, weak pincodeVC] _ in
+                guard let pincode = pincodeVC?.passcode else {return}
+                self?.viewModel.savePincode(pincode)
+                self?.viewModel.analyticsManager.log(event: .setupPinKeydown2)
             }
             childNavigationController.viewControllers = [pincodeVC]
         case .setUpBiometryAuthentication:

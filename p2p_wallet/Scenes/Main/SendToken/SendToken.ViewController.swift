@@ -61,7 +61,9 @@ extension SendToken {
             case .chooseWallet:
                 let vc = self.scenesFactory.makeChooseWalletViewController(customFilter: {$0.amount > 0}, showOtherWallets: false)
                 vc.completion = { [weak self, weak vc] wallet in
-                    self?.viewModel.analyticsManager.log(event: .sendSelectTokenClick, params: ["tokenTicker": wallet.token.symbol])
+                    self?.viewModel.analyticsManager.log(
+                        event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
+                    )
                     self?.viewModel.input.walletPubkey.onNext(wallet.pubkey)
                     vc?.back()
                 }
@@ -69,7 +71,7 @@ extension SendToken {
             case .chooseAddress:
                 break
             case .scanQrCode:
-                let vc = QrCodeScannerVC()
+                let vc = QrCodeScannerVC(analyticsManager: viewModel.analyticsManager)
                 vc.callback = { code in
                     if NSRegularExpression.publicKey.matches(code) {
                         self.viewModel.input.address.onNext(code)

@@ -55,5 +55,16 @@ struct ProcessTransaction {
             }
             return error
         }
+        
+        var rawValue: String {
+            switch self {
+            case .processing:
+                return "processing"
+            case .confirmed:
+                return "confirmed"
+            case .error:
+                return "error"
+            }
+        }
     }
 }

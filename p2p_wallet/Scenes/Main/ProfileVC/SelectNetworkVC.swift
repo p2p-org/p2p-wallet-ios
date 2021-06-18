@@ -45,9 +45,9 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
     
     @objc func saveChange() {
         showAlert(title: L10n.switchNetwork, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem.url + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { [weak self] (index) in
-            if index != 0 {return}
+            guard index == 0 else {return}
             if let url = self?.selectedItem.url {
-                self?.analyticsManger.log(event: .settingsNetworkClick, params: ["endpoint": url])
+                self?.analyticsManger.log(event: .settingsNetworkSelected(network: url))
             }
             
             self?.changeNetworkToSelectedNetwork()

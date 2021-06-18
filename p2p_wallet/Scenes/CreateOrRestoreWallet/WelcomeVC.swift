@@ -24,6 +24,7 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
             moveToPage(viewControllers.count - 1)
             pageControl.isHidden = true
         }
+        createOrRestoreWalletViewModel.analyticsManager.log(event: .firstInOpen)
     }
     
     override func setUp() {

@@ -164,7 +164,7 @@ class MainContainer {
     }
     
     func makeBackupVC() -> BackupVC {
-        BackupVC(accountStorage: accountStorage, authenticationHandler: mainViewModel, scenesFactory: self)
+        BackupVC(accountStorage: accountStorage, authenticationHandler: mainViewModel, scenesFactory: self, analyticsManager: analyticsManager)
     }
     
     func makeBackupManuallyVC() -> BackupManuallyVC {
@@ -172,7 +172,7 @@ class MainContainer {
     }
     
     func makeSelectFiatVC() -> SelectFiatVC {
-        SelectFiatVC(responder: self)
+        SelectFiatVC(responder: self, analyticsManager: analyticsManager)
     }
     
     func makeSelectNetworkVC() -> SelectNetworkVC {
@@ -180,7 +180,7 @@ class MainContainer {
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {
-        ConfigureSecurityVC(accountStorage: accountStorage, authenticationHandler: mainViewModel)
+        ConfigureSecurityVC(accountStorage: accountStorage, authenticationHandler: mainViewModel, analyticsManager: analyticsManager)
     }
     
     func makeSelectLanguageVC() -> SelectLanguageVC {
@@ -188,7 +188,7 @@ class MainContainer {
     }
     
     func makeSelectAppearanceVC() -> SelectAppearanceVC {
-        SelectAppearanceVC()
+        SelectAppearanceVC(analyticsManager: analyticsManager)
     }
     
     // MARK: - Token edit

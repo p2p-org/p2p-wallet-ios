@@ -31,6 +31,7 @@ class CreateWalletViewController: WLIndicatorModalVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.kickOff()
+        viewModel.analyticsManager.log(event: .createWalletOpen)
     }
     
     override func setUp() {
