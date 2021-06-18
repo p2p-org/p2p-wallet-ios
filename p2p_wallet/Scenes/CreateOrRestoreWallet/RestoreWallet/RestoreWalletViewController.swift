@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol RestoreWalletScenesFactory {
-    func makeEnterPhrasesVC() -> WLEnterPhrasesVC
+    func makeEnterPhrasesVC() -> RecoveryEnterSeedsViewController
     func makeDerivableAccountsVC(phrases: [String]) -> DerivableAccountsVC
 }
 

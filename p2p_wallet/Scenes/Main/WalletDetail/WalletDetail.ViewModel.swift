@@ -96,6 +96,10 @@ extension WalletDetail {
             walletsRepository
                 .dataObservable
                 .map {$0?.first(where: {$0.pubkey == self.pubkey})}
+                .do(onNext: {[weak self] wallet in
+                    guard let ticker = wallet?.token.symbol else {return}
+                    self?.analyticsManager.log(event: .tokenDetailsOpen(tokenTicker: ticker))
+                })
                 .bind(to: walletSubject)
                 .disposed(by: disposeBag)
         }
@@ -108,27 +112,28 @@ extension WalletDetail {
         
         @objc func sendTokens() {
             guard let wallet = walletSubject.value else {return}
-            analyticsManager.log(event: .walletSendClick)
-            analyticsManager.log(event: .sendOpen, params: ["fromPage": "wallet"])
+            analyticsManager.log(event: .tokenDetailsSendClick)
+            analyticsManager.log(event: .sendOpen(fromPage: "token_details"))
             navigationSubject.accept(.send(wallet: wallet))
         }
         
         @objc func receiveTokens() {
             guard let pubkey = walletSubject.value?.pubkey else {return}
-            analyticsManager.log(event: .walletQrClick)
-            analyticsManager.log(event: .receiveOpen, params: ["fromPage": "wallet"])
+            analyticsManager.log(event: .tokenDetailQrClick)
+            analyticsManager.log(event: .tokenDetailsReceiveClick)
+            analyticsManager.log(event: .receiveOpen(fromPage: "token_details"))
             navigationSubject.accept(.receive(walletPubkey: pubkey))
         }
         
         @objc func swapTokens() {
             guard let wallet = walletSubject.value else {return}
-            analyticsManager.log(event: .walletSwapClick)
-            analyticsManager.log(event: .swapOpen, params: ["fromPage": "wallet"])
+            analyticsManager.log(event: .tokenDetailsSwapClick)
+            analyticsManager.log(event: .swapOpen(fromPage: "token_details"))
             navigationSubject.accept(.swap(fromWallet: wallet))
         }
         
         func showTransaction(_ transaction: SolanaSDK.AnyTransaction) {
-            analyticsManager.log(event: .walletTransactionDetailsOpen)
+            analyticsManager.log(event: .tokenDetailsDetailsOpen)
             navigationSubject.accept(.transactionInfo(transaction))
         }
         

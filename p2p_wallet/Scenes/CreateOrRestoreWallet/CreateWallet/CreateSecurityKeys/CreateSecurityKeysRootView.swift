@@ -24,8 +24,8 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
         .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.createPhrases))
     lazy var phrasesListViews: WLPhrasesListView = {
         let listView = WLPhrasesListView(forAutoLayout: ())
-        listView.copyToClipboardAction = CocoaAction {
-            self.viewModel.copyToClipboard()
+        listView.copyToClipboardAction = CocoaAction { [weak self] in
+            self?.viewModel.copyToClipboard()
             return .just(())
         }
         return listView
