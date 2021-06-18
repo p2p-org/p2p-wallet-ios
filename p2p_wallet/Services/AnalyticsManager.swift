@@ -10,7 +10,6 @@ import Amplitude
 
 protocol AnalyticsManagerType {
     func log(event: AnalyticsEvent)
-    func log(event: AnalyticsEvent, params: [AnyHashable: Any])
 }
 
 struct AnalyticsManager: AnalyticsManagerType {
@@ -25,10 +24,11 @@ struct AnalyticsManager: AnalyticsManagerType {
     
     func log(event: AnalyticsEvent) {
         // Amplitude
-        Amplitude.instance().logEvent(event.rawValue)
-    }
-    
-    func log(event: AnalyticsEvent, params: [AnyHashable: Any]) {
-        Amplitude.instance().logEvent(event.rawValue, withEventProperties: params)
+        if let params = event.params {
+            Amplitude.instance().logEvent(event.eventName, withEventProperties: params)
+        } else {
+            Amplitude.instance().logEvent(event.eventName)
+        }
+        
     }
 }
