@@ -39,7 +39,6 @@ extension ReceiveToken {
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
-            backgroundColor = .vcBackground
             layout()
             bind()
         }
@@ -77,7 +76,7 @@ extension ReceiveToken {
                 stackView.addArrangedSubview(showHideDetailButton.padding(.init(x: 20, y: 0)))
             } else {
                 stackView.addArrangedSubview(
-                    UILabel(text: L10n.viewInExplorer, textSize: 17, weight: .medium, textColor: .a3a5ba, textAlignment: .center)
+                    UILabel(text: L10n.viewInExplorer, textSize: 17, weight: .medium, textColor: .textSecondary, textAlignment: .center)
                         .onTap(viewModel, action: #selector(ViewModel.showSOLAddressInExplorer))
                         .centeredHorizontallyView
                         .padding(.init(x: 20, y: 9))
