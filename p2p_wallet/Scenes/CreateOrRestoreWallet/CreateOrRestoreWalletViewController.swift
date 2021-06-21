@@ -14,6 +14,9 @@ protocol CreateOrRestoreWalletScenesFactory {
 }
 
 class CreateOrRestoreWalletViewController: BaseVC {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
+    }
     
     // MARK: - Properties
     let viewModel: CreateOrRestoreWalletViewModel
@@ -33,8 +36,8 @@ class CreateOrRestoreWalletViewController: BaseVC {
     // MARK: - Methods
     override func bind() {
         super.bind()
-        viewModel.navigationSubject
-            .subscribe(onNext: {[unowned self] in self.navigate(to: $0)})
+        viewModel.output.navigation
+            .drive(onNext: {[weak self] in self?.navigate(to: $0)})
             .disposed(by: disposeBag)
     }
     
@@ -43,7 +46,8 @@ class CreateOrRestoreWalletViewController: BaseVC {
         switch scene {
         case .welcome:
             removeAllChilds()
-            add(child: WelcomeVC(createOrRestoreWalletViewModel: viewModel))
+//            add(child: WelcomeVC(createOrRestoreWalletViewModel: viewModel))
+            add(child: WelcomeVC.SecondVC(createOrRestoreWalletViewModel: viewModel))
         case .createWallet:
             let vc = scenesFactory.makeCreateWalletViewController()
             vc.isModalInPresentation = true

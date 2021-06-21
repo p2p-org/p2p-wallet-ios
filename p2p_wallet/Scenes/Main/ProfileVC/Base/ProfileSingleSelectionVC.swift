@@ -65,7 +65,7 @@ extension ProfileSingleSelectionVC {
         
         override func commonInit() {
             super.commonInit()
-            backgroundColor = .textWhite
+            backgroundColor = .contentBackground
             let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
                 radioButton, label
             ])

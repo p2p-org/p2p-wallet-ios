@@ -12,7 +12,8 @@ import Action
 
 enum HomeNavigatableScene {
     case receiveToken
-    case scanQr
+    case scanQrWithSwiper(progress: CGFloat, state: UIGestureRecognizer.State)
+    case scanQrCodeWithTap
     case sendToken(address: String? = nil)
     case swapToken
     case addToken
@@ -26,8 +27,7 @@ class HomeViewModel {
     // MARK: - Constants
     
     // MARK: - Properties
-    let walletsVM: WalletsVM
-    let homeCollectionViewModel: HomeCollectionViewModel
+    let walletsRepository: WalletsRepository
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<HomeNavigatableScene>()
@@ -36,9 +36,8 @@ class HomeViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(walletsVM: WalletsVM) {
-        self.walletsVM = walletsVM
-        self.homeCollectionViewModel = HomeCollectionViewModel(walletsVM: walletsVM)
+    init(walletsRepository: WalletsRepository) {
+        self.walletsRepository = walletsRepository
     }
     
     // MARK: - Actions

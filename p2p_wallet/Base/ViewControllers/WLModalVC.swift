@@ -8,7 +8,7 @@
 import Foundation
 
 class WLIndicatorModalVC: BaseVC {
-    lazy var containerView = UIView(backgroundColor: .background)
+    lazy var containerView = UIView(backgroundColor: .grayMain)
     var swipeGesture: UIGestureRecognizer?
     
     // MARK: - Initializers
@@ -21,7 +21,7 @@ class WLIndicatorModalVC: BaseVC {
     override func setUp() {
         super.setUp()
         view.backgroundColor = .clear
-        let topGestureView = UIView(width: 71, height: 5, backgroundColor: .vcBackground, cornerRadius: 2.5)
+        let topGestureView = UIView(width: 71, height: 5, backgroundColor: .grayMain, cornerRadius: 2.5)
         view.addSubview(topGestureView)
         topGestureView.autoPinEdge(toSuperviewSafeArea: .top)
         topGestureView.autoAlignAxis(toSuperviewAxis: .vertical)
@@ -58,5 +58,18 @@ class WLModalVC: WLIndicatorModalVC {
         super.setUp()
         containerView.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: padding)
+    }
+}
+
+class WLModalWrapperVC: WLIndicatorModalVC {
+    var vc: UIViewController
+    init(wrapped: UIViewController) {
+        vc = wrapped
+        super.init()
+    }
+
+    override func setUp() {
+        super.setUp()
+        add(child: vc, to: containerView)
     }
 }

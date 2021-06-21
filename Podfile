@@ -14,6 +14,7 @@ target 'p2p_wallet' do
   pod 'BEPureLayout', :git => 'https://github.com/bigearsenal/BEPureLayout.git'
   pod 'LazySubject', :git => 'https://github.com/bigearsenal/LazySubject.git'
   pod 'THPinViewController', :git => 'https://github.com/p2p-org/THPinViewController.git'
+  pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git'
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
   pod 'Action'
@@ -27,6 +28,8 @@ target 'p2p_wallet' do
   pod 'Charts'
   pod 'RxBiBinding'
   pod "RxAppState"
+  pod 'JazziconSwift'
+  pod 'Amplitude', '~> 8.3.0'
   
   # Firebase
   pod 'Firebase/Analytics'

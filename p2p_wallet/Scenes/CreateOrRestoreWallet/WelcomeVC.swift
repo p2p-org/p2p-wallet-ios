@@ -24,6 +24,7 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
             moveToPage(viewControllers.count - 1)
             pageControl.isHidden = true
         }
+        createOrRestoreWalletViewModel.analyticsManager.log(event: .firstInOpen)
     }
     
     override func setUp() {
@@ -60,9 +61,9 @@ class WelcomeVC: BEPagesVC, BEPagesVCDelegate {
 extension WelcomeVC {
     class SlideVC: WLIntroVC {
         lazy var createWalletButton = WLButton.stepButton(type: .blue, label: L10n.createNewWallet.uppercaseFirst)
-            .onTap(self, action: #selector(buttonCreateWalletDidTouch))
+            .onTap(createOrRestoreWalletViewModel, action: #selector(CreateOrRestoreWalletViewModel.navigateToCreateWallet))
         lazy var restoreWalletButton = WLButton.stepButton(type: .sub, label: L10n.iVeAlreadyHadAWallet.uppercaseFirst)
-            .onTap(self, action: #selector(buttonRestoreWalletDidTouch))
+            .onTap(createOrRestoreWalletViewModel, action: #selector(CreateOrRestoreWalletViewModel.navigateToRestoreWallet))
         
         let createOrRestoreWalletViewModel: CreateOrRestoreWalletViewModel
         init(createOrRestoreWalletViewModel: CreateOrRestoreWalletViewModel)
@@ -75,15 +76,6 @@ extension WelcomeVC {
             
             buttonsStackView.addArrangedSubview(createWalletButton)
             buttonsStackView.addArrangedSubview(restoreWalletButton)
-        }
-        
-        // MARK: - Actions
-        @objc func buttonCreateWalletDidTouch() {
-            createOrRestoreWalletViewModel.navigationSubject.accept(.createWallet)
-        }
-        
-        @objc func buttonRestoreWalletDidTouch() {
-            createOrRestoreWalletViewModel.navigationSubject.accept(.restoreWallet)
         }
     }
     
@@ -102,7 +94,7 @@ extension WelcomeVC {
     
     class SecondVC: SlideVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .embeded
+            .hidden
         }
         
         override func setUp() {

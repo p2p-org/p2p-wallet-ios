@@ -11,17 +11,20 @@ class RestoreWalletContainer {
     // from parent
     let handler: CreateOrRestoreWalletHandler
     let accountStorage: KeychainAccountStorage
+    let analyticsManager: AnalyticsManagerType
     
     // longlived dependency
     let viewModel: RestoreWalletViewModel
     
     init(
         accountStorage: KeychainAccountStorage,
-        handler: CreateOrRestoreWalletHandler
+        handler: CreateOrRestoreWalletHandler,
+        analyticsManager: AnalyticsManagerType
     ) {
-        self.viewModel = RestoreWalletViewModel(accountStorage: accountStorage, handler: handler)
+        self.viewModel = RestoreWalletViewModel(accountStorage: accountStorage, handler: handler, analyticsManager: analyticsManager)
         self.accountStorage = accountStorage
         self.handler = handler
+        self.analyticsManager = analyticsManager
     }
     
     func makeRestoreWalletViewController() -> RestoreWalletViewController
@@ -29,12 +32,17 @@ class RestoreWalletContainer {
         RestoreWalletViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeEnterPhrasesVC() -> EnterPhrasesVC {
-        EnterPhrasesVC(restoreWalletViewModel: viewModel)
+    func makeEnterPhrasesVC() -> RecoveryEnterSeedsViewController {
+        RecoveryEnterSeedsViewController(handler: viewModel, analyticsManager: analyticsManager)
     }
     
-    func makeWelcomeBackVC(phrases: [String]) -> WelcomeBackVC {
-        WelcomeBackVC(phrases: phrases, accountStorage: accountStorage, restoreWalletViewModel: viewModel)
+    func makeDerivableAccountsVC(phrases: [String]) -> DerivableAccountsVC {
+        let viewModel = DerivableAccountsViewModel(
+            phrases: phrases,
+            pricesFetcher: CryptoComparePricesFetcher(),
+            handler: viewModel
+        )
+        return DerivableAccountsVC(viewModel: viewModel, analyticsManager: analyticsManager)
     }
 }
 

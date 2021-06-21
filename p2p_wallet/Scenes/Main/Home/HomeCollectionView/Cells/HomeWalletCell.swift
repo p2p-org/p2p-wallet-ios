@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import BECollectionView
 
 class HomeWalletCell: EditableWalletCell {
     lazy var addressLabel = UILabel(text: "<public key>", textSize: 13, textColor: .textSecondary, numberOfLines: 1)
@@ -17,7 +18,8 @@ class HomeWalletCell: EditableWalletCell {
     
     override func commonInit() {
         super.commonInit()
-        equityValueLabel.font = .boldSystemFont(ofSize: 15)
+        coinNameLabel.font = .systemFont(ofSize: 17, weight: .medium)
+        equityValueLabel.font = .systemFont(ofSize: 17, weight: .medium)
         equityValueLabel.setContentHuggingPriority(.required, for: .horizontal)
         tokenCountLabel.setContentHuggingPriority(.required, for: .horizontal)
         let vStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
@@ -40,15 +42,15 @@ class HomeWalletCell: EditableWalletCell {
     override func setUp(with item: Wallet) {
         super.setUp(with: item)
         if item.pubkey != nil {
-            addressLabel.text = item.pubkeyShort()
+            addressLabel.text = item.shortPubkey()
         } else {
             addressLabel.text = nil
         }
         
-        if item.amountInUSD == 0 {
+        if item.amountInCurrentFiat == 0 {
             indicatorColorView.backgroundColor = .clear
         } else {
-            indicatorColorView.backgroundColor = item.indicatorColor
+            indicatorColorView.backgroundColor = item.token.indicatorColor
         }
     }
     
@@ -56,5 +58,12 @@ class HomeWalletCell: EditableWalletCell {
         let stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing)
         stackView.addArrangedSubviews(arrangedSubviews)
         return stackView
+    }
+}
+
+extension HomeWalletCell: BECollectionViewCell {
+    func setUp(with item: AnyHashable?) {
+        guard let wallet = item as? Wallet else {return}
+        setUp(with: wallet)
     }
 }

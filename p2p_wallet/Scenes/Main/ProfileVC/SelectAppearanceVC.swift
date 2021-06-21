@@ -12,10 +12,10 @@ class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
     var interfaceStyle: UIUserInterfaceStyle { AppDelegate.shared.window?.overrideUserInterfaceStyle ?? .unspecified }
     override var dataDidChange: Bool {selectedItem != interfaceStyle}
     
-    let rootViewModel: RootViewModel
+    let analyticsManager: AnalyticsManagerType
     
-    init(rootViewModel: RootViewModel) {
-        self.rootViewModel = rootViewModel
+    init(analyticsManager: AnalyticsManagerType) {
+        self.analyticsManager = analyticsManager
         super.init()
         data = [
             .dark: interfaceStyle == .dark,
@@ -37,6 +37,7 @@ class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
     
     override func rowDidSelect(_ gesture: UIGestureRecognizer) {
         super.rowDidSelect(gesture)
+        analyticsManager.log(event: .settingsAppearanceSelected(appearance: selectedItem.name))
         AppDelegate.shared.changeThemeTo(selectedItem)
     }
 }

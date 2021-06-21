@@ -7,6 +7,7 @@
 
 import Foundation
 import SDWebImage
+import CoreImage.CIFilterBuiltins
 
 extension UIImageView {
     static let qrCodeCache = NSCache<NSString, UIImage>()
@@ -19,34 +20,6 @@ extension UIImageView {
         sd_setImage(with: url) { [weak self] (image, _, _, _) in
             if image == nil {
                 self?.image = UIColor.gray.image(self?.frame.size ?? .zero)
-            }
-        }
-    }
-    
-    func setQrCode(string: String?) {
-        guard let string = string else {return}
-        
-        if let imageFromCache = UIImageView.qrCodeCache.object(forKey: string as NSString) {
-            image = imageFromCache
-            return
-        }
-        
-        let data = string.data(using: String.Encoding.ascii)
-
-        DispatchQueue.global().async {
-            var image: UIImage?
-            if let filter = CIFilter(name: "CIQRCodeGenerator") {
-                filter.setValue(data, forKey: "inputMessage")
-                let transform = CGAffineTransform(scaleX: 3, y: 3)
-
-                if let output = filter.outputImage?.transformed(by: transform) {
-                    let qrCode = UIImage(ciImage: output)
-                    image = qrCode
-                    UIImageView.qrCodeCache.setObject(qrCode, forKey: string as NSString)
-                }
-            }
-            DispatchQueue.main.async {
-                self.image = image
             }
         }
     }

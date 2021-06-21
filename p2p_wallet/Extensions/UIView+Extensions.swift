@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Action
 
 extension UIView {
     func fittingHeight(targetWidth: CGFloat) -> CGFloat {
@@ -25,12 +26,12 @@ extension UIView {
         ])
     }
     
-    func showIndetermineHudWithMessage(_ message: String?) {
+    func showIndetermineHud() {
         // Hide all previous hud
         hideHud()
         
         // show new hud
-        showLoadingIndicatorView(message: message)
+        showLoadingIndicatorView()
     }
     
     func hideHud() {
@@ -41,7 +42,7 @@ extension UIView {
         subviews.filter {$0 is ErrorView}.forEach {$0.removeFromSuperview()}
     }
     
-    func showErrorView(title: String? = nil, description: String? = nil) {
+    func showErrorView(title: String? = nil, description: String? = nil, retryAction: CocoaAction? = nil) {
         removeErrorView()
         let errorView = ErrorView(backgroundColor: .textWhite)
         if let title = title {
@@ -49,6 +50,9 @@ extension UIView {
         }
         if let description = description {
             errorView.descriptionLabel.text = description
+        }
+        if let action = retryAction {
+            errorView.buttonAction = action
         }
         let spacer1 = UIView.spacer
         let spacer2 = UIView.spacer
@@ -59,8 +63,20 @@ extension UIView {
         errorView.autoPinEdgesToSuperviewEdges()
     }
     
-    func showErrorView(error: Error) {
-        let description = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-        showErrorView(title: L10n.error, description: description)
+    func showErrorView(error: Error?, retryAction: CocoaAction? = nil) {
+        showErrorView(title: L10n.error, description: error?.readableDescription ?? L10n.somethingWentWrongPleaseTryAgainLater, retryAction: retryAction)
+    }
+    
+    // MARK: - View builders
+    static func squareRoundedCornerIcon(
+        backgroundColor: UIColor = .grayPanel,
+        imageSize: CGFloat = 24,
+        image: UIImage?,
+        tintColor: UIColor = .iconSecondary,
+        padding: UIEdgeInsets = .init(all: 12.25),
+        cornerRadius: CGFloat = 12
+    ) -> UIView {
+        UIImageView(width: imageSize, height: imageSize, image: image, tintColor: tintColor)
+            .padding(padding, backgroundColor: backgroundColor, cornerRadius: 12)
     }
 }

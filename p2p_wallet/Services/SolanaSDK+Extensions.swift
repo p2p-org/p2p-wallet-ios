@@ -8,13 +8,6 @@
 import Foundation
 import RxSwift
 
-extension String: ListItemType {
-    static func placeholder(at index: Int) -> String {
-        "\(index)"
-    }
-    var id: String {self}
-}
-
 extension SolanaSDK.Error: LocalizedError {
     public var errorDescription: String? {
         switch self {

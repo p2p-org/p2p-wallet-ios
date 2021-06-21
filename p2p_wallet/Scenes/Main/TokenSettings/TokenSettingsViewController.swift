@@ -8,21 +8,27 @@
 import Foundation
 import UIKit
 import Action
+import RxSwift
 
-@objc protocol TokenSettingsViewControllerDelegate: class {
+@objc protocol TokenSettingsViewControllerDelegate: AnyObject {
     @objc optional func tokenSettingsViewControllerDidCloseToken(_ vc: TokenSettingsViewController)
+}
+
+protocol TokenSettingsScenesFactory {
+    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
 
 class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
-    let rootViewModel: RootViewModel
+    let authenticationHandler: AuthenticationHandler
+    let scenesFactory: TokenSettingsScenesFactory
     weak var delegate: TokenSettingsViewControllerDelegate?
     
     // MARK: - Subviews
     lazy var navigationBar: WLNavigationBar = {
-        let navigationBar = WLNavigationBar(backgroundColor: .textWhite)
+        let navigationBar = WLNavigationBar(forAutoLayout: ())
         navigationBar.backButton
             .onTap(self, action: #selector(back))
         navigationBar.titleLabel.text = L10n.walletSettings
@@ -30,25 +36,35 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     }()
     
     // MARK: - Initializer
-    init(viewModel: TokenSettingsViewModel, rootViewModel: RootViewModel)
-    {
+    init(
+        viewModel: TokenSettingsViewModel,
+        authenticationHandler: AuthenticationHandler,
+        scenesFactory: TokenSettingsScenesFactory
+    ) {
         self.viewModel = viewModel
-        self.rootViewModel = rootViewModel
+        self.authenticationHandler = authenticationHandler
+        self.scenesFactory = scenesFactory
         super.init()
     }
     
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        containerView.backgroundColor = .f6f6f8
+        containerView.backgroundColor = .white.onDarkMode(.h2b2b2b)
         
         containerView.addSubview(navigationBar)
         navigationBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
         
+        let separator = UIView.separator(height: 1, color: .clear.onDarkMode(.separator))
+        containerView.addSubview(separator)
+        separator.autoPinEdge(.top, to: .bottom, of: navigationBar)
+        separator.autoPinEdge(toSuperviewEdge: .leading)
+        separator.autoPinEdge(toSuperviewEdge: .trailing)
+        
         let rootView = TokenSettingsRootView(viewModel: viewModel)
         containerView.addSubview(rootView)
         rootView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-        rootView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 10)
+        rootView.autoPinEdge(.top, to: .bottom, of: separator)
     }
     
     override func bind() {
@@ -63,26 +79,26 @@ class TokenSettingsViewController: WLIndicatorModalVC {
         case .alert(let title, let description):
             showAlert(title: title?.uppercaseFirst, message: description)
         case .closeConfirmation:
-            guard let symbol = viewModel.wallet?.symbol else {return}
+            guard let symbol = viewModel.wallet?.token.symbol else {return}
             let vc = TokenSettingsCloseAccountConfirmationVC(symbol: symbol)
             vc.completion = {
                 vc.dismiss(animated: true) { [unowned self] in
-                    self.rootViewModel.authenticationSubject.onNext(
-                        .init(
+                    self.authenticationHandler.authenticate(
+                        presentationStyle: .init(
                             isRequired: false,
                             isFullScreen: false,
-                            useBiometry: false,
                             completion: {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                                    self?.viewModel.showProcessingAndClose()
+                                    self?.viewModel.closeAccount()
                                 }
-                            })
+                            }
+                        )
                     )
                 }
             }
             self.present(vc, animated: true, completion: nil)
-        case .processTransaction:
-            let vc = ProcessTransactionViewController(viewModel: viewModel.processTransactionViewModel)
+        case .processTransaction(let request, let transactionType):
+            let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
             vc.delegate = self
             self.present(vc, animated: true, completion: nil)
         }
@@ -90,7 +106,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
 }
 
 extension TokenSettingsViewController: ProcessTransactionViewControllerDelegate {
-    func processTransactionViewControllerDidComplete(_ vc: ProcessTransactionViewController) {
+    func processTransactionViewControllerDidComplete(_ vc: UIViewController) {
         vc.dismiss(animated: true) { [weak self] in
             self?.dismiss(animated: true, completion: { [weak self] in
                 guard let strongSelf = self else {return}

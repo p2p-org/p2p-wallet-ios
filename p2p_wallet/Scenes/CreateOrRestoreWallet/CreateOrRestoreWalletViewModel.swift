@@ -15,12 +15,50 @@ enum CreateOrRestoreWalletNavigatableScene {
     case restoreWallet
 }
 
-class CreateOrRestoreWalletViewModel {
-    // MARK: - Constants
+protocol CreateOrRestoreWalletHandler {
+    func creatingWalletDidComplete()
+    func restoringWalletDidComplete()
+    func creatingOrRestoringWalletDidCancel()
+}
+
+class CreateOrRestoreWalletViewModel: ViewModelType {
+    // MARK: - NestedType
+    struct Input {
+        
+    }
+    struct Output {
+        let navigation: Driver<CreateOrRestoreWalletNavigatableScene>
+    }
+    
+    // MARK: - Dependencies
+    let analyticsManager: AnalyticsManagerType
     
     // MARK: - Properties
-    let bag = DisposeBag()
+    private let bag = DisposeBag()
+    let input: Input
+    let output: Output
+    
+    // MARK: - Initializer
+    init(analyticsManager: AnalyticsManagerType) {
+        self.analyticsManager = analyticsManager
+        self.input = Input()
+        self.output = Output(
+            navigation: navigationSubject.asDriver()
+        )
+    }
     
     // MARK: - Subjects
-    let navigationSubject = BehaviorRelay<CreateOrRestoreWalletNavigatableScene>(value: .welcome)
+    private let navigationSubject = BehaviorRelay<CreateOrRestoreWalletNavigatableScene>(value: .welcome)
+    
+    // MARK: - Actions
+    @objc func navigateToCreateWallet() {
+        analyticsManager.log(event: .firstInCreateWalletClick)
+        navigationSubject.accept(.createWallet)
+    }
+    
+    @objc func navigateToRestoreWallet() {
+        analyticsManager.log(event: .firstInIHaveWalletClick)
+        analyticsManager.log(event: .recoveryOpen(fromPage: "first_in"))
+        navigationSubject.accept(.restoreWallet)
+    }
 }

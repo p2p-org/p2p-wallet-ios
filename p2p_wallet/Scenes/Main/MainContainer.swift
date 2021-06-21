@@ -6,132 +6,223 @@
 //
 
 import Foundation
+import RxSwift
 
 class MainContainer {
-    let rootViewModel: RootViewModel
+    let rootViewModel: Root.ViewModel
     
     let accountStorage: KeychainAccountStorage
     var solanaSDK: SolanaSDK
     var socket: SolanaSDK.Socket
-    let transactionManager: TransactionsManager
-    private(set) var myWalletsVM: WalletsVM
+    let processingTransactionsManager: ProcessingTransactionsManager
+    let pricesManager: PricesManager
+    private(set) var walletsViewModel: WalletsViewModel
     
-    init(rootViewModel: RootViewModel, accountStorage: KeychainAccountStorage) {
+    let mainViewModel: MainViewModel
+    let analyticsManager: AnalyticsManagerType
+    
+    init(rootViewModel: Root.ViewModel, accountStorage: KeychainAccountStorage, analyticsManager: AnalyticsManagerType) {
         self.rootViewModel = rootViewModel
         self.accountStorage = accountStorage
-        self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: accountStorage)
-        self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: accountStorage.account?.publicKey)
-        self.transactionManager = TransactionsManager(socket: socket)
-        myWalletsVM = WalletsVM(solanaSDK: solanaSDK, socket: socket, transactionManager: transactionManager)
+        self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
+        self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
+        self.processingTransactionsManager = ProcessingTransactionsManager(handler: socket)
+        self.pricesManager = PricesManager(tokensRepository: solanaSDK, fetcher: CryptoComparePricesFetcher(), refreshAfter: 10 * 1000) // 10minutes
+        
+        self.walletsViewModel = WalletsViewModel(
+            solanaSDK: solanaSDK,
+            socket: socket,
+            processingTransactionRepository: processingTransactionsManager,
+            pricesRepository: pricesManager
+        )
+        
+        self.mainViewModel = MainViewModel()
+        self.analyticsManager = analyticsManager
         
         defer {
             socket.connect()
+//            pricesManager.startObserving()
         }
     }
     
-    func makeMainViewController() -> MainViewController {
-        MainViewController(rootViewModel: rootViewModel, scenesFactory: self)
+    func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController {
+        MainViewController(viewModel: mainViewModel, scenesFactory: self, authenticateWhenAppears: authenticateWhenAppears)
+    }
+    
+    // MARK: - Authentication
+    func makeLocalAuthVC() -> LocalAuthVC {
+        LocalAuthVC(accountStorage: accountStorage)
+    }
+    
+    // MARK: - Reset pincode with seed phrases
+    func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
+    {
+        let container = ResetPinCodeWithSeedPhrasesContainer(accountRepository: accountStorage)
+        return container.makeResetPinCodeWithSeedPhrasesViewController()
     }
     
     func makeHomeViewController() -> HomeViewController {
-        let vm = HomeViewModel(walletsVM: myWalletsVM)
-        return HomeViewController(viewModel: vm, scenesFactory: self)
+        let vm = HomeViewModel(walletsRepository: walletsViewModel)
+        return HomeViewController(viewModel: vm, scenesFactory: self, analyticsManager: analyticsManager)
+    }
+    
+    func makeInvestmentsViewController() -> InvestmentsViewController {
+        let newsViewModel = NewsViewModel()
+        let defisViewModel = DefisViewModel()
+        let investmentsViewModel = InvestmentsViewModel(
+            newsViewModel: newsViewModel,
+            defisViewModel: defisViewModel
+        )
+        return InvestmentsViewController(viewModel: investmentsViewModel)
     }
     
     func makeMyProductsViewController() -> MyProductsViewController {
-        let viewModel = MyProductsViewModel(walletsVM: myWalletsVM)
+        let viewModel = MyProductsViewModel(walletsRepository: walletsViewModel)
         return MyProductsViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetailViewController {
-        let viewModel = WalletDetailViewModel(solanaSDK: solanaSDK, walletsVM: myWalletsVM, walletPubkey: pubkey, walletSymbol: symbol)
-        return WalletDetailViewController(viewModel: viewModel, scenesFactory: self)
+    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController {
+        let viewModel = WalletDetail.ViewModel(
+            pubkey: pubkey,
+            symbol: symbol,
+            walletsRepository: walletsViewModel,
+            pricesRepository: pricesManager,
+            transactionsRepository: solanaSDK,
+            analyticsManager: analyticsManager
+        )
+        
+        return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeAddNewTokenVC() -> AddNewWalletVC {
-        let vm = _AddNewWalletVM(solanaSDK: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, scenesFactory: self)
-        return AddNewWalletVC(viewModel: vm)
+    func makeTransactionInfoViewController(transaction: SolanaSDK.AnyTransaction) -> TransactionInfoViewController
+    {
+        let viewModel = TransactionInfoViewModel(transaction: transaction)
+        return TransactionInfoViewController(viewModel: viewModel)
     }
     
-    func makeReceiveTokenViewController() -> ReceiveTokenVC {
-        ReceiveTokenVC(wallets: myWalletsVM.data)
+    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController? {
+        guard let pubkey = walletsViewModel.solWallet?.pubkey else {return nil}
+        let tokenWallet = walletsViewModel.getWallets().first(where: {$0.pubkey == tokenWalletPubkey})
+        let viewModel = ReceiveToken.ViewModel(pubkey: pubkey, tokenWallet: tokenWallet, analyticsManager: analyticsManager)
+        return ReceiveToken.ViewController(viewModel: viewModel)
     }
     
-    func makeSendTokenViewController(activeWallet: Wallet?, destinationAddress: String?) -> SendTokenViewController {
-        let vm = SendTokenViewModel(solanaSDK: solanaSDK, walletsVM: myWalletsVM, transactionManager: transactionManager, activeWallet: activeWallet, destinationAddress: destinationAddress)
-        let vc = SendTokenViewController(viewModel: vm, scenesFactory: self)
+    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController {
+        let vm = SendToken.ViewModel(
+            repository: walletsViewModel,
+            walletPubkey: walletPubkey,
+            destinationAddress: destinationAddress,
+            apiClient: solanaSDK,
+            authenticationHandler: mainViewModel,
+            analyticsManager: analyticsManager
+        )
+        let vc = SendToken.ViewController(viewModel: vm, scenesFactory: self)
         return vc
     }
     
-    func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapTokenViewController {
-        let vm = SwapTokenViewModel(solanaSDK: solanaSDK, transactionManager: transactionManager, wallets: myWalletsVM.data, fromWallet: wallet)
-        return SwapTokenViewController(viewModel: vm, scenesFactory: self)
+    func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapToken.ViewController
+    {
+        let vm = SwapToken.ViewModel(
+            solWallet: walletsViewModel.solWallet,
+            apiClient: solanaSDK,
+            authenticationHandler: mainViewModel,
+            analyticsManager: analyticsManager
+        )
+        vm.input.sourceWallet.accept(wallet ?? walletsViewModel.solWallet)
+        return SwapToken.ViewController(viewModel: vm, scenesFactory: self)
     }
     
-    func makeChooseWalletVC(customFilter: ((Wallet) -> Bool)? = nil) -> ChooseWalletVC {
-        ChooseWalletVC(viewModel: myWalletsVM, sceneFactory: self, customFilter: customFilter)
+    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController {
+        let viewModel = ChooseWalletViewModel(
+            myWalletsViewModel: walletsViewModel,
+            tokensRepository: solanaSDK,
+            pricesRepository: pricesManager,
+            showOtherWallets: showOtherWallets)
+        { (item) -> Bool in
+            guard let customFilter = customFilter else {return true}
+            guard let item = item as? Wallet else {return false}
+            return customFilter(item)
+        }
+        return ChooseWalletViewController(viewModel: viewModel)
     }
     
-    func makeSwapChooseDestinationWalletVC(customFilter: ((Wallet) -> Bool)? = nil) -> SwapChooseDestinationWalletViewController {
-        let vm = SwapChooseDestinationViewModel(solanaSDK: solanaSDK, socket: socket, walletsVM: myWalletsVM)
-        let filter = customFilter ?? {_ in true}
-        let vc = SwapChooseDestinationWalletViewController(viewModel: vm, sceneFactory: self, customFilter: filter)
-        vm.reload()
-        return vc
+    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController {
+        let viewModel = ProcessTransaction.ViewModel(
+            transactionType: transactionType,
+            request: request,
+            transactionHandler: processingTransactionsManager,
+            walletsRepository: walletsViewModel,
+            pricesRepository: pricesManager,
+            apiClient: solanaSDK,
+            analyticsManager: analyticsManager
+        )
+        return ProcessTransaction.ViewController(viewModel: viewModel)
     }
     
     // MARK: - Profile VCs
     func makeProfileVC() -> ProfileVC {
-        ProfileVC(accountStorage: accountStorage, rootViewModel: rootViewModel, scenesFactory: self)
+        ProfileVC(accountStorage: accountStorage, rootViewModel: rootViewModel, scenesFactory: self, analyticsManager: analyticsManager)
     }
     
     func makeBackupVC() -> BackupVC {
-        BackupVC(accountStorage: accountStorage, rootViewModel: rootViewModel, scenesFactory: self)
+        BackupVC(accountStorage: accountStorage, authenticationHandler: mainViewModel, scenesFactory: self, analyticsManager: analyticsManager)
     }
     
     func makeBackupManuallyVC() -> BackupManuallyVC {
         BackupManuallyVC(accountStorage: accountStorage)
     }
     
+    func makeSelectFiatVC() -> SelectFiatVC {
+        SelectFiatVC(responder: self, analyticsManager: analyticsManager)
+    }
+    
     func makeSelectNetworkVC() -> SelectNetworkVC {
-        SelectNetworkVC(accountStorage: accountStorage, rootViewModel: rootViewModel, changeNetworkResponder: self)
+        SelectNetworkVC(changeNetworkResponder: rootViewModel, analyticsManger: analyticsManager)
     }
     
     func makeConfigureSecurityVC() -> ConfigureSecurityVC {
-        ConfigureSecurityVC(accountStorage: accountStorage, rootViewModel: rootViewModel)
+        ConfigureSecurityVC(accountStorage: accountStorage, authenticationHandler: mainViewModel, analyticsManager: analyticsManager)
     }
     
     func makeSelectLanguageVC() -> SelectLanguageVC {
-        SelectLanguageVC(rootViewModel: rootViewModel)
+        SelectLanguageVC(responder: rootViewModel)
     }
     
     func makeSelectAppearanceVC() -> SelectAppearanceVC {
-        SelectAppearanceVC(rootViewModel: rootViewModel)
+        SelectAppearanceVC(analyticsManager: analyticsManager)
     }
     
     // MARK: - Token edit
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController {
-        TokenSettingsViewController(viewModel: TokenSettingsViewModel(walletsVM: myWalletsVM, pubkey: pubkey, solanaSDK: solanaSDK, transactionManager: transactionManager, accountStorage: accountStorage), rootViewModel: rootViewModel)
+        TokenSettingsViewController(
+            viewModel: TokenSettingsViewModel(
+                walletsRepository: walletsViewModel,
+                pubkey: pubkey,
+                solanaSDK: solanaSDK,
+                pricesRepository: pricesManager,
+                accountStorage: accountStorage
+            ),
+            authenticationHandler: mainViewModel,
+            scenesFactory: self
+        )
     }
     
     // MARK: - Helpers
-    func changeNetwork(to network: SolanaSDK.Network) {
-        Defaults.network = network
-        
-        self.socket.disconnect()
-        self.solanaSDK = SolanaSDK(network: Defaults.network, accountStorage: accountStorage)
-        self.socket = SolanaSDK.Socket(endpoint: Defaults.network.endpoint.replacingOccurrences(of: "http", with: "ws"), publicKey: accountStorage.account?.publicKey)
+    func changeFiat(to fiat: Fiat) {
+        Defaults.fiat = fiat
+        pricesManager.currentPrices.accept([:])
+        pricesManager.fetchCurrentPrices(coins: walletsViewModel.getWallets().map {$0.token.symbol})
     }
 }
 
 extension MainContainer: TabBarScenesFactory,
-                         MyWalletsScenesFactory,
+                         MyProductsScenesFactory,
                          ProfileScenesFactory,
-                         SwapScenesFactory,
+                         SwapTokenScenesFactory,
                          WalletDetailScenesFactory,
                          SendTokenScenesFactory,
                          BackupScenesFactory,
-                         AddNewWalletScenesFactory,
                          HomeScenesFactory,
-                         ChangeNetworkResponder,
+                         ChangeFiatResponder,
+                         TokenSettingsScenesFactory,
                          _MainScenesFactory {}

@@ -7,6 +7,7 @@
 
 import Foundation
 import SafariServices
+import Action
 
 extension UIViewController {
     @discardableResult
@@ -47,12 +48,12 @@ extension UIViewController {
         view.subviews.first(where: {$0 is ErrorView}) as? ErrorView
     }
     
-    func showErrorView(error: Error) {
-        view.showErrorView(error: error)
+    func showErrorView(error: Error?, retryAction: CocoaAction? = nil) {
+        view.showErrorView(error: error, retryAction: retryAction)
     }
     
-    func showErrorView(title: String? = nil, description: String? = nil) {
-        view.showErrorView(title: title, description: description)
+    func showErrorView(title: String? = nil, description: String? = nil, retryAction: CocoaAction? = nil) {
+        view.showErrorView(title: title, description: description, retryAction: retryAction)
     }
     
     func removeErrorView() {
@@ -86,29 +87,15 @@ extension UIViewController {
     }
     
     // MARK: - HUDs
-    func showIndetermineHudWithMessage(_ message: String?) {
-        view.showIndetermineHudWithMessage(message)
+    func showIndetermineHud(_ message: String? = nil) {
+        view.showIndetermineHud()
     }
     
     func hideHud() {
         view.hideHud()
     }
     
-    // MARK: - Custom modal
-    func presentCustomModal(vc wrappedVC: UIViewController, title: String? = nil, titleImageView: UIView? = nil) {
-        let vc = makeCustomModalVC(wrappedVC: wrappedVC, title: title, titleImageView: titleImageView)
-        present(vc, animated: true, completion: nil)
-    }
-    
-    func makeCustomModalVC(wrappedVC: UIViewController, title: String? = nil, titleImageView: UIView? = nil) -> WLModalWrapperVC {
-        let vc = WLModalWrapperVC(wrapped: wrappedVC)
-        vc.title = title
-        vc.titleImageView = titleImageView
-        vc.modalPresentationStyle = wrappedVC.modalPresentationStyle
-        vc.transitioningDelegate = wrappedVC as? UIViewControllerTransitioningDelegate
-        return vc
-    }
-    
+    // MARK: - Keyboard
     @objc func hideKeyboard() {
         view.endEditing(true)
     }
@@ -135,7 +122,7 @@ extension UIViewController {
         }
     }
     
-    func transition(from oldVC: UIViewController? = nil, to newVC: UIViewController, in containerView: UIView? = nil) {
+    func transition(from oldVC: UIViewController? = nil, to newVC: UIViewController, in containerView: UIView? = nil, completion: (() -> Void)? = nil) {
         let oldVC = oldVC ?? children.last
         let containerView = containerView ?? view
         
@@ -157,6 +144,7 @@ extension UIViewController {
             oldVC?.view.removeFromSuperview()
             oldVC?.removeFromParent()
             newVC.didMove(toParent: self)
+            completion?()
         }
     }
 }
