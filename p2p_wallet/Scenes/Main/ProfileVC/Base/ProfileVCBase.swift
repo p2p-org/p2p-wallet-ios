@@ -16,7 +16,7 @@ class ProfileVCBase: BaseVStackVC {
     var dataDidChange: Bool {false}
     
     lazy var navigationBar: WLNavigationBar = {
-        let navigationBar = WLNavigationBar(backgroundColor: .textWhite)
+        let navigationBar = WLNavigationBar(backgroundColor: .white.onDarkMode(.h2e2e2e))
         navigationBar.backButton
             .onTap(self, action: #selector(back))
         return navigationBar
@@ -25,7 +25,7 @@ class ProfileVCBase: BaseVStackVC {
     override func setUp() {
         super.setUp()
         navigationBar.titleLabel.text = title
-        view.backgroundColor = .f6f6f8
+        view.backgroundColor = .f6f6f8.onDarkMode(.h1b1b1b)
         
         view.addSubview(navigationBar)
         navigationBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)

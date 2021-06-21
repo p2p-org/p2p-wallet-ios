@@ -15,7 +15,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     
     // MARK: - Subviews
     private lazy var headerView = UIStackView(axis: .vertical, spacing: 20, alignment: .leading, distribution: .fill) {
-        UIImageView(width: 36, height: 36, image: .backButtonLight)
+        UIImageView(width: 36, height: 36, image: .backSquare)
             .onTap(self, action: #selector(back))
         BEStackViewSpacing(30)
         UILabel(text: L10n.derivableAccounts, textSize: 27, weight: .bold, numberOfLines: 0)

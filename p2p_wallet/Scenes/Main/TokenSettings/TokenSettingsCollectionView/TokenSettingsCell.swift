@@ -31,7 +31,7 @@ class TokenSettingsCell: BaseCollectionViewCell, LoadableView {
         ]),
         isVisibleSwitcher
     ])
-    lazy var iconImageView = UIImageView(width: 24, height: 24, image: .buttonEdit, tintColor: .a3a5ba.onDarkMode(.h8d8d8d))
+    lazy var iconImageView = UIImageView(width: 24, height: 24, image: .buttonEdit, tintColor: .iconSecondary)
     lazy var descriptionLabel = UILabel(textSize: 13, weight: .semibold, textColor: .textSecondary)
     lazy var mainLabel = UILabel(textSize: 17, weight: .semibold)
     lazy var isVisibleSwitcher = UISwitch()
