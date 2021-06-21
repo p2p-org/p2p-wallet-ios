@@ -41,7 +41,7 @@ extension SwapToken {
             autocorrectionType: .no/*, rightView: useAllBalanceButton, rightViewMode: .always*/
         )
         
-        private lazy var equityValueLabel = UILabel(text: "≈ 0.00 \(Defaults.fiat.symbol)", weight: .semibold, textColor: .textSecondary)
+        private lazy var equityValueLabel = UILabel(text: "≈ 0.00 \(Defaults.fiat.symbol)", weight: .semibold, textColor: .textSecondary.onDarkMode(.white))
         
         init(viewModel: ViewModel, type: WalletType) {
             self.viewModel = viewModel

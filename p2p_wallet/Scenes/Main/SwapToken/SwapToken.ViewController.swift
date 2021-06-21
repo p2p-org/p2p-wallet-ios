@@ -40,7 +40,7 @@ extension SwapToken {
                     UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
                         .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
                     UILabel(text: L10n.swap, textSize: 17, weight: .semibold),
-                    UIImageView(width: 36, height: 36, image: .slippageSettings, tintColor: .a3a5ba)
+                    UIImageView(width: 36, height: 36, image: .slippageSettings, tintColor: .iconSecondary)
                         .onTap(viewModel, action: #selector(ViewModel.chooseSlippage))
                 ])
                     .padding(.init(all: 20)),
