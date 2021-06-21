@@ -83,7 +83,7 @@ extension SwapToken {
                         .withContentHuggingPriority(.required, for: .horizontal),
                     exchangeRateReverseButton
                 ])
-                    .padding(.init(all: 8), backgroundColor: .f6f6f8, cornerRadius: 12),
+                    .padding(.init(all: 8), backgroundColor: .grayPanel, cornerRadius: 12),
                 UIView.separator(height: 1, color: .separator),
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
                     UILabel(text: L10n.minimumReceive + ": ", textColor: .textSecondary),
