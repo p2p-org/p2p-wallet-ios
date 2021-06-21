@@ -35,7 +35,7 @@ extension SwapToken {
         lazy var minimumReceiveLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
         lazy var liquidityProviderFeeLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
         lazy var feeLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
-        lazy var feeAlertImageView = UIImageView(width: 16, height: 16, image: .alert, tintColor: .alert)
+        lazy var feeAlertImageView = UIImageView(width: 20, height: 20, image: .alert, tintColor: .alert)
         lazy var slippageLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
         
         lazy var errorLabel = UILabel(textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
@@ -109,6 +109,7 @@ extension SwapToken {
                     feeLabel
                         .withContentHuggingPriority(.required, for: .horizontal)
                         .withContentCompressionResistancePriority(.required, for: .horizontal),
+                    BEStackViewSpacing(5),
                     feeAlertImageView
                         .withContentHuggingPriority(.required, for: .horizontal)
                         .withContentCompressionResistancePriority(.required, for: .horizontal)
@@ -304,6 +305,12 @@ extension SwapToken {
             viewModel.output.error
                 .map {$0 != L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee}
                 .drive(feeAlertImageView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.error
+                .map {$0 != L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee}
+                .map {$0 ? UIColor.textSecondary: UIColor.alert}
+                .drive(feeLabel.rx.textColor)
                 .disposed(by: disposeBag)
                 
             
