@@ -34,7 +34,6 @@ class WLNavigationBar: BEView {
     override func commonInit() {
         super.commonInit()
         addSubview(stackView)
-        backgroundColor = .textWhite
         stackView.autoPinEdgesToSuperviewSafeArea(with: .init(all: 20))
     }
 }

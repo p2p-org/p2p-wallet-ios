@@ -17,7 +17,7 @@ class CreateSecurityKeysViewController: BaseVC {
     // MARK: - Properties
     let viewModel: CreateSecurityKeysViewModel
     
-    lazy var backButton = UIImageView(width: 36, height: 36, image: .backButtonLight)
+    lazy var backButton = UIImageView(width: 36, height: 36, image: .backSquare)
         .onTap(self, action: #selector(back))
     
     // MARK: - Initializer

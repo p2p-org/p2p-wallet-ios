@@ -28,7 +28,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Subviews
     lazy var navigationBar: WLNavigationBar = {
-        let navigationBar = WLNavigationBar(backgroundColor: .textWhite)
+        let navigationBar = WLNavigationBar(forAutoLayout: ())
         navigationBar.backButton
             .onTap(self, action: #selector(back))
         navigationBar.titleLabel.text = L10n.walletSettings
@@ -50,15 +50,21 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        containerView.backgroundColor = .f6f6f8
+        containerView.backgroundColor = .white.onDarkMode(.h2b2b2b)
         
         containerView.addSubview(navigationBar)
         navigationBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
         
+        let separator = UIView.separator(height: 1, color: .clear.onDarkMode(.separator))
+        containerView.addSubview(separator)
+        separator.autoPinEdge(.top, to: .bottom, of: navigationBar)
+        separator.autoPinEdge(toSuperviewEdge: .leading)
+        separator.autoPinEdge(toSuperviewEdge: .trailing)
+        
         let rootView = TokenSettingsRootView(viewModel: viewModel)
         containerView.addSubview(rootView)
         rootView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-        rootView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 10)
+        rootView.autoPinEdge(.top, to: .bottom, of: separator)
     }
     
     override func bind() {

@@ -26,7 +26,7 @@ class WLButton: UIButton {
         var disabledColor: UIColor? {
             switch self {
             case .blue:
-                return .a3a5baStatic
+                return .iconSecondary
             default:
                 return nil
             }

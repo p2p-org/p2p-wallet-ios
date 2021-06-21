@@ -17,7 +17,7 @@ extension ProcessTransaction.RootView {
         summaryView?.removeFromSuperview()
         
         switch viewModel.output.transactionType {
-        case .swap(let from, let to, let inputAmount, let estimatedAmount):
+        case .swap(let from, let to, let inputAmount, let estimatedAmount, _):
             let sv = SwapTransactionSummaryView(forAutoLayout: ())
             sv.sourceIconImageView.setUp(token: from.token)
             sv.sourceAmountLabel.text = (-(inputAmount)).toString(maximumFractionDigits: 4)

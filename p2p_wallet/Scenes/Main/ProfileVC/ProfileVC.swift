@@ -58,6 +58,7 @@ class ProfileVC: ProfileVCBase {
     
     // MARK: - Methods
     override func setUp() {
+        title = L10n.settings
         super.setUp()
         
         stackView.addArrangedSubviews([
@@ -123,11 +124,12 @@ class ProfileVC: ProfileVCBase {
 //                showRightArrow: false
 //            ),
             
-            BEStackViewSpacing(10),
+            BEStackViewSpacing(16),
             
             createCell(
                 image: .settingsLogout,
-                text: L10n.logout
+                text: L10n.logout,
+                isAlert: true
             )
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
         ])
@@ -244,10 +246,10 @@ class ProfileVC: ProfileVCBase {
     }
     
     // MARK: - Helpers
-    private func createCell(image: UIImage?, text: String, descriptionView: UIView? = nil, showRightArrow: Bool = true) -> UIView
+    private func createCell(image: UIImage?, text: String, descriptionView: UIView? = nil, showRightArrow: Bool = true, isAlert: Bool = false) -> UIView
     {
         let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-            UIImageView(width: 24, height: 24, image: image, tintColor: .a3a5ba),
+            UIView.squareRoundedCornerIcon(image: image, tintColor: isAlert ? .alert: .iconSecondary),
             UILabel(text: text, textSize: 17, numberOfLines: 0)
         ])
         if let descriptionView = descriptionView {
@@ -262,7 +264,7 @@ class ProfileVC: ProfileVCBase {
             )
         }
         return stackView
-            .padding(.init(x: 20, y: 16), backgroundColor: .textWhite)
+            .padding(.init(x: 20, y: 6), backgroundColor: .contentBackground)
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
