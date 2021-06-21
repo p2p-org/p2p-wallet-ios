@@ -23,11 +23,13 @@ class HorizontalPicker: BEView {
             stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
             stackView.addArrangedSubviews(labels.enumerated().map {
                 let label = UILabel(text: $1)
+                label.tag = 1
                 let gesture = GestureRegconizer(target: self, action: #selector(buttonOptionDidTouch(_:)))
                 gesture.index = $0
-                label.addGestureRecognizer(gesture)
-                label.isUserInteractionEnabled = true
-                return label.padding(.init(x: 16, y: 8), cornerRadius: 12)
+                let view = label.padding(.init(x: 16, y: 8), cornerRadius: 12)
+                view.addGestureRecognizer(gesture)
+                view.isUserInteractionEnabled = true
+                return view
             })
         }
     }
@@ -37,9 +39,11 @@ class HorizontalPicker: BEView {
             guard selectedIndex >= 0 && selectedIndex < labels.count else {return}
             for (index, view) in stackView.arrangedSubviews.enumerated() {
                 if index != selectedIndex {
-                    view.backgroundColor = .clear
+                    view.backgroundColor = .clear.onDarkMode(.grayPanel)
+                    getLabelAtIndex(index: index)?.textColor = .black.onDarkMode(.h8d8d8d)
                 } else {
                     view.backgroundColor = .background4
+                    getLabelAtIndex(index: index)?.textColor = .textBlack
                 }
             }
         }
@@ -55,5 +59,10 @@ class HorizontalPicker: BEView {
         let index = (gesture as! GestureRegconizer).index!
         selectedIndex = index
         delegate?.picker(self, didSelectOptionAtIndex: index)
+    }
+    
+    private func getLabelAtIndex(index: Int) -> UILabel? {
+        guard index < stackView.arrangedSubviews.count else {return nil}
+        return stackView.arrangedSubviews[index].viewWithTag(1) as? UILabel
     }
 }
