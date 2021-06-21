@@ -249,13 +249,7 @@ class ProfileVC: ProfileVCBase {
     private func createCell(image: UIImage?, text: String, descriptionView: UIView? = nil, showRightArrow: Bool = true, isAlert: Bool = false) -> UIView
     {
         let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-            UIImageView(
-                width: 24,
-                height: 24,
-                image: image,
-                tintColor: isAlert ? .alert: .iconSecondary
-            )
-                .padding(.init(all: 12.25), backgroundColor: .grayPanel, cornerRadius: 12),
+            UIView.squareRoundedCornerIcon(image: image, tintColor: isAlert ? .alert: .iconSecondary),
             UILabel(text: text, textSize: 17, numberOfLines: 0)
         ])
         if let descriptionView = descriptionView {
@@ -270,7 +264,7 @@ class ProfileVC: ProfileVCBase {
             )
         }
         return stackView
-            .padding(.init(x: 20, y: 6), backgroundColor: .white.onDarkMode(.h2e2e2e))
+            .padding(.init(x: 20, y: 6), backgroundColor: .contentBackground)
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

@@ -66,4 +66,17 @@ extension UIView {
     func showErrorView(error: Error?, retryAction: CocoaAction? = nil) {
         showErrorView(title: L10n.error, description: error?.readableDescription ?? L10n.somethingWentWrongPleaseTryAgainLater, retryAction: retryAction)
     }
+    
+    // MARK: - View builders
+    static func squareRoundedCornerIcon(
+        backgroundColor: UIColor = .grayPanel,
+        imageSize: CGFloat = 24,
+        image: UIImage?,
+        tintColor: UIColor = .iconSecondary,
+        padding: UIEdgeInsets = .init(all: 12.25),
+        cornerRadius: CGFloat = 12
+    ) -> UIView {
+        UIImageView(width: imageSize, height: imageSize, image: image, tintColor: tintColor)
+            .padding(padding, backgroundColor: backgroundColor, cornerRadius: 12)
+    }
 }
