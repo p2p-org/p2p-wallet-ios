@@ -43,7 +43,7 @@ class BackupVC: ProfileVCBase {
     override func setUp() {
         title = L10n.backup
         super.setUp()
-        view.backgroundColor = .textWhite
+        view.backgroundColor = .contentBackground
         
         stackView.removeFromSuperview()
         scrollView.removeFromSuperview()
