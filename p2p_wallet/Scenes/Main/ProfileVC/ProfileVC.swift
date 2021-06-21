@@ -129,6 +129,7 @@ class ProfileVC: ProfileVCBase {
             createCell(
                 image: .settingsLogout,
                 text: L10n.logout,
+                showRightArrow: false,
                 isAlert: true
             )
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
@@ -260,7 +261,7 @@ class ProfileVC: ProfileVCBase {
         }
         if showRightArrow {
             stackView.addArrangedSubview(
-                UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .textBlack)
+                UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .black.onDarkMode(.h8d8d8d))
             )
         }
         return stackView
