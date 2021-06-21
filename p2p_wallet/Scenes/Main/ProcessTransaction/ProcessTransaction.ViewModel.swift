@@ -276,14 +276,13 @@ extension ProcessTransaction {
             
             // request
             request
+                .do(onSuccess: completion)
                 .map { response -> String in
                     if let swapResponse = response as? SolanaSDK.SwapResponse {
-                        completion(swapResponse)
                         return swapResponse.transactionId
                     }
                     
                     if let response = response as? SolanaSDK.TransactionID {
-                        completion(response)
                         return response
                     }
                     
