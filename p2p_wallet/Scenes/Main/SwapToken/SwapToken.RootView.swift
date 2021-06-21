@@ -51,7 +51,6 @@ extension SwapToken {
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
-            backgroundColor = .vcBackground
             layout()
             bind()
         }
@@ -122,7 +121,8 @@ extension SwapToken {
                 BEStackViewSpacing(12),
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill, arrangedSubviews: [
                     UILabel(text: L10n.poweredBy, textSize: 13, textColor: .textSecondary, textAlignment: .center),
-                    UIImageView(width: 94, height: 24, image: .orcaLogo)
+                    UIImageView(width: 24, height: 24, image: .orcaLogo),
+                    UIImageView(width: 68, height: 13, image: .orcaText, tintColor: .textBlack)
                 ])
                     .centeredHorizontallyView
             ])

@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "logomark.1ef55f8f.png",
+      "filename" : "New Project.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "logomark.1ef55f8f@2x.png",
+      "filename" : "New Project@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "logomark.1ef55f8f@3x.png",
+      "filename" : "New Project@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
