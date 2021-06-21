@@ -64,6 +64,7 @@ extension SwapToken {
         }
         
         // MARK: - Dependencies
+        private let solWallet: Wallet?
         private let apiClient: SwapTokenAPIClient
         private let authenticationHandler: AuthenticationHandler
         let analyticsManager: AnalyticsManagerType
@@ -97,10 +98,12 @@ extension SwapToken {
         
         // MARK: - Initializer
         init(
+            solWallet: Wallet?,
             apiClient: SwapTokenAPIClient,
             authenticationHandler: AuthenticationHandler,
             analyticsManager: AnalyticsManagerType
         ) {
+            self.solWallet = solWallet
             self.apiClient = apiClient
             self.authenticationHandler = authenticationHandler
             self.analyticsManager = analyticsManager
@@ -435,8 +438,12 @@ extension SwapToken {
                 }
             }
             
-            // FIXME: - Verify feeInLamports
-//            L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
+            // Verify feeInLamports
+            if let solWallet = solWallet,
+               (solWallet.lamports ?? 0) < (feeInLamportsSubject.value ?? 0)
+            {
+                return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
+            }
             
             return nil
         }
@@ -499,8 +506,9 @@ extension SwapToken {
                     transactionType: .swap(
                         from: sourceWallet,
                         to: destinationWallet,
-                        inputAmount: inputAmount + feeInLamportsSubject.value?.convertToBalance(decimals: sourceWallet.token.decimals),
-                        estimatedAmount: estimatedAmount
+                        inputAmount: inputAmount,
+                        estimatedAmount: estimatedAmount,
+                        fee: feeInLamportsSubject.value?.convertToBalance(decimals: solWallet?.token.decimals) ?? 0
                     )
                 )
             )

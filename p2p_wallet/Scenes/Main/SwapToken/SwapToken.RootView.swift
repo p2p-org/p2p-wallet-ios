@@ -35,6 +35,7 @@ extension SwapToken {
         lazy var minimumReceiveLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
         lazy var liquidityProviderFeeLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
         lazy var feeLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
+        lazy var feeAlertImageView = UIImageView(width: 20, height: 20, image: .alert, tintColor: .alert)
         lazy var slippageLabel = UILabel(textColor: .textSecondary, textAlignment: .right)
         
         lazy var errorLabel = UILabel(textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
@@ -51,7 +52,6 @@ extension SwapToken {
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
-            backgroundColor = .vcBackground
             layout()
             bind()
         }
@@ -84,7 +84,7 @@ extension SwapToken {
                         .withContentHuggingPriority(.required, for: .horizontal),
                     exchangeRateReverseButton
                 ])
-                    .padding(.init(all: 8), backgroundColor: .f6f6f8, cornerRadius: 12),
+                    .padding(.init(all: 8), backgroundColor: .grayPanel, cornerRadius: 12),
                 UIView.separator(height: 1, color: .separator),
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
                     UILabel(text: L10n.minimumReceive + ": ", textColor: .textSecondary),
@@ -108,6 +108,10 @@ extension SwapToken {
                         .withContentCompressionResistancePriority(.defaultLow, for: .horizontal),
                     feeLabel
                         .withContentHuggingPriority(.required, for: .horizontal)
+                        .withContentCompressionResistancePriority(.required, for: .horizontal),
+                    BEStackViewSpacing(5),
+                    feeAlertImageView
+                        .withContentHuggingPriority(.required, for: .horizontal)
                         .withContentCompressionResistancePriority(.required, for: .horizontal)
                 ]),
                 BEStackViewSpacing(16),
@@ -122,7 +126,8 @@ extension SwapToken {
                 BEStackViewSpacing(12),
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill, arrangedSubviews: [
                     UILabel(text: L10n.poweredBy, textSize: 13, textColor: .textSecondary, textAlignment: .center),
-                    UIImageView(width: 94, height: 24, image: .orcaLogo)
+                    UIImageView(width: 24, height: 24, image: .orcaLogo),
+                    UIImageView(width: 68, height: 13, image: .orcaText, tintColor: .textBlack)
                 ])
                     .centeredHorizontallyView
             ])
@@ -293,9 +298,21 @@ extension SwapToken {
                 .disposed(by: disposeBag)
             
             viewModel.output.error
-                .map {$0 == nil || $0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid}
+                .map {$0 == nil || $0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid || $0 == L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee}
                 .drive(errorLabel.rx.isHidden)
                 .disposed(by: disposeBag)
+            
+            viewModel.output.error
+                .map {$0 != L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee}
+                .drive(feeAlertImageView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.error
+                .map {$0 != L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee}
+                .map {$0 ? UIColor.textSecondary: UIColor.alert}
+                .drive(feeLabel.rx.textColor)
+                .disposed(by: disposeBag)
+                
             
             // swap button
             viewModel.output.isValid

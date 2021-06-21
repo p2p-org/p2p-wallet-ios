@@ -22,7 +22,7 @@ extension ReceiveToken {
             .lineBreakMode(.byTruncatingMiddle)
         
         private lazy var detailView = createDetailView()
-        private lazy var showHideDetailButton = WLButton.stepButton(type: .gray, label: nil, labelColor: .a3a5ba)
+        private lazy var showHideDetailButton = WLButton.stepButton(type: .gray, label: nil, labelColor: .textSecondary)
             .onTap(viewModel, action: #selector(ViewModel.toggleIsShowingDetail))
         
         private lazy var directAddressHeaderLabel = UILabel(text: L10n.directAddress(viewModel.output.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
@@ -39,7 +39,6 @@ extension ReceiveToken {
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
-            backgroundColor = .vcBackground
             layout()
             bind()
         }
@@ -52,7 +51,7 @@ extension ReceiveToken {
             stackView.addArrangedSubviews {
                 UILabel(text: L10n.scanOrCopyQRCode, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
                 
-                UIImageView(width: 207, height: 207, image: .receiveQrCodeFrame, tintColor: .f6f6f8.onDarkMode(.white))
+                UIImageView(width: 207, height: 207, image: .receiveQrCodeFrame, tintColor: .f6f6f8.onDarkMode(.h8d8d8d))
                     .withCenteredChild(
                         QrCodeView(size: 190, coinLogoSize: 50)
                             .with(string: viewModel.output.pubkey)
@@ -77,7 +76,7 @@ extension ReceiveToken {
                 stackView.addArrangedSubview(showHideDetailButton.padding(.init(x: 20, y: 0)))
             } else {
                 stackView.addArrangedSubview(
-                    UILabel(text: L10n.viewInExplorer, textSize: 17, weight: .medium, textColor: .a3a5ba, textAlignment: .center)
+                    UILabel(text: L10n.viewInExplorer, textSize: 17, weight: .medium, textColor: .textSecondary, textAlignment: .center)
                         .onTap(viewModel, action: #selector(ViewModel.showSOLAddressInExplorer))
                         .centeredHorizontallyView
                         .padding(.init(x: 20, y: 9))

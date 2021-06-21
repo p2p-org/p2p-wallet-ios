@@ -27,7 +27,7 @@ class TokenSettingsRootView: BEView {
                 viewModel: viewModel
             )
         ])
-        
+        collectionView.contentInset.modify(dTop: 10)
         collectionView.delegate = self
         return collectionView
     }()

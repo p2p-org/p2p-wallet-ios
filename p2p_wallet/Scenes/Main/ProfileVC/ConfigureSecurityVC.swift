@@ -41,8 +41,7 @@ class ConfigureSecurityVC: ProfileVCBase {
         
         stackView.addArrangedSubviews([
             UIView.row([
-                UIImageView(width: 24, height: 24, image: .settingsPincode, tintColor: .a3a5ba)
-                    .padding(.init(all: 13), backgroundColor: .f6f6f8, cornerRadius: 12),
+                UIView.squareRoundedCornerIcon(image: .settingsPincode),
                 UIView.col([
                     UILabel(text: L10n.pinCode, weight: .medium),
                     UILabel(text: L10n.defaultSecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0)
@@ -50,7 +49,7 @@ class ConfigureSecurityVC: ProfileVCBase {
                 UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .textBlack)
             ])
                 .with(spacing: 16, alignment: .center, distribution: .fill)
-                .padding(.init(x: 20, y: 14), backgroundColor: .textWhite)
+                .padding(.init(x: 20, y: 14), backgroundColor: .contentBackground)
                 .onTap(self, action: #selector(buttonChangePinCodeDidTouch))
         ])
         
@@ -58,8 +57,7 @@ class ConfigureSecurityVC: ProfileVCBase {
         if !biometryMethod.stringValue.isEmpty {
             stackView.insertArrangedSubview(
                 UIView.row([
-                    UIImageView(width: 24, height: 24, image: biometryMethod.icon, tintColor: .a3a5ba)
-                        .padding(.init(all: 13), backgroundColor: .f6f6f8, cornerRadius: 12),
+                    UIView.squareRoundedCornerIcon(image: biometryMethod.icon),
                     UIView.col([
                         UILabel(text: LABiometryType.current.stringValue, weight: .medium),
                         UILabel(text: L10n.willBeAsAPrimarySecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0)
@@ -67,7 +65,7 @@ class ConfigureSecurityVC: ProfileVCBase {
                     biometrySwitcher
                 ])
                     .with(spacing: 16, alignment: .center, distribution: .fill)
-                    .padding(.init(x: 20, y: 14), backgroundColor: .textWhite),
+                    .padding(.init(x: 20, y: 14), backgroundColor: .contentBackground),
                 at: 0
             )
         }

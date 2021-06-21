@@ -92,8 +92,8 @@ extension ProcessTransaction {
             switch transactionType {
             case .send(let fromWallet, let receiver, let amount):
                 executeSend(fromWallet: fromWallet, receiver: receiver, amount: amount)
-            case .swap(let from, let to, let inputAmount, let estimatedAmount):
-                executeSwap(from: from, to: to, inputAmount: inputAmount, estimatedAmount: estimatedAmount)
+            case .swap(let from, let to, let inputAmount, let estimatedAmount, let fee):
+                executeSwap(from: from, to: to, inputAmount: inputAmount, estimatedAmount: estimatedAmount, fee: fee)
             case .closeAccount(let wallet):
                 executeCloseAccount(wallet)
             }
@@ -210,7 +210,8 @@ extension ProcessTransaction {
             from: Wallet,
             to: Wallet,
             inputAmount: Double,
-            estimatedAmount: Double
+            estimatedAmount: Double,
+            fee: Double
         ) {
             executeRequest { [weak self] response in
                 // cast type
@@ -242,6 +243,16 @@ extension ProcessTransaction {
                     
                     self?.pricesRepository.fetchCurrentPrices(coins: [wallet.token.symbol])
                 }
+                
+                // update sol wallet (minus fee)
+                self?.walletsRepository.updateWallet(where: {$0.token.isNative == true}, transform: {
+                    var wallet = $0
+                    let fee = fee.toLamport(decimals: wallet.token.decimals)
+                    if (wallet.lamports ?? 0) >= fee {
+                        wallet.lamports = (wallet.lamports ?? fee) - fee
+                    }
+                    return wallet
+                })
             }
         }
         
