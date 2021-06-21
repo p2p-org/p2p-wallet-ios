@@ -122,7 +122,7 @@ extension SendToken {
                     amountTextField,
                     changeModeButton
                         .withContentHuggingPriority(.required, for: .horizontal)
-                        .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
+                        .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12)
                         .onTap(viewModel, action: #selector(ViewModel.switchCurrencyMode))
                 ]),
                 BEStackViewSpacing(6),
