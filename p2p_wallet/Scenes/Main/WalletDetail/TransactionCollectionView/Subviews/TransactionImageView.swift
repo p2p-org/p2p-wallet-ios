@@ -11,7 +11,7 @@ class TransactionImageView: BEView {
     private let _backgroundColor: UIColor?
     private let _cornerRadius: CGFloat?
     
-    private lazy var basicIconImageView = UIImageView(width: 24.38, height: 24.38, tintColor: .a3a5ba.onDarkMode(.h8d8d8d))
+    private lazy var basicIconImageView = UIImageView(width: 24.38, height: 24.38, tintColor: .iconSecondary)
     private lazy var fromTokenImageView = CoinLogoImageView(size: 30)
     private lazy var toTokenImageView = CoinLogoImageView(size: 30)
     
