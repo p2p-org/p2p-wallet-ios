@@ -16,6 +16,11 @@ enum OnboardingNavigatableScene {
     case dismiss
 }
 
+protocol OnboardingHandler {
+    func onboardingDidCancel()
+    func onboardingDidComplete()
+}
+
 class OnboardingViewModel {
     // MARK: - Constants
     
@@ -23,6 +28,7 @@ class OnboardingViewModel {
     let bag = DisposeBag()
     let handler: OnboardingHandler
     let accountStorage: KeychainAccountStorage
+    let analyticsManager: AnalyticsManagerType
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<OnboardingNavigatableScene>()
@@ -31,9 +37,10 @@ class OnboardingViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializer
-    init(accountStorage: KeychainAccountStorage, handler: OnboardingHandler) {
+    init(accountStorage: KeychainAccountStorage, handler: OnboardingHandler, analyticsManager: AnalyticsManagerType) {
         self.accountStorage = accountStorage
         self.handler = handler
+        self.analyticsManager = analyticsManager
         navigateNext()
     }
     
@@ -57,6 +64,8 @@ class OnboardingViewModel {
     func setEnableBiometry(_ on: Bool) {
         Defaults.isBiometryEnabled = on
         Defaults.didSetEnableBiometry = true
+        analyticsManager.log(event: .setupFaceidClick(faceID: on))
+        
         navigationSubject.onNext(.setUpNotifications)
     }
     

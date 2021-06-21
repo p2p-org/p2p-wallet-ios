@@ -16,6 +16,7 @@ class CreateSecurityKeysViewModel {
     let disposeBag = DisposeBag()
     let accountStorage: KeychainAccountStorage
     let createWalletViewModel: CreateWalletViewModel
+    let analyticsManager: AnalyticsManagerType
     
     // MARK: - Subjects
     let phrasesSubject = BehaviorRelay<[String]>(value: [])
@@ -24,9 +25,10 @@ class CreateSecurityKeysViewModel {
     // MARK: - Input
     let checkBoxIsSelectedInput = BehaviorRelay<Bool>(value: false)
     
-    init(accountStorage: KeychainAccountStorage, createWalletViewModel: CreateWalletViewModel) {
+    init(accountStorage: KeychainAccountStorage, createWalletViewModel: CreateWalletViewModel, analyticsManager: AnalyticsManagerType) {
         self.accountStorage = accountStorage
         self.createWalletViewModel = createWalletViewModel
+        self.analyticsManager = analyticsManager
         createPhrases()
     }
     
@@ -38,20 +40,31 @@ class CreateSecurityKeysViewModel {
     }
     
     @objc func copyToClipboard() {
+        analyticsManager.log(event: .createWalletCopySeedClick)
         UIApplication.shared.copyToClipboard(phrasesSubject.value.joined(separator: " "))
     }
     
     @objc func saveToICloud() {
+        analyticsManager.log(event: .createWalletBackupToIcloudClick)
         accountStorage.saveICloud(phrases: phrasesSubject.value.joined(separator: " "))
         UIApplication.shared.showDone(L10n.savedToICloud)
     }
     
     @objc func next() {
-        UIApplication.shared.showIndetermineHudWithMessage(L10n.creatingAnAccount.uppercaseFirst)
+        if checkBoxIsSelectedInput.value {
+            analyticsManager.log(event: .createWalletIHaveSavedWordsClick)
+        }
+        analyticsManager.log(event: .createWalletNextClick)
+        
+        UIApplication.shared.showIndetermineHud()
         DispatchQueue.global().async {
             do {
-                let account = try SolanaSDK.Account(phrase: self.phrasesSubject.value, network: Defaults.network)
-                try self.accountStorage.save(account)
+                try self.accountStorage.save(phrases: self.phrasesSubject.value)
+                
+                let derivablePath = SolanaSDK.DerivablePath.default
+                try self.accountStorage.save(derivableType: derivablePath.type)
+                try self.accountStorage.save(walletIndex: derivablePath.walletIndex)
+                
                 DispatchQueue.main.async {
                     UIApplication.shared.hideHud()
                     self.createWalletViewModel.finish()

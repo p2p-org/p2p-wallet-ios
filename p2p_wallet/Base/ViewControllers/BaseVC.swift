@@ -23,6 +23,7 @@ class BaseVC: BEViewController {
     }
     
     func forceResizeModal() {
+        view.layoutIfNeeded()
         preferredContentSize.height += 1
     }
 }

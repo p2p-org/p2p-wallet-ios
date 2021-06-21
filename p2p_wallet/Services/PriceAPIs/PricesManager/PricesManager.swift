@@ -10,27 +10,20 @@ import RxSwift
 import RxCocoa
 
 class PricesManager {
-    typealias Coin = String
-    
     // MARK: - Properties
+    var tokensRepository: TokensRepository
     var fetcher: PricesFetcher
     private let disposeBag = DisposeBag()
     
     private var refreshInterval: TimeInterval // Refresh
     private var timer: Timer?
-    var solPrice: CurrentPrice? {currentPrices.value["SOL"]}
-    
-    private lazy var supportedCoins: [String] = {
-        var pairs = SolanaSDK.Token.getSupportedTokens(network: SolanaSDK.Network.mainnetBeta)?.map {$0.symbol} ?? [String]()
-        pairs.append("SOL")
-        return pairs
-    }()
     
     // MARK: - Subjects
-    let currentPrices = BehaviorRelay<[Coin: CurrentPrice]>(value: [:])
+    let currentPrices = BehaviorRelay<[String: CurrentPrice]>(value: [:])
     
     // MARK: - Initializer
-    init(fetcher: PricesFetcher, refreshAfter seconds: TimeInterval = 30) {
+    init(tokensRepository: TokensRepository, fetcher: PricesFetcher, refreshAfter seconds: TimeInterval = 30) {
+        self.tokensRepository = tokensRepository
         self.fetcher = fetcher
         self.refreshInterval = seconds
     }
@@ -55,8 +48,12 @@ class PricesManager {
     }
     
     // get supported coin
-    @objc func fetchCurrentPrices() {
-        fetcher.getCurrentPrices(coins: supportedCoins, toFiat: Defaults.fiat.code)
+    @objc func fetchCurrentPrices(coins: [String] = []) {
+        var coins = coins
+        if coins.isEmpty {
+            coins = tokensRepository.supportedTokens.map {$0.symbol}
+        }
+        fetcher.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
             .subscribe(onSuccess: {[weak self] prices in
                 guard let self = self else {return}
                 self.updateCurrentPrices(prices)
@@ -69,20 +66,20 @@ class PricesManager {
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
     {
         fetcher.getHistoricalPrice(of: coinName, fiat: Defaults.fiat.code, period: period)
-            .do(
-                afterSuccess: {
-                    Logger.log(message: "Historical price for \(coinName) in \(period): \($0)", event: .response)
-                    
-                },
-                afterError: { error in
-                    Logger.log(message: "Historical price fetching error: \(error)", event: .error)
-                }
-            )
+//            .do(
+//                afterSuccess: {
+//                    Logger.log(message: "Historical price for \(coinName) in \(period): \($0)", event: .response)
+//                    
+//                },
+//                afterError: { error in
+//                    Logger.log(message: "Historical price fetching error: \(error)", event: .error)
+//                }
+//            )
     }
 }
 
 extension PricesManager {
-    func updateCurrentPrices(_ newPrices: [Coin: CurrentPrice?]) {
+    func updateCurrentPrices(_ newPrices: [String: CurrentPrice?]) {
         var prices = currentPrices.value
         for newPrice in newPrices {
             prices[newPrice.key] = newPrice.value

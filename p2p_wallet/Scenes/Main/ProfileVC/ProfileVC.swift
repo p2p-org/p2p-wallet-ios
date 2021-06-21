@@ -12,6 +12,7 @@ import SwiftUI
 
 protocol ProfileScenesFactory {
     func makeBackupVC() -> BackupVC
+    func makeSelectFiatVC() -> SelectFiatVC
     func makeSelectNetworkVC() -> SelectNetworkVC
     func makeConfigureSecurityVC() -> ConfigureSecurityVC
     func makeSelectLanguageVC() -> SelectLanguageVC
@@ -20,6 +21,7 @@ protocol ProfileScenesFactory {
 
 class ProfileVC: ProfileVCBase {
     lazy var backupShieldImageView = UIImageView(width: 17, height: 21, image: .backupShield)
+    lazy var fiatLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var secureMethodsLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var activeLanguageLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var appearanceLabel = UILabel(weight: .medium, textColor: .textSecondary)
@@ -27,19 +29,27 @@ class ProfileVC: ProfileVCBase {
     lazy var hideZeroBalancesSwitcher: UISwitch = { [unowned self] in
         let switcher = UISwitch()
         switcher.onTintColor = .h5887ff
-        switcher.addTarget(self, action: #selector(switcherDidSwitch(sender:)), for: .valueChanged)
+        switcher.addTarget(self, action: #selector(hideZeroBalancesSwitcherDidSwitch(sender:)), for: .valueChanged)
+        return switcher
+    }()
+    lazy var useFreeTransactionsSwitcher: UISwitch = {[unowned self] in
+        let switcher = UISwitch()
+        switcher.onTintColor = .h5887ff
+        switcher.addTarget(self, action: #selector(useFreeTransactionsSwitcherDidSwitch(sender:)), for: .valueChanged)
         return switcher
     }()
     
     var disposables = [DefaultsDisposable]()
     let accountStorage: KeychainAccountStorage
-    let rootViewModel: RootViewModel
+    let rootViewModel: Root.ViewModel
     let scenesFactory: ProfileScenesFactory
+    let analyticsManager: AnalyticsManagerType
     
-    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel, scenesFactory: ProfileScenesFactory) {
+    init(accountStorage: KeychainAccountStorage, rootViewModel: Root.ViewModel, scenesFactory: ProfileScenesFactory, analyticsManager: AnalyticsManagerType) {
         self.accountStorage = accountStorage
         self.scenesFactory = scenesFactory
         self.rootViewModel = rootViewModel
+        self.analyticsManager = analyticsManager
     }
     
     deinit {
@@ -48,6 +58,7 @@ class ProfileVC: ProfileVCBase {
     
     // MARK: - Methods
     override func setUp() {
+        title = L10n.settings
         super.setUp()
         
         stackView.addArrangedSubviews([
@@ -60,11 +71,19 @@ class ProfileVC: ProfileVCBase {
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             createCell(
+                image: .settingsCurrency,
+                text: L10n.currency,
+                descriptionView: fiatLabel
+            )
+                .withTag(2)
+                .onTap(self, action: #selector(cellDidTouch(_:))),
+            
+            createCell(
                 image: .settingsNetwork,
                 text: L10n.network,
                 descriptionView: networkLabel
             )
-                .withTag(2)
+                .withTag(3)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             createCell(
@@ -72,7 +91,7 @@ class ProfileVC: ProfileVCBase {
                 text: L10n.security,
                 descriptionView: secureMethodsLabel
             )
-                .withTag(3)
+                .withTag(4)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             createCell(
@@ -80,7 +99,7 @@ class ProfileVC: ProfileVCBase {
                 text: L10n.language,
                 descriptionView: activeLanguageLabel
             )
-                .withTag(4)
+                .withTag(5)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             createCell(
@@ -88,7 +107,7 @@ class ProfileVC: ProfileVCBase {
                 text: L10n.appearance,
                 descriptionView: appearanceLabel
             )
-                .withTag(5)
+                .withTag(6)
                 .onTap(self, action: #selector(cellDidTouch(_:))),
             
             createCell(
@@ -98,24 +117,37 @@ class ProfileVC: ProfileVCBase {
                 showRightArrow: false
             ),
             
-            BEStackViewSpacing(10),
+//            createCell(
+//                image: .settingsFreeTransactions,
+//                text: L10n.useFreeTransactions,
+//                descriptionView: useFreeTransactionsSwitcher,
+//                showRightArrow: false
+//            ),
+            
+            BEStackViewSpacing(16),
             
             createCell(
                 image: .settingsLogout,
-                text: L10n.logout
+                text: L10n.logout,
+                showRightArrow: false,
+                isAlert: true
             )
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
         ])
         
         setUpBackupShield()
         
+        setUp(fiat: Defaults.fiat)
+        
         setUp(enabledBiometry: Defaults.isBiometryEnabled)
         
-        setUp(network: Defaults.network)
+        setUp(endpoint: Defaults.apiEndPoint)
         
         setUp(theme: AppDelegate.shared.window?.overrideUserInterfaceStyle)
         
         setUp(isZeroBalanceHidden: Defaults.hideZeroBalances)
+        
+        setUp(isUsingFreeTransactions: Defaults.useFreeTransaction)
         
         activeLanguageLabel.text = Locale.current.uiLanguageLocalizedString?.uppercaseFirst
     }
@@ -123,12 +155,16 @@ class ProfileVC: ProfileVCBase {
     override func bind() {
         super.bind()
         
-        disposables.append(Defaults.observe(\.isBiometryEnabled) { update in
-            self.setUp(enabledBiometry: update.newValue)
+        disposables.append(Defaults.observe(\.isBiometryEnabled) { [weak self] update in
+            self?.setUp(enabledBiometry: update.newValue)
         })
         
-        disposables.append(Defaults.observe(\.network){ update in
-            self.setUp(network: update.newValue)
+        disposables.append(Defaults.observe(\.apiEndPoint){ [weak self] update in
+            self?.setUp(endpoint: update.newValue)
+        })
+        
+        disposables.append(Defaults.observe(\.fiat){ [weak self] update in
+            self?.setUp(fiat: update.newValue)
         })
     }
     
@@ -141,6 +177,10 @@ class ProfileVC: ProfileVCBase {
         backupShieldImageView.tintColor = shieldColor
     }
     
+    func setUp(fiat: Fiat?) {
+        fiatLabel.text = fiat?.name
+    }
+    
     func setUp(enabledBiometry: Bool?) {
         var text = ""
         if enabledBiometry == true {
@@ -150,8 +190,8 @@ class ProfileVC: ProfileVCBase {
         secureMethodsLabel.text = text
     }
     
-    func setUp(network: SolanaSDK.Network?) {
-        networkLabel.text = network?.cluster
+    func setUp(endpoint: SolanaSDK.APIEndPoint?) {
+        networkLabel.text = endpoint?.network.cluster
     }
     
     func setUp(theme: UIUserInterfaceStyle?) {
@@ -162,13 +202,17 @@ class ProfileVC: ProfileVCBase {
         hideZeroBalancesSwitcher.isOn = isZeroBalanceHidden
     }
     
+    func setUp(isUsingFreeTransactions: Bool) {
+        useFreeTransactionsSwitcher.isOn = isUsingFreeTransactions
+    }
+    
     // MARK: - Actions
     @objc func buttonLogoutDidTouch() {
-        showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { (index) in
-            if index == 0 {
-                self.dismiss(animated: true) {
-                    self.rootViewModel.logout()
-                }
+        showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { [weak self] (index) in
+            guard index == 0 else {return}
+            self?.analyticsManager.log(event: .settingsLogoutClick)
+            self?.dismiss(animated: true) {
+                self?.rootViewModel.logout()
             }
         }
     }
@@ -183,15 +227,18 @@ class ProfileVC: ProfileVCBase {
             }
             show(vc, sender: nil)
         case 2:
-            let vc = scenesFactory.makeSelectNetworkVC()
+            let vc = scenesFactory.makeSelectFiatVC()
             show(vc, sender: nil)
         case 3:
-            let vc = scenesFactory.makeConfigureSecurityVC()
+            let vc = scenesFactory.makeSelectNetworkVC()
             show(vc, sender: nil)
         case 4:
-            let vc = scenesFactory.makeSelectLanguageVC()
+            let vc = scenesFactory.makeConfigureSecurityVC()
             show(vc, sender: nil)
         case 5:
+            let vc = scenesFactory.makeSelectLanguageVC()
+            show(vc, sender: nil)
+        case 6:
             let vc = scenesFactory.makeSelectAppearanceVC()
             show(vc, sender: nil)
         default:
@@ -200,10 +247,10 @@ class ProfileVC: ProfileVCBase {
     }
     
     // MARK: - Helpers
-    private func createCell(image: UIImage?, text: String, descriptionView: UIView? = nil, showRightArrow: Bool = true) -> UIView
+    private func createCell(image: UIImage?, text: String, descriptionView: UIView? = nil, showRightArrow: Bool = true, isAlert: Bool = false) -> UIView
     {
         let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-            UIImageView(width: 24, height: 24, image: image, tintColor: .a3a5ba),
+            UIView.squareRoundedCornerIcon(image: image, tintColor: isAlert ? .alert: .iconSecondary),
             UILabel(text: text, textSize: 17, numberOfLines: 0)
         ])
         if let descriptionView = descriptionView {
@@ -214,11 +261,11 @@ class ProfileVC: ProfileVCBase {
         }
         if showRightArrow {
             stackView.addArrangedSubview(
-                UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .textBlack)
+                UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .black.onDarkMode(.h8d8d8d))
             )
         }
         return stackView
-            .padding(.init(x: 20, y: 16), backgroundColor: .textWhite)
+            .padding(.init(x: 20, y: 6), backgroundColor: .contentBackground)
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -228,7 +275,12 @@ class ProfileVC: ProfileVCBase {
         }
     }
     
-    @objc func switcherDidSwitch(sender: UISwitch) {
+    @objc func hideZeroBalancesSwitcherDidSwitch(sender: UISwitch) {
         Defaults.hideZeroBalances.toggle()
+        analyticsManager.log(event: .settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
+    }
+    
+    @objc func useFreeTransactionsSwitcherDidSwitch(sender: UISwitch) {
+        Defaults.useFreeTransaction.toggle()
     }
 }

@@ -8,15 +8,20 @@
 import Foundation
 import UIKit
 
+protocol MyProductsScenesFactory {
+    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController
+    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
+}
+
 class MyProductsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: MyProductsViewModel
-    let scenesFactory: MyWalletsScenesFactory
+    let scenesFactory: MyProductsScenesFactory
     lazy var rootView = MyProductsRootView(viewModel: viewModel)
     
     // MARK: - Initializer
-    init(viewModel: MyProductsViewModel, scenesFactory: MyWalletsScenesFactory)
+    init(viewModel: MyProductsViewModel, scenesFactory: MyProductsScenesFactory)
     {
         self.viewModel = viewModel
         self.scenesFactory = scenesFactory
@@ -41,8 +46,9 @@ class MyProductsViewController: WLIndicatorModalVC {
     private func navigate(to scene: MyProductsNavigatableScene) {
         switch scene {
         case .addNewWallet:
-            let vc = scenesFactory.makeAddNewTokenVC()
-            self.present(vc, animated: true, completion: nil)
+//            let vc = scenesFactory.makeAddNewTokenVC()
+//            self.present(vc, animated: true, completion: nil)
+            break
         case .walletDetail(let pubkey, let symbol):
             let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey, symbol: symbol)
             self.present(vc, animated: true, completion: nil)

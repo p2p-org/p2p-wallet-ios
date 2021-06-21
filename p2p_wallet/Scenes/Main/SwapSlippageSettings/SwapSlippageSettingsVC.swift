@@ -20,21 +20,22 @@ class SwapSlippageSettingsVC: WLModalVC {
         axis: .horizontal,
         spacing: 10,
         alignment: .fill,
-        distribution: .equalSpacing,
+        distribution: .fillEqually,
         arrangedSubviews:
-            quickSelectableSlippages.enumerated().map {createButton(text: "\($1)%", tag: $0)} +
+            quickSelectableSlippages.enumerated().map {createButton(text: "\($1.toString(groupingSeparator: nil))%", tag: $0)} +
             [
-                UIImageView(width: 25, height: 24, image: .slippageEdit)
-                    .padding(.init(all: 11), backgroundColor: .f6f6f8, cornerRadius: 12)
+                UIView(backgroundColor: .grayPanel, cornerRadius: 12)
+                    .withCenteredChild(
+                        UIImageView(width: 25, height: 24, image: .slippageEdit)
+                    )
                     .onTap(self, action: #selector(buttonCustomSlippageDidTouch))
             ]
     )
     lazy var customSlippageTextField = PercentSuffixTextField(
         height: 56,
-        backgroundColor: .f6f6f8,
+        backgroundColor: .f6f6f8.onDarkMode(.h1b1b1b),
         cornerRadius: 12,
         font: .systemFont(ofSize: 17),
-        textColor: .black,
         placeholder: nil,
         autocorrectionType: .no,
         autocapitalizationType: UITextAutocapitalizationType.none,
@@ -101,11 +102,11 @@ class SwapSlippageSettingsVC: WLModalVC {
         
         // config styles
         let deselectedViews = slippagesView.arrangedSubviews.filter {$0 != selectedView}
-        selectedView.backgroundColor = .white
-        selectedView.border(width: 1, color: .h5887ff)
+        selectedView.backgroundColor = .white.onDarkMode(.h1b1b1b)
+        selectedView.border(width: 1, color: .h5887ff.onDarkMode(.h1b1b1b))
         
         deselectedViews.forEach {
-            $0.backgroundColor = .f6f6f8
+            $0.backgroundColor = .grayPanel
             $0.border(width: 0, color: .clear)
         }
         
@@ -119,8 +120,8 @@ class SwapSlippageSettingsVC: WLModalVC {
     
     // MARK: - Helpers
     func createButton(text: String, tag: Int) -> UIView {
-        UILabel(text: text, weight: .medium, textColor: .a3a5ba)
-            .padding(.init(x: 10, y: 14), backgroundColor: .f6f6f8, cornerRadius: 12)
+        UILabel(text: text, weight: .medium, textColor: .a3a5ba, textAlignment: .center)
+            .padding(.init(x: 10, y: 14), backgroundColor: .grayPanel, cornerRadius: 12)
             .withTag(tag)
             .onTap(self, action: #selector(buttonSelectableSlippageDidTouch(_:)))
     }

@@ -9,29 +9,23 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Action
+import BECollectionView
 
 enum TokenSettingsNavigatableScene {
     case alert(title: String?, description: String)
     case closeConfirmation
-    case processTransaction
+    case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
 }
 
-class TokenSettingsViewModel: ListViewModel<TokenSettings> {
+class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     // MARK: - Properties
-    let walletsVM: WalletsVM
+    let disposeBag = DisposeBag()
+    let walletsRepository: WalletsRepository
     let pubkey: String
     let solanaSDK: SolanaSDK
-    let transactionManager: TransactionsManager
+    let pricesRepository: PricesRepository
     let accountStorage: KeychainAccountStorage
-    var wallet: Wallet? {walletsVM.items.first(where: {$0.pubkey == pubkey})}
-    lazy var processTransactionViewModel: ProcessTransactionViewModel = {
-        let viewModel = ProcessTransactionViewModel(transactionsManager: transactionManager)
-        viewModel.tryAgainAction = CocoaAction {
-            self.closeWallet()
-            return .just(())
-        }
-        return viewModel
-    }()
+    var wallet: Wallet? {walletsRepository.getWallets().first(where: {$0.pubkey == pubkey})}
     
     // MARK: - Subject
     let navigationSubject = PublishSubject<TokenSettingsNavigatableScene>()
@@ -39,29 +33,34 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
-    init(walletsVM: WalletsVM, pubkey: String, solanaSDK: SolanaSDK, transactionManager: TransactionsManager, accountStorage: KeychainAccountStorage) {
-        self.walletsVM = walletsVM
+    init(
+        walletsRepository: WalletsRepository,
+        pubkey: String,
+        solanaSDK: SolanaSDK,
+        pricesRepository: PricesRepository,
+        accountStorage: KeychainAccountStorage
+    ) {
+        self.walletsRepository = walletsRepository
         self.pubkey = pubkey
         self.solanaSDK = solanaSDK
-        self.transactionManager = transactionManager
         self.accountStorage = accountStorage
+        self.pricesRepository = pricesRepository
         super.init()
     }
     
     override func bind() {
         super.bind()
-        walletsVM.dataObservable
+        walletsRepository.dataObservable
             .map {$0?.first(where: {$0.pubkey == self.pubkey})}
             .map {wallet -> [TokenSettings] in
                 [
                     .visibility(!(wallet?.isHidden ?? false)),
-                    .close
+                    .close(enabled: wallet?.amount == 0)
                 ]
             }
             .asDriver(onErrorJustReturn: [])
             .drive(onNext: { [weak self] (settings) in
-                self?.items = settings
-                self?.state.accept(.loaded(settings))
+                self?.overrideData(by: settings)
             })
             .disposed(by: disposeBag)
     }
@@ -71,46 +70,13 @@ class TokenSettingsViewModel: ListViewModel<TokenSettings> {
     // MARK: - Actions
     @objc func toggleHideWallet() {
         guard let wallet = wallet else {return}
-        if wallet.isHidden {
-            walletsVM.unhideWallet(wallet)
-        } else {
-            walletsVM.hideWallet(wallet)
-        }
+        walletsRepository.toggleWalletVisibility(wallet)
     }
     
-    @objc func showProcessingAndClose() {
-        navigationSubject.onNext(.processTransaction)
-        closeWallet()
-    }
-    
-    private func closeWallet() {
-        var transaction = Transaction(
-            type: .send,
-            symbol: "SOL",
-            status: .processing
-        )
-        
-        self.processTransactionViewModel.transactionHandler.accept(
-            TransactionHandler(transaction: transaction)
-        )
-        
-        Single.zip(
-            solanaSDK.closeTokenAccount(tokenPubkey: pubkey),
-            solanaSDK.getCreatingTokenAccountFee().catchAndReturn(0)
-        )
-            .subscribe(onSuccess: { signature, fee in
-                transaction.amount = fee.convertToBalance(decimals: 9)
-                transaction.signatureInfo = .init(signature: signature)
-                self.processTransactionViewModel.transactionHandler.accept(
-                    TransactionHandler(transaction: transaction)
-                )
-                self.transactionManager.process(transaction)
-                self.walletsVM.removeItem(where: {$0.pubkey == self.pubkey})
-            }, onFailure: {error in
-                self.processTransactionViewModel.transactionHandler.accept(
-                    TransactionHandler(transaction: transaction, error: error)
-                )
-            })
-            .disposed(by: disposeBag)
+    @objc func closeAccount() {
+        guard let wallet = wallet else {return}
+        let request = solanaSDK.closeTokenAccount(tokenPubkey: pubkey)
+            .map {$0 as ProcessTransactionResponseType}
+        navigationSubject.onNext(.processTransaction(request: request, transactionType: .closeAccount(wallet)))
     }
 }

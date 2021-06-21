@@ -12,6 +12,7 @@ import Firebase
 @_exported import SwiftyUserDefaults
 import THPinViewController
 import Action
+import BECollectionView
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -32,9 +33,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         Bundle.swizzleLocalization()
-        
-        // fetch prices
-        PricesManager.shared.startObserving()
         
         // BEPureLayoutConfiguration
         BEPureLayoutConfigs.defaultBackgroundColor = .background

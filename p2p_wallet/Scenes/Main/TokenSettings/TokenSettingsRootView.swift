@@ -6,35 +6,29 @@
 //
 
 import UIKit
+import BECollectionView
 
 class TokenSettingsRootView: BEView {
     // MARK: - Constants
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
-    lazy var collectionView: TokenSettingsCollectionView = {
-        let collectionView = TokenSettingsCollectionView(viewModel: viewModel, sections: [
-            CollectionViewSection(
-                cellType: TokenSettingsCell.self,
-                interGroupSpacing: 1,
-                itemHeight: .estimated(72),
-                contentInsets: .zero,
-                horizontalInterItemSpacing: .fixed(0)
+    lazy var collectionView: BECollectionView = {
+        let collectionView = BECollectionView(sections: [
+            TokenSettingsSection(
+                index: 0,
+                layout: .init(
+                    cellType: TokenSettingsCell.self,
+                    interGroupSpacing: 1,
+                    itemHeight: .estimated(72),
+                    contentInsets: .zero,
+                    horizontalInterItemSpacing: .fixed(0)
+                ),
+                viewModel: viewModel
             )
         ])
-        collectionView.itemDidSelect = { [weak self] in
-            switch $0 {
-            case .close:
-                guard let wallet = self?.viewModel.wallet else {return}
-                if let balance = wallet.amount, balance > 0 {
-                    self?.viewModel.navigationSubject.onNext(.alert(title: L10n.error, description: L10n.nonNativeAccountCanOnlyBeClosedIfItsBalanceIsZero))
-                } else {
-                    self?.viewModel.navigationSubject.onNext(.closeConfirmation)
-                }
-            default:
-                return
-            }
-        }
+        collectionView.contentInset.modify(dTop: 10)
+        collectionView.delegate = self
         return collectionView
     }()
     
@@ -66,5 +60,21 @@ class TokenSettingsRootView: BEView {
     
     private func bind() {
         
+    }
+}
+
+extension TokenSettingsRootView: BECollectionViewDelegate {
+    func beCollectionView(collectionView: BECollectionView, didSelect item: AnyHashable) {
+        guard let item = item as? TokenSettings else {
+            return
+        }
+        switch item {
+        case .close(let isEnabled):
+            if isEnabled {
+                viewModel.navigationSubject.onNext(.closeConfirmation)
+            }
+        default:
+            return
+        }
     }
 }

@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "HXRO.png",
+      "filename" : "Property 1=HXRO.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Property 1=HXRO@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "Property 1=HXRO@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

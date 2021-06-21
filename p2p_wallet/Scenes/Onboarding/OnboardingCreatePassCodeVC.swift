@@ -20,4 +20,9 @@ class OnboardingCreatePassCodeVC: CreatePassCodeVC {
         backButton
             .onTap(viewModel, action: #selector(OnboardingViewModel.cancelOnboarding))
     }
+    
+    override func showConfirmPassCodeVC() {
+        super.showConfirmPassCodeVC()
+        viewModel.analyticsManager.log(event: .setupPinKeydown1)
+    }
 }

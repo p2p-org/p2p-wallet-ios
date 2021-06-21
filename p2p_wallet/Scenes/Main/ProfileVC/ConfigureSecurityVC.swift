@@ -22,10 +22,17 @@ class ConfigureSecurityVC: ProfileVCBase {
     }()
     
     let accountStorage: KeychainAccountStorage
-    let rootViewModel: RootViewModel
-    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel) {
+    let authenticationHandler: AuthenticationHandler
+    let analyticsManager: AnalyticsManagerType
+    
+    init(
+        accountStorage: KeychainAccountStorage,
+        authenticationHandler: AuthenticationHandler,
+        analyticsManager: AnalyticsManagerType
+    ) {
         self.accountStorage = accountStorage
-        self.rootViewModel = rootViewModel
+        self.authenticationHandler = authenticationHandler
+        self.analyticsManager = analyticsManager
     }
     
     override func setUp() {
@@ -34,8 +41,7 @@ class ConfigureSecurityVC: ProfileVCBase {
         
         stackView.addArrangedSubviews([
             UIView.row([
-                UIImageView(width: 24, height: 24, image: .settingsPincode, tintColor: .a3a5ba)
-                    .padding(.init(all: 13), backgroundColor: .f6f6f8, cornerRadius: 12),
+                UIView.squareRoundedCornerIcon(image: .settingsPincode),
                 UIView.col([
                     UILabel(text: L10n.pinCode, weight: .medium),
                     UILabel(text: L10n.defaultSecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0)
@@ -43,7 +49,7 @@ class ConfigureSecurityVC: ProfileVCBase {
                 UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .textBlack)
             ])
                 .with(spacing: 16, alignment: .center, distribution: .fill)
-                .padding(.init(x: 20, y: 14), backgroundColor: .textWhite)
+                .padding(.init(x: 20, y: 14), backgroundColor: .contentBackground)
                 .onTap(self, action: #selector(buttonChangePinCodeDidTouch))
         ])
         
@@ -51,8 +57,7 @@ class ConfigureSecurityVC: ProfileVCBase {
         if !biometryMethod.stringValue.isEmpty {
             stackView.insertArrangedSubview(
                 UIView.row([
-                    UIImageView(width: 24, height: 24, image: biometryMethod.icon, tintColor: .a3a5ba)
-                        .padding(.init(all: 13), backgroundColor: .f6f6f8, cornerRadius: 12),
+                    UIView.squareRoundedCornerIcon(image: biometryMethod.icon),
                     UIView.col([
                         UILabel(text: LABiometryType.current.stringValue, weight: .medium),
                         UILabel(text: L10n.willBeAsAPrimarySecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0)
@@ -60,7 +65,7 @@ class ConfigureSecurityVC: ProfileVCBase {
                     biometrySwitcher
                 ])
                     .with(spacing: 16, alignment: .center, distribution: .fill)
-                    .padding(.init(x: 20, y: 14), backgroundColor: .textWhite),
+                    .padding(.init(x: 20, y: 14), backgroundColor: .contentBackground),
                 at: 0
             )
         }
@@ -69,14 +74,7 @@ class ConfigureSecurityVC: ProfileVCBase {
     }
     
     @objc func switcherDidChange(_ switcher: UISwitch) {
-        // prevent default's localAuth action
-        let isAuthenticating = rootViewModel.isAuthenticating
-        guard !isAuthenticating else {
-            switcher.isOn.toggle()
-            return
-        }
-        
-        rootViewModel.markAsIsAuthenticating()
+        authenticationHandler.pauseAuthentication(true)
         
         // get context
         let context = LAContext()
@@ -87,21 +85,23 @@ class ConfigureSecurityVC: ProfileVCBase {
             DispatchQueue.main.async {
                 if success {
                     Defaults.isBiometryEnabled.toggle()
+                    self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
                 } else {
                     self?.showError(authenticationError ?? Error.unknown)
                     switcher.isOn.toggle()
                 }
             }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self?.rootViewModel.markAsIsAuthenticating(isAuthenticating)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self?.authenticationHandler.pauseAuthentication(false)
             }
         }
     }
     
     @objc func buttonChangePinCodeDidTouch() {
-        rootViewModel.authenticationSubject.onNext(
-            .init(
+        authenticationHandler.authenticate(
+            presentationStyle: .init(
+                title: L10n.enterCurrentPINCode,
                 isRequired: false,
                 isFullScreen: false,
                 useBiometry: false,
@@ -109,24 +109,55 @@ class ConfigureSecurityVC: ProfileVCBase {
                     // pin code vc
                     let vc = CreatePassCodeVC(promptTitle: L10n.newPINCode)
                     vc.disableDismissAfterCompletion = true
-                    vc.completion = {_ in
-                        guard let pincode = vc.passcode else {return}
+                    vc.completion = {[weak self, weak vc] _ in
+                        guard let pincode = vc?.passcode else {return}
                         self?.accountStorage.save(pincode)
-                        vc.dismiss(animated: true, completion: nil)
+                        vc?.dismiss(animated: true) { [weak self] in
+                            let vc = PinCodeChangedVC()
+                            self?.present(vc, animated: true, completion: nil)
+                        }
                     }
-                    
+
                     // navigation
                     let nc = BENavigationController()
                     nc.viewControllers = [vc]
-                    
+
                     // modal
                     let modalVC = WLIndicatorModalVC()
                     modalVC.add(child: nc, to: modalVC.containerView)
-                    
+
     //                modalVC.isModalInPresentation = true
                     self?.present(modalVC, animated: true, completion: nil)
                 }
             )
         )
+    }
+}
+
+private class PinCodeChangedVC: FlexibleHeightVC {
+    override var padding: UIEdgeInsets { UIEdgeInsets(all: 20).modifying(dBottom: -20) }
+    override var margin: UIEdgeInsets {UIEdgeInsets(all: 16).modifying(dBottom: -12)}
+    init() {
+        super.init(position: .center)
+    }
+    
+    override func setUp() {
+        super.setUp()
+        stackView.addArrangedSubviews([
+            UIImageView(width: 95+60, height: 95+60, image: .passcodeChanged)
+                .centeredHorizontallyView,
+            BEStackViewSpacing(0),
+            UILabel(text: L10n.pinCodeChanged, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center),
+            BEStackViewSpacing(30),
+            WLButton.stepButton(type: .blue, label: L10n.goBackToProfile)
+                .onTap(self, action: #selector(back))
+        ])
+    }
+    
+    override func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        let pc = super.presentationController(forPresented: presented, presenting: presenting, source: source) as! PresentationController
+        pc.roundedCorner = .allCorners
+        pc.cornerRadius = 24
+        return pc
     }
 }

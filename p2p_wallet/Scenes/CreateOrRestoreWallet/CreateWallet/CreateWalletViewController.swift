@@ -31,6 +31,7 @@ class CreateWalletViewController: WLIndicatorModalVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.kickOff()
+        viewModel.analyticsManager.log(event: .createWalletOpen)
     }
     
     override func setUp() {
@@ -42,17 +43,17 @@ class CreateWalletViewController: WLIndicatorModalVC {
     
     override func bind() {
         super.bind()
-        viewModel.navigationSubject
-            .subscribe(onNext: {[unowned self] in self.navigate(to: $0)})
+        viewModel.output.navigation
+            .drive(onNext: {[weak self] in self?.navigate(to: $0)})
             .disposed(by: disposeBag)
     }
     
     // MARK: - Navigation
     private func navigate(to scene: CreateWalletNavigatableScene) {
         switch scene {
-        case .termsAndConditions:
-            let vc = scenesFactory.makeTermsAndConditionsVC()
-            childNavigationController.pushViewController(vc, animated: true)
+//        case .termsAndConditions:
+//            let vc = scenesFactory.makeTermsAndConditionsVC()
+//            childNavigationController.pushViewController(vc, animated: true)
         case .createPhrases:
             let vc = scenesFactory.makeCreateSecurityKeysViewController()
             childNavigationController.pushViewController(vc, animated: true)

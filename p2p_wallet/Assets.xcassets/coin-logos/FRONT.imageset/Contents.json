@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "FRONT.png",
+      "filename" : "Property 1=FRONT.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Property 1=FRONT@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "Property 1=FRONT@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

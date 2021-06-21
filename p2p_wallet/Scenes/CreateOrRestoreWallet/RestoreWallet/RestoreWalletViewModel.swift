@@ -11,7 +11,7 @@ import RxCocoa
 
 enum RestoreWalletNavigatableScene {
     case enterPhrases
-    case welcomeBack(phrases: [String])
+    case derivableAccounts(phrases: [String])
 }
 
 class RestoreWalletViewModel {
@@ -21,19 +21,19 @@ class RestoreWalletViewModel {
     let bag = DisposeBag()
     let accountStorage: KeychainAccountStorage
     let handler: CreateOrRestoreWalletHandler
+    let analyticsManager: AnalyticsManagerType
+    
+    private var phrases: [String]?
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<RestoreWalletNavigatableScene>()
     let errorMessage = PublishSubject<String?>()
     
     // MARK: - Initializer
-    init(accountStorage: KeychainAccountStorage, handler: CreateOrRestoreWalletHandler) {
+    init(accountStorage: KeychainAccountStorage, handler: CreateOrRestoreWalletHandler, analyticsManager: AnalyticsManagerType) {
         self.accountStorage = accountStorage
         self.handler = handler
-    }
-    
-    func finish() {
-        handler.creatingOrRestoringWalletDidComplete()
+        self.analyticsManager = analyticsManager
     }
     
     // MARK: - Actions
@@ -43,22 +43,42 @@ class RestoreWalletViewModel {
             errorMessage.onNext(L10n.thereIsNoP2PWalletSavedInYourICloud)
             return
         }
-        handlePhrases(phrases)
+        analyticsManager.log(event: .recoveryRestoreIcloudClick)
+        handlePhrases(phrases.components(separatedBy: " "))
     }
     
     @objc func restoreManually() {
+        analyticsManager.log(event: .recoveryRestoreManualyClick)
         navigationSubject.onNext(.enterPhrases)
     }
-    
-    private func handlePhrases(_ text: String)
-    {
+}
+
+extension RestoreWalletViewModel: PhrasesCreationHandler {
+    func handlePhrases(_ phrases: [String]) {
+        self.phrases = phrases
+        navigationSubject.onNext(.derivableAccounts(phrases: phrases))
+    }
+}
+
+extension RestoreWalletViewModel: AccountRestorationHandler {
+    func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath) {
+        analyticsManager.log(event: .recoveryRestoreClick)
+        
         do {
-            let phrases = text.components(separatedBy: " ")
-            _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
-            navigationSubject.onNext(.welcomeBack(phrases: phrases))
+            guard let phrases = self.phrases else {
+                handler.creatingOrRestoringWalletDidCancel()
+                return
+            }
+            try accountStorage.save(phrases: phrases)
+            try accountStorage.save(derivableType: derivablePath.type)
+            try accountStorage.save(walletIndex: derivablePath.walletIndex)
+            
+            handler.restoringWalletDidComplete()
         } catch {
-            let message = (error as? SolanaSDK.Error)?.errorDescription ?? error.localizedDescription
-            errorMessage.onNext(message)
+            errorMessage.onNext(error.readableDescription)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                self?.handler.creatingOrRestoringWalletDidCancel()
+            }
         }
     }
 }

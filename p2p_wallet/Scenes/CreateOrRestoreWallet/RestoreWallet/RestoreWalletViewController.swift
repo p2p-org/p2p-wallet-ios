@@ -9,8 +9,8 @@ import Foundation
 import UIKit
 
 protocol RestoreWalletScenesFactory {
-    func makeEnterPhrasesVC() -> EnterPhrasesVC
-    func makeWelcomeBackVC(phrases: [String]) -> WelcomeBackVC
+    func makeEnterPhrasesVC() -> RecoveryEnterSeedsViewController
+    func makeDerivableAccountsVC(phrases: [String]) -> DerivableAccountsVC
 }
 
 class RestoreWalletViewController: WLIntroVC {
@@ -65,13 +65,11 @@ class RestoreWalletViewController: WLIntroVC {
     private func navigate(to scene: RestoreWalletNavigatableScene) {
         switch scene {
         case .enterPhrases:
-            let vc = scenesFactory.makeEnterPhrasesVC()
-            let titleImageView = UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white)
-
-            presentCustomModal(vc: vc, title: L10n.securityKey.uppercaseFirst, titleImageView: titleImageView)
-        case .welcomeBack(phrases: let phrases):
-            let vc = scenesFactory.makeWelcomeBackVC(phrases: phrases)
-            transition(to: vc)
+            let vc = WLModalWrapperVC(wrapped: scenesFactory.makeEnterPhrasesVC())
+            present(vc, animated: true, completion: nil)
+        case .derivableAccounts(let phrases):
+            let vc = WLModalWrapperVC(wrapped: scenesFactory.makeDerivableAccountsVC(phrases: phrases))
+            present(vc, animated: true, completion: nil)
         }
     }
 }

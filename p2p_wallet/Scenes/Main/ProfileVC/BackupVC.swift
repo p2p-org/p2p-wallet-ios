@@ -14,8 +14,9 @@ protocol BackupScenesFactory {
 
 class BackupVC: ProfileVCBase {
     let accountStorage: KeychainAccountStorage
-    let rootViewModel: RootViewModel
+    let authenticationHandler: AuthenticationHandler
     let scenesFactory: BackupScenesFactory
+    let analyticsManager: AnalyticsManagerType
     
     lazy var isIcloudBackedUp = BehaviorRelay<Bool>(value: accountStorage.didBackupUsingIcloud)
     var backedUpIcloudCompletion: (() -> Void)?
@@ -26,17 +27,23 @@ class BackupVC: ProfileVCBase {
     lazy var backupUsingIcloudButton = WLButton.stepButton(type: .black, label: " " + L10n.backupUsingICloud)
     lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .f6f6f8, textColor: .textBlack, label: L10n.backupManually)
     
-    init(accountStorage: KeychainAccountStorage, rootViewModel: RootViewModel, scenesFactory: BackupScenesFactory) {
+    init(accountStorage: KeychainAccountStorage, authenticationHandler: AuthenticationHandler, scenesFactory: BackupScenesFactory, analyticsManager: AnalyticsManagerType) {
         self.accountStorage = accountStorage
-        self.rootViewModel = rootViewModel
+        self.authenticationHandler = authenticationHandler
         self.scenesFactory = scenesFactory
+        self.analyticsManager = analyticsManager
         super.init()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        analyticsManager.log(event: .settingBackupOpen)
     }
     
     override func setUp() {
         title = L10n.backup
         super.setUp()
-        view.backgroundColor = .textWhite
+        view.backgroundColor = .contentBackground
         
         stackView.removeFromSuperview()
         scrollView.removeFromSuperview()
@@ -105,11 +112,10 @@ class BackupVC: ProfileVCBase {
     
     @objc func buttonBackupUsingICloudDidTouch() {
         guard let account = accountStorage.account?.phrase else {return}
-        rootViewModel.authenticationSubject.onNext(
-            .init(
+        authenticationHandler.authenticate(
+            presentationStyle: .init(
                 isRequired: false,
                 isFullScreen: false,
-                useBiometry: true,
                 completion: { [weak self] in
                     self?.accountStorage.saveICloud(phrases: account.joined(separator: " "))
                     self?.isIcloudBackedUp.accept(true)
@@ -120,12 +126,11 @@ class BackupVC: ProfileVCBase {
     }
     
     @objc func buttonBackupManuallyDidTouch() {
-        rootViewModel.authenticationSubject.onNext(
-            .init(
+        authenticationHandler.authenticate(
+            presentationStyle: .init(
                 isRequired: false,
                 isFullScreen: false,
-                useBiometry: true,
-                completion: {
+                completion: { [weak self] in
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                         guard let vc = self?.scenesFactory.makeBackupManuallyVC()
                         else {return}
