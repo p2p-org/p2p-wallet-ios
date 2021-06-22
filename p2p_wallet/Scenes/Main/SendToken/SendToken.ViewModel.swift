@@ -436,7 +436,12 @@ extension SendToken {
             navigationSubject.onNext(
                 .processTransaction(
                     request: request.map {$0 as ProcessTransactionResponseType},
-                    transactionType: .send(from: wallet, to: receiver, amount: amount)
+                    transactionType: .send(
+                        from: wallet,
+                        to: receiver,
+                        lamport: lamport,
+                        feeInLamports: feeSubject.value?.toLamport(decimals: wallet.token.decimals) ?? 0
+                    )
                 )
             )
         }
