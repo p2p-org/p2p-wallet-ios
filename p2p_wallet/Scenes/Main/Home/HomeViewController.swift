@@ -54,6 +54,7 @@ class HomeViewController: BaseVC {
     
     override func setUp() {
         super.setUp()
+        view.backgroundColor = .white.onDarkMode(.h1b1b1b)
         setStatusBarColor(view.backgroundColor!)
     }
     

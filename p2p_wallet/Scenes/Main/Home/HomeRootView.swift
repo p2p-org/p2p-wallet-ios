@@ -30,7 +30,7 @@ class HomeRootView: BEView {
                 .onTap(viewModel, action: #selector(HomeViewModel.showSettings))
         }
         
-        let view = UIView(backgroundColor: .background)
+        let view = UIView(backgroundColor: .white.onDarkMode(.h1b1b1b))
         view.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(top: 10, left: 16, bottom: 6, right: 20))
         return view
@@ -77,7 +77,6 @@ class HomeRootView: BEView {
     // MARK: - Methods
     override func commonInit() {
         super.commonInit()
-        backgroundColor = .background
         layout()
         bind()
         collectionView.refresh()
