@@ -57,7 +57,7 @@ class PassCodeVC: BEViewController, THPinViewControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Setup views
-        backgroundColor = .pinViewBgColor
+        backgroundColor = .background
         promptColor = .textBlack
         tintColor = .pinViewButtonBgColor
         embededPinVC.bottomButtonImage = .delete

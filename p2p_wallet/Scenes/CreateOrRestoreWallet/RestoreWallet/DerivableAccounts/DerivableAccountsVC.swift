@@ -23,7 +23,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
             derivationPathLabel
             UIImageView(width: 10, height: 8, image: .downArrow, tintColor: .a3a5ba)
         }
-            .padding(.init(all: 18), backgroundColor: .f6f6f8, cornerRadius: 12)
+            .padding(.init(all: 18), backgroundColor: .grayPanel, cornerRadius: 12)
             .onTap(viewModel, action: #selector(DerivableAccountsViewModel.selectDerivationPath))
     }
     

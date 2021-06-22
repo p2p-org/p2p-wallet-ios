@@ -48,10 +48,10 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
         .onTap(self, action: #selector(buttonNextDidTouch))
     lazy var pasteButton = WLButton(backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12, label: L10n.paste, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .white, contentInsets: .init(x: 16, y: 10))
         .onTap(self, action: #selector(buttonPasteDidTouch))
-    lazy var retryButton = WLButton.stepButton(type: .black, label: L10n.resetAndTryAgain)
+    lazy var retryButton = WLButton.stepButton(type: .gray, label: L10n.resetAndTryAgain)
         .onTap(self, action: #selector(resetAndTryAgainButtonDidTouch))
     
-    lazy var descriptionLabel = UILabel(text: L10n.enterASeedPhraseFromYourAccount, textSize: 17, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
+    lazy var descriptionLabel = UILabel(text: L10n.enterASeedPhraseFromYourAccount, textSize: 17, textColor: .textSecondary.onDarkMode(.h5887ff), numberOfLines: 0, textAlignment: .center)
     
     // MARK: - Initializers
     init(handler: PhrasesCreationHandler) {
@@ -80,8 +80,8 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
                 .padding(.init(all: 20)),
             UIView.separator(height: 1, color: .separator),
             textView
-                .padding(.init(all: 10), backgroundColor: .lightGrayBackground, cornerRadius: 16)
-                .border(width: 1, color: .a3a5ba)
+                .padding(.init(all: 10), backgroundColor: .f3f3f3.onDarkMode(.h1b1b1b), cornerRadius: 16)
+                .border(width: 1, color: .a3a5ba.onDarkMode(.h5887ff))
                 .padding(.init(all: 20, excludingEdge: .bottom)),
             BEStackViewSpacing(30),
             errorLabel
@@ -166,6 +166,7 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
     private func handlePhrases()
     {
         hideKeyboard()
+        textView.superview?.border(width: 1, color: .f3f3f3.onDarkMode(.h1b1b1b))
         do {
             let phrases = textView.getPhrases()
             _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
@@ -183,6 +184,11 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
     }
     
     func wlPhrasesTextViewDidBeginEditing(_ textView: WLPhrasesTextView) {
-        self.error.accept(nil)
+        error.accept(nil)
+        textView.superview?.border(width: 1, color: .h5887ff)
+    }
+    
+    func wlPhrasesTextViewDidEndEditing(_ textView: WLPhrasesTextView) {
+        textView.superview?.border(width: 1, color: .f3f3f3.onDarkMode(.h1b1b1b))
     }
 }
