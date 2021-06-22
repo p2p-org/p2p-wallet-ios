@@ -506,9 +506,9 @@ extension SwapToken {
                     transactionType: .swap(
                         from: sourceWallet,
                         to: destinationWallet,
-                        inputAmount: inputAmount,
-                        estimatedAmount: estimatedAmount,
-                        fee: feeInLamportsSubject.value?.convertToBalance(decimals: solWallet?.token.decimals) ?? 0
+                        inputAmount: lamports,
+                        estimatedAmount: estimatedAmount.toLamport(decimals: destinationWallet.token.decimals),
+                        fee: feeInLamportsSubject.value ?? 0
                     )
                 )
             )
