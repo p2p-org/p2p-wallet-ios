@@ -30,6 +30,8 @@ protocol WalletsRepository: BEListViewModelType {
     
     @discardableResult
     func updateWallet(where predicate: (Wallet) -> Bool, transform: (Wallet) -> Wallet?) -> Bool
+    
+    func batchUpdate(closure: ([Wallet]) -> [Wallet])
 }
 
 extension WalletsViewModel: WalletsRepository {
@@ -47,5 +49,10 @@ extension WalletsViewModel: WalletsRepository {
     
     func getError() -> Error? {
         error
+    }
+    
+    func batchUpdate(closure: ([Wallet]) -> [Wallet]) {
+        let wallets = closure(getWallets())
+        overrideData(by: wallets)
     }
 }

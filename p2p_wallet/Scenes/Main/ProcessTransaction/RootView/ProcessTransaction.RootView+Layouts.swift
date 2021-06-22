@@ -20,16 +20,16 @@ extension ProcessTransaction.RootView {
         case .swap(let from, let to, let inputAmount, let estimatedAmount, _):
             let sv = SwapTransactionSummaryView(forAutoLayout: ())
             sv.sourceIconImageView.setUp(token: from.token)
-            sv.sourceAmountLabel.text = (-(inputAmount)).toString(maximumFractionDigits: 4)
+            sv.sourceAmountLabel.text = (-(inputAmount.convertToBalance(decimals: from.token.decimals))).toString(maximumFractionDigits: 9)
             sv.sourceSymbolLabel.text = from.token.symbol
             
             sv.destinationIconImageView.setUp(token: to.token)
-            sv.destinationAmountLabel.text = estimatedAmount.toString(maximumFractionDigits: 4, showPlus: true)
+            sv.destinationAmountLabel.text = estimatedAmount.convertToBalance(decimals: to.token.decimals).toString(maximumFractionDigits: 9, showPlus: true)
             sv.destinationSymbolLabel.text = to.token.symbol
             
             summaryView = sv
-        case .send(let fromWallet, _, let sentAmount):
-            let sentAmount = -sentAmount
+        case .send(let fromWallet, _, let sentAmount, _):
+            let sentAmount = -(sentAmount.convertToBalance(decimals: fromWallet.token.decimals))
             let symbol = fromWallet.token.symbol
             
             let sv = DefaultTransactionSummaryView(forAutoLayout: ())
@@ -150,7 +150,7 @@ extension ProcessTransaction.RootView {
             
             var symbol = ""
             switch transactionType {
-            case .send(let fromWallet, _, _):
+            case .send(let fromWallet, _, _, _):
                 symbol = fromWallet.token.symbol
             case .swap, .closeAccount:
                 break
