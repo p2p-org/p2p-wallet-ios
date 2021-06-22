@@ -13,20 +13,20 @@ class WLButton: UIButton {
         var backgroundColor: UIColor {
             switch self {
             case .black:
-                return .black
+                return .blackButtonBackground
             case .sub:
-                return .h202020
+                return .h2b2b2b
             case .blue:
                 return .h5887ff
             case .gray:
-                return .f6f6f8
+                return .grayPanel
             }
         }
         
         var disabledColor: UIColor? {
             switch self {
             case .blue:
-                return .iconSecondary
+                return .grayPanel
             default:
                 return nil
             }

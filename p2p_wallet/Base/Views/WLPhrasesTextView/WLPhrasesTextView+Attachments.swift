@@ -39,12 +39,12 @@ extension WLPhrasesTextView {
         let label = { () -> UILabel in
             let label = UILabel(textColor: .textBlack)
             label.attributedText = NSMutableAttributedString()
-                .text("\(index != nil ? "\(index!)": ""). ", size: 15, weight: .semibold, color: .a3a5ba)
+                .text("\(index != nil ? "\(index!)": ""). ", size: 15, weight: .semibold, color: .iconSecondary)
                 .text("\(phrase)", size: 15, weight: .semibold)
             return label
         }()
-            .padding(.init(x: 12, y: 12), backgroundColor: .textWhite, cornerRadius: 5)
-        label.border(width: 1, color: UIColor.a3a5ba.withAlphaComponent(0.5))
+            .padding(.init(x: 12, y: 12), backgroundColor: .tagBackground, cornerRadius: 5)
+        label.border(width: 1, color: .tagBorder)
         label.translatesAutoresizingMaskIntoConstraints = true
         label.isUserInteractionEnabled = true
         

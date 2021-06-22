@@ -10,6 +10,7 @@ import SubviewAttachingTextView
 
 protocol WLPhrasesTextViewDelegate: AnyObject {
     func wlPhrasesTextViewDidBeginEditing(_ textView: WLPhrasesTextView)
+    func wlPhrasesTextViewDidEndEditing(_ textView: WLPhrasesTextView)
 }
 
 class WLPhrasesTextView: SubviewAttachingTextView {
@@ -103,6 +104,10 @@ class WLPhrasesTextView: SubviewAttachingTextView {
 extension WLPhrasesTextView: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         forwardedDelegate?.wlPhrasesTextViewDidBeginEditing(self)
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        forwardedDelegate?.wlPhrasesTextViewDidEndEditing(self)
     }
     
     func textViewDidChange(_ textView: UITextView) {
