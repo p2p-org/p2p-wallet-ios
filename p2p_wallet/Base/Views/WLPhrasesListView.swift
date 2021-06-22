@@ -12,7 +12,7 @@ import Action
 class WLPhrasesListView: BEView {
     lazy var tagListView: TagListView = {
         let tagListView = TagListView(forAutoLayout: ())
-        tagListView.tagBackgroundColor = .textWhite
+        tagListView.tagBackgroundColor = .tagBackground
         tagListView.textFont = .systemFont(ofSize: 15)
         tagListView.textColor = .textBlack
         tagListView.marginX = 7
@@ -20,11 +20,11 @@ class WLPhrasesListView: BEView {
         tagListView.paddingX = 12
         tagListView.paddingY = 12
         tagListView.borderWidth = 1
-        tagListView.borderColor = UIColor.a3a5ba.withAlphaComponent(0.5)
+        tagListView.borderColor = .tagBorder
         tagListView.cornerRadius = 8
         return tagListView
     }()
-    lazy var copyToClipboardButton = UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: .textSecondary, textAlignment: .center)
+    lazy var copyToClipboardButton = UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: .textSecondary.onDarkMode(.white), textAlignment: .center)
         .padding(.init(all: 16))
         .onTap(self, action: #selector(copyToClipboard))
     
@@ -41,7 +41,7 @@ class WLPhrasesListView: BEView {
                 UIView.separator(height: 1, color: .separator),
                 copyToClipboardButton
             ])
-                .padding(.zero, backgroundColor: .f6f6f8, cornerRadius: 12)
+                .padding(.zero, backgroundColor: .f6f6f8.onDarkMode(.h1b1b1b), cornerRadius: 12)
         ])
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
@@ -57,7 +57,7 @@ class WLPhrasesListView: BEView {
             tagListView.addTag("\(index + 1). \(phrase)")
             tagListView.tagViews[index].setAttributedTitle(
                 NSMutableAttributedString()
-                    .text("\(index + 1). ", color: .a3a5ba)
+                    .text("\(index + 1). ", color: .a3a5ba.onDarkMode(.h8d8d8d))
                     .text(phrase),
                 for: .normal
             )

@@ -20,7 +20,7 @@ class RestoreWalletViewController: WLIntroVC {
     let scenesFactory: RestoreWalletScenesFactory
     
     // MARK: - Subviews
-    lazy var iCloudRestoreButton = WLButton.stepButton(enabledColor: .white, textColor: .black, label: " " + L10n.restoreUsingICloud)
+    lazy var iCloudRestoreButton = WLButton.stepButton(enabledColor: .textWhite, textColor: .textBlack, label: " " + L10n.restoreUsingICloud)
         .onTap(viewModel, action: #selector(RestoreWalletViewModel.restoreFromICloud))
     lazy var restoreManuallyButton = WLButton.stepButton(type: .sub, label: L10n.restoreManually)
         .onTap(viewModel, action: #selector(RestoreWalletViewModel.restoreManually))

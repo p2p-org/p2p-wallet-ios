@@ -34,7 +34,7 @@ class BaseOnboardingVC: BaseVStackVC {
             UIView.separator(height: 1, color: .separator),
             spacer1,
             imageView
-                .padding(.init(all: 18), backgroundColor: UIColor.f6f6f8.withAlphaComponent(0.5), cornerRadius: 12)
+                .padding(.init(all: 18), backgroundColor: .grayPanel.withAlphaComponent(0.5), cornerRadius: 12)
                 .centeredHorizontallyView,
             BEStackViewSpacing(30),
             firstDescriptionLabel.padding(.init(x: 20, y: 0)),

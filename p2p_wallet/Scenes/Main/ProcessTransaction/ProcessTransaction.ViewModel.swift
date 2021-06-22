@@ -90,8 +90,8 @@ extension ProcessTransaction {
         
         @objc func executeRequest() {
             switch transactionType {
-            case .send(let fromWallet, let receiver, let amount):
-                executeSend(fromWallet: fromWallet, receiver: receiver, amount: amount)
+            case .send(let fromWallet, let receiver, let lamports, let feeInLamports):
+                executeSend(fromWallet: fromWallet, receiver: receiver, lamports: lamports, feeInLamports: feeInLamports)
             case .swap(let from, let to, let inputAmount, let estimatedAmount, let fee):
                 executeSwap(from: from, to: to, inputAmount: inputAmount, estimatedAmount: estimatedAmount, fee: fee)
             case .closeAccount(let wallet):
@@ -185,7 +185,8 @@ extension ProcessTransaction {
         private func executeSend(
             fromWallet: Wallet,
             receiver: String,
-            amount: Double
+            lamports: SolanaSDK.Lamports,
+            feeInLamports: SolanaSDK.Lamports
         ) {
             // Verify address
             guard NSRegularExpression.publicKey.matches(receiver) else {
@@ -197,11 +198,20 @@ extension ProcessTransaction {
             // Execute request
             executeRequest { [weak self] _ in
                 // update wallet
-                self?.walletsRepository.updateWallet(where: {$0.pubkey == fromWallet.pubkey}, transform: {
-                    var wallet = $0
-                    let lamports = amount.toLamport(decimals: fromWallet.token.decimals)
-                    wallet.lamports = (wallet.lamports ?? 0) - lamports
-                    return wallet
+                self?.walletsRepository.batchUpdate(closure: {
+                    var wallets = $0
+                    // update wallet
+                    if let index = wallets.firstIndex(where: {$0.pubkey == fromWallet.pubkey})
+                    {
+                        wallets[index].decreaseBalance(diffInLamports: lamports)
+                    }
+                    
+                    // update SOL wallet (minus fee)
+                    if let index = wallets.firstIndex(where: {$0.token.isNative})
+                    {
+                        wallets[index].decreaseBalance(diffInLamports: feeInLamports)
+                    }
+                    return wallets
                 })
             }
         }
@@ -209,63 +219,65 @@ extension ProcessTransaction {
         private func executeSwap(
             from: Wallet,
             to: Wallet,
-            inputAmount: Double,
-            estimatedAmount: Double,
-            fee: Double
+            inputAmount: SolanaSDK.Lamports,
+            estimatedAmount: SolanaSDK.Lamports,
+            fee: SolanaSDK.Lamports
         ) {
             executeRequest { [weak self] response in
                 // cast type
                 let response = response as! SolanaSDK.SwapResponse
                 
-                // update source wallet
-                self?.walletsRepository.updateWallet(where: {$0.pubkey == from.pubkey}, transform: {
-                    var wallet = $0
-                    let lamports = inputAmount.toLamport(decimals: from.token.decimals)
-                    wallet.lamports = (wallet.lamports ?? 0) - lamports
-                    return wallet
-                })
-                
-                // update destination wallet
-                if self?.walletsRepository.getWallets().contains(where: {$0.pubkey == to.pubkey}) == true
-                {
-                    self?.walletsRepository.updateWallet(where: {$0.pubkey == to.pubkey}, transform: {
-                        var wallet = $0
-                        let lamports = estimatedAmount.toLamport(decimals: to.token.decimals)
-                        wallet.lamports = (wallet.lamports ?? 0) + lamports
-                        return wallet
-                    })
-                } else if let pubkey = response.newWalletPubkey {
-                    var wallet = to
-                    wallet.pubkey = pubkey
-                    wallet.lamports = estimatedAmount.toLamport(decimals: wallet.token.decimals)
+                // batch update
+                self?.walletsRepository.batchUpdate(closure: {
+                    var wallets = $0
                     
-                    _ = self?.walletsRepository.insert(wallet)
-                    
-                    self?.pricesRepository.fetchCurrentPrices(coins: [wallet.token.symbol])
-                }
-                
-                // update sol wallet (minus fee)
-                self?.walletsRepository.updateWallet(where: {$0.token.isNative == true}, transform: {
-                    var wallet = $0
-                    let fee = fee.toLamport(decimals: wallet.token.decimals)
-                    if (wallet.lamports ?? 0) >= fee {
-                        wallet.lamports = (wallet.lamports ?? fee) - fee
+                    // update source wallet
+                    if let index = wallets.firstIndex(where: {$0.pubkey == from.pubkey})
+                    {
+                        wallets[index].decreaseBalance(diffInLamports: inputAmount)
                     }
-                    return wallet
+                    
+                    // update destination wallet if exists
+                    if let index = wallets.firstIndex(where: {$0.pubkey == to.pubkey})
+                    {
+                        wallets[index].increaseBalance(diffInLamports: estimatedAmount)
+                    }
+                    
+                    // add new wallet if destination is a new wallet
+                    else if let pubkey = response.newWalletPubkey {
+                        var wallet = to
+                        wallet.pubkey = pubkey
+                        wallet.lamports = estimatedAmount
+                        wallets.append(wallet)
+                    }
+                    
+                    // update sol wallet (minus fee)
+                    if let index = wallets.firstIndex(where: {$0.token.isNative})
+                    {
+                        wallets[index].decreaseBalance(diffInLamports: fee)
+                    }
+                    
+                    return wallets
                 })
             }
         }
         
         private func executeCloseAccount(_ wallet: Wallet) {
             executeRequest { [weak self] _ in
-                self?.walletsRepository.updateWallet(where: {$0.token.symbol == "SOL"}, transform: { [weak self] in
-                    var wallet = $0
-                    let lamports = self?.output.reimbursedAmount?.toLamport(decimals: wallet.token.decimals) ?? 0
-                    wallet.lamports = (wallet.lamports ?? 0) + lamports
-                    return wallet
+                self?.walletsRepository.batchUpdate(closure: {
+                    var wallets = $0
+                    
+                    // remove closed wallet
+                    wallets.removeAll(where: {$0.pubkey == wallet.pubkey})
+                    
+                    // update sol wallet
+                    if let index = wallets.firstIndex(where: {$0.token.isNative})
+                    {
+                        wallets[index].updateBalance(diff: self?.output.reimbursedAmount ?? 0)
+                    }
+                    
+                    return wallets
                 })
-                
-                _ = self?.walletsRepository.removeItem(where: {$0.pubkey == wallet.pubkey})
             }
         }
         
@@ -276,14 +288,13 @@ extension ProcessTransaction {
             
             // request
             request
+                .do(onSuccess: completion)
                 .map { response -> String in
                     if let swapResponse = response as? SolanaSDK.SwapResponse {
-                        completion(swapResponse)
                         return swapResponse.transactionId
                     }
                     
                     if let response = response as? SolanaSDK.TransactionID {
-                        completion(response)
                         return response
                     }
                     
