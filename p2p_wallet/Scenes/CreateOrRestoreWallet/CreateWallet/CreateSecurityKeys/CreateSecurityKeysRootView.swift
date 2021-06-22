@@ -20,7 +20,7 @@ class CreateSecurityKeysRootView: ScrollableVStackRootView {
     
     // MARK: - Subviews
     let backButton: UIView
-    lazy var regenerateButton = UIImageView(width: 36, height: 36, image: .regenerateButton, tintColor: .a3a5ba)
+    lazy var regenerateButton = UIImageView(width: 36, height: 36, image: .regenerateButton, tintColor: .iconSecondary)
         .onTap(viewModel, action: #selector(CreateSecurityKeysViewModel.createPhrases))
     lazy var phrasesListViews: WLPhrasesListView = {
         let listView = WLPhrasesListView(forAutoLayout: ())
