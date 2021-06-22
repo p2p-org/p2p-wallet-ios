@@ -33,7 +33,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         super.commonInit()
         layer.cornerRadius = 12
         layer.masksToBounds = true
-        backgroundColor = .background3
+        backgroundColor = .grayMain
         
         stackView.addArrangedSubviews([
             {
