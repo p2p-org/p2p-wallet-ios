@@ -46,7 +46,8 @@ extension WalletDetail {
             walletsRepository: WalletsRepository,
             pricesRepository: PricesRepository,
             transactionsRepository: TransactionsRepository,
-            analyticsManager: AnalyticsManagerType
+            analyticsManager: AnalyticsManagerType,
+            feeRelayerAPIClient: FeeRelayerSolanaAPIClient
         ) {
             self.pubkey = pubkey
             self.symbol = symbol
@@ -71,7 +72,8 @@ extension WalletDetail {
                     account: pubkey,
                     accountSymbol: symbol,
                     repository: transactionsRepository,
-                    pricesRepository: pricesRepository
+                    pricesRepository: pricesRepository,
+                    feeRelayerAPIClient: feeRelayerAPIClient
                 )
             )
             
