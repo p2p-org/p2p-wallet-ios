@@ -23,7 +23,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         transactionTimestampLabel
     ])
         .padding(.init(top: 30, left: 20, bottom: 54, right: 20))
-    private lazy var transactionTypeLabel = UILabel(textSize: 21, weight: .medium, textAlignment: .center)
+    private lazy var transactionTypeLabel = UILabel(textSize: 21, weight: .semibold, textAlignment: .center)
     private lazy var transactionTimestampLabel = UILabel(textSize: 13, weight: .medium, textColor: .textSecondary, textAlignment: .center)
     private lazy var transactionIconImageView = UIImageView(width: 30, height: 30, tintColor: .white)
     
@@ -49,7 +49,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
 //    private lazy var blockNumLabel = sectionContent()
     private lazy var signatureLabel = UILabel(weight: .semibold, numberOfLines: 0)
     
-    private lazy var toggleShowHideTransactionDetailsButton = WLButton.stepButton(enabledColor: .f6f6f8, textColor: .a3a5ba, label: L10n.showTransactionDetails)
+    private lazy var toggleShowHideTransactionDetailsButton = WLButton.stepButton(enabledColor: .grayPanel, textColor: .a3a5baStatic.onDarkMode(.white), label: L10n.showTransactionDetails)
     
     // MARK: - Initializers
     init(viewModel: TransactionInfoViewModel) {
@@ -247,8 +247,8 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         
         switch transaction.value {
         case let transferTransaction as SolanaSDK.TransferTransaction:
-            var fromIconView: UIView
-            var toIconView: UIView
+            var fromIconView: UIView?
+            var toIconView: UIView?
             let coinLogoImageView = CoinLogoImageView(size: 45)
             wasPaidByP2POrg = transferTransaction.wasPaidByP2POrg
             
@@ -257,18 +257,21 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                 coinLogoImageView.setUp(token: transferTransaction.source?.token)
                 
                 fromIconView = coinLogoImageView
-                toIconView = UIImageView(width: 25, height: 25, image: .walletIcon, tintColor: .a3a5ba)
-                    .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
+                toIconView = UIImageView(width: 25, height: 25, image: .walletIcon, tintColor: .iconSecondary)
+                    .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12)
                 
             case .receive:
                 shouldAddFeeSection = false
-                fromIconView = UIImageView(width: 25, height: 25, image: .walletIcon, tintColor: .a3a5ba)
-                    .padding(.init(all: 10), backgroundColor: .f6f6f8, cornerRadius: 12)
+                fromIconView = UIImageView(width: 25, height: 25, image: .walletIcon, tintColor: .iconSecondary)
+                    .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12)
                 coinLogoImageView.setUp(token: transferTransaction.destination?.token)
                 toIconView = coinLogoImageView
             default:
-                fromIconView = UIView()
-                toIconView = UIView()
+                fromIconView = UIImageView(width: 25, height: 25, image: .walletIcon, tintColor: .iconSecondary)
+                    .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12)
+                
+                toIconView = UIImageView(width: 25, height: 25, image: .walletIcon, tintColor: .iconSecondary)
+                    .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12)
             }
             
             transactionDetailView.addArrangedSubviews([
@@ -372,8 +375,13 @@ private extension TransactionInfoRootView {
                 distribution: .fill,
                 arrangedSubviews: [
                     signatureLabel,
-                    UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
-                        .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                    UIImageView(width: 16, height: 16, image: .link, tintColor: .iconSecondary)
+                        .padding(
+                            .init(all: 10),
+                            backgroundColor:
+                                UIColor.a3a5ba.withAlphaComponent(0.1).onDarkMode(.grayPanel),
+                            cornerRadius: 12
+                        )
                         .onTap(viewModel, action: #selector(TransactionInfoViewModel.showExplorer))
                 ]
             )
@@ -382,21 +390,32 @@ private extension TransactionInfoRootView {
     
     func createWalletInfo(
         title: String,
-        iconView: UIView,
+        iconView: UIView?,
         wallet: Wallet?,
         selector: Selector? = nil
     ) -> TransactionInfoSection<UILabel, UIStackView> {
-        var arrangedSubviews: [BEStackViewElement] = [
-            iconView,
+        var arrangedSubviews: [BEStackViewElement] = []
+        
+        if let iconView = iconView {
+            arrangedSubviews.append(iconView)
+        }
+        
+        arrangedSubviews.append(
             UIStackView(axis: .vertical, spacing: 7, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 UILabel(text: wallet?.token.symbol, textSize: 17, weight: .semibold),
                 UILabel(text: wallet?.shortPubkey(), weight: .semibold, textColor: .textSecondary)
             ])
-        ]
+        )
+        
         if let selector = selector {
             arrangedSubviews.append(
-                UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .a3a5ba)
-                    .padding(.init(all: 6), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: .iconSecondary)
+                    .padding(
+                        .init(all: 6),
+                        backgroundColor:
+                            UIColor.a3a5ba.withAlphaComponent(0.1).onDarkMode(.grayPanel),
+                        cornerRadius: 12
+                    )
                     .onTap(viewModel, action: selector)
             )
         }
