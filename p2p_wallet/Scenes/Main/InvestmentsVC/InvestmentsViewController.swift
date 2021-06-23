@@ -26,11 +26,6 @@ class InvestmentsViewController: BaseVC {
         view = InvestmentsRootView(viewModel: viewModel)
     }
     
-    override func setUp() {
-        super.setUp()
-        view.backgroundColor = .vcBackground
-    }
-    
     override func bind() {
         super.bind()
         viewModel.navigationSubject

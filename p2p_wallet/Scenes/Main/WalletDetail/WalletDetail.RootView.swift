@@ -67,7 +67,6 @@ extension WalletDetail {
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
-            backgroundColor = .vcBackground
             layout()
             bind()
             walletNameTextField.delegate = self
