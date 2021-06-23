@@ -205,8 +205,10 @@ extension ProcessTransaction.RootView {
             self.buttonStackView.addArrangedSubviews([
                 WLButton.stepButton(type: .blue, label: L10n.tryAgain)
                     .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.tryAgain)),
-                WLButton.stepButton(enabledColor: .eff3ff, textColor: .h5887ff, label: L10n.cancel)
-                    .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.cancel))
+                createSecondaryButton(
+                    label: L10n.cancel,
+                    action: #selector(ProcessTransaction.ViewModel.cancel)
+                )
             ])
         }
     }
@@ -230,8 +232,10 @@ extension ProcessTransaction.RootView {
         ])
         
         buttonStackView.addArrangedSubview(
-            WLButton.stepButton(enabledColor: .eff3ff, textColor: .h5887ff, label: L10n.ok)
-                .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.cancel))
+            createSecondaryButton(
+                label: L10n.ok,
+                action: #selector(ProcessTransaction.ViewModel.cancel)
+            )
         )
     }
     
@@ -247,5 +251,14 @@ extension ProcessTransaction.RootView {
         transactionStatusImageView.autoPinEdge(toSuperviewEdge: .bottom)
         transactionStatusImageView.autoAlignAxis(toSuperviewAxis: .vertical)
         return view
+    }
+    
+    private func createSecondaryButton(label: String, action: Selector) -> WLButton {
+        WLButton.stepButton(
+            enabledColor: .eff3ff.onDarkMode(.h404040),
+            textColor: .h5887ff.onDarkMode(.white),
+            label: label
+        )
+            .onTap(viewModel, action: action)
     }
 }

@@ -63,6 +63,7 @@ extension TokenSettingsCell: BECollectionViewCell {
         }
         descriptionLabel.isHidden = false
         isVisibleSwitcher.isHidden = true
+        iconImageView.tintColor = .iconSecondary
         stackView.alpha = 1
         switch item {
         case .visibility(let isVisible):
@@ -73,6 +74,7 @@ extension TokenSettingsCell: BECollectionViewCell {
             isVisibleSwitcher.isOn = isVisible
         case .close(let isEnabled):
             iconImageView.image = .closeToken
+            iconImageView.tintColor = .alert
             if isEnabled {
                 descriptionLabel.isHidden = true
             } else {
