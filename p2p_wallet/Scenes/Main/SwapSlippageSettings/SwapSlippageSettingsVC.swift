@@ -36,6 +36,7 @@ class SwapSlippageSettingsVC: WLModalVC {
         backgroundColor: .f6f6f8.onDarkMode(.h1b1b1b),
         cornerRadius: 12,
         font: .systemFont(ofSize: 17),
+        keyboardType: .decimalPad,
         placeholder: nil,
         autocorrectionType: .no,
         autocapitalizationType: UITextAutocapitalizationType.none,
