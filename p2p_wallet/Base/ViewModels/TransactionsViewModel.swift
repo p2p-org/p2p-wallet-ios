@@ -16,17 +16,22 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     let repository: TransactionsRepository
     let pricesRepository: PricesRepository
     let disposeBag = DisposeBag()
+    var fetchedFeePayer = false
+    
+    let feeRelayer: SolanaSDK.FeeRelayer
     
     init(
         account: String,
         accountSymbol: String,
         repository: TransactionsRepository,
-        pricesRepository: PricesRepository
+        pricesRepository: PricesRepository,
+        feeRelayerAPIClient: FeeRelayerSolanaAPIClient
     ) {
         self.account = account
         self.accountSymbol = accountSymbol
         self.repository = repository
         self.pricesRepository = pricesRepository
+        self.feeRelayer = SolanaSDK.FeeRelayer(solanaAPIClient: feeRelayerAPIClient)
         super.init(isPaginationEnabled: true, limit: 10)
     }
     
@@ -39,12 +44,33 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     }
     
     override func createRequest() -> Single<[SolanaSDK.AnyTransaction]> {
-        repository.getTransactionsHistory(
-            account: account,
-            accountSymbol: accountSymbol,
-            before: before,
-            limit: limit
-        )
+        let fetchPubkeys: Single<[String]>
+        if fetchedFeePayer {
+            fetchPubkeys = .just(Defaults.p2pFeePayerPubkeys)
+        } else {
+            fetchPubkeys = feeRelayer.getFeePayerPubkey()
+                .map {$0.base58EncodedString}
+                .catchAndReturn("")
+                .flatMap {newFeePayer in
+                    if !newFeePayer.isEmpty, !Defaults.p2pFeePayerPubkeys.contains(newFeePayer)
+                    {
+                        Defaults.p2pFeePayerPubkeys.append(newFeePayer)
+                    }
+                    return .just(Defaults.p2pFeePayerPubkeys)
+                }
+        }
+        
+        return fetchPubkeys
+            .flatMap { [weak self] pubkeys -> Single<[SolanaSDK.AnyTransaction]> in
+                guard let `self` = self else {return .error(SolanaSDK.Error.unknown)}
+                return self.repository.getTransactionsHistory(
+                    account: self.account,
+                    accountSymbol: self.accountSymbol,
+                    before: self.before,
+                    limit: self.limit,
+                    p2pFeePayerPubkeys: pubkeys
+                )
+            }
             .map { [weak self] newData in
                 guard let data = self?.updatedTransactionsWithPrices(transactions: newData)
                 else {return newData}

@@ -9,12 +9,12 @@ import Foundation
 import RxSwift
 
 protocol TransactionsRepository {
-    func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int) -> Single<[SolanaSDK.AnyTransaction]>
-    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType) -> Single<SolanaSDK.AnyTransaction>
+    func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int, p2pFeePayerPubkeys: [String]) -> Single<[SolanaSDK.AnyTransaction]>
+    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType, p2pFeePayerPubkeys: [String]) -> Single<SolanaSDK.AnyTransaction>
 }
 
 extension SolanaSDK: TransactionsRepository {
-    func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int) -> Single<[AnyTransaction]> {
+    func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int, p2pFeePayerPubkeys: [String]) -> Single<[AnyTransaction]> {
         getConfirmedSignaturesForAddress2(account: account, configs: RequestConfiguration(limit: limit, before: before))
             .flatMap {activities in
                 
@@ -23,7 +23,7 @@ extension SolanaSDK: TransactionsRepository {
                 
                 // parse
                 return Single.zip(activities.map { activity in
-                    self.getTransaction(account: account, accountSymbol: accountSymbol, signature: activity.signature, parser: parser)
+                    self.getTransaction(account: account, accountSymbol: accountSymbol, signature: activity.signature, parser: parser, p2pFeePayerPubkeys: p2pFeePayerPubkeys)
                         .map {
                             AnyTransaction(
                                 signature: $0.signature,
@@ -43,12 +43,12 @@ extension SolanaSDK: TransactionsRepository {
             })
     }
     
-    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType) -> Single<AnyTransaction> {
+    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType, p2pFeePayerPubkeys: [String]) -> Single<AnyTransaction> {
         getConfirmedTransaction(transactionSignature: signature)
             .flatMap { info in
                 let time = info.blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(info.blockTime!)): nil
                 
-                return parser.parse(transactionInfo: info, myAccount: account, myAccountSymbol: accountSymbol)
+                return parser.parse(transactionInfo: info, myAccount: account, myAccountSymbol: accountSymbol, p2pFeePayerPubkeys: p2pFeePayerPubkeys)
                     .map {
                         AnyTransaction(
                             signature: signature,

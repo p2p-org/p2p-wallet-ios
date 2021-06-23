@@ -34,4 +34,5 @@ extension DefaultsKeys {
     var isIntroductionViewed: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var hideZeroBalances: DefaultsKey<Bool> {.init(#function, defaultValue: true)}
     var useFreeTransaction: DefaultsKey<Bool> {.init(#function, defaultValue: true)}
+    var p2pFeePayerPubkeys: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
 }
