@@ -79,4 +79,20 @@ extension UIView {
         UIImageView(width: imageSize, height: imageSize, image: image, tintColor: tintColor)
             .padding(padding, backgroundColor: backgroundColor, cornerRadius: 12)
     }
+    
+    static func allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice(
+    ) -> UIStackView {
+        UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
+            UIImageView(width: 20, height: 20, image: .lock, tintColor: .iconSecondary)
+            
+            UILabel(
+                text: L10n
+                    .allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice,
+                textSize: 13,
+                weight: .medium,
+                textColor: .iconSecondary,
+                numberOfLines: 0
+            )
+        }
+    }
 }
