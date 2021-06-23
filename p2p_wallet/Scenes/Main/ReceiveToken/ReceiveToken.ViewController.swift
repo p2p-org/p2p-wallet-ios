@@ -29,7 +29,9 @@ extension ReceiveToken {
                 UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
                     UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
                         .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
-                    UILabel(text: L10n.receive + " " + viewModel.output.tokenWallet?.token.symbol, textSize: 17, weight: .semibold)
+                    UILabel(text: L10n.receive + " " + viewModel.output.tokenWallet?.token.symbol, textSize: 17, weight: .semibold),
+                    UIImageView(width: 32, height: 32, image: .questionMarkCircle, tintColor: .iconSecondary)
+                        .onTap(viewModel, action: #selector(ReceiveToken.ViewModel.showHelp))
                 ])
                     .padding(.init(all: 20)),
                 UIView.separator(height: 1, color: .separator),
@@ -55,6 +57,9 @@ extension ReceiveToken {
                 showWebsite(url: url)
             case .share(let address):
                 let vc = UIActivityViewController(activityItems: [address], applicationActivities: nil)
+                present(vc, animated: true, completion: nil)
+            case .help:
+                let vc = HelpViewController()
                 present(vc, animated: true, completion: nil)
             default:
                 break

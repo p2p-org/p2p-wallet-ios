@@ -49,7 +49,8 @@ extension ReceiveToken {
             
             stackView.spacing = 30
             stackView.addArrangedSubviews {
-                UILabel(text: L10n.scanOrCopyQRCode, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
+                UILabel(text: L10n.oneUnifiedAddressToReceiveSOLOrSPLTokens, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
+                    .padding(.init(x: 20, y: 0))
                 
                 UIImageView(width: 207, height: 207, image: .receiveQrCodeFrame, tintColor: .f6f6f8.onDarkMode(.h8d8d8d))
                     .withCenteredChild(
@@ -58,7 +59,7 @@ extension ReceiveToken {
                     )
                     .centeredHorizontallyView
                 
-                UIStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill, builder: {
+                UIStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill) {
                     addressLabel
                         .padding(.init(all: 20), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
                         .onTap(self, action: #selector(copyMainPubkeyToClipboard))
@@ -66,21 +67,34 @@ extension ReceiveToken {
                     UIImageView(width: 32, height: 32, image: .share, tintColor: .a3a5ba)
                         .onTap(viewModel, action: #selector(ViewModel.share))
                         .padding(.init(all: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
-                })
+                }
                     .padding(.zero, cornerRadius: 12)
                     .padding(.init(x: 20, y: 0))
             }
             
             if viewModel.output.tokenWallet != nil {
-                stackView.addArrangedSubview(detailView)
-                stackView.addArrangedSubview(showHideDetailButton.padding(.init(x: 20, y: 0)))
+                stackView.addArrangedSubviews {
+                    detailView
+                    showHideDetailButton.padding(.init(x: 20, y: 0))
+                    BEStackViewSpacing(16)
+                }
             } else {
-                stackView.addArrangedSubview(
+                stackView.addArrangedSubviews {
                     UILabel(text: L10n.viewInExplorer, textSize: 17, weight: .medium, textColor: .textSecondary, textAlignment: .center)
                         .onTap(viewModel, action: #selector(ViewModel.showSOLAddressInExplorer))
                         .centeredHorizontallyView
                         .padding(.init(x: 20, y: 9))
-                )
+                    BEStackViewSpacing(25)
+                }
+            }
+            
+            stackView.addArrangedSubviews {
+                UIView.separator(height: 1, color: .separator)
+                
+                BEStackViewSpacing(10)
+                
+                UIView.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice()
+                    .padding(.init(x: 20, y: 0))
             }
             
             // Toast

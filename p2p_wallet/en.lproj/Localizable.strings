@@ -371,3 +371,7 @@
 "Network changed" = "Network changed";
 "Insufficient funds for fee" = "Insufficient funds for fee";
 "Settings" = "Settings";
+"One unified address to receive SOL or SPL Tokens" = "One unified address to receive SOL or SPL Tokens";
+"SOL and SPL Tokens" = "SOL and SPL Tokens";
+"The Solana Program Library  (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications. SPL Tokens can be traded on Serum, a Solana based decentralized exchange and FTX." = "The Solana Program Library  (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications. SPL Tokens can be traded on Serum, a Solana based decentralized exchange and FTX.";
+"Send SOL or any SPL Tokens on one address" = "Send SOL or any SPL Tokens on one address";

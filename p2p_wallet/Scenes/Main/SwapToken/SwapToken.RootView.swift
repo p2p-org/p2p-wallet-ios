@@ -63,74 +63,77 @@ extension SwapToken {
         // MARK: - Layout
         private func layout() {
             stackView.spacing = 30
-            
-            stackView.addArrangedSubviews([
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    UILabel(text: L10n.from, weight: .semibold),
+            stackView.addArrangedSubviews {
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill) {
+                    UILabel(text: L10n.from, weight: .semibold)
                     availableSourceBalanceLabel
-                ]),
-                sourceWalletView,
-                BEStackViewSpacing(8),
-                swapSourceAndDestinationView(),
-                BEStackViewSpacing(8),
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    UILabel(text: L10n.to, weight: .semibold),
+                }
+                sourceWalletView
+                BEStackViewSpacing(8)
+                swapSourceAndDestinationView()
+                BEStackViewSpacing(8)
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill) {
+                    UILabel(text: L10n.to, weight: .semibold)
                     destinationBalanceLabel
-                ]),
-                destinationWalletView,
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    UILabel(text: L10n.price + ": ", weight: .medium, textColor: .textSecondary),
+                }
+                destinationWalletView
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill) {
+                    UILabel(text: L10n.price + ": ", weight: .medium, textColor: .textSecondary)
                     exchangeRateLabel
-                        .withContentHuggingPriority(.required, for: .horizontal),
+                        .withContentHuggingPriority(.required, for: .horizontal)
                     exchangeRateReverseButton
-                ])
-                    .padding(.init(all: 8), backgroundColor: .grayPanel, cornerRadius: 12),
-                UIView.separator(height: 1, color: .separator),
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    UILabel(text: L10n.minimumReceive + ": ", textColor: .textSecondary),
+                }
+                    .padding(.init(all: 8), backgroundColor: .grayPanel, cornerRadius: 12)
+                UIView.separator(height: 1, color: .separator)
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill) {
+                    UILabel(text: L10n.minimumReceive + ": ", textColor: .textSecondary)
                     minimumReceiveLabel
-                ]),
-                BEStackViewSpacing(16),
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .top, distribution: .fill, arrangedSubviews: [
+                }
+                BEStackViewSpacing(16)
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .top, distribution: .fill) {
                     UILabel(text: L10n.liquidityProviderFee + ":", textColor: .textSecondary)
                         .adjustsFontSizeToFitWidth()
                         .withContentHuggingPriority(.defaultLow, for: .horizontal)
-                        .withContentCompressionResistancePriority(.defaultLow, for: .horizontal),
+                        .withContentCompressionResistancePriority(.defaultLow, for: .horizontal)
                     liquidityProviderFeeLabel
                         .withContentHuggingPriority(.required, for: .horizontal)
                         .withContentCompressionResistancePriority(.required, for: .horizontal)
-                ]),
-                BEStackViewSpacing(16),
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .top, distribution: .fill, arrangedSubviews: [
+                }
+                BEStackViewSpacing(16)
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .top, distribution: .fill) {
                     UILabel(text: L10n.fee + ":", textColor: .textSecondary)
                         .adjustsFontSizeToFitWidth()
                         .withContentHuggingPriority(.defaultLow, for: .horizontal)
-                        .withContentCompressionResistancePriority(.defaultLow, for: .horizontal),
+                        .withContentCompressionResistancePriority(.defaultLow, for: .horizontal)
                     feeLabel
                         .withContentHuggingPriority(.required, for: .horizontal)
-                        .withContentCompressionResistancePriority(.required, for: .horizontal),
-                    BEStackViewSpacing(5),
+                        .withContentCompressionResistancePriority(.required, for: .horizontal)
+                    BEStackViewSpacing(5)
                     feeAlertImageView
                         .withContentHuggingPriority(.required, for: .horizontal)
                         .withContentCompressionResistancePriority(.required, for: .horizontal)
-                ]),
-                BEStackViewSpacing(16),
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    UILabel(text: L10n.slippage + ": ", textColor: .textSecondary),
+                }
+                BEStackViewSpacing(16)
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill) {
+                    UILabel(text: L10n.slippage + ": ", textColor: .textSecondary)
                     slippageLabel
-                ])
-                .onTap(viewModel, action: #selector(ViewModel.chooseSlippage)),
-                errorLabel,
-                BEStackViewSpacing(16),
-                swapButton,
-                BEStackViewSpacing(12),
-                UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill, arrangedSubviews: [
-                    UILabel(text: L10n.poweredBy, textSize: 13, textColor: .textSecondary, textAlignment: .center),
-                    UIImageView(width: 24, height: 24, image: .orcaLogo),
+                }
+                    .onTap(viewModel, action: #selector(ViewModel.chooseSlippage))
+                errorLabel
+                BEStackViewSpacing(16)
+                swapButton
+                BEStackViewSpacing(20)
+                UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
+                    UILabel(text: L10n.poweredBy, textSize: 13, textColor: .textSecondary, textAlignment: .center)
+                    UIImageView(width: 24, height: 24, image: .orcaLogo)
                     UIImageView(width: 68, height: 13, image: .orcaText, tintColor: .textBlack)
-                ])
+                }
                     .centeredHorizontallyView
-            ])
+                BEStackViewSpacing(20)
+                UIView.separator(height: 1, color: .separator)
+                BEStackViewSpacing(10)
+                UIView.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice()
+            }
         }
         
         private func bind() {
@@ -312,7 +315,6 @@ extension SwapToken {
                 .map {$0 ? UIColor.textSecondary: UIColor.alert}
                 .drive(feeLabel.rx.textColor)
                 .disposed(by: disposeBag)
-                
             
             // swap button
             viewModel.output.isValid
