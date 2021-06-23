@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "qr-code-range.png",
+      "filename" : "Group 17.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "qr-code-range@2x.png",
+      "filename" : "Group 17@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "qr-code-range@3x.png",
+      "filename" : "Group 17@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
@@ -19,5 +19,8 @@
   "info" : {
     "author" : "xcode",
     "version" : 1
+  },
+  "properties" : {
+    "template-rendering-intent" : "template"
   }
 }

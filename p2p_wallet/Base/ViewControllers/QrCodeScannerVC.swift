@@ -20,6 +20,7 @@ class QrCodeScannerVC: BaseVC {
     var callback: ((String) -> Bool)?
     
     lazy var cameraContainerView = UIView(backgroundColor: .red, cornerRadius: 20)
+    lazy var rangeImageView = UIImageView(width: scanSize.width, height: scanSize.height, image: .qrCodeRange, tintColor: .white)
     
     init(analyticsManager: AnalyticsManagerType) {
         self.analyticsManager = analyticsManager
@@ -28,12 +29,24 @@ class QrCodeScannerVC: BaseVC {
     override func setUp() {
         super.setUp()
         
-        view.backgroundColor = .black
+        view.backgroundColor = .black.onDarkMode(.e5e5e5)
         
         view.addSubview(cameraContainerView)
-        cameraContainerView.autoPinEdgesToSuperviewSafeArea(with: .init(x: 0, y: 44))
+        cameraContainerView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
         
-        let rangeImageView = UIImageView(width: scanSize.width, height: scanSize.height, image: .qrCodeRange)
+        let descriptionView = UIStackView(axis: .horizontal, spacing: 5, alignment: .top, distribution: .fill) {
+            UILabel(text: "⚡", textSize: 17, weight: .semibold)
+            
+            UIStackView(axis: .vertical, spacing: 7, alignment: .fill, distribution: .fill) {
+                UILabel(text: L10n.scanAnP2PAddress, textSize: 17, weight: .semibold, textColor: .white)
+                UILabel(text: "If you want to send tokens,s confirm actions on a web or you want to connect your web-wallet", textSize: 13, textColor: .white.withAlphaComponent(0.5), numberOfLines: 0)
+            }
+        }
+        
+        view.addSubview(descriptionView)
+        descriptionView.autoPinEdge(.top, to: .bottom, of: cameraContainerView, withOffset: 30)
+        descriptionView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 30), excludingEdge: .top)
+        
         cameraContainerView.addSubview(rangeImageView)
         rangeImageView.autoCenterInSuperview()
         
@@ -76,9 +89,13 @@ class QrCodeScannerVC: BaseVC {
 
     func found(code: String) {
         if callback?(code) == true {
-            analyticsManager.log(event: .scanQrSuccess)
-            back()
-            AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+            rangeImageView.tintColor = .h28ff31
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
+                self?.analyticsManager.log(event: .scanQrSuccess)
+                self?.back()
+                AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+            }
+            
         }
         print(code)
     }
