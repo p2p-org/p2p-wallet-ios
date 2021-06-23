@@ -85,7 +85,7 @@ extension SendToken {
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
                 self.present(vc, animated: true, completion: nil)
             case .feeInfo:
-                let vc = FreeTransactionInfoVC(position: .bottom)
+                let vc = FreeTransactionInfoVC()
                 self.present(vc, animated: true, completion: nil)
             }
         }
