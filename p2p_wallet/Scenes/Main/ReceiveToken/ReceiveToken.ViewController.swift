@@ -30,7 +30,7 @@ extension ReceiveToken {
                     UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
                         .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
                     UILabel(text: L10n.receive + " " + viewModel.output.tokenWallet?.token.symbol, textSize: 17, weight: .semibold),
-                    UIImageView(width: 32, height: 32, image: .questionMarkCircle, tintColor: .grayPanel)
+                    UIImageView(width: 32, height: 32, image: .questionMarkCircle, tintColor: .iconSecondary)
                         .onTap(viewModel, action: #selector(ReceiveToken.ViewModel.showHelp))
                 ])
                     .padding(.init(all: 20)),

@@ -73,15 +73,39 @@ extension ReceiveToken {
             }
             
             if viewModel.output.tokenWallet != nil {
-                stackView.addArrangedSubview(detailView)
-                stackView.addArrangedSubview(showHideDetailButton.padding(.init(x: 20, y: 0)))
+                stackView.addArrangedSubviews {
+                    detailView
+                    showHideDetailButton.padding(.init(x: 20, y: 0))
+                    BEStackViewSpacing(16)
+                }
             } else {
-                stackView.addArrangedSubview(
+                stackView.addArrangedSubviews {
                     UILabel(text: L10n.viewInExplorer, textSize: 17, weight: .medium, textColor: .textSecondary, textAlignment: .center)
                         .onTap(viewModel, action: #selector(ViewModel.showSOLAddressInExplorer))
                         .centeredHorizontallyView
                         .padding(.init(x: 20, y: 9))
-                )
+                    BEStackViewSpacing(25)
+                }
+            }
+            
+            stackView.addArrangedSubviews {
+                UIView.separator(height: 1, color: .separator)
+                
+                BEStackViewSpacing(10)
+                
+                UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
+                    UIImageView(width: 20, height: 20, image: .lock, tintColor: .iconSecondary)
+                    
+                    UILabel(
+                        text: L10n
+                            .allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice,
+                        textSize: 13,
+                        weight: .medium,
+                        textColor: .iconSecondary,
+                        numberOfLines: 0
+                    )
+                }
+                    .padding(.init(x: 20, y: 0))
             }
             
             // Toast
