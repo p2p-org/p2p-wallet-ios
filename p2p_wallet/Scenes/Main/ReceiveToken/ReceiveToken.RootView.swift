@@ -59,7 +59,7 @@ extension ReceiveToken {
                     )
                     .centeredHorizontallyView
                 
-                UIStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill, builder: {
+                UIStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill) {
                     addressLabel
                         .padding(.init(all: 20), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
                         .onTap(self, action: #selector(copyMainPubkeyToClipboard))
