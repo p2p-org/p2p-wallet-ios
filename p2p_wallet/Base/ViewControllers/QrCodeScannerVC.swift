@@ -29,7 +29,7 @@ class QrCodeScannerVC: BaseVC {
     override func setUp() {
         super.setUp()
         
-        view.backgroundColor = .black.onDarkMode(.e5e5e5)
+        view.backgroundColor = .h1b1b1b
         
         view.addSubview(cameraContainerView)
         cameraContainerView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
