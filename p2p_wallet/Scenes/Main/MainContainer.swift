@@ -88,7 +88,8 @@ class MainContainer {
             walletsRepository: walletsViewModel,
             pricesRepository: pricesManager,
             transactionsRepository: solanaSDK,
-            analyticsManager: analyticsManager
+            analyticsManager: analyticsManager,
+            feeRelayerAPIClient: solanaSDK
         )
         
         return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)

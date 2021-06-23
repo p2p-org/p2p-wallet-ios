@@ -57,7 +57,7 @@ extension WLPhrasesTextView {
     }
     
     func placeholderAttachment(at index: Int) -> NSMutableAttributedString {
-        let label = UILabel(text: "\(index + 1). ", weight: .semibold, textColor: .a3a5ba)
+        let label = UILabel(text: "\(index + 1). ", weight: .semibold, textColor: .a3a5baStatic)
             .padding(.init(top: 12, left: 12, bottom: 12, right: 0))
         label.translatesAutoresizingMaskIntoConstraints = true
         label.isUserInteractionEnabled = true

@@ -34,12 +34,12 @@ class TokenSettingsCloseAccountConfirmationVC: WLModalVC {
             UIView.separator(height: 1, color: .separator),
             BEStackViewSpacing(20),
             UILabel(text: L10n.closeTokenAccount, textSize: 17, weight: .medium, textColor: .alert, textAlignment: .center)
-                .padding(.init(all: 18), backgroundColor: .f6f6f8, cornerRadius: 12)
+                .padding(.init(all: 18), backgroundColor: .grayPanel, cornerRadius: 12)
                 .onTap(self, action: #selector(buttonCloseDidTouch))
                 .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(10),
-            UILabel(text: L10n.cancel, textSize: 17, weight: .medium, textColor: .h5887ff, textAlignment: .center)
-                .padding(.init(all: 18), backgroundColor: .f6f6f8, cornerRadius: 12)
+            UILabel(text: L10n.cancel, textSize: 17, weight: .medium, textColor: .h5887ff.onDarkMode(.white), textAlignment: .center)
+                .padding(.init(all: 18), backgroundColor: .grayPanel, cornerRadius: 12)
                 .onTap(self, action: #selector(back))
                 .padding(.init(x: 20, y: 0))
         ])
