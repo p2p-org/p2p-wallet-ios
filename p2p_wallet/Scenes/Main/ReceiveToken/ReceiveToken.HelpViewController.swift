@@ -16,7 +16,7 @@ extension ReceiveToken {
             
             stackView.addArrangedSubviews {
                 UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
-                    UIImageView(width: 32, height: 32, image: .questionMarkCircle, tintColor: .grayPanel)
+                    UIImageView(width: 32, height: 32, image: .questionMarkCircle, tintColor: .iconSecondary)
                     UILabel(text: L10n.solAndSPLTokens, textSize: 17, weight: .semibold)
                 }
                     .padding(.init(x: 20, y: 0))
