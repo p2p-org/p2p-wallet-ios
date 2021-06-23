@@ -81,6 +81,10 @@ extension ReceiveToken {
             navigationSubject.accept(.share(address: pubkey))
         }
         
+        @objc func showHelp() {
+            navigationSubject.accept(.help)
+        }
+        
         @objc func toggleIsShowingDetail() {
             isShowingDetailSubject.accept(!isShowingDetailSubject.value)
         }
