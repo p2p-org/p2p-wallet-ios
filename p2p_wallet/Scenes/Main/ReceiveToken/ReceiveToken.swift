@@ -11,5 +11,6 @@ struct ReceiveToken {
     enum NavigatableScene {
         case showInExplorer(address: String)
         case share(address: String)
+        case help
     }
 }

@@ -49,7 +49,8 @@ extension ReceiveToken {
             
             stackView.spacing = 30
             stackView.addArrangedSubviews {
-                UILabel(text: L10n.scanOrCopyQRCode, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
+                UILabel(text: L10n.oneUnifiedAddressToReceiveSOLOrSPLTokens, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
+                    .padding(.init(x: 20, y: 0))
                 
                 UIImageView(width: 207, height: 207, image: .receiveQrCodeFrame, tintColor: .f6f6f8.onDarkMode(.h8d8d8d))
                     .withCenteredChild(

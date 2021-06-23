@@ -7,8 +7,8 @@
 
 import Foundation
 
-class FreeTransactionInfoVC: FlexibleHeightVC {
-    override var padding: UIEdgeInsets {.init(x: 20, y: 30)}
+class FreeTransactionInfoVC: WLBottomSheet {
+    override var padding: UIEdgeInsets {.init(x: 0, y: 30)}
     
     override func setUp() {
         super.setUp()
@@ -31,21 +31,11 @@ class FreeTransactionInfoVC: FlexibleHeightVC {
                 }
             
             UILabel(text: L10n.WillBePaidByP2p.orgWeTakeCareOfAllTransfersCosts, textSize: 15, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
+                .padding(.init(x: 20, y: 0))
             
             WLButton.stepButton(type: .blue, label: L10n.great)
                 .onTap(self, action: #selector(back))
+                .padding(.init(x: 20, y: 0))
         }
-    }
-    
-    override func fittingHeightInContainer(frame: CGRect) -> CGFloat {
-        let height = super.fittingHeightInContainer(frame: frame)
-        return height + 30
-    }
-    
-    override func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        let pc = super.presentationController(forPresented: presented, presenting: presenting, source: source) as! PresentationController
-        pc.roundedCorner = [.topLeft, .topRight]
-        pc.cornerRadius = 25
-        return pc
     }
 }
