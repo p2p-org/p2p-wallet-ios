@@ -122,7 +122,7 @@ extension SwapToken {
                 errorLabel
                 BEStackViewSpacing(16)
                 swapButton
-                BEStackViewSpacing(12)
+                BEStackViewSpacing(20)
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
                     UILabel(text: L10n.poweredBy, textSize: 13, textColor: .textSecondary, textAlignment: .center)
                     UIImageView(width: 24, height: 24, image: .orcaLogo)
