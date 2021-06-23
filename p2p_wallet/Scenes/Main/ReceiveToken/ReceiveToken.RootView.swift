@@ -67,7 +67,7 @@ extension ReceiveToken {
                     UIImageView(width: 32, height: 32, image: .share, tintColor: .a3a5ba)
                         .onTap(viewModel, action: #selector(ViewModel.share))
                         .padding(.init(all: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
-                })
+                }
                     .padding(.zero, cornerRadius: 12)
                     .padding(.init(x: 20, y: 0))
             }

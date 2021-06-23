@@ -26,7 +26,7 @@ class WLButton: UIButton {
         var disabledColor: UIColor? {
             switch self {
             case .blue:
-                return .grayPanel
+                return .a3a5ba.onDarkMode(.h404040)
             default:
                 return nil
             }
