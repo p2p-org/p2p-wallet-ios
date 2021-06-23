@@ -108,12 +108,12 @@ extension SendToken {
         
         // MARK: - Layout
         private func layout() {
-            stackView.addArrangedSubviews([
+            stackView.addArrangedSubviews {
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
                     UILabel(text: L10n.from, weight: .bold),
                     balanceLabel
-                ]),
-                BEStackViewSpacing(30),
+                ])
+                BEStackViewSpacing(30)
                 
                 UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
                     coinImageView,
@@ -124,17 +124,17 @@ extension SendToken {
                         .withContentHuggingPriority(.required, for: .horizontal)
                         .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12)
                         .onTap(viewModel, action: #selector(ViewModel.switchCurrencyMode))
-                ]),
-                BEStackViewSpacing(6),
+                ])
+                BEStackViewSpacing(6)
                 
                 UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
                     UIView(),
                     equityValueLabel
-                ]),
-                BEStackViewSpacing(20),
+                ])
+                BEStackViewSpacing(20)
                 
-                UIView.separator(height: 1, color: .separator),
-                BEStackViewSpacing(20),
+                UIView.separator(height: 1, color: .separator)
+                BEStackViewSpacing(20)
                 
                 UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
                     UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing) {
@@ -149,27 +149,45 @@ extension SendToken {
                         feeInfoButton
                             .withContentHuggingPriority(.required, for: .horizontal)
                     }
-                },
+                }
                 
-                BEStackViewSpacing(20),
+                BEStackViewSpacing(20)
                 
-                UIView.separator(height: 1, color: .separator),
-                BEStackViewSpacing(20),
+                UIView.separator(height: 1, color: .separator)
+                BEStackViewSpacing(20)
                 
-                UILabel(text: L10n.sendTo, weight: .bold),
+                UILabel(text: L10n.sendTo, weight: .bold)
                 addressStackView
-                    .padding(.init(all: 8), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12),
+                    .padding(.init(all: 8), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
                 
-                BEStackViewSpacing(10),
+                BEStackViewSpacing(10)
                 
-                errorLabel,
+                errorLabel
                 
-                checkingAddressValidityView,
-                noFundAddressView,
+                checkingAddressValidityView
+                noFundAddressView
                 
-                BEStackViewSpacing(30),
+                BEStackViewSpacing(30)
+                
+                UIView.separator(height: 1, color: .separator)
+                
+                BEStackViewSpacing(20)
+                
                 sendButton
-            ])
+                
+                BEStackViewSpacing(16)
+                
+                UILabel(text: L10n.sendSOLOrAnySPLTokensOnOneAddress, textSize: 14, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
+                    .padding(.init(x: 20, y: 0))
+                
+                BEStackViewSpacing(16)
+                
+                UIView.separator(height: 1, color: .separator)
+                
+                BEStackViewSpacing(10)
+                
+                UIView.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice()
+            }
             
             equityValueLabel.autoPinEdge(.leading, to: .leading, of: amountTextField)
             
