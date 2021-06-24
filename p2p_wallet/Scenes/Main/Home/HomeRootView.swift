@@ -52,7 +52,11 @@ class HomeRootView: BEView {
     }()
     
     lazy var tabBar: TabBar = {
-        let tabBar = TabBar(cornerRadius: .defaultPadding, contentInset: UIEdgeInsets(top: 20, left: 0, bottom: 8, right: 0))
+        let tabBar = TabBar(
+            shadowColor: .clear, // temporarily disable shadow
+            cornerRadius: .defaultPadding,
+            contentInset: UIEdgeInsets(top: 20, left: 0, bottom: 8, right: 0)
+        )
         tabBar.backgroundColor = .white.onDarkMode(.h2a2a2a)
         tabBar.stackView.addArrangedSubviews([
             .spacer,
