@@ -24,8 +24,8 @@ class BackupVC: ProfileVCBase {
     lazy var shieldImageView = UIImageView(width: 80, height: 100, image: .backupShield)
     lazy var titleLabel = UILabel(textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
     lazy var descriptionLabel = UILabel(textSize: 15, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
-    lazy var backupUsingIcloudButton = WLButton.stepButton(type: .black, label: " " + L10n.backupUsingICloud)
-    lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .f6f6f8, textColor: .textBlack, label: L10n.backupManually)
+    lazy var backupUsingIcloudButton = WLButton.stepButton(enabledColor: .blackButtonBackground.onDarkMode(.h2b2b2b), textColor: .white, label: " " + L10n.backupUsingICloud)
+    lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .f6f6f8.onDarkMode(.h2b2b2b), textColor: .textBlack, label: L10n.backupManually)
     
     init(accountStorage: KeychainAccountStorage, authenticationHandler: AuthenticationHandler, scenesFactory: BackupScenesFactory, analyticsManager: AnalyticsManagerType) {
         self.accountStorage = accountStorage
@@ -43,7 +43,7 @@ class BackupVC: ProfileVCBase {
     override func setUp() {
         title = L10n.backup
         super.setUp()
-        view.backgroundColor = .contentBackground
+        view.backgroundColor = .white.onDarkMode(.h1b1b1b)
         
         stackView.removeFromSuperview()
         scrollView.removeFromSuperview()
