@@ -78,7 +78,7 @@ extension SwapToken {
                 }
                 destinationWalletView
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill) {
-                    UILabel(text: L10n.price + ": ", weight: .medium, textColor: .textSecondary)
+                    UILabel(text: L10n.price + ": ", weight: .medium, textColor: .a3a5baStatic.onDarkMode(.white))
                     exchangeRateLabel
                         .withContentHuggingPriority(.required, for: .horizontal)
                     exchangeRateReverseButton
