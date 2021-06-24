@@ -158,7 +158,7 @@ extension SendToken {
                 
                 UILabel(text: L10n.sendTo, weight: .bold)
                 addressStackView
-                    .padding(.init(all: 8), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                    .padding(.init(all: 8), backgroundColor: .a3a5ba.onDarkMode(.h8d8d8d).withAlphaComponent(0.1), cornerRadius: 12)
                 
                 BEStackViewSpacing(10)
                 

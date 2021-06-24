@@ -63,7 +63,7 @@ extension TransactionInfoRootView {
             ])
             
             addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 16))
+            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 16, y: 6))
         }
     }
 }
