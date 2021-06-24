@@ -31,19 +31,34 @@ class SwapSlippageSettingsVC: WLModalVC {
                     .onTap(self, action: #selector(buttonCustomSlippageDidTouch))
             ]
     )
-    lazy var customSlippageTextField = PercentSuffixTextField(
-        height: 56,
-        backgroundColor: .f6f6f8.onDarkMode(.h1b1b1b),
-        cornerRadius: 12,
-        font: .systemFont(ofSize: 17),
-        keyboardType: .decimalPad,
-        placeholder: nil,
-        autocorrectionType: .no,
-        autocapitalizationType: UITextAutocapitalizationType.none,
-        spellCheckingType: .no,
-        horizontalPadding: 16,
-        showClearButton: true
-    )
+    lazy var customSlippageTextField: PercentSuffixTextField = {
+        let tf = PercentSuffixTextField(
+            height: 56,
+            backgroundColor: .f6f6f8.onDarkMode(.h1b1b1b),
+            cornerRadius: 12,
+            font: .systemFont(ofSize: 17),
+            keyboardType: .decimalPad,
+            placeholder: nil,
+            autocorrectionType: .no,
+            autocapitalizationType: UITextAutocapitalizationType.none,
+            spellCheckingType: .no,
+            horizontalPadding: 16,
+            rightView: textFieldClearButton,
+            rightViewMode: .whileEditing
+        )
+        tf.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        return tf
+    }()
+    lazy var textFieldClearButton = UIView(forAutoLayout: ())
+        .withModifier {view in
+            let clearButton = UIImageView(width: 24, height: 24, image: .textfieldClear)
+                .onTap(self, action: #selector(buttonClearTextFieldDidTouch))
+            view.addSubview(clearButton)
+            clearButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 8)
+            clearButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 16)
+            clearButton.autoAlignAxis(toSuperviewAxis: .horizontal)
+            return view
+        }
     lazy var doneButton = WLButton.stepButton(type: .blue, label: L10n.done)
         .onTap(self, action: #selector(buttonDoneDidTouch))
     
@@ -86,7 +101,7 @@ class SwapSlippageSettingsVC: WLModalVC {
         containerView.autoPinBottomToSuperViewAvoidKeyboard()
         
         customSlippageTextField.delegate = self
-        customSlippageTextField.text = "\(slippage)"
+        customSlippageTextField.text = slippage.toString(maximumFractionDigits: 9, groupingSeparator: "")
         reloadData()
     }
     
@@ -155,6 +170,20 @@ class SwapSlippageSettingsVC: WLModalVC {
     @objc func keyboardDidShowOrHide() {
         forceResizeModal()
     }
+    
+    @objc func buttonClearTextFieldDidTouch() {
+        customSlippageTextField.text = nil
+        customSlippageTextField.sendActions(for: .editingChanged)
+    }
+    
+    @objc func textFieldDidChange() {
+        if customSlippageTextField.text == nil || customSlippageTextField.text?.isEmpty == true
+        {
+            textFieldClearButton.isHidden = true
+        } else {
+            textFieldClearButton.isHidden = false
+        }
+    }
 }
 
 extension SwapSlippageSettingsVC: UIViewControllerTransitioningDelegate {
@@ -171,5 +200,13 @@ extension SwapSlippageSettingsVC: UITextFieldDelegate {
             return customSlippageTextField.shouldChangeCharactersInRange(range, replacementString: string)
         }
         return true
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.border(width: 1, color: .h5887ff)
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.border(width: 1, color: .f6f6f8.onDarkMode(.h1b1b1b))
     }
 }

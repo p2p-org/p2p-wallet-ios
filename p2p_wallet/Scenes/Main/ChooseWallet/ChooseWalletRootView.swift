@@ -18,7 +18,7 @@ class ChooseWalletRootView: BEView {
     private lazy var searchBar: BESearchBar = {
         let searchBar = BESearchBar(fixedHeight: 36, cornerRadius: 12)
         
-        searchBar.textFieldBgColor = .f6f6f8
+        searchBar.textFieldBgColor = .grayPanel
         searchBar.placeholder = L10n.searchToken
         
         searchBar.leftViewWidth = 20.57 + 12 + 12
