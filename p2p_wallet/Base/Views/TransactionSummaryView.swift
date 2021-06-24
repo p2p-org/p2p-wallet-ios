@@ -47,8 +47,8 @@ class SwapTransactionSummaryView: TransactionSummaryView {
         stackView.distribution = .equalSpacing
         stackView.spacing = 22
         
-        let swapIconImageView = UIImageView(width: 24, height: 24, image: .transactionSwap, tintColor: .a3a5ba)
-            .padding(.init(all: 6), backgroundColor: .f6f6f8, cornerRadius: 12)
+        let swapIconImageView = UIImageView(width: 24, height: 24, image: .transactionSwap, tintColor: .iconSecondary)
+            .padding(.init(all: 6), backgroundColor: .grayPanel, cornerRadius: 12)
         
         stackView.addArrangedSubviews([
             UIView.spacer,

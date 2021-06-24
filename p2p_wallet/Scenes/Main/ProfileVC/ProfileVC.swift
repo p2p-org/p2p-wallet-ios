@@ -28,13 +28,11 @@ class ProfileVC: ProfileVCBase {
     lazy var networkLabel = UILabel(weight: .medium, textColor: .textSecondary)
     lazy var hideZeroBalancesSwitcher: UISwitch = { [unowned self] in
         let switcher = UISwitch()
-        switcher.onTintColor = .h5887ff
         switcher.addTarget(self, action: #selector(hideZeroBalancesSwitcherDidSwitch(sender:)), for: .valueChanged)
         return switcher
     }()
     lazy var useFreeTransactionsSwitcher: UISwitch = {[unowned self] in
         let switcher = UISwitch()
-        switcher.onTintColor = .h5887ff
         switcher.addTarget(self, action: #selector(useFreeTransactionsSwitcherDidSwitch(sender:)), for: .valueChanged)
         return switcher
     }()

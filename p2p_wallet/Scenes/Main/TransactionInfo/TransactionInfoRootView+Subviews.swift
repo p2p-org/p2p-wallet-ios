@@ -44,7 +44,7 @@ extension TransactionInfoRootView {
     // MARK: - Status view
     class TransactionStatusView: BEView {
         lazy var indicatorView = UIView(width: 8, height: 8, backgroundColor: .greenConfirmed, cornerRadius: 2)
-        lazy var label = UILabel(text: L10n.completed, textSize: 13, weight: .semibold, textColor: .a3a5ba)
+        lazy var label = UILabel(text: L10n.completed, textSize: 13, weight: .semibold, textColor: .iconSecondary)
         
         init() {
             super.init(frame: .zero)
@@ -54,7 +54,7 @@ extension TransactionInfoRootView {
         override func commonInit() {
             super.commonInit()
             
-            backgroundColor = UIColor.f6f6f8.withAlphaComponent(0.5)
+            backgroundColor = UIColor.f6f6f8.withAlphaComponent(0.5).onDarkMode(.grayPanel)
             layer.cornerRadius = 6
             layer.masksToBounds = true
             
@@ -63,7 +63,7 @@ extension TransactionInfoRootView {
             ])
             
             addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 6))
+            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 16, y: 6))
         }
     }
 }

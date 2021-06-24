@@ -22,7 +22,7 @@ extension ReceiveToken {
             .lineBreakMode(.byTruncatingMiddle)
         
         private lazy var detailView = createDetailView()
-        private lazy var showHideDetailButton = WLButton.stepButton(type: .gray, label: nil, labelColor: .textSecondary)
+        private lazy var showHideDetailButton = WLButton.stepButton(type: .gray, label: nil, labelColor: .a3a5baStatic.onDarkMode(.white))
             .onTap(viewModel, action: #selector(ViewModel.toggleIsShowingDetail))
         
         private lazy var directAddressHeaderLabel = UILabel(text: L10n.directAddress(viewModel.output.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)

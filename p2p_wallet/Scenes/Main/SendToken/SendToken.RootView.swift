@@ -29,7 +29,7 @@ extension SendToken {
             placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
             autocorrectionType: .no
         )
-        lazy var changeModeButton = UILabel(weight: .semibold, textColor: .textSecondary)
+        lazy var changeModeButton = UILabel(weight: .semibold, textColor: .a3a5ba)
         lazy var symbolLabel = UILabel(weight: .semibold)
         lazy var equityValueLabel = UILabel(text: "≈", textColor: .textSecondary)
         lazy var coinSymbolPriceLabel = UILabel(textColor: .textSecondary)
@@ -39,7 +39,7 @@ extension SendToken {
             walletIconView, addressTextField, clearAddressButton, qrCodeImageView
         ])
         lazy var walletIconView = UIImageView(width: 24, height: 24, image: .walletIcon, tintColor: .a3a5ba)
-            .padding(.init(all: 10), backgroundColor: .textWhite, cornerRadius: 12)
+            .padding(.init(all: 10), backgroundColor: .white.onDarkMode(.h404040), cornerRadius: 12)
         lazy var addressTextField: UITextField = {
             let textField = UITextField(height: 44, backgroundColor: .clear, placeholder: L10n.walletAddress, autocorrectionType: .none, autocapitalizationType: UITextAutocapitalizationType.none, spellCheckingType: .no, horizontalPadding: 8)
             textField.attributedPlaceholder = NSAttributedString(string: L10n.walletAddress, attributes: [.foregroundColor: UIColor.a3a5ba.onDarkMode(.h5887ff)])
@@ -158,7 +158,7 @@ extension SendToken {
                 
                 UILabel(text: L10n.sendTo, weight: .bold)
                 addressStackView
-                    .padding(.init(all: 8), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                    .padding(.init(all: 8), backgroundColor: .a3a5ba.onDarkMode(.h8d8d8d).withAlphaComponent(0.1), cornerRadius: 12)
                 
                 BEStackViewSpacing(10)
                 
