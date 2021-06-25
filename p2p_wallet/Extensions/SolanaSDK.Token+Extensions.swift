@@ -30,7 +30,7 @@ extension SolanaSDK.Token {
     
     var image: UIImage? {
         // swiftlint:disable swiftgen_assets
-        UIImage(named: symbol)
+        UIImage(named: symbol.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: "Ü", with: "U"))
         // swiftlint:enable swiftgen_assets
     }
     
