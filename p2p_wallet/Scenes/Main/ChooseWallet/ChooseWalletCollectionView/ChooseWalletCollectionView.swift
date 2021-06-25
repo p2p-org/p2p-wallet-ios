@@ -48,14 +48,4 @@ class ChooseWalletCollectionView: BECollectionView {
         
         return snapshot
     }
-    
-    override func didEndDecelerating() {
-        super.didEndDecelerating()
-        // get indexPaths
-        let visibleIndexPaths = collectionView.indexPathsForVisibleItems
-        
-        // get sections
-        let visibleWallets = visibleIndexPaths.map {dataSource.itemIdentifier(for: $0)}.compactMap {$0?.value as? Wallet}
-        viewModel.pricesRepository.fetchCurrentPrices(coins: visibleWallets.map {$0.token.symbol})
-    }
 }
