@@ -16,7 +16,6 @@ class ChooseWalletViewModel {
     // MARK: - Properties
     let disposeBag = DisposeBag()
     let myWalletsViewModel: BEListViewModelType
-    let pricesRepository: PricesRepository
     let otherWalletsViewModel: OtherWalletsViewModel?
     var firstSectionFilter: ((AnyHashable) -> Bool)?
     
@@ -32,12 +31,10 @@ class ChooseWalletViewModel {
     init(
         myWalletsViewModel: BEListViewModelType,
         tokensRepository: TokensRepository,
-        pricesRepository: PricesRepository,
         showOtherWallets: Bool,
         firstSectionFilter: ((AnyHashable) -> Bool)? = nil
     ) {
         self.myWalletsViewModel = myWalletsViewModel
-        self.pricesRepository = pricesRepository
         if showOtherWallets {
             otherWalletsViewModel = OtherWalletsViewModel(tokensRepository: tokensRepository)
         } else {
