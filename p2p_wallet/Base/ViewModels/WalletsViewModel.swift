@@ -71,6 +71,16 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             self?.updateWalletsVisibility()
         })
         
+        // observe account notification
+        dataObservable
+            .map {[weak self] _ in self?.getWallets() ?? []}
+            .subscribe(onNext: {[weak self] wallets in
+                for wallet in wallets where wallet.pubkey != nil {
+                    self?.socket.subscribeAccountNotification(account: wallet.pubkey!)
+                }
+            })
+            .disposed(by: disposeBag)
+        
         // observe app state
         UIApplication.shared.rx
             .applicationDidBecomeActive
@@ -110,12 +120,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                     .map {[weak self] wallets in
                         self?.mapPrices(wallets: wallets) ?? []
                     }
-                    // accountSubscribe
-                    .do(onSuccess: {[weak self] wallets in
-                        for wallet in wallets where wallet.pubkey != nil {
-                            self?.socket.subscribeAccountNotification(account: wallet.pubkey!)
-                        }
-                    })
             }
     }
     
