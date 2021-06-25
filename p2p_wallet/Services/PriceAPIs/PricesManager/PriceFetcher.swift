@@ -24,11 +24,11 @@ extension PricesFetcher {
             .responseData()
             .take(1)
             .asSingle()
-//            .do(onSuccess: {response in
-//                Logger.log(message: String(data: response.1, encoding: .utf8) ?? "", event: .response, apiMethod: "getPrices")
-//            }, onSubscribe: {
-//                Logger.log(message: "\(endpoint)\(path)", event: .request, apiMethod: "getPrices")
-//            })
+            .do(onSuccess: {response in
+                Logger.log(message: String(data: response.1, encoding: .utf8) ?? "", event: .response, apiMethod: "getPrices")
+            }, onSubscribe: {
+                Logger.log(message: "\(endpoint)\(path)", event: .request, apiMethod: "getPrices")
+            })
             .map {try JSONDecoder().decode(T.self, from: $0.1)}
             .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .observe(on: MainScheduler.instance)
