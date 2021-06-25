@@ -39,8 +39,8 @@ class PricesManager {
     
     // MARK: - Observe current price
     func startObserving() {
-        fetchCurrentPrices()
-        timer = Timer.scheduledTimer(timeInterval: refreshInterval, target: self, selector: #selector(fetchCurrentPrices), userInfo: nil, repeats: true)
+        fetchAllTokensPrice()
+        timer = Timer.scheduledTimer(timeInterval: refreshInterval, target: self, selector: #selector(fetchAllTokensPrice), userInfo: nil, repeats: true)
     }
     
     func stopObserving() {
@@ -48,8 +48,10 @@ class PricesManager {
     }
     
     // get supported coin
-    @objc func fetchCurrentPrices(coins: [String] = []) {
+    func fetchCurrentPrices(coins: [String] = []) {
         fetcher.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: {[weak self] prices in
                 guard let self = self else {return}
                 self.updateCurrentPrices(prices)
@@ -59,7 +61,7 @@ class PricesManager {
             .disposed(by: disposeBag)
     }
     
-    func fetchAllTokensPrice() {
+    @objc func fetchAllTokensPrice() {
         let coins = tokensRepository.supportedTokens.map {$0.symbol}
         fetchCurrentPrices(coins: coins)
     }
