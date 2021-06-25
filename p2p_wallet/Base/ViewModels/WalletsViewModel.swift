@@ -116,11 +116,11 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                         wallets.insert(solWallet, at: 0)
                         return wallets
                     }
-                    // map prices
-                    .map {[weak self] wallets in
-                        self?.mapPrices(wallets: wallets) ?? []
-                    }
             }
+    }
+    
+    override func map(newData: [Wallet]) -> [Wallet] {
+        mapPrices(wallets: newData).sorted(by: Wallet.defaultSorter)
     }
     
     override func reload() {
