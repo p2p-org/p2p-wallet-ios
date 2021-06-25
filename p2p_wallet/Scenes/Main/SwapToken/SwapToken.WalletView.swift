@@ -62,21 +62,25 @@ extension SwapToken {
             super.commonInit()
             let action: Selector = type == .source ? #selector(ViewModel.chooseSourceWallet): #selector(ViewModel.chooseDestinationWallet)
             
-            let stackView = UIStackView(axis: .vertical, spacing: 6, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-                    iconImageView
-                        .onTap(viewModel, action: action),
-                    UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
-                        .onTap(viewModel, action: action),
+            let stackView = UIStackView(axis: .vertical, spacing: 6, alignment: .fill, distribution: .fill) {
+                UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
+                    
+                    UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
+                        iconImageView
+                        UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
+                    }
+                        .onTap(viewModel, action: action)
+                    
                     amountTextField
-                ]),
-                UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
+                }
+                
+                UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill) {
                     tokenSymbolLabel
-                        .withContentHuggingPriority(.required, for: .horizontal),
-                    UIView.spacer,
+                        .withContentHuggingPriority(.required, for: .horizontal)
+                    UIView.spacer
                     equityValueLabel
-                ])
-            ])
+                }
+            }
             
             tokenSymbolLabel.centerXAnchor.constraint(equalTo: iconImageView.centerXAnchor)
                 .isActive = true
