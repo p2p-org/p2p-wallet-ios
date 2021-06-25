@@ -124,6 +124,11 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         if processingTransactionRepository.getProcessingTransactions().count > 0 {
             return
         }
+        
+        if pricesRepository.getCurrentPrices().isEmpty {
+            pricesRepository.fetchAllTokensPrice()
+        }
+        
         super.reload()
     }
     
