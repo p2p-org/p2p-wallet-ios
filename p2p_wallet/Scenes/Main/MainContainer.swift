@@ -41,8 +41,13 @@ class MainContainer {
         
         defer {
             socket.connect()
-//            pricesManager.startObserving()
+            pricesManager.startObserving()
         }
+    }
+    
+    deinit {
+        socket.disconnect()
+        pricesManager.stopObserving()
     }
     
     func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController {
@@ -141,7 +146,6 @@ class MainContainer {
         let viewModel = ChooseWalletViewModel(
             myWalletsViewModel: walletsViewModel,
             tokensRepository: solanaSDK,
-            pricesRepository: pricesManager,
             showOtherWallets: showOtherWallets)
         { (item) -> Bool in
             guard let customFilter = customFilter else {return true}
@@ -216,7 +220,7 @@ class MainContainer {
     func changeFiat(to fiat: Fiat) {
         Defaults.fiat = fiat
         pricesManager.currentPrices.accept([:])
-        pricesManager.fetchCurrentPrices(coins: walletsViewModel.getWallets().map {$0.token.symbol})
+        pricesManager.fetchAllTokensPrice()
     }
 }
 

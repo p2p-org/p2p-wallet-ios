@@ -110,10 +110,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                     .map {[weak self] wallets in
                         self?.mapPrices(wallets: wallets) ?? []
                     }
-                    // update prices
-                    .do(onSuccess: {[weak self] wallets in
-                        self?.pricesRepository.fetchCurrentPrices(coins: wallets.map {$0.token.symbol})
-                    })
                     // accountSubscribe
                     .do(onSuccess: {[weak self] wallets in
                         for wallet in wallets where wallet.pubkey != nil {

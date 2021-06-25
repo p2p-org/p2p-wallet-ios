@@ -15,17 +15,35 @@ class CryptoComparePricesFetcher: PricesFetcher {
     func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[String: CurrentPrice?]> {
         var path = "/pricemulti?"
         path += "api_key=\(apikey)&"
-        return send("\(path)fsyms=\(coins.joined(separator: ","))&tsyms=\(fiat)", decodedTo: [String: [String: Double]].self)
-            .map {dict in
-                var result = [String: CurrentPrice?]()
-                for key in dict.keys {
-                    var price: CurrentPrice?
-                    if let value = dict[key]?[fiat] {
-                        price = CurrentPrice(value: value)
+        
+        let requests = coins
+            .filter {!$0.contains("-")}
+            .chunked(into: 30)
+            .map { coins -> Single<[String: CurrentPrice?]> in
+                let coinListQuery = coins
+                    .joined(separator: ",")
+                    .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                
+                return self.send("\(path)fsyms=\(coinListQuery)&tsyms=\(fiat)", decodedTo: [String: [String: Double]].self)
+                    .map {dict in
+                        var result = [String: CurrentPrice?]()
+                        for key in dict.keys {
+                            var price: CurrentPrice?
+                            if let value = dict[key]?[fiat] {
+                                price = CurrentPrice(value: value)
+                            }
+                            result[key] = price
+                        }
+                        return result
                     }
-                    result[key] = price
-                }
-                return result
+                    .catchAndReturn([:])
+            }
+        
+        return Single.zip(requests)
+            .map { dictArray -> [String: CurrentPrice?] in
+                let tupleArray: [(String, CurrentPrice?)] = dictArray.flatMap { $0 }
+                let dictonary = Dictionary(tupleArray, uniquingKeysWith: { (first, _) in first })
+                return dictonary
             }
     }
     
@@ -58,5 +76,13 @@ class CryptoComparePricesFetcher: PricesFetcher {
                     )
                 }
             }
+    }
+}
+
+private extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0 ..< Swift.min($0 + size, count)])
+        }
     }
 }

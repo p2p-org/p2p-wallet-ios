@@ -37,6 +37,7 @@
 		BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC123E8325B181D80043178E /* Locale+Extensions.swift */; };
 		BC1255092653A2E400695A2B /* DerivablePathsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1255082653A2E400695A2B /* DerivablePathsVC.swift */; };
 		BC12550B2653A61C00695A2B /* SelectableDerivablePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */; };
+		BC1460C62685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */; };
 		BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */; };
 		BC18CA8A263265680054E624 /* SolanaSDK.Token+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */; };
 		BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8E2632694F0054E624 /* TokensRepository.swift */; };
@@ -355,6 +356,8 @@
 		BC123E8325B181D80043178E /* Locale+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Locale+Extensions.swift"; sourceTree = "<group>"; };
 		BC1255082653A2E400695A2B /* DerivablePathsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePathsVC.swift; sourceTree = "<group>"; };
 		BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableDerivablePath.swift; sourceTree = "<group>"; };
+		BC1460C42685BBD6000D8CFE /* p2p_walletTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "p2p_walletTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcherTests.swift; sourceTree = "<group>"; };
 		BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Wallet+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Token+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA8E2632694F0054E624 /* TokensRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokensRepository.swift; sourceTree = "<group>"; };
@@ -1295,6 +1298,8 @@
 			isa = PBXGroup;
 			children = (
 				BCB2233125412AF9002D997F /* Info.plist */,
+				BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */,
+				BC1460C42685BBD6000D8CFE /* p2p_walletTests-Bridging-Header.h */,
 			);
 			path = p2p_walletTests;
 			sourceTree = "<group>";
@@ -1672,7 +1677,7 @@
 					};
 					BCB2232A25412AF9002D997F = {
 						CreatedOnToolsVersion = 12.0.1;
-						LastSwiftMigration = 1210;
+						LastSwiftMigration = 1250;
 						TestTargetID = BCB2231425412AF8002D997F;
 					};
 					BCB2233525412AF9002D997F = {
@@ -2199,6 +2204,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC1460C62685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2512,7 +2518,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-walletTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "p2p_walletTests/p2p_walletTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2554,7 +2560,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-walletTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "p2p_walletTests/p2p_walletTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/p2p_wallet.app/p2p_wallet";
