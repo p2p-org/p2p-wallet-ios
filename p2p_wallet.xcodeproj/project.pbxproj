@@ -37,6 +37,7 @@
 		BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC123E8325B181D80043178E /* Locale+Extensions.swift */; };
 		BC1255092653A2E400695A2B /* DerivablePathsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1255082653A2E400695A2B /* DerivablePathsVC.swift */; };
 		BC12550B2653A61C00695A2B /* SelectableDerivablePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */; };
+		BC1460C62685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */; };
 		BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */; };
 		BC18CA8A263265680054E624 /* SolanaSDK.Token+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */; };
 		BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8E2632694F0054E624 /* TokensRepository.swift */; };
@@ -96,6 +97,7 @@
 		BC460ABF257A44310035F6AA /* ProcessingTransactionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460ABE257A44310035F6AA /* ProcessingTransactionsManager.swift */; };
 		BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */; };
 		BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC490CBD256CB796006E7AC9 /* WalletCell.swift */; };
+		BC51E55F268588E000C9B05D /* Tokens.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC51E55E268588E000C9B05D /* Tokens.xcassets */; };
 		BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */; };
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */; };
@@ -354,6 +356,8 @@
 		BC123E8325B181D80043178E /* Locale+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Locale+Extensions.swift"; sourceTree = "<group>"; };
 		BC1255082653A2E400695A2B /* DerivablePathsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePathsVC.swift; sourceTree = "<group>"; };
 		BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableDerivablePath.swift; sourceTree = "<group>"; };
+		BC1460C42685BBD6000D8CFE /* p2p_walletTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "p2p_walletTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcherTests.swift; sourceTree = "<group>"; };
 		BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Wallet+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Token+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA8E2632694F0054E624 /* TokensRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokensRepository.swift; sourceTree = "<group>"; };
@@ -419,6 +423,7 @@
 		BC460ABE257A44310035F6AA /* ProcessingTransactionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingTransactionsManager.swift; sourceTree = "<group>"; };
 		BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BehaviorRelay+Extensions.swift"; sourceTree = "<group>"; };
 		BC490CBD256CB796006E7AC9 /* WalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCell.swift; sourceTree = "<group>"; };
+		BC51E55E268588E000C9B05D /* Tokens.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Tokens.xcassets; sourceTree = "<group>"; };
 		BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BonfidaPricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcher.swift; sourceTree = "<group>"; };
@@ -1029,6 +1034,7 @@
 				BCA9945125AE94D7005BD8FB /* Fonts */,
 				BC6EE7E6254BD30600FE1025 /* p2p_wallet.entitlements */,
 				BCB2232125412AF8002D997F /* Assets.xcassets */,
+				BC51E55E268588E000C9B05D /* Tokens.xcassets */,
 				BC65E9F82542C181005F50CE /* Colors.xcassets */,
 				BCB2232325412AF9002D997F /* LaunchScreen.storyboard */,
 				BCB2232625412AF9002D997F /* Info.plist */,
@@ -1291,6 +1297,8 @@
 			isa = PBXGroup;
 			children = (
 				BCB2233125412AF9002D997F /* Info.plist */,
+				BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */,
+				BC1460C42685BBD6000D8CFE /* p2p_walletTests-Bridging-Header.h */,
 			);
 			path = p2p_walletTests;
 			sourceTree = "<group>";
@@ -1668,7 +1676,7 @@
 					};
 					BCB2232A25412AF9002D997F = {
 						CreatedOnToolsVersion = 12.0.1;
-						LastSwiftMigration = 1210;
+						LastSwiftMigration = 1250;
 						TestTargetID = BCB2231425412AF8002D997F;
 					};
 					BCB2233525412AF9002D997F = {
@@ -1709,6 +1717,7 @@
 			files = (
 				BCA9946725AE94D7005BD8FB /* Montserrat-BoldItalic.ttf in Resources */,
 				BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */,
+				BC51E55F268588E000C9B05D /* Tokens.xcassets in Resources */,
 				BCA9946D25AE94D7005BD8FB /* Montserrat-MediumItalic.ttf in Resources */,
 				BCA9946E25AE94D7005BD8FB /* Montserrat-BlackItalic.ttf in Resources */,
 				BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */,
@@ -2193,6 +2202,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC1460C62685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2506,7 +2516,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-walletTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "p2p_walletTests/p2p_walletTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2548,7 +2558,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-walletTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "p2p_walletTests/p2p_walletTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/p2p_wallet.app/p2p_wallet";

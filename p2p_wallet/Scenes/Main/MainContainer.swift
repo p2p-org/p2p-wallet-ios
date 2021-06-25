@@ -27,7 +27,7 @@ class MainContainer {
         self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
         self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
         self.processingTransactionsManager = ProcessingTransactionsManager(handler: socket)
-        self.pricesManager = PricesManager(tokensRepository: solanaSDK, fetcher: CryptoComparePricesFetcher(), refreshAfter: 10 * 1000) // 10minutes
+        self.pricesManager = PricesManager(tokensRepository: solanaSDK, fetcher: CryptoComparePricesFetcher(), refreshAfter: 2 * 1000) // 2 minutes
         
         self.walletsViewModel = WalletsViewModel(
             solanaSDK: solanaSDK,
@@ -41,8 +41,13 @@ class MainContainer {
         
         defer {
             socket.connect()
-//            pricesManager.startObserving()
+            pricesManager.startObserving()
         }
+    }
+    
+    deinit {
+        socket.disconnect()
+        pricesManager.stopObserving()
     }
     
     func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController {
@@ -137,7 +142,6 @@ class MainContainer {
         let viewModel = ChooseWalletViewModel(
             myWalletsViewModel: walletsViewModel,
             tokensRepository: solanaSDK,
-            pricesRepository: pricesManager,
             showOtherWallets: showOtherWallets)
         { (item) -> Bool in
             guard let customFilter = customFilter else {return true}
@@ -212,7 +216,7 @@ class MainContainer {
     func changeFiat(to fiat: Fiat) {
         Defaults.fiat = fiat
         pricesManager.currentPrices.accept([:])
-        pricesManager.fetchCurrentPrices(coins: walletsViewModel.getWallets().map {$0.token.symbol})
+        pricesManager.fetchAllTokensPrice()
     }
 }
 

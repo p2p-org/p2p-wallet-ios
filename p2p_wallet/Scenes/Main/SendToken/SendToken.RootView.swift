@@ -21,7 +21,6 @@ extension SendToken {
         lazy var balanceLabel = UILabel(text: "0", weight: .medium)
             .onTap(viewModel, action: #selector(ViewModel.useAllBalance))
         lazy var coinImageView = CoinLogoImageView(size: 44)
-            .onTap(viewModel, action: #selector(ViewModel.chooseWallet))
         lazy var amountTextField = TokenAmountTextField(
             font: .systemFont(ofSize: 27, weight: .semibold),
             textColor: .textBlack,
@@ -109,22 +108,26 @@ extension SendToken {
         // MARK: - Layout
         private func layout() {
             stackView.addArrangedSubviews {
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
-                    UILabel(text: L10n.from, weight: .bold),
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing) {
+                    UILabel(text: L10n.from, weight: .bold)
                     balanceLabel
-                ])
+                }
                 BEStackViewSpacing(30)
                 
-                UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-                    coinImageView,
-                    UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textBlack)
-                        .onTap(viewModel, action: #selector(ViewModel.chooseWallet)),
-                    amountTextField,
+                UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
+                    UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
+                        coinImageView
+                        UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textBlack)
+                    }
+                        .onTap(viewModel, action: #selector(ViewModel.chooseWallet))
+                    
+                    amountTextField
+                    
                     changeModeButton
                         .withContentHuggingPriority(.required, for: .horizontal)
                         .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12)
                         .onTap(viewModel, action: #selector(ViewModel.switchCurrencyMode))
-                ])
+                }
                 BEStackViewSpacing(6)
                 
                 UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
