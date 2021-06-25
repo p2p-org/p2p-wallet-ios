@@ -182,6 +182,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             if let price = pricesRepository.currentPrice(for: wallets[i].token.symbol)
             {
                 wallets[i].price = price
+            } else {
+                wallets[i].price = nil
             }
         }
         return wallets
