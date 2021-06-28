@@ -36,7 +36,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         transactions.append(
             .init(
                 status: .processing(percent: 0),
-                transaction: transaction
+                parsed: transaction
             )
         )
         transactionsSubject.accept(transactions)
@@ -47,7 +47,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
             .subscribe(onCompleted: { [weak self] in
                 guard let `self` = self else {return}
                 var transactions = self.transactionsSubject.value
-                if let index = transactions.firstIndex(where: {$0.transaction?.signature == transaction.signature})
+                if let index = transactions.firstIndex(where: {$0.parsed?.signature == transaction.signature})
                 {
                     transactions[index].status = .confirmed
                 }

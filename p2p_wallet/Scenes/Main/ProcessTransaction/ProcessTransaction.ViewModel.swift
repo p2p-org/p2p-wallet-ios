@@ -361,7 +361,7 @@ extension ProcessTransaction {
         
         private func observeTransaction(signature: String) {
             transactionHandler.processingTransactionsObservable()
-                .map {$0.first(where: {$0.transaction?.signature == signature})}
+                .map {$0.first(where: {$0.parsed?.signature == signature})}
                 .filter {$0?.status == .confirmed}
                 .take(1)
                 .asSingle()

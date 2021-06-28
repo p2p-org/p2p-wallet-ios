@@ -191,7 +191,7 @@ extension WalletDetail.RootView: UITextFieldDelegate {
 
 extension WalletDetail.RootView: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionView, didSelect item: AnyHashable) {
-        guard let transaction = item as? SolanaSDK.AnyTransaction else {return}
+        guard let transaction = item as? ParsedTransaction else {return}
         viewModel.showTransaction(transaction)
     }
 }
