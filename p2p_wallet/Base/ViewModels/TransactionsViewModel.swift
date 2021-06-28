@@ -157,9 +157,20 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
             .sorted(by: {$0.parsed?.blockTime?.timeIntervalSince1970 > $1.parsed?.blockTime?.timeIntervalSince1970})
         
         var data = currentData
-        for transaction in transactions.reversed() where !data.contains(where: {$0.parsed?.signature == transaction.parsed?.signature})
+        for transaction in transactions.reversed()
         {
-            data.insert(transaction, at: 0)
+            // update if exists and is being processed
+            if let index = data.firstIndex(where: {$0.parsed?.signature == transaction.parsed?.signature})
+            {
+                if data[index].status != .confirmed {
+                    data[index] = transaction
+                }
+            }
+            // append if not
+            else {
+                data.insert(transaction, at: 0)
+            }
+            
         }
         return data
     }
