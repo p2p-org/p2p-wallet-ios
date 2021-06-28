@@ -15,6 +15,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     var before: String?
     let repository: TransactionsRepository
     let pricesRepository: PricesRepository
+    let processingTransactionRepository: ProcessingTransactionsRepository
     let disposeBag = DisposeBag()
     var fetchedFeePayer = false
     
@@ -25,12 +26,14 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
         accountSymbol: String,
         repository: TransactionsRepository,
         pricesRepository: PricesRepository,
+        processingTransactionRepository: ProcessingTransactionsRepository,
         feeRelayerAPIClient: FeeRelayerSolanaAPIClient
     ) {
         self.account = account
         self.accountSymbol = accountSymbol
         self.repository = repository
         self.pricesRepository = pricesRepository
+        self.processingTransactionRepository = processingTransactionRepository
         self.feeRelayer = SolanaSDK.FeeRelayer(solanaAPIClient: feeRelayerAPIClient)
         super.init(isPaginationEnabled: true, limit: 10)
     }
@@ -39,9 +42,17 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
         super.bind()
         pricesRepository.pricesObservable()
             .subscribe(onNext: {[weak self] _ in
-                self?.updatePrices()
+                self?.refreshUI()
             })
             .disposed(by: disposeBag)
+        
+//        processingTransactionRepository.processingTransactionsObservable()
+//            .filter {processingTransactions in
+//                var transactions = [ProcessingTransaction]()
+//                for pt in processingTransactions where pt.transaction != nil {
+//
+//                }
+//            }
     }
     
     override func createRequest() -> Single<[SolanaSDK.AnyTransaction]> {
@@ -72,16 +83,15 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
                     p2pFeePayerPubkeys: pubkeys
                 )
             }
-            .map { [weak self] newData in
-                guard let data = self?.updatedTransactionsWithPrices(transactions: newData)
-                else {return newData}
-                return data
-            }
             .do(
                 afterSuccess: {[weak self] transactions in
                     self?.before = transactions.last?.signature
                 }
             )
+    }
+    
+    override func map(newData: [SolanaSDK.AnyTransaction]) -> [SolanaSDK.AnyTransaction] {
+        updatedTransactionsWithPrices(transactions: newData)
     }
     
     override func flush() {
@@ -90,11 +100,6 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     }
     
     // MARK: - Helpers
-    private func updatePrices() {
-        let newData = updatedTransactionsWithPrices(transactions: data)
-        overrideData(by: newData)
-    }
-    
     private func updatedTransactionsWithPrices(transactions: [SolanaSDK.AnyTransaction]) -> [SolanaSDK.AnyTransaction]
     {
         var transactions = transactions
