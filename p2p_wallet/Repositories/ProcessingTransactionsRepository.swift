@@ -9,8 +9,8 @@ import Foundation
 import RxSwift
 
 protocol ProcessingTransactionsRepository {
-    func processingTransactionsObservable() -> Observable<[ProcessingTransaction]>
-    func getProcessingTransactions() -> [ProcessingTransaction]
+    func processingTransactionsObservable() -> Observable<[ParsedTransaction]>
+    func getProcessingTransactions() -> [ParsedTransaction]
     func process(transaction: SolanaSDK.AnyTransaction)
 }
 
