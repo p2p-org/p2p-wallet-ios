@@ -18,7 +18,7 @@ protocol PricesRepository {
 }
 
 extension PricesManager: PricesRepository {
-    func getCurrentPrices() -> [String : CurrentPrice] {
+    func getCurrentPrices() -> [String: CurrentPrice] {
         currentPrices.value
     }
     
