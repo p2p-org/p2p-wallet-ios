@@ -45,12 +45,12 @@ class WDVCSectionHeaderView: SectionHeaderView {
             ])
                 .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(16),
-            UIView.separator(height: 2, color: .separator),
+            UIView.defaultSeparator(height: 2),
             BEStackViewSpacing(0),
             lineChartView
                 .padding(.init(x: -10, y: 0)),
             BEStackViewSpacing(0),
-            UIView.separator(height: 1, color: .separator),
+            UIView.defaultSeparator(),
             BEStackViewSpacing(10),
             chartPicker
                 .padding(.init(x: 20, y: 0)),

@@ -45,7 +45,7 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
             ])
         ])
         
-        let separator = UIView.separator(height: 1, color: .separator)
+        let separator = UIView.defaultSeparator()
         contentView.addSubview(separator)
         separator.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets.init(all: 20).modifying(dBottom: -20), excludingEdge: .top)
         

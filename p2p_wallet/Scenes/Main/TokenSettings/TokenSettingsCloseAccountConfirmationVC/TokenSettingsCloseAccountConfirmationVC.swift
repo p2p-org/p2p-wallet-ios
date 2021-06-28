@@ -31,7 +31,7 @@ class TokenSettingsCloseAccountConfirmationVC: WLModalVC {
             )
                 .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(20),
-            UIView.separator(height: 1, color: .separator),
+            UIView.defaultSeparator(),
             BEStackViewSpacing(20),
             UILabel(text: L10n.closeTokenAccount, textSize: 17, weight: .medium, textColor: .alert, textAlignment: .center)
                 .padding(.init(all: 18), backgroundColor: .grayPanel, cornerRadius: 12)

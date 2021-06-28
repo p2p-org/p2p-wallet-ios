@@ -56,7 +56,7 @@ class BackupManuallyVC: BaseVC {
             ])
                 .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(20),
-            UIView.separator(height: 1, color: .separator),
+            UIView.defaultSeparator(),
             rootView
                 .padding(.init(x: 20, y: 0))
         ])

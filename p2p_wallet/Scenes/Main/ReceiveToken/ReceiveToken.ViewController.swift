@@ -34,7 +34,7 @@ extension ReceiveToken {
                         .onTap(viewModel, action: #selector(ReceiveToken.ViewModel.showHelp))
                 ])
                     .padding(.init(all: 20)),
-                UIView.separator(height: 1, color: .separator),
+                UIView.defaultSeparator(),
                 rootView
             ])
             

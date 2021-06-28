@@ -57,7 +57,7 @@ class BackupVC: ProfileVCBase {
         let spacer1 = UIView.spacer
         let spacer2 = UIView.spacer
         stackView.addArrangedSubviews([
-            UIView.separator(height: 1, color: .separator),
+            UIView.defaultSeparator(),
             spacer1,
             shieldImageView
                 .centeredHorizontallyView,

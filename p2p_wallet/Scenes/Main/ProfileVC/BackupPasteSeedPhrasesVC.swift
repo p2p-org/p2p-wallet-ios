@@ -31,7 +31,7 @@ class BackupPasteSeedPhrasesVC: WLEnterPhrasesVC {
         view.addSubview(navigationBar)
         navigationBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
         
-        let separator = UIView.separator(height: 1, color: .separator)
+        let separator = UIView.defaultSeparator()
         view.addSubview(separator)
         separator.autoPinEdge(.top, to: .bottom, of: navigationBar)
         separator.autoPinEdge(toSuperviewEdge: .leading)
