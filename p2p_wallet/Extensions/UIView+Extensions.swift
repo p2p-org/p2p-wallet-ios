@@ -95,4 +95,8 @@ extension UIView {
             )
         }
     }
+    
+    static func defaultSeparator(height: CGFloat = 1) -> UIView {
+        .separator(height: height, color: .separator)
+    }
 }

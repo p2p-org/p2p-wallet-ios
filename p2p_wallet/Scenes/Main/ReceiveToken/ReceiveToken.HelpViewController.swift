@@ -23,7 +23,7 @@ extension ReceiveToken {
                 
                 BEStackViewSpacing(16.67)
                 
-                UIView.separator(height: 1, color: .separator)
+                UIView.defaultSeparator()
                 
                 BEStackViewSpacing(20)
                 

@@ -84,7 +84,7 @@ extension SwapToken {
                     exchangeRateReverseButton
                 }
                     .padding(.init(all: 8), backgroundColor: .grayPanel, cornerRadius: 12)
-                UIView.separator(height: 1, color: .separator)
+                UIView.defaultSeparator()
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill) {
                     UILabel(text: L10n.minimumReceive + ": ", textColor: .textSecondary)
                     minimumReceiveLabel
@@ -130,7 +130,7 @@ extension SwapToken {
                 }
                     .centeredHorizontallyView
                 BEStackViewSpacing(20)
-                UIView.separator(height: 1, color: .separator)
+                UIView.defaultSeparator()
                 BEStackViewSpacing(10)
                 UIView.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice()
             }
@@ -325,7 +325,7 @@ extension SwapToken {
         // MARK: - Helpers
         private func swapSourceAndDestinationView() -> UIView {
             let view = UIView(forAutoLayout: ())
-            let separator = UIView.separator(height: 1, color: .separator)
+            let separator = UIView.defaultSeparator()
             view.addSubview(separator)
             separator.autoPinEdge(toSuperviewEdge: .leading)
             separator.autoPinEdge(toSuperviewEdge: .trailing)
