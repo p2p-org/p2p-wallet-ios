@@ -53,7 +53,7 @@ class HomeRootView: BEView {
     
     lazy var tabBar: TabBar = {
         let tabBar = TabBar(
-            shadowColor: .clear, // temporarily disable shadow
+            shadowColor: BEPureLayoutConfigs.defaultShadowColor.onDarkMode(.clear), // temporarily disable shadow
             cornerRadius: .defaultPadding,
             contentInset: UIEdgeInsets(top: 20, left: 0, bottom: 8, right: 0)
         )
