@@ -126,6 +126,7 @@ extension TransactionCell: BECollectionViewCell {
         }
         
         // amount
+        amountInTokenLabel.text = nil
         if !isUndefinedTransaction {
             if transaction.amount != 0 {
                 amountInTokenLabel.text = "\(transaction.amount.toString(maximumFractionDigits: 9, showPlus: true)) \(transaction.symbol)"
