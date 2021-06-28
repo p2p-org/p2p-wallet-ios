@@ -46,13 +46,11 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
             })
             .disposed(by: disposeBag)
         
-//        processingTransactionRepository.processingTransactionsObservable()
-//            .filter {processingTransactions in
-//                var transactions = [ProcessingTransaction]()
-//                for pt in processingTransactions where pt.transaction != nil {
-//
-//                }
-//            }
+        processingTransactionRepository.processingTransactionsObservable()
+            .subscribe(onNext: {[weak self] transactions in
+                self?.refreshUI()
+            })
+            .disposed(by: disposeBag)
     }
     
     override func createRequest() -> Single<[ParsedTransaction]> {
@@ -94,7 +92,9 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
     }
     
     override func map(newData: [ParsedTransaction]) -> [ParsedTransaction] {
-        updatedTransactionsWithPrices(transactions: newData)
+        var transactions = insertProcessingTransaction(intoCurrentData: newData)
+        transactions = updatedTransactionsWithPrices(transactions: transactions)
+        return transactions
     }
     
     override func flush() {
@@ -123,5 +123,44 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
         transaction.parsed?.amountInFiat = amount * price.value
         
         return transaction
+    }
+    
+    private func insertProcessingTransaction(
+        intoCurrentData currentData: [ParsedTransaction]
+    ) -> [ParsedTransaction] {
+        let processingTransactions = processingTransactionRepository.getProcessingTransactions()
+        var transactions = [ParsedTransaction]()
+        for pt in processingTransactions where pt.parsed != nil {
+            switch pt.parsed?.value {
+            case let transaction as SolanaSDK.TransferTransaction:
+                if transaction.source?.pubkey == self.account ||
+                    transaction.destination?.pubkey == self.account ||
+                    transaction.authority == self.account
+                {
+                    transactions.append(pt)
+                }
+            case let transaction as SolanaSDK.CloseAccountTransaction:
+                // FIXME: - Close account
+                break
+            case let transaction as SolanaSDK.SwapTransaction:
+                if transaction.source?.pubkey == self.account ||
+                    transaction.destination?.pubkey == self.account
+                {
+                    transactions.append(pt)
+                }
+            default:
+                break
+            }
+        }
+        
+        transactions = transactions
+            .sorted(by: {$0.parsed?.blockTime?.timeIntervalSince1970 > $1.parsed?.blockTime?.timeIntervalSince1970})
+        
+        var data = currentData
+        for transaction in transactions.reversed() where !data.contains(where: {$0.parsed?.signature == transaction.parsed?.signature})
+        {
+            data.insert(transaction, at: 0)
+        }
+        return data
     }
 }
