@@ -9,12 +9,13 @@ import Foundation
 import BECollectionView
 import RxSwift
 
-class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
+class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
     let account: String
     let accountSymbol: String
     var before: String?
     let repository: TransactionsRepository
     let pricesRepository: PricesRepository
+    let processingTransactionRepository: ProcessingTransactionsRepository
     let disposeBag = DisposeBag()
     var fetchedFeePayer = false
     
@@ -25,25 +26,34 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
         accountSymbol: String,
         repository: TransactionsRepository,
         pricesRepository: PricesRepository,
+        processingTransactionRepository: ProcessingTransactionsRepository,
         feeRelayerAPIClient: FeeRelayerSolanaAPIClient
     ) {
         self.account = account
         self.accountSymbol = accountSymbol
         self.repository = repository
         self.pricesRepository = pricesRepository
+        self.processingTransactionRepository = processingTransactionRepository
         self.feeRelayer = SolanaSDK.FeeRelayer(solanaAPIClient: feeRelayerAPIClient)
         super.init(isPaginationEnabled: true, limit: 10)
     }
     
     override func bind() {
+        super.bind()
         pricesRepository.pricesObservable()
             .subscribe(onNext: {[weak self] _ in
-                self?.updatePrices()
+                self?.refreshUI()
+            })
+            .disposed(by: disposeBag)
+        
+        processingTransactionRepository.processingTransactionsObservable()
+            .subscribe(onNext: {[weak self] transactions in
+                self?.refreshUI()
             })
             .disposed(by: disposeBag)
     }
     
-    override func createRequest() -> Single<[SolanaSDK.AnyTransaction]> {
+    override func createRequest() -> Single<[ParsedTransaction]> {
         let fetchPubkeys: Single<[String]>
         if fetchedFeePayer {
             fetchPubkeys = .just(Defaults.p2pFeePayerPubkeys)
@@ -71,16 +81,20 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
                     p2pFeePayerPubkeys: pubkeys
                 )
             }
-            .map { [weak self] newData in
-                guard let data = self?.updatedTransactionsWithPrices(transactions: newData)
-                else {return newData}
-                return data
+            .map {
+                $0.map {ParsedTransaction(status: .confirmed, parsed: $0)}
             }
             .do(
                 afterSuccess: {[weak self] transactions in
-                    self?.before = transactions.last?.signature
+                    self?.before = transactions.last?.parsed?.signature
                 }
             )
+    }
+    
+    override func map(newData: [ParsedTransaction]) -> [ParsedTransaction] {
+        var transactions = insertProcessingTransaction(intoCurrentData: newData)
+        transactions = updatedTransactionsWithPrices(transactions: transactions)
+        return transactions
     }
     
     override func flush() {
@@ -89,12 +103,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     }
     
     // MARK: - Helpers
-    private func updatePrices() {
-        let newData = updatedTransactionsWithPrices(transactions: data)
-        overrideData(by: newData)
-    }
-    
-    private func updatedTransactionsWithPrices(transactions: [SolanaSDK.AnyTransaction]) -> [SolanaSDK.AnyTransaction]
+    private func updatedTransactionsWithPrices(transactions: [ParsedTransaction]) -> [ParsedTransaction]
     {
         var transactions = transactions
         for index in 0..<transactions.count {
@@ -104,14 +113,65 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     }
     
     private func updatedTransactionWithPrice(
-        transaction: SolanaSDK.AnyTransaction
-    ) -> SolanaSDK.AnyTransaction {
-        guard let price = pricesRepository.currentPrice(for: transaction.symbol)
+        transaction: ParsedTransaction
+    ) -> ParsedTransaction {
+        guard let price = pricesRepository.currentPrice(for: transaction.parsed?.symbol ?? "")
         else {return transaction}
         
         var transaction = transaction
-        transaction.amountInFiat = transaction.amount * price.value
+        let amount = transaction.parsed?.amount
+        transaction.parsed?.amountInFiat = amount * price.value
         
         return transaction
+    }
+    
+    private func insertProcessingTransaction(
+        intoCurrentData currentData: [ParsedTransaction]
+    ) -> [ParsedTransaction] {
+        let processingTransactions = processingTransactionRepository.getProcessingTransactions()
+        var transactions = [ParsedTransaction]()
+        for pt in processingTransactions where pt.parsed != nil {
+            switch pt.parsed?.value {
+            case let transaction as SolanaSDK.TransferTransaction:
+                if transaction.source?.pubkey == self.account ||
+                    transaction.destination?.pubkey == self.account ||
+                    transaction.authority == self.account
+                {
+                    transactions.append(pt)
+                }
+            case let transaction as SolanaSDK.CloseAccountTransaction:
+                // FIXME: - Close account
+                break
+            case let transaction as SolanaSDK.SwapTransaction:
+                if transaction.source?.pubkey == self.account ||
+                    transaction.destination?.pubkey == self.account
+                {
+                    transactions.append(pt)
+                }
+            default:
+                break
+            }
+        }
+        
+        transactions = transactions
+            .sorted(by: {$0.parsed?.blockTime?.timeIntervalSince1970 > $1.parsed?.blockTime?.timeIntervalSince1970})
+        
+        var data = currentData
+        for transaction in transactions.reversed()
+        {
+            // update if exists and is being processed
+            if let index = data.firstIndex(where: {$0.parsed?.signature == transaction.parsed?.signature})
+            {
+                if data[index].status != .confirmed {
+                    data[index] = transaction
+                }
+            }
+            // append if not
+            else {
+                data.insert(transaction, at: 0)
+            }
+            
+        }
+        return data
     }
 }

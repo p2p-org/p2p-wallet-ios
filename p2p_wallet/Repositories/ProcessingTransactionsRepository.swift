@@ -9,6 +9,13 @@ import Foundation
 import RxSwift
 
 protocol ProcessingTransactionsRepository {
-    func getProcessingTransactions() -> [ProcessingTransaction]
-    func process(signature: String) -> Completable
+    func processingTransactionsObservable() -> Observable<[ParsedTransaction]>
+    func getProcessingTransactions() -> [ParsedTransaction]
+    func process(transaction: SolanaSDK.AnyTransaction)
+}
+
+extension ProcessingTransactionsRepository {
+    func areSomeTransactionsInProgress() -> Bool {
+        getProcessingTransactions().filter {$0.status != .confirmed}.count > 0
+    }
 }

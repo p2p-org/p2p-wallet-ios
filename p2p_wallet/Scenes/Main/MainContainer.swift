@@ -91,6 +91,7 @@ class MainContainer {
             pubkey: pubkey,
             symbol: symbol,
             walletsRepository: walletsViewModel,
+            processingTransactionRepository: processingTransactionsManager,
             pricesRepository: pricesManager,
             transactionsRepository: solanaSDK,
             analyticsManager: analyticsManager,
@@ -100,7 +101,7 @@ class MainContainer {
         return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeTransactionInfoViewController(transaction: SolanaSDK.AnyTransaction) -> TransactionInfoViewController
+    func makeTransactionInfoViewController(transaction: ParsedTransaction) -> TransactionInfoViewController
     {
         let viewModel = TransactionInfoViewModel(transaction: transaction)
         return TransactionInfoViewController(viewModel: viewModel)

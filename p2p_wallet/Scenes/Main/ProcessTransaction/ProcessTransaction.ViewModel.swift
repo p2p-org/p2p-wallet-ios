@@ -300,18 +300,73 @@ extension ProcessTransaction {
                     
                     throw SolanaSDK.Error.unknown
                 }
-                .flatMapCompletable { [weak self] transactionId in
+                .subscribe(onSuccess: { [weak self] transactionId in
                     // update status
                     self?.transactionStatusSubject.accept(.processing)
                     self?.transactionIdSubject.accept(transactionId)
                     
                     // observe confimation status
-                    return self?.transactionHandler.process(signature: transactionId) ?? .empty()
-                }
-                .subscribe(onCompleted: { [weak self] in
-                    self?.transactionStatusSubject.accept(.confirmed)
-                }, onError: { [weak self] error in
+                    self?.processTransaction(signature: transactionId)
+                    self?.observeTransaction(signature: transactionId)
+                }, onFailure: { [weak self] error in
                     self?.transactionStatusSubject.accept(.error(error))
+                })
+                .disposed(by: disposeBag)
+        }
+        
+        private func processTransaction(signature: String) {
+            var value: AnyHashable?
+            var fee: UInt64?
+            switch transactionType {
+            case .closeAccount(let wallet):
+                value = SolanaSDK.CloseAccountTransaction(
+                    reimbursedAmount: output.reimbursedAmount,
+                    closedWallet: wallet
+                )
+                fee = output.reimbursedAmount?.toLamport(decimals: wallet.token.decimals)
+            case .send(let from, let to, let lamport, let feeInLamports):
+                var toWallet = from
+                toWallet.pubkey = to
+                value = SolanaSDK.TransferTransaction(
+                    source: from,
+                    destination: toWallet,
+                    authority: nil,
+                    amount: lamport.convertToBalance(decimals: from.token.decimals),
+                    wasPaidByP2POrg: Defaults.useFreeTransaction,
+                    myAccount: from.pubkey
+                )
+                fee = feeInLamports
+            case .swap(let from, let to, let inputAmount, let estimatedAmount, let afee):
+                value = SolanaSDK.SwapTransaction(
+                    source: from,
+                    sourceAmount: inputAmount.convertToBalance(decimals: from.token.decimals),
+                    destination: to,
+                    destinationAmount: estimatedAmount.convertToBalance(decimals: to.token.decimals),
+                    myAccountSymbol: from.token.symbol
+                )
+                fee = afee
+            }
+            
+            let transaction = SolanaSDK.AnyTransaction(
+                signature: signature,
+                value: value,
+                slot: nil,
+                blockTime: Date(),
+                fee: fee,
+                blockhash: nil
+            )
+            
+            transactionHandler.process(transaction: transaction)
+        }
+        
+        private func observeTransaction(signature: String) {
+            transactionHandler.processingTransactionsObservable()
+                .map {$0.first(where: {$0.parsed?.signature == signature})}
+                .filter {$0?.status == .confirmed}
+                .take(1)
+                .asSingle()
+                .subscribe(onSuccess: {[weak self] _ in
+                    self?.transactionStatusSubject.accept(.confirmed)
                 })
                 .disposed(by: disposeBag)
         }

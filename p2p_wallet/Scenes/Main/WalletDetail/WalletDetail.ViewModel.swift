@@ -25,6 +25,7 @@ extension WalletDetail {
         
         // MARK: - Dependencies
         private let walletsRepository: WalletsRepository
+        private let processingTransactionRepository: ProcessingTransactionsRepository
         private let pubkey: String
         private let symbol: String
         let analyticsManager: AnalyticsManagerType
@@ -44,6 +45,7 @@ extension WalletDetail {
             pubkey: String,
             symbol: String,
             walletsRepository: WalletsRepository,
+            processingTransactionRepository: ProcessingTransactionsRepository,
             pricesRepository: PricesRepository,
             transactionsRepository: TransactionsRepository,
             analyticsManager: AnalyticsManagerType,
@@ -52,6 +54,7 @@ extension WalletDetail {
             self.pubkey = pubkey
             self.symbol = symbol
             self.walletsRepository = walletsRepository
+            self.processingTransactionRepository = processingTransactionRepository
             self.analyticsManager = analyticsManager
             
             self.input = Input()
@@ -73,6 +76,7 @@ extension WalletDetail {
                     accountSymbol: symbol,
                     repository: transactionsRepository,
                     pricesRepository: pricesRepository,
+                    processingTransactionRepository: processingTransactionRepository,
                     feeRelayerAPIClient: feeRelayerAPIClient
                 )
             )
@@ -134,7 +138,7 @@ extension WalletDetail {
             navigationSubject.accept(.swap(fromWallet: wallet))
         }
         
-        func showTransaction(_ transaction: SolanaSDK.AnyTransaction) {
+        func showTransaction(_ transaction: ParsedTransaction) {
             analyticsManager.log(event: .tokenDetailsDetailsOpen)
             navigationSubject.accept(.transactionInfo(transaction))
         }

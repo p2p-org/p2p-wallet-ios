@@ -14,6 +14,7 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
         imageView,
         transactionTypeLabel,
         amountInFiatLabel,
+        transactionPendingIndicator,
         descriptionLabel,
         amountInTokenLabel,
         swapTransactionImageView
@@ -24,6 +25,7 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
     private lazy var imageView = TransactionImageView(size: 45, backgroundColor: .grayPanel, cornerRadius: 12)
     private lazy var transactionTypeLabel = UILabel(textSize: 17, weight: .semibold)
     private lazy var amountInFiatLabel = UILabel(textSize: 15, weight: .semibold, textAlignment: .right)
+    private lazy var transactionPendingIndicator = UIImageView(width: 20, height: 20, image: .transactionPending)
     private lazy var descriptionLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
     private lazy var amountInTokenLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary, textAlignment: .right)
     private lazy var swapTransactionImageView = SwapTransactionImageView(height: 18)
@@ -37,7 +39,7 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
             imageView,
             UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    transactionTypeLabel, amountInFiatLabel
+                    transactionTypeLabel, amountInFiatLabel, BEStackViewSpacing(5), transactionPendingIndicator
                 ]),
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
                     descriptionLabel, swapTransactionImageView, amountInTokenLabel
@@ -55,7 +57,9 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
 
 extension TransactionCell: BECollectionViewCell {
     func setUp(with item: AnyHashable?) {
-        guard let transaction = item as? SolanaSDK.AnyTransaction else {return}
+        guard let tx = item as? ParsedTransaction,
+              let transaction = tx.parsed else {return}
+        
         // clear
         descriptionLabel.text = nil
         
@@ -126,12 +130,19 @@ extension TransactionCell: BECollectionViewCell {
         }
         
         // amount
+        amountInTokenLabel.text = nil
         if !isUndefinedTransaction {
             if transaction.amount != 0 {
                 amountInTokenLabel.text = "\(transaction.amount.toString(maximumFractionDigits: 9, showPlus: true)) \(transaction.symbol)"
             }
         } else if let blockhash = transaction.blockhash {
             amountInTokenLabel.text = "#" + blockhash.prefix(4) + "..." + blockhash.suffix(4)
+        }
+        
+        // status
+        transactionPendingIndicator.isHidden = true
+        if tx.status != .confirmed {
+            transactionPendingIndicator.isHidden = false
         }
     }
 }
