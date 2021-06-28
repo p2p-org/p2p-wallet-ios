@@ -9,7 +9,7 @@ import Foundation
 import BECollectionView
 import RxSwift
 
-class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
+class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
     let account: String
     let accountSymbol: String
     var before: String?
@@ -55,7 +55,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
 //            }
     }
     
-    override func createRequest() -> Single<[SolanaSDK.AnyTransaction]> {
+    override func createRequest() -> Single<[ParsedTransaction]> {
         let fetchPubkeys: Single<[String]>
         if fetchedFeePayer {
             fetchPubkeys = .just(Defaults.p2pFeePayerPubkeys)
@@ -83,14 +83,17 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
                     p2pFeePayerPubkeys: pubkeys
                 )
             }
+            .map {
+                $0.map {ParsedTransaction(status: .confirmed, parsed: $0)}
+            }
             .do(
                 afterSuccess: {[weak self] transactions in
-                    self?.before = transactions.last?.signature
+                    self?.before = transactions.last?.parsed?.signature
                 }
             )
     }
     
-    override func map(newData: [SolanaSDK.AnyTransaction]) -> [SolanaSDK.AnyTransaction] {
+    override func map(newData: [ParsedTransaction]) -> [ParsedTransaction] {
         updatedTransactionsWithPrices(transactions: newData)
     }
     
@@ -100,7 +103,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     }
     
     // MARK: - Helpers
-    private func updatedTransactionsWithPrices(transactions: [SolanaSDK.AnyTransaction]) -> [SolanaSDK.AnyTransaction]
+    private func updatedTransactionsWithPrices(transactions: [ParsedTransaction]) -> [ParsedTransaction]
     {
         var transactions = transactions
         for index in 0..<transactions.count {
@@ -110,13 +113,14 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     }
     
     private func updatedTransactionWithPrice(
-        transaction: SolanaSDK.AnyTransaction
-    ) -> SolanaSDK.AnyTransaction {
-        guard let price = pricesRepository.currentPrice(for: transaction.symbol)
+        transaction: ParsedTransaction
+    ) -> ParsedTransaction {
+        guard let price = pricesRepository.currentPrice(for: transaction.parsed?.symbol ?? "")
         else {return transaction}
         
         var transaction = transaction
-        transaction.amountInFiat = transaction.amount * price.value
+        let amount = transaction.parsed?.amount
+        transaction.parsed?.amountInFiat = amount * price.value
         
         return transaction
     }

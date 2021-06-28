@@ -49,7 +49,7 @@ class TransactionInfoViewController: WLIndicatorModalVC {
     private func navigate(to scene: TransactionInfoNavigatableScene) {
         switch scene {
         case .explorer:
-            showWebsite(url: "https://explorer.solana.com/tx/\(viewModel.transaction.value.signature ?? "")")
+            showWebsite(url: "https://explorer.solana.com/tx/\(viewModel.transaction.value.parsed?.signature ?? "")")
         }
     }
 }

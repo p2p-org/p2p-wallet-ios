@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct ParsedTransaction {
-    enum Status: Equatable {
+struct ParsedTransaction: Hashable {
+    enum Status: Equatable, Hashable {
         case requesting
         case processing(percent: Double)
         case confirmed
     }
     
     var status: Status
-    var transaction: SolanaSDK.AnyTransaction?
+    var parsed: SolanaSDK.AnyTransaction?
 }

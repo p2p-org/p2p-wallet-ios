@@ -55,7 +55,10 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
 
 extension TransactionCell: BECollectionViewCell {
     func setUp(with item: AnyHashable?) {
-        guard let transaction = item as? SolanaSDK.AnyTransaction else {return}
+        guard let tx = item as? ParsedTransaction,
+              let transaction = tx.parsed else {return}
+        let status = tx.status
+        
         // clear
         descriptionLabel.text = nil
         
