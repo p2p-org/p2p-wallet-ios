@@ -52,7 +52,7 @@ class ConnectionErrorView: BEView {
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 30))
         
         // separator
-        let separator = UIView.separator(height: 1, color: .separator)
+        let separator = UIView.defaultSeparator()
         view.addSubview(separator)
         separator.autoPinEdge(toSuperviewEdge: .leading)
         separator.autoPinEdge(toSuperviewEdge: .trailing)

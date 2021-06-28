@@ -45,7 +45,7 @@ extension ProcessTransaction {
             }
                 .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(20),
-            UIView.separator(height: 1, color: .separator)
+            UIView.defaultSeparator()
         ])
         lazy var buttonStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
         

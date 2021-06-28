@@ -40,7 +40,7 @@ extension SendToken {
                     UILabel(text: L10n.send, textSize: 17, weight: .semibold)
                 ])
                     .padding(.init(all: 20)),
-                UIView.separator(height: 1, color: .separator),
+                UIView.defaultSeparator(),
                 rootView
             ])
             

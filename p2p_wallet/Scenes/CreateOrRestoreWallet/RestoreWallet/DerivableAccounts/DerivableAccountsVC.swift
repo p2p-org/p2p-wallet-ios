@@ -64,7 +64,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
         view.addSubview(headerView)
         headerView.autoPinEdgesToSuperviewEdges(with: .init(all: 20), excludingEdge: .bottom)
         
-        let separator = UIView.separator(height: 1, color: .separator)
+        let separator = UIView.defaultSeparator()
         view.addSubview(separator)
         separator.autoPinEdge(.top, to: .bottom, of: headerView, withOffset: 16)
         separator.autoPinEdge(toSuperviewEdge: .leading)
@@ -75,7 +75,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
         accountsCollectionView.autoPinEdge(toSuperviewSafeArea: .leading)
         accountsCollectionView.autoPinEdge(toSuperviewSafeArea: .trailing)
         
-        let separator2 = UIView.separator(height: 1, color: .separator)
+        let separator2 = UIView.defaultSeparator()
         view.addSubview(separator2)
         separator2.autoPinEdge(.top, to: .bottom, of: accountsCollectionView)
         separator2.autoPinEdge(toSuperviewEdge: .leading)

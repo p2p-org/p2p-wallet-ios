@@ -38,7 +38,7 @@ class WLPhrasesListView: BEView {
             UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 tagListView
                     .padding(.init(top: 10, left: 10, bottom: 16, right: 10), cornerRadius: 12),
-                UIView.separator(height: 1, color: .separator),
+                UIView.defaultSeparator(),
                 copyToClipboardButton
             ])
                 .padding(.zero, backgroundColor: .f6f6f8.onDarkMode(.h1b1b1b), cornerRadius: 12)
