@@ -8,19 +8,33 @@
 import Foundation
 import Action
 
-class BackupManuallyVC: WLIndicatorModalVC {
+class BackupManuallyVC: BaseVC {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+        .hidden
+    }
     
     let phrases: [String]
-    lazy var rootView = ScrollableVStackRootView(forAutoLayout: ())
+    lazy var rootView: ScrollableVStackRootView = {
+        let rootView = ScrollableVStackRootView(forAutoLayout: ())
+        rootView.scrollView.contentInset = .init(only: .top, inset: 20)
+        rootView.stackView.spacing = 20
+        rootView.stackView.addArrangedSubviews([
+            phrasesListView
+        ])
+        return rootView
+    }()
     
     lazy var phrasesListView: WLPhrasesListView = {
         let listView = WLPhrasesListView(forAutoLayout: ())
-        listView.copyToClipboardAction = CocoaAction {
-            self.buttonCopyToClipboardDidTouch()
+        listView.copyToClipboardAction = CocoaAction { [weak self] in
+            self?.buttonCopyToClipboardDidTouch()
             return .just(())
         }
         return listView
     }()
+    
+    lazy var continueButton = WLButton.stepButton(type: .blue, label: L10n.continue)
+        .onTap(self, action: #selector(continueButtonDidTouch))
     
     init(accountStorage: SolanaSDKAccountStorage) {
         self.phrases = accountStorage.account?.phrase ?? []
@@ -28,8 +42,6 @@ class BackupManuallyVC: WLIndicatorModalVC {
     
     override func setUp() {
         super.setUp()
-        rootView.scrollView.contentInset = .init(only: .top, inset: 20)
-        
         // header view
         let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
             UIStackView(axis: .horizontal, distribution: .equalSpacing, arrangedSubviews: [
@@ -44,19 +56,23 @@ class BackupManuallyVC: WLIndicatorModalVC {
                 .padding(.init(x: 20, y: 0))
         ])
         
-        containerView.addSubview(stackView)
+        view.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(only: .top, inset: 20))
         
-        rootView.stackView.spacing = 20
-        rootView.stackView.addArrangedSubviews([
-            phrasesListView
-        ])
+        view.addSubview(continueButton)
+        continueButton.autoPinEdgesToSuperviewSafeArea(with: .init(x: 20, y: 30), excludingEdge: .top)
         
+        // phrase
         phrasesListView.setUp(phrases: phrases)
     }
     
     // MARK: - Actions
     func buttonCopyToClipboardDidTouch() {
         UIApplication.shared.copyToClipboard(phrases.joined(separator: " "))
+    }
+    
+    @objc func continueButtonDidTouch() {
+        let vc = BackupPasteSeedPhrasesVC()
+        show(vc, sender: nil)
     }
 }
