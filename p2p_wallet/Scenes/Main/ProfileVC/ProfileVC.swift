@@ -133,7 +133,7 @@ class ProfileVC: ProfileVCBase {
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
         ])
         
-        setUpBackupShield()
+        setUpBackupShield(didBackup: accountStorage.didBackupUsingIcloud || Defaults.didBackupOffline)
         
         setUp(fiat: Defaults.fiat)
         
@@ -166,9 +166,9 @@ class ProfileVC: ProfileVCBase {
         })
     }
     
-    func setUpBackupShield() {
+    func setUpBackupShield(didBackup: Bool) {
         var shieldColor = UIColor.alertOrange
-        if accountStorage.didBackupUsingIcloud
+        if didBackup
         {
             shieldColor = .attentionGreen
         }
@@ -220,8 +220,8 @@ class ProfileVC: ProfileVCBase {
         switch tag {
         case 1:
             let vc = scenesFactory.makeBackupVC()
-            vc.backedUpIcloudCompletion = {
-                self.setUpBackupShield()
+            vc.didBackupCompletion = { [weak self] didBackup in
+                self?.setUpBackupShield(didBackup: didBackup)
             }
             show(vc, sender: nil)
         case 2:
