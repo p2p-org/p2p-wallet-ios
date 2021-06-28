@@ -31,7 +31,7 @@ class BaseOnboardingVC: BaseVStackVC {
         
         stackView.addArrangedSubviews([
             titleLabel.padding(.init(all: 20)),
-            UIView.separator(height: 1, color: .separator),
+            UIView.defaultSeparator(),
             spacer1,
             imageView
                 .padding(.init(all: 18), backgroundColor: .grayPanel.withAlphaComponent(0.5), cornerRadius: 12)

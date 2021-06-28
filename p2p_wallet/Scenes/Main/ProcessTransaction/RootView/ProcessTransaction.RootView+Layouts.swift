@@ -87,7 +87,7 @@ extension ProcessTransaction.RootView {
             BEStackViewSpacing(15),
             summaryView,
             BEStackViewSpacing(30),
-            UIView.separator(height: 1, color: .separator),
+            UIView.defaultSeparator(),
             BEStackViewSpacing(20),
             transactionIDStackView,
             BEStackViewSpacing(20),

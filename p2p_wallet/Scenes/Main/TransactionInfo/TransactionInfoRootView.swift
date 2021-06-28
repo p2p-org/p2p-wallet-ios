@@ -88,7 +88,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         transactionIconImageView.wrapper?.autoPinEdge(.top, to: .bottom, of: headerView, withOffset: -28)
         
         // separator
-        let separator = UIView.separator(height: 1, color: .separator)
+        let separator = UIView.defaultSeparator()
         addSubview(separator)
         separator.autoPinEdge(toSuperviewEdge: .leading)
         separator.autoPinEdge(toSuperviewEdge: .trailing)
@@ -110,7 +110,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             transactionIdSection,
             
             // buttons
-            UIView.separator(height: 1, color: .separator),
+            UIView.defaultSeparator(),
             BEStackViewSpacing(20),
             
             toggleShowHideTransactionDetailsButton

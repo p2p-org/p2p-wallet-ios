@@ -34,7 +34,7 @@ class ChooseWalletViewController: WLIndicatorModalVC {
                     .onTap(self, action: #selector(back))
             ])
                 .padding(.init(all: 20)),
-            UIView.separator(height: 1, color: .separator),
+            UIView.defaultSeparator(),
             rootView
         ])
         
