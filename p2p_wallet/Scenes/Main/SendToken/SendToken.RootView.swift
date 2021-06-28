@@ -68,7 +68,7 @@ extension SendToken {
             noFundAddressViewLabel
                 .padding(.init(x: 20, y: 0))
             
-            UIView.separator(height: 1, color: .separator)
+            UIView.defaultSeparator()
             
             UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill) {
                 UILabel(text: L10n.imSureItSCorrect, textSize: 15, weight: .semibold)
@@ -136,7 +136,7 @@ extension SendToken {
                 ])
                 BEStackViewSpacing(20)
                 
-                UIView.separator(height: 1, color: .separator)
+                UIView.defaultSeparator()
                 BEStackViewSpacing(20)
                 
                 UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
@@ -156,7 +156,7 @@ extension SendToken {
                 
                 BEStackViewSpacing(20)
                 
-                UIView.separator(height: 1, color: .separator)
+                UIView.defaultSeparator()
                 BEStackViewSpacing(20)
                 
                 UILabel(text: L10n.sendTo, weight: .bold)
@@ -172,7 +172,7 @@ extension SendToken {
                 
                 BEStackViewSpacing(30)
                 
-                UIView.separator(height: 1, color: .separator)
+                UIView.defaultSeparator()
                 
                 BEStackViewSpacing(20)
                 
@@ -185,7 +185,7 @@ extension SendToken {
                 
                 BEStackViewSpacing(16)
                 
-                UIView.separator(height: 1, color: .separator)
+                UIView.defaultSeparator()
                 
                 BEStackViewSpacing(10)
                 

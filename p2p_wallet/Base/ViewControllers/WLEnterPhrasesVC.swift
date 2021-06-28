@@ -78,7 +78,7 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
                 UILabel(text: L10n.securityKey.uppercaseFirst, textSize: 21, weight: .semibold)
             ])
                 .padding(.init(all: 20)),
-            UIView.separator(height: 1, color: .separator),
+            UIView.defaultSeparator(),
             textView
                 .padding(.init(all: 10), backgroundColor: .f3f3f3.onDarkMode(.h1b1b1b), cornerRadius: 16)
                 .border(width: 1, color: .a3a5ba.onDarkMode(.h5887ff))

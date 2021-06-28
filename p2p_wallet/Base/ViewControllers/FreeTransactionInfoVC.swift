@@ -16,7 +16,7 @@ class FreeTransactionInfoVC: WLBottomSheet {
         stackView.addArrangedSubviews {
             UIView(forAutoLayout: ())
                 .withModifier { view in
-                    let separator = UIView.separator(height: 1, color: .separator)
+                    let separator = UIView.defaultSeparator()
                     view.addSubview(separator)
                     separator.autoAlignAxis(toSuperviewAxis: .horizontal)
                     separator.autoPinEdge(toSuperviewEdge: .leading)
