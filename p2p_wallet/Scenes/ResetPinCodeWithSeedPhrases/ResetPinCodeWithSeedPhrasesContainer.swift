@@ -23,8 +23,8 @@ class ResetPinCodeWithSeedPhrasesContainer {
         ResetPinCodeWithSeedPhrasesViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeEnterPhrasesVC() -> WLEnterPhrasesVC {
-        WLEnterPhrasesVC(handler: viewModel)
+    func makeEnterPhrasesVC() -> ResetPinCodeWithSeedPhrasesEnterPhrasesVC {
+        ResetPinCodeWithSeedPhrasesEnterPhrasesVC(handler: viewModel)
     }
     
     func makeCreatePassCodeVC() -> CreatePassCodeVC {
