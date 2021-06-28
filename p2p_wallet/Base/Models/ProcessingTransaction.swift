@@ -14,6 +14,6 @@ struct ProcessingTransaction {
         case confirmed
     }
     
-    var signature: String?
     var status: Status
+    var transaction: SolanaSDK.AnyTransaction?
 }
