@@ -13,3 +13,9 @@ protocol ProcessingTransactionsRepository {
     func getProcessingTransactions() -> [ProcessingTransaction]
     func process(transaction: SolanaSDK.AnyTransaction)
 }
+
+extension ProcessingTransactionsRepository {
+    func areSomeTransactionsInProgress() -> Bool {
+        getProcessingTransactions().filter {$0.status != .confirmed}.count > 0
+    }
+}

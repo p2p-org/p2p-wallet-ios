@@ -125,7 +125,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     
     override func reload() {
         // disable refreshing when there is a transaction in progress
-        if processingTransactionRepository.getProcessingTransactions().count > 0 {
+        if processingTransactionRepository.areSomeTransactionsInProgress()
+        {
             return
         }
         
