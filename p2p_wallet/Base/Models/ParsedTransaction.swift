@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ProcessingTransaction {
+struct ParsedTransaction {
     enum Status: Equatable {
         case requesting
         case processing(percent: Double)

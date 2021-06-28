@@ -15,7 +15,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
     
     // MARK: - Properties
     private let disposeBag = DisposeBag()
-    private let transactionsSubject = BehaviorRelay<[ProcessingTransaction]>(value: [])
+    private let transactionsSubject = BehaviorRelay<[ParsedTransaction]>(value: [])
     
     // MARK: - Initializer
     init(handler: TransactionHandler) {
@@ -23,11 +23,11 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
     }
     
     // MARK: - Methods
-    func getProcessingTransactions() -> [ProcessingTransaction] {
+    func getProcessingTransactions() -> [ParsedTransaction] {
         transactionsSubject.value
     }
     
-    func processingTransactionsObservable() -> Observable<[ProcessingTransaction]> {
+    func processingTransactionsObservable() -> Observable<[ParsedTransaction]> {
         transactionsSubject.asObservable()
     }
     

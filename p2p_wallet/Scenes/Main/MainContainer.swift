@@ -95,6 +95,7 @@ class MainContainer {
             pubkey: pubkey,
             symbol: symbol,
             walletsRepository: walletsViewModel,
+            processingTransactionRepository: processingTransactionsManager,
             pricesRepository: pricesManager,
             transactionsRepository: solanaSDK,
             analyticsManager: analyticsManager,
