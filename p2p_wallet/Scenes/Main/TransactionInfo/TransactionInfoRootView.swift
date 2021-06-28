@@ -126,16 +126,17 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         // header
         transactionDriver
             .drive(onNext: {[weak self] transaction in
-                self?.transactionTypeLabel.text = transaction.label
-                self?.transactionTimestampLabel.text = transaction.blockTime?.string(withFormat: "dd MMM yyyy @ HH:mm a")
-                self?.transactionIconImageView.image = transaction.icon
+                let transaction = transaction.parsed
+                self?.transactionTypeLabel.text = transaction?.label
+                self?.transactionTimestampLabel.text = transaction?.blockTime?.string(withFormat: "dd MMM yyyy @ HH:mm a")
+                self?.transactionIconImageView.image = transaction?.icon
             })
             .disposed(by: disposeBag)
         
         // setUp
         transactionDriver
             .drive(onNext: {[weak self] transaction in
-                self?.setUp(transaction: transaction)
+                self?.setUp(transaction: transaction.parsed)
             })
             .disposed(by: disposeBag)
         
@@ -152,12 +153,13 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         
         // signature
         transactionDriver
-            .map {$0.signature}
+            .map {$0.parsed?.signature}
             .drive(signatureLabel.rx.text)
             .disposed(by: disposeBag)
     }
     
-    private func setUp(transaction: SolanaSDK.AnyTransaction) {
+    private func setUp(transaction: SolanaSDK.AnyTransaction?) {
+        guard let transaction = transaction else {return}
         // summary
         if let summaryView = stackView.arrangedSubviews.first as? TransactionSummaryView
         {
