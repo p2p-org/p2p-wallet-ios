@@ -27,24 +27,32 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         transactionsSubject.value
     }
     
-    func process(signature: String) -> Completable {
+    func processingTransactionsObservable() -> Observable<[ProcessingTransaction]> {
+        transactionsSubject.asObservable()
+    }
+    
+    func process(transaction: SolanaSDK.AnyTransaction) {
         var transactions = transactionsSubject.value
         transactions.append(
             .init(
-                signature: signature,
-                status: .processing(percent: 0)
+                status: .processing(percent: 0),
+                transaction: transaction
             )
         )
         transactionsSubject.accept(transactions)
         
-        return handler.observeTransactionCompletion(signature: signature)
+        handler.observeTransactionCompletion(signature: transaction.signature ?? "")
             .timeout(.seconds(60), scheduler: MainScheduler.instance)
             .catch {_ in .empty()}
-            .do(onCompleted: { [weak self] in
+            .subscribe(onCompleted: { [weak self] in
                 guard let `self` = self else {return}
                 var transactions = self.transactionsSubject.value
-                transactions.removeAll(where: {$0.signature == signature})
+                if let index = transactions.firstIndex(where: {$0.transaction?.signature == transaction.signature})
+                {
+                    transactions[index].status = .confirmed
+                }
                 self.transactionsSubject.accept(transactions)
             })
+            .disposed(by: disposeBag)
     }
 }

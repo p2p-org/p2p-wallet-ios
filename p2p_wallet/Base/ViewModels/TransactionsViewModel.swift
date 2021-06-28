@@ -36,6 +36,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.AnyTransaction> {
     }
     
     override func bind() {
+        super.bind()
         pricesRepository.pricesObservable()
             .subscribe(onNext: {[weak self] _ in
                 self?.updatePrices()
