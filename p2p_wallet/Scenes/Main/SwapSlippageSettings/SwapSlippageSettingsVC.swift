@@ -82,7 +82,7 @@ class SwapSlippageSettingsVC: WLModalVC {
         stackView.addArrangedSubviews([
             UILabel(text: L10n.slippageSettings, textSize: 17, weight: .semibold)
                 .padding(.init(x: 20, y: 0)),
-            UIView.separator(height: 1, color: .separator),
+            UIView.defaultSeparator(),
             UILabel(
                 text: L10n
                     .SlippageRefersToTheDifferenceBetweenTheExpectedPriceOfATradeAndThePriceAtWhichTheTradeIsExecuted
