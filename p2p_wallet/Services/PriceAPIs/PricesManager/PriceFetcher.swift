@@ -35,8 +35,8 @@ extension PricesFetcher {
     }
 }
 
-struct CurrentPrice: Hashable {
-    struct Change24h: Hashable {
+struct CurrentPrice: Codable, Hashable {
+    struct Change24h: Codable, Hashable {
         var value: Double?
         var percentage: Double?
     }

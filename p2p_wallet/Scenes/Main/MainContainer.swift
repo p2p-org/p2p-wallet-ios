@@ -27,7 +27,7 @@ class MainContainer {
         self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: accountStorage)
         self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
         self.processingTransactionsManager = ProcessingTransactionsManager(handler: socket)
-        self.pricesManager = PricesManager(tokensRepository: solanaSDK, fetcher: CryptoComparePricesFetcher(), refreshAfter: 2 * 1000) // 2 minutes
+        self.pricesManager = PricesManager(tokensRepository: solanaSDK, pricesStorage: UserDefaultsPricesStorage(), fetcher: CryptoComparePricesFetcher(), refreshAfter: 2 * 1000) // 2 minutes
         
         self.walletsViewModel = WalletsViewModel(
             solanaSDK: solanaSDK,
