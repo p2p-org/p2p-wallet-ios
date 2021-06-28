@@ -8,12 +8,17 @@
 import Foundation
 import Action
 
+protocol BackupManuallyVCDelegate: AnyObject {
+    func backupManuallyVCDidBackup(_ vc: BackupManuallyVC)
+}
+
 class BackupManuallyVC: BaseVC {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
         .hidden
     }
     
     let phrases: [String]
+    weak var delegate: BackupManuallyVCDelegate?
     lazy var rootView: ScrollableVStackRootView = {
         let rootView = ScrollableVStackRootView(forAutoLayout: ())
         rootView.scrollView.contentInset = .init(only: .top, inset: 20)
@@ -72,7 +77,20 @@ class BackupManuallyVC: BaseVC {
     }
     
     @objc func continueButtonDidTouch() {
-        let vc = BackupPasteSeedPhrasesVC()
+        let vc = BackupPasteSeedPhrasesVC(handler: self)
         show(vc, sender: nil)
+    }
+}
+
+extension BackupManuallyVC: PhrasesCreationHandler {
+    func handlePhrases(_ phrases: [String]) {
+        if phrases == self.phrases {
+            dismiss(animated: true) { [weak self] in
+                guard let `self` = self else {return}
+                self.delegate?.backupManuallyVCDidBackup(self)
+            }
+        } else {
+            self.showErrorView(title: L10n.error, description: L10n.thePhrasesYouHasEnteredIsNotCorrect)
+        }
     }
 }
