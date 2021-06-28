@@ -44,7 +44,7 @@ extension SwapToken {
                         .onTap(viewModel, action: #selector(ViewModel.chooseSlippage))
                 ])
                     .padding(.init(all: 20)),
-                UIView.separator(height: 1, color: .separator),
+                UIView.defaultSeparator(),
                 rootView
             ])
             

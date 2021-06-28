@@ -32,7 +32,7 @@ extension TransactionInfoRootView {
         
         override func commonInit() {
             super.commonInit()
-            let separator = UIView.separator(height: 1, color: .separator)
+            let separator = UIView.defaultSeparator()
             addSubview(separator)
             separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
             

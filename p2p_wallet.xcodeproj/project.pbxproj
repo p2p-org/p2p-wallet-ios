@@ -85,6 +85,8 @@
 		BC3ADE8D2570B832002B3B16 /* WLCenterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE8C2570B832002B3B16 /* WLCenterSheet.swift */; };
 		BC3B3DAA258C653000C6117E /* WLIndicatorModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3B3DA9258C653000C6117E /* WLIndicatorModalVC.swift */; };
 		BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3EA480254FD3CE00FB1FEA /* BaseCollectionViewCell.swift */; };
+		BC44532526896F8B0019F37E /* BackupPasteSeedPhrasesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC44532426896F8B0019F37E /* BackupPasteSeedPhrasesVC.swift */; };
+		BC44532B268985C80019F37E /* ResetPinCodeWithSeedPhrasesEnterPhrasesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC44532A268985C80019F37E /* ResetPinCodeWithSeedPhrasesEnterPhrasesVC.swift */; };
 		BC4593A326423F0100E11A52 /* ConnectionErrorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4593A226423F0100E11A52 /* ConnectionErrorVC.swift */; };
 		BC46075A266F325500A12E07 /* WalletDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460756266F325500A12E07 /* WalletDetail.swift */; };
 		BC46075B266F325500A12E07 /* WalletDetail.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460757266F325500A12E07 /* WalletDetail.ViewController.swift */; };
@@ -411,6 +413,8 @@
 		BC3ADE8C2570B832002B3B16 /* WLCenterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLCenterSheet.swift; sourceTree = "<group>"; };
 		BC3B3DA9258C653000C6117E /* WLIndicatorModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLIndicatorModalVC.swift; sourceTree = "<group>"; };
 		BC3EA480254FD3CE00FB1FEA /* BaseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionViewCell.swift; sourceTree = "<group>"; };
+		BC44532426896F8B0019F37E /* BackupPasteSeedPhrasesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupPasteSeedPhrasesVC.swift; sourceTree = "<group>"; };
+		BC44532A268985C80019F37E /* ResetPinCodeWithSeedPhrasesEnterPhrasesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPinCodeWithSeedPhrasesEnterPhrasesVC.swift; sourceTree = "<group>"; };
 		BC4593A226423F0100E11A52 /* ConnectionErrorVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionErrorVC.swift; sourceTree = "<group>"; };
 		BC460756266F325500A12E07 /* WalletDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.swift; sourceTree = "<group>"; };
 		BC460757266F325500A12E07 /* WalletDetail.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.ViewController.swift; sourceTree = "<group>"; };
@@ -752,6 +756,7 @@
 				BC1FFEF226297BEB0014F027 /* ResetPinCodeWithSeedPhrasesContainer.swift */,
 				BC1FFECE262975200014F027 /* ResetPinCodeWithSeedPhrasesViewModel.swift */,
 				BC1FFED0262975200014F027 /* ResetPinCodeWithSeedPhrasesViewController.swift */,
+				BC44532A268985C80019F37E /* ResetPinCodeWithSeedPhrasesEnterPhrasesVC.swift */,
 			);
 			path = ResetPinCodeWithSeedPhrases;
 			sourceTree = "<group>";
@@ -1247,6 +1252,7 @@
 				BCB58359255CE96B00B10F65 /* ProfileVC.swift */,
 				BC10510825887F7D00398EA2 /* BackupVC.swift */,
 				BC10512F258B05DF00398EA2 /* BackupManuallyVC.swift */,
+				BC44532426896F8B0019F37E /* BackupPasteSeedPhrasesVC.swift */,
 				BC105118258884AA00398EA2 /* SelectNetworkVC.swift */,
 				BC0E7DC625B178BF009AD08B /* SelectLanguageVC.swift */,
 				BC27453F263699F500D37CD1 /* SelectFiatVC.swift */,
@@ -1961,6 +1967,7 @@
 				BCA93FA425ECD16E0081DDF6 /* TokenSettingsSection.swift in Sources */,
 				BC1FFF0626298D6C0014F027 /* AccountRepository.swift in Sources */,
 				BC2EC1852553B326006EEDA5 /* UIColor+Extensions.swift in Sources */,
+				BC44532B268985C80019F37E /* ResetPinCodeWithSeedPhrasesEnterPhrasesVC.swift in Sources */,
 				BC5A97BB260D9967009674C4 /* MyProductsCollectionView+Sections.swift in Sources */,
 				BC2EC1DE2553EFC6006EEDA5 /* SwipeDownInteractor.swift in Sources */,
 				BC32A361254A761B002156F0 /* Button+Extensions.swift in Sources */,
@@ -2001,6 +2008,7 @@
 				BCACA7DA267894130091E118 /* ProcessingTransaction.swift in Sources */,
 				BCDCAE1B267C5570001ED7B4 /* RecoveryEnterSeedsViewController.swift in Sources */,
 				BCB7C7DE2668D29500FEC68E /* SwapToken.ViewController.swift in Sources */,
+				BC44532526896F8B0019F37E /* BackupPasteSeedPhrasesVC.swift in Sources */,
 				BC32A356254A69EA002156F0 /* WelcomeVC.swift in Sources */,
 				BC1FFED3262975200014F027 /* ResetPinCodeWithSeedPhrasesViewController.swift in Sources */,
 				BC65E03E261DA5ED00E436C7 /* WalletDetailTransactionsCollectionView.swift in Sources */,

@@ -23,6 +23,19 @@ class RecoveryEnterSeedsViewController: WLEnterPhrasesVC {
         analyticsManager.log(event: .recoveryEnterSeedOpen)
     }
     
+    override func setUp() {
+        super.setUp()
+        var index = 0
+        stackView.insertArrangedSubviews(at: &index) {
+            UIStackView(axis: .horizontal, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
+                UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white),
+                UILabel(text: L10n.securityKey.uppercaseFirst, textSize: 21, weight: .semibold)
+            ])
+                .padding(.init(all: 20))
+            UIView.separator(height: 1, color: .separator)
+        }
+    }
+    
     override func buttonPasteDidTouch() {
         analyticsManager.log(event: .recoveryEnterSeedPaste)
         super.buttonPasteDidTouch()

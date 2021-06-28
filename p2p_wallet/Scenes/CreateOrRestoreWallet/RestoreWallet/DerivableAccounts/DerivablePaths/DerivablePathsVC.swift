@@ -55,7 +55,7 @@ class DerivablePathsVC: WLIndicatorModalVC, BECollectionViewDelegate {
         containerView.addSubview(headerStackView)
         headerStackView.autoPinEdgesToSuperviewEdges(with: .init(all: 20), excludingEdge: .bottom)
         
-        let separator = UIView.separator(height: 1, color: .separator)
+        let separator = UIView.defaultSeparator()
         containerView.addSubview(separator)
         separator.autoPinEdge(.top, to: .bottom, of: headerStackView, withOffset: 20)
         separator.autoPinEdge(toSuperviewEdge: .leading)

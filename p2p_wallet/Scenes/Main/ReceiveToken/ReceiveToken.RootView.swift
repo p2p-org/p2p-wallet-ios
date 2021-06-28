@@ -89,7 +89,7 @@ extension ReceiveToken {
             }
             
             stackView.addArrangedSubviews {
-                UIView.separator(height: 1, color: .separator)
+                UIView.defaultSeparator()
                 
                 BEStackViewSpacing(10)
                 
@@ -126,7 +126,7 @@ extension ReceiveToken {
         
         private func createDetailView() -> UIStackView {
             UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
-                UIView.separator(height: 1, color: .separator)
+                UIView.defaultSeparator()
                 
                 UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
                     directAddressHeaderLabel
@@ -142,7 +142,7 @@ extension ReceiveToken {
                 }
                     .padding(.init(x: 20, y: 0))
                 
-                UIView.separator(height: 1, color: .separator)
+                UIView.defaultSeparator()
                 
                 UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
                     mintAddressHeaderLabel
@@ -158,7 +158,7 @@ extension ReceiveToken {
                 }
                     .padding(.init(x: 20, y: 0))
                 
-                UIView.separator(height: 1, color: .separator)
+                UIView.defaultSeparator()
             }
         }
         
