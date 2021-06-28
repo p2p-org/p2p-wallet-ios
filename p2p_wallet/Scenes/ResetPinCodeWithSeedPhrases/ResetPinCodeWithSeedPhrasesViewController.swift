@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol ResetPinCodeWithSeedPhrasesScenesFactory {
-    func makeEnterPhrasesVC() -> WLEnterPhrasesVC
+    func makeEnterPhrasesVC() -> ResetPinCodeWithSeedPhrasesEnterPhrasesVC
     func makeCreatePassCodeVC() -> CreatePassCodeVC
 }
 

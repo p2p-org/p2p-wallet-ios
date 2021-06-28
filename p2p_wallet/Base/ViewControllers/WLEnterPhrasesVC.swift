@@ -72,21 +72,15 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
         stackView.autoPinEdgesToSuperviewEdges()
         
         // arranged subviews
-        stackView.addArrangedSubviews([
-            UIStackView(axis: .horizontal, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white),
-                UILabel(text: L10n.securityKey.uppercaseFirst, textSize: 21, weight: .semibold)
-            ])
-                .padding(.init(all: 20)),
-            UIView.separator(height: 1, color: .separator),
+        stackView.addArrangedSubviews {
             textView
                 .padding(.init(all: 10), backgroundColor: .f3f3f3.onDarkMode(.h1b1b1b), cornerRadius: 16)
                 .border(width: 1, color: .a3a5ba.onDarkMode(.h5887ff))
-                .padding(.init(all: 20, excludingEdge: .bottom)),
-            BEStackViewSpacing(30),
+                .padding(.init(all: 20, excludingEdge: .bottom))
+            BEStackViewSpacing(30)
             errorLabel
                 .padding(.init(x: 20, y: 0))
-        ])
+        }
         
         // tabBar
         view.addSubview(tabBar)
