@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 
 protocol ProcessingTransactionsRepository {
+    func processingTransactionsObservable() -> Observable<[ProcessingTransaction]>
     func getProcessingTransactions() -> [ProcessingTransaction]
-    func process(signature: String) -> Completable
+    func process(transaction: SolanaSDK.AnyTransaction)
 }
