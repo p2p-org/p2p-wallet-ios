@@ -9,9 +9,15 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+protocol PricesStorage {
+    func retrievePrices() -> [String: CurrentPrice]
+    func savePrices(_ prices: [String: CurrentPrice])
+}
+
 class PricesManager {
     // MARK: - Properties
     var tokensRepository: TokensRepository
+    let pricesStorage: PricesStorage
     var fetcher: PricesFetcher
     private let disposeBag = DisposeBag()
     
@@ -19,11 +25,12 @@ class PricesManager {
     private var timer: Timer?
     
     // MARK: - Subjects
-    let currentPrices = BehaviorRelay<[String: CurrentPrice]>(value: [:])
+    lazy var currentPrices = BehaviorRelay<[String: CurrentPrice]>(value: pricesStorage.retrievePrices())
     
     // MARK: - Initializer
-    init(tokensRepository: TokensRepository, fetcher: PricesFetcher, refreshAfter seconds: TimeInterval = 30) {
+    init(tokensRepository: TokensRepository, pricesStorage: PricesStorage, fetcher: PricesFetcher, refreshAfter seconds: TimeInterval = 30) {
         self.tokensRepository = tokensRepository
+        self.pricesStorage = pricesStorage
         self.fetcher = fetcher
         self.refreshInterval = seconds
     }
@@ -87,6 +94,7 @@ extension PricesManager {
         for newPrice in newPrices {
             prices[newPrice.key] = newPrice.value
         }
+        pricesStorage.savePrices(prices)
         currentPrices.accept(prices)
     }
 }
