@@ -134,7 +134,12 @@ class BackupVC: ProfileVCBase {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                         guard let vc = self?.scenesFactory.makeBackupManuallyVC()
                         else {return}
-                        self?.present(vc, animated: true, completion: nil)
+                        let nc = BENavigationController(rootViewController: vc)
+                        
+                        let modalVC = WLIndicatorModalVC()
+                        modalVC.add(child: nc, to: modalVC.containerView)
+                        
+                        self?.present(modalVC, animated: true, completion: nil)
                     }
                 }
             )
