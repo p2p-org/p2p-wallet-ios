@@ -21,14 +21,14 @@ class TransactionInfoViewModel {
     // MARK: - Subjects
     let navigationSubject = PublishSubject<TransactionInfoNavigatableScene>()
     let showDetailTransaction = BehaviorRelay<Bool>(value: false)
-    let transaction: BehaviorRelay<ParsedTransaction>
+    let transaction: BehaviorRelay<SolanaSDK.ParsedTransaction>
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    init(transaction: ParsedTransaction) {
-        self.transaction = BehaviorRelay<ParsedTransaction>(value: transaction)
+    init(transaction: SolanaSDK.ParsedTransaction) {
+        self.transaction = BehaviorRelay<SolanaSDK.ParsedTransaction>(value: transaction)
     }
     
     // MARK: - Actions
@@ -41,11 +41,11 @@ class TransactionInfoViewModel {
     }
     
     @objc func copySignatureToClipboard() {
-        UIApplication.shared.copyToClipboard(transaction.value.parsed?.signature)
+        UIApplication.shared.copyToClipboard(transaction.value.signature)
     }
     
     @objc func copySourceAddressToClipboard() {
-        switch transaction.value.parsed?.value {
+        switch transaction.value.value {
         case let transferTransaction as SolanaSDK.TransferTransaction:
             UIApplication.shared.copyToClipboard(transferTransaction.source?.pubkey)
         default:
@@ -54,7 +54,7 @@ class TransactionInfoViewModel {
     }
     
     @objc func copyDestinationAddressToClipboard() {
-        switch transaction.value.parsed?.value {
+        switch transaction.value.value {
         case let transferTransaction as SolanaSDK.TransferTransaction:
             UIApplication.shared.copyToClipboard(transferTransaction.destination?.pubkey)
         case let createAccountTransaction as SolanaSDK.CreateAccountTransaction:

@@ -1,5 +1,5 @@
 //
-//  SolanaSDK.AnyTransaction+Extensions.swift
+//  SolanaSDK.ParsedTransaction+Extensions.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 09/04/2021.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension SolanaSDK.AnyTransaction {
+extension SolanaSDK.ParsedTransaction {
     var label: String {
         switch value {
         case is SolanaSDK.CreateAccountTransaction:

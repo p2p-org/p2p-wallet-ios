@@ -9,7 +9,7 @@ import Foundation
 import BECollectionView
 import RxSwift
 
-class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
+class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     let account: String
     let accountSymbol: String
     var before: String?
@@ -53,7 +53,7 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
             .disposed(by: disposeBag)
     }
     
-    override func createRequest() -> Single<[ParsedTransaction]> {
+    override func createRequest() -> Single<[SolanaSDK.ParsedTransaction]> {
         let fetchPubkeys: Single<[String]>
         if fetchedFeePayer {
             fetchPubkeys = .just(Defaults.p2pFeePayerPubkeys)
@@ -71,7 +71,7 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
         }
         
         return fetchPubkeys
-            .flatMap { [weak self] pubkeys -> Single<[SolanaSDK.AnyTransaction]> in
+            .flatMap { [weak self] pubkeys -> Single<[SolanaSDK.ParsedTransaction]> in
                 guard let `self` = self else {return .error(SolanaSDK.Error.unknown)}
                 return self.repository.getTransactionsHistory(
                     account: self.account,
@@ -81,17 +81,14 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
                     p2pFeePayerPubkeys: pubkeys
                 )
             }
-            .map {
-                $0.map {ParsedTransaction(status: .confirmed, parsed: $0)}
-            }
             .do(
                 afterSuccess: {[weak self] transactions in
-                    self?.before = transactions.last?.parsed?.signature
+                    self?.before = transactions.last?.signature
                 }
             )
     }
     
-    override func map(newData: [ParsedTransaction]) -> [ParsedTransaction] {
+    override func map(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
         var transactions = insertProcessingTransaction(intoCurrentData: newData)
         transactions = updatedTransactionsWithPrices(transactions: transactions)
         return transactions
@@ -103,7 +100,7 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
     }
     
     // MARK: - Helpers
-    private func updatedTransactionsWithPrices(transactions: [ParsedTransaction]) -> [ParsedTransaction]
+    private func updatedTransactionsWithPrices(transactions: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction]
     {
         var transactions = transactions
         for index in 0..<transactions.count {
@@ -113,25 +110,25 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
     }
     
     private func updatedTransactionWithPrice(
-        transaction: ParsedTransaction
-    ) -> ParsedTransaction {
-        guard let price = pricesRepository.currentPrice(for: transaction.parsed?.symbol ?? "")
+        transaction: SolanaSDK.ParsedTransaction
+    ) -> SolanaSDK.ParsedTransaction {
+        guard let price = pricesRepository.currentPrice(for: transaction.symbol)
         else {return transaction}
         
         var transaction = transaction
-        let amount = transaction.parsed?.amount
-        transaction.parsed?.amountInFiat = amount * price.value
+        let amount = transaction.amount
+        transaction.amountInFiat = amount * price.value
         
         return transaction
     }
     
     private func insertProcessingTransaction(
-        intoCurrentData currentData: [ParsedTransaction]
-    ) -> [ParsedTransaction] {
+        intoCurrentData currentData: [SolanaSDK.ParsedTransaction]
+    ) -> [SolanaSDK.ParsedTransaction] {
         let processingTransactions = processingTransactionRepository.getProcessingTransactions()
-        var transactions = [ParsedTransaction]()
-        for pt in processingTransactions where pt.parsed != nil {
-            switch pt.parsed?.value {
+        var transactions = [SolanaSDK.ParsedTransaction]()
+        for pt in processingTransactions {
+            switch pt.value {
             case let transaction as SolanaSDK.TransferTransaction:
                 if transaction.source?.pubkey == self.account ||
                     transaction.destination?.pubkey == self.account ||
@@ -154,13 +151,13 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
         }
         
         transactions = transactions
-            .sorted(by: {$0.parsed?.blockTime?.timeIntervalSince1970 > $1.parsed?.blockTime?.timeIntervalSince1970})
+            .sorted(by: {$0.blockTime?.timeIntervalSince1970 > $1.blockTime?.timeIntervalSince1970})
         
         var data = currentData
         for transaction in transactions.reversed()
         {
             // update if exists and is being processed
-            if let index = data.firstIndex(where: {$0.parsed?.signature == transaction.parsed?.signature})
+            if let index = data.firstIndex(where: {$0.signature == transaction.signature})
             {
                 if data[index].status != .confirmed {
                     data[index] = transaction
