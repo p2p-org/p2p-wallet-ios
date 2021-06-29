@@ -105,7 +105,7 @@ class MainContainer {
         return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeTransactionInfoViewController(transaction: ParsedTransaction) -> TransactionInfoViewController
+    func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController
     {
         let viewModel = TransactionInfoViewModel(transaction: transaction)
         return TransactionInfoViewController(viewModel: viewModel)

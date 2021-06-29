@@ -9,12 +9,12 @@ import Foundation
 import RxSwift
 
 protocol TransactionsRepository {
-    func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int, p2pFeePayerPubkeys: [String]) -> Single<[SolanaSDK.AnyTransaction]>
-    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType, p2pFeePayerPubkeys: [String]) -> Single<SolanaSDK.AnyTransaction>
+    func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int, p2pFeePayerPubkeys: [String]) -> Single<[SolanaSDK.ParsedTransaction]>
+    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType, p2pFeePayerPubkeys: [String]) -> Single<SolanaSDK.ParsedTransaction>
 }
 
 extension SolanaSDK: TransactionsRepository {
-    func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int, p2pFeePayerPubkeys: [String]) -> Single<[AnyTransaction]> {
+    func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int, p2pFeePayerPubkeys: [String]) -> Single<[SolanaSDK.ParsedTransaction]> {
         getConfirmedSignaturesForAddress2(account: account, configs: RequestConfiguration(limit: limit, before: before))
             .flatMap {activities in
                 
@@ -25,7 +25,8 @@ extension SolanaSDK: TransactionsRepository {
                 return Single.zip(activities.map { activity in
                     self.getTransaction(account: account, accountSymbol: accountSymbol, signature: activity.signature, parser: parser, p2pFeePayerPubkeys: p2pFeePayerPubkeys)
                         .map {
-                            AnyTransaction(
+                            SolanaSDK.ParsedTransaction(
+                                status: $0.status,
                                 signature: $0.signature,
                                 value: $0.value,
                                 slot: activity.slot,
@@ -43,14 +44,15 @@ extension SolanaSDK: TransactionsRepository {
             })
     }
     
-    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType, p2pFeePayerPubkeys: [String]) -> Single<AnyTransaction> {
+    func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType, p2pFeePayerPubkeys: [String]) -> Single<SolanaSDK.ParsedTransaction> {
         getConfirmedTransaction(transactionSignature: signature)
             .flatMap { info in
                 let time = info.blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(info.blockTime!)): nil
                 
                 return parser.parse(transactionInfo: info, myAccount: account, myAccountSymbol: accountSymbol, p2pFeePayerPubkeys: p2pFeePayerPubkeys)
                     .map {
-                        AnyTransaction(
+                        SolanaSDK.ParsedTransaction(
+                            status: $0.status,
                             signature: signature,
                             value: $0.value,
                             slot: nil,
@@ -60,7 +62,8 @@ extension SolanaSDK: TransactionsRepository {
                         )
                     }
                     .catchAndReturn(
-                        AnyTransaction(
+                        SolanaSDK.ParsedTransaction(
+                            status: .confirmed,
                             signature: signature,
                             value: nil,
                             slot: nil,
@@ -71,7 +74,8 @@ extension SolanaSDK: TransactionsRepository {
                     )
             }
             .catchAndReturn(
-                AnyTransaction(
+                SolanaSDK.ParsedTransaction(
+                    status: .confirmed,
                     signature: signature,
                     value: nil,
                     slot: nil,

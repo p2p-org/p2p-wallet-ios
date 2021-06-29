@@ -15,7 +15,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
     
     // MARK: - Properties
     private let disposeBag = DisposeBag()
-    private let transactionsSubject = BehaviorRelay<[ParsedTransaction]>(value: [])
+    private let transactionsSubject = BehaviorRelay<[SolanaSDK.ParsedTransaction]>(value: [])
     
     // MARK: - Initializer
     init(handler: TransactionHandler) {
@@ -23,22 +23,17 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
     }
     
     // MARK: - Methods
-    func getProcessingTransactions() -> [ParsedTransaction] {
+    func getProcessingTransactions() -> [SolanaSDK.ParsedTransaction] {
         transactionsSubject.value
     }
     
-    func processingTransactionsObservable() -> Observable<[ParsedTransaction]> {
+    func processingTransactionsObservable() -> Observable<[SolanaSDK.ParsedTransaction]> {
         transactionsSubject.asObservable()
     }
     
-    func process(transaction: SolanaSDK.AnyTransaction) {
+    func process(transaction: SolanaSDK.ParsedTransaction) {
         var transactions = transactionsSubject.value
-        transactions.append(
-            .init(
-                status: .processing(percent: 0),
-                parsed: transaction
-            )
-        )
+        transactions.append(transaction)
         transactionsSubject.accept(transactions)
         
         handler.observeTransactionCompletion(signature: transaction.signature ?? "")
@@ -47,7 +42,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
             .subscribe(onCompleted: { [weak self] in
                 guard let `self` = self else {return}
                 var transactions = self.transactionsSubject.value
-                if let index = transactions.firstIndex(where: {$0.parsed?.signature == transaction.signature})
+                if let index = transactions.firstIndex(where: {$0.signature == transaction.signature})
                 {
                     transactions[index].status = .confirmed
                 }
