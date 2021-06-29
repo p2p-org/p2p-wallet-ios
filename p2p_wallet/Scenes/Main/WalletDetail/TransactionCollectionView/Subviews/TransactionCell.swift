@@ -57,8 +57,8 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
 
 extension TransactionCell: BECollectionViewCell {
     func setUp(with item: AnyHashable?) {
-        guard let tx = item as? ParsedTransaction,
-              let transaction = tx.parsed else {return}
+        guard let transaction = item as? SolanaSDK.ParsedTransaction
+        else {return}
         
         // clear
         descriptionLabel.text = nil
@@ -141,7 +141,7 @@ extension TransactionCell: BECollectionViewCell {
         
         // status
         transactionPendingIndicator.isHidden = true
-        if tx.status != .confirmed {
+        if transaction.status != .confirmed {
             transactionPendingIndicator.isHidden = false
         }
     }

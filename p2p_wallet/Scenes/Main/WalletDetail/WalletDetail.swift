@@ -12,7 +12,7 @@ protocol WalletDetailScenesFactory {
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapToken.ViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
-    func makeTransactionInfoViewController(transaction: ParsedTransaction) -> TransactionInfoViewController
+    func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController
 }
 
 struct WalletDetail {
@@ -21,6 +21,6 @@ struct WalletDetail {
         case send(wallet: Wallet)
         case receive(walletPubkey: String)
         case swap(fromWallet: Wallet)
-        case transactionInfo(_ transaction: ParsedTransaction)
+        case transactionInfo(_ transaction: SolanaSDK.ParsedTransaction)
     }
 }
