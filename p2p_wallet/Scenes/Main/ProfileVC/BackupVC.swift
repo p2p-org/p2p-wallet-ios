@@ -10,6 +10,7 @@ import RxCocoa
 
 protocol BackupScenesFactory {
     func makeBackupManuallyVC() -> BackupManuallyVC
+    func makeBackupShowPhrasesVC() -> BackupShowPhrasesVC
 }
 
 class BackupVC: ProfileVCBase {
@@ -105,9 +106,7 @@ class BackupVC: ProfileVCBase {
             subtitle = L10n.ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletBackupFromICloud
             backupMannuallyButtonTitle = L10n.viewRecoveryKey
             backupMannuallyButtonTextColor = .h5887ff
-        }
-        
-        if accountStorage.didBackupUsingIcloud {
+            
             isIcloudButtonHidden = true
         }
         
@@ -134,25 +133,43 @@ class BackupVC: ProfileVCBase {
     }
     
     @objc func buttonBackupManuallyDidTouch() {
-        authenticationHandler.authenticate(
-            presentationStyle: .init(
-                isRequired: false,
-                isFullScreen: false,
-                completion: { [weak self] in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                        guard let vc = self?.scenesFactory.makeBackupManuallyVC()
-                        else {return}
-                        vc.delegate = self
-                        let nc = BENavigationController(rootViewController: vc)
-                        
-                        let modalVC = WLIndicatorModalVC()
-                        modalVC.add(child: nc, to: modalVC.containerView)
-                        
-                        self?.present(modalVC, animated: true, completion: nil)
+        if didBackupSubject.value {
+            authenticationHandler.authenticate(
+                presentationStyle: .init(
+                    isRequired: false,
+                    isFullScreen: false,
+                    completion: { [weak self] in
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                            self?.showSeedPhrasesVC()
+                        }
                     }
-                }
+                )
             )
-        )
+        } else {
+            showBackupManuallyVC()
+        }        
+    }
+    
+    private func showBackupManuallyVC() {
+        let vc = scenesFactory.makeBackupManuallyVC()
+        vc.delegate = self
+        let nc = BENavigationController(rootViewController: vc)
+        
+        let modalVC = WLIndicatorModalVC()
+        modalVC.add(child: nc, to: modalVC.containerView)
+        
+        present(modalVC, animated: true, completion: nil)
+    }
+    
+    private func showSeedPhrasesVC() {
+        let vc = scenesFactory.makeBackupShowPhrasesVC()
+        
+        let nc = BENavigationController(rootViewController: vc)
+        
+        let modalVC = WLIndicatorModalVC()
+        modalVC.add(child: nc, to: modalVC.containerView)
+        
+        present(modalVC, animated: true, completion: nil)
     }
 }
 

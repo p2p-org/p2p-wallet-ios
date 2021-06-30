@@ -10,6 +10,7 @@ import TagListView
 import Action
 
 class WLPhrasesListView: BEView {
+    private lazy var descriptionLabel = UILabel(text: L10n.WriteDownOrDuplicateTheseWordsInTheCorrectOrderAndKeepThemInASafePlace.copyThemManuallyOrBackupToICloud, textColor: .textSecondary, numberOfLines: 0)
     lazy var tagListView: TagListView = {
         let tagListView = TagListView(forAutoLayout: ())
         tagListView.tagBackgroundColor = .tagBackground
@@ -33,7 +34,7 @@ class WLPhrasesListView: BEView {
     override func commonInit() {
         super.commonInit()
         let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            UILabel(text: L10n.WriteDownOrDuplicateTheseWordsInTheCorrectOrderAndKeepThemInASafePlace.copyThemManuallyOrBackupToICloud, textColor: .textSecondary, numberOfLines: 0),
+            descriptionLabel,
             BEStackViewSpacing(30),
             UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 tagListView
@@ -64,5 +65,9 @@ class WLPhrasesListView: BEView {
                 
         }
         setNeedsLayout()
+    }
+    
+    func setUp(description: String) {
+        descriptionLabel.text = description
     }
 }

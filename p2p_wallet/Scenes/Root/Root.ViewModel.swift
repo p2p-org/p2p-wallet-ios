@@ -95,6 +95,7 @@ extension Root {
             Defaults.walletName = [:]
             Defaults.didSetEnableBiometry = false
             Defaults.didSetEnableNotifications = false
+            Defaults.didBackupOffline = false
             reload()
         }
         
