@@ -194,13 +194,13 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             ],
             at: &index
         )
-        swapSummaryView.sourceIconImageView.setUp(token: transaction.source?.token)
-        swapSummaryView.sourceAmountLabel.text = (-(transaction.sourceAmount ?? 0)).toString(maximumFractionDigits: 4)
-        swapSummaryView.sourceSymbolLabel.text = transaction.source?.token.symbol
         
-        swapSummaryView.destinationIconImageView.setUp(token: transaction.destination?.token)
-        swapSummaryView.destinationAmountLabel.text = transaction.destinationAmount?.toString(maximumFractionDigits: 4, showPlus: true)
-        swapSummaryView.destinationSymbolLabel.text = transaction.destination?.token.symbol
+        swapSummaryView.setUp(
+            from: transaction.source?.token,
+            to: transaction.destination?.token,
+            inputAmount: transaction.sourceAmount?.toLamport(decimals: transaction.source?.token.decimals ?? 0),
+            estimatedAmount: transaction.destinationAmount?.toLamport(decimals: transaction.destination?.token.decimals ?? 0)
+        )
         
         let fromSection = createLabelsOnlySection(title: L10n.from)
         fromSection.contentView.text = transaction.source?.pubkey

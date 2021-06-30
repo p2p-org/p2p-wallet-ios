@@ -30,14 +30,14 @@ class DefaultTransactionSummaryView: TransactionSummaryView {
 }
 
 class SwapTransactionSummaryView: TransactionSummaryView {
-    lazy var sourceIconImageView = CoinLogoImageView(size: 44)
-    lazy var destinationIconImageView = CoinLogoImageView(size: 44)
+    private lazy var sourceIconImageView = CoinLogoImageView(size: 44)
+    private lazy var destinationIconImageView = CoinLogoImageView(size: 44)
     
-    lazy var sourceAmountLabel = createAmountLabel()
-    lazy var destinationAmountLabel = createAmountLabel()
+    private lazy var sourceAmountLabel = createAmountLabel()
+    private lazy var destinationAmountLabel = createAmountLabel()
     
-    lazy var sourceSymbolLabel = createSymbolLabel()
-    lazy var destinationSymbolLabel = createSymbolLabel()
+    private lazy var sourceSymbolLabel = createSymbolLabel()
+    private lazy var destinationSymbolLabel = createSymbolLabel()
     
     override func commonInit() {
         super.commonInit()
@@ -83,6 +83,19 @@ class SwapTransactionSummaryView: TransactionSummaryView {
         
         // pin bottom
         sourceSymbolLabel.autoPinEdge(toSuperviewEdge: .bottom)
+    }
+    
+    func setUp(from: SolanaSDK.Token?, to: SolanaSDK.Token?, inputAmount: SolanaSDK.Lamports?, estimatedAmount: SolanaSDK.Lamports?)
+    {
+        guard let from = from, let to = to, let inputAmount = inputAmount, let estimatedAmount = estimatedAmount
+        else {return}
+        sourceIconImageView.setUp(token: from)
+        sourceAmountLabel.text = (-(inputAmount.convertToBalance(decimals: from.decimals))).toString(maximumFractionDigits: 9)
+        sourceSymbolLabel.text = from.symbol
+        
+        destinationIconImageView.setUp(token: to)
+        destinationAmountLabel.text = estimatedAmount.convertToBalance(decimals: to.decimals).toString(maximumFractionDigits: 9, showPlus: true)
+        destinationSymbolLabel.text = to.symbol
     }
     
     private func createAmountLabel() -> UILabel {
