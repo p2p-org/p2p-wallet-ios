@@ -65,5 +65,10 @@ extension TransactionInfoRootView {
             addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 16, y: 6))
         }
+        
+        func setUp(status: SolanaSDK.ParsedTransaction.Status) {
+            indicatorView.backgroundColor = status.indicatorColor
+            label.text = status.label
+        }
     }
 }

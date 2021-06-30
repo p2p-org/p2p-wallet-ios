@@ -131,6 +131,7 @@
 		BC5ED749256237AB0030572D /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED748256237AB0030572D /* EmptyView.swift */; };
 		BC5ED7532562687F0030572D /* PricesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED7522562687F0030572D /* PricesManager.swift */; };
 		BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED757256269FE0030572D /* PriceFetcher.swift */; };
+		BC6342E1268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */; };
 		BC6366DB255A8D8300D585FD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC6366DA255A8D8300D585FD /* GoogleService-Info.plist */; };
 		BC65DFEA261D693500E436C7 /* WDVCSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DFE9261D693500E436C7 /* WDVCSectionHeaderView.swift */; };
 		BC65DFEF261D695200E436C7 /* TransactionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DFEE261D695200E436C7 /* TransactionCell.swift */; };
@@ -462,6 +463,7 @@
 		BC5ED748256237AB0030572D /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		BC5ED7522562687F0030572D /* PricesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricesManager.swift; sourceTree = "<group>"; };
 		BC5ED757256269FE0030572D /* PriceFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceFetcher.swift; sourceTree = "<group>"; };
+		BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.ParsedTransaction.Status+Extensions.swift"; sourceTree = "<group>"; };
 		BC6366DA255A8D8300D585FD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BC65DFE9261D693500E436C7 /* WDVCSectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WDVCSectionHeaderView.swift; sourceTree = "<group>"; };
 		BC65DFEE261D695200E436C7 /* TransactionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionCell.swift; sourceTree = "<group>"; };
@@ -1164,6 +1166,7 @@
 				BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */,
 				BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */,
 				BC18CAA2263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift */,
+				BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */,
 				BC460767266F4B3200A12E07 /* ObservableType+Extensions.swift */,
 				BCDCAE1C267C69D1001ED7B4 /* UIUserInterfaceStyle+Extensions.swift */,
 				BCDCAE1E26818634001ED7B4 /* Wallet+Extensions.swift */,
@@ -1962,6 +1965,7 @@
 				BC8F691E260ADF7D002FDCCD /* ChooseWalletRootView.swift in Sources */,
 				BC8F684D2609D866002FDCCD /* WalletsRepository.swift in Sources */,
 				BC0E7DC725B178BF009AD08B /* SelectLanguageVC.swift in Sources */,
+				BC6342E1268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift in Sources */,
 				BCF2411F26732B0E00C9F158 /* AnalyticsManager.swift in Sources */,
 				BCE42E0425DFA0B50021540E /* CreateWalletViewController.swift in Sources */,
 				BC22ABE12552A4B70071C69F /* DismissMenuAnimator.swift in Sources */,
