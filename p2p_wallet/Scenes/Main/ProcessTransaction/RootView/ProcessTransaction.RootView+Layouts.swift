@@ -19,14 +19,7 @@ extension ProcessTransaction.RootView {
         switch viewModel.output.transactionType {
         case .swap(let from, let to, let inputAmount, let estimatedAmount, _):
             let sv = SwapTransactionSummaryView(forAutoLayout: ())
-            sv.sourceIconImageView.setUp(token: from.token)
-            sv.sourceAmountLabel.text = (-(inputAmount.convertToBalance(decimals: from.token.decimals))).toString(maximumFractionDigits: 9)
-            sv.sourceSymbolLabel.text = from.token.symbol
-            
-            sv.destinationIconImageView.setUp(token: to.token)
-            sv.destinationAmountLabel.text = estimatedAmount.convertToBalance(decimals: to.token.decimals).toString(maximumFractionDigits: 9, showPlus: true)
-            sv.destinationSymbolLabel.text = to.token.symbol
-            
+            sv.setUp(from: from.token, to: to.token, inputAmount: inputAmount, estimatedAmount: estimatedAmount)
             summaryView = sv
         case .send(let fromWallet, _, let sentAmount, _):
             let sentAmount = -(sentAmount.convertToBalance(decimals: fromWallet.token.decimals))
