@@ -138,7 +138,7 @@ extension WalletDetail {
             navigationSubject.accept(.swap(fromWallet: wallet))
         }
         
-        func showTransaction(_ transaction: ParsedTransaction) {
+        func showTransaction(_ transaction: SolanaSDK.ParsedTransaction) {
             analyticsManager.log(event: .tokenDetailsDetailsOpen)
             navigationSubject.accept(.transactionInfo(transaction))
         }
