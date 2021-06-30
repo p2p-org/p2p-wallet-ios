@@ -376,3 +376,4 @@
 "Backing up" = "Резервное копирование";
 "The phrases you has entered is not correct" = "Вы ввели неправильные фразы";
 "pending" = "в ожидании";
+"Save that seed phrase and keep it in the safe place. Will be used for recovery and backup." = "Сохраните эту исходную фразу и храните ее в надежном месте. Будет использоваться для восстановления и резервного копирования.";

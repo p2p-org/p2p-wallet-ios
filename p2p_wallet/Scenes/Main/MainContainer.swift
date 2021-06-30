@@ -182,6 +182,10 @@ class MainContainer {
         BackupManuallyVC(accountStorage: accountStorage)
     }
     
+    func makeBackupShowPhrasesVC() -> BackupShowPhrasesVC {
+        BackupShowPhrasesVC(accountStorage: accountStorage, authenticationHandler: mainViewModel)
+    }
+    
     func makeSelectFiatVC() -> SelectFiatVC {
         SelectFiatVC(responder: self, analyticsManager: analyticsManager)
     }
