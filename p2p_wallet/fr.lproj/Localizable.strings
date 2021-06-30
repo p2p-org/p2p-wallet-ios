@@ -377,3 +377,5 @@
 "Send SOL or any SPL Tokens on one address" = "Envoyez SOL ou n'importe quel jeton SPL sur une seule adresse";
 "Backing up" = "Sauvegarde";
 "The phrases you has entered is not correct" = "Les phrases que vous avez saisies ne sont pas correctes";
+"pending" = "en attendant";
+"Save that seed phrase and keep it in the safe place. Will be used for recovery and backup." = "Enregistrez cette phrase de départ et conservez-la dans un endroit sûr. Sera utilisé pour la récupération et la sauvegarde.";

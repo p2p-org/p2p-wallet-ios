@@ -42,7 +42,7 @@ class TransactionImageView: BEView {
         toTokenImageView.alpha = 0
     }
     
-    func setUp(transaction: SolanaSDK.AnyTransaction) {
+    func setUp(transaction: SolanaSDK.ParsedTransaction) {
         fromTokenImageView.alpha = 0
         toTokenImageView.alpha = 0
         

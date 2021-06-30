@@ -101,7 +101,7 @@ class MainContainer {
         return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeTransactionInfoViewController(transaction: ParsedTransaction) -> TransactionInfoViewController
+    func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController
     {
         let viewModel = TransactionInfoViewModel(transaction: transaction)
         return TransactionInfoViewController(viewModel: viewModel)
@@ -176,6 +176,10 @@ class MainContainer {
     
     func makeBackupManuallyVC() -> BackupManuallyVC {
         BackupManuallyVC(accountStorage: accountStorage)
+    }
+    
+    func makeBackupShowPhrasesVC() -> BackupShowPhrasesVC {
+        BackupShowPhrasesVC(accountStorage: accountStorage, authenticationHandler: mainViewModel)
     }
     
     func makeSelectFiatVC() -> SelectFiatVC {

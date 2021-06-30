@@ -271,9 +271,15 @@ extension ProcessTransaction {
                     wallets.removeAll(where: {$0.pubkey == wallet.pubkey})
                     
                     // update sol wallet
+                    var convertedAmount = self?.output.reimbursedAmount ?? 0
+                    if wallet.token.symbol == "SOL"
+                    {
+                        convertedAmount += wallet.amount ?? 0
+                    }
+                    
                     if let index = wallets.firstIndex(where: {$0.token.isNative})
                     {
-                        wallets[index].updateBalance(diff: self?.output.reimbursedAmount ?? 0)
+                        wallets[index].updateBalance(diff: convertedAmount)
                     }
                     
                     return wallets
@@ -347,7 +353,8 @@ extension ProcessTransaction {
                 fee = afee
             }
             
-            let transaction = SolanaSDK.AnyTransaction(
+            let transaction = SolanaSDK.ParsedTransaction(
+                status: .processing(percent: 0),
                 signature: signature,
                 value: value,
                 slot: nil,
@@ -361,7 +368,7 @@ extension ProcessTransaction {
         
         private func observeTransaction(signature: String) {
             transactionHandler.processingTransactionsObservable()
-                .map {$0.first(where: {$0.parsed?.signature == signature})}
+                .map {$0.first(where: {$0.signature == signature})}
                 .filter {$0?.status == .confirmed}
                 .take(1)
                 .asSingle()

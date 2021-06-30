@@ -126,17 +126,16 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         // header
         transactionDriver
             .drive(onNext: {[weak self] transaction in
-                let transaction = transaction.parsed
-                self?.transactionTypeLabel.text = transaction?.label
-                self?.transactionTimestampLabel.text = transaction?.blockTime?.string(withFormat: "dd MMM yyyy @ HH:mm a")
-                self?.transactionIconImageView.image = transaction?.icon
+                self?.transactionTypeLabel.text = transaction.label
+                self?.transactionTimestampLabel.text = transaction.blockTime?.string(withFormat: "dd MMM yyyy @ HH:mm a")
+                self?.transactionIconImageView.image = transaction.icon
             })
             .disposed(by: disposeBag)
         
         // setUp
         transactionDriver
             .drive(onNext: {[weak self] transaction in
-                self?.setUp(transaction: transaction.parsed)
+                self?.setUp(transaction: transaction)
             })
             .disposed(by: disposeBag)
         
@@ -153,12 +152,12 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         
         // signature
         transactionDriver
-            .map {$0.parsed?.signature}
+            .map {$0.signature}
             .drive(signatureLabel.rx.text)
             .disposed(by: disposeBag)
     }
     
-    private func setUp(transaction: SolanaSDK.AnyTransaction?) {
+    private func setUp(transaction: SolanaSDK.ParsedTransaction?) {
         guard let transaction = transaction else {return}
         // summary
         if let summaryView = stackView.arrangedSubviews.first as? TransactionSummaryView
@@ -172,6 +171,9 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         // if detail shown
         blockNumSection.contentView.text = "#\(transaction.slot ?? 0)"
         feeSection.contentView.text = "\(transaction.fee ?? 0)" + " lamports"
+        
+        // status
+        statusView.setUp(status: transaction.status)
         
         // modify
         switch transaction.value {
@@ -192,13 +194,13 @@ class TransactionInfoRootView: ScrollableVStackRootView {
             ],
             at: &index
         )
-        swapSummaryView.sourceIconImageView.setUp(token: transaction.source?.token)
-        swapSummaryView.sourceAmountLabel.text = (-(transaction.sourceAmount ?? 0)).toString(maximumFractionDigits: 4)
-        swapSummaryView.sourceSymbolLabel.text = transaction.source?.token.symbol
         
-        swapSummaryView.destinationIconImageView.setUp(token: transaction.destination?.token)
-        swapSummaryView.destinationAmountLabel.text = transaction.destinationAmount?.toString(maximumFractionDigits: 4, showPlus: true)
-        swapSummaryView.destinationSymbolLabel.text = transaction.destination?.token.symbol
+        swapSummaryView.setUp(
+            from: transaction.source?.token,
+            to: transaction.destination?.token,
+            inputAmount: transaction.sourceAmount?.toLamport(decimals: transaction.source?.token.decimals ?? 0),
+            estimatedAmount: transaction.destinationAmount?.toLamport(decimals: transaction.destination?.token.decimals ?? 0)
+        )
         
         let fromSection = createLabelsOnlySection(title: L10n.from)
         fromSection.contentView.text = transaction.source?.pubkey
@@ -229,7 +231,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         ])
     }
     
-    private func setUpWithOtherTransaction(_ transaction: SolanaSDK.AnyTransaction)
+    private func setUpWithOtherTransaction(_ transaction: SolanaSDK.ParsedTransaction)
     {
         var index = 0
         stackView.insertArrangedSubviewsWithCustomSpacing(
