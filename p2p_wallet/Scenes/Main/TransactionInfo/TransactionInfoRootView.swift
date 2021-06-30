@@ -172,6 +172,9 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         blockNumSection.contentView.text = "#\(transaction.slot ?? 0)"
         feeSection.contentView.text = "\(transaction.fee ?? 0)" + " lamports"
         
+        // status
+        statusView.setUp(status: transaction.status)
+        
         // modify
         switch transaction.value {
         case let transaction as SolanaSDK.SwapTransaction:
