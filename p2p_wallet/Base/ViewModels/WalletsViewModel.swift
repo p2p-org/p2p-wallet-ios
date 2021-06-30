@@ -255,6 +255,10 @@ fileprivate extension Wallet {
     static var defaultSorter: (Wallet, Wallet) -> Bool {
         { lhs, rhs in
             // Solana
+            if lhs.token.isNative != rhs.token.isNative {
+                return lhs.token.isNative
+            }
+            
             if lhs.token.symbol == "SOL" || rhs.token.symbol == "SOL" {
                 return lhs.token.symbol == "SOL"
             }

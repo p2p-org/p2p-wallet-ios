@@ -13,7 +13,7 @@ import LazySubject
 protocol SendTokenAPIClient {
     func getFees() -> Single<SolanaSDK.Fee>
     func checkAccountValidation(account: String) -> Single<Bool>
-    func sendSOL(
+    func sendNativeSOL(
         to destination: String,
         amount: UInt64,
         withoutFee: Bool,
@@ -402,10 +402,9 @@ extension SendToken {
             
             // define token
             var request: Single<String>!
-            let isSendingSOL = wallet.token.symbol == "SOL"
-            if isSendingSOL {
+            if wallet.token.isNative {
                 // SOLANA
-                request = apiClient.sendSOL(
+                request = apiClient.sendNativeSOL(
                     to: receiver,
                     amount: lamport,
                     withoutFee: Defaults.useFreeTransaction,

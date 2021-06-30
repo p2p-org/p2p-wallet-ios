@@ -271,9 +271,15 @@ extension ProcessTransaction {
                     wallets.removeAll(where: {$0.pubkey == wallet.pubkey})
                     
                     // update sol wallet
+                    var convertedAmount = self?.output.reimbursedAmount ?? 0
+                    if wallet.token.symbol == "SOL"
+                    {
+                        convertedAmount += wallet.amount ?? 0
+                    }
+                    
                     if let index = wallets.firstIndex(where: {$0.token.isNative})
                     {
-                        wallets[index].updateBalance(diff: self?.output.reimbursedAmount ?? 0)
+                        wallets[index].updateBalance(diff: convertedAmount)
                     }
                     
                     return wallets
