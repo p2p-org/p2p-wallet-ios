@@ -271,6 +271,10 @@ fileprivate extension Wallet {
                 return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
             }
             
+            if lhs.token.symbol.isEmpty != rhs.token.symbol.isEmpty {
+                return !lhs.token.symbol.isEmpty
+            }
+            
             if lhs.amount != rhs.amount {
                 return lhs.amount.orZero > rhs.amount.orZero
             }
