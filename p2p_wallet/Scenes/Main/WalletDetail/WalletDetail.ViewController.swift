@@ -57,7 +57,7 @@ extension WalletDetail {
                 }
             case .swap(let wallet):
                 let vc = scenesFactory.makeSwapTokenViewController(fromWallet: wallet)
-                self.show(vc, sender: nil)
+                present(vc, interactiveDismissalType: .standard, completion: nil)
             case .transactionInfo(let transaction):
                 let vc = scenesFactory.makeTransactionInfoViewController(transaction: transaction)
                 present(vc, interactiveDismissalType: .standard, completion: nil)
