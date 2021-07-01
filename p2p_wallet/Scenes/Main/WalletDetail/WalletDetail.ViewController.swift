@@ -49,18 +49,18 @@ extension WalletDetail {
                 self.present(vc, animated: true, completion: nil)
             case .send(let wallet):
                 let vc = scenesFactory.makeSendTokenViewController(walletPubkey: wallet.pubkey, destinationAddress: nil)
-                self.present(vc, animated: true, completion: nil)
+                present(vc, interactiveDismissalType: .standard, completion: nil)
             case .receive(let pubkey):
                 if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: pubkey)
                 {
-                    self.show(vc, sender: nil)
+                    present(vc, interactiveDismissalType: .standard, completion: nil)
                 }
             case .swap(let wallet):
                 let vc = scenesFactory.makeSwapTokenViewController(fromWallet: wallet)
-                self.show(vc, sender: nil)
+                present(vc, interactiveDismissalType: .standard, completion: nil)
             case .transactionInfo(let transaction):
                 let vc = scenesFactory.makeTransactionInfoViewController(transaction: transaction)
-                present(vc, animated: true, completion: nil)
+                present(vc, interactiveDismissalType: .standard, completion: nil)
             default:
                 break
             }
