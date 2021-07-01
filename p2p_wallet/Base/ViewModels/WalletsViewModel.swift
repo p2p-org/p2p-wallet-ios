@@ -263,15 +263,18 @@ fileprivate extension Wallet {
                 return lhs.token.symbol == "SOL"
             }
             
-            if lhs.isLiquidity != rhs.isLiquidity {
-                return !lhs.isLiquidity
+            if lhs.token.isLiquidity != rhs.token.isLiquidity {
+                return !lhs.token.isLiquidity
             }
+            
             if lhs.amountInCurrentFiat != rhs.amountInCurrentFiat {
                 return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
             }
+            
             if lhs.amount != rhs.amount {
                 return lhs.amount.orZero > rhs.amount.orZero
             }
+            
             if lhs.token.symbol != rhs.token.symbol {
                 return lhs.token.symbol < rhs.token.symbol
             }
