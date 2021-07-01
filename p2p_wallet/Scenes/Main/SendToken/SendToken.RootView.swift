@@ -102,7 +102,9 @@ extension SendToken {
         
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            amountTextField.becomeFirstResponder()
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { [weak self] in
+                self?.amountTextField.becomeFirstResponder()
+            }
         }
         
         // MARK: - Layout
