@@ -74,7 +74,7 @@ class HomeViewController: BaseVC {
             {
                 analyticsManager.log(event: .mainScreenReceiveOpen)
                 analyticsManager.log(event: .receiveOpen(fromPage: "main_screen"))
-                self.present(vc, animated: true, completion: nil)
+                present(vc, interactiveDismissalType: .standard, completion: nil)
             }
         case .scanQrWithSwiper(let progress, let state):
             MenuHelper.mapGestureStateToInteractor(
@@ -103,12 +103,12 @@ class HomeViewController: BaseVC {
                 .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
             analyticsManager.log(event: .mainScreenSendOpen)
             analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
-            self.present(vc, animated: true, completion: nil)
+            present(vc, interactiveDismissalType: .standard, completion: nil)
         case .swapToken:
             let vc = self.scenesFactory.makeSwapTokenViewController(fromWallet: nil)
             analyticsManager.log(event: .mainScreenSwapOpen)
             analyticsManager.log(event: .swapOpen(fromPage: "main_screen"))
-            self.present(vc, animated: true, completion: nil)
+            present(vc, interactiveDismissalType: .standard, completion: nil)
         case .allProducts:
             let vc = self.scenesFactory.makeMyProductsViewController()
             self.present(vc, animated: true, completion: nil)

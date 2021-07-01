@@ -210,13 +210,13 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         
         let amountSection = createLabelsOnlySection(title: L10n.amount.uppercaseFirst)
         var amountText: String = transaction.sourceAmount
-            .toString(maximumFractionDigits: 4, showMinus: false)
+            .toString(maximumFractionDigits: 9, showMinus: false)
         
         amountText += " "
         amountText += transaction.source?.token.symbol ?? ""
         amountText += " \(L10n.to.lowercased()) "
         amountText += transaction.destinationAmount
-            .toString(maximumFractionDigits: 4, showMinus: false)
+            .toString(maximumFractionDigits: 9, showMinus: false)
         amountText += " "
         amountText += transaction.destination?.token.symbol ?? ""
         
@@ -443,5 +443,12 @@ private extension TransactionInfoRootView {
     
     func createContentLabel() -> UILabel {
         UILabel(weight: .semibold, numberOfLines: 0)
+    }
+}
+
+extension TransactionInfoRootView {
+    override func fittingHeight(targetWidth: CGFloat) -> CGFloat {
+        super.fittingHeight(targetWidth: targetWidth) +
+            headerView.fittingHeight(targetWidth: targetWidth)
     }
 }

@@ -8,12 +8,13 @@
 import Foundation
 import UIKit
 
-class TransactionInfoViewController: WLIndicatorModalVC {
+class TransactionInfoViewController: WLIndicatorModalVC, CustomPresentableViewController {
     
     // MARK: - Properties
     let viewModel: TransactionInfoViewModel
     lazy var rootView = TransactionInfoRootView(viewModel: viewModel)
     var viewTranslation = CGPoint(x: 0, y: 0)
+    var transitionManager: UIViewControllerTransitioningDelegate?
     
     // MARK: - Initializer
     init(viewModel: TransactionInfoViewModel)
@@ -21,7 +22,6 @@ class TransactionInfoViewController: WLIndicatorModalVC {
         self.viewModel = viewModel
         super.init()
         modalPresentationStyle = .custom
-        transitioningDelegate = self
     }
     
     // MARK: - Methods
@@ -40,7 +40,7 @@ class TransactionInfoViewController: WLIndicatorModalVC {
         viewModel.showDetailTransaction
             .distinctUntilChanged()
             .subscribe(onNext: {[weak self] _ in
-                self?.forceResizeModal()
+                self?.updatePresentationLayout(animated: true)
             })
             .disposed(by: disposeBag)
     }
@@ -52,48 +52,14 @@ class TransactionInfoViewController: WLIndicatorModalVC {
             showWebsite(url: "https://explorer.solana.com/tx/\(viewModel.transaction.value.signature ?? "")")
         }
     }
-}
-
-extension TransactionInfoViewController: UIViewControllerTransitioningDelegate {
-    private class PresentationController: FlexibleHeightPresentationController {
-        var originFrame: CGRect?
-        var state: UIPanGestureRecognizer.State?
-        
-        override func calculateFittingHeightOfPresentedView(targetWidth: CGFloat) -> CGFloat {
-            
-            let rootView = (presentedViewController as! TransactionInfoViewController)
-                .rootView
-            
-            var height = rootView.headerView.fittingHeight(targetWidth: targetWidth) + 14
-            
-            height += rootView.scrollView.contentSize.height
-            height += rootView.scrollView.contentInset.top
-            height += rootView.scrollView.contentInset.bottom
-            
-            return height
-        }
-        
-        override var frameOfPresentedViewInContainerView: CGRect {
-            if state == .ended, let frame = originFrame {
-                originFrame = nil
-                return frame
-            }
-            return super.frameOfPresentedViewInContainerView
-        }
-        
-        override func presentedViewDidSwipe(gestureRecognizer: UIPanGestureRecognizer) {
-            guard let view = gestureRecognizer.view else {return}
-            state = gestureRecognizer.state
-            
-            if state == .began {
-                originFrame = view.frame
-            }
-            
-            super.presentedViewDidSwipe(gestureRecognizer: gestureRecognizer)
-        }
+    
+    // MARK: - Transitions
+    override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
+        super.calculateFittingHeightForPresentedView(targetWidth: targetWidth) +
+            rootView.fittingHeight(targetWidth: targetWidth)
     }
     
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        PresentationController(position: .bottom, presentedViewController: presented, presenting: presenting)
+    var dismissalHandlingScrollView: UIScrollView? {
+        rootView.scrollView
     }
 }
