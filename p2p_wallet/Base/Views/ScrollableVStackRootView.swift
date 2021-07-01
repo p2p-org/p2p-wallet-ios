@@ -8,7 +8,7 @@
 import Foundation
 
 class ScrollableVStackRootView: BEView {
-    lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: UIEdgeInsets(top: .defaultPadding, left: .defaultPadding, bottom: 24, right: .defaultPadding))
+    lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: UIEdgeInsets(top: .defaultPadding, left: .defaultPadding, bottom: .defaultPadding + safeAreaInsets.bottom, right: .defaultPadding))
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     
     override func commonInit() {
@@ -21,5 +21,11 @@ class ScrollableVStackRootView: BEView {
         // stackView
         scrollView.contentView.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
+    }
+}
+
+extension ScrollableVStackRootView {
+    override func fittingHeight(targetWidth: CGFloat) -> CGFloat {
+        scrollView.fittingHeight(targetWidth: targetWidth)
     }
 }

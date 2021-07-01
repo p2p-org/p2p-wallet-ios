@@ -445,3 +445,10 @@ private extension TransactionInfoRootView {
         UILabel(weight: .semibold, numberOfLines: 0)
     }
 }
+
+extension TransactionInfoRootView {
+    override func fittingHeight(targetWidth: CGFloat) -> CGFloat {
+        super.fittingHeight(targetWidth: targetWidth) +
+            headerView.fittingHeight(targetWidth: targetWidth)
+    }
+}
