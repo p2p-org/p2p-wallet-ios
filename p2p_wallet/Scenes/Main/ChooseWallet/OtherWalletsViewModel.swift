@@ -23,7 +23,7 @@ class OtherWalletsViewModel: BEListViewModel<Wallet> {
                 let wallets = self.tokensRepository.supportedTokens
                     .excludingSpecialTokens()
                     .map {
-                        Wallet(pubkey: nil, lamports: nil, token: $0, liquidity: false)
+                        Wallet(pubkey: nil, lamports: nil, token: $0)
                     }
                     .filter {
                         $0.token.symbol != "SOL"
