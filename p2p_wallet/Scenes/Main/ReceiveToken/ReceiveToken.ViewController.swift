@@ -9,34 +9,37 @@ import Foundation
 import UIKit
 
 extension ReceiveToken {
-    class ViewController: WLIndicatorModalVC {
+    class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
         
         // MARK: - Properties
         let viewModel: ViewModel
+        lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
+            UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
+                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
+            UILabel(text: L10n.receive + " " + viewModel.output.tokenWallet?.token.symbol, textSize: 17, weight: .semibold),
+            UIImageView(width: 32, height: 32, image: .questionMarkCircle, tintColor: .iconSecondary)
+                .onTap(viewModel, action: #selector(ReceiveToken.ViewModel.showHelp))
+        ])
+            .padding(.init(all: 20))
         lazy var rootView = RootView(viewModel: viewModel)
+        var transitionManager: UIViewControllerTransitioningDelegate?
         
         // MARK: - Initializer
         init(viewModel: ViewModel)
         {
             self.viewModel = viewModel
             super.init()
+            modalPresentationStyle = .custom
         }
         
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
-                    UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
-                        .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
-                    UILabel(text: L10n.receive + " " + viewModel.output.tokenWallet?.token.symbol, textSize: 17, weight: .semibold),
-                    UIImageView(width: 32, height: 32, image: .questionMarkCircle, tintColor: .iconSecondary)
-                        .onTap(viewModel, action: #selector(ReceiveToken.ViewModel.showHelp))
-                ])
-                    .padding(.init(all: 20)),
-                UIView.defaultSeparator(),
+            let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
+                headerView
+                UIView.defaultSeparator()
                 rootView
-            ])
+            }
             
             containerView.addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges()
@@ -46,6 +49,10 @@ extension ReceiveToken {
             super.bind()
             viewModel.output.navigationScene
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .disposed(by: disposeBag)
+            
+            viewModel.output.isShowingDetail
+                .drive(onNext: {[weak self] _ in self?.updatePresentationLayout(animated: true)})
                 .disposed(by: disposeBag)
         }
         
@@ -64,6 +71,18 @@ extension ReceiveToken {
             default:
                 break
             }
+        }
+        
+        // MARK: - Transition
+        override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
+            super.calculateFittingHeightForPresentedView(targetWidth: targetWidth)
+                + headerView.fittingHeight(targetWidth: targetWidth)
+                + 1 // separator
+                + rootView.fittingHeight(targetWidth: targetWidth)
+        }
+        
+        var dismissalHandlingScrollView: UIScrollView? {
+            rootView.scrollView
         }
     }
 }
