@@ -57,18 +57,16 @@ class ModalPresentationController: UIPresentationController {
         }
         
         if targetHeight > safeAreaFrame.size.height {
-            let topInset: CGFloat = 8
             var frame = safeAreaFrame
-            frame.origin.y += topInset
-            frame.size.height -= topInset
-            return safeAreaFrame
+            frame.size.height += containerView.safeAreaInsets.bottom
+            return frame
         }
 
         var frame = safeAreaFrame
         frame.origin.x += inset
         frame.origin.y += frame.size.height - targetHeight
         frame.size.width = targetWidth
-        frame.size.height = targetHeight
+        frame.size.height = targetHeight + containerView.safeAreaInsets.bottom
 
         return frame
     }

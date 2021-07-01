@@ -58,4 +58,8 @@ class TransactionInfoViewController: WLIndicatorModalVC, CustomPresentableViewCo
         super.calculateFittingHeightForPresentedView(targetWidth: targetWidth) +
             rootView.fittingHeight(targetWidth: targetWidth)
     }
+    
+    var dismissalHandlingScrollView: UIScrollView? {
+        rootView.scrollView
+    }
 }
