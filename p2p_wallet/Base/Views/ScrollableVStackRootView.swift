@@ -23,3 +23,9 @@ class ScrollableVStackRootView: BEView {
         stackView.autoPinEdgesToSuperviewEdges()
     }
 }
+
+extension ScrollableVStackRootView {
+    override func fittingHeight(targetWidth: CGFloat) -> CGFloat {
+        scrollView.fittingHeight(targetWidth: targetWidth)
+    }
+}
