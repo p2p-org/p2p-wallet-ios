@@ -21,6 +21,7 @@ class OtherWalletsViewModel: BEListViewModel<Wallet> {
         Single<[Wallet]>.create {observer in
             DispatchQueue.global(qos: .background).async {
                 let wallets = self.tokensRepository.supportedTokens
+                    .excludingSpecialTokens()
                     .map {
                         Wallet(pubkey: nil, lamports: nil, token: $0, liquidity: false)
                     }

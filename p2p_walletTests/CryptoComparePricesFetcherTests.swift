@@ -31,7 +31,7 @@ class CryptoComparePricesFetcherTests: XCTestCase {
     }
 
     func testFetchingPrices() throws {
-        let coins = repository.supportedTokens.map {$0.symbol}
+        let coins = repository.supportedTokens.excludingSpecialTokens().map {$0.symbol}
         let request = priceFetcher.getCurrentPrices(coins: coins, toFiat: "USD")
         
         let result = try request.toBlocking().first()

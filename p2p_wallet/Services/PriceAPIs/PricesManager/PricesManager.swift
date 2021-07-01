@@ -69,7 +69,9 @@ class PricesManager {
     }
     
     @objc func fetchAllTokensPrice() {
-        let coins = tokensRepository.supportedTokens.map {$0.symbol}
+        let coins = tokensRepository.supportedTokens
+            .excludingSpecialTokens()
+            .map {$0.symbol}
         fetchCurrentPrices(coins: coins)
     }
     
