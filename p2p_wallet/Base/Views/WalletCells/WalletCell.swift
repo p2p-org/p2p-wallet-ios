@@ -28,7 +28,7 @@ class WalletCell: BaseCollectionViewCell, LoadableView {
     
     func setUp(with item: Wallet) {
         coinLogoImageView.setUp(wallet: item)
-        if item.isLiquidity {
+        if item.name.isEmpty {
             coinNameLabel.text = item.mintAddress.prefix(4) + "..." + item.mintAddress.suffix(4)
         } else {
             coinNameLabel.text = item.name /*+ (item.isProcessing == true ? " (\(L10n.creating))" : "")*/
