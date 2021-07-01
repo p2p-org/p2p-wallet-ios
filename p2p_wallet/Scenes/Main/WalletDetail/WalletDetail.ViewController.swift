@@ -60,7 +60,7 @@ extension WalletDetail {
                 self.show(vc, sender: nil)
             case .transactionInfo(let transaction):
                 let vc = scenesFactory.makeTransactionInfoViewController(transaction: transaction)
-                present(vc, animated: true, completion: nil)
+                present(vc, interactiveDismissalType: .standard, completion: nil)
             default:
                 break
             }
