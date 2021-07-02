@@ -102,7 +102,7 @@ class CoinLogoImageView: BEView {
             if let urlString = token?.logoURI,
                let url = URL(string: urlString)
             {
-                tokenIcon.sd_setImage(with: url, placeholderImage: jazziconImage)
+                tokenIcon.kf.setImage(with: url, placeholder: jazziconImage)
             } else {
                 tokenIcon.image = jazziconImage
             }

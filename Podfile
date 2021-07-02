@@ -22,7 +22,6 @@ target 'p2p_wallet' do
   pod 'MBProgressHUD', '~> 1.2.0'
   pod 'TagListView', '~> 1.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
-  pod 'SDWebImage'
   pod 'UITextView+Placeholder'
   pod 'SubviewAttachingTextView'
   pod 'Charts'
@@ -30,6 +29,7 @@ target 'p2p_wallet' do
   pod "RxAppState"
   pod 'JazziconSwift'
   pod 'Amplitude', '~> 8.3.0'
+  pod 'Kingfisher'
   
   # Firebase
   pod 'Firebase/Analytics'
