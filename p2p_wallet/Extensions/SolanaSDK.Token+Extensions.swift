@@ -12,7 +12,7 @@ extension SolanaSDK.Token {
     
     var indicatorColor: UIColor {
         // swiftlint:disable swiftgen_assets
-        var color = UIColor(named: symbol) ?? SolanaSDK.Token.cachedIndicatorColors[symbol]
+        var color = UIColor(named: symbol + "-BGCOLOR") ?? SolanaSDK.Token.cachedIndicatorColors[symbol]
         // swiftlint:enable swiftgen_assets
         if color == nil {
             color = .random
