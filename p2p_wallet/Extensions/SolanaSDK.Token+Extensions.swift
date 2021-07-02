@@ -30,7 +30,18 @@ extension SolanaSDK.Token {
     
     var image: UIImage? {
         // swiftlint:disable swiftgen_assets
-        UIImage(named: symbol.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: "Ü", with: "U"))
+        var imageName = symbol
+            .replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: "Ü", with: "U")
+        
+        // parse liquidity tokens
+        if name.contains("Raydium ") && symbol.contains("-") {
+            imageName = "Raydium-" + imageName
+        }
+        if name.contains("Orca ") && symbol.contains("/") {
+            imageName = "Orca-" + imageName
+        }
+        return UIImage(named: imageName)
         // swiftlint:enable swiftgen_assets
     }
     
