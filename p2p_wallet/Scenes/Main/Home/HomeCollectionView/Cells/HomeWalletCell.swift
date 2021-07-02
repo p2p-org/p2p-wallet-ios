@@ -20,14 +20,23 @@ class HomeWalletCell: EditableWalletCell {
         super.commonInit()
         coinNameLabel.font = .systemFont(ofSize: 17, weight: .medium)
         equityValueLabel.font = .systemFont(ofSize: 17, weight: .medium)
+        equityValueLabel.textAlignment = .right
         equityValueLabel.setContentHuggingPriority(.required, for: .horizontal)
+        equityValueLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        
+        tokenCountLabel.textAlignment = .right
         tokenCountLabel.setContentHuggingPriority(.required, for: .horizontal)
-        let vStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            row(arrangedSubviews: [coinNameLabel, equityValueLabel])
-                .with(distribution: .fill),
-            row(arrangedSubviews: [addressLabel, tokenCountLabel])
-                .with(distribution: .fill)
-        ])
+        tokenCountLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        let vStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
+            UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
+                coinNameLabel
+                equityValueLabel
+            }
+            UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
+                addressLabel
+                tokenCountLabel
+            }
+        }
         
         stackView.alignment = .center
         stackView.addArrangedSubviews([
