@@ -35,11 +35,11 @@ extension SolanaSDK.Token {
             .replacingOccurrences(of: "Ü", with: "U")
         
         // parse liquidity tokens
-        if name.contains("Raydium ") && symbol.contains("-") {
-            imageName = "Raydium-" + imageName
-        }
-        if name.contains("Orca ") && symbol.contains("/") {
-            imageName = "Orca-" + imageName
+        let liquidityTokensPrefixes = ["Raydium", "Orca", "Mercurial"]
+        for prefix in liquidityTokensPrefixes {
+            if name.contains("\(prefix) ") && imageName.contains("-") {
+                imageName = "\(prefix)-" + imageName
+            }
         }
         return UIImage(named: imageName)
         // swiftlint:enable swiftgen_assets
