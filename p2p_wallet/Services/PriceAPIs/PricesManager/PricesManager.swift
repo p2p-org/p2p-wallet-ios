@@ -15,6 +15,9 @@ protocol PricesStorage {
 }
 
 class PricesManager {
+    enum Error: Swift.Error {
+        case notFound
+    }
     // MARK: - Properties
     var tokensRepository: TokensRepository
     let pricesStorage: PricesStorage
@@ -81,6 +84,24 @@ class PricesManager {
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
     {
         fetcher.getHistoricalPrice(of: coinName, fiat: Defaults.fiat.code, period: period)
+            .map {prices in
+                if prices.count == 0 {throw Error.notFound}
+                return prices
+            }
+            .catch { _ in
+                Single.zip(
+                    self.fetcher.getHistoricalPrice(of: coinName, fiat: "USD", period: period),
+                    self.fetcher.getValueInUSD(fiat: Defaults.fiat.code)
+                )
+                .map {records, rate in
+                    guard let rate = rate else {return []}
+                    var records = records
+                    for i in 0..<records.count {
+                        records[i] = records[i].converting(exchangeRate: rate)
+                    }
+                    return records
+                }
+            }
 //            .do(
 //                afterSuccess: {
 //                    Logger.log(message: "Historical price for \(coinName) in \(period): \($0)", event: .response)

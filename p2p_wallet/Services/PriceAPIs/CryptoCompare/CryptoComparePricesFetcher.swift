@@ -77,6 +77,11 @@ class CryptoComparePricesFetcher: PricesFetcher {
                 }
             }
     }
+    
+    func getValueInUSD(fiat: String) -> Single<Double?> {
+        return send("/price?fsym=USD&tsyms=\(fiat)", decodedTo: [String: Double].self)
+            .map {$0[fiat]}
+    }
 }
 
 private extension Array {
