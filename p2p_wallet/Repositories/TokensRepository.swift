@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import RxSwift
 
 protocol TokensRepository {
-    var supportedTokens: [SolanaSDK.Token] {get}
+    func getTokensList() -> Single<[SolanaSDK.Token]>
 }
 
 extension SolanaSDK: TokensRepository {}

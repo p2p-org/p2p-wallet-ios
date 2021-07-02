@@ -18,20 +18,17 @@ class OtherWalletsViewModel: BEListViewModel<Wallet> {
     }
     
     override func createRequest() -> Single<[Wallet]> {
-        Single<[Wallet]>.create {observer in
-            DispatchQueue.global(qos: .background).async {
-                let wallets = self.tokensRepository.supportedTokens
-                    .excludingSpecialTokens()
+        tokensRepository.getTokensList()
+            .map {$0.excludingSpecialTokens()}
+            .map {
+                $0
+                    .filter {
+                        $0.symbol != "SOL"
+                    }
                     .map {
                         Wallet(pubkey: nil, lamports: nil, token: $0)
                     }
-                    .filter {
-                        $0.token.symbol != "SOL"
-                    }
-                
-                observer(.success(wallets))
+                    
             }
-            return Disposables.create()
-        }
     }
 }

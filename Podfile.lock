@@ -112,6 +112,7 @@ PODS:
     - GoogleUtilities/Logger
   - JazziconSwift (1.0.0)
   - KeychainSwift (19.0.0)
+  - Kingfisher (6.3.0)
   - LazySubject (0.1.0):
     - RxCocoa
     - RxSwift
@@ -142,9 +143,6 @@ PODS:
   - RxRelay (6.2.0):
     - RxSwift (= 6.2.0)
   - RxSwift (6.2.0)
-  - SDWebImage (5.11.1):
-    - SDWebImage/Core (= 5.11.1)
-  - SDWebImage/Core (5.11.1)
   - SolanaSwift (0.3.0):
     - ASKSecp256k1
     - Ed25519HDKeySwift
@@ -172,13 +170,13 @@ DEPENDENCIES:
   - Firebase/Crashlytics
   - JazziconSwift
   - KeychainSwift (~> 19.0)
+  - Kingfisher
   - LazySubject (from `LazySubject`)
   - MBProgressHUD (~> 1.2.0)
   - RxAppState
   - RxBiBinding
   - RxBlocking
   - RxCocoa
-  - SDWebImage
   - SolanaSwift (from `SolanaSwift`)
   - SubviewAttachingTextView
   - SwiftGen (~> 6.0)
@@ -208,6 +206,7 @@ SPEC REPOS:
     - GoogleUtilities
     - JazziconSwift
     - KeychainSwift
+    - Kingfisher
     - MBProgressHUD
     - nanopb
     - PromisesObjC
@@ -219,7 +218,6 @@ SPEC REPOS:
     - RxCocoa
     - RxRelay
     - RxSwift
-    - SDWebImage
     - Starscream
     - SubviewAttachingTextView
     - SwiftGen
@@ -262,6 +260,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: f8a43108b38a68eebe8b3540e1f4f2d28843ce20
   JazziconSwift: 0e92431adad8e4d0a8dcb50fd82c414784c86afe
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
+  Kingfisher: 6c3df386db71d82c0817a429d2c9421a77396529
   LazySubject: 9eb19a8524f377efd877f44d9f48c17be7962ebd
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
@@ -274,7 +273,6 @@ SPEC CHECKSUMS:
   RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
-  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SolanaSwift: 755f1d53991aa601d574934db18735e575f45101
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
@@ -286,6 +284,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: e5932ae46d5ca3d8aec0cb9753437c62a9063058
+PODFILE CHECKSUM: 302a2e39695dc0daff1b7816c6c66761289f0e23
 
 COCOAPODS: 1.10.1

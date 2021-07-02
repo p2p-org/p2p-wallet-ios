@@ -69,10 +69,13 @@ class PricesManager {
     }
     
     @objc func fetchAllTokensPrice() {
-        let coins = tokensRepository.supportedTokens
-            .excludingSpecialTokens()
-            .map {$0.symbol}
-        fetchCurrentPrices(coins: coins)
+        tokensRepository.getTokensList()
+            .subscribe(onSuccess: {[weak self] tokens in
+                let coins = tokens.excludingSpecialTokens()
+                    .map {$0.symbol}
+                self?.fetchCurrentPrices(coins: coins)
+            })
+            .disposed(by: disposeBag)
     }
     
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
