@@ -14,6 +14,7 @@ protocol PricesFetcher {
     var endpoint: String {get}
     func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[String: CurrentPrice?]>
     func getHistoricalPrice(of coinName: String, fiat: String, period: Period) -> Single<[PriceRecord]>
+    func getValueInUSD(fiat: String) -> Single<Double?>
 }
 
 extension PricesFetcher {
@@ -51,6 +52,10 @@ struct PriceRecord: Hashable {
     let low: Double
     let high: Double
     let startTime: Date
+    
+    func converting(exchangeRate: Double) -> PriceRecord {
+        PriceRecord(close: close * exchangeRate, open: open * exchangeRate, low: low * exchangeRate, high: high * exchangeRate, startTime: startTime)
+    }
 }
 
 enum Period: String, CaseIterable {
