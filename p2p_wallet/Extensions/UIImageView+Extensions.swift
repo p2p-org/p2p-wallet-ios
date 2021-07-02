@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SDWebImage
+import Kingfisher
 import CoreImage.CIFilterBuiltins
 
 extension UIImageView {
@@ -17,11 +17,7 @@ extension UIImageView {
             image = UIColor.gray.image(frame.size)
             return
         }
-        sd_setImage(with: url) { [weak self] (image, _, _, _) in
-            if image == nil {
-                self?.image = UIColor.gray.image(self?.frame.size ?? .zero)
-            }
-        }
+        kf.setImage(with: url, placeholder: UIColor.gray.image(frame.size))
     }
     
     func with(urlString: String?) -> Self {
