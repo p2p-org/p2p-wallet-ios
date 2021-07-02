@@ -81,6 +81,10 @@ struct BonfidaPricesFetcher: PricesFetcher {
             })
             .map {$0.reversed()}
     }
+    
+    func getValueInUSD(fiat: String) -> Single<Double?> {
+        return .just(nil) // TODO
+    }
 }
 
 private extension Period {
