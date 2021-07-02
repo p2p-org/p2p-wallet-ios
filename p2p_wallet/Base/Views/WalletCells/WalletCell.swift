@@ -40,14 +40,14 @@ class WalletCell: BaseCollectionViewCell, LoadableView {
         } else {
             coinNameLabel.text = item.name /*+ (item.isProcessing == true ? " (\(L10n.creating))" : "")*/
         }
-        tokenCountLabel.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.token.symbol)"
+        tokenCountLabel.text = "\(item.amount.toString(autoSetMaximumFractionDigits: true)) \(item.token.symbol)"
         
         if let price = item.price {
             equityValueLabel.isHidden = false
             coinPriceLabel.isHidden = false
             coinChangeLabel.isHidden = false
             
-            equityValueLabel.text = "\(item.amountInCurrentFiat.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
+            equityValueLabel.text = "\(item.amountInCurrentFiat.toString(autoSetMaximumFractionDigits: true)) \(Defaults.fiat.symbol)"
             coinPriceLabel.text = "\(price.value.toString()) \(Defaults.fiat.symbol)"
             coinChangeLabel.text = "\((price.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true))% 24 hrs"
         } else {

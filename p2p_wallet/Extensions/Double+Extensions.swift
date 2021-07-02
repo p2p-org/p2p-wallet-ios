@@ -8,8 +8,8 @@
 import Foundation
 
 extension Optional where Wrapped == Double {
-    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false, showMinus: Bool = true, groupingSeparator: String? = " ") -> String {
-        orZero.toString(maximumFractionDigits: maximumFractionDigits, showPlus: showPlus, showMinus: showMinus, groupingSeparator: groupingSeparator)
+    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false, showMinus: Bool = true, groupingSeparator: String? = " ", autoSetMaximumFractionDigits: Bool = false) -> String {
+        orZero.toString(maximumFractionDigits: maximumFractionDigits, showPlus: showPlus, showMinus: showMinus, groupingSeparator: groupingSeparator, autoSetMaximumFractionDigits: autoSetMaximumFractionDigits)
     }
     
     public var orZero: Double {
@@ -48,7 +48,7 @@ extension Double {
         return formatter.string(from: self as NSNumber) ?? "0"
     }
     
-    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false, showMinus: Bool = true, groupingSeparator: String? = " ") -> String {
+    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false, showMinus: Bool = true, groupingSeparator: String? = " ", autoSetMaximumFractionDigits: Bool = false) -> String {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
@@ -61,14 +61,17 @@ extension Double {
             formatter.positivePrefix = formatter.plusSign
         }
 
-        formatter.maximumFractionDigits = maximumFractionDigits
-//        if self > 1000 {
-//            formatter.maximumFractionDigits = 2
-//        } else if self < 100 {
-//            formatter.maximumFractionDigits = maximumFractionDigits
-//        } else {
-//            formatter.maximumFractionDigits = 2
-//        }
+        if !autoSetMaximumFractionDigits {
+            formatter.maximumFractionDigits = maximumFractionDigits
+        } else {
+            if self > 1000 {
+                formatter.maximumFractionDigits = 2
+            } else if self > 100 {
+                formatter.maximumFractionDigits = 4
+            } else {
+                formatter.maximumFractionDigits = 9
+            }
+        }
         
         let number = showMinus ? self: abs(self)
         
