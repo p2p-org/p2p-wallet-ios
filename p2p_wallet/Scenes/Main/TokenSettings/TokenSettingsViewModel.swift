@@ -54,11 +54,11 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
             .map {$0?.first(where: {$0.pubkey == self.pubkey})}
             .map {wallet -> [TokenSettings] in
                 let isWalletVisible = !(wallet?.isHidden ?? true)
-                let isAmountEmpty = wallet?.amount == 0
-                let isNonNativeSOL = (wallet?.token.isNative == false && wallet?.token.symbol == "SOL")
+//                let isAmountEmpty = wallet?.amount == 0
+//                let isNonNativeSOL = (wallet?.token.isNative == false && wallet?.token.symbol == "SOL")
                 return [
-                    .visibility(isWalletVisible),
-                    .close(enabled: isAmountEmpty || isNonNativeSOL)
+                    .visibility(isWalletVisible)
+//                    .close(enabled: isAmountEmpty || isNonNativeSOL)
                 ]
             }
             .asDriver(onErrorJustReturn: [])
