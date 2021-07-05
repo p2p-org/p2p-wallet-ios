@@ -9,9 +9,10 @@ import Foundation
 import RxSwift
 
 protocol ProcessingTransactionsRepository {
+    typealias RequestIndex = Int
     func processingTransactionsObservable() -> Observable<[SolanaSDK.ParsedTransaction]>
     func getProcessingTransactions() -> [SolanaSDK.ParsedTransaction]
-    func process(transaction: SolanaSDK.ParsedTransaction)
+    func request(_ request: Single<ProcessTransactionResponseType>, transaction: SolanaSDK.ParsedTransaction, fee: SolanaSDK.Lamports) -> RequestIndex
 }
 
 extension ProcessingTransactionsRepository {
