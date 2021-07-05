@@ -89,12 +89,9 @@ extension ProcessTransaction {
         }
         
         private func bindLayout() {
-            Driver.combineLatest(
-                viewModel.output.transactionId,
-                viewModel.output.transactionStatus
-            )
-                .drive(onNext: { [weak self] (transactionId, transactionStatus) in
-                    self?.layout(transactionId: transactionId, transactionStatus: transactionStatus)
+            viewModel.output.transaction
+                .drive(onNext: { [weak self] transaction in
+                    self?.layout(transaction: transaction)
                     self?.transactionStatusDidChange?()
                 })
                 .disposed(by: disposeBag)

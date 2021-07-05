@@ -20,7 +20,7 @@ extension ProcessTransaction {
         struct Output {
             let navigationScene: Driver<NavigatableScene>
             let transactionType: TransactionType
-            let transactionStatus: Driver<SolanaSDK.ParsedTransaction>
+            let transaction: Driver<SolanaSDK.ParsedTransaction>
             let pricesRepository: PricesRepository
             var reimbursedAmount: Double?
         }
@@ -67,7 +67,7 @@ extension ProcessTransaction {
                 navigationScene: navigationSubject
                     .asDriver(onErrorJustReturn: .showExplorer(transactionID: "")),
                 transactionType: transactionType,
-                transactionStatus: transactionSubject
+                transaction: transactionSubject
                     .asDriver(),
                 pricesRepository: pricesRepository
             )
