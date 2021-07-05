@@ -15,7 +15,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Properties
     private let solanaSDK: SolanaSDK
     private let socket: SolanaSDK.Socket
-    private let processingTransactionRepository: ProcessingTransactionsRepository
+    weak var processingTransactionRepository: ProcessingTransactionsRepository?
     private let pricesRepository: PricesRepository
     
     private var defaultsDisposables = [DefaultsDisposable]()
@@ -31,12 +31,10 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     init(
         solanaSDK: SolanaSDK,
         socket: SolanaSDK.Socket,
-        processingTransactionRepository: ProcessingTransactionsRepository,
         pricesRepository: PricesRepository
     ) {
         self.solanaSDK = solanaSDK
         self.socket = socket
-        self.processingTransactionRepository = processingTransactionRepository
         self.pricesRepository = pricesRepository
         super.init()
         
@@ -125,7 +123,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     
     override func reload() {
         // disable refreshing when there is a transaction in progress
-        if processingTransactionRepository.areSomeTransactionsInProgress()
+        if processingTransactionRepository?.areSomeTransactionsInProgress() == true
         {
             return
         }
