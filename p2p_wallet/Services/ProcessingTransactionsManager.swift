@@ -255,10 +255,13 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         walletsRepository.batchUpdate { wallets in
             var wallets = wallets
             var wallet = wallet
-            wallet.pubkey = swapResponse.newWalletPubkey
-            wallet.lamports = transaction.destinationAmount?.toLamport(decimals: wallet.token.decimals)
-            wallet.price = pricesRepository.currentPrice(for: wallet.token.symbol)
-            wallets.append(wallet)
+            if !wallets.contains(where: {$0.token.symbol == wallet.token.symbol}) {
+                wallet.pubkey = swapResponse.newWalletPubkey
+                wallet.lamports = transaction.destinationAmount?.toLamport(decimals: wallet.token.decimals)
+                wallet.price = pricesRepository.currentPrice(for: wallet.token.symbol)
+                wallets.append(wallet)
+            }
+            
             return wallets
         }
     }
