@@ -13,15 +13,17 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
     // MARK: - Dependencies
     private let handler: TransactionHandler
     private let walletsRepository: WalletsRepository
+    private let pricesRepository: PricesRepository
     
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private let transactionsSubject = BehaviorRelay<[SolanaSDK.ParsedTransaction]>(value: [])
     
     // MARK: - Initializer
-    init(handler: TransactionHandler, walletsRepository: WalletsRepository) {
+    init(handler: TransactionHandler, walletsRepository: WalletsRepository, pricesRepository: PricesRepository) {
         self.handler = handler
         self.walletsRepository = walletsRepository
+        self.pricesRepository = pricesRepository
     }
     
     // MARK: - Methods
@@ -40,13 +42,16 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         transactions.append(transaction)
         transactionsSubject.accept(transactions)
         
+        // update balance before sending
+        updateRepository(transactionIndex: index, fee: fee, isReversed: false)
+        
         // request
         request
-            // update wallets repository
-            .do(onSuccess: {[weak self] res in
-                DispatchQueue.main.async { [weak self] in
-                    self?.handleResponse(res, transactionIndex: index, fee: fee)
+            .do(onSuccess: {[weak self] response in
+                guard let response = response as? SolanaSDK.SwapResponse else {
+                    return
                 }
+                self?.addNewWalletToRepository(transactionIndex: index, swapResponse: response)
             })
             // get signature
             .map { response -> String in
@@ -62,14 +67,12 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
             }
             // update transaction status
             .do(onSuccess: {[weak self] signature in
-                DispatchQueue.main.async { [weak self] in
-                    self?.batchUpdateTransaction(transactionIndex: index, modifier: { transaction in
-                        var transaction = transaction
-                        transaction.status = .processing(percent: 0)
-                        transaction.signature = signature
-                        return transaction
-                    })
-                }
+                self?.batchUpdateTransaction(transactionIndex: index, modifier: { transaction in
+                    var transaction = transaction
+                    transaction.status = .processing(percent: 0)
+                    transaction.signature = signature
+                    return transaction
+                })
             })
             // signature subscribe
             .flatMapCompletable{ signature in
@@ -83,6 +86,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                 self?.updateTransactionStatus(transactionIndex: index, status: .confirmed)
             }, onError: {[weak self] error in
                 self?.updateTransactionStatus(transactionIndex: index, status: .error(error.readableDescription))
+                self?.updateRepository(transactionIndex: index, fee: fee, isReversed: true)
             })
             .disposed(by: disposeBag)
         
@@ -109,7 +113,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         }
     }
     
-    private func handleResponse(_ res: ProcessTransactionResponseType, transactionIndex: Int, fee: SolanaSDK.Lamports) {
+    private func updateRepository(transactionIndex: Int, fee: SolanaSDK.Lamports, isReversed: Bool) {
         guard let tx = transactionsSubject.value[safe: transactionIndex],
               let transaction = tx.value
         else {
@@ -125,7 +129,11 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                    let amount = transaction.amount,
                     let index = wallets.firstIndex(where: {$0.pubkey == fromWallet.pubkey})
                 {
-                    wallets[index].decreaseBalance(diffInLamports: amount.toLamport(decimals: fromWallet.token.decimals))
+                    if isReversed {
+                        wallets[index].increaseBalance(diffInLamports: amount.toLamport(decimals: fromWallet.token.decimals))
+                    } else {
+                        wallets[index].decreaseBalance(diffInLamports: amount.toLamport(decimals: fromWallet.token.decimals))
+                    }
                 }
                 
                 // update toWallet (if send to different wallet of THIS account)
@@ -133,13 +141,23 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                    let amount = transaction.amount,
                     let index = wallets.firstIndex(where: {$0.pubkey == toWallet.pubkey})
                 {
-                    wallets[index].increaseBalance(diffInLamports: amount.toLamport(decimals: toWallet.token.decimals))
+                    if isReversed {
+                        wallets[index].decreaseBalance(diffInLamports: amount.toLamport(decimals: toWallet.token.decimals))
+                    } else {
+                        wallets[index].increaseBalance(diffInLamports: amount.toLamport(decimals: toWallet.token.decimals))
+                    }
+                    
                 }
                 
                 // update SOL wallet (minus fee)
                 if let index = wallets.firstIndex(where: {$0.token.isNative})
                 {
-                    wallets[index].decreaseBalance(diffInLamports: fee)
+                    if isReversed {
+                        wallets[index].increaseBalance(diffInLamports: fee)
+                    } else {
+                        wallets[index].decreaseBalance(diffInLamports: fee)
+                    }
+                    
                 }
                 return wallets
             })
@@ -153,11 +171,20 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                 
                 if let wallet = transaction.closedWallet {
                     // remove closed wallet
-                    wallets.removeAll(where: {$0.pubkey == wallet.pubkey})
+                    if isReversed {
+                        wallets.append(wallet)
+                    } else {
+                        wallets.removeAll(where: {$0.pubkey == wallet.pubkey})
+                    }
+                    
                     
                     // if closing non-native Solana wallet, then convert its balances and send it to native Solana wallet
                     if wallet.token.symbol == "SOL" {
-                        convertedAmount += wallet.amount ?? 0
+                        if isReversed {
+                            convertedAmount -= wallet.amount ?? 0
+                        } else {
+                            convertedAmount += wallet.amount ?? 0
+                        }
                     }
                 }
 
@@ -172,8 +199,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         }
         
         // Swap
-        else if let transaction = transaction as? SolanaSDK.SwapTransaction,
-                let response = res as? SolanaSDK.SwapResponse
+        else if let transaction = transaction as? SolanaSDK.SwapTransaction
         {
             walletsRepository.batchUpdate(closure: {
                 var wallets = $0
@@ -183,7 +209,11 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                    let index = wallets.firstIndex(where: {$0.pubkey == sourceWallet.pubkey}),
                    let change = transaction.sourceAmount?.toLamport(decimals: sourceWallet.token.decimals)
                 {
-                    wallets[index].decreaseBalance(diffInLamports: change)
+                    if isReversed {
+                        wallets[index].increaseBalance(diffInLamports: change)
+                    } else {
+                        wallets[index].decreaseBalance(diffInLamports: change)
+                    }
                 }
 
                 // update destination wallet if exists
@@ -191,27 +221,45 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                    let index = wallets.firstIndex(where: {$0.pubkey == destinationWallet.pubkey}),
                    let change = transaction.destinationAmount?.toLamport(decimals: destinationWallet.token.decimals)
                 {
-                    wallets[index].increaseBalance(diffInLamports: change)
-                }
-
-                // add new wallet if destination is a new wallet
-                else if let pubkey = response.newWalletPubkey,
-                        var wallet = transaction.destination,
-                        let estimatedAmount = transaction.destinationAmount?.toLamport(decimals: wallet.token.decimals)
-                {
-                    wallet.pubkey = pubkey
-                    wallet.lamports = estimatedAmount
-                    wallets.append(wallet)
+                    if isReversed {
+                        wallets[index].decreaseBalance(diffInLamports: change)
+                    } else {
+                        wallets[index].increaseBalance(diffInLamports: change)
+                    }
+                    
                 }
 
                 // update sol wallet (minus fee)
                 if let index = wallets.firstIndex(where: {$0.token.isNative})
                 {
-                    wallets[index].decreaseBalance(diffInLamports: fee)
+                    if isReversed {
+                        wallets[index].increaseBalance(diffInLamports: fee)
+                    } else {
+                        wallets[index].decreaseBalance(diffInLamports: fee)
+                    }
                 }
 
                 return wallets
             })
+        }
+    }
+    
+    private func addNewWalletToRepository(transactionIndex: Int, swapResponse: SolanaSDK.SwapResponse) {
+        guard let tx = transactionsSubject.value[safe: transactionIndex],
+              let transaction = tx.value as? SolanaSDK.SwapTransaction,
+              let wallet = transaction.destination
+        else {
+            return
+        }
+        // add new wallet if destination is a new wallet
+        walletsRepository.batchUpdate { wallets in
+            var wallets = wallets
+            var wallet = wallet
+            wallet.pubkey = swapResponse.newWalletPubkey
+            wallet.lamports = transaction.destinationAmount?.toLamport(decimals: wallet.token.decimals)
+            wallet.price = pricesRepository.currentPrice(for: wallet.token.symbol)
+            wallets.append(wallet)
+            return wallets
         }
     }
 }

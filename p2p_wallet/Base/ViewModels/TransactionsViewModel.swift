@@ -47,7 +47,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             .disposed(by: disposeBag)
         
         processingTransactionRepository.processingTransactionsObservable()
-            .subscribe(onNext: {[weak self] transactions in
+            .subscribe(onNext: {[weak self] _ in
                 self?.refreshUI()
             })
             .disposed(by: disposeBag)
@@ -165,6 +165,9 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             }
             // append if not
             else {
+                if transaction.signature != nil {
+                    data.removeAll(where: {$0.signature == nil})
+                }
                 data.insert(transaction, at: 0)
             }
             
