@@ -10,17 +10,51 @@ import KeychainSwift
 
 class KeychainAccountStorage: SolanaSDKAccountStorage {
     // MARK: - Constants
-    private let pincodeKey = "Keychain.Pincode"
-    private let phrasesKey = "Keychain.Phrases"
-    private let derivableTypeKey = "Keychain.DerivableType"
-    private let walletIndexKey = "Keychain.WalletIndexKey"
-        
+    private let pincodeKey: String
+    private let phrasesKey: String
+    private let derivableTypeKey: String
+    private let walletIndexKey: String
+    
+    private let iCloudPhrasesKey = "Keychain.Phrases"
+    
     // MARK: - Properties
     private var _account: SolanaSDK.Account?
     
     // MARK: - Services
     let keychain = KeychainSwift()
     let iCloudStore = NSUbiquitousKeyValueStore()
+    
+    // MARK: - Initializers
+    init() {
+        if let pincodeKey = Defaults.keychainPincodeKey,
+              let phrasesKey = Defaults.keychainPhrasesKey,
+              let derivableTypeKey = Defaults.keychainDerivableTypeKey,
+              let walletIndexKey = Defaults.keychainWalletIndexKey
+        {
+            self.pincodeKey = pincodeKey
+            self.phrasesKey = phrasesKey
+            self.derivableTypeKey = derivableTypeKey
+            self.walletIndexKey = walletIndexKey
+        } else {
+            let pincodeKey = UUID().uuidString
+            self.pincodeKey = pincodeKey
+            Defaults.keychainPincodeKey = pincodeKey
+            
+            let phrasesKey = UUID().uuidString
+            self.phrasesKey = phrasesKey
+            Defaults.keychainPhrasesKey = phrasesKey
+            
+            let derivableTypeKey = UUID().uuidString
+            self.derivableTypeKey = derivableTypeKey
+            Defaults.keychainDerivableTypeKey = derivableTypeKey
+            
+            let walletIndexKey = UUID().uuidString
+            self.walletIndexKey = walletIndexKey
+            Defaults.keychainWalletIndexKey = walletIndexKey
+            
+            keychain.clear()
+        }
+    }
     
     // MARK: - SolanaSDKAccountStorage
     func save(phrases: [String]) throws {
@@ -88,11 +122,11 @@ class KeychainAccountStorage: SolanaSDKAccountStorage {
     
     // MARK: - iCloud
     func saveICloud(phrases: String) {
-        iCloudStore.set(phrases, forKey: phrasesKey)
+        iCloudStore.set(phrases, forKey: iCloudPhrasesKey)
     }
     
     func phrasesFromICloud() -> String? {
-        iCloudStore.string(forKey: phrasesKey)
+        iCloudStore.string(forKey: iCloudPhrasesKey)
     }
     
     // MARK: - Clearance
