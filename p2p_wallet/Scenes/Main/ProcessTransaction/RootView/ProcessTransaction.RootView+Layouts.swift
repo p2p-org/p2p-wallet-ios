@@ -9,10 +9,7 @@ import Foundation
 
 extension ProcessTransaction.RootView {
     // MARK: - Main layout function
-    func layout(
-        transactionId: SolanaSDK.TransactionID?,
-        transactionStatus: ProcessTransaction.TransactionStatus
-    ) {
+    func layout(transaction: SolanaSDK.ParsedTransaction) {
         // summary view
         summaryView?.removeFromSuperview()
         
@@ -48,17 +45,17 @@ extension ProcessTransaction.RootView {
         layoutByDefault()
         
         // title, subtitle, image, button
-        switch transactionStatus {
-        case .processing:
-            layoutProcessingTransaction(enableDoneButtonWhen: transactionId != nil)
+        switch transaction.status {
+        case .requesting, .processing:
+            layoutProcessingTransaction()
         case .confirmed:
             layoutConfirmedTransaction()
         case .error(let error):
-            layoutTransactionError(error)
+            layoutTransactionError(error ?? L10n.somethingWentWrong)
         }
         
         // transaction id
-        if let signature = transactionId {
+        if let signature = transaction.signature {
             self.transactionIDLabel.text = signature
         } else {
             self.transactionIDStackView.isHidden = true
@@ -89,7 +86,7 @@ extension ProcessTransaction.RootView {
         ])
     }
     
-    private func layoutProcessingTransaction(enableDoneButtonWhen condition: Bool) {
+    private func layoutProcessingTransaction() {
         switch viewModel.output.transactionType {
         case .send, .closeAccount:
             self.titleLabel.text = L10n.sending + "..."
@@ -102,7 +99,6 @@ extension ProcessTransaction.RootView {
         self.transactionStatusImageView.image = .transactionProcessing
         self.buttonStackView.addArrangedSubview(
             WLButton.stepButton(type: .blue, label: L10n.done)
-                .enableIf(condition)
                 .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.done))
         )
     }
@@ -117,13 +113,13 @@ extension ProcessTransaction.RootView {
         )
     }
     
-    private func layoutTransactionError(_ error: Error) {
+    private func layoutTransactionError(_ error: String) {
         let transactionType = viewModel.output.transactionType
         // specific errors
         
         // When trying to send a wrapped token to a new SOL wallet (which is not yet in the blockchain)
-        if error.readableDescription == L10n.invalidAccountInfo ||
-            error.readableDescription == L10n.couldNotRetrieveAccountInfo
+        if error == L10n.invalidAccountInfo ||
+            error == L10n.couldNotRetrieveAccountInfo
         {
             layoutWithSpecificError(
                 image: .transactionErrorInvalidAccountInfo
@@ -134,7 +130,7 @@ extension ProcessTransaction.RootView {
         }
         
         // When trying to send a wrapped token to another wrapped token
-        else if error.readableDescription == L10n.walletAddressIsNotValid {
+        else if error == L10n.walletAddressIsNotValid {
             layoutWithSpecificError(
                 image: .transactionErrorWrongWallet
             )
@@ -153,7 +149,7 @@ extension ProcessTransaction.RootView {
         }
         
         // When a user entered an incorrect recipient address
-        else if error.readableDescription == L10n.wrongWalletAddress
+        else if error == L10n.wrongWalletAddress
         {
             layoutWithSpecificError(
                 image: .transactionErrorWrongWallet
@@ -164,7 +160,7 @@ extension ProcessTransaction.RootView {
         }
         
         // When the user needs to correct the slippage value
-        else if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit
+        else if error == L10n.swapInstructionExceedsDesiredSlippageLimit
         {
             layoutWithSpecificError(
                 image: .transactionErrorSlippageExceeded
@@ -180,20 +176,20 @@ extension ProcessTransaction.RootView {
             L10n.errorProcessingInstruction0CustomProgramError0x1,
             L10n.blockhashNotFound
         ]
-            .contains(error.readableDescription)
+            .contains(error)
         {
             layoutWithSpecificError(
                 image: .transactionErrorSystem
             )
             
             titleLabel.text = L10n.systemError
-            subtitleLabel.text = error.readableDescription
+            subtitleLabel.text = error
         }
         
         // generic errors
         else {
             self.titleLabel.text = L10n.somethingWentWrong
-            self.subtitleLabel.text = error.readableDescription
+            self.subtitleLabel.text = error
             self.transactionStatusImageView.image = .transactionError
             self.buttonStackView.addArrangedSubviews([
                 WLButton.stepButton(type: .blue, label: L10n.tryAgain)
