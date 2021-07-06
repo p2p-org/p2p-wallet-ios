@@ -87,15 +87,23 @@ class SwapTransactionSummaryView: TransactionSummaryView {
     
     func setUp(from: SolanaSDK.Token?, to: SolanaSDK.Token?, inputAmount: SolanaSDK.Lamports?, estimatedAmount: SolanaSDK.Lamports?)
     {
-        guard let from = from, let to = to, let inputAmount = inputAmount, let estimatedAmount = estimatedAmount
-        else {return}
         sourceIconImageView.setUp(token: from)
-        sourceAmountLabel.text = (-(inputAmount.convertToBalance(decimals: from.decimals))).toString(maximumFractionDigits: 9)
-        sourceSymbolLabel.text = from.symbol
+        if let inputAmount = inputAmount {
+            sourceAmountLabel.text = (-(inputAmount.convertToBalance(decimals: from?.decimals))).toString(maximumFractionDigits: 9)
+        } else {
+            sourceAmountLabel.text = nil
+        }
+        
+        sourceSymbolLabel.text = from?.symbol
         
         destinationIconImageView.setUp(token: to)
-        destinationAmountLabel.text = estimatedAmount.convertToBalance(decimals: to.decimals).toString(maximumFractionDigits: 9, showPlus: true)
-        destinationSymbolLabel.text = to.symbol
+        if let estimatedAmount = estimatedAmount {
+            destinationAmountLabel.text = estimatedAmount.convertToBalance(decimals: to?.decimals).toString(maximumFractionDigits: 9, showPlus: true)
+        } else {
+            destinationAmountLabel.text = nil
+        }
+        
+        destinationSymbolLabel.text = to?.symbol
     }
     
     private func createAmountLabel() -> UILabel {
