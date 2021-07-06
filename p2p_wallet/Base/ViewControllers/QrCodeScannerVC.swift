@@ -19,7 +19,7 @@ class QrCodeScannerVC: BaseVC {
     /// The callback for qr code recognizer, do any validation and return true if qr code valid
     var callback: ((String) -> Bool)?
     
-    lazy var cameraContainerView = UIView(backgroundColor: .red, cornerRadius: 20)
+    lazy var cameraContainerView = UIView(cornerRadius: 20)
     
     init(analyticsManager: AnalyticsManagerType) {
         self.analyticsManager = analyticsManager
@@ -114,69 +114,100 @@ extension QrCodeScannerVC: AVCaptureMetadataOutputObjectsDelegate {
 
 extension QrCodeScannerVC {
     func setUpCamera() {
-        if cameraAvailable,
-           cameraAuthorized,
-           let videoCaptureDevice = AVCaptureDevice.default(for: .video)
-        {
-            captureSession = AVCaptureSession()
-
-            let videoInput: AVCaptureDeviceInput
-
-            do {
-                videoInput = try AVCaptureDeviceInput(device: videoCaptureDevice)
-            } catch {
-                return
-            }
-
-            if captureSession.canAddInput(videoInput) {
-                captureSession.addInput(videoInput)
-            } else {
-                failed()
-                return
-            }
-
-            let metadataOutput = AVCaptureMetadataOutput()
-            let screenSize = UIScreen.main.bounds.size
-            var scanRect = CGRect(x: (screenSize.width-scanSize.width)/2.0, y: (screenSize.height-scanSize.height)/2.0, width: scanSize.width, height: scanSize.height)
-            
-            scanRect = CGRect(x: scanRect.origin.y/screenSize.height, y: scanRect.origin.x/screenSize.width, width: scanRect.size.height/screenSize.height, height: scanRect.size.width/screenSize.width)
-            
-            metadataOutput.rectOfInterest = scanRect
-
-            if captureSession.canAddOutput(metadataOutput) {
-                captureSession.addOutput(metadataOutput)
-
-                metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-                metadataOutput.metadataObjectTypes = [.qr]
-            } else {
-                failed()
-                return
-            }
-
-            previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-            previewLayer.videoGravity = .resizeAspectFill
-            
-            cameraContainerView.layer.addSublayer(previewLayer)
-            captureSession.startRunning()
-        } else {
-            failed()
+        // camera unavailable
+        guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
+            handleCameraUnavailable()
+            return
         }
-           
+        
+        // request camera authorization
+        if AVCaptureDevice.authorizationStatus(for: .video) !=  .authorized {
+            AVCaptureDevice.requestAccess(for: .video, completionHandler: { [weak self] (granted: Bool) in
+                DispatchQueue.main.async { [weak self] in
+                    self?.handleCameraAuthrizationGranted(granted)
+                }
+            })
+            return
+        }
+        
+        // camera is authorized
+        guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else {
+            handleCaptureSessionFailed()
+            return
+        }
+        
+        captureSession = AVCaptureSession()
+
+        let videoInput: AVCaptureDeviceInput
+
+        do {
+            videoInput = try AVCaptureDeviceInput(device: videoCaptureDevice)
+        } catch {
+            handleCaptureSessionFailed()
+            return
+        }
+        
+        if captureSession.canAddInput(videoInput) {
+            captureSession.addInput(videoInput)
+        } else {
+            handleCaptureSessionFailed()
+            return
+        }
+        
+        let metadataOutput = AVCaptureMetadataOutput()
+        let screenSize = UIScreen.main.bounds.size
+        var scanRect = CGRect(x: (screenSize.width-scanSize.width)/2.0, y: (screenSize.height-scanSize.height)/2.0, width: scanSize.width, height: scanSize.height)
+        
+        scanRect = CGRect(x: scanRect.origin.y/screenSize.height, y: scanRect.origin.x/screenSize.width, width: scanRect.size.height/screenSize.height, height: scanRect.size.width/screenSize.width)
+        
+        metadataOutput.rectOfInterest = scanRect
+
+        if captureSession.canAddOutput(metadataOutput) {
+            captureSession.addOutput(metadataOutput)
+
+            metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
+            metadataOutput.metadataObjectTypes = [.qr]
+        } else {
+            handleCaptureSessionFailed()
+            return
+        }
+
+        previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+        previewLayer.videoGravity = .resizeAspectFill
+        
+        cameraContainerView.layer.addSublayer(previewLayer)
+        captureSession.startRunning()
     }
     
-    private var cameraAvailable: Bool {
-        UIImagePickerController.isSourceTypeAvailable(.camera)
+    private func handleCameraUnavailable() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
+            self?.captureSession = nil
+            self?.showAlert(title: L10n.scanningQrCodeNotSupported, message: L10n.YourDeviceDoesNotSupportScanningACodeFromAnItem.pleaseUseADeviceWithACamera, buttonTitles: [L10n.ok]) { [weak self] _ in
+                self?.back()
+            }
+        }
+        
     }
     
-    private var cameraAuthorized: Bool {
-        let status = AVCaptureDevice.authorizationStatus(for: .video)
-        if status == .restricted || status == .denied {
+    private func handleCaptureSessionFailed() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
+            self?.captureSession = nil
+            self?.showAlert(title: L10n.couldNotCreateCaptureSession, message: L10n.thereIsSomethingWrongWithYourCameraPleaseTryAgainLater, buttonTitles: [L10n.ok]) { [weak self] _ in
+                self?.back()
+            }
+        }
+    }
+    
+    private func handleCameraAuthrizationGranted(_ granted: Bool) {
+        if granted {
+            setUpCamera()
+        } else {
             showAlert(
                 title: L10n.changeYourSettingsToUseCameraForScanningQrCode,
                 message: L10n.ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode.pleaseEnableItInSettings,
                 buttonTitles: [L10n.ok, L10n.cancel],
                 highlightedButtonIndex: 0)
-            { (index) in
+            { [weak self] (index) in
                 if index == 0 {
                     guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
                         return
@@ -187,17 +218,10 @@ extension QrCodeScannerVC {
                             print("Settings opened: \(success)") // Prints true
                         })
                     }
+                } else {
+                    self?.back()
                 }
             }
-            return false
         }
-        return true
-    }
-    
-    func failed() {
-        let ac = UIAlertController(title: L10n.scanningQrCodeNotSupported, message: L10n.YourDeviceDoesNotSupportScanningACodeFromAnItem.pleaseUseADeviceWithACamera, preferredStyle: .alert)
-        ac.addAction(UIAlertAction(title: L10n.ok, style: .default))
-        present(ac, animated: true)
-        captureSession = nil
     }
 }
