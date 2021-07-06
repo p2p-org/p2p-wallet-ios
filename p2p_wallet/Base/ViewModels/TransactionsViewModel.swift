@@ -20,6 +20,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     var fetchedFeePayer = false
     
     let feeRelayer: SolanaSDK.FeeRelayer
+    let accountNotificationsRepository: AccountNotificationsRepository
     
     init(
         account: String,
@@ -27,7 +28,8 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         repository: TransactionsRepository,
         pricesRepository: PricesRepository,
         processingTransactionRepository: ProcessingTransactionsRepository,
-        feeRelayerAPIClient: FeeRelayerSolanaAPIClient
+        feeRelayerAPIClient: FeeRelayerSolanaAPIClient,
+        accountNotificationsRepository: AccountNotificationsRepository
     ) {
         self.account = account
         self.accountSymbol = accountSymbol
@@ -35,6 +37,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         self.pricesRepository = pricesRepository
         self.processingTransactionRepository = processingTransactionRepository
         self.feeRelayer = SolanaSDK.FeeRelayer(solanaAPIClient: feeRelayerAPIClient)
+        self.accountNotificationsRepository = accountNotificationsRepository
         super.init(isPaginationEnabled: true, limit: 10)
     }
     
@@ -49,6 +52,13 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         processingTransactionRepository.processingTransactionsObservable()
             .subscribe(onNext: {[weak self] _ in
                 self?.refreshUI()
+            })
+            .disposed(by: disposeBag)
+        
+        accountNotificationsRepository.observeAccountNotifications(account: account)
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            .subscribe(onNext: {[weak self] _ in
+                self?.reload()
             })
             .disposed(by: disposeBag)
     }

@@ -102,7 +102,8 @@ class MainContainer {
             pricesRepository: pricesManager,
             transactionsRepository: solanaSDK,
             analyticsManager: analyticsManager,
-            feeRelayerAPIClient: solanaSDK
+            feeRelayerAPIClient: solanaSDK,
+            accountNotificationsRepository: socket
         )
         
         return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)
