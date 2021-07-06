@@ -60,7 +60,6 @@ class PricesManager {
     // get supported coin
     func fetchCurrentPrices(coins: [String] = []) {
         fetcher.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
-            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: {[weak self] prices in
                 guard let self = self else {return}
@@ -93,6 +92,7 @@ class PricesManager {
                     self.fetcher.getHistoricalPrice(of: coinName, fiat: "USD", period: period),
                     self.fetcher.getValueInUSD(fiat: Defaults.fiat.code)
                 )
+                .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
                 .map {records, rate in
                     guard let rate = rate else {return []}
                     var records = records
@@ -102,6 +102,7 @@ class PricesManager {
                     return records
                 }
             }
+            .observe(on: MainScheduler.instance)
 //            .do(
 //                afterSuccess: {
 //                    Logger.log(message: "Historical price for \(coinName) in \(period): \($0)", event: .response)
