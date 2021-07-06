@@ -379,3 +379,7 @@
 "The phrases you has entered is not correct" = "Вы ввели неправильные фразы";
 "pending" = "в ожидании";
 "Save that seed phrase and keep it in the safe place. Will be used for recovery and backup." = "Сохраните эту исходную фразу и храните ее в надежном месте. Будет использоваться для восстановления и резервного копирования.";
+"Could not create capture session" = "Не удалось создать сеанс записи";
+"There is something wrong with your camera!\nPlease try again later!" = "Что-то не так с вашей камерой!\nПовторите попытку позже!";
+"Seed phrase must have 12 or 24 words" = "Исходная фраза должна состоять из 12 или 24 слов.";
+"Seed phrase must have at least 12 words" = "В исходной фразе должно быть не менее 12 слов.";

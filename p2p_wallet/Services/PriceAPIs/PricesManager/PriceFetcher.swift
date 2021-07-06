@@ -20,6 +20,7 @@ protocol PricesFetcher {
 extension PricesFetcher {
     func send<T: Decodable>(_ path: String, decodedTo: T.Type) -> Single<T> {
         request(.get, "\(endpoint)\(path)")
+            .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .responseData()
@@ -31,8 +32,6 @@ extension PricesFetcher {
                 Logger.log(message: "\(endpoint)\(path)", event: .request, apiMethod: "getPrices")
             })
             .map {try JSONDecoder().decode(T.self, from: $0.1)}
-            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
-            .observe(on: MainScheduler.instance)
     }
 }
 

@@ -49,7 +49,8 @@ extension WalletDetail {
             pricesRepository: PricesRepository,
             transactionsRepository: TransactionsRepository,
             analyticsManager: AnalyticsManagerType,
-            feeRelayerAPIClient: FeeRelayerSolanaAPIClient
+            feeRelayerAPIClient: FeeRelayerSolanaAPIClient,
+            accountNotificationsRepository: AccountNotificationsRepository
         ) {
             self.pubkey = pubkey
             self.symbol = symbol
@@ -77,7 +78,8 @@ extension WalletDetail {
                     repository: transactionsRepository,
                     pricesRepository: pricesRepository,
                     processingTransactionRepository: processingTransactionRepository,
-                    feeRelayerAPIClient: feeRelayerAPIClient
+                    feeRelayerAPIClient: feeRelayerAPIClient,
+                    accountNotificationsRepository: accountNotificationsRepository
                 )
             )
             
@@ -102,11 +104,18 @@ extension WalletDetail {
             walletsRepository
                 .dataObservable
                 .map {$0?.first(where: {$0.pubkey == self.pubkey})}
-                .do(onNext: {[weak self] wallet in
-                    guard let ticker = wallet?.token.symbol else {return}
+                .filter {$0 != nil}
+                .bind(to: walletSubject)
+                .disposed(by: disposeBag)
+            
+            walletSubject
+                .filter {$0 != nil}
+                .map {$0!.token.symbol}
+                .take(1)
+                .asSingle()
+                .subscribe(onSuccess: {[weak self] ticker in
                     self?.analyticsManager.log(event: .tokenDetailsOpen(tokenTicker: ticker))
                 })
-                .bind(to: walletSubject)
                 .disposed(by: disposeBag)
         }
         

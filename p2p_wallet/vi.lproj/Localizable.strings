@@ -379,3 +379,7 @@
 "The phrases you has entered is not correct" = "Các cụm từ bạn đã nhập không chính xác";
 "pending" = "đang chờ xử lý";
 "Save that seed phrase and keep it in the safe place. Will be used for recovery and backup." = "Lưu cụm bảo mật đó và giữ nó ở nơi an toàn. Nó sẽ được sử dụng để phục hồi và sao lưu.";
+"Could not create capture session" = "Không thể tạo phiên chụp";
+"There is something wrong with your camera!\nPlease try again later!" = "Đã xảy ra lỗi với máy ảnh của bạn!\nVui lòng thử lại sau!";
+"Seed phrase must have 12 or 24 words" = "Cụm từ hạt giống phải có 12 hoặc 24 từ";
+"Seed phrase must have at least 12 words" = "Cụm từ hạt giống phải có ít nhất 12 từ";

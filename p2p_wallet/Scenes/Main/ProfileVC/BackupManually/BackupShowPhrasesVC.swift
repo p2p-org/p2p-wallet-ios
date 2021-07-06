@@ -8,7 +8,29 @@
 import Foundation
 import Action
 
-class BackupShowPhrasesVC: BackupManuallyBaseVC {
+class BackupShowPhrasesVC: WLIndicatorModalVC, CustomPresentableViewController {
+    var transitionManager: UIViewControllerTransitioningDelegate?
+    fileprivate let childVC: _BackupShowPhrasesVC
+    
+    init(accountStorage: KeychainAccountStorage, authenticationHandler: AuthenticationHandler)
+    {
+        childVC = _BackupShowPhrasesVC(accountStorage: accountStorage, authenticationHandler: authenticationHandler)
+        super.init()
+        modalPresentationStyle = .custom
+    }
+    
+    override func setUp() {
+        super.setUp()
+        add(child: childVC, to: containerView)
+    }
+    
+    override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
+        super.calculateFittingHeightForPresentedView(targetWidth: targetWidth) +
+            childVC.calculateFittingHeightForPresentedView(targetWidth: targetWidth)
+    }
+}
+
+private class _BackupShowPhrasesVC: BackupManuallyBaseVC {
     lazy var backupUsingIcloudButton = WLButton.stepButton(
         enabledColor: .blackButtonBackground,
         textColor: .white,
@@ -47,5 +69,14 @@ class BackupShowPhrasesVC: BackupManuallyBaseVC {
                 }
             )
         )
+    }
+    
+    func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
+        headerView.fittingHeight(targetWidth: targetWidth) +
+            20 +
+            1 +
+            rootView.fittingHeight(targetWidth: targetWidth - 20 * 2) +
+            31 +
+            20
     }
 }

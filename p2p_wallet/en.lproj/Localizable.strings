@@ -379,3 +379,7 @@
 "The phrases you has entered is not correct" = "The phrases you has entered is not correct";
 "pending" = "pending";
 "Save that seed phrase and keep it in the safe place. Will be used for recovery and backup." = "Save that seed phrase and keep it in the safe place. Will be used for recovery and backup.";
+"Could not create capture session" = "Could not create capture session";
+"There is something wrong with your camera!\nPlease try again later!" = "There is something wrong with your camera!\nPlease try again later!";
+"Seed phrase must have 12 or 24 words" = "Seed phrase must have 12 or 24 words";
+"Seed phrase must have at least 12 words" = "Seed phrase must have at least 12 words";

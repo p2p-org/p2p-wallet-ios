@@ -128,10 +128,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             return
         }
         
-        if pricesRepository.getCurrentPrices().isEmpty {
-            pricesRepository.fetchAllTokensPrice()
-        }
-        
         super.reload()
     }
     
