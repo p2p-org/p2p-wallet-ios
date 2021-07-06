@@ -138,12 +138,12 @@ class HomeRootView: BEView {
             })
             .disposed(by: disposeBag)
         
-        collectionView.collectionView.rx.willEndDragging
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] _ in
-                self?.toggleHeaderViewVisibility()
-            })
-            .disposed(by: disposeBag)
+//        collectionView.collectionView.rx.willEndDragging
+//            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+//            .subscribe(onNext: { [weak self] _ in
+//                self?.toggleHeaderViewVisibility()
+//            })
+//            .disposed(by: disposeBag)
     }
     
     // MARK: - Helpers
