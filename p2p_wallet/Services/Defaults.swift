@@ -14,6 +14,12 @@ extension Fiat: DefaultsSerializable {}
 extension SolanaSDK.APIEndPoint: DefaultsSerializable {}
 
 extension DefaultsKeys {
+    // Keychain-keys
+    var keychainPincodeKey: DefaultsKey<String?> {.init(#function, defaultValue: nil)}
+    var keychainPhrasesKey: DefaultsKey<String?> {.init(#function, defaultValue: nil)}
+    var keychainDerivableTypeKey: DefaultsKey<String?> {.init(#function, defaultValue: nil)}
+    var keychainWalletIndexKey: DefaultsKey<String?> {.init(#function, defaultValue: nil)}
+    
     var didSetEnableBiometry: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var isBiometryEnabled: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var didSetEnableNotifications: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
