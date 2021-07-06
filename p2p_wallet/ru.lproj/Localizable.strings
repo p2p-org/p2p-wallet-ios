@@ -383,3 +383,4 @@
 "There is something wrong with your camera!\nPlease try again later!" = "Что-то не так с вашей камерой!\nПовторите попытку позже!";
 "Seed phrase must have 12 or 24 words" = "Исходная фраза должна состоять из 12 или 24 слов.";
 "Seed phrase must have at least 12 words" = "В исходной фразе должно быть не менее 12 слов.";
+"No chart data available." = "Нет данных диаграммы.";

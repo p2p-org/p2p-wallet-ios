@@ -20,6 +20,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         chartView.holeRadiusPercent = 0.58
         chartView.chartDescription?.enabled = false
         chartView.legend.enabled = false
+        chartView.noDataText = L10n.noChartDataAvailable
         return chartView
     }()
     
