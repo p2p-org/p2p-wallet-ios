@@ -19,9 +19,8 @@ extension ProcessTransaction {
         struct Input {}
         struct Output {
             let navigationScene: Driver<NavigatableScene>
-            let transactionId: Driver<SolanaSDK.TransactionID?>
             let transactionType: TransactionType
-            let transactionStatus: Driver<TransactionStatus>
+            let transaction: Driver<SolanaSDK.ParsedTransaction>
             let pricesRepository: PricesRepository
             var reimbursedAmount: Double?
         }
@@ -43,8 +42,7 @@ extension ProcessTransaction {
         
         // MARK: - Subject
         private let navigationSubject = PublishSubject<NavigatableScene>()
-        private let transactionIdSubject = BehaviorRelay<SolanaSDK.TransactionID?>(value: nil)
-        private let transactionStatusSubject = BehaviorRelay<TransactionStatus>(value: .processing)
+        private let transactionSubject = BehaviorRelay<SolanaSDK.ParsedTransaction>(value: .init(status: .requesting, signature: nil, value: nil, slot: nil, blockTime: nil, fee: nil, blockhash: nil))
         
         // MARK: - Initializer
         init(
@@ -68,15 +66,13 @@ extension ProcessTransaction {
             self.output = Output(
                 navigationScene: navigationSubject
                     .asDriver(onErrorJustReturn: .showExplorer(transactionID: "")),
-                transactionId: transactionIdSubject
-                    .asDriver(),
                 transactionType: transactionType,
-                transactionStatus: transactionStatusSubject
+                transaction: transactionSubject
                     .asDriver(),
                 pricesRepository: pricesRepository
             )
             
-            executeRequest()
+            execute()
         }
         
         // MARK: - Actions
@@ -88,22 +84,63 @@ extension ProcessTransaction {
                 })
         }
         
-        @objc func executeRequest() {
+        @objc func execute() {
+            var requestIndex: Int
+            
             switch transactionType {
-            case .send(let fromWallet, let receiver, let lamports, let feeInLamports):
-                executeSend(fromWallet: fromWallet, receiver: receiver, lamports: lamports, feeInLamports: feeInLamports)
+            case .send(let fromWallet, let receiver, let lamports, let fee):
+                // form transaction
+                let transaction = SolanaSDK.TransferTransaction(
+                    source: fromWallet,
+                    destination: Wallet(pubkey: receiver, lamports: 0, token: fromWallet.token),
+                    authority: walletsRepository.solWallet?.pubkey,
+                    amount: lamports.convertToBalance(decimals: fromWallet.token.decimals),
+                    myAccount: fromWallet.pubkey
+                )
+                
+                // Verify address
+                guard NSRegularExpression.publicKey.matches(receiver) else {
+                    var tx = transactionSubject.value
+                    tx.value = transaction
+                    tx.status = .error(L10n.wrongWalletAddress)
+                    transactionSubject.accept(tx)
+                    return
+                }
+                
+                // Execute
+                requestIndex = markAsRequestingAndSendRequest(transaction: transaction, fee: fee)
             case .swap(let from, let to, let inputAmount, let estimatedAmount, let fee):
-                executeSwap(from: from, to: to, inputAmount: inputAmount, estimatedAmount: estimatedAmount, fee: fee)
+                // form transaction
+                let transaction = SolanaSDK.SwapTransaction(
+                    source: from,
+                    sourceAmount: inputAmount.convertToBalance(decimals: from.token.decimals),
+                    destination: to,
+                    destinationAmount: estimatedAmount.convertToBalance(decimals: to.token.decimals),
+                    myAccountSymbol: nil
+                )
+                
+                // Execute
+                requestIndex = markAsRequestingAndSendRequest(transaction: transaction, fee: fee)
             case .closeAccount(let wallet):
-                executeCloseAccount(wallet)
+                // form transaction
+                let transaction = SolanaSDK.CloseAccountTransaction(
+                    reimbursedAmount: output.reimbursedAmount,
+                    closedWallet: wallet
+                )
+                
+                // Execute
+                requestIndex = markAsRequestingAndSendRequest(transaction: transaction, fee: 0)
             }
+            
+            // observe
+            observeTransaction(requestIndex: requestIndex)
         }
         
         @objc func tryAgain() {
             // log
             var event: AnalyticsEvent?
             
-            if let error = transactionStatusSubject.value.getError()?.readableDescription
+            if let error = transactionSubject.value.status.getError()?.readableDescription
             {
                 switch transactionType {
                 case .send:
@@ -120,14 +157,14 @@ extension ProcessTransaction {
             }
             
             // execute
-            executeRequest()
+            execute()
         }
         
         @objc func showExplorer() {
-            guard let id = transactionIdSubject.value else {return}
+            guard let id = transactionSubject.value.signature else {return}
             
             // log
-            let transactionStatus = transactionStatusSubject.value.rawValue
+            let transactionStatus = transactionSubject.value.status.rawValue
             switch transactionType {
             case .send:
                 analyticsManager.log(event: .sendExplorerClick(txStatus: transactionStatus))
@@ -143,7 +180,7 @@ extension ProcessTransaction {
         
         @objc func done() {
             // log
-            let transactionStatus = transactionStatusSubject.value.rawValue
+            let transactionStatus = transactionSubject.value.status.rawValue
             switch transactionType {
             case .send:
                 analyticsManager.log(event: .sendDoneClick(txStatus: transactionStatus))
@@ -161,7 +198,7 @@ extension ProcessTransaction {
             // log
             var event: AnalyticsEvent?
             
-            if let error = transactionStatusSubject.value.getError()?.readableDescription
+            if let error = transactionSubject.value.status.getError()?.readableDescription
             {
                 switch transactionType {
                 case .send:
@@ -182,199 +219,30 @@ extension ProcessTransaction {
         }
         
         // MARK: - Helpers
-        private func executeSend(
-            fromWallet: Wallet,
-            receiver: String,
-            lamports: SolanaSDK.Lamports,
-            feeInLamports: SolanaSDK.Lamports
-        ) {
-            // Verify address
-            guard NSRegularExpression.publicKey.matches(receiver) else {
-                transactionStatusSubject
-                    .accept(.error(SolanaSDK.Error.other(L10n.wrongWalletAddress)))
-                return
-            }
+        /// Mark transaction as processing, then call request
+        /// - Parameters:
+        ///   - transaction: transaction that need to be sent
+        ///   - fee: transaction's fee
+        /// - Returns: transaction index in repository (for observing)
+        private func markAsRequestingAndSendRequest(transaction: AnyHashable, fee: SolanaSDK.Lamports) -> Int {
+            // mark as requesting
+            var tx = transactionSubject.value
+            tx.status = .requesting
+            tx.value = transaction
+            transactionSubject.accept(tx)
             
-            // Execute request
-            executeRequest { [weak self] _ in
-                // update wallet
-                self?.walletsRepository.batchUpdate(closure: {
-                    var wallets = $0
-                    // update wallet
-                    if let index = wallets.firstIndex(where: {$0.pubkey == fromWallet.pubkey})
-                    {
-                        wallets[index].decreaseBalance(diffInLamports: lamports)
-                    }
-                    
-                    // update SOL wallet (minus fee)
-                    if let index = wallets.firstIndex(where: {$0.token.isNative})
-                    {
-                        wallets[index].decreaseBalance(diffInLamports: feeInLamports)
-                    }
-                    return wallets
-                })
-            }
+            // send transaction
+            return transactionHandler.request(request, transaction: transactionSubject.value, fee: fee)
         }
         
-        private func executeSwap(
-            from: Wallet,
-            to: Wallet,
-            inputAmount: SolanaSDK.Lamports,
-            estimatedAmount: SolanaSDK.Lamports,
-            fee: SolanaSDK.Lamports
-        ) {
-            executeRequest { [weak self] response in
-                // cast type
-                let response = response as! SolanaSDK.SwapResponse
-                
-                // batch update
-                self?.walletsRepository.batchUpdate(closure: {
-                    var wallets = $0
-                    
-                    // update source wallet
-                    if let index = wallets.firstIndex(where: {$0.pubkey == from.pubkey})
-                    {
-                        wallets[index].decreaseBalance(diffInLamports: inputAmount)
-                    }
-                    
-                    // update destination wallet if exists
-                    if let index = wallets.firstIndex(where: {$0.pubkey == to.pubkey})
-                    {
-                        wallets[index].increaseBalance(diffInLamports: estimatedAmount)
-                    }
-                    
-                    // add new wallet if destination is a new wallet
-                    else if let pubkey = response.newWalletPubkey {
-                        var wallet = to
-                        wallet.pubkey = pubkey
-                        wallet.lamports = estimatedAmount
-                        wallets.append(wallet)
-                    }
-                    
-                    // update sol wallet (minus fee)
-                    if let index = wallets.firstIndex(where: {$0.token.isNative})
-                    {
-                        wallets[index].decreaseBalance(diffInLamports: fee)
-                    }
-                    
-                    return wallets
-                })
-            }
-        }
-        
-        private func executeCloseAccount(_ wallet: Wallet) {
-            executeRequest { [weak self] _ in
-                self?.walletsRepository.batchUpdate(closure: {
-                    var wallets = $0
-                    
-                    // remove closed wallet
-                    wallets.removeAll(where: {$0.pubkey == wallet.pubkey})
-                    
-                    // update sol wallet
-                    var convertedAmount = self?.output.reimbursedAmount ?? 0
-                    if wallet.token.symbol == "SOL"
-                    {
-                        convertedAmount += wallet.amount ?? 0
-                    }
-                    
-                    if let index = wallets.firstIndex(where: {$0.token.isNative})
-                    {
-                        wallets[index].updateBalance(diff: convertedAmount)
-                    }
-                    
-                    return wallets
-                })
-            }
-        }
-        
-        private func executeRequest(completion: @escaping (ProcessTransactionResponseType) -> Void) {
-            // clean up
-            self.transactionStatusSubject.accept(.processing)
-            self.transactionIdSubject.accept(nil)
-            
-            // request
-            request
-                .do(onSuccess: completion)
-                .map { response -> String in
-                    if let swapResponse = response as? SolanaSDK.SwapResponse {
-                        return swapResponse.transactionId
-                    }
-                    
-                    if let response = response as? SolanaSDK.TransactionID {
-                        return response
-                    }
-                    
-                    throw SolanaSDK.Error.unknown
-                }
-                .subscribe(onSuccess: { [weak self] transactionId in
-                    // update status
-                    self?.transactionStatusSubject.accept(.processing)
-                    self?.transactionIdSubject.accept(transactionId)
-                    
-                    // observe confimation status
-                    self?.processTransaction(signature: transactionId)
-                    self?.observeTransaction(signature: transactionId)
-                }, onFailure: { [weak self] error in
-                    self?.transactionStatusSubject.accept(.error(error))
-                })
-                .disposed(by: disposeBag)
-        }
-        
-        private func processTransaction(signature: String) {
-            var value: AnyHashable?
-            var fee: UInt64?
-            switch transactionType {
-            case .closeAccount(let wallet):
-                value = SolanaSDK.CloseAccountTransaction(
-                    reimbursedAmount: output.reimbursedAmount,
-                    closedWallet: wallet
-                )
-                fee = output.reimbursedAmount?.toLamport(decimals: wallet.token.decimals)
-            case .send(let from, let to, let lamport, let feeInLamports):
-                var toWallet = from
-                toWallet.pubkey = to
-                value = SolanaSDK.TransferTransaction(
-                    source: from,
-                    destination: toWallet,
-                    authority: nil,
-                    amount: lamport.convertToBalance(decimals: from.token.decimals),
-                    wasPaidByP2POrg: Defaults.useFreeTransaction,
-                    myAccount: from.pubkey
-                )
-                fee = feeInLamports
-            case .swap(let from, let to, let inputAmount, let estimatedAmount, let afee):
-                value = SolanaSDK.SwapTransaction(
-                    source: from,
-                    sourceAmount: inputAmount.convertToBalance(decimals: from.token.decimals),
-                    destination: to,
-                    destinationAmount: estimatedAmount.convertToBalance(decimals: to.token.decimals),
-                    myAccountSymbol: from.token.symbol
-                )
-                fee = afee
-            }
-            
-            let transaction = SolanaSDK.ParsedTransaction(
-                status: .processing(percent: 0),
-                signature: signature,
-                value: value,
-                slot: nil,
-                blockTime: Date(),
-                fee: fee,
-                blockhash: nil
-            )
-            
-            transactionHandler.process(transaction: transaction)
-        }
-        
-        private func observeTransaction(signature: String) {
+        /// Observe status of current transaction
+        /// - Parameter requestIndex: index of current transaction in repository
+        private func observeTransaction(requestIndex: Int) {
             transactionHandler.processingTransactionsObservable()
-                .map {$0.first(where: {$0.signature == signature})}
-                .filter {$0?.status == .confirmed}
-                .take(1)
-                .asSingle()
-                .subscribe(onSuccess: {[weak self] _ in
-                    self?.transactionStatusSubject.accept(.confirmed)
-                })
+                .map {$0[safe: requestIndex]}
+                .filter {$0 != nil}
+                .map {$0!}
+                .bind(to: transactionSubject)
                 .disposed(by: disposeBag)
         }
     }
