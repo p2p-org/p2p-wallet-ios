@@ -8,14 +8,15 @@
 import Foundation
 import RxSwift
 
-protocol ProcessingTransactionsRepository {
+protocol ProcessingTransactionsRepository: AnyObject {
+    typealias RequestIndex = Int
     func processingTransactionsObservable() -> Observable<[SolanaSDK.ParsedTransaction]>
     func getProcessingTransactions() -> [SolanaSDK.ParsedTransaction]
-    func process(transaction: SolanaSDK.ParsedTransaction)
+    func request(_ request: Single<ProcessTransactionResponseType>, transaction: SolanaSDK.ParsedTransaction, fee: SolanaSDK.Lamports) -> RequestIndex
 }
 
 extension ProcessingTransactionsRepository {
     func areSomeTransactionsInProgress() -> Bool {
-        getProcessingTransactions().filter {$0.status != .confirmed}.count > 0
+        getProcessingTransactions().filter {$0.isProcessing}.count > 0
     }
 }

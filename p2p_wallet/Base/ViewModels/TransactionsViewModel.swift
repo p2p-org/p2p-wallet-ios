@@ -47,7 +47,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             .disposed(by: disposeBag)
         
         processingTransactionRepository.processingTransactionsObservable()
-            .subscribe(onNext: {[weak self] transactions in
+            .subscribe(onNext: {[weak self] _ in
                 self?.refreshUI()
             })
             .disposed(by: disposeBag)
@@ -127,7 +127,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     ) -> [SolanaSDK.ParsedTransaction] {
         let processingTransactions = processingTransactionRepository.getProcessingTransactions()
         var transactions = [SolanaSDK.ParsedTransaction]()
-        for pt in processingTransactions {
+        for var pt in processingTransactions {
             switch pt.value {
             case let transaction as SolanaSDK.TransferTransaction:
                 if transaction.source?.pubkey == self.account ||
@@ -139,10 +139,12 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             case let transaction as SolanaSDK.CloseAccountTransaction:
                 // FIXME: - Close account
                 break
-            case let transaction as SolanaSDK.SwapTransaction:
+            case var transaction as SolanaSDK.SwapTransaction:
                 if transaction.source?.pubkey == self.account ||
                     transaction.destination?.pubkey == self.account
                 {
+                    transaction.myAccountSymbol = accountSymbol
+                    pt.value = transaction
                     transactions.append(pt)
                 }
             default:
@@ -165,6 +167,9 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             }
             // append if not
             else {
+                if transaction.signature != nil {
+                    data.removeAll(where: {$0.signature == nil})
+                }
                 data.insert(transaction, at: 0)
             }
             
