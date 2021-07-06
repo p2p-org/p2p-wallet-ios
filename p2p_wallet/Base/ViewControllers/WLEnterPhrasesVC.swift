@@ -142,7 +142,7 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
     }
     
     @objc func buttonNextDidTouch() {
-        textView.wrapPhrase(addingPlaceholderAttachment: false)
+        textView.wrapPhrase()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.handlePhrases()
         }
@@ -163,6 +163,9 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
         textView.superview?.border(width: 1, color: .f3f3f3.onDarkMode(.h1b1b1b))
         do {
             let phrases = textView.getPhrases()
+            if phrases.count < 12 {
+                throw SolanaSDK.Error.other(L10n.seedPhraseMustHaveAtLeast12Words)
+            }
             _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
             if dismissAfterCompletion {
                 dismiss(animated: true) {
