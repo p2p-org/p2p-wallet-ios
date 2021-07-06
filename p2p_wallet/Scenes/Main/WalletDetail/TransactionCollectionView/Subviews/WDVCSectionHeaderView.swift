@@ -125,6 +125,7 @@ extension WDVCSectionHeaderView {
             legend.enabled = false
             pinchZoomEnabled = false
             doubleTapToZoomEnabled = false
+            noDataText = L10n.noChartDataAvailable
             
             // marker
             let marker = createMarker()
