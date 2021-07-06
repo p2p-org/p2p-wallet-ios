@@ -163,13 +163,7 @@ class BackupVC: ProfileVCBase {
     
     private func showSeedPhrasesVC() {
         let vc = scenesFactory.makeBackupShowPhrasesVC()
-        
-        let nc = BENavigationController(rootViewController: vc)
-        
-        let modalVC = WLIndicatorModalVC()
-        modalVC.add(child: nc, to: modalVC.containerView)
-        
-        present(modalVC, animated: true, completion: nil)
+        present(vc, interactiveDismissalType: .standard, completion: nil)
     }
 }
 
