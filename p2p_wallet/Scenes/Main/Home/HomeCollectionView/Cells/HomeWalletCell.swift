@@ -12,10 +12,6 @@ class HomeWalletCell: EditableWalletCell {
     lazy var addressLabel = UILabel(text: "<public key>", textSize: 13, textColor: .textSecondary, numberOfLines: 1)
     lazy var indicatorColorView = UIView(width: 3, cornerRadius: 1.5)
     
-    override var loadingViews: [UIView] {
-        super.loadingViews + [addressLabel]
-    }
-    
     override func commonInit() {
         super.commonInit()
         coinNameLabel.font = .systemFont(ofSize: 17, weight: .medium)
