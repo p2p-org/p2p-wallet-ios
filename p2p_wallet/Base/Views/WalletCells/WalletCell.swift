@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import ListPlaceholder
 
-class WalletCell: BaseCollectionViewCell, LoadableView {
+class WalletCell: BaseCollectionViewCell {
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
     lazy var coinLogoImageView = CoinLogoImageView(size: 45)
     lazy var coinNameLabel = UILabel(text: "<Coin name>", weight: .semibold, numberOfLines: 0)
@@ -16,7 +17,6 @@ class WalletCell: BaseCollectionViewCell, LoadableView {
     lazy var equityValueLabel = UILabel(text: "<44,33>", textSize: 13)
     
     lazy var coinChangeLabel = UILabel(text: "<0.35% 24 hrs>", textSize: 13, textColor: .textSecondary)
-    var loadingViews: [UIView] {[coinLogoImageView, coinNameLabel, tokenCountLabel, coinPriceLabel, equityValueLabel, coinChangeLabel]}
     
     override func commonInit() {
         super.commonInit()
@@ -55,5 +55,13 @@ class WalletCell: BaseCollectionViewCell, LoadableView {
             coinPriceLabel.isHidden = true
             coinChangeLabel.isHidden = true
         }
+    }
+    
+    func showLoading() {
+        stackView.hideLoader()
+        stackView.showLoader()
+    }
+    func hideLoading() {
+        stackView.hideLoader()
     }
 }

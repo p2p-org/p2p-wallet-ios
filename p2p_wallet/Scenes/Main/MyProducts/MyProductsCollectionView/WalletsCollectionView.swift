@@ -29,18 +29,24 @@ class WalletsCollectionView: BECollectionView {
     }
     
     init(
+        header: BECollectionViewHeaderFootViewLayout? = nil,
         walletsRepository: WalletsRepository,
         activeWalletsSection: WalletsSection,
         hiddenWalletsSection: HiddenWalletsSection,
-        additionalSections: [BECollectionViewSection] = []
+        additionalSections: [BECollectionViewSection] = [],
+        footer: BECollectionViewHeaderFootViewLayout? = nil
     ) {
         self.walletsRepository = walletsRepository
         self.activeWalletsSection = activeWalletsSection
         self.hiddenWalletsSection = hiddenWalletsSection
-        super.init(sections: [
-            activeWalletsSection,
-            hiddenWalletsSection
-        ] + additionalSections)
+        super.init(
+            header: header,
+            sections: [
+                activeWalletsSection,
+                hiddenWalletsSection
+            ] + additionalSections,
+            footer: footer
+        )
     }
     
     override func dataDidChangeObservable() -> Observable<Void> {

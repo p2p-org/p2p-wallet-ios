@@ -61,7 +61,6 @@ extension ChooseWalletCollectionView {
     }
     
     class Cell: WalletCell, BECollectionViewCell {
-        override var loadingViews: [UIView] {super.loadingViews + [addressLabel]}
         lazy var addressLabel = UILabel(textSize: 13, textColor: .textSecondary)
         
         override func commonInit() {
