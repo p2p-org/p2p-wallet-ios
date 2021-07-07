@@ -116,6 +116,7 @@ PODS:
   - LazySubject (0.1.0):
     - RxCocoa
     - RxSwift
+  - ListPlaceholder (1.5)
   - MBProgressHUD (1.2.0)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
@@ -172,6 +173,7 @@ DEPENDENCIES:
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - LazySubject (from `LazySubject`)
+  - "ListPlaceholder (from `git@github.com:p2p-org/ListPlaceholder.git`)"
   - MBProgressHUD (~> 1.2.0)
   - RxAppState
   - RxBiBinding
@@ -234,10 +236,17 @@ EXTERNAL SOURCES:
     :path: BEPureLayout
   LazySubject:
     :path: LazySubject
+  ListPlaceholder:
+    :git: "git@github.com:p2p-org/ListPlaceholder.git"
   SolanaSwift:
     :path: SolanaSwift
   THPinViewController:
     :path: THPinViewController
+
+CHECKOUT OPTIONS:
+  ListPlaceholder:
+    :commit: a481544f6a2c03e05c726bc07fc0b69202bb4f9c
+    :git: "git@github.com:p2p-org/ListPlaceholder.git"
 
 SPEC CHECKSUMS:
   Action: 9891cd1b0a9047557d7e58e8dfae743e19d08197
@@ -262,6 +271,7 @@ SPEC CHECKSUMS:
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: 6c3df386db71d82c0817a429d2c9421a77396529
   LazySubject: 9eb19a8524f377efd877f44d9f48c17be7962ebd
+  ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
@@ -284,6 +294,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 302a2e39695dc0daff1b7816c6c66761289f0e23
+PODFILE CHECKSUM: c0fa7c92f0034e0ad8df54ed51834dfdeba1d363
 
 COCOAPODS: 1.10.1
