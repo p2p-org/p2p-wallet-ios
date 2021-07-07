@@ -11,6 +11,7 @@
 		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
 		BC036C162692C070005C1BEC /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC036C152692C070005C1BEC /* Collection+Extensions.swift */; };
 		BC036C1B269449A7005C1BEC /* AccountNotificationsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC036C1A269449A7005C1BEC /* AccountNotificationsRepository.swift */; };
+		BC036C3126959F6C005C1BEC /* BaseCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC036C3026959F6C005C1BEC /* BaseCollectionReusableView.swift */; };
 		BC0378F825FB538D00D10EAE /* MyProductsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0378F525FB538D00D10EAE /* MyProductsViewModel.swift */; };
 		BC0378F925FB538D00D10EAE /* MyProductsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0378F625FB538D00D10EAE /* MyProductsRootView.swift */; };
 		BC0378FA25FB538D00D10EAE /* MyProductsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0378F725FB538D00D10EAE /* MyProductsViewController.swift */; };
@@ -345,6 +346,7 @@
 		BB7CFE6A2633569A3CAC841A /* Pods-p2p_walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.release.xcconfig"; sourceTree = "<group>"; };
 		BC036C152692C070005C1BEC /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
 		BC036C1A269449A7005C1BEC /* AccountNotificationsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountNotificationsRepository.swift; sourceTree = "<group>"; };
+		BC036C3026959F6C005C1BEC /* BaseCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionReusableView.swift; sourceTree = "<group>"; };
 		BC0378F525FB538D00D10EAE /* MyProductsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsViewModel.swift; sourceTree = "<group>"; };
 		BC0378F625FB538D00D10EAE /* MyProductsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsRootView.swift; sourceTree = "<group>"; };
 		BC0378F725FB538D00D10EAE /* MyProductsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsViewController.swift; sourceTree = "<group>"; };
@@ -1624,6 +1626,7 @@
 				BC8F676F2608737B002FDCCD /* WLPhrasesTextView */,
 				BC65E085261DB21600E436C7 /* WalletCells */,
 				BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */,
+				BC036C3026959F6C005C1BEC /* BaseCollectionReusableView.swift */,
 				BCD5E74825512D2500F51299 /* SectionHeaderView.swift */,
 				BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */,
 				BC11C9D72590987D00E399A9 /* SectionBackgroundView.swift */,
@@ -2228,6 +2231,7 @@
 				BCFC768825E2EAB800FBE148 /* MainViewController.swift in Sources */,
 				BC10511E258884D800398EA2 /* ConfigureSecurityVC.swift in Sources */,
 				BCB7C7C92665EEC400FEC68E /* SendToken.RootView.swift in Sources */,
+				BC036C3126959F6C005C1BEC /* BaseCollectionReusableView.swift in Sources */,
 				BC460768266F4B3200A12E07 /* ObservableType+Extensions.swift in Sources */,
 				BC460764266F40F400A12E07 /* Root.ViewModel.swift in Sources */,
 				BC2EC1D22553ED1B006EEDA5 /* FlexibleHeightPresentationController.swift in Sources */,
