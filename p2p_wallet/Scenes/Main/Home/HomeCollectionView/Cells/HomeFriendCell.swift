@@ -26,22 +26,31 @@ class FriendsViewModel: BEListViewModel<Friend> {
     }
 }
 
-class HomeFriendCell: BaseCollectionViewCell, LoadableView, BECollectionViewCell {
+class HomeFriendCell: BaseCollectionViewCell, BECollectionViewCell {
     let imageView = UIImageView(width: 56, height: 56, backgroundColor: .gray, cornerRadius: 28)
     let nameLabel = UILabel(text: "friend", textSize: 12, textAlignment: .center)
     
-    override func commonInit() {
-        super.commonInit()
-        contentView.col([
-            imageView,
-            nameLabel
-        ]).with(spacing: 8, alignment: .center)
+    lazy var stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .center, distribution: .fill) {
+        imageView
+        nameLabel
     }
     
-    var loadingViews: [UIView] {[imageView, nameLabel]}
+    override func commonInit() {
+        super.commonInit()
+        contentView.addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges()
+    }
     
     func setUp(with item: AnyHashable?) {
         guard let friend = item as? Friend else {return}
         nameLabel.text = friend.name
+    }
+    
+    func showLoading() {
+        stackView.hideLoader()
+        stackView.showLoader()
+    }
+    func hideLoading() {
+        stackView.hideLoader()
     }
 }
