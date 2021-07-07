@@ -245,7 +245,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   ListPlaceholder:
-    :commit: a481544f6a2c03e05c726bc07fc0b69202bb4f9c
+    :commit: a037cc56ac43e0fb2e607991a4cc98707d2d19c2
     :git: "git@github.com:p2p-org/ListPlaceholder.git"
 
 SPEC CHECKSUMS:
