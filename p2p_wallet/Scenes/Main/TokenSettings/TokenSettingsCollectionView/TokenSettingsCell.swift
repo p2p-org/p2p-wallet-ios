@@ -13,14 +13,7 @@ protocol TokenSettingsCellDelegate: AnyObject {
     func tokenSettingsCellDidToggleVisibility(_ cell: TokenSettingsCell)
 }
 
-class TokenSettingsCell: BaseCollectionViewCell, LoadableView {
-    var loadingViews: [UIView] {[
-        iconImageView,
-        descriptionLabel,
-        mainLabel,
-        isVisibleSwitcher
-    ]}
-    
+class TokenSettingsCell: BaseCollectionViewCell {
     // MARK: - Subviews
     lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
         iconImageView
@@ -53,6 +46,14 @@ class TokenSettingsCell: BaseCollectionViewCell, LoadableView {
     
     @objc func switchChanged(_ mySwitch: UISwitch) {
         delegate?.tokenSettingsCellDidToggleVisibility(self)
+    }
+    
+    func showLoading() {
+        stackView.hideLoader()
+        stackView.showLoader()
+    }
+    func hideLoading() {
+        stackView.hideLoader()
     }
 }
 

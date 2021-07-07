@@ -8,18 +8,18 @@
 import Foundation
 import BECollectionView
 
-class DerivablePathCell: BaseCollectionViewCell, LoadableView, BECollectionViewCell {
-    var loadingViews: [UIView] {[radioButton, titleLabel]}
-    
+class DerivablePathCell: BaseCollectionViewCell, BECollectionViewCell {
     private lazy var radioButton = WLRadioButton()
     private lazy var titleLabel = UILabel(textSize: 17, numberOfLines: 0)
     
+    lazy var stackView = UIStackView(axis: .horizontal, spacing: 20, alignment: .center, distribution: .fill) {
+        radioButton
+        titleLabel
+    }
+    
     override func commonInit() {
         super.commonInit()
-        let stackView = UIStackView(axis: .horizontal, spacing: 20, alignment: .center, distribution: .fill) {
-            radioButton
-            titleLabel
-        }
+        
         contentView.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 22))
     }
@@ -32,5 +32,13 @@ class DerivablePathCell: BaseCollectionViewCell, LoadableView, BECollectionViewC
             pathTitle += " (\(L10n.deprecated))"
         }
         titleLabel.text = pathTitle
+    }
+    
+    func showLoading() {
+        stackView.hideLoader()
+        stackView.showLoader()
+    }
+    func hideLoading() {
+        stackView.hideLoader()
     }
 }
