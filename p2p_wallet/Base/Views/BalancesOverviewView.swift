@@ -9,7 +9,7 @@ import Foundation
 import Charts
 import BECollectionView
 
-class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
+class BalancesOverviewView: BERoundedCornerShadowView {
     lazy var equityValueLabel = UILabel(text: " ", textSize: 21, weight: .bold, textColor: textColor)
     lazy var changeLabel = UILabel(text: " ", textSize: 13)
     lazy var chartView: PieChartView = {
@@ -23,8 +23,6 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         chartView.noDataText = L10n.noChartDataAvailable
         return chartView
     }()
-    
-    var loadingViews: [UIView] {[equityValueLabel, changeLabel, chartView]}
     
     let textColor: UIColor
     
@@ -68,7 +66,7 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         case .loaded:
             let equityValue = data.reduce(0) { $0 + $1.amountInCurrentFiat }
             equityValueLabel.text = "\(Defaults.fiat.symbol) \(equityValue.toString(autoSetMaximumFractionDigits: true))"
-            changeLabel.text = L10n.allTokens // FIXME: - temporarily, remove later
+            changeLabel.text = L10n.allTokens
             setUpChartView(wallets: data)
             hideLoading()
         case .error:
@@ -100,5 +98,13 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         
         chartView.data = data
         chartView.highlightValues(nil)
+    }
+    
+    func showLoading() {
+        stackView.hideLoader()
+        stackView.showLoader()
+    }
+    func hideLoading() {
+        stackView.hideLoader()
     }
 }

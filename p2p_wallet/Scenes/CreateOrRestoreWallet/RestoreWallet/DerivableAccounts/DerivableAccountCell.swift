@@ -8,8 +8,22 @@
 import Foundation
 import BECollectionView
 
-class DerivableAccountCell: BaseCollectionViewCell, LoadableView, BECollectionViewCell {
-    var loadingViews: [UIView] {[logoImageView, symbolLabel, addressLabel, balanceInFiatLabel, balanceLabel]}
+class DerivableAccountCell: BaseCollectionViewCell, BECollectionViewCell {
+    lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
+        logoImageView
+        
+        UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
+            UIStackView(axis: .horizontal, spacing: 5, alignment: .center, distribution: .fill) {
+                symbolLabel
+                balanceInFiatLabel
+            }
+            
+            UIStackView(axis: .horizontal, spacing: 5, alignment: .center, distribution: .fill) {
+                addressLabel
+                balanceLabel
+            }
+        }
+    }
     
     lazy var logoImageView = CoinLogoImageView(size: 45)
     lazy var symbolLabel = UILabel(text: "SOL", textSize: 17, weight: .medium)
@@ -19,22 +33,6 @@ class DerivableAccountCell: BaseCollectionViewCell, LoadableView, BECollectionVi
     
     override func commonInit() {
         super.commonInit()
-        let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
-            logoImageView
-            
-            UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
-                UIStackView(axis: .horizontal, spacing: 5, alignment: .center, distribution: .fill) {
-                    symbolLabel
-                    balanceInFiatLabel
-                }
-                
-                UIStackView(axis: .horizontal, spacing: 5, alignment: .center, distribution: .fill) {
-                    addressLabel
-                    balanceLabel
-                }
-            }
-        }
-        
         contentView.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 15))
     }
@@ -61,5 +59,13 @@ class DerivableAccountCell: BaseCollectionViewCell, LoadableView, BECollectionVi
             .toString(maximumFractionDigits: 4, groupingSeparator: " ")
             + Defaults.fiat.symbol
         balanceLabel.text = account.amount?.toString(maximumFractionDigits: 9) + " " + "SOL"
+    }
+    
+    func showLoading() {
+        stackView.hideLoader()
+        stackView.showLoader()
+    }
+    func hideLoading() {
+        stackView.hideLoader()
     }
 }
