@@ -7,9 +7,10 @@
 
 import Foundation
 import Charts
+import ListPlaceholder
 import BECollectionView
 
-class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
+class BalancesOverviewView: BERoundedCornerShadowView {
     lazy var equityValueLabel = UILabel(text: " ", textSize: 21, weight: .bold)
     lazy var changeLabel = UILabel(text: " ", textSize: 13, textColor: .textSecondary)
     lazy var chartView: PieChartView = {
@@ -23,8 +24,6 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         chartView.noDataText = L10n.noChartDataAvailable
         return chartView
     }()
-    
-    var loadingViews: [UIView] {[equityValueLabel, changeLabel, chartView]}
     
     init() {
         super.init(shadowColor: UIColor.black.withAlphaComponent(0.05), radius: 24, offset: CGSize(width: 0, height: 8), opacity: 1, cornerRadius: 12, contentInset: .init(x: 16, y: 14))
@@ -97,5 +96,13 @@ class BalancesOverviewView: BERoundedCornerShadowView, LoadableView {
         
         chartView.data = data
         chartView.highlightValues(nil)
+    }
+    
+    func showLoading() {
+        stackView.hideLoader()
+        stackView.showLoader()
+    }
+    func hideLoading() {
+        stackView.hideLoader()
     }
 }

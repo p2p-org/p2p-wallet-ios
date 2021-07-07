@@ -12,6 +12,7 @@
 		BC036C162692C070005C1BEC /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC036C152692C070005C1BEC /* Collection+Extensions.swift */; };
 		BC036C1B269449A7005C1BEC /* AccountNotificationsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC036C1A269449A7005C1BEC /* AccountNotificationsRepository.swift */; };
 		BC036C3126959F6C005C1BEC /* BaseCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC036C3026959F6C005C1BEC /* BaseCollectionReusableView.swift */; };
+		BC036C352695A0E0005C1BEC /* HomeCollectionView+HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC036C342695A0E0005C1BEC /* HomeCollectionView+HeaderView.swift */; };
 		BC0378F825FB538D00D10EAE /* MyProductsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0378F525FB538D00D10EAE /* MyProductsViewModel.swift */; };
 		BC0378F925FB538D00D10EAE /* MyProductsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0378F625FB538D00D10EAE /* MyProductsRootView.swift */; };
 		BC0378FA25FB538D00D10EAE /* MyProductsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0378F725FB538D00D10EAE /* MyProductsViewController.swift */; };
@@ -121,9 +122,6 @@
 		BC54DD232587169400A65566 /* ValueByDateChartMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD222587169400A65566 /* ValueByDateChartMarker.swift */; };
 		BC54DD8E25872FE500A65566 /* HorizontalPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54DD8D25872FE500A65566 /* HorizontalPicker.swift */; };
 		BC5A971E260C6D42009674C4 /* ActiveWalletsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5A971D260C6D42009674C4 /* ActiveWalletsSection.swift */; };
-		BC5A9728260C6DB8009674C4 /* ActiveWalletsSection+SupplementaryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5A9727260C6DB8009674C4 /* ActiveWalletsSection+SupplementaryViews.swift */; };
-		BC5A9734260C6EA0009674C4 /* HomeHiddenWalletsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5A9733260C6EA0009674C4 /* HomeHiddenWalletsSection.swift */; };
-		BC5A9739260C6F47009674C4 /* HiddenWalletsSection+SupplementaryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5A9738260C6F47009674C4 /* HiddenWalletsSection+SupplementaryViews.swift */; };
 		BC5A974D260C8588009674C4 /* FriendsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5A974C260C8588009674C4 /* FriendsSection.swift */; };
 		BC5A9752260C860F009674C4 /* FriendsSection+SupplementaryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5A9751260C860F009674C4 /* FriendsSection+SupplementaryViews.swift */; };
 		BC5A97BB260D9967009674C4 /* MyProductsCollectionView+Sections.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5A97BA260D9967009674C4 /* MyProductsCollectionView+Sections.swift */; };
@@ -347,6 +345,7 @@
 		BC036C152692C070005C1BEC /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
 		BC036C1A269449A7005C1BEC /* AccountNotificationsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountNotificationsRepository.swift; sourceTree = "<group>"; };
 		BC036C3026959F6C005C1BEC /* BaseCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionReusableView.swift; sourceTree = "<group>"; };
+		BC036C342695A0E0005C1BEC /* HomeCollectionView+HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeCollectionView+HeaderView.swift"; sourceTree = "<group>"; };
 		BC0378F525FB538D00D10EAE /* MyProductsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsViewModel.swift; sourceTree = "<group>"; };
 		BC0378F625FB538D00D10EAE /* MyProductsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsRootView.swift; sourceTree = "<group>"; };
 		BC0378F725FB538D00D10EAE /* MyProductsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProductsViewController.swift; sourceTree = "<group>"; };
@@ -463,9 +462,6 @@
 		BC54DD222587169400A65566 /* ValueByDateChartMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueByDateChartMarker.swift; sourceTree = "<group>"; };
 		BC54DD8D25872FE500A65566 /* HorizontalPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalPicker.swift; sourceTree = "<group>"; };
 		BC5A971D260C6D42009674C4 /* ActiveWalletsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWalletsSection.swift; sourceTree = "<group>"; };
-		BC5A9727260C6DB8009674C4 /* ActiveWalletsSection+SupplementaryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActiveWalletsSection+SupplementaryViews.swift"; sourceTree = "<group>"; };
-		BC5A9733260C6EA0009674C4 /* HomeHiddenWalletsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHiddenWalletsSection.swift; sourceTree = "<group>"; };
-		BC5A9738260C6F47009674C4 /* HiddenWalletsSection+SupplementaryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HiddenWalletsSection+SupplementaryViews.swift"; sourceTree = "<group>"; };
 		BC5A974C260C8588009674C4 /* FriendsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsSection.swift; sourceTree = "<group>"; };
 		BC5A9751260C860F009674C4 /* FriendsSection+SupplementaryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FriendsSection+SupplementaryViews.swift"; sourceTree = "<group>"; };
 		BC5A97BA260D9967009674C4 /* MyProductsCollectionView+Sections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MyProductsCollectionView+Sections.swift"; sourceTree = "<group>"; };
@@ -904,18 +900,8 @@
 			isa = PBXGroup;
 			children = (
 				BC5A971D260C6D42009674C4 /* ActiveWalletsSection.swift */,
-				BC5A9727260C6DB8009674C4 /* ActiveWalletsSection+SupplementaryViews.swift */,
 			);
 			path = ActiveWalletsSection;
-			sourceTree = "<group>";
-		};
-		BC5A972C260C6E5B009674C4 /* HiddenWalletsSection */ = {
-			isa = PBXGroup;
-			children = (
-				BC5A9733260C6EA0009674C4 /* HomeHiddenWalletsSection.swift */,
-				BC5A9738260C6F47009674C4 /* HiddenWalletsSection+SupplementaryViews.swift */,
-			);
-			path = HiddenWalletsSection;
 			sourceTree = "<group>";
 		};
 		BC5A974B260C8576009674C4 /* FriendsSection */ = {
@@ -1421,6 +1407,7 @@
 				BC5A9725260C6D8F009674C4 /* Sections */,
 				BCBE148F25EF3D100014BCE5 /* Cells */,
 				BCBE149325EF3D100014BCE5 /* HomeCollectionView.swift */,
+				BC036C342695A0E0005C1BEC /* HomeCollectionView+HeaderView.swift */,
 			);
 			path = HomeCollectionView;
 			sourceTree = "<group>";
@@ -2096,6 +2083,7 @@
 				BC65E244261EE04B00E436C7 /* PricesRepository.swift in Sources */,
 				BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */,
 				BC5A97D0260DA82B009674C4 /* BaseHiddenWalletSection.swift in Sources */,
+				BC036C352695A0E0005C1BEC /* HomeCollectionView+HeaderView.swift in Sources */,
 				BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */,
 				BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */,
 				BCE42E1A25DFA5100021540E /* RestoreWalletViewController.swift in Sources */,
@@ -2111,7 +2099,6 @@
 				BC54DCF92587089700A65566 /* WalletGraphViewModel.swift in Sources */,
 				BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */,
 				BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */,
-				BC5A9728260C6DB8009674C4 /* ActiveWalletsSection+SupplementaryViews.swift in Sources */,
 				BC53E23A26576A77005624CC /* WelcomeBackVC.swift in Sources */,
 				BC65E170261E9FB600E436C7 /* Defi.swift in Sources */,
 				BCD5E770255130DD00F51299 /* News.swift in Sources */,
@@ -2211,7 +2198,6 @@
 				BCAEF2C4255E159200F3491F /* LoadableView.swift in Sources */,
 				BC6EE7C5254BBEC000FE1025 /* EnableNotificationsVC.swift in Sources */,
 				BCD5E7962551332200F51299 /* DefiCell.swift in Sources */,
-				BCD5E82F25525DE600F51299 /* FetcherState.swift in Sources */,
 				BC105136258B2A2A00398EA2 /* TermsAndConditionsVC.swift in Sources */,
 				BC7B2C7025E384F700833656 /* CreateSecurityKeysViewModel.swift in Sources */,
 				BCB7C7D12667336800FEC68E /* ProcessTransaction.ViewController.swift in Sources */,

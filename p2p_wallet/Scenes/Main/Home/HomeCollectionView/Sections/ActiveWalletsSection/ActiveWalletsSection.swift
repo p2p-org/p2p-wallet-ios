@@ -15,10 +15,6 @@ extension HomeCollectionView {
             super.init(
                 index: index,
                 viewModel: viewModel,
-                header: .init(
-                    identifier: "ActiveWalletsSectionHeaderView",
-                    viewClass: HeaderView.self
-                ),
                 cellType: HomeWalletCell.self
             )
         }
