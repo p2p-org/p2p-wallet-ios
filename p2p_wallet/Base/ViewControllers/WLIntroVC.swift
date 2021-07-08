@@ -27,7 +27,8 @@ class WLIntroVC: BaseVStackVC {
         button.onTap(self, action: #selector(back))
         return button
     }()
-    lazy var p2pValidatorLogo = UIImageView.p2pValidatorLogo
+    lazy var spacer0 = UIView.spacer
+    lazy var walletIntroLogo = UIImageView.walletIntro
     lazy var spacer1 = UIView.spacer
     lazy var titleLabel = UILabel(font: FontFamily.Montserrat.extraBold.font(size: 32), textColor: .white, numberOfLines: 0, textAlignment: .center)
     lazy var descriptionLabel = UILabel(textSize: 17, textColor: UIColor.white.withAlphaComponent(0.5), numberOfLines: 0, textAlignment: .center)
@@ -51,8 +52,8 @@ class WLIntroVC: BaseVStackVC {
         linesView.autoPinEdgesToSuperviewEdges()
         
         stackView.addArrangedSubviews([
-            UIView.spacer(46),
-            p2pValidatorLogo
+            spacer0,
+            walletIntroLogo
                 .centeredHorizontallyView,
             spacer1,
             titleLabel,
@@ -60,6 +61,9 @@ class WLIntroVC: BaseVStackVC {
             BEStackViewSpacing(84),
             buttonsStackView
         ])
+        
+        spacer0.heightAnchor.constraint(equalTo: spacer1.heightAnchor)
+            .isActive = true
         
         scrollView.contentView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 50)
     }

@@ -33,16 +33,9 @@ class WelcomeBackVC: WLIntroVC {
         super.setUp()
         
         // add center image
-        var i = 3
-        let logoImageView = UIImageView(width: 150, height: 150, image: .welcomeBack)
-        let spacer2 = UIView.spacer
-        stackView.insertArrangedSubviewsWithCustomSpacing([
-            logoImageView.centeredHorizontallyView,
-            spacer2
-        ], at: &i)
-        
-        spacer2.heightAnchor.constraint(equalTo: spacer1.heightAnchor)
-            .isActive = true
+        walletIntroLogo.image = .welcomeBack
+        walletIntroLogo.widthConstraint?.constant = 150
+        walletIntroLogo.heightConstraint?.constant = 150
         
         titleLabel.text = L10n.welcomeBack
         
