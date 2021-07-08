@@ -13,13 +13,11 @@ extension ReceiveToken {
         
         // MARK: - Properties
         let viewModel: ViewModel
-        lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
+        lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill) {
             UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
-                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
-            UILabel(text: L10n.receive + " " + viewModel.output.tokenWallet?.token.symbol, textSize: 17, weight: .semibold),
-            UIImageView(width: 32, height: 32, image: .questionMarkCircle, tintColor: .iconSecondary)
-                .onTap(viewModel, action: #selector(ReceiveToken.ViewModel.showHelp))
-        ])
+                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
+            UILabel(text: L10n.receive + " " + viewModel.output.tokenWallet?.token.symbol, textSize: 17, weight: .semibold)
+        }
             .padding(.init(all: 20))
         lazy var rootView = RootView(viewModel: viewModel)
         var transitionManager: UIViewControllerTransitioningDelegate?
