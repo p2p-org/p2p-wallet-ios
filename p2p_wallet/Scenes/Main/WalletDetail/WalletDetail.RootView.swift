@@ -38,17 +38,16 @@ extension WalletDetail {
             let collectionView = TransactionsCollectionView(
                 transactionViewModel: viewModel.output.transactionsViewModel,
                 graphViewModel: viewModel.output.graphViewModel,
-                analyticsManager: viewModel.analyticsManager
+                analyticsManager: viewModel.analyticsManager,
+                scanQrCodeAction: CocoaAction { [weak self] in
+                    self?.viewModel.receiveTokens()
+                    return .just(())
+                },
+                wallet: viewModel.output.wallet,
+                solPubkey: viewModel.output.solPubkey
             )
-            
-            collectionView.delegate = self
-            
             collectionView.contentInset.modify(dBottom: 100)
-            
-            collectionView.scanQrCodeAction = CocoaAction { [weak self] in
-                self?.viewModel.receiveTokens()
-                return .just(())
-            }
+            collectionView.delegate = self
             return collectionView
         }()
         
@@ -155,17 +154,6 @@ extension WalletDetail {
             viewModel.output.wallet
                 .drive(onNext: { [weak self] wallet in
                     self?.coinLogoImageView.setUp(wallet: wallet)
-                })
-                .disposed(by: disposeBag)
-            
-            Driver.combineLatest(
-                viewModel.output.wallet,
-                viewModel.output.solPubkey
-            )
-                .drive(onNext: {[weak self] wallet, solPubkey in
-                    self?.collectionView.wallet = wallet
-                    self?.collectionView.solPubkey = solPubkey
-                    self?.collectionView.transactionsSection.reloadHeader()
                 })
                 .disposed(by: disposeBag)
             

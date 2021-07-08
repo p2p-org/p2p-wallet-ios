@@ -11,7 +11,7 @@ import UIKit
 
 class BaseCollectionReusableView: UICollectionReusableView {
     open var padding: UIEdgeInsets {.zero}
-    public lazy var stackView = UIStackView(forAutoLayout: ())
+    public lazy var stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
     
     public override init(frame: CGRect) {
         super.init(frame: frame)

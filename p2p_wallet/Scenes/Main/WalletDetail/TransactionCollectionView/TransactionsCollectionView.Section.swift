@@ -12,27 +12,16 @@ import Action
 
 extension TransactionsCollectionView {
     class DefaultSection: BECollectionViewSection {
-        var wallet: Wallet?
-        var solPubkey: String?
-        let disposeBag = DisposeBag()
-        let graphViewModel: WalletGraphViewModel
-        var scanQrCodeAction: CocoaAction?
-        let analyticsManager: AnalyticsManagerType
-        
+        private var graphViewModel: WalletGraphViewModel
         init(
             index: Int,
             viewModel: BEListViewModelType,
-            graphViewModel: WalletGraphViewModel,
-            analyticsManager: AnalyticsManagerType
+            graphViewModel: WalletGraphViewModel
         ) {
             self.graphViewModel = graphViewModel
-            self.analyticsManager = analyticsManager
             super.init(
                 index: index,
                 layout: .init(
-                    header: .init(
-                        viewClass: WDVCSectionHeaderView.self
-                    ),
                     cellType: TransactionCell.self,
                     emptyCellType: WLEmptyCell.self,
                     interGroupSpacing: 1,
@@ -40,12 +29,6 @@ extension TransactionsCollectionView {
                 ),
                 viewModel: viewModel
             )
-        }
-        
-        override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
-            let header = super.configureHeader(indexPath: indexPath)
-            reloadHeader(header: header)
-            return header
         }
         
         override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
@@ -62,28 +45,5 @@ extension TransactionsCollectionView {
             super.reload()
             graphViewModel.reload()
         }
-        
-        func reloadHeader(header: UICollectionReusableView? = nil) {
-            if let header = (header ?? self.headerView()) as? WDVCSectionHeaderView {
-                header.headerLabel.text = L10n.activity
-                header.analyticsManager = analyticsManager
-                if let wallet = wallet {
-                    header.setUp(wallet: wallet, solPubkey: solPubkey)
-                }
-                header.lineChartView
-                    .subscribed(to: graphViewModel)
-                    .disposed(by: disposeBag)
-                header.chartPicker.delegate = self
-                header.scanQrCodeAction = scanQrCodeAction
-            }
-        }
-    }
-}
-
-extension TransactionsCollectionView.DefaultSection: HorizontalPickerDelegate {
-    func picker(_ picker: HorizontalPicker, didSelectOptionAtIndex index: Int) {
-        guard index < Period.allCases.count else {return}
-        graphViewModel.period = Period.allCases[index]
-        graphViewModel.reload()
     }
 }
