@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "678e166f47e672d7ef5f38123153c32e60e4b124r1-600-575_hq 1.png",
+      "filename" : "Logo.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "678e166f47e672d7ef5f38123153c32e60e4b124r1-600-575_hq 1@2x.png",
+      "filename" : "Logo@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "678e166f47e672d7ef5f38123153c32e60e4b124r1-600-575_hq 1@3x.png",
+      "filename" : "Logo@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
