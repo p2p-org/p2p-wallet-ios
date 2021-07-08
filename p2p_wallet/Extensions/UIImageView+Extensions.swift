@@ -25,7 +25,7 @@ extension UIImageView {
         return self
     }
     
-    static var p2pValidatorLogo: UIImageView {
-        UIImageView(width: 88, height: 31, image: .p2pValidatorLogo)
+    static var walletIntro: UIImageView {
+        UIImageView(width: 90, height: 90, image: .walletIntro)
     }
 }
