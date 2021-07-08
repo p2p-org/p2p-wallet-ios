@@ -9,8 +9,9 @@ import Foundation
 import BECollectionView
 
 class TransactionCell: BaseCollectionViewCell {
+    override var padding: UIEdgeInsets {.init(all: 20)}
+    
     // MARK: - Subviews
-    private lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
     private lazy var imageView = TransactionImageView(size: 45, backgroundColor: .grayPanel, cornerRadius: 12)
     private lazy var transactionTypeLabel = UILabel(textSize: 17, weight: .semibold)
     private lazy var amountInFiatLabel = UILabel(textSize: 15, weight: .semibold, textAlignment: .right)
@@ -21,11 +22,13 @@ class TransactionCell: BaseCollectionViewCell {
     
     override func commonInit() {
         super.commonInit()
-        contentView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 20))
         
-        stackView.addArrangedSubviews([
-            imageView,
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        stackView.alignment = .center
+        
+        stackView.addArrangedSubviews {
+            imageView
             UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
                     transactionTypeLabel, amountInFiatLabel, BEStackViewSpacing(5), transactionStatusIndicator
@@ -34,21 +37,13 @@ class TransactionCell: BaseCollectionViewCell {
                     descriptionLabel, swapTransactionImageView, amountInTokenLabel
                 ])
             ])
-        ])
+        }
         
         let separator = UIView.defaultSeparator()
         contentView.addSubview(separator)
         separator.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets.init(all: 20).modifying(dBottom: -20), excludingEdge: .top)
         
         swapTransactionImageView.isHidden = true
-    }
-    
-    func showLoading() {
-        stackView.hideLoader()
-        stackView.showLoader()
-    }
-    func hideLoading() {
-        stackView.hideLoader()
     }
 }
 

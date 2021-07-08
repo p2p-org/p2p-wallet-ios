@@ -100,7 +100,7 @@ class BalancesOverviewView: BERoundedCornerShadowView {
     
     func showLoading() {
         stackView.hideLoader()
-        stackView.showLoader()
+        stackView.showLoader(customGradientColor: .defaultLoaderGradientColors)
     }
     func hideLoading() {
         stackView.hideLoader()

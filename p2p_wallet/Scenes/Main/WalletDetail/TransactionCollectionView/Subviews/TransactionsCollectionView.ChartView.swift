@@ -10,6 +10,20 @@ import Charts
 
 extension TransactionsCollectionView {
     class ChartView: LineChartView, LazyView {
+        // MARK: - Subviews
+        lazy var noDataPlaceholderView: UIView = {
+            let view = UIView(backgroundColor: .grayMain.withAlphaComponent(0.8))
+            let text = UILabel(text: L10n.noChartDataAvailable, textSize: 15, weight: .semibold, textColor: .textSecondary, textAlignment: .center)
+            view.addSubview(text)
+            text.autoPinEdge(toSuperviewEdge: .leading, withInset: 20, relation: .greaterThanOrEqual)
+            text.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20, relation: .greaterThanOrEqual)
+            text.autoCenterInSuperview()
+            view.isHidden = true
+            view.isUserInteractionEnabled = true
+            return view
+        }()
+        
+        // MARK: - Initializers
         init() {
             super.init(frame: .zero)
             configureForAutoLayout()
@@ -26,12 +40,16 @@ extension TransactionsCollectionView {
             legend.enabled = false
             pinchZoomEnabled = false
             doubleTapToZoomEnabled = false
-            noDataText = L10n.noChartDataAvailable
+            noDataText = ""
             
             // marker
             let marker = createMarker()
             marker.chartView = self
             self.marker = marker
+            
+            // placeholder
+            addSubview(noDataPlaceholderView)
+            noDataPlaceholderView.autoPinEdgesToSuperviewEdges()
         }
         
         required init?(coder aDecoder: NSCoder) {
@@ -43,6 +61,27 @@ extension TransactionsCollectionView {
             let values = prices.map { price -> ChartDataEntry in
                 x += 1
                 return ChartDataEntry(x: Double(x), y: price.close, data: price.startTime)
+            }
+            drawChart(entries: values)
+        }
+        
+        private func drawChart(entries: [ChartDataEntry]) {
+            var values = entries
+            
+            // show placeholder
+            noDataPlaceholderView.isHidden = !values.isEmpty
+            isUserInteractionEnabled = !values.isEmpty
+            let animated = !values.isEmpty
+            
+            if values.isEmpty {
+                values = [
+                    ChartDataEntry(x: 0, y: 1, data: nil),
+                    ChartDataEntry(x: 1, y: 3, data: nil),
+                    ChartDataEntry(x: 2, y: 2, data: nil),
+                    ChartDataEntry(x: 3, y: 1, data: nil),
+                    ChartDataEntry(x: 4, y: 5, data: nil),
+                    ChartDataEntry(x: 5, y: 7, data: nil)
+                ]
             }
             
             let set1 = LineChartDataSet(entries: values)
@@ -66,12 +105,12 @@ extension TransactionsCollectionView {
             let data = LineChartData(dataSet: set1)
             data.setDrawValues(false)
             self.data = data
-            self.animate(xAxisDuration: 0.3)
+            self.animate(xAxisDuration: animated ? 0.3: 0)
         }
         
         func handleError(_ error: Error) {
             // TODO: Error
-            
+            drawChart(entries: [])
         }
         
         private func createMarker() -> ValueByDateChartMarker {
