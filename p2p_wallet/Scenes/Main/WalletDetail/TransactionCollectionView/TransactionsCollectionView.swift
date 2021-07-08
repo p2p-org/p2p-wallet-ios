@@ -1,5 +1,5 @@
 //
-//  WalletDetailTransactionsCollectionView.swift
+//  TransactionsCollectionView.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 07/04/2021.
@@ -9,8 +9,8 @@ import Foundation
 import BECollectionView
 import Action
 
-class WalletDetailTransactionsCollectionView: BECollectionView {
-    let transactionsSection: WalletDetailTransactionsSection
+class TransactionsCollectionView: BECollectionView {
+    let transactionsSection: DefaultSection
     let analyticsManager: AnalyticsManagerType
     
     var scanQrCodeAction: CocoaAction? {
