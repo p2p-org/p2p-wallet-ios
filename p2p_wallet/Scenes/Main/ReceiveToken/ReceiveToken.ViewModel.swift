@@ -20,12 +20,14 @@ extension ReceiveToken {
             let isShowingDetail: Driver<Bool>
             let pubkey: String
             let tokenWallet: Wallet?
+            let tokensCount: Driver<Int>
         }
         
         // MARK: - Dependencies
         private let pubkey: String
         private let tokenWallet: Wallet?
         private let analyticsManager: AnalyticsManagerType
+        private let tokensRepository: TokensRepository
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -38,9 +40,15 @@ extension ReceiveToken {
         private let isShowingDetailSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
-        init(pubkey: String, tokenWallet: Wallet? = nil, analyticsManager: AnalyticsManagerType) {
+        init(
+            pubkey: String,
+            tokenWallet: Wallet? = nil,
+            analyticsManager: AnalyticsManagerType,
+            tokensRepository: TokensRepository
+        ) {
             self.pubkey = pubkey
             self.analyticsManager = analyticsManager
+            self.tokensRepository = tokensRepository
             var tokenWallet = tokenWallet
             if tokenWallet?.pubkey == pubkey {
                 tokenWallet = nil
@@ -54,7 +62,10 @@ extension ReceiveToken {
                 isShowingDetail: isShowingDetailSubject
                     .asDriver(),
                 pubkey: pubkey,
-                tokenWallet: tokenWallet
+                tokenWallet: tokenWallet,
+                tokensCount: tokensRepository.getTokensList()
+                    .map {$0.count}
+                    .asDriver(onErrorJustReturn: 554)
             )
         }
         

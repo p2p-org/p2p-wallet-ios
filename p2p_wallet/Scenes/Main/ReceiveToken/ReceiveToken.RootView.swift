@@ -18,6 +18,7 @@ extension ReceiveToken {
         var isCopying = false
         
         // MARK: - Subviews
+        private lazy var tokenCountLabel = UILabel(text: "+", textSize: 12, weight: .semibold, textColor: .white)
         private lazy var addressLabel = UILabel(text: viewModel.output.pubkey, textSize: 15, weight: .semibold, textAlignment: .center)
             .lineBreakMode(.byTruncatingMiddle)
         
@@ -47,7 +48,7 @@ extension ReceiveToken {
         private func layout() {
             scrollView.contentInset.modify(dLeft: -.defaultPadding, dRight: -.defaultPadding)
             
-            stackView.spacing = 30
+            stackView.spacing = 20
             stackView.addArrangedSubviews {
                 UILabel(text: L10n.oneUnifiedAddressToReceiveSOLOrSPLTokens, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
                     .padding(.init(x: 20, y: 0))
@@ -57,6 +58,22 @@ extension ReceiveToken {
                         QrCodeView(size: 190, coinLogoSize: 50)
                             .with(string: viewModel.output.pubkey)
                     )
+                    .centeredHorizontallyView
+                
+                UIView(forAutoLayout: ())
+                    .withModifier {[unowned self] view in
+                        let imageView = UIImageView(width: 92, height: 32, image: .tokenExampleStack)
+                        view.addSubview(imageView)
+                        imageView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .trailing)
+                        let wrapperView = self.tokenCountLabel
+                            .padding(.init(x: 6, y: 4), backgroundColor: .h202020.withAlphaComponent(0.8), cornerRadius: 12)
+                        view.addSubview(wrapperView)
+                        wrapperView.autoPinEdge(toSuperviewEdge: .trailing)
+                        wrapperView.autoAlignAxis(toSuperviewAxis: .horizontal)
+                        wrapperView.autoPinEdge(.leading, to: .trailing, of: imageView, withOffset: -12)
+                        return view
+                    }
+                    .onTap(viewModel, action: #selector(ViewModel.showHelp))
                     .centeredHorizontallyView
                 
                 UIStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill) {
@@ -111,6 +128,11 @@ extension ReceiveToken {
         }
         
         private func bind() {
+            viewModel.output.tokensCount
+                .map {"+\($0 - 4)"}
+                .drive(tokenCountLabel.rx.text)
+                .disposed(by: disposeBag)
+            
             viewModel.output.isShowingDetail
                 .map {!$0}
                 .drive(detailView.rx.isHidden)
