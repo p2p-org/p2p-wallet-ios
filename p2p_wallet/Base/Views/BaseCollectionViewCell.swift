@@ -8,6 +8,9 @@
 import Foundation
 
 class BaseCollectionViewCell: UICollectionViewCell {
+    var padding: UIEdgeInsets {.init(all: 20)}
+    
+    lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
     override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
@@ -21,6 +24,15 @@ class BaseCollectionViewCell: UICollectionViewCell {
     }
     
     func commonInit() {
-        
+        contentView.addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges(with: padding)
+    }
+    
+    func showLoading() {
+        stackView.hideLoader()
+        stackView.showLoader(customGradientColor: .defaultLoaderGradientColors)
+    }
+    func hideLoading() {
+        stackView.hideLoader()
     }
 }
