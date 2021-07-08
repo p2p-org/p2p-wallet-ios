@@ -9,14 +9,11 @@ import Foundation
 import BECollectionView
 
 class NewsCell: BaseCollectionViewCell {
+    override var padding: UIEdgeInsets {.init(all: 16)}
     lazy var imageView = UIImageView(backgroundColor: .gray)
     lazy var titleLabel = UILabel(text: "How it works", textSize: 21, weight: .semibold, textColor: .textWhite, numberOfLines: 0)
     lazy var descriptionLabel = UILabel(text: "The most important info you should know before investing", textSize: 17, textColor: .textWhite, numberOfLines: 0)
-    
-    lazy var textStackView = UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
-        titleLabel
-        descriptionLabel
-    }
+
     
     override func commonInit() {
         super.commonInit()
@@ -26,20 +23,24 @@ class NewsCell: BaseCollectionViewCell {
         contentView.addSubview(imageView)
         imageView.autoPinEdgesToSuperviewEdges()
         
-        contentView.addSubview(textStackView)
-        textStackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 16), excludingEdge: .top)
-        
+        stackView.spacing = 5
+        stackView.constraintToSuperviewWithAttribute(.top)?.isActive = false
+        bringSubviewToFront(stackView)
+        stackView.addArrangedSubviews {
+            titleLabel
+            descriptionLabel
+        }
     }
     
-    func showLoading() {
-        textStackView.hideLoader()
-        textStackView.showLoader()
-        
+    override func showLoading() {
+        super.showLoading()
         imageView.hideLoader()
-        imageView.showLoader()
+        imageView.showLoader(customGradientColor: .defaultLoaderGradientColors)
     }
-    func hideLoading() {
-        textStackView.hideLoader()
+    
+    override func hideLoading() {
+        super.hideLoading()
+        imageView.hideLoader()
     }
 }
 

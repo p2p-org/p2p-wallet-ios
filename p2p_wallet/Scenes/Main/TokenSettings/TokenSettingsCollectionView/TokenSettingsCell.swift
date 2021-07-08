@@ -14,16 +14,9 @@ protocol TokenSettingsCellDelegate: AnyObject {
 }
 
 class TokenSettingsCell: BaseCollectionViewCell {
+    override var padding: UIEdgeInsets {.init(x: 20, y: 14)}
+    
     // MARK: - Subviews
-    lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
-        iconImageView
-            .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12),
-        UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            descriptionLabel,
-            mainLabel
-        ]),
-        isVisibleSwitcher
-    ])
     lazy var iconImageView = UIImageView(width: 24, height: 24, image: .buttonEdit, tintColor: .iconSecondary)
     lazy var descriptionLabel = UILabel(textSize: 13, weight: .semibold, textColor: .textSecondary)
     lazy var mainLabel = UILabel(textSize: 17, weight: .semibold)
@@ -34,8 +27,18 @@ class TokenSettingsCell: BaseCollectionViewCell {
     
     override func commonInit() {
         super.commonInit()
-        addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 14))
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        
+        stackView.addArrangedSubviews {
+            iconImageView
+                .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12)
+            UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
+                descriptionLabel,
+                mainLabel
+            ])
+            isVisibleSwitcher
+        }
         
         let separator = UIView.separator(height: 1, color: .clear.onDarkMode(.separator))
         addSubview(separator)
@@ -46,14 +49,6 @@ class TokenSettingsCell: BaseCollectionViewCell {
     
     @objc func switchChanged(_ mySwitch: UISwitch) {
         delegate?.tokenSettingsCellDidToggleVisibility(self)
-    }
-    
-    func showLoading() {
-        stackView.hideLoader()
-        stackView.showLoader()
-    }
-    func hideLoading() {
-        stackView.hideLoader()
     }
 }
 

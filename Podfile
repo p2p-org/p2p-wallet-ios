@@ -30,7 +30,7 @@ target 'p2p_wallet' do
   pod 'JazziconSwift'
   pod 'Amplitude', '~> 8.3.0'
   pod 'Kingfisher'
-  pod 'ListPlaceholder', :git => 'git@github.com:p2p-org/ListPlaceholder.git'
+  pod 'ListPlaceholder', :git => 'git@github.com:p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   
   # Firebase
   pod 'Firebase/Analytics'
