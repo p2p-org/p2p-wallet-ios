@@ -228,7 +228,6 @@
 		BCAB206F25DE0563004F4F9D /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAB206E25DE0563004F4F9D /* DependencyContainer.swift */; };
 		BCACA7DC2678942B0091E118 /* ProcessingTransactionsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCACA7DB2678942B0091E118 /* ProcessingTransactionsRepository.swift */; };
 		BCACA7E12679E75E0091E118 /* AnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCACA7E02679E75E0091E118 /* AnalyticsEvent.swift */; };
-		BCAEF2C4255E159200F3491F /* LoadableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAEF2C3255E159200F3491F /* LoadableView.swift */; };
 		BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2231825412AF8002D997F /* AppDelegate.swift */; };
 		BCB2232225412AF8002D997F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232125412AF8002D997F /* Assets.xcassets */; };
 		BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232325412AF9002D997F /* LaunchScreen.storyboard */; };
@@ -572,7 +571,6 @@
 		BCAB206E25DE0563004F4F9D /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		BCACA7DB2678942B0091E118 /* ProcessingTransactionsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingTransactionsRepository.swift; sourceTree = "<group>"; };
 		BCACA7E02679E75E0091E118 /* AnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEvent.swift; sourceTree = "<group>"; };
-		BCAEF2C3255E159200F3491F /* LoadableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadableView.swift; sourceTree = "<group>"; };
 		BCB2231525412AF8002D997F /* p2p_wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = p2p_wallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB2231825412AF8002D997F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BCB2232125412AF8002D997F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -1617,7 +1615,6 @@
 				BCD5E74825512D2500F51299 /* SectionHeaderView.swift */,
 				BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */,
 				BC11C9D72590987D00E399A9 /* SectionBackgroundView.swift */,
-				BCAEF2C3255E159200F3491F /* LoadableView.swift */,
 				BC3EA480254FD3CE00FB1FEA /* BaseCollectionViewCell.swift */,
 				BC7AD0E7254A540700B4A070 /* WLButton.swift */,
 				BC2EC1F82553FF6A006EEDA5 /* DashedButton.swift */,
@@ -2195,7 +2192,6 @@
 				BCE3D58525F2426D0092F91B /* SystemVersion.swift in Sources */,
 				BC46075C266F325500A12E07 /* WalletDetail.ViewModel.swift in Sources */,
 				BC2DA29A260B0AD700B50738 /* CreateTokenHandler.swift in Sources */,
-				BCAEF2C4255E159200F3491F /* LoadableView.swift in Sources */,
 				BC6EE7C5254BBEC000FE1025 /* EnableNotificationsVC.swift in Sources */,
 				BCD5E7962551332200F51299 /* DefiCell.swift in Sources */,
 				BC105136258B2A2A00398EA2 /* TermsAndConditionsVC.swift in Sources */,

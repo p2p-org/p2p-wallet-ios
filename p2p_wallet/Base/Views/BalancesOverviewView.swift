@@ -64,7 +64,7 @@ class BalancesOverviewView: BERoundedCornerShadowView {
         case .loaded:
             let equityValue = data.reduce(0) { $0 + $1.amountInCurrentFiat }
             equityValueLabel.text = "\(Defaults.fiat.symbol) \(equityValue.toString(autoSetMaximumFractionDigits: true))"
-            changeLabel.text = L10n.allTokens // FIXME: - temporarily, remove later
+            changeLabel.text = L10n.allTokens
             setUpChartView(wallets: data)
             hideLoading()
         case .error:

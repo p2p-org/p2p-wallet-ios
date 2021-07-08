@@ -8,18 +8,7 @@
 import Foundation
 import BECollectionView
 
-class TransactionCell: BaseCollectionViewCell, LoadableView {
-    // MARK: - Properties
-    var loadingViews: [UIView] {[
-        imageView,
-        transactionTypeLabel,
-        amountInFiatLabel,
-        transactionStatusIndicator,
-        descriptionLabel,
-        amountInTokenLabel,
-        swapTransactionImageView
-    ]}
-    
+class TransactionCell: BaseCollectionViewCell {
     // MARK: - Subviews
     private lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
     private lazy var imageView = TransactionImageView(size: 45, backgroundColor: .grayPanel, cornerRadius: 12)
@@ -52,6 +41,14 @@ class TransactionCell: BaseCollectionViewCell, LoadableView {
         separator.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets.init(all: 20).modifying(dBottom: -20), excludingEdge: .top)
         
         swapTransactionImageView.isHidden = true
+    }
+    
+    func showLoading() {
+        stackView.hideLoader()
+        stackView.showLoader()
+    }
+    func hideLoading() {
+        stackView.hideLoader()
     }
 }
 
