@@ -9,7 +9,8 @@ import Foundation
 import ListPlaceholder
 
 class WalletCell: BaseCollectionViewCell {
-    lazy var stackView = UIStackView(axis: .horizontal, spacing: 16.adaptiveWidth, alignment: .top, distribution: .fill)
+    override var padding: UIEdgeInsets {.zero}
+    
     lazy var coinLogoImageView = CoinLogoImageView(size: 45)
     lazy var coinNameLabel = UILabel(text: "<Coin name>", weight: .semibold, numberOfLines: 0)
     lazy var coinPriceLabel = UILabel(text: "<12>", textSize: 13)
@@ -20,10 +21,9 @@ class WalletCell: BaseCollectionViewCell {
     
     override func commonInit() {
         super.commonInit()
-        contentView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges()
-        
-        // Override this method to arrange stackview
+        stackView.axis = .horizontal
+        stackView.spacing = 16.adaptiveWidth
+        stackView.alignment = .top
     }
     
     override func prepareForReuse() {
@@ -55,13 +55,5 @@ class WalletCell: BaseCollectionViewCell {
             coinPriceLabel.isHidden = true
             coinChangeLabel.isHidden = true
         }
-    }
-    
-    func showLoading() {
-        stackView.hideLoader()
-        stackView.showLoader()
-    }
-    func hideLoading() {
-        stackView.hideLoader()
     }
 }

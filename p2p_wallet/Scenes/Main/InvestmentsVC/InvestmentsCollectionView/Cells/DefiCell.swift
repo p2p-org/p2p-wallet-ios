@@ -9,26 +9,22 @@ import Foundation
 import BECollectionView
 
 class DefiCell: BaseCollectionViewCell {
-    lazy var stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill)
-    
+    override var padding: UIEdgeInsets {.init(all: 16)}
     lazy var imageView = UIImageView(width: 32, height: 32, backgroundColor: .gray, cornerRadius: 16)
     lazy var titleLabel = UILabel(text: "Token exchange", weight: .semibold, numberOfLines: 0)
     
     override func commonInit() {
         super.commonInit()
         backgroundColor = .textWhite
-        contentView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 16))
         
-        stackView.addArrangedSubviews([imageView, titleLabel])
-    }
-    
-    func showLoading() {
-        stackView.hideLoader()
-        stackView.showLoader()
-    }
-    func hideLoading() {
-        stackView.hideLoader()
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        stackView.alignment = .center
+        
+        stackView.addArrangedSubviews {
+            imageView
+            titleLabel
+        }
     }
 }
 

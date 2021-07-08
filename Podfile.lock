@@ -173,7 +173,7 @@ DEPENDENCIES:
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - LazySubject (from `LazySubject`)
-  - "ListPlaceholder (from `git@github.com:p2p-org/ListPlaceholder.git`)"
+  - "ListPlaceholder (from `git@github.com:p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)"
   - MBProgressHUD (~> 1.2.0)
   - RxAppState
   - RxBiBinding
@@ -237,6 +237,7 @@ EXTERNAL SOURCES:
   LazySubject:
     :path: LazySubject
   ListPlaceholder:
+    :branch: custom_gradient_color
     :git: "git@github.com:p2p-org/ListPlaceholder.git"
   SolanaSwift:
     :path: SolanaSwift
@@ -245,7 +246,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   ListPlaceholder:
-    :commit: a037cc56ac43e0fb2e607991a4cc98707d2d19c2
+    :commit: a729fd45aa22b9d087477d1ccedb9f4292762a58
     :git: "git@github.com:p2p-org/ListPlaceholder.git"
 
 SPEC CHECKSUMS:
@@ -294,6 +295,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: c0fa7c92f0034e0ad8df54ed51834dfdeba1d363
+PODFILE CHECKSUM: db042deee8095124a1d26e5d7d6c60e8dd82c1da
 
 COCOAPODS: 1.10.1

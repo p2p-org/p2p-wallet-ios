@@ -14,3 +14,15 @@ extension Array where Element: Equatable {
         }
     }
 }
+
+extension Array where Element: UIColor {
+    static var defaultLoaderGradientColors: [UIColor] {
+        [
+            .gray.withAlphaComponent(0.12),
+            .gray.withAlphaComponent(0.24),
+            .gray.withAlphaComponent(0.48),
+            .gray.withAlphaComponent(0.24),
+            .gray.withAlphaComponent(0.12)
+        ]
+    }
+}
