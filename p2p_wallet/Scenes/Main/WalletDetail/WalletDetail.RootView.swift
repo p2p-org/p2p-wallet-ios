@@ -34,8 +34,8 @@ extension WalletDetail {
         
         lazy var settingsButton = UIImageView(width: 25, height: 25, image: .settings, tintColor: .a3a5ba)
         
-        lazy var collectionView: WalletDetailTransactionsCollectionView = { [weak self] in
-            let collectionView = WalletDetailTransactionsCollectionView(
+        lazy var collectionView: TransactionsCollectionView = {
+            let collectionView = TransactionsCollectionView(
                 transactionViewModel: viewModel.output.transactionsViewModel,
                 graphViewModel: viewModel.output.graphViewModel,
                 analyticsManager: viewModel.analyticsManager
