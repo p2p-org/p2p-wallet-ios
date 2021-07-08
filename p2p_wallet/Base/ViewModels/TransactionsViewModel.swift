@@ -57,6 +57,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         
         accountNotificationsRepository.observeAccountNotifications(account: account)
             .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            .delay(.seconds(3), scheduler: MainScheduler.instance)
             .subscribe(onNext: {[weak self] _ in
                 self?.reload()
             })
