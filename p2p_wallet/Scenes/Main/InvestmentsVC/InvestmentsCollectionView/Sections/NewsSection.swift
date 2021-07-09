@@ -8,7 +8,7 @@
 import Foundation
 import BECollectionView
 
-class NewsSection: BECollectionViewSection {
+class NewsSection: BEStaticSectionsCollectionView.Section {
     init(index: Int, viewModel: NewsViewModel) {
         super.init(
             index: index,
