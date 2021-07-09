@@ -28,8 +28,8 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     }
     
     private lazy var derivationPathLabel = UILabel(textSize: 17, weight: .semibold)
-    private lazy var accountsCollectionView: BECollectionView = {
-        let collectionView = BECollectionView(
+    private lazy var accountsCollectionView: BEStaticSectionsCollectionView = {
+        let collectionView = BEStaticSectionsCollectionView(
             sections: [
                 .init(
                     index: 0,

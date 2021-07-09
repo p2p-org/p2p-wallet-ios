@@ -19,7 +19,7 @@ class DerivablePathsVC: WLIndicatorModalVC, BECollectionViewDelegate {
     weak var delegate: DerivablePathsVCDelegate?
     
     // MARK: - Subviews
-    private lazy var collectionView = BECollectionView(
+    private lazy var collectionView = BEStaticSectionsCollectionView(
         sections: [
             .init(
                 index: 0,
@@ -67,7 +67,7 @@ class DerivablePathsVC: WLIndicatorModalVC, BECollectionViewDelegate {
         collectionView.delegate = self
     }
     
-    func beCollectionView(collectionView: BECollectionView, didSelect item: AnyHashable) {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let path = item as? SelectableDerivablePath else {return}
         var paths = viewModel.data
         for i in 0..<paths.count {
