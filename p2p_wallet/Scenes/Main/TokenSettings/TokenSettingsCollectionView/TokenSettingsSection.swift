@@ -9,7 +9,7 @@ import Foundation
 import Action
 import BECollectionView
 
-class TokenSettingsSection: BECollectionViewSection {
+class TokenSettingsSection: BEStaticSectionsCollectionView.Section {
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         (cell as? TokenSettingsCell)?.delegate = self
