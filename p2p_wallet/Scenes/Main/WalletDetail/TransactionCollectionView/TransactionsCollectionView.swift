@@ -10,7 +10,7 @@ import BECollectionView
 import Action
 import RxCocoa
 
-class TransactionsCollectionView: BECollectionView {
+class TransactionsCollectionView: BEStaticSectionsCollectionView {
     let transactionsSection: DefaultSection
     let graphViewModel: WalletGraphViewModel
     let analyticsManager: AnalyticsManagerType

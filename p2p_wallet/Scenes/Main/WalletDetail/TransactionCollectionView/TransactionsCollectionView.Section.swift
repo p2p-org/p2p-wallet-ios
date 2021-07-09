@@ -11,7 +11,7 @@ import RxSwift
 import Action
 
 extension TransactionsCollectionView {
-    class DefaultSection: BECollectionViewSection {
+    class DefaultSection: Section {
         private var graphViewModel: WalletGraphViewModel
         init(
             index: Int,
