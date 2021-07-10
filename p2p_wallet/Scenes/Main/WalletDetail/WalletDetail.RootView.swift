@@ -158,8 +158,9 @@ extension WalletDetail {
                 .disposed(by: disposeBag)
             
             // log
-            collectionView.dataDidChangeObservable()
-                .map {[weak self] in self?.collectionView.sections.first?.viewModel.getCurrentPage()}
+            viewModel.output.transactionsViewModel
+                .dataDidChange
+                .map {[weak self] _ in self?.viewModel.output.transactionsViewModel.getCurrentPage()}
                 .distinctUntilChanged()
                 .subscribe(onNext: {[weak self] currentPage in
                     guard let currentPage = currentPage else {return}
