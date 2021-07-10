@@ -77,16 +77,13 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
         return headerView
     }
     
+    override func configureSectionHeaderView(view: UICollectionReusableView?, sectionIndex: Int) {
+        let view = view as? SectionHeaderView
+        view?.dateLabel.text = "\(String(describing: sections[safe: sectionIndex]?.userInfo))"
+    }
+    
     override func refresh() {
         super.refresh()
         graphViewModel.reload()
-    }
-    
-    override func dataDidLoad() {
-        super.dataDidLoad()
-        for (index, section) in sections.enumerated() {
-            let headerView = sectionHeaderView(sectionIndex: index) as? SectionHeaderView
-            headerView?.dateLabel.text = "\(section.userInfo)"
-        }
     }
 }
