@@ -11,23 +11,20 @@ import RxSwift
 import Action
 
 extension TransactionsCollectionView {
-    class DefaultSection: Section {
-        private var graphViewModel: WalletGraphViewModel
-        init(
-            index: Int,
-            viewModel: BEListViewModelType,
-            graphViewModel: WalletGraphViewModel
-        ) {
-            self.graphViewModel = graphViewModel
+    class DefaultSection: BECollectionViewSectionBase {
+        init(index: Int) {
             super.init(
                 index: index,
                 layout: .init(
+                    header: .init(
+                        viewClass: SectionHeaderView.self,
+                        heightDimension: .estimated(15)
+                    ),
                     cellType: TransactionCell.self,
                     emptyCellType: WLEmptyCell.self,
                     interGroupSpacing: 1,
                     itemHeight: .estimated(85)
-                ),
-                viewModel: viewModel
+                )
             )
         }
         
@@ -39,11 +36,6 @@ extension TransactionsCollectionView {
                 cell.imageView.image = .transactionEmpty
             }
             return cell
-        }
-        
-        override func reload() {
-            super.reload()
-            graphViewModel.reload()
         }
     }
 }
