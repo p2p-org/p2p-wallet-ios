@@ -46,7 +46,6 @@ extension WalletDetail {
                 wallet: viewModel.output.wallet,
                 solPubkey: viewModel.output.solPubkey
             )
-            collectionView.contentInset.modify(dBottom: 100)
             collectionView.delegate = self
             return collectionView
         }()

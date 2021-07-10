@@ -39,18 +39,30 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
             viewModel: transactionViewModel,
             mapDataToSections: { viewModel in
                 let transactions = viewModel.getData(type: SolanaSDK.ParsedTransaction.self)
-                var dict = [[SolanaSDK.ParsedTransaction]]()
-                for transaction in transactions {
-                    dict.append([transaction])
+                
+                let calendar = Calendar.current
+                let today = calendar.startOfDay(for: Date())
+                let dictionary = Dictionary(grouping: transactions) { item -> Int in
+                    guard let date = item.blockTime else {return .max}
+                    let createdDate = calendar.startOfDay(for: date)
+                    return calendar.dateComponents([.day], from: createdDate, to: today).day ?? 0
                 }
                 
-                return dict.enumerated().map { key, value in
-                    SectionInfo(
-                        userInfo: key,
-                        layout: DefaultSection(index: key),
-                        items: value
-                    )
-                }
+                return dictionary.keys.sorted()
+                    .map {key -> SectionInfo in
+                        var sectionInfo: String
+                        switch key {
+                        case 0: sectionInfo = L10n.today
+                        case 1: sectionInfo = L10n.yesterday
+                        case .max: sectionInfo = L10n.unknownDate
+                        default: sectionInfo = L10n.dDayAgo(key)
+                        }
+                        return SectionInfo(
+                            userInfo: sectionInfo,
+                            layout: DefaultSection(index: 0),
+                            items: dictionary[key] ?? []
+                        )
+                    }
             },
             layout: .init(
                 header: .init(
@@ -63,6 +75,8 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
                 itemHeight: .estimated(85)
             )
         )
+        
+        contentInset.modify(dBottom: 120)
     }
     
     override func configureHeaderView(kind: String, indexPath: IndexPath) -> UICollectionReusableView? {
@@ -79,7 +93,8 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     
     override func configureSectionHeaderView(view: UICollectionReusableView?, sectionIndex: Int) {
         let view = view as? SectionHeaderView
-        view?.dateLabel.text = "\(String(describing: sections[safe: sectionIndex]?.userInfo))"
+        let text = sections[safe: sectionIndex]?.userInfo as? String
+        view?.setUp(header: text)
     }
     
     override func refresh() {
