@@ -36,6 +36,10 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
     }
     
     func request(_ request: Single<ProcessTransactionResponseType>, transaction: SolanaSDK.ParsedTransaction, fee: SolanaSDK.Lamports) -> Int {
+        // modify blocktime
+        var transaction = transaction
+        transaction.blockTime = Date()
+        
         // add pending transaction
         var transactions = transactionsSubject.value
         let index = transactions.count
