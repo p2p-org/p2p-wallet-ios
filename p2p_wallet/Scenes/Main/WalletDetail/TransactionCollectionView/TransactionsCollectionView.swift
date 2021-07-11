@@ -42,6 +42,11 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
                 
                 let calendar = Calendar.current
                 let today = calendar.startOfDay(for: Date())
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateStyle = .medium
+                dateFormatter.timeStyle = .none
+                dateFormatter.locale = Locale.shared
+                
                 let dictionary = Dictionary(grouping: transactions) { item -> Int in
                     guard let date = item.blockTime else {return .max}
                     let createdDate = calendar.startOfDay(for: date)
@@ -52,10 +57,21 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
                     .map {key -> SectionInfo in
                         var sectionInfo: String
                         switch key {
-                        case 0: sectionInfo = L10n.today
-                        case 1: sectionInfo = L10n.yesterday
-                        case .max: sectionInfo = L10n.unknownDate
-                        default: sectionInfo = L10n.dDayAgo(key)
+                        case 0:
+                            sectionInfo = L10n.today + ", " + dateFormatter.string(from: today)
+                        case 1:
+                            sectionInfo = L10n.yesterday
+                            if let date = calendar.date(byAdding: .day, value: -1, to: today) {
+                                sectionInfo += ", " + dateFormatter.string(from: date)
+                            }
+                        case .max:
+                            sectionInfo = L10n.unknownDate
+                        default:
+                            if let date = calendar.date(byAdding: .day, value: -key, to: today) {
+                                sectionInfo = dateFormatter.string(from: date)
+                            } else {
+                                sectionInfo = L10n.unknownDate
+                            }
                         }
                         return SectionInfo(
                             userInfo: sectionInfo,
@@ -94,7 +110,7 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     override func configureSectionHeaderView(view: UICollectionReusableView?, sectionIndex: Int) {
         let view = view as? SectionHeaderView
         let text = sections[safe: sectionIndex]?.userInfo as? String
-        view?.setUp(header: text)
+        view?.setUp(header: text?.uppercaseFirst)
     }
     
     override func refresh() {
