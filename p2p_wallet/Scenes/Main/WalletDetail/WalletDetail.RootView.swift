@@ -46,7 +46,6 @@ extension WalletDetail {
                 wallet: viewModel.output.wallet,
                 solPubkey: viewModel.output.solPubkey
             )
-            collectionView.contentInset.modify(dBottom: 100)
             collectionView.delegate = self
             return collectionView
         }()
@@ -158,8 +157,9 @@ extension WalletDetail {
                 .disposed(by: disposeBag)
             
             // log
-            collectionView.dataDidChangeObservable()
-                .map {[weak self] in self?.collectionView.sections.first?.viewModel.getCurrentPage()}
+            viewModel.output.transactionsViewModel
+                .dataDidChange
+                .map {[weak self] _ in self?.viewModel.output.transactionsViewModel.getCurrentPage()}
                 .distinctUntilChanged()
                 .subscribe(onNext: {[weak self] currentPage in
                     guard let currentPage = currentPage else {return}
@@ -178,7 +178,7 @@ extension WalletDetail.RootView: UITextFieldDelegate {
 }
 
 extension WalletDetail.RootView: BECollectionViewDelegate {
-    func beCollectionView(collectionView: BECollectionView, didSelect item: AnyHashable) {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let transaction = item as? SolanaSDK.ParsedTransaction else {return}
         viewModel.showTransaction(transaction)
     }

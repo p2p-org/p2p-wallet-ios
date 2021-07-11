@@ -13,8 +13,8 @@ class TokenSettingsRootView: BEView {
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
-    lazy var collectionView: BECollectionView = {
-        let collectionView = BECollectionView(sections: [
+    lazy var collectionView: BEStaticSectionsCollectionView = {
+        let collectionView = BEStaticSectionsCollectionView(sections: [
             TokenSettingsSection(
                 index: 0,
                 layout: .init(
@@ -64,7 +64,7 @@ class TokenSettingsRootView: BEView {
 }
 
 extension TokenSettingsRootView: BECollectionViewDelegate {
-    func beCollectionView(collectionView: BECollectionView, didSelect item: AnyHashable) {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let item = item as? TokenSettings else {
             return
         }
