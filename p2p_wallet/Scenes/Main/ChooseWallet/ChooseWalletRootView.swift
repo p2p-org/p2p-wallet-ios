@@ -77,7 +77,7 @@ class ChooseWalletRootView: BEView {
 }
 
 extension ChooseWalletRootView: BECollectionViewDelegate {
-    func beCollectionView(collectionView: BECollectionView, didSelect item: AnyHashable) {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let item = item as? Wallet else { return }
         viewModel.selectedWallet.onNext(item)
     }

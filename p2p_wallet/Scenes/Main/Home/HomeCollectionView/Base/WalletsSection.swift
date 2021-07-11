@@ -9,14 +9,14 @@ import Foundation
 import BECollectionView
 import Action
 
-class WalletsSection: BECollectionViewSection {
+class WalletsSection: BEStaticSectionsCollectionView.Section {
     var walletCellEditAction: Action<Wallet, Void>?
     
     init(
         index: Int,
         viewModel: WalletsRepository,
-        header: BECollectionViewSectionLayout.Header? = nil,
-        footer: BECollectionViewSectionLayout.Footer? = nil,
+        header: BECollectionViewSectionHeaderLayout? = nil,
+        footer: BECollectionViewSectionFooterLayout? = nil,
         background: UICollectionReusableView.Type? = nil,
         cellType: BECollectionViewCell.Type,
         customFilter: @escaping ((AnyHashable) -> Bool) = { item in
