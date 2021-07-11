@@ -75,7 +75,6 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
                         }
                         return SectionInfo(
                             userInfo: sectionInfo,
-                            layout: DefaultSection(index: 0),
                             items: dictionary[key] ?? []
                         )
                     }
@@ -111,6 +110,16 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
         let view = view as? SectionHeaderView
         let text = sections[safe: sectionIndex]?.userInfo as? String
         view?.setUp(header: text?.uppercaseFirst)
+    }
+    
+    override func configureCell(indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell? {
+        let cell = super.configureCell(indexPath: indexPath, item: item)
+        if let cell = cell as? WLEmptyCell {
+            cell.titleLabel.text = L10n.noTransactionsYet
+            cell.subtitleLabel.text = L10n.youHaveNotMadeAnyTransactionYet
+            cell.imageView.image = .transactionEmpty
+        }
+        return cell
     }
     
     override func refresh() {
