@@ -10,7 +10,7 @@ import BECollectionView
 import Action
 import RxSwift
 
-class WalletsCollectionView: BECollectionView {
+class WalletsCollectionView: BEStaticSectionsCollectionView {
     let walletsRepository: WalletsRepository
     let activeWalletsSection: WalletsSection
     let hiddenWalletsSection: HiddenWalletsSection
@@ -29,12 +29,12 @@ class WalletsCollectionView: BECollectionView {
     }
     
     init(
-        header: BECollectionViewHeaderFootViewLayout? = nil,
+        header: BECollectionViewHeaderFooterViewLayout? = nil,
         walletsRepository: WalletsRepository,
         activeWalletsSection: WalletsSection,
         hiddenWalletsSection: HiddenWalletsSection,
-        additionalSections: [BECollectionViewSection] = [],
-        footer: BECollectionViewHeaderFootViewLayout? = nil
+        additionalSections: [Section] = [],
+        footer: BECollectionViewHeaderFooterViewLayout? = nil
     ) {
         self.walletsRepository = walletsRepository
         self.activeWalletsSection = activeWalletsSection

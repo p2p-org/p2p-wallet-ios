@@ -9,7 +9,7 @@ import Foundation
 import BECollectionView
 import Action
 
-class FriendsSection: BECollectionViewSection {
+class FriendsSection: BEStaticSectionsCollectionView.Section {
     var receiveAction: CocoaAction?
     var sendAction: CocoaAction?
     var swapAction: CocoaAction?

@@ -9,7 +9,7 @@ import Foundation
 import BECollectionView
 
 extension ChooseWalletCollectionView {
-    class FirstSection: BECollectionViewSection {
+    class FirstSection: Section {
         init(viewModel: ChooseWalletViewModel, filter: ((AnyHashable) -> Bool)? = nil) {
             super.init(
                 index: 0,
@@ -34,7 +34,7 @@ extension ChooseWalletCollectionView {
         }
     }
     
-    class SecondSection: BECollectionViewSection {
+    class SecondSection: Section {
         init(viewModel: OtherWalletsViewModel, firstSectionFilter: ((AnyHashable) -> Bool)? = nil) {
             super.init(
                 index: 1,

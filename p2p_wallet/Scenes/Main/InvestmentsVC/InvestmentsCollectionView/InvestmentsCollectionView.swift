@@ -8,10 +8,10 @@
 import Foundation
 import BECollectionView
 
-class InvestmentsCollectionView: BECollectionView {
+class InvestmentsCollectionView: BEStaticSectionsCollectionView {
     // MARK: - Properties
     let newsSection: NewsSection
-    let defisSection: BECollectionViewSection
+    let defisSection: DefisSection
     
     // MARK: - Initializers
     init(

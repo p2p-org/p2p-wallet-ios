@@ -8,7 +8,7 @@
 import Foundation
 import BECollectionView
 
-class ChooseWalletCollectionView: BECollectionView {
+class ChooseWalletCollectionView: BEStaticSectionsCollectionView {
     // MARK: - Properties
     let viewModel: ChooseWalletViewModel
     
@@ -16,7 +16,7 @@ class ChooseWalletCollectionView: BECollectionView {
     init(viewModel: ChooseWalletViewModel, firstSectionFilter: ((AnyHashable) -> Bool)? = nil) {
         self.viewModel = viewModel
         
-        var sections: [BECollectionViewSection] = [ FirstSection(viewModel: viewModel, filter: firstSectionFilter) ]
+        var sections: [Section] = [ FirstSection(viewModel: viewModel, filter: firstSectionFilter) ]
         
         if let viewModel = viewModel.otherWalletsViewModel {
             sections.append(

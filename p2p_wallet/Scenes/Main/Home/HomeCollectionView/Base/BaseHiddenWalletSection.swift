@@ -49,10 +49,10 @@ class HiddenWalletsSection: WalletsSection {
     init(
         index: Int,
         viewModel: WalletsRepository,
-        header: BECollectionViewSectionLayout.Header = .init(
+        header: BECollectionViewSectionHeaderLayout = .init(
             viewClass: HiddenWalletsSectionHeaderView.self
         ),
-        footer: BECollectionViewSectionLayout.Footer? = nil,
+        footer: BECollectionViewSectionFooterLayout? = nil,
         background: UICollectionReusableView.Type? = nil,
         limit: Int? = nil
     ) {
