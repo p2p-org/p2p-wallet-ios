@@ -22,6 +22,10 @@ class BackupShowPhrasesVC: WLIndicatorModalVC, CustomPresentableViewController {
     override func setUp() {
         super.setUp()
         add(child: childVC, to: containerView)
+        
+        if SystemVersion.isIOS13() {
+            childVC.view.layoutIfNeeded()
+        }
     }
     
     override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
