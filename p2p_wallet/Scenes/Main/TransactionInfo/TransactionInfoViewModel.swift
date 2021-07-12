@@ -47,7 +47,7 @@ class TransactionInfoViewModel {
     @objc func copySourceAddressToClipboard() {
         switch transaction.value.value {
         case let transferTransaction as SolanaSDK.TransferTransaction:
-            UIApplication.shared.copyToClipboard(transferTransaction.source?.pubkey)
+            UIApplication.shared.copyToClipboard(transferTransaction.authority ?? transferTransaction.source?.pubkey)
         default:
             return
         }
@@ -56,7 +56,7 @@ class TransactionInfoViewModel {
     @objc func copyDestinationAddressToClipboard() {
         switch transaction.value.value {
         case let transferTransaction as SolanaSDK.TransferTransaction:
-            UIApplication.shared.copyToClipboard(transferTransaction.destination?.pubkey)
+            UIApplication.shared.copyToClipboard(transferTransaction.destinationAuthority ?? transferTransaction.destination?.pubkey)
         case let createAccountTransaction as SolanaSDK.CreateAccountTransaction:
             UIApplication.shared.copyToClipboard(createAccountTransaction.newWallet?.pubkey)
         default:

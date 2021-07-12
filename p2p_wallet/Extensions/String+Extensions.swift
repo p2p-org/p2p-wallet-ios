@@ -44,6 +44,11 @@ extension String {
         NSLocalizedString(self, comment: "")
     }
     // swiftlint:enable swiftgen_strings
+    
+    func truncatingMiddle(numOfSymbolsRevealed: Int = 4) -> String {
+        if count <= 2 * numOfSymbolsRevealed {return self}
+        return prefix(numOfSymbolsRevealed) + "..." + suffix(numOfSymbolsRevealed)
+    }
 }
 
 extension String {

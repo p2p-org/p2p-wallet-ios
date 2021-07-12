@@ -74,12 +74,12 @@ extension TransactionCell: BECollectionViewCell {
             case .send:
                 if let destination = transaction.destination
                 {
-                    descriptionLabel.text = L10n.to(destination.shortPubkey())
+                    descriptionLabel.text = L10n.to(destination.pubkey?.truncatingMiddle() ?? "")
                 }
             case .receive:
                 if let source = transaction.source
                 {
-                    descriptionLabel.text = L10n.fromToken(source.shortPubkey())
+                    descriptionLabel.text = L10n.fromToken(source.pubkey?.truncatingMiddle() ?? "")
                 }
             default:
                 break

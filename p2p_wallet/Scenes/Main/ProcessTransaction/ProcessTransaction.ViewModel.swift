@@ -94,6 +94,7 @@ extension ProcessTransaction {
                     source: fromWallet,
                     destination: Wallet(pubkey: receiver, lamports: 0, token: fromWallet.token),
                     authority: walletsRepository.solWallet?.pubkey,
+                    destinationAuthority: nil,
                     amount: lamports.convertToBalance(decimals: fromWallet.token.decimals),
                     myAccount: fromWallet.pubkey
                 )

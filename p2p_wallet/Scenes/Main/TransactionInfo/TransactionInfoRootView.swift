@@ -283,6 +283,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                     title: L10n.from,
                     iconView: fromIconView,
                     wallet: transferTransaction.source,
+                    authority: transferTransaction.authority,
                     selector: #selector(
                         TransactionInfoViewModel.copySourceAddressToClipboard
                     )
@@ -291,6 +292,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                     title: L10n.to,
                     iconView: toIconView,
                     wallet: transferTransaction.destination,
+                    authority: transferTransaction.destinationAuthority,
                     selector: #selector(
                         TransactionInfoViewModel.copyDestinationAddressToClipboard
                     )
@@ -304,6 +306,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                     iconView: CoinLogoImageView(size: 45)
                         .with(token: createAccountTransaction.newWallet?.token),
                     wallet: createAccountTransaction.newWallet,
+                    authority: nil,
                     selector: #selector(
                         TransactionInfoViewModel.copyDestinationAddressToClipboard
                     )
@@ -315,7 +318,8 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                     title: L10n.closedWallet,
                     iconView: CoinLogoImageView(size: 45)
                         .with(token: closedAccountTransaction.closedWallet?.token),
-                    wallet: closedAccountTransaction.closedWallet
+                    wallet: closedAccountTransaction.closedWallet,
+                    authority: nil
                 )
             ])
         default:
@@ -396,6 +400,7 @@ private extension TransactionInfoRootView {
         title: String,
         iconView: UIView?,
         wallet: Wallet?,
+        authority: String?,
         selector: Selector? = nil
     ) -> TransactionInfoSection<UILabel, UIStackView> {
         var arrangedSubviews: [BEStackViewElement] = []
@@ -407,7 +412,7 @@ private extension TransactionInfoRootView {
         arrangedSubviews.append(
             UIStackView(axis: .vertical, spacing: 7, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 UILabel(text: wallet?.token.symbol, textSize: 17, weight: .semibold),
-                UILabel(text: wallet?.shortPubkey(), weight: .semibold, textColor: .textSecondary)
+                UILabel(text: authority?.truncatingMiddle() ?? wallet?.pubkey?.truncatingMiddle(), weight: .semibold, textColor: .textSecondary)
             ])
         )
         
