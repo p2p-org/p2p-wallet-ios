@@ -13,9 +13,6 @@ class WLIntroVC: BaseVStackVC {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
         .hidden
     }
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        .lightContent
-    }
     override var padding: UIEdgeInsets {
         UIEdgeInsets(x: 30, y: 0)
     }

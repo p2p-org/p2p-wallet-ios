@@ -14,10 +14,6 @@ protocol CreateOrRestoreWalletScenesFactory {
 }
 
 class CreateOrRestoreWalletViewController: BaseVC {
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        .lightContent
-    }
-    
     // MARK: - Properties
     let viewModel: CreateOrRestoreWalletViewModel
     let scenesFactory: CreateOrRestoreWalletScenesFactory
