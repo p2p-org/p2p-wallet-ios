@@ -57,9 +57,12 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         
         accountNotificationsRepository.observeAccountNotifications(account: account)
             .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .delay(.seconds(3), scheduler: MainScheduler.instance)
+            .delay(.seconds(2), scheduler: MainScheduler.instance)
             .subscribe(onNext: {[weak self] _ in
-                self?.reload()
+                self?.updateFirstPage(onSuccessFilterNewData: { [weak self] newData in
+                    guard let self = self else {return newData}
+                    return newData.filter {newTx in !self.data.contains(where: {oldTx in oldTx.signature == newTx.signature})}
+                })
             })
             .disposed(by: disposeBag)
     }
