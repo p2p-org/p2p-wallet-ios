@@ -297,7 +297,7 @@
 "Create account" = "Tạo Tài khoản";
 "Close account" = "Đóng Tài khoản";
 "%@ to %@" = "%@ đến %@";
-"%@ Сlosed" = "%@ Đã đóng";
+"%@ Closed" = "%@ Đã đóng";
 "%@ Created" = "Tạo token %@";
 "To %@" = "Đến %@";
 "From token %@" = "Từ %@";
@@ -384,3 +384,6 @@
 "Seed phrase must have 12 or 24 words" = "Cụm từ hạt giống phải có 12 hoặc 24 từ";
 "Seed phrase must have at least 12 words" = "Cụm từ hạt giống phải có ít nhất 12 từ";
 "No chart data available." = "Không có sẵn dữ liệu biểu đồ.";
+"Today" = "Hôm nay";
+"Yesterday" = "Hôm qua";
+"Unknown date" = "Ngày không xác định";

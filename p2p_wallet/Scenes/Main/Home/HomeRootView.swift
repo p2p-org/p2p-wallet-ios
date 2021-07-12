@@ -193,7 +193,7 @@ class HomeRootView: BEView {
 }
 
 extension HomeRootView: BECollectionViewDelegate {
-    func beCollectionView(collectionView: BECollectionView, didSelect item: AnyHashable) {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let wallet = item as? Wallet else {return}
         viewModel.navigationSubject.onNext(.walletDetail(wallet: wallet))
     }

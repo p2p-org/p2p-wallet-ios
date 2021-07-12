@@ -9,10 +9,6 @@ import Foundation
 import SwiftUI
 
 class WellDoneVC: WLIntroVC {
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        .lightContent
-    }
-    
     let viewModel: Root.ViewModel
     let analyticsManager: AnalyticsManagerType
     init(viewModel: Root.ViewModel, analyticsManager: AnalyticsManagerType) {

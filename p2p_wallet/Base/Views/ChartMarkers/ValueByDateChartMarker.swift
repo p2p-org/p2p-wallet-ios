@@ -10,7 +10,7 @@ import Charts
 
 class ValueByDateChartMarker: ChartMarker {
     override func refreshContent(entry: ChartDataEntry, highlight: Highlight) {
-        var string = entry.y.toString(maximumFractionDigits: 4) + " " + Defaults.fiat.symbol
+        var string = entry.y.toString(autoSetMaximumFractionDigits: true) + " " + Defaults.fiat.symbol
         if let date = entry.data as? Date {
             string += "\n"
             string += date.string(withFormat: "dd MMM yyyy HH:mm:ss")

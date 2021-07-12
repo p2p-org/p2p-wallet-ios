@@ -10,8 +10,7 @@ import BECollectionView
 import Action
 import RxCocoa
 
-class TransactionsCollectionView: BECollectionView {
-    let transactionsSection: DefaultSection
+class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let graphViewModel: WalletGraphViewModel
     let analyticsManager: AnalyticsManagerType
     let scanQrCodeAction: CocoaAction
@@ -32,18 +31,67 @@ class TransactionsCollectionView: BECollectionView {
         self.wallet = wallet
         self.solPubkey = solPubkey
         
-        transactionsSection = .init(
-            index: 0,
-            viewModel: transactionViewModel,
-            graphViewModel: graphViewModel
-        )
         super.init(
             header: .init(
-                viewType: TransactionsCollectionView.HeaderView.self,
+                viewType: HeaderView.self,
                 heightDimension: .estimated(557)
             ),
-            sections: [transactionsSection]
+            viewModel: transactionViewModel,
+            mapDataToSections: { viewModel in
+                let transactions = viewModel.getData(type: SolanaSDK.ParsedTransaction.self)
+                
+                let calendar = Calendar.current
+                let today = calendar.startOfDay(for: Date())
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateStyle = .medium
+                dateFormatter.timeStyle = .none
+                dateFormatter.locale = Locale.shared
+                
+                let dictionary = Dictionary(grouping: transactions) { item -> Int in
+                    guard let date = item.blockTime else {return .max}
+                    let createdDate = calendar.startOfDay(for: date)
+                    return calendar.dateComponents([.day], from: createdDate, to: today).day ?? 0
+                }
+                
+                return dictionary.keys.sorted()
+                    .map {key -> SectionInfo in
+                        var sectionInfo: String
+                        switch key {
+                        case 0:
+                            sectionInfo = L10n.today + ", " + dateFormatter.string(from: today)
+                        case 1:
+                            sectionInfo = L10n.yesterday
+                            if let date = calendar.date(byAdding: .day, value: -1, to: today) {
+                                sectionInfo += ", " + dateFormatter.string(from: date)
+                            }
+                        case .max:
+                            sectionInfo = L10n.unknownDate
+                        default:
+                            if let date = calendar.date(byAdding: .day, value: -key, to: today) {
+                                sectionInfo = dateFormatter.string(from: date)
+                            } else {
+                                sectionInfo = L10n.unknownDate
+                            }
+                        }
+                        return SectionInfo(
+                            userInfo: sectionInfo,
+                            items: dictionary[key] ?? []
+                        )
+                    }
+            },
+            layout: .init(
+                header: .init(
+                    viewClass: SectionHeaderView.self,
+                    heightDimension: .estimated(15)
+                ),
+                cellType: TransactionCell.self,
+                emptyCellType: WLEmptyCell.self,
+                interGroupSpacing: 1,
+                itemHeight: .estimated(85)
+            )
         )
+        
+        contentInset.modify(dBottom: 120)
     }
     
     override func configureHeaderView(kind: String, indexPath: IndexPath) -> UICollectionReusableView? {
@@ -56,5 +104,26 @@ class TransactionsCollectionView: BECollectionView {
             solPubkey: solPubkey
         )
         return headerView
+    }
+    
+    override func configureSectionHeaderView(view: UICollectionReusableView?, sectionIndex: Int) {
+        let view = view as? SectionHeaderView
+        let text = sections[safe: sectionIndex]?.userInfo as? String
+        view?.setUp(header: text?.uppercaseFirst)
+    }
+    
+    override func configureCell(indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell? {
+        let cell = super.configureCell(indexPath: indexPath, item: item)
+        if let cell = cell as? WLEmptyCell {
+            cell.titleLabel.text = L10n.noTransactionsYet
+            cell.subtitleLabel.text = L10n.youHaveNotMadeAnyTransactionYet
+            cell.imageView.image = .transactionEmpty
+        }
+        return cell
+    }
+    
+    override func refresh() {
+        super.refresh()
+        graphViewModel.reload()
     }
 }

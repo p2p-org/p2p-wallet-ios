@@ -384,3 +384,6 @@
 "Seed phrase must have 12 or 24 words" = "La phrase de départ doit avoir 12 ou 24 mots";
 "Seed phrase must have at least 12 words" = "La phrase de départ doit avoir au moins 12 mots";
 "No chart data available." = "Aucune donnée graphique disponible.";
+"Today" = "Aujourd'hui";
+"Yesterday" = "Hier";
+"Unknown date" = "Date inconnue";
