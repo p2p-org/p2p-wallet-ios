@@ -10,6 +10,9 @@ import UIKit
 
 extension Root {
     class ViewController: BaseVC {
+        private var statusBarStyle: UIStatusBarStyle = .default
+        override var preferredStatusBarStyle: UIStatusBarStyle {self.statusBarStyle}
+        
         // MARK: - Properties
         private let viewModel: ViewModel
         private let scenesFactory: RootViewControllerScenesFactory
@@ -49,11 +52,6 @@ extension Root {
                 .disposed(by: disposeBag)
         }
         
-        override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-            super.traitCollectionDidChange(previousTraitCollection)
-            setNeedsStatusBarAppearanceUpdate()
-        }
-        
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
@@ -62,22 +60,33 @@ extension Root {
                 let nc = BENavigationController(rootViewController: vc)
                 transition(to: nc)
                 
+                changeStatusBarStyle(.lightContent)
+                
             case .onboarding:
                 let vc = scenesFactory.makeOnboardingViewController()
                 transition(to: vc)
+                
+                changeStatusBarStyle(.lightContent)
                 
             case .onboardingDone(let isRestoration):
                 let vc: UIViewController = isRestoration ? scenesFactory.makeWelcomeBackVC(): scenesFactory.makeWellDoneVC()
                 transition(to: vc)
                 
+                changeStatusBarStyle(.lightContent)
+                
             case .main(let showAuthenticationWhenAppears):
                 let vc = scenesFactory.makeMainViewController(authenticateWhenAppears: showAuthenticationWhenAppears)
                 transition(to: vc)
                 
+                changeStatusBarStyle(.default)
+                
             default:
                 break
             }
-            
+        }
+        
+        private func changeStatusBarStyle(_ style: UIStatusBarStyle) {
+            self.statusBarStyle = style
             setNeedsStatusBarAppearanceUpdate()
         }
     }
