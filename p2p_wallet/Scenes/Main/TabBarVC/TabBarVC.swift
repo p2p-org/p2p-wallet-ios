@@ -14,14 +14,6 @@ protocol TabBarScenesFactory {
 }
 
 class TabBarVC: BEPagesVC {
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        switch currentPage {
-        case 0:
-            return .lightContent
-        default:
-            return .default
-        }
-    }
     lazy var tabBar = TabBar(cornerRadius: 20)
     
     let scenesFactory: TabBarScenesFactory
