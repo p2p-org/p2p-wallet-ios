@@ -16,17 +16,17 @@ class WLPhrasesListView: BEView {
         tagListView.tagBackgroundColor = .tagBackground
         tagListView.textFont = .systemFont(ofSize: 15)
         tagListView.textColor = .textBlack
-        tagListView.marginX = 7
-        tagListView.marginY = 10
+        tagListView.marginX = 6
+        tagListView.marginY = 4
         tagListView.paddingX = 12
-        tagListView.paddingY = 12
+        tagListView.paddingY = 6
         tagListView.borderWidth = 1
         tagListView.borderColor = .tagBorder
         tagListView.cornerRadius = 8
         return tagListView
     }()
     lazy var copyToClipboardButton = UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: .textSecondary.onDarkMode(.white), textAlignment: .center)
-        .padding(.init(all: 16))
+        .padding(.init(all: 9))
         .onTap(self, action: #selector(copyToClipboard))
     
     var copyToClipboardAction: CocoaAction?
@@ -35,10 +35,10 @@ class WLPhrasesListView: BEView {
         super.commonInit()
         let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
             descriptionLabel,
-            BEStackViewSpacing(30),
+            BEStackViewSpacing(20),
             UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
                 tagListView
-                    .padding(.init(top: 10, left: 10, bottom: 16, right: 10), cornerRadius: 12),
+                    .padding(.init(all: 10), cornerRadius: 12),
                 UIView.defaultSeparator(),
                 copyToClipboardButton
             ])
