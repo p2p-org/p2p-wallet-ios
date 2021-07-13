@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import RxCocoa
 
 class TransactionInfoViewController: WLIndicatorModalVC, CustomPresentableViewController {
     
@@ -37,9 +38,13 @@ class TransactionInfoViewController: WLIndicatorModalVC, CustomPresentableViewCo
             .subscribe(onNext: {[weak self] in self?.navigate(to: $0)})
             .disposed(by: disposeBag)
         
-        viewModel.showDetailTransaction
-            .distinctUntilChanged()
-            .subscribe(onNext: {[weak self] _ in
+        Driver.combineLatest(
+            viewModel.showDetailTransaction
+                .distinctUntilChanged()
+                .asDriver(onErrorJustReturn: false),
+            viewModel.transaction.asDriver()
+        )
+            .drive(onNext: {[weak self] _ in
                 self?.updatePresentationLayout(animated: true)
             })
             .disposed(by: disposeBag)
