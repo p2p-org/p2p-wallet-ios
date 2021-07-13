@@ -24,14 +24,8 @@ class HomeRootView: BEView {
         collectionView.sendAction = viewModel.navigationAction(scene: .scanQr)
         collectionView.swapAction = viewModel.navigationAction(scene: .swapToken)
         collectionView.showAllProductsAction = viewModel.navigationAction(scene: .allProducts)
-        collectionView.walletCellEditAction = Action<Wallet, Void> { [weak self] wallet in
-            self?.viewModel.navigationSubject.onNext(.walletSettings(wallet: wallet))
-            return .just(())
-        }
-        collectionView.showHideHiddenWalletsAction = CocoaAction { [weak self] in
-            self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
-            return .just(())
-        }
+        collectionView.walletCellEditAction = viewModel.navigateToWalletSettingsAction()
+        collectionView.showHideHiddenWalletsAction = viewModel.showHideHiddenWalletAction()
         return collectionView
     }()
     
@@ -63,6 +57,6 @@ class HomeRootView: BEView {
 extension HomeRootView: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let wallet = item as? Wallet else {return}
-        viewModel.navigationSubject.onNext(.walletDetail(wallet: wallet))
+        viewModel.showWalletDetail(wallet: wallet)
     }
 }
