@@ -28,7 +28,10 @@ class HomeViewModel {
     let walletsRepository: WalletsRepository
     
     // MARK: - Subjects
-    let navigationSubject = PublishSubject<HomeNavigatableScene>()
+    private let navigationSubject = PublishSubject<HomeNavigatableScene>()
+    var navigationDriver: Driver<HomeNavigatableScene> {
+        navigationSubject.asDriver(onErrorJustReturn: .profile)
+    }
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
@@ -40,10 +43,28 @@ class HomeViewModel {
     
     // MARK: - Actions
     func navigationAction(scene: HomeNavigatableScene) -> CocoaAction {
-        CocoaAction {
-            self.navigationSubject.onNext(scene)
+        CocoaAction { [weak self] in
+            self?.navigationSubject.onNext(scene)
             return .just(())
         }
+    }
+    
+    func navigateToWalletSettingsAction() -> Action<Wallet, Void> {
+        Action<Wallet, Void> { [weak self] wallet in
+            self?.navigationSubject.onNext(.walletSettings(wallet: wallet))
+            return .just(())
+        }
+    }
+    
+    func showHideHiddenWalletAction() -> CocoaAction {
+        CocoaAction { [weak self] in
+            self?.walletsRepository.toggleIsHiddenWalletShown()
+            return .just(())
+        }
+    }
+    
+    func showWalletDetail(wallet: Wallet) {
+        navigationSubject.onNext(.walletDetail(wallet: wallet))
     }
 //    @objc func showDetail() {
 //        

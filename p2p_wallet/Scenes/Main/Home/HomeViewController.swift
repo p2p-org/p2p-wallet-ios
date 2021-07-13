@@ -87,8 +87,8 @@ class HomeViewController: BaseVC {
             })
             .disposed(by: disposeBag)
         
-        viewModel.navigationSubject
-            .subscribe(onNext: {[unowned self] in self.navigate(to: $0)})
+        viewModel.navigationDriver
+            .drive(onNext: {[weak self] in self?.navigate(to: $0)})
             .disposed(by: disposeBag)
     }
     
