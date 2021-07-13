@@ -12,7 +12,7 @@ class WalletCell: BaseCollectionViewCell {
     override var padding: UIEdgeInsets {.zero}
     
     lazy var coinLogoImageView = CoinLogoImageView(size: 45)
-    lazy var coinNameLabel = UILabel(text: "<Coin name>", weight: .semibold, numberOfLines: 0)
+    lazy var coinSymbolLabel = UILabel(text: "<Coin name>", weight: .semibold, numberOfLines: 0)
     lazy var coinPriceLabel = UILabel(text: "<12>", textSize: 13)
     lazy var tokenCountLabel = UILabel(text: "<0,00344 Tkns>", textSize: 13, textColor: .textSecondary)
     lazy var equityValueLabel = UILabel(text: "<44,33>", textSize: 13)
@@ -36,11 +36,11 @@ class WalletCell: BaseCollectionViewCell {
     func setUp(with item: Wallet) {
         coinLogoImageView.setUp(wallet: item)
         if item.name.isEmpty {
-            coinNameLabel.text = item.mintAddress.prefix(4) + "..." + item.mintAddress.suffix(4)
+            coinSymbolLabel.text = item.mintAddress.prefix(4) + "..." + item.mintAddress.suffix(4)
         } else {
-            coinNameLabel.text = item.name /*+ (item.isProcessing == true ? " (\(L10n.creating))" : "")*/
+            coinSymbolLabel.text = item.name /*+ (item.isProcessing == true ? " (\(L10n.creating))" : "")*/
         }
-        tokenCountLabel.text = "\(item.amount.toString(autoSetMaximumFractionDigits: true)) \(item.token.symbol)"
+        tokenCountLabel.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.token.symbol)"
         
         if let price = item.price {
             equityValueLabel.isHidden = false
