@@ -41,7 +41,7 @@ class CreateSecurityKeysViewModel {
     
     @objc func copyToClipboard() {
         analyticsManager.log(event: .createWalletCopySeedClick)
-        UIApplication.shared.copyToClipboard(phrasesSubject.value.joined(separator: " "))
+        UIApplication.shared.copyToClipboard(phrasesSubject.value.joined(separator: " "), alertMessage: L10n.seedPhraseCopiedToClipboard)
     }
     
     @objc func saveToICloud() {
