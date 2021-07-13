@@ -93,6 +93,7 @@ extension UIApplication {
         
         (toast?.viewWithTag(1) as? UILabel)?.text = message
         
+        kWindow?.bringSubviewToFront(toast!)
         kWindow?.layoutIfNeeded()
         toast?.constraintToSuperviewWithAttribute(.top)?.constant = 25
         
