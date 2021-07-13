@@ -35,6 +35,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     private lazy var statusView = TransactionStatusView()
     
     // MARK: - Sections
+    private lazy var fromToSectionsView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
     private lazy var transactionDetailView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
     private lazy var transactionIdSection = createTransactionIdSection(signatureLabel: signatureLabel)
     private lazy var blockNumSection = createLabelsOnlySection(title: L10n.blockNumber)
@@ -97,26 +98,29 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         // setup content
         stackView.spacing = 0
         
-        stackView.addArrangedSubviews([
+        stackView.addArrangedSubviews {
             // status
-            statusView.centeredHorizontallyView,
+            statusView.centeredHorizontallyView
             
-            BEStackViewSpacing(30),
+            BEStackViewSpacing(30)
+            
+            // from/to
+            fromToSectionsView
             
             // detail
-            transactionDetailView,
+            transactionDetailView
             
             // sections
-            transactionIdSection,
+            transactionIdSection
             
             // buttons
-            UIView.defaultSeparator(),
-            BEStackViewSpacing(20),
+            UIView.defaultSeparator()
+            BEStackViewSpacing(20)
             
             toggleShowHideTransactionDetailsButton
                 .onTap(viewModel, action: #selector(TransactionInfoViewModel.toggleShowDetailTransaction))
                 .padding(.init(x: 20, y: 0))
-        ])
+        }
     }
     
     private func bind() {
@@ -222,6 +226,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
         
         amountSection.contentView.text = amountText
         
+        fromToSectionsView.isHidden = true
         transactionDetailView.addArrangedSubviews([
             fromSection,
             toSection,
@@ -278,7 +283,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                     .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12)
             }
             
-            transactionDetailView.addArrangedSubviews([
+            fromToSectionsView.addArrangedSubviews {
                 createWalletInfo(
                     title: L10n.from,
                     iconView: fromIconView,
@@ -287,7 +292,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                     selector: #selector(
                         TransactionInfoViewModel.copySourceAddressToClipboard
                     )
-                ),
+                )
                 createWalletInfo(
                     title: L10n.to,
                     iconView: toIconView,
@@ -297,10 +302,10 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                         TransactionInfoViewModel.copyDestinationAddressToClipboard
                     )
                 )
-            ])
+            }
             
         case let createAccountTransaction as SolanaSDK.CreateAccountTransaction:
-            transactionDetailView.addArrangedSubviews([
+            fromToSectionsView.addArrangedSubview(
                 createWalletInfo(
                     title: L10n.newWallet,
                     iconView: CoinLogoImageView(size: 45)
@@ -311,9 +316,9 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                         TransactionInfoViewModel.copyDestinationAddressToClipboard
                     )
                 )
-            ])
+            )
         case let closedAccountTransaction as SolanaSDK.CloseAccountTransaction:
-            transactionDetailView.addArrangedSubviews([
+            fromToSectionsView.addArrangedSubview(
                 createWalletInfo(
                     title: L10n.closedWallet,
                     iconView: CoinLogoImageView(size: 45)
@@ -321,8 +326,9 @@ class TransactionInfoRootView: ScrollableVStackRootView {
                     wallet: closedAccountTransaction.closedWallet,
                     authority: nil
                 )
-            ])
+            )
         default:
+            fromToSectionsView.isHidden = true
             break
         }
         
