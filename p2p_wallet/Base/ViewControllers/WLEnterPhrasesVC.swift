@@ -26,7 +26,7 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
     var dismissAfterCompletion = true
     
     // MARK: - Subviews
-    lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical)
+    lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
     lazy var stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
     
     lazy var textView = WLPhrasesTextView()
@@ -187,5 +187,20 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
     
     func wlPhrasesTextViewDidEndEditing(_ textView: WLPhrasesTextView) {
         textView.superview?.border(width: 1, color: .f3f3f3.onDarkMode(.h1b1b1b))
+    }
+    
+    func wlPhrasesTextViewDidChange(_ textView: WLPhrasesTextView) {
+        if textView.isFirstResponder {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) { [weak self, weak textView] in
+                guard let range = textView?.selectedTextRange?.start,
+                      let rect = textView?.caretRect(for: range)
+                else {return}
+                self?.scrollView.scrollTo(y: rect.maxY, animated: true)
+            }
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) { [weak self] in
+                self?.scrollView.scrollToBottom(animated: true)
+            }
+        }
     }
 }
