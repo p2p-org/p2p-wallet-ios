@@ -61,8 +61,8 @@ class HomeViewController: BaseVC {
     override func bind() {
         super.bind()
         
-        viewModel.navigationSubject
-            .subscribe(onNext: {[unowned self] in self.navigate(to: $0)})
+        viewModel.navigationDriver
+            .drive(onNext: {[weak self] in self?.navigate(to: $0)})
             .disposed(by: disposeBag)
     }
     
@@ -137,8 +137,8 @@ class HomeViewController: BaseVC {
     
     private func qrCodeScannerHandler(code: String) -> Bool {
         if NSRegularExpression.publicKey.matches(code) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.viewModel.navigationSubject.onNext(.sendToken(address: code))
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.viewModel.showSendToken(address: code)
             }
             return true
         }

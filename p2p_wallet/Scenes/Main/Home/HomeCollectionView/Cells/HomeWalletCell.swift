@@ -8,13 +8,13 @@
 import Foundation
 import BECollectionView
 
-class HomeWalletCell: EditableWalletCell {
-    lazy var addressLabel = UILabel(text: "<public key>", textSize: 13, textColor: .textSecondary, numberOfLines: 1)
+final class HomeWalletCell: EditableWalletCell {
+    lazy var coinFullnameLabel = UILabel(text: "<description>", textSize: 13, textColor: .textSecondary, numberOfLines: 1)
     lazy var indicatorColorView = UIView(width: 3, cornerRadius: 1.5)
     
     override func commonInit() {
         super.commonInit()
-        coinNameLabel.font = .systemFont(ofSize: 17, weight: .medium)
+        coinSymbolLabel.font = .systemFont(ofSize: 17, weight: .medium)
         equityValueLabel.font = .systemFont(ofSize: 17, weight: .medium)
         equityValueLabel.textAlignment = .right
         equityValueLabel.setContentHuggingPriority(.required, for: .horizontal)
@@ -25,11 +25,11 @@ class HomeWalletCell: EditableWalletCell {
         tokenCountLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         let vStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
             UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
-                coinNameLabel
+                coinSymbolLabel
                 equityValueLabel
             }
             UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
-                addressLabel
+                coinFullnameLabel
                 tokenCountLabel
             }
         }
@@ -46,11 +46,7 @@ class HomeWalletCell: EditableWalletCell {
     
     override func setUp(with item: Wallet) {
         super.setUp(with: item)
-        if item.pubkey != nil {
-            addressLabel.text = item.pubkey?.truncatingMiddle()
-        } else {
-            addressLabel.text = nil
-        }
+        coinFullnameLabel.text = item.token.name
         
         if item.amountInCurrentFiat == 0 {
             indicatorColorView.backgroundColor = .clear

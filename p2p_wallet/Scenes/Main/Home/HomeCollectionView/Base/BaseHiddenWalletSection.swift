@@ -9,33 +9,55 @@ import Foundation
 import BECollectionView
 import Action
 
-class HiddenWalletsSectionHeaderView: SectionHeaderView {
+class HiddenWalletsSectionHeaderView: BaseCollectionReusableView {
+    // MARK: - Properties
     var showHideHiddenWalletsAction: CocoaAction?
     
-    lazy var imageView = UIImageView(width: 20, height: 20, image: .visibilityShow, tintColor: .textSecondary)
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        headerLabel.font = .systemFont(ofSize: 15)
-    }
+    // MARK: - Subviews
+    private lazy var imageView = UIImageView(width: 20, height: 20, image: .visibilityShow, tintColor: .textSecondary)
+    private lazy var headerLabel = UILabel(text: "Wallets", textSize: 15)
+    private lazy var imageViewWrapper = imageView
+        .padding(.init(all: 12.5))
+        .padding(.init(top: 30, left: .defaultPadding, bottom: 30, right: 0))
     
     override func commonInit() {
         super.commonInit()
         stackView.axis = .horizontal
-        stackView.distribution = .fill
         stackView.alignment = .center
+        stackView.spacing = 16
         
-        headerLabel.wrapper?.removeFromSuperview()
         stackView.addArrangedSubviews([
-            imageView
-                .padding(.init(all: 12.5))
-                .padding(.init(top: 10, left: .defaultPadding, bottom: 10, right: 0))
-            ,
+            imageViewWrapper,
             headerLabel
         ])
         
         stackView.isUserInteractionEnabled = true
         stackView.onTap(self, action: #selector(stackViewDidTouch))
+    }
+    
+    @discardableResult
+    func setUp(isHiddenWalletsShown: Bool, hiddenWalletList: [Wallet]) -> Bool {
+        let isSubviewsHidden = imageViewWrapper.isHidden
+        if isHiddenWalletsShown {
+            imageView.tintColor = .textBlack
+            imageView.image = .visibilityHide
+            headerLabel.textColor = .textBlack
+            headerLabel.text = L10n.hide
+        } else {
+            imageView.tintColor = .textSecondary
+            imageView.image = .visibilityShow
+            headerLabel.textColor = .textSecondary
+            headerLabel.text = L10n.dHiddenWallet(hiddenWalletList.count)
+        }
+        
+        imageViewWrapper.isHidden = hiddenWalletList.isEmpty
+        headerLabel.isHidden = hiddenWalletList.isEmpty
+        
+        // return true if should update height, else return false
+        if imageViewWrapper.isHidden != isSubviewsHidden {
+            return true
+        }
+        return false
     }
     
     @objc func stackViewDidTouch() {
@@ -97,32 +119,31 @@ class HiddenWalletsSection: WalletsSection {
     
     private func updateHeader(headerView: HiddenWalletsSectionHeaderView) {
         let viewModel = self.viewModel as! WalletsRepository
+        let shouldUpdateHeight = headerView.setUp(
+            isHiddenWalletsShown: viewModel.isHiddenWalletsShown.value,
+            hiddenWalletList: viewModel.hiddenWallets()
+        )
         
-        if viewModel.isHiddenWalletsShown.value {
-            headerView.imageView.tintColor = .textBlack
-            headerView.imageView.image = .visibilityHide
-            headerView.headerLabel.textColor = .textBlack
-            headerView.headerLabel.text = L10n.hide
-        } else {
-            headerView.imageView.tintColor = .textSecondary
-            headerView.imageView.image = .visibilityShow
-            headerView.headerLabel.textColor = .textSecondary
-            headerView.headerLabel.text = L10n.dHiddenWallet(viewModel.hiddenWallets().count)
+        if shouldUpdateHeight {
+            let context = UICollectionViewLayoutInvalidationContext()
+            context.invalidateSupplementaryElements(ofKind: UICollectionView.elementKindSectionHeader, at: [.init(row: 0, section: 1)])
+            collectionView?.relayout(context)
         }
-        var shouldRelayout = false
-        if viewModel.hiddenWallets().isEmpty {
-            if headerView.stackView.isDescendant(of: headerView) {
-                shouldRelayout = true
-                headerView.removeStackView()
-            }
-        } else {
-            if !headerView.stackView.isDescendant(of: headerView) {
-                shouldRelayout = true
-                headerView.addStackView()
-            }
-        }
-        if shouldRelayout {
-            collectionView?.relayout()
-        }
+        
+//        var shouldRelayout = false
+//        if viewModel.hiddenWallets().isEmpty {
+//            if headerView.stackView.isDescendant(of: headerView) {
+//                shouldRelayout = true
+//                headerView.removeStackView()
+//            }
+//        } else {
+//            if !headerView.stackView.isDescendant(of: headerView) {
+//                shouldRelayout = true
+//                headerView.addStackView()
+//            }
+//        }
+//        if shouldRelayout {
+//            collectionView?.relayout()
+//        }
     }
 }

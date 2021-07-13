@@ -23,7 +23,7 @@ class HomeRootView: BEView {
         let stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing) {
             UIImageView(width: 45, height: 45, image: .scanQr, tintColor: .textSecondary
             )
-                .onTap(self, action: #selector(qrScannerDidTouch))
+                .onTap(viewModel, action: #selector(HomeViewModel.navigateToScanQrCodeWithTap))
                 .onSwipe(self, action: #selector(qrScannerDidSwipe(sender:)))
             
             UIImageView(width: 25, height: 25, image: .settings, tintColor: .textSecondary)
@@ -39,15 +39,8 @@ class HomeRootView: BEView {
     lazy var collectionView: HomeCollectionView = {
         let collectionView = HomeCollectionView(walletsRepository: viewModel.walletsRepository)
         collectionView.delegate = self
-
-        collectionView.walletCellEditAction = Action<Wallet, Void> { [weak self] wallet in
-            self?.viewModel.navigationSubject.onNext(.walletSettings(wallet: wallet))
-            return .just(())
-        }
-        collectionView.showHideHiddenWalletsAction = CocoaAction { [weak self] in
-            self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
-            return .just(())
-        }
+        collectionView.walletCellEditAction = viewModel.navigateToWalletSettingsAction()
+        collectionView.showHideHiddenWalletsAction = viewModel.showHideHiddenWalletAction()
         return collectionView
     }()
     
@@ -184,17 +177,13 @@ class HomeRootView: BEView {
         let translation = sender.translation(in: self)
         let progress = MenuHelper.calculateProgress(translationInView: translation, viewBounds: bounds, direction: .right
         )
-        viewModel.navigationSubject.onNext(.scanQrWithSwiper(progress: progress, state: sender.state))
-    }
-    
-    @objc func qrScannerDidTouch() {
-        viewModel.navigationSubject.onNext(.scanQrCodeWithTap)
+        viewModel.navigateToScanQrCodeWithSwiper(progress: progress, swiperState: sender.state)
     }
 }
 
 extension HomeRootView: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let wallet = item as? Wallet else {return}
-        viewModel.navigationSubject.onNext(.walletDetail(wallet: wallet))
+        viewModel.showWalletDetail(wallet: wallet)
     }
 }
