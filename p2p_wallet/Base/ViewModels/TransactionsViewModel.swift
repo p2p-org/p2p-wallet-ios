@@ -57,7 +57,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         
         accountNotificationsRepository.observeAccountNotifications(account: account)
             .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .delay(.seconds(2), scheduler: MainScheduler.instance)
+            .delay(.seconds(1), scheduler: MainScheduler.instance)
             .subscribe(onNext: {[weak self] _ in
                 self?.updateFirstPage(onSuccessFilterNewData: { [weak self] newData in
                     guard let self = self else {return newData}
@@ -111,6 +111,13 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     override func flush() {
         before = nil
         super.flush()
+    }
+    
+    override func updateFirstPage(onSuccessFilterNewData: (([SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction])? = nil) {
+        let originalBefore = before
+        before = nil
+        super.updateFirstPage(onSuccessFilterNewData: onSuccessFilterNewData)
+        before = originalBefore
     }
     
     // MARK: - Helpers
