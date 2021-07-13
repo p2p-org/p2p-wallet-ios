@@ -11,6 +11,7 @@ import SubviewAttachingTextView
 protocol WLPhrasesTextViewDelegate: AnyObject {
     func wlPhrasesTextViewDidBeginEditing(_ textView: WLPhrasesTextView)
     func wlPhrasesTextViewDidEndEditing(_ textView: WLPhrasesTextView)
+    func wlPhrasesTextViewDidChange(_ textView: WLPhrasesTextView)
 }
 
 class WLPhrasesTextView: SubviewAttachingTextView {
@@ -118,6 +119,8 @@ extension WLPhrasesTextView: UITextViewDelegate {
         if shouldRearrange {
             rearrangeAttachments()
         }
+        
+        forwardedDelegate?.wlPhrasesTextViewDidChange(self)
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
