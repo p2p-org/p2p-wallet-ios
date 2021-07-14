@@ -19,6 +19,8 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
             .onTap(self, action: #selector(back))
         BEStackViewSpacing(30)
         UILabel(text: L10n.derivableAccounts, textSize: 27, weight: .bold, numberOfLines: 0)
+        BEStackViewSpacing(8)
+        UILabel(text: L10n.ThisIsTheThingYouUseToGetAllYourAccountsFromYourMnemonicPhrase.byDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet, textColor: .textSecondary, numberOfLines: 0)
         UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
             derivationPathLabel
             UIImageView(width: 10, height: 8, image: .downArrow, tintColor: .a3a5ba)
@@ -100,7 +102,7 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
             .disposed(by: disposeBag)
         
         viewModel.output.selectedDerivationPath
-            .map {$0?.rawValue}
+            .map {$0?.title}
             .asDriver(onErrorJustReturn: nil)
             .drive(derivationPathLabel.rx.text)
             .disposed(by: disposeBag)
