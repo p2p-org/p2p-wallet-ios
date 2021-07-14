@@ -31,7 +31,7 @@ class MainContainer {
         
         let walletsViewModel = WalletsViewModel(
             solanaSDK: solanaSDK,
-            socket: socket,
+            accountNotificationsRepository: socket,
             pricesRepository: pricesManager
         )
         
