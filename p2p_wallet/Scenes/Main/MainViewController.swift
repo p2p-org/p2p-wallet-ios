@@ -120,6 +120,10 @@ class MainViewController: BaseVC {
         
         // cancelledCompletion
         if !authStyle.isRequired {
+            // disable swipe down
+            localAuthVC?.isModalInPresentation = true
+            
+            // handle cancelled by tapping <x>
             localAuthVC?.cancelledCompletion = {[weak self] in
                 self?.viewModel.input.authenticationStatus.accept(nil)
             }
