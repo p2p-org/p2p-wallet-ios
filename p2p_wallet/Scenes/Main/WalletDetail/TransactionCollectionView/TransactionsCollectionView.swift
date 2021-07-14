@@ -8,6 +8,7 @@
 import Foundation
 import BECollectionView
 import Action
+import RxSwift
 import RxCocoa
 
 class TransactionsCollectionView: BEDynamicSectionsCollectionView {
@@ -16,6 +17,7 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let scanQrCodeAction: CocoaAction
     let wallet: Driver<Wallet?>
     let solPubkey: Driver<String?>
+    let disposeBag = DisposeBag()
     
     init(
         transactionViewModel: BEListViewModelType,
@@ -92,6 +94,19 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
         )
         
         contentInset.modify(dBottom: 120)
+    }
+    
+    override func bind() {
+        super.bind()
+        (viewModel as! TransactionsViewModel).isFetchingReceiptDriver
+            .drive(onNext: {[weak self] isFetching in
+                if isFetching {
+                    self?.showIndetermineHud()
+                } else {
+                    self?.hideHud()
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     override func configureHeaderView(kind: String, indexPath: IndexPath) -> UICollectionReusableView? {

@@ -103,7 +103,7 @@ class MainContainer {
             transactionsRepository: solanaSDK,
             analyticsManager: analyticsManager,
             feeRelayerAPIClient: solanaSDK,
-            accountNotificationsRepository: socket
+            notificationsRepository: walletsViewModel
         )
         
         return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)

@@ -50,7 +50,7 @@ extension WalletDetail {
             transactionsRepository: TransactionsRepository,
             analyticsManager: AnalyticsManagerType,
             feeRelayerAPIClient: FeeRelayerSolanaAPIClient,
-            accountNotificationsRepository: AccountNotificationsRepository
+            notificationsRepository: WLNotificationsRepository
         ) {
             self.pubkey = pubkey
             self.symbol = symbol
@@ -79,7 +79,7 @@ extension WalletDetail {
                     pricesRepository: pricesRepository,
                     processingTransactionRepository: processingTransactionRepository,
                     feeRelayerAPIClient: feeRelayerAPIClient,
-                    accountNotificationsRepository: accountNotificationsRepository
+                    notificationsRepository: notificationsRepository
                 )
             )
             
