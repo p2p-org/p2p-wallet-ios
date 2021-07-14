@@ -56,7 +56,6 @@ final class HomeWalletCell: EditableWalletCell {
             coinFullnameLabel.text = item.token.name
         }
         
-        
         if item.amountInCurrentFiat == 0 {
             indicatorColorView.backgroundColor = .clear
         } else {
