@@ -91,6 +91,9 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
             }, onError: {[weak self] error in
                 self?.updateTransactionStatus(transactionIndex: index, status: .error(error.readableDescription))
                 self?.updateRepository(transactionIndex: index, fee: fee, isReversed: true)
+                
+                // show alert
+                UIApplication.shared.showToast(message: "❌ " + L10n.errorSendingTransaction + ": " + error.readableDescription)
             })
             .disposed(by: disposeBag)
         
