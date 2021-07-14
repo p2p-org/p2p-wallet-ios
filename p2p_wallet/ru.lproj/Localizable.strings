@@ -387,3 +387,4 @@
 "Unknown date" = "Неизвестная дата";
 "✅ Seed phrase copied to clipboard!" = "✅ Исходная фраза скопирована в буфер обмена!";
 "Wallet" = "Кошелек";
+"Error sending transaction" = "Ошибка при отправке транзакции";

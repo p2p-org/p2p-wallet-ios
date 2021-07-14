@@ -387,3 +387,4 @@
 "Unknown date" = "Ngày không xác định";
 "✅ Seed phrase copied to clipboard!" = "✅ Cụm từ hạt giống được sao chép vào khay nhớ tạm!";
 "Wallet" = "Ví tiền";
+"Error sending transaction" = "Lỗi khi gửi giao dịch";

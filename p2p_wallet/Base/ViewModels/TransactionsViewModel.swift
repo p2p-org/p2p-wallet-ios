@@ -173,7 +173,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             }
         }
         
-        transactions = transactions
+        transactions = transactions.filter {!$0.isFailure}
             .sorted(by: {$0.blockTime?.timeIntervalSince1970 > $1.blockTime?.timeIntervalSince1970})
         
         var data = currentData
