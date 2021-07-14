@@ -9,7 +9,7 @@ import Foundation
 import MBProgressHUD
 
 extension UIApplication {
-    private static let toastTag = 11348
+    private static let toastTag = 70457
     
     private var kWindow: UIWindow? {
         // keyWindow is deprecated
