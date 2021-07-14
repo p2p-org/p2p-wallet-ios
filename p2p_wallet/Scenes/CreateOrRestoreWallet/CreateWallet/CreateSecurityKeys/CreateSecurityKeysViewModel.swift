@@ -47,7 +47,7 @@ class CreateSecurityKeysViewModel {
     @objc func saveToICloud() {
         analyticsManager.log(event: .createWalletBackupToIcloudClick)
         accountStorage.saveICloud(phrases: phrasesSubject.value.joined(separator: " "))
-        UIApplication.shared.showDone(L10n.savedToICloud)
+        UIApplication.shared.showToast(message: "✅ " + L10n.savedToICloud)
     }
     
     @objc func next() {

@@ -46,7 +46,11 @@ final class HomeWalletCell: EditableWalletCell {
     
     override func setUp(with item: Wallet) {
         super.setUp(with: item)
-        coinFullnameLabel.text = item.token.name
+        if item.token.isNative {
+            coinFullnameLabel.text = item.pubkey?.truncatingMiddle()
+        } else {
+            coinFullnameLabel.text = item.token.name
+        }
         
         if item.amountInCurrentFiat == 0 {
             indicatorColorView.backgroundColor = .clear

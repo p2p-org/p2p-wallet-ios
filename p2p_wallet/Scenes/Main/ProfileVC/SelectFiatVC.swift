@@ -52,6 +52,6 @@ class SelectFiatVC: ProfileSingleSelectionVC<Fiat> {
     private func changeFiatToSelectedItem() {
         analyticsManager.log(event: .settingsСurrencySelected(сurrency: selectedItem.code))
         responder.changeFiat(to: selectedItem)
-        UIApplication.shared.showDone(L10n.currencyChanged)
+        UIApplication.shared.showToast(message: "✅ " + L10n.currencyChanged)
     }
 }

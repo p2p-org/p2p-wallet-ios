@@ -9,7 +9,7 @@ import Foundation
 import MBProgressHUD
 
 extension UIApplication {
-    private static let toastTag = 11348
+    private static let toastTag = 70457
     
     private var kWindow: UIWindow? {
         // keyWindow is deprecated
@@ -30,25 +30,6 @@ extension UIApplication {
     
     func hideLoadingIndicatorView() {
         kWindow?.hideLoadingIndicatorView()
-    }
-    
-    func showDone(_ message: String, completion: (() -> Void)? = nil) {
-        guard let keyWindow = kWindow else {return}
-        
-        // Hide all previous hud
-        hideHud()
-        
-        // show new hud
-        let hud = MBProgressHUD.showAdded(to: keyWindow, animated: false)
-        hud.mode = .customView
-        let imageView = UIImageView(width: 100, height: 100, image: .checkMark)
-        imageView.tintColor = .textBlack
-        hud.customView = imageView
-        hud.label.text = message
-        hud.hide(animated: true, afterDelay: 1)
-        if let completion = completion {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: completion)
-        }
     }
     
     func openAppSettings() {
@@ -93,6 +74,7 @@ extension UIApplication {
         
         (toast?.viewWithTag(1) as? UILabel)?.text = message
         
+        kWindow?.bringSubviewToFront(toast!)
         kWindow?.layoutIfNeeded()
         toast?.constraintToSuperviewWithAttribute(.top)?.constant = 25
         

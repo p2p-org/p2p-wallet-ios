@@ -388,3 +388,9 @@
 "Yesterday" = "Hôm qua";
 "Unknown date" = "Ngày không xác định";
 "✅ Seed phrase copied to clipboard!" = "✅ Cụm từ hạt giống được sao chép vào khay nhớ tạm!";
+"Wallet" = "Ví tiền";
+"Error sending transaction" = "Lỗi khi gửi giao dịch";
+"This is the thing you use to get all your accounts from your mnemonic phrase. By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet." = "Đây là thứ bạn sử dụng để lấy tất cả các tài khoản của mình từ cụm từ ghi nhớ của bạn. Theo mặc định, ví P2P sẽ sử dụng m/44'/501'/0'/0' làm đường dẫn dẫn xuất cho ví chính.";
+"Default" = "Mặc định";
+"Error retrieving receipt" = "Lỗi khi truy xuất hoá đơn";
+"Fetching receipt" = "Tải hoá đơn";

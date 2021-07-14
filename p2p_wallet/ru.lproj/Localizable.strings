@@ -388,3 +388,9 @@
 "Yesterday" = "Вчера";
 "Unknown date" = "Неизвестная дата";
 "✅ Seed phrase copied to clipboard!" = "✅ Исходная фраза скопирована в буфер обмена!";
+"Wallet" = "Кошелек";
+"Error sending transaction" = "Ошибка при отправке транзакции";
+"This is the thing you use to get all your accounts from your mnemonic phrase. By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet." = "Это то, что вы используете, чтобы получить все свои учетные записи из вашей мнемонической фразы. По умолчанию кошелек P2P будет использовать m/44'/501'/0'/0' в качестве пути деривации для основного кошелька.";
+"Default" = "По умолчанию";
+"Error retrieving receipt" = "Ошибка при получении квитанции";
+"Fetching receipt" = "Получение квитанции";

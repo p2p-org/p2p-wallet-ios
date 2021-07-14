@@ -388,3 +388,9 @@
 "Yesterday" = "Hier";
 "Unknown date" = "Date inconnue";
 "✅ Seed phrase copied to clipboard!" = "✅ Phrase de départ copiée dans le presse-papiers !";
+"Wallet" = "Portefeuille";
+"Error sending transaction" = "Erreur lors de l'envoi de la transaction";
+"This is the thing you use to get all your accounts from your mnemonic phrase. By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet." = "C'est la chose que vous utilisez pour obtenir tous vos comptes à partir de votre phrase mnémotechnique. Par défaut, le portefeuille P2P utilisera m/44'/501'/0'/0' comme chemin de dérivation pour le portefeuille principal.";
+"Default" = "Défaut";
+"Error retrieving receipt" = "Erreur lors de la récupération du reçu";
+"Fetching receipt" = "Récupération du reçu";

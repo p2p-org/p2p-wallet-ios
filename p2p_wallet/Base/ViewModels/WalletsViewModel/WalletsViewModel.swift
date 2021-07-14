@@ -12,14 +12,17 @@ import BECollectionView
 import RxAppState
 
 class WalletsViewModel: BEListViewModel<Wallet> {
-    // MARK: - Properties
+    // MARK: - Dependencies
     private let solanaSDK: SolanaSDK
-    private let socket: SolanaSDK.Socket
+    let accountNotificationsRepository: AccountNotificationsRepository
     weak var processingTransactionRepository: ProcessingTransactionsRepository?
     private let pricesRepository: PricesRepository
     
+    // MARK: - Properties
     private var defaultsDisposables = [DefaultsDisposable]()
     private var disposeBag = DisposeBag()
+    let notificationsSubject = BehaviorRelay<WLNotification?>(value: nil)
+    var notifications = [WLNotification]()
     
     // MARK: - Getters
     var solWallet: Wallet? {data.first(where: {$0.token.symbol == "SOL"})}
@@ -30,11 +33,11 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Initializer
     init(
         solanaSDK: SolanaSDK,
-        socket: SolanaSDK.Socket,
+        accountNotificationsRepository: AccountNotificationsRepository,
         pricesRepository: PricesRepository
     ) {
         self.solanaSDK = solanaSDK
-        self.socket = socket
+        self.accountNotificationsRepository = accountNotificationsRepository
         self.pricesRepository = pricesRepository
         super.init()
         
@@ -54,13 +57,9 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             .disposed(by: disposeBag)
         
         // observe tokens' balance
-        socket.observeAccountNotifications()
+        accountNotificationsRepository.observeAllAccountsNotifications()
             .subscribe(onNext: {[weak self] notification in
-                self?.updateItem(where: {$0.pubkey == notification.pubkey}, transform: { wallet in
-                    var wallet = wallet
-                    wallet.lamports = notification.lamports
-                    return wallet
-                })
+                self?.handleAccountNotification(notification)
             })
             .disposed(by: disposeBag)
         
@@ -74,7 +73,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             .map {[weak self] _ in self?.getWallets() ?? []}
             .subscribe(onNext: {[weak self] wallets in
                 for wallet in wallets where wallet.pubkey != nil {
-                    self?.socket.subscribeAccountNotification(account: wallet.pubkey!)
+                    self?.accountNotificationsRepository.subscribeAccountNotification(account: wallet.pubkey!)
                 }
             })
             .disposed(by: disposeBag)
@@ -242,6 +241,36 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     
     private func appDidEnterBackground() {
         shouldUpdateBalance = true
+    }
+    
+    // MARK: - Account notifications
+    private func handleAccountNotification(_ notification: (pubkey: String, lamports: SolanaSDK.Lamports))
+    {
+        // notify changes
+        let oldLamportsValue = data.first(where: {$0.pubkey == notification.pubkey})?.lamports
+        let newLamportsValue = notification.lamports
+        
+        if let oldLamportsValue = oldLamportsValue {
+            var wlNoti: WLNotification?
+            if oldLamportsValue > newLamportsValue {
+                // sent
+                wlNoti = .sent(account: notification.pubkey, lamports: oldLamportsValue - newLamportsValue)
+            } else if oldLamportsValue < newLamportsValue {
+                // received
+                wlNoti = .received(account: notification.pubkey, lamports: newLamportsValue - oldLamportsValue)
+            }
+            if let wlNoti = wlNoti {
+                notificationsSubject.accept(wlNoti)
+                notifications.append(wlNoti)
+            }
+        }
+        
+        // update
+        updateItem(where: {$0.pubkey == notification.pubkey}, transform: { wallet in
+            var wallet = wallet
+            wallet.lamports = notification.lamports
+            return wallet
+        })
     }
 }
 

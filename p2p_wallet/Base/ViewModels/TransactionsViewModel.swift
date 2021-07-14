@@ -8,20 +8,28 @@
 import Foundation
 import BECollectionView
 import RxSwift
+import RxCocoa
 
 class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
-    let account: String
-    let accountSymbol: String
-    var before: String?
-    let repository: TransactionsRepository
-    let pricesRepository: PricesRepository
-    let processingTransactionRepository: ProcessingTransactionsRepository
-    let disposeBag = DisposeBag()
-    var fetchedFeePayer = false
+    // MARK: - Dependencies
+    private let account: String
+    private let accountSymbol: String
+    private var before: String?
+    private let repository: TransactionsRepository
+    private let pricesRepository: PricesRepository
+    private let processingTransactionRepository: ProcessingTransactionsRepository
+    private let feeRelayer: SolanaSDK.FeeRelayer
+    private let notificationsRepository: WLNotificationsRepository
     
-    let feeRelayer: SolanaSDK.FeeRelayer
-    let accountNotificationsRepository: AccountNotificationsRepository
+    // MARK: - Properties
+    private let disposeBag = DisposeBag()
+    private var fetchedFeePayer = false
+    private let isFetchingReceiptSubject = BehaviorRelay<Bool>(value: false)
+    var isFetchingReceiptDriver: Driver<Bool> {
+        isFetchingReceiptSubject.asDriver()
+    }
     
+    // MARK: - Subjects
     init(
         account: String,
         accountSymbol: String,
@@ -29,7 +37,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         pricesRepository: PricesRepository,
         processingTransactionRepository: ProcessingTransactionsRepository,
         feeRelayerAPIClient: FeeRelayerSolanaAPIClient,
-        accountNotificationsRepository: AccountNotificationsRepository
+        notificationsRepository: WLNotificationsRepository
     ) {
         self.account = account
         self.accountSymbol = accountSymbol
@@ -37,7 +45,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         self.pricesRepository = pricesRepository
         self.processingTransactionRepository = processingTransactionRepository
         self.feeRelayer = SolanaSDK.FeeRelayer(solanaAPIClient: feeRelayerAPIClient)
-        self.accountNotificationsRepository = accountNotificationsRepository
+        self.notificationsRepository = notificationsRepository
         super.init(isPaginationEnabled: true, limit: 10)
     }
     
@@ -55,14 +63,20 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             })
             .disposed(by: disposeBag)
         
-        accountNotificationsRepository.observeAccountNotifications(account: account)
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .delay(.seconds(1), scheduler: MainScheduler.instance)
-            .subscribe(onNext: {[weak self] _ in
-                self?.updateFirstPage(onSuccessFilterNewData: { [weak self] newData in
-                    guard let self = self else {return newData}
-                    return newData.filter {newTx in !self.data.contains(where: {oldTx in oldTx.signature == newTx.signature})}
-                })
+        notificationsRepository.observeChange(account: account)
+            .distinctUntilChanged()
+            .do(onNext: {[weak self] _ in
+                self?.isFetchingReceiptSubject.accept(true)
+            })
+            .delay(.seconds(1), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: {[weak self] notification in
+                switch notification {
+                case .received:
+                    self?.getNewReceipt()
+                case .sent:
+                    break
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -113,11 +127,41 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         super.flush()
     }
     
-    override func updateFirstPage(onSuccessFilterNewData: (([SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction])? = nil) {
-        let originalBefore = before
-        before = nil
-        super.updateFirstPage(onSuccessFilterNewData: onSuccessFilterNewData)
-        before = originalBefore
+    /// get most recent receiving transaction if posible
+    private func getNewReceipt() {
+        repository.getTransactionsHistory(
+            account: account,
+            accountSymbol: accountSymbol,
+            before: nil,
+            limit: 3,
+            p2pFeePayerPubkeys: Defaults.p2pFeePayerPubkeys
+        )
+            .map { [weak self] transactions -> [SolanaSDK.ParsedTransaction] in
+                // find receipt
+                let newTransactions = transactions.filter {newTx in self?.data.contains(where: {$0.signature == newTx.signature}) == false}
+                
+                // receive
+                if newTransactions.contains(where: {($0.value as? SolanaSDK.TransferTransaction)?.transferType == .receive})
+                {
+                    return newTransactions
+                }
+                
+                // throw
+                throw SolanaSDK.Error.notFound
+            }
+            .retry(maxAttempts: 3, delayInSeconds: 2)
+            .subscribe(onSuccess: {[weak self] newTransactions in
+                guard let self = self else {return}
+                self.isFetchingReceiptSubject.accept(false)
+                let newTransactions = newTransactions.filter {newTx in !self.data.contains(where: {$0.signature == newTx.signature})}
+                var data = self.data
+                data = newTransactions + data
+                self.overrideData(by: data)
+            }, onFailure: {[weak self] error in
+                self?.isFetchingReceiptSubject.accept(false)
+                UIApplication.shared.showToast(message: L10n.errorRetrievingReceipt + ": " + error.readableDescription + ". " + L10n.pleaseTryAgainLater.uppercaseFirst)
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Helpers
@@ -173,7 +217,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             }
         }
         
-        transactions = transactions
+        transactions = transactions.filter {!$0.isFailure}
             .sorted(by: {$0.blockTime?.timeIntervalSince1970 > $1.blockTime?.timeIntervalSince1970})
         
         var data = currentData
