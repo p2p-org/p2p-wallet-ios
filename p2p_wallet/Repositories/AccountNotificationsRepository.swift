@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 
 protocol AccountNotificationsRepository {
-    func subscribeAccountNotification(account: String)
+    func subscribeAccountNotification(account: String, isNative: Bool)
     func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: SolanaSDK.Lamports)>
     func observeAccountNotifications(account: String) -> Observable<SolanaSDK.Lamports>
 }

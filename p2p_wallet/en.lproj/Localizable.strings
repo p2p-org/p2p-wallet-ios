@@ -392,3 +392,4 @@
 "Default" = "Default";
 "Error retrieving receipt" = "Error retrieving receipt";
 "Fetching receipt" = "Fetching receipt";
+"Attempt to debit an account but found no record of a prior credit." = "Attempt to debit an account but found no record of a prior credit.";

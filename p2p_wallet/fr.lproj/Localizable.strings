@@ -392,3 +392,4 @@
 "Default" = "Défaut";
 "Error retrieving receipt" = "Erreur lors de la récupération du reçu";
 "Fetching receipt" = "Récupération du reçu";
+"Attempt to debit an account but found no record of a prior credit." = "Tentative de débit d'un compte mais n'a trouvé aucune trace d'un crédit antérieur.";
