@@ -29,8 +29,6 @@ extension ReceiveToken {
         private lazy var directAddressHeaderLabel = UILabel(text: L10n.directAddress(viewModel.output.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
         private lazy var mintAddressHeaderLabel = UILabel(text: L10n.mintAddress(viewModel.output.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
         
-        private var copiedToClipboardToastBottomConstraint: NSLayoutConstraint!
-        
         // MARK: - Initializers
         init(viewModel: ViewModel) {
             self.viewModel = viewModel
@@ -113,18 +111,6 @@ extension ReceiveToken {
                 UIView.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice()
                     .padding(.init(x: 20, y: 0))
             }
-            
-            // Toast
-            let copiedToClipboardToast = BERoundedCornerShadowView(shadowColor: .white.withAlphaComponent(0.15), radius: 16, offset: .zero, opacity: 1, cornerRadius: 12, contentInset: .init(x: 20, y: 10))
-            copiedToClipboardToast.mainView.backgroundColor = .h202020.onDarkMode(.h202020)
-            copiedToClipboardToast.stackView.addArrangedSubview(
-                UILabel(text: L10n.addressCopiedToClipboard, textSize: 15, weight: .semibold, textColor: .white, numberOfLines: 0, textAlignment: .center)
-            )
-            copiedToClipboardToast.autoSetDimension(.width, toSize: 335)
-            
-            addSubview(copiedToClipboardToast)
-            copiedToClipboardToast.autoAlignAxis(toSuperviewAxis: .vertical)
-            copiedToClipboardToastBottomConstraint = copiedToClipboardToast.autoPinEdge(toSuperviewEdge: .bottom, withInset: -100)
         }
         
         private func bind() {
@@ -220,19 +206,13 @@ extension ReceiveToken {
             
             let addressLabelOriginalColor = addressLabel.textColor
             addressLabel.textColor = .h5887ff
-            copiedToClipboardToastBottomConstraint.constant = -30
             
-            UIView.animate(withDuration: 0.3) {
-                self.layoutIfNeeded()
-            } completion: { _ in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+            UIApplication.shared.showToast(
+                message: "✅ " + L10n.addressCopiedToClipboard
+            ) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
                     self?.addressLabel.textColor = addressLabelOriginalColor
-                    self?.copiedToClipboardToastBottomConstraint.constant = 100
-
-                    UIView.animate(withDuration: 0.3) {
-                        self?.layoutIfNeeded()
-                        self?.isCopying = false
-                    }
+                    self?.isCopying = false
                 }
             }
         }
