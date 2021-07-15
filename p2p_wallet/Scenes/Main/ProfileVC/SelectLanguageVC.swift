@@ -13,6 +13,10 @@ struct LocalizedLanguage: Hashable, Codable, DefaultsSerializable {
     var localizedName: String? {
         Locale.shared.localizedString(forLanguageCode: code)
     }
+    
+    var originalName: String? {
+        Locale(identifier: code).localizedString(forLanguageCode: code)
+    }
 }
 
 protocol ChangeLanguageResponder {
@@ -38,7 +42,7 @@ class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
     
     override func createCell(item: LocalizedLanguage) -> Cell<LocalizedLanguage> {
         let cell = super.createCell(item: item)
-        cell.label.text = item.localizedName?.uppercaseFirst
+        cell.label.text = item.originalName?.uppercaseFirst
         return cell
     }
     
