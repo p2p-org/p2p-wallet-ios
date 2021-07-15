@@ -99,11 +99,11 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     override func bind() {
         super.bind()
         (viewModel as! TransactionsViewModel).isFetchingReceiptDriver
-            .drive(onNext: {[weak self] isFetching in
+            .drive(onNext: {isFetching in
                 if isFetching {
-                    self?.showIndetermineHud()
-                } else {
-                    self?.hideHud()
+                    UIApplication.shared.showToast(
+                        message: "✅ " +  L10n.ReceivedNewTokens.downloadingReceipt
+                    )
                 }
             })
             .disposed(by: disposeBag)
