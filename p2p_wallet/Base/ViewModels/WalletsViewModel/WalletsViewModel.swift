@@ -169,7 +169,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                 var data = self.data
                 let newWallets = newData
                     .filter {wl in !data.contains(where: {$0.pubkey == wl.pubkey})}
-                    .filter {$0.lamports == 0}
+                    .filter {$0.lamports != 0}
                 data.append(contentsOf: newWallets)
                 self.overrideData(by: data)
             })
