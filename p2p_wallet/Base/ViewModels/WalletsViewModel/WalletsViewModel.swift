@@ -23,6 +23,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private var disposeBag = DisposeBag()
     let notificationsSubject = BehaviorRelay<WLNotification?>(value: nil)
     var notifications = [WLNotification]()
+    private var timer: Timer?
     
     // MARK: - Getters
     var solWallet: Wallet? {data.first(where: {$0.token.symbol == "SOL"})}
@@ -43,6 +44,11 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         
         self.customSorter = Wallet.defaultSorter
         bind()
+        startObserving()
+    }
+    
+    deinit {
+        stopObserving()
     }
     
     // MARK: - Binding
@@ -52,7 +58,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         // observe prices
         pricesRepository.pricesObservable()
             .subscribe(onNext: { [weak self] _ in
-                self?.updatePrices()
+                self?.refreshUI()
             })
             .disposed(by: disposeBag)
         
@@ -65,7 +71,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         
         // observe hideZeroBalances settings
         defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] _ in
-            self?.updateWalletsVisibility()
+            self?.refreshUI()
         })
         
         // observe account notification
@@ -94,30 +100,56 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             .disposed(by: disposeBag)
     }
     
+    // MARK: - Observing
+    func startObserving() {
+        timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(getNewWallet), userInfo: nil, repeats: true)
+    }
+    
+    func stopObserving() {
+        timer?.invalidate()
+    }
+    
     // MARK: - Methods
     override func createRequest() -> Single<[Wallet]> {
-        solanaSDK.getBalance()
-            .flatMap {balance in
-                self.solanaSDK.getTokenWallets()
-                    // update visibility
-                    .map {[weak self] wallets in
-                        self?.mapVisibility(wallets: wallets) ?? []
-                    }
-                    // add sol wallet on top
-                    .map {[weak self] wallets in
-                        var wallets = wallets
-                        let solWallet = Wallet.nativeSolana(
-                            pubkey: self?.solanaSDK.accountStorage.account?.publicKey.base58EncodedString,
-                            lamport: balance
-                        )
-                        wallets.insert(solWallet, at: 0)
-                        return wallets
-                    }
-                    // map prices
-                    .map {[weak self] wallets in
-                        self?.mapPrices(wallets: wallets) ?? []
-                    }
+        Single.zip(
+            solanaSDK.getBalance(),
+            solanaSDK.getTokenWallets()
+        )
+        
+            .map {[weak self] balance, wallets in
+                guard let self = self else {return []}
+                var wallets = wallets
+                
+                // add sol wallet on top
+                let solWallet = Wallet.nativeSolana(
+                    pubkey: self.solanaSDK.accountStorage.account?.publicKey.base58EncodedString,
+                    lamport: balance
+                )
+                wallets.insert(solWallet, at: 0)
+                
+                return wallets
             }
+    }
+    
+    override func map(newData: [Wallet]) -> [Wallet] {
+        var wallets = newData
+        // update visibility
+        for i in 0..<wallets.count {
+            // update visibility
+            wallets[i].updateVisibility()
+        }
+        
+        // map prices
+        for i in 0..<wallets.count {
+            if let price = pricesRepository.currentPrice(for: wallets[i].token.symbol)
+            {
+                wallets[i].price = price
+            } else {
+                wallets[i].price = nil
+            }
+        }
+        
+        return super.map(newData: wallets)
     }
     
     override func reload() {
@@ -128,6 +160,20 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         }
         
         super.reload()
+    }
+    
+    @objc private func getNewWallet() {
+        solanaSDK.getTokenWallets()
+            .subscribe(onSuccess: {[weak self] newData in
+                guard let self = self else {return}
+                var data = self.data
+                let newWallets = newData
+                    .filter {wl in !data.contains(where: {$0.pubkey == wl.pubkey})}
+                    .filter {$0.lamports == 0}
+                data.append(contentsOf: newWallets)
+                self.overrideData(by: data)
+            })
+            .disposed(by: disposeBag)
     }
     
     override var dataDidChange: Observable<Void> {
@@ -169,64 +215,17 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         })
     }
     
-    // MARK: - Mappers
-    private func mapPrices(wallets: [Wallet]) -> [Wallet] {
-        var wallets = wallets
-        for i in 0..<wallets.count {
-            if let price = pricesRepository.currentPrice(for: wallets[i].token.symbol)
-            {
-                wallets[i].price = price
-            } else {
-                wallets[i].price = nil
-            }
-        }
-        return wallets
-    }
-    
-    private func mapVisibility(wallets: [Wallet]) -> [Wallet] {
-        var wallets = wallets
-        for i in 0..<wallets.count {
-            // update visibility
-            wallets[i].updateVisibility()
-        }
-        return wallets
-    }
-    
     // MARK: - Helpers
-    private func updatePrices() {
-        guard currentState == .loaded else {return}
-        let wallets = mapPrices(wallets: data)
-        overrideData(by: wallets)
-    }
-    
-    private func updateWalletsVisibility() {
-        guard currentState == .loaded else {return}
-        let wallets = mapVisibility(wallets: data)
-        overrideData(by: wallets)
-    }
-    
     private func hideWallet(_ wallet: Wallet) {
         Defaults.unhiddenWalletPubkey.removeAll(where: {$0 == wallet.pubkey})
         Defaults.hiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
-        self.updateItem(where: {
-            $0.pubkey == wallet.pubkey
-        }) { wallet -> Wallet? in
-            var wallet = wallet
-            wallet.updateVisibility()
-            return wallet
-        }
+        refreshUI()
     }
     
     private func unhideWallet(_ wallet: Wallet) {
         Defaults.unhiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
         Defaults.hiddenWalletPubkey.removeAll(where: {$0 == wallet.pubkey})
-        self.updateItem(where: {
-            $0.pubkey == wallet.pubkey
-        }) { wallet -> Wallet? in
-            var wallet = wallet
-            wallet.updateVisibility()
-            return wallet
-        }
+        refreshUI()
     }
     
     // MARK: - App state
