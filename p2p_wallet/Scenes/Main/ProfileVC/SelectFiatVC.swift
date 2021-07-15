@@ -12,7 +12,6 @@ protocol ChangeFiatResponder {
 }
 
 class SelectFiatVC: ProfileSingleSelectionVC<Fiat> {
-    override var dataDidChange: Bool {selectedItem != Defaults.fiat}
     let responder: ChangeFiatResponder
     let analyticsManager: AnalyticsManagerType
     init(responder: ChangeFiatResponder, analyticsManager: AnalyticsManagerType) {
@@ -30,10 +29,6 @@ class SelectFiatVC: ProfileSingleSelectionVC<Fiat> {
     override func setUp() {
         title = L10n.currency
         super.setUp()
-        navigationBar.rightItems.addArrangedSubviews([
-            UILabel(text: L10n.done, textSize: 17, weight: .medium, textColor: .h5887ff)
-                .onTap(self, action: #selector(saveChange))
-        ])
     }
     
     override func createCell(item: Fiat) -> Cell<Fiat> {
@@ -42,11 +37,9 @@ class SelectFiatVC: ProfileSingleSelectionVC<Fiat> {
         return cell
     }
     
-    @objc func saveChange() {
-        showAlert(title: L10n.switchNetwork, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem.name + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { [weak self] (index) in
-            if index != 0 {return}
-            self?.changeFiatToSelectedItem()
-        }
+    override func itemDidSelect(_ item: Fiat) {
+        super.itemDidSelect(item)
+        changeFiatToSelectedItem()
     }
     
     private func changeFiatToSelectedItem() {

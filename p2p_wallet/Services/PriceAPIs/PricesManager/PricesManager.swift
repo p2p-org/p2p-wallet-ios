@@ -22,7 +22,7 @@ class PricesManager {
     var tokensRepository: TokensRepository
     let pricesStorage: PricesStorage
     var fetcher: PricesFetcher
-    private let disposeBag = DisposeBag()
+    private var fetchAllTokenPricesDisposable: Disposable?
     
     private var refreshInterval: TimeInterval // Refresh
     private var timer: Timer?
@@ -58,8 +58,17 @@ class PricesManager {
     }
     
     // get supported coin
-    func fetchCurrentPrices(coins: [String] = []) {
-        fetcher.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
+    
+    @objc func fetchAllTokensPrice() {
+        // cancel previous request
+        fetchAllTokenPricesDisposable?.dispose()
+        
+        // request new records
+        fetchAllTokenPricesDisposable = tokensRepository.getTokensList()
+            .flatMap { tokens -> Single<[String: CurrentPrice?]> in
+                let coins = tokens.excludingSpecialTokens().map {$0.symbol}
+                return self.fetcher.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
+            }
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: {[weak self] prices in
                 guard let self = self else {return}
@@ -67,17 +76,6 @@ class PricesManager {
             }, onFailure: {error in
                 Logger.log(message: "Error fetching price \(error)", event: .error)
             })
-            .disposed(by: disposeBag)
-    }
-    
-    @objc func fetchAllTokensPrice() {
-        tokensRepository.getTokensList()
-            .subscribe(onSuccess: {[weak self] tokens in
-                let coins = tokens.excludingSpecialTokens()
-                    .map {$0.symbol}
-                self?.fetchCurrentPrices(coins: coins)
-            })
-            .disposed(by: disposeBag)
     }
     
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
