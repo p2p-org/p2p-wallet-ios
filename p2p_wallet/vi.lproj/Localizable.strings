@@ -392,3 +392,4 @@
 "Default" = "Mặc định";
 "Error retrieving receipt" = "Lỗi khi truy xuất hoá đơn";
 "Fetching receipt" = "Tải hoá đơn";
+"Attempt to debit an account but found no record of a prior credit." = "Cố gắng ghi nợ tài khoản nhưng không tìm thấy hồ sơ nào về khoản ghi có trước đó.";

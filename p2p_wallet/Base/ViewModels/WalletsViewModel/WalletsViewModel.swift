@@ -79,7 +79,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             .map {[weak self] _ in self?.getWallets() ?? []}
             .subscribe(onNext: {[weak self] wallets in
                 for wallet in wallets where wallet.pubkey != nil {
-                    self?.accountNotificationsRepository.subscribeAccountNotification(account: wallet.pubkey!)
+                    self?.accountNotificationsRepository.subscribeAccountNotification(account: wallet.pubkey!, isNative: wallet.token.isNative)
                 }
             })
             .disposed(by: disposeBag)

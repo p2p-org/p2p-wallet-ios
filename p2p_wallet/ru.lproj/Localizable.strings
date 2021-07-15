@@ -392,3 +392,4 @@
 "Default" = "По умолчанию";
 "Error retrieving receipt" = "Ошибка при получении квитанции";
 "Fetching receipt" = "Получение квитанции";
+"Attempt to debit an account but found no record of a prior credit." = "Попытка списать средства со счета, но не обнаружена предыдущая запись о кредите.";
