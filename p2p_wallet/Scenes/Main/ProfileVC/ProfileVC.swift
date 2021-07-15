@@ -59,6 +59,9 @@ class ProfileVC: ProfileVCBase {
         title = L10n.settings
         super.setUp()
         
+        var languageTitle = L10n.language
+        if languageTitle != "Language" {languageTitle += " (Language)"}
+        
         stackView.addArrangedSubviews([
             createCell(
                 image: .settingsBackup,
@@ -94,7 +97,7 @@ class ProfileVC: ProfileVCBase {
             
             createCell(
                 image: .settingsLanguage,
-                text: L10n.language,
+                text: languageTitle,
                 descriptionView: activeLanguageLabel
             )
                 .withTag(5)

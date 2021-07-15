@@ -30,7 +30,6 @@ class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
         super.init()
         data = [LocalizedLanguage: Bool]()
         Bundle.main.localizations.filter({$0 != "Base"}).forEach {
-            print($0)
             data[LocalizedLanguage(code: $0)] = $0 == Defaults.localizedLanguage.code
         }
     }
