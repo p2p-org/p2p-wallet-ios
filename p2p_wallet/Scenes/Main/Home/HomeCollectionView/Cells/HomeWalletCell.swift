@@ -50,6 +50,7 @@ final class HomeWalletCell: EditableWalletCell {
     
     override func setUp(with item: Wallet) {
         super.setUp(with: item)
+        equityValueLabel.text = "\(item.amountInCurrentFiat.toString(maximumFractionDigits: 2)) \(Defaults.fiat.symbol)"
         if item.token.isNative {
             coinFullnameLabel.text = item.pubkey?.truncatingMiddle()
         } else {
