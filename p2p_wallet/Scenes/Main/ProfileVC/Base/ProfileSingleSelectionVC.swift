@@ -35,13 +35,16 @@ class ProfileSingleSelectionVC<T: Hashable>: ProfileVCBase {
         return cell
     }
     
-    @objc func rowDidSelect(_ gesture: UIGestureRecognizer) {
+    @objc private func rowDidSelect(_ gesture: UIGestureRecognizer) {
         guard let cell = gesture.view as? Cell<T>,
               let item = cell.item,
               let isCellSelected = data[item],
               isCellSelected == false
         else {return}
-        
+        itemDidSelect(item)
+    }
+    
+    func itemDidSelect(_ item: T) {
         data[item] = true
         
         // deselect all other networks

@@ -13,7 +13,6 @@ class ProfileVCBase: BaseVStackVC {
     }
     
     override var padding: UIEdgeInsets {.init(all: 20)}
-    var dataDidChange: Bool {false}
     
     lazy var navigationBar: WLNavigationBar = {
         let navigationBar = WLNavigationBar(backgroundColor: .contentBackground)
@@ -35,17 +34,5 @@ class ProfileVCBase: BaseVStackVC {
         
         scrollView.contentInset = .zero
         stackView.spacing = 1
-    }
-    
-    override func back() {
-        if dataDidChange {
-            showAlert(title: L10n.leaveThisPage, message: L10n.youHaveUnsavedChangesThatWillBeLostIfYouDecideToLeave, buttonTitles: [L10n.stay, L10n.leave], highlightedButtonIndex: 0) { (index) in
-                if index == 1 {
-                    super.back()
-                }
-            }
-        } else {
-            super.back()
-        }
     }
 }

@@ -13,7 +13,6 @@ protocol ChangeNetworkResponder {
 }
 
 class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
-    override var dataDidChange: Bool {selectedItem != Defaults.apiEndPoint}
     let responder: ChangeNetworkResponder
     let analyticsManger: AnalyticsManagerType
     
@@ -31,10 +30,6 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
     override func setUp() {
         title = L10n.network
         super.setUp()
-        navigationBar.rightItems.addArrangedSubviews([
-            UILabel(text: L10n.done, textSize: 17, weight: .medium, textColor: .h5887ff)
-                .onTap(self, action: #selector(saveChange))
-        ])
     }
     
     override func createCell(item: SolanaSDK.APIEndPoint) -> Cell<SolanaSDK.APIEndPoint> {
@@ -43,9 +38,14 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
         return cell
     }
     
-    @objc func saveChange() {
+    override func itemDidSelect(_ item: SolanaSDK.APIEndPoint) {
+        let originalSelectedItem = selectedItem
+        super.itemDidSelect(item)
         showAlert(title: L10n.switchNetwork, message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem.url + "\"", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { [weak self] (index) in
-            guard index == 0 else {return}
+            guard index == 0 else {
+                self?.reverseChange(originalSelectedItem: originalSelectedItem)
+                return
+            }
             if let url = self?.selectedItem.url {
                 self?.analyticsManger.log(event: .settingsNetworkSelected(network: url))
             }
@@ -54,7 +54,12 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
         }
     }
     
-    func changeNetworkToSelectedNetwork() {
+    private func changeNetworkToSelectedNetwork() {
         responder.changeAPIEndpoint(to: selectedItem)
+    }
+    
+    private func reverseChange(originalSelectedItem: SolanaSDK.APIEndPoint)
+    {
+        super.itemDidSelect(originalSelectedItem)
     }
 }

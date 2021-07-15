@@ -10,7 +10,6 @@ import Foundation
 @available(iOS 13.0, *)
 class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
     var interfaceStyle: UIUserInterfaceStyle { AppDelegate.shared.window?.overrideUserInterfaceStyle ?? .unspecified }
-    override var dataDidChange: Bool {selectedItem != interfaceStyle}
     
     let analyticsManager: AnalyticsManagerType
     
@@ -35,8 +34,8 @@ class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
         return cell
     }
     
-    override func rowDidSelect(_ gesture: UIGestureRecognizer) {
-        super.rowDidSelect(gesture)
+    override func itemDidSelect(_ item: UIUserInterfaceStyle) {
+        super.itemDidSelect(item)
         analyticsManager.log(event: .settingsAppearanceSelected(appearance: selectedItem.name))
         AppDelegate.shared.changeThemeTo(selectedItem)
     }
