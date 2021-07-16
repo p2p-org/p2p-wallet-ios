@@ -18,7 +18,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     private let repository: TransactionsRepository
     private let pricesRepository: PricesRepository
     private let processingTransactionRepository: ProcessingTransactionsRepository
-    private let feeRelayer: SolanaSDK.FeeRelayer
+    private let feeRelayer: FeeRelayerType
     private let notificationsRepository: WLNotificationsRepository
     
     // MARK: - Properties
@@ -36,7 +36,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         repository: TransactionsRepository,
         pricesRepository: PricesRepository,
         processingTransactionRepository: ProcessingTransactionsRepository,
-        feeRelayerAPIClient: FeeRelayerSolanaAPIClient,
+        feeRelayer: FeeRelayerType,
         notificationsRepository: WLNotificationsRepository
     ) {
         self.account = account
@@ -44,7 +44,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         self.repository = repository
         self.pricesRepository = pricesRepository
         self.processingTransactionRepository = processingTransactionRepository
-        self.feeRelayer = SolanaSDK.FeeRelayer(solanaAPIClient: feeRelayerAPIClient)
+        self.feeRelayer = feeRelayer
         self.notificationsRepository = notificationsRepository
         super.init(isPaginationEnabled: true, limit: 10)
     }
@@ -87,7 +87,6 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             fetchPubkeys = .just(Defaults.p2pFeePayerPubkeys)
         } else {
             fetchPubkeys = feeRelayer.getFeePayerPubkey()
-                .map {$0.base58EncodedString}
                 .catchAndReturn("")
                 .flatMap {newFeePayer in
                     if !newFeePayer.isEmpty, !Defaults.p2pFeePayerPubkeys.contains(newFeePayer)

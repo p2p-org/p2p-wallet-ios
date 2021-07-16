@@ -17,6 +17,9 @@ PODS:
   - Ed25519HDKeySwift (1.2.0):
     - CryptoSwift
     - TweetNacl
+  - FeeRelayerSwift (1.0.0):
+    - RxAlamofire
+    - RxSwift
   - Firebase/Analytics (8.0.0):
     - Firebase/Core
   - Firebase/Core (8.0.0):
@@ -167,6 +170,7 @@ DEPENDENCIES:
   - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
   - Charts
+  - FeeRelayerSwift (from `FeeRelayerSwift`)
   - Firebase/Analytics
   - Firebase/Crashlytics
   - JazziconSwift
@@ -234,6 +238,8 @@ EXTERNAL SOURCES:
     :path: BECollectionView
   BEPureLayout:
     :path: BEPureLayout
+  FeeRelayerSwift:
+    :path: FeeRelayerSwift
   LazySubject:
     :path: LazySubject
   ListPlaceholder:
@@ -259,6 +265,7 @@ SPEC CHECKSUMS:
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   CryptoSwift: 7cc902df1784de3b389a387756c7d710f197730c
   Ed25519HDKeySwift: 68d37145dc6d58ff47033e273829f01648afce58
+  FeeRelayerSwift: 0c3d322a5d914c43bc6ab3fd9d15b04bc2c3080b
   Firebase: 73c3e3b216ec1ecbc54d2ffdd4670c65c749edb1
   FirebaseAnalytics: dcb92c7c9ef4fa7ffac276e8f87bd4fc8c97f1b8
   FirebaseCore: 3f09591d51292843e2a46f18358d60bf4e996255
@@ -295,6 +302,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: db042deee8095124a1d26e5d7d6c60e8dd82c1da
+PODFILE CHECKSUM: c0914f282ccad8b3b70c91b2725eac2c87058b16
 
 COCOAPODS: 1.10.1

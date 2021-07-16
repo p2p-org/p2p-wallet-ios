@@ -49,7 +49,7 @@ extension WalletDetail {
             pricesRepository: PricesRepository,
             transactionsRepository: TransactionsRepository,
             analyticsManager: AnalyticsManagerType,
-            feeRelayerAPIClient: FeeRelayerSolanaAPIClient,
+            feeRelayer: FeeRelayerType,
             notificationsRepository: WLNotificationsRepository
         ) {
             self.pubkey = pubkey
@@ -78,7 +78,7 @@ extension WalletDetail {
                     repository: transactionsRepository,
                     pricesRepository: pricesRepository,
                     processingTransactionRepository: processingTransactionRepository,
-                    feeRelayerAPIClient: feeRelayerAPIClient,
+                    feeRelayer: feeRelayer,
                     notificationsRepository: notificationsRepository
                 )
             )
