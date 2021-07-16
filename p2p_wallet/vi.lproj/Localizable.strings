@@ -394,3 +394,4 @@
 "Fetching receipt" = "Tải hoá đơn";
 "Attempt to debit an account but found no record of a prior credit." = "Cố gắng ghi nợ tài khoản nhưng không tìm thấy hồ sơ nào về khoản ghi có trước đó.";
 "Received new tokens. Downloading receipt..." = "Đã nhận được tokens. Đang tải xuống biên lai ...";
+"Unknown token" = "Token không xác định";
