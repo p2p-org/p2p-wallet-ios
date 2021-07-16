@@ -11,7 +11,7 @@ import RxCocoa
 import BECollectionView
 
 protocol WalletsRepository: BEListViewModelType {
-    var solWallet: Wallet? {get}
+    var nativeWallet: Wallet? {get}
     func getWallets() -> [Wallet]
     var stateObservable: Observable<BEFetcherState> {get}
     var dataDidChange: Observable<Void> {get}

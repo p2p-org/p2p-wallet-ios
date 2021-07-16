@@ -185,7 +185,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                     }
                     
                     // if closing non-native Solana wallet, then convert its balances and send it to native Solana wallet
-                    if wallet.token.symbol == "SOL" {
+                    if wallet.token.symbol == "SOL" && !wallet.token.isNative {
                         if isReversed {
                             convertedAmount -= wallet.amount ?? 0
                         } else {

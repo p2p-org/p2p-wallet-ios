@@ -18,7 +18,7 @@ extension WalletDetail {
         struct Output {
             let navigationScene: Driver<NavigatableScene?>
             let wallet: Driver<Wallet?>
-            let solPubkey: Driver<String?>
+            let nativePubkey: Driver<String?>
             let graphViewModel: WalletGraphViewModel
             let transactionsViewModel: TransactionsViewModel
         }
@@ -64,8 +64,8 @@ extension WalletDetail {
                     .asDriver(onErrorJustReturn: nil),
                 wallet: walletSubject
                     .asDriver(),
-                solPubkey: walletsRepository.dataObservable
-                    .map {$0?.first(where: {$0.token.symbol == "SOL"})}
+                nativePubkey: walletsRepository.dataObservable
+                    .map {$0?.first(where: {$0.token.isNative})}
                     .map {$0?.pubkey}
                     .asDriver(onErrorJustReturn: nil),
                 graphViewModel: WalletGraphViewModel(

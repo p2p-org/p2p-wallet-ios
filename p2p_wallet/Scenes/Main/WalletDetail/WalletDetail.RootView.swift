@@ -44,7 +44,7 @@ extension WalletDetail {
                     return .just(())
                 },
                 wallet: viewModel.output.wallet,
-                solPubkey: viewModel.output.solPubkey
+                nativePubkey: viewModel.output.nativePubkey
             )
             collectionView.delegate = self
             return collectionView
@@ -136,7 +136,7 @@ extension WalletDetail {
             
             // bind viewModel's output to controls
             viewModel.output.wallet
-                .map {$0?.token.symbol == "SOL"}
+                .map {$0?.token.isNative == true}
                 .drive(settingsButton.rx.isHidden)
                 .disposed(by: disposeBag)
             

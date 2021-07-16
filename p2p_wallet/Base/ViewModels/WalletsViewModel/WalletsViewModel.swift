@@ -26,7 +26,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private var timer: Timer?
     
     // MARK: - Getters
-    var solWallet: Wallet? {data.first(where: {$0.token.symbol == "SOL"})}
+    var nativeWallet: Wallet? {data.first(where: {$0.token.isNative})}
     
     // MARK: - Subjects
     let isHiddenWalletsShown = BehaviorRelay<Bool>(value: false)
@@ -41,8 +41,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         self.accountNotificationsRepository = accountNotificationsRepository
         self.pricesRepository = pricesRepository
         super.init()
-        
-        self.customSorter = Wallet.defaultSorter
         bind()
         startObserving()
     }
@@ -58,7 +56,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         // observe prices
         pricesRepository.pricesObservable()
             .subscribe(onNext: { [weak self] _ in
-                self?.refreshUI()
+                self?.updatePrices()
             })
             .disposed(by: disposeBag)
         
@@ -71,7 +69,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         
         // observe hideZeroBalances settings
         defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] _ in
-            self?.refreshUI()
+            self?.updateWalletsVisibility()
         })
         
         // observe account notification
@@ -115,7 +113,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             solanaSDK.getBalance(),
             solanaSDK.getTokenWallets()
         )
-        
+            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
             .map {[weak self] balance, wallets in
                 guard let self = self else {return []}
                 var wallets = wallets
@@ -127,29 +125,18 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                 )
                 wallets.insert(solWallet, at: 0)
                 
+                // update visibility
+                wallets = self.mapVisibility(wallets: wallets)
+                
+                // map prices
+                wallets = self.mapPrices(wallets: wallets)
+                
+                // sort
+                wallets.sort(by: Wallet.defaultSorter)
+                
                 return wallets
             }
-    }
-    
-    override func map(newData: [Wallet]) -> [Wallet] {
-        var wallets = newData
-        // update visibility
-        for i in 0..<wallets.count {
-            // update visibility
-            wallets[i].updateVisibility()
-        }
-        
-        // map prices
-        for i in 0..<wallets.count {
-            if let price = pricesRepository.currentPrice(for: wallets[i].token.symbol)
-            {
-                wallets[i].price = price
-            } else {
-                wallets[i].price = nil
-            }
-        }
-        
-        return super.map(newData: wallets)
+            .observe(on: MainScheduler.instance)
     }
     
     override func reload() {
@@ -164,14 +151,20 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     
     @objc private func getNewWallet() {
         solanaSDK.getTokenWallets()
-            .subscribe(onSuccess: {[weak self] newData in
-                guard let self = self else {return}
+            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .map { [weak self] newData -> [Wallet] in
+                guard let self = self else {return []}
                 var data = self.data
                 let newWallets = newData
                     .filter {wl in !data.contains(where: {$0.pubkey == wl.pubkey})}
                     .filter {$0.lamports != 0}
                 data.append(contentsOf: newWallets)
-                self.overrideData(by: data)
+                data.sort(by: Wallet.defaultSorter)
+                return data
+            }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: {[weak self] data in
+                self?.overrideData(by: data)
             })
             .disposed(by: disposeBag)
     }
@@ -215,17 +208,57 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         })
     }
     
+    // MARK: - Mappers
+    private func mapPrices(wallets: [Wallet]) -> [Wallet] {
+        var wallets = wallets
+        for i in 0..<wallets.count {
+            wallets[i].price = pricesRepository.currentPrice(for: wallets[i].token.symbol)
+        }
+        return wallets
+    }
+    
+    private func mapVisibility(wallets: [Wallet]) -> [Wallet] {
+        var wallets = wallets
+        for i in 0..<wallets.count {
+            // update visibility
+            wallets[i].updateVisibility()
+        }
+        return wallets
+    }
+    
     // MARK: - Helpers
+    private func updatePrices() {
+        guard currentState == .loaded else {return}
+        let wallets = mapPrices(wallets: data)
+        overrideData(by: wallets)
+    }
+    
+    private func updateWalletsVisibility() {
+        guard currentState == .loaded else {return}
+        let wallets = mapVisibility(wallets: data)
+        overrideData(by: wallets)
+    }
+    
     private func hideWallet(_ wallet: Wallet) {
         Defaults.unhiddenWalletPubkey.removeAll(where: {$0 == wallet.pubkey})
         Defaults.hiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
-        refreshUI()
+        updateVisibility(for: wallet)
     }
     
     private func unhideWallet(_ wallet: Wallet) {
         Defaults.unhiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
         Defaults.hiddenWalletPubkey.removeAll(where: {$0 == wallet.pubkey})
-        refreshUI()
+        updateVisibility(for: wallet)
+    }
+    
+    private func updateVisibility(for wallet: Wallet) {
+        self.updateItem(where: {
+            $0.pubkey == wallet.pubkey
+        }) { wallet -> Wallet? in
+            var wallet = wallet
+            wallet.updateVisibility()
+            return wallet
+        }
     }
     
     // MARK: - App state
@@ -279,10 +312,6 @@ fileprivate extension Wallet {
             // Solana
             if lhs.token.isNative != rhs.token.isNative {
                 return lhs.token.isNative
-            }
-            
-            if lhs.token.symbol == "SOL" || rhs.token.symbol == "SOL" {
-                return lhs.token.symbol == "SOL"
             }
             
             if lhs.token.isLiquidity != rhs.token.isLiquidity {
