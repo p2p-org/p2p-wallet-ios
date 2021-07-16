@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import LazySubject
+import FeeRelayerSwift
 
 protocol SendTokenAPIClient {
     func getFees() -> Single<SolanaSDK.Fee>
@@ -31,6 +32,27 @@ protocol SendTokenAPIClient {
 }
 
 extension SolanaSDK: SendTokenAPIClient {
+    func sendNativeSOL(to destination: String, amount: UInt64, withoutFee: Bool, isSimulation: Bool) -> Single<TransactionID> {
+        sendNativeSOL(
+            to: destination,
+            amount: amount,
+            isSimulation: isSimulation,
+            customProxy: withoutFee ? FeeRelayer(errorType: SolanaSDK.Error.self): nil
+        )
+    }
+    
+    func sendSPLTokens(mintAddress: String, decimals: Decimals, from fromPublicKey: String, to destinationAddress: String, amount: UInt64, withoutFee: Bool, isSimulation: Bool) -> Single<TransactionID> {
+        sendSPLTokens(
+            mintAddress: mintAddress,
+            decimals: decimals,
+            from: fromPublicKey,
+            to: destinationAddress,
+            amount: amount,
+            isSimulation: isSimulation,
+            customProxy: withoutFee ? FeeRelayer(errorType: SolanaSDK.Error.self): nil
+        )
+    }
+    
     func getFees() -> Single<Fee> {
         getFees(commitment: nil)
     }
