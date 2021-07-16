@@ -29,7 +29,7 @@ extension SolanaSDK.Wallet {
     }
     
     var isHidden: Bool {
-        if token.symbol == "SOL" {return false}
+        if token.isNative {return false}
         guard let pubkey = self.pubkey else {return false}
         if Defaults.hiddenWalletPubkey.contains(pubkey) {
             return true

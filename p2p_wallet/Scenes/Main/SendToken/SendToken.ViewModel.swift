@@ -111,7 +111,7 @@ extension SendToken {
                 request: Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
                     .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
                     .map {
-                        let decimals = repository.solWallet?.token.decimals
+                        let decimals = repository.nativeWallet?.token.decimals
                         return $0.convertToBalance(decimals: decimals)
                     }
             )
@@ -357,7 +357,7 @@ extension SendToken {
                 
                 // Verify with fee
                 if let fee = fee,
-                   let solAmount = repository.solWallet?.amount,
+                   let solAmount = repository.nativeWallet?.amount,
                    fee > solAmount
                 {
                     return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee

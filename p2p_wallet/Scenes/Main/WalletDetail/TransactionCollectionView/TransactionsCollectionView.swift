@@ -16,7 +16,7 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let analyticsManager: AnalyticsManagerType
     let scanQrCodeAction: CocoaAction
     let wallet: Driver<Wallet?>
-    let solPubkey: Driver<String?>
+    let nativePubkey: Driver<String?>
     let disposeBag = DisposeBag()
     
     init(
@@ -25,13 +25,13 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
         analyticsManager: AnalyticsManagerType,
         scanQrCodeAction: CocoaAction,
         wallet: Driver<Wallet?>,
-        solPubkey: Driver<String?>
+        nativePubkey: Driver<String?>
     ) {
         self.analyticsManager = analyticsManager
         self.graphViewModel = graphViewModel
         self.scanQrCodeAction = scanQrCodeAction
         self.wallet = wallet
-        self.solPubkey = solPubkey
+        self.nativePubkey = nativePubkey
         
         super.init(
             header: .init(
@@ -116,7 +116,7 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
             analyticsManager: analyticsManager,
             scanQrCodeAction: scanQrCodeAction,
             wallet: wallet,
-            solPubkey: solPubkey
+            solPubkey: nativePubkey
         )
         return headerView
     }
