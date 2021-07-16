@@ -155,9 +155,11 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             .map { [weak self] newData -> [Wallet] in
                 guard let self = self else {return []}
                 var data = self.data
-                let newWallets = newData
+                var newWallets = newData
                     .filter {wl in !data.contains(where: {$0.pubkey == wl.pubkey})}
                     .filter {$0.lamports != 0}
+                newWallets = self.mapPrices(wallets: newWallets)
+                newWallets = self.mapVisibility(wallets: newWallets)
                 data.append(contentsOf: newWallets)
                 data.sort(by: Wallet.defaultSorter)
                 return data
