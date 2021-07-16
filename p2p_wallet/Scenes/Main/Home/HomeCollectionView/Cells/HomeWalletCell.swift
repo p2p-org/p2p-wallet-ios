@@ -53,6 +53,8 @@ final class HomeWalletCell: EditableWalletCell {
         equityValueLabel.text = "\(item.amountInCurrentFiat.toString(maximumFractionDigits: 2)) \(Defaults.fiat.symbol)"
         if item.token.isNative {
             coinFullnameLabel.text = item.pubkey?.truncatingMiddle()
+        } else if item.token.isUndefined {
+            coinFullnameLabel.text = L10n.unknownToken
         } else {
             coinFullnameLabel.text = item.token.name
         }

@@ -394,3 +394,4 @@
 "Fetching receipt" = "Récupération du reçu";
 "Attempt to debit an account but found no record of a prior credit." = "Tentative de débit d'un compte mais n'a trouvé aucune trace d'un crédit antérieur.";
 "Received new tokens. Downloading receipt..." = "Reçu de nouveaux jetons. Téléchargement du reçu...";
+"Unknown token" = "Jeton inconnu";
