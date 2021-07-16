@@ -19,6 +19,7 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
         footer: BECollectionViewSectionFooterLayout? = nil,
         background: UICollectionReusableView.Type? = nil,
         cellType: BECollectionViewCell.Type,
+        numberOfLoadingCells: Int = 2,
         customFilter: @escaping ((AnyHashable) -> Bool) = { item in
             guard let wallet = item as? Wallet else {return false}
             return !wallet.isHidden
@@ -31,6 +32,7 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
                 header: header,
                 footer: footer,
                 cellType: cellType,
+                numberOfLoadingCells: numberOfLoadingCells,
                 interGroupSpacing: 30,
                 itemHeight: .estimated(45),
                 contentInsets: NSDirectionalEdgeInsets(top: 0, leading: .defaultPadding, bottom: 0, trailing: .defaultPadding),
