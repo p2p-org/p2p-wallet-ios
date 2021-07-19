@@ -396,3 +396,4 @@
 "Received new tokens. Downloading receipt..." = "Đã nhận được tokens. Đang tải xuống biên lai ...";
 "Unknown token" = "Token không xác định";
 "Interface language changed" = "Ngôn ngữ giao diện đã thay đổi";
+"Changed language to %@" = "Đã thay đổi ngôn ngữ thành %@";
