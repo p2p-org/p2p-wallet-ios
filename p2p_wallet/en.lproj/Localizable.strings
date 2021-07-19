@@ -395,3 +395,4 @@
 "Attempt to debit an account but found no record of a prior credit." = "Attempt to debit an account but found no record of a prior credit.";
 "Received new tokens. Downloading receipt..." = "Received new tokens. Downloading receipt...";
 "Unknown token" = "Unknown token";
+"Interface language changed" = "Interface language changed";

@@ -55,6 +55,9 @@ class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
                 return
             }
             self?.responder.languageDidChange(to: language)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                UIApplication.shared.showToast(message: L10n.interfaceLanguageChanged)
+            }
         }
     }
     
