@@ -396,3 +396,4 @@
 "Received new tokens. Downloading receipt..." = "Получены новые токены. Скачивание квитанции ...";
 "Unknown token" = "Неизвестный токен";
 "Interface language changed" = "Язык интерфейса изменен";
+"Changed language to %@" = "Изменен язык на %@";

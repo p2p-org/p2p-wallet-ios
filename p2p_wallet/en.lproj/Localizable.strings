@@ -396,3 +396,4 @@
 "Received new tokens. Downloading receipt..." = "Received new tokens. Downloading receipt...";
 "Unknown token" = "Unknown token";
 "Interface language changed" = "Interface language changed";
+"Changed language to %@" = "Changed language to %@";

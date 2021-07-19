@@ -396,3 +396,4 @@
 "Received new tokens. Downloading receipt..." = "Reçu de nouveaux jetons. Téléchargement du reçu...";
 "Unknown token" = "Jeton inconnu";
 "Interface language changed" = "La langue de l'interface a changé";
+"Changed language to %@" = "Langue changée en %@";
