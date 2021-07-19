@@ -395,3 +395,4 @@
 "Attempt to debit an account but found no record of a prior credit." = "Попытка списать средства со счета, но не обнаружена предыдущая запись о кредите.";
 "Received new tokens. Downloading receipt..." = "Получены новые токены. Скачивание квитанции ...";
 "Unknown token" = "Неизвестный токен";
+"Interface language changed" = "Язык интерфейса изменен";
