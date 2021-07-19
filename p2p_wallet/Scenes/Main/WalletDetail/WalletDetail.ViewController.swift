@@ -9,7 +9,8 @@ import Foundation
 import UIKit
 
 extension WalletDetail {
-    class ViewController: WLIndicatorModalVC {
+    class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
+        var transitionManager: UIViewControllerTransitioningDelegate?
         
         // MARK: - Properties
         let viewModel: ViewModel
@@ -64,6 +65,10 @@ extension WalletDetail {
             default:
                 break
             }
+        }
+        
+        override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
+            .infinity
         }
     }
 }
