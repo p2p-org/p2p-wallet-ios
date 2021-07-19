@@ -131,7 +131,7 @@ class HomeViewController: BaseVC {
             analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: wallet.token.symbol))
             
             let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey, symbol: wallet.token.symbol)
-            present(vc, animated: true, completion: nil)
+            present(vc, interactiveDismissalType: .standard)
         case .walletSettings(let wallet):
             guard let pubkey = wallet.pubkey else {return}
             let vc = self.scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
