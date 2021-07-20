@@ -103,11 +103,7 @@ extension SwapToken {
                     })
                     .disposed(by: disposeBag)
                 
-                // text field
-                amountTextField.rx.text
-                    .bind(to: viewModel.input.amount)
-                    .disposed(by: disposeBag)
-                
+                // analytics
                 amountTextField.rx.controlEvent([.editingDidEnd])
                     .asObservable()
                     .subscribe(onNext: { [weak self] _ in
@@ -116,6 +112,7 @@ extension SwapToken {
                     })
                     .disposed(by: disposeBag)
                 
+                // use all balance
                 viewModel.output.useAllBalanceDidTap
                     .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
                     .drive(onNext: {[weak self] in
@@ -123,12 +120,6 @@ extension SwapToken {
                         self?.amountTextField.text = $0
                     })
                     .disposed(by: disposeBag)
-                
-                // FIXME: - BiBinding
-                //                viewModel.output.amount
-                //                    .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
-                //                    .drive(amountTextField.rx.text)
-                //                    .disposed(by: disposeBag)
                 
                 // equity value label
                 // FIXME: - price observing
@@ -147,6 +138,17 @@ extension SwapToken {
                     .drive(equityValueLabel.rx.text)
                     .disposed(by: disposeBag)
                 
+                // text
+                amountTextField.rx.text
+                    .bind(to: viewModel.input.amount)
+                    .disposed(by: disposeBag)
+                
+                // FIXME: - BiBinding
+                //                viewModel.output.amount
+                //                    .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
+                //                    .drive(amountTextField.rx.text)
+                //                    .disposed(by: disposeBag)
+                
             case .destination:
                 // wallet
                 viewModel.output.destinationWallet
@@ -155,7 +157,19 @@ extension SwapToken {
                     })
                     .disposed(by: disposeBag)
                 
-                // textField
+                // equity value label
+                viewModel.output.destinationWallet
+                    .map {destinationWallet -> String? in
+                        if destinationWallet != nil {
+                            return nil
+                        } else {
+                            return L10n.selectCurrency
+                        }
+                    }
+                    .drive(equityValueLabel.rx.text)
+                    .disposed(by: disposeBag)
+                
+                // amount
 //                amountTextField.rx.text
 //                    .bind(to: viewModel.input.estimatedAmount)
 //                    .disposed(by: disposeBag)
@@ -171,18 +185,6 @@ extension SwapToken {
                 viewModel.output.estimatedAmount
                     .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
                     .drive(amountTextField.rx.text)
-                    .disposed(by: disposeBag)
-                
-                // equity value label
-                viewModel.output.destinationWallet
-                    .map {destinationWallet -> String? in
-                        if destinationWallet != nil {
-                            return nil
-                        } else {
-                            return L10n.selectCurrency
-                        }
-                    }
-                    .drive(equityValueLabel.rx.text)
                     .disposed(by: disposeBag)
             }
         }
