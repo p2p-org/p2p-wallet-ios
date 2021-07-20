@@ -88,37 +88,22 @@ extension SwapToken {
         }
         
         private func bind() {
-            // textFields
+            // subjects
+            let walletDriver: Driver<Wallet?>
+            let textFieldKeydownEvent: (Double) -> AnalyticsEvent
+            let equityValueLabelDriver: Driver<String?>
+            let inputSubject: PublishRelay<String?>
+            let outputDriver: Driver<Double?>
+            
             switch type {
             case .source:
-                // wallet
-                viewModel.output.sourceWallet
-                    .drive(onNext: {[weak self] wallet in
-                        self?.setUp(wallet: wallet)
-                    })
-                    .disposed(by: disposeBag)
+                walletDriver = viewModel.output.sourceWallet
                 
-                // analytics
-                amountTextField.rx.controlEvent([.editingDidEnd])
-                    .asObservable()
-                    .subscribe(onNext: { [weak self] _ in
-                        guard let amount = self?.amountTextField.text?.double else {return}
-                        self?.viewModel.analyticsManager.log(event: .swapTokenAAmountKeydown(sum: amount))
-                    })
-                    .disposed(by: disposeBag)
+                textFieldKeydownEvent = {amount in
+                    .swapTokenAAmountKeydown(sum: amount)
+                }
                 
-                // use all balance
-                viewModel.output.useAllBalanceDidTap
-                    .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
-                    .drive(onNext: {[weak self] in
-                        // write text without notifying
-                        self?.amountTextField.text = $0
-                    })
-                    .disposed(by: disposeBag)
-                
-                // equity value label
-                // FIXME: - price observing
-                Driver.combineLatest(
+                equityValueLabelDriver = Driver.combineLatest(
                     viewModel.output.amount,
                     viewModel.output.sourceWallet
                 )
@@ -130,40 +115,27 @@ extension SwapToken {
                             return L10n.selectCurrency
                         }
                     }
-                    .drive(equityValueLabel.rx.text)
-                    .disposed(by: disposeBag)
                 
-                // text
-                amountTextField.rx.text
-                    .filter {[weak self] _ in self?.amountTextField.isFirstResponder == true}
-                    .bind(to: viewModel.input.amount)
-                    .disposed(by: disposeBag)
+                inputSubject = viewModel.input.amount
+                outputDriver = viewModel.output.amount
                 
-                viewModel.output.amount
+                // use all balance
+                viewModel.output.useAllBalanceDidTap
                     .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
-                    .filter {[weak self] _ in self?.amountTextField.isFirstResponder == false}
-                    .drive(amountTextField.rx.text)
+                    .drive(onNext: {[weak self] in
+                        // write text without notifying
+                        self?.amountTextField.text = $0
+                    })
                     .disposed(by: disposeBag)
                 
             case .destination:
-                // wallet
-                viewModel.output.destinationWallet
-                    .drive(onNext: { [weak self] wallet in
-                        self?.setUp(wallet: wallet)
-                    })
-                    .disposed(by: disposeBag)
+                walletDriver = viewModel.output.destinationWallet
                 
-                // analytics
-                amountTextField.rx.controlEvent([.editingDidEnd])
-                    .asObservable()
-                    .subscribe(onNext: { [weak self] _ in
-                        guard let amount = self?.amountTextField.text?.double else {return}
-                        self?.viewModel.analyticsManager.log(event: .swapTokenBAmountKeydown(sum: amount))
-                    })
-                    .disposed(by: disposeBag)
+                textFieldKeydownEvent = {amount in
+                    .swapTokenBAmountKeydown(sum: amount)
+                }
                 
-                // equity value label
-                viewModel.output.destinationWallet
+                equityValueLabelDriver = viewModel.output.destinationWallet
                     .map {destinationWallet -> String? in
                         if destinationWallet != nil {
                             return nil
@@ -171,21 +143,45 @@ extension SwapToken {
                             return L10n.selectCurrency
                         }
                     }
-                    .drive(equityValueLabel.rx.text)
-                    .disposed(by: disposeBag)
                 
-                // amount
-                amountTextField.rx.text
-                    .filter {[weak self] _ in self?.amountTextField.isFirstResponder == true}
-                    .bind(to: viewModel.input.estimatedAmount)
-                    .disposed(by: disposeBag)
-                
-                viewModel.output.estimatedAmount
-                    .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
-                    .filter {[weak self] _ in self?.amountTextField.isFirstResponder == false}
-                    .drive(amountTextField.rx.text)
-                    .disposed(by: disposeBag)
+                inputSubject = viewModel.input.estimatedAmount
+                outputDriver = viewModel.output.estimatedAmount
             }
+            
+            // wallet
+            walletDriver
+                .drive(onNext: { [weak self] wallet in
+                    self?.setUp(wallet: wallet)
+                })
+                .disposed(by: disposeBag)
+            
+            // analytics
+            amountTextField.rx.controlEvent([.editingDidEnd])
+                .asObservable()
+                .subscribe(onNext: { [weak self] _ in
+                    guard let amount = self?.amountTextField.text?.double else {return}
+                    let event = textFieldKeydownEvent(amount)
+                    self?.viewModel.analyticsManager.log(event: event)
+                })
+                .disposed(by: disposeBag)
+            
+            // equity value label
+            equityValueLabelDriver
+                .drive(equityValueLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // input amount
+            amountTextField.rx.text
+                .filter {[weak self] _ in self?.amountTextField.isFirstResponder == true}
+                .distinctUntilChanged()
+                .bind(to: inputSubject)
+                .disposed(by: disposeBag)
+            
+            outputDriver
+                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
+                .filter {[weak self] _ in self?.amountTextField.isFirstResponder == false}
+                .drive(amountTextField.rx.text)
+                .disposed(by: disposeBag)
         }
         
         private func setUp(wallet: Wallet?) {
