@@ -51,11 +51,6 @@ extension SwapToken {
             
             bind()
             amountTextField.delegate = self
-            
-            // FIXME: - disable input in destination wallet, re-enable later
-            if type == .destination {
-                amountTextField.isUserInteractionEnabled = false
-            }
         }
         
         override func commonInit() {
@@ -140,14 +135,15 @@ extension SwapToken {
                 
                 // text
                 amountTextField.rx.text
+                    .filter {[weak self] _ in self?.amountTextField.isFirstResponder == true}
                     .bind(to: viewModel.input.amount)
                     .disposed(by: disposeBag)
                 
-                // FIXME: - BiBinding
-                //                viewModel.output.amount
-                //                    .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
-                //                    .drive(amountTextField.rx.text)
-                //                    .disposed(by: disposeBag)
+                viewModel.output.amount
+                    .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
+                    .filter {[weak self] _ in self?.amountTextField.isFirstResponder == false}
+                    .drive(amountTextField.rx.text)
+                    .disposed(by: disposeBag)
                 
             case .destination:
                 // wallet
@@ -179,12 +175,14 @@ extension SwapToken {
                     .disposed(by: disposeBag)
                 
                 // amount
-//                amountTextField.rx.text
-//                    .bind(to: viewModel.input.estimatedAmount)
-//                    .disposed(by: disposeBag)
+                amountTextField.rx.text
+                    .filter {[weak self] _ in self?.amountTextField.isFirstResponder == true}
+                    .bind(to: viewModel.input.estimatedAmount)
+                    .disposed(by: disposeBag)
                 
                 viewModel.output.estimatedAmount
                     .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
+                    .filter {[weak self] _ in self?.amountTextField.isFirstResponder == false}
                     .drive(amountTextField.rx.text)
                     .disposed(by: disposeBag)
             }
