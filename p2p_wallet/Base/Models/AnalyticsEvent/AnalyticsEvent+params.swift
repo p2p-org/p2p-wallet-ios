@@ -83,6 +83,7 @@ extension AnalyticsEvent {
         case .swapTokenASelectClick(let tokenTicker): return ["tokenTicker": tokenTicker]
         case .swapTokenBSelectClick(let tokenTicker): return ["tokenTicker": tokenTicker]
         case .swapTokenAAmountKeydown(let sum): return ["sum": sum]
+        case .swapTokenBAmountKeydown(let sum): return ["sum": sum]
         case .swapAvailableClick(let sum): return ["sum": sum]
         case .swapReverseClick: return nil
         case .swapSlippageClick: return nil

@@ -81,6 +81,7 @@ enum AnalyticsEvent {
     case swapTokenASelectClick(tokenTicker: String)
     case swapTokenBSelectClick(tokenTicker: String)
     case swapTokenAAmountKeydown(sum: Double)
+    case swapTokenBAmountKeydown(sum: Double)
     case swapAvailableClick(sum: Double)
     case swapReverseClick
     case swapSlippageClick

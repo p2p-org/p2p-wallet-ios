@@ -157,6 +157,15 @@ extension SwapToken {
                     })
                     .disposed(by: disposeBag)
                 
+                // analytics
+                amountTextField.rx.controlEvent([.editingDidEnd])
+                    .asObservable()
+                    .subscribe(onNext: { [weak self] _ in
+                        guard let amount = self?.amountTextField.text?.double else {return}
+                        self?.viewModel.analyticsManager.log(event: .swapTokenBAmountKeydown(sum: amount))
+                    })
+                    .disposed(by: disposeBag)
+                
                 // equity value label
                 viewModel.output.destinationWallet
                     .map {destinationWallet -> String? in
@@ -172,14 +181,6 @@ extension SwapToken {
                 // amount
 //                amountTextField.rx.text
 //                    .bind(to: viewModel.input.estimatedAmount)
-//                    .disposed(by: disposeBag)
-                
-//                amountTextField.rx.controlEvent([.editingDidEnd])
-//                    .asObservable()
-//                    .subscribe(onNext: { [weak self] _ in
-//                        guard let amount = self?.amountTextField.text?.double else {return}
-//                        self?.viewModel.analyticsManager.log(event: .swapTokenBAmountKeydown, params: ["sum": amount])
-//                    })
 //                    .disposed(by: disposeBag)
                 
                 viewModel.output.estimatedAmount
