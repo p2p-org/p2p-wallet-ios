@@ -156,9 +156,9 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
                 var data = self.data
                 data = newTransactions + data
                 self.overrideData(by: data)
-            }, onFailure: {[weak self] error in
+            }, onFailure: {[weak self] _ in
                 self?.isFetchingReceiptSubject.accept(false)
-                UIApplication.shared.showToast(message: L10n.errorRetrievingReceipt + ": " + error.readableDescription + ". " + L10n.pleaseTryAgainLater.uppercaseFirst)
+//                UIApplication.shared.showToast(message: L10n.errorRetrievingReceipt + ": " + error.readableDescription + ". " + L10n.pleaseTryAgainLater.uppercaseFirst)
             })
             .disposed(by: disposeBag)
     }

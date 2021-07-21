@@ -290,7 +290,7 @@ extension SwapToken {
                             .text(" ")
                             .text("(\(L10n.max). 20%)", color: .textSecondary)
                     } else {
-                        self?.slippageLabel.text = (slippage * 100).toString() + " %"
+                        self?.slippageLabel.text = (slippage * 100).toString(maximumFractionDigits: 9) + " %"
                     }
                 })
                 .disposed(by: disposeBag)
