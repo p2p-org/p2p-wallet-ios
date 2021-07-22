@@ -397,3 +397,5 @@
 "Unknown token" = "Неизвестный токен";
 "Interface language changed" = "Язык интерфейса изменен";
 "Changed language to %@" = "Изменен язык на %@";
+"Source account is not valid" = "Исходная учетная запись недействительна";
+"Given pool token amount results in zero trading tokens" = "Указанная сумма токена пула приводит к нулю торговых токенов";
