@@ -83,6 +83,7 @@ extension AnalyticsEvent {
         case .swapTokenASelectClick: return "swap_token_a_select_click"
         case .swapTokenBSelectClick: return "swap_token_b_select_click"
         case .swapTokenAAmountKeydown: return "swap_token_a_amount_keydown"
+        case .swapTokenBAmountKeydown: return "swap_token_a_amount_keydown"
         case .swapAvailableClick: return "swap_available_click"
         case .swapReverseClick: return "swap_reverse_click"
         case .swapSlippageClick: return "swap_slippage_click"

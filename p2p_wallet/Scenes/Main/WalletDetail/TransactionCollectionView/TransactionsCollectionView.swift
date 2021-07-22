@@ -96,18 +96,18 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
         contentInset.modify(dBottom: 120)
     }
     
-    override func bind() {
-        super.bind()
-        (viewModel as! TransactionsViewModel).isFetchingReceiptDriver
-            .drive(onNext: {isFetching in
-                if isFetching {
-                    UIApplication.shared.showToast(
-                        message: "✅ " +  L10n.ReceivedNewTokens.downloadingReceipt
-                    )
-                }
-            })
-            .disposed(by: disposeBag)
-    }
+//    override func bind() {
+//        super.bind()
+//        (viewModel as! TransactionsViewModel).isFetchingReceiptDriver
+//            .drive(onNext: {isFetching in
+//                if isFetching {
+//                    UIApplication.shared.showToast(
+//                        message: "✅ " +  L10n.ReceivedNewTokens.downloadingReceipt
+//                    )
+//                }
+//            })
+//            .disposed(by: disposeBag)
+//    }
     
     override func configureHeaderView(kind: String, indexPath: IndexPath) -> UICollectionReusableView? {
         let headerView = super.configureHeaderView(kind: kind, indexPath: indexPath) as? HeaderView

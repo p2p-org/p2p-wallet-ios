@@ -396,3 +396,6 @@
 "Received new tokens. Downloading receipt..." = "Received new tokens. Downloading receipt...";
 "Unknown token" = "Unknown token";
 "Interface language changed" = "Interface language changed";
+"Changed language to %@" = "Changed language to %@";
+"Source account is not valid" = "Source account is not valid";
+"Given pool token amount results in zero trading tokens" = "Given pool token amount results in zero trading tokens";

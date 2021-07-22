@@ -252,14 +252,14 @@ extension SwapToken {
                 .bind(to: estimatedAmountSubject)
                 .disposed(by: disposeBag)
             
-            // TODO: - input amount from estimated amount
-//            Observable.combineLatest(
-//                currentPoolSubject.distinctUntilChanged(),
-//                input.estimatedAmount.map {$0?.double}
-//            )
-//                .map {[weak self] in self?.calculateInputAmount(forExpectedAmount: $1)}
-//                .bind(to: amountSubject)
-//                .disposed(by: disposeBag)
+            // input amount from estimated amount
+            Observable.combineLatest(
+                currentPoolSubject.distinctUntilChanged(),
+                input.estimatedAmount.map {$0?.double}
+            )
+                .map {[weak self] in self?.calculateInputAmount(forExpectedAmount: $1)}
+                .bind(to: amountSubject)
+                .disposed(by: disposeBag)
             
             // fee
             Observable.combineLatest(
