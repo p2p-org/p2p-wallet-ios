@@ -122,7 +122,7 @@ extension TransactionsCollectionView {
             // amountLabel
             wallet?.map {
                 $0?.amountInCurrentFiat
-                    .toString(autoSetMaximumFractionDigits: true)
+                    .toString(maximumFractionDigits: 2)
             }
                 .map {Defaults.fiat.symbol + " " + ($0 ?? "0")}
                 .drive(amountLabel.rx.text)

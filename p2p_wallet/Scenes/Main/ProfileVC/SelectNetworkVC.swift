@@ -51,6 +51,10 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
             }
             
             self?.changeNetworkToSelectedNetwork()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                UIApplication.shared.showToast(message: "✅ " + L10n.networkChanged)
+            }
         }
     }
     
