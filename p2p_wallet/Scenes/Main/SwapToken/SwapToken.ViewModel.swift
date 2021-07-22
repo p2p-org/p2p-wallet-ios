@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import LazySubject
+import FeeRelayerSwift
 
 protocol SwapTokenAPIClient {
     func getSwapPools() -> Single<[SolanaSDK.Pool]>
@@ -29,6 +30,10 @@ protocol SwapTokenAPIClient {
 }
 
 extension SolanaSDK: SwapTokenAPIClient {
+    func swap(account: Account?, pool: Pool?, source: PublicKey, sourceMint: PublicKey, destination: PublicKey?, destinationMint: PublicKey, slippage: Double, amount: UInt64, isSimulation: Bool) -> Single<SwapResponse> {
+        swap(account: account, pool: pool, source: source, sourceMint: sourceMint, destination: destination, destinationMint: destinationMint, slippage: slippage, amount: amount, isSimulation: isSimulation, customProxy: Defaults.useFreeTransaction ? FeeRelayer(errorType: SolanaSDK.Error.self): nil)
+    }
+    
     func getLamportsPerSignature() -> Single<Lamports> {
         getFees().map {$0.feeCalculator?.lamportsPerSignature}.map {$0 ?? 0}
     }
