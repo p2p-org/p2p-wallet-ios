@@ -80,7 +80,7 @@ extension {{enumName}} {
     {% else %}
     let format = {{param.bundle|default:"BundleToken.bundle"}}.localizedString(forKey: key, value: nil, table: table)
     {% endif %}
-    return String(format: format, locale: Locale.current, arguments: args)
+    return String(format: format, locale: Locale.shared, arguments: args)
   }
 }
 {% if not param.bundle and not param.lookupFunction %}
