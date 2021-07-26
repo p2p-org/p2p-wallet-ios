@@ -7,6 +7,10 @@
 
 import Foundation
 
+protocol WalletDidSelectHandler {
+    func walletDidSelect(_ wallet: Wallet)
+}
+
 struct ChooseWallet {
     
 }
