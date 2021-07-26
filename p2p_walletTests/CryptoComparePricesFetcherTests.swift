@@ -7,11 +7,12 @@
 
 import XCTest
 import RxBlocking
+import RxSwift
 @testable import p2p_wallet
 
 private struct Repository: TokensRepository {
-    var supportedTokens: [SolanaSDK.Token] {
-        try! SolanaSDK.TokensListParser()
+    func getTokensList() -> Single<[SolanaSDK.Token]> {
+        SolanaSDK.TokensListParser()
             .parse(network: "mainnet-beta")
     }
 }
@@ -31,7 +32,7 @@ class CryptoComparePricesFetcherTests: XCTestCase {
     }
 
     func testFetchingPrices() throws {
-        let coins = repository.supportedTokens.excludingSpecialTokens().map {$0.symbol}
+        let coins = try repository.getTokensList().map {$0.excludingSpecialTokens().map {$0.symbol}}.toBlocking().first()!
         let request = priceFetcher.getCurrentPrices(coins: coins, toFiat: "USD")
         
         let result = try request.toBlocking().first()

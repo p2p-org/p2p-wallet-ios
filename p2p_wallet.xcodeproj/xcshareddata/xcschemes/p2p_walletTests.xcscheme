@@ -34,6 +34,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "BCB2231425412AF8002D997F"
+            BuildableName = "p2p_wallet.app"
+            BlueprintName = "p2p_wallet"
+            ReferencedContainer = "container:p2p_wallet.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
