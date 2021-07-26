@@ -37,7 +37,7 @@ extension ChooseWallet {
         }()
         private lazy var collectionView: CollectionView = {
             let collectionView = CollectionView(
-                walletViewModel: viewModel.output.walletsViewModel
+                viewModel: viewModel
             )
             collectionView.keyboardDismissMode = .onDrag
             return collectionView
@@ -58,7 +58,7 @@ extension ChooseWallet {
         
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            
+            viewModel.reload()
         }
         
         // MARK: - Layout
@@ -84,7 +84,7 @@ extension ChooseWallet {
 
 extension ChooseWallet.RootView: BESearchBarDelegate {
     func beSearchBar(_ searchBar: BESearchBar, searchWithKeyword keyword: String) {
-        viewModel.output.walletsViewModel.search(keyword: keyword)
+        viewModel.search(keyword: keyword)
     }
     
     func beSearchBarDidBeginSearching(_ searchBar: BESearchBar) {

@@ -10,9 +10,9 @@ import BECollectionView
 
 extension ChooseWallet {
     class CollectionView: BEDynamicSectionsCollectionView {
-        init(walletViewModel: ChooseWallet.WalletsViewModel) {
+        init(viewModel: ViewModel) {
             super.init(
-                viewModel: walletViewModel,
+                viewModel: viewModel,
                 mapDataToSections: { viewModel in
                     let wallets = viewModel.getData(type: Wallet.self)
                     let myWallets = wallets.filter {$0.pubkey != nil}
@@ -58,6 +58,25 @@ extension ChooseWallet {
             }
             
             return snapshot
+        }
+        
+        override func configureSectionHeaderView(view: UICollectionReusableView?, sectionIndex: Int) {
+            if let view = view as? WLSectionHeaderView {
+                if viewModel.getData(type: Wallet.self).count == 0 {
+                    view.headerLabel.isHidden = true
+                } else {
+                    view.headerLabel.isHidden = false
+                }
+            }
+        }
+        
+        override func configureCell(indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell? {
+            let cell = super.configureCell(indexPath: indexPath, item: item)
+            if let cell = cell as? WLEmptyCell {
+                cell.titleLabel.text = L10n.nothingFound
+                cell.subtitleLabel.text = L10n.changeYourSearchPhrase
+            }
+            return cell
         }
     }
 }
