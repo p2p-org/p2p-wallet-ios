@@ -80,6 +80,8 @@ extension SwapToken {
         let input: Input
         let output: Output
         
+        private var isSelectingSourceWallet = true
+        
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private lazy var poolsSubject = LazySubject<[SolanaSDK.Pool]>(request: apiClient.getSwapPools())
@@ -352,10 +354,12 @@ extension SwapToken {
         }
         
         @objc func chooseSourceWallet() {
+            isSelectingSourceWallet = true
             navigationSubject.accept(.chooseSourceWallet)
         }
         
         @objc func chooseDestinationWallet() {
+            isSelectingSourceWallet = false
             navigationSubject.accept(.chooseDestinationWallet(validMints: getValidDestinationWalletMints(), excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey))
         }
         
@@ -517,6 +521,18 @@ extension SwapToken {
                     )
                 )
             )
+        }
+    }
+}
+
+extension SwapToken.ViewModel: WalletDidSelectHandler {
+    func walletDidSelect(_ wallet: Wallet) {
+        if isSelectingSourceWallet {
+            analyticsManager.log(event: .swapTokenASelectClick(tokenTicker: wallet.token.symbol))
+            input.sourceWallet.accept(wallet)
+        } else {
+            analyticsManager.log(event: .swapTokenBSelectClick(tokenTicker: wallet.token.symbol))
+            input.destinationWallet.accept(wallet)
         }
     }
 }

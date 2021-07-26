@@ -468,3 +468,12 @@ extension SendToken {
         }
     }
 }
+
+extension SendToken.ViewModel: WalletDidSelectHandler {
+    func walletDidSelect(_ wallet: Wallet) {
+        analyticsManager.log(
+            event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
+        )
+        input.walletPubkey.onNext(wallet.pubkey)
+    }
+}
