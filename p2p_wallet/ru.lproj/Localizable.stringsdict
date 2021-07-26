@@ -16,14 +16,12 @@
 			<string>%d скрытых кошельков</string>
 			<key>one</key>
 			<string>%d скрытый кошелек</string>
-			<key>two</key>
-			<string>%d скрытых кошелька</string>
 			<key>few</key>
 			<string>%d скрытых кошелька</string>
 			<key>many</key>
 			<string>%d скрытых кошельков</string>
 			<key>other</key>
-			<string>%d скрытых кошельков</string>
+			<string>%d скрытых кошелька</string>
 		</dict>
 	</dict>
 	<key>%d day ago</key>
@@ -40,14 +38,12 @@
 			<string>%d дней назад</string>
 			<key>one</key>
 			<string>%d день назад</string>
-			<key>two</key>
-			<string>%d дня назад</string>
 			<key>few</key>
 			<string>%d дня назад</string>
 			<key>many</key>
 			<string>%d дней назад</string>
 			<key>other</key>
-			<string>%d дней назад</string>
+			<string>%d дня назад</string>
 		</dict>
 	</dict>
 	<key>Wrong Pin-code, %d attempt(s) left</key>
@@ -66,8 +62,10 @@
 			<string>Неверный PIN-код, осталась %d попытка</string>
 			<key>few</key>
 			<string>Неверный PIN-код, осталось %d попытки</string>
-			<key>other</key>
+			<key>many</key>
 			<string>Неверный PIN-код, осталось %d попыток</string>
+			<key>other</key>
+			<string>Неверный PIN-код, осталось %d попытки</string>
 		</dict>
 	</dict>
 </dict>
