@@ -17,6 +17,7 @@ extension ChooseWallet {
         private let handler: WalletDidSelectHandler
         private let tokensRepository: TokensRepository
         private let showOtherWallets: Bool
+        private var keyword: String?
         
         init(
             myWallets: [Wallet],
@@ -52,9 +53,19 @@ extension ChooseWallet {
             return .just(myWallets)
         }
         
+        override func map(newData: [Wallet]) -> [Wallet] {
+            var data = super.map(newData: newData)
+            if let keyword = keyword {
+                data = data.filter {$0.hasKeyword(keyword)}
+            }
+            return data
+        }
+        
         // MARK: - Actions
         func search(keyword: String) {
-            
+            guard self.keyword != keyword else {return}
+            self.keyword = keyword
+            reload()
         }
         
         func selectWallet(_ wallet: Wallet) {
