@@ -16,35 +16,40 @@ extension ChooseWallet {
         private let myWallets: [Wallet]
         private let handler: WalletDidSelectHandler
         private let tokensRepository: TokensRepository
+        private let showOtherWallets: Bool
         
         init(
             myWallets: [Wallet],
             handler: WalletDidSelectHandler,
-            tokensRepository: TokensRepository
+            tokensRepository: TokensRepository,
+            showOtherWallets: Bool
         ) {
             self.myWallets = myWallets
             self.handler = handler
             self.tokensRepository = tokensRepository
+            self.showOtherWallets = showOtherWallets
             super.init()
-            reload()
         }
         
         // MARK: - Request
         override func createRequest() -> Single<[Wallet]> {
-            tokensRepository.getTokensList()
-                .map {$0.excludingSpecialTokens()}
-                .map {
-                    $0
-                        .filter {
-                            $0.symbol != "SOL"
-                        }
-                        .map {
-                            Wallet(pubkey: nil, lamports: nil, token: $0)
-                        }
-                }
-                .map {
-                    self.myWallets + $0
-                }
+            if showOtherWallets {
+                return tokensRepository.getTokensList()
+                    .map {$0.excludingSpecialTokens()}
+                    .map {
+                        $0
+                            .filter {
+                                $0.symbol != "SOL"
+                            }
+                            .map {
+                                Wallet(pubkey: nil, lamports: nil, token: $0)
+                            }
+                    }
+                    .map {
+                        self.myWallets + $0
+                    }
+            }
+            return .just(myWallets)
         }
         
         // MARK: - Actions
