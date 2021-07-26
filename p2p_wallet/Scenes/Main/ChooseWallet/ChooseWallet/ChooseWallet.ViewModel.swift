@@ -47,7 +47,7 @@ extension ChooseWallet {
                             }
                     }
                     .map {
-                        self.myWallets + $0
+                        self.myWallets + $0.filter {otherWallet in !self.myWallets.contains(where: {$0.token.symbol == otherWallet.token.symbol})}
                     }
             }
             return .just(myWallets)
