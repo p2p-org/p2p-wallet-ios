@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 
 protocol SwapTokenScenesFactory {
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController
+    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
 
@@ -82,25 +82,21 @@ extension SwapToken {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .chooseSourceWallet:
-                let vc = scenesFactory.makeChooseWalletViewController(customFilter: {$0.amount > 0}, showOtherWallets: false)
-                vc.completion = {[weak self, weak vc] wallet in
-                    self?.viewModel.analyticsManager.log(event: .swapTokenASelectClick(tokenTicker: wallet.token.symbol))
-                    self?.viewModel.input.sourceWallet.accept(wallet)
-                    vc?.back()
-                }
+                let vc = scenesFactory.makeChooseWalletViewController(
+                    customFilter: {$0.amount > 0},
+                    showOtherWallets: false,
+                    handler: viewModel
+                )
                 self.present(vc, animated: true, completion: nil)
             case .chooseDestinationWallet(let validMints, let sourceWalletPubkey):
-                
-                let vc = scenesFactory.makeChooseWalletViewController(customFilter: {
-                    return $0.pubkey != sourceWalletPubkey &&
-                        validMints.contains($0.mintAddress)
-                }, showOtherWallets: true)
-                
-                vc.completion = {[weak self, weak vc] wallet in
-                    self?.viewModel.analyticsManager.log(event: .swapTokenBSelectClick(tokenTicker: wallet.token.symbol))
-                    self?.viewModel.input.destinationWallet.accept(wallet)
-                    vc?.back()
-                }
+                let vc = scenesFactory.makeChooseWalletViewController(
+                    customFilter: {
+                        $0.pubkey != sourceWalletPubkey &&
+                            validMints.contains($0.mintAddress)
+                    },
+                    showOtherWallets: true,
+                    handler: viewModel
+                )
                 self.present(vc, animated: true, completion: nil)
             case .chooseSlippage:
                 let vc = SwapSlippageSettingsVC(slippage: Defaults.slippage * 100)

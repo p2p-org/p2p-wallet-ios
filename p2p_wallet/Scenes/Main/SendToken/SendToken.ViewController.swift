@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 
 protocol SendTokenScenesFactory {
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool) -> ChooseWalletViewController
+    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
 
@@ -68,14 +68,11 @@ extension SendToken {
         private func navigate(to scene: NavigatableScene) {
             switch scene {
             case .chooseWallet:
-                let vc = self.scenesFactory.makeChooseWalletViewController(customFilter: {$0.amount > 0}, showOtherWallets: false)
-                vc.completion = { [weak self, weak vc] wallet in
-                    self?.viewModel.analyticsManager.log(
-                        event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
-                    )
-                    self?.viewModel.input.walletPubkey.onNext(wallet.pubkey)
-                    vc?.back()
-                }
+                let vc = scenesFactory.makeChooseWalletViewController(
+                    customFilter: { $0.amount > 0},
+                    showOtherWallets: false,
+                    handler: viewModel
+                )
                 self.present(vc, animated: true, completion: nil)
             case .chooseAddress:
                 break
