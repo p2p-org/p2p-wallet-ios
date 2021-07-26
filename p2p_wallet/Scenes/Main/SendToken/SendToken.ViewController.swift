@@ -68,10 +68,11 @@ extension SendToken {
         private func navigate(to scene: NavigatableScene) {
             switch scene {
             case .chooseWallet:
-                let vc = scenesFactory.makeChooseWalletViewController(customFilter: { wallet in
-//                    wallet.amount > 0
-                    true
-                }, showOtherWallets: false, handler: viewModel)
+                let vc = scenesFactory.makeChooseWalletViewController(
+                    customFilter: { $0.amount > 0},
+                    showOtherWallets: false,
+                    handler: viewModel
+                )
                 self.present(vc, animated: true, completion: nil)
             case .chooseAddress:
                 break
