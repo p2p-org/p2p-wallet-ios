@@ -66,8 +66,10 @@
 			<string>Неверный PIN-код, осталась %d попытка</string>
 			<key>few</key>
 			<string>Неверный PIN-код, осталось %d попытки</string>
-			<key>other</key>
+			<key>many</key>
 			<string>Неверный PIN-код, осталось %d попыток</string>
+			<key>other</key>
+			<string>Неверный PIN-код, осталось %d попытки</string>
 		</dict>
 	</dict>
 </dict>
