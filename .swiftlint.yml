@@ -8,6 +8,7 @@ excluded:
  - BECollectionView
  - THPinViewController
  - FeeRelayerSwift
+ - TransakSwift
 
 disabled_rules:
   - identifier_name
