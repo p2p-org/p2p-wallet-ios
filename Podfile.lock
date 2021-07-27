@@ -161,6 +161,7 @@ PODS:
   - SwiftyUserDefaults (5.3.0)
   - TagListView (1.4.1)
   - THPinViewController (1.2.8)
+  - TransakSwift (0.1.0)
   - TweetNacl (1.0.2)
   - "UITextView+Placeholder (1.4.0)"
 
@@ -190,6 +191,7 @@ DEPENDENCIES:
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
   - THPinViewController (from `THPinViewController`)
+  - TransakSwift (from `TransakSwift`)
   - "UITextView+Placeholder"
 
 SPEC REPOS:
@@ -249,6 +251,8 @@ EXTERNAL SOURCES:
     :path: SolanaSwift
   THPinViewController:
     :path: THPinViewController
+  TransakSwift:
+    :path: TransakSwift
 
 CHECKOUT OPTIONS:
   ListPlaceholder:
@@ -299,9 +303,10 @@ SPEC CHECKSUMS:
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   THPinViewController: d9d65cdc5670b99b82d4cef841c954caf4b78299
+  TransakSwift: cca8162100a0a8c568499ab78c870de57744bbdc
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: c0914f282ccad8b3b70c91b2725eac2c87058b16
+PODFILE CHECKSUM: 1d1fde8c4582487eb070a3aa08efe523724e510e
 
 COCOAPODS: 1.10.1
