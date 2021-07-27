@@ -399,3 +399,4 @@
 "Changed language to %@" = "Đã thay đổi ngôn ngữ thành %@";
 "Source account is not valid" = "Tài khoản nguồn không hợp lệ";
 "Given pool token amount results in zero trading tokens" = "Token pool hiện tại trả về một giao dịch token với giá trị bằng 0";
+"Wrong signature" = "Chữ ký sai";
