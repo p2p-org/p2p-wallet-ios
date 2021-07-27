@@ -13,6 +13,27 @@ protocol FeeRelayerType {
     func getFeePayerPubkey() -> Single<String>
 }
 
+private extension FeeRelayer.SwapTokensParamsSwapAccount {
+    init(
+        pool: SolanaSDK.Pool,
+        transferAuthority: String,
+        amountIn: FeeRelayer.Lamports,
+        minAmountOut: FeeRelayer.Lamports
+    ) {
+        self.init(
+            pubkey: pool.address.base58EncodedString,
+            authority: pool.authority?.base58EncodedString ?? "",
+            transferAuthority: transferAuthority,
+            source: pool.swapData.tokenAccountA.base58EncodedString,
+            destination: pool.swapData.tokenAccountB.base58EncodedString,
+            poolTokenMint: pool.swapData.tokenPool.base58EncodedString,
+            poolFeeAccount: pool.swapData.feeAccount.base58EncodedString,
+            amountIn: amountIn,
+            minimumAmountOut: minAmountOut
+        )
+    }
+}
+
 extension FeeRelayer: FeeRelayerType, SolanaCustomFeeRelayerProxy {
     public func getFeePayer() -> Single<String> {
         getFeePayerPubkey()
@@ -90,26 +111,16 @@ extension FeeRelayer: FeeRelayerType, SolanaCustomFeeRelayerProxy {
                     destinationMint: destinationTokenMint,
                     authority: userAuthority,
                     swapAccount: .init(
-                        pubkey: pool.address.base58EncodedString,
-                        authority: pool.authority?.base58EncodedString ?? "",
+                        pool: pool,
                         transferAuthority: userAuthority,
-                        source: pool.swapData.tokenAccountA.base58EncodedString,
-                        destination: pool.swapData.tokenAccountB.base58EncodedString,
-                        poolTokenMint: pool.swapData.tokenPool.base58EncodedString,
-                        poolFeeAccount: pool.swapData.feeAccount.base58EncodedString,
                         amountIn: amount,
-                        minimumAmountOut: minAmountOut
+                        minAmountOut: minAmountOut
                     ),
                     feeCompensationSwapAccount: .init(
-                        pubkey: feeCompensationPool.address.base58EncodedString,
-                        authority: feeCompensationPool.authority?.base58EncodedString ?? "",
+                        pool: feeCompensationPool,
                         transferAuthority: userAuthority,
-                        source: feeCompensationPool.swapData.tokenAccountA.base58EncodedString,
-                        destination: feeCompensationPool.swapData.tokenAccountB.base58EncodedString,
-                        poolTokenMint: feeCompensationPool.swapData.tokenPool.base58EncodedString,
-                        poolFeeAccount: feeCompensationPool.swapData.feeAccount.base58EncodedString,
                         amountIn: feeAmount,
-                        minimumAmountOut: feeMinAmountOut
+                        minAmountOut: feeMinAmountOut
                     ),
                     feePayerWSOLAccountKeypair: feePayerWSOLAccountKeypair,
                     signature: signature,
