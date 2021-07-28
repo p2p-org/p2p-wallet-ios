@@ -47,7 +47,7 @@ extension FeeRelayer: FeeRelayerType, SolanaCustomFeeRelayerProxy {
         blockhash: String,
         isSimulation: Bool
     ) -> Single<SolanaSDK.TransactionID> {
-        sendTransaction(
+        sendTransactionAndLog(
             .transferSOL(
                 .init(
                     sender: sender,
@@ -70,7 +70,7 @@ extension FeeRelayer: FeeRelayerType, SolanaCustomFeeRelayerProxy {
         signature: String,
         blockhash: String
     ) -> Single<SolanaSDK.TransactionID> {
-        sendTransaction(
+        sendTransactionAndLog(
             .transferSPLToken(
                 .init(
                     sender: sender,
@@ -102,7 +102,7 @@ extension FeeRelayer: FeeRelayerType, SolanaCustomFeeRelayerProxy {
         signature: String,
         blockhash: String
     ) -> Single<SolanaSDK.TransactionID> {
-        sendTransaction(
+        sendTransactionAndLog(
             .swapToken(
                 .init(
                     source: sourceToken,
@@ -128,5 +128,22 @@ extension FeeRelayer: FeeRelayerType, SolanaCustomFeeRelayerProxy {
                 )
             )
         )
+    }
+    
+    private func sendTransactionAndLog(_ requestType: RequestType) -> Single<SolanaSDK.TransactionID> {
+        // log request
+        if let data = try? requestType.getParams(),
+           let message = String(data: data, encoding: .utf8)
+        {
+            Logger.log(message: message, event: .request)
+        }
+        
+        // send
+        return sendTransaction(requestType)
+            .do(onSuccess: {
+                Logger.log(message: "\($0)", event: .response)
+            }, onError: {
+                Logger.log(message: "\($0)", event: .error)
+            })
     }
 }
