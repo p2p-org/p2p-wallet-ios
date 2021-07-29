@@ -8,6 +8,7 @@ excluded:
  - BECollectionView
  - THPinViewController
  - FeeRelayerSwift
+ - TransakSwift
 
 disabled_rules:
   - identifier_name
@@ -30,8 +31,8 @@ line_length:
   error: 500
 
 function_parameter_count:
-  warning: 8
-  error: 15
+  warning: 15
+  error: 20
 
 file_length:
   warning: 500

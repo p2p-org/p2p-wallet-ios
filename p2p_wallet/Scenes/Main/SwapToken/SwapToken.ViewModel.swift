@@ -10,30 +10,6 @@ import RxSwift
 import RxCocoa
 import LazySubject
 
-protocol SwapTokenAPIClient {
-    func getSwapPools() -> Single<[SolanaSDK.Pool]>
-    func getPoolWithTokenBalances(pool: SolanaSDK.Pool) -> Single<SolanaSDK.Pool>
-    func swap(
-        account: SolanaSDK.Account?,
-        pool: SolanaSDK.Pool?,
-        source: SolanaSDK.PublicKey,
-        sourceMint: SolanaSDK.PublicKey,
-        destination: SolanaSDK.PublicKey?,
-        destinationMint: SolanaSDK.PublicKey,
-        slippage: Double,
-        amount: UInt64,
-        isSimulation: Bool
-    ) -> Single<SolanaSDK.SwapResponse>
-    func getLamportsPerSignature() -> Single<SolanaSDK.Lamports>
-    func getCreatingTokenAccountFee() -> Single<UInt64>
-}
-
-extension SolanaSDK: SwapTokenAPIClient {
-    func getLamportsPerSignature() -> Single<Lamports> {
-        getFees().map {$0.feeCalculator?.lamportsPerSignature}.map {$0 ?? 0}
-    }
-}
-
 extension SwapToken {
     class ViewModel: ViewModelType {
         // MARK: - Nested type
@@ -225,16 +201,25 @@ extension SwapToken {
                 destinationWalletSubject.distinctUntilChanged()
             )
                 .map {(pools, sourceWallet, destinationWallet) in
-                    pools?.matchedPool(
+                    pools?.getMatchedPools(
                         sourceMint: sourceWallet?.mintAddress,
                         destinationMint: destinationWallet?.mintAddress
                     )
                 }
-                .flatMap { [weak self] pool -> Single<SolanaSDK.Pool?> in
-                    guard let pool = pool, let strongSelf = self else {return .just(nil)}
-                    strongSelf.isLoadingSubject.accept(true)
-                    return strongSelf.apiClient.getPoolWithTokenBalances(pool: pool)
-                        .map(Optional.init)
+                .flatMap { [weak self] pools -> Single<SolanaSDK.Pool?> in
+                    guard let pools = pools, let self = self else {return .just(nil)}
+                    
+                    if let pool = pools.first(where: {$0.isValid}) {return .just(pool)}
+                    
+                    self.isLoadingSubject.accept(true)
+                    return Single.zip(
+                        pools.map {
+                            self.apiClient.getPoolWithTokenBalances(pool: $0)
+                        }
+                    )
+                        .map {
+                            $0.first(where: {$0.isValid})
+                        }
                         .do(afterSuccess: { [weak self] _ in
                             self?.isLoadingSubject.accept(false)
                         }, afterError: {[weak self] _ in
@@ -355,7 +340,15 @@ extension SwapToken {
         
         @objc func chooseDestinationWallet() {
             isSelectingSourceWallet = false
-            navigationSubject.accept(.chooseDestinationWallet(validMints: getValidDestinationWalletMints(), excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey))
+            isLoadingSubject.accept(true)
+            getValidDestinationWalletMints()
+                .subscribe(onSuccess: {[weak self] validMints in
+                    self?.isLoadingSubject.accept(false)
+                    self?.navigationSubject.accept(.chooseDestinationWallet(validMints: validMints, excludedSourceWalletPubkey: self?.sourceWalletSubject.value?.pubkey))
+                }, onFailure: { [weak self] _ in
+                    self?.isLoadingSubject.accept(false)
+                })
+                .disposed(by: disposeBag)
         }
         
         @objc func swapSourceAndDestination() {
@@ -456,16 +449,42 @@ extension SwapToken {
             slippage <= 0.2 && slippage > 0
         }
         
-        private func getValidDestinationWalletMints() -> Set<String> {
-            let sourceWalletMint = sourceWalletSubject.value?.mintAddress
-            var validDestinationMints: Set<String> = Set(poolsSubject.value?
-                .filter {$0.swapData.mintA.base58EncodedString == sourceWalletMint}
-                .map {$0.swapData.mintB.base58EncodedString} ?? [])
+        private func getValidDestinationWalletMints() -> Single<Set<String>> {
+            // get source wallet mint, available mint
+            guard let sourceWalletMint = sourceWalletSubject.value?.mintAddress,
+                  let availablePools = poolsSubject.value?.getPools(mintA: sourceWalletMint),
+                  availablePools.count > 0
+            else {
+                return .just([])
+            }
             
-            validDestinationMints = validDestinationMints.union(Set(poolsSubject.value?
-                .filter {$0.swapData.mintB.base58EncodedString == sourceWalletMint}
-                .map {$0.swapData.mintA.base58EncodedString} ?? []))
-            return validDestinationMints
+            // retrieve balances and filter out empty pools
+            let getTokenBalancesRequests: [Single<SolanaSDK.Pool?>] = availablePools.map {
+                apiClient.getPoolWithTokenBalances(pool: $0)
+                    .map(Optional.init)
+                    .catchAndReturn(nil)
+            }
+            return Single.zip(getTokenBalancesRequests)
+                .do(onSuccess: { [weak self] newPools in
+                    // update pools
+                    guard let self = self, var pools = self.poolsSubject.value else {return}
+                    for newPool in newPools {
+                        if let newPool = newPool, let index = pools.firstIndex(where: {$0.address == newPool.address}
+                        ) {
+                            pools[index] = newPool
+                            
+                            // remove empty pool
+                            if newPool.tokenABalance?.amountInUInt64 == 0 || newPool.tokenABalance?.amountInUInt64 == 0
+                            {
+                                pools.removeAll(where: {$0.address == newPool.address})
+                            }
+                        }
+                    }
+                    self.poolsSubject.updateValue(pools)
+                })
+                .map { $0.filter {$0?.isValid == true} }
+                .map { $0.map {$0!.swapData.mintB.base58EncodedString} }
+                .map { Set($0) }
         }
         
         private func swap() {
@@ -574,8 +593,7 @@ private extension SwapToken.ViewModel {
               amount > 0,
               let sourceDecimals = sourceDecimals,
               let destinationDecimals = destinationDecimals,
-              let estimatedAmountLamports = currentPoolSubject.value?.estimatedAmount(forInputAmount: amount.toLamport(decimals: sourceDecimals), includeFees: true),
-              let lamports = currentPoolSubject.value?.minimumReceiveAmount(estimatedAmount: estimatedAmountLamports, slippage: slippageSubject.value)
+              let lamports = currentPoolSubject.value?.minimumReceiveAmount(fromInputAmount: amount.toLamport(decimals: sourceDecimals), slippage: slippageSubject.value, includesFees: true)
         else {return nil}
         return lamports.convertToBalance(decimals: destinationDecimals)
     }
