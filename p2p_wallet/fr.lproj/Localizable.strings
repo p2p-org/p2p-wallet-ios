@@ -399,3 +399,4 @@
 "Changed language to %@" = "Langue changée en %@";
 "Source account is not valid" = "Le compte source n'est pas valide";
 "Given pool token amount results in zero trading tokens" = "Compte tenu du montant du jeton de pool, aucun jeton de trading";
+"Wrong signature" = "Mauvaise signature";
