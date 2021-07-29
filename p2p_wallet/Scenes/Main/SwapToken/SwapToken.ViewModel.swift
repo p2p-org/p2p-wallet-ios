@@ -201,18 +201,25 @@ extension SwapToken {
                 destinationWalletSubject.distinctUntilChanged()
             )
                 .map {(pools, sourceWallet, destinationWallet) in
-                    pools?.matchedPool(
+                    pools?.getMatchedPools(
                         sourceMint: sourceWallet?.mintAddress,
                         destinationMint: destinationWallet?.mintAddress
                     )
                 }
-                .flatMap { [weak self] pool -> Single<SolanaSDK.Pool?> in
-                    guard let pool = pool, let strongSelf = self else {return .just(nil)}
-                    if pool.isValid {return .just(pool)}
-                    // load token balance
-                    strongSelf.isLoadingSubject.accept(true)
-                    return strongSelf.apiClient.getPoolWithTokenBalances(pool: pool)
-                        .map(Optional.init)
+                .flatMap { [weak self] pools -> Single<SolanaSDK.Pool?> in
+                    guard let pools = pools, let self = self else {return .just(nil)}
+                    
+                    if let pool = pools.first(where: {$0.isValid}) {return .just(pool)}
+                    
+                    self.isLoadingSubject.accept(true)
+                    return Single.zip(
+                        pools.map {
+                            self.apiClient.getPoolWithTokenBalances(pool: $0)
+                        }
+                    )
+                        .map {
+                            $0.first(where: {$0.isValid})
+                        }
                         .do(afterSuccess: { [weak self] _ in
                             self?.isLoadingSubject.accept(false)
                         }, afterError: {[weak self] _ in
