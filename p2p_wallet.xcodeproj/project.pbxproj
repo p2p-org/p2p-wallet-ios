@@ -177,7 +177,7 @@
 		BC699AB925F9E69B00F57209 /* WLPhrasesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC699AB825F9E69B00F57209 /* WLPhrasesListView.swift */; };
 		BC699ACA25FB114D00F57209 /* UINavigationController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC699AC925FB114D00F57209 /* UINavigationController+Extensions.swift */; };
 		BC6D01FB265DF8220001B841 /* FreeTransactionInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6D01FA265DF8220001B841 /* FreeTransactionInfoVC.swift */; };
-		BC6EE772254AEEB300FE1025 /* SolanaSDK+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE771254AEEB300FE1025 /* SolanaSDK+Extensions.swift */; };
+		BC6EE772254AEEB300FE1025 /* Error+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE771254AEEB300FE1025 /* Error+Extensions.swift */; };
 		BC6EE777254AF6E600FE1025 /* EnableBiometryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE776254AF6E600FE1025 /* EnableBiometryVC.swift */; };
 		BC6EE77D254BB8F400FE1025 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE77C254BB8F400FE1025 /* Defaults.swift */; };
 		BC6EE7C5254BBEC000FE1025 /* EnableNotificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6EE7C4254BBEC000FE1025 /* EnableNotificationsVC.swift */; };
@@ -235,7 +235,6 @@
 		BCACA7DC2678942B0091E118 /* ProcessingTransactionsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCACA7DB2678942B0091E118 /* ProcessingTransactionsRepository.swift */; };
 		BCACA7E12679E75E0091E118 /* AnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCACA7E02679E75E0091E118 /* AnalyticsEvent.swift */; };
 		BCB0FE5D26A197FD00B02C33 /* FeeRelayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB0FE5C26A197FD00B02C33 /* FeeRelayer.swift */; };
-		BCB0FE5F26A198A400B02C33 /* SolanaSDK.Error+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB0FE5E26A198A400B02C33 /* SolanaSDK.Error+Extensions.swift */; };
 		BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2231825412AF8002D997F /* AppDelegate.swift */; };
 		BCB2232225412AF8002D997F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232125412AF8002D997F /* Assets.xcassets */; };
 		BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232325412AF9002D997F /* LaunchScreen.storyboard */; };
@@ -530,7 +529,7 @@
 		BC699AB825F9E69B00F57209 /* WLPhrasesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLPhrasesListView.swift; sourceTree = "<group>"; };
 		BC699AC925FB114D00F57209 /* UINavigationController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extensions.swift"; sourceTree = "<group>"; };
 		BC6D01FA265DF8220001B841 /* FreeTransactionInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeTransactionInfoVC.swift; sourceTree = "<group>"; };
-		BC6EE771254AEEB300FE1025 /* SolanaSDK+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK+Extensions.swift"; sourceTree = "<group>"; };
+		BC6EE771254AEEB300FE1025 /* Error+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+Extensions.swift"; sourceTree = "<group>"; };
 		BC6EE776254AF6E600FE1025 /* EnableBiometryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableBiometryVC.swift; sourceTree = "<group>"; };
 		BC6EE77C254BB8F400FE1025 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		BC6EE7C4254BBEC000FE1025 /* EnableNotificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableNotificationsVC.swift; sourceTree = "<group>"; };
@@ -589,7 +588,6 @@
 		BCACA7DB2678942B0091E118 /* ProcessingTransactionsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingTransactionsRepository.swift; sourceTree = "<group>"; };
 		BCACA7E02679E75E0091E118 /* AnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEvent.swift; sourceTree = "<group>"; };
 		BCB0FE5C26A197FD00B02C33 /* FeeRelayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeeRelayer.swift; sourceTree = "<group>"; };
-		BCB0FE5E26A198A400B02C33 /* SolanaSDK.Error+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Error+Extensions.swift"; sourceTree = "<group>"; };
 		BCB2231525412AF8002D997F /* p2p_wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = p2p_wallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB2231825412AF8002D997F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BCB2232125412AF8002D997F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -1187,6 +1185,7 @@
 			isa = PBXGroup;
 			children = (
 				BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */,
+				BC6EE771254AEEB300FE1025 /* Error+Extensions.swift */,
 				BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */,
 				BC65E9E22542BE43005F50CE /* String+Extensions.swift */,
 				BC32A360254A761B002156F0 /* Button+Extensions.swift */,
@@ -1218,7 +1217,6 @@
 				BC2F8F0B269D3D200048009D /* UIScrollView+Extensions.swift */,
 				BCC1F206269E96A1003DD648 /* SolanaSDK.DerivablePath+Extensions.swift */,
 				BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */,
-				BCB0FE5E26A198A400B02C33 /* SolanaSDK.Error+Extensions.swift */,
 				BC28A9AE26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift */,
 			);
 			path = Extensions;
@@ -1376,7 +1374,6 @@
 			isa = PBXGroup;
 			children = (
 				BC32A3AB254A8884002156F0 /* AccountStorage.swift */,
-				BC6EE771254AEEB300FE1025 /* SolanaSDK+Extensions.swift */,
 				BC6EE77C254BB8F400FE1025 /* Defaults.swift */,
 				BC5257CD25CBA6A60076317E /* PriceAPIs */,
 				BC460ABE257A44310035F6AA /* ProcessingTransactionsManager.swift */,
@@ -2038,7 +2035,7 @@
 				BC7B2C7225E384F700833656 /* CreateSecurityKeysViewController.swift in Sources */,
 				BC11CA252592FEA300E399A9 /* BalancesOverviewView.swift in Sources */,
 				BCAB206F25DE0563004F4F9D /* DependencyContainer.swift in Sources */,
-				BC6EE772254AEEB300FE1025 /* SolanaSDK+Extensions.swift in Sources */,
+				BC6EE772254AEEB300FE1025 /* Error+Extensions.swift in Sources */,
 				BCE42DF725DF9C7A0021540E /* OnboardingViewController.swift in Sources */,
 				BCEB206125E1532C00B54FEF /* OnboardingContainer.swift in Sources */,
 				BCC1F20D269EC712003DD648 /* WLNotificationsRepository.swift in Sources */,
@@ -2312,7 +2309,6 @@
 				BCACA7DC2678942B0091E118 /* ProcessingTransactionsRepository.swift in Sources */,
 				BC18CA8A263265680054E624 /* SolanaSDK.Token+Extensions.swift in Sources */,
 				BC53E2242654ECCD005624CC /* AccountsListViewModel.swift in Sources */,
-				BCB0FE5F26A198A400B02C33 /* SolanaSDK.Error+Extensions.swift in Sources */,
 				BCA93F5325E77C240081DDF6 /* TokenSettingsViewModel.swift in Sources */,
 				BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */,
 				BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */,

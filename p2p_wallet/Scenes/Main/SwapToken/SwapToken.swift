@@ -39,7 +39,7 @@ extension SolanaSDK: SwapTokenAPIClient {
             slippage: slippage,
             amount: amount,
             isSimulation: isSimulation,
-            customProxy: Defaults.useFreeTransaction ? FeeRelayer(errorType: SolanaSDK.Error.self): nil
+            customProxy: Defaults.useFreeTransaction ? FeeRelayer(): nil
         )
     }
     
