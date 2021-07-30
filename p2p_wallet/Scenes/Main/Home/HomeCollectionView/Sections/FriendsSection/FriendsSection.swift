@@ -10,6 +10,7 @@ import BECollectionView
 import Action
 
 class FriendsSection: BEStaticSectionsCollectionView.Section {
+    var buyAction: CocoaAction?
     var receiveAction: CocoaAction?
     var sendAction: CocoaAction?
     var swapAction: CocoaAction?
@@ -39,6 +40,7 @@ class FriendsSection: BEStaticSectionsCollectionView.Section {
     
     override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
         let headerView = super.configureHeader(indexPath: indexPath) as? HeaderView
+        headerView?.buyAction = buyAction
         headerView?.receiveAction = receiveAction
         headerView?.sendAction = sendAction
         headerView?.swapAction = swapAction

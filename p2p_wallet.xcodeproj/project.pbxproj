@@ -61,6 +61,8 @@
 		BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */; };
 		BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */; };
 		BC274540263699F500D37CD1 /* SelectFiatVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC27453F263699F500D37CD1 /* SelectFiatVC.swift */; };
+		BC28A9AF26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC28A9AE26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift */; };
+		BC28A9B126B3B0440031BE42 /* WLSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC28A9B026B3B0440031BE42 /* WLSpinnerView.swift */; };
 		BC290A00256B9C95002A727C /* SwapToken.WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2909FF256B9C95002A727C /* SwapToken.WalletView.swift */; };
 		BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC290A04256BA36F002A727C /* TokenAmountTextField.swift */; };
 		BC2DA294260B079100B50738 /* WLAddTokenButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2DA293260B079100B50738 /* WLAddTokenButton.swift */; };
@@ -409,6 +411,8 @@
 		BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeScannerVC.swift; sourceTree = "<group>"; };
 		BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionView.swift; sourceTree = "<group>"; };
 		BC27453F263699F500D37CD1 /* SelectFiatVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectFiatVC.swift; sourceTree = "<group>"; };
+		BC28A9AE26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransakWidgetViewController+Extensions.swift"; sourceTree = "<group>"; };
+		BC28A9B026B3B0440031BE42 /* WLSpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLSpinnerView.swift; sourceTree = "<group>"; };
 		BC2909FF256B9C95002A727C /* SwapToken.WalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.WalletView.swift; sourceTree = "<group>"; };
 		BC290A04256BA36F002A727C /* TokenAmountTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAmountTextField.swift; sourceTree = "<group>"; };
 		BC2DA293260B079100B50738 /* WLAddTokenButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLAddTokenButton.swift; sourceTree = "<group>"; };
@@ -1215,6 +1219,7 @@
 				BCC1F206269E96A1003DD648 /* SolanaSDK.DerivablePath+Extensions.swift */,
 				BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */,
 				BCB0FE5E26A198A400B02C33 /* SolanaSDK.Error+Extensions.swift */,
+				BC28A9AE26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1682,6 +1687,7 @@
 				BCEE508426244B6300271AB9 /* WLEmptyCell.swift */,
 				BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */,
 				BCB7C7E12669E50B00FEC68E /* TransactionSummaryView.swift */,
+				BC28A9B026B3B0440031BE42 /* WLSpinnerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2125,6 +2131,7 @@
 				BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */,
 				BC5A97D0260DA82B009674C4 /* BaseHiddenWalletSection.swift in Sources */,
 				BC38555B26AE971400BD8BF7 /* ChooseWallet.ViewModel.swift in Sources */,
+				BC28A9AF26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift in Sources */,
 				BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */,
 				BC38555E26AE9A2B00BD8BF7 /* ChooseWallet.CollectionView.swift in Sources */,
 				BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */,
@@ -2220,6 +2227,7 @@
 				BCE04C67268D901400CE131A /* OneWayPanGestureRecognizer.swift in Sources */,
 				BC03791625FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift in Sources */,
 				BC53E2202654BFAA005624CC /* DerivablePathsViewModel.swift in Sources */,
+				BC28A9B126B3B0440031BE42 /* WLSpinnerView.swift in Sources */,
 				BCBE149925EF3D110014BCE5 /* HomeFriendCell.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */,
 				BC6EE777254AF6E600FE1025 /* EnableBiometryVC.swift in Sources */,
