@@ -45,6 +45,7 @@ extension AnalyticsEvent {
 
         // main_screen
         case .mainScreenWalletsOpen: return "main_screen_wallets_open"
+        case .mainScreenBuyOpen: return "main_screen_buy_open"
         case .mainScreenReceiveOpen: return "main_screen_receive_open"
         case .mainScreenSendOpen: return "main_screen_send_open"
         case .mainScreenSwapOpen: return "main_screen_swap_open"
@@ -54,6 +55,7 @@ extension AnalyticsEvent {
         // token_details
         case .tokenDetailsOpen: return "token_details_open"
         case .tokenDetailQrClick: return "token_detail_qr_click"
+        case .tokenDetailsBuyClick: return "token_details_buy_click"
         case .tokenDetailsReceiveClick: return "token_details_receive_click"
         case .tokenDetailsSendClick: return "token_details_send_click"
         case .tokenDetailsSwapClick: return "token_details_swap_click"

@@ -44,6 +44,13 @@ extension WalletDetail {
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
+            case .buy(let tokens):
+                do {
+                    let vc = try scenesFactory.makeBuyTokenViewController(token: tokens)
+                    present(vc, animated: true, completion: nil)
+                } catch {
+                    showAlert(title: L10n.error, message: error.readableDescription)
+                }
             case .settings(let pubkey):
                 let vc = scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
                 vc.delegate = self

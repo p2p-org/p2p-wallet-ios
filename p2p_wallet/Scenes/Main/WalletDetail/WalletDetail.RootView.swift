@@ -111,8 +111,6 @@ extension WalletDetail {
             tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
             
             tabBar.stackView.addArrangedSubviews([
-    //            UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .white)
-    //                .padding(.init(all: 16)),
                 UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
                     .padding(.init(all: 16))
                     .onTap(viewModel, action: #selector(ViewModel.receiveTokens)),
@@ -123,6 +121,15 @@ extension WalletDetail {
                     .padding(.init(all: 16))
                     .onTap(viewModel, action: #selector(ViewModel.swapTokens))
             ])
+            
+            if viewModel.output.canBuyToken {
+                tabBar.stackView.insertArrangedSubview(
+                    UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .white)
+                        .padding(.init(all: 16))
+                        .onTap(viewModel, action: #selector(ViewModel.buyTokens)),
+                    at: 0
+                )
+            }
         }
         
         private func bind() {

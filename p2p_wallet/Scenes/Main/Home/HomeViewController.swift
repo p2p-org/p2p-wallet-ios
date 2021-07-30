@@ -100,6 +100,7 @@ class HomeViewController: BaseVC {
         case .buyToken:
             do {
                 let vc = try scenesFactory.makeBuyTokenViewController(token: .all)
+                analyticsManager.log(event: .mainScreenBuyOpen)
                 present(vc, animated: true, completion: nil)
             } catch {
                 showAlert(title: L10n.error, message: error.readableDescription)
