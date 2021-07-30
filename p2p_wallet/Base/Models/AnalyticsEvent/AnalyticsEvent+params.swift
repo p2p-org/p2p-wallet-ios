@@ -45,6 +45,7 @@ extension AnalyticsEvent {
 
         // main_screen
         case .mainScreenWalletsOpen: return nil
+        case .mainScreenBuyOpen: return nil
         case .mainScreenReceiveOpen: return nil
         case .mainScreenSendOpen: return nil
         case .mainScreenSwapOpen: return nil
@@ -54,6 +55,7 @@ extension AnalyticsEvent {
         // token_details
         case .tokenDetailsOpen(let tokenTicker): return ["tokenTicker": tokenTicker]
         case .tokenDetailQrClick: return nil
+        case .tokenDetailsBuyClick: return nil
         case .tokenDetailsReceiveClick: return nil
         case .tokenDetailsSendClick: return nil
         case .tokenDetailsSwapClick: return nil

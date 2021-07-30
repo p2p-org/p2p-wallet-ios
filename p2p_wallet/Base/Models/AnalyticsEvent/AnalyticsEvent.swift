@@ -43,6 +43,7 @@ enum AnalyticsEvent {
 
     // main_screen
     case mainScreenWalletsOpen
+    case mainScreenBuyOpen
     case mainScreenReceiveOpen
     case mainScreenSendOpen
     case mainScreenSwapOpen
@@ -52,6 +53,7 @@ enum AnalyticsEvent {
     // token_details
     case tokenDetailsOpen(tokenTicker: String)
     case tokenDetailQrClick
+    case tokenDetailsBuyClick
     case tokenDetailsReceiveClick
     case tokenDetailsSendClick
     case tokenDetailsSwapClick

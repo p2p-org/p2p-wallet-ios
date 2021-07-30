@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import TransakSwift
 
 extension WalletDetail {
     class ViewModel: ViewModelType {
@@ -21,6 +22,7 @@ extension WalletDetail {
             let nativePubkey: Driver<String?>
             let graphViewModel: WalletGraphViewModel
             let transactionsViewModel: TransactionsViewModel
+            let canBuyToken: Bool
         }
         
         // MARK: - Dependencies
@@ -80,7 +82,8 @@ extension WalletDetail {
                     processingTransactionRepository: processingTransactionRepository,
                     feeRelayer: feeRelayer,
                     notificationsRepository: notificationsRepository
-                )
+                ),
+                canBuyToken: symbol == "SOL" || symbol == "USDC"
             )
             
             bind()
@@ -130,6 +133,18 @@ extension WalletDetail {
             analyticsManager.log(event: .tokenDetailsSendClick)
             analyticsManager.log(event: .sendOpen(fromPage: "token_details"))
             navigationSubject.accept(.send(wallet: wallet))
+        }
+        
+        @objc func buyTokens() {
+            var tokens = TransakWidgetViewController.CryptoCurrency.all
+            if symbol == "SOL" {
+                tokens = .sol
+            }
+            if symbol == "USDC" {
+                tokens = .usdc
+            }
+            analyticsManager.log(event: .tokenDetailsBuyClick)
+            navigationSubject.accept(.buy(tokens: tokens))
         }
         
         @objc func receiveTokens() {

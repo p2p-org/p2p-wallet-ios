@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import TransakSwift
 
 protocol WalletDetailScenesFactory {
+    func makeBuyTokenViewController(token: TransakWidgetViewController.CryptoCurrency) throws -> UIViewController
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapToken.ViewController
@@ -18,6 +20,7 @@ protocol WalletDetailScenesFactory {
 struct WalletDetail {
     enum NavigatableScene {
         case settings(walletPubkey: String)
+        case buy(tokens: TransakWidgetViewController.CryptoCurrency)
         case send(wallet: Wallet)
         case receive(walletPubkey: String)
         case swap(fromWallet: Wallet)
