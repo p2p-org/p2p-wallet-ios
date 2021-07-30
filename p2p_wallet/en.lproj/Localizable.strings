@@ -400,3 +400,4 @@
 "Source account is not valid" = "Source account is not valid";
 "Given pool token amount results in zero trading tokens" = "Given pool token amount results in zero trading tokens";
 "Wrong signature" = "Wrong signature";
+"Buy" = "Buy";
