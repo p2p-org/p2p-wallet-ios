@@ -8,9 +8,11 @@
 import Foundation
 import UIKit
 import Action
+import TransakSwift
 
 protocol HomeScenesFactory {
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController
+    func makeBuyTokenViewController(token: TransakWidgetViewController.CryptoCurrency) throws -> UIViewController
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapToken.ViewController
@@ -95,35 +97,41 @@ class HomeViewController: BaseVC {
     // MARK: - Navigation
     private func navigate(to scene: HomeNavigatableScene) {
         switch scene {
+        case .buyToken:
+            do {
+                let vc = try scenesFactory.makeBuyTokenViewController(token: .all)
+                present(vc, animated: true, completion: nil)
+            } catch {
+                showAlert(title: L10n.error, message: error.readableDescription)
+            }
         case .receiveToken:
-            if let vc = self.scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: nil)
+            if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: nil)
             {
                 analyticsManager.log(event: .mainScreenReceiveOpen)
                 analyticsManager.log(event: .receiveOpen(fromPage: "main_screen"))
                 present(vc, interactiveDismissalType: .standard, completion: nil)
             }
-            
         case .scanQr:
             analyticsManager.log(event: .mainScreenQrOpen)
             analyticsManager.log(event: .scanQrOpen(fromPage: "main_screen"))
         case .sendToken(let address):
-            let vc = self.scenesFactory
+            let vc = scenesFactory
                 .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
             analyticsManager.log(event: .mainScreenSendOpen)
             analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
             present(vc, interactiveDismissalType: .standard, completion: nil)
         case .swapToken:
-            let vc = self.scenesFactory.makeSwapTokenViewController(fromWallet: nil)
+            let vc = scenesFactory.makeSwapTokenViewController(fromWallet: nil)
             analyticsManager.log(event: .mainScreenSwapOpen)
             analyticsManager.log(event: .swapOpen(fromPage: "main_screen"))
             present(vc, interactiveDismissalType: .standard, completion: nil)
         case .allProducts:
-            let vc = self.scenesFactory.makeMyProductsViewController()
+            let vc = scenesFactory.makeMyProductsViewController()
             self.present(vc, animated: true, completion: nil)
         case .profile:
             analyticsManager.log(event: .mainScreenSettingsOpen)
             analyticsManager.log(event: .settingsOpen(fromPage: "main_screen"))
-            let profileVC = self.scenesFactory.makeProfileVC()
+            let profileVC = scenesFactory.makeProfileVC()
             self.show(profileVC, sender: nil)
         case .walletDetail(let wallet):
             guard let pubkey = wallet.pubkey else {return}
@@ -134,7 +142,7 @@ class HomeViewController: BaseVC {
             present(vc, interactiveDismissalType: .standard)
         case .walletSettings(let wallet):
             guard let pubkey = wallet.pubkey else {return}
-            let vc = self.scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
+            let vc = scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
             self.present(vc, animated: true, completion: nil)
         }
     }

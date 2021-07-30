@@ -400,3 +400,5 @@
 "Source account is not valid" = "Исходная учетная запись недействительна";
 "Given pool token amount results in zero trading tokens" = "Указанное значение токенов слишком мало для совершения обмена";
 "Wrong signature" = "Неправильная подпись";
+"Buy" = "Купить";
+"There is no %@ wallet in your account" = "В вашем аккаунте нет кошелька %@";

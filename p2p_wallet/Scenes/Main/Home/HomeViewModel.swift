@@ -11,6 +11,7 @@ import RxCocoa
 import Action
 
 enum HomeNavigatableScene {
+    case buyToken
     case receiveToken
     case scanQr
     case sendToken(address: String? = nil)

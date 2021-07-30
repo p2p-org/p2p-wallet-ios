@@ -27,6 +27,7 @@ extension FriendsSection {
     }
     
     class HeaderView: SectionHeaderView {
+        var buyAction: CocoaAction?
         var receiveAction: CocoaAction?
         var sendAction: CocoaAction?
         var swapAction: CocoaAction?
@@ -40,7 +41,8 @@ extension FriendsSection {
                 BEStackViewSpacing(20),
                 UIView.row([
                     .spacer,
-//                    createButton(image: .walletAdd, title: L10n.buy),
+                    createButton(image: .walletAdd, title: L10n.buy)
+                        .onTap(self, action: #selector(buttonAddDidTouch)),
                     createButton(image: .walletReceive, title: L10n.receive)
                         .onTap(self, action: #selector(buttonReceiveDidTouch)),
                     createButton(image: .walletSend, title: L10n.send)
@@ -63,6 +65,10 @@ extension FriendsSection {
                 button,
                 UILabel(text: title, textSize: 12)
             ])
+        }
+        
+        @objc func buttonAddDidTouch() {
+            buyAction?.execute()
         }
         
         @objc func buttonReceiveDidTouch() {

@@ -28,22 +28,7 @@ class WLLoadingIndicatorView: BEView {
     private let isBlocking: Bool
     
     // MARK: - Subviews
-    private lazy var contentView: UIView = {
-        let view = UIView(forAutoLayout: ())
-        view.addSubview(spinner)
-        spinner.autoPinEdgesToSuperviewEdges()
-        let imageView = UIImageView(width: 45, height: 45, cornerRadius: 45/2, image: .spinnerIcon)
-        view.addSubview(imageView)
-        imageView.autoCenterInSuperview()
-        return view
-    }()
-    
-    private lazy var spinner: BESpinnerView = {
-        let spinner = BESpinnerView(width: 65, height: 65, cornerRadius: 65/2)
-        spinner.endColor = .h5887ff
-        spinner.lineWidth = 4
-        return spinner
-    }()
+    private lazy var spinner = WLSpinnerView(size: 65, endColor: .h5887ff)
     
     // MARK: - Initializer
     init(isBlocking: Bool) {
@@ -62,8 +47,8 @@ class WLLoadingIndicatorView: BEView {
         super.commonInit()
         isUserInteractionEnabled = isBlocking
         
-        addSubview(contentView)
-        contentView.autoCenterInSuperview()
+        addSubview(spinner)
+        spinner.autoCenterInSuperview()
     }
     
     func animate() {

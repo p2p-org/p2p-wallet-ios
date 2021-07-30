@@ -400,3 +400,5 @@
 "Source account is not valid" = "Tài khoản nguồn không hợp lệ";
 "Given pool token amount results in zero trading tokens" = "Token pool hiện tại trả về một giao dịch token với giá trị bằng 0";
 "Wrong signature" = "Chữ ký sai";
+"Buy" = "Mua";
+"There is no %@ wallet in your account" = "Không có ví %@ trong tài khoản của bạn";
