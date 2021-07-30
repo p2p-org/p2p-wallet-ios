@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import Action
+import TransakSwift
 
 protocol HomeScenesFactory {
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController
@@ -95,6 +96,36 @@ class HomeViewController: BaseVC {
     // MARK: - Navigation
     private func navigate(to scene: HomeNavigatableScene) {
         switch scene {
+        case .buyToken:
+            let environment: TransakWidgetViewController.Environment
+            let params: TransakWidgetViewController.Params
+            #if DEBUG
+            environment = .staging
+            params = .init(
+                apiKey: "bef19a55-6870-452a-b997-3d63eb59205d",
+                hostURL: "https://p2p.org",
+                additionalParams: [
+                    "walletAddressesData": #"{"address": "1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX"}"#,
+                    "networks": "solana",
+                    "defaultCryptoCurrency": "SOL",
+                    "cryptoCurrencyList": "USDC,SOL"
+                ]
+            )
+            #else
+            environment = .production
+            params = .init(
+                apiKey: "8c244c47-122b-4158-8a2b-9c0551e31b89",
+                hostURL: "https://p2p.org",
+                additionalParams: [
+                    "walletAddressesData": #"{"address": "1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX"}"#,
+                    "networks": "solana",
+                    "defaultCryptoCurrency": "SOL",
+                    "cryptoCurrencyList": "USDC,SOL"
+                ]
+            )
+            #endif
+            let vc = TransakWidgetViewController(env: environment, params: params)
+            present(vc, animated: true, completion: nil)
         case .receiveToken:
             if let vc = self.scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: nil)
             {
