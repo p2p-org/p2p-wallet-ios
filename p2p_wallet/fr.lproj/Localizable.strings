@@ -401,3 +401,4 @@
 "Given pool token amount results in zero trading tokens" = "Compte tenu du montant du jeton de pool, aucun jeton de trading";
 "Wrong signature" = "Mauvaise signature";
 "Buy" = "Acheter";
+"There is no %@ wallet in your account" = "Il n'y a pas de portefeuille %@ dans votre compte";
