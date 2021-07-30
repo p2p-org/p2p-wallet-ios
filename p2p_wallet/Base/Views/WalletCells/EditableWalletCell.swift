@@ -40,9 +40,9 @@ class EditableWalletCell: WalletCell {
         stackView.heightAnchor.constraint(equalTo: scrollView.heightAnchor).isActive = true
         
         buttonStackView.addArrangedSubviews([
-            editButton
-                .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.3), cornerRadius: 12)
-                .onTap(self, action: #selector(buttonEditDidTouch)),
+//            editButton
+//                .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.3), cornerRadius: 12)
+//                .onTap(self, action: #selector(buttonEditDidTouch)),
             hideButton
                 .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.3), cornerRadius: 12)
                 .onTap(self, action: #selector(buttonHideDidTouch))
