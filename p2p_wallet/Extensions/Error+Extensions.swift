@@ -70,9 +70,11 @@ extension FeeRelayer.Error: LocalizedError {
         }
         
         string = string.localized()
+        #if DEBUG
         if let data = data as? String {
             string += " \(data)"
         }
+        #endif
         return string
     }
 }
