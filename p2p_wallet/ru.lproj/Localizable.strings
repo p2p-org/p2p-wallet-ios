@@ -93,7 +93,7 @@
 "Turn on" = "Включить";
 "Authentication failed" = "Ошибка аутентификации";
 "Retry after" = "Повторить после";
-"seconds" = "секунды";
+"seconds" = "сек.";
 "Tap button to retry!" = "Нажмите кнопку, чтобы повторить попытку!";
 "Or saving into Keychain" = "Или сохранить в Связке ключей";
 "Continue" = "Продолжить";
@@ -272,8 +272,8 @@
 "If you lose this device, you can recover your encrypted wallet backup from iCloud" = "Если вы потеряете это устройство, вы можете восстановить зашифрованную резервную копию кошелька из iCloud.";
 "View recovery key" = "Посмотреть ключ восстановления";
 "Backup to iCloud" = "Сохранить в iCloud";
-"We’ve locked your wallet, try again in %@" = "Мы заблокировали ваш кошелек, попробуйте еще раз через %@";
-"minutes" = "минут";
+"We’ve locked your wallet, try again in %@" = "Мы заблокировали Ваш кошелек, попробуйте ввести PIN-код еще раз через %@";
+"minutes" = "мин.";
 "Hide zero balances" = "Скрыть нулевые балансы";
 "Wrong order or seed phrase, please check it and try again" = "Неверный порядок слов или мнемоническая фраза. Пожалуйста, проверьте и попробуйте еще раз.";
 "Your public %@ address" = "Ваш публичный %@ адрес";
@@ -313,7 +313,7 @@
 "Wallet address is not valid" = "Адрес кошелька недействителен";
 "It must be an %@ wallet address " = "Это должен быть адрес кошелька %@.";
 "Slippage error" = "Ошибка проскальзывания";
-"Swap instruction exceeds desired slippage limit.\nSet another slippage and try again." = "Инструкция по свопу превышает желаемый предел проскальзывания.\nУстановите другое значение проскальзывания и попробуйте еще раз.";
+"Swap instruction exceeds desired slippage limit.\nSet another slippage and try again." = "Установленного значения проскальзывания недостаточно для совершения обмена.\nИзмените значение и попробуйте еще раз.";
 "The fee calculation failed due to overflow, underflow or unexpected 0" = "Сбой при расчете комиссии из-за переполнения, недостаточного количества или непредвиденного значения 0";
 "Error processing instruction 0:custom program error: 0x1" = "Инструкция обработки ошибки 0: ошибка пользовательской программы: 0x1";
 "System error" = "Системная ошибка";
@@ -321,8 +321,8 @@
 "Token account should be zero" = "Аккаунт токена должен быть нулевым";
 "Wrong wallet address" = "Неверный адрес кошелька";
 "Check enterred wallet address and try again." = "Проверьте введенный адрес кошелька и попробуйте еще раз.";
-"or reset it with a seed phrase" = "или сбросить его с помощью seed-фразы";
-"Reset PIN with a seed phrase" = "Сбросить PIN-код с начальной фразой";
+"or reset it with a seed phrase" = "или сбросьте его с помощью мнемонической фразы";
+"Reset PIN with a seed phrase" = "Сбросить PIN-код";
 "Your %@ address will be disabled. This action can not be undone" = "Ваш %@ адрес будет отключен. Это действие нельзя отменить";
 "Switching network..." = "Переключение сети...";
 "Currency" = "Валюта";
@@ -335,7 +335,7 @@
 "French Franc" = "Французский франк";
 "British pound sterling" = "Фунт стерлингов";
 "Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet." = "Вы уверены, что хотите удалить этот токен-аккаунт?  Это навсегда отключит передачу токенов на этот адрес и удалит их из вашего кошелька.";
-"Powered by" = "Питаться от";
+"Powered by" = "Powered by";
 "Connection problem" = "Проблема соединения";
 "Your connection to the Internet has been interrupted." = "Ваше подключение к Интернету было прервано.";
 "Refresh" = "Обновить";
