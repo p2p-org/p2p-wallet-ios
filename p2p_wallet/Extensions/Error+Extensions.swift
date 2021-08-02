@@ -54,7 +54,11 @@ extension FeeRelayer.Error: LocalizedError {
         case .parseSignatureError: string = "Wrong signature format"
         case .wrongSignature: string = "Wrong signature"
         case .signerError: string = "Signer error"
-        case .clientError: string = "Solana RPC client error"
+        case .clientError:
+            if let data = data as? String {
+                return data.uppercaseFirst.localized()
+            }
+            string = "Solana RPC client error"
         case .programError: string = "Solana program error"
         case .tooSmallAmount : string = "Amount is too small"
         case .notEnoughBalance : string = "Not enough balance"
@@ -70,11 +74,31 @@ extension FeeRelayer.Error: LocalizedError {
         }
         
         string = string.localized()
-        #if DEBUG
-        if let data = data as? String {
+        
+        if let data = data as? FeeRelayer.FeeRelayerErrorData {
+            var details = [String]()
+            
+            if let expected = data.expected {
+                details.append(" \(L10n.expected): \(expected.toString(maximumFractionDigits: 9))")
+            }
+            if let minimum = data.minimum {
+                details.append(" \(L10n.minimum): \(minimum.toString(maximumFractionDigits: 9))")
+            }
+            if let actual = data.actual {
+                details.append(" \(L10n.actual): \(actual.toString(maximumFractionDigits: 9))")
+            }
+            if let found = data.found {
+                details.append(" \(L10n.actual): \(found.toString(maximumFractionDigits: 9))")
+            }
+            
+            if !details.isEmpty {
+                string += ":\n\(details.joined(separator: ", ").uppercaseFirst)"
+            }
+        } else if let data = data as? String {
+            #if DEBUG
             string += " \(data)"
+            #endif
         }
-        #endif
         return string
     }
 }
