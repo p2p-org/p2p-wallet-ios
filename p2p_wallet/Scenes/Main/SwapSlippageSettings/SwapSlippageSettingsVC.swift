@@ -159,7 +159,7 @@ class SwapSlippageSettingsVC: WLModalVC {
     
     @objc func buttonDoneDidTouch() {
         if isShowingTextField,
-           let slippage = Double(customSlippageTextField.text ?? "")
+           let slippage = customSlippageTextField.text?.double
         {
             self.slippage = slippage
         }
