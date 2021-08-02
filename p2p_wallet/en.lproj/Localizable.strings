@@ -419,3 +419,7 @@
 "Decimals mismatch" = "Decimals mismatch";
 "Token mint mismatch" = "Token mint mismatch";
 "Not enough output amount" = "Not enough output amount";
+"expected" = "expected";
+"minimum" = "minimum";
+"actual" = "actual";
+"found" = "found";

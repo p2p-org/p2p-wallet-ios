@@ -419,3 +419,7 @@
 "Decimals mismatch" = "Số thập phân không khớp";
 "Token mint mismatch" = "Token mint không khớp";
 "Not enough output amount" = "Không đủ số lượng đầu ra";
+"expected" = "kì vọng";
+"minimum" = "tối thiểu";
+"actual" = "nhận về";
+"found" = "tìm thấy";

@@ -419,3 +419,7 @@
 "Decimals mismatch" = "Non-concordance des décimales";
 "Token mint mismatch" = "Non-concordance de la monnaie de jeton";
 "Not enough output amount" = "Quantité de sortie insuffisante";
+"expected" = "attendu";
+"minimum" = "le minimum";
+"actual" = "réel";
+"found" = "trouvé";
