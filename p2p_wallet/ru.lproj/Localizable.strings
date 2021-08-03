@@ -238,7 +238,7 @@
 "Could not retrieve balance" = "Не удалось получить баланс";
 "Could not derivate private key" = "Не удалось получить закрытый ключ";
 "Blockhash required" = "Требуется блок-хеш";
-"Your account does not have enough SOL to cover fee" = "В вашем аккаунте недостаточно SOL для заплаты комиссии";
+"Your account does not have enough tokens to cover fee" = "В вашем аккаунте недостаточного токена для заплаты комиссии";
 "You must select a wallet to send" = "Вы должны выбрать кошелек для отправки";
 "Price" = "Цена";
 "Select currency" = "Выберите валюту";

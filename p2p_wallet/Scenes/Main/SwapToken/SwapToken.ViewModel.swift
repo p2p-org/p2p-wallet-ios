@@ -456,10 +456,19 @@ extension SwapToken {
             }
             
             // Verify feeInLamports
-            if let solWallet = solWallet,
+            // fee relayer
+            if SwapToken.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
+            {
+                if (sourceWallet?.lamports ?? 0) < (feeInLamportsSubject.value ?? 0)
+                {
+                    return L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee
+                }
+            }
+            // normal transactions
+            else if let solWallet = solWallet,
                (solWallet.lamports ?? 0) < (feeInLamportsSubject.value ?? 0)
             {
-                return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
+                return L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee
             }
             
             return nil

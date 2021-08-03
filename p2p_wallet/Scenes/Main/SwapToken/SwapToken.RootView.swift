@@ -313,17 +313,17 @@ extension SwapToken {
                 .disposed(by: disposeBag)
             
             viewModel.output.error
-                .map {$0 == nil || $0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid || $0 == L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee}
+                .map {$0 == nil || $0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid || $0 == L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee}
                 .drive(errorLabel.rx.isHidden)
                 .disposed(by: disposeBag)
             
             viewModel.output.error
-                .map {$0 != L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee}
+                .map {$0 != L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee}
                 .drive(feeAlertImageView.rx.isHidden)
                 .disposed(by: disposeBag)
             
             viewModel.output.error
-                .map {$0 != L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee}
+                .map {$0 != L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee}
                 .map {$0 ? UIColor.textSecondary: UIColor.alert}
                 .drive(feeLabel.rx.textColor)
                 .disposed(by: disposeBag)
