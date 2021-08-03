@@ -259,13 +259,32 @@ extension SwapToken {
             
             // fee in lamports
             Observable.combineLatest(
+                poolsSubject.dataObservable,
                 sourceWalletSubject,
                 destinationWalletSubject,
                 lamportsPerSignatureSubject.dataObservable,
                 creatingAccountFeeSubject.dataObservable
             )
-                .map {sourceWallet, destinationWallet, lamportsPerSignature, creatingAccountFee in
-                    calculateFeeInLamport(sourceWallet: sourceWallet, destinationWallet: destinationWallet, lamportsPerSignature: lamportsPerSignature, creatingAccountFee: creatingAccountFee)
+                .map {pools, sourceWallet, destinationWallet, lamportsPerSignature, creatingAccountFee -> SolanaSDK.Lamports? in
+                    var fee = calculateFeeInLamport(sourceWallet: sourceWallet, destinationWallet: destinationWallet, lamportsPerSignature: lamportsPerSignature, creatingAccountFee: creatingAccountFee)
+                    
+                    // if fee relayer is available
+                    if SwapToken.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
+                    {
+                        if let currentFee = fee,
+                           let compensationPool = pools?.getMatchedPools(
+                                sourceMint: sourceWallet?.token.address,
+                                destinationMint: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+                           )
+                                .first(where: {$0.isValid})
+                        {
+                            fee = compensationPool.inputAmount(forMinimumReceiveAmount: currentFee, slippage: SolanaSDK.Pool.feeCompensationPoolDefaultSlippage, roundRules: .up, includeFees: true)
+                        } else {
+                            return 0
+                        }
+                    }
+                    
+                    return fee
                 }
                 .bind(to: feeInLamportsSubject)
                 .disposed(by: disposeBag)
@@ -273,10 +292,11 @@ extension SwapToken {
             // available amount
             Observable.combineLatest(
                 sourceWalletSubject,
+                destinationWalletSubject,
                 feeInLamportsSubject
             )
-                .map {sourceWallet, feeInLamports -> Double? in
-                    calculateAvailableAmount(sourceWallet: sourceWallet, feeInLamports: feeInLamports)
+                .map {sourceWallet, destinationWallet, feeInLamports -> Double? in
+                    calculateAvailableAmount(sourceWallet: sourceWallet, destinationWallet: destinationWallet, feeInLamports: feeInLamports)
                 }
                 .bind(to: availableAmountSubject)
                 .disposed(by: disposeBag)
@@ -637,17 +657,24 @@ private func calculateFeeInLamport(sourceWallet: Wallet?, destinationWallet: Wal
         }
     }
     
+    // fee relayer
+    if SwapToken.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
+    {
+        feeInLamports += lPS // fee for creating a SOL account
+    }
+    
     return feeInLamports
 }
 
-private func calculateAvailableAmount(sourceWallet wallet: Wallet?, feeInLamports: SolanaSDK.Lamports?) -> Double?
+private func calculateAvailableAmount(sourceWallet wallet: Wallet?, destinationWallet: Wallet?, feeInLamports: SolanaSDK.Lamports?) -> Double?
 {
     guard let sourceWallet = wallet,
           let feeInLamports = feeInLamports
     else {return wallet?.amount}
     
-    // if token is not nativeSolana
-    if !sourceWallet.token.isNative {return sourceWallet.amount}
+    // if token is not nativeSolana and are not using fee relayer
+    if !sourceWallet.token.isNative && !SwapToken.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
+    {return sourceWallet.amount}
     
     let availableAmount = (sourceWallet.amount ?? 0) - feeInLamports.convertToBalance(decimals: sourceWallet.token.decimals)
     return availableAmount > 0 ? availableAmount: 0

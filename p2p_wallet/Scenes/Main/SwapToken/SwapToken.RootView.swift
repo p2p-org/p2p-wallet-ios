@@ -273,10 +273,22 @@ extension SwapToken {
                 .drive(liquidityProviderFeeLabel.rx.text)
                 .disposed(by: disposeBag)
             
-            viewModel.output.feeInLamports
-                .map {lamports -> String? in
+            Driver.combineLatest(
+                viewModel.output.sourceWallet,
+                viewModel.output.destinationWallet,
+                viewModel.output.feeInLamports
+            )
+                .map {source, destination, lamports -> String? in
                     guard let lamports = lamports else {return nil}
-                    return lamports.convertToBalance(decimals: 9).toString(maximumFractionDigits: 9) + " SOL"
+                    var value: Double = 0
+                    var symbol = "SOL"
+                    if SwapToken.isFeeRelayerEnabled(source: source, destination: destination) {
+                        value = lamports.convertToBalance(decimals: source?.token.decimals)
+                        symbol = source?.token.symbol ?? ""
+                    } else {
+                        value = lamports.convertToBalance(decimals: 9)
+                    }
+                    return "\(value.toString(maximumFractionDigits: 9)) \(symbol)"
                 }
                 .drive(feeLabel.rx.text)
                 .disposed(by: disposeBag)
