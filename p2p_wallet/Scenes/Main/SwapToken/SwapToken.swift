@@ -55,4 +55,14 @@ struct SwapToken {
         case chooseSlippage
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
     }
+    
+    // MARK: - Helpers
+    static func isFeeRelayerEnabled(source: Wallet?, destination: Wallet?) -> Bool {
+        guard let source = source,
+              let destination = destination
+        else {
+            return false
+        }
+        return !source.token.isNative && !destination.token.isNative
+    }
 }
