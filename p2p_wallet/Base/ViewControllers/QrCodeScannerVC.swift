@@ -10,16 +10,24 @@ import AVFoundation
 import UIKit
 
 class QrCodeScannerVC: BaseVC {
+    // MARK: - Dependencies
     let analyticsManager: AnalyticsManagerType
     
+    // MARK: - Properties
     var captureSession: AVCaptureSession!
-    var previewLayer: AVCaptureVideoPreviewLayer!
     let scanSize = CGSize(width: 200.0, height: 200.0)
     
     /// The callback for qr code recognizer, do any validation and return true if qr code valid
     var callback: ((String) -> Bool)?
     
+    // MARK: - Subviews and sublayers
+    var previewLayer: AVCaptureVideoPreviewLayer!
     lazy var cameraContainerView = UIView(cornerRadius: 20)
+    private lazy var rangeImageView = UIImageView(width: scanSize.width, height: scanSize.height, image: .qrCodeRange)
+    private lazy var overlayLayer = UIView(backgroundColor: UIColor.black.withAlphaComponent(0.35), cornerRadius: 16)
+    private lazy var rangeLabel = UILabel(text: L10n.scanQRCode, weight: .medium, textColor: .white, textAlignment: .center)
+    private lazy var closeButton = UIButton.closeFill()
+        .onTap(self, action: #selector(closeButtonDidTouch))
     
     init(analyticsManager: AnalyticsManagerType) {
         self.analyticsManager = analyticsManager
@@ -27,36 +35,26 @@ class QrCodeScannerVC: BaseVC {
 
     override func setUp() {
         super.setUp()
-        
         view.backgroundColor = .black
         
         view.addSubview(cameraContainerView)
         cameraContainerView.autoPinEdgesToSuperviewSafeArea(with: .init(x: 0, y: 44))
         
-        let rangeImageView = UIImageView(width: scanSize.width, height: scanSize.height, image: .qrCodeRange)
         cameraContainerView.addSubview(rangeImageView)
         rangeImageView.autoCenterInSuperview()
         
-        let overlayLayer = UIView(backgroundColor: UIColor.black.withAlphaComponent(0.35), cornerRadius: 16)
         rangeImageView.addSubview(overlayLayer)
         overlayLayer.autoPinEdgesToSuperviewEdges(with: .init(all: 10))
         
-        let rangeLabel = UILabel(text: L10n.scanQRCode, weight: .medium, textColor: .white, textAlignment: .center)
         cameraContainerView.addSubview(rangeLabel)
         rangeLabel.autoCenterInSuperview()
         
-        let closeButton = UIButton.closeFill()
-            .onTap(self, action: #selector(closeButtonDidTouch))
         cameraContainerView.addSubview(closeButton)
         closeButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 16)
         
         view.layoutIfNeeded()
         
         setUpCamera()
-        
-        cameraContainerView.bringSubviewToFront(rangeImageView)
-        cameraContainerView.bringSubviewToFront(rangeLabel)
-        cameraContainerView.bringSubviewToFront(closeButton)
     }
     
     override func viewDidLayoutSubviews() {
@@ -172,11 +170,20 @@ extension QrCodeScannerVC {
             return
         }
 
+        // remove existing layer
+        previewLayer?.removeFromSuperlayer()
+        
+        // create new layer
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.videoGravity = .resizeAspectFill
         
         cameraContainerView.layer.addSublayer(previewLayer)
         captureSession.startRunning()
+        
+        // bring important subviews to front
+        cameraContainerView.bringSubviewToFront(rangeImageView)
+        cameraContainerView.bringSubviewToFront(rangeLabel)
+        cameraContainerView.bringSubviewToFront(closeButton)
     }
     
     private func handleCameraUnavailable() {
