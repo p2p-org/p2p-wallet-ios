@@ -269,7 +269,7 @@ extension SendToken {
             
             // available amount's color
             viewModel.output.error
-                .map {($0 == L10n.insufficientFunds || $0 == L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee || $0 == L10n.amountIsNotValid) ? UIColor.red: UIColor.h5887ff}
+                .map {($0 == L10n.insufficientFunds || $0 == L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee || $0 == L10n.amountIsNotValid) ? UIColor.red: UIColor.h5887ff}
                 .drive(balanceLabel.rx.textColor)
                 .disposed(by: disposeBag)
             

@@ -382,7 +382,7 @@ extension SendToken {
                    let solAmount = repository.nativeWallet?.amount,
                    fee > solAmount
                 {
-                    return L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee
+                    return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
                 }
                 
                 // Verify amount

@@ -238,7 +238,6 @@
 "Could not retrieve balance" = "Could not retrieve balance";
 "Could not derivate private key" = "Could not derivate private key";
 "Blockhash required" = "Blockhash required";
-"Your account does not have enough tokens to cover fee" = "Your account does not have enough tokens to cover fee";
 "You must select a wallet to send" = "You must select a wallet to send";
 "Price" = "Price";
 "Select currency" = "Select currency";
@@ -430,3 +429,5 @@
 "Your transaction may be frontrun" = "Your transaction may be frontrun";
 "Slippage exceeds maximum" = "Slippage exceeds maximum";
 "Enter a number less than %d%" = "Enter a number less than %d%";
+"Not enough %@ to pay network fee" = "Not enough %@ to pay network fee";
+"Your account does not have enough SOL to cover fee" = "Your account does not have enough SOL to cover fee";

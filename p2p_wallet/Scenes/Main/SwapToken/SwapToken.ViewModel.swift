@@ -478,14 +478,14 @@ extension SwapToken {
             {
                 if (sourceWallet?.lamports ?? 0) < (feeInLamportsSubject.value ?? 0)
                 {
-                    return L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee
+                    return L10n.notEnoughToPayNetworkFee(sourceWallet!.token.symbol)
                 }
             }
             // normal transactions
             else if let solWallet = solWallet,
                (solWallet.lamports ?? 0) < (feeInLamportsSubject.value ?? 0)
             {
-                return L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee
+                return L10n.notEnoughToPayNetworkFee("SOL")
             }
             
             return nil

@@ -240,7 +240,6 @@ extension SwapToken {
                     [
                         L10n.insufficientFunds,
                         L10n.amountIsNotValid,
-                        L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee,
                         L10n.slippageIsnTValid
                     ].contains($0)
                 }
