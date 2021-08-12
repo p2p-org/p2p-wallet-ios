@@ -423,3 +423,9 @@
 "minimum" = "tối thiểu";
 "actual" = "nhận về";
 "found" = "tìm thấy";
+"Current price" = "Giá hiện tại";
+"Max price slippage" = "Mức trượt giá tối đa";
+"Receive at least" = "Nhận ít nhất";
+"Swap fees" = "Phí chuyển đổi";
+"Your transaction may be frontrun" = "Giao dịch của bạn có thể chạy trước";
+"Slippage exceeds maximum" = "Trượt giá vượt quá mức tối đa";

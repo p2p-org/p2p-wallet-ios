@@ -423,3 +423,9 @@
 "minimum" = "минимум";
 "actual" = "действительные";
 "found" = "найденные";
+"Current price" = "Текущая цена";
+"Max price slippage" = "Максимальное проскальзывание цены";
+"Receive at least" = "Получите не менее";
+"Swap fees" = "Комиссия за своп";
+"Your transaction may be frontrun" = "Ваша транзакция может быть авансированной";
+"Slippage exceeds maximum" = "Проскальзывание превышает максимальное";

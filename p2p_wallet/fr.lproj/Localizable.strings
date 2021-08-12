@@ -423,3 +423,9 @@
 "minimum" = "le minimum";
 "actual" = "réel";
 "found" = "trouvé";
+"Current price" = "Prix ​​actuel";
+"Max price slippage" = "Glissement de prix max";
+"Receive at least" = "Recevez au moins";
+"Swap fees" = "Frais d'échange";
+"Your transaction may be frontrun" = "Votre transaction peut être en avance";
+"Slippage exceeds maximum" = "Le glissement dépasse le maximum";

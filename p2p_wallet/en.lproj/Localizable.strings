@@ -423,3 +423,9 @@
 "minimum" = "minimum";
 "actual" = "actual";
 "found" = "found";
+"Current price" = "Current price";
+"Max price slippage" = "Max price slippage";
+"Receive at least" = "Receive at least";
+"Swap fees" = "Swap fees";
+"Your transaction may be frontrun" = "Your transaction may be frontrun";
+"Slippage exceeds maximum" = "Slippage exceeds maximum";
