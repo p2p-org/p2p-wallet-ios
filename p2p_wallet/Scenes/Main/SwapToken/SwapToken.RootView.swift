@@ -235,7 +235,15 @@ extension SwapToken {
                 .disposed(by: disposeBag)
             
             viewModel.output.error
-                .map {$0 == nil || $0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid || $0 == L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee}
+                .map {
+                    $0 == nil ||
+                    [
+                        L10n.insufficientFunds,
+                        L10n.amountIsNotValid,
+                        L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee,
+                        L10n.slippageIsnTValid
+                    ].contains($0)
+                }
                 .drive(errorLabel.rx.isHidden)
                 .disposed(by: disposeBag)
             
