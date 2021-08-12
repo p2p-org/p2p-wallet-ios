@@ -238,7 +238,6 @@
 "Could not retrieve balance" = "Không thể truy xuất số dư";
 "Could not derivate private key" = "Không thể trích xuất private key";
 "Blockhash required" = "Blockhash không có";
-"Your account does not have enough tokens to cover fee" = "Tài khoản của bạn không có đủ tokens để trả phí";
 "You must select a wallet to send" = "Bạn phải chọn một ví để gửi";
 "Price" = "Giá bán";
 "Select currency" = "Chọn loại tiền tệ";
@@ -430,3 +429,5 @@
 "Your transaction may be frontrun" = "Giao dịch của bạn có thể chạy trước";
 "Slippage exceeds maximum" = "Trượt giá vượt quá mức tối đa";
 "Enter a number less than %d%" = "Nhập một số nhỏ hơn %d%";
+"Not enough %@ to pay network fee" = "Không đủ %@ để trả phí mạng";
+"Your account does not have enough SOL to cover fee" = "Tài khoản của bạn không có đủ SOL để trả phí";

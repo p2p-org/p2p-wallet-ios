@@ -238,7 +238,6 @@
 "Could not retrieve balance" = "Не удалось получить баланс";
 "Could not derivate private key" = "Не удалось получить закрытый ключ";
 "Blockhash required" = "Требуется блок-хеш";
-"Your account does not have enough tokens to cover fee" = "В вашем аккаунте недостаточного токена для заплаты комиссии";
 "You must select a wallet to send" = "Вы должны выбрать кошелек для отправки";
 "Price" = "Цена";
 "Select currency" = "Выберите валюту";
@@ -430,3 +429,5 @@
 "Your transaction may be frontrun" = "Ваша транзакция может быть авансированной";
 "Slippage exceeds maximum" = "Проскальзывание превышает максимальное";
 "Enter a number less than %d%" = "Введите число меньше %d%";
+"Not enough %@ to pay network fee" = "Недостаточно %@ для оплаты сетевой комиссии";
+"Your account does not have enough SOL to cover fee" = "На вашем счету недостаточно SOL для покрытия комиссии";
