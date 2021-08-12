@@ -492,7 +492,7 @@ extension SwapToken {
         }
         
         func isSlippageValid(slippage: Double) -> Bool {
-            slippage <= 0.2 && slippage > 0
+            slippage <= .maxSlippage && slippage > 0
         }
         
         private func getValidDestinationWalletMints() -> Single<Set<String>> {

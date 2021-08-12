@@ -429,3 +429,4 @@
 "Swap fees" = "Комиссия за своп";
 "Your transaction may be frontrun" = "Ваша транзакция может быть авансированной";
 "Slippage exceeds maximum" = "Проскальзывание превышает максимальное";
+"Enter a number less than %d%" = "Введите число меньше %d%";

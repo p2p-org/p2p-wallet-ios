@@ -213,12 +213,12 @@ extension SwapToken {
             // slippage
             viewModel.output.slippage
                 .drive(onNext: {[weak self] slippage in
-                    if slippage > 0.2 {
+                    if slippage > .maxSlippage {
                         self?.slippageLabel.attributedText = NSMutableAttributedString()
                             .text((slippage * 100).toString(maximumFractionDigits: 9) + "%", weight: .medium)
                             .text(" ", weight: .medium)
                             .text(L10n.slippageExceedsMaximum, weight: .medium, color: .red)
-                    } else if slippage == 0.2 {
+                    } else if slippage > .frontrunSlippage && slippage <= .maxSlippage {
                         self?.slippageLabel.attributedText = NSMutableAttributedString()
                             .text((slippage * 100).toString(maximumFractionDigits: 9) + "%", weight: .medium)
                             .text(" ", weight: .medium)
@@ -234,7 +234,7 @@ extension SwapToken {
                 .drive(errorLabel.rx.text)
                 .disposed(by: disposeBag)
             
-            viewModel.output.error
+            let errorHidden = viewModel.output.error
                 .map {
                     $0 == nil ||
                     [
@@ -244,7 +244,22 @@ extension SwapToken {
                         L10n.slippageIsnTValid
                     ].contains($0)
                 }
+                
+            errorHidden
                 .drive(errorLabel.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            errorHidden
+                .drive(onNext: {[weak self] isErrorHidden in
+                    var textSize: CGFloat = 15
+                    var textColor: UIColor = .textBlack
+                    if !isErrorHidden {
+                        textSize = 13
+                        textColor = .textSecondary
+                    }
+                    self?.swapFeeLabel.font = .systemFont(ofSize: textSize)
+                    self?.swapFeeLabel.textColor = textColor
+                })
                 .disposed(by: disposeBag)
             
 //            viewModel.output.error
@@ -261,6 +276,11 @@ extension SwapToken {
             // swap button
             viewModel.output.isValid
                 .drive(swapButton.rx.isEnabled)
+                .disposed(by: disposeBag)
+            
+            viewModel.output.slippage
+                .map {$0 > .maxSlippage ? L10n.enterANumberLessThanD(Int(Double.maxSlippage * 100)): L10n.swapNow}
+                .drive(swapButton.rx.title())
                 .disposed(by: disposeBag)
         }
         

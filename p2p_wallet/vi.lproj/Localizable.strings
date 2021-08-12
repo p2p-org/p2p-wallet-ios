@@ -429,3 +429,4 @@
 "Swap fees" = "Phí chuyển đổi";
 "Your transaction may be frontrun" = "Giao dịch của bạn có thể chạy trước";
 "Slippage exceeds maximum" = "Trượt giá vượt quá mức tối đa";
+"Enter a number less than %d%" = "Nhập một số nhỏ hơn %d%";
