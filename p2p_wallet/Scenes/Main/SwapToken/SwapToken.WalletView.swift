@@ -163,13 +163,13 @@ extension SwapToken {
                     .swapTokenBAmountKeydown(sum: amount)
                 }
                 
-                equityValueLabelDriver = viewModel.output.destinationWallet
-                    .map {destinationWallet -> String? in
-                        if destinationWallet != nil {
-                            return nil
-                        } else {
-                            return L10n.selectCurrency
-                        }
+                equityValueLabelDriver = Driver.combineLatest(
+                    viewModel.output.minimumReceiveAmount,
+                    viewModel.output.destinationWallet
+                )
+                    .map {minReceiveAmount, wallet -> String? in
+                        guard let symbol = wallet?.token.symbol else {return nil}
+                        return L10n.receiveAtLeast + ": " + minReceiveAmount?.toString(maximumFractionDigits: 9) + " " + symbol
                     }
                 
                 inputSubject = viewModel.input.estimatedAmount
