@@ -257,7 +257,7 @@ extension SwapToken {
                         textSize = 13
                         textColor = .textSecondary
                     }
-                    self?.swapFeeLabel.font = .systemFont(ofSize: textSize)
+                    self?.swapFeeLabel.font = .systemFont(ofSize: textSize, weight: .medium)
                     self?.swapFeeLabel.textColor = textColor
                 })
                 .disposed(by: disposeBag)
