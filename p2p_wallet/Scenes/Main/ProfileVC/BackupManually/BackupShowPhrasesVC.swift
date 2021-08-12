@@ -58,7 +58,7 @@ private class _BackupShowPhrasesVC: BackupManuallyBaseVC {
             backupUsingIcloudButton
         }
         
-        backupUsingIcloudButton.isEnabled = !accountStorage.didBackupUsingIcloud
+        backupUsingIcloudButton.isEnabled = !accountStorage.didBackupUsingIcloud && !Defaults.didBackupOffline
     }
     
     @objc func backupUsingICloudButtonDidTouch() {
