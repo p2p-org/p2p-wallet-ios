@@ -32,7 +32,7 @@ extension SwapToken {
         lazy var slippageLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
         
         lazy var swapFeeLabel = UILabel(text: L10n.swapFees, textSize: 15, weight: .medium)
-        lazy var errorLabel = UILabel(textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
+        lazy var errorLabel = UILabel(textSize: 15, weight: .medium, textColor: .alert, numberOfLines: 0)
         
         lazy var swapButton = WLButton.stepButton(type: .blue, label: L10n.swapNow)
             .onTap(viewModel, action: #selector(ViewModel.authenticateAndSwap))
@@ -215,16 +215,16 @@ extension SwapToken {
                 .drive(onNext: {[weak self] slippage in
                     if slippage > 0.2 {
                         self?.slippageLabel.attributedText = NSMutableAttributedString()
-                            .text((slippage * 100).toString(maximumFractionDigits: 9) + " %")
-                            .text(" ")
-                            .text(L10n.slippageExceedsMaximum, color: .red)
+                            .text((slippage * 100).toString(maximumFractionDigits: 9) + "%", weight: .medium)
+                            .text(" ", weight: .medium)
+                            .text(L10n.slippageExceedsMaximum, weight: .medium, color: .red)
                     } else if slippage == 0.2 {
                         self?.slippageLabel.attributedText = NSMutableAttributedString()
-                            .text((slippage * 100).toString(maximumFractionDigits: 9) + " %")
-                            .text(" ")
-                            .text(L10n.yourTransactionMayBeFrontrun, color: .attentionGreen)
+                            .text((slippage * 100).toString(maximumFractionDigits: 9) + "%", weight: .medium)
+                            .text(" ", weight: .medium)
+                            .text(L10n.yourTransactionMayBeFrontrun, weight: .medium, color: .attentionGreen)
                     } else {
-                        self?.slippageLabel.text = (slippage * 100).toString(maximumFractionDigits: 9) + " %"
+                        self?.slippageLabel.text = (slippage * 100).toString(maximumFractionDigits: 9) + "%"
                     }
                 })
                 .disposed(by: disposeBag)
