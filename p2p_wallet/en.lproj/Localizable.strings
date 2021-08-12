@@ -429,3 +429,4 @@
 "Swap fees" = "Swap fees";
 "Your transaction may be frontrun" = "Your transaction may be frontrun";
 "Slippage exceeds maximum" = "Slippage exceeds maximum";
+"Enter a number less than %d%" = "Enter a number less than %d%";
