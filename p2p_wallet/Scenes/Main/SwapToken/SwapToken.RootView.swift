@@ -19,9 +19,6 @@ extension SwapToken {
         let viewModel: ViewModel
         
         // MARK: - Subviews
-        lazy var availableSourceBalanceLabel = UILabel(text: "Available", weight: .medium, textColor: .h5887ff)
-            .onTap(viewModel, action: #selector(ViewModel.useAllBalance))
-        lazy var destinationBalanceLabel = UILabel(weight: .medium, textColor: .textSecondary)
         lazy var sourceWalletView = WalletView(viewModel: viewModel, type: .source)
         lazy var destinationWalletView = SwapToken.WalletView(viewModel: viewModel, type: .destination)
         
@@ -64,18 +61,10 @@ extension SwapToken {
         private func layout() {
             stackView.spacing = 30
             stackView.addArrangedSubviews {
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill) {
-                    UILabel(text: L10n.from, weight: .semibold)
-                    availableSourceBalanceLabel
-                }
                 sourceWalletView
-                BEStackViewSpacing(8)
+                BEStackViewSpacing(16)
                 swapSourceAndDestinationView()
-                BEStackViewSpacing(8)
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill) {
-                    UILabel(text: L10n.to, weight: .semibold)
-                    destinationBalanceLabel
-                }
+                BEStackViewSpacing(16)
                 destinationWalletView
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill) {
                     UILabel(text: L10n.price + ": ", weight: .medium, textColor: .a3a5baStatic.onDarkMode(.white))
@@ -154,34 +143,6 @@ extension SwapToken {
                                 return .just(())
                             }
                         )
-                    }
-                })
-                .disposed(by: disposeBag)
-            
-            // available amount
-            Driver.combineLatest(
-                viewModel.output.availableAmount,
-                viewModel.output.sourceWallet
-            )
-                .map {amount, wallet in
-                    L10n.available + ": " + amount?.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
-                }
-                .drive(availableSourceBalanceLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            viewModel.output.error
-                .map {$0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid}
-                .map {$0 ? UIColor.alert: UIColor.h5887ff}
-                .drive(availableSourceBalanceLabel.rx.textColor)
-                .disposed(by: disposeBag)
-            
-            // destination wallet
-            viewModel.output.destinationWallet
-                .drive(onNext: { [weak self] wallet in
-                    if let amount = wallet?.amount?.toString(maximumFractionDigits: 9) {
-                        self?.destinationBalanceLabel.text = L10n.balance + ": " + amount + " " + "\(wallet?.token.symbol ?? "")"
-                    } else {
-                        self?.destinationBalanceLabel.text = nil
                     }
                 })
                 .disposed(by: disposeBag)
@@ -339,12 +300,12 @@ extension SwapToken {
             let view = UIView(forAutoLayout: ())
             let separator = UIView.defaultSeparator()
             view.addSubview(separator)
-            separator.autoPinEdge(toSuperviewEdge: .leading)
-            separator.autoPinEdge(toSuperviewEdge: .trailing)
+            separator.autoPinEdge(toSuperviewEdge: .leading, withInset: 8)
             separator.autoAlignAxis(toSuperviewAxis: .horizontal)
             
             view.addSubview(reverseButton)
             reverseButton.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .leading)
+            separator.autoPinEdge(.trailing, to: .leading, of: reverseButton, withOffset: -8)
             
             return view
         }
