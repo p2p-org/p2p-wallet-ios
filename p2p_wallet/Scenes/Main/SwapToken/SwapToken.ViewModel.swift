@@ -47,6 +47,7 @@ extension SwapToken {
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
+        private var defaultsDisposable = [DefaultsDisposable]()
         
         let input: Input
         let output: Output
@@ -74,6 +75,7 @@ extension SwapToken {
         private let useAllBalanceDidTapSubject = PublishRelay<Double?>()
         private let isExchageRateReversedSubject = BehaviorRelay<Bool>(value: false)
         private let feeInLamportsSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
+        private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
         
         // MARK: - Initializer
         init(
@@ -195,6 +197,12 @@ extension SwapToken {
                 .filter {$0 == .loaded}
                 .map {[weak self] _ in self?.poolsSubject.value}
             
+            // Paying token
+            let payingTokenDisposable = Defaults.observe(\.payingToken) { [weak self] update in
+                self?.payingTokenSubject.accept(update.newValue ?? Defaults.payingToken)
+            }
+            defaultsDisposable.append(payingTokenDisposable)
+            
             // current pool, compensation pool
             Observable.combineLatest(
                 dataLoaded,
@@ -248,9 +256,10 @@ extension SwapToken {
                 sourceWalletSubject,
                 destinationWalletSubject,
                 lamportsPerSignatureSubject.dataObservable,
-                creatingAccountFeeSubject.dataObservable
+                creatingAccountFeeSubject.dataObservable,
+                payingTokenSubject.distinctUntilChanged()
             )
-                .map {compensationPool, sourceWallet, destinationWallet, lamportsPerSignature, creatingAccountFee -> SolanaSDK.Lamports? in
+                .map {compensationPool, sourceWallet, destinationWallet, lamportsPerSignature, creatingAccountFee, _ -> SolanaSDK.Lamports? in
                     var fee = calculateFeeInLamport(sourceWallet: sourceWallet, destinationWallet: destinationWallet, lamportsPerSignature: lamportsPerSignature, creatingAccountFee: creatingAccountFee)
                     
                     // if fee relayer is available

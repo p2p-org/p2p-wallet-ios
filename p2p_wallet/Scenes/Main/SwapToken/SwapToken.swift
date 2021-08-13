@@ -64,7 +64,7 @@ struct SwapToken {
         else {
             return false
         }
-        return !source.token.isNative && !destination.token.isNative
+        return !source.token.isNative && !destination.token.isNative && Defaults.payingToken != .nativeSOL
     }
     
     static func createSectionView(
