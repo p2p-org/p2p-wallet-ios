@@ -238,7 +238,6 @@
 "Could not retrieve balance" = "Could not retrieve balance";
 "Could not derivate private key" = "Could not derivate private key";
 "Blockhash required" = "Blockhash required";
-"Your account does not have enough tokens to cover fee" = "Your account does not have enough tokens to cover fee";
 "You must select a wallet to send" = "You must select a wallet to send";
 "Price" = "Price";
 "Select currency" = "Select currency";
@@ -423,3 +422,19 @@
 "minimum" = "minimum";
 "actual" = "actual";
 "found" = "found";
+"Current price" = "Current price";
+"Max price slippage" = "Max price slippage";
+"Receive at least" = "Receive at least";
+"Swap fees" = "Swap fees";
+"Your transaction may be frontrun" = "Your transaction may be frontrun";
+"Slippage exceeds maximum" = "Slippage exceeds maximum";
+"Enter a number less than %d%" = "Enter a number less than %d%";
+"Not enough %@ to pay network fee" = "Not enough %@ to pay network fee";
+"Your account does not have enough SOL to cover fee" = "Your account does not have enough SOL to cover fee";
+"Native Solana Token" = "Native Solana Token";
+"Transaction Token" = "Transaction Token";
+"Swap settings" = "Swap settings";
+"Pay network fee with" = "Pay network fee with";
+"Network fee" = "Network fee";
+"Fee compensation pool not found" = "Fee compensation pool not found";
+"Please choose paying with SOL" = "Please choose paying with SOL";

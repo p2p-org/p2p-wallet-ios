@@ -86,7 +86,10 @@ enum AnalyticsEvent {
     case swapTokenBAmountKeydown(sum: Double)
     case swapAvailableClick(sum: Double)
     case swapReverseClick
+    case swapSettingsClick
     case swapSlippageClick
+    case swapPayNetworkFeeWithClick
+    case swapSwapFeesClick
     case swapSlippageKeydown(slippage: Double)
     case swapSwapClick(tokenA: String, tokenB: String, sumA: Double, sumB: Double)
     case swapDoneClick(txStatus: String)

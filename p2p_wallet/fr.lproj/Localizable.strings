@@ -238,7 +238,6 @@
 "Could not retrieve balance" = "Impossible de récupérer le solde";
 "Could not derivate private key" = "Impossible de dériver la clé privée";
 "Blockhash required" = "Blockhash requis";
-"Your account does not have enough tokens to cover fee" = "Votre compte n'a pas assez de jetons pour couvrir les frais";
 "You must select a wallet to send" = "Vous devez sélectionner un portefeuille à envoyer";
 "Price" = "Prix";
 "Select currency" = "Sélectionnez la devise";
@@ -423,3 +422,19 @@
 "minimum" = "le minimum";
 "actual" = "réel";
 "found" = "trouvé";
+"Current price" = "Prix ​​actuel";
+"Max price slippage" = "Glissement de prix max";
+"Receive at least" = "Recevez au moins";
+"Swap fees" = "Frais d'échange";
+"Your transaction may be frontrun" = "Votre transaction peut être en avance";
+"Slippage exceeds maximum" = "Le glissement dépasse le maximum";
+"Enter a number less than %d%" = "Entrez un nombre inférieur à %d%";
+"Not enough %@ to pay network fee" = "Pas assez %@ pour payer les frais de réseau";
+"Your account does not have enough SOL to cover fee" = "Votre compte n'a pas assez de SOL pour couvrir les frais";
+"Native Solana Token" = "Jeton Solana Natif";
+"Transaction Token" = "Jeton de transaction";
+"Swap settings" = "Échanger les paramètres";
+"Pay network fee with" = "Payer les frais de réseau avec";
+"Network fee" = "Frais de réseau";
+"Fee compensation pool not found" = "Pool de compensation des frais introuvable";
+"Please choose paying with SOL" = "Veuillez choisir de payer avec SOL";

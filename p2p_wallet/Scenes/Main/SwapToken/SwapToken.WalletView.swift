@@ -21,27 +21,29 @@ extension SwapToken {
         private let viewModel: ViewModel
         private let type: WalletType
         
-        private lazy var iconImageView = CoinLogoImageView(size: 44)
+        private lazy var balanceView = BalanceView(forAutoLayout: ())
+        private lazy var iconImageView = CoinLogoImageView(size: 32, cornerRadius: 16)
             .with(
                 placeholder: UIImageView(
-                    width: 24,
-                    height: 24,
+                    width: 20,
+                    height: 20,
                     image: .walletIcon,
                     tintColor: .white
-                ).padding(.init(all: 10), backgroundColor: .h5887ff, cornerRadius: 12)
+                ).padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 16)
             )
         
         private lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
         
         private lazy var amountTextField = TokenAmountTextField(
-            font: .systemFont(ofSize: 27, weight: .semibold),
+            font: .systemFont(ofSize: 27, weight: .bold),
             textColor: .textBlack,
+            textAlignment: .right,
             keyboardType: .decimalPad,
             placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
             autocorrectionType: .no/*, rightView: useAllBalanceButton, rightViewMode: .always*/
         )
         
-        private lazy var equityValueLabel = UILabel(text: "≈ 0.00 \(Defaults.fiat.symbol)", weight: .semibold, textColor: .textSecondary.onDarkMode(.white))
+        private lazy var equityValueLabel = UILabel(text: "≈ 0.00 \(Defaults.fiat.symbol)", textSize: 13, weight: .medium, textColor: .textSecondary.onDarkMode(.white), textAlignment: .right)
         
         init(viewModel: ViewModel, type: WalletType) {
             self.viewModel = viewModel
@@ -51,15 +53,33 @@ extension SwapToken {
             
             bind()
             amountTextField.delegate = self
+            
+            layer.cornerRadius = 12
+            layer.masksToBounds = true
+            layer.borderWidth = 1
+            layer.borderColor = UIColor.separator.cgColor
         }
         
         override func commonInit() {
             super.commonInit()
             let action: Selector = type == .source ? #selector(ViewModel.chooseSourceWallet): #selector(ViewModel.chooseDestinationWallet)
+            let balanceView = type == .destination ? balanceView: balanceView
+                .onTap(viewModel, action: #selector(ViewModel.useAllBalance))
+            balanceView.tintColor = type == .source ? .h5887ff: .textSecondary.onDarkMode(.white)
             
-            let stackView = UIStackView(axis: .vertical, spacing: 6, alignment: .fill, distribution: .fill) {
-                UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
-                    
+            let stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill) {
+                UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .equalCentering) {
+                    UILabel(text: type == .source ? L10n.from: L10n.to, textSize: 15, weight: .semibold)
+                    balanceView
+                }
+                
+                UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
+                    iconImageView
+                        .onTap(viewModel, action: action)
+                        .withContentHuggingPriority(.required, for: .horizontal)
+                    tokenSymbolLabel
+                        .onTap(viewModel, action: action)
+                        .withContentHuggingPriority(.required, for: .horizontal)
                     UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
                         iconImageView
                         UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
@@ -69,22 +89,13 @@ extension SwapToken {
                     amountTextField
                 }
                 
-                UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill) {
-                    tokenSymbolLabel
-                        .withContentHuggingPriority(.required, for: .horizontal)
-                    UIView.spacer
-                    equityValueLabel
-                }
+                BEStackViewSpacing(0)
+                
+                equityValueLabel
             }
             
-            tokenSymbolLabel.centerXAnchor.constraint(equalTo: iconImageView.centerXAnchor)
-                .isActive = true
-            tokenSymbolLabel.adjustsFontSizeToFitWidth = true
-            equityValueLabel.leadingAnchor.constraint(equalTo: amountTextField.leadingAnchor)
-                .isActive = true
-            
             addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges()
+            stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 16))
         }
         
         private func bind() {
@@ -92,6 +103,7 @@ extension SwapToken {
             let walletDriver: Driver<Wallet?>
             let textFieldKeydownEvent: (Double) -> AnalyticsEvent
             let equityValueLabelDriver: Driver<String?>
+            let balanceTextDriver: Driver<String?>
             let inputSubject: PublishRelay<String?>
             let outputDriver: Driver<Double?>
             
@@ -128,6 +140,22 @@ extension SwapToken {
                     })
                     .disposed(by: disposeBag)
                 
+                // available amount
+                balanceTextDriver = Driver.combineLatest(
+                    viewModel.output.availableAmount,
+                    viewModel.output.sourceWallet
+                )
+                    .map {amount, wallet -> String? in
+                        guard let amount = amount else {return nil}
+                        return amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
+                    }
+                
+                viewModel.output.error
+                    .map {$0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid}
+                    .map {$0 ? UIColor.alert: UIColor.h5887ff}
+                    .drive(balanceView.rx.tintColor)
+                    .disposed(by: disposeBag)
+                
             case .destination:
                 walletDriver = viewModel.output.destinationWallet
                 
@@ -135,17 +163,25 @@ extension SwapToken {
                     .swapTokenBAmountKeydown(sum: amount)
                 }
                 
-                equityValueLabelDriver = viewModel.output.destinationWallet
-                    .map {destinationWallet -> String? in
-                        if destinationWallet != nil {
-                            return nil
-                        } else {
-                            return L10n.selectCurrency
-                        }
+                equityValueLabelDriver = Driver.combineLatest(
+                    viewModel.output.minimumReceiveAmount,
+                    viewModel.output.destinationWallet
+                )
+                    .map {minReceiveAmount, wallet -> String? in
+                        guard let symbol = wallet?.token.symbol else {return nil}
+                        return L10n.receiveAtLeast + ": " + minReceiveAmount?.toString(maximumFractionDigits: 9) + " " + symbol
                     }
                 
                 inputSubject = viewModel.input.estimatedAmount
                 outputDriver = viewModel.output.estimatedAmount
+                
+                balanceTextDriver = viewModel.output.destinationWallet
+                    .map { wallet -> String? in
+                        if let amount = wallet?.amount?.toString(maximumFractionDigits: 9) {
+                            return amount + " " + "\(wallet?.token.symbol ?? "")"
+                        }
+                        return nil
+                    }
             }
             
             // wallet
@@ -153,6 +189,15 @@ extension SwapToken {
                 .drive(onNext: { [weak self] wallet in
                     self?.setUp(wallet: wallet)
                 })
+                .disposed(by: disposeBag)
+            
+            // balance text
+            balanceTextDriver
+                .drive(balanceView.balanceLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            balanceTextDriver.map {$0 == nil}
+                .drive(balanceView.walletView.rx.isHidden)
                 .disposed(by: disposeBag)
             
             // analytics
@@ -207,5 +252,32 @@ extension SwapToken.WalletView: UITextFieldDelegate {
             return textField.shouldChangeCharactersInRange(range, replacementString: string)
         }
         return true
+    }
+}
+
+private extension SwapToken.WalletView {
+    class BalanceView: BEView {
+        private let disposeBag = DisposeBag()
+        lazy var walletView = UIImageView(width: 16, height: 16, image: .walletIcon)
+        lazy var balanceLabel = UILabel(textSize: 13, weight: .medium)
+        
+        override var tintColor: UIColor! {
+            didSet {
+                self.walletView.tintColor = tintColor
+                self.balanceLabel.textColor = tintColor
+            }
+        }
+        
+        override func commonInit() {
+            super.commonInit()
+            let stackView = UIStackView(axis: .horizontal, spacing: 5.33, alignment: .center, distribution: .fill) {
+                walletView
+                balanceLabel
+            }
+            addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewEdges()
+            
+            walletView.isHidden = true
+        }
     }
 }
