@@ -100,12 +100,6 @@ extension SwapToken {
                 self.present(vc, animated: true, completion: nil)
             case .chooseSlippage:
                 let vc = SettingsNavigationController(rootViewController: SettingsViewController(viewModel: viewModel))
-                
-//                let vc = SwapSlippageSettingsVC(slippage: Defaults.slippage * 100)
-//                vc.completion = {[weak self] slippage in
-//                    Defaults.slippage = slippage / 100
-//                    self?.viewModel.input.slippage.accept(slippage / 100)
-//                }
                 self.present(vc, interactiveDismissalType: .standard)
             case .processTransaction(let request, let transactionType):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
