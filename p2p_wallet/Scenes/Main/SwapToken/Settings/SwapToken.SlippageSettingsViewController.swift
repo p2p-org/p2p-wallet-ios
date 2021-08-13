@@ -11,13 +11,14 @@ extension SwapToken {
     class SlippageSettingsViewController: SettingsBaseViewController {
         // MARK: - Properties
         private let quickSelectableSlippages: [Double] = [0.1, 0.5, 1, 5]
-        var slippage: Double = Defaults.slippage * 100
-        var shouldShowTextField = false
-        var isShowingTextField = false
+        private var slippage: Double = Defaults.slippage * 100
+        private var shouldShowTextField = false
+        private var isShowingTextField = false
         var completion: ((Double) -> Void)?
+        private var keyboardHeight: CGFloat = 0
         
         // MARK: - Subviews
-        lazy var slippagesView = UIStackView(
+        private lazy var slippagesView = UIStackView(
             axis: .horizontal,
             spacing: 10,
             alignment: .fill,
@@ -32,7 +33,7 @@ extension SwapToken {
                         .onTap(self, action: #selector(buttonCustomSlippageDidTouch))
                 ]
         )
-        lazy var customSlippageTextField: PercentSuffixTextField = {
+        private lazy var customSlippageTextField: PercentSuffixTextField = {
             let tf = PercentSuffixTextField(
                 height: 56,
                 backgroundColor: .f6f6f8.onDarkMode(.h1b1b1b),
@@ -50,7 +51,7 @@ extension SwapToken {
             tf.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
             return tf
         }()
-        lazy var textFieldClearButton = UIView(forAutoLayout: ())
+        private lazy var textFieldClearButton = UIView(forAutoLayout: ())
             .withModifier {view in
                 let clearButton = UIImageView(width: 24, height: 24, image: .textfieldClear)
                     .onTap(self, action: #selector(buttonClearTextFieldDidTouch))
@@ -60,7 +61,7 @@ extension SwapToken {
                 clearButton.autoAlignAxis(toSuperviewAxis: .horizontal)
                 return view
             }
-        lazy var doneButton = WLButton.stepButton(type: .blue, label: L10n.done)
+        private lazy var doneButton = WLButton.stepButton(type: .blue, label: L10n.done)
             .onTap(self, action: #selector(buttonDoneDidTouch))
         
         // MARK: - Methods
@@ -68,8 +69,8 @@ extension SwapToken {
             super.setUp()
             title = L10n.slippageSettings
             
-            NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShowOrHide), name: UIResponder.keyboardDidShowNotification, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShowOrHide), name: UIResponder.keyboardDidHideNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
             
             customSlippageTextField.delegate = self
             customSlippageTextField.text = slippage.toString(maximumFractionDigits: 9, groupingSeparator: "")
@@ -156,7 +157,16 @@ extension SwapToken {
             back()
         }
         
-        @objc private func keyboardDidShowOrHide() {
+        @objc func keyboardWillShow(notification: NSNotification) {
+            if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue
+            {
+                keyboardHeight = keyboardSize.height
+            }
+            updatePresentationLayout()
+        }
+        
+        @objc func keyboardWillHide(notification: NSNotification) {
+            keyboardHeight = 0
             updatePresentationLayout()
         }
         
@@ -176,6 +186,10 @@ extension SwapToken {
             } else {
                 textFieldClearButton.isHidden = false
             }
+        }
+        
+        override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
+            super.calculateFittingHeightForPresentedView(targetWidth: targetWidth) + keyboardHeight
         }
     }
 }
