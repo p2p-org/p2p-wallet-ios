@@ -115,7 +115,7 @@ extension SwapToken {
                 $0.border(width: 0, color: .clear)
             }
             
-            customSlippageTextField.wrapper?.isHidden = !shouldShowTextField
+            customSlippageTextField.isHidden = !shouldShowTextField
             
             // force relayout modal when needed
             if shouldShowTextField != isShowingTextField {
