@@ -263,10 +263,11 @@ extension SwapToken {
                     var fee = calculateFeeInLamport(sourceWallet: sourceWallet, destinationWallet: destinationWallet, lamportsPerSignature: lamportsPerSignature, creatingAccountFee: creatingAccountFee)
                     
                     // if fee relayer is available
-                    if isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet),
-                       let pool = compensationPool
+                    if isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
                     {
-                        if let currentFee = fee {
+                        
+                        if let pool = compensationPool, let currentFee = fee
+                        {
                             fee = pool.inputAmount(forMinimumReceiveAmount: currentFee, slippage: SolanaSDK.Pool.feeCompensationPoolDefaultSlippage, roundRules: .up, includeFees: true)
                         } else {
                             fee = 0
@@ -303,6 +304,7 @@ extension SwapToken {
             // error subject
             Observable.combineLatest(
                 poolsSubject.observable,
+                compensationPoolSubject,
                 currentPoolSubject,
                 sourceWalletSubject,
                 destinationWalletSubject,
@@ -448,6 +450,7 @@ extension SwapToken {
             let availableAmount = availableAmountSubject.value
             let destinationWallet = destinationWalletSubject.value
             let pool = currentPoolSubject.value
+            let feeCompensationPool = compensationPoolSubject.value
             let slippage = slippageSubject.value
             
             // Verify amount
@@ -495,6 +498,9 @@ extension SwapToken {
             // fee relayer
             if isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
             {
+                if feeCompensationPool == nil {
+                    return L10n.feeCompensationPoolNotFound
+                }
                 if (sourceWallet?.lamports ?? 0) < (feeInLamportsSubject.value ?? 0)
                 {
                     return L10n.notEnoughToPayNetworkFee(sourceWallet!.token.symbol)
