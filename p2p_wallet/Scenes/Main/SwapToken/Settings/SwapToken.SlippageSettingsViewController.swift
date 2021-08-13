@@ -11,7 +11,7 @@ extension SwapToken {
     class SlippageSettingsViewController: SettingsBaseViewController {
         // MARK: - Properties
         private let quickSelectableSlippages: [Double] = [0.1, 0.5, 1, 5]
-        var slippage: Double = Defaults.slippage
+        var slippage: Double = Defaults.slippage * 100
         var shouldShowTextField = false
         var isShowingTextField = false
         var completion: ((Double) -> Void)?
@@ -68,9 +68,16 @@ extension SwapToken {
             super.setUp()
             title = L10n.slippageSettings
             
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShowOrHide), name: UIResponder.keyboardDidShowNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShowOrHide), name: UIResponder.keyboardDidHideNotification, object: nil)
+            
             customSlippageTextField.delegate = self
             customSlippageTextField.text = slippage.toString(maximumFractionDigits: 9, groupingSeparator: "")
             reloadData()
+        }
+        
+        deinit {
+            NotificationCenter.default.removeObserver(self)
         }
         
         override func setUpContent(stackView: UIStackView) {
@@ -111,7 +118,7 @@ extension SwapToken {
             
             // force relayout modal when needed
             if shouldShowTextField != isShowingTextField {
-//                forceResizeModal()
+                updatePresentationLayout()
                 isShowingTextField.toggle()
             }
         }
@@ -146,11 +153,15 @@ extension SwapToken {
                 self.slippage = slippage
             }
             completion?(slippage)
-            dismiss(animated: true, completion: nil)
+            back()
         }
         
         @objc private func keyboardDidShowOrHide() {
-//            forceResizeModal()
+            updatePresentationLayout()
+        }
+        
+        private func updatePresentationLayout() {
+            (navigationController as? SettingsNavigationController)?.updatePresentationLayout(animated: true)
         }
         
         @objc private func buttonClearTextFieldDidTouch() {
