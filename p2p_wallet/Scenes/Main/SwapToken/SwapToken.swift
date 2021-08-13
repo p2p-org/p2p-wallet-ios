@@ -65,4 +65,30 @@ struct SwapToken {
         }
         return !source.token.isNative && !destination.token.isNative
     }
+    
+    static func createSectionView(
+        title: String? = nil,
+        label: UIView? = nil,
+        contentView: UIView,
+        rightView: UIView = UIImageView(width: 6, height: 12, image: .nextArrow, tintColor: .h8b94a9.onDarkMode(.white)
+        )
+            .padding(.init(x: 9, y: 6))
+    ) -> UIStackView {
+        UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill) {
+            UIView.defaultSeparator()
+            UIStackView(axis: .horizontal, spacing: 5, alignment: .center, distribution: .fill) {
+                UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
+                    label ?? UILabel(
+                        text: title,
+                        textSize: 13,
+                        weight: .medium,
+                        textColor: .textSecondary
+                    )
+                    contentView
+                }
+                
+                rightView
+            }
+        }
+    }
 }
