@@ -151,6 +151,7 @@
 		BC604A2526C65EFF00B1DF0F /* SwapToken.SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC604A2426C65EFF00B1DF0F /* SwapToken.SettingsViewController.swift */; };
 		BC604A2726C65F5000B1DF0F /* SwapToken.SlippageSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC604A2626C65F4F00B1DF0F /* SwapToken.SlippageSettingsViewController.swift */; };
 		BC620D7426C6739C002186ED /* SwapToken.NetworkFeePayerSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC620D7326C6739C002186ED /* SwapToken.NetworkFeePayerSettingsViewController.swift */; };
+		BC620D7626C6EFDB002186ED /* SwapToken.SwapFeesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC620D7526C6EFDB002186ED /* SwapToken.SwapFeesViewController.swift */; };
 		BC6342E1268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */; };
 		BC6366DB255A8D8300D585FD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC6366DA255A8D8300D585FD /* GoogleService-Info.plist */; };
 		BC65DFEF261D695200E436C7 /* TransactionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DFEE261D695200E436C7 /* TransactionCell.swift */; };
@@ -507,6 +508,7 @@
 		BC604A2426C65EFF00B1DF0F /* SwapToken.SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.SettingsViewController.swift; sourceTree = "<group>"; };
 		BC604A2626C65F4F00B1DF0F /* SwapToken.SlippageSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.SlippageSettingsViewController.swift; sourceTree = "<group>"; };
 		BC620D7326C6739C002186ED /* SwapToken.NetworkFeePayerSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.NetworkFeePayerSettingsViewController.swift; sourceTree = "<group>"; };
+		BC620D7526C6EFDB002186ED /* SwapToken.SwapFeesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.SwapFeesViewController.swift; sourceTree = "<group>"; };
 		BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.ParsedTransaction.Status+Extensions.swift"; sourceTree = "<group>"; };
 		BC6366DA255A8D8300D585FD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BC65DFEE261D695200E436C7 /* TransactionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionCell.swift; sourceTree = "<group>"; };
@@ -1002,6 +1004,7 @@
 				BC604A2426C65EFF00B1DF0F /* SwapToken.SettingsViewController.swift */,
 				BC604A2626C65F4F00B1DF0F /* SwapToken.SlippageSettingsViewController.swift */,
 				BC620D7326C6739C002186ED /* SwapToken.NetworkFeePayerSettingsViewController.swift */,
+				BC620D7526C6EFDB002186ED /* SwapToken.SwapFeesViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -2213,6 +2216,7 @@
 				BCA9948725AEA1C0005BD8FB /* ExpandablePresentationController.swift in Sources */,
 				BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */,
 				BCE04C6C268D901400CE131A /* ModalTransitionManager.swift in Sources */,
+				BC620D7626C6EFDB002186ED /* SwapToken.SwapFeesViewController.swift in Sources */,
 				BC4593A326423F0100E11A52 /* ConnectionErrorVC.swift in Sources */,
 				BC3ADE822570B005002B3B16 /* FlexibleHeightVC.swift in Sources */,
 				BC10510925887F7D00398EA2 /* BackupVC.swift in Sources */,

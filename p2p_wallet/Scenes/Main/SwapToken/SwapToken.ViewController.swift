@@ -87,7 +87,7 @@ extension SwapToken {
                     showOtherWallets: false,
                     handler: viewModel
                 )
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
             case .chooseDestinationWallet(let validMints, let sourceWalletPubkey):
                 let vc = scenesFactory.makeChooseWalletViewController(
                     customFilter: {
@@ -97,17 +97,20 @@ extension SwapToken {
                     showOtherWallets: true,
                     handler: viewModel
                 )
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
             case .settings:
                 let vc = SettingsViewController(viewModel: viewModel)
-                self.present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .chooseSlippage:
                 let vc = SlippageSettingsViewController()
                 vc.completion = {[weak self] slippage in
                     Defaults.slippage = slippage / 100
                     self?.viewModel.input.slippage.accept(slippage / 100)
                 }
-                self.present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+            case .swapFees:
+                let vc = SwapFeesViewController(viewModel: viewModel)
+                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .processTransaction(let request, let transactionType):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
                 self.present(vc, animated: true, completion: nil)
