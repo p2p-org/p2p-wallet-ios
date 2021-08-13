@@ -54,6 +54,7 @@ struct SwapToken {
         case chooseDestinationWallet(validMints: Set<String>, excludedSourceWalletPubkey: String?)
         case settings
         case chooseSlippage
+        case swapFees
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
     }
     

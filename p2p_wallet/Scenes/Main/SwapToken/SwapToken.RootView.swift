@@ -87,6 +87,7 @@ extension SwapToken {
                         view.autoSetDimension(.height, toSize: 48, relation: .greaterThanOrEqual)
                         return view
                     }
+                    .onTap(viewModel, action: #selector(ViewModel.showSwapFees))
                     .withTag(3)
                 
                 swapButton
@@ -177,38 +178,6 @@ extension SwapToken {
                 }
                 .drive(exchangeRateLabel.rx.text)
                 .disposed(by: disposeBag)
-            
-            // fee
-//            Driver.combineLatest(
-//                viewModel.output.liquidityProviderFee,
-//                viewModel.output.destinationWallet.map {$0?.token.symbol}
-//            )
-//                .map {fee, symbol -> String? in
-//                    guard let fee = fee, let symbol = symbol else {return nil}
-//                    return fee.toString(maximumFractionDigits: 9) + " " + symbol
-//                }
-//                .drive(liquidityProviderFeeLabel.rx.text)
-//                .disposed(by: disposeBag)
-            
-//            Driver.combineLatest(
-//                viewModel.output.sourceWallet,
-//                viewModel.output.destinationWallet,
-//                viewModel.output.feeInLamports
-//            )
-//                .map {source, destination, lamports -> String? in
-//                    guard let lamports = lamports else {return nil}
-//                    var value: Double = 0
-//                    var symbol = "SOL"
-//                    if SwapToken.isFeeRelayerEnabled(source: source, destination: destination) {
-//                        value = lamports.convertToBalance(decimals: source?.token.decimals)
-//                        symbol = source?.token.symbol ?? ""
-//                    } else {
-//                        value = lamports.convertToBalance(decimals: 9)
-//                    }
-//                    return "\(value.toString(maximumFractionDigits: 9)) \(symbol)"
-//                }
-//                .drive(feeLabel.rx.text)
-//                .disposed(by: disposeBag)
             
             // slippage
             viewModel.output.slippage

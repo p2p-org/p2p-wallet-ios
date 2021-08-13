@@ -263,7 +263,8 @@ extension SwapToken {
                     var fee = calculateFeeInLamport(sourceWallet: sourceWallet, destinationWallet: destinationWallet, lamportsPerSignature: lamportsPerSignature, creatingAccountFee: creatingAccountFee)
                     
                     // if fee relayer is available
-                    if let pool = compensationPool
+                    if isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet),
+                       let pool = compensationPool
                     {
                         if let currentFee = fee {
                             fee = pool.inputAmount(forMinimumReceiveAmount: currentFee, slippage: SolanaSDK.Pool.feeCompensationPoolDefaultSlippage, roundRules: .up, includeFees: true)
@@ -381,6 +382,11 @@ extension SwapToken {
             navigationSubject.accept(.chooseSlippage)
         }
         
+        @objc func showSwapFees() {
+            analyticsManager.log(event: .swapSwapFeesClick)
+            navigationSubject.accept(.swapFees)
+        }
+        
         @objc func authenticateAndSwap() {
             authenticationHandler.authenticate(
                 presentationStyle:
@@ -420,7 +426,7 @@ extension SwapToken {
             }
             
             let getCompensationPoolRequest: Single<SolanaSDK.Pool?>
-            if !SwapToken.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet) {
+            if !isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet) {
                 getCompensationPoolRequest = .just(nil)
             } else if let pool = compensationPools.first(where: {$0.isValid}) {
                 getCompensationPoolRequest = .just(pool)
@@ -487,7 +493,7 @@ extension SwapToken {
             
             // Verify feeInLamports
             // fee relayer
-            if SwapToken.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
+            if isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
             {
                 if (sourceWallet?.lamports ?? 0) < (feeInLamportsSubject.value ?? 0)
                 {
