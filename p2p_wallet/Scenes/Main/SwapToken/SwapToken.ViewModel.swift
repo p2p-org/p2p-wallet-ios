@@ -362,9 +362,13 @@ extension SwapToken {
             isExchageRateReversedSubject.accept(!isExchageRateReversedSubject.value)
         }
         
+        @objc func showSettings() {
+            analyticsManager.log(event: .swapSettingsClick)
+            navigationSubject.accept(.settings)
+        }
+        
         @objc func chooseSlippage() {
             analyticsManager.log(event: .swapSlippageClick)
-            
             navigationSubject.accept(.chooseSlippage)
         }
         

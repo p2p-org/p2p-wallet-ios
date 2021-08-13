@@ -82,6 +82,8 @@ extension SwapToken {
         
         // MARK: - Navigation
         @objc private func navigateToSlippageSettingsVC() {
+            viewModel.analyticsManager.log(event: .swapSlippageClick)
+            
             let vc = SlippageSettingsViewController()
             vc.completion = {[weak self] slippage in
                 Defaults.slippage = slippage / 100
