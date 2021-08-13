@@ -436,3 +436,5 @@
 "Swap settings" = "Cài đặt Chuyển đổi";
 "Pay network fee with" = "Thanh toán phí mạng bằng";
 "Network fee" = "Phí mạng";
+"Fee compensation pool not found" = "Không tìm thấy pool để bồi thường phí";
+"Please choose paying with SOL" = "Vui lòng chọn thanh toán bằng SOL";

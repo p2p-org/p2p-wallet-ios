@@ -436,3 +436,5 @@
 "Swap settings" = "Échanger les paramètres";
 "Pay network fee with" = "Payer les frais de réseau avec";
 "Network fee" = "Frais de réseau";
+"Fee compensation pool not found" = "Pool de compensation des frais introuvable";
+"Please choose paying with SOL" = "Veuillez choisir de payer avec SOL";

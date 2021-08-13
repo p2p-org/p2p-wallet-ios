@@ -436,3 +436,5 @@
 "Swap settings" = "Настройки обмена";
 "Pay network fee with" = "Оплатите сетевую комиссию с помощью";
 "Network fee" = "Плата за сеть";
+"Fee compensation pool not found" = "Пул компенсации комиссионных не найден";
+"Please choose paying with SOL" = "Пожалуйста, выберите оплату с помощью SOL";
