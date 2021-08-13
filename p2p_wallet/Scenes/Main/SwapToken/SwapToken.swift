@@ -52,6 +52,7 @@ struct SwapToken {
     enum NavigatableScene {
         case chooseSourceWallet
         case chooseDestinationWallet(validMints: Set<String>, excludedSourceWalletPubkey: String?)
+        case settings
         case chooseSlippage
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
     }
