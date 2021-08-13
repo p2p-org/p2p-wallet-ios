@@ -433,3 +433,5 @@
 "Your account does not have enough SOL to cover fee" = "На вашем счету недостаточно SOL для покрытия комиссии";
 "Native Solana Token" = "Нативный Токен Соланы";
 "Transaction Token" = "Токен транзакции";
+"Swap settings" = "Настройки обмена";
+"Pay network fee with" = "Оплатите сетевую комиссию с помощью";

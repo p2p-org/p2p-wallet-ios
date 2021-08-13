@@ -433,3 +433,5 @@
 "Your account does not have enough SOL to cover fee" = "Your account does not have enough SOL to cover fee";
 "Native Solana Token" = "Native Solana Token";
 "Transaction Token" = "Transaction Token";
+"Swap settings" = "Swap settings";
+"Pay network fee with" = "Pay network fee with";

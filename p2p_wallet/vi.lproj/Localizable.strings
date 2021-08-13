@@ -433,3 +433,5 @@
 "Your account does not have enough SOL to cover fee" = "Tài khoản của bạn không có đủ SOL để trả phí";
 "Native Solana Token" = "Native Solana Token";
 "Transaction Token" = "Token giao dịch";
+"Swap settings" = "Cài đặt Chuyển đổi";
+"Pay network fee with" = "Thanh toán phí mạng bằng";

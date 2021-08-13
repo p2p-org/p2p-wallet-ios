@@ -433,3 +433,5 @@
 "Your account does not have enough SOL to cover fee" = "Votre compte n'a pas assez de SOL pour couvrir les frais";
 "Native Solana Token" = "Jeton Solana Natif";
 "Transaction Token" = "Jeton de transaction";
+"Swap settings" = "Échanger les paramètres";
+"Pay network fee with" = "Payer les frais de réseau avec";
