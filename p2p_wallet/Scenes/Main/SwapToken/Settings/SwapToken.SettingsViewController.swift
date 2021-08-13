@@ -14,6 +14,7 @@ extension SwapToken {
         private let viewModel: ViewModel
         private var defaultsDisposables = [DefaultsDisposable]()
         private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
+        private var transactionTokensName: String?
         
         // MARK: - Subviews
         private lazy var separator = UIView.defaultSeparator()
@@ -50,6 +51,11 @@ extension SwapToken {
                 payingTokenSubject.asDriver()
             )
                 .drive(onNext: {[weak self] source, destination, payingToken in
+                    var symbols = [String]()
+                    if let source = source {symbols.append(source.token.symbol)}
+                    if let destination = destination {symbols.append(destination.token.symbol)}
+                    self?.transactionTokensName = symbols.isEmpty ? nil: symbols.joined(separator: "+")
+                    
                     self?.setUpPayingTokenLabel(source: source, destination: destination, payingToken: payingToken)
                 })
                 .disposed(by: disposeBag)
@@ -64,6 +70,7 @@ extension SwapToken {
                 contentView: payingTokenLabel,
                 addSeparatorOnTop: false
             )
+                .onTap(self, action: #selector(navigateToPayNetworkFeeWithVC))
             
             stackView.addArrangedSubviews {
                 createSectionView(
@@ -92,6 +99,16 @@ extension SwapToken {
             show(vc, sender: nil)
         }
         
+        @objc private func navigateToPayNetworkFeeWithVC() {
+            viewModel.analyticsManager.log(event: .swapPayNetworkFeeWithClick)
+            
+            let vc = NetworkFeePayerSettingsViewController(transactionTokenName: transactionTokensName ?? "")
+            vc.completion = { method in
+                Defaults.payingToken = method
+            }
+            show(vc, sender: nil)
+        }
+        
         // MARK: - Helper
         private func setUpPayingTokenLabel(
             source: Wallet?,
@@ -99,21 +116,19 @@ extension SwapToken {
             payingToken: PayingToken
         ) {
             let text: String
-            var isChoosingEnabled = true
             // if source or destination is native wallet
             if source == nil && destination == nil {
                 text = payingToken == .nativeSOL ? "SOL": L10n.transactionToken
             } else if source?.token.isNative == true || destination?.token.isNative == true || payingToken == .nativeSOL
             {
                 text = "SOL"
-                isChoosingEnabled = false
-            } else if let source = source, let destination = destination {
-                text = "\(source.token.symbol) + \(destination.token.symbol)"
             } else {
-                text = L10n.transactionToken
+                text = transactionTokensName ?? L10n.transactionToken
             }
             payingTokenLabel.text = text
-            payingTokenSection?.isUserInteractionEnabled = isChoosingEnabled
+            
+            let isChoosingDisabled = source?.token.isNative == true || destination?.token.isNative == true
+            payingTokenSection?.isUserInteractionEnabled = !isChoosingDisabled
         }
     }
 }
