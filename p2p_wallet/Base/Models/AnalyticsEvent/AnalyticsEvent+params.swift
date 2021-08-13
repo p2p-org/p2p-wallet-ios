@@ -88,7 +88,10 @@ extension AnalyticsEvent {
         case .swapTokenBAmountKeydown(let sum): return ["sum": sum]
         case .swapAvailableClick(let sum): return ["sum": sum]
         case .swapReverseClick: return nil
+        case .swapSettingsClick: return nil
         case .swapSlippageClick: return nil
+        case .swapSwapFeesClick: return nil
+        case .swapPayNetworkFeeWithClick: return nil
         case .swapSlippageKeydown(let slippage): return ["slippage": slippage]
         case .swapSwapClick(let tokenA, let tokenB, let sumA, let sumB): return ["tokenA": tokenA, "tokenB": tokenB, "sumA": sumA, "sumB": sumB]
         case .swapDoneClick(let txStatus): return ["txStatus": txStatus]

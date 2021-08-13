@@ -47,6 +47,7 @@ extension SwapToken {
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
+        private var defaultsDisposable = [DefaultsDisposable]()
         
         let input: Input
         let output: Output
@@ -74,6 +75,7 @@ extension SwapToken {
         private let useAllBalanceDidTapSubject = PublishRelay<Double?>()
         private let isExchageRateReversedSubject = BehaviorRelay<Bool>(value: false)
         private let feeInLamportsSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
+        private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
         
         // MARK: - Initializer
         init(
@@ -195,6 +197,12 @@ extension SwapToken {
                 .filter {$0 == .loaded}
                 .map {[weak self] _ in self?.poolsSubject.value}
             
+            // Paying token
+            let payingTokenDisposable = Defaults.observe(\.payingToken) { [weak self] update in
+                self?.payingTokenSubject.accept(update.newValue ?? Defaults.payingToken)
+            }
+            defaultsDisposable.append(payingTokenDisposable)
+            
             // current pool, compensation pool
             Observable.combineLatest(
                 dataLoaded,
@@ -248,15 +256,18 @@ extension SwapToken {
                 sourceWalletSubject,
                 destinationWalletSubject,
                 lamportsPerSignatureSubject.dataObservable,
-                creatingAccountFeeSubject.dataObservable
+                creatingAccountFeeSubject.dataObservable,
+                payingTokenSubject.distinctUntilChanged()
             )
-                .map {compensationPool, sourceWallet, destinationWallet, lamportsPerSignature, creatingAccountFee -> SolanaSDK.Lamports? in
+                .map {compensationPool, sourceWallet, destinationWallet, lamportsPerSignature, creatingAccountFee, _ -> SolanaSDK.Lamports? in
                     var fee = calculateFeeInLamport(sourceWallet: sourceWallet, destinationWallet: destinationWallet, lamportsPerSignature: lamportsPerSignature, creatingAccountFee: creatingAccountFee)
                     
                     // if fee relayer is available
-                    if let pool = compensationPool
+                    if isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
                     {
-                        if let currentFee = fee {
+                        
+                        if let pool = compensationPool, let currentFee = fee
+                        {
                             fee = pool.inputAmount(forMinimumReceiveAmount: currentFee, slippage: SolanaSDK.Pool.feeCompensationPoolDefaultSlippage, roundRules: .up, includeFees: true)
                         } else {
                             fee = 0
@@ -293,6 +304,7 @@ extension SwapToken {
             // error subject
             Observable.combineLatest(
                 poolsSubject.observable,
+                compensationPoolSubject,
                 currentPoolSubject,
                 sourceWalletSubject,
                 destinationWalletSubject,
@@ -362,10 +374,19 @@ extension SwapToken {
             isExchageRateReversedSubject.accept(!isExchageRateReversedSubject.value)
         }
         
+        @objc func showSettings() {
+            analyticsManager.log(event: .swapSettingsClick)
+            navigationSubject.accept(.settings)
+        }
+        
         @objc func chooseSlippage() {
             analyticsManager.log(event: .swapSlippageClick)
-            
             navigationSubject.accept(.chooseSlippage)
+        }
+        
+        @objc func showSwapFees() {
+            analyticsManager.log(event: .swapSwapFeesClick)
+            navigationSubject.accept(.swapFees)
         }
         
         @objc func authenticateAndSwap() {
@@ -407,7 +428,7 @@ extension SwapToken {
             }
             
             let getCompensationPoolRequest: Single<SolanaSDK.Pool?>
-            if !SwapToken.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet) {
+            if !isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet) {
                 getCompensationPoolRequest = .just(nil)
             } else if let pool = compensationPools.first(where: {$0.isValid}) {
                 getCompensationPoolRequest = .just(pool)
@@ -429,6 +450,7 @@ extension SwapToken {
             let availableAmount = availableAmountSubject.value
             let destinationWallet = destinationWalletSubject.value
             let pool = currentPoolSubject.value
+            let feeCompensationPool = compensationPoolSubject.value
             let slippage = slippageSubject.value
             
             // Verify amount
@@ -474,25 +496,28 @@ extension SwapToken {
             
             // Verify feeInLamports
             // fee relayer
-            if SwapToken.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
+            if isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
             {
+                if feeCompensationPool == nil {
+                    return L10n.feeCompensationPoolNotFound
+                }
                 if (sourceWallet?.lamports ?? 0) < (feeInLamportsSubject.value ?? 0)
                 {
-                    return L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee
+                    return L10n.notEnoughToPayNetworkFee(sourceWallet!.token.symbol)
                 }
             }
             // normal transactions
             else if let solWallet = solWallet,
                (solWallet.lamports ?? 0) < (feeInLamportsSubject.value ?? 0)
             {
-                return L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee
+                return L10n.notEnoughToPayNetworkFee("SOL")
             }
             
             return nil
         }
         
         func isSlippageValid(slippage: Double) -> Bool {
-            slippage <= 0.2 && slippage > 0
+            slippage <= .maxSlippage && slippage > 0
         }
         
         private func getValidDestinationWalletMints() -> Single<Set<String>> {

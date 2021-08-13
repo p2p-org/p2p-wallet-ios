@@ -26,7 +26,7 @@ extension SwapToken {
                 .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
             UILabel(text: L10n.swap, textSize: 17, weight: .semibold),
             UIImageView(width: 36, height: 36, image: .slippageSettings, tintColor: .iconSecondary)
-                .onTap(viewModel, action: #selector(ViewModel.chooseSlippage))
+                .onTap(viewModel, action: #selector(ViewModel.showSettings))
         ])
             .padding(.init(all: 20))
         lazy var rootView = RootView(viewModel: viewModel)
@@ -87,7 +87,7 @@ extension SwapToken {
                     showOtherWallets: false,
                     handler: viewModel
                 )
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
             case .chooseDestinationWallet(let validMints, let sourceWalletPubkey):
                 let vc = scenesFactory.makeChooseWalletViewController(
                     customFilter: {
@@ -97,14 +97,20 @@ extension SwapToken {
                     showOtherWallets: true,
                     handler: viewModel
                 )
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
+            case .settings:
+                let vc = SettingsViewController(viewModel: viewModel)
+                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .chooseSlippage:
-                let vc = SwapSlippageSettingsVC(slippage: Defaults.slippage * 100)
+                let vc = SlippageSettingsViewController()
                 vc.completion = {[weak self] slippage in
                     Defaults.slippage = slippage / 100
                     self?.viewModel.input.slippage.accept(slippage / 100)
                 }
-                self.present(vc, animated: true, completion: nil)
+                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+            case .swapFees:
+                let vc = SwapFeesViewController(viewModel: viewModel)
+                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .processTransaction(let request, let transactionType):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
                 self.present(vc, animated: true, completion: nil)

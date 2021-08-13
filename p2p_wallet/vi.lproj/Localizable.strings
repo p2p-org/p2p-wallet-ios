@@ -238,7 +238,6 @@
 "Could not retrieve balance" = "Không thể truy xuất số dư";
 "Could not derivate private key" = "Không thể trích xuất private key";
 "Blockhash required" = "Blockhash không có";
-"Your account does not have enough tokens to cover fee" = "Tài khoản của bạn không có đủ tokens để trả phí";
 "You must select a wallet to send" = "Bạn phải chọn một ví để gửi";
 "Price" = "Giá bán";
 "Select currency" = "Chọn loại tiền tệ";
@@ -423,3 +422,19 @@
 "minimum" = "tối thiểu";
 "actual" = "nhận về";
 "found" = "tìm thấy";
+"Current price" = "Giá hiện tại";
+"Max price slippage" = "Mức trượt giá tối đa";
+"Receive at least" = "Nhận ít nhất";
+"Swap fees" = "Phí chuyển đổi";
+"Your transaction may be frontrun" = "Giao dịch của bạn có thể chạy trước";
+"Slippage exceeds maximum" = "Trượt giá vượt quá mức tối đa";
+"Enter a number less than %d%" = "Nhập một số nhỏ hơn %d%";
+"Not enough %@ to pay network fee" = "Không đủ %@ để trả phí mạng";
+"Your account does not have enough SOL to cover fee" = "Tài khoản của bạn không có đủ SOL để trả phí";
+"Native Solana Token" = "Native Solana Token";
+"Transaction Token" = "Token giao dịch";
+"Swap settings" = "Cài đặt Chuyển đổi";
+"Pay network fee with" = "Thanh toán phí mạng bằng";
+"Network fee" = "Phí mạng";
+"Fee compensation pool not found" = "Không tìm thấy pool để bồi thường phí";
+"Please choose paying with SOL" = "Vui lòng chọn thanh toán bằng SOL";

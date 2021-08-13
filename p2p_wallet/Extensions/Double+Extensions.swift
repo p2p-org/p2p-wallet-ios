@@ -40,6 +40,9 @@ extension Optional where Wrapped == Double {
 }
 
 extension Double {
+    static var maxSlippage: Self {0.5}
+    static var frontrunSlippage: Self {0.2}
+    
     public var readableString: String {
         let formatter = NumberFormatter()
         formatter.usesGroupingSeparator = false
