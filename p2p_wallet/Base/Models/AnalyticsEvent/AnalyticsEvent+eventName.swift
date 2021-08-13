@@ -90,6 +90,7 @@ extension AnalyticsEvent {
         case .swapReverseClick: return "swap_reverse_click"
         case .swapSettingsClick: return "swap_settings_click"
         case .swapSlippageClick: return "swap_slippage_click"
+        case .swapPayNetworkFeeWithClick: return "swap_pay_network_fee_with_click"
         case .swapSlippageKeydown: return "swap_slippage_keydown"
         case .swapSwapClick: return "swap_swap_click"
         case .swapDoneClick: return "swap_done_click"
