@@ -212,21 +212,8 @@ extension SwapToken {
             
             // slippage
             viewModel.output.slippage
-                .drive(onNext: {[weak self] slippage in
-                    if slippage > .maxSlippage {
-                        self?.slippageLabel.attributedText = NSMutableAttributedString()
-                            .text((slippage * 100).toString(maximumFractionDigits: 9) + "%", weight: .medium)
-                            .text(" ", weight: .medium)
-                            .text(L10n.slippageExceedsMaximum, weight: .medium, color: .red)
-                    } else if slippage > .frontrunSlippage && slippage <= .maxSlippage {
-                        self?.slippageLabel.attributedText = NSMutableAttributedString()
-                            .text((slippage * 100).toString(maximumFractionDigits: 9) + "%", weight: .medium)
-                            .text(" ", weight: .medium)
-                            .text(L10n.yourTransactionMayBeFrontrun, weight: .medium, color: .attentionGreen)
-                    } else {
-                        self?.slippageLabel.text = (slippage * 100).toString(maximumFractionDigits: 9) + "%"
-                    }
-                })
+                .map {slippageAttributedText(slippage: $0)}
+                .drive(slippageLabel.rx.attributedText)
                 .disposed(by: disposeBag)
             
             // error
