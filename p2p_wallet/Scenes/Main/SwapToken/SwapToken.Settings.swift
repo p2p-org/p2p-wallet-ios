@@ -6,14 +6,43 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
 extension SwapToken {
     // MARK: - View controllers
+    class SettingsNavigationController: BENavigationController, CustomPresentableViewController {
+        var transitionManager: UIViewControllerTransitioningDelegate?
+        
+        func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
+            (topViewController as? SettingsBaseViewController)?
+                .calculateFittingHeightForPresentedView(targetWidth: targetWidth)
+                ?? .infinity
+        }
+        
+        override func pushViewController(_ viewController: UIViewController, animated: Bool) {
+            super.pushViewController(viewController, animated: animated)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.updatePresentationLayout(animated: animated)
+            }
+        }
+        
+        override func popViewController(animated: Bool) -> UIViewController? {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.updatePresentationLayout(animated: animated)
+            }
+            return super.popViewController(animated: animated)
+        }
+    }
     class SettingsViewController: SettingsBaseViewController {
         // MARK: - Properties
         private let viewModel: ViewModel
+        private var defaultsDisposables = [DefaultsDisposable]()
+        private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
         
         // MARK: - Subviews
+        private lazy var separator = UIView.defaultSeparator()
+        private var payingTokenSection: UIView?
         private lazy var slippageLabel = UILabel(textSize: 15, weight: .medium)
         private lazy var payingTokenLabel = UILabel(textSize: 15, weight: .medium)
         
@@ -35,27 +64,75 @@ extension SwapToken {
                 .map {slippageAttributedText(slippage: $0)}
                 .drive(slippageLabel.rx.attributedText)
                 .disposed(by: disposeBag)
+            
+            defaultsDisposables.append(Defaults.observe(\.payingToken, handler: { [weak self] update in
+                self?.payingTokenSubject.accept(update.newValue ?? .transactionToken)
+            }))
+            
+            Driver.combineLatest(
+                viewModel.output.sourceWallet,
+                viewModel.output.destinationWallet,
+                payingTokenSubject.asDriver()
+            )
+                .drive(onNext: {[weak self] source, destination, payingToken in
+                    self?.setUpPayingTokenLabel(source: source, destination: destination, payingToken: payingToken)
+                })
+                .disposed(by: disposeBag)
+                
         }
         
         override func setUpContent(stackView: UIStackView) {
             stackView.spacing = 12
+            
+            payingTokenSection = createSectionView(
+                title: L10n.payNetworkFeeWith,
+                contentView: payingTokenLabel,
+                addSeparatorOnTop: false
+            )
+            
             stackView.addArrangedSubviews {
                 createSectionView(
                     title: L10n.slippageSettings,
                     contentView: slippageLabel,
                     addSeparatorOnTop: false
                 )
+                    .withTag(1)
                 
-                createSectionView(
-                    title: L10n.payNetworkFeeWith,
-                    contentView: payingTokenLabel
-                )
+                separator
+                
+                payingTokenSection!
             }
+        }
+        
+        // MARK: - Helper
+        private func setUpPayingTokenLabel(
+            source: Wallet?,
+            destination: Wallet?,
+            payingToken: PayingToken
+        ) {
+            let text: String
+            var isChoosingEnabled = true
+            // if source or destination is native wallet
+            if source == nil && destination == nil {
+                text = payingToken == .nativeSOL ? "SOL": L10n.transactionToken
+            } else if source?.token.isNative == true || destination?.token.isNative == true || payingToken == .nativeSOL
+            {
+                text = "SOL"
+                isChoosingEnabled = false
+            } else if let source = source, let destination = destination {
+                text = "\(source.token.symbol) + \(destination.token.symbol)"
+            } else {
+                text = L10n.transactionToken
+            }
+            payingTokenLabel.text = text
+            payingTokenSection?.isUserInteractionEnabled = isChoosingEnabled
         }
     }
     
     // MARK: - Helpers
     class SettingsBaseViewController: WLIndicatorModalVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
+        
         // MARK: - Properties
         override var title: String? {
             didSet {
@@ -83,20 +160,21 @@ extension SwapToken {
             return headerView
         }()
         
-        lazy var stackView = UIStackView(axis: .horizontal, spacing: 20, alignment: .fill, distribution: .fill) {
+        lazy var stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
             headerView
+            
             contentStackView
-                .padding(.init(all: 20))
+                .padding(.init(top: 0, left: 20, bottom: 20, right: 20))
         }
         
-        private lazy var contentStackView = UIStackView(axis: .horizontal, spacing: 20, alignment: .fill, distribution: .fill)
+        lazy var contentStackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
         
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            view.addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 20), excludingEdge: .bottom)
-            stackView.autoPinEdge(toSuperviewSafeArea: .bottom, withInset: 20)
+            containerView.addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
+            stackView.autoPinEdge(toSuperviewSafeArea: .bottom)
             
             setUpContent(stackView: contentStackView)
         }
@@ -109,22 +187,11 @@ extension SwapToken {
             backButton.isHidden = isHidden
         }
         
-        override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-            super.viewWillTransition(to: size, with: coordinator)
-            orientationDidChangeTo(UIDevice.current.orientation)
-        }
-        
-        func orientationDidChangeTo(_ orientation: UIDeviceOrientation) {
-            if orientation.isLandscape {
-                contentStackView.axis = .horizontal
-            } else {
-                contentStackView.axis = .vertical
-            }
-        }
-        
         // MARK: - Transition
         override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
-            view.fittingHeight(targetWidth: targetWidth) + view.safeAreaInsets.bottom
+            super.calculateFittingHeightForPresentedView(targetWidth: targetWidth) +
+                containerView.fittingHeight(targetWidth: targetWidth) +
+                view.safeAreaInsets.bottom
         }
     }
 }
