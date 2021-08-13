@@ -431,3 +431,5 @@
 "Enter a number less than %d%" = "Entrez un nombre inférieur à %d%";
 "Not enough %@ to pay network fee" = "Pas assez %@ pour payer les frais de réseau";
 "Your account does not have enough SOL to cover fee" = "Votre compte n'a pas assez de SOL pour couvrir les frais";
+"Native Solana Token" = "Jeton Solana Natif";
+"Transaction Token" = "Jeton de transaction";

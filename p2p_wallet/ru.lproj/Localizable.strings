@@ -431,3 +431,5 @@
 "Enter a number less than %d%" = "Введите число меньше %d%";
 "Not enough %@ to pay network fee" = "Недостаточно %@ для оплаты сетевой комиссии";
 "Your account does not have enough SOL to cover fee" = "На вашем счету недостаточно SOL для покрытия комиссии";
+"Native Solana Token" = "Нативный Токен Соланы";
+"Transaction Token" = "Токен транзакции";

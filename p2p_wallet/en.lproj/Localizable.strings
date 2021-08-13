@@ -431,3 +431,5 @@
 "Enter a number less than %d%" = "Enter a number less than %d%";
 "Not enough %@ to pay network fee" = "Not enough %@ to pay network fee";
 "Your account does not have enough SOL to cover fee" = "Your account does not have enough SOL to cover fee";
+"Native Solana Token" = "Native Solana Token";
+"Transaction Token" = "Transaction Token";
