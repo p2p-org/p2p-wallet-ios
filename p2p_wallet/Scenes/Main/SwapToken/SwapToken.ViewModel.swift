@@ -268,9 +268,9 @@ extension SwapToken {
                         
                         if let pool = compensationPool, let currentFee = fee
                         {
-                            fee = pool.inputAmount(forMinimumReceiveAmount: currentFee, slippage: SolanaSDK.Pool.feeCompensationPoolDefaultSlippage, roundRules: .up, includeFees: true)
+                            fee = pool.inputAmount(forMinimumReceiveAmount: currentFee, slippage: SolanaSDK.Pool.feeCompensationPoolDefaultSlippage, roundRules: .up, includeFees: true, replaceZeroWithMinimum: true)
                         } else {
-                            fee = 0
+                            fee = 1
                         }
                     }
                     
