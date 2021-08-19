@@ -7,7 +7,6 @@
 
 import UIKit
 import RxSwift
-//import SwiftUI
 
 extension SerumSwap {
     class RootView: ScrollableVStackRootView {
@@ -177,17 +176,3 @@ extension SerumSwap {
         }
     }
 }
-
-
-//@available(iOS 13, *)
-//struct SerumSwapRootView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Group {
-//            UIViewPreview {
-//                SerumSwap.RootView(viewModel: SerumSwap.ViewModel())
-//            }
-//            .previewDevice("iPhone SE (2nd generation)")
-//        }
-//    }
-//}
-//

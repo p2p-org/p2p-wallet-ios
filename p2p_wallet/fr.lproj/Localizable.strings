@@ -438,3 +438,6 @@
 "Network fee" = "Frais de réseau";
 "Fee compensation pool not found" = "Pool de compensation des frais introuvable";
 "Please choose paying with SOL" = "Veuillez choisir de payer avec SOL";
+"Could not retrieve exchange rate" = "Impossible de récupérer le taux de change";
+"Some parameters are missing" = "Certains paramètres sont manquants";
+"Exchange rate is not valid" = "Le taux de change n'est pas valide";
