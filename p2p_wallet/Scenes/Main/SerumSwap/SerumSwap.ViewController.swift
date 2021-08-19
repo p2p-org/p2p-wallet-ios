@@ -7,11 +7,7 @@
 
 import Foundation
 import UIKit
-
-
-//@objc protocol SerumSwapViewControllerDelegate {
-//
-//}
+import RxCocoa
 
 extension SerumSwap {
     class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
@@ -70,12 +66,14 @@ extension SerumSwap {
                 })
                 .disposed(by: disposeBag)
             
-//            viewModel.output.pool.map {$0 == nil}
-//                .distinctUntilChanged()
-//                .drive(onNext: {[weak self] _ in
-//                    self?.updatePresentationLayout(animated: true)
-//                })
-//                .disposed(by: disposeBag)
+            Driver.combineLatest(
+                viewModel.slippageDriver,
+                viewModel.errorDriver
+            )
+                .drive(onNext: {[weak self] _ in
+                    self?.updatePresentationLayout(animated: true)
+                })
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Actions
@@ -85,43 +83,40 @@ extension SerumSwap {
         
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
-//            switch scene {
-//            case .chooseSourceWallet:
-//                let vc = scenesFactory.makeChooseWalletViewController(
-//                    customFilter: {$0.amount > 0},
-//                    showOtherWallets: false,
-//                    handler: viewModel
-//                )
-//                present(vc, animated: true, completion: nil)
-//            case .chooseDestinationWallet(let validMints, let sourceWalletPubkey):
-//                let vc = scenesFactory.makeChooseWalletViewController(
-//                    customFilter: {
-//                        $0.pubkey != sourceWalletPubkey &&
-//                            validMints.contains($0.mintAddress)
-//                    },
-//                    showOtherWallets: true,
-//                    handler: viewModel
-//                )
-//                present(vc, animated: true, completion: nil)
-//            case .settings:
-//                let vc = SettingsViewController(viewModel: viewModel)
-//                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
-//            case .chooseSlippage:
-//                let vc = SlippageSettingsViewController()
-//                vc.completion = {[weak self] slippage in
-//                    Defaults.slippage = slippage / 100
-//                    self?.viewModel.input.slippage.accept(slippage / 100)
-//                }
-//                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
-//            case .swapFees:
-//                let vc = SwapFeesViewController(viewModel: viewModel)
-//                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
-//            case .processTransaction(let request, let transactionType):
-//                let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
-//                self.present(vc, animated: true, completion: nil)
-//            default:
-//                break
-//            }
+            switch scene {
+            case .chooseSourceWallet:
+                let vc = scenesFactory.makeChooseWalletViewController(
+                    customFilter: {$0.amount > 0},
+                    showOtherWallets: false,
+                    handler: viewModel
+                )
+                present(vc, animated: true, completion: nil)
+            case .chooseDestinationWallet:
+                var filter: ((Wallet) -> Bool)?
+                if let sourceWallet = viewModel.getSourceWallet() {
+                    filter = {
+                        $0.pubkey != sourceWallet.pubkey
+                    }
+                }
+                let vc = scenesFactory.makeChooseWalletViewController(
+                    customFilter: filter,
+                    showOtherWallets: true,
+                    handler: viewModel
+                )
+                present(vc, animated: true, completion: nil)
+            case .settings, .chooseSlippage:
+                let vc = SwapToken.SlippageSettingsViewController()
+                vc.completion = {[weak self] slippage in
+                    Defaults.slippage = slippage / 100
+                    self?.viewModel.changeSlippage(to: Defaults.slippage)
+                }
+                present(SwapToken.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+            case .processTransaction(let request, let transactionType):
+                let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
+                self.present(vc, animated: true, completion: nil)
+            default:
+                break
+            }
         }
         
         // MARK: - Transitions

@@ -15,7 +15,6 @@ struct SerumSwap {
         case chooseDestinationWallet
         case settings
         case chooseSlippage
-        case swapFees
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
     }
     
@@ -84,7 +83,7 @@ protocol SerumSwapScenesFactory {
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
 
-protocol SerumSwapViewModelType {
+protocol SerumSwapViewModelType: WalletDidSelectHandler {
     // Input
     var inputAmountSubject: PublishRelay<String?> {get}
     var estimatedAmountSubject: PublishRelay<String?> {get}
@@ -119,4 +118,5 @@ protocol SerumSwapViewModelType {
     func reverseExchangeRate()
     func authenticateAndSwap()
     func changeSlippage(to slippage: Double)
+    func getSourceWallet() -> Wallet?
 }

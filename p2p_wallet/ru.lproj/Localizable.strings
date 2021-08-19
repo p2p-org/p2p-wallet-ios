@@ -438,3 +438,6 @@
 "Network fee" = "Плата за сеть";
 "Fee compensation pool not found" = "Пул компенсации комиссионных не найден";
 "Please choose paying with SOL" = "Пожалуйста, выберите оплату с помощью SOL";
+"Could not retrieve exchange rate" = "Не удалось получить обменный курс";
+"Some parameters are missing" = "Некоторые параметры отсутствуют";
+"Exchange rate is not valid" = "Курс обмена недействителен";
