@@ -47,6 +47,11 @@
 		BC18CA8A263265680054E624 /* SolanaSDK.Token+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */; };
 		BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8E2632694F0054E624 /* TokensRepository.swift */; };
 		BC18CAA3263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CAA2263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift */; };
+		BC1BEBF926CDF6520049A44C /* SerumSwap.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF526CDF6520049A44C /* SerumSwap.swift */; };
+		BC1BEBFA26CDF6520049A44C /* SerumSwap.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF626CDF6520049A44C /* SerumSwap.ViewController.swift */; };
+		BC1BEBFC26CDF6520049A44C /* SerumSwap.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF826CDF6520049A44C /* SerumSwap.RootView.swift */; };
+		BC1BEBFE26CDFE290049A44C /* SerumSwap.WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBFD26CDFE290049A44C /* SerumSwap.WalletView.swift */; };
+		BC1BEBFF26CE12170049A44C /* SerumSwap.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF726CDF6520049A44C /* SerumSwap.ViewModel.swift */; };
 		BC1FFED1262975200014F027 /* ResetPinCodeWithSeedPhrasesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFECE262975200014F027 /* ResetPinCodeWithSeedPhrasesViewModel.swift */; };
 		BC1FFED3262975200014F027 /* ResetPinCodeWithSeedPhrasesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFED0262975200014F027 /* ResetPinCodeWithSeedPhrasesViewController.swift */; };
 		BC1FFEE8262977940014F027 /* WLEnterPhrasesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFEE7262977940014F027 /* WLEnterPhrasesVC.swift */; };
@@ -395,6 +400,11 @@
 		BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Token+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA8E2632694F0054E624 /* TokensRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokensRepository.swift; sourceTree = "<group>"; };
 		BC18CAA2263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.WrappingToken+Extensions.swift"; sourceTree = "<group>"; };
+		BC1BEBF526CDF6520049A44C /* SerumSwap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerumSwap.swift; sourceTree = "<group>"; };
+		BC1BEBF626CDF6520049A44C /* SerumSwap.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerumSwap.ViewController.swift; sourceTree = "<group>"; };
+		BC1BEBF726CDF6520049A44C /* SerumSwap.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerumSwap.ViewModel.swift; sourceTree = "<group>"; };
+		BC1BEBF826CDF6520049A44C /* SerumSwap.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerumSwap.RootView.swift; sourceTree = "<group>"; };
+		BC1BEBFD26CDFE290049A44C /* SerumSwap.WalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerumSwap.WalletView.swift; sourceTree = "<group>"; };
 		BC1FFECE262975200014F027 /* ResetPinCodeWithSeedPhrasesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPinCodeWithSeedPhrasesViewModel.swift; sourceTree = "<group>"; };
 		BC1FFED0262975200014F027 /* ResetPinCodeWithSeedPhrasesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPinCodeWithSeedPhrasesViewController.swift; sourceTree = "<group>"; };
 		BC1FFEE7262977940014F027 /* WLEnterPhrasesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLEnterPhrasesVC.swift; sourceTree = "<group>"; };
@@ -788,6 +798,18 @@
 				BCE77E672653711B000B68BB /* ViewModelType.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		BC1BEBDC26CDEEBB0049A44C /* SerumSwap */ = {
+			isa = PBXGroup;
+			children = (
+				BC1BEBF526CDF6520049A44C /* SerumSwap.swift */,
+				BC1BEBF726CDF6520049A44C /* SerumSwap.ViewModel.swift */,
+				BC1BEBF626CDF6520049A44C /* SerumSwap.ViewController.swift */,
+				BC1BEBF826CDF6520049A44C /* SerumSwap.RootView.swift */,
+				BC1BEBFD26CDFE290049A44C /* SerumSwap.WalletView.swift */,
+			);
+			path = SerumSwap;
 			sourceTree = "<group>";
 		};
 		BC1D2ACA256B6E7A0064E595 /* SwapToken */ = {
@@ -1647,6 +1669,7 @@
 				BC22A5D825D2716400F7026D /* SendToken */,
 				BCBBE1822563C0F400533F6B /* ReceiveToken */,
 				BC1D2ACA256B6E7A0064E595 /* SwapToken */,
+				BC1BEBDC26CDEEBB0049A44C /* SerumSwap */,
 				BC38555426AE96D900BD8BF7 /* ChooseWallet */,
 				BCA93F4F25E77C070081DDF6 /* TokenSettings */,
 				BC5DB15625F75E33003D00BE /* ProcessTransaction */,
@@ -2055,6 +2078,7 @@
 				BCE42DF725DF9C7A0021540E /* OnboardingViewController.swift in Sources */,
 				BCEB206125E1532C00B54FEF /* OnboardingContainer.swift in Sources */,
 				BCC1F20D269EC712003DD648 /* WLNotificationsRepository.swift in Sources */,
+				BC1BEBFF26CE12170049A44C /* SerumSwap.ViewModel.swift in Sources */,
 				BC2DA2A2260B245400B50738 /* TransactionHandler.swift in Sources */,
 				BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */,
 				BCBE14A025EF3D110014BCE5 /* HomeRootView.swift in Sources */,
@@ -2131,6 +2155,7 @@
 				BC53E21E2654BF88005624CC /* DerivablePathCell.swift in Sources */,
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
 				BC1255092653A2E400695A2B /* DerivablePathsVC.swift in Sources */,
+				BC1BEBF926CDF6520049A44C /* SerumSwap.swift in Sources */,
 				BC105119258884AA00398EA2 /* SelectNetworkVC.swift in Sources */,
 				BC6D01FB265DF8220001B841 /* FreeTransactionInfoVC.swift in Sources */,
 				BCE77E6626537067000B68BB /* DerivableAccountsViewModel.swift in Sources */,
@@ -2149,6 +2174,7 @@
 				BC38555E26AE9A2B00BD8BF7 /* ChooseWallet.CollectionView.swift in Sources */,
 				BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */,
 				BCE42E1A25DFA5100021540E /* RestoreWalletViewController.swift in Sources */,
+				BC1BEBFC26CDF6520049A44C /* SerumSwap.RootView.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WellDoneVC.swift in Sources */,
 				BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */,
 				BC65DFEF261D695200E436C7 /* TransactionCell.swift in Sources */,
@@ -2314,6 +2340,7 @@
 				BC65E037261D72B200E436C7 /* TransactionsRepository.swift in Sources */,
 				BC2EC1D12553ED1B006EEDA5 /* FittingSizePresentationController.swift in Sources */,
 				BC7BCB7B2562807E0018DECA /* Double+Extensions.swift in Sources */,
+				BC1BEBFA26CDF6520049A44C /* SerumSwap.ViewController.swift in Sources */,
 				BC036C162692C070005C1BEC /* Collection+Extensions.swift in Sources */,
 				BC2EC1802553B1F7006EEDA5 /* SectionFooterView.swift in Sources */,
 				BCA93F6A25E78D8A0081DDF6 /* WLNavigationBar.swift in Sources */,
@@ -2330,6 +2357,7 @@
 				BC18CA8A263265680054E624 /* SolanaSDK.Token+Extensions.swift in Sources */,
 				BC53E2242654ECCD005624CC /* AccountsListViewModel.swift in Sources */,
 				BCA93F5325E77C240081DDF6 /* TokenSettingsViewModel.swift in Sources */,
+				BC1BEBFE26CDFE290049A44C /* SerumSwap.WalletView.swift in Sources */,
 				BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */,
 				BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */,
 			);
