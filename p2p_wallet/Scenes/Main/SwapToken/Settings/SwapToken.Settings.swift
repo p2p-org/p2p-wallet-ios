@@ -80,6 +80,7 @@ extension SwapToken {
             stackView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
             
             setUpContent(stackView: contentStackView)
+            stackView.addArrangedSubview(.spacer)
         }
         
         func setUpContent(stackView: UIStackView) {
@@ -93,7 +94,7 @@ extension SwapToken {
         // MARK: - Transition
         override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
             super.calculateFittingHeightForPresentedView(targetWidth: targetWidth) +
-                containerView.fittingHeight(targetWidth: targetWidth) +
+                containerView.fittingHeight(targetWidth: targetWidth) -
                 view.safeAreaInsets.bottom
         }
     }
