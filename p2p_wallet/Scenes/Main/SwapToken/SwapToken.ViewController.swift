@@ -38,6 +38,7 @@ extension SwapToken {
             self.viewModel = viewModel
             self.scenesFactory = scenesFactory
             super.init()
+            modalPresentationStyle = .custom
         }
         
         // MARK: - Methods
