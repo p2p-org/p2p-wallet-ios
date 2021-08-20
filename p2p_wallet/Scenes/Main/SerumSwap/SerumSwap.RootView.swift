@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 extension SerumSwap {
     class RootView: ScrollableVStackRootView {
@@ -65,12 +66,16 @@ extension SerumSwap {
                 createSectionView(
                     title: L10n.currentPrice,
                     contentView: exchangeRateLabel,
-                    rightView: exchangeRateReverseButton
+                    rightView: exchangeRateReverseButton,
+                    addSeparatorOnTop: false
                 )
+                
+                UIView.defaultSeparator()
                 
                 createSectionView(
                     title: L10n.maxPriceSlippage,
-                    contentView: slippageLabel
+                    contentView: slippageLabel,
+                    addSeparatorOnTop: false
                 )
                     .onTap(self, action: #selector(chooseSlippage))
                 
@@ -85,10 +90,6 @@ extension SerumSwap {
                     UIImageView(width: 68, height: 13, image: .orcaText, tintColor: .textBlack)
                 }
                     .centeredHorizontallyView
-                BEStackViewSpacing(20)
-                UIView.defaultSeparator()
-                BEStackViewSpacing(10)
-                UIView.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice()
             }
         }
         
@@ -137,8 +138,28 @@ extension SerumSwap {
                 .drive(swapButton.rx.isEnabled)
                 .disposed(by: disposeBag)
             
-            viewModel.slippageDriver
-                .map {$0 > .maxSlippage ? L10n.enterANumberLessThanD(Int(Double.maxSlippage * 100)): L10n.swapNow}
+            Driver.combineLatest(
+                viewModel.sourceWalletDriver.map {$0 == nil},
+                viewModel.destinationWalletDriver.map {$0 == nil},
+                viewModel.slippageDriver,
+                viewModel.inputAmountDriver,
+                viewModel.estimatedAmountDriver
+            )
+                .map {isSourceWalletEmpty, isDestinationWalletEmpty, slippage, amount, availableAmount -> String? in
+                    if isSourceWalletEmpty || isDestinationWalletEmpty {
+                        return L10n.selectToken
+                    }
+                    if slippage > .maxSlippage {
+                        return L10n.enterANumberLessThanD(Int(Double.maxSlippage * 100))
+                    }
+                    if amount == nil {
+                        return L10n.enterTheAmount
+                    }
+                    if amount > availableAmount {
+                        return L10n.donTGoOverTheAvailableFunds
+                    }
+                    return L10n.swapNow
+                }
                 .drive(swapButton.rx.title())
                 .disposed(by: disposeBag)
         }
