@@ -441,3 +441,6 @@
 "Could not retrieve exchange rate" = "Không thể truy xuất tỷ giá hối đoái";
 "Some parameters are missing" = "Một số thông số bị thiếu";
 "Exchange rate is not valid" = "Tỷ giá hối đoái không hợp lệ";
+"SELECT" = "LỰA CHỌN";
+"Enter the amount" = "Nhập số tiền";
+"Don’t go over the available funds" = "Đừng vượt quá số tiền hiện có";

@@ -232,13 +232,7 @@ extension SwapToken {
         private func setUp(wallet: Wallet?) {
             amountTextField.wallet = wallet
             iconImageView.setUp(wallet: wallet)
-            if let wallet = wallet {
-                tokenSymbolLabel.alpha = 1
-                tokenSymbolLabel.text = wallet.token.symbol
-            } else {
-                tokenSymbolLabel.alpha = 0
-                tokenSymbolLabel.text = nil
-            }
+            tokenSymbolLabel.text = wallet?.token.symbol ?? L10n.select
             
             self.wallet = wallet
         }

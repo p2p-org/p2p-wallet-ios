@@ -441,3 +441,6 @@
 "Could not retrieve exchange rate" = "Не удалось получить обменный курс";
 "Some parameters are missing" = "Некоторые параметры отсутствуют";
 "Exchange rate is not valid" = "Курс обмена недействителен";
+"SELECT" = "ВЫБРАТЬ";
+"Enter the amount" = "Введите сумму";
+"Don’t go over the available funds" = "Не превышайте доступные средства";
