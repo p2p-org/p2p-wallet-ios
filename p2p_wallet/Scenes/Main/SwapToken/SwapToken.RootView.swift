@@ -249,21 +249,20 @@ extension SwapToken {
             Driver.combineLatest(
                 viewModel.output.sourceWallet.map {$0 == nil},
                 viewModel.output.destinationWallet.map {$0 == nil},
-                viewModel.output.slippage,
                 viewModel.output.amount,
-                viewModel.output.availableAmount
+                viewModel.output.error
             )
-            .map {isSourceWalletEmpty, isDestinationWalletEmpty, slippage, amount, availableAmount -> String? in
+            .map {isSourceWalletEmpty, isDestinationWalletEmpty, amount, error -> String? in
                 if isSourceWalletEmpty || isDestinationWalletEmpty {
                     return L10n.selectToken
-                }
-                if slippage > .maxSlippage {
-                    return L10n.enterANumberLessThanD(Int(Double.maxSlippage * 100))
                 }
                 if amount == nil {
                     return L10n.enterTheAmount
                 }
-                if amount > availableAmount {
+                if error == L10n.slippageIsnTValid {
+                    return L10n.enterANumberLessThanD(Int(Double.maxSlippage * 100))
+                }
+                if error == L10n.insufficientFunds {
                     return L10n.donTGoOverTheAvailableFunds
                 }
                 return L10n.swapNow
