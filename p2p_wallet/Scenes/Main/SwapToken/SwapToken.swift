@@ -72,7 +72,7 @@ struct SwapToken {
         title: String? = nil,
         label: UIView? = nil,
         contentView: UIView,
-        rightView: UIView = UIImageView(width: 6, height: 12, image: .nextArrow, tintColor: .h8b94a9.onDarkMode(.white)
+        rightView: UIView? = UIImageView(width: 6, height: 12, image: .nextArrow, tintColor: .h8b94a9.onDarkMode(.white)
         )
             .padding(.init(x: 9, y: 6)),
         addSeparatorOnTop: Bool = true
@@ -87,8 +87,9 @@ struct SwapToken {
                 )
                 contentView
             }
-            
-            rightView
+        }
+        if let rightView = rightView {
+            stackView.addArrangedSubview(rightView)
         }
         
         if !addSeparatorOnTop {

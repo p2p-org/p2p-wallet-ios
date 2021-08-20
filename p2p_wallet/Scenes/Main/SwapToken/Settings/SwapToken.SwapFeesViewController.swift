@@ -46,12 +46,14 @@ extension SwapToken {
                 createSectionView(
                     title: L10n.liquidityProviderFee,
                     contentView: liquidityProviderFeeLabel,
+                    rightView: nil,
                     addSeparatorOnTop: false
                 )
                 UIView.defaultSeparator()
                 createSectionView(
                     title: L10n.networkFee,
                     contentView: networkFeeLabel,
+                    rightView: nil,
                     addSeparatorOnTop: false
                 )
                 UIView.defaultSeparator()

@@ -438,3 +438,6 @@
 "Network fee" = "Frais de réseau";
 "Fee compensation pool not found" = "Pool de compensation des frais introuvable";
 "Please choose paying with SOL" = "Veuillez choisir de payer avec SOL";
+"SELECT" = "SÉLECTIONNER";
+"Enter the amount" = "Entrez le montant";
+"Don’t go over the available funds" = "Ne dépassez pas les fonds disponibles";

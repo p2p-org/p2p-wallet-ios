@@ -438,3 +438,6 @@
 "Network fee" = "Phí mạng";
 "Fee compensation pool not found" = "Không tìm thấy pool để bồi thường phí";
 "Please choose paying with SOL" = "Vui lòng chọn thanh toán bằng SOL";
+"SELECT" = "LỰA CHỌN";
+"Enter the amount" = "Nhập số tiền";
+"Don’t go over the available funds" = "Đừng vượt quá số tiền hiện có";
