@@ -67,20 +67,29 @@ extension SwapToken {
                 createSectionView(
                     title: L10n.currentPrice,
                     contentView: exchangeRateLabel,
-                    rightView: exchangeRateReverseButton
+                    rightView: exchangeRateReverseButton,
+                    addSeparatorOnTop: false
                 )
                     .withTag(1)
                 
-                createSectionView(
-                    title: L10n.maxPriceSlippage,
-                    contentView: slippageLabel
-                )
-                    .onTap(viewModel, action: #selector(ViewModel.chooseSlippage))
+                UIView.defaultSeparator()
                     .withTag(2)
                 
                 createSectionView(
+                    title: L10n.maxPriceSlippage,
+                    contentView: slippageLabel,
+                    addSeparatorOnTop: false
+                )
+                    .onTap(viewModel, action: #selector(ViewModel.chooseSlippage))
+                    .withTag(3)
+                
+                UIView.defaultSeparator()
+                    .withTag(4)
+                
+                createSectionView(
                     label: swapFeeLabel,
-                    contentView: errorLabel
+                    contentView: errorLabel,
+                    addSeparatorOnTop: false
                 )
                     .withModifier { view in
                         let view = view
@@ -88,7 +97,7 @@ extension SwapToken {
                         return view
                     }
                     .onTap(viewModel, action: #selector(ViewModel.showSwapFees))
-                    .withTag(3)
+                    .withTag(5)
                 
                 swapButton
                 
@@ -99,10 +108,6 @@ extension SwapToken {
                     UIImageView(width: 68, height: 13, image: .orcaText, tintColor: .textBlack)
                 }
                     .centeredHorizontallyView
-                BEStackViewSpacing(20)
-                UIView.defaultSeparator()
-                BEStackViewSpacing(10)
-                UIView.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice()
             }
         }
         
@@ -136,7 +141,15 @@ extension SwapToken {
                 .disposed(by: disposeBag)
             
             isNoPoolAvailable
-                .drive(stackView.viewWithTag(3)!.rx.isHidden)
+                .drive(stackView.viewWithTag(2)!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isNoPoolAvailable
+                .drive(stackView.viewWithTag(4)!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isNoPoolAvailable
+                .drive(stackView.viewWithTag(5)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
             // exchange rate label
@@ -233,8 +246,28 @@ extension SwapToken {
                 .drive(swapButton.rx.isEnabled)
                 .disposed(by: disposeBag)
             
-            viewModel.output.slippage
-                .map {$0 > .maxSlippage ? L10n.enterANumberLessThanD(Int(Double.maxSlippage * 100)): L10n.swapNow}
+            Driver.combineLatest(
+                viewModel.output.sourceWallet.map {$0 == nil},
+                viewModel.output.destinationWallet.map {$0 == nil},
+                viewModel.output.slippage,
+                viewModel.output.amount,
+                viewModel.output.availableAmount
+            )
+            .map {isSourceWalletEmpty, isDestinationWalletEmpty, slippage, amount, availableAmount -> String? in
+                if isSourceWalletEmpty || isDestinationWalletEmpty {
+                    return L10n.selectToken
+                }
+                if slippage > .maxSlippage {
+                    return L10n.enterANumberLessThanD(Int(Double.maxSlippage * 100))
+                }
+                if amount == nil {
+                    return L10n.enterTheAmount
+                }
+                if amount > availableAmount {
+                    return L10n.donTGoOverTheAvailableFunds
+                }
+                return L10n.swapNow
+            }
                 .drive(swapButton.rx.title())
                 .disposed(by: disposeBag)
         }

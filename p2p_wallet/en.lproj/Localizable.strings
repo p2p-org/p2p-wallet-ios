@@ -438,3 +438,6 @@
 "Network fee" = "Network fee";
 "Fee compensation pool not found" = "Fee compensation pool not found";
 "Please choose paying with SOL" = "Please choose paying with SOL";
+"SELECT" = "SELECT";
+"Enter the amount" = "Enter the amount";
+"Don’t go over the available funds" = "Don’t go over the available funds";
