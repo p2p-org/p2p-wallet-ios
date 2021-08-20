@@ -251,9 +251,9 @@ extension SwapToken {
                 viewModel.output.destinationWallet.map {$0 == nil},
                 viewModel.output.slippage,
                 viewModel.output.amount,
-                viewModel.output.availableAmount
+                viewModel.output.error
             )
-            .map {isSourceWalletEmpty, isDestinationWalletEmpty, slippage, amount, availableAmount -> String? in
+            .map {isSourceWalletEmpty, isDestinationWalletEmpty, slippage, amount, error -> String? in
                 if isSourceWalletEmpty || isDestinationWalletEmpty {
                     return L10n.selectToken
                 }
@@ -263,7 +263,7 @@ extension SwapToken {
                 if amount == nil {
                     return L10n.enterTheAmount
                 }
-                if amount > availableAmount {
+                if error == L10n.insufficientFunds {
                     return L10n.donTGoOverTheAvailableFunds
                 }
                 return L10n.swapNow
