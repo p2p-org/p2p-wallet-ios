@@ -34,6 +34,17 @@ extension SwapToken {
         
         private lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
         
+        private lazy var maxButton = UILabel(
+            text: L10n.max.uppercased(),
+            textSize: 13,
+            weight: .semibold,
+            textColor: .textSecondary.onDarkMode(.white)
+        )
+            .withContentHuggingPriority(.required, for: .horizontal)
+            .padding(.init(x: 13.5, y: 8), backgroundColor: .f6f6f8.onDarkMode(.h404040), cornerRadius: 12)
+            .withContentHuggingPriority(.required, for: .horizontal)
+            .onTap(viewModel, action: #selector(ViewModel.useAllBalance))
+        
         private lazy var amountTextField = TokenAmountTextField(
             font: .systemFont(ofSize: 27, weight: .bold),
             textColor: .textBlack,
@@ -86,12 +97,19 @@ extension SwapToken {
                     }
                         .onTap(viewModel, action: action)
                     
+                    BEStackViewSpacing(12)
+                    maxButton
+                    
                     amountTextField
                 }
                 
                 BEStackViewSpacing(0)
                 
                 equityValueLabel
+            }
+            
+            if type == .destination {
+                maxButton.isHidden = true
             }
             
             addSubview(stackView)
@@ -154,6 +172,11 @@ extension SwapToken {
                     .map {$0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid}
                     .map {$0 ? UIColor.alert: UIColor.h5887ff}
                     .drive(balanceView.rx.tintColor)
+                    .disposed(by: disposeBag)
+                
+                viewModel.output.amount
+                    .map {$0 != nil}
+                    .drive(maxButton.rx.isHidden)
                     .disposed(by: disposeBag)
                 
             case .destination:
