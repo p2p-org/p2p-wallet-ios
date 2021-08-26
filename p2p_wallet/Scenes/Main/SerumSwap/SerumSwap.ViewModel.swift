@@ -12,6 +12,7 @@ import RxCocoa
 extension SerumSwap {
     class ViewModel: SerumSwapViewModelType {
         // MARK: - Dependencies
+        private let provider: SwapProviderType
         private let analyticsManager: AnalyticsManager
         private let authenticationHandler: AuthenticationHandler
         
@@ -35,7 +36,7 @@ extension SerumSwap {
         private let destinationWalletRelay = BehaviorRelay<Wallet?>(value: nil)
         private let estimatedAmountRelay = BehaviorRelay<Double?>(value: nil)
         
-        private let exchangeRateRelay = BehaviorRelay<ExchangeRate?>(value: nil)
+        private let exchangeRateRelay = BehaviorRelay<Double?>(value: nil)
         
         private let slippageRelay = BehaviorRelay<Double?>(value: nil)
         
@@ -43,11 +44,13 @@ extension SerumSwap {
         
         // MARK: - Initializer
         init(
+            provider: SwapProviderType,
             analyticsManager: AnalyticsManager,
             authenticationHandler: AuthenticationHandler,
             sourceWallet: Wallet? = nil,
             destinationWallet: Wallet? = nil
         ) {
+            self.provider = provider
             self.analyticsManager = analyticsManager
             self.authenticationHandler = authenticationHandler
             bind()
@@ -78,11 +81,12 @@ extension SerumSwap {
                     self?.isLoadingRelay.accept(true)
                     self?.exchangeRateRelay.accept(nil)
                 })
-                .flatMap {
-                    calculateExchangeRate(
-                        sourceWallet: $0,
-                        destinationWallet: $1
-                    )
+                .flatMap { [weak self] sourceWallet, destinationWallet -> Single<Double?> in
+                    guard let self = self else {throw SolanaSDK.Error.unknown}
+                    guard let sourceWallet = sourceWallet, let destinationWallet = destinationWallet
+                    else {return .just(nil)}
+                    return self.provider.loadPrice(fromMint: sourceWallet.mintAddress, toMint: destinationWallet.mintAddress)
+                        .map(Optional.init)
                 }
                 .do(afterNext: {[weak self] _ in
                     self?.isLoadingRelay.accept(false)
@@ -96,7 +100,7 @@ extension SerumSwap {
             // estimating
             Observable.combineLatest(
                 inputAmountSubject.map {$0?.double},
-                exchangeRateRelay.map {$0?.rate},
+                exchangeRateRelay,
                 slippageRelay
             )
                 .map {calculateEstimatedAmount(inputAmount: $0, rate: $1, slippage: $2)}
@@ -105,7 +109,7 @@ extension SerumSwap {
             
             Observable.combineLatest(
                 estimatedAmountSubject.map {$0?.double},
-                exchangeRateRelay.map {$0?.rate},
+                exchangeRateRelay,
                 slippageRelay
             )
                 .map {calculateNeededInputAmount(forReceivingEstimatedAmount: $0, rate: $1, slippage: $2)}
@@ -153,7 +157,7 @@ extension SerumSwap.ViewModel {
     var destinationWalletDriver: Driver<Wallet?> { destinationWalletRelay.asDriver() }
     var estimatedAmountDriver: Driver<Double?> { estimatedAmountRelay.asDriver() }
     var errorDriver: Driver<String?> { errorRelay.asDriver() }
-    var exchangeRateDriver: Driver<SerumSwap.ExchangeRate?> { exchangeRateRelay.asDriver() }
+    var exchangeRateDriver: Driver<Double?> { exchangeRateRelay.asDriver() }
     var slippageDriver: Driver<Double?> { slippageRelay.asDriver() }
     var isSwappableDriver: Driver<Bool> {
         errorRelay.map {$0 == nil}.asDriver(onErrorJustReturn: false)
@@ -198,13 +202,6 @@ extension SerumSwap.ViewModel {
         destinationWalletRelay.accept(sourceWallet)
     }
     
-    func reverseExchangeRate() {
-        guard let exchangeRate = exchangeRateRelay.value,
-              exchangeRate.rate != 0
-        else {return}
-        exchangeRateRelay.accept(.init(from: exchangeRate.to, to: exchangeRate.from, rate: 1/exchangeRate.rate))
-    }
-    
     func authenticateAndSwap() {
         authenticationHandler.authenticate(
             presentationStyle:
@@ -245,17 +242,6 @@ private func calculateAvailableAmount(
     sourceWallet?.amount
 }
 
-private func calculateExchangeRate(
-    sourceWallet: Wallet?,
-    destinationWallet: Wallet?
-) -> Single<SerumSwap.ExchangeRate?> {
-    guard let sourceWallet = sourceWallet,
-          let destinationWallet = destinationWallet
-    else {return .just(nil)}
-    // isLoadingSubject.accept(true)
-    fatalError()
-}
-
 private func calculateEstimatedAmount(
     inputAmount: Double?,
     rate: Double?,
@@ -286,7 +272,7 @@ private func validate(
     sourceWallet: Wallet?,
     inputAmount: Double?,
     destinationWallet: Wallet?,
-    exchangeRate: SerumSwap.ExchangeRate?,
+    exchangeRate: Double?,
     slippage: Double?
 ) -> String? {
     // if some params are missing
@@ -302,7 +288,7 @@ private func validate(
     if inputAmount > calculateAvailableAmount(sourceWallet: sourceWallet) {return L10n.insufficientFunds}
     
     // verify exchange rate
-    if exchangeRate.rate != 0 {return L10n.exchangeRateIsNotValid}
+    if exchangeRate == 0 {return L10n.exchangeRateIsNotValid}
     
     // verify slippage
     if !isSlippageValid(slippage: slippage) {return L10n.slippageIsnTValid}

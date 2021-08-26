@@ -24,9 +24,9 @@ extension SerumSwap {
         private lazy var destinationWalletView = WalletView(viewModel: viewModel, type: .destination)
         
         private lazy var exchangeRateLabel = UILabel(textSize: 15, weight: .medium)
-        private lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
-            .padding(.init(all: 3))
-            .onTap(self, action: #selector(reverseExchangeRate))
+//        private lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
+//            .padding(.init(all: 3))
+//            .onTap(self, action: #selector(reverseExchangeRate))
         
         private lazy var slippageLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
         
@@ -66,7 +66,7 @@ extension SerumSwap {
                 createSectionView(
                     title: L10n.currentPrice,
                     contentView: exchangeRateLabel,
-                    rightView: exchangeRateReverseButton,
+//                    rightView: exchangeRateReverseButton,
                     addSeparatorOnTop: false
                 )
                 
@@ -95,16 +95,22 @@ extension SerumSwap {
         
         private func bind() {
             // exchange rate
-            viewModel.exchangeRateDriver
-                .map {exrate -> String? in
-                    guard let exrate = exrate else {return nil}
-                    var string = exrate.rate.toString(maximumFractionDigits: 9)
+            Driver.combineLatest(
+                viewModel.exchangeRateDriver,
+                viewModel.sourceWalletDriver,
+                viewModel.destinationWalletDriver
+            )
+                .map {exrate, source, destination -> String? in
+                    guard let exrate = exrate, let source = source, let destination = destination
+                    else {return nil}
+                    
+                    var string = exrate.toString(maximumFractionDigits: 9)
                     string += " "
-                    string += exrate.to
+                    string += source.token.symbol
                     string += " "
                     string += L10n.per
                     string += " "
-                    string += exrate.from
+                    string += destination.token.symbol
                     return string
                 }
                 .drive(exchangeRateLabel.rx.text)
