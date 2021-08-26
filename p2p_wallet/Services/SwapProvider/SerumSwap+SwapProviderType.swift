@@ -15,20 +15,18 @@ extension SerumSwap: SwapProviderType {
     
     func calculateEstimatedAmount(inputAmount: Double?, rate: Double?, slippage: Double?) -> Double? {
         guard let inputAmount = inputAmount,
-              let rate = rate,
-              let slippage = slippage,
-              rate != 0
+              let fair = rate,
+              fair != 0
         else {return nil}
-        return inputAmount / rate * (1 - slippage)
+        return FEE_MULTIPLIER * (inputAmount / fair)
     }
     
     func calculateNeededInputAmount(forReceivingEstimatedAmount estimatedAmount: Double?, rate: Double?, slippage: Double?) -> Double? {
         guard let estimatedAmount = estimatedAmount,
-              let rate = rate,
-              let slippage = slippage,
-              rate != 0
+              let fair = rate,
+              fair != 0
         else {return nil}
-        return estimatedAmount * rate * (1 + slippage)
+        return estimatedAmount * fair / FEE_MULTIPLIER
     }
     
     func loadPrice(fromMint: String, toMint: String) -> Single<Double> {
