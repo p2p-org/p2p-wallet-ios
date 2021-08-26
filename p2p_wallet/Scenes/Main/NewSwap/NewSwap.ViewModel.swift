@@ -38,7 +38,7 @@ extension NewSwap {
         
         private let exchangeRateRelay = BehaviorRelay<Double?>(value: nil)
         
-        private let slippageRelay = BehaviorRelay<Double?>(value: nil)
+        private let slippageRelay = BehaviorRelay<Double?>(value: Defaults.slippage)
         
         private let errorRelay = BehaviorRelay<String?>(value: nil)
         
@@ -108,7 +108,13 @@ extension NewSwap {
                 exchangeRateRelay,
                 slippageRelay
             )
-                .map {calculateEstimatedAmount(inputAmount: $0, rate: $1, slippage: $2)}
+                .map {[weak self] in
+                    self?.provider.calculateEstimatedAmount(
+                        inputAmount: $0,
+                        rate: $1,
+                        slippage: $2
+                    )
+                }
                 .bind(to: estimatedAmountRelay)
                 .disposed(by: disposeBag)
             
@@ -117,7 +123,13 @@ extension NewSwap {
                 exchangeRateRelay,
                 slippageRelay
             )
-                .map {calculateNeededInputAmount(forReceivingEstimatedAmount: $0, rate: $1, slippage: $2)}
+                .map {[weak self] in
+                    self?.provider.calculateNeededInputAmount(
+                        forReceivingEstimatedAmount: $0,
+                        rate: $1,
+                        slippage: $2
+                    )
+                }
                 .bind(to: inputAmountRelay)
                 .disposed(by: disposeBag)
             
@@ -129,13 +141,15 @@ extension NewSwap {
                 exchangeRateRelay,
                 slippageRelay
             )
-                .map {
-                    validate(
-                        sourceWallet: $0,
-                        inputAmount: $1,
-                        destinationWallet: $2,
-                        exchangeRate: $3,
-                        slippage: $4
+                .map { [weak self] params -> String? in
+                    guard let self = self else {return nil}
+                    return validate(
+                        provider: self.provider,
+                        sourceWallet: params.0,
+                        inputAmount: params.1,
+                        destinationWallet: params.2,
+                        exchangeRate: params.3,
+                        slippage: params.4
                     )
                 }
                 .bind(to: errorRelay)
@@ -155,7 +169,7 @@ extension NewSwap.ViewModel {
     var sourceWalletDriver: Driver<Wallet?> { sourceWalletRelay.asDriver() }
     var availableAmountDriver: Driver<Double?> {
         sourceWalletRelay
-            .map {calculateAvailableAmount(sourceWallet: $0)}
+            .map {[weak self] in self?.provider.calculateAvailableAmount(sourceWallet: $0)}
             .asDriver(onErrorJustReturn: nil)
     }
     var inputAmountDriver: Driver<Double?> { inputAmountRelay.asDriver() }
@@ -190,7 +204,7 @@ extension NewSwap.ViewModel {
     }
     
     func useAllBalance() {
-        guard let amount = calculateAvailableAmount(sourceWallet: sourceWalletRelay.value)
+        guard let amount = provider.calculateAvailableAmount(sourceWallet: sourceWalletRelay.value)
         else {return}
         analyticsManager.log(event: .swapAvailableClick(sum: amount))
         useAllBalanceSubject.accept(amount)
@@ -240,40 +254,10 @@ extension NewSwap.ViewModel {
     }
 }
 
-// MARK: - Calculation
-private func calculateAvailableAmount(
-    sourceWallet: Wallet?
-) -> Double? {
-    sourceWallet?.amount
-}
-
-private func calculateEstimatedAmount(
-    inputAmount: Double?,
-    rate: Double?,
-    slippage: Double?
-) -> Double? {
-    guard let inputAmount = inputAmount,
-          let rate = rate,
-          let slippage = slippage
-    else {return nil}
-    return inputAmount * rate * (1 - slippage)
-}
-
-private func calculateNeededInputAmount(
-    forReceivingEstimatedAmount estimatedAmount: Double?,
-    rate: Double?,
-    slippage: Double?
-) -> Double? {
-    guard let estimatedAmount = estimatedAmount,
-          let rate = rate,
-          rate != 0
-    else {return nil}
-    return estimatedAmount / rate * (1 + slippage)
-}
-
 /// Verify current context
 /// - Returns: Error string, nil if no error appear
 private func validate(
+    provider: SwapProviderType,
     sourceWallet: Wallet?,
     inputAmount: Double?,
     destinationWallet: Wallet?,
@@ -290,7 +274,9 @@ private func validate(
     
     // verify amount
     if inputAmount <= 0 {return L10n.amountIsNotValid}
-    if inputAmount > calculateAvailableAmount(sourceWallet: sourceWallet) {return L10n.insufficientFunds}
+    
+    // TODO: - Compare with decimal
+    if inputAmount > provider.calculateAvailableAmount(sourceWallet: sourceWallet) {return L10n.insufficientFunds}
     
     // verify exchange rate
     if exchangeRate == 0 {return L10n.exchangeRateIsNotValid}
