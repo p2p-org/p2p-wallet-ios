@@ -155,6 +155,7 @@ extension NewSwap {
                     .emit(onNext: {[weak self] in
                         // write text without notifying
                         self?.amountTextField.text = $0
+                        self?.viewModel.inputAmountSubject.accept($0)
                     })
                     .disposed(by: disposeBag)
                 
