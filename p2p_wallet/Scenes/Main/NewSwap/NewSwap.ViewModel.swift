@@ -87,12 +87,14 @@ extension NewSwap {
                     else {return .just(nil)}
                     return self.provider.loadPrice(fromMint: sourceWallet.mintAddress, toMint: destinationWallet.mintAddress)
                         .map(Optional.init)
+                        .catch {[weak self] _ in
+                            self?.isLoadingRelay.accept(false)
+                            self?.errorRelay.accept(L10n.couldNotRetrieveExchangeRate)
+                            return .just(nil)
+                        }
                 }
                 .do(afterNext: {[weak self] _ in
                     self?.isLoadingRelay.accept(false)
-                }, afterError: {[weak self] _ in
-                    self?.isLoadingRelay.accept(false)
-                    self?.errorRelay.accept(L10n.couldNotRetrieveExchangeRate)
                 })
                 .bind(to: exchangeRateRelay)
                 .disposed(by: disposeBag)
