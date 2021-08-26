@@ -28,6 +28,8 @@ extension SolanaSDK.Error: LocalizedError {
                 string = description.localized()
             }
             return string
+        case .transactionError(let transactionError):
+            return transactionError.keys.first
         case .socket(let error):
             var string = L10n.socketReturnsAnError + ": "
             if let error = error as? LocalizedError {
