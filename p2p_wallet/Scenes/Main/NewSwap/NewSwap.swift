@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-struct SerumSwap {
+struct NewSwap {
     enum NavigatableScene {
         case chooseSourceWallet
         case chooseDestinationWallet
@@ -72,18 +72,18 @@ struct SerumSwap {
     }
 }
 
-protocol SerumSwapScenesFactory {
+protocol NewSwapScenesFactory {
     func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
 
-protocol SerumSwapViewModelType: WalletDidSelectHandler {
+protocol NewSwapViewModelType: WalletDidSelectHandler {
     // Input
     var inputAmountSubject: PublishRelay<String?> {get}
     var estimatedAmountSubject: PublishRelay<String?> {get}
     
     // Drivers
-    var navigationDriver: Driver<SerumSwap.NavigatableScene?> {get}
+    var navigationDriver: Driver<NewSwap.NavigatableScene?> {get}
     var isLoadingDriver: Driver<Bool> {get}
     
     var sourceWalletDriver: Driver<Wallet?> {get}
@@ -105,7 +105,7 @@ protocol SerumSwapViewModelType: WalletDidSelectHandler {
     var useAllBalanceDidTapSignal: Signal<Double?> {get}
     
     // Actions
-    func navigate(to: SerumSwap.NavigatableScene)
+    func navigate(to: NewSwap.NavigatableScene)
     func useAllBalance()
     func log(_ event: AnalyticsEvent)
     func swapSourceAndDestination()

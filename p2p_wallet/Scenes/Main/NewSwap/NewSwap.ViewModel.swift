@@ -9,11 +9,11 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-extension SerumSwap {
-    class ViewModel: SerumSwapViewModelType {
+extension NewSwap {
+    class ViewModel: NewSwapViewModelType {
         // MARK: - Dependencies
         private let provider: SwapProviderType
-        private let analyticsManager: AnalyticsManager
+        private let analyticsManager: AnalyticsManagerType
         private let authenticationHandler: AuthenticationHandler
         
         // MARK: - Properties
@@ -45,7 +45,7 @@ extension SerumSwap {
         // MARK: - Initializer
         init(
             provider: SwapProviderType,
-            analyticsManager: AnalyticsManager,
+            analyticsManager: AnalyticsManagerType,
             authenticationHandler: AuthenticationHandler,
             sourceWallet: Wallet? = nil,
             destinationWallet: Wallet? = nil
@@ -143,9 +143,9 @@ extension SerumSwap {
     }
 }
 
-extension SerumSwap.ViewModel {
+extension NewSwap.ViewModel {
     // MARK: - Output
-    var navigationDriver: Driver<SerumSwap.NavigatableScene?> { navigationRelay.asDriver() }
+    var navigationDriver: Driver<NewSwap.NavigatableScene?> { navigationRelay.asDriver() }
     var isLoadingDriver: Driver<Bool> { isLoadingRelay.asDriver() }
     var sourceWalletDriver: Driver<Wallet?> { sourceWalletRelay.asDriver() }
     var availableAmountDriver: Driver<Double?> {
@@ -166,9 +166,9 @@ extension SerumSwap.ViewModel {
     var useAllBalanceDidTapSignal: Signal<Double?> {useAllBalanceSubject.asSignal(onErrorJustReturn: nil)}
 }
 
-extension SerumSwap.ViewModel {
+extension NewSwap.ViewModel {
     // MARK: - Actions
-    func navigate(to scene: SerumSwap.NavigatableScene) {
+    func navigate(to scene: NewSwap.NavigatableScene) {
         switch scene {
         case .chooseSourceWallet:
             isSelectingSourceWallet = true

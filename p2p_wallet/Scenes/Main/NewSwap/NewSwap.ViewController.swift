@@ -9,12 +9,12 @@ import Foundation
 import UIKit
 import RxCocoa
 
-extension SerumSwap {
+extension NewSwap {
     class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
         // MARK: - Properties
         var transitionManager: UIViewControllerTransitioningDelegate?
-        private let viewModel: SerumSwapViewModelType
-        private let scenesFactory: SerumSwapScenesFactory
+        private let viewModel: NewSwapViewModelType
+        private let scenesFactory: NewSwapScenesFactory
         
         // MARK: - Subviews
         private lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
@@ -29,8 +29,8 @@ extension SerumSwap {
         
         // MARK: - Initializer
         init(
-            viewModel: SerumSwapViewModelType,
-            scenesFactory: SerumSwapScenesFactory)
+            viewModel: NewSwapViewModelType,
+            scenesFactory: NewSwapScenesFactory)
         {
             self.viewModel = viewModel
             self.scenesFactory = scenesFactory
