@@ -43,7 +43,7 @@ extension SerumSwap {
             .withContentHuggingPriority(.required, for: .horizontal)
             .padding(.init(x: 13.5, y: 8), backgroundColor: .f6f6f8.onDarkMode(.h404040), cornerRadius: 12)
             .withContentHuggingPriority(.required, for: .horizontal)
-            .onTap(viewModel, action: #selector(ViewModel.useAllBalance))
+            .onTap(self, action: #selector(useAllBalance))
         
         private lazy var amountTextField = TokenAmountTextField(
             font: .systemFont(ofSize: 27, weight: .bold),
@@ -75,7 +75,7 @@ extension SerumSwap {
             super.commonInit()
             let action: Selector = type == .source ? #selector(chooseSourceWallet): #selector(chooseDestinationWallet)
             let balanceView = type == .destination ? balanceView: balanceView
-                .onTap(viewModel, action: #selector(useAllBalance))
+                .onTap(self, action: #selector(useAllBalance))
             balanceView.tintColor = type == .source ? .h5887ff: .textSecondary.onDarkMode(.white)
             
             let stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill) {
