@@ -18,12 +18,6 @@ struct SerumSwap {
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
     }
     
-    struct ExchangeRate {
-        let from: String
-        let to: String
-        let rate: Double
-    }
-    
     // MARK: - Helpers
     static func createSectionView(
         title: String? = nil,
@@ -99,7 +93,7 @@ protocol SerumSwapViewModelType: WalletDidSelectHandler {
     var destinationWalletDriver: Driver<Wallet?> {get}
     var estimatedAmountDriver: Driver<Double?> {get}
     
-    var exchangeRateDriver: Driver<SerumSwap.ExchangeRate?> {get}
+    var exchangeRateDriver: Driver<Double?> {get}
     
     var slippageDriver: Driver<Double?> {get}
     
@@ -115,7 +109,7 @@ protocol SerumSwapViewModelType: WalletDidSelectHandler {
     func useAllBalance()
     func log(_ event: AnalyticsEvent)
     func swapSourceAndDestination()
-    func reverseExchangeRate()
+//    func reverseExchangeRate()
     func authenticateAndSwap()
     func changeSlippage(to slippage: Double)
     func getSourceWallet() -> Wallet?
