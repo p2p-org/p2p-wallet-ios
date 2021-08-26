@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-extension SerumSwap {
+extension NewSwap {
     class WalletView: BEView {
         // MARK: - Nested type
         enum WalletType {
@@ -18,7 +18,7 @@ extension SerumSwap {
         
         var wallet: Wallet?
         private let disposeBag = DisposeBag()
-        private let viewModel: SerumSwapViewModelType
+        private let viewModel: NewSwapViewModelType
         private let type: WalletType
         
         private lazy var balanceView = BalanceView(forAutoLayout: ())
@@ -56,7 +56,7 @@ extension SerumSwap {
         
         private lazy var equityValueLabel = UILabel(text: "≈ 0.00 \(Defaults.fiat.symbol)", textSize: 13, weight: .medium, textColor: .textSecondary.onDarkMode(.white), textAlignment: .right)
         
-        init(viewModel: SerumSwapViewModelType, type: WalletType) {
+        init(viewModel: NewSwapViewModelType, type: WalletType) {
             self.viewModel = viewModel
             self.type = type
             super.init(frame: .zero)
@@ -275,7 +275,7 @@ extension SerumSwap {
     }
 }
 
-private extension SerumSwap.WalletView {
+private extension NewSwap.WalletView {
     class BalanceView: BEView {
         private let disposeBag = DisposeBag()
         lazy var walletView = UIImageView(width: 16, height: 16, image: .walletIcon)
@@ -303,7 +303,7 @@ private extension SerumSwap.WalletView {
 }
 
 // MARK: - TextField delegate
-extension SerumSwap.WalletView: UITextFieldDelegate {
+extension NewSwap.WalletView: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let textField = textField as? TokenAmountTextField {
             return textField.shouldChangeCharactersInRange(range, replacementString: string)

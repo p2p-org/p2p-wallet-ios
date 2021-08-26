@@ -9,13 +9,13 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-extension SerumSwap {
+extension NewSwap {
     class RootView: ScrollableVStackRootView {
         // MARK: - Constants
         private let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        private let viewModel: SerumSwapViewModelType
+        private let viewModel: NewSwapViewModelType
         
         // MARK: - Subviews
         private lazy var sourceWalletView = WalletView(viewModel: viewModel, type: .source)
@@ -36,7 +36,7 @@ extension SerumSwap {
             .onTap(self, action: #selector(authenticateAndSwap))
         
         // MARK: - Initializers
-        init(viewModel: SerumSwapViewModelType) {
+        init(viewModel: NewSwapViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
