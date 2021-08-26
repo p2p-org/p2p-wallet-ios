@@ -85,6 +85,9 @@ extension NewSwap {
                     guard let self = self else {throw SolanaSDK.Error.unknown}
                     guard let sourceWallet = sourceWallet, let destinationWallet = destinationWallet
                     else {return .just(nil)}
+                    if sourceWallet.mintAddress == destinationWallet.mintAddress {
+                        return .just(nil)
+                    }
                     return self.provider.loadPrice(fromMint: sourceWallet.mintAddress, toMint: destinationWallet.mintAddress)
                         .map(Optional.init)
                         .catch {[weak self] _ in
