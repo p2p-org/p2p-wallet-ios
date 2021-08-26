@@ -174,9 +174,9 @@ extension SerumSwap {
             viewModel.swapSourceAndDestination()
         }
         
-        @objc private func reverseExchangeRate() {
-            viewModel.reverseExchangeRate()
-        }
+//        @objc private func reverseExchangeRate() {
+//            viewModel.reverseExchangeRate()
+//        }
         
         @objc private func authenticateAndSwap() {
             viewModel.authenticateAndSwap()
