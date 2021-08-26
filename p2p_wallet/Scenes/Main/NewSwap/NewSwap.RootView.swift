@@ -66,7 +66,7 @@ extension NewSwap {
                 createSectionView(
                     title: L10n.currentPrice,
                     contentView: exchangeRateLabel,
-//                    rightView: exchangeRateReverseButton,
+                    rightView: nil, // exchangeRateReverseButton
                     addSeparatorOnTop: false
                 )
                 
