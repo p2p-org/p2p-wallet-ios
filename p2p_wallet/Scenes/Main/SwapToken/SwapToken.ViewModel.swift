@@ -694,16 +694,10 @@ private func calculateFeeInLamport(sourceWallet: Wallet?, destinationWallet: Wal
     
     // if destination wallet is selected
     if let destinationWallet = destinationWallet {
-        // if destination wallet is a wrapped sol, a fee for creating it is needed
-        if destinationWallet.token.address == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+        // if destination wallet is a wrapped sol or not yet created a fee for creating it is needed
+        if destinationWallet.token.address == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString ||
+            destinationWallet.pubkey == nil
         {
-            feeInLamports += lPS
-            feeInLamports += creatingAccountFee
-        }
-        
-        // if destination wallet is not a wrapped sol and has not yet created, a fee for creating it is needed
-        else if destinationWallet.pubkey == nil {
-            feeInLamports += lPS
             feeInLamports += creatingAccountFee
         }
     }
