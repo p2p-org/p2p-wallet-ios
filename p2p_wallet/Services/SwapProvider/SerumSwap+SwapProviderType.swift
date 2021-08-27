@@ -24,6 +24,13 @@ extension SerumSwap: SwapProviderType {
         creatingAccountFee: SolanaSDK.Lamports?
     ) -> Single<[FeeType: SwapFee]> {
         var fees = [FeeType: SwapFee]()
+        fees[.liquidityProvider] = .init(
+            lamports: 0,
+            token: .unsupported(mint: nil),
+            toString: {
+                (BASE_TAKER_FEE_BPS*100).toString() + "%"
+            }
+        )
         
         guard let sourceWallet = sourceWallet,
               let destinationWallet = destinationWallet,
