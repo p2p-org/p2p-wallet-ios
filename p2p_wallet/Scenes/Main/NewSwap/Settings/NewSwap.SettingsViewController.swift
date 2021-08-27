@@ -18,8 +18,6 @@ protocol NewSwapSettingsViewModelType {
     func changePayingToken(to payingToken: PayingToken)
 }
 
-extension NewSwap.ViewModel: NewSwapSettingsViewModelType {}
-
 extension NewSwap {
     class SettingsViewController: SettingsBaseViewController {
         // MARK: - Properties

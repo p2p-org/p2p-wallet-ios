@@ -107,13 +107,19 @@ extension NewSwap {
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)
-            case .settings, .chooseSlippage:
+            case .settings:
+                let vc = SettingsViewController(viewModel: viewModel)
+                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+            case .chooseSlippage:
                 let vc = SwapToken.SlippageSettingsViewController()
                 vc.completion = {[weak self] slippage in
                     Defaults.slippage = slippage / 100
                     self?.viewModel.changeSlippage(to: Defaults.slippage)
                 }
                 present(SwapToken.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+            case .swapFees:
+                let vc = SwapFeesViewController(viewModel: viewModel)
+                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .processTransaction(let request, let transactionType):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
                 self.present(vc, animated: true, completion: nil)

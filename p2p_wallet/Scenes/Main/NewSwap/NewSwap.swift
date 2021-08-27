@@ -15,6 +15,7 @@ struct NewSwap {
         case chooseDestinationWallet
         case settings
         case chooseSlippage
+        case swapFees
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
     }
     
@@ -79,7 +80,7 @@ protocol NewSwapScenesFactory {
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
 
-protocol NewSwapViewModelType: WalletDidSelectHandler {
+protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelType, NewSwapSwapFeesViewModelType {
     // Input
     var inputAmountSubject: PublishRelay<String?> {get}
     var estimatedAmountSubject: PublishRelay<String?> {get}
