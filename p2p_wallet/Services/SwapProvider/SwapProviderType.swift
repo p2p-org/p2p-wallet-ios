@@ -48,4 +48,7 @@ protocol SwapProviderType {
         rate: Double?,
         slippage: Double?
     ) -> Double?
+    
+    /// Logo shown at bottom, after "Powered by" text
+    func logoView() -> UIView
 }

@@ -218,6 +218,9 @@ extension NewSwap.ViewModel {
     }
     
     var useAllBalanceDidTapSignal: Signal<Double?> {useAllBalanceSubject.asSignal(onErrorJustReturn: nil)}
+    func providerSignatureView() -> UIView {
+        provider.logoView()
+    }
 }
 
 extension NewSwap.ViewModel {
