@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 extension NewSwap {
-    class ViewModel: NewSwapViewModelType {
+    class ViewModel {
         // MARK: - Dependencies
         private let provider: SwapProviderType
         private let apiClient: NewSwapViewModelAPIClient
@@ -42,7 +42,7 @@ extension NewSwap {
         
         private let slippageRelay = BehaviorRelay<Double?>(value: Defaults.slippage)
         
-        private let feeRelay = BehaviorRelay<SwapFee?>(value: nil)
+        private let feesRelay = BehaviorRelay<SwapFee?>(value: nil)
         private var lamportsPerSignatureRelay = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
         private var creatingAccountFeeRelay = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
         
@@ -156,7 +156,7 @@ extension NewSwap {
                     self?.provider.calculateFee(sourceWallet: $0, destinationWallet: $1, lamportsPerSignature: $2, creatingAccountFee: $3)
                     ?? .just(nil)
                 }
-                .bind(to: feeRelay)
+                .bind(to: feesRelay)
                 .disposed(by: disposeBag)
             
             // error
@@ -166,7 +166,7 @@ extension NewSwap {
                 destinationWalletRelay,
                 estimatedAmountRelay,
                 exchangeRateRelay,
-                feeRelay,
+                feesRelay,
                 slippageRelay
             )
                 .map { [weak self] params -> String? in
@@ -193,7 +193,7 @@ extension NewSwap {
     }
 }
 
-extension NewSwap.ViewModel {
+extension NewSwap.ViewModel: NewSwapViewModelType {
     // MARK: - Output
     var navigationDriver: Driver<NewSwap.NavigatableScene?> { navigationRelay.asDriver() }
     var isLoadingDriver: Driver<Bool> { isLoadingRelay.asDriver() }
@@ -201,7 +201,7 @@ extension NewSwap.ViewModel {
     var availableAmountDriver: Driver<Double?> {
         Observable.combineLatest(
             sourceWalletRelay,
-            feeRelay
+            feesRelay
         )
             .map {[weak self] in self?.provider.calculateAvailableAmount(sourceWallet: $0, fee: $1)}
             .asDriver(onErrorJustReturn: nil)
@@ -211,7 +211,7 @@ extension NewSwap.ViewModel {
     var estimatedAmountDriver: Driver<Double?> { estimatedAmountRelay.asDriver() }
     var errorDriver: Driver<String?> { errorRelay.asDriver() }
     var exchangeRateDriver: Driver<Double?> { exchangeRateRelay.asDriver() }
-    var feeDriver: Driver<SwapFee?> { feeRelay.asDriver() }
+    var feeDriver: Driver<SwapFee?> { feesRelay.asDriver() }
     var slippageDriver: Driver<Double?> { slippageRelay.asDriver() }
     var isSwappableDriver: Driver<Bool> {
         errorRelay.map {$0 == nil}.asDriver(onErrorJustReturn: false)
@@ -260,7 +260,7 @@ extension NewSwap.ViewModel {
     }
     
     func useAllBalance() {
-        guard let amount = provider.calculateAvailableAmount(sourceWallet: sourceWalletRelay.value, fee: feeRelay.value)
+        guard let amount = provider.calculateAvailableAmount(sourceWallet: sourceWalletRelay.value, fee: feesRelay.value)
         else {return}
         analyticsManager.log(event: .swapAvailableClick(sum: amount))
         useAllBalanceSubject.accept(amount)
