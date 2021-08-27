@@ -272,6 +272,7 @@ extension NewSwap.ViewModel {
         let sourceWallet = sourceWalletRelay.value
         sourceWalletRelay.accept(destinationWalletRelay.value)
         destinationWalletRelay.accept(sourceWallet)
+        inputAmountSubject.accept(nil)
     }
     
     func authenticateAndSwap() {
