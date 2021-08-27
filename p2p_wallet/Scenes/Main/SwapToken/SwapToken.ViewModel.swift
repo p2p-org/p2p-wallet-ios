@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 import LazySubject
 
+// DEPRECATED: Use NewSwap instead
 extension SwapToken {
     class ViewModel: ViewModelType {
         // MARK: - Nested type
@@ -400,6 +401,14 @@ extension SwapToken {
                         }
                     )
             )
+        }
+        
+        var payingTokenDriver: Driver<PayingToken> {
+            payingTokenSubject.asDriver()
+        }
+        
+        func changePayingToken(to payingToken: PayingToken) {
+            payingTokenSubject.accept(payingToken)
         }
         
         // MARK: - Helpers
