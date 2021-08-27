@@ -13,5 +13,6 @@ enum FeeType {
 }
 struct SwapFee {
     let lamports: SolanaSDK.Lamports
-    let symbol: String
+    let token: SolanaSDK.Token
+    var toString: (() -> String?)?
 }

@@ -362,7 +362,7 @@ private func validate(
     if exchangeRate == 0 {return L10n.exchangeRateIsNotValid}
     
     // verify fee
-    if fee?.symbol == "SOL",
+    if fee?.token.symbol == "SOL",
        let balance = solWallet?.lamports,
        let fee = fee?.lamports
     {

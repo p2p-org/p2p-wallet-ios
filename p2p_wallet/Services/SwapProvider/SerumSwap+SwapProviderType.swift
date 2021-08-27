@@ -54,7 +54,7 @@ extension SerumSwap: SwapProviderType {
         // if paying directly with SOL
         if isPayingWithSOL {
             feeInSOL += lamportsPerSignature
-            fees[.default] = .init(lamports: feeInSOL, symbol: "SOL")
+            fees[.default] = .init(lamports: feeInSOL, token: .nativeSolana, toString: nil)
             return .just(fees)
         }
         
@@ -74,7 +74,7 @@ extension SerumSwap: SwapProviderType {
                     .map { neededAmount -> [FeeType: SwapFee] in
                         guard let lamports = neededAmount?.toLamport(decimals: sourceWallet.token.decimals)
                         else {return [:]}
-                        fees[.default] = .init(lamports: lamports, symbol: sourceWallet.token.symbol)
+                        fees[.default] = .init(lamports: lamports, token: sourceWallet.token, toString: nil)
                         return fees
                     }
             } catch {
@@ -91,11 +91,11 @@ extension SerumSwap: SwapProviderType {
         guard let fee = fee else {return sourceWallet.amount}
         guard var amount = sourceWallet.lamports else {return nil}
         
-        if fee.symbol == "SOL" {
+        if fee.token.symbol == "SOL" {
             if sourceWallet.token.isNative {
                 amount -= fee.lamports
             }
-        } else if fee.symbol == sourceWallet.token.symbol {
+        } else if fee.token.symbol == sourceWallet.token.symbol {
             amount -= fee.lamports
         }
         
