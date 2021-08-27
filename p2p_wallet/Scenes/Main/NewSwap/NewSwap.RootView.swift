@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Action
 
 extension NewSwap {
     class RootView: ScrollableVStackRootView {
@@ -123,6 +124,26 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             // error
+            viewModel.errorDriver
+                .map { $0 == L10n.swappingIsCurrentlyUnavailable }
+                .drive(onNext: {[weak self] isUnavailable in
+                    self?.removeErrorView()
+                    self?.stackView.isHidden = false
+                    
+                    if isUnavailable {
+                        self?.stackView.isHidden = true
+                        self?.showErrorView(
+                            title: L10n.swappingIsCurrentlyUnavailable,
+                            description: L10n.swappingPoolsNotFound + "\n" + L10n.pleaseTryAgainLater,
+                            retryAction: CocoaAction { [weak self] in
+                                self?.viewModel.reload()
+                                return .just(())
+                            }
+                        )
+                    }
+                })
+                .disposed(by: disposeBag)
+            
             viewModel.errorDriver
                 .drive(errorLabel.rx.text)
                 .disposed(by: disposeBag)

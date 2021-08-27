@@ -99,6 +99,8 @@ protocol NewSwapViewModelType: WalletDidSelectHandler {
     
     var slippageDriver: Driver<Double?> {get}
     
+    var feeDriver: Driver<SwapFee?> {get}
+    
     var errorDriver: Driver<String?> {get}
     
     var isSwappableDriver: Driver<Bool> {get}
@@ -107,6 +109,7 @@ protocol NewSwapViewModelType: WalletDidSelectHandler {
     var useAllBalanceDidTapSignal: Signal<Double?> {get}
     
     // Actions
+    func reload()
     func navigate(to: NewSwap.NavigatableScene)
     func useAllBalance()
     func log(_ event: AnalyticsEvent)
@@ -116,3 +119,10 @@ protocol NewSwapViewModelType: WalletDidSelectHandler {
     func changeSlippage(to slippage: Double)
     func getSourceWallet() -> Wallet?
 }
+
+protocol NewSwapViewModelAPIClient {
+    func getLamportsPerSignature() -> Single<SolanaSDK.Lamports>
+    func getCreatingTokenAccountFee() -> Single<UInt64>
+}
+
+extension SolanaSDK: NewSwapViewModelAPIClient {}
