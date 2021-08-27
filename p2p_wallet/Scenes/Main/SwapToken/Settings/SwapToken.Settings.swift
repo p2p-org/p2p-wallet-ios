@@ -15,6 +15,7 @@ extension SwapToken {
     typealias SettingsViewController = NewSwap.SettingsViewController
     typealias SlippageSettingsViewController = NewSwap.SlippageSettingsViewController
     typealias NetworkFeePayerSettingsViewController = NewSwap.NetworkFeePayerSettingsViewController
+    typealias SwapFeesViewController = NewSwap.SwapFeesViewController
 }
 
 extension SwapToken.ViewModel: NewSwapSettingsViewModelType {
@@ -36,5 +37,44 @@ extension SwapToken.ViewModel: NewSwapSettingsViewModelType {
     
     func changeSlippage(to slippage: Double) {
         input.slippage.accept(slippage)
+    }
+}
+
+extension SwapToken.ViewModel: NewSwapSwapFeesViewModelType {
+    var feesDriver: Driver<[FeeType: SwapFee]> {
+        Driver.combineLatest(
+            output.feeInLamports,
+            output.liquidityProviderFee,
+            output.sourceWallet,
+            output.destinationWallet
+        )
+            .map {fee, liquidityProviderFee, source, destination -> [FeeType: SwapFee] in
+                var result = [FeeType: SwapFee]()
+                guard let source = source, let destination = destination
+                else {return result}
+                
+                if let fee = liquidityProviderFee {
+                    result[.liquidityProvider] = .init(
+                        lamports: fee.toLamport(decimals: destination.token.decimals),
+                        token: destination.token
+                    )
+                }
+                
+                if let fee = fee {
+                    if SwapToken.isFeeRelayerEnabled(source: source, destination: destination) {
+                        result[.default] = .init(
+                            lamports: fee,
+                            token: source.token
+                        )
+                    } else {
+                        result[.default] = .init(
+                            lamports: fee,
+                            token: .nativeSolana
+                        )
+                    }
+                }
+                
+                return result
+            }
     }
 }
