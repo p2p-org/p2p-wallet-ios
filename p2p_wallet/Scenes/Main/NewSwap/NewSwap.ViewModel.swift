@@ -263,6 +263,8 @@ extension NewSwap.ViewModel {
             log(.swapSlippageClick)
         case .processTransaction:
             break
+        case .swapFees:
+            log(.swapSwapFeesClick)
         }
         navigationRelay.accept(scene)
     }

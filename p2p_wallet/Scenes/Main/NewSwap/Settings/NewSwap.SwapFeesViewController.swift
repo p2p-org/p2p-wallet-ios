@@ -16,8 +16,6 @@ protocol NewSwapSwapFeesViewModelType {
     func log(_ event: AnalyticsEvent)
 }
 
-extension NewSwap.ViewModel: NewSwapSwapFeesViewModelType {}
-
 extension NewSwap {
     class SwapFeesViewController: SettingsBaseViewController {
         // MARK: - Properties

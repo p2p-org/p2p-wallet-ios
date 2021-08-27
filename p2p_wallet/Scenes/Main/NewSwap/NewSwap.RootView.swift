@@ -261,7 +261,7 @@ extension NewSwap {
         }
         
         @objc private func showSwapFees() {
-            
+            viewModel.navigate(to: .swapFees)
         }
         
         // MARK: - Helpers
