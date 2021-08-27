@@ -101,6 +101,8 @@ protocol NewSwapViewModelType: WalletDidSelectHandler {
     
     var feesDriver: Driver<[FeeType: SwapFee]> {get}
     
+    var payingTokenDriver: Driver<PayingToken> {get}
+    
     var errorDriver: Driver<String?> {get}
     
     var isSwappableDriver: Driver<Bool> {get}
@@ -117,6 +119,7 @@ protocol NewSwapViewModelType: WalletDidSelectHandler {
 //    func reverseExchangeRate()
     func authenticateAndSwap()
     func changeSlippage(to slippage: Double)
+    func changePayingToken(to payingToken: PayingToken)
     func getSourceWallet() -> Wallet?
     func providerSignatureView() -> UIView
 }

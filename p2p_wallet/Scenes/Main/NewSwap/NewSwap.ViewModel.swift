@@ -41,6 +41,7 @@ extension NewSwap {
         private let exchangeRateRelay = BehaviorRelay<Double?>(value: nil)
         
         private let slippageRelay = BehaviorRelay<Double?>(value: Defaults.slippage)
+        private let payingTokenRelay = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
         
         private let feesRelay = BehaviorRelay<[FeeType: SwapFee]>(value: [:])
         private var lamportsPerSignatureRelay = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
@@ -216,6 +217,9 @@ extension NewSwap.ViewModel: NewSwapViewModelType {
     var errorDriver: Driver<String?> { errorRelay.asDriver() }
     var exchangeRateDriver: Driver<Double?> { exchangeRateRelay.asDriver() }
     var feesDriver: Driver<[FeeType: SwapFee]> { feesRelay.asDriver() }
+    var payingTokenDriver: Driver<PayingToken> {
+        payingTokenRelay.asDriver()
+    }
     var slippageDriver: Driver<Double?> { slippageRelay.asDriver() }
     var isSwappableDriver: Driver<Bool> {
         errorRelay.map {$0 == nil}.asDriver(onErrorJustReturn: false)
@@ -298,6 +302,10 @@ extension NewSwap.ViewModel {
     func changeSlippage(to slippage: Double) {
         log(.swapSlippageKeydown(slippage: slippage))
         slippageRelay.accept(slippage)
+    }
+    
+    func changePayingToken(to payingToken: PayingToken) {
+        payingTokenRelay.accept(payingToken)
     }
     
     func getSourceWallet() -> Wallet? {
