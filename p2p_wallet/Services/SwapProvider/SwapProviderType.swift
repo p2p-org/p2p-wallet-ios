@@ -22,12 +22,13 @@ protocol SwapProviderType {
     ) -> Bool
     
     /// Calculate fee for swapping
-    func calculateFee(
+    /// - Returns: collection of fee's name and fee's detail
+    func calculateFees(
         sourceWallet: Wallet?,
         destinationWallet: Wallet?,
         lamportsPerSignature: SolanaSDK.Lamports?,
         creatingAccountFee: SolanaSDK.Lamports?
-    ) -> Single<SwapFee?>
+    ) -> Single<[FeeType: SwapFee]>
     
     /// Maximum amount that user can use for swapping
     func calculateAvailableAmount(

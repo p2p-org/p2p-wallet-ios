@@ -152,7 +152,7 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             // fee
-            let isFeeNil = viewModel.feeDriver.map {$0 == nil}
+            let isFeeNil = viewModel.feesDriver.map {$0.isEmpty}
             
             isFeeNil.drive(stackView.viewWithTag(4)!.rx.isHidden)
                 .disposed(by: disposeBag)
