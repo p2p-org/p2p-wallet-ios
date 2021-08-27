@@ -99,7 +99,7 @@ protocol NewSwapViewModelType: WalletDidSelectHandler {
     
     var slippageDriver: Driver<Double?> {get}
     
-    var feeDriver: Driver<SwapFee?> {get}
+    var feesDriver: Driver<[FeeType: SwapFee]> {get}
     
     var errorDriver: Driver<String?> {get}
     

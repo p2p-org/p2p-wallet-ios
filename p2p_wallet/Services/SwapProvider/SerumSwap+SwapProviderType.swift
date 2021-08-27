@@ -17,17 +17,19 @@ extension SerumSwap: SwapProviderType {
         false
     }
     
-    func calculateFee(
+    func calculateFees(
         sourceWallet: Wallet?,
         destinationWallet: Wallet?,
         lamportsPerSignature: SolanaSDK.Lamports?,
         creatingAccountFee: SolanaSDK.Lamports?
-    ) -> Single<SwapFee?> {
+    ) -> Single<[FeeType: SwapFee]> {
+        var fees = [FeeType: SwapFee]()
+        
         guard let sourceWallet = sourceWallet,
               let destinationWallet = destinationWallet,
               let lamportsPerSignature = lamportsPerSignature,
               let creatingAccountFee = creatingAccountFee
-        else {return .just(nil)}
+        else {return .just(fees)}
         
         var feeInSOL: SolanaSDK.Lamports = 0
         
@@ -52,7 +54,8 @@ extension SerumSwap: SwapProviderType {
         // if paying directly with SOL
         if isPayingWithSOL {
             feeInSOL += lamportsPerSignature
-            return .just(.init(lamports: feeInSOL, symbol: "SOL"))
+            fees[.default] = .init(lamports: feeInSOL, symbol: "SOL")
+            return .just(fees)
         }
         
         // convert fee from SOL to amount in source token
@@ -68,10 +71,11 @@ extension SerumSwap: SwapProviderType {
                             slippage: 0.01
                         )
                     }
-                    .map { neededAmount -> SwapFee? in
+                    .map { neededAmount -> [FeeType: SwapFee] in
                         guard let lamports = neededAmount?.toLamport(decimals: sourceWallet.token.decimals)
-                        else {return nil}
-                        return .init(lamports: lamports, symbol: sourceWallet.token.symbol)
+                        else {return [:]}
+                        fees[.default] = .init(lamports: lamports, symbol: sourceWallet.token.symbol)
+                        return fees
                     }
             } catch {
                 return .error(error)

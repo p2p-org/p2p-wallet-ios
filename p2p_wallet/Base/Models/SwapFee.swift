@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum FeeType {
+    case `default`
+    case liquidityProvider
+}
 struct SwapFee {
     let lamports: SolanaSDK.Lamports
     let symbol: String

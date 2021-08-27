@@ -70,7 +70,7 @@ extension NewSwap {
             Driver.combineLatest(
                 viewModel.slippageDriver,
                 viewModel.errorDriver,
-                viewModel.feeDriver,
+                viewModel.feesDriver,
                 viewModel.exchangeRateDriver
             )
                 .drive(onNext: {[weak self] _ in
