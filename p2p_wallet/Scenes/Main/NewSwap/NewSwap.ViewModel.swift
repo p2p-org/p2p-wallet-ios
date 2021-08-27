@@ -164,6 +164,7 @@ extension NewSwap {
                 sourceWalletRelay,
                 inputAmountRelay,
                 destinationWalletRelay,
+                estimatedAmountRelay,
                 exchangeRateRelay,
                 feeRelay,
                 slippageRelay
@@ -175,10 +176,11 @@ extension NewSwap {
                         sourceWallet: params.0,
                         inputAmount: params.1,
                         destinationWallet: params.2,
-                        exchangeRate: params.3,
-                        fee: params.4,
+                        estimatedAmount: params.3,
+                        exchangeRate: params.4,
+                        fee: params.5,
                         solWallet: self.walletsRepository.nativeWallet,
-                        slippage: params.5
+                        slippage: params.6
                     )
                 }
                 .bind(to: errorRelay)
@@ -312,6 +314,7 @@ private func validate(
     sourceWallet: Wallet?,
     inputAmount: Double?,
     destinationWallet: Wallet?,
+    estimatedAmount: Double?,
     exchangeRate: Double?,
     fee: SwapFee?,
     solWallet: Wallet?,
@@ -328,8 +331,16 @@ private func validate(
     // verify amount
     if inputAmount <= 0 {return L10n.amountIsNotValid}
     
-    // TODO: - Compare with decimal
-    if inputAmount > provider.calculateAvailableAmount(sourceWallet: sourceWallet, fee: fee) {return L10n.insufficientFunds}
+    // verify if input amount
+    if inputAmount.isGreaterThan(
+        provider.calculateAvailableAmount(sourceWallet: sourceWallet, fee: fee),
+        decimals: sourceWallet.token.decimals
+    ) {return L10n.insufficientFunds}
+    
+    // verify estimated amount
+    if estimatedAmount == 0 {
+        return L10n.amountIsTooSmall
+    }
     
     // verify exchange rate
     if exchangeRate == 0 {return L10n.exchangeRateIsNotValid}

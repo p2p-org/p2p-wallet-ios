@@ -37,6 +37,10 @@ extension Optional where Wrapped == Double {
         if right == 0 {return 0}
         return left.orZero / right
     }
+    
+    func isGreaterThan(right: Double?, decimals: SolanaSDK.Decimals) -> Bool {
+        self?.rounded(decimals: decimals) > right?.rounded(decimals: decimals)
+    }
 }
 
 extension Double {
@@ -90,5 +94,9 @@ extension Double {
     func rounded(decimals: UInt8?) -> Double {
         guard let decimals = decimals else {return self}
         return rounded(decimals: Int(decimals))
+    }
+    
+    func isGreaterThan(_ right: Double?, decimals: SolanaSDK.Decimals) -> Bool {
+        rounded(decimals: decimals) > right?.rounded(decimals: decimals)
     }
 }
