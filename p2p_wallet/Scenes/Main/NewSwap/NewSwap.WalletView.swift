@@ -175,8 +175,11 @@ extension NewSwap {
                     .drive(balanceView.rx.tintColor)
                     .disposed(by: disposeBag)
                 
-                viewModel.inputAmountDriver
-                    .map {$0 != nil}
+                Driver.combineLatest(
+                    viewModel.inputAmountDriver,
+                    viewModel.sourceWalletDriver
+                )
+                    .map {$0 != nil || $1 == nil}
                     .drive(maxButton.rx.isHidden)
                     .disposed(by: disposeBag)
                 
