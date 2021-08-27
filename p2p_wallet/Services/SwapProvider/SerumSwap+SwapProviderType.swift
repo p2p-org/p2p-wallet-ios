@@ -131,4 +131,8 @@ extension SerumSwap: SwapProviderType {
         else {return .error(SolanaSDK.Error.unknown)}
         return loadFair(fromMint: fromMint, toMint: toMint)
     }
+    
+    func logoView() -> UIView {
+        UIImageView(width: 24, height: 24, image: .serumLogo, tintColor: .textBlack)
+    }
 }

@@ -107,8 +107,7 @@ extension NewSwap {
                 BEStackViewSpacing(20)
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
                     UILabel(text: L10n.poweredBy, textSize: 13, textColor: .textSecondary, textAlignment: .center)
-                    UIImageView(width: 24, height: 24, image: .serumLogo)
-                    UIImageView(width: 68, height: 13, image: .orcaText, tintColor: .textBlack)
+                    viewModel.providerSignatureView()
                 }
                     .centeredHorizontallyView
             }

@@ -118,6 +118,7 @@ protocol NewSwapViewModelType: WalletDidSelectHandler {
     func authenticateAndSwap()
     func changeSlippage(to slippage: Double)
     func getSourceWallet() -> Wallet?
+    func providerSignatureView() -> UIView
 }
 
 protocol NewSwapViewModelAPIClient {
