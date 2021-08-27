@@ -192,8 +192,10 @@ extension NewSwap {
                     viewModel.destinationWalletDriver
                 )
                     .map {minReceiveAmount, wallet -> String? in
-                        guard let symbol = wallet?.token.symbol else {return nil}
-                        return L10n.receiveAtLeast + ": " + minReceiveAmount?.toString(maximumFractionDigits: 9) + " " + symbol
+                        guard let symbol = wallet?.token.symbol,
+                              let minReceiveAmount = minReceiveAmount?.toString(maximumFractionDigits: 9)
+                        else {return nil}
+                        return L10n.receiveAtLeast + ": " + minReceiveAmount + " " + symbol
                     }
                 
                 inputSubject = viewModel.estimatedAmountSubject
