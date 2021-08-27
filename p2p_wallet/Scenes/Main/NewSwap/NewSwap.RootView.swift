@@ -31,6 +31,7 @@ extension NewSwap {
         
         private lazy var slippageLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
         
+        private lazy var swapFeeLabel = UILabel(text: L10n.swapFees, textSize: 15, weight: .medium)
         private lazy var errorLabel = UILabel(textSize: 15, weight: .medium, textColor: .alert, numberOfLines: 0)
         
         private lazy var swapButton = WLButton.stepButton(type: .blue, label: L10n.swapNow)
@@ -70,8 +71,10 @@ extension NewSwap {
                     rightView: nil, // exchangeRateReverseButton
                     addSeparatorOnTop: false
                 )
+                    .withTag(1)
                 
                 UIView.defaultSeparator()
+                    .withTag(2)
                 
                 createSectionView(
                     title: L10n.maxPriceSlippage,
@@ -79,6 +82,23 @@ extension NewSwap {
                     addSeparatorOnTop: false
                 )
                     .onTap(self, action: #selector(chooseSlippage))
+                    .withTag(3)
+                
+                UIView.defaultSeparator()
+                    .withTag(4)
+                
+                createSectionView(
+                    label: swapFeeLabel,
+                    contentView: errorLabel,
+                    addSeparatorOnTop: false
+                )
+                    .withModifier { view in
+                        let view = view
+                        view.autoSetDimension(.height, toSize: 48, relation: .greaterThanOrEqual)
+                        return view
+                    }
+                    .onTap(self, action: #selector(showSwapFees))
+                    .withTag(5)
                 
                 errorLabel
                 
@@ -87,7 +107,7 @@ extension NewSwap {
                 BEStackViewSpacing(20)
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
                     UILabel(text: L10n.poweredBy, textSize: 13, textColor: .textSecondary, textAlignment: .center)
-                    UIImageView(width: 24, height: 24, image: .orcaLogo)
+                    UIImageView(width: 24, height: 24, image: .serumLogo)
                     UIImageView(width: 68, height: 13, image: .orcaText, tintColor: .textBlack)
                 }
                     .centeredHorizontallyView
@@ -96,6 +116,15 @@ extension NewSwap {
         
         private func bind() {
             // exchange rate
+            let isRateNil = viewModel.exchangeRateDriver
+                .map {$0 == nil}
+            
+            isRateNil.drive(stackView.viewWithTag(1)!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isRateNil.drive(stackView.viewWithTag(2)!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
             Driver.combineLatest(
                 viewModel.exchangeRateDriver,
                 viewModel.sourceWalletDriver,
@@ -123,7 +152,44 @@ extension NewSwap {
                 .drive(slippageLabel.rx.attributedText)
                 .disposed(by: disposeBag)
             
+            // fee
+            let isFeeNil = viewModel.feeDriver.map {$0 == nil}
+            
+            isFeeNil.drive(stackView.viewWithTag(4)!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isFeeNil.drive(stackView.viewWithTag(5)!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
             // error
+            let isErrorHidden = viewModel.errorDriver
+                .map {
+                    $0 == nil ||
+                    [
+                        L10n.insufficientFunds,
+                        L10n.amountIsNotValid,
+                        L10n.slippageIsnTValid,
+                        L10n.someParametersAreMissing
+                    ].contains($0)
+                }
+            
+            isErrorHidden
+                .drive(errorLabel.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isErrorHidden
+                .drive(onNext: {[weak self] isErrorHidden in
+                    var textSize: CGFloat = 15
+                    var textColor: UIColor = .textBlack
+                    if !isErrorHidden {
+                        textSize = 13
+                        textColor = .textSecondary
+                    }
+                    self?.swapFeeLabel.font = .systemFont(ofSize: textSize, weight: .medium)
+                    self?.swapFeeLabel.textColor = textColor
+                })
+                .disposed(by: disposeBag)
+            
             viewModel.errorDriver
                 .map { $0 == L10n.swappingIsCurrentlyUnavailable }
                 .drive(onNext: {[weak self] isUnavailable in
@@ -146,18 +212,6 @@ extension NewSwap {
             
             viewModel.errorDriver
                 .drive(errorLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            viewModel.errorDriver
-                .map {
-                    $0 == nil ||
-                    [
-                        L10n.insufficientFunds,
-                        L10n.amountIsNotValid,
-                        L10n.slippageIsnTValid
-                    ].contains($0)
-                }
-                .drive(errorLabel.rx.isHidden)
                 .disposed(by: disposeBag)
             
             // button
@@ -205,6 +259,10 @@ extension NewSwap {
         
         @objc private func chooseSlippage() {
             viewModel.navigate(to: .chooseSlippage)
+        }
+        
+        @objc private func showSwapFees() {
+            
         }
         
         // MARK: - Helpers

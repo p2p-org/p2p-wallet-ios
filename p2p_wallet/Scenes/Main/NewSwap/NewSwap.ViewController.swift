@@ -69,7 +69,9 @@ extension NewSwap {
             
             Driver.combineLatest(
                 viewModel.slippageDriver,
-                viewModel.errorDriver
+                viewModel.errorDriver,
+                viewModel.feeDriver,
+                viewModel.exchangeRateDriver
             )
                 .drive(onNext: {[weak self] _ in
                     self?.updatePresentationLayout(animated: true)
