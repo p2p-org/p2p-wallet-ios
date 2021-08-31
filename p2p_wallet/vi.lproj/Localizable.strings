@@ -438,6 +438,9 @@
 "Network fee" = "Phí mạng";
 "Fee compensation pool not found" = "Không tìm thấy pool để bồi thường phí";
 "Please choose paying with SOL" = "Vui lòng chọn thanh toán bằng SOL";
+"Could not retrieve exchange rate" = "Không thể truy xuất tỷ giá hối đoái";
+"Some parameters are missing" = "Một số thông số bị thiếu";
+"Exchange rate is not valid" = "Tỷ giá hối đoái không hợp lệ";
 "SELECT" = "LỰA CHỌN";
 "Enter the amount" = "Nhập số tiền";
 "Don’t go over the available funds" = "Đừng vượt quá số tiền hiện có";

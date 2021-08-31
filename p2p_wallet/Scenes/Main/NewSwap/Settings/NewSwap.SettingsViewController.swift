@@ -1,5 +1,5 @@
 //
-//  SwapToken.SettingsViewController.swift
+//  NewSwap.SettingsViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 13/08/2021.
@@ -8,12 +8,21 @@
 import Foundation
 import RxCocoa
 
-extension SwapToken {
+protocol NewSwapSettingsViewModelType {
+    var sourceWalletDriver: Driver<Wallet?> {get}
+    var destinationWalletDriver: Driver<Wallet?> {get}
+    var slippageDriver: Driver<Double?> {get}
+    var payingTokenDriver: Driver<PayingToken> {get}
+    func log(_ event: AnalyticsEvent)
+    func changeSlippage(to slippage: Double)
+    func changePayingToken(to payingToken: PayingToken)
+}
+
+extension NewSwap {
     class SettingsViewController: SettingsBaseViewController {
         // MARK: - Properties
-        private let viewModel: ViewModel
+        private let viewModel: NewSwapSettingsViewModelType
         private var defaultsDisposables = [DefaultsDisposable]()
-        private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
         private var transactionTokensName: String?
         
         // MARK: - Subviews
@@ -23,7 +32,7 @@ extension SwapToken {
         private lazy var payingTokenLabel = UILabel(textSize: 15, weight: .medium)
         
         // MARK: - Initializers
-        init(viewModel: ViewModel) {
+        init(viewModel: NewSwapSettingsViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
@@ -36,19 +45,15 @@ extension SwapToken {
         
         override func bind() {
             super.bind()
-            viewModel.output.slippage
-                .map {slippageAttributedText(slippage: $0)}
+            viewModel.slippageDriver
+                .map {slippageAttributedText(slippage: $0 ?? 0)}
                 .drive(slippageLabel.rx.attributedText)
                 .disposed(by: disposeBag)
             
-            defaultsDisposables.append(Defaults.observe(\.payingToken, handler: { [weak self] update in
-                self?.payingTokenSubject.accept(update.newValue ?? .transactionToken)
-            }))
-            
             Driver.combineLatest(
-                viewModel.output.sourceWallet,
-                viewModel.output.destinationWallet,
-                payingTokenSubject.asDriver()
+                viewModel.sourceWalletDriver,
+                viewModel.destinationWalletDriver,
+                viewModel.payingTokenDriver
             )
                 .drive(onNext: {[weak self] source, destination, payingToken in
                     var symbols = [String]()
@@ -89,22 +94,23 @@ extension SwapToken {
         
         // MARK: - Navigation
         @objc private func navigateToSlippageSettingsVC() {
-            viewModel.analyticsManager.log(event: .swapSlippageClick)
+            viewModel.log(.swapSlippageClick)
             
             let vc = SlippageSettingsViewController()
             vc.completion = {[weak self] slippage in
                 Defaults.slippage = slippage / 100
-                self?.viewModel.input.slippage.accept(slippage / 100)
+                self?.viewModel.changeSlippage(to: slippage / 100)
             }
             show(vc, sender: nil)
         }
         
         @objc private func navigateToPayNetworkFeeWithVC() {
-            viewModel.analyticsManager.log(event: .swapPayNetworkFeeWithClick)
+            viewModel.log(.swapPayNetworkFeeWithClick)
             
             let vc = NetworkFeePayerSettingsViewController(transactionTokenName: transactionTokensName ?? "")
-            vc.completion = { method in
+            vc.completion = {[weak self] method in
                 Defaults.payingToken = method
+                self?.viewModel.changePayingToken(to: method)
             }
             show(vc, sender: nil)
         }

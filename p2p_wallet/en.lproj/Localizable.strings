@@ -438,6 +438,9 @@
 "Network fee" = "Network fee";
 "Fee compensation pool not found" = "Fee compensation pool not found";
 "Please choose paying with SOL" = "Please choose paying with SOL";
+"Could not retrieve exchange rate" = "Could not retrieve exchange rate";
+"Some parameters are missing" = "Some parameters are missing";
+"Exchange rate is not valid" = "Exchange rate is not valid";
 "SELECT" = "SELECT";
 "Enter the amount" = "Enter the amount";
 "Don’t go over the available funds" = "Don’t go over the available funds";

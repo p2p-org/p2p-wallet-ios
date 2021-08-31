@@ -1,5 +1,5 @@
 //
-//  SwapToken.SwapFeesViewController.swift
+//  NewSwap.SwapFeesViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 14/08/2021.
@@ -8,12 +8,18 @@
 import Foundation
 import RxCocoa
 
-extension SwapToken {
+protocol NewSwapSwapFeesViewModelType {
+    var feesDriver: Driver<[FeeType: SwapFee]> {get}
+    var sourceWalletDriver: Driver<Wallet?> {get}
+    var destinationWalletDriver: Driver<Wallet?> {get}
+    var payingTokenDriver: Driver<PayingToken> {get}
+    func log(_ event: AnalyticsEvent)
+}
+
+extension NewSwap {
     class SwapFeesViewController: SettingsBaseViewController {
         // MARK: - Properties
-        private let viewModel: ViewModel
-        private var defaultsDisposables = [DefaultsDisposable]()
-        private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
+        private let viewModel: NewSwapSwapFeesViewModelType
         private var transactionTokensName: String?
         
         // MARK: - Subviews
@@ -23,7 +29,7 @@ extension SwapToken {
         private var payingTokenSection: UIView?
         
         // MARK: - Initializers
-        init(viewModel: ViewModel) {
+        init(viewModel: NewSwapSwapFeesViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
@@ -64,45 +70,38 @@ extension SwapToken {
         override func bind() {
             super.bind()
             // fee
-            Driver.combineLatest(
-                viewModel.output.liquidityProviderFee,
-                viewModel.output.destinationWallet.map {$0?.token.symbol}
-            )
-                .map {fee, symbol -> String? in
-                    guard let fee = fee, let symbol = symbol else {return nil}
-                    return fee.toString(maximumFractionDigits: 9) + " " + symbol
+            viewModel.feesDriver.map {$0[.liquidityProvider]}
+                .map {fee -> String? in
+                    if let toString = fee?.toString {
+                        return toString()
+                    }
+                    
+                    guard let amount = fee?.lamports.convertToBalance(decimals: fee?.token.decimals),
+                          let symbol = fee?.token.symbol
+                    else {return nil}
+                    return amount.toString(maximumFractionDigits: 9) + " " + symbol
                 }
                 .drive(liquidityProviderFeeLabel.rx.text)
                 .disposed(by: disposeBag)
             
-            Driver.combineLatest(
-                viewModel.output.sourceWallet,
-                viewModel.output.destinationWallet,
-                viewModel.output.feeInLamports
-            )
-                .map {source, destination, lamports -> String? in
-                    guard let lamports = lamports else {return nil}
-                    var value: Double = 0
-                    var symbol = "SOL"
-                    if isFeeRelayerEnabled(source: source, destination: destination) {
-                        value = lamports.convertToBalance(decimals: source?.token.decimals)
-                        symbol = source?.token.symbol ?? ""
-                    } else {
-                        value = lamports.convertToBalance(decimals: 9)
+            viewModel.feesDriver.map {$0[.default]}
+                .map {fee -> String? in
+                    if let toString = fee?.toString {
+                        return toString()
                     }
-                    return "\(value.toString(maximumFractionDigits: 9)) \(symbol)"
+                    
+                    guard let amount = fee?.lamports.convertToBalance(decimals: fee?.token.decimals),
+                          let symbol = fee?.token.symbol
+                    else {return nil}
+                    return amount.toString(maximumFractionDigits: 9) + " " + symbol
                 }
                 .drive(networkFeeLabel.rx.text)
                 .disposed(by: disposeBag)
             
-            defaultsDisposables.append(Defaults.observe(\.payingToken, handler: { [weak self] update in
-                self?.payingTokenSubject.accept(update.newValue ?? .transactionToken)
-            }))
-            
             Driver.combineLatest(
-                viewModel.output.sourceWallet,
-                viewModel.output.destinationWallet,
-                payingTokenSubject.asDriver()
+                viewModel.sourceWalletDriver,
+                viewModel.destinationWalletDriver,
+                viewModel.payingTokenDriver
             )
                 .drive(onNext: {[weak self] source, destination, payingToken in
                     var symbols = [String]()
@@ -117,7 +116,7 @@ extension SwapToken {
         
         // MARK: - Navigation
         @objc private func navigateToPayNetworkFeeWithVC() {
-            viewModel.analyticsManager.log(event: .swapPayNetworkFeeWithClick)
+            viewModel.log(.swapPayNetworkFeeWithClick)
             
             let vc = NetworkFeePayerSettingsViewController(transactionTokenName: transactionTokensName ?? "")
             vc.completion = { method in

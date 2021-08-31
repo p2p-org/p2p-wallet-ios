@@ -1,5 +1,5 @@
 //
-//  SwapToken.SlippageSettingsViewController.swift
+//  NewSwap.SlippageSettingsViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 13/08/2021.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension SwapToken {
+extension NewSwap {
     class SlippageSettingsViewController: SettingsBaseViewController {
         // MARK: - Properties
         private let quickSelectableSlippages: [Double] = [0.1, 0.5, 1, 5]
@@ -44,14 +44,12 @@ extension SwapToken {
                 autocorrectionType: .no,
                 autocapitalizationType: UITextAutocapitalizationType.none,
                 spellCheckingType: .no,
-                horizontalPadding: 16,
-                rightView: textFieldClearButton,
-                rightViewMode: .whileEditing
+                horizontalPadding: 16
             )
             tf.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
             return tf
         }()
-        private lazy var textFieldClearButton = UIView(forAutoLayout: ())
+        private lazy var textFieldClearButton = UIView(frame: .zero)
             .withModifier {view in
                 let clearButton = UIImageView(width: 24, height: 24, image: .textfieldClear)
                     .onTap(self, action: #selector(buttonClearTextFieldDidTouch))
@@ -75,6 +73,11 @@ extension SwapToken {
             
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+            
+            view.addSubview(textFieldClearButton)
+            textFieldClearButton.autoPinEdge(.top, to: .top, of: customSlippageTextField)
+            textFieldClearButton.autoPinEdge(.trailing, to: .trailing, of: customSlippageTextField)
+            textFieldClearButton.autoPinEdge(.bottom, to: .bottom, of: customSlippageTextField)
             
             customSlippageTextField.delegate = self
             customSlippageTextField.text = slippage.toString(maximumFractionDigits: 9, groupingSeparator: "")
@@ -120,10 +123,11 @@ extension SwapToken {
             }
             
             customSlippageTextField.isHidden = !shouldShowTextField
+            textFieldClearButton.isHidden = !shouldShowTextField
             
             // force relayout modal when needed
             if shouldShowTextField != isShowingTextField {
-                updatePresentationLayout()
+                updatePresentationLayout(animated: true)
                 isShowingTextField.toggle()
             }
         }
@@ -166,16 +170,12 @@ extension SwapToken {
             {
                 keyboardHeight = keyboardSize.height
             }
-            updatePresentationLayout()
+            updatePresentationLayout(animated: true)
         }
         
         @objc func keyboardWillHide(notification: NSNotification) {
             keyboardHeight = 0
-            updatePresentationLayout()
-        }
-        
-        private func updatePresentationLayout() {
-            (navigationController as? SettingsNavigationController)?.updatePresentationLayout(animated: true)
+            updatePresentationLayout(animated: true)
         }
         
         @objc private func buttonClearTextFieldDidTouch() {
@@ -198,7 +198,7 @@ extension SwapToken {
     }
 }
 
-extension SwapToken.SlippageSettingsViewController: UITextFieldDelegate {
+extension NewSwap.SlippageSettingsViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == customSlippageTextField {
             return customSlippageTextField.shouldChangeCharactersInRange(range, replacementString: string)
