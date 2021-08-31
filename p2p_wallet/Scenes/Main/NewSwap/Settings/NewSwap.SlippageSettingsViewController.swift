@@ -44,14 +44,12 @@ extension NewSwap {
                 autocorrectionType: .no,
                 autocapitalizationType: UITextAutocapitalizationType.none,
                 spellCheckingType: .no,
-                horizontalPadding: 16,
-                rightView: textFieldClearButton,
-                rightViewMode: .whileEditing
+                horizontalPadding: 16
             )
             tf.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
             return tf
         }()
-        private lazy var textFieldClearButton = UIView(forAutoLayout: ())
+        private lazy var textFieldClearButton = UIView(frame: .zero)
             .withModifier {view in
                 let clearButton = UIImageView(width: 24, height: 24, image: .textfieldClear)
                     .onTap(self, action: #selector(buttonClearTextFieldDidTouch))
@@ -75,6 +73,11 @@ extension NewSwap {
             
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+            
+            view.addSubview(textFieldClearButton)
+            textFieldClearButton.autoPinEdge(.top, to: .top, of: customSlippageTextField)
+            textFieldClearButton.autoPinEdge(.trailing, to: .trailing, of: customSlippageTextField)
+            textFieldClearButton.autoPinEdge(.bottom, to: .bottom, of: customSlippageTextField)
             
             customSlippageTextField.delegate = self
             customSlippageTextField.text = slippage.toString(maximumFractionDigits: 9, groupingSeparator: "")
@@ -120,10 +123,11 @@ extension NewSwap {
             }
             
             customSlippageTextField.isHidden = !shouldShowTextField
+            textFieldClearButton.isHidden = !shouldShowTextField
             
             // force relayout modal when needed
             if shouldShowTextField != isShowingTextField {
-                updatePresentationLayout()
+                updatePresentationLayout(animated: true)
                 isShowingTextField.toggle()
             }
         }
@@ -166,16 +170,12 @@ extension NewSwap {
             {
                 keyboardHeight = keyboardSize.height
             }
-            updatePresentationLayout()
+            updatePresentationLayout(animated: true)
         }
         
         @objc func keyboardWillHide(notification: NSNotification) {
             keyboardHeight = 0
-            updatePresentationLayout()
-        }
-        
-        private func updatePresentationLayout() {
-            (navigationController as? SettingsNavigationController)?.updatePresentationLayout(animated: true)
+            updatePresentationLayout(animated: true)
         }
         
         @objc private func buttonClearTextFieldDidTouch() {
