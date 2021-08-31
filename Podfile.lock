@@ -10,7 +10,7 @@ PODS:
     - RxCocoa
   - BEPureLayout (0.3.0):
     - PureLayout
-  - BufferLayoutSwift (0.4.1):
+  - BufferLayoutSwift (0.9.0):
     - Runtime (~> 2.2.2)
   - Charts (3.6.0):
     - Charts/Core (= 3.6.0)
@@ -148,7 +148,7 @@ PODS:
   - RxSwift (6.2.0)
   - SolanaSwift (0.3.0):
     - ASKSecp256k1 (~> 0.0.6)
-    - BufferLayoutSwift (~> 0.4.0)
+    - BufferLayoutSwift (~> 0.9.0)
     - Ed25519HDKeySwift (~> 1.2.0)
     - RxAlamofire (~> 6.1.1)
     - RxCocoa (~> 6.2.0)
@@ -271,7 +271,7 @@ SPEC CHECKSUMS:
   ASKSecp256k1: 58eb44dfa57f9d29ac0b02fe5de5a312064517f2
   BECollectionView: 9120725dd693271cef287447e3d1aa844f77535f
   BEPureLayout: ecb9d52780a665b9ea751b4e82f95df8dc2bc73b
-  BufferLayoutSwift: b1274b5fc2263bee7c539dc0f2f90d250e09eabb
+  BufferLayoutSwift: 94e01c016df92afb017b2f7d4bc434f9915a275a
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   CryptoSwift: 0bc800a7e6a24c4fc9ebeab97d44b0d5f73a78bd
   Ed25519HDKeySwift: 68d37145dc6d58ff47033e273829f01648afce58
@@ -304,7 +304,7 @@ SPEC CHECKSUMS:
   RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
-  SolanaSwift: 75a0579ddf158f5c7483d31d9f36e29fd62669e9
+  SolanaSwift: 271477c50faba62a605a74637de77f167861ef21
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
