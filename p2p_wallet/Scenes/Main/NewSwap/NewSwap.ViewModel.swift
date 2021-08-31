@@ -193,7 +193,40 @@ extension NewSwap {
         }
         
         fileprivate func swap() {
-//            analyticsManager.log(event: .swapSwapClick(tokenA: sourceWallet.token.symbol, tokenB: destinationWallet.token.symbol, sumA: inputAmount, sumB: estimatedAmount))
+            guard let sourceWallet = sourceWalletRelay.value,
+                  let destinationWallet = destinationWalletRelay.value,
+                  let inputAmount = inputAmountRelay.value,
+                  let estimatedAmount = estimatedAmountRelay.value,
+                  let slippage = slippageRelay.value
+            else {return}
+            let fee = feesRelay.value
+            
+            // log
+            log(.swapSwapClick(tokenA: sourceWallet.token.symbol, tokenB: destinationWallet.token.symbol, sumA: inputAmount, sumB: estimatedAmount))
+            
+            // request
+            let request = provider.swap(
+                fromWallet: sourceWallet,
+                toWallet: destinationWallet,
+                amount: inputAmount,
+                slippage: slippage,
+                isSimulation: false
+            )
+                .map {$0 as ProcessTransactionResponseType}
+            
+            // show processing scene
+            navigate(
+                to: .processTransaction(
+                    request: request,
+                    transactionType: .swap(
+                        from: sourceWallet,
+                        to: destinationWallet,
+                        inputAmount: inputAmount.toLamport(decimals: sourceWallet.token.decimals),
+                        estimatedAmount: estimatedAmount.toLamport(decimals: destinationWallet.token.decimals),
+                        fee: fee[.default]?.lamports ?? 0
+                    )
+                )
+            )
         }
     }
 }

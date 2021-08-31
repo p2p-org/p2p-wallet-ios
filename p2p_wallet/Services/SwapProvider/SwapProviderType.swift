@@ -52,4 +52,13 @@ protocol SwapProviderType {
     
     /// Logo shown at bottom, after "Powered by" text
     func logoView() -> UIView
+    
+    /// Main function
+    func swap(
+        fromWallet: SolanaSDK.Wallet,
+        toWallet: SolanaSDK.Wallet,
+        amount: Double,
+        slippage: Double,
+        isSimulation: Bool
+    ) -> Single<SolanaSDK.TransactionID>
 }
