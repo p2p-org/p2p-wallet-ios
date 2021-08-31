@@ -100,7 +100,9 @@ extension SwapToken {
                 present(vc, animated: true, completion: nil)
             case .settings:
                 let vc = SettingsViewController(viewModel: viewModel)
-                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+                let nc = SettingsNavigationController(rootViewController: vc)
+                nc.modalPresentationStyle = .custom
+                present(nc, interactiveDismissalType: .standard)
             case .chooseSlippage:
                 let vc = SlippageSettingsViewController()
                 vc.completion = {[weak self] slippage in

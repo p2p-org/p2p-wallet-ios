@@ -16,20 +16,6 @@ extension NewSwap {
                 .calculateFittingHeightForPresentedView(targetWidth: targetWidth)
                 ?? .infinity
         }
-        
-        override func pushViewController(_ viewController: UIViewController, animated: Bool) {
-            super.pushViewController(viewController, animated: animated)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                self?.updatePresentationLayout(animated: animated)
-            }
-        }
-        
-        override func popViewController(animated: Bool) -> UIViewController? {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                self?.updatePresentationLayout(animated: animated)
-            }
-            return super.popViewController(animated: animated)
-        }
     }
     
     class SettingsBaseViewController: WLIndicatorModalVC {
@@ -72,6 +58,11 @@ extension NewSwap {
         lazy var contentStackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
         
         // MARK: - Methods
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            updatePresentationLayout(animated: animated)
+        }
+        
         override func setUp() {
             super.setUp()
             containerView.addSubview(stackView)
@@ -91,6 +82,10 @@ extension NewSwap {
         }
         
         // MARK: - Transition
+        func updatePresentationLayout(animated: Bool) {
+            (navigationController as? SettingsNavigationController)?.updatePresentationLayout(animated: animated)
+        }
+        
         override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
             super.calculateFittingHeightForPresentedView(targetWidth: targetWidth) +
                 containerView.fittingHeight(targetWidth: targetWidth) -
