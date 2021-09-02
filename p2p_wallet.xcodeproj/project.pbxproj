@@ -105,6 +105,7 @@
 		BC3ADE8D2570B832002B3B16 /* WLCenterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE8C2570B832002B3B16 /* WLCenterSheet.swift */; };
 		BC3B3DAA258C653000C6117E /* WLIndicatorModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3B3DA9258C653000C6117E /* WLIndicatorModalVC.swift */; };
 		BC3EA481254FD3CE00FB1FEA /* BaseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3EA480254FD3CE00FB1FEA /* BaseCollectionViewCell.swift */; };
+		BC423D8C26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC423D8B26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift */; };
 		BC44532526896F8B0019F37E /* BackupPasteSeedPhrasesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC44532426896F8B0019F37E /* BackupPasteSeedPhrasesVC.swift */; };
 		BC44532B268985C80019F37E /* ResetPinCodeWithSeedPhrasesEnterPhrasesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC44532A268985C80019F37E /* ResetPinCodeWithSeedPhrasesEnterPhrasesVC.swift */; };
 		BC44532D2689CBA90019F37E /* UserDefaultsPricesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC44532C2689CBA90019F37E /* UserDefaultsPricesStorage.swift */; };
@@ -468,6 +469,7 @@
 		BC3ADE8C2570B832002B3B16 /* WLCenterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLCenterSheet.swift; sourceTree = "<group>"; };
 		BC3B3DA9258C653000C6117E /* WLIndicatorModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLIndicatorModalVC.swift; sourceTree = "<group>"; };
 		BC3EA480254FD3CE00FB1FEA /* BaseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionViewCell.swift; sourceTree = "<group>"; };
+		BC423D8B26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Socket+Extensions.swift"; sourceTree = "<group>"; };
 		BC44532426896F8B0019F37E /* BackupPasteSeedPhrasesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupPasteSeedPhrasesVC.swift; sourceTree = "<group>"; };
 		BC44532A268985C80019F37E /* ResetPinCodeWithSeedPhrasesEnterPhrasesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPinCodeWithSeedPhrasesEnterPhrasesVC.swift; sourceTree = "<group>"; };
 		BC44532C2689CBA90019F37E /* UserDefaultsPricesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsPricesStorage.swift; sourceTree = "<group>"; };
@@ -1283,6 +1285,7 @@
 				BCC1F206269E96A1003DD648 /* SolanaSDK.DerivablePath+Extensions.swift */,
 				BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */,
 				BC28A9AE26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift */,
+				BC423D8B26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2251,6 +2254,7 @@
 				BC85EA69266E1324005006D5 /* ReceiveToken.RootView.swift in Sources */,
 				BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */,
 				BCA93F6225E77EF50081DDF6 /* TokenSettingsCell.swift in Sources */,
+				BC423D8C26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift in Sources */,
 				BCEB205925E1519600B54FEF /* RestoreWalletContainer.swift in Sources */,
 				BC5257E725CBACEA0076317E /* Fiat.swift in Sources */,
 				BCDCAE212682E41B001ED7B4 /* ReceiveToken.HelpViewController.swift in Sources */,
