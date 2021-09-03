@@ -12,8 +12,7 @@ protocol WalletDetailScenesFactory {
     func makeBuyTokenViewController(token: TransakWidgetViewController.CryptoCurrency) throws -> UIViewController
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
-//    func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapToken.ViewController
-    func makeNewSwapTokenViewController(fromWallet wallet: Wallet?) -> NewSwap.ViewController
+    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> CustomPresentableViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
     func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController
 }
