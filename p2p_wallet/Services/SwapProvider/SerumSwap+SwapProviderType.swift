@@ -38,56 +38,48 @@ extension SerumSwap: SwapProviderType {
               let creatingAccountFee = creatingAccountFee
         else {return .just(fees)}
         
-        var feeInSOL: SolanaSDK.Lamports = 0
-        
-        // if source token is native, a fee for creating wrapped SOL is needed, thus a fee for new account's signature (not associated token address) is also needed
-        if sourceWallet.token.isNative {
-            feeInSOL += creatingAccountFee + lamportsPerSignature
-        }
-        
-        // if destination wallet is a wrapped sol or not yet created, a fee for creating it is needed, as new address is an associated token address, the signature fee is NOT needed
-        if destinationWallet.token.address == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString ||
-            destinationWallet.pubkey == nil
-        {
-            feeInSOL += creatingAccountFee
-        }
-        
-        // fee for creating new open order
-        feeInSOL += creatingAccountFee + lamportsPerSignature
-        
-        // define if paying directly with SOL or paying with source token through fee-relayer
         let isPayingWithSOL = !isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
         
-        // if paying directly with SOL
-        if isPayingWithSOL {
-            feeInSOL += lamportsPerSignature
-            fees[.default] = .init(lamports: feeInSOL, token: .nativeSolana, toString: nil)
-            return .just(fees)
-        }
+        let networkFeeRequest = calculateNetworkFee(
+            fromWallet: sourceWallet,
+            toWallet: destinationWallet,
+            lamportsPerSignature: lamportsPerSignature,
+            minRentExemption: creatingAccountFee,
+            isPayingWithSOL: isPayingWithSOL
+        )
         
-        // convert fee from SOL to amount in source token
-        // TODO: - Check: look for sourceToken/SOL price and send to fee-relayer
-        else {
-            do {
-                let fromMint = try SolanaSDK.PublicKey(string: sourceWallet.mintAddress)
-                return loadFair(fromMint: fromMint, toMint: .solMint)
-                    .map {
-                        calculateNeededInputAmount(
-                            forReceivingEstimatedAmount: feeInSOL.convertToBalance(decimals: 9),
-                            rate: $0,
-                            slippage: 0.01
-                        )
+        return networkFeeRequest
+            .flatMap {networkFee in
+                // if paying directly with SOL
+                if isPayingWithSOL {
+                    fees[.default] = .init(lamports: networkFee, token: .nativeSolana, toString: nil)
+                    return .just(fees)
+                }
+                
+                // convert fee from SOL to amount in source token
+                // TODO: - Check: look for sourceToken/SOL price and send to fee-relayer
+                else {
+                    do {
+                        let fromMint = try SolanaSDK.PublicKey(string: sourceWallet.mintAddress)
+                        return loadFair(fromMint: fromMint, toMint: .solMint)
+                            .map {
+                                calculateNeededInputAmount(
+                                    forReceivingEstimatedAmount: networkFee.convertToBalance(decimals: 9),
+                                    rate: $0,
+                                    slippage: 0.01
+                                )
+                            }
+                            .map { neededAmount -> [FeeType: SwapFee] in
+                                guard let lamports = neededAmount?.toLamport(decimals: sourceWallet.token.decimals)
+                                else {return [:]}
+                                fees[.default] = .init(lamports: lamports, token: sourceWallet.token, toString: nil)
+                                return fees
+                            }
+                    } catch {
+                        return .error(error)
                     }
-                    .map { neededAmount -> [FeeType: SwapFee] in
-                        guard let lamports = neededAmount?.toLamport(decimals: sourceWallet.token.decimals)
-                        else {return [:]}
-                        fees[.default] = .init(lamports: lamports, token: sourceWallet.token, toString: nil)
-                        return fees
-                    }
-            } catch {
-                return .error(error)
+                }
             }
-        }
     }
     
     func calculateAvailableAmount(

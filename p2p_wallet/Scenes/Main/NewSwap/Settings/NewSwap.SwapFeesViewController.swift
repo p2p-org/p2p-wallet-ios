@@ -98,6 +98,12 @@ extension NewSwap {
                 .drive(networkFeeLabel.rx.text)
                 .disposed(by: disposeBag)
             
+            viewModel.feesDriver
+                .drive(onNext: {[weak self] _ in
+                    self?.updatePresentationLayout(animated: true)
+                })
+                .disposed(by: disposeBag)
+            
             Driver.combineLatest(
                 viewModel.sourceWalletDriver,
                 viewModel.destinationWalletDriver,
