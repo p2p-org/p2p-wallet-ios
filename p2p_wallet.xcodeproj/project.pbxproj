@@ -43,6 +43,7 @@
 		BC1255092653A2E400695A2B /* DerivablePathsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1255082653A2E400695A2B /* DerivablePathsVC.swift */; };
 		BC12550B2653A61C00695A2B /* SelectableDerivablePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */; };
 		BC1460C62685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */; };
+		BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC185EF726E20CFF00280FE6 /* SwapProvider.swift */; };
 		BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */; };
 		BC18CA8A263265680054E624 /* SolanaSDK.Token+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */; };
 		BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8E2632694F0054E624 /* TokensRepository.swift */; };
@@ -401,6 +402,7 @@
 		BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableDerivablePath.swift; sourceTree = "<group>"; };
 		BC1460C42685BBD6000D8CFE /* p2p_walletTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "p2p_walletTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcherTests.swift; sourceTree = "<group>"; };
+		BC185EF726E20CFF00280FE6 /* SwapProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapProvider.swift; sourceTree = "<group>"; };
 		BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Wallet+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Token+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA8E2632694F0054E624 /* TokensRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokensRepository.swift; sourceTree = "<group>"; };
@@ -1040,6 +1042,7 @@
 		BC63110926D78AC300516C38 /* SwapProvider */ = {
 			isa = PBXGroup;
 			children = (
+				BC185EF726E20CFF00280FE6 /* SwapProvider.swift */,
 				BC63110A26D78AE600516C38 /* SwapProviderType.swift */,
 				BC63110C26D78F9800516C38 /* SerumSwap+SwapProviderType.swift */,
 			);
@@ -2249,6 +2252,7 @@
 				BC5A9734260C6EA0009674C4 /* HomeHiddenWalletsSection.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				BCBE149E25EF3D110014BCE5 /* HomeViewModel.swift in Sources */,
+				BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */,
 				BC0A9E9025F09BDE0063F9E3 /* OnboardingCreatePassCodeVC.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
 				BC85EA69266E1324005006D5 /* ReceiveToken.RootView.swift in Sources */,

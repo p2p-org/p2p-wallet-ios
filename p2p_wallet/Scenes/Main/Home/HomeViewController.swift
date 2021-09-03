@@ -15,8 +15,7 @@ protocol HomeScenesFactory {
     func makeBuyTokenViewController(token: TransakWidgetViewController.CryptoCurrency) throws -> UIViewController
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
-//    func makeSwapTokenViewController(fromWallet wallet: Wallet?) -> SwapToken.ViewController
-    func makeNewSwapTokenViewController(fromWallet wallet: Wallet?) -> NewSwap.ViewController
+    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> CustomPresentableViewController
     func makeMyProductsViewController() -> MyProductsViewController
     func makeProfileVC() -> ProfileVC
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
@@ -123,7 +122,7 @@ class HomeViewController: BaseVC {
             analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
             present(vc, interactiveDismissalType: .standard, completion: nil)
         case .swapToken:
-            let vc = scenesFactory.makeNewSwapTokenViewController(fromWallet: nil)
+            let vc = scenesFactory.makeSwapTokenViewController(provider: .serum, fromWallet: nil)
             analyticsManager.log(event: .mainScreenSwapOpen)
             analyticsManager.log(event: .swapOpen(fromPage: "main_screen"))
             present(vc, interactiveDismissalType: .standard, completion: nil)
