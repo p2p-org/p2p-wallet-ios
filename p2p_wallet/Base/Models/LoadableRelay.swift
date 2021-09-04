@@ -16,6 +16,8 @@ public enum LoadableState: Equatable {
     case error(String?)
 }
 
+public typealias LoadableDriver<T> = Driver<(value: T?, state: LoadableState)>
+
 public class LoadableRelay<T> {
     // MARK: - Subject
     private let stateRelay = BehaviorRelay<LoadableState>(value: .notRequested)
@@ -82,5 +84,11 @@ public class LoadableRelay<T> {
         cancelRequest()
         self.value = value
         stateRelay.accept(state)
+    }
+    
+    /// Convert to driver to drive UI
+    public func asDriver() -> LoadableDriver<T> {
+        stateObservable.asDriver(onErrorJustReturn: .notRequested)
+            .map {[weak self] in (value: self?.value, state: $0)}
     }
 }

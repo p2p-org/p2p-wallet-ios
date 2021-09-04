@@ -96,11 +96,11 @@ protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelT
     var destinationWalletDriver: Driver<Wallet?> {get}
     var estimatedAmountDriver: Driver<Double?> {get}
     
-    var exchangeRateDriver: Driver<Double?> {get}
+    var exchangeRateDriver: LoadableDriver<Double> {get}
     
     var slippageDriver: Driver<Double?> {get}
     
-    var feesDriver: Driver<[FeeType: SwapFee]> {get}
+    var feesDriver: LoadableDriver<[FeeType: SwapFee]> {get}
     
     var payingTokenDriver: Driver<PayingToken> {get}
     
@@ -125,6 +125,16 @@ protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelT
     func changePayingToken(to payingToken: PayingToken)
     func getSourceWallet() -> Wallet?
     func providerSignatureView() -> UIView
+}
+
+extension NewSwapViewModelType {
+    var isSwapPairValidDriver: Driver<Bool> {
+        Driver.combineLatest([
+            exchangeRateDriver.map {$0.state},
+            feesDriver.map {$0.state}
+        ])
+            .map {$0.allSatisfy {$0 == .loaded}}
+    }
 }
 
 protocol NewSwapViewModelAPIClient {

@@ -159,6 +159,14 @@ extension NewSwap {
                     })
                     .disposed(by: disposeBag)
                 
+                viewModel.isSwapPairValidDriver
+                    .drive(balanceView.rx.isUserInteractionEnabled)
+                    .disposed(by: disposeBag)
+                
+                viewModel.isSwapPairValidDriver
+                    .drive(maxButton.rx.isUserInteractionEnabled)
+                    .disposed(by: disposeBag)
+                
                 // available amount
                 balanceTextDriver = Driver.combineLatest(
                     viewModel.availableAmountDriver,
@@ -245,7 +253,7 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             // input amount
-            viewModel.errorFetchingTokenPairInfoDriver
+            viewModel.isSwapPairValidDriver
                 .drive(amountTextField.rx.isUserInteractionEnabled)
                 .disposed(by: disposeBag)
             
