@@ -125,11 +125,11 @@ extension NewSwap {
                         creatingAccountFee: creatingAccountFee
                     )
                     
-                    // catch and return nil
-                    return Single.zip(
-                        requestExchangeRate,
-                        requestFees
-                    )
+                    // request, catch and return nil
+                    return requestExchangeRate
+                        .flatMap {exRate in
+                            requestFees.map {(exRate, $0)}
+                        }
                         .map(Optional.init)
                         .catchAndReturn(nil)
                 }
