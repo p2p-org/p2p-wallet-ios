@@ -25,14 +25,14 @@ extension NewSwap {
         private lazy var destinationWalletView = WalletView(viewModel: viewModel, type: .destination)
         
         private lazy var exchangeRateLabel = UILabel(textSize: 15, weight: .medium)
-//        private lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
-//            .padding(.init(all: 3))
-//            .onTap(self, action: #selector(reverseExchangeRate))
+        private lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
+            .padding(.init(all: 3))
+            .onTap(self, action: #selector(reverseExchangeRate))
         
         private lazy var slippageLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
         
         private lazy var swapFeeLabel = UILabel(text: L10n.swapFees, textSize: 15, weight: .medium)
-        private lazy var errorLabel = UILabel(textSize: 15, weight: .medium, textColor: .alert, numberOfLines: 0)
+        private lazy var errorLabel = UILabel(textSize: 15, weight: .medium, textColor: .alert, numberOfLines: 0, textAlignment: .center)
         
         private lazy var swapButton = WLButton.stepButton(type: .blue, label: L10n.swapNow)
             .onTap(self, action: #selector(authenticateAndSwap))
@@ -68,7 +68,7 @@ extension NewSwap {
                 createSectionView(
                     title: L10n.currentPrice,
                     contentView: exchangeRateLabel,
-                    rightView: nil, // exchangeRateReverseButton
+                    rightView: exchangeRateReverseButton,
                     addSeparatorOnTop: false
                 )
                     .withTag(1)
@@ -89,7 +89,7 @@ extension NewSwap {
                 
                 createSectionView(
                     label: swapFeeLabel,
-                    contentView: errorLabel,
+                    contentView: UIView(),
                     addSeparatorOnTop: false
                 )
                     .withModifier { view in
@@ -115,23 +115,27 @@ extension NewSwap {
         
         private func bind() {
             // exchange rate
-            let isRateNil = viewModel.exchangeRateDriver
-                .map {$0 == nil}
-            
-            isRateNil.drive(stackView.viewWithTag(1)!.rx.isHidden)
+            viewModel.isSwapPairValidDriver.map {!$0}
+                .drive(stackView.viewWithTag(1)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            isRateNil.drive(stackView.viewWithTag(2)!.rx.isHidden)
+            viewModel.isSwapPairValidDriver.map {!$0}
+                .drive(stackView.viewWithTag(2)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
             Driver.combineLatest(
                 viewModel.exchangeRateDriver,
                 viewModel.sourceWalletDriver,
-                viewModel.destinationWalletDriver
+                viewModel.destinationWalletDriver,
+                viewModel.isExchangeRateReversedDriver
             )
-                .map {exrate, source, destination -> String? in
-                    guard let exrate = exrate, let source = source, let destination = destination
+                .map {exrate, source, destination, isReversed -> String? in
+                    guard var exrate = exrate, let source = source, let destination = destination
                     else {return nil}
+                    
+                    if exrate != 0 && isReversed {
+                        exrate = 1/exrate
+                    }
                     
                     var string = exrate.toString(maximumFractionDigits: 9)
                     string += " "
@@ -152,31 +156,59 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             // fee
-            let isFeeNil = viewModel.feesDriver.map {$0.isEmpty}
-            
-            isFeeNil.drive(stackView.viewWithTag(4)!.rx.isHidden)
+            let isFeeEmpty = viewModel.feesDriver.map {$0.isEmpty}
+            isFeeEmpty
+                .drive(stackView.viewWithTag(4)!.rx.isHidden)
+                .disposed(by: disposeBag)
+
+            isFeeEmpty
+                .drive(stackView.viewWithTag(5)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            isFeeNil.drive(stackView.viewWithTag(5)!.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            // error
-            let isErrorHidden = viewModel.errorDriver
-                .map {
-                    $0 == nil ||
-                    [
+            // error label
+            let presentableErrorDriver = Driver.combineLatest(
+                viewModel.errorDriver,
+                viewModel.isSwapPairValidDriver,
+                viewModel.sourceWalletDriver.map {$0?.token.symbol},
+                viewModel.destinationWalletDriver.map {$0?.token.symbol},
+                viewModel.isLoadingDriver
+            )
+                .map {error, isValid, source, destination, isLoading -> String? in
+                    if isLoading {return nil}
+                    
+                    // Invalid swap pair
+                    if !isValid,
+                       let source = source,
+                       let destination = destination
+                    {
+                        return L10n.swappingFromToIsCurrentlyUnsupported(source, destination)
+                    }
+                    
+                    // These errors might not be shown in error label
+                    let hiddenErrors = [
                         L10n.insufficientFunds,
                         L10n.amountIsNotValid,
                         L10n.slippageIsnTValid,
                         L10n.someParametersAreMissing
-                    ].contains($0)
+                    ]
+                    
+                    // Validation errors
+                    if let error = error,
+                       !hiddenErrors.contains(error)
+                    {
+                        return error
+                    }
+                    
+                    return nil
                 }
             
-            isErrorHidden
+            presentableErrorDriver
+                .map {$0 == nil}
                 .drive(errorLabel.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            isErrorHidden
+            presentableErrorDriver
+                .map {$0 == nil}
                 .drive(onNext: {[weak self] isErrorHidden in
                     var textSize: CGFloat = 15
                     var textColor: UIColor = .textBlack
@@ -189,7 +221,7 @@ extension NewSwap {
                 })
                 .disposed(by: disposeBag)
             
-            viewModel.errorDriver
+            presentableErrorDriver
                 .map { $0 == L10n.swappingIsCurrentlyUnavailable }
                 .drive(onNext: {[weak self] isUnavailable in
                     self?.removeErrorView()
@@ -199,7 +231,7 @@ extension NewSwap {
                         self?.stackView.isHidden = true
                         self?.showErrorView(
                             title: L10n.swappingIsCurrentlyUnavailable,
-                            description: L10n.swappingPoolsNotFound + "\n" + L10n.pleaseTryAgainLater,
+                            description: L10n.swappingIsCurrentlyUnavailable,
                             retryAction: CocoaAction { [weak self] in
                                 self?.viewModel.reload()
                                 return .just(())
@@ -209,7 +241,7 @@ extension NewSwap {
                 })
                 .disposed(by: disposeBag)
             
-            viewModel.errorDriver
+            presentableErrorDriver
                 .drive(errorLabel.rx.text)
                 .disposed(by: disposeBag)
             
@@ -248,9 +280,9 @@ extension NewSwap {
             viewModel.swapSourceAndDestination()
         }
         
-//        @objc private func reverseExchangeRate() {
-//            viewModel.reverseExchangeRate()
-//        }
+        @objc private func reverseExchangeRate() {
+            viewModel.reverseExchangeRate()
+        }
         
         @objc private func authenticateAndSwap() {
             viewModel.authenticateAndSwap()
