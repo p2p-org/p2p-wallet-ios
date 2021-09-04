@@ -106,6 +106,10 @@ protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelT
     
     var errorDriver: Driver<String?> {get}
     
+    var isSwapPairValidDriver: Driver<Bool> {get}
+    
+    var isExchangeRateReversedDriver: Driver<Bool> {get}
+    
     var isSwappableDriver: Driver<Bool> {get}
     
     // Signals
@@ -117,7 +121,7 @@ protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelT
     func useAllBalance()
     func log(_ event: AnalyticsEvent)
     func swapSourceAndDestination()
-//    func reverseExchangeRate()
+    func reverseExchangeRate()
     func authenticateAndSwap()
     func changeSlippage(to slippage: Double)
     func changePayingToken(to payingToken: PayingToken)

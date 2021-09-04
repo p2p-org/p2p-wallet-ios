@@ -92,10 +92,18 @@ extension SerumSwap: SwapProviderType {
         
         if fee.token.symbol == "SOL" {
             if sourceWallet.token.isNative {
-                amount -= fee.lamports
+                if amount > fee.lamports {
+                    amount -= fee.lamports
+                } else {
+                    amount = 0
+                }
             }
         } else if fee.token.symbol == sourceWallet.token.symbol {
-            amount -= fee.lamports
+            if amount > fee.lamports {
+                amount -= fee.lamports
+            } else {
+                amount = 0
+            }
         }
         
         return amount.convertToBalance(decimals: sourceWallet.token.decimals)

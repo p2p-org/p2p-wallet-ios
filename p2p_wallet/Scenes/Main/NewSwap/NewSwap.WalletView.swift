@@ -245,6 +245,10 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             // input amount
+            viewModel.isSwapPairValidDriver
+                .drive(amountTextField.rx.isUserInteractionEnabled)
+                .disposed(by: disposeBag)
+            
             amountTextField.rx.text
                 .filter {[weak self] _ in self?.amountTextField.isFirstResponder == true}
                 .distinctUntilChanged()
