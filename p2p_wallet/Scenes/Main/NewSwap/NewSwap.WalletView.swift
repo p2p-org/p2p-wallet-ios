@@ -245,7 +245,7 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             // input amount
-            viewModel.isSwapPairValidDriver
+            viewModel.errorFetchingTokenPairInfoDriver
                 .drive(amountTextField.rx.isUserInteractionEnabled)
                 .disposed(by: disposeBag)
             

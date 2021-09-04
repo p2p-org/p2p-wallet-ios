@@ -44,6 +44,7 @@
 		BC12550B2653A61C00695A2B /* SelectableDerivablePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */; };
 		BC1460C62685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */; };
 		BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC185EF726E20CFF00280FE6 /* SwapProvider.swift */; };
+		BC185EFA26E3B81F00280FE6 /* LoadableRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC185EF926E3B81F00280FE6 /* LoadableRelay.swift */; };
 		BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */; };
 		BC18CA8A263265680054E624 /* SolanaSDK.Token+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */; };
 		BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8E2632694F0054E624 /* TokensRepository.swift */; };
@@ -403,6 +404,7 @@
 		BC1460C42685BBD6000D8CFE /* p2p_walletTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "p2p_walletTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcherTests.swift; sourceTree = "<group>"; };
 		BC185EF726E20CFF00280FE6 /* SwapProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapProvider.swift; sourceTree = "<group>"; };
+		BC185EF926E3B81F00280FE6 /* LoadableRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadableRelay.swift; sourceTree = "<group>"; };
 		BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Wallet+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Token+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA8E2632694F0054E624 /* TokensRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokensRepository.swift; sourceTree = "<group>"; };
@@ -1180,6 +1182,7 @@
 				BC53E2252654FE56005624CC /* DerivableAccount.swift */,
 				BCDCAE14267C4B90001ED7B4 /* AnalyticsEvent */,
 				BC59392B26D883EF0044EF5B /* SwapFee.swift */,
+				BC185EF926E3B81F00280FE6 /* LoadableRelay.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2400,6 +2403,7 @@
 				BC1BEBFE26CDFE290049A44C /* NewSwap.WalletView.swift in Sources */,
 				BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */,
 				BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */,
+				BC185EFA26E3B81F00280FE6 /* LoadableRelay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
