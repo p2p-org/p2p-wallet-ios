@@ -115,11 +115,11 @@ extension NewSwap {
         
         private func bind() {
             // exchange rate
-            viewModel.isSwapPairValidDriver.map {!$0}
+            viewModel.errorFetchingTokenPairInfoDriver.map {!$0}
                 .drive(stackView.viewWithTag(1)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            viewModel.isSwapPairValidDriver.map {!$0}
+            viewModel.errorFetchingTokenPairInfoDriver.map {!$0}
                 .drive(stackView.viewWithTag(2)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
@@ -168,10 +168,10 @@ extension NewSwap {
             // error label
             let presentableErrorDriver = Driver.combineLatest(
                 viewModel.errorDriver,
-                viewModel.isSwapPairValidDriver,
+                viewModel.errorFetchingTokenPairInfoDriver,
                 viewModel.sourceWalletDriver.map {$0?.token.symbol},
                 viewModel.destinationWalletDriver.map {$0?.token.symbol},
-                viewModel.isLoadingDriver
+                viewModel.isInitializingDriver
             )
                 .map {error, isValid, source, destination, isLoading -> String? in
                     if isLoading {return nil}

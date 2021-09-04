@@ -87,7 +87,7 @@ protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelT
     
     // Drivers
     var navigationDriver: Driver<NewSwap.NavigatableScene?> {get}
-    var isLoadingDriver: Driver<Bool> {get}
+    var isInitializingDriver: Driver<Bool> {get}
     
     var sourceWalletDriver: Driver<Wallet?> {get}
     var availableAmountDriver: Driver<Double?> {get}
@@ -105,8 +105,6 @@ protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelT
     var payingTokenDriver: Driver<PayingToken> {get}
     
     var errorDriver: Driver<String?> {get}
-    
-    var isSwapPairValidDriver: Driver<Bool> {get}
     
     var isExchangeRateReversedDriver: Driver<Bool> {get}
     
