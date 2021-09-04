@@ -255,8 +255,8 @@ extension NewSwap.ViewModel: NewSwapViewModelType {
     var destinationWalletDriver: Driver<Wallet?> { destinationWalletRelay.asDriver() }
     var estimatedAmountDriver: Driver<Double?> { estimatedAmountRelay.asDriver() }
     var errorDriver: Driver<String?> { errorRelay.asDriver() }
-    var exchangeRateDriver: Driver<Double?> { exchangeRateRelay.valueObservable.asDriver(onErrorJustReturn: nil) }
-    var feesDriver: Driver<[FeeType: SwapFee]> { feesRelay.valueObservable.map {$0 == nil ? [:]: $0!}.asDriver(onErrorJustReturn: [:]) }
+    var exchangeRateDriver: LoadableDriver<Double> { exchangeRateRelay.asDriver() }
+    var feesDriver: LoadableDriver<[FeeType: SwapFee]> { feesRelay.asDriver() }
     var payingTokenDriver: Driver<PayingToken> {
         payingTokenRelay.asDriver()
     }
