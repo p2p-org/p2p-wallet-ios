@@ -41,7 +41,7 @@ extension SwapToken.ViewModel: NewSwapSettingsViewModelType {
 }
 
 extension SwapToken.ViewModel: NewSwapSwapFeesViewModelType {
-    var feesDriver: LoadableDriver<[FeeType: SwapFee]> {
+    var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> {
         Driver.combineLatest(
             output.feeInLamports,
             output.liquidityProviderFee,

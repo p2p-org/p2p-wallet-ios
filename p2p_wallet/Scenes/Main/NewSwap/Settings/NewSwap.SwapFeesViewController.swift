@@ -9,7 +9,7 @@ import Foundation
 import RxCocoa
 
 protocol NewSwapSwapFeesViewModelType {
-    var feesDriver: LoadableDriver<[FeeType: SwapFee]> {get}
+    var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> {get}
     var sourceWalletDriver: Driver<Wallet?> {get}
     var destinationWalletDriver: Driver<Wallet?> {get}
     var payingTokenDriver: Driver<PayingToken> {get}
