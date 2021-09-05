@@ -105,12 +105,11 @@ public class LoadableRelay<T> {
     }
 }
 
-public typealias LoadableValue<T> = (value: T?, state: LoadableState, reloadAction: (() -> Void)?)
-public typealias LoadableDriver<T> = Driver<LoadableValue<T>>
+public typealias Loadable<T> = (value: T?, state: LoadableState, reloadAction: (() -> Void)?)
 
 extension LoadableRelay {
     /// Convert to driver to drive UI
-    public func asDriver() -> LoadableDriver<T> {
+    public func asDriver() -> Driver<Loadable<T>> {
         stateObservable.asDriver(onErrorJustReturn: .notRequested)
             .map {[weak self] in (value: self?.value, state: $0, reloadAction: {[weak self] in self?.reload()})}
     }
@@ -120,7 +119,7 @@ extension Reactive where Base: UILabel {
     /// Bindable sink for `loadbleText` property.
     public func loadableText<T>(
         onLoaded: @escaping ((T?) -> String?)
-    ) -> Binder<LoadableValue<T>> {
+    ) -> Binder<Loadable<T>> {
         Binder(self.base) {label, loadableValue in
             label.set(loadableValue, onLoaded: onLoaded)
         }
@@ -128,7 +127,7 @@ extension Reactive where Base: UILabel {
 }
 
 extension UILabel {
-    public func set<T>(_ loadableValue: LoadableValue<T>, onLoaded: @escaping ((T?) -> String?)) {
+    public func set<T>(_ loadableValue: Loadable<T>, onLoaded: @escaping ((T?) -> String?)) {
         isUserInteractionEnabled = false
         switch loadableValue.state {
         case .notRequested:

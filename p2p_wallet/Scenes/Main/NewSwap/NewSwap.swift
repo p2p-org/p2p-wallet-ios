@@ -96,11 +96,11 @@ protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelT
     var destinationWalletDriver: Driver<Wallet?> {get}
     var estimatedAmountDriver: Driver<Double?> {get}
     
-    var exchangeRateDriver: LoadableDriver<Double> {get}
+    var exchangeRateDriver: Driver<Loadable<Double>> {get}
     
     var slippageDriver: Driver<Double?> {get}
     
-    var feesDriver: LoadableDriver<[FeeType: SwapFee]> {get}
+    var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> {get}
     
     var payingTokenDriver: Driver<PayingToken> {get}
     
