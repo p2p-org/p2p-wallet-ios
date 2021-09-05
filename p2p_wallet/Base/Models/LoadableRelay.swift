@@ -14,9 +14,27 @@ public enum LoadableState: Equatable {
     case loading
     case loaded
     case error(String?)
+    
+    var isError: Bool {
+        switch self {
+        case .error(_): return true
+        default: return false
+        }
+    }
 }
 
-public typealias LoadableDriver<T> = Driver<(value: T?, state: LoadableState)>
+extension Collection where Element == LoadableState {
+    var combined: Element {
+        // if there is some error, return error
+        if contains(where: {$0.isError}) {return .error(nil)}
+        // if all loaded, return loaded
+        if allSatisfy({$0 == .loaded}) {return .loaded}
+        // if there is 1 loading, return loading
+        if contains(where: {$0 == .loading}) {return .loading}
+        // default
+        return .notRequested
+    }
+}
 
 public class LoadableRelay<T> {
     // MARK: - Subject
@@ -85,10 +103,58 @@ public class LoadableRelay<T> {
         self.value = value
         stateRelay.accept(state)
     }
-    
+}
+
+public typealias LoadableValue<T> = (value: T?, state: LoadableState, reloadAction: (() -> Void)?)
+public typealias LoadableDriver<T> = Driver<LoadableValue<T>>
+
+extension LoadableRelay {
     /// Convert to driver to drive UI
     public func asDriver() -> LoadableDriver<T> {
         stateObservable.asDriver(onErrorJustReturn: .notRequested)
-            .map {[weak self] in (value: self?.value, state: $0)}
+            .map {[weak self] in (value: self?.value, state: $0, reloadAction: {[weak self] in self?.reload()})}
     }
+}
+
+extension Reactive where Base: UILabel {
+    /// Bindable sink for `loadbleText` property.
+    public func loadableText<T>(
+        onLoaded: @escaping ((T?) -> String?)
+    ) -> Binder<LoadableValue<T>> {
+        Binder(self.base) {label, loadableValue in
+            label.set(loadableValue, onLoaded: onLoaded)
+        }
+    }
+}
+
+extension UILabel {
+    public func set<T>(_ loadableValue: LoadableValue<T>, onLoaded: @escaping ((T?) -> String?)) {
+        isUserInteractionEnabled = false
+        switch loadableValue.state {
+        case .notRequested:
+            break
+        case .loading:
+            text = L10n.loading + "..."
+        case .loaded:
+            text = onLoaded(loadableValue.value)
+        case .error(_):
+            isUserInteractionEnabled = true
+            
+            attributedText = NSMutableAttributedString()
+                .text(L10n.error.uppercaseFirst + ". " + L10n.tapToTryAgain, size: font.pointSize, weight: font.weight, color: .alert)
+            
+            let gesture = LoadableTapGesture(target: self, action: #selector(loadableTextDidTap(gesture:)))
+            gesture.reloadAction = loadableValue.reloadAction
+            addGestureRecognizer(gesture)
+        }
+    }
+    
+    @objc public func loadableTextDidTap(gesture: UIGestureRecognizer) {
+        guard let gesture = gesture as? LoadableTapGesture else {return}
+        gesture.reloadAction?()
+    }
+}
+
+class LoadableTapGesture: UITapGestureRecognizer {
+    var reloadAction: (() -> Void)?
 }

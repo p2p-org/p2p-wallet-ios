@@ -445,3 +445,4 @@
 "Enter the amount" = "Nhập số tiền";
 "Don’t go over the available funds" = "Đừng vượt quá số tiền hiện có";
 "Error fetching market %@" = "Lỗi khi tìm nạp thị trường %@";
+"Tap to try again" = "Nhấn để thử lại";

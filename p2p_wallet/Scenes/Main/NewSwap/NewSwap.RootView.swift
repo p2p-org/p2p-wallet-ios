@@ -115,11 +115,13 @@ extension NewSwap {
         
         private func bind() {
             // exchange rate
-            viewModel.exchangeRateDriver.map {$0.value == nil}
+            viewModel.exchangeRateDriver
+                .map {$0.state == .notRequested}
                 .drive(stackView.viewWithTag(1)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            viewModel.exchangeRateDriver.map {$0.value == nil}
+            viewModel.exchangeRateDriver
+                .map {$0.state == .notRequested}
                 .drive(stackView.viewWithTag(2)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
@@ -129,24 +131,25 @@ extension NewSwap {
                 viewModel.destinationWalletDriver,
                 viewModel.isExchangeRateReversedDriver
             )
-                .map {exrate, source, destination, isReversed -> String? in
-                    guard var exrate = exrate, let source = source, let destination = destination
-                    else {return nil}
-                    
-                    if exrate != 0 && isReversed {
-                        exrate = 1/exrate
-                    }
-                    
-                    var string = exrate.toString(maximumFractionDigits: 9)
-                    string += " "
-                    string += source.token.symbol
-                    string += " "
-                    string += L10n.per
-                    string += " "
-                    string += destination.token.symbol
-                    return string
-                }
-                .drive(exchangeRateLabel.rx.text)
+                .drive(onNext: {[weak self] exrate, source, destination, isReversed in
+                    self?.exchangeRateLabel.set(exrate, onLoaded: { rate in
+                        guard let source = source, let destination = destination else {
+                            return nil
+                        }
+                        var rate = rate
+                        if rate != 0 && isReversed {
+                            rate = 1/rate
+                        }
+                        var string = rate.toString(maximumFractionDigits: 9)
+                        string += " "
+                        string += source.token.symbol
+                        string += " "
+                        string += L10n.per
+                        string += " "
+                        string += destination.token.symbol
+                        return string
+                    })
+                })
                 .disposed(by: disposeBag)
             
             // slippage
@@ -156,7 +159,7 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             // fee
-            let isFeeEmpty = viewModel.feesDriver.map {$0.isEmpty}
+            let isFeeEmpty = viewModel.feesDriver.map {$0.state == .notRequested}
             isFeeEmpty
                 .drive(stackView.viewWithTag(4)!.rx.isHidden)
                 .disposed(by: disposeBag)
@@ -178,6 +181,7 @@ extension NewSwap {
                     if isInitializing {return nil}
                     
                     // Invalid swap pair
+                    
                     if !isValid,
                        let source = source,
                        let destination = destination
