@@ -125,12 +125,14 @@ extension NewSwap {
                 .drive(stackView.viewWithTag(2)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            Driver.combineLatest(
-                viewModel.exchangeRateDriver,
-                viewModel.sourceWalletDriver,
-                viewModel.destinationWalletDriver,
-                viewModel.isExchangeRateReversedDriver
-            )
+            viewModel.exchangeRateDriver
+                .withLatestFrom(
+                    Driver.combineLatest(
+                        viewModel.sourceWalletDriver,
+                        viewModel.destinationWalletDriver,
+                        viewModel.isExchangeRateReversedDriver
+                    ),
+                    resultSelector: {($0, $1.0, $1.1, $1.2)})
                 .drive(onNext: {[weak self] exrate, source, destination, isReversed in
                     self?.exchangeRateLabel.set(exrate, onLoaded: { rate in
                         guard let source = source, let destination = destination else {
