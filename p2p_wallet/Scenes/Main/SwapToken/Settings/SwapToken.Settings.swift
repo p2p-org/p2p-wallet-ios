@@ -41,25 +41,25 @@ extension SwapToken.ViewModel: NewSwapSettingsViewModelType {
 }
 
 extension SwapToken.ViewModel: NewSwapSwapFeesViewModelType {
-    var feesDriver: Driver<[FeeType: SwapFee]> {
+    var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> {
         Driver.combineLatest(
             output.feeInLamports,
             output.liquidityProviderFee,
             output.sourceWallet,
             output.destinationWallet
         )
-            .map {fee, liquidityProviderFee, source, destination -> [FeeType: SwapFee] in
+            .map {fee, liquidityProviderFee, source, destination in
                 var result = [FeeType: SwapFee]()
                 guard let source = source, let destination = destination
-                else {return result}
-                
+                else {return (value: result, state: .loaded, reloadAction: nil)}
+
                 if let fee = liquidityProviderFee {
                     result[.liquidityProvider] = .init(
                         lamports: fee.toLamport(decimals: destination.token.decimals),
                         token: destination.token
                     )
                 }
-                
+
                 if let fee = fee {
                     if SwapToken.isFeeRelayerEnabled(source: source, destination: destination) {
                         result[.default] = .init(
@@ -73,8 +73,8 @@ extension SwapToken.ViewModel: NewSwapSwapFeesViewModelType {
                         )
                     }
                 }
-                
-                return result
+
+                return (value: result, state: .loaded, reloadAction: nil)
             }
     }
 }

@@ -444,3 +444,7 @@
 "SELECT" = "ВЫБРАТЬ";
 "Enter the amount" = "Введите сумму";
 "Don’t go over the available funds" = "Не превышайте доступные средства";
+"Error fetching market %@" = "Ошибка при загрузке маркета %@";
+"Tap to try again" = "Нажмите, чтобы повторить попытку";
+"Loading exchange rate" = "Загрузка обменного курса";
+"Calculating fees" = "Идет расчет комиссий";

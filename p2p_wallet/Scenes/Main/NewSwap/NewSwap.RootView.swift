@@ -115,38 +115,45 @@ extension NewSwap {
         
         private func bind() {
             // exchange rate
-            viewModel.isSwapPairValidDriver.map {!$0}
+            viewModel.exchangeRateDriver
+                .map {$0.state == .notRequested}
                 .drive(stackView.viewWithTag(1)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            viewModel.isSwapPairValidDriver.map {!$0}
+            viewModel.exchangeRateDriver
+                .map {$0.state == .notRequested}
                 .drive(stackView.viewWithTag(2)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
             Driver.combineLatest(
                 viewModel.exchangeRateDriver,
-                viewModel.sourceWalletDriver,
-                viewModel.destinationWalletDriver,
                 viewModel.isExchangeRateReversedDriver
             )
-                .map {exrate, source, destination, isReversed -> String? in
-                    guard var exrate = exrate, let source = source, let destination = destination
-                    else {return nil}
-                    
-                    if exrate != 0 && isReversed {
-                        exrate = 1/exrate
-                    }
-                    
-                    var string = exrate.toString(maximumFractionDigits: 9)
-                    string += " "
-                    string += source.token.symbol
-                    string += " "
-                    string += L10n.per
-                    string += " "
-                    string += destination.token.symbol
-                    return string
-                }
-                .drive(exchangeRateLabel.rx.text)
+                .withLatestFrom(
+                    Driver.combineLatest(
+                        viewModel.sourceWalletDriver,
+                        viewModel.destinationWalletDriver
+                    ),
+                    resultSelector: {($0.0, $0.1, $1.0, $1.1)})
+                .drive(onNext: {[weak self] exrate, isReversed, source, destination in
+                    self?.exchangeRateLabel.set(exrate, onLoaded: { rate in
+                        guard let source = source, let destination = destination else {
+                            return nil
+                        }
+                        var rate = rate
+                        if rate != 0 && isReversed {
+                            rate = 1/rate
+                        }
+                        var string = rate.toString(maximumFractionDigits: 9)
+                        string += " "
+                        string += source.token.symbol
+                        string += " "
+                        string += L10n.per
+                        string += " "
+                        string += destination.token.symbol
+                        return string
+                    })
+                })
                 .disposed(by: disposeBag)
             
             // slippage
@@ -156,7 +163,7 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             // fee
-            let isFeeEmpty = viewModel.feesDriver.map {$0.isEmpty}
+            let isFeeEmpty = viewModel.feesDriver.map {$0.state == .notRequested}
             isFeeEmpty
                 .drive(stackView.viewWithTag(4)!.rx.isHidden)
                 .disposed(by: disposeBag)
@@ -167,17 +174,19 @@ extension NewSwap {
             
             // error label
             let presentableErrorDriver = Driver.combineLatest(
+                viewModel.isInitializingDriver,
                 viewModel.errorDriver,
-                viewModel.isSwapPairValidDriver,
+                viewModel.exchangeRateDriver,
+                viewModel.feesDriver,
                 viewModel.sourceWalletDriver.map {$0?.token.symbol},
-                viewModel.destinationWalletDriver.map {$0?.token.symbol},
-                viewModel.isLoadingDriver
+                viewModel.destinationWalletDriver.map {$0?.token.symbol}
             )
-                .map {error, isValid, source, destination, isLoading -> String? in
-                    if isLoading {return nil}
+                .map {isInitializing, error, exchangeRate, fee, source, destination -> String? in
+                    if isInitializing {return nil}
                     
                     // Invalid swap pair
-                    if !isValid,
+                    let combinedState = [exchangeRate.state, fee.state].combined
+                    if combinedState.isError,
                        let source = source,
                        let destination = destination
                     {
@@ -251,12 +260,20 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             Driver.combineLatest(
+                viewModel.exchangeRateDriver,
+                viewModel.feesDriver,
                 viewModel.sourceWalletDriver.map {$0 == nil},
                 viewModel.destinationWalletDriver.map {$0 == nil},
                 viewModel.inputAmountDriver,
                 viewModel.errorDriver
             )
-                .map {isSourceWalletEmpty, isDestinationWalletEmpty, amount, error -> String? in
+                .map {fees, exrate, isSourceWalletEmpty, isDestinationWalletEmpty, amount, error -> String? in
+                    if exrate.state == .loading {
+                        return L10n.loadingExchangeRate + "..."
+                    }
+                    if fees.state == .loading {
+                        return L10n.calculatingFees + "..."
+                    }
                     if isSourceWalletEmpty || isDestinationWalletEmpty {
                         return L10n.selectToken
                     }
