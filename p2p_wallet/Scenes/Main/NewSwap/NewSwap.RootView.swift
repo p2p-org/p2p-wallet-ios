@@ -181,8 +181,8 @@ extension NewSwap {
                     if isInitializing {return nil}
                     
                     // Invalid swap pair
-                    
-                    if !isValid,
+                    let combinedState = [exchangeRate.state, fee.state].combined
+                    if combinedState.isError,
                        let source = source,
                        let destination = destination
                     {
