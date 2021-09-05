@@ -263,7 +263,14 @@ extension NewSwap.ViewModel: NewSwapViewModelType {
     var slippageDriver: Driver<Double?> { slippageRelay.asDriver() }
     var isExchangeRateReversedDriver: Driver<Bool> {isExchangeRateReversed.asDriver()}
     var isSwappableDriver: Driver<Bool> {
-        errorRelay.map {$0 == nil}.asDriver(onErrorJustReturn: false)
+        Observable.combineLatest([
+            errorRelay.map {$0 != nil},
+            Observable.combineLatest([
+                exchangeRateRelay.stateObservable,
+                feesRelay.stateObservable
+            ]).map {$0.combined == .loaded}
+        ]).map {$0.allSatisfy {$0}}
+        .asDriver(onErrorJustReturn: false)
     }
     
     var useAllBalanceDidTapSignal: Signal<Double?> {useAllBalanceSubject.asSignal(onErrorJustReturn: nil)}
