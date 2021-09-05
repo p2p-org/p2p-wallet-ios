@@ -131,11 +131,14 @@ extension UILabel {
         isUserInteractionEnabled = false
         switch loadableValue.state {
         case .notRequested:
-            break
+            attributedText = NSMutableAttributedString()
+                .text(L10n.loading + "...")
         case .loading:
-            text = L10n.loading + "..."
+            attributedText = NSMutableAttributedString()
+                .text(L10n.loading + "...")
         case .loaded:
-            text = onLoaded(loadableValue.value)
+            attributedText = NSMutableAttributedString()
+                .text(onLoaded(loadableValue.value) ?? "")
         case .error(_):
             isUserInteractionEnabled = true
             
