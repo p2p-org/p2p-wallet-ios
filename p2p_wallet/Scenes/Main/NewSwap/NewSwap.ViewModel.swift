@@ -29,8 +29,10 @@ extension NewSwap {
         private let useAllBalanceSubject = PublishRelay<Double?>()
         
         // MARK: - Subject
+        private let lamportsPerSignatureRelay: LoadableRelay<SolanaSDK.Lamports>
+        private let creatingAccountFeeRelay: LoadableRelay<SolanaSDK.Lamports>
+        
         private let navigationRelay = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let isLoadingRelay = BehaviorRelay<Bool>(value: false)
         
         private let sourceWalletRelay = BehaviorRelay<Wallet?>(value: nil)
         private let inputAmountRelay = BehaviorRelay<Double?>(value: nil)
@@ -38,17 +40,13 @@ extension NewSwap {
         private let destinationWalletRelay = BehaviorRelay<Wallet?>(value: nil)
         private let estimatedAmountRelay = BehaviorRelay<Double?>(value: nil)
         
-        private let exchangeRateRelay = BehaviorRelay<Double?>(value: nil)
+        private var exchangeRateRelay: LoadableRelay<Double>
+        private let feesRelay: LoadableRelay<[FeeType: SwapFee]>
         
         private let slippageRelay = BehaviorRelay<Double?>(value: Defaults.slippage)
         private let payingTokenRelay = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
         
-        private let feesRelay = BehaviorRelay<[FeeType: SwapFee]>(value: [:])
-        private var lamportsPerSignatureRelay = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
-        private var creatingAccountFeeRelay = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
-        
         private let errorRelay = BehaviorRelay<String?>(value: nil)
-        private let isSwapPairValidRelay = BehaviorRelay<Bool>(value: false)
         private let isExchangeRateReversed = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
@@ -66,6 +64,14 @@ extension NewSwap {
             self.walletsRepository = walletsRepository
             self.analyticsManager = analyticsManager
             self.authenticationHandler = authenticationHandler
+            self.lamportsPerSignatureRelay = .init(
+                request: apiClient.getLamportsPerSignature()
+            )
+            self.creatingAccountFeeRelay = .init(
+                request: apiClient.getCreatingTokenAccountFee()
+            )
+            self.exchangeRateRelay = .init(request: .just(0)) // placeholder, change request later
+            self.feesRelay = .init(request: .just([:])) // placeholder, change request later
             bind()
             
             sourceWalletRelay.accept(sourceWallet)
@@ -91,70 +97,46 @@ extension NewSwap {
             Observable.combineLatest(
                 sourceWalletRelay.distinctUntilChanged(),
                 destinationWalletRelay.distinctUntilChanged(),
-                lamportsPerSignatureRelay,
-                creatingAccountFeeRelay
+                lamportsPerSignatureRelay.valueObservable,
+                creatingAccountFeeRelay.valueObservable
             )
                 .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-                .do(onNext: {[weak self] _ in
+                .subscribe(onNext: {[weak self] sourceWallet, destinationWallet, lamportsPerSignature, creatingAccountFee in
+                    guard let self = self else {return}
+                    
                     // reset exchange rate and fees
-                    self?.exchangeRateRelay.accept(nil)
-                    self?.feesRelay.accept([:])
-                    self?.isSwapPairValidRelay.accept(false)
-                    self?.isExchangeRateReversed.accept(false)
-                })
-                .flatMap { [weak self] sourceWallet, destinationWallet, lamportsPerSignature, creatingAccountFee -> Single<(Double?, [FeeType: SwapFee]?)?> in
-                    guard let self = self else {throw SolanaSDK.Error.unknown}
+                    self.exchangeRateRelay.flush()
+                    self.feesRelay.flush()
+                    self.isExchangeRateReversed.accept(false)
                     
-                    // if source wallet or destinationWallet is undefined, just mark exchange rate and fees as undefined
+                    // if source wallet or destinationWallet is undefined
                     guard let sourceWallet = sourceWallet, let destinationWallet = destinationWallet
-                    else {return .just(nil)}
+                    else { return }
                     if sourceWallet.mintAddress == destinationWallet.mintAddress {
-                        return .just(nil)
+                        return
                     }
-                    
-                    // mark as loading, block user's interaction
-                    self.isLoadingRelay.accept(true)
-                    
+
                     // form request
-                    let requestExchangeRate = self.provider.loadPrice(fromMint: sourceWallet.mintAddress, toMint: destinationWallet.mintAddress)
-                    
-                    let requestFees = self.provider.calculateFees(
+                    self.exchangeRateRelay.request = self.provider
+                        .loadPrice(fromMint: sourceWallet.mintAddress, toMint: destinationWallet.mintAddress)
+
+                    self.feesRelay.request = self.provider.calculateFees(
                         sourceWallet: sourceWallet,
                         destinationWallet: destinationWallet,
                         lamportsPerSignature: lamportsPerSignature,
                         creatingAccountFee: creatingAccountFee
                     )
                     
-                    // request, catch and return nil
-                    return requestExchangeRate
-                        .flatMap {exRate in
-                            requestFees.map {(exRate, $0)}
-                        }
-                        .map(Optional.init)
-                        .catchAndReturn(nil)
-                }
-                .subscribe(onNext: {[weak self] params in
-                    guard let params = params else {
-                        // resign loading state
-                        self?.isLoadingRelay.accept(false)
-                        self?.isSwapPairValidRelay.accept(false)
-                        return
-                    }
-                    
-                    // resign loading state
-                    self?.isLoadingRelay.accept(false)
-                    self?.isSwapPairValidRelay.accept(true)
-                    
-                    // exchange rate and fee
-                    self?.exchangeRateRelay.accept(params.0)
-                    self?.feesRelay.accept(params.1 ?? [:])
+                    // request
+                    self.exchangeRateRelay.reload()
+                    self.feesRelay.reload()
                 })
                 .disposed(by: disposeBag)
             
             // estimating
             Observable.combineLatest(
                 inputAmountSubject.map {$0?.double},
-                exchangeRateRelay,
+                exchangeRateRelay.valueObservable,
                 slippageRelay
             )
                 .map {[weak self] in
@@ -169,7 +151,7 @@ extension NewSwap {
             
             Observable.combineLatest(
                 estimatedAmountSubject.map {$0?.double},
-                exchangeRateRelay,
+                exchangeRateRelay.valueObservable,
                 slippageRelay
             )
                 .map {[weak self] in
@@ -188,8 +170,8 @@ extension NewSwap {
                 inputAmountRelay,
                 destinationWalletRelay,
                 estimatedAmountRelay,
-                exchangeRateRelay,
-                feesRelay,
+                exchangeRateRelay.valueObservable,
+                feesRelay.valueObservable,
                 slippageRelay
             )
                 .map { [weak self] params -> String? in
@@ -201,7 +183,7 @@ extension NewSwap {
                         destinationWallet: params.2,
                         estimatedAmount: params.3,
                         exchangeRate: params.4,
-                        fee: params.5[.default],
+                        fee: params.5?[.default],
                         solWallet: self.walletsRepository.nativeWallet,
                         slippage: params.6
                     )
@@ -241,7 +223,7 @@ extension NewSwap {
                         to: destinationWallet,
                         inputAmount: inputAmount.toLamport(decimals: sourceWallet.token.decimals),
                         estimatedAmount: estimatedAmount.toLamport(decimals: destinationWallet.token.decimals),
-                        fee: fee[.default]?.lamports ?? 0
+                        fee: fee?[.default]?.lamports ?? 0
                     )
                 )
             )
@@ -252,30 +234,43 @@ extension NewSwap {
 extension NewSwap.ViewModel: NewSwapViewModelType {
     // MARK: - Output
     var navigationDriver: Driver<NewSwap.NavigatableScene?> { navigationRelay.asDriver() }
-    var isLoadingDriver: Driver<Bool> { isLoadingRelay.asDriver() }
+    var isInitializingDriver: Driver<Bool> {
+        Observable.combineLatest([
+            lamportsPerSignatureRelay.stateObservable,
+            creatingAccountFeeRelay.stateObservable
+        ])
+            .map {$0.combined != .loaded}
+            .asDriver(onErrorJustReturn: true)
+    }
     var sourceWalletDriver: Driver<Wallet?> { sourceWalletRelay.asDriver() }
     var availableAmountDriver: Driver<Double?> {
         Observable.combineLatest(
             sourceWalletRelay,
-            feesRelay
+            feesRelay.valueObservable
         )
-            .map {[weak self] in self?.provider.calculateAvailableAmount(sourceWallet: $0, fee: $1[.default])}
+            .map {[weak self] in self?.provider.calculateAvailableAmount(sourceWallet: $0, fee: $1?[.default])}
             .asDriver(onErrorJustReturn: nil)
     }
     var inputAmountDriver: Driver<Double?> { inputAmountRelay.asDriver() }
     var destinationWalletDriver: Driver<Wallet?> { destinationWalletRelay.asDriver() }
     var estimatedAmountDriver: Driver<Double?> { estimatedAmountRelay.asDriver() }
     var errorDriver: Driver<String?> { errorRelay.asDriver() }
-    var exchangeRateDriver: Driver<Double?> { exchangeRateRelay.asDriver() }
-    var feesDriver: Driver<[FeeType: SwapFee]> { feesRelay.asDriver() }
+    var exchangeRateDriver: Driver<Loadable<Double>> { exchangeRateRelay.asDriver() }
+    var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> { feesRelay.asDriver() }
     var payingTokenDriver: Driver<PayingToken> {
         payingTokenRelay.asDriver()
     }
     var slippageDriver: Driver<Double?> { slippageRelay.asDriver() }
-    var isSwapPairValidDriver: Driver<Bool> {isSwapPairValidRelay.asDriver()}
     var isExchangeRateReversedDriver: Driver<Bool> {isExchangeRateReversed.asDriver()}
     var isSwappableDriver: Driver<Bool> {
-        errorRelay.map {$0 == nil}.asDriver(onErrorJustReturn: false)
+        Observable.combineLatest([
+            errorRelay.map {$0 == nil},
+            Observable.combineLatest([
+                exchangeRateRelay.stateObservable,
+                feesRelay.stateObservable
+            ]).map {$0.combined == .loaded}
+        ]).map {$0.allSatisfy {$0}}
+        .asDriver(onErrorJustReturn: false)
     }
     
     var useAllBalanceDidTapSignal: Signal<Double?> {useAllBalanceSubject.asSignal(onErrorJustReturn: nil)}
@@ -287,21 +282,8 @@ extension NewSwap.ViewModel: NewSwapViewModelType {
 extension NewSwap.ViewModel {
     // MARK: - Actions
     func reload() {
-        isLoadingRelay.accept(true)
-        Single.zip(
-            apiClient.getLamportsPerSignature(),
-            apiClient.getCreatingTokenAccountFee()
-        )
-            .subscribe(onSuccess: {[weak self] lps, ctaFee in
-                self?.isLoadingRelay.accept(false)
-                self?.lamportsPerSignatureRelay.accept(lps)
-                self?.creatingAccountFeeRelay.accept(ctaFee)
-            }, onFailure: {error in
-                Logger.log(message: error.readableDescription, event: .error)
-                self.isLoadingRelay.accept(false)
-                self.errorRelay.accept(L10n.swappingIsCurrentlyUnavailable)
-            })
-            .disposed(by: disposeBag)
+        lamportsPerSignatureRelay.reload()
+        creatingAccountFeeRelay.reload()
     }
     
     func navigate(to scene: NewSwap.NavigatableScene) {
@@ -323,7 +305,7 @@ extension NewSwap.ViewModel {
     }
     
     func useAllBalance() {
-        guard let amount = provider.calculateAvailableAmount(sourceWallet: sourceWalletRelay.value, fee: feesRelay.value[.default])
+        guard let amount = provider.calculateAvailableAmount(sourceWallet: sourceWalletRelay.value, fee: feesRelay.value?[.default])
         else {return}
         analyticsManager.log(event: .swapAvailableClick(sum: amount))
         useAllBalanceSubject.accept(amount)
