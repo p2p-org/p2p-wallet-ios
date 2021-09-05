@@ -446,3 +446,5 @@
 "Don’t go over the available funds" = "Don’t go over the available funds";
 "Error fetching market %@" = "Error fetching market %@";
 "Tap to try again" = "Tap to try again";
+"Loading exchange rate" = "Loading exchange rate";
+"Calculating fees" = "Calculating fees";

@@ -125,15 +125,17 @@ extension NewSwap {
                 .drive(stackView.viewWithTag(2)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            viewModel.exchangeRateDriver
+            Driver.combineLatest(
+                viewModel.exchangeRateDriver,
+                viewModel.isExchangeRateReversedDriver
+            )
                 .withLatestFrom(
                     Driver.combineLatest(
                         viewModel.sourceWalletDriver,
-                        viewModel.destinationWalletDriver,
-                        viewModel.isExchangeRateReversedDriver
+                        viewModel.destinationWalletDriver
                     ),
-                    resultSelector: {($0, $1.0, $1.1, $1.2)})
-                .drive(onNext: {[weak self] exrate, source, destination, isReversed in
+                    resultSelector: {($0.0, $0.1, $1.0, $1.1)})
+                .drive(onNext: {[weak self] exrate, isReversed, source, destination in
                     self?.exchangeRateLabel.set(exrate, onLoaded: { rate in
                         guard let source = source, let destination = destination else {
                             return nil
@@ -258,12 +260,20 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             Driver.combineLatest(
+                viewModel.exchangeRateDriver,
+                viewModel.feesDriver,
                 viewModel.sourceWalletDriver.map {$0 == nil},
                 viewModel.destinationWalletDriver.map {$0 == nil},
                 viewModel.inputAmountDriver,
                 viewModel.errorDriver
             )
-                .map {isSourceWalletEmpty, isDestinationWalletEmpty, amount, error -> String? in
+                .map {fees, exrate, isSourceWalletEmpty, isDestinationWalletEmpty, amount, error -> String? in
+                    if exrate.state == .loading {
+                        return L10n.loadingExchangeRate + "..."
+                    }
+                    if fees.state == .loading {
+                        return L10n.calculatingFees + "..."
+                    }
                     if isSourceWalletEmpty || isDestinationWalletEmpty {
                         return L10n.selectToken
                     }
