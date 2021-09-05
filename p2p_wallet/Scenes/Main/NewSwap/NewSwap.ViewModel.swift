@@ -264,7 +264,7 @@ extension NewSwap.ViewModel: NewSwapViewModelType {
     var isExchangeRateReversedDriver: Driver<Bool> {isExchangeRateReversed.asDriver()}
     var isSwappableDriver: Driver<Bool> {
         Observable.combineLatest([
-            errorRelay.map {$0 != nil},
+            errorRelay.map {$0 == nil},
             Observable.combineLatest([
                 exchangeRateRelay.stateObservable,
                 feesRelay.stateObservable
