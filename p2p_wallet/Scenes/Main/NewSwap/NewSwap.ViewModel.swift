@@ -239,7 +239,7 @@ extension NewSwap.ViewModel: NewSwapViewModelType {
             lamportsPerSignatureRelay.stateObservable,
             creatingAccountFeeRelay.stateObservable
         ])
-            .map {$0.allSatisfy {$0 == .loaded}}
+            .map {$0.combined != .loaded}
             .asDriver(onErrorJustReturn: true)
     }
     var sourceWalletDriver: Driver<Wallet?> { sourceWalletRelay.asDriver() }
