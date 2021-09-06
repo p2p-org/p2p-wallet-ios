@@ -109,7 +109,10 @@ extension ProcessTransaction {
                 }
                 
                 // Execute
-                requestIndex = markAsRequestingAndSendRequest(transaction: transaction, fee: fee)
+                requestIndex = markAsRequestingAndSendRequest(
+                    transaction: transaction,
+                    fee: .init(lamports: fee, token: .nativeSolana)
+                )
             case .orcaSwap(let from, let to, let inputAmount, let estimatedAmount, let fee):
                 // form transaction
                 let transaction = SolanaSDK.SwapTransaction(
@@ -122,6 +125,32 @@ extension ProcessTransaction {
                 
                 // Execute
                 requestIndex = markAsRequestingAndSendRequest(transaction: transaction, fee: fee)
+                
+            case .swap(let provider, let from, let to, let inputAmount, let estimatedAmount, let networkFee, let slippage, let isSimulation):
+                // form transaction
+                let transaction = SolanaSDK.SwapTransaction(
+                    source: from,
+                    sourceAmount: inputAmount,
+                    destination: to,
+                    destinationAmount: estimatedAmount,
+                    myAccountSymbol: nil
+                )
+                
+                // Execute
+                requestIndex = markAsRequestingAndSendRequest(
+                    transaction: transaction,
+                    fee: networkFee,
+                    overridingRequest: provider
+                        .swap(
+                            fromWallet: from,
+                            toWallet: to,
+                            amount: inputAmount,
+                            slippage: slippage,
+                            isSimulation: isSimulation
+                        )
+                        .map {$0 as ProcessTransactionResponseType}
+                )
+                
             case .closeAccount(let wallet):
                 // form transaction
                 let transaction = SolanaSDK.CloseAccountTransaction(
@@ -130,7 +159,10 @@ extension ProcessTransaction {
                 )
                 
                 // Execute
-                requestIndex = markAsRequestingAndSendRequest(transaction: transaction, fee: 0)
+                requestIndex = markAsRequestingAndSendRequest(
+                    transaction: transaction,
+                    fee: .init(lamports: 0, token: .nativeSolana)
+                )
             }
             
             // observe
@@ -146,7 +178,7 @@ extension ProcessTransaction {
                 switch transactionType {
                 case .send:
                     event = .sendTryAgainClick(error: error)
-                case .orcaSwap:
+                case .orcaSwap, .swap:
                     event = .swapTryAgainClick(error: error)
                 case .closeAccount:
                     break
@@ -169,7 +201,7 @@ extension ProcessTransaction {
             switch transactionType {
             case .send:
                 analyticsManager.log(event: .sendExplorerClick(txStatus: transactionStatus))
-            case .orcaSwap:
+            case .orcaSwap, .swap:
                 analyticsManager.log(event: .swapExplorerClick(txStatus: transactionStatus))
             case .closeAccount:
                 break
@@ -185,7 +217,7 @@ extension ProcessTransaction {
             switch transactionType {
             case .send:
                 analyticsManager.log(event: .sendDoneClick(txStatus: transactionStatus))
-            case .orcaSwap:
+            case .orcaSwap, .swap:
                 analyticsManager.log(event: .swapDoneClick(txStatus: transactionStatus))
             case .closeAccount:
                 break
@@ -204,7 +236,7 @@ extension ProcessTransaction {
                 switch transactionType {
                 case .send:
                     event = .sendCancelClick(error: error)
-                case .orcaSwap:
+                case .orcaSwap, .swap:
                     event = .swapCancelClick(error: error)
                 case .closeAccount:
                     break
@@ -225,7 +257,11 @@ extension ProcessTransaction {
         ///   - transaction: transaction that need to be sent
         ///   - fee: transaction's fee
         /// - Returns: transaction index in repository (for observing)
-        private func markAsRequestingAndSendRequest(transaction: AnyHashable, fee: SolanaSDK.Lamports) -> Int {
+        private func markAsRequestingAndSendRequest(
+            transaction: AnyHashable,
+            fee: SwapFee,
+            overridingRequest: Single<ProcessTransactionResponseType>? = nil
+        ) -> Int {
             // mark as requesting
             var tx = transactionSubject.value
             tx.status = .requesting
@@ -233,7 +269,7 @@ extension ProcessTransaction {
             transactionSubject.accept(tx)
             
             // send transaction
-            return transactionHandler.request(request, transaction: transactionSubject.value, fee: fee)
+            return transactionHandler.request(overridingRequest ?? request, transaction: transactionSubject.value, fee: fee)
         }
         
         /// Observe status of current transaction
