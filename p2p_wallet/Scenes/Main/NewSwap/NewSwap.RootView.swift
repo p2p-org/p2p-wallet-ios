@@ -152,7 +152,7 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             // fee
-            viewModel.feesDriver.map {$0.state == .notRequested}
+            viewModel.feesDriver.map {$0.state != .loaded}
                 .drive(
                     stackView.viewWithTag(4)!.rx.isHidden,
                     stackView.viewWithTag(5)!.rx.isHidden
@@ -219,10 +219,6 @@ extension NewSwap {
         
         @objc private func showSwapFees() {
             viewModel.navigate(to: .swapFees)
-        }
-        
-        @objc private func recalculateExchangeRate() {
-            viewModel.calculateExchangeRateAndFees()
         }
         
         // MARK: - Helpers
@@ -330,7 +326,7 @@ private func generateErrorText(
 ) -> String? {
     // if failed to get exchange rate and fees
     if exrate.isError || fees.isError {
-        return L10n.couldNotCalculateExchangeRateOrSwappingFeesFromCurrentTokenPair + ".\n" + L10n.retry + "?"
+        return L10n.couldNotCalculateExchangeRateOrSwappingFeesFromCurrentTokenPair
     }
 
     guard let error = error else {return nil}

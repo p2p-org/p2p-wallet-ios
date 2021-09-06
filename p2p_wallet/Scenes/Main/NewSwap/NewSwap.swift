@@ -126,16 +126,6 @@ protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelT
     func providerSignatureView() -> UIView
 }
 
-extension NewSwapViewModelType {
-    var isSwapPairValidDriver: Driver<Bool> {
-        Driver.combineLatest([
-            exchangeRateDriver.map {$0.state},
-            feesDriver.map {$0.state}
-        ])
-            .map {$0.allSatisfy {$0 == .loaded}}
-    }
-}
-
 protocol NewSwapViewModelAPIClient {
     func getLamportsPerSignature() -> Single<SolanaSDK.Lamports>
     func getCreatingTokenAccountFee() -> Single<UInt64>
