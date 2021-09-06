@@ -234,13 +234,13 @@ extension NewSwap {
 extension NewSwap.ViewModel: NewSwapViewModelType {
     // MARK: - Output
     var navigationDriver: Driver<NewSwap.NavigatableScene?> { navigationRelay.asDriver() }
-    var isInitializingDriver: Driver<Bool> {
+    var initialStateDriver: Driver<LoadableState> {
         Observable.combineLatest([
             lamportsPerSignatureRelay.stateObservable,
             creatingAccountFeeRelay.stateObservable
         ])
-            .map {$0.combined != .loaded}
-            .asDriver(onErrorJustReturn: true)
+            .map {$0.combined}
+            .asDriver(onErrorJustReturn: .notRequested)
     }
     var sourceWalletDriver: Driver<Wallet?> { sourceWalletRelay.asDriver() }
     var availableAmountDriver: Driver<Double?> {

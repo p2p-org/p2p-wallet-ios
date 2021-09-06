@@ -114,15 +114,33 @@ extension NewSwap {
         }
         
         private func bind() {
-            // exchange rate
-            viewModel.exchangeRateDriver
-                .map {$0.state == .notRequested}
-                .drive(stackView.viewWithTag(1)!.rx.isHidden)
+            // initial state
+            viewModel.initialStateDriver
+                .drive(onNext: {[weak self] state in
+                    self?.removeErrorView()
+                    self?.stackView.isHidden = false
+                    
+                    if state.isError {
+                        self?.stackView.isHidden = true
+                        self?.showErrorView(
+                            title: L10n.swappingIsCurrentlyUnavailable,
+                            description: L10n.swappingIsCurrentlyUnavailable,
+                            retryAction: CocoaAction { [weak self] in
+                                self?.viewModel.reload()
+                                return .just(())
+                            }
+                        )
+                    }
+                })
                 .disposed(by: disposeBag)
             
+            // exchange rate
             viewModel.exchangeRateDriver
-                .map {$0.state == .notRequested}
-                .drive(stackView.viewWithTag(2)!.rx.isHidden)
+                .map {$0.state != .loading && $0.state != .loaded}
+                .drive(
+                    stackView.viewWithTag(1)!.rx.isHidden,
+                    stackView.viewWithTag(2)!.rx.isHidden
+                )
                 .disposed(by: disposeBag)
             
             Driver.combineLatest(
@@ -134,26 +152,29 @@ extension NewSwap {
                         viewModel.sourceWalletDriver,
                         viewModel.destinationWalletDriver
                     ),
-                    resultSelector: {($0.0, $0.1, $1.0, $1.1)})
-                .drive(onNext: {[weak self] exrate, isReversed, source, destination in
-                    self?.exchangeRateLabel.set(exrate, onLoaded: { rate in
-                        guard let source = source, let destination = destination else {
-                            return nil
-                        }
-                        var rate = rate
-                        if rate != 0 && isReversed {
-                            rate = 1/rate
-                        }
-                        var string = rate.toString(maximumFractionDigits: 9)
-                        string += " "
-                        string += source.token.symbol
-                        string += " "
-                        string += L10n.per
-                        string += " "
-                        string += destination.token.symbol
-                        return string
-                    })
-                })
+                    resultSelector: {($0.0, $0.1, $1.0, $1.1)}
+                )
+                .map { exrate, isReversed, source, destination -> String? in
+                    guard let source = source,
+                          let destination = destination,
+                          exrate.state == .loaded,
+                          var rate = exrate.value
+                    else {
+                        return nil
+                    }
+                    if rate != 0 && isReversed {
+                        rate = 1/rate
+                    }
+                    var string = rate.toString(maximumFractionDigits: 9)
+                    string += " "
+                    string += source.token.symbol
+                    string += " "
+                    string += L10n.per
+                    string += " "
+                    string += destination.token.symbol
+                    return string
+                }
+                .drive(exchangeRateLabel.rx.text)
                 .disposed(by: disposeBag)
             
             // slippage
@@ -163,26 +184,24 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             // fee
-            let isFeeEmpty = viewModel.feesDriver.map {$0.state == .notRequested}
-            isFeeEmpty
-                .drive(stackView.viewWithTag(4)!.rx.isHidden)
-                .disposed(by: disposeBag)
-
-            isFeeEmpty
-                .drive(stackView.viewWithTag(5)!.rx.isHidden)
+            viewModel.feesDriver.map {$0.state == .notRequested}
+                .drive(
+                    stackView.viewWithTag(4)!.rx.isHidden,
+                    stackView.viewWithTag(5)!.rx.isHidden
+                )
                 .disposed(by: disposeBag)
             
             // error label
             let presentableErrorDriver = Driver.combineLatest(
-                viewModel.isInitializingDriver,
+                viewModel.initialStateDriver,
                 viewModel.errorDriver,
                 viewModel.exchangeRateDriver,
                 viewModel.feesDriver,
                 viewModel.sourceWalletDriver.map {$0?.token.symbol},
                 viewModel.destinationWalletDriver.map {$0?.token.symbol}
             )
-                .map {isInitializing, error, exchangeRate, fee, source, destination -> String? in
-                    if isInitializing {return nil}
+                .map {initialState, error, exchangeRate, fee, source, destination -> String? in
+                    if initialState == .loading {return nil}
                     
                     // Invalid swap pair
                     let combinedState = [exchangeRate.state, fee.state].combined
@@ -227,26 +246,6 @@ extension NewSwap {
                     }
                     self?.swapFeeLabel.font = .systemFont(ofSize: textSize, weight: .medium)
                     self?.swapFeeLabel.textColor = textColor
-                })
-                .disposed(by: disposeBag)
-            
-            presentableErrorDriver
-                .map { $0 == L10n.swappingIsCurrentlyUnavailable }
-                .drive(onNext: {[weak self] isUnavailable in
-                    self?.removeErrorView()
-                    self?.stackView.isHidden = false
-                    
-                    if isUnavailable {
-                        self?.stackView.isHidden = true
-                        self?.showErrorView(
-                            title: L10n.swappingIsCurrentlyUnavailable,
-                            description: L10n.swappingIsCurrentlyUnavailable,
-                            retryAction: CocoaAction { [weak self] in
-                                self?.viewModel.reload()
-                                return .just(())
-                            }
-                        )
-                    }
                 })
                 .disposed(by: disposeBag)
             
