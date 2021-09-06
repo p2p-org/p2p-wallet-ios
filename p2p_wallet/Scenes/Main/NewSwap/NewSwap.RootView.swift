@@ -117,20 +117,7 @@ extension NewSwap {
             // initial state
             viewModel.initialStateDriver
                 .drive(onNext: {[weak self] state in
-                    self?.removeErrorView()
-                    self?.stackView.isHidden = false
-                    
-                    if state.isError {
-                        self?.stackView.isHidden = true
-                        self?.showErrorView(
-                            title: L10n.swappingIsCurrentlyUnavailable,
-                            description: L10n.swappingIsCurrentlyUnavailable,
-                            retryAction: CocoaAction { [weak self] in
-                                self?.viewModel.reload()
-                                return .just(())
-                            }
-                        )
-                    }
+                    self?.setUp(initialState: state)
                 })
                 .disposed(by: disposeBag)
             
@@ -154,26 +141,7 @@ extension NewSwap {
                     ),
                     resultSelector: {($0.0, $0.1, $1.0, $1.1)}
                 )
-                .map { exrate, isReversed, source, destination -> String? in
-                    guard let source = source,
-                          let destination = destination,
-                          exrate.state == .loaded,
-                          var rate = exrate.value
-                    else {
-                        return nil
-                    }
-                    if rate != 0 && isReversed {
-                        rate = 1/rate
-                    }
-                    var string = rate.toString(maximumFractionDigits: 9)
-                    string += " "
-                    string += source.token.symbol
-                    string += " "
-                    string += L10n.per
-                    string += " "
-                    string += destination.token.symbol
-                    return string
-                }
+                .map(generateExchangeRateText)
                 .drive(exchangeRateLabel.rx.text)
                 .disposed(by: disposeBag)
             
@@ -192,42 +160,14 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             // error label
-            let presentableErrorDriver = Driver.combineLatest(
-                viewModel.initialStateDriver,
-                viewModel.errorDriver,
-                viewModel.exchangeRateDriver,
-                viewModel.feesDriver,
-                viewModel.sourceWalletDriver.map {$0?.token.symbol},
-                viewModel.destinationWalletDriver.map {$0?.token.symbol}
-            )
-                .map {initialState, error, exchangeRate, fee, source, destination -> String? in
-                    if initialState == .loading {return nil}
-                    
-                    // Invalid swap pair
-                    let combinedState = [exchangeRate.state, fee.state].combined
-                    if combinedState.isError,
-                       let source = source,
-                       let destination = destination
-                    {
-                        return L10n.swappingFromToIsCurrentlyUnsupported(source, destination)
-                    }
-                    
-                    // These errors might not be shown in error label
-                    let hiddenErrors = [
+            let presentableErrorDriver = viewModel.errorDriver
+                .filter {
+                    ![
                         L10n.insufficientFunds,
                         L10n.amountIsNotValid,
                         L10n.slippageIsnTValid,
                         L10n.someParametersAreMissing
-                    ]
-                    
-                    // Validation errors
-                    if let error = error,
-                       !hiddenErrors.contains(error)
-                    {
-                        return error
-                    }
-                    
-                    return nil
+                    ].contains($0)
                 }
             
             presentableErrorDriver
@@ -236,25 +176,17 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             presentableErrorDriver
-                .map {$0 == nil}
-                .drive(onNext: {[weak self] isErrorHidden in
-                    var textSize: CGFloat = 15
-                    var textColor: UIColor = .textBlack
-                    if !isErrorHidden {
-                        textSize = 13
-                        textColor = .textSecondary
-                    }
-                    self?.swapFeeLabel.font = .systemFont(ofSize: textSize, weight: .medium)
-                    self?.swapFeeLabel.textColor = textColor
-                })
-                .disposed(by: disposeBag)
-            
-            presentableErrorDriver
                 .drive(errorLabel.rx.text)
                 .disposed(by: disposeBag)
             
             // button
-            viewModel.isSwappableDriver
+            Driver.combineLatest([
+                viewModel.initialStateDriver.map {$0 == .loaded},
+                viewModel.exchangeRateDriver.map {$0.state == .loaded},
+                viewModel.feesDriver.map {$0.state == .loaded},
+                viewModel.errorDriver.map {$0 == nil}
+            ])
+                .map {$0.allSatisfy {$0}}
                 .drive(swapButton.rx.isEnabled)
                 .disposed(by: disposeBag)
             
@@ -263,32 +195,12 @@ extension NewSwap {
                 viewModel.feesDriver,
                 viewModel.sourceWalletDriver.map {$0 == nil},
                 viewModel.destinationWalletDriver.map {$0 == nil},
-                viewModel.inputAmountDriver,
+                viewModel.inputAmountDriver.map {$0 == nil},
                 viewModel.errorDriver
             )
-                .map {fees, exrate, isSourceWalletEmpty, isDestinationWalletEmpty, amount, error -> String? in
-                    if exrate.state == .loading {
-                        return L10n.loadingExchangeRate + "..."
-                    }
-                    if fees.state == .loading {
-                        return L10n.calculatingFees + "..."
-                    }
-                    if isSourceWalletEmpty || isDestinationWalletEmpty {
-                        return L10n.selectToken
-                    }
-                    if amount == nil {
-                        return L10n.enterTheAmount
-                    }
-                    if error == L10n.slippageIsnTValid {
-                        return L10n.enterANumberLessThanD(Int(Double.maxSlippage * 100))
-                    }
-                    if error == L10n.insufficientFunds {
-                        return L10n.donTGoOverTheAvailableFunds
-                    }
-                    return L10n.swapNow
-                }
-                    .drive(swapButton.rx.title())
-                    .disposed(by: disposeBag)
+                .map(generateSwapButtonText)
+                .drive(swapButton.rx.title())
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Actions
@@ -327,4 +239,78 @@ extension NewSwap {
             return view
         }
     }
+}
+
+extension NewSwap.RootView {
+    private func setUp(initialState: LoadableState) {
+        removeErrorView()
+        stackView.isHidden = false
+        
+        if initialState.isError {
+            stackView.isHidden = true
+            showErrorView(
+                title: L10n.swappingIsCurrentlyUnavailable,
+                description: L10n.swappingIsCurrentlyUnavailable,
+                retryAction: CocoaAction { [weak self] in
+                    self?.viewModel.reload()
+                    return .just(())
+                }
+            )
+        }
+    }
+}
+
+private func generateExchangeRateText(
+    exrate: Loadable<Double>,
+    isReversed: Bool,
+    source: Wallet?,
+    destination: Wallet?
+) -> String? {
+    guard let source = source,
+          let destination = destination,
+          exrate.state == .loaded,
+          var rate = exrate.value
+    else {
+        return nil
+    }
+    if rate != 0 && isReversed {
+        rate = 1/rate
+    }
+    var string = rate.toString(maximumFractionDigits: 9)
+    string += " "
+    string += source.token.symbol
+    string += " "
+    string += L10n.per
+    string += " "
+    string += destination.token.symbol
+    return string
+}
+
+private func generateSwapButtonText(
+    exrate: Loadable<Double?>,
+    fees: Loadable<[FeeType: SwapFee]>,
+    isSourceWalletEmpty: Bool,
+    isDestinationWalletEmpty: Bool,
+    isAmountNil: Bool,
+    error: String?
+) -> String? {
+    if exrate.state == .loading {
+        return L10n.loadingExchangeRate + "..."
+    }
+    if fees.state == .loading {
+        return L10n.calculatingFees + "..."
+    }
+    if isSourceWalletEmpty || isDestinationWalletEmpty {
+        return L10n.selectToken
+    }
+    if isAmountNil {
+        return L10n.enterTheAmount
+    }
+    if error == L10n.slippageIsnTValid {
+        return L10n.enterANumberLessThanD(Int(Double.maxSlippage * 100))
+    }
+    if error == L10n.insufficientFunds {
+        return L10n.donTGoOverTheAvailableFunds
+    }
+    return L10n.swapNow
 }

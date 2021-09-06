@@ -46,7 +46,6 @@ extension NewSwap {
         private let slippageRelay = BehaviorRelay<Double?>(value: Defaults.slippage)
         private let payingTokenRelay = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
         
-        private let errorRelay = BehaviorRelay<String?>(value: nil)
         private let isExchangeRateReversed = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
@@ -163,33 +162,6 @@ extension NewSwap {
                 }
                 .bind(to: inputAmountRelay)
                 .disposed(by: disposeBag)
-            
-            // error
-            Observable.combineLatest(
-                sourceWalletRelay,
-                inputAmountRelay,
-                destinationWalletRelay,
-                estimatedAmountRelay,
-                exchangeRateRelay.valueObservable,
-                feesRelay.valueObservable,
-                slippageRelay
-            )
-                .map { [weak self] params -> String? in
-                    guard let self = self else {return nil}
-                    return validate(
-                        provider: self.provider,
-                        sourceWallet: params.0,
-                        inputAmount: params.1,
-                        destinationWallet: params.2,
-                        estimatedAmount: params.3,
-                        exchangeRate: params.4,
-                        fee: params.5?[.default],
-                        solWallet: self.walletsRepository.nativeWallet,
-                        slippage: params.6
-                    )
-                }
-                .bind(to: errorRelay)
-                .disposed(by: disposeBag)
         }
         
         fileprivate func swap() {
@@ -233,7 +205,9 @@ extension NewSwap {
 
 extension NewSwap.ViewModel: NewSwapViewModelType {
     // MARK: - Output
-    var navigationDriver: Driver<NewSwap.NavigatableScene?> { navigationRelay.asDriver() }
+    var navigationDriver: Driver<NewSwap.NavigatableScene?> {
+        navigationRelay.asDriver()
+    }
     var initialStateDriver: Driver<LoadableState> {
         Observable.combineLatest([
             lamportsPerSignatureRelay.stateObservable,
@@ -254,7 +228,33 @@ extension NewSwap.ViewModel: NewSwapViewModelType {
     var inputAmountDriver: Driver<Double?> { inputAmountRelay.asDriver() }
     var destinationWalletDriver: Driver<Wallet?> { destinationWalletRelay.asDriver() }
     var estimatedAmountDriver: Driver<Double?> { estimatedAmountRelay.asDriver() }
-    var errorDriver: Driver<String?> { errorRelay.asDriver() }
+    var errorDriver: Driver<String?> {
+        Driver.combineLatest(
+            initialStateDriver,
+            sourceWalletDriver,
+            inputAmountDriver,
+            destinationWalletDriver,
+            estimatedAmountDriver,
+            exchangeRateDriver,
+            feesDriver,
+            slippageDriver
+        )
+            .map {[weak self] initialState, sourceWallet, inputAmount, destinationWallet, estimatedAmount, exchangeRate, fees, slippage -> String? in
+                guard let self = self else {return nil}
+                return validate(
+                    provider: self.provider,
+                    initialState: initialState,
+                    sourceWallet: sourceWallet,
+                    inputAmount: inputAmount,
+                    destinationWallet: destinationWallet,
+                    estimatedAmount: estimatedAmount,
+                    exchangeRate: exchangeRate,
+                    fees: fees,
+                    solWallet: self.walletsRepository.nativeWallet,
+                    slippage: slippage
+                )
+            }
+    }
     var exchangeRateDriver: Driver<Loadable<Double>> { exchangeRateRelay.asDriver() }
     var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> { feesRelay.asDriver() }
     var payingTokenDriver: Driver<PayingToken> {
@@ -262,16 +262,6 @@ extension NewSwap.ViewModel: NewSwapViewModelType {
     }
     var slippageDriver: Driver<Double?> { slippageRelay.asDriver() }
     var isExchangeRateReversedDriver: Driver<Bool> {isExchangeRateReversed.asDriver()}
-    var isSwappableDriver: Driver<Bool> {
-        Observable.combineLatest([
-            errorRelay.map {$0 == nil},
-            Observable.combineLatest([
-                exchangeRateRelay.stateObservable,
-                feesRelay.stateObservable
-            ]).map {$0.combined == .loaded}
-        ]).map {$0.allSatisfy {$0}}
-        .asDriver(onErrorJustReturn: false)
-    }
     
     var useAllBalanceDidTapSignal: Signal<Double?> {useAllBalanceSubject.asSignal(onErrorJustReturn: nil)}
     func providerSignatureView() -> UIView {
@@ -365,23 +355,31 @@ extension NewSwap.ViewModel {
 }
 
 /// Verify current context
-/// - Returns: Error string, nil if no error appear
+/// - Returns: Error string, nil if no error appear or some params are unfilled
 private func validate(
     provider: SwapProviderType,
+    initialState: LoadableState,
     sourceWallet: Wallet?,
     inputAmount: Double?,
     destinationWallet: Wallet?,
     estimatedAmount: Double?,
-    exchangeRate: Double?,
-    fee: SwapFee?,
+    exchangeRate: Loadable<Double>,
+    fees: Loadable<[FeeType: SwapFee]>,
     solWallet: Wallet?,
     slippage: Double?
 ) -> String? {
+    // if swap is initializing, loading exchange rate or calculating fees
+    if [initialState, exchangeRate.state, fees.state].combined != .loaded
+    {
+        return nil
+    }
+    
     // if some params are missing
     guard let sourceWallet = sourceWallet,
           let inputAmount = inputAmount,
           let destinationWallet = destinationWallet,
-          let exchangeRate = exchangeRate,
+          let exchangeRate = exchangeRate.value,
+          let fees = fees.value,
           let slippage = slippage
     else {return L10n.someParametersAreMissing}
     
@@ -390,7 +388,7 @@ private func validate(
     
     // verify if input amount
     if inputAmount.isGreaterThan(
-        provider.calculateAvailableAmount(sourceWallet: sourceWallet, fee: fee),
+        provider.calculateAvailableAmount(sourceWallet: sourceWallet, fee: fees[.default]),
         decimals: sourceWallet.token.decimals
     ) {return L10n.insufficientFunds}
     
@@ -403,9 +401,9 @@ private func validate(
     if exchangeRate == 0 {return L10n.exchangeRateIsNotValid}
     
     // verify fee
-    if fee?.token.symbol == "SOL",
+    if fees[.default]?.token.symbol == "SOL",
        let balance = solWallet?.lamports,
-       let fee = fee?.lamports
+       let fee = fees[.default]?.lamports
     {
         if balance < fee {
             return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
