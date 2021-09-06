@@ -26,7 +26,7 @@ struct ProcessTransaction {
     
     enum TransactionType {
         case send(from: Wallet, to: String, lamport: SolanaSDK.Lamports, feeInLamports: SolanaSDK.Lamports)
-        case swap(from: Wallet, to: Wallet, inputAmount: SolanaSDK.Lamports, estimatedAmount: SolanaSDK.Lamports, fee: SolanaSDK.Lamports)
+        case orcaSwap(from: Wallet, to: Wallet, inputAmount: SolanaSDK.Lamports, estimatedAmount: SolanaSDK.Lamports, fee: SolanaSDK.Lamports)
         case closeAccount(Wallet)
     }
 }

@@ -1,5 +1,5 @@
 //
-//  NewSwap.SwapFeesViewController.swift
+//  SwapToken.SwapFeesViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 14/08/2021.
@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-protocol NewSwapSwapFeesViewModelType {
+protocol SwapTokenSwapFeesViewModelType {
     var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> {get}
     var sourceWalletDriver: Driver<Wallet?> {get}
     var destinationWalletDriver: Driver<Wallet?> {get}
@@ -16,10 +16,10 @@ protocol NewSwapSwapFeesViewModelType {
     func log(_ event: AnalyticsEvent)
 }
 
-extension NewSwap {
+extension SwapToken {
     class SwapFeesViewController: SettingsBaseViewController {
         // MARK: - Properties
-        private let viewModel: NewSwapSwapFeesViewModelType
+        private let viewModel: SwapTokenSwapFeesViewModelType
         private var transactionTokensName: String?
         
         // MARK: - Subviews
@@ -29,7 +29,7 @@ extension NewSwap {
         private var payingTokenSection: UIView?
         
         // MARK: - Initializers
-        init(viewModel: NewSwapSwapFeesViewModelType) {
+        init(viewModel: SwapTokenSwapFeesViewModelType) {
             self.viewModel = viewModel
             super.init()
         }

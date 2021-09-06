@@ -200,7 +200,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
                 {
                     transactions.append(pt)
                 }
-            case let transaction as SolanaSDK.CloseAccountTransaction:
+            case _ as SolanaSDK.CloseAccountTransaction:
                 // FIXME: - Close account
                 break
             case var transaction as SolanaSDK.SwapTransaction:

@@ -2,38 +2,35 @@
 //  SwapToken.ViewController.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 03/06/2021.
+//  Created by Chung Tran on 19/08/2021.
 //
 
 import Foundation
 import UIKit
-import RxSwift
-
-protocol SwapTokenScenesFactory {
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
-}
+import RxCocoa
 
 extension SwapToken {
     class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
         // MARK: - Properties
         var transitionManager: UIViewControllerTransitioningDelegate?
-        let viewModel: ViewModel
-        let scenesFactory: SwapTokenScenesFactory
+        private let viewModel: SwapTokenViewModelType
+        private let scenesFactory: SwapTokenScenesFactory
         
-        lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
+        // MARK: - Subviews
+        private lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
             UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
                 .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
             UILabel(text: L10n.swap, textSize: 17, weight: .semibold),
             UIImageView(width: 36, height: 36, image: .slippageSettings, tintColor: .iconSecondary)
-                .onTap(viewModel, action: #selector(ViewModel.showSettings))
+                .onTap(self, action: #selector(showSettings))
         ])
             .padding(.init(all: 20))
-        lazy var rootView = RootView(viewModel: viewModel)
+        private lazy var rootView = RootView(viewModel: viewModel)
         
         // MARK: - Initializer
-        init(viewModel: ViewModel,
-             scenesFactory: SwapTokenScenesFactory)
+        init(
+            viewModel: SwapTokenViewModelType,
+            scenesFactory: SwapTokenScenesFactory)
         {
             self.viewModel = viewModel
             self.scenesFactory = scenesFactory
@@ -56,11 +53,12 @@ extension SwapToken {
         
         override func bind() {
             super.bind()
-            viewModel.output.navigationScene
+            viewModel.navigationDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
             
-            viewModel.output.isLoading
+            viewModel.initialStateDriver
+                .map {$0 == .loading}
                 .drive(onNext: {[weak self] isLoading in
                     if isLoading {
                         self?.showIndetermineHud(nil)
@@ -70,12 +68,21 @@ extension SwapToken {
                 })
                 .disposed(by: disposeBag)
             
-            viewModel.output.pool.map {$0 == nil}
-                .distinctUntilChanged()
+            Driver.combineLatest(
+                viewModel.slippageDriver,
+                viewModel.errorDriver,
+                viewModel.feesDriver,
+                viewModel.exchangeRateDriver
+            )
                 .drive(onNext: {[weak self] _ in
                     self?.updatePresentationLayout(animated: true)
                 })
                 .disposed(by: disposeBag)
+        }
+        
+        // MARK: - Actions
+        @objc private func showSettings() {
+            navigate(to: .settings)
         }
         
         // MARK: - Navigation
@@ -88,12 +95,15 @@ extension SwapToken {
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)
-            case .chooseDestinationWallet(let validMints, let sourceWalletPubkey):
+            case .chooseDestinationWallet:
+                var filter: ((Wallet) -> Bool)?
+                if let sourceWallet = viewModel.getSourceWallet() {
+                    filter = {
+                        $0.pubkey != sourceWallet.pubkey
+                    }
+                }
                 let vc = scenesFactory.makeChooseWalletViewController(
-                    customFilter: {
-                        $0.pubkey != sourceWalletPubkey &&
-                            validMints.contains($0.mintAddress)
-                    },
+                    customFilter: filter,
                     showOtherWallets: true,
                     handler: viewModel
                 )
@@ -104,12 +114,12 @@ extension SwapToken {
                 nc.modalPresentationStyle = .custom
                 present(nc, interactiveDismissalType: .standard)
             case .chooseSlippage:
-                let vc = SlippageSettingsViewController()
+                let vc = OrcaSwap.SlippageSettingsViewController()
                 vc.completion = {[weak self] slippage in
                     Defaults.slippage = slippage / 100
-                    self?.viewModel.input.slippage.accept(slippage / 100)
+                    self?.viewModel.changeSlippage(to: Defaults.slippage)
                 }
-                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+                present(OrcaSwap.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .swapFees:
                 let vc = SwapFeesViewController(viewModel: viewModel)
                 present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)

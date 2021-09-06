@@ -1,5 +1,5 @@
 //
-//  NewSwap.NetworkFeePayerSettingsViewController.swift
+//  SwapToken.NetworkFeePayerSettingsViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 13/08/2021.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension NewSwap {
+extension SwapToken {
     class NetworkFeePayerSettingsViewController: SettingsBaseViewController {
         // MARK: - Properties
         private let transactionTokenName: String?
@@ -64,7 +64,7 @@ extension NewSwap {
     }
 }
 
-private extension NewSwap {
+private extension SwapToken {
     class RadioCell: BEView {
         var method: PayingToken?
         

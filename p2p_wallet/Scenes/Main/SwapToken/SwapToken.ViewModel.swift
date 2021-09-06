@@ -2,616 +2,181 @@
 //  SwapToken.ViewModel.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 03/06/2021.
+//  Created by Chung Tran on 19/08/2021.
 //
 
 import Foundation
 import RxSwift
 import RxCocoa
-import LazySubject
 
-// DEPRECATED: Use NewSwap instead
 extension SwapToken {
-    class ViewModel: ViewModelType {
-        // MARK: - Nested type
-        struct Input {
-            let sourceWallet = PublishRelay<Wallet?>()
-            let destinationWallet = PublishRelay<Wallet?>()
-            let amount = PublishRelay<String?>()
-            let estimatedAmount = PublishRelay<String?>()
-            let slippage = PublishRelay<Double>()
-        }
-        struct Output {
-            let navigationScene: Driver<NavigatableScene?>
-            let pool: Driver<SolanaSDK.Pool?>
-            let isLoading: Driver<Bool>
-            let error: Driver<String?>
-            let isValid: Driver<Bool>
-            let sourceWallet: Driver<Wallet?>
-            let availableAmount: Driver<Double?>
-            let destinationWallet: Driver<Wallet?>
-            let amount: Driver<Double?>
-            let estimatedAmount: Driver<Double?>
-            let liquidityProviderFee: Driver<Double?>
-            let feeInLamports: Driver<SolanaSDK.Lamports?>
-            let slippage: Driver<Double>
-            let minimumReceiveAmount: Driver<Double?>
-            let useAllBalanceDidTap: Driver<Double?>
-            let isExchageRateReversed: Driver<Bool>
-        }
-        
+    class ViewModel {
         // MARK: - Dependencies
-        private let solWallet: Wallet?
-        private let apiClient: SwapTokenAPIClient
+        private let provider: SwapProviderType
+        private let apiClient: SwapTokenApiClient
+        private let walletsRepository: WalletsRepository
+        private let analyticsManager: AnalyticsManagerType
         private let authenticationHandler: AuthenticationHandler
-        let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
-        private var defaultsDisposable = [DefaultsDisposable]()
+        private var defaultsDisposables = [DefaultsDisposable]()
+        fileprivate var isSelectingSourceWallet = true
         
-        let input: Input
-        let output: Output
-        
-        private var isSelectingSourceWallet = true
+        // MARK: - Input
+        let inputAmountSubject: PublishRelay<String?> = .init()
+        let estimatedAmountSubject: PublishRelay<String?> = .init()
+        private let useAllBalanceSubject = PublishRelay<Double?>()
         
         // MARK: - Subject
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private lazy var poolsSubject = LazySubject<[SolanaSDK.Pool]>(request: apiClient.getSwapPools())
-        private lazy var lamportsPerSignatureSubject = LazySubject<SolanaSDK.Lamports>(request: apiClient.getLamportsPerSignature())
-        private lazy var creatingAccountFeeSubject = LazySubject<SolanaSDK.Lamports>(request: apiClient.getCreatingTokenAccountFee())
-        private let isLoadingSubject = PublishRelay<Bool>()
-        private let errorSubject = PublishRelay<String?>()
-        private let isValidSubject = BehaviorRelay<Bool>(value: false)
-        private let sourceWalletSubject = BehaviorRelay<Wallet?>(value: nil)
-        private let availableAmountSubject = BehaviorRelay<Double?>(value: nil)
-        private let destinationWalletSubject = BehaviorRelay<Wallet?>(value: nil)
-        private let currentPoolSubject = BehaviorRelay<SolanaSDK.Pool?>(value: nil)
-        private let compensationPoolSubject = BehaviorRelay<SolanaSDK.Pool?>(value: nil)
-        private let amountSubject = BehaviorRelay<Double?>(value: nil)
-        private let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
-        private let liquidityProviderFeeSubject = BehaviorRelay<Double?>(value: nil)
-        private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
-        private let minimumReceiveAmountSubject = BehaviorRelay<Double?>(value: nil)
-        private let useAllBalanceDidTapSubject = PublishRelay<Double?>()
-        private let isExchageRateReversedSubject = BehaviorRelay<Bool>(value: false)
-        private let feeInLamportsSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
-        private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
+        private let lamportsPerSignatureRelay: LoadableRelay<SolanaSDK.Lamports>
+        private let creatingAccountFeeRelay: LoadableRelay<SolanaSDK.Lamports>
+        
+        private let navigationRelay = BehaviorRelay<NavigatableScene?>(value: nil)
+        
+        private let sourceWalletRelay = BehaviorRelay<Wallet?>(value: nil)
+        private let inputAmountRelay = BehaviorRelay<Double?>(value: nil)
+        
+        private let destinationWalletRelay = BehaviorRelay<Wallet?>(value: nil)
+        private let estimatedAmountRelay = BehaviorRelay<Double?>(value: nil)
+        
+        private var exchangeRateRelay: LoadableRelay<Double>
+        private let feesRelay: LoadableRelay<[FeeType: SwapFee]>
+        
+        private let slippageRelay = BehaviorRelay<Double?>(value: Defaults.slippage)
+        private let payingTokenRelay = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
+        
+        private let isExchangeRateReversed = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
         init(
-            solWallet: Wallet?,
-            apiClient: SwapTokenAPIClient,
+            provider: SwapProviderType,
+            apiClient: SwapTokenApiClient,
+            walletsRepository: WalletsRepository,
+            analyticsManager: AnalyticsManagerType,
             authenticationHandler: AuthenticationHandler,
-            analyticsManager: AnalyticsManagerType
+            sourceWallet: Wallet? = nil,
+            destinationWallet: Wallet? = nil
         ) {
-            self.solWallet = solWallet
+            self.provider = provider
             self.apiClient = apiClient
-            self.authenticationHandler = authenticationHandler
+            self.walletsRepository = walletsRepository
             self.analyticsManager = analyticsManager
-            
-            self.input = Input()
-            self.output = Output(
-                navigationScene: navigationSubject
-                    .asDriver(onErrorJustReturn: nil),
-                pool: currentPoolSubject
-                    .asDriver(),
-                isLoading: isLoadingSubject
-                    .asDriver(onErrorJustReturn: false),
-                error: errorSubject
-                    .asDriver(onErrorJustReturn: nil),
-                isValid: isValidSubject
-                    .asDriver(),
-                sourceWallet: sourceWalletSubject
-                    .asDriver(),
-                availableAmount: availableAmountSubject
-                    .asDriver(),
-                destinationWallet: destinationWalletSubject
-                    .asDriver(),
-                amount: amountSubject
-                    .asDriver(),
-                estimatedAmount: estimatedAmountSubject
-                    .asDriver(),
-                liquidityProviderFee: liquidityProviderFeeSubject
-                    .asDriver(),
-                feeInLamports: feeInLamportsSubject
-                    .asDriver(),
-                slippage: slippageSubject
-                    .asDriver(),
-                minimumReceiveAmount: minimumReceiveAmountSubject
-                    .asDriver(),
-                useAllBalanceDidTap: useAllBalanceDidTapSubject
-                    .asDriver(onErrorJustReturn: nil),
-                isExchageRateReversed: isExchageRateReversedSubject
-                    .asDriver()
+            self.authenticationHandler = authenticationHandler
+            self.lamportsPerSignatureRelay = .init(
+                request: apiClient.getLamportsPerSignature()
             )
-            
+            self.creatingAccountFeeRelay = .init(
+                request: apiClient.getCreatingTokenAccountFee()
+            )
+            self.exchangeRateRelay = .init(request: .just(0)) // placeholder, change request later
+            self.feesRelay = .init(request: .just([:])) // placeholder, change request later
             bind()
+            
+            sourceWalletRelay.accept(sourceWallet)
+            destinationWalletRelay.accept(destinationWallet)
+            
             reload()
         }
         
         /// Bind subjects
         private func bind() {
-            bindInputIntoSubjects()
-            bindSubjectsIntoSubjects()
-        }
-        
-        private func bindInputIntoSubjects() {
-            // source wallet
-            input.sourceWallet
-                .bind(to: sourceWalletSubject)
-                .disposed(by: disposeBag)
-            
-            // destination wallet
-            input.destinationWallet
-                .bind(to: destinationWalletSubject)
-                .disposed(by: disposeBag)
-            
-            // amount
-            input.amount
+            // bind input
+            inputAmountSubject
                 .map {$0?.double}
-                .bind(to: amountSubject)
+                .bind(to: inputAmountRelay)
                 .disposed(by: disposeBag)
             
-            // estimated amount
-            input.estimatedAmount
+            estimatedAmountSubject
                 .map {$0?.double}
-                .bind(to: estimatedAmountSubject)
+                .bind(to: estimatedAmountRelay)
                 .disposed(by: disposeBag)
             
-            // slippage
-            input.slippage
-                .do(onNext: {[weak self] slippage in
-                    self?.analyticsManager.log(event: .swapSlippageKeydown(slippage: slippage))
-                })
-                .bind(to: slippageSubject)
-                .disposed(by: disposeBag)
-        }
-        
-        private func bindSubjectsIntoSubjects() {
-            let combinedState = Observable.combineLatest([
-                poolsSubject.observable,
-                lamportsPerSignatureSubject.observable,
-                creatingAccountFeeSubject.observable
-            ])
-                .map {$0.combinedState}
-            
-            // pools
-            combinedState
-                .subscribe(onNext: {[weak self] state in
-                    switch state {
-                    case .initializing, .loading:
-                        self?.isLoadingSubject.accept(true)
-                        self?.errorSubject.accept(nil)
-                    case .loaded:
-                        self?.isLoadingSubject.accept(false)
-                        self?.errorSubject.accept(nil)
-                    case .error:
-                        self?.isLoadingSubject.accept(false)
-                        self?.errorSubject.accept(L10n.swappingIsCurrentlyUnavailable)
-                    }
+            // exchange rate, fees
+            Observable.combineLatest(
+                sourceWalletRelay.distinctUntilChanged(),
+                destinationWalletRelay.distinctUntilChanged(),
+                lamportsPerSignatureRelay.valueObservable,
+                creatingAccountFeeRelay.valueObservable
+            )
+                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+                .subscribe(onNext: {[weak self] _ in
+                    self?.calculateExchangeRateAndFees()
                 })
                 .disposed(by: disposeBag)
             
-            // pools loaded
-            let dataLoaded = combinedState
+            exchangeRateRelay
+                .stateObservable
                 .filter {$0 == .loaded}
-                .map {[weak self] _ in self?.poolsSubject.value}
-            
-            // Paying token
-            let payingTokenDisposable = Defaults.observe(\.payingToken) { [weak self] update in
-                self?.payingTokenSubject.accept(update.newValue ?? Defaults.payingToken)
-            }
-            defaultsDisposable.append(payingTokenDisposable)
-            
-            // current pool, compensation pool
-            Observable.combineLatest(
-                dataLoaded,
-                sourceWalletSubject.distinctUntilChanged(),
-                destinationWalletSubject.distinctUntilChanged()
-            )
-                .flatMap { [weak self] _ -> Single<(pool: SolanaSDK.Pool?, compensationPool: SolanaSDK.Pool?)> in
-                    guard let self = self else {return .just((pool: nil, compensationPool: nil))}
-                    self.isLoadingSubject.accept(true)
-                    return self.loadPools()
-                }
-                .asDriver(onErrorJustReturn: (pool: nil, compensationPool: nil))
-                .drive(onNext: {[weak self] pools in
-                    guard let self = self else {return}
-                    self.isLoadingSubject.accept(false)
-                    self.currentPoolSubject.accept(pools.pool)
-                    self.compensationPoolSubject.accept(pools.compensationPool)
+                .subscribe(onNext: {[weak self] _ in
+                    self?.feesRelay.reload()
                 })
                 .disposed(by: disposeBag)
             
-            // estimated amount from input amount
+            // estimating
             Observable.combineLatest(
-                currentPoolSubject.distinctUntilChanged(),
-                input.amount.map {$0?.double}
+                inputAmountSubject.map {$0?.double},
+                exchangeRateRelay.valueObservable,
+                slippageRelay
             )
-                .map {[weak self] in self?.calculateEstimatedAmount(forInputAmount: $1)}
-                .bind(to: estimatedAmountSubject)
-                .disposed(by: disposeBag)
-            
-            // input amount from estimated amount
-            Observable.combineLatest(
-                currentPoolSubject.distinctUntilChanged(),
-                input.estimatedAmount.map {$0?.double}
-            )
-                .map {[weak self] in self?.calculateInputAmount(forExpectedAmount: $1)}
-                .bind(to: amountSubject)
-                .disposed(by: disposeBag)
-            
-            // fee
-            Observable.combineLatest(
-                currentPoolSubject.distinctUntilChanged(),
-                amountSubject.distinctUntilChanged()
-            )
-                .map {calculateFee(forInputAmount: $1, in: $0)}
-                .bind(to: liquidityProviderFeeSubject)
-                .disposed(by: disposeBag)
-            
-            // fee in lamports
-            Observable.combineLatest(
-                compensationPoolSubject,
-                sourceWalletSubject,
-                destinationWalletSubject,
-                lamportsPerSignatureSubject.dataObservable,
-                creatingAccountFeeSubject.dataObservable,
-                payingTokenSubject.distinctUntilChanged()
-            )
-                .map {compensationPool, sourceWallet, destinationWallet, lamportsPerSignature, creatingAccountFee, _ -> SolanaSDK.Lamports? in
-                    var fee = calculateFeeInLamport(sourceWallet: sourceWallet, destinationWallet: destinationWallet, lamportsPerSignature: lamportsPerSignature, creatingAccountFee: creatingAccountFee)
-                    
-                    // if fee relayer is available
-                    if isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
-                    {
-                        
-                        if let pool = compensationPool, let currentFee = fee
-                        {
-                            fee = pool.inputAmount(forMinimumReceiveAmount: currentFee, slippage: SolanaSDK.Pool.feeCompensationPoolDefaultSlippage, roundRules: .up, includeFees: true, replaceZeroWithMinimum: true)
-                        } else {
-                            fee = 1
-                        }
-                    }
-                    
-                    return fee
-                }
-                .bind(to: feeInLamportsSubject)
-                .disposed(by: disposeBag)
-            
-            // available amount
-            Observable.combineLatest(
-                sourceWalletSubject,
-                destinationWalletSubject,
-                feeInLamportsSubject
-            )
-                .map {sourceWallet, destinationWallet, feeInLamports -> Double? in
-                    calculateAvailableAmount(sourceWallet: sourceWallet, destinationWallet: destinationWallet, feeInLamports: feeInLamports)
-                }
-                .bind(to: availableAmountSubject)
-                .disposed(by: disposeBag)
-            
-            // minimum receive amount
-            Observable.combineLatest(
-                currentPoolSubject.distinctUntilChanged(),
-                amountSubject.distinctUntilChanged(),
-                slippageSubject.distinctUntilChanged()
-            )
-                .map {[weak self] _ in self?.calculateMinimumReceiveAmount()}
-                .bind(to: minimumReceiveAmountSubject)
-                .disposed(by: disposeBag)
-                
-            // error subject
-            Observable.combineLatest(
-                poolsSubject.observable,
-                compensationPoolSubject,
-                currentPoolSubject,
-                sourceWalletSubject,
-                destinationWalletSubject,
-                amountSubject,
-                slippageSubject
-            )
-                .map {_ in self.verifyError()}
-                .bind(to: errorSubject)
-                .disposed(by: disposeBag)
-            
-            // isValid subject
-            Observable.combineLatest(
-                currentPoolSubject,
-                amountSubject,
-                errorSubject.map {$0 == nil}
-            )
-                .map {$0 != nil && $1 > 0 && $2}
-                .bind(to: isValidSubject)
-                .disposed(by: disposeBag)
-        }
-        
-        // MARK: - Actions
-        @objc func reload() {
-            poolsSubject.reload()
-            lamportsPerSignatureSubject.reload()
-            creatingAccountFeeSubject.reload()
-        }
-        
-        @objc func useAllBalance() {
-            let amount = availableAmountSubject.value
-            
-            if let amount = amount {
-                analyticsManager.log(event: .swapAvailableClick(sum: amount))
-            }
-            
-            input.amount.accept(amount?.toString(maximumFractionDigits: 9, groupingSeparator: nil))
-            useAllBalanceDidTapSubject.accept(amount)
-        }
-        
-        @objc func chooseSourceWallet() {
-            isSelectingSourceWallet = true
-            navigationSubject.accept(.chooseSourceWallet)
-        }
-        
-        @objc func chooseDestinationWallet() {
-            isSelectingSourceWallet = false
-            isLoadingSubject.accept(true)
-            getValidDestinationWalletMints()
-                .subscribe(onSuccess: {[weak self] validMints in
-                    self?.isLoadingSubject.accept(false)
-                    self?.navigationSubject.accept(.chooseDestinationWallet(validMints: validMints, excludedSourceWalletPubkey: self?.sourceWalletSubject.value?.pubkey))
-                }, onFailure: { [weak self] _ in
-                    self?.isLoadingSubject.accept(false)
-                })
-                .disposed(by: disposeBag)
-        }
-        
-        @objc func swapSourceAndDestination() {
-            analyticsManager.log(event: .swapReverseClick)
-            
-            let tempWallet = sourceWalletSubject.value
-            sourceWalletSubject.accept(destinationWalletSubject.value)
-            destinationWalletSubject.accept(tempWallet)
-        }
-        
-        @objc func reverseExchangeRate() {
-            isExchageRateReversedSubject.accept(!isExchageRateReversedSubject.value)
-        }
-        
-        @objc func showSettings() {
-            analyticsManager.log(event: .swapSettingsClick)
-            navigationSubject.accept(.settings)
-        }
-        
-        @objc func chooseSlippage() {
-            analyticsManager.log(event: .swapSlippageClick)
-            navigationSubject.accept(.chooseSlippage)
-        }
-        
-        @objc func showSwapFees() {
-            analyticsManager.log(event: .swapSwapFeesClick)
-            navigationSubject.accept(.swapFees)
-        }
-        
-        @objc func authenticateAndSwap() {
-            authenticationHandler.authenticate(
-                presentationStyle:
-                    .init(
-                        isRequired: false,
-                        isFullScreen: false,
-                        completion: { [weak self] in
-                            self?.swap()
-                        }
+                .map {[weak self] in
+                    self?.provider.calculateEstimatedAmount(
+                        inputAmount: $0,
+                        rate: $1,
+                        slippage: $2
                     )
+                }
+                .bind(to: estimatedAmountRelay)
+                .disposed(by: disposeBag)
+            
+            Observable.combineLatest(
+                estimatedAmountSubject.map {$0?.double},
+                exchangeRateRelay.valueObservable,
+                slippageRelay
             )
-        }
-        
-        var payingTokenDriver: Driver<PayingToken> {
-            payingTokenSubject.asDriver()
-        }
-        
-        func changePayingToken(to payingToken: PayingToken) {
-            payingTokenSubject.accept(payingToken)
-        }
-        
-        // MARK: - Helpers
-        private func loadPools() -> Single<(pool: SolanaSDK.Pool?, compensationPool: SolanaSDK.Pool?)> {
-            guard let pools = poolsSubject.value,
-                  let sourceWallet = sourceWalletSubject.value,
-                  let destinationWallet = destinationWalletSubject.value
-            else {return .just((pool: nil, compensationPool: nil))}
-            
-            let swapPools = pools.getMatchedPools(
-                sourceMint: sourceWallet.mintAddress,
-                destinationMint: destinationWallet.mintAddress
-            )
-            
-            let compensationPools = pools.getMatchedPools(
-                sourceMint: sourceWallet.mintAddress,
-                destinationMint: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
-            )
-            
-            let getPoolRequest: Single<SolanaSDK.Pool?>
-            if let pool = swapPools.first(where: {$0.isValid}) {
-                getPoolRequest = .just(pool)
-            } else {
-                getPoolRequest = Single.zip(swapPools.map {apiClient.getPoolWithTokenBalances(pool: $0)})
-                    .map {$0.first(where: {$0.isValid})}
-            }
-            
-            let getCompensationPoolRequest: Single<SolanaSDK.Pool?>
-            if !isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet) {
-                getCompensationPoolRequest = .just(nil)
-            } else if let pool = compensationPools.first(where: {$0.isValid}) {
-                getCompensationPoolRequest = .just(pool)
-            } else {
-                getCompensationPoolRequest = Single.zip(compensationPools.map {apiClient.getPoolWithTokenBalances(pool: $0)})
-                    .map {$0.first(where: {$0.isValid})}
-            }
-            
-            return Single.zip(getPoolRequest, getCompensationPoolRequest)
-                .map {(pool: $0, compensationPool: $1)}
-        }
-        
-        /// Verify current context
-        /// - Returns: Error string, nil if no error appear
-        private func verifyError() -> String? {
-            // get variables
-            let sourceAmountInput = amountSubject.value
-            let sourceWallet = sourceWalletSubject.value
-            let availableAmount = availableAmountSubject.value
-            let destinationWallet = destinationWalletSubject.value
-            let pool = currentPoolSubject.value
-            let feeCompensationPool = compensationPoolSubject.value
-            let slippage = slippageSubject.value
-            
-            // Verify amount
-            if let input = sourceAmountInput {
-                // amount is empty
-                if input <= 0, pool != nil {
-                    return L10n.amountIsNotValid
+                .map {[weak self] in
+                    self?.provider.calculateNeededInputAmount(
+                        forReceivingEstimatedAmount: $0,
+                        rate: $1,
+                        slippage: $2
+                    )
                 }
-                
-                // insufficient funds
-                if input.rounded(decimals: sourceDecimals) > availableAmount?.rounded(decimals: sourceDecimals)
-                {
-                    return L10n.insufficientFunds
-                }
-            }
-            
-            // Verify slippage
-            if !isSlippageValid(slippage: slippage) {
-                return L10n.slippageIsnTValid
-            }
-            
-            // Verify pool
-            if pool == nil {
-                // if there are pools, but there is no pool for current pairs
-                if let pools = self.poolsSubject.value,
-                   !pools.isEmpty
-                {
-                    if let sourceWallet = sourceWallet,
-                       let destinationWallet = destinationWallet
-                    {
-                        if sourceWallet.token.symbol == destinationWallet.token.symbol {
-                            return L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.token.symbol)
-                        } else {
-                            return L10n.swappingFromToIsCurrentlyUnsupported(sourceWallet.token.symbol, destinationWallet.token.symbol)
-                        }
-                    }
-                }
-                // if there is no pools at all
-                else {
-                    return L10n.swappingIsCurrentlyUnavailable
-                }
-            }
-            
-            // Verify feeInLamports
-            // fee relayer
-            if isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
-            {
-                if feeCompensationPool == nil {
-                    return L10n.feeCompensationPoolNotFound
-                }
-                if (sourceWallet?.lamports ?? 0) < (feeInLamportsSubject.value ?? 0)
-                {
-                    return L10n.notEnoughToPayNetworkFee(sourceWallet!.token.symbol)
-                }
-            }
-            // normal transactions
-            else if let solWallet = solWallet,
-               (solWallet.lamports ?? 0) < (feeInLamportsSubject.value ?? 0)
-            {
-                return L10n.notEnoughToPayNetworkFee("SOL")
-            }
-            
-            return nil
+                .bind(to: inputAmountRelay)
+                .disposed(by: disposeBag)
         }
         
-        func isSlippageValid(slippage: Double) -> Bool {
-            slippage <= .maxSlippage && slippage > 0
-        }
-        
-        private func getValidDestinationWalletMints() -> Single<Set<String>> {
-            // get source wallet mint, available mint
-            guard let sourceWalletMint = sourceWalletSubject.value?.mintAddress,
-                  let availablePools = poolsSubject.value?.getPools(mintA: sourceWalletMint),
-                  availablePools.count > 0
-            else {
-                return .just([])
-            }
+        fileprivate func swap() {
+            guard let sourceWallet = sourceWalletRelay.value,
+                  let destinationWallet = destinationWalletRelay.value,
+                  let inputAmount = inputAmountRelay.value,
+                  let estimatedAmount = estimatedAmountRelay.value,
+                  let slippage = slippageRelay.value
+            else {return}
+            let fee = feesRelay.value
             
-            // retrieve balances and filter out empty pools
-            let getTokenBalancesRequests: [Single<SolanaSDK.Pool?>] = availablePools.map {
-                apiClient.getPoolWithTokenBalances(pool: $0)
-                    .map(Optional.init)
-                    .catchAndReturn(nil)
-            }
-            return Single.zip(getTokenBalancesRequests)
-                .do(onSuccess: { [weak self] newPools in
-                    // update pools
-                    guard let self = self, var pools = self.poolsSubject.value else {return}
-                    for newPool in newPools {
-                        if let newPool = newPool, let index = pools.firstIndex(where: {$0.address == newPool.address}
-                        ) {
-                            pools[index] = newPool
-                            
-                            // remove empty pool
-                            if newPool.tokenABalance?.amountInUInt64 == 0 || newPool.tokenABalance?.amountInUInt64 == 0
-                            {
-                                pools.removeAll(where: {$0.address == newPool.address})
-                            }
-                        }
-                    }
-                    self.poolsSubject.updateValue(pools)
-                })
-                .map { $0.filter {$0?.isValid == true} }
-                .map { $0.map {$0!.swapData.mintB.base58EncodedString} }
-                .map { Set($0) }
-        }
-        
-        private func swap() {
-            guard let sourceWallet = sourceWalletSubject.value,
-                  let sourcePubkey = try? SolanaSDK.PublicKey(string: sourceWallet.pubkey ?? ""),
-                  let sourceMint = try? SolanaSDK.PublicKey(string: sourceWallet.mintAddress),
-                  let destinationWallet = destinationWalletSubject.value,
-                  let destinationMint = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress),
-                  let amountDouble = amountSubject.value
-            else {
-                return
-            }
+            // log
+            log(.swapSwapClick(tokenA: sourceWallet.token.symbol, tokenB: destinationWallet.token.symbol, sumA: inputAmount, sumB: estimatedAmount))
             
-            let sourceDecimals = sourceWallet.token.decimals
-            let lamports = amountDouble.toLamport(decimals: sourceDecimals)
-            let destinationPubkey = try? SolanaSDK.PublicKey(string: destinationWallet.pubkey ?? "")
-            
-            let request = apiClient.swap(
-                account: nil,
-                pool: currentPoolSubject.value,
-                source: sourcePubkey,
-                sourceMint: sourceMint,
-                destination: destinationPubkey,
-                destinationMint: destinationMint,
-                slippage: slippageSubject.value,
-                amount: lamports,
+            // request
+            let request = provider.swap(
+                fromWallet: sourceWallet,
+                toWallet: destinationWallet,
+                amount: inputAmount,
+                slippage: slippage,
                 isSimulation: false
             )
                 .map {$0 as ProcessTransactionResponseType}
             
-            // calculate amount
-            let inputAmount = amountDouble
-            let estimatedAmount = estimatedAmountSubject.value ?? 0
-            
-            // log
-            analyticsManager.log(event: .swapSwapClick(tokenA: sourceWallet.token.symbol, tokenB: destinationWallet.token.symbol, sumA: inputAmount, sumB: estimatedAmount))
-            
             // show processing scene
-            navigationSubject.accept(
-                .processTransaction(
+            navigate(
+                to: .processTransaction(
                     request: request,
-                    transactionType: .swap(
+                    transactionType: .orcaSwap(
                         from: sourceWallet,
                         to: destinationWallet,
-                        inputAmount: lamports,
+                        inputAmount: inputAmount.toLamport(decimals: sourceWallet.token.decimals),
                         estimatedAmount: estimatedAmount.toLamport(decimals: destinationWallet.token.decimals),
-                        fee: feeInLamportsSubject.value ?? 0
+                        fee: fee?[.default]?.lamports ?? 0
                     )
                 )
             )
@@ -619,117 +184,258 @@ extension SwapToken {
     }
 }
 
-extension SwapToken.ViewModel: WalletDidSelectHandler {
+extension SwapToken.ViewModel: SwapTokenViewModelType {
+    // MARK: - Output
+    var navigationDriver: Driver<SwapToken.NavigatableScene?> {
+        navigationRelay.asDriver()
+    }
+    var initialStateDriver: Driver<LoadableState> {
+        Observable.combineLatest([
+            lamportsPerSignatureRelay.stateObservable,
+            creatingAccountFeeRelay.stateObservable
+        ])
+            .map {$0.combined}
+            .asDriver(onErrorJustReturn: .notRequested)
+    }
+    var sourceWalletDriver: Driver<Wallet?> { sourceWalletRelay.asDriver() }
+    var availableAmountDriver: Driver<Double?> {
+        Observable.combineLatest(
+            sourceWalletRelay,
+            feesRelay.valueObservable
+        )
+            .map {[weak self] in self?.provider.calculateAvailableAmount(sourceWallet: $0, fee: $1?[.default])}
+            .asDriver(onErrorJustReturn: nil)
+    }
+    var inputAmountDriver: Driver<Double?> { inputAmountRelay.asDriver() }
+    var destinationWalletDriver: Driver<Wallet?> { destinationWalletRelay.asDriver() }
+    var estimatedAmountDriver: Driver<Double?> { estimatedAmountRelay.asDriver() }
+    var errorDriver: Driver<String?> {
+        Driver.combineLatest(
+            initialStateDriver,
+            sourceWalletDriver,
+            inputAmountDriver,
+            destinationWalletDriver,
+            estimatedAmountDriver,
+            exchangeRateDriver,
+            feesDriver,
+            slippageDriver
+        )
+            .map {[weak self] initialState, sourceWallet, inputAmount, destinationWallet, estimatedAmount, exchangeRate, fees, slippage -> String? in
+                guard let self = self else {return nil}
+                return validate(
+                    provider: self.provider,
+                    initialState: initialState,
+                    sourceWallet: sourceWallet,
+                    inputAmount: inputAmount,
+                    destinationWallet: destinationWallet,
+                    estimatedAmount: estimatedAmount,
+                    exchangeRate: exchangeRate,
+                    fees: fees,
+                    solWallet: self.walletsRepository.nativeWallet,
+                    slippage: slippage
+                )
+            }
+    }
+    var exchangeRateDriver: Driver<Loadable<Double>> { exchangeRateRelay.asDriver() }
+    var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> { feesRelay.asDriver() }
+    var payingTokenDriver: Driver<PayingToken> {
+        payingTokenRelay.asDriver()
+    }
+    var slippageDriver: Driver<Double?> { slippageRelay.asDriver() }
+    var isExchangeRateReversedDriver: Driver<Bool> {isExchangeRateReversed.asDriver()}
+    
+    var useAllBalanceDidTapSignal: Signal<Double?> {useAllBalanceSubject.asSignal(onErrorJustReturn: nil)}
+    func providerSignatureView() -> UIView {
+        provider.logoView()
+    }
+}
+
+extension SwapToken.ViewModel {
+    // MARK: - Actions
+    func reload() {
+        lamportsPerSignatureRelay.reload()
+        creatingAccountFeeRelay.reload()
+    }
+    
+    func calculateExchangeRateAndFees() {
+        // reset exchange rate and fees
+        exchangeRateRelay.flush()
+        feesRelay.flush()
+        isExchangeRateReversed.accept(false)
+        
+        // if source wallet or destinationWallet is undefined
+        guard let sourceWallet = sourceWalletRelay.value,
+              let destinationWallet = destinationWalletRelay.value,
+              let lamportsPerSignature = lamportsPerSignatureRelay.value,
+              let creatingAccountFee = creatingAccountFeeRelay.value
+        else { return }
+        
+        // if two mint are equal
+        if sourceWallet.mintAddress == destinationWallet.mintAddress {
+            return
+        }
+
+        // form request
+        exchangeRateRelay.request = provider
+            .loadPrice(fromMint: sourceWallet.mintAddress, toMint: destinationWallet.mintAddress)
+
+        feesRelay.request = provider.calculateFees(
+            sourceWallet: sourceWallet,
+            destinationWallet: destinationWallet,
+            lamportsPerSignature: lamportsPerSignature,
+            creatingAccountFee: creatingAccountFee
+        )
+        
+        // request exchange rate and fee (feesRelay will reload after exchangeRateRelay reloaded by a binding in function bind, it's faster because market has been cached after requesting exchange rate)
+        exchangeRateRelay.reload()
+    }
+    
+    func navigate(to scene: SwapToken.NavigatableScene) {
+        switch scene {
+        case .chooseSourceWallet:
+            isSelectingSourceWallet = true
+        case .chooseDestinationWallet:
+            isSelectingSourceWallet = false
+        case .settings:
+            log(.swapSettingsClick)
+        case .chooseSlippage:
+            log(.swapSlippageClick)
+        case .processTransaction:
+            break
+        case .swapFees:
+            log(.swapSwapFeesClick)
+        }
+        navigationRelay.accept(scene)
+    }
+    
+    func useAllBalance() {
+        guard let amount = provider.calculateAvailableAmount(sourceWallet: sourceWalletRelay.value, fee: feesRelay.value?[.default])
+        else {return}
+        analyticsManager.log(event: .swapAvailableClick(sum: amount))
+        useAllBalanceSubject.accept(amount)
+    }
+    
+    func log(_ event: AnalyticsEvent) {
+        analyticsManager.log(event: event)
+    }
+    
+    func swapSourceAndDestination() {
+        analyticsManager.log(event: .swapReverseClick)
+        let sourceWallet = sourceWalletRelay.value
+        sourceWalletRelay.accept(destinationWalletRelay.value)
+        destinationWalletRelay.accept(sourceWallet)
+        inputAmountSubject.accept(nil)
+    }
+    
+    func authenticateAndSwap() {
+        authenticationHandler.authenticate(
+            presentationStyle:
+                .init(
+                    isRequired: false,
+                    isFullScreen: false,
+                    completion: { [weak self] in
+                        self?.swap()
+                    }
+                )
+        )
+    }
+    
+    func reverseExchangeRate() {
+        isExchangeRateReversed.accept(!isExchangeRateReversed.value)
+    }
+    
+    func changeSlippage(to slippage: Double) {
+        log(.swapSlippageKeydown(slippage: slippage))
+        slippageRelay.accept(slippage)
+    }
+    
+    func changePayingToken(to payingToken: PayingToken) {
+        payingTokenRelay.accept(payingToken)
+    }
+    
+    func getSourceWallet() -> Wallet? {
+        sourceWalletRelay.value
+    }
+    
     func walletDidSelect(_ wallet: Wallet) {
         if isSelectingSourceWallet {
             analyticsManager.log(event: .swapTokenASelectClick(tokenTicker: wallet.token.symbol))
-            input.sourceWallet.accept(wallet)
+            sourceWalletRelay.accept(wallet)
         } else {
             analyticsManager.log(event: .swapTokenBSelectClick(tokenTicker: wallet.token.symbol))
-            input.destinationWallet.accept(wallet)
+            destinationWalletRelay.accept(wallet)
         }
     }
 }
 
-private extension SwapToken.ViewModel {
-    // MARK: - Calculator
-    private var sourceDecimals: UInt8? {
-        sourceWalletSubject.value?.token.decimals
-    }
-    
-    private var destinationDecimals: UInt8? {
-        destinationWalletSubject.value?.token.decimals
-    }
-    
-    /// Calculate input amount for receving expected amount
-    /// - Parameter expectedAmount: expected amount of receiver
-    /// - Returns: input amount for receiving expected amount
-    func calculateInputAmount(forExpectedAmount expectedAmount: Double?) -> Double? {
-        guard let expectedAmount = expectedAmount,
-              expectedAmount > 0,
-              let sourceDecimals = sourceDecimals,
-              let destinationDecimals = destinationDecimals,
-              let inputAmountLamports = currentPoolSubject.value?.inputAmount(forEstimatedAmount: expectedAmount.toLamport(decimals: destinationDecimals), includeFees: true)
-        else {return nil}
-        return inputAmountLamports.convertToBalance(decimals: sourceDecimals)
-    }
-    
-    /// Calculate estimated amount for an input amount
-    /// - Returns: estimated amount from input amount
-    func calculateEstimatedAmount(forInputAmount inputAmount: Double?) -> Double? {
-        guard let inputAmount = inputAmount,
-              inputAmount > 0,
-              let sourceDecimals = sourceDecimals,
-              let destinationDecimals = destinationDecimals,
-              let estimatedAmountLamports = currentPoolSubject.value?.estimatedAmount(forInputAmount: inputAmount.toLamport(decimals: sourceDecimals), includeFees: true)
-        else {return nil}
-        return estimatedAmountLamports.convertToBalance(decimals: destinationDecimals)
-    }
-    
-    /// Calculate minimum receive amount from input amount
-    /// - Returns: minimum receive amount
-    func calculateMinimumReceiveAmount() -> Double? {
-        guard let amount = amountSubject.value,
-              amount > 0,
-              let sourceDecimals = sourceDecimals,
-              let destinationDecimals = destinationDecimals,
-              let lamports = currentPoolSubject.value?.minimumReceiveAmount(fromInputAmount: amount.toLamport(decimals: sourceDecimals), slippage: slippageSubject.value, includesFees: true)
-        else {return nil}
-        return lamports.convertToBalance(decimals: destinationDecimals)
-    }
-}
-
-private func calculateFee(forInputAmount inputAmount: Double?, in pool: SolanaSDK.Pool?) -> Double? {
-    guard let inputAmount = inputAmount, let pool = pool else {return nil}
-    return pool.fee(forInputAmount: inputAmount)
-}
-
-private func calculateFeeInLamport(sourceWallet: Wallet?, destinationWallet: Wallet?, lamportsPerSignature: SolanaSDK.Lamports?, creatingAccountFee: SolanaSDK.Lamports?) -> SolanaSDK.Lamports?
-{
-    let creatingAccountFee = creatingAccountFee ?? 0
-    guard let lPS = lamportsPerSignature else {return nil}
-    
-    // default fee
-    var feeInLamports = lPS * 2
-    
-    guard let sourceWallet = sourceWallet
-    else {return feeInLamports}
-    
-    // if token is native, a fee for creating wrapped SOL is needed
-    if sourceWallet.token.isNative {
-        feeInLamports += lPS
-        feeInLamports += creatingAccountFee
-    }
-    
-    // if destination wallet is selected
-    if let destinationWallet = destinationWallet {
-        // if destination wallet is a wrapped sol or not yet created a fee for creating it is needed
-        if destinationWallet.token.address == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString ||
-            destinationWallet.pubkey == nil
-        {
-            feeInLamports += creatingAccountFee
-        }
-    }
-    
-    // fee relayer
-    if SwapToken.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
+/// Verify current context
+/// - Returns: Error string, nil if no error appear or some params are unfilled
+private func validate(
+    provider: SwapProviderType,
+    initialState: LoadableState,
+    sourceWallet: Wallet?,
+    inputAmount: Double?,
+    destinationWallet: Wallet?,
+    estimatedAmount: Double?,
+    exchangeRate: Loadable<Double>,
+    fees: Loadable<[FeeType: SwapFee]>,
+    solWallet: Wallet?,
+    slippage: Double?
+) -> String? {
+    // if swap is initializing, loading exchange rate or calculating fees
+    if [initialState, exchangeRate.state, fees.state].combined != .loaded
     {
-        feeInLamports += lPS // fee for creating a SOL account
+        return nil
     }
     
-    return feeInLamports
+    // verify fee
+    if let fees = fees.value,
+       fees[.default]?.token.symbol == "SOL",
+       let balance = solWallet?.lamports,
+       let fee = fees[.default]?.lamports
+    {
+        if balance < fee {
+            return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
+        }
+    }
+    
+    // if some params are missing
+    guard let sourceWallet = sourceWallet,
+          let inputAmount = inputAmount,
+          let destinationWallet = destinationWallet,
+          let exchangeRate = exchangeRate.value,
+          let fees = fees.value,
+          let slippage = slippage
+    else {return L10n.someParametersAreMissing}
+    
+    // verify amount
+    if inputAmount <= 0 {return L10n.amountIsNotValid}
+    
+    // verify if input amount
+    if inputAmount.isGreaterThan(
+        provider.calculateAvailableAmount(sourceWallet: sourceWallet, fee: fees[.default]),
+        decimals: sourceWallet.token.decimals
+    ) {return L10n.insufficientFunds}
+    
+    // verify estimated amount
+    if estimatedAmount == 0 {
+        return L10n.amountIsTooSmall
+    }
+    
+    // verify exchange rate
+    if exchangeRate == 0 {return L10n.exchangeRateIsNotValid}
+    
+    // verify slippage
+    if !isSlippageValid(slippage: slippage) {return L10n.slippageIsnTValid}
+    
+    // verify tokens
+    if sourceWallet.token.address == destinationWallet.token.address {
+        return L10n.YouCanNotSwapToItself.pleaseChooseAnotherToken(sourceWallet.token.address)
+    }
+    
+    return nil
 }
 
-private func calculateAvailableAmount(sourceWallet wallet: Wallet?, destinationWallet: Wallet?, feeInLamports: SolanaSDK.Lamports?) -> Double?
-{
-    guard let sourceWallet = wallet,
-          let feeInLamports = feeInLamports
-    else {return wallet?.amount}
-    
-    // if token is not nativeSolana and are not using fee relayer
-    if !sourceWallet.token.isNative && !SwapToken.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
-    {return sourceWallet.amount}
-    
-    let availableAmount = (sourceWallet.amount ?? 0) - feeInLamports.convertToBalance(decimals: sourceWallet.token.decimals)
-    return availableAmount > 0 ? availableAmount: 0
+private func isSlippageValid(slippage: Double) -> Bool {
+    slippage <= .maxSlippage && slippage > 0
 }
