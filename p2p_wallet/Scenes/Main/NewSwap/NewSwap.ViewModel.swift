@@ -100,8 +100,16 @@ extension NewSwap {
                 creatingAccountFeeRelay.valueObservable
             )
                 .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-                .subscribe(onNext: {[weak self] sourceWallet, destinationWallet, lamportsPerSignature, creatingAccountFee in
+                .subscribe(onNext: {[weak self] _ in
                     self?.calculateExchangeRateAndFees()
+                })
+                .disposed(by: disposeBag)
+            
+            exchangeRateRelay
+                .stateObservable
+                .filter {$0 == .loaded}
+                .subscribe(onNext: {[weak self] _ in
+                    self?.feesRelay.reload()
                 })
                 .disposed(by: disposeBag)
             
@@ -268,19 +276,18 @@ extension NewSwap.ViewModel {
         }
 
         // form request
-        self.exchangeRateRelay.request = self.provider
+        exchangeRateRelay.request = provider
             .loadPrice(fromMint: sourceWallet.mintAddress, toMint: destinationWallet.mintAddress)
 
-        self.feesRelay.request = self.provider.calculateFees(
+        feesRelay.request = provider.calculateFees(
             sourceWallet: sourceWallet,
             destinationWallet: destinationWallet,
             lamportsPerSignature: lamportsPerSignature,
             creatingAccountFee: creatingAccountFee
         )
         
-        // request
-        self.exchangeRateRelay.reload()
-        self.feesRelay.reload()
+        // request exchange rate and fee (feesRelay will reload after exchangeRateRelay reloaded by a binding in function bind, it's faster because market has been cached after requesting exchange rate)
+        exchangeRateRelay.reload()
     }
     
     func navigate(to scene: NewSwap.NavigatableScene) {
@@ -381,6 +388,17 @@ private func validate(
         return nil
     }
     
+    // verify fee
+    if let fees = fees.value,
+       fees[.default]?.token.symbol == "SOL",
+       let balance = solWallet?.lamports,
+       let fee = fees[.default]?.lamports
+    {
+        if balance < fee {
+            return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
+        }
+    }
+    
     // if some params are missing
     guard let sourceWallet = sourceWallet,
           let inputAmount = inputAmount,
@@ -406,16 +424,6 @@ private func validate(
     
     // verify exchange rate
     if exchangeRate == 0 {return L10n.exchangeRateIsNotValid}
-    
-    // verify fee
-    if fees[.default]?.token.symbol == "SOL",
-       let balance = solWallet?.lamports,
-       let fee = fees[.default]?.lamports
-    {
-        if balance < fee {
-            return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
-        }
-    }
     
     // verify slippage
     if !isSlippageValid(slippage: slippage) {return L10n.slippageIsnTValid}
