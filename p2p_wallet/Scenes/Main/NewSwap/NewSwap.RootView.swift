@@ -160,15 +160,19 @@ extension NewSwap {
                 .disposed(by: disposeBag)
             
             // error label
-            let presentableErrorDriver = viewModel.errorDriver
-                .filter {
-                    ![
-                        L10n.insufficientFunds,
-                        L10n.amountIsNotValid,
-                        L10n.slippageIsnTValid,
-                        L10n.someParametersAreMissing
-                    ].contains($0)
-                }
+            let presentableErrorDriver = Driver.combineLatest(
+                viewModel.exchangeRateDriver.map {$0.state},
+                viewModel.feesDriver.map {$0.state},
+                viewModel.errorDriver
+            )
+                .withLatestFrom(
+                    Driver.combineLatest(
+                        viewModel.sourceWalletDriver.map {$0?.token.symbol},
+                        viewModel.destinationWalletDriver.map {$0?.token.symbol}
+                    ),
+                    resultSelector: {($0.0, $0.1, $0.2, $1.0, $1.1)}
+                )
+                .map(generateErrorText)
             
             presentableErrorDriver
                 .map {$0 == nil}
@@ -260,12 +264,19 @@ extension NewSwap.RootView {
     }
 }
 
+// MARK: - Text generators
 private func generateExchangeRateText(
     exrate: Loadable<Double>,
     isReversed: Bool,
     source: Wallet?,
     destination: Wallet?
 ) -> String? {
+    // if exrate is loading
+    if exrate.state == .loading {
+        return L10n.loading + "..."
+    }
+    
+    // exrate is loaded or error
     guard let source = source,
           let destination = destination,
           exrate.state == .loaded,
@@ -313,4 +324,29 @@ private func generateSwapButtonText(
         return L10n.donTGoOverTheAvailableFunds
     }
     return L10n.swapNow
+}
+
+private func generateErrorText(
+    exrate: LoadableState,
+    fees: LoadableState,
+    error: String?,
+    sourceWalletSymbol: String?,
+    destinationWalletSymbol: String?
+) -> String? {
+    // if failed to get exchange rate and fees
+    if exrate.isError || fees.isError {
+        return L10n.swappingFromToIsCurrentlyUnsupported(sourceWalletSymbol ?? "", destinationWalletSymbol ?? "")
+    }
+
+    guard let error = error else {return nil}
+    
+    let hiddenErrors = [
+        L10n.insufficientFunds,
+        L10n.amountIsNotValid,
+        L10n.slippageIsnTValid,
+        L10n.someParametersAreMissing
+    ] // hide these error (already shown in another place)
+    
+    if !hiddenErrors.contains(error) {return error}
+    return nil
 }
