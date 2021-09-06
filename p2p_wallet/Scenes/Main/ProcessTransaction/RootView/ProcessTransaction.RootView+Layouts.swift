@@ -18,6 +18,10 @@ extension ProcessTransaction.RootView {
             let sv = SwapTransactionSummaryView(forAutoLayout: ())
             sv.setUp(from: from.token, to: to.token, inputAmount: inputAmount, estimatedAmount: estimatedAmount)
             summaryView = sv
+        case .swap(_, let from, let to, let inputAmount, let estimatedAmount, _, _, _):
+            let sv = SwapTransactionSummaryView(forAutoLayout: ())
+            sv.setUp(from: from.token, to: to.token, inputAmount: inputAmount.toLamport(decimals: from.token.decimals), estimatedAmount: estimatedAmount.toLamport(decimals: to.token.decimals))
+            summaryView = sv
         case .send(let fromWallet, _, let sentAmount, _):
             let sentAmount = -(sentAmount.convertToBalance(decimals: fromWallet.token.decimals))
             let symbol = fromWallet.token.symbol
@@ -91,7 +95,7 @@ extension ProcessTransaction.RootView {
         case .send, .closeAccount:
             self.titleLabel.text = L10n.sending + "..."
             self.subtitleLabel.text = L10n.transactionProcessing
-        case .orcaSwap:
+        case .orcaSwap, .swap:
             self.titleLabel.text = L10n.swapping + "..."
             self.subtitleLabel.text = L10n.transactionProcessing
         }
@@ -141,7 +145,7 @@ extension ProcessTransaction.RootView {
             switch transactionType {
             case .send(let fromWallet, _, _, _):
                 symbol = fromWallet.token.symbol
-            case .orcaSwap, .closeAccount:
+            case .orcaSwap, .swap, .closeAccount:
                 break
             }
             

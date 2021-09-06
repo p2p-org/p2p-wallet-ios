@@ -35,7 +35,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         transactionsSubject.asObservable()
     }
     
-    func request(_ request: Single<ProcessTransactionResponseType>, transaction: SolanaSDK.ParsedTransaction, fee: SolanaSDK.Lamports) -> Int {
+    func request(_ request: Single<ProcessTransactionResponseType>, transaction: SolanaSDK.ParsedTransaction, fee: SwapFee) -> Int {
         // modify blocktime
         var transaction = transaction
         transaction.blockTime = Date()
@@ -120,7 +120,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         }
     }
     
-    private func updateRepository(transactionIndex: Int, fee: SolanaSDK.Lamports, isReversed: Bool) {
+    private func updateRepository(transactionIndex: Int, fee: SwapFee, isReversed: Bool) {
         guard let tx = transactionsSubject.value[safe: transactionIndex],
               let transaction = tx.value
         else {
@@ -157,12 +157,12 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                 }
                 
                 // update SOL wallet (minus fee)
-                if let index = wallets.firstIndex(where: {$0.token.isNative})
+                if let index = wallets.firstIndex(where: {$0.token.address == fee.token.address})
                 {
                     if isReversed {
-                        wallets[index].increaseBalance(diffInLamports: fee)
+                        wallets[index].increaseBalance(diffInLamports: fee.lamports)
                     } else {
-                        wallets[index].decreaseBalance(diffInLamports: fee)
+                        wallets[index].decreaseBalance(diffInLamports: fee.lamports)
                     }
                     
                 }
@@ -236,12 +236,12 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                 }
 
                 // update sol wallet (minus fee)
-                if let index = wallets.firstIndex(where: {$0.token.isNative})
+                if let index = wallets.firstIndex(where: {$0.token.address == fee.token.address})
                 {
                     if isReversed {
-                        wallets[index].increaseBalance(diffInLamports: fee)
+                        wallets[index].increaseBalance(diffInLamports: fee.lamports)
                     } else {
-                        wallets[index].decreaseBalance(diffInLamports: fee)
+                        wallets[index].decreaseBalance(diffInLamports: fee.lamports)
                     }
                 }
 

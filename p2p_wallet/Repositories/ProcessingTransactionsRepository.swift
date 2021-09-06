@@ -12,7 +12,7 @@ protocol ProcessingTransactionsRepository: AnyObject {
     typealias RequestIndex = Int
     func processingTransactionsObservable() -> Observable<[SolanaSDK.ParsedTransaction]>
     func getProcessingTransactions() -> [SolanaSDK.ParsedTransaction]
-    func request(_ request: Single<ProcessTransactionResponseType>, transaction: SolanaSDK.ParsedTransaction, fee: SolanaSDK.Lamports) -> RequestIndex
+    func request(_ request: Single<ProcessTransactionResponseType>, transaction: SolanaSDK.ParsedTransaction, fee: SwapFee) -> RequestIndex
 }
 
 extension ProcessingTransactionsRepository {
