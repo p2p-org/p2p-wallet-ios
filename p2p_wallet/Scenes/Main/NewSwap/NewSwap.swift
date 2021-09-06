@@ -108,8 +108,6 @@ protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelT
     
     var isExchangeRateReversedDriver: Driver<Bool> {get}
     
-    var isSwappableDriver: Driver<Bool> {get}
-    
     // Signals
     var useAllBalanceDidTapSignal: Signal<Double?> {get}
     
