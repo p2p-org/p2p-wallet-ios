@@ -110,7 +110,7 @@ extension ProcessTransaction {
                 
                 // Execute
                 requestIndex = markAsRequestingAndSendRequest(transaction: transaction, fee: fee)
-            case .swap(let from, let to, let inputAmount, let estimatedAmount, let fee):
+            case .orcaSwap(let from, let to, let inputAmount, let estimatedAmount, let fee):
                 // form transaction
                 let transaction = SolanaSDK.SwapTransaction(
                     source: from,
@@ -146,7 +146,7 @@ extension ProcessTransaction {
                 switch transactionType {
                 case .send:
                     event = .sendTryAgainClick(error: error)
-                case .swap:
+                case .orcaSwap:
                     event = .swapTryAgainClick(error: error)
                 case .closeAccount:
                     break
@@ -169,7 +169,7 @@ extension ProcessTransaction {
             switch transactionType {
             case .send:
                 analyticsManager.log(event: .sendExplorerClick(txStatus: transactionStatus))
-            case .swap:
+            case .orcaSwap:
                 analyticsManager.log(event: .swapExplorerClick(txStatus: transactionStatus))
             case .closeAccount:
                 break
@@ -185,7 +185,7 @@ extension ProcessTransaction {
             switch transactionType {
             case .send:
                 analyticsManager.log(event: .sendDoneClick(txStatus: transactionStatus))
-            case .swap:
+            case .orcaSwap:
                 analyticsManager.log(event: .swapDoneClick(txStatus: transactionStatus))
             case .closeAccount:
                 break
@@ -204,7 +204,7 @@ extension ProcessTransaction {
                 switch transactionType {
                 case .send:
                     event = .sendCancelClick(error: error)
-                case .swap:
+                case .orcaSwap:
                     event = .swapCancelClick(error: error)
                 case .closeAccount:
                     break

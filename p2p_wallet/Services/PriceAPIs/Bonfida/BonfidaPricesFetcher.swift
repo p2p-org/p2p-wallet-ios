@@ -83,7 +83,7 @@ struct BonfidaPricesFetcher: PricesFetcher {
     }
     
     func getValueInUSD(fiat: String) -> Single<Double?> {
-        return .just(nil) // TODO
+        return .just(nil)
     }
 }
 

@@ -28,15 +28,15 @@ class InvestmentsViewController: BaseVC {
     
     override func bind() {
         super.bind()
-        viewModel.navigationSubject
-            .subscribe(onNext: {self.navigate(to: $0)})
-            .disposed(by: disposeBag)
+//        viewModel.navigationSubject
+//            .subscribe(onNext: {self.navigate(to: $0)})
+//            .disposed(by: disposeBag)
     }
     
     // MARK: - Navigation
-    private func navigate(to scene: InvestmentsNavigatableScene) {
-        switch scene {
-        
-        }
-    }
+//    private func navigate(to scene: InvestmentsNavigatableScene) {
+//        switch scene {
+//        
+//        }
+//    }
 }

@@ -2,43 +2,43 @@
 //  SwapToken.RootView.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 03/06/2021.
+//  Created by Chung Tran on 19/08/2021.
 //
 
 import UIKit
 import RxSwift
-import Action
 import RxCocoa
+import Action
 
 extension SwapToken {
     class RootView: ScrollableVStackRootView {
         // MARK: - Constants
-        let disposeBag = DisposeBag()
+        private let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        let viewModel: ViewModel
+        private let viewModel: SwapTokenViewModelType
         
         // MARK: - Subviews
-        lazy var sourceWalletView = WalletView(viewModel: viewModel, type: .source)
-        lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
-            .onTap(viewModel, action: #selector(ViewModel.swapSourceAndDestination))
-        lazy var destinationWalletView = SwapToken.WalletView(viewModel: viewModel, type: .destination)
+        private lazy var sourceWalletView = WalletView(viewModel: viewModel, type: .source)
+        private lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
+            .onTap(self, action: #selector(swapSourceAndDestination))
+        private lazy var destinationWalletView = WalletView(viewModel: viewModel, type: .destination)
         
-        lazy var exchangeRateLabel = UILabel(textSize: 15, weight: .medium)
-        lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
+        private lazy var exchangeRateLabel = UILabel(textSize: 15, weight: .medium)
+        private lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
             .padding(.init(all: 3))
-            .onTap(viewModel, action: #selector(ViewModel.reverseExchangeRate))
+            .onTap(self, action: #selector(reverseExchangeRate))
         
-        lazy var slippageLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
+        private lazy var slippageLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
         
-        lazy var swapFeeLabel = UILabel(text: L10n.swapFees, textSize: 15, weight: .medium)
-        lazy var errorLabel = UILabel(textSize: 15, weight: .medium, textColor: .alert, numberOfLines: 0)
+        private lazy var swapFeeLabel = UILabel(text: L10n.swapFees, textSize: 15, weight: .medium)
+        private lazy var errorLabel = UILabel(textSize: 15, weight: .medium, textColor: .alert, numberOfLines: 0, textAlignment: .center)
         
-        lazy var swapButton = WLButton.stepButton(type: .blue, label: L10n.swapNow)
-            .onTap(viewModel, action: #selector(ViewModel.authenticateAndSwap))
+        private lazy var swapButton = WLButton.stepButton(type: .blue, label: L10n.swapNow)
+            .onTap(self, action: #selector(authenticateAndSwap))
         
         // MARK: - Initializers
-        init(viewModel: ViewModel) {
+        init(viewModel: SwapTokenViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
@@ -52,6 +52,7 @@ extension SwapToken {
         
         override func didMoveToWindow() {
             super.didMoveToWindow()
+            
         }
         
         // MARK: - Layout
@@ -80,7 +81,7 @@ extension SwapToken {
                     contentView: slippageLabel,
                     addSeparatorOnTop: false
                 )
-                    .onTap(viewModel, action: #selector(ViewModel.chooseSlippage))
+                    .onTap(self, action: #selector(chooseSlippage))
                     .withTag(3)
                 
                 UIView.defaultSeparator()
@@ -88,7 +89,7 @@ extension SwapToken {
                 
                 createSectionView(
                     label: swapFeeLabel,
-                    contentView: errorLabel,
+                    contentView: UIView(),
                     addSeparatorOnTop: false
                 )
                     .withModifier { view in
@@ -96,179 +97,128 @@ extension SwapToken {
                         view.autoSetDimension(.height, toSize: 48, relation: .greaterThanOrEqual)
                         return view
                     }
-                    .onTap(viewModel, action: #selector(ViewModel.showSwapFees))
+                    .onTap(self, action: #selector(showSwapFees))
                     .withTag(5)
+                
+                errorLabel
                 
                 swapButton
                 
                 BEStackViewSpacing(20)
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
                     UILabel(text: L10n.poweredBy, textSize: 13, textColor: .textSecondary, textAlignment: .center)
-                    UIImageView(width: 24, height: 24, image: .orcaLogo)
-                    UIImageView(width: 68, height: 13, image: .orcaText, tintColor: .textBlack)
+                    viewModel.providerSignatureView()
                 }
                     .centeredHorizontallyView
             }
         }
         
         private func bind() {
-            // loaded
-            viewModel.output.error
-                .map { $0 == L10n.swappingIsCurrentlyUnavailable }
-                .drive(onNext: {[weak self] isUnavailable in
-                    self?.removeErrorView()
-                    self?.stackView.isHidden = false
-                    
-                    if isUnavailable {
-                        self?.stackView.isHidden = true
-                        self?.showErrorView(
-                            title: L10n.swappingIsCurrentlyUnavailable,
-                            description: L10n.swappingPoolsNotFound + "\n" + L10n.pleaseTryAgainLater,
-                            retryAction: CocoaAction { [weak self] in
-                                self?.viewModel.reload()
-                                return .just(())
-                            }
-                        )
-                    }
+            // initial state
+            viewModel.initialStateDriver
+                .drive(onNext: {[weak self] state in
+                    self?.setUp(initialState: state)
                 })
                 .disposed(by: disposeBag)
             
-            // pool
-            let isNoPoolAvailable = viewModel.output.pool.map {$0 == nil}
-            
-            isNoPoolAvailable
-                .drive(stackView.viewWithTag(1)!.rx.isHidden)
+            // exchange rate
+            viewModel.exchangeRateDriver
+                .map {$0.state != .loading && $0.state != .loaded}
+                .drive(
+                    stackView.viewWithTag(1)!.rx.isHidden,
+                    stackView.viewWithTag(2)!.rx.isHidden
+                )
                 .disposed(by: disposeBag)
             
-            isNoPoolAvailable
-                .drive(stackView.viewWithTag(2)!.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            isNoPoolAvailable
-                .drive(stackView.viewWithTag(4)!.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            isNoPoolAvailable
-                .drive(stackView.viewWithTag(5)!.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            // exchange rate label
             Driver.combineLatest(
-                viewModel.output.amount,
-                viewModel.output.estimatedAmount,
-                viewModel.output.isExchageRateReversed,
-                viewModel.output.sourceWallet.map {$0?.token.symbol},
-                viewModel.output.destinationWallet.map {$0?.token.symbol}
+                viewModel.exchangeRateDriver,
+                viewModel.isExchangeRateReversedDriver
             )
-                .map {amount, estimatedAmount, isReversed, sourceSymbol, destinationSymbol -> String? in
-                    guard let amount = amount, let estimatedAmount = estimatedAmount, let sourceSymbol = sourceSymbol, let destinationSymbol = destinationSymbol
-                    else {return nil}
-                    
-                    let rate: Double
-                    let fromSymbol: String
-                    let toSymbol: String
-                    if isReversed {
-                        guard estimatedAmount != 0 else {return nil}
-                        rate = amount / estimatedAmount
-                        fromSymbol = destinationSymbol
-                        toSymbol = sourceSymbol
-                    } else {
-                        guard amount != 0 else {return nil}
-                        rate = estimatedAmount / amount
-                        fromSymbol = sourceSymbol
-                        toSymbol = destinationSymbol
-                    }
-                    
-                    var string = rate.toString(maximumFractionDigits: 9)
-                    string += " "
-                    string += toSymbol
-                    string += " "
-                    string += L10n.per
-                    string += " "
-                    string += fromSymbol
-                    
-                    return string
-                }
+                .withLatestFrom(
+                    Driver.combineLatest(
+                        viewModel.sourceWalletDriver,
+                        viewModel.destinationWalletDriver
+                    ),
+                    resultSelector: {($0.0, $0.1, $1.0, $1.1)}
+                )
+                .map(generateExchangeRateText)
                 .drive(exchangeRateLabel.rx.text)
                 .disposed(by: disposeBag)
             
             // slippage
-            viewModel.output.slippage
-                .map {slippageAttributedText(slippage: $0)}
+            viewModel.slippageDriver
+                .map {slippageAttributedText(slippage: $0 ?? 0)}
                 .drive(slippageLabel.rx.attributedText)
                 .disposed(by: disposeBag)
             
-            // error
-            viewModel.output.error
-                .drive(errorLabel.rx.text)
+            // fee
+            viewModel.feesDriver.map {$0.state != .loaded}
+                .drive(
+                    stackView.viewWithTag(4)!.rx.isHidden,
+                    stackView.viewWithTag(5)!.rx.isHidden
+                )
                 .disposed(by: disposeBag)
             
-            let errorHidden = viewModel.output.error
-                .map {
-                    $0 == nil ||
-                    [
-                        L10n.insufficientFunds,
-                        L10n.amountIsNotValid,
-                        L10n.slippageIsnTValid
-                    ].contains($0)
-                }
-                
-            errorHidden
+            // error label
+            let presentableErrorDriver = Driver.combineLatest(
+                viewModel.exchangeRateDriver.map {$0.state},
+                viewModel.feesDriver.map {$0.state},
+                viewModel.errorDriver
+            )
+                .map(generateErrorText)
+            
+            presentableErrorDriver
+                .map {$0 == nil}
                 .drive(errorLabel.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            errorHidden
-                .drive(onNext: {[weak self] isErrorHidden in
-                    var textSize: CGFloat = 15
-                    var textColor: UIColor = .textBlack
-                    if !isErrorHidden {
-                        textSize = 13
-                        textColor = .textSecondary
-                    }
-                    self?.swapFeeLabel.font = .systemFont(ofSize: textSize, weight: .medium)
-                    self?.swapFeeLabel.textColor = textColor
-                })
+            presentableErrorDriver
+                .drive(errorLabel.rx.text)
                 .disposed(by: disposeBag)
             
-//            viewModel.output.error
-//                .map {$0 != L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee}
-//                .drive(feeAlertImageView.rx.isHidden)
-//                .disposed(by: disposeBag)
-//
-//            viewModel.output.error
-//                .map {$0 != L10n.yourAccountDoesNotHaveEnoughTokensToCoverFee}
-//                .map {$0 ? UIColor.textSecondary: UIColor.alert}
-//                .drive(feeLabel.rx.textColor)
-//                .disposed(by: disposeBag)
-            
-            // swap button
-            viewModel.output.isValid
+            // button
+            Driver.combineLatest([
+                viewModel.initialStateDriver.map {$0 == .loaded},
+                viewModel.exchangeRateDriver.map {$0.state == .loaded},
+                viewModel.feesDriver.map {$0.state == .loaded},
+                viewModel.errorDriver.map {$0 == nil}
+            ])
+                .map {$0.allSatisfy {$0}}
                 .drive(swapButton.rx.isEnabled)
                 .disposed(by: disposeBag)
             
             Driver.combineLatest(
-                viewModel.output.sourceWallet.map {$0 == nil},
-                viewModel.output.destinationWallet.map {$0 == nil},
-                viewModel.output.amount,
-                viewModel.output.error
+                viewModel.exchangeRateDriver,
+                viewModel.feesDriver,
+                viewModel.sourceWalletDriver.map {$0 == nil},
+                viewModel.destinationWalletDriver.map {$0 == nil},
+                viewModel.inputAmountDriver.map {$0 == nil},
+                viewModel.errorDriver
             )
-            .map {isSourceWalletEmpty, isDestinationWalletEmpty, amount, error -> String? in
-                if isSourceWalletEmpty || isDestinationWalletEmpty {
-                    return L10n.selectToken
-                }
-                if amount == nil {
-                    return L10n.enterTheAmount
-                }
-                if error == L10n.slippageIsnTValid {
-                    return L10n.enterANumberLessThanD(Int(Double.maxSlippage * 100))
-                }
-                if error == L10n.insufficientFunds {
-                    return L10n.donTGoOverTheAvailableFunds
-                }
-                return L10n.swapNow
-            }
+                .map(generateSwapButtonText)
                 .drive(swapButton.rx.title())
                 .disposed(by: disposeBag)
+        }
+        
+        // MARK: - Actions
+        @objc private func swapSourceAndDestination() {
+            viewModel.swapSourceAndDestination()
+        }
+        
+        @objc private func reverseExchangeRate() {
+            viewModel.reverseExchangeRate()
+        }
+        
+        @objc private func authenticateAndSwap() {
+            viewModel.authenticateAndSwap()
+        }
+        
+        @objc private func chooseSlippage() {
+            viewModel.navigate(to: .chooseSlippage)
+        }
+        
+        @objc private func showSwapFees() {
+            viewModel.navigate(to: .swapFees)
         }
         
         // MARK: - Helpers
@@ -286,4 +236,108 @@ extension SwapToken {
             return view
         }
     }
+}
+
+extension SwapToken.RootView {
+    private func setUp(initialState: LoadableState) {
+        removeErrorView()
+        stackView.isHidden = false
+        
+        if initialState.isError {
+            stackView.isHidden = true
+            showErrorView(
+                title: L10n.swappingIsCurrentlyUnavailable,
+                description: L10n.swappingIsCurrentlyUnavailable,
+                retryAction: CocoaAction { [weak self] in
+                    self?.viewModel.reload()
+                    return .just(())
+                }
+            )
+        }
+    }
+}
+
+// MARK: - Text generators
+private func generateExchangeRateText(
+    exrate: Loadable<Double>,
+    isReversed: Bool,
+    source: Wallet?,
+    destination: Wallet?
+) -> String? {
+    // if exrate is loading
+    if exrate.state == .loading {
+        return L10n.loading + "..."
+    }
+    
+    // exrate is loaded or error
+    guard let source = source,
+          let destination = destination,
+          exrate.state == .loaded,
+          var rate = exrate.value
+    else {
+        return nil
+    }
+    if rate != 0 && isReversed {
+        rate = 1/rate
+    }
+    var string = rate.toString(maximumFractionDigits: 9)
+    string += " "
+    string += source.token.symbol
+    string += " "
+    string += L10n.per
+    string += " "
+    string += destination.token.symbol
+    return string
+}
+
+private func generateSwapButtonText(
+    exrate: Loadable<Double?>,
+    fees: Loadable<[FeeType: SwapFee]>,
+    isSourceWalletEmpty: Bool,
+    isDestinationWalletEmpty: Bool,
+    isAmountNil: Bool,
+    error: String?
+) -> String? {
+    if exrate.state == .loading {
+        return L10n.loadingExchangeRate + "..."
+    }
+    if fees.state == .loading {
+        return L10n.calculatingFees + "..."
+    }
+    if isSourceWalletEmpty || isDestinationWalletEmpty {
+        return L10n.selectToken
+    }
+    if isAmountNil {
+        return L10n.enterTheAmount
+    }
+    if error == L10n.slippageIsnTValid {
+        return L10n.enterANumberLessThanD(Int(Double.maxSlippage * 100))
+    }
+    if error == L10n.insufficientFunds {
+        return L10n.donTGoOverTheAvailableFunds
+    }
+    return L10n.swapNow
+}
+
+private func generateErrorText(
+    exrate: LoadableState,
+    fees: LoadableState,
+    error: String?
+) -> String? {
+    // if failed to get exchange rate and fees
+    if exrate.isError || fees.isError {
+        return L10n.couldNotCalculateExchangeRateOrSwappingFeesFromCurrentTokenPair
+    }
+
+    guard let error = error else {return nil}
+    
+    let hiddenErrors = [
+        L10n.insufficientFunds,
+        L10n.amountIsNotValid,
+        L10n.slippageIsnTValid,
+        L10n.someParametersAreMissing
+    ] // hide these error (already shown in another place)
+    
+    if !hiddenErrors.contains(error) {return error}
+    return nil
 }

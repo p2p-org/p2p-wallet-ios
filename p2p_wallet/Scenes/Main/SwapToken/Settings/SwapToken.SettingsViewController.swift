@@ -1,5 +1,5 @@
 //
-//  NewSwap.SettingsViewController.swift
+//  SwapToken.SettingsViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 13/08/2021.
@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-protocol NewSwapSettingsViewModelType {
+protocol SwapTokenSettingsViewModelType {
     var sourceWalletDriver: Driver<Wallet?> {get}
     var destinationWalletDriver: Driver<Wallet?> {get}
     var slippageDriver: Driver<Double?> {get}
@@ -18,10 +18,10 @@ protocol NewSwapSettingsViewModelType {
     func changePayingToken(to payingToken: PayingToken)
 }
 
-extension NewSwap {
+extension SwapToken {
     class SettingsViewController: SettingsBaseViewController {
         // MARK: - Properties
-        private let viewModel: NewSwapSettingsViewModelType
+        private let viewModel: SwapTokenSettingsViewModelType
         private var defaultsDisposables = [DefaultsDisposable]()
         private var transactionTokensName: String?
         
@@ -32,7 +32,7 @@ extension NewSwap {
         private lazy var payingTokenLabel = UILabel(textSize: 15, weight: .medium)
         
         // MARK: - Initializers
-        init(viewModel: NewSwapSettingsViewModelType) {
+        init(viewModel: SwapTokenSettingsViewModelType) {
             self.viewModel = viewModel
             super.init()
         }

@@ -8,10 +8,6 @@
 import Foundation
 import UIKit
 
-//protocol ProcessTransactionScenesFactory {
-//    func makeProcessTransactionDetailViewController() -> ProcessTransactionDetailViewController
-//}
-
 @objc protocol ProcessTransactionViewControllerDelegate: AnyObject {
     func processTransactionViewControllerDidComplete(_ vc: UIViewController)
 }

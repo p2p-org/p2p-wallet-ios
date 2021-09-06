@@ -1,18 +1,57 @@
 //
-//  SerumSwap.swift
+//  OrcaSwap.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 19/08/2021.
+//  Created by Chung Tran on 03/06/2021.
 //
 
 import Foundation
 import RxSwift
-import RxCocoa
+import FeeRelayerSwift
 
-struct NewSwap {
+protocol OrcaSwapAPIClient {
+    func getSwapPools() -> Single<[SolanaSDK.Pool]>
+    func getPoolWithTokenBalances(pool: SolanaSDK.Pool) -> Single<SolanaSDK.Pool>
+    func swap(
+        account: SolanaSDK.Account?,
+        pool: SolanaSDK.Pool?,
+        source: SolanaSDK.PublicKey,
+        sourceMint: SolanaSDK.PublicKey,
+        destination: SolanaSDK.PublicKey?,
+        destinationMint: SolanaSDK.PublicKey,
+        slippage: Double,
+        amount: UInt64,
+        isSimulation: Bool
+    ) -> Single<SolanaSDK.SwapResponse>
+    func getLamportsPerSignature() -> Single<SolanaSDK.Lamports>
+    func getCreatingTokenAccountFee() -> Single<UInt64>
+}
+
+extension SolanaSDK: OrcaSwapAPIClient {
+    func swap(account: Account?, pool: Pool?, source: PublicKey, sourceMint: PublicKey, destination: PublicKey?, destinationMint: PublicKey, slippage: Double, amount: UInt64, isSimulation: Bool) -> Single<SwapResponse> {
+        swap(
+            account: account,
+            pool: pool,
+            source: source,
+            sourceMint: sourceMint,
+            destination: destination,
+            destinationMint: destinationMint,
+            slippage: slippage,
+            amount: amount,
+            isSimulation: isSimulation,
+            customProxy: Defaults.payingToken == .transactionToken ? FeeRelayer(): nil
+        )
+    }
+    
+    func getLamportsPerSignature() -> Single<Lamports> {
+        getFees().map {$0.feeCalculator?.lamportsPerSignature}.map {$0 ?? 0}
+    }
+}
+
+struct OrcaSwap {
     enum NavigatableScene {
         case chooseSourceWallet
-        case chooseDestinationWallet
+        case chooseDestinationWallet(validMints: Set<String>, excludedSourceWalletPubkey: String?)
         case settings
         case chooseSlippage
         case swapFees
@@ -20,6 +59,15 @@ struct NewSwap {
     }
     
     // MARK: - Helpers
+    static func isFeeRelayerEnabled(source: Wallet?, destination: Wallet?) -> Bool {
+        guard let source = source,
+              let destination = destination
+        else {
+            return false
+        }
+        return !source.token.isNative && !destination.token.isNative && Defaults.payingToken != .nativeSOL
+    }
+    
     static func createSectionView(
         title: String? = nil,
         label: UIView? = nil,
@@ -40,7 +88,6 @@ struct NewSwap {
                 contentView
             }
         }
-        
         if let rightView = rightView {
             stackView.addArrangedSubview(rightView)
         }
@@ -74,61 +121,3 @@ struct NewSwap {
         }
     }
 }
-
-protocol NewSwapScenesFactory {
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
-}
-
-protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelType, NewSwapSwapFeesViewModelType {
-    // Input
-    var inputAmountSubject: PublishRelay<String?> {get}
-    var estimatedAmountSubject: PublishRelay<String?> {get}
-    
-    // Drivers
-    var navigationDriver: Driver<NewSwap.NavigatableScene?> {get}
-    var initialStateDriver: Driver<LoadableState> {get}
-    
-    var sourceWalletDriver: Driver<Wallet?> {get}
-    var availableAmountDriver: Driver<Double?> {get}
-    var inputAmountDriver: Driver<Double?> {get}
-    
-    var destinationWalletDriver: Driver<Wallet?> {get}
-    var estimatedAmountDriver: Driver<Double?> {get}
-    
-    var exchangeRateDriver: Driver<Loadable<Double>> {get}
-    
-    var slippageDriver: Driver<Double?> {get}
-    
-    var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> {get}
-    
-    var payingTokenDriver: Driver<PayingToken> {get}
-    
-    var errorDriver: Driver<String?> {get}
-    
-    var isExchangeRateReversedDriver: Driver<Bool> {get}
-    
-    // Signals
-    var useAllBalanceDidTapSignal: Signal<Double?> {get}
-    
-    // Actions
-    func reload()
-    func calculateExchangeRateAndFees()
-    func navigate(to: NewSwap.NavigatableScene)
-    func useAllBalance()
-    func log(_ event: AnalyticsEvent)
-    func swapSourceAndDestination()
-    func reverseExchangeRate()
-    func authenticateAndSwap()
-    func changeSlippage(to slippage: Double)
-    func changePayingToken(to payingToken: PayingToken)
-    func getSourceWallet() -> Wallet?
-    func providerSignatureView() -> UIView
-}
-
-protocol NewSwapViewModelAPIClient {
-    func getLamportsPerSignature() -> Single<SolanaSDK.Lamports>
-    func getCreatingTokenAccountFee() -> Single<UInt64>
-}
-
-extension SolanaSDK: NewSwapViewModelAPIClient {}
