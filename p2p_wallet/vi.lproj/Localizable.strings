@@ -448,3 +448,4 @@
 "Tap to try again" = "Nhấn để thử lại";
 "Loading exchange rate" = "Đang tải tỷ giá hối đoái";
 "Calculating fees" = "Đang tính phí";
+"Could not calculate exchange rate or swapping fees from current token pair" = "Không thể tính toán tỷ giá hối đoái hoặc phí hoán đổi từ cặp mã thông báo hiện tại";

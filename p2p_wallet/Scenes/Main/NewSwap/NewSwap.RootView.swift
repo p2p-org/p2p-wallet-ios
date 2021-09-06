@@ -165,13 +165,6 @@ extension NewSwap {
                 viewModel.feesDriver.map {$0.state},
                 viewModel.errorDriver
             )
-                .withLatestFrom(
-                    Driver.combineLatest(
-                        viewModel.sourceWalletDriver.map {$0?.token.symbol},
-                        viewModel.destinationWalletDriver.map {$0?.token.symbol}
-                    ),
-                    resultSelector: {($0.0, $0.1, $0.2, $1.0, $1.1)}
-                )
                 .map(generateErrorText)
             
             presentableErrorDriver
@@ -226,6 +219,10 @@ extension NewSwap {
         
         @objc private func showSwapFees() {
             viewModel.navigate(to: .swapFees)
+        }
+        
+        @objc private func recalculateExchangeRate() {
+            viewModel.calculateExchangeRateAndFees()
         }
         
         // MARK: - Helpers
@@ -329,13 +326,11 @@ private func generateSwapButtonText(
 private func generateErrorText(
     exrate: LoadableState,
     fees: LoadableState,
-    error: String?,
-    sourceWalletSymbol: String?,
-    destinationWalletSymbol: String?
+    error: String?
 ) -> String? {
     // if failed to get exchange rate and fees
     if exrate.isError || fees.isError {
-        return L10n.swappingFromToIsCurrentlyUnsupported(sourceWalletSymbol ?? "", destinationWalletSymbol ?? "")
+        return L10n.couldNotCalculateExchangeRateOrSwappingFeesFromCurrentTokenPair + ".\n" + L10n.retry + "?"
     }
 
     guard let error = error else {return nil}

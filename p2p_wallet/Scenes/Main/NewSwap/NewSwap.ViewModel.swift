@@ -101,34 +101,7 @@ extension NewSwap {
             )
                 .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
                 .subscribe(onNext: {[weak self] sourceWallet, destinationWallet, lamportsPerSignature, creatingAccountFee in
-                    guard let self = self else {return}
-                    
-                    // reset exchange rate and fees
-                    self.exchangeRateRelay.flush()
-                    self.feesRelay.flush()
-                    self.isExchangeRateReversed.accept(false)
-                    
-                    // if source wallet or destinationWallet is undefined
-                    guard let sourceWallet = sourceWallet, let destinationWallet = destinationWallet
-                    else { return }
-                    if sourceWallet.mintAddress == destinationWallet.mintAddress {
-                        return
-                    }
-
-                    // form request
-                    self.exchangeRateRelay.request = self.provider
-                        .loadPrice(fromMint: sourceWallet.mintAddress, toMint: destinationWallet.mintAddress)
-
-                    self.feesRelay.request = self.provider.calculateFees(
-                        sourceWallet: sourceWallet,
-                        destinationWallet: destinationWallet,
-                        lamportsPerSignature: lamportsPerSignature,
-                        creatingAccountFee: creatingAccountFee
-                    )
-                    
-                    // request
-                    self.exchangeRateRelay.reload()
-                    self.feesRelay.reload()
+                    self?.calculateExchangeRateAndFees()
                 })
                 .disposed(by: disposeBag)
             
@@ -274,6 +247,40 @@ extension NewSwap.ViewModel {
     func reload() {
         lamportsPerSignatureRelay.reload()
         creatingAccountFeeRelay.reload()
+    }
+    
+    func calculateExchangeRateAndFees() {
+        // reset exchange rate and fees
+        exchangeRateRelay.flush()
+        feesRelay.flush()
+        isExchangeRateReversed.accept(false)
+        
+        // if source wallet or destinationWallet is undefined
+        guard let sourceWallet = sourceWalletRelay.value,
+              let destinationWallet = destinationWalletRelay.value,
+              let lamportsPerSignature = lamportsPerSignatureRelay.value,
+              let creatingAccountFee = creatingAccountFeeRelay.value
+        else { return }
+        
+        // if two mint are equal
+        if sourceWallet.mintAddress == destinationWallet.mintAddress {
+            return
+        }
+
+        // form request
+        self.exchangeRateRelay.request = self.provider
+            .loadPrice(fromMint: sourceWallet.mintAddress, toMint: destinationWallet.mintAddress)
+
+        self.feesRelay.request = self.provider.calculateFees(
+            sourceWallet: sourceWallet,
+            destinationWallet: destinationWallet,
+            lamportsPerSignature: lamportsPerSignature,
+            creatingAccountFee: creatingAccountFee
+        )
+        
+        // request
+        self.exchangeRateRelay.reload()
+        self.feesRelay.reload()
     }
     
     func navigate(to scene: NewSwap.NavigatableScene) {

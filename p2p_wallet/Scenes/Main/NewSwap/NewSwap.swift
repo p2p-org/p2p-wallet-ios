@@ -113,6 +113,7 @@ protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelT
     
     // Actions
     func reload()
+    func calculateExchangeRateAndFees()
     func navigate(to: NewSwap.NavigatableScene)
     func useAllBalance()
     func log(_ event: AnalyticsEvent)
