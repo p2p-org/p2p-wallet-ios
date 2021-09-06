@@ -57,7 +57,8 @@ extension NewSwap {
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
             
-            viewModel.isInitializingDriver
+            viewModel.initialStateDriver
+                .map {$0 == .loading}
                 .drive(onNext: {[weak self] isLoading in
                     if isLoading {
                         self?.showIndetermineHud(nil)

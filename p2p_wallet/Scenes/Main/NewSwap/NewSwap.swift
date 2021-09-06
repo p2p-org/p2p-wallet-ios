@@ -87,7 +87,7 @@ protocol NewSwapViewModelType: WalletDidSelectHandler, NewSwapSettingsViewModelT
     
     // Drivers
     var navigationDriver: Driver<NewSwap.NavigatableScene?> {get}
-    var isInitializingDriver: Driver<Bool> {get}
+    var initialStateDriver: Driver<LoadableState> {get}
     
     var sourceWalletDriver: Driver<Wallet?> {get}
     var availableAmountDriver: Driver<Double?> {get}
