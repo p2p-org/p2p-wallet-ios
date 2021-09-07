@@ -44,8 +44,7 @@ extension SerumSwap: SwapProviderType {
             fromWallet: sourceWallet,
             toWallet: destinationWallet,
             lamportsPerSignature: lamportsPerSignature,
-            minRentExemption: creatingAccountFee,
-            isPayingWithSOL: isPayingWithSOL
+            minRentExemption: creatingAccountFee
         )
         
         return networkFeeRequest
