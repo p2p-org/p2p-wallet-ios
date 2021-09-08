@@ -56,11 +56,7 @@ extension FeeRelayer.Error: LocalizedError {
         case .parseSignatureError: string = "Wrong signature format"
         case .wrongSignature: string = "Wrong signature"
         case .signerError: string = "Signer error"
-        case .clientError:
-            if let data = data as? String {
-                return data.uppercaseFirst.localized()
-            }
-            string = "Solana RPC client error"
+        case .clientError: string = "Solana RPC client error"
         case .programError: string = "Solana program error"
         case .tooSmallAmount : string = "Amount is too small"
         case .notEnoughBalance : string = "Not enough balance"
@@ -76,7 +72,11 @@ extension FeeRelayer.Error: LocalizedError {
         default: string = "Unknown error"
         }
         
+        let additionalMessage = message.replacingOccurrences(of: "\(string): ", with: "")
         string = string.localized()
+        #if DEBUG
+        string += ": \(additionalMessage)"
+        #endif
         
         #if DEBUG
         var details = [String]()
