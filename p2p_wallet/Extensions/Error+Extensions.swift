@@ -49,7 +49,7 @@ extension SolanaSDK.Error: LocalizedError {
 extension FeeRelayer.Error: LocalizedError {
     public var errorDescription: String? {
         var string: String
-        switch self.type {
+        switch self.data?.type {
         case .parseHashError: string = "Wrong hash format"
         case .parsePubkeyError: string = "Wrong pubkey format"
         case .parseKeypairError: string = "Wrong keypair format"
@@ -73,34 +73,24 @@ extension FeeRelayer.Error: LocalizedError {
         case .feeCalculatorNotFound: string = "Fee calculator not found"
         case .notEnoughOutAmount : string = "Not enough output amount"
         case .unknown: string = "Unknown error"
+        default: string = "Unknown error"
         }
         
         string = string.localized()
         
-        if let data = data as? FeeRelayer.FeeRelayerErrorData {
-            var details = [String]()
-            
-            if let expected = data.expected {
-                details.append(" \(L10n.expected): \(expected.toString(maximumFractionDigits: 9))")
-            }
-            if let minimum = data.minimum {
-                details.append(" \(L10n.minimum): \(minimum.toString(maximumFractionDigits: 9))")
-            }
-            if let actual = data.actual {
-                details.append(" \(L10n.actual): \(actual.toString(maximumFractionDigits: 9))")
-            }
-            if let found = data.found {
-                details.append(" \(L10n.actual): \(found.toString(maximumFractionDigits: 9))")
-            }
-            
-            if !details.isEmpty {
-                string += ":\n\(details.joined(separator: ", ").uppercaseFirst)"
-            }
-        } else if let data = data as? String {
-            #if DEBUG
-            string += " \(data)"
-            #endif
+        #if DEBUG
+        var details = [String]()
+        if let array = data?.data?.array {
+            details += array
         }
+        if let dictionary = data?.data?.dict {
+            details += dictionary.map {"\($0.key.localized()): \($0.value)"}
+        }
+        if !details.isEmpty {
+            string += ": \(details.joined(separator: ", ").uppercaseFirst)"
+        }
+        #endif
+        
         return string
     }
 }
