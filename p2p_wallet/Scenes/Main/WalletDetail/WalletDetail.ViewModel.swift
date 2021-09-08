@@ -81,8 +81,7 @@ extension WalletDetail {
                     pricesRepository: pricesRepository,
                     processingTransactionRepository: processingTransactionRepository,
                     feeRelayer: feeRelayer,
-                    notificationsRepository: notificationsRepository,
-                    walletsRepository: walletsRepository
+                    notificationsRepository: notificationsRepository
                 ),
                 canBuyToken: symbol == "SOL" || symbol == "USDC"
             )
