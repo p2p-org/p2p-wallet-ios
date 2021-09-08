@@ -20,7 +20,6 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     private let processingTransactionRepository: ProcessingTransactionsRepository
     private let feeRelayer: FeeRelayerType
     private let notificationsRepository: WLNotificationsRepository
-    private let walletsRepository: WalletsRepository
     
     // MARK: - Properties
     private let disposeBag = DisposeBag()
@@ -38,8 +37,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         pricesRepository: PricesRepository,
         processingTransactionRepository: ProcessingTransactionsRepository,
         feeRelayer: FeeRelayerType,
-        notificationsRepository: WLNotificationsRepository,
-        walletsRepository: WalletsRepository
+        notificationsRepository: WLNotificationsRepository
     ) {
         self.account = account
         self.accountSymbol = accountSymbol
@@ -48,7 +46,6 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         self.processingTransactionRepository = processingTransactionRepository
         self.feeRelayer = feeRelayer
         self.notificationsRepository = notificationsRepository
-        self.walletsRepository = walletsRepository
         super.init(isPaginationEnabled: true, limit: 10)
     }
     
@@ -108,8 +105,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
                     accountSymbol: self.accountSymbol,
                     before: self.before,
                     limit: self.limit,
-                    p2pFeePayerPubkeys: pubkeys,
-                    myWallets: self.walletsRepository.getWallets()
+                    p2pFeePayerPubkeys: pubkeys
                 )
             }
             .do(
@@ -137,8 +133,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             accountSymbol: accountSymbol,
             before: nil,
             limit: 3,
-            p2pFeePayerPubkeys: Defaults.p2pFeePayerPubkeys,
-            myWallets: walletsRepository.getWallets()
+            p2pFeePayerPubkeys: Defaults.p2pFeePayerPubkeys
         )
             .map { [weak self] transactions -> [SolanaSDK.ParsedTransaction] in
                 // find receipt
