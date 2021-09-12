@@ -699,7 +699,7 @@ private func calculateFeeInLamport(sourceWallet: Wallet?, destinationWallet: Wal
     else {return feeInLamports}
     
     // if token is native, a fee for creating wrapped SOL is needed
-    if sourceWallet.token.isNative {
+    if sourceWallet.isNativeSOL {
         feeInLamports += lPS
         feeInLamports += creatingAccountFee
     }
@@ -730,7 +730,7 @@ private func calculateAvailableAmount(sourceWallet wallet: Wallet?, destinationW
     else {return wallet?.amount}
     
     // if token is not nativeSolana and are not using fee relayer
-    if !sourceWallet.token.isNative && !OrcaSwap.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
+    if !sourceWallet.isNativeSOL && !OrcaSwap.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
     {return sourceWallet.amount}
     
     let availableAmount = (sourceWallet.amount ?? 0) - feeInLamports.convertToBalance(decimals: sourceWallet.token.decimals)

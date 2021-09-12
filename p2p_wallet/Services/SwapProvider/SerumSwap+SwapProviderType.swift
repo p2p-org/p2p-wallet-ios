@@ -90,7 +90,7 @@ extension SerumSwap: SwapProviderType {
         guard var amount = sourceWallet.lamports else {return nil}
         
         if fee.token.symbol == "SOL" {
-            if sourceWallet.token.isNative {
+            if sourceWallet.isNativeSOL {
                 if amount > fee.lamports {
                     amount -= fee.lamports
                 } else {

@@ -143,7 +143,7 @@ extension WalletDetail {
             
             // bind viewModel's output to controls
             viewModel.output.wallet
-                .map {$0?.token.isNative == true}
+                .map {$0?.isNativeSOL == true}
                 .drive(settingsButton.rx.isHidden)
                 .disposed(by: disposeBag)
             

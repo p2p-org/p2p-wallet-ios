@@ -51,7 +51,7 @@ class EditableWalletCell: WalletCell {
     
     override func setUp(with item: Wallet) {
         super.setUp(with: item)
-        buttonStackView.isHidden = item.token.isNative
+        buttonStackView.isHidden = item.isNativeSOL
         hideButton.image = item.isHidden ? .visibilityShow: .visibilityHide
         stackView.alpha = item.isHidden ? 0.5: 1
     }

@@ -26,7 +26,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private var timer: Timer?
     
     // MARK: - Getters
-    var nativeWallet: Wallet? {data.first(where: {$0.token.isNative})}
+    var nativeWallet: Wallet? {data.first(where: {$0.isNativeSOL})}
     
     // MARK: - Subjects
     let isHiddenWalletsShown = BehaviorRelay<Bool>(value: false)
@@ -77,7 +77,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             .map {[weak self] _ in self?.getWallets() ?? []}
             .subscribe(onNext: {[weak self] wallets in
                 for wallet in wallets where wallet.pubkey != nil {
-                    self?.accountNotificationsRepository.subscribeAccountNotification(account: wallet.pubkey!, isNative: wallet.token.isNative)
+                    self?.accountNotificationsRepository.subscribeAccountNotification(account: wallet.pubkey!, isNative: wallet.isNativeSOL)
                 }
             })
             .disposed(by: disposeBag)
@@ -312,8 +312,8 @@ fileprivate extension Wallet {
     static var defaultSorter: (Wallet, Wallet) -> Bool {
         { lhs, rhs in
             // Solana
-            if lhs.token.isNative != rhs.token.isNative {
-                return lhs.token.isNative
+            if lhs.isNativeSOL != rhs.isNativeSOL {
+                return lhs.isNativeSOL
             }
             
             if lhs.token.isLiquidity != rhs.token.isLiquidity {
