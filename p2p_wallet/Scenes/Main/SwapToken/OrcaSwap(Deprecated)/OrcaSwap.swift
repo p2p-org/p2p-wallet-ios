@@ -65,7 +65,7 @@ struct OrcaSwap {
         else {
             return false
         }
-        return !source.token.isNative && !destination.token.isNative && Defaults.payingToken != .nativeSOL
+        return !source.isNativeSOL && !destination.isNativeSOL && Defaults.payingToken != .nativeSOL
     }
     
     static func createSectionView(

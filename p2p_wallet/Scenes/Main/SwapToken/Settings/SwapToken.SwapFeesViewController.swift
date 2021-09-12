@@ -141,7 +141,7 @@ extension SwapToken {
             // if source or destination is native wallet
             if source == nil && destination == nil {
                 text = payingToken == .nativeSOL ? "SOL": L10n.transactionToken
-            } else if source?.token.isNative == true || destination?.token.isNative == true || payingToken == .nativeSOL
+            } else if source?.isNativeSOL == true || destination?.isNativeSOL == true || payingToken == .nativeSOL
             {
                 text = "SOL"
             } else {
@@ -149,7 +149,7 @@ extension SwapToken {
             }
             payingTokenLabel.text = text
             
-            let isChoosingDisabled = source?.token.isNative == true || destination?.token.isNative == true
+            let isChoosingDisabled = source?.isNativeSOL == true || destination?.isNativeSOL == true
             payingTokenSection?.isUserInteractionEnabled = !isChoosingDisabled
         }
     }

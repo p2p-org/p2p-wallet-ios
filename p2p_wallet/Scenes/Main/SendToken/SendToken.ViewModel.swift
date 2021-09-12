@@ -424,7 +424,7 @@ extension SendToken {
             
             // define token
             var request: Single<String>!
-            if wallet.token.isNative {
+            if wallet.isNativeSOL {
                 // SOLANA
                 request = apiClient.sendNativeSOL(
                     to: receiver,

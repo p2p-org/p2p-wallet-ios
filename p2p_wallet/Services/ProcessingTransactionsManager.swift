@@ -195,7 +195,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                 }
 
                 // update native solana wallet
-                if let index = wallets.firstIndex(where: {$0.token.isNative})
+                if let index = wallets.firstIndex(where: {$0.isNativeSOL})
                 {
                     wallets[index].updateBalance(diff: convertedAmount)
                 }

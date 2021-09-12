@@ -67,7 +67,7 @@ extension WalletDetail {
                 wallet: walletSubject
                     .asDriver(),
                 nativePubkey: walletsRepository.dataObservable
-                    .map {$0?.first(where: {$0.token.isNative})}
+                    .map {$0?.first(where: {$0.isNativeSOL})}
                     .map {$0?.pubkey}
                     .asDriver(onErrorJustReturn: nil),
                 graphViewModel: WalletGraphViewModel(
