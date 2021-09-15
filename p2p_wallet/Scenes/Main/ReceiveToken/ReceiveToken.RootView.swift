@@ -75,8 +75,8 @@ private protocol SwitcherDelegate: AnyObject {
 }
 
 private class Switcher: BEView {
-    private let disabledColor: UIColor = .f6f6f8
-    private let disabledTextColor: UIColor = .a3a5ba
+    private let disabledColor: UIColor = .f6f6f8Static
+    private let disabledTextColor: UIColor = .a3a5baStatic
     private let enabledColor: UIColor = .h5887ff
     private let enabledTextColor: UIColor = .white
     
