@@ -15,6 +15,7 @@ protocol ReceiveTokenViewModelType {
     var tokenTypeDriver: Driver<ReceiveToken.TokenType> {get}
     var updateLayoutDriver: Driver<Void> {get}
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType {get}
+    var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {get}
     
     // MARK: - Actions
     func switchToken(_ tokenType: ReceiveToken.TokenType)
@@ -22,13 +23,14 @@ protocol ReceiveTokenViewModelType {
 }
 
 extension ReceiveToken {
-    class NewViewModel {
+    class ViewModel {
         // MARK: - Dependencies
         private let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
+        let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -49,12 +51,15 @@ extension ReceiveToken {
                 navigationSubject: navigationSubject
             )
             
+            self.receiveBitcoinViewModel = ReceiveToken.ReceiveBitcoinViewModel(
+            )
+            
             self.analyticsManager = analyticsManager
         }
     }
 }
 
-extension ReceiveToken.NewViewModel: ReceiveTokenViewModelType {
+extension ReceiveToken.ViewModel: ReceiveTokenViewModelType {
     var navigationSceneDriver: Driver<ReceiveToken.NavigatableScene?> {
         navigationSubject.asDriver()
     }
