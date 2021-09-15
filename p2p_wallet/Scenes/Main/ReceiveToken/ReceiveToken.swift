@@ -13,4 +13,8 @@ struct ReceiveToken {
         case share(address: String)
         case help
     }
+    
+    enum TokenType: CaseIterable {
+        case solana, btc
+    }
 }

@@ -9,100 +9,126 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+protocol ReceiveTokenViewModelType {
+    // MARK: - Drivers
+    var navigationSceneDriver: Driver<ReceiveToken.NavigatableScene?> {get}
+    var tokenTypeDriver: Driver<ReceiveToken.TokenType> {get}
+    
+    // Solana
+    var solanaIsShowingDetailDriver: Driver<Bool> {get}
+    var solanaPubkey: String {get}
+    var solanaTokenWallet: Wallet? {get}
+    var solanaTokensCountDriver: Driver<Int> {get}
+    
+    // Btc
+    
+    // MARK: - Actions
+    func switchToken(_ tokenType: ReceiveToken.TokenType)
+    func copyToClipboard(address: String, logEvent: AnalyticsEvent)
+    
+    // Solana
+    func solanaShowSOLAddressInExplorer()
+    func solanaShowTokenMintAddressInExplorer()
+    func solanaShowTokenPubkeyAddressInExplorer()
+    func solanaShare()
+    func solanaShowHelp()
+    func solanaToggleIsShowingDetail()
+    
+}
+
 extension ReceiveToken {
-    class ViewModel: ViewModelType {
-        // MARK: - Nested type
-        struct Input {
-            
-        }
-        struct Output {
-            let navigationScene: Driver<NavigatableScene?>
-            let isShowingDetail: Driver<Bool>
-            let pubkey: String
-            let tokenWallet: Wallet?
-            let tokensCount: Driver<Int>
-        }
-        
+    class NewViewModel {
         // MARK: - Dependencies
-        private let pubkey: String
-        private let tokenWallet: Wallet?
         private let analyticsManager: AnalyticsManagerType
         private let tokensRepository: TokensRepository
         
         // MARK: - Properties
+        let solanaPubkey: String
+        let solanaTokenWallet: Wallet?
         private let disposeBag = DisposeBag()
         
-        let input: Input
-        let output: Output
-        
-        // MARK: - Subject
+        // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let isShowingDetailSubject = BehaviorRelay<Bool>(value: false)
+        private let tokenTypeSubject = BehaviorRelay<TokenType>(value: .solana)
         
-        // MARK: - Initializer
+        // Solana
+        private let solanaIsShowingDetailSubject = BehaviorRelay<Bool>(value: false)
+        private let solanaTokenListSubject = BehaviorRelay<[SolanaSDK.Token]>(value: [])
+        
+        // MARK: - Initializers
         init(
-            pubkey: String,
-            tokenWallet: Wallet? = nil,
+            solanaPubkey: String,
+            solanaTokenWallet: Wallet? = nil,
             analyticsManager: AnalyticsManagerType,
             tokensRepository: TokensRepository
         ) {
-            self.pubkey = pubkey
+            self.solanaPubkey = solanaPubkey
             self.analyticsManager = analyticsManager
             self.tokensRepository = tokensRepository
-            var tokenWallet = tokenWallet
-            if tokenWallet?.pubkey == pubkey {
+            var tokenWallet = solanaTokenWallet
+            if solanaTokenWallet?.pubkey == solanaPubkey {
                 tokenWallet = nil
             }
-            self.tokenWallet = tokenWallet
-            
-            self.input = Input()
-            self.output = Output(
-                navigationScene: navigationSubject
-                    .asDriver(onErrorJustReturn: nil),
-                isShowingDetail: isShowingDetailSubject
-                    .asDriver(),
-                pubkey: pubkey,
-                tokenWallet: tokenWallet,
-                tokensCount: tokensRepository.getTokensList()
-                    .map {$0.count}
-                    .asDriver(onErrorJustReturn: 554)
-            )
+            self.solanaTokenWallet = tokenWallet
         }
-        
-        // MARK: - Actions
-        @objc func showSOLAddressInExplorer() {
-            analyticsManager.log(event: .receiveViewExplorerOpen)
-            navigationSubject.accept(.showInExplorer(address: pubkey))
-        }
-        
-        @objc func showTokenMintAddressInExplorer() {
-            guard let mintAddress = tokenWallet?.token.address else {return}
-            analyticsManager.log(event: .receiveViewExplorerOpen)
-            navigationSubject.accept(.showInExplorer(address: mintAddress))
-        }
-        
-        @objc func showTokenPubkeyAddressInExplorer() {
-            guard let pubkey = tokenWallet?.pubkey else {return}
-            analyticsManager.log(event: .receiveViewExplorerOpen)
-            navigationSubject.accept(.showInExplorer(address: pubkey))
-        }
-        
-        @objc func share() {
-            analyticsManager.log(event: .receiveAddressShare)
-            navigationSubject.accept(.share(address: pubkey))
-        }
-        
-        @objc func showHelp() {
-            navigationSubject.accept(.help)
-        }
-        
-        @objc func toggleIsShowingDetail() {
-            isShowingDetailSubject.accept(!isShowingDetailSubject.value)
-        }
-        
-        func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
-            UIApplication.shared.copyToClipboard(address, alert: false)
-            analyticsManager.log(event: logEvent)
-        }
+    }
+}
+
+extension ReceiveToken.NewViewModel: ReceiveTokenViewModelType {
+    var navigationSceneDriver: Driver<ReceiveToken.NavigatableScene?> {
+        navigationSubject.asDriver()
+    }
+    
+    var tokenTypeDriver: Driver<ReceiveToken.TokenType> {
+        tokenTypeSubject.asDriver()
+    }
+    
+    var solanaIsShowingDetailDriver: Driver<Bool> {
+        solanaIsShowingDetailSubject.asDriver()
+    }
+    
+    var solanaTokensCountDriver: Driver<Int> {
+        tokensRepository.getTokensList()
+            .map {$0.count}
+            .asDriver(onErrorJustReturn: 554)
+    }
+    
+    func switchToken(_ tokenType: ReceiveToken.TokenType) {
+        tokenTypeSubject.accept(tokenType)
+    }
+    
+    func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
+        UIApplication.shared.copyToClipboard(address, alert: false)
+        analyticsManager.log(event: logEvent)
+    }
+    
+    func solanaShowSOLAddressInExplorer() {
+        analyticsManager.log(event: .receiveViewExplorerOpen)
+        navigationSubject.accept(.showInExplorer(address: solanaPubkey))
+    }
+    
+    func solanaShowTokenMintAddressInExplorer() {
+        guard let mintAddress = solanaTokenWallet?.token.address else {return}
+        analyticsManager.log(event: .receiveViewExplorerOpen)
+        navigationSubject.accept(.showInExplorer(address: mintAddress))
+    }
+    
+    func solanaShowTokenPubkeyAddressInExplorer() {
+        guard let pubkey = solanaTokenWallet?.pubkey else {return}
+        analyticsManager.log(event: .receiveViewExplorerOpen)
+        navigationSubject.accept(.showInExplorer(address: pubkey))
+    }
+    
+    func solanaShare() {
+        analyticsManager.log(event: .receiveAddressShare)
+        navigationSubject.accept(.share(address: solanaPubkey))
+    }
+    
+    func solanaShowHelp() {
+        navigationSubject.accept(.help)
+    }
+    
+    func solanaToggleIsShowingDetail() {
+        solanaIsShowingDetailSubject.accept(!solanaIsShowingDetailSubject.value)
     }
 }
