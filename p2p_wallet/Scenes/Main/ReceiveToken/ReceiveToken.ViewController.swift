@@ -18,7 +18,7 @@ extension ReceiveToken {
             UILabel(text: L10n.receive, textSize: 17, weight: .semibold)
         }
             .padding(.init(all: 20))
-        lazy var receiveSolanaView = ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
+        lazy var rootView = RootView(viewModel: viewModel)
         var transitionManager: UIViewControllerTransitioningDelegate?
         
         // MARK: - Initializer
@@ -35,7 +35,7 @@ extension ReceiveToken {
             let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
                 headerView
                 UIView.defaultSeparator()
-                receiveSolanaView
+                rootView
             }
             
             containerView.addSubview(stackView)
@@ -75,11 +75,11 @@ extension ReceiveToken {
             super.calculateFittingHeightForPresentedView(targetWidth: targetWidth)
                 + headerView.fittingHeight(targetWidth: targetWidth)
                 + 1 // separator
-                + receiveSolanaView.fittingHeight(targetWidth: targetWidth)
+                + rootView.fittingHeight(targetWidth: targetWidth)
         }
         
         var dismissalHandlingScrollView: UIScrollView? {
-            receiveSolanaView.scrollView
+            rootView.scrollView
         }
     }
 }

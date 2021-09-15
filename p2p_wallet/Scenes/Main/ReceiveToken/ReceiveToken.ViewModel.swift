@@ -64,7 +64,11 @@ extension ReceiveToken.NewViewModel: ReceiveTokenViewModelType {
     }
     
     var updateLayoutDriver: Driver<Void> {
-        receiveSolanaViewModel.isShowingDetailDriver.map {_ in ()}.asDriver()
+        Driver.combineLatest(
+            receiveSolanaViewModel.isShowingDetailDriver,
+            tokenTypeDriver
+        )
+            .map {_ in ()}.asDriver()
     }
     
     func switchToken(_ tokenType: ReceiveToken.TokenType) {

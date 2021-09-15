@@ -210,6 +210,7 @@
 		BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */; };
 		BC7BCB7B2562807E0018DECA /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */; };
 		BC80203926F1DA7000C109C2 /* ReceiveToken.ReceiveSolanaViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80203826F1DA7000C109C2 /* ReceiveToken.ReceiveSolanaViewModel.swift */; };
+		BC80203B26F1DD5D00C109C2 /* ReceiveToken.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80203A26F1DD5D00C109C2 /* ReceiveToken.RootView.swift */; };
 		BC80569A26D8DDE000206ECA /* SwapToken.Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80569926D8DDE000206ECA /* SwapToken.Settings.swift */; };
 		BC85EA66266E1324005006D5 /* ReceiveToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC85EA62266E1324005006D5 /* ReceiveToken.swift */; };
 		BC85EA67266E1324005006D5 /* ReceiveToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC85EA63266E1324005006D5 /* ReceiveToken.ViewController.swift */; };
@@ -582,6 +583,7 @@
 		BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonfidaPricesFetcher.swift; sourceTree = "<group>"; };
 		BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
 		BC80203826F1DA7000C109C2 /* ReceiveToken.ReceiveSolanaViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ReceiveSolanaViewModel.swift; sourceTree = "<group>"; };
+		BC80203A26F1DD5D00C109C2 /* ReceiveToken.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.RootView.swift; sourceTree = "<group>"; };
 		BC80569926D8DDE000206ECA /* SwapToken.Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.Settings.swift; sourceTree = "<group>"; };
 		BC85EA62266E1324005006D5 /* ReceiveToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.swift; sourceTree = "<group>"; };
 		BC85EA63266E1324005006D5 /* ReceiveToken.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ViewController.swift; sourceTree = "<group>"; };
@@ -1508,6 +1510,7 @@
 				BC85EA62266E1324005006D5 /* ReceiveToken.swift */,
 				BC85EA64266E1324005006D5 /* ReceiveToken.ViewModel.swift */,
 				BC85EA63266E1324005006D5 /* ReceiveToken.ViewController.swift */,
+				BC80203A26F1DD5D00C109C2 /* ReceiveToken.RootView.swift */,
 				BC80203726F1DA3100C109C2 /* ReceiveToken.Solana */,
 				BC8F682F260989F8002FDCCD /* ReceiveToken.QrCodeView.swift */,
 				BCDCAE202682E41B001ED7B4 /* ReceiveToken.HelpViewController.swift */,
@@ -2419,6 +2422,7 @@
 				BC1BEBFE26CDFE290049A44C /* SwapToken.WalletView.swift in Sources */,
 				BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */,
 				BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */,
+				BC80203B26F1DD5D00C109C2 /* ReceiveToken.RootView.swift in Sources */,
 				BC185EFA26E3B81F00280FE6 /* LoadableRelay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
