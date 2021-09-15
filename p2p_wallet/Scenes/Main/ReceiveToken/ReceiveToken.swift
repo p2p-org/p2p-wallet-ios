@@ -16,5 +16,13 @@ struct ReceiveToken {
     
     enum TokenType: CaseIterable {
         case solana, btc
+        var localizedName: String {
+            switch self {
+            case .solana:
+                return L10n.solana
+            case .btc:
+                return L10n.bitcoin
+            }
+        }
     }
 }

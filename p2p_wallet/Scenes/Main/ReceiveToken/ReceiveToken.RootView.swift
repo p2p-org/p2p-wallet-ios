@@ -9,16 +9,18 @@ import Foundation
 import RxSwift
 
 extension ReceiveToken {
-    class RootView: ScrollableVStackRootView {
+    class RootView: ScrollableVStackRootView, SwitcherDelegate {
         // MARK: - Constants
-        let disposeBag = DisposeBag()
+        private let disposeBag = DisposeBag()
+        private let allTokenTypes = TokenType.allCases
         
         // MARK: - Properties
-        let viewModel: ReceiveTokenViewModelType
+        private let viewModel: ReceiveTokenViewModelType
         
         // MARK: - Subviews
-        lazy var receiveSolanaView = ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
-        lazy var receiveBTCView = BEView()
+        private lazy var switcher = Switcher()
+        private lazy var receiveSolanaView = ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
+        private lazy var receiveBTCView = BEView()
         
         // MARK: - Initializers
         init(viewModel: ReceiveTokenViewModelType) {
@@ -34,10 +36,11 @@ extension ReceiveToken {
         }
         
         func layout() {
+            switcher.labels = allTokenTypes.map {$0.localizedName}
+            
             scrollView.contentInset.modify(dLeft: -.defaultPadding, dRight: -.defaultPadding)
             stackView.addArrangedSubviews {
-                UIButton(label: "switch", textColor: .black)
-                    .onTap(self, action: #selector(switchTokenType))
+                switcher.centeredHorizontallyView
                 receiveSolanaView
                 receiveBTCView
             }
@@ -59,8 +62,80 @@ extension ReceiveToken {
         }
         
         // MARK: - Actions
-        @objc func switchTokenType() {
-            viewModel.switchToken(.allCases.randomElement()!)
+        fileprivate func switcher(_ switcher: Switcher, didChangeIndexTo index: Int) {
+            guard let token = allTokenTypes[safe: index] else {return}
+            viewModel.switchToken(token)
         }
+    }
+}
+
+private protocol SwitcherDelegate: AnyObject {
+    func switcher(_ switcher: Switcher, didChangeIndexTo index: Int)
+}
+
+private class Switcher: BEView {
+    private let disabledColor: UIColor = .f6f6f8
+    private let enabledColor: UIColor = .h5887ff
+    
+    private lazy var stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill)
+    weak var delegate: SwitcherDelegate?
+    
+    var labels: [String] = [] {
+        didSet {
+            reloadData()
+            selectedIndex = 0
+        }
+    }
+    
+    var selectedIndex: Int = 0 {
+        didSet { changeSelectedIndex() }
+    }
+    
+    override func commonInit() {
+        super.commonInit()
+        // add stackView
+        addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges()
+    }
+    
+    private func reloadData() {
+        stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
+        stackView.addArrangedSubviews(
+            labels.enumerated().map {index, label -> UIView in
+                let view = UILabel(text: label, textSize: 15, weight: .medium, textColor: .textWhite)
+                    .withContentHuggingPriority(.required, for: .horizontal)
+                    .padding(.init(x: 12, y: 14), backgroundColor: disabledColor, cornerRadius: 12)
+                
+                let gesture = TapGesture(target: self, action: #selector(viewDidTap(gesture:)))
+                gesture.index = index
+                view.addGestureRecognizer(gesture)
+                
+                return view
+            }
+        )
+    }
+    
+    private func changeSelectedIndex() {
+        for (index, view) in stackView.arrangedSubviews.enumerated() {
+            if index != selectedIndex && view.backgroundColor == enabledColor {
+                view.backgroundColor = disabledColor
+            }
+            
+            if index == selectedIndex && view.backgroundColor == disabledColor {
+                view.backgroundColor = enabledColor
+            }
+        }
+        
+        // Animation:
+    }
+    
+    @objc private func viewDidTap(gesture: TapGesture) {
+        guard selectedIndex != gesture.index else {return}
+        selectedIndex = gesture.index
+        delegate?.switcher(self, didChangeIndexTo: selectedIndex)
+    }
+    
+    private class TapGesture: UITapGestureRecognizer {
+        var index: Int!
     }
 }
