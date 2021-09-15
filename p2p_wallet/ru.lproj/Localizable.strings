@@ -451,3 +451,4 @@
 "Could not calculate exchange rate or swapping fees from current token pair" = "Не удалось рассчитать обменный курс или комиссию за обмен для текущей пары токенов";
 "Solana" = "Солана";
 "Bitcoin" = "Биткойн";
+"I want to receive renBTC" = "Я хочу получать renBTC";

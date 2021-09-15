@@ -37,12 +37,15 @@ extension ReceiveToken {
                 alignment: .fill,
                 distribution: .fill
             ) {
+                
             }
             
             // add stackView
-            stackView.autoSetDimension(.height, toSize: 200, relation: .greaterThanOrEqual)
             addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges()
+            
+            // set min height to 200
+            autoSetDimension(.height, toSize: 200, relation: .greaterThanOrEqual)
         }
         
         func bind() {
