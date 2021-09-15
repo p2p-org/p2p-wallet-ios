@@ -33,6 +33,11 @@ extension ReceiveToken {
             bind()
         }
         
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            viewModel.reload()
+        }
+        
         func layout() {
             let stackView = UIStackView(
                 axis: .vertical,
