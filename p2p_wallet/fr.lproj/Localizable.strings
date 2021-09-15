@@ -449,3 +449,5 @@
 "Loading exchange rate" = "Chargement du taux de change";
 "Calculating fees" = "Calcul des frais";
 "Could not calculate exchange rate or swapping fees from current token pair" = "Impossible de calculer le taux de change ou les frais d'échange à partir de la paire de jetons actuelle";
+"Solana" = "Solana";
+"Bitcoin" = "Bitcoin";

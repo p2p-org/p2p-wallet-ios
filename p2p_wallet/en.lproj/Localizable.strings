@@ -449,3 +449,5 @@
 "Loading exchange rate" = "Loading exchange rate";
 "Calculating fees" = "Calculating fees";
 "Could not calculate exchange rate or swapping fees from current token pair" = "Could not calculate exchange rate or swapping fees from current token pair";
+"Solana" = "Solana";
+"Bitcoin" = "Bitcoin";
