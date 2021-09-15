@@ -13,27 +13,26 @@ protocol ReceiveTokenViewModelType {
     // MARK: - Drivers
     var navigationSceneDriver: Driver<ReceiveToken.NavigatableScene?> {get}
     var tokenTypeDriver: Driver<ReceiveToken.TokenType> {get}
-    
-    // Solana
-    var solanaIsShowingDetailDriver: Driver<Bool> {get}
-    var solanaPubkey: String {get}
-    var solanaTokenWallet: Wallet? {get}
-    var solanaTokensCountDriver: Driver<Int> {get}
-    
-    // Btc
+    var updateLayoutDriver: Driver<Void> {get}
     
     // MARK: - Actions
     func switchToken(_ tokenType: ReceiveToken.TokenType)
     func copyToClipboard(address: String, logEvent: AnalyticsEvent)
+}
+
+protocol ReceiveTokenSolanaViewModelType {
+    var isShowingDetailDriver: Driver<Bool> {get}
+    var pubkey: String {get}
+    var tokenWallet: Wallet? {get}
+    var tokensCountDriver: Driver<Int> {get}
     
-    // Solana
-    func solanaShowSOLAddressInExplorer()
-    func solanaShowTokenMintAddressInExplorer()
-    func solanaShowTokenPubkeyAddressInExplorer()
-    func solanaShare()
-    func solanaShowHelp()
-    func solanaToggleIsShowingDetail()
-    
+    func showSOLAddressInExplorer()
+    func showTokenMintAddressInExplorer()
+    func showTokenPubkeyAddressInExplorer()
+    func share()
+    func showHelp()
+    func toggleIsShowingDetail()
+    func copyToClipboard(address: String, logEvent: AnalyticsEvent)
 }
 
 extension ReceiveToken {
@@ -43,8 +42,8 @@ extension ReceiveToken {
         private let tokensRepository: TokensRepository
         
         // MARK: - Properties
-        let solanaPubkey: String
-        let solanaTokenWallet: Wallet?
+        let pubkey: String
+        let tokenWallet: Wallet?
         private let disposeBag = DisposeBag()
         
         // MARK: - Subjects
@@ -62,14 +61,14 @@ extension ReceiveToken {
             analyticsManager: AnalyticsManagerType,
             tokensRepository: TokensRepository
         ) {
-            self.solanaPubkey = solanaPubkey
+            self.pubkey = solanaPubkey
             self.analyticsManager = analyticsManager
             self.tokensRepository = tokensRepository
             var tokenWallet = solanaTokenWallet
             if solanaTokenWallet?.pubkey == solanaPubkey {
                 tokenWallet = nil
             }
-            self.solanaTokenWallet = tokenWallet
+            self.tokenWallet = tokenWallet
         }
     }
 }
@@ -83,14 +82,8 @@ extension ReceiveToken.NewViewModel: ReceiveTokenViewModelType {
         tokenTypeSubject.asDriver()
     }
     
-    var solanaIsShowingDetailDriver: Driver<Bool> {
-        solanaIsShowingDetailSubject.asDriver()
-    }
-    
-    var solanaTokensCountDriver: Driver<Int> {
-        tokensRepository.getTokensList()
-            .map {$0.count}
-            .asDriver(onErrorJustReturn: 554)
+    var updateLayoutDriver: Driver<Void> {
+        isShowingDetailDriver.map {_ in ()}.asDriver()
     }
     
     func switchToken(_ tokenType: ReceiveToken.TokenType) {
@@ -101,34 +94,46 @@ extension ReceiveToken.NewViewModel: ReceiveTokenViewModelType {
         UIApplication.shared.copyToClipboard(address, alert: false)
         analyticsManager.log(event: logEvent)
     }
-    
-    func solanaShowSOLAddressInExplorer() {
-        analyticsManager.log(event: .receiveViewExplorerOpen)
-        navigationSubject.accept(.showInExplorer(address: solanaPubkey))
+}
+
+extension ReceiveToken.NewViewModel: ReceiveTokenSolanaViewModelType {
+    var isShowingDetailDriver: Driver<Bool> {
+        solanaIsShowingDetailSubject.asDriver()
     }
     
-    func solanaShowTokenMintAddressInExplorer() {
-        guard let mintAddress = solanaTokenWallet?.token.address else {return}
-        analyticsManager.log(event: .receiveViewExplorerOpen)
-        navigationSubject.accept(.showInExplorer(address: mintAddress))
+    var tokensCountDriver: Driver<Int> {
+        tokensRepository.getTokensList()
+            .map {$0.count}
+            .asDriver(onErrorJustReturn: 554)
     }
     
-    func solanaShowTokenPubkeyAddressInExplorer() {
-        guard let pubkey = solanaTokenWallet?.pubkey else {return}
+    func showSOLAddressInExplorer() {
         analyticsManager.log(event: .receiveViewExplorerOpen)
         navigationSubject.accept(.showInExplorer(address: pubkey))
     }
     
-    func solanaShare() {
-        analyticsManager.log(event: .receiveAddressShare)
-        navigationSubject.accept(.share(address: solanaPubkey))
+    func showTokenMintAddressInExplorer() {
+        guard let mintAddress = tokenWallet?.token.address else {return}
+        analyticsManager.log(event: .receiveViewExplorerOpen)
+        navigationSubject.accept(.showInExplorer(address: mintAddress))
     }
     
-    func solanaShowHelp() {
+    func showTokenPubkeyAddressInExplorer() {
+        guard let pubkey = tokenWallet?.pubkey else {return}
+        analyticsManager.log(event: .receiveViewExplorerOpen)
+        navigationSubject.accept(.showInExplorer(address: pubkey))
+    }
+    
+    func share() {
+        analyticsManager.log(event: .receiveAddressShare)
+        navigationSubject.accept(.share(address: pubkey))
+    }
+    
+    func showHelp() {
         navigationSubject.accept(.help)
     }
     
-    func solanaToggleIsShowingDetail() {
+    func toggleIsShowingDetail() {
         solanaIsShowingDetailSubject.accept(!solanaIsShowingDetailSubject.value)
     }
 }

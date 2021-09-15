@@ -1,5 +1,5 @@
 //
-//  ReceiveToken.RootView.swift
+//  ReceiveToken.ReceiveSolanaView.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 07/06/2021.
@@ -7,30 +7,31 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 extension ReceiveToken {
-    class RootView: ScrollableVStackRootView {
+    class ReceiveSolanaView: ScrollableVStackRootView {
         // MARK: - Constants
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        let viewModel: ReceiveTokenViewModelType
+        let viewModel: ReceiveTokenSolanaViewModelType
         var isCopying = false
         
         // MARK: - Subviews
         private lazy var tokenCountLabel = UILabel(text: "+", textSize: 12, weight: .semibold, textColor: .white)
-        private lazy var addressLabel = UILabel(text: viewModel.solanaPubkey, textSize: 15, weight: .semibold, textAlignment: .center)
+        private lazy var addressLabel = UILabel(text: viewModel.pubkey, textSize: 15, weight: .semibold, textAlignment: .center)
             .lineBreakMode(.byTruncatingMiddle)
         
         private lazy var detailView = createDetailView()
         private lazy var showHideDetailButton = WLButton.stepButton(type: .gray, label: nil, labelColor: .a3a5baStatic.onDarkMode(.white))
             .onTap(self, action: #selector(toggleIsShowingDetail))
         
-        private lazy var directAddressHeaderLabel = UILabel(text: L10n.directAddress(viewModel.solanaTokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
-        private lazy var mintAddressHeaderLabel = UILabel(text: L10n.mintAddress(viewModel.solanaTokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
+        private lazy var directAddressHeaderLabel = UILabel(text: L10n.directAddress(viewModel.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
+        private lazy var mintAddressHeaderLabel = UILabel(text: L10n.mintAddress(viewModel.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
         
         // MARK: - Initializers
-        init(viewModel: ReceiveTokenViewModelType) {
+        init(viewModel: ReceiveTokenSolanaViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
@@ -54,7 +55,7 @@ extension ReceiveToken {
                 UIImageView(width: 207, height: 207, image: .receiveQrCodeFrame, tintColor: .f6f6f8.onDarkMode(.h8d8d8d))
                     .withCenteredChild(
                         QrCodeView(size: 190, coinLogoSize: 50)
-                            .with(string: viewModel.solanaPubkey)
+                            .with(string: viewModel.pubkey)
                     )
                     .centeredHorizontallyView
                 
@@ -87,7 +88,7 @@ extension ReceiveToken {
                     .padding(.init(x: 20, y: 0))
             }
             
-            if viewModel.solanaTokenWallet != nil {
+            if viewModel.tokenWallet != nil {
                 stackView.addArrangedSubviews {
                     detailView
                     showHideDetailButton.padding(.init(x: 20, y: 0))
@@ -114,17 +115,17 @@ extension ReceiveToken {
         }
         
         private func bind() {
-            viewModel.solanaTokensCountDriver
+            viewModel.tokensCountDriver
                 .map {"+\($0 - 4)"}
                 .drive(tokenCountLabel.rx.text)
                 .disposed(by: disposeBag)
             
-            viewModel.solanaIsShowingDetailDriver
+            viewModel.isShowingDetailDriver
                 .map {!$0}
                 .drive(detailView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            viewModel.solanaIsShowingDetailDriver
+            viewModel.isShowingDetailDriver
                 .map {
                     $0 ? L10n.hideAddressDetail : L10n.showAddressDetail
                 }
@@ -141,7 +142,7 @@ extension ReceiveToken {
                     mintAddressHeaderLabel
                     
                     UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
-                        UILabel(text: viewModel.solanaTokenWallet?.token.address, textSize: 15, weight: .medium, numberOfLines: 0)
+                        UILabel(text: viewModel.tokenWallet?.token.address, textSize: 15, weight: .medium, numberOfLines: 0)
                             .onTap(self, action: #selector(copyTokenMintToClipboard))
                         
                         UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
@@ -156,31 +157,31 @@ extension ReceiveToken {
         }
         
         @objc func showHelp() {
-            viewModel.solanaShowHelp()
+            viewModel.showHelp()
         }
         
         @objc func toggleIsShowingDetail() {
-            viewModel.solanaToggleIsShowingDetail()
+            viewModel.toggleIsShowingDetail()
         }
         
         @objc func showSolAddressInExplorer() {
-            viewModel.solanaShowSOLAddressInExplorer()
+            viewModel.showSOLAddressInExplorer()
         }
         
         @objc func share() {
-            viewModel.solanaShare()
+            viewModel.share()
         }
         
         @objc func showTokenPubkeyAddressInExplorer() {
-            viewModel.solanaShowTokenPubkeyAddressInExplorer()
+            viewModel.showTokenPubkeyAddressInExplorer()
         }
         
         @objc func showTokenMintAddressInExplorer() {
-            viewModel.solanaShowTokenMintAddressInExplorer()
+            viewModel.showTokenMintAddressInExplorer()
         }
         
         @objc private func copyTokenPubKeyToClipboard() {
-            guard !isCopying, let pubkey = viewModel.solanaTokenWallet?.pubkey else {return}
+            guard !isCopying, let pubkey = viewModel.tokenWallet?.pubkey else {return}
             isCopying = true
             
             viewModel.copyToClipboard(address: pubkey, logEvent: .receiveAddressCopy)
@@ -194,7 +195,7 @@ extension ReceiveToken {
         }
         
         @objc private func copyTokenMintToClipboard() {
-            guard !isCopying, let mint = viewModel.solanaTokenWallet?.token.address else {return}
+            guard !isCopying, let mint = viewModel.tokenWallet?.token.address else {return}
             isCopying = true
             
             viewModel.copyToClipboard(address: mint, logEvent: .receiveAddressCopy)
@@ -211,7 +212,7 @@ extension ReceiveToken {
             guard !isCopying else {return}
             isCopying = true
             
-            viewModel.copyToClipboard(address: viewModel.solanaPubkey, logEvent: .receiveAddressCopy)
+            viewModel.copyToClipboard(address: viewModel.pubkey, logEvent: .receiveAddressCopy)
             
             let addressLabelOriginalColor = addressLabel.textColor
             addressLabel.textColor = .h5887ff

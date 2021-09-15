@@ -11,18 +11,18 @@ import UIKit
 extension ReceiveToken {
     class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
         // MARK: - Properties
-        let viewModel: ReceiveTokenViewModelType
+        let viewModel: ReceiveTokenViewModelType & ReceiveTokenSolanaViewModelType
         lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill) {
             UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
                 .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
             UILabel(text: L10n.receive, textSize: 17, weight: .semibold)
         }
             .padding(.init(all: 20))
-        lazy var rootView = RootView(viewModel: viewModel)
+        lazy var receiveSolanaView = ReceiveSolanaView(viewModel: viewModel)
         var transitionManager: UIViewControllerTransitioningDelegate?
         
         // MARK: - Initializer
-        init(viewModel: ReceiveTokenViewModelType)
+        init(viewModel: ReceiveTokenViewModelType & ReceiveTokenSolanaViewModelType)
         {
             self.viewModel = viewModel
             super.init()
@@ -35,7 +35,7 @@ extension ReceiveToken {
             let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
                 headerView
                 UIView.defaultSeparator()
-                rootView
+                receiveSolanaView
             }
             
             containerView.addSubview(stackView)
@@ -48,7 +48,7 @@ extension ReceiveToken {
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
             
-            viewModel.solanaIsShowingDetailDriver
+            viewModel.updateLayoutDriver
                 .drive(onNext: {[weak self] _ in self?.updatePresentationLayout(animated: true)})
                 .disposed(by: disposeBag)
         }
@@ -75,11 +75,11 @@ extension ReceiveToken {
             super.calculateFittingHeightForPresentedView(targetWidth: targetWidth)
                 + headerView.fittingHeight(targetWidth: targetWidth)
                 + 1 // separator
-                + rootView.fittingHeight(targetWidth: targetWidth)
+                + receiveSolanaView.fittingHeight(targetWidth: targetWidth)
         }
         
         var dismissalHandlingScrollView: UIScrollView? {
-            rootView.scrollView
+            receiveSolanaView.scrollView
         }
     }
 }
