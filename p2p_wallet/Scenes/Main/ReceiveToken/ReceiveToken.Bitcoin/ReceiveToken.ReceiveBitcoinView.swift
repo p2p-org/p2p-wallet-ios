@@ -17,6 +17,9 @@ extension ReceiveToken {
         // MARK: - Properties
         let viewModel: ReceiveTokenBitcoinViewModelType
         
+        // MARK: - Subviews
+        lazy var loadingView = BESpinnerView(size: 30, endColor: .h5887ff)
+        
         // MARK: - Initializers
         init(viewModel: ReceiveTokenBitcoinViewModelType) {
             self.viewModel = viewModel
@@ -46,6 +49,11 @@ extension ReceiveToken {
             
             // set min height to 200
             autoSetDimension(.height, toSize: 200, relation: .greaterThanOrEqual)
+            
+            // loadingView
+            addSubview(loadingView)
+            loadingView.autoCenterInSuperview()
+            loadingView.animate()
         }
         
         func bind() {
