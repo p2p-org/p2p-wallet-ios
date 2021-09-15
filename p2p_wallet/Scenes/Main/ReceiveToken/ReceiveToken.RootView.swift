@@ -37,6 +37,7 @@ extension ReceiveToken {
         
         func layout() {
             switcher.labels = allTokenTypes.map {$0.localizedName}
+            switcher.delegate = self
             
             scrollView.contentInset.modify(dLeft: -.defaultPadding, dRight: -.defaultPadding)
             stackView.addArrangedSubviews {
@@ -75,7 +76,9 @@ private protocol SwitcherDelegate: AnyObject {
 
 private class Switcher: BEView {
     private let disabledColor: UIColor = .f6f6f8
+    private let disabledTextColor: UIColor = .a3a5ba
     private let enabledColor: UIColor = .h5887ff
+    private let enabledTextColor: UIColor = .white
     
     private lazy var stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill)
     weak var delegate: SwitcherDelegate?
@@ -102,7 +105,7 @@ private class Switcher: BEView {
         stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
         stackView.addArrangedSubviews(
             labels.enumerated().map {index, label -> UIView in
-                let view = UILabel(text: label, textSize: 15, weight: .medium, textColor: .textWhite)
+                let view = UILabel(text: label, textSize: 15, weight: .medium, textColor: disabledTextColor)
                     .withContentHuggingPriority(.required, for: .horizontal)
                     .padding(.init(x: 12, y: 14), backgroundColor: disabledColor, cornerRadius: 12)
                 
@@ -119,10 +122,12 @@ private class Switcher: BEView {
         for (index, view) in stackView.arrangedSubviews.enumerated() {
             if index != selectedIndex && view.backgroundColor == enabledColor {
                 view.backgroundColor = disabledColor
+                (view.subviews.first as? UILabel)?.textColor = disabledTextColor
             }
             
             if index == selectedIndex && view.backgroundColor == disabledColor {
                 view.backgroundColor = enabledColor
+                (view.subviews.first as? UILabel)?.textColor = enabledTextColor
             }
         }
         
