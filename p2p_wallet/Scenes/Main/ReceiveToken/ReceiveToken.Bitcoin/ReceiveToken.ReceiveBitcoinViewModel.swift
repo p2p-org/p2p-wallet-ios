@@ -6,9 +6,12 @@
 //
 
 import Foundation
+import RxCocoa
 
 protocol ReceiveTokenBitcoinViewModelType {
+    var initialStateDriver: Driver<LoadableState> {get}
     
+    func reload()
 }
 
 extension ReceiveToken {
@@ -22,6 +25,10 @@ extension ReceiveToken {
         private let solanaClient: RenVMSolanaAPIClientType
         private let destinationAddress: SolanaSDK.PublicKey
         
+        // MARK: - Subjects
+        private let solanaChainSubject: LoadableRelay<RenVM.SolanaChain>
+        private var lockAndMint: RenVM.LockAndMint?
+        
         // MARK: - Initializers
         init(
             rpcClient: RenVMRpcClientType,
@@ -32,21 +39,36 @@ extension ReceiveToken {
             self.solanaClient = solanaClient
             self.destinationAddress = destinationAddress
             
-            // load solana chain
+            self.solanaChainSubject = .init(
+                request: RenVM.SolanaChain.load(
+                    client: rpcClient,
+                    solanaClient: solanaClient,
+                    network: rpcClient.network
+                )
+            )
             
-            // configure lock and mint
+            bind()
             
-//            self.lockAndMint = .init(
-//                rpcClient: rpcClient,
-//                chain: chain,
-//                mintTokenSymbol: mintTokenSymbol,
-//                version: version,
-//                destinationAddress: destinationAddress.data
-//            )
+            // check if session exist
+            
+            // if session exist, restore the session
+            
+            // if not create session
+        }
+        
+        func bind() {
+            
         }
     }
 }
 
 extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {
+    var initialStateDriver: Driver<LoadableState> {
+        solanaChainSubject.stateObservable
+            .asDriver(onErrorJustReturn: .notRequested)
+    }
     
+    func reload() {
+        solanaChainSubject.reload()
+    }
 }
