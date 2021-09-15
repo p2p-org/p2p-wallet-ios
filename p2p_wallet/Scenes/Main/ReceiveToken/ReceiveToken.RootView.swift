@@ -18,6 +18,7 @@ extension ReceiveToken {
         
         // MARK: - Subviews
         lazy var receiveSolanaView = ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
+        lazy var receiveBTCView = BEView()
         
         // MARK: - Initializers
         init(viewModel: ReceiveTokenViewModelType) {
@@ -28,8 +29,38 @@ extension ReceiveToken {
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
-//            layout()
-//            bind()
+            layout()
+            bind()
+        }
+        
+        func layout() {
+            scrollView.contentInset.modify(dLeft: -.defaultPadding, dRight: -.defaultPadding)
+            stackView.addArrangedSubviews {
+                UIButton(label: "switch", textColor: .black)
+                    .onTap(self, action: #selector(switchTokenType))
+                receiveSolanaView
+                receiveBTCView
+            }
+        }
+        
+        func bind() {
+            viewModel.tokenTypeDriver
+                .drive(onNext: {[weak self] token in
+                    switch token {
+                    case .solana:
+                        self?.receiveSolanaView.isHidden = false
+                        self?.receiveBTCView.isHidden = true
+                    case .btc:
+                        self?.receiveSolanaView.isHidden = true
+                        self?.receiveBTCView.isHidden = false
+                    }
+                })
+                .disposed(by: disposeBag)
+        }
+        
+        // MARK: - Actions
+        @objc func switchTokenType() {
+            viewModel.switchToken(.allCases.randomElement()!)
         }
     }
 }

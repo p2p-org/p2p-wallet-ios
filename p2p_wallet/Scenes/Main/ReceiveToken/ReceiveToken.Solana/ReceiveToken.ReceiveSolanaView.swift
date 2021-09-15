@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 extension ReceiveToken {
-    class ReceiveSolanaView: ScrollableVStackRootView {
+    class ReceiveSolanaView: BEView {
         // MARK: - Constants
         let disposeBag = DisposeBag()
         
@@ -45,10 +45,12 @@ extension ReceiveToken {
         
         // MARK: - Layout
         private func layout() {
-            scrollView.contentInset.modify(dLeft: -.defaultPadding, dRight: -.defaultPadding)
-            
-            stackView.spacing = 20
-            stackView.addArrangedSubviews {
+            let stackView = UIStackView(
+                axis: .vertical,
+                spacing: 20,
+                alignment: .fill,
+                distribution: .fill
+            ) {
                 UILabel(text: L10n.oneUnifiedAddressToReceiveSOLOrSPLTokens, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
                     .padding(.init(x: 20, y: 0))
                 
@@ -112,6 +114,10 @@ extension ReceiveToken {
                 UIView.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice()
                     .padding(.init(x: 20, y: 0))
             }
+            
+            // add stackView
+            addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewEdges()
         }
         
         private func bind() {
