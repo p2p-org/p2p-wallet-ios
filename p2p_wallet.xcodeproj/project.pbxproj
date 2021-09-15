@@ -213,7 +213,7 @@
 		BC85EA66266E1324005006D5 /* ReceiveToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC85EA62266E1324005006D5 /* ReceiveToken.swift */; };
 		BC85EA67266E1324005006D5 /* ReceiveToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC85EA63266E1324005006D5 /* ReceiveToken.ViewController.swift */; };
 		BC85EA68266E1324005006D5 /* ReceiveToken.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC85EA64266E1324005006D5 /* ReceiveToken.ViewModel.swift */; };
-		BC85EA69266E1324005006D5 /* ReceiveToken.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC85EA65266E1324005006D5 /* ReceiveToken.RootView.swift */; };
+		BC85EA69266E1324005006D5 /* ReceiveToken.ReceiveSolanaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC85EA65266E1324005006D5 /* ReceiveToken.ReceiveSolanaView.swift */; };
 		BC89ADB825E0FCB3001A6791 /* BaseOnboardingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC89ADB725E0FCB3001A6791 /* BaseOnboardingVC.swift */; };
 		BC8F676B26083B18002FDCCD /* WLPhrasesTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F676A26083B18002FDCCD /* WLPhrasesTextView.swift */; };
 		BC8F67742608738D002FDCCD /* WLPhrasesTextView+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F67732608738D002FDCCD /* WLPhrasesTextView+Attachments.swift */; };
@@ -584,7 +584,7 @@
 		BC85EA62266E1324005006D5 /* ReceiveToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.swift; sourceTree = "<group>"; };
 		BC85EA63266E1324005006D5 /* ReceiveToken.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ViewController.swift; sourceTree = "<group>"; };
 		BC85EA64266E1324005006D5 /* ReceiveToken.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ViewModel.swift; sourceTree = "<group>"; };
-		BC85EA65266E1324005006D5 /* ReceiveToken.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.RootView.swift; sourceTree = "<group>"; };
+		BC85EA65266E1324005006D5 /* ReceiveToken.ReceiveSolanaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ReceiveSolanaView.swift; sourceTree = "<group>"; };
 		BC89ADB725E0FCB3001A6791 /* BaseOnboardingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseOnboardingVC.swift; sourceTree = "<group>"; };
 		BC8F676A26083B18002FDCCD /* WLPhrasesTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLPhrasesTextView.swift; sourceTree = "<group>"; };
 		BC8F67732608738D002FDCCD /* WLPhrasesTextView+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WLPhrasesTextView+Attachments.swift"; sourceTree = "<group>"; };
@@ -1497,7 +1497,7 @@
 				BC85EA62266E1324005006D5 /* ReceiveToken.swift */,
 				BC85EA64266E1324005006D5 /* ReceiveToken.ViewModel.swift */,
 				BC85EA63266E1324005006D5 /* ReceiveToken.ViewController.swift */,
-				BC85EA65266E1324005006D5 /* ReceiveToken.RootView.swift */,
+				BC85EA65266E1324005006D5 /* ReceiveToken.ReceiveSolanaView.swift */,
 				BC8F682F260989F8002FDCCD /* ReceiveToken.QrCodeView.swift */,
 				BCDCAE202682E41B001ED7B4 /* ReceiveToken.HelpViewController.swift */,
 			);
@@ -2262,7 +2262,7 @@
 				BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */,
 				BC0A9E9025F09BDE0063F9E3 /* OnboardingCreatePassCodeVC.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
-				BC85EA69266E1324005006D5 /* ReceiveToken.RootView.swift in Sources */,
+				BC85EA69266E1324005006D5 /* ReceiveToken.ReceiveSolanaView.swift in Sources */,
 				BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */,
 				BCA93F6225E77EF50081DDF6 /* TokenSettingsCell.swift in Sources */,
 				BC423D8C26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift in Sources */,
