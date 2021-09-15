@@ -451,3 +451,4 @@
 "Could not calculate exchange rate or swapping fees from current token pair" = "Không thể tính toán tỷ giá hối đoái hoặc phí hoán đổi từ cặp mã thông báo hiện tại";
 "Solana" = "Solana";
 "Bitcoin" = "Bitcoin";
+"I want to receive renBTC" = "Tôi muốn nhận renBTC";

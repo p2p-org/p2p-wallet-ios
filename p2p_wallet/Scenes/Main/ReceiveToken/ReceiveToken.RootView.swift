@@ -40,6 +40,8 @@ extension ReceiveToken {
             switcher.delegate = self
             
             scrollView.contentInset.modify(dLeft: -.defaultPadding, dRight: -.defaultPadding)
+            
+            stackView.spacing = 20
             stackView.addArrangedSubviews {
                 switcher.centeredHorizontallyView
                 receiveSolanaView
