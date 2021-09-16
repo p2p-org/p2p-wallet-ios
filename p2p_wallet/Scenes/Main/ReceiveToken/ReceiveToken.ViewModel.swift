@@ -43,7 +43,8 @@ extension ReceiveToken {
             analyticsManager: AnalyticsManagerType,
             tokensRepository: TokensRepository,
             renVMRpcClient: RenVMRpcClientType,
-            solanaClient: RenVMSolanaAPIClientType
+            solanaClient: RenVMSolanaAPIClientType,
+            renVMSessionStorage: RenVMSessionStorageType
         ) {
             self.receiveSolanaViewModel = ReceiveToken.ReceiveSolanaViewModel(
                 solanaPubkey: solanaPubkey.base58EncodedString,
@@ -56,7 +57,8 @@ extension ReceiveToken {
             self.receiveBitcoinViewModel = ReceiveToken.ReceiveBitcoinViewModel(
                 rpcClient: renVMRpcClient,
                 solanaClient: solanaClient,
-                destinationAddress: solanaPubkey
+                destinationAddress: solanaPubkey,
+                sessionStorage: renVMSessionStorage
             )
             
             self.analyticsManager = analyticsManager
