@@ -461,3 +461,7 @@
 "If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "If you do not finish your transaction within this period/session/time frame, you risk losing the deposits.";
 "I can complete this transaction within time" = "I can complete this transaction within time";
 "Be sure you can complete this transaction" = "Be sure you can complete this transaction";
+"This address accepts %@. You may lose assets by sending another coin." = "This address accepts %@. You may lose assets by sending another coin.";
+"only Bitcoin" = "only Bitcoin";
+"Minimum transaction amount of %@" = "Minimum transaction amount of %@";
+"%@ is the remaining time to safely send the assets." = "%@ is the remaining time to safely send the assets.";

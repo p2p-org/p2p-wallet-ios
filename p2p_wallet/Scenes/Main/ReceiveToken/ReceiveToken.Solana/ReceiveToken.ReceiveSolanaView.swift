@@ -54,11 +54,8 @@ extension ReceiveToken {
                 UILabel(text: L10n.oneUnifiedAddressToReceiveSOLOrSPLTokens, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
                     .padding(.init(x: 20, y: 0))
                 
-                UIImageView(width: 207, height: 207, image: .receiveQrCodeFrame, tintColor: .f6f6f8.onDarkMode(.h8d8d8d))
-                    .withCenteredChild(
-                        QrCodeView(size: 190, coinLogoSize: 50)
-                            .with(string: viewModel.pubkey)
-                    )
+                QrCodeView.withFrame(string: viewModel.pubkey)
+                    .0
                     .centeredHorizontallyView
                 
                 UIView(forAutoLayout: ())
