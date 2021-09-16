@@ -461,3 +461,7 @@
 "If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "Si vous ne terminez pas votre transaction dans cette période/session/délai, vous risquez de perdre les dépôts.";
 "I can complete this transaction within time" = "Je peux terminer cette transaction dans les délais";
 "Be sure you can complete this transaction" = "Assurez-vous que vous pouvez terminer cette transaction";
+"This address accepts %@. You may lose assets by sending another coin." = "Cette adresse accepte %@.  Vous pouvez perdre des actifs en envoyant une autre pièce.";
+"only Bitcoin" = "seulement Bitcoin";
+"Minimum transaction amount of %@" = "Montant minimum de la transaction de %@";
+"%@ is the remaining time to safely send the assets." = "%@ est le temps restant pour envoyer les actifs en toute sécurité.";

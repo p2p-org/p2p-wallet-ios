@@ -28,7 +28,7 @@ extension ReceiveToken {
             addressView
         }
         private lazy var conditionView = ConditionView()
-        private lazy var addressView = BEView()
+        private lazy var addressView = AddressView(viewModel: viewModel)
         
         // MARK: - Initializers
         init(
@@ -150,6 +150,7 @@ private class ConditionView: BEView {
     fileprivate weak var delegate: ConditionViewDelegate?
     private lazy var completeTxWithinTimeSwitcher = UISwitch()
     private lazy var confirmButton = WLButton.stepButton(type: .blue, label: L10n.showAddress)
+        .onTap(self, action: #selector(buttonConfirmDidTouch))
     
     override func commonInit() {
         super.commonInit()
@@ -208,18 +209,95 @@ private class ConditionView: BEView {
     @objc private func buttonConfirmDidTouch() {
         delegate?.conditionViewButtonConfirmDidTouch(self)
     }
+}
+
+private class AddressView: BEView {
+    private let disposeBag = DisposeBag()
+    private let viewModel: ReceiveTokenBitcoinViewModelType
+    private var label1: UILabel!
+    private var label2: UILabel!
+    private var label3: UILabel!
+    private var qrCodeView: ReceiveToken.QrCodeView!
     
-    private func textBuilder(text: String) -> UIStackView {
-        UIStackView(axis: .horizontal, spacing: 10, alignment: .top, distribution: .fill) {
-            UIView(width: 3, height: 3, backgroundColor: .textBlack, cornerRadius: 1.5)
-                .padding(.init(x: 0, y: 8))
-            UILabel(text: nil, textSize: 15, numberOfLines: 0)
-                .withAttributedText(
-                    NSMutableAttributedString()
-                        .text(text, size: 15),
-                    lineSpacing: 8
-                )
+    private lazy var addressLabel = UILabel(text: nil, textSize: 15, weight: .semibold, textAlignment: .center)
+        .lineBreakMode(.byTruncatingMiddle)
+    
+    init(viewModel: ReceiveTokenBitcoinViewModelType) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
+    }
+    
+    override func commonInit() {
+        super.commonInit()
+        
+        let line1 = textBuilder(text: L10n.ThisAddressAccepts.youMayLoseAssetsBySendingAnotherCoin(L10n.onlyBitcoin))
+        
+        let line2 = textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC"))
+        
+        let line3 = textBuilder(text: "")
+        
+        let qrCodeViewAndFrame = ReceiveToken.QrCodeView.withFrame()
+            
+        let frame = qrCodeViewAndFrame.0
+        qrCodeView = qrCodeViewAndFrame.1
+        
+        let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
+            line1
+            line2
+            line3
+            
+            BEStackViewSpacing(30)
+            
+            frame.centeredHorizontallyView
+            
+            BEStackViewSpacing(24)
+            
+            UIStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill) {
+                addressLabel
+                    .padding(.init(all: 20), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
+                    .onTap(self, action: #selector(copyBTCAddressToClipboard))
+                
+                UIImageView(width: 32, height: 32, image: .share, tintColor: .a3a5ba)
+                    .onTap(self, action: #selector(share))
+                    .padding(.init(all: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
+            }
+                .padding(.zero, cornerRadius: 12)
+                .padding(.init(x: 20, y: 0))
+            
+            UILabel(text: L10n.viewInExplorer, textSize: 17, weight: .medium, textColor: .textSecondary, textAlignment: .center)
+                .onTap(self, action: #selector(showBTCAddressInExplorer))
+                .centeredHorizontallyView
+                .padding(.init(x: 20, y: 9))
         }
+        
+        addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 0))
+        
+        bind()
+    }
+    
+    private func bind() {
+        viewModel.addressDriver
+            .drive(addressLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.addressDriver
+            .drive(onNext: {[weak self] address in
+                self?.qrCodeView.setUp(string: address)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    @objc private func copyBTCAddressToClipboard() {
+        
+    }
+    
+    @objc private func share() {
+        
+    }
+    
+    @objc private func showBTCAddressInExplorer() {
+        
     }
 }
 
@@ -231,4 +309,17 @@ private func switchField(text: String, switch: UISwitch) -> UIView {
     }
         .padding(.init(all: 20), cornerRadius: 12)
         .border(width: 1, color: .f6f6f8.onDarkMode(.white.withAlphaComponent(0.5)))
+}
+
+private func textBuilder(text: String) -> UIStackView {
+    UIStackView(axis: .horizontal, spacing: 10, alignment: .top, distribution: .fill) {
+        UIView(width: 3, height: 3, backgroundColor: .textBlack, cornerRadius: 1.5)
+            .padding(.init(x: 0, y: 8))
+        UILabel(text: nil, textSize: 15, numberOfLines: 0)
+            .withAttributedText(
+                NSMutableAttributedString()
+                    .text(text, size: 15),
+                lineSpacing: 8
+            )
+    }
 }

@@ -461,3 +461,7 @@
 "If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "Nếu bạn không hoàn thành giao dịch của mình trong khoảng thời gian / phiên / khung thời gian này, bạn có nguy cơ mất tiền gửi.";
 "I can complete this transaction within time" = "Tôi có thể hoàn thành giao dịch này trong đúng thời hạn";
 "Be sure you can complete this transaction" = "Hãy chắc chắn rằng bạn có thể hoàn thành giao dịch này";
+"This address accepts %@. You may lose assets by sending another coin." = "Địa chỉ này chấp nhận %@.  Bạn có thể mất tài sản khi gửi một đồng xu khác.";
+"only Bitcoin" = "chỉ Bitcoin";
+"Minimum transaction amount of %@" = "Số tiền giao dịch tối thiểu là %@";
+"%@ is the remaining time to safely send the assets." = "%@ là thời gian còn lại để gửi tài sản một cách an toàn.";
