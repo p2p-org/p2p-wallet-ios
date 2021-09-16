@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import RxSwift
 import RxCocoa
 
 protocol ReceiveTokenBitcoinViewModelType {
-    var initialStateDriver: Driver<LoadableState> {get}
+    var isLoadingDriver: Driver<Bool> {get}
+    var addressDriver: Driver<String?> {get}
     
     func reload()
 }
@@ -24,51 +26,51 @@ extension ReceiveToken {
         private let rpcClient: RenVMRpcClientType
         private let solanaClient: RenVMSolanaAPIClientType
         private let destinationAddress: SolanaSDK.PublicKey
+        private let sessionStorage: RenVMSessionStorageType
+        
+        private var lockAndMint: RenVM.LockAndMint?
         
         // MARK: - Subjects
-        private let solanaChainSubject: LoadableRelay<RenVM.SolanaChain>
-        private var lockAndMint: RenVM.LockAndMint?
+        private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
+        private let addressSubject = BehaviorRelay<String?>(value: nil)
         
         // MARK: - Initializers
         init(
             rpcClient: RenVMRpcClientType,
             solanaClient: RenVMSolanaAPIClientType,
-            destinationAddress: SolanaSDK.PublicKey
+            destinationAddress: SolanaSDK.PublicKey,
+            sessionStorage: RenVMSessionStorageType
         ) {
             self.rpcClient = rpcClient
             self.solanaClient = solanaClient
             self.destinationAddress = destinationAddress
-            
-            self.solanaChainSubject = .init(
-                request: RenVM.SolanaChain.load(
-                    client: rpcClient,
-                    solanaClient: solanaClient,
-                    network: rpcClient.network
-                )
-            )
-            
-            bind()
-            
-            // check if session exist
-            
-            // if session exist, restore the session
-            
-            // if not create session
+            self.sessionStorage = sessionStorage
         }
         
-        func bind() {
+        func reload() {
+            // if session exist, restore the session, load address
+            if let session = sessionStorage.loadSession() {
+                loadAddress()
+            }
             
+            // if not create session, load address
+            else {
+                
+            }
+        }
+        
+        private func loadAddress() {
+            isLoadingSubject.accept(true)
         }
     }
 }
 
 extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {
-    var initialStateDriver: Driver<LoadableState> {
-        solanaChainSubject.stateObservable
-            .asDriver(onErrorJustReturn: .notRequested)
+    var isLoadingDriver: Driver<Bool> {
+        isLoadingSubject.asDriver()
     }
     
-    func reload() {
-        solanaChainSubject.reload()
+    var addressDriver: Driver<String?> {
+        addressSubject.asDriver()
     }
 }
