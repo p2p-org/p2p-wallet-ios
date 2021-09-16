@@ -86,6 +86,10 @@ extension ReceiveToken {
                 .addTarget(self, action: #selector(receiveRenBTCSwitcherDidTouch(sender:)), for: .valueChanged)
             
             viewModel.isReceivingRenBTCDriver
+                .drive(receiveRenBTCSwitcher.rx.isOn)
+                .disposed(by: disposeBag)
+            
+            viewModel.isReceivingRenBTCDriver
                 .drive(receiveNormalBTCView.rx.isHidden)
                 .disposed(by: disposeBag)
             
