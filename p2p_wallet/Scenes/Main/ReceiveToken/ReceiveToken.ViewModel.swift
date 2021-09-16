@@ -58,7 +58,9 @@ extension ReceiveToken {
                 rpcClient: renVMRpcClient,
                 solanaClient: solanaClient,
                 destinationAddress: solanaPubkey,
-                sessionStorage: renVMSessionStorage
+                sessionStorage: renVMSessionStorage,
+                analyticsManager: analyticsManager,
+                navigationSubject: navigationSubject
             )
             
             self.analyticsManager = analyticsManager

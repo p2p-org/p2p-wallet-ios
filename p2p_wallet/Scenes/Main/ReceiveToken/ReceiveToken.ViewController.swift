@@ -59,6 +59,9 @@ extension ReceiveToken {
             case .showInExplorer(let mintAddress):
                 let url = "https://explorer.solana.com/address/\(mintAddress)"
                 showWebsite(url: url)
+            case .showBTCExplorer(let address):
+                let url = "https://btc.com/btc/address/\(address)"
+                showWebsite(url: url)
             case .share(let address):
                 let vc = UIActivityViewController(activityItems: [address], applicationActivities: nil)
                 present(vc, animated: true, completion: nil)

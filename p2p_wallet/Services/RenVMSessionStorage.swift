@@ -10,6 +10,7 @@ import Foundation
 protocol RenVMSessionStorageType {
     func loadSession() -> RenVM.Session?
     func saveSession(_ session: RenVM.Session)
+    func expireCurrentSession()
 }
 
 struct RenVMSessionStorage: RenVMSessionStorageType {
@@ -19,5 +20,9 @@ struct RenVMSessionStorage: RenVMSessionStorageType {
     
     func saveSession(_ session: RenVM.Session) {
         Defaults.renVMSession = session
+    }
+    
+    func expireCurrentSession() {
+        Defaults.renVMSession = nil
     }
 }

@@ -21,6 +21,9 @@ protocol ReceiveTokenBitcoinViewModelType {
     func getSessionEndDate() -> Date?
     func acceptConditionAndLoadAddress()
     func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool)
+    func copyToClipboard(address: String, logEvent: AnalyticsEvent)
+    func share()
+    func showBTCAddressInExplorer()
 }
 
 extension ReceiveToken {
@@ -29,12 +32,15 @@ extension ReceiveToken {
         private let mintTokenSymbol = "BTC"
         private let version = "1"
         private let disposeBag = DisposeBag()
+        private var loadingDisposable: Disposable?
         
         // MARK: - Properties
         private let rpcClient: RenVMRpcClientType
         private let solanaClient: RenVMSolanaAPIClientType
         private let destinationAddress: SolanaSDK.PublicKey
         private let sessionStorage: RenVMSessionStorageType
+        private let analyticsManager: AnalyticsManagerType
+        private let navigationSubject: BehaviorRelay<NavigatableScene?>
         
         private var lockAndMint: RenVM.LockAndMint?
         
@@ -51,12 +57,16 @@ extension ReceiveToken {
             rpcClient: RenVMRpcClientType,
             solanaClient: RenVMSolanaAPIClientType,
             destinationAddress: SolanaSDK.PublicKey,
-            sessionStorage: RenVMSessionStorageType
+            sessionStorage: RenVMSessionStorageType,
+            analyticsManager: AnalyticsManagerType,
+            navigationSubject: BehaviorRelay<NavigatableScene?>
         ) {
             self.rpcClient = rpcClient
             self.solanaClient = solanaClient
             self.destinationAddress = destinationAddress
             self.sessionStorage = sessionStorage
+            self.analyticsManager = analyticsManager
+            self.navigationSubject = navigationSubject
             
             bind()
         }
@@ -65,6 +75,15 @@ extension ReceiveToken {
             Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
                 .map {_ in ()}
                 .bind(to: timerSubject)
+                .disposed(by: disposeBag)
+            
+            timerSubject
+                .subscribe(onNext: { [weak self] in
+                    guard let endAt = self?.getSessionEndDate() else {return}
+                    if Date() >= endAt {
+                        self?.expireCurrentSession()
+                    }
+                })
                 .disposed(by: disposeBag)
         }
         
@@ -90,8 +109,10 @@ extension ReceiveToken {
             // set loading
             isLoadingSubject.accept(true)
             
+            loadingDisposable?.dispose()
+            
             // request
-            RenVM.SolanaChain.load(
+            loadingDisposable = RenVM.SolanaChain.load(
                 client: rpcClient,
                 solanaClient: solanaClient
             )
@@ -126,7 +147,11 @@ extension ReceiveToken {
                     self?.isLoadingSubject.accept(false)
                     self?.errorSubject.accept(error.readableDescription)
                 })
-                .disposed(by: disposeBag)
+        }
+        
+        private func expireCurrentSession() {
+            sessionStorage.expireCurrentSession()
+            reload()
         }
         
         func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool) {
@@ -162,5 +187,21 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     
     func getSessionEndDate() -> Date? {
         sessionStorage.loadSession()?.endAt
+    }
+    
+    func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
+        UIApplication.shared.copyToClipboard(address, alert: false)
+        analyticsManager.log(event: logEvent)
+    }
+    
+    func share() {
+        analyticsManager.log(event: .receiveAddressShare)
+        navigationSubject.accept(.share(address: addressSubject.value ?? ""))
+    }
+    
+    func showBTCAddressInExplorer() {
+        guard let pubkey = addressSubject.value else {return}
+        analyticsManager.log(event: .receiveViewExplorerOpen)
+        navigationSubject.accept(.showBTCExplorer(address: pubkey))
     }
 }
