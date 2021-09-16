@@ -69,6 +69,7 @@ extension ReceiveToken {
             self.navigationSubject = navigationSubject
             
             bind()
+            reload()
         }
         
         private func bind() {
