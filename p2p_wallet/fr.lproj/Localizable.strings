@@ -452,3 +452,11 @@
 "Solana" = "Solana";
 "Bitcoin" = "Bitcoin";
 "I want to receive renBTC" = "Je veux recevoir renBTC";
+"Show address" = "Afficher l'adresse";
+"Bitcoin deposit address" = "Adresse de dépôt Bitcoin";
+"is only open for 36 hours" = "n'est ouvert que pendant 36 heures";
+"but you can send to it multiple times within this session" = "mais vous pouvez l'envoyer plusieurs fois au cours de cette session";
+"Each transaction to this deposit address takes about 60 minutes to complete. For security reasons, you will need to wait for 6 block confirmations before you can mint renBTC on Solana." = "Chaque transaction à cette adresse de dépôt prend environ 60 minutes.  Pour des raisons de sécurité, vous devrez attendre 6 confirmations de blocage avant de pouvoir monnayer renBTC sur Solana.";
+"If you cannot complete this transaction within the required time, please return at a later date." = "Si vous ne pouvez pas terminer cette transaction dans les délais requis, veuillez revenir à une date ultérieure.";
+"If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "Si vous ne terminez pas votre transaction dans cette période/session/délai, vous risquez de perdre les dépôts.";
+"I can complete this transaction within time" = "Je peux terminer cette transaction dans les délais";

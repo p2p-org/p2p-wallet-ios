@@ -452,3 +452,11 @@
 "Solana" = "Solana";
 "Bitcoin" = "Bitcoin";
 "I want to receive renBTC" = "Tôi muốn nhận renBTC";
+"Show address" = "Hiển thị địa chỉ";
+"Bitcoin deposit address" = "Địa chỉ gửi bitcoin";
+"is only open for 36 hours" = "chỉ mở cửa trong 36 giờ";
+"but you can send to it multiple times within this session" = "nhưng bạn có thể gửi nó nhiều lần trong phiên này";
+"Each transaction to this deposit address takes about 60 minutes to complete. For security reasons, you will need to wait for 6 block confirmations before you can mint renBTC on Solana." = "Mỗi giao dịch đến địa chỉ gửi tiền này mất khoảng 60 phút để hoàn tất.  Vì lý do bảo mật, bạn sẽ cần đợi 6 xác nhận khối trước khi có thể đúc đồng nhân dân tệ trên Solana.";
+"If you cannot complete this transaction within the required time, please return at a later date." = "Nếu bạn không thể hoàn thành giao dịch này trong thời gian cần thiết, vui lòng quay lại vào một ngày sau đó.";
+"If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "Nếu bạn không hoàn thành giao dịch của mình trong khoảng thời gian / phiên / khung thời gian này, bạn có nguy cơ mất tiền gửi.";
+"I can complete this transaction within time" = "Tôi có thể hoàn thành giao dịch này trong thời gian";

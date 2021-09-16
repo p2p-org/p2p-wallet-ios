@@ -77,8 +77,10 @@ extension ReceiveToken.ViewModel: ReceiveTokenViewModelType {
     
     var updateLayoutDriver: Driver<Void> {
         Driver.combineLatest(
+            tokenTypeDriver,
             receiveSolanaViewModel.isShowingDetailDriver,
-            tokenTypeDriver
+            receiveBitcoinViewModel.conditionAcceptedDriver,
+            receiveBitcoinViewModel.addressDriver
         )
             .map {_ in ()}.asDriver()
     }
