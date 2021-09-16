@@ -112,11 +112,12 @@ private class ConditionView: BEView {
             UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
                 UILabel(text: L10n.iWantToReceiveRenBTC, textSize: 15, weight: .semibold, numberOfLines: 0)
                 receiveRenBTCSwitcher
+                    .withContentHuggingPriority(.required, for: .horizontal)
             }
                 .padding(.init(all: 20), cornerRadius: 12)
-                .border(width: 1, color: .f6f6f8)
+                .border(width: 1, color: .f6f6f8.onDarkMode(.white.withAlphaComponent(0.5)))
             
-            UIStackView(axis: .horizontal, spacing: 12, alignment: .top, distribution: .fill) {
+            UIStackView(axis: .horizontal, spacing: 8, alignment: .top, distribution: .fill) {
                 UIImageView(width: 36, height: 36, image: .warning)
                 
                 UILabel(text: nil, numberOfLines: 0)
@@ -130,7 +131,7 @@ private class ConditionView: BEView {
                             .text(".", size: 15)
                     )
             }
-                .padding(.init(x: 16, y: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.5))
+                .padding(.init(x: 16, y: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.05), cornerRadius: 12)
             
             textBuilder(text: L10n.EachTransactionToThisDepositAddressTakesAbout60MinutesToComplete.forSecurityReasonsYouWillNeedToWaitFor6BlockConfirmationsBeforeYouCanMintRenBTCOnSolana)
             
@@ -141,22 +142,29 @@ private class ConditionView: BEView {
             UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
                 UILabel(text: L10n.iCanCompleteThisTransactionWithinTime, textSize: 15, weight: .semibold, numberOfLines: 0)
                 completeTxWithinTimeSwitcher
+                    .withContentHuggingPriority(.required, for: .horizontal)
             }
                 .padding(.init(all: 20), cornerRadius: 12)
-                .border(width: 1, color: .f6f6f8)
+                .border(width: 1, color: .f6f6f8.onDarkMode(.white.withAlphaComponent(0.5)))
             
             BEStackViewSpacing(20)
             
             confirmButton
         }
         addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges()
+        stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 0))
     }
     
     private func textBuilder(text: String) -> UIStackView {
         UIStackView(axis: .horizontal, spacing: 10, alignment: .top, distribution: .fill) {
-            UILabel(text: ".", textSize: 20)
-            UILabel(text: text, textSize: 15, numberOfLines: 0)
+            UIView(width: 3, height: 3, backgroundColor: .textBlack, cornerRadius: 1.5)
+                .padding(.init(x: 0, y: 8))
+            UILabel(text: nil, textSize: 15, numberOfLines: 0)
+                .withAttributedText(
+                    NSMutableAttributedString()
+                        .text(text, size: 15),
+                    lineSpacing: 8
+                )
         }
     }
 }
