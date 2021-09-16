@@ -452,3 +452,11 @@
 "Solana" = "Солана";
 "Bitcoin" = "Биткойн";
 "I want to receive renBTC" = "Я хочу получать renBTC";
+"Show address" = "Показать адрес";
+"Bitcoin deposit address" = "Адрес депозита биткойнов";
+"is only open for 36 hours" = "открыт только в течении 36 часов";
+"but you can send to it multiple times within this session" = "но вы можете отправить ему несколько раз в течение этого сеанса";
+"Each transaction to this deposit address takes about 60 minutes to complete. For security reasons, you will need to wait for 6 block confirmations before you can mint renBTC on Solana." = "Каждая транзакция на этот депозитный адрес занимает около 60 минут.  По соображениям безопасности вам нужно подождать 6 подтверждений блока, прежде чем вы сможете монетизировать renBTC на Solana.";
+"If you cannot complete this transaction within the required time, please return at a later date." = "Если вы не можете завершить эту транзакцию в течение требуемого времени, пожалуйста, верните его позже.";
+"If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "Если вы не завершите транзакцию в течение этого периода / сеанса / временных рамок, вы рискуете потерять депозиты.";
+"I can complete this transaction within time" = "Я могу завершить эту транзакцию в срок";
