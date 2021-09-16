@@ -15,8 +15,10 @@ protocol ReceiveTokenBitcoinViewModelType {
     var errorDriver: Driver<String?> {get}
     var conditionAcceptedDriver: Driver<Bool> {get}
     var addressDriver: Driver<String?> {get}
+    var timerSignal: Signal<Void> {get}
     
     func reload()
+    func getSessionEndDate() -> Date?
     func acceptConditionAndLoadAddress()
     func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool)
 }
@@ -42,6 +44,7 @@ extension ReceiveToken {
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let conditionAcceptedSubject = BehaviorRelay<Bool>(value: false)
         private let addressSubject = BehaviorRelay<String?>(value: nil)
+        private let timerSubject = PublishRelay<Void>()
         
         // MARK: - Initializers
         init(
@@ -54,6 +57,15 @@ extension ReceiveToken {
             self.solanaClient = solanaClient
             self.destinationAddress = destinationAddress
             self.sessionStorage = sessionStorage
+            
+            bind()
+        }
+        
+        private func bind() {
+            Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+                .map {_ in ()}
+                .bind(to: timerSubject)
+                .disposed(by: disposeBag)
         }
         
         func reload() {
@@ -142,5 +154,13 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     
     var addressDriver: Driver<String?> {
         addressSubject.asDriver()
+    }
+    
+    var timerSignal: Signal<Void> {
+        timerSubject.asSignal()
+    }
+    
+    func getSessionEndDate() -> Date? {
+        sessionStorage.loadSession()?.endAt
     }
 }

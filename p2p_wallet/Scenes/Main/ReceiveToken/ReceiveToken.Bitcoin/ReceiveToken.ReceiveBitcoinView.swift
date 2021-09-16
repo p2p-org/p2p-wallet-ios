@@ -289,6 +289,24 @@ private class AddressView: BEView {
                 self?.qrCodeView.setUp(string: address)
             })
             .disposed(by: disposeBag)
+        
+        viewModel.timerSignal
+            .emit(onNext: { [weak self] in
+                guard let self = self else {return}
+                guard let endAt = self.viewModel.getSessionEndDate()
+                else {return}
+                let currentDate = Date()
+                let calendar = Calendar.current
+
+                let d = calendar.dateComponents([.hour, .minute, .second], from: currentDate, to: endAt)
+                let countdown = String(format: "%02d:%02d:%02d", d.hour ?? 0, d.minute ?? 0, d.second ?? 0)
+                
+                let text = L10n.isTheRemainingTimeToSafelySendTheAssets(countdown)
+                
+                self.label3.text = text
+                self.semiboldText(countdown, in: self.label3)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func semiboldText(_ text: String, in label: UILabel) {
