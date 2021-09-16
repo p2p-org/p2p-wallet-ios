@@ -216,6 +216,8 @@ private class AddressView: BEView {
     private let viewModel: ReceiveTokenBitcoinViewModelType
     private var label3: UILabel!
     private var qrCodeView: ReceiveToken.QrCodeView!
+    private var isCopying = false
+    private var currentAddress: String?
     
     private lazy var addressLabel = UILabel(text: nil, textSize: 15, weight: .semibold, textAlignment: .center)
         .lineBreakMode(.byTruncatingMiddle)
@@ -287,6 +289,7 @@ private class AddressView: BEView {
         viewModel.addressDriver
             .drive(onNext: {[weak self] address in
                 self?.qrCodeView.setUp(string: address)
+                self?.currentAddress = address
             })
             .disposed(by: disposeBag)
         
@@ -316,15 +319,30 @@ private class AddressView: BEView {
     }
     
     @objc private func copyBTCAddressToClipboard() {
+        guard !isCopying, let pubkey = currentAddress else {return}
+        isCopying = true
         
+        viewModel.copyToClipboard(address: pubkey, logEvent: .receiveAddressCopy)
+        
+        let addressLabelOriginalColor = addressLabel.textColor
+        addressLabel.textColor = .h5887ff
+        
+        UIApplication.shared.showToast(
+            message: "✅ " + L10n.addressCopiedToClipboard
+        ) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+                self?.addressLabel.textColor = addressLabelOriginalColor
+                self?.isCopying = false
+            }
+        }
     }
     
     @objc private func share() {
-        
+        viewModel.share()
     }
     
     @objc private func showBTCAddressInExplorer() {
-        
+        viewModel.showBTCAddressInExplorer()
     }
 }
 
