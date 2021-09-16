@@ -79,6 +79,7 @@ extension ReceiveToken.ViewModel: ReceiveTokenViewModelType {
         Driver.combineLatest(
             tokenTypeDriver,
             receiveSolanaViewModel.isShowingDetailDriver,
+            receiveBitcoinViewModel.isReceivingRenBTCDriver,
             receiveBitcoinViewModel.conditionAcceptedDriver,
             receiveBitcoinViewModel.addressDriver
         )
