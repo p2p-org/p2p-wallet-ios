@@ -11,9 +11,12 @@ import RxCocoa
 
 protocol ReceiveTokenBitcoinViewModelType {
     var isLoadingDriver: Driver<Bool> {get}
+    var errorDriver: Driver<String?> {get}
+    var conditionAcceptedDriver: Driver<Bool> {get}
     var addressDriver: Driver<String?> {get}
     
     func reload()
+    func acceptConditionAndLoadAddress()
 }
 
 extension ReceiveToken {
@@ -21,6 +24,7 @@ extension ReceiveToken {
         // MARK: - Constants
         private let mintTokenSymbol = "BTC"
         private let version = "1"
+        private let disposeBag = DisposeBag()
         
         // MARK: - Properties
         private let rpcClient: RenVMRpcClientType
@@ -32,6 +36,8 @@ extension ReceiveToken {
         
         // MARK: - Subjects
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
+        private let errorSubject = BehaviorRelay<String?>(value: nil)
+        private let conditionAcceptedSubject = BehaviorRelay<Bool>(value: false)
         private let addressSubject = BehaviorRelay<String?>(value: nil)
         
         // MARK: - Initializers
@@ -48,19 +54,62 @@ extension ReceiveToken {
         }
         
         func reload() {
-            // if session exist, restore the session, load address
-            if let session = sessionStorage.loadSession() {
-                loadAddress()
-            }
+            // clear old values
+            isLoadingSubject.accept(false)
+            errorSubject.accept(nil)
+            conditionAcceptedSubject.accept(false)
+            addressSubject.accept(nil)
             
-            // if not create session, load address
-            else {
-                
+            // if session exists, condition accepted, load session
+            if sessionStorage.loadSession() != nil {
+                acceptConditionAndLoadAddress()
             }
         }
         
-        private func loadAddress() {
+        func acceptConditionAndLoadAddress() {
+            conditionAcceptedSubject.accept(true)
+            loadSession()
+        }
+        
+        private func loadSession() {
+            // set loading
             isLoadingSubject.accept(true)
+            
+            // request
+            RenVM.SolanaChain.load(
+                client: rpcClient,
+                solanaClient: solanaClient
+            )
+                .observe(on: MainScheduler.instance)
+                .flatMap {[weak self] solanaChain -> Single<Data> in
+                    guard let self = self else {throw RenVM.Error.unknown}
+                    
+                    // create lock and mint
+                    self.lockAndMint = try .init(
+                        rpcClient: self.rpcClient,
+                        chain: solanaChain,
+                        mintTokenSymbol: self.mintTokenSymbol,
+                        version: self.version,
+                        destinationAddress: self.destinationAddress.data,
+                        session: self.sessionStorage.loadSession()
+                    )
+                    
+                    // save session
+                    self.sessionStorage.saveSession(self.lockAndMint!.session)
+                    
+                    // generate address
+                    return self.lockAndMint!.generateGatewayAddress()
+                }
+                .map {Base58.encode($0.bytes)}
+                .subscribe(on: MainScheduler.instance)
+                .subscribe(onSuccess: {[weak self] address in
+                    self?.isLoadingSubject.accept(false)
+                    self?.addressSubject.accept(address)
+                }, onFailure: {[weak self] error in
+                    self?.isLoadingSubject.accept(false)
+                    self?.errorSubject.accept(error.readableDescription)
+                })
+                .disposed(by: disposeBag)
         }
     }
 }
@@ -68,6 +117,14 @@ extension ReceiveToken {
 extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {
     var isLoadingDriver: Driver<Bool> {
         isLoadingSubject.asDriver()
+    }
+    
+    var errorDriver: Driver<String?> {
+        errorSubject.asDriver()
+    }
+    
+    var conditionAcceptedDriver: Driver<Bool> {
+        conditionAcceptedSubject.asDriver()
     }
     
     var addressDriver: Driver<String?> {
