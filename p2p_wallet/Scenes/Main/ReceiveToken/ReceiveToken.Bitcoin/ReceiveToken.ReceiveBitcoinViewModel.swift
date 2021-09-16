@@ -71,10 +71,10 @@ extension ReceiveToken {
         
         func acceptConditionAndLoadAddress() {
             conditionAcceptedSubject.accept(true)
-            loadSession()
+            loadSession(savedSession: sessionStorage.loadSession())
         }
         
-        private func loadSession() {
+        private func loadSession(savedSession: RenVM.Session?) {
             // set loading
             isLoadingSubject.accept(true)
             
@@ -94,11 +94,13 @@ extension ReceiveToken {
                         mintTokenSymbol: self.mintTokenSymbol,
                         version: self.version,
                         destinationAddress: self.destinationAddress.data,
-                        session: self.sessionStorage.loadSession()
+                        session: savedSession
                     )
                     
                     // save session
-                    self.sessionStorage.saveSession(self.lockAndMint!.session)
+                    if savedSession == nil {
+                        self.sessionStorage.saveSession(self.lockAndMint!.session)
+                    }
                     
                     // generate address
                     return self.lockAndMint!.generateGatewayAddress()
