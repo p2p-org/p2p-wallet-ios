@@ -214,8 +214,6 @@ private class ConditionView: BEView {
 private class AddressView: BEView {
     private let disposeBag = DisposeBag()
     private let viewModel: ReceiveTokenBitcoinViewModelType
-    private var label1: UILabel!
-    private var label2: UILabel!
     private var label3: UILabel!
     private var qrCodeView: ReceiveToken.QrCodeView!
     
@@ -230,11 +228,16 @@ private class AddressView: BEView {
     override func commonInit() {
         super.commonInit()
         
-        let line1 = textBuilder(text: L10n.ThisAddressAccepts.youMayLoseAssetsBySendingAnotherCoin(L10n.onlyBitcoin))
+        let text1 = L10n.ThisAddressAccepts.youMayLoseAssetsBySendingAnotherCoin(L10n.onlyBitcoin)
+        let line1 = textBuilder(text: text1)
+        semiboldText(L10n.onlyBitcoin, in: line1.arrangedSubviews.last as! UILabel)
         
-        let line2 = textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC"))
+        let text2 = L10n.minimumTransactionAmountOf("0.000112 BTC")
+        let line2 = textBuilder(text: text2)
+        semiboldText("0.000112 BTC", in: line2.arrangedSubviews.last as! UILabel)
         
-        let line3 = textBuilder(text: "")
+        let line3 = textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59"))
+        label3 = (line3.arrangedSubviews.last as! UILabel)
         
         let qrCodeViewAndFrame = ReceiveToken.QrCodeView.withFrame()
             
@@ -286,6 +289,12 @@ private class AddressView: BEView {
                 self?.qrCodeView.setUp(string: address)
             })
             .disposed(by: disposeBag)
+    }
+    
+    private func semiboldText(_ text: String, in label: UILabel) {
+        let aStr = NSMutableAttributedString(string: label.text!)
+        aStr.addAttribute(.font, value: UIFont.systemFont(ofSize: 15, weight: .semibold), range: NSString(string: label.text!).range(of: text))
+        label.attributedText = aStr
     }
     
     @objc private func copyBTCAddressToClipboard() {
