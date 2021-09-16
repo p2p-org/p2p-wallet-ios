@@ -11,7 +11,7 @@ import RxCocoa
 import Action
 
 extension ReceiveToken {
-    class ReceiveBitcoinView: BEView {
+    class ReceiveBitcoinView: BEView, ConditionViewDelegate {
         // MARK: - Constants
         private let disposeBag = DisposeBag()
         
@@ -63,6 +63,9 @@ extension ReceiveToken {
             addSubview(loadingView)
             loadingView.autoCenterInSuperview()
             loadingView.animate()
+            
+            // conditionView
+            conditionView.delegate = self
         }
         
         private func bind() {
@@ -98,24 +101,26 @@ extension ReceiveToken {
                 .drive(addressView.rx.isHidden)
                 .disposed(by: disposeBag)
         }
+        
+        fileprivate func conditionViewButtonConfirmDidTouch(_ conditionView: ConditionView) {
+            viewModel.acceptConditionAndLoadAddress()
+        }
     }
 }
 
+private protocol ConditionViewDelegate: AnyObject {
+    func conditionViewButtonConfirmDidTouch(_ conditionView: ConditionView)
+}
+
 private class ConditionView: BEView {
-    private lazy var receiveRenBTCSwitcher = UISwitch()
+    private let disposeBag = DisposeBag()
+    fileprivate weak var delegate: ConditionViewDelegate?
     private lazy var completeTxWithinTimeSwitcher = UISwitch()
     private lazy var confirmButton = WLButton.stepButton(type: .blue, label: L10n.showAddress)
     
     override func commonInit() {
         super.commonInit()
         let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
-            UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
-                UILabel(text: L10n.iWantToReceiveRenBTC, textSize: 15, weight: .semibold, numberOfLines: 0)
-                receiveRenBTCSwitcher
-                    .withContentHuggingPriority(.required, for: .horizontal)
-            }
-                .padding(.init(all: 20), cornerRadius: 12)
-                .border(width: 1, color: .f6f6f8.onDarkMode(.white.withAlphaComponent(0.5)))
             
             UIStackView(axis: .horizontal, spacing: 8, alignment: .top, distribution: .fill) {
                 UIImageView(width: 36, height: 36, image: .warning)
@@ -139,13 +144,10 @@ private class ConditionView: BEView {
             
             textBuilder(text: L10n.ifYouDoNotFinishYourTransactionWithinThisPeriodSessionTimeFrameYouRiskLosingTheDeposits)
             
-            UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
-                UILabel(text: L10n.iCanCompleteThisTransactionWithinTime, textSize: 15, weight: .semibold, numberOfLines: 0)
-                completeTxWithinTimeSwitcher
-                    .withContentHuggingPriority(.required, for: .horizontal)
-            }
-                .padding(.init(all: 20), cornerRadius: 12)
-                .border(width: 1, color: .f6f6f8.onDarkMode(.white.withAlphaComponent(0.5)))
+            switchField(
+                text: L10n.iCanCompleteThisTransactionWithinTime,
+                switch: completeTxWithinTimeSwitcher
+            )
             
             BEStackViewSpacing(20)
             
@@ -153,6 +155,25 @@ private class ConditionView: BEView {
         }
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 0))
+        
+        bind()
+    }
+    
+    private func bind() {
+        completeTxWithinTimeSwitcher.rx.isOn
+            .asDriver()
+            .drive(confirmButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        completeTxWithinTimeSwitcher.rx.isOn
+            .asDriver()
+            .map {$0 ? L10n.showAddress: L10n.beSureYouCanCompleteThisTransaction}
+            .drive(confirmButton.rx.title())
+            .disposed(by: disposeBag)
+    }
+    
+    @objc private func buttonConfirmDidTouch() {
+        delegate?.conditionViewButtonConfirmDidTouch(self)
     }
     
     private func textBuilder(text: String) -> UIStackView {
@@ -167,4 +188,14 @@ private class ConditionView: BEView {
                 )
         }
     }
+}
+
+private func switchField(text: String, switch: UISwitch) -> UIView {
+    UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
+        UILabel(text: text, textSize: 15, weight: .semibold, numberOfLines: 0)
+        `switch`
+            .withContentHuggingPriority(.required, for: .horizontal)
+    }
+        .padding(.init(all: 20), cornerRadius: 12)
+        .border(width: 1, color: .f6f6f8.onDarkMode(.white.withAlphaComponent(0.5)))
 }

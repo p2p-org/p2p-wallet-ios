@@ -460,3 +460,4 @@
 "If you cannot complete this transaction within the required time, please return at a later date." = "Если вы не можете завершить эту транзакцию в течение требуемого времени, пожалуйста, верните его позже.";
 "If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "Если вы не завершите транзакцию в течение этого периода / сеанса / временных рамок, вы рискуете потерять депозиты.";
 "I can complete this transaction within time" = "Я могу завершить эту транзакцию в срок";
+"Be sure you can complete this transaction" = "Убедитесь, что вы сможете завершить эту транзакцию";
