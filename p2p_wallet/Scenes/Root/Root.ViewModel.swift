@@ -96,6 +96,7 @@ extension Root {
             Defaults.didSetEnableBiometry = false
             Defaults.didSetEnableNotifications = false
             Defaults.didBackupOffline = false
+            Defaults.renVMSession = nil
             reload()
         }
         
