@@ -20,7 +20,6 @@ extension ReceiveToken {
         private let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
         
         // MARK: - Subviews
-        private lazy var loadingView = BESpinnerView(size: 30, endColor: .h5887ff)
         private lazy var receiveRenBTCSwitcher = UISwitch()
         private lazy var receiveNormalBTCView = ReceiveSolanaView(viewModel: receiveSolanaViewModel)
         private lazy var receiveRenBTCView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
@@ -67,11 +66,6 @@ extension ReceiveToken {
             // set min height to 200
             autoSetDimension(.height, toSize: 200, relation: .greaterThanOrEqual)
             
-            // loadingView
-            addSubview(loadingView)
-            loadingView.autoCenterInSuperview()
-            loadingView.animate()
-            
             // conditionView
             conditionView.delegate = self
         }
@@ -91,11 +85,6 @@ extension ReceiveToken {
             viewModel.isReceivingRenBTCDriver
                 .map {!$0}
                 .drive(receiveRenBTCView.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            viewModel.isLoadingDriver
-                .map {!$0}
-                .drive(loadingView.rx.isHidden)
                 .disposed(by: disposeBag)
             
             viewModel.errorDriver
@@ -214,6 +203,8 @@ private class AddressView: BEView {
     private var isCopying = false
     private var currentAddress: String?
     
+    
+    private lazy var loadingView = BESpinnerView(size: 30, endColor: .h5887ff)
     private lazy var addressLabel = UILabel(text: nil, textSize: 15, weight: .semibold, textAlignment: .center)
         .lineBreakMode(.byTruncatingMiddle)
     
@@ -273,10 +264,19 @@ private class AddressView: BEView {
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 0))
         
+        frame.addSubview(loadingView)
+        loadingView.autoCenterInSuperview()
+        loadingView.animate()
+        
         bind()
     }
     
     private func bind() {
+        viewModel.isLoadingDriver
+            .map {!$0}
+            .drive(loadingView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
         viewModel.addressDriver
             .drive(addressLabel.rx.text)
             .disposed(by: disposeBag)
