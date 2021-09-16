@@ -17,15 +17,26 @@ extension ReceiveToken {
         
         // MARK: - Properties
         private let viewModel: ReceiveTokenBitcoinViewModelType
+        private let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
         
         // MARK: - Subviews
         private lazy var loadingView = BESpinnerView(size: 30, endColor: .h5887ff)
+        private lazy var receiveRenBTCSwitcher = UISwitch()
+        private lazy var receiveNormalBTCView = ReceiveSolanaView(viewModel: receiveSolanaViewModel)
+        private lazy var receiveRenBTCView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
+            conditionView
+            addressView
+        }
         private lazy var conditionView = ConditionView()
         private lazy var addressView = BEView()
         
         // MARK: - Initializers
-        init(viewModel: ReceiveTokenBitcoinViewModelType) {
+        init(
+            viewModel: ReceiveTokenBitcoinViewModelType,
+            receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
+        ) {
             self.viewModel = viewModel
+            self.receiveSolanaViewModel = receiveSolanaViewModel
             super.init(frame: .zero)
         }
         
@@ -48,8 +59,10 @@ extension ReceiveToken {
                 alignment: .fill,
                 distribution: .fill
             ) {
-                conditionView
-                addressView
+                switchField(text: L10n.iWantToReceiveRenBTC, switch: receiveRenBTCSwitcher)
+                    .padding(.init(x: 20, y: 0))
+                receiveNormalBTCView
+                receiveRenBTCView
             }
             
             // add stackView
@@ -69,6 +82,18 @@ extension ReceiveToken {
         }
         
         private func bind() {
+            receiveRenBTCSwitcher
+                .addTarget(self, action: #selector(receiveRenBTCSwitcherDidTouch(sender:)), for: .valueChanged)
+            
+            viewModel.isReceivingRenBTCDriver
+                .drive(receiveNormalBTCView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            viewModel.isReceivingRenBTCDriver
+                .map {!$0}
+                .drive(receiveRenBTCView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
             viewModel.isLoadingDriver
                 .map {!$0}
                 .drive(loadingView.rx.isHidden)
@@ -104,6 +129,10 @@ extension ReceiveToken {
         
         fileprivate func conditionViewButtonConfirmDidTouch(_ conditionView: ConditionView) {
             viewModel.acceptConditionAndLoadAddress()
+        }
+        
+        @objc private func receiveRenBTCSwitcherDidTouch(sender: UISwitch) {
+            viewModel.toggleIsReceivingRenBTC(isReceivingRenBTC: sender.isOn)
         }
     }
 }

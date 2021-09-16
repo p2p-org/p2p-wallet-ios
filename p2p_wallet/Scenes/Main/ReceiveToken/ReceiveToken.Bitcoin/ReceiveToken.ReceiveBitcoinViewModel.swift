@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol ReceiveTokenBitcoinViewModelType {
+    var isReceivingRenBTCDriver: Driver<Bool> {get}
     var isLoadingDriver: Driver<Bool> {get}
     var errorDriver: Driver<String?> {get}
     var conditionAcceptedDriver: Driver<Bool> {get}
@@ -17,6 +18,7 @@ protocol ReceiveTokenBitcoinViewModelType {
     
     func reload()
     func acceptConditionAndLoadAddress()
+    func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool)
 }
 
 extension ReceiveToken {
@@ -35,6 +37,7 @@ extension ReceiveToken {
         private var lockAndMint: RenVM.LockAndMint?
         
         // MARK: - Subjects
+        private let isReceivingRenBTCSubject = BehaviorRelay<Bool>(value: false)
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let conditionAcceptedSubject = BehaviorRelay<Bool>(value: false)
@@ -111,10 +114,18 @@ extension ReceiveToken {
                 })
                 .disposed(by: disposeBag)
         }
+        
+        func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool) {
+            isReceivingRenBTCSubject.accept(isReceivingRenBTC)
+        }
     }
 }
 
 extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {
+    var isReceivingRenBTCDriver: Driver<Bool> {
+        isReceivingRenBTCSubject.asDriver()
+    }
+    
     var isLoadingDriver: Driver<Bool> {
         isLoadingSubject.asDriver()
     }

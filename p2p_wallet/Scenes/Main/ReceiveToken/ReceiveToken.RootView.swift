@@ -20,7 +20,10 @@ extension ReceiveToken {
         // MARK: - Subviews
         private lazy var switcher = Switcher()
         private lazy var receiveSolanaView = ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
-        private lazy var receiveBTCView = ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel)
+        private lazy var receiveBTCView = ReceiveBitcoinView(
+            viewModel: viewModel.receiveBitcoinViewModel,
+            receiveSolanaViewModel: viewModel.receiveSolanaViewModel
+        )
         
         // MARK: - Initializers
         init(viewModel: ReceiveTokenViewModelType) {
