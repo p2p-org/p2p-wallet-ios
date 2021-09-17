@@ -74,8 +74,12 @@ class RenVMService {
         observingTxStreamDisposable?.dispose()
         
         // if session exists, condition accepted, load session
-        if sessionStorage.loadSession() != nil {
-            acceptConditionAndLoadAddress()
+        if let session = sessionStorage.loadSession() {
+            if Date() >= session.endAt {
+                expireCurrentSession()
+            } else {
+                acceptConditionAndLoadAddress()
+            }
         }
     }
     
@@ -150,6 +154,12 @@ class RenVMService {
     }
     
     private func observeTxStatusAndMint() throws {
+        guard let endAt = getSessionEndDate(), Date() < endAt
+        else {
+            expireCurrentSession()
+            return
+        }
+        
         guard let address = addressSubject.value else {return}
         
         var url = "https://blockstream.info"
@@ -163,6 +173,7 @@ class RenVMService {
             .rx.data(request: request)
             .take(1).asSingle()
             .map {try JSONDecoder().decode(TxDetail.self, from: $0)}
+            .map {$0.filter {$0.status.confirmed == true}}
             .map {[weak self] in $0.filter {self?.mintingTx.contains($0.txid) == false && self?.mintedTx.contains($0.txid) == false}}
             .subscribe(onSuccess: { [weak self] details in
                 Logger.log(message: "Received renBTC transactions: \(details)", event: .info)
