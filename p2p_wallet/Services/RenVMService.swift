@@ -31,13 +31,17 @@ class RenVMService {
     // MARK: - Dependencies
     private let rpcClient: RenVMRpcClientType
     private let solanaClient: RenVMSolanaAPIClientType
-    private let destinationAddress: SolanaSDK.PublicKey
+    private let account: SolanaSDK.Account
     private let sessionStorage: RenVMSessionStorageType
     
     // MARK: - Properties
     private var loadingDisposable: Disposable?
     private var observingTxStreamDisposable: Disposable?
     private var lockAndMint: RenVM.LockAndMint?
+    private let mintQueue = DispatchQueue(label: "mintQueue", qos: .background)
+    private lazy var scheduler = SerialDispatchQueueScheduler(queue: mintQueue, internalSerialQueueName: "mintQueue")
+    private var mintingTx = [String]()
+    private var mintedTx = [String]()
     
     // MARK: - Subjects
     private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
@@ -49,12 +53,12 @@ class RenVMService {
     init(
         rpcClient: RenVMRpcClientType,
         solanaClient: RenVMSolanaAPIClientType,
-        destinationAddress: SolanaSDK.PublicKey,
+        account: SolanaSDK.Account,
         sessionStorage: RenVMSessionStorageType
     ) {
         self.rpcClient = rpcClient
         self.solanaClient = solanaClient
-        self.destinationAddress = destinationAddress
+        self.account = account
         self.sessionStorage = sessionStorage
         
         reload()
@@ -101,7 +105,7 @@ class RenVMService {
                     chain: solanaChain,
                     mintTokenSymbol: self.mintTokenSymbol,
                     version: self.version,
-                    destinationAddress: self.destinationAddress.data,
+                    destinationAddress: self.account.publicKey.data,
                     session: savedSession
                 )
                 
@@ -134,42 +138,68 @@ class RenVMService {
         // cancel previous observing
         observingTxStreamDisposable?.dispose()
         
-        // create new observing with new address
-        guard let address = addressSubject.value
-        else {return}
-        
         // do request each 3 seconds in background
         observingTxStreamDisposable = Timer.observable(
             seconds: 3,
-            scheduler: ConcurrentDispatchQueueScheduler(qos: .background)
+            scheduler: scheduler
         )
-            .flatMap {[weak self] _ -> Single<Data> in
-                guard let self = self else {return .just(Data())}
-                var url = "https://blockstream.info"
-                if self.rpcClient.network.isTestnet {
-                    url += "/testnet"
-                }
-                url += "/\(address)/utxo"
-                return URLSession(configuration: .default)
-                    .rx.data(request: try .init(url: "", method: .get))
-                    .take(1).asSingle()
-            }
-            .map {(try? JSONDecoder().decode(TxDetail.self, from: $0)) ?? []}
-            .catchAndReturn([])
-            .map {$0.filter {$0.status.confirmed == true}}
-            .observe(on: ConcurrentMainScheduler.instance)
-            .subscribe(onNext: {[weak self] details in
-                Logger.log(message: "Received renBTC transactions: \(details)", event: .info)
-                guard let self = self, !details.isEmpty else {return}
-                for detail in details {
-                    guard let _ = try? self.lockAndMint?.getDepositState(transactionHash: detail.txid, txIndex: String(detail.vout), amount: String(detail.value))
-                    else {
-                        continue
-                    }
-                    
-                    self.lockAndMint?.mint(signer: <#T##Data#>)
-                }
+            .observe(on: scheduler)
+            .subscribe(onNext: { [weak self] in
+                try? self?.observeTxStatusAndMint()
             })
+    }
+    
+    private func observeTxStatusAndMint() throws {
+        guard let address = addressSubject.value else {return}
+        
+        var url = "https://blockstream.info"
+        if self.rpcClient.network.isTestnet {
+            url += "/testnet"
+        }
+        url += "/api/address/\(address)/utxo"
+        let request = try URLRequest(url: url, method: .get)
+        
+        URLSession(configuration: .default)
+            .rx.data(request: request)
+            .take(1).asSingle()
+            .map {try JSONDecoder().decode(TxDetail.self, from: $0)}
+            .map {[weak self] in $0.filter {self?.mintingTx.contains($0.txid) == false && self?.mintedTx.contains($0.txid) == false}}
+            .subscribe(onSuccess: { [weak self] details in
+                Logger.log(message: "Received renBTC transactions: \(details)", event: .info)
+                
+                for detail in details {
+                    try? self?.mint(txDetail: detail)
+                }
+            }, onFailure: { error in
+                Logger.log(message: "Received renBTC transactions error: \(error)", event: .error)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func mint(txDetail: TxDetailElement) throws {
+        guard let lockAndMint = lockAndMint else {
+            return
+        }
+        
+        try lockAndMint.getDepositState(transactionHash: txDetail.txid, txIndex: String(txDetail.vout), amount: String(txDetail.value))
+        
+        mintingTx.append(txDetail.txid)
+        
+        lockAndMint.submitMintTransaction()
+            .flatMap {[weak self] _ -> Single<String> in
+                guard let self = self else {throw RenVM.Error.unknown}
+                return lockAndMint.mint(signer: self.account.secretKey)
+            }
+            .observe(on: scheduler)
+            .subscribe(onSuccess: {[weak self] signature in
+                Logger.log(message: "Received renBTC transactions mint signature: \(signature)", event: .info)
+                self?.mintingTx.removeAll(where: {$0 == txDetail.txid})
+                self?.mintedTx.append(txDetail.txid)
+            }, onFailure: {[weak self] error in
+                Logger.log(message: "Received renBTC transactions mint error: \(error)", event: .error)
+                self?.mintingTx.removeAll(where: {$0 == txDetail.txid})
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -223,4 +253,3 @@ private struct Status: Codable {
 }
 
 private typealias TxDetail = [TxDetailElement]
-
