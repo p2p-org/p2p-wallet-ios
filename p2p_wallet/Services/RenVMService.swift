@@ -100,7 +100,7 @@ class RenVMService {
             solanaClient: solanaClient
         )
             .observe(on: MainScheduler.instance)
-            .flatMap {[weak self] solanaChain -> Single<Data> in
+            .flatMap {[weak self] solanaChain -> Single<RenVM.LockAndMint.GatewayAddressResponse> in
                 guard let self = self else {throw RenVM.Error.unknown}
                 
                 // create lock and mint
@@ -121,12 +121,11 @@ class RenVMService {
                 // generate address
                 return self.lockAndMint!.generateGatewayAddress()
             }
-            .map {Base58.encode($0.bytes)}
             .subscribe(on: MainScheduler.instance)
-            .subscribe(onSuccess: {[weak self] address in
+            .subscribe(onSuccess: {[weak self] response in
                 self?.isLoadingSubject.accept(false)
-                self?.addressSubject.accept(address)
-                self?.observeTxStreamAndMint()
+                self?.addressSubject.accept(Base58.encode(response.gatewayAddress.bytes))
+                self?.observeTxStreamAndMint(response: response)
             }, onFailure: {[weak self] error in
                 self?.isLoadingSubject.accept(false)
                 self?.errorSubject.accept(error.readableDescription)
@@ -138,7 +137,7 @@ class RenVMService {
         reload()
     }
     
-    private func observeTxStreamAndMint() {
+    private func observeTxStreamAndMint(response: RenVM.LockAndMint.GatewayAddressResponse) {
         // cancel previous observing
         observingTxStreamDisposable?.dispose()
         
@@ -149,11 +148,11 @@ class RenVMService {
         )
             .observe(on: scheduler)
             .subscribe(onNext: { [weak self] in
-                try? self?.observeTxStatusAndMint()
+                try? self?.observeTxStatusAndMint(response: response)
             })
     }
     
-    private func observeTxStatusAndMint() throws {
+    private func observeTxStatusAndMint(response: RenVM.LockAndMint.GatewayAddressResponse) throws {
         guard let endAt = getSessionEndDate(), Date() < endAt
         else {
             expireCurrentSession()
@@ -179,7 +178,7 @@ class RenVMService {
                 Logger.log(message: "Received renBTC transactions: \(details)", event: .info)
                 
                 for detail in details {
-                    try? self?.mint(txDetail: detail)
+                    try? self?.mint(response: response, txDetail: detail)
                 }
             }, onFailure: { error in
                 Logger.log(message: "Received renBTC transactions error: \(error)", event: .error)
@@ -187,19 +186,26 @@ class RenVMService {
             .disposed(by: disposeBag)
     }
     
-    private func mint(txDetail: TxDetailElement) throws {
+    private func mint(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: TxDetailElement) throws {
         guard let lockAndMint = lockAndMint else {
             return
         }
         
-        try lockAndMint.getDepositState(transactionHash: txDetail.txid, txIndex: String(txDetail.vout), amount: String(txDetail.value))
+        let state = try lockAndMint.getDepositState(
+            transactionHash: txDetail.txid,
+            txIndex: String(txDetail.vout),
+            amount: String(txDetail.value),
+            sendTo: response.sendTo,
+            gHash: response.gHash,
+            gPubkey: response.gPubkey
+        )
         
         mintingTx.append(txDetail.txid)
         
-        lockAndMint.submitMintTransaction()
+        lockAndMint.submitMintTransaction(state: state)
             .flatMap {[weak self] _ -> Single<String> in
                 guard let self = self else {throw RenVM.Error.unknown}
-                return lockAndMint.mint(signer: self.account.secretKey)
+                return lockAndMint.mint(state: state, signer: self.account.secretKey)
             }
             .observe(on: scheduler)
             .subscribe(onSuccess: {[weak self] signature in
