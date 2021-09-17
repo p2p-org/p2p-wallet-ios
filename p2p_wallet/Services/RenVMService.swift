@@ -48,11 +48,13 @@ class RenVMService {
     init(
         rpcClient: RenVMRpcClientType,
         solanaClient: RenVMSolanaAPIClientType,
-        destinationAddress: SolanaSDK.PublicKey
+        destinationAddress: SolanaSDK.PublicKey,
+        sessionStorage: RenVMSessionStorageType
     ) {
         self.rpcClient = rpcClient
         self.solanaClient = solanaClient
         self.destinationAddress = destinationAddress
+        self.sessionStorage = sessionStorage
         
         reload()
     }
@@ -126,5 +128,27 @@ class RenVMService {
 }
 
 extension RenVMService: RenVMServiceType {
+    var isLoadingDriver: Driver<Bool> {
+        isLoadingSubject.asDriver()
+    }
     
+    var errorDriver: Driver<String?> {
+        errorSubject.asDriver()
+    }
+    
+    var conditionAcceptedDriver: Driver<Bool> {
+        conditionAcceptedSubject.asDriver()
+    }
+    
+    var addressDriver: Driver<String?> {
+        addressSubject.asDriver()
+    }
+    
+    func getSessionEndDate() -> Date? {
+        sessionStorage.loadSession()?.endAt
+    }
+    
+    func getCurrentAddress() -> String? {
+        addressSubject.value
+    }
 }
