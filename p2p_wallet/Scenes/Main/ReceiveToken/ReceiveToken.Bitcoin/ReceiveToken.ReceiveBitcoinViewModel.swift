@@ -29,47 +29,37 @@ protocol ReceiveTokenBitcoinViewModelType {
 extension ReceiveToken {
     class ReceiveBitcoinViewModel {
         // MARK: - Constants
-        private let mintTokenSymbol = "BTC"
-        private let version = "1"
         private let disposeBag = DisposeBag()
-        private var loadingDisposable: Disposable?
         
-        // MARK: - Properties
-        private let rpcClient: RenVMRpcClientType
-        private let solanaClient: RenVMSolanaAPIClientType
-        private let destinationAddress: SolanaSDK.PublicKey
-        private let sessionStorage: RenVMSessionStorageType
+        // MARK: - Dependencies
+        private let renVMService: RenVMServiceType
         private let analyticsManager: AnalyticsManagerType
         private let navigationSubject: BehaviorRelay<NavigatableScene?>
         
-        private var lockAndMint: RenVM.LockAndMint?
-        
         // MARK: - Subjects
         private let isReceivingRenBTCSubject = BehaviorRelay<Bool>(value: false)
-        private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
-        private let errorSubject = BehaviorRelay<String?>(value: nil)
-        private let conditionAcceptedSubject = BehaviorRelay<Bool>(value: false)
-        private let addressSubject = BehaviorRelay<String?>(value: nil)
         private let timerSubject = PublishRelay<Void>()
         
         // MARK: - Initializers
         init(
-            rpcClient: RenVMRpcClientType,
-            solanaClient: RenVMSolanaAPIClientType,
-            destinationAddress: SolanaSDK.PublicKey,
-            sessionStorage: RenVMSessionStorageType,
+            renVMService: RenVMServiceType,
             analyticsManager: AnalyticsManagerType,
             navigationSubject: BehaviorRelay<NavigatableScene?>
         ) {
-            self.rpcClient = rpcClient
-            self.solanaClient = solanaClient
-            self.destinationAddress = destinationAddress
-            self.sessionStorage = sessionStorage
+            self.renVMService = renVMService
             self.analyticsManager = analyticsManager
             self.navigationSubject = navigationSubject
             
             bind()
             reload()
+        }
+        
+        func reload() {
+            renVMService.reload()
+        }
+        
+        func acceptConditionAndLoadAddress() {
+            renVMService.acceptConditionAndLoadAddress()
         }
         
         private func bind() {
@@ -82,77 +72,10 @@ extension ReceiveToken {
                 .subscribe(onNext: { [weak self] in
                     guard let endAt = self?.getSessionEndDate() else {return}
                     if Date() >= endAt {
-                        self?.expireCurrentSession()
+                        self?.renVMService.expireCurrentSession()
                     }
                 })
                 .disposed(by: disposeBag)
-        }
-        
-        func reload() {
-            // clear old values
-            isLoadingSubject.accept(false)
-            errorSubject.accept(nil)
-            conditionAcceptedSubject.accept(false)
-            addressSubject.accept(nil)
-            
-            // if session exists, condition accepted, load session
-            if sessionStorage.loadSession() != nil {
-                acceptConditionAndLoadAddress()
-            }
-        }
-        
-        func acceptConditionAndLoadAddress() {
-            conditionAcceptedSubject.accept(true)
-            loadSession(savedSession: sessionStorage.loadSession())
-        }
-        
-        private func loadSession(savedSession: RenVM.Session?) {
-            // set loading
-            isLoadingSubject.accept(true)
-            
-            loadingDisposable?.dispose()
-            
-            // request
-            loadingDisposable = RenVM.SolanaChain.load(
-                client: rpcClient,
-                solanaClient: solanaClient
-            )
-                .observe(on: MainScheduler.instance)
-                .flatMap {[weak self] solanaChain -> Single<Data> in
-                    guard let self = self else {throw RenVM.Error.unknown}
-                    
-                    // create lock and mint
-                    self.lockAndMint = try .init(
-                        rpcClient: self.rpcClient,
-                        chain: solanaChain,
-                        mintTokenSymbol: self.mintTokenSymbol,
-                        version: self.version,
-                        destinationAddress: self.destinationAddress.data,
-                        session: savedSession
-                    )
-                    
-                    // save session
-                    if savedSession == nil {
-                        self.sessionStorage.saveSession(self.lockAndMint!.session)
-                    }
-                    
-                    // generate address
-                    return self.lockAndMint!.generateGatewayAddress()
-                }
-                .map {Base58.encode($0.bytes)}
-                .subscribe(on: MainScheduler.instance)
-                .subscribe(onSuccess: {[weak self] address in
-                    self?.isLoadingSubject.accept(false)
-                    self?.addressSubject.accept(address)
-                }, onFailure: {[weak self] error in
-                    self?.isLoadingSubject.accept(false)
-                    self?.errorSubject.accept(error.readableDescription)
-                })
-        }
-        
-        private func expireCurrentSession() {
-            sessionStorage.expireCurrentSession()
-            reload()
         }
         
         func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool) {
@@ -167,19 +90,19 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
     
     var isLoadingDriver: Driver<Bool> {
-        isLoadingSubject.asDriver()
+        renVMService.isLoadingDriver
     }
     
     var errorDriver: Driver<String?> {
-        errorSubject.asDriver()
+        renVMService.errorDriver
     }
     
     var conditionAcceptedDriver: Driver<Bool> {
-        conditionAcceptedSubject.asDriver()
+        renVMService.conditionAcceptedDriver
     }
     
     var addressDriver: Driver<String?> {
-        addressSubject.asDriver()
+        renVMService.addressDriver
     }
     
     var timerSignal: Signal<Void> {
@@ -187,7 +110,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
     
     func getSessionEndDate() -> Date? {
-        sessionStorage.loadSession()?.endAt
+        renVMService.getSessionEndDate()
     }
     
     func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
@@ -196,13 +119,14 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
     
     func share() {
+        guard let address = renVMService.getCurrentAddress() else {return}
         analyticsManager.log(event: .receiveAddressShare)
-        navigationSubject.accept(.share(address: addressSubject.value ?? ""))
+        navigationSubject.accept(.share(address: address))
     }
     
     func showBTCAddressInExplorer() {
-        guard let pubkey = addressSubject.value else {return}
+        guard let address = renVMService.getCurrentAddress() else {return}
         analyticsManager.log(event: .receiveViewExplorerOpen)
-        navigationSubject.accept(.showBTCExplorer(address: pubkey))
+        navigationSubject.accept(.showBTCExplorer(address: address))
     }
 }

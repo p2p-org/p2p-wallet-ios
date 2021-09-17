@@ -203,7 +203,6 @@ private class AddressView: BEView {
     private var isCopying = false
     private var currentAddress: String?
     
-    
     private lazy var loadingView = BESpinnerView(size: 30, endColor: .h5887ff)
     private lazy var addressLabel = UILabel(text: nil, textSize: 15, weight: .semibold, textAlignment: .center)
         .lineBreakMode(.byTruncatingMiddle)
