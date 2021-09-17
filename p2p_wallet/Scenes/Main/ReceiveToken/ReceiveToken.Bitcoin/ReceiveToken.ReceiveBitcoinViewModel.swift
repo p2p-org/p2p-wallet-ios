@@ -63,8 +63,7 @@ extension ReceiveToken {
         }
         
         private func bind() {
-            Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
-                .map {_ in ()}
+            Timer.observable(seconds: 1)
                 .bind(to: timerSubject)
                 .disposed(by: disposeBag)
             

@@ -36,6 +36,7 @@ class RenVMService {
     
     // MARK: - Properties
     private var loadingDisposable: Disposable?
+    private var observingTxStreamDisposable: Disposable?
     private var lockAndMint: RenVM.LockAndMint?
     
     // MARK: - Subjects
@@ -65,6 +66,8 @@ class RenVMService {
         errorSubject.accept(nil)
         conditionAcceptedSubject.accept(false)
         addressSubject.accept(nil)
+        loadingDisposable?.dispose()
+        observingTxStreamDisposable?.dispose()
         
         // if session exists, condition accepted, load session
         if sessionStorage.loadSession() != nil {
@@ -115,6 +118,7 @@ class RenVMService {
             .subscribe(onSuccess: {[weak self] address in
                 self?.isLoadingSubject.accept(false)
                 self?.addressSubject.accept(address)
+                self?.observeTxStreamAndMint()
             }, onFailure: {[weak self] error in
                 self?.isLoadingSubject.accept(false)
                 self?.errorSubject.accept(error.readableDescription)
@@ -124,6 +128,48 @@ class RenVMService {
     func expireCurrentSession() {
         sessionStorage.expireCurrentSession()
         reload()
+    }
+    
+    private func observeTxStreamAndMint() {
+        // cancel previous observing
+        observingTxStreamDisposable?.dispose()
+        
+        // create new observing with new address
+        guard let address = addressSubject.value
+        else {return}
+        
+        // do request each 3 seconds in background
+        observingTxStreamDisposable = Timer.observable(
+            seconds: 3,
+            scheduler: ConcurrentDispatchQueueScheduler(qos: .background)
+        )
+            .flatMap {[weak self] _ -> Single<Data> in
+                guard let self = self else {return .just(Data())}
+                var url = "https://blockstream.info"
+                if self.rpcClient.network.isTestnet {
+                    url += "/testnet"
+                }
+                url += "/\(address)/utxo"
+                return URLSession(configuration: .default)
+                    .rx.data(request: try .init(url: "", method: .get))
+                    .take(1).asSingle()
+            }
+            .map {(try? JSONDecoder().decode(TxDetail.self, from: $0)) ?? []}
+            .catchAndReturn([])
+            .map {$0.filter {$0.status.confirmed == true}}
+            .observe(on: ConcurrentMainScheduler.instance)
+            .subscribe(onNext: {[weak self] details in
+                Logger.log(message: "Received renBTC transactions: \(details)", event: .info)
+                guard let self = self, !details.isEmpty else {return}
+                for detail in details {
+                    guard let _ = try? self.lockAndMint?.getDepositState(transactionHash: detail.txid, txIndex: String(detail.vout), amount: String(detail.value))
+                    else {
+                        continue
+                    }
+                    
+                    self.lockAndMint?.mint(signer: <#T##Data#>)
+                }
+            })
     }
 }
 
@@ -152,3 +198,29 @@ extension RenVMService: RenVMServiceType {
         addressSubject.value
     }
 }
+
+// MARK: - TxDetailElement
+private struct TxDetailElement: Codable {
+    let txid: String
+    let vout: UInt64
+    let status: Status
+    let value: UInt64
+}
+
+// MARK: - Status
+private struct Status: Codable {
+    let confirmed: Bool
+    let blockHeight: Int?
+    let blockHash: String?
+    let blockTime: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case confirmed
+        case blockHeight = "block_height"
+        case blockHash = "block_hash"
+        case blockTime = "block_time"
+    }
+}
+
+private typealias TxDetail = [TxDetailElement]
+
