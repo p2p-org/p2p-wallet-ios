@@ -200,6 +200,7 @@ class RenVMService {
             }, onFailure: {[weak self] error in
                 guard let self = self else {return}
                 Logger.log(message: "renBTC event mint error: \(error), isSubmited: \(self.sessionStorage.isSubmited(txid: txDetail.txid)), isMinted: \(self.sessionStorage.isMinted(txid: txDetail.txid))", event: .error)
+                self.handlingTxIds.removeAll(where: {$0 == txDetail.txid})
             })
             .disposed(by: disposeBag)
     }
