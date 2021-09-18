@@ -23,6 +23,14 @@ protocol RenVMServiceType {
 }
 
 class RenVMService {
+    // MARK: - Nested type
+    private enum TxStatus: Comparable, Equatable {
+        case submiting, submited, minting, minted
+        var isProcessing: Bool {
+            self == .submiting || self == .minting
+        }
+    }
+    
     // MARK: - Constants
     private let mintTokenSymbol = "BTC"
     private let version = "1"
@@ -40,8 +48,7 @@ class RenVMService {
     private var lockAndMint: RenVM.LockAndMint?
     private let mintQueue = DispatchQueue(label: "mintQueue", qos: .background)
     private lazy var scheduler = SerialDispatchQueueScheduler(queue: mintQueue, internalSerialQueueName: "mintQueue")
-    private var mintingTx = [String]()
-    private var mintedTx = [String]()
+    private var txStatus = [String: TxStatus]()
     
     // MARK: - Subjects
     private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
@@ -173,7 +180,7 @@ class RenVMService {
             .take(1).asSingle()
             .map {try JSONDecoder().decode(TxDetail.self, from: $0)}
             .map {$0.filter {$0.status.confirmed == true}}
-            .map {[weak self] in $0.filter {self?.mintingTx.contains($0.txid) == false && self?.mintedTx.contains($0.txid) == false}}
+            .map {[weak self] in $0.filter {self?.txStatus[$0.txid] != .minted}}
             .subscribe(onSuccess: { [weak self] details in
                 Logger.log(message: "Received renBTC transactions: \(details)", event: .info)
                 
@@ -187,7 +194,10 @@ class RenVMService {
     }
     
     private func mint(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: TxDetailElement) throws {
-        guard let lockAndMint = lockAndMint else {
+        
+        guard let lockAndMint = lockAndMint,
+              txStatus[txDetail.txid]?.isProcessing == false
+        else {
             return
         }
         
@@ -200,21 +210,41 @@ class RenVMService {
             gPubkey: response.gPubkey
         )
         
-        mintingTx.append(txDetail.txid)
+        let submitMintRequest: Completable
         
-        lockAndMint.submitMintTransaction(state: state)
-            .flatMap {[weak self] _ -> Single<String> in
-                guard let self = self else {throw RenVM.Error.unknown}
-                return lockAndMint.mint(state: state, signer: self.account.secretKey)
-            }
+        // the transaction hasn't already been submitted
+        if (txStatus[txDetail.txid] ?? .submiting) < .submited {
+            txStatus[txDetail.txid] = .submiting
+            submitMintRequest = lockAndMint.submitMintTransaction(state: state)
+                .asCompletable()
+        }
+        
+        // the transaction
+        else {
+            submitMintRequest = .empty()
+        }
+        
+        submitMintRequest
+            .do(onError: { [weak self] _ in
+                self?.txStatus[txDetail.txid] = nil
+            }, onCompleted: { [weak self] in
+                self?.txStatus[txDetail.txid] = .minting
+            })
+            .andThen(
+                lockAndMint.mint(state: state, signer: self.account.secretKey)
+                    .do(
+                        onError: { [weak self] _ in
+                            self?.txStatus[txDetail.txid] = .submited
+                        }
+                    )
+            )
             .observe(on: scheduler)
             .subscribe(onSuccess: {[weak self] signature in
                 Logger.log(message: "Received renBTC transactions mint signature: \(signature)", event: .info)
-                self?.mintingTx.removeAll(where: {$0 == txDetail.txid})
-                self?.mintedTx.append(txDetail.txid)
+                self?.txStatus[txDetail.txid] = .minted
+                
             }, onFailure: {[weak self] error in
-                Logger.log(message: "Received renBTC transactions mint error: \(error)", event: .error)
-                self?.mintingTx.removeAll(where: {$0 == txDetail.txid})
+                Logger.log(message: "Received renBTC transactions mint error: \(error), txStatus: \(String(describing: self?.txStatus[txDetail.txid]))", event: .error)
             })
             .disposed(by: disposeBag)
     }
