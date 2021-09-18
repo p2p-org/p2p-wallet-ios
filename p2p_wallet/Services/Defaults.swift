@@ -49,4 +49,5 @@ extension DefaultsKeys {
     var prices: DefaultsKey<Data> {.init(#function, defaultValue: Data())}
     var payingToken: DefaultsKey<PayingToken> {.init(#function, defaultValue: .transactionToken)}
     var renVMSession: DefaultsKey<RenVM.Session?> {.init(#function, defaultValue: nil)}
+    var renVMTxs: DefaultsKey<[String: RenVMService.TxStatus]> {.init(#function, defaultValue: [:])}
 }

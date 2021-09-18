@@ -24,7 +24,7 @@ protocol RenVMServiceType {
 
 class RenVMService {
     // MARK: - Nested type
-    private enum TxStatus: Comparable, Equatable {
+    enum TxStatus: Comparable, Equatable {
         case submiting, submited, minting, minted
         var isProcessing: Bool {
             self == .submiting || self == .minting
@@ -48,7 +48,6 @@ class RenVMService {
     private var lockAndMint: RenVM.LockAndMint?
     private let mintQueue = DispatchQueue(label: "mintQueue", qos: .background)
     private lazy var scheduler = SerialDispatchQueueScheduler(queue: mintQueue, internalSerialQueueName: "mintQueue")
-    private var txStatus = [String: TxStatus]()
     
     // MARK: - Subjects
     private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
@@ -180,15 +179,15 @@ class RenVMService {
             .take(1).asSingle()
             .map {try JSONDecoder().decode(TxDetail.self, from: $0)}
             .map {$0.filter {$0.status.confirmed == true}}
-            .map {[weak self] in $0.filter {self?.txStatus[$0.txid] != .minted}}
+            .map {$0.filter {Defaults.renVMTxs[$0.txid] != .minted}}
             .subscribe(onSuccess: { [weak self] details in
-                Logger.log(message: "Received renBTC transactions: \(details)", event: .info)
+                Logger.log(message: "renBTC event: \(details)", event: .info)
                 
                 for detail in details {
                     try? self?.mint(response: response, txDetail: detail)
                 }
             }, onFailure: { error in
-                Logger.log(message: "Received renBTC transactions error: \(error)", event: .error)
+                Logger.log(message: "renBTC event error: \(error)", event: .error)
             })
             .disposed(by: disposeBag)
     }
@@ -201,7 +200,7 @@ class RenVMService {
         }
         
         // prevent dupplicating
-        if let status = txStatus[txDetail.txid],
+        if let status = Defaults.renVMTxs[txDetail.txid],
            status.isProcessing
         {
             return
@@ -219,38 +218,41 @@ class RenVMService {
         let submitMintRequest: Completable
         
         // the transaction hasn't already been submitted
-        if (txStatus[txDetail.txid] ?? .submiting) < .submited {
-            txStatus[txDetail.txid] = .submiting
+        if (Defaults.renVMTxs[txDetail.txid] ?? .submiting) < .submited {
+            Defaults.renVMTxs[txDetail.txid] = .submiting
             submitMintRequest = lockAndMint.submitMintTransaction(state: state)
                 .asCompletable()
         }
         
-        // the transaction
+        // the transaction has been submitted
         else {
             submitMintRequest = .empty()
         }
         
         submitMintRequest
-            .do(onError: { [weak self] _ in
-                self?.txStatus[txDetail.txid] = nil
-            }, onCompleted: { [weak self] in
-                self?.txStatus[txDetail.txid] = .minting
+            .do(onError: {_ in
+                // error submitting
+                Defaults.renVMTxs[txDetail.txid] = nil
+            }, onCompleted: {
+                // completed, forward to minting
+                Defaults.renVMTxs[txDetail.txid] = .minting
             })
             .andThen(
                 lockAndMint.mint(state: state, signer: self.account.secretKey)
                     .do(
-                        onError: { [weak self] _ in
-                            self?.txStatus[txDetail.txid] = .submited
+                        onError: { _ in
+                            // error, back to minting in next request
+                            Defaults.renVMTxs[txDetail.txid] = .submited
                         }
                     )
             )
             .observe(on: scheduler)
-            .subscribe(onSuccess: {[weak self] signature in
-                Logger.log(message: "Received renBTC transactions mint signature: \(signature)", event: .info)
-                self?.txStatus[txDetail.txid] = .minted
+            .subscribe(onSuccess: {signature in
+                Logger.log(message: "renBTC event mint signature: \(signature)", event: .info)
+                Defaults.renVMTxs[txDetail.txid] = .minted
                 
-            }, onFailure: {[weak self] error in
-                Logger.log(message: "Received renBTC transactions mint error: \(error), txStatus: \(String(describing: self?.txStatus[txDetail.txid]))", event: .error)
+            }, onFailure: { error in
+                Logger.log(message: "renBTC event mint error: \(error), txStatus: \(String(describing: Defaults.renVMTxs[txDetail.txid]))", event: .error)
             })
             .disposed(by: disposeBag)
     }
