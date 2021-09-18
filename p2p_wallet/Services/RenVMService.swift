@@ -23,14 +23,6 @@ protocol RenVMServiceType {
 }
 
 class RenVMService {
-    // MARK: - Nested type
-    enum TxStatus: Comparable, Equatable {
-        case submiting, submited, minting, minted
-        var isProcessing: Bool {
-            self == .submiting || self == .minting
-        }
-    }
-    
     // MARK: - Constants
     private let mintTokenSymbol = "BTC"
     private let version = "1"
@@ -179,7 +171,7 @@ class RenVMService {
             .take(1).asSingle()
             .map {try JSONDecoder().decode(TxDetail.self, from: $0)}
             .map {$0.filter {$0.status.confirmed == true}}
-            .map {$0.filter {Defaults.renVMTxs[$0.txid] != .minted}}
+            .map {[weak self] in $0.filter {self?.sessionStorage.getStatusFor($0.txid) != .minted}}
             .subscribe(onSuccess: { [weak self] details in
                 Logger.log(message: "renBTC event: \(details)", event: .info)
                 
@@ -199,10 +191,10 @@ class RenVMService {
             return
         }
         
+        let status = sessionStorage.getStatusFor(txDetail.txid)
+        
         // prevent dupplicating
-        if let status = Defaults.renVMTxs[txDetail.txid],
-           status.isProcessing
-        {
+        if status?.isProcessing == true {
             return
         }
         
@@ -218,8 +210,8 @@ class RenVMService {
         let submitMintRequest: Completable
         
         // the transaction hasn't already been submitted
-        if (Defaults.renVMTxs[txDetail.txid] ?? .submiting) < .submited {
-            Defaults.renVMTxs[txDetail.txid] = .submiting
+        if (status ?? .submiting) < .submited {
+            sessionStorage.setStatusFor(txDetail.txid, status: .submiting)
             submitMintRequest = lockAndMint.submitMintTransaction(state: state)
                 .asCompletable()
         }
@@ -230,29 +222,29 @@ class RenVMService {
         }
         
         submitMintRequest
-            .do(onError: {_ in
+            .do(onError: {[weak self] _ in
                 // error submitting
-                Defaults.renVMTxs[txDetail.txid] = nil
-            }, onCompleted: {
+                self?.sessionStorage.setStatusFor(txDetail.txid, status: nil)
+            }, onCompleted: { [weak self] in
                 // completed, forward to minting
-                Defaults.renVMTxs[txDetail.txid] = .minting
+                self?.sessionStorage.setStatusFor(txDetail.txid, status: .minting)
             })
             .andThen(
                 lockAndMint.mint(state: state, signer: self.account.secretKey)
                     .do(
-                        onError: { _ in
+                        onError: {[weak self] _ in
                             // error, back to minting in next request
-                            Defaults.renVMTxs[txDetail.txid] = .submited
+                            self?.sessionStorage.setStatusFor(txDetail.txid, status: .submited)
                         }
                     )
             )
             .observe(on: scheduler)
-            .subscribe(onSuccess: {signature in
+            .subscribe(onSuccess: {[weak self] signature in
                 Logger.log(message: "renBTC event mint signature: \(signature)", event: .info)
-                Defaults.renVMTxs[txDetail.txid] = .minted
+                self?.sessionStorage.setStatusFor(txDetail.txid, status: .minted)
                 
-            }, onFailure: { error in
-                Logger.log(message: "renBTC event mint error: \(error), txStatus: \(String(describing: Defaults.renVMTxs[txDetail.txid]))", event: .error)
+            }, onFailure: {[weak self] error in
+                Logger.log(message: "renBTC event mint error: \(error), txStatus: \(String(describing: self?.sessionStorage.getStatusFor(txDetail.txid)))", event: .error)
             })
             .disposed(by: disposeBag)
     }

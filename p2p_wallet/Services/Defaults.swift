@@ -17,6 +17,8 @@ extension PayingToken: DefaultsSerializable {}
 
 extension RenVM.Session: DefaultsSerializable {}
 
+extension RenVM.Tx: DefaultsSerializable {}
+
 extension DefaultsKeys {
     // Keychain-keys
     var keychainPincodeKey: DefaultsKey<String?> {.init(#function, defaultValue: nil)}
@@ -49,5 +51,5 @@ extension DefaultsKeys {
     var prices: DefaultsKey<Data> {.init(#function, defaultValue: Data())}
     var payingToken: DefaultsKey<PayingToken> {.init(#function, defaultValue: .transactionToken)}
     var renVMSession: DefaultsKey<RenVM.Session?> {.init(#function, defaultValue: nil)}
-    var renVMTxs: DefaultsKey<[String: RenVMService.TxStatus]> {.init(#function, defaultValue: [:])}
+    var renVMTxs: DefaultsKey<[RenVM.Tx]> {.init(#function, defaultValue: [])}
 }
