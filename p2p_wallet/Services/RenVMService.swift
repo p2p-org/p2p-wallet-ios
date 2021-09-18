@@ -195,9 +195,15 @@ class RenVMService {
     
     private func mint(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: TxDetailElement) throws {
         
-        guard let lockAndMint = lockAndMint,
-              txStatus[txDetail.txid]?.isProcessing == false
+        guard let lockAndMint = lockAndMint
         else {
+            return
+        }
+        
+        // prevent dupplicating
+        if let status = txStatus[txDetail.txid],
+           status.isProcessing
+        {
             return
         }
         
