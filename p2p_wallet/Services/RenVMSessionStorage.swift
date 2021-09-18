@@ -9,7 +9,7 @@ import Foundation
 
 extension RenVM {
     struct SubmitedTx: Codable {
-        let txid: String
+        let tx: TxDetail
         var isMinted: Bool
     }
 }
@@ -21,8 +21,9 @@ protocol RenVMSessionStorageType {
     
     func isMinted(txid: String) -> Bool
     func isSubmited(txid: String) -> Bool
-    func setAsMinted(txid: String)
-    func setAsSubmited(txid: String)
+    func setAsMinted(tx: RenVM.TxDetail)
+    func setAsSubmited(tx: RenVM.TxDetail)
+    func getSubmitedButUnmintedTxId() -> [RenVM.TxDetail]
 }
 
 struct RenVMSessionStorage: RenVMSessionStorageType {
@@ -39,29 +40,33 @@ struct RenVMSessionStorage: RenVMSessionStorageType {
     }
     
     func isMinted(txid: String) -> Bool {
-        Defaults.renVMSubmitedTx.first(where: {$0.txid == txid})?.isMinted == true
+        Defaults.renVMSubmitedTxDetail.first(where: {$0.tx.txid == txid})?.isMinted == true
     }
     
     func isSubmited(txid: String) -> Bool {
-        Defaults.renVMSubmitedTx.contains(where: {$0.txid == txid})
+        Defaults.renVMSubmitedTxDetail.contains(where: {$0.tx.txid == txid})
     }
     
-    func setAsMinted(txid: String) {
-        var txs = Defaults.renVMSubmitedTx
+    func setAsMinted(tx: RenVM.TxDetail) {
+        var txs = Defaults.renVMSubmitedTxDetail
         
-        if let index = txs.firstIndex(where: {$0.txid == txid}) {
+        if let index = txs.firstIndex(where: {$0.tx.txid == tx.txid}) {
             var tx = txs[index]
             tx.isMinted = true
             txs[index] = tx
         }
         
-        Defaults.renVMSubmitedTx = txs
+        Defaults.renVMSubmitedTxDetail = txs
     }
     
-    func setAsSubmited(txid: String) {
-        if Defaults.renVMSubmitedTx.contains(where: {$0.txid == txid}) {return}
-        var txs = Defaults.renVMSubmitedTx
-        txs.append(.init(txid: txid, isMinted: false))
-        Defaults.renVMSubmitedTx = txs
+    func setAsSubmited(tx: RenVM.TxDetail) {
+        if Defaults.renVMSubmitedTxDetail.contains(where: {$0.tx.txid == tx.txid}) {return}
+        var txs = Defaults.renVMSubmitedTxDetail
+        txs.append(.init(tx: tx, isMinted: false))
+        Defaults.renVMSubmitedTxDetail = txs
+    }
+    
+    func getSubmitedButUnmintedTxId() -> [RenVM.TxDetail] {
+        Defaults.renVMSubmitedTxDetail.filter {$0.isMinted == false}.map {$0.tx}
     }
 }
