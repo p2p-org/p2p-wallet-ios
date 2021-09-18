@@ -177,6 +177,7 @@ class RenVMService {
                 return array.filter {!self.sessionStorage.isMinted(txid: $0.txid) && !self.handlingTxIds.contains($0.txid)}
             }
             .subscribe(onSuccess: { [weak self] details in
+                guard !details.isEmpty else {return}
                 Logger.log(message: "renBTC event: \(details)", event: .info)
                 
                 for detail in details {
