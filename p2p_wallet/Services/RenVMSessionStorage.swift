@@ -37,6 +37,7 @@ struct RenVMSessionStorage: RenVMSessionStorageType {
     
     func expireCurrentSession() {
         Defaults.renVMSession = nil
+        Defaults.renVMSubmitedTxDetail = []
     }
     
     func isMinted(txid: String) -> Bool {
