@@ -170,11 +170,13 @@ class RenVMService {
         URLSession(configuration: .default)
             .rx.data(request: request)
             .take(1).asSingle()
-            .map {try JSONDecoder().decode(TxDetail.self, from: $0)}
+            .map {try JSONDecoder().decode(RenVM.TxDetails.self, from: $0)}
             .map {$0.filter {$0.status.confirmed == true}}
-            .map {[weak self] array -> TxDetail in
+            .map {[weak self] array -> RenVM.TxDetails in
                 guard let self = self else {throw RenVM.Error.unknown}
-                return array.filter {!self.sessionStorage.isMinted(txid: $0.txid) && !self.handlingTxIds.contains($0.txid)}
+                var array = array.filter {!self.sessionStorage.isMinted(txid: $0.txid)}
+                array += self.sessionStorage.getSubmitedButUnmintedTxId()
+                return array.filter {!self.handlingTxIds.contains($0.txid)}
             }
             .subscribe(onSuccess: { [weak self] details in
                 guard !details.isEmpty else {return}
@@ -190,12 +192,12 @@ class RenVMService {
             .disposed(by: disposeBag)
     }
     
-    private func mint(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: TxDetailElement) throws {
+    private func mint(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: RenVM.TxDetail) throws {
         
         prepareMintRequest(response: response, txDetail: txDetail)
             .subscribe(onSuccess: {[weak self] signature in
                 Logger.log(message: "renBTC event mint signature: \(signature)", event: .info)
-                self?.sessionStorage.setAsMinted(txid: txDetail.txid)
+                self?.sessionStorage.setAsMinted(tx: txDetail)
                 
             }, onFailure: {[weak self] error in
                 guard let self = self else {return}
@@ -205,7 +207,7 @@ class RenVMService {
             .disposed(by: disposeBag)
     }
     
-    private func prepareMintRequest(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: TxDetailElement) -> Single<String>
+    private func prepareMintRequest(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: RenVM.TxDetail) -> Single<String>
     {
         guard let lockAndMint = lockAndMint else {
             return .error(RenVM.Error.unknown)
@@ -235,7 +237,7 @@ class RenVMService {
             submitMintRequest = lockAndMint.submitMintTransaction(state: state)
                 .asCompletable()
                 .do(onCompleted: { [weak self] in
-                    self?.sessionStorage.setAsSubmited(txid: txDetail.txid)
+                    self?.sessionStorage.setAsSubmited(tx: txDetail)
                 })
         }
         
@@ -286,27 +288,27 @@ extension RenVMService: RenVMServiceType {
     }
 }
 
-// MARK: - TxDetailElement
-private struct TxDetailElement: Codable {
-    let txid: String
-    let vout: UInt64
-    let status: Status
-    let value: UInt64
-}
+extension RenVM {
+    // MARK: - TxDetailElement
+    struct TxDetail: Codable {
+        let txid: String
+        let vout: UInt64
+        let status: Status
+        let value: UInt64
+        
+        struct Status: Codable {
+            let confirmed: Bool
+            let blockHeight: Int?
+            let blockHash: String?
+            let blockTime: Int?
 
-// MARK: - Status
-private struct Status: Codable {
-    let confirmed: Bool
-    let blockHeight: Int?
-    let blockHash: String?
-    let blockTime: Int?
-
-    enum CodingKeys: String, CodingKey {
-        case confirmed
-        case blockHeight = "block_height"
-        case blockHash = "block_hash"
-        case blockTime = "block_time"
+            enum CodingKeys: String, CodingKey {
+                case confirmed
+                case blockHeight = "block_height"
+                case blockHash = "block_hash"
+                case blockTime = "block_time"
+            }
+        }
     }
+    typealias TxDetails = [TxDetail]
 }
-
-private typealias TxDetail = [TxDetailElement]
