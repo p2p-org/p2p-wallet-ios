@@ -192,20 +192,6 @@ class RenVMService {
     private func mint(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: TxDetailElement) throws {
         
         prepareMintRequest(response: response, txDetail: txDetail)
-            .catch {[weak self] error in
-                guard let self = self else {throw RenVM.Error.unknown}
-                if let error = error as? RenVM.Error,
-                   error == .paramsMissing
-                {
-                    return Single<Void>.just(())
-                        .delay(.seconds(3), scheduler: self.scheduler)
-                        .flatMap {[weak self] in
-                            guard let self = self else {throw RenVM.Error.unknown}
-                            return self.prepareMintRequest(response: response, txDetail: txDetail)
-                        }
-                }
-                throw error
-            }
             .subscribe(onSuccess: {[weak self] signature in
                 Logger.log(message: "renBTC event mint signature: \(signature)", event: .info)
                 self?.sessionStorage.setAsMinted(txid: txDetail.txid)
@@ -255,6 +241,20 @@ class RenVMService {
             .andThen(
                 lockAndMint.mint(state: state, signer: self.account.secretKey)
             )
+            .catch {[weak self] error in
+                guard let self = self else {throw RenVM.Error.unknown}
+                if let error = error as? RenVM.Error,
+                   error == .paramsMissing
+                {
+                    return Single<Void>.just(())
+                        .delay(.seconds(3), scheduler: self.scheduler)
+                        .flatMap {[weak self] in
+                            guard let self = self else {throw RenVM.Error.unknown}
+                            return self.prepareMintRequest(response: response, txDetail: txDetail)
+                        }
+                }
+                throw error
+            }
     }
 }
 
