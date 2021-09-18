@@ -40,6 +40,7 @@ class RenVMService {
     private var lockAndMint: RenVM.LockAndMint?
     private let mintQueue = DispatchQueue(label: "mintQueue", qos: .background)
     private lazy var scheduler = SerialDispatchQueueScheduler(queue: mintQueue, internalSerialQueueName: "mintQueue")
+    private lazy var handlingTxIds = [String]()
     
     // MARK: - Subjects
     private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
@@ -171,11 +172,15 @@ class RenVMService {
             .take(1).asSingle()
             .map {try JSONDecoder().decode(TxDetail.self, from: $0)}
             .map {$0.filter {$0.status.confirmed == true}}
-            .map {[weak self] in $0.filter {self?.sessionStorage.getStatusFor($0.txid) != .minted}}
+            .map {[weak self] array -> TxDetail in
+                guard let self = self else {throw RenVM.Error.unknown}
+                return array.filter {!self.sessionStorage.isMinted(txid: $0.txid) && !self.handlingTxIds.contains($0.txid)}
+            }
             .subscribe(onSuccess: { [weak self] details in
                 Logger.log(message: "renBTC event: \(details)", event: .info)
                 
                 for detail in details {
+                    self?.handlingTxIds.append(detail.txid)
                     try? self?.mint(response: response, txDetail: detail)
                 }
             }, onFailure: { error in
@@ -186,67 +191,70 @@ class RenVMService {
     
     private func mint(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: TxDetailElement) throws {
         
-        guard let lockAndMint = lockAndMint
-        else {
-            return
+        prepareMintRequest(response: response, txDetail: txDetail)
+            .catch {[weak self] error in
+                guard let self = self else {throw RenVM.Error.unknown}
+                if let error = error as? RenVM.Error,
+                   error == .paramsMissing
+                {
+                    return Single<Void>.just(())
+                        .delay(.seconds(3), scheduler: self.scheduler)
+                        .flatMap {[weak self] in
+                            guard let self = self else {throw RenVM.Error.unknown}
+                            return self.prepareMintRequest(response: response, txDetail: txDetail)
+                        }
+                }
+                throw error
+            }
+            .subscribe(onSuccess: {[weak self] signature in
+                Logger.log(message: "renBTC event mint signature: \(signature)", event: .info)
+                self?.sessionStorage.setAsMinted(txid: txDetail.txid)
+                
+            }, onFailure: {[weak self] error in
+                guard let self = self else {return}
+                Logger.log(message: "renBTC event mint error: \(error), isSubmited: \(self.sessionStorage.isSubmited(txid: txDetail.txid)), isMinted: \(self.sessionStorage.isMinted(txid: txDetail.txid))", event: .error)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func prepareMintRequest(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: TxDetailElement) -> Single<String>
+    {
+        guard let lockAndMint = lockAndMint else {
+            return .error(RenVM.Error.unknown)
         }
         
-        let status = sessionStorage.getStatusFor(txDetail.txid)
+        let state: RenVM.State
         
-        // prevent dupplicating
-        if status?.isProcessing == true {
-            return
+        do {
+            state = try lockAndMint.getDepositState(
+                transactionHash: txDetail.txid,
+                txIndex: String(txDetail.vout),
+                amount: String(txDetail.value),
+                sendTo: response.sendTo,
+                gHash: response.gHash,
+                gPubkey: response.gPubkey
+            )
+        } catch {
+            return .error(error)
         }
-        
-        let state = try lockAndMint.getDepositState(
-            transactionHash: txDetail.txid,
-            txIndex: String(txDetail.vout),
-            amount: String(txDetail.value),
-            sendTo: response.sendTo,
-            gHash: response.gHash,
-            gPubkey: response.gPubkey
-        )
         
         let submitMintRequest: Completable
         
         // the transaction hasn't already been submitted
-        if (status ?? .submiting) < .submited {
-            sessionStorage.setStatusFor(txDetail.txid, status: .submiting)
+        if sessionStorage.isSubmited(txid: txDetail.txid) {
+            submitMintRequest = .empty()
+        } else {
             submitMintRequest = lockAndMint.submitMintTransaction(state: state)
                 .asCompletable()
+                .do(onCompleted: { [weak self] in
+                    self?.sessionStorage.setAsSubmited(txid: txDetail.txid)
+                })
         }
         
-        // the transaction has been submitted
-        else {
-            submitMintRequest = .empty()
-        }
-        
-        submitMintRequest
-            .do(onError: {[weak self] _ in
-                // error submitting
-                self?.sessionStorage.setStatusFor(txDetail.txid, status: nil)
-            }, onCompleted: { [weak self] in
-                // completed, forward to minting
-                self?.sessionStorage.setStatusFor(txDetail.txid, status: .minting)
-            })
+        return submitMintRequest
             .andThen(
                 lockAndMint.mint(state: state, signer: self.account.secretKey)
-                    .do(
-                        onError: {[weak self] _ in
-                            // error, back to minting in next request
-                            self?.sessionStorage.setStatusFor(txDetail.txid, status: .submited)
-                        }
-                    )
             )
-            .observe(on: scheduler)
-            .subscribe(onSuccess: {[weak self] signature in
-                Logger.log(message: "renBTC event mint signature: \(signature)", event: .info)
-                self?.sessionStorage.setStatusFor(txDetail.txid, status: .minted)
-                
-            }, onFailure: {[weak self] error in
-                Logger.log(message: "renBTC event mint error: \(error), txStatus: \(String(describing: self?.sessionStorage.getStatusFor(txDetail.txid)))", event: .error)
-            })
-            .disposed(by: disposeBag)
     }
 }
 
