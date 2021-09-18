@@ -97,7 +97,7 @@ extension Root {
             Defaults.didSetEnableNotifications = false
             Defaults.didBackupOffline = false
             Defaults.renVMSession = nil
-            Defaults.renVMTxs = [:]
+            Defaults.renVMTxs = []
             reload()
         }
         
