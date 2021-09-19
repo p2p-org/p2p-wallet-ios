@@ -465,3 +465,4 @@
 "only Bitcoin" = "chỉ Bitcoin";
 "Minimum transaction amount of %@" = "Số tiền giao dịch tối thiểu là %@";
 "%@ is the remaining time to safely send the assets." = "%@ là thời gian còn lại để gửi tài sản một cách an toàn.";
+"Received %@ renBTC" = "Đã nhận %@ renBTC";
