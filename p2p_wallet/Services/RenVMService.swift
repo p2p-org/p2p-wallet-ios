@@ -201,7 +201,26 @@ class RenVMService {
                 
             }, onFailure: {[weak self] error in
                 guard let self = self else {return}
+                
+                // already minted
+                if let error = error as? SolanaSDK.Error {
+                    switch error {
+                    case .invalidResponse(let response):
+                        if response.data?.logs?.contains(where: {$0.isAlreadyInUseLog}) == true
+                        {
+                            Logger.log(message: "txDetail is already minted \(txDetail)", event: .info)
+                            self.sessionStorage.setAsMinted(tx: txDetail)
+                            return
+                        }
+                    default:
+                        break
+                    }
+                }
+                
+                // other error
                 Logger.log(message: "renBTC event mint error: \(error), isSubmited: \(self.sessionStorage.isSubmited(txid: txDetail.txid)), isMinted: \(self.sessionStorage.isMinted(txid: txDetail.txid))", event: .error)
+                
+                // remove from handling list
                 self.handlingTxIds.removeAll(where: {$0 == txDetail.txid})
             })
             .disposed(by: disposeBag)
@@ -311,4 +330,11 @@ extension RenVM {
         }
     }
     typealias TxDetails = [TxDetail]
+}
+
+private extension String {
+    var isAlreadyInUseLog: Bool {
+        starts(with: "Allocate: account Address { address: ") &&
+            hasSuffix("} already in use")
+    }
 }
