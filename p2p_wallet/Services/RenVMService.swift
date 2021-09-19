@@ -199,6 +199,8 @@ class RenVMService {
                 Logger.log(message: "renBTC event mint signature: \(signature)", event: .info)
                 self?.sessionStorage.setAsMinted(tx: txDetail)
                 
+                let value = txDetail.value.convertToBalance(decimals: 8)
+                UIApplication.shared.showToast(message: L10n.receivedRenBTC(value.toString(maximumFractionDigits: 8)))
             }, onFailure: {[weak self] error in
                 guard let self = self else {return}
                 
