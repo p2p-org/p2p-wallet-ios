@@ -87,24 +87,6 @@ extension ReceiveToken {
                 .drive(receiveRenBTCView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            viewModel.errorDriver
-                .drive(onNext: {[weak self] error in
-                    guard let self = self else {return}
-                    if let error = error {
-                        self.showErrorView(
-                            title: L10n.error,
-                            description: error,
-                            retryAction: CocoaAction { [weak self] in
-                                self?.viewModel.reload()
-                                return .just(())
-                            }
-                        )
-                    } else {
-                        self.removeErrorView()
-                    }
-                })
-                .disposed(by: disposeBag)
-            
             viewModel.conditionAcceptedDriver
                 .drive(conditionView.rx.isHidden)
                 .disposed(by: disposeBag)
@@ -274,6 +256,24 @@ private class AddressView: BEView {
         viewModel.isLoadingDriver
             .map {!$0}
             .drive(loadingView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.errorDriver
+            .drive(onNext: {[weak self] error in
+                guard let self = self else {return}
+                if let error = error {
+                    self.showErrorView(
+                        title: L10n.error,
+                        description: error,
+                        retryAction: CocoaAction { [weak self] in
+                            self?.viewModel.reload()
+                            return .just(())
+                        }
+                    )
+                } else {
+                    self.removeErrorView()
+                }
+            })
             .disposed(by: disposeBag)
         
         viewModel.addressDriver
