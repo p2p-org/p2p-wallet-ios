@@ -466,3 +466,4 @@
 "Minimum transaction amount of %@" = "Montant minimum de la transaction de %@";
 "%@ is the remaining time to safely send the assets." = "%@ est le temps restant pour envoyer les actifs en toute sécurité.";
 "Received %@ renBTC" = "Reçu %@ renBTC";
+"Receiving %@ renBTC: Pending" = "Réception de %@ renBTC : en attente";
