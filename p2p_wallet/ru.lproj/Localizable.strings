@@ -467,3 +467,5 @@
 "%@ is the remaining time to safely send the assets." = "%@ - оставшееся время для безопасной отправки активов.";
 "Received %@ renBTC" = "Получено %@ renBTC";
 "Receiving %@ renBTC: Pending" = "Получение %@ renBTC: Ожидается";
+"Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL." = "Требуется учетная запись связанного токена Solana.  Для этого вам потребуется подписать транзакцию и потратить немного SOL.";
+"Create Token Account" = "Создать учетную запись токена";

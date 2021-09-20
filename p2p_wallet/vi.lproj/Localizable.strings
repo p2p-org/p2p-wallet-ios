@@ -467,3 +467,5 @@
 "%@ is the remaining time to safely send the assets." = "%@ là thời gian còn lại để gửi tài sản một cách an toàn.";
 "Received %@ renBTC" = "Đã nhận %@ renBTC";
 "Receiving %@ renBTC: Pending" = "Nhận %@ renBTC: Đang chờ xử lý";
+"Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL." = "Yêu cầu tài khoản token liên kết Solana. Điều này sẽ yêu cầu bạn ký một giao dịch và chi tiêu một số SOL.";
+"Create Token Account" = "Tạo tài khoản token";
