@@ -13,12 +13,14 @@ protocol ReceiveTokenBitcoinViewModelType {
     var isReceivingRenBTCDriver: Driver<Bool> {get}
     var isLoadingDriver: Driver<Bool> {get}
     var errorDriver: Driver<String?> {get}
+    var isRenBTCWalletCreatedDriver: Driver<Bool> {get}
     var conditionAcceptedDriver: Driver<Bool> {get}
     var addressDriver: Driver<String?> {get}
     var timerSignal: Signal<Void> {get}
     
     func reload()
     func getSessionEndDate() -> Date?
+    func createRenBTCWallet()
     func acceptConditionAndLoadAddress()
     func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool)
     func copyToClipboard(address: String, logEvent: AnalyticsEvent)
@@ -38,17 +40,21 @@ extension ReceiveToken {
         
         // MARK: - Subjects
         private let isReceivingRenBTCSubject = BehaviorRelay<Bool>(value: false)
+        private let isRenBTCWalletCreatedSubject = BehaviorRelay<Bool>(value: false)
         private let timerSubject = PublishRelay<Void>()
         
         // MARK: - Initializers
         init(
             renVMService: RenVMServiceType,
             analyticsManager: AnalyticsManagerType,
-            navigationSubject: BehaviorRelay<NavigatableScene?>
+            navigationSubject: BehaviorRelay<NavigatableScene?>,
+            isRenBTCWalletCreated: Bool
         ) {
             self.renVMService = renVMService
             self.analyticsManager = analyticsManager
             self.navigationSubject = navigationSubject
+            
+            isRenBTCWalletCreatedSubject.accept(isRenBTCWalletCreated)
             
             bind()
             reload()
@@ -56,6 +62,10 @@ extension ReceiveToken {
         
         func reload() {
             renVMService.reload()
+        }
+        
+        func createRenBTCWallet() {
+            fatalError()
         }
         
         func acceptConditionAndLoadAddress() {
@@ -94,6 +104,10 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     
     var errorDriver: Driver<String?> {
         renVMService.errorDriver
+    }
+    
+    var isRenBTCWalletCreatedDriver: Driver<Bool> {
+        isRenBTCWalletCreatedSubject.asDriver()
     }
     
     var conditionAcceptedDriver: Driver<Bool> {
