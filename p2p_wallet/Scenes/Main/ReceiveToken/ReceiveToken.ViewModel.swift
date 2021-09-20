@@ -79,6 +79,7 @@ extension ReceiveToken.ViewModel: ReceiveTokenViewModelType {
             tokenTypeDriver,
             receiveSolanaViewModel.isShowingDetailDriver,
             receiveBitcoinViewModel.isReceivingRenBTCDriver,
+            receiveBitcoinViewModel.isRenBTCWalletCreatedDriver,
             receiveBitcoinViewModel.conditionAcceptedDriver,
             receiveBitcoinViewModel.addressDriver
         )

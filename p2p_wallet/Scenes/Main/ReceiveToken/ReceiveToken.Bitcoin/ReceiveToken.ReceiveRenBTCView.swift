@@ -49,7 +49,7 @@ extension ReceiveToken {
                 .drive(createWalletView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            let isConditionalHiddenDriver = Driver.combineLatest(
+            Driver.combineLatest(
                 viewModel.isRenBTCWalletCreatedDriver,
                 viewModel.conditionAcceptedDriver
             )
@@ -57,13 +57,17 @@ extension ReceiveToken {
                     if !isRenBTCCreated {return true}
                     return conditionalAccepted
                 }
-            
-            isConditionalHiddenDriver
                 .drive(conditionView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            isConditionalHiddenDriver
-                .map {!$0}
+            Driver.combineLatest(
+                viewModel.isRenBTCWalletCreatedDriver,
+                viewModel.conditionAcceptedDriver
+            )
+                .map { isRenBTCCreated, conditionalAccepted -> Bool in
+                    if !isRenBTCCreated {return true}
+                    return !conditionalAccepted
+                }
                 .drive(addressView.rx.isHidden)
                 .disposed(by: disposeBag)
         }
