@@ -200,7 +200,8 @@ class RenVMService {
                 self?.sessionStorage.setAsMinted(tx: txDetail)
                 
                 let value = txDetail.value.convertToBalance(decimals: 8)
-                UIApplication.shared.showToast(message: L10n.receivedRenBTC(value.toString(maximumFractionDigits: 8)))
+                    .toString(maximumFractionDigits: 8)
+                UIApplication.shared.showToast(message: L10n.receivingRenBTCPending(value))
             }, onFailure: {[weak self] error in
                 guard let self = self else {return}
                 

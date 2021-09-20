@@ -466,3 +466,4 @@
 "Minimum transaction amount of %@" = "Минимальная сумма транзакции %@";
 "%@ is the remaining time to safely send the assets." = "%@ - оставшееся время для безопасной отправки активов.";
 "Received %@ renBTC" = "Получено %@ renBTC";
+"Receiving %@ renBTC: Pending" = "Получение %@ renBTC: Ожидается";
