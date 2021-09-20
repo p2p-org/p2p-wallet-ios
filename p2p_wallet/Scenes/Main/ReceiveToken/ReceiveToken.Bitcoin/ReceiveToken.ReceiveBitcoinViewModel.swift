@@ -67,7 +67,6 @@ extension ReceiveToken {
             }
             
             bind()
-            reload()
         }
         
         func reload() {
