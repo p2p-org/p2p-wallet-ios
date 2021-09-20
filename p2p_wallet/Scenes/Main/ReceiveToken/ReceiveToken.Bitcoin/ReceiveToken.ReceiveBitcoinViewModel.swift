@@ -37,7 +37,7 @@ extension ReceiveToken {
         private let renVMService: RenVMServiceType
         private let analyticsManager: AnalyticsManagerType
         private let navigationSubject: BehaviorRelay<NavigatableScene?>
-        private let createATokenHandler: CreateAssociatedTokenAccountHandler
+        private let associatedTokenAccountHandler: AssociatedTokenAccountHandler
         
         // MARK: - Subjects
         private let isReceivingRenBTCSubject = BehaviorRelay<Bool>(value: false)
@@ -50,15 +50,15 @@ extension ReceiveToken {
             analyticsManager: AnalyticsManagerType,
             navigationSubject: BehaviorRelay<NavigatableScene?>,
             isRenBTCWalletCreated: Bool,
-            createATokenHandler: CreateAssociatedTokenAccountHandler
+            associatedTokenAccountHandler: AssociatedTokenAccountHandler
         ) {
             self.renVMService = renVMService
             self.analyticsManager = analyticsManager
             self.navigationSubject = navigationSubject
-            self.createATokenHandler = createATokenHandler
+            self.associatedTokenAccountHandler = associatedTokenAccountHandler
             
             createRenBTCSubject = .init(
-                request: createATokenHandler
+                request: associatedTokenAccountHandler
                     .createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
             )
             
