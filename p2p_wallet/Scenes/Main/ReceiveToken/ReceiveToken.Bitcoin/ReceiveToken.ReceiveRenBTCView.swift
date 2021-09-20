@@ -45,12 +45,15 @@ extension ReceiveToken {
         }
         
         private func bind() {
-            viewModel.isRenBTCWalletCreatedDriver
+            let isRenBTCWalletCreatedDriver = viewModel.renBTCWalletCreatingDriver
+                .map {$0.state == .loaded}
+            
+            isRenBTCWalletCreatedDriver
                 .drive(createWalletView.rx.isHidden)
                 .disposed(by: disposeBag)
             
             Driver.combineLatest(
-                viewModel.isRenBTCWalletCreatedDriver,
+                isRenBTCWalletCreatedDriver,
                 viewModel.conditionAcceptedDriver
             )
                 .map { isRenBTCCreated, conditionalAccepted -> Bool in
@@ -61,7 +64,7 @@ extension ReceiveToken {
                 .disposed(by: disposeBag)
             
             Driver.combineLatest(
-                viewModel.isRenBTCWalletCreatedDriver,
+                isRenBTCWalletCreatedDriver,
                 viewModel.conditionAcceptedDriver
             )
                 .map { isRenBTCCreated, conditionalAccepted -> Bool in
@@ -99,6 +102,7 @@ private class CreateWalletView: BEView {
     override func commonInit() {
         super.commonInit()
         layout()
+        bind()
     }
     
     func layout() {
@@ -116,6 +120,28 @@ private class CreateWalletView: BEView {
         
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
+    }
+    
+    func bind() {
+        viewModel.renBTCWalletCreatingDriver
+            .drive(onNext: {[weak self] params in
+                let state = params.state
+                switch state {
+                case .notRequested:
+                    self?.createATokenButton.setTitle(L10n.createTokenAccount, for: .normal)
+                    self?.createATokenButton.isEnabled = true
+                case .loading:
+                    self?.createATokenButton.setTitle(L10n.creatingTokenAccount, for: .normal)
+                    self?.createATokenButton.isEnabled = false
+                case .loaded:
+                    self?.createATokenButton.setTitle(L10n.createTokenAccount, for: .normal)
+                    self?.createATokenButton.isEnabled = false
+                case .error(_):
+                    self?.createATokenButton.setTitle(L10n.error + ". " + L10n.retry.uppercaseFirst, for: .normal)
+                    self?.createATokenButton.isEnabled = true
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     @objc func buttonCreateTokenAccountDidTouch() {
