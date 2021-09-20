@@ -9,100 +9,91 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+protocol ReceiveTokenViewModelType {
+    // MARK: - Drivers
+    var navigationSceneDriver: Driver<ReceiveToken.NavigatableScene?> {get}
+    var tokenTypeDriver: Driver<ReceiveToken.TokenType> {get}
+    var updateLayoutDriver: Driver<Void> {get}
+    var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType {get}
+    var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {get}
+    
+    // MARK: - Actions
+    func switchToken(_ tokenType: ReceiveToken.TokenType)
+    func copyToClipboard(address: String, logEvent: AnalyticsEvent)
+}
+
 extension ReceiveToken {
-    class ViewModel: ViewModelType {
-        // MARK: - Nested type
-        struct Input {
-            
-        }
-        struct Output {
-            let navigationScene: Driver<NavigatableScene?>
-            let isShowingDetail: Driver<Bool>
-            let pubkey: String
-            let tokenWallet: Wallet?
-            let tokensCount: Driver<Int>
-        }
-        
+    class ViewModel {
         // MARK: - Dependencies
-        private let pubkey: String
-        private let tokenWallet: Wallet?
         private let analyticsManager: AnalyticsManagerType
-        private let tokensRepository: TokensRepository
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
+        let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
+        let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         
-        let input: Input
-        let output: Output
-        
-        // MARK: - Subject
+        // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let isShowingDetailSubject = BehaviorRelay<Bool>(value: false)
+        private let tokenTypeSubject = BehaviorRelay<TokenType>(value: .solana)
         
-        // MARK: - Initializer
+        // MARK: - Initializers
         init(
-            pubkey: String,
-            tokenWallet: Wallet? = nil,
+            solanaPubkey: SolanaSDK.PublicKey,
+            solanaTokenWallet: Wallet? = nil,
             analyticsManager: AnalyticsManagerType,
-            tokensRepository: TokensRepository
+            tokensRepository: TokensRepository,
+            renVMService: RenVMServiceType,
+            isRenBTCWalletCreated: Bool,
+            createATokenHandler: CreateAssociatedTokenAccountHandler
         ) {
-            self.pubkey = pubkey
-            self.analyticsManager = analyticsManager
-            self.tokensRepository = tokensRepository
-            var tokenWallet = tokenWallet
-            if tokenWallet?.pubkey == pubkey {
-                tokenWallet = nil
-            }
-            self.tokenWallet = tokenWallet
-            
-            self.input = Input()
-            self.output = Output(
-                navigationScene: navigationSubject
-                    .asDriver(onErrorJustReturn: nil),
-                isShowingDetail: isShowingDetailSubject
-                    .asDriver(),
-                pubkey: pubkey,
-                tokenWallet: tokenWallet,
-                tokensCount: tokensRepository.getTokensList()
-                    .map {$0.count}
-                    .asDriver(onErrorJustReturn: 554)
+            self.receiveSolanaViewModel = ReceiveToken.ReceiveSolanaViewModel(
+                solanaPubkey: solanaPubkey.base58EncodedString,
+                solanaTokenWallet: solanaTokenWallet,
+                analyticsManager: analyticsManager,
+                tokensRepository: tokensRepository,
+                navigationSubject: navigationSubject
             )
+            
+            self.receiveBitcoinViewModel = ReceiveToken.ReceiveBitcoinViewModel(
+                renVMService: renVMService,
+                analyticsManager: analyticsManager,
+                navigationSubject: navigationSubject,
+                isRenBTCWalletCreated: isRenBTCWalletCreated,
+                createATokenHandler: createATokenHandler
+            )
+            
+            self.analyticsManager = analyticsManager
         }
-        
-        // MARK: - Actions
-        @objc func showSOLAddressInExplorer() {
-            analyticsManager.log(event: .receiveViewExplorerOpen)
-            navigationSubject.accept(.showInExplorer(address: pubkey))
-        }
-        
-        @objc func showTokenMintAddressInExplorer() {
-            guard let mintAddress = tokenWallet?.token.address else {return}
-            analyticsManager.log(event: .receiveViewExplorerOpen)
-            navigationSubject.accept(.showInExplorer(address: mintAddress))
-        }
-        
-        @objc func showTokenPubkeyAddressInExplorer() {
-            guard let pubkey = tokenWallet?.pubkey else {return}
-            analyticsManager.log(event: .receiveViewExplorerOpen)
-            navigationSubject.accept(.showInExplorer(address: pubkey))
-        }
-        
-        @objc func share() {
-            analyticsManager.log(event: .receiveAddressShare)
-            navigationSubject.accept(.share(address: pubkey))
-        }
-        
-        @objc func showHelp() {
-            navigationSubject.accept(.help)
-        }
-        
-        @objc func toggleIsShowingDetail() {
-            isShowingDetailSubject.accept(!isShowingDetailSubject.value)
-        }
-        
-        func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
-            UIApplication.shared.copyToClipboard(address, alert: false)
-            analyticsManager.log(event: logEvent)
-        }
+    }
+}
+
+extension ReceiveToken.ViewModel: ReceiveTokenViewModelType {
+    var navigationSceneDriver: Driver<ReceiveToken.NavigatableScene?> {
+        navigationSubject.asDriver()
+    }
+    
+    var tokenTypeDriver: Driver<ReceiveToken.TokenType> {
+        tokenTypeSubject.asDriver()
+    }
+    
+    var updateLayoutDriver: Driver<Void> {
+        Driver.combineLatest(
+            tokenTypeDriver,
+            receiveSolanaViewModel.isShowingDetailDriver,
+            receiveBitcoinViewModel.isReceivingRenBTCDriver,
+            receiveBitcoinViewModel.renBTCWalletCreatingDriver,
+            receiveBitcoinViewModel.conditionAcceptedDriver,
+            receiveBitcoinViewModel.addressDriver
+        )
+            .map {_ in ()}.asDriver()
+    }
+    
+    func switchToken(_ tokenType: ReceiveToken.TokenType) {
+        tokenTypeSubject.accept(tokenType)
+    }
+    
+    func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
+        UIApplication.shared.copyToClipboard(address, alert: false)
+        analyticsManager.log(event: logEvent)
     }
 }

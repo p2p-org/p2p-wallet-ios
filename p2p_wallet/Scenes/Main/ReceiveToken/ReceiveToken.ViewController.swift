@@ -10,20 +10,19 @@ import UIKit
 
 extension ReceiveToken {
     class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
-        
         // MARK: - Properties
-        let viewModel: ViewModel
+        let viewModel: ReceiveTokenViewModelType
         lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill) {
             UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
                 .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
-            UILabel(text: L10n.receive + " " + viewModel.output.tokenWallet?.token.symbol, textSize: 17, weight: .semibold)
+            UILabel(text: L10n.receive, textSize: 17, weight: .semibold)
         }
             .padding(.init(all: 20))
         lazy var rootView = RootView(viewModel: viewModel)
         var transitionManager: UIViewControllerTransitioningDelegate?
         
         // MARK: - Initializer
-        init(viewModel: ViewModel)
+        init(viewModel: ReceiveTokenViewModelType)
         {
             self.viewModel = viewModel
             super.init()
@@ -45,11 +44,11 @@ extension ReceiveToken {
         
         override func bind() {
             super.bind()
-            viewModel.output.navigationScene
+            viewModel.navigationSceneDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
             
-            viewModel.output.isShowingDetail
+            viewModel.updateLayoutDriver
                 .drive(onNext: {[weak self] _ in self?.updatePresentationLayout(animated: true)})
                 .disposed(by: disposeBag)
         }
@@ -59,6 +58,9 @@ extension ReceiveToken {
             switch scene {
             case .showInExplorer(let mintAddress):
                 let url = "https://explorer.solana.com/address/\(mintAddress)"
+                showWebsite(url: url)
+            case .showBTCExplorer(let address):
+                let url = "https://btc.com/btc/address/\(address)"
                 showWebsite(url: url)
             case .share(let address):
                 let vc = UIActivityViewController(activityItems: [address], applicationActivities: nil)

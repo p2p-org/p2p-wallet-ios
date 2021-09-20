@@ -61,6 +61,17 @@ extension ReceiveToken {
             return self
         }
         
+        static func withFrame(string: String? = nil) -> (UIView, QrCodeView) {
+            let qrCodeView = QrCodeView(size: 190, coinLogoSize: 50)
+                .with(string: string)
+            
+            let view = UIImageView(width: 207, height: 207, image: .receiveQrCodeFrame, tintColor: .f6f6f8.onDarkMode(.h8d8d8d))
+                .withCenteredChild(
+                    qrCodeView
+                )
+                .centeredHorizontallyView
+            return (view, qrCodeView)
+        }
     }
     
     private class QrCodeImageView: UIImageView {

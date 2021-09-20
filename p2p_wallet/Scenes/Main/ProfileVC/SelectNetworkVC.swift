@@ -15,10 +15,16 @@ protocol ChangeNetworkResponder {
 class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
     let responder: ChangeNetworkResponder
     let analyticsManger: AnalyticsManagerType
+    let renVMService: RenVMServiceType
     
-    init(changeNetworkResponder: ChangeNetworkResponder, analyticsManger: AnalyticsManagerType) {
+    init(
+        changeNetworkResponder: ChangeNetworkResponder,
+        analyticsManger: AnalyticsManagerType,
+        renVMService: RenVMServiceType
+    ) {
         self.responder = changeNetworkResponder
         self.analyticsManger = analyticsManger
+        self.renVMService = renVMService
         super.init()
         // initial data
         SolanaSDK.APIEndPoint.definedEndpoints
@@ -59,6 +65,10 @@ class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
     }
     
     private func changeNetworkToSelectedNetwork() {
+        if Defaults.apiEndPoint.network != selectedItem.network {
+            renVMService.expireCurrentSession()
+        }
+        
         responder.changeAPIEndpoint(to: selectedItem)
     }
     

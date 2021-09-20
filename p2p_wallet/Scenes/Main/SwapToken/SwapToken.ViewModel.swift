@@ -154,7 +154,6 @@ extension SwapToken {
                   let slippage = slippageRelay.value
             else {return}
             
-            
             // log
             log(.swapSwapClick(tokenA: sourceWallet.token.symbol, tokenB: destinationWallet.token.symbol, sumA: inputAmount, sumB: estimatedAmount))
             
