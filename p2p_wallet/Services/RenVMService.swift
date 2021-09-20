@@ -33,6 +33,7 @@ class RenVMService {
     private let solanaClient: RenVMSolanaAPIClientType
     private let account: SolanaSDK.Account
     private let sessionStorage: RenVMSessionStorageType
+    private let transactionHandler: TransactionHandler
     
     // MARK: - Properties
     private var loadingDisposable: Disposable?
@@ -53,12 +54,14 @@ class RenVMService {
         rpcClient: RenVMRpcClientType,
         solanaClient: RenVMSolanaAPIClientType,
         account: SolanaSDK.Account,
-        sessionStorage: RenVMSessionStorageType
+        sessionStorage: RenVMSessionStorageType,
+        transactionHandler: TransactionHandler
     ) {
         self.rpcClient = rpcClient
         self.solanaClient = solanaClient
         self.account = account
         self.sessionStorage = sessionStorage
+        self.transactionHandler = transactionHandler
         
         reload()
     }
@@ -195,16 +198,22 @@ class RenVMService {
     private func mint(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: RenVM.TxDetail) throws {
         
         prepareMintRequest(response: response, txDetail: txDetail)
-            .subscribe(onSuccess: {[weak self] signature in
+            .do(onSuccess: {[weak self] signature in
                 Logger.log(message: "renBTC event mint signature: \(signature)", event: .info)
                 self?.sessionStorage.setAsMinted(tx: txDetail)
-                
+
                 let value = txDetail.value.convertToBalance(decimals: 8)
                     .toString(maximumFractionDigits: 8)
                 UIApplication.shared.showToast(message: L10n.receivingRenBTCPending(value))
-            }, onFailure: {[weak self] error in
+            })
+            .flatMapCompletable(transactionHandler.observeTransactionCompletion(signature:))
+            .subscribe(onCompleted: {
+                let value = txDetail.value.convertToBalance(decimals: 8)
+                    .toString(maximumFractionDigits: 8)
+                UIApplication.shared.showToast(message: L10n.receivedRenBTC(value))
+            }, onError: { [weak self] error in
                 guard let self = self else {return}
-                
+
                 // already minted
                 if let error = error as? SolanaSDK.Error {
                     switch error {
