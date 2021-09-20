@@ -43,7 +43,8 @@ extension ReceiveToken {
             analyticsManager: AnalyticsManagerType,
             tokensRepository: TokensRepository,
             renVMService: RenVMServiceType,
-            isRenBTCWalletCreated: Bool
+            isRenBTCWalletCreated: Bool,
+            createATokenHandler: CreateAssociatedTokenAccountHandler
         ) {
             self.receiveSolanaViewModel = ReceiveToken.ReceiveSolanaViewModel(
                 solanaPubkey: solanaPubkey.base58EncodedString,
@@ -57,7 +58,8 @@ extension ReceiveToken {
                 renVMService: renVMService,
                 analyticsManager: analyticsManager,
                 navigationSubject: navigationSubject,
-                isRenBTCWalletCreated: isRenBTCWalletCreated
+                isRenBTCWalletCreated: isRenBTCWalletCreated,
+                createATokenHandler: createATokenHandler
             )
             
             self.analyticsManager = analyticsManager
