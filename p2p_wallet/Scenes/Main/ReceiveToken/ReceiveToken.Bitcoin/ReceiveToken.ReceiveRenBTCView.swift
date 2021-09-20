@@ -7,16 +7,18 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 import Action
 
 extension ReceiveToken {
-    class ReceiveRenBTCView: BEView, ConditionViewDelegate {
+    class ReceiveRenBTCView: BEView {
         // MARK: - Properties
-        let viewModel: ReceiveTokenBitcoinViewModelType
+        private let viewModel: ReceiveTokenBitcoinViewModelType
         private let disposeBag = DisposeBag()
         
         // MARK: - Subviews
-        private lazy var conditionView = ConditionView()
+        private lazy var createWalletView = CreateWalletView(viewModel: viewModel)
+        private lazy var conditionView = ConditionView(viewModel: viewModel)
         private lazy var addressView = AddressView(viewModel: viewModel)
         
         // MARK: - Initializer
@@ -33,23 +35,34 @@ extension ReceiveToken {
         
         private func layout() {
             let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
+                createWalletView
                 conditionView
                 addressView
             }
             
             addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges()
-            
-            // conditionView
-            conditionView.delegate = self
+            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 0))
         }
         
         private func bind() {
-            viewModel.conditionAcceptedDriver
+            viewModel.isRenBTCWalletCreatedDriver
+                .drive(createWalletView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            let isConditionalHiddenDriver = Driver.combineLatest(
+                viewModel.isRenBTCWalletCreatedDriver,
+                viewModel.conditionAcceptedDriver
+            )
+                .map { isRenBTCCreated, conditionalAccepted -> Bool in
+                    if !isRenBTCCreated {return true}
+                    return conditionalAccepted
+                }
+            
+            isConditionalHiddenDriver
                 .drive(conditionView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            viewModel.conditionAcceptedDriver
+            isConditionalHiddenDriver
                 .map {!$0}
                 .drive(addressView.rx.isHidden)
                 .disposed(by: disposeBag)
@@ -61,36 +74,77 @@ extension ReceiveToken {
     }
 }
 
-private protocol ConditionViewDelegate: AnyObject {
-    func conditionViewButtonConfirmDidTouch(_ conditionView: ConditionView)
+private class CreateWalletView: BEView {
+    // MARK: - Properties
+    private let disposeBag = DisposeBag()
+    private let viewModel: ReceiveTokenBitcoinViewModelType
+    
+    // MARK: - Subviews
+    private lazy var createATokenButton = WLButton.stepButton(
+        type: .blue,
+        label: L10n.createTokenAccount
+    )
+        .onTap(self, action: #selector(buttonCreateTokenAccountDidTouch))
+    
+    // MARK: - Initializers
+    init(viewModel: ReceiveTokenBitcoinViewModelType) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
+    }
+    
+    override func commonInit() {
+        super.commonInit()
+        layout()
+    }
+    
+    func layout() {
+        let stackView = UIStackView(axis: .vertical, spacing: 30, alignment: .fill, distribution: .fill) {
+            warningView(
+                attributedText: NSMutableAttributedString()
+                    .text(L10n.SolanaAssociatedTokenAccountRequired
+                            .thisWillRequireYouToSignATransactionAndSpendSomeSOL,
+                          size: 15
+                    )
+            )
+            
+            createATokenButton
+        }
+        
+        addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges()
+    }
+    
+    @objc func buttonCreateTokenAccountDidTouch() {
+        viewModel.createRenBTCWallet()
+    }
 }
 
 private class ConditionView: BEView {
+    private let viewModel: ReceiveTokenBitcoinViewModelType
     private let disposeBag = DisposeBag()
-    fileprivate weak var delegate: ConditionViewDelegate?
     private lazy var completeTxWithinTimeSwitcher = UISwitch()
     private lazy var confirmButton = WLButton.stepButton(type: .blue, label: L10n.showAddress)
         .onTap(self, action: #selector(buttonConfirmDidTouch))
+    
+    init(viewModel: ReceiveTokenBitcoinViewModelType) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
+    }
     
     override func commonInit() {
         super.commonInit()
         let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
             
-            UIStackView(axis: .horizontal, spacing: 8, alignment: .top, distribution: .fill) {
-                UIImageView(width: 36, height: 36, image: .warning)
-                
-                UILabel(text: nil, numberOfLines: 0)
-                    .withAttributedText(
-                        NSMutableAttributedString()
-                            .text(L10n.bitcoinDepositAddress, size: 15)
-                            .text(" ", size: 15)
-                            .text(L10n.isOnlyOpenFor36Hours, size: 15, weight: .semibold)
-                            .text(", ", size: 15)
-                            .text(L10n.butYouCanSendToItMultipleTimesWithinThisSession, size: 15)
-                            .text(".", size: 15)
-                    )
-            }
-                .padding(.init(x: 16, y: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.05), cornerRadius: 12)
+            warningView(
+                attributedText:
+                    NSMutableAttributedString()
+                        .text(L10n.bitcoinDepositAddress, size: 15)
+                        .text(" ", size: 15)
+                        .text(L10n.isOnlyOpenFor36Hours, size: 15, weight: .semibold)
+                        .text(", ", size: 15)
+                        .text(L10n.butYouCanSendToItMultipleTimesWithinThisSession, size: 15)
+                        .text(".", size: 15)
+            )
             
             ReceiveToken.textBuilder(text: L10n.EachTransactionToThisDepositAddressTakesAbout60MinutesToComplete.forSecurityReasonsYouWillNeedToWaitFor6BlockConfirmationsBeforeYouCanMintRenBTCOnSolana)
             
@@ -108,7 +162,7 @@ private class ConditionView: BEView {
             confirmButton
         }
         addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 0))
+        stackView.autoPinEdgesToSuperviewEdges()
         
         bind()
     }
@@ -127,7 +181,7 @@ private class ConditionView: BEView {
     }
     
     @objc private func buttonConfirmDidTouch() {
-        delegate?.conditionViewButtonConfirmDidTouch(self)
+        viewModel.acceptConditionAndLoadAddress()
     }
 }
 
@@ -197,7 +251,7 @@ private class AddressView: BEView {
         }
         
         addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 0))
+        stackView.autoPinEdgesToSuperviewEdges()
         
         frame.addSubview(loadingView)
         loadingView.autoCenterInSuperview()
@@ -292,4 +346,14 @@ private class AddressView: BEView {
     @objc private func showBTCAddressInExplorer() {
         viewModel.showBTCAddressInExplorer()
     }
+}
+
+private func warningView(attributedText: NSAttributedString) -> UIView {
+    UIStackView(axis: .horizontal, spacing: 8, alignment: .top, distribution: .fill) {
+        UIImageView(width: 36, height: 36, image: .warning)
+        
+        UILabel(text: nil, numberOfLines: 0)
+            .withAttributedText(attributedText)
+    }
+        .padding(.init(x: 16, y: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.05), cornerRadius: 12)
 }

@@ -467,3 +467,5 @@
 "%@ is the remaining time to safely send the assets." = "%@ est le temps restant pour envoyer les actifs en toute sécurité.";
 "Received %@ renBTC" = "Reçu %@ renBTC";
 "Receiving %@ renBTC: Pending" = "Réception de %@ renBTC : en attente";
+"Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL." = "Compte Token associé Solana requis.  Cela vous obligera à signer une transaction et à dépenser du SOL.";
+"Create Token Account" = "Créer un compte jeton";
