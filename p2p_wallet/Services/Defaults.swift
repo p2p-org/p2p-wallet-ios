@@ -15,6 +15,10 @@ extension SolanaSDK.APIEndPoint: DefaultsSerializable {}
 
 extension PayingToken: DefaultsSerializable {}
 
+extension RenVM.Session: DefaultsSerializable {}
+
+extension RenVM.SubmitedTx: DefaultsSerializable {}
+
 extension DefaultsKeys {
     // Keychain-keys
     var keychainPincodeKey: DefaultsKey<String?> {.init(#function, defaultValue: nil)}
@@ -46,4 +50,6 @@ extension DefaultsKeys {
     var p2pFeePayerPubkeys: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
     var prices: DefaultsKey<Data> {.init(#function, defaultValue: Data())}
     var payingToken: DefaultsKey<PayingToken> {.init(#function, defaultValue: .transactionToken)}
+    var renVMSession: DefaultsKey<RenVM.Session?> {.init(#function, defaultValue: nil)}
+    var renVMSubmitedTxDetail: DefaultsKey<[RenVM.SubmitedTx]> {.init(#function, defaultValue: [])}
 }
