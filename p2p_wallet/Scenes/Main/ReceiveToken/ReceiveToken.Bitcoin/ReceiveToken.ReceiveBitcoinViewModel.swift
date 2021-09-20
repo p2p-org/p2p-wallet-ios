@@ -13,7 +13,7 @@ protocol ReceiveTokenBitcoinViewModelType {
     var isReceivingRenBTCDriver: Driver<Bool> {get}
     var isLoadingDriver: Driver<Bool> {get}
     var errorDriver: Driver<String?> {get}
-    var isRenBTCWalletCreatedDriver: Driver<Bool> {get}
+    var renBTCWalletCreatingDriver: Driver<Loadable<String>> {get}
     var conditionAcceptedDriver: Driver<Bool> {get}
     var addressDriver: Driver<String?> {get}
     var timerSignal: Signal<Void> {get}
@@ -41,7 +41,7 @@ extension ReceiveToken {
         
         // MARK: - Subjects
         private let isReceivingRenBTCSubject = BehaviorRelay<Bool>(value: false)
-        private let isRenBTCWalletCreatedSubject = BehaviorRelay<Bool>(value: false)
+        private let createRenBTCSubject: LoadableRelay<String>
         private let timerSubject = PublishRelay<Void>()
         
         // MARK: - Initializers
@@ -57,7 +57,14 @@ extension ReceiveToken {
             self.navigationSubject = navigationSubject
             self.createATokenHandler = createATokenHandler
             
-            isRenBTCWalletCreatedSubject.accept(isRenBTCWalletCreated)
+            createRenBTCSubject = .init(
+                request: createATokenHandler
+                    .createAssociatedTokenAccount(tokenMint: "", isSimulation: false)
+            )
+            
+            if isRenBTCWalletCreated {
+                createRenBTCSubject.accept(nil, state: .loaded)
+            }
             
             bind()
             reload()
@@ -68,7 +75,7 @@ extension ReceiveToken {
         }
         
         func createRenBTCWallet() {
-            isRenBTCWalletCreatedSubject.accept(true)
+            createRenBTCSubject.reload()
         }
         
         func acceptConditionAndLoadAddress() {
@@ -109,8 +116,8 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         renVMService.errorDriver
     }
     
-    var isRenBTCWalletCreatedDriver: Driver<Bool> {
-        isRenBTCWalletCreatedSubject.asDriver()
+    var renBTCWalletCreatingDriver: Driver<Loadable<String>> {
+        createRenBTCSubject.asDriver()
     }
     
     var conditionAcceptedDriver: Driver<Bool> {

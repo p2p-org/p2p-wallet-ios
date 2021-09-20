@@ -10,11 +10,20 @@ import RxSwift
 
 protocol CreateAssociatedTokenAccountHandler {
     func createAssociatedTokenAccount(
-        for owner: SolanaSDK.PublicKey,
         tokenMint: SolanaSDK.PublicKey,
-        payer: SolanaSDK.Account?,
         isSimulation: Bool
     ) -> Single<SolanaSDK.TransactionID>
 }
 
-extension SolanaSDK: CreateAssociatedTokenAccountHandler {}
+extension SolanaSDK: CreateAssociatedTokenAccountHandler {
+    func createAssociatedTokenAccount(tokenMint: PublicKey, isSimulation: Bool) -> Single<TransactionID> {
+        guard let account = accountStorage.account
+        else {return .error(SolanaSDK.Error.unauthorized)}
+        
+        return createAssociatedTokenAccount(
+            for: account.publicKey,
+            tokenMint: tokenMint,
+            isSimulation: isSimulation
+        )
+    }
+}
