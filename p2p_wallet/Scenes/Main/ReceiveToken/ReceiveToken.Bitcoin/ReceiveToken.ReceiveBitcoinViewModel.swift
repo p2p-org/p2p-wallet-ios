@@ -37,6 +37,7 @@ extension ReceiveToken {
         private let renVMService: RenVMServiceType
         private let analyticsManager: AnalyticsManagerType
         private let navigationSubject: BehaviorRelay<NavigatableScene?>
+        private let createATokenHandler: CreateAssociatedTokenAccountHandler
         
         // MARK: - Subjects
         private let isReceivingRenBTCSubject = BehaviorRelay<Bool>(value: false)
@@ -48,11 +49,13 @@ extension ReceiveToken {
             renVMService: RenVMServiceType,
             analyticsManager: AnalyticsManagerType,
             navigationSubject: BehaviorRelay<NavigatableScene?>,
-            isRenBTCWalletCreated: Bool
+            isRenBTCWalletCreated: Bool,
+            createATokenHandler: CreateAssociatedTokenAccountHandler
         ) {
             self.renVMService = renVMService
             self.analyticsManager = analyticsManager
             self.navigationSubject = navigationSubject
+            self.createATokenHandler = createATokenHandler
             
             isRenBTCWalletCreatedSubject.accept(isRenBTCWalletCreated)
             
@@ -65,7 +68,7 @@ extension ReceiveToken {
         }
         
         func createRenBTCWallet() {
-            fatalError()
+            isRenBTCWalletCreatedSubject.accept(true)
         }
         
         func acceptConditionAndLoadAddress() {
