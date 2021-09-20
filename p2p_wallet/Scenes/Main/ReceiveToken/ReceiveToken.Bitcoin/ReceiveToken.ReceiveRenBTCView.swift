@@ -237,10 +237,12 @@ private class AddressView: BEView {
         
         let text1 = L10n.ThisAddressAccepts.youMayLoseAssetsBySendingAnotherCoin(L10n.onlyBitcoin)
         let line1 = ReceiveToken.textBuilder(text: text1)
+        (line1.arrangedSubviews.last as! UILabel).text = text1
         semiboldText(L10n.onlyBitcoin, in: line1.arrangedSubviews.last as! UILabel)
         
         let text2 = L10n.minimumTransactionAmountOf("0.000112 BTC")
         let line2 = ReceiveToken.textBuilder(text: text2)
+        (line2.arrangedSubviews.last as! UILabel).text = text2
         semiboldText("0.000112 BTC", in: line2.arrangedSubviews.last as! UILabel)
         
         let line3 = ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59"))
