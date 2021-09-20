@@ -1235,14 +1235,6 @@
 			path = Bonfida;
 			sourceTree = "<group>";
 		};
-		BC7D077F26F8668A005F777F /* ReceiveToken.Bitcoin.RenBTC */ = {
-			isa = PBXGroup;
-			children = (
-				BC7D078026F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift */,
-			);
-			path = ReceiveToken.Bitcoin.RenBTC;
-			sourceTree = "<group>";
-		};
 		BC80203726F1DA3100C109C2 /* ReceiveToken.Solana */ = {
 			isa = PBXGroup;
 			children = (
@@ -1257,7 +1249,7 @@
 			children = (
 				BC80203F26F1EBDA00C109C2 /* ReceiveToken.ReceiveBitcoinViewModel.swift */,
 				BC80203D26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift */,
-				BC7D077F26F8668A005F777F /* ReceiveToken.Bitcoin.RenBTC */,
+				BC7D078026F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift */,
 			);
 			path = ReceiveToken.Bitcoin;
 			sourceTree = "<group>";
