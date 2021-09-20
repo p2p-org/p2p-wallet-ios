@@ -59,7 +59,7 @@ extension ReceiveToken {
             
             createRenBTCSubject = .init(
                 request: createATokenHandler
-                    .createAssociatedTokenAccount(tokenMint: "", isSimulation: false)
+                    .createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
             )
             
             if isRenBTCWalletCreated {
