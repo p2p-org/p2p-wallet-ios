@@ -99,14 +99,7 @@ class CoinLogoImageView: BEView {
             }
             
             let jazziconImage = jazzicon.generateImage(size: size)
-            if let urlString = token?.logoURI,
-               let url = URL(string: urlString)
-            {
-                tokenIcon.kf.setImage(with: url, placeholder: jazziconImage)
-            } else {
-                tokenIcon.image = jazziconImage
-            }
-            
+            tokenIcon.setImage(urlString: token?.logoURI, placeholder: jazziconImage)
         }
         
         // wrapped by
