@@ -60,14 +60,30 @@ class CoinLogoImageView: BEView {
         setUp(token: wallet?.token)
     }
     
-    func setUp(token: SolanaSDK.Token? = nil) {
+    func setUp(token: SolanaSDK.Token? = nil, placeholder: UIImage? = nil) {
         // default
         wrappingView.alpha = 0
         backgroundColor = .clear
         tokenIcon.isHidden = false
         
         // with token
-        tokenIcon.setImage(urlString: token?.logoURI, placeholder: .walletPlaceholder)
+        let jazzicon: Jazzicon
+        if let token = token {
+            let key = token.symbol.isEmpty ? token.address: token.symbol
+            var seed = Self.cachedJazziconSeeds[key]
+            if seed == nil {
+                seed = UInt64.random(in: 0..<10000000)
+                Self.cachedJazziconSeeds[key] = seed
+            }
+            
+            jazzicon = Jazzicon(seed: seed!)
+        } else {
+            jazzicon = Jazzicon()
+        }
+        
+        let jazziconImage = jazzicon.generateImage(size: size)
+        
+        tokenIcon.setImage(urlString: token?.logoURI, placeholder: placeholder ?? jazziconImage)
         
         // wrapped by
         if let wrappedBy = token?.wrappedBy {
