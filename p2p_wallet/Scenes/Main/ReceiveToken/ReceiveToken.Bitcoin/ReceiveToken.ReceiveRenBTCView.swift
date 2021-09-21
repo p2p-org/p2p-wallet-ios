@@ -137,7 +137,7 @@ private class CreateWalletView: BEView {
                     self?.createATokenButton.setTitle(L10n.createTokenAccount, for: .normal)
                     self?.createATokenButton.isEnabled = false
                 case .error(_):
-                    self?.createATokenButton.setTitle(L10n.error + ". " + L10n.retry.uppercaseFirst, for: .normal)
+                    self?.createATokenButton.setTitle(L10n.error.uppercaseFirst + ". " + L10n.retry.uppercaseFirst + "?", for: .normal)
                     self?.createATokenButton.isEnabled = true
                 }
             })
