@@ -28,8 +28,7 @@ class WalletCell: BaseCollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        coinLogoImageView.tokenIcon.kf.cancelDownloadTask() // first, cancel currenct download task
-        coinLogoImageView.tokenIcon.kf.setImage(with: URL(string: "")) // second, prevent kingfisher from setting previous image
+        coinLogoImageView.tokenIcon.cancelPreviousTask()
         coinLogoImageView.tokenIcon.image = nil
     }
     
