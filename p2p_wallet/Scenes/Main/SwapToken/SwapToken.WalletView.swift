@@ -23,14 +23,6 @@ extension SwapToken {
         
         private lazy var balanceView = BalanceView(forAutoLayout: ())
         private lazy var iconImageView = CoinLogoImageView(size: 32, cornerRadius: 16)
-            .with(
-                placeholder: UIImageView(
-                    width: 20,
-                    height: 20,
-                    image: .walletIcon,
-                    tintColor: .white
-                ).padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 16)
-            )
         
         private lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
         
