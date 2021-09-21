@@ -48,10 +48,13 @@ extension ChooseWallet.CollectionView {
         
         override func setUp(with item: Wallet) {
             super.setUp(with: item)
-            if let pubkey = item.pubkey {
-                addressLabel.text = pubkey.prefix(4) + "..." + pubkey.suffix(4)
+            
+            if item.isNativeSOL {
+                addressLabel.text = item.pubkey?.truncatingMiddle()
+            } else if item.token.isUndefined {
+                addressLabel.text = L10n.unknownToken
             } else {
-                addressLabel.text = nil
+                addressLabel.text = item.token.name
             }
         }
         

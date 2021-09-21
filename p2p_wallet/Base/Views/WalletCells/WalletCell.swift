@@ -47,7 +47,7 @@ class WalletCell: BaseCollectionViewCell {
             coinPriceLabel.isHidden = false
             coinChangeLabel.isHidden = false
             
-            equityValueLabel.text = "\(item.amountInCurrentFiat.toString(autoSetMaximumFractionDigits: true)) \(Defaults.fiat.symbol)"
+            equityValueLabel.text = "\(item.amountInCurrentFiat.toString(maximumFractionDigits: 2)) \(Defaults.fiat.symbol)"
             coinPriceLabel.text = "\(price.value.toString()) \(Defaults.fiat.symbol)"
             coinChangeLabel.text = "\((price.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true))% 24 hrs"
         } else {
