@@ -124,7 +124,6 @@
 		BC460ABF257A44310035F6AA /* ProcessingTransactionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460ABE257A44310035F6AA /* ProcessingTransactionsManager.swift */; };
 		BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */; };
 		BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC490CBD256CB796006E7AC9 /* WalletCell.swift */; };
-		BC51E55F268588E000C9B05D /* Tokens.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC51E55E268588E000C9B05D /* Tokens.xcassets */; };
 		BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */; };
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */; };
@@ -500,7 +499,6 @@
 		BC460ABE257A44310035F6AA /* ProcessingTransactionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingTransactionsManager.swift; sourceTree = "<group>"; };
 		BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BehaviorRelay+Extensions.swift"; sourceTree = "<group>"; };
 		BC490CBD256CB796006E7AC9 /* WalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCell.swift; sourceTree = "<group>"; };
-		BC51E55E268588E000C9B05D /* Tokens.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Tokens.xcassets; sourceTree = "<group>"; };
 		BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BonfidaPricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcher.swift; sourceTree = "<group>"; };
@@ -1184,7 +1182,6 @@
 				BCA9945125AE94D7005BD8FB /* Fonts */,
 				BC6EE7E6254BD30600FE1025 /* p2p_wallet.entitlements */,
 				BCB2232125412AF8002D997F /* Assets.xcassets */,
-				BC51E55E268588E000C9B05D /* Tokens.xcassets */,
 				BC65E9F82542C181005F50CE /* Colors.xcassets */,
 				BCB2232325412AF9002D997F /* LaunchScreen.storyboard */,
 				BCB2232625412AF9002D997F /* Info.plist */,
@@ -1932,7 +1929,6 @@
 			files = (
 				BCA9946725AE94D7005BD8FB /* Montserrat-BoldItalic.ttf in Resources */,
 				BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */,
-				BC51E55F268588E000C9B05D /* Tokens.xcassets in Resources */,
 				BCA9946D25AE94D7005BD8FB /* Montserrat-MediumItalic.ttf in Resources */,
 				BCA9946E25AE94D7005BD8FB /* Montserrat-BlackItalic.ttf in Resources */,
 				BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */,
