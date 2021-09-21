@@ -215,18 +215,9 @@ class RenVMService {
                 guard let self = self else {return}
 
                 // already minted
-                if let error = error as? SolanaSDK.Error {
-                    switch error {
-                    case .invalidResponse(let response):
-                        if response.data?.logs?.contains(where: {$0.isAlreadyInUseLog}) == true
-                        {
-                            Logger.log(message: "txDetail is already minted \(txDetail)", event: .info)
-                            self.sessionStorage.setAsMinted(tx: txDetail)
-                            return
-                        }
-                    default:
-                        break
-                    }
+                if error.isAlreadyInUseSolanaError {
+                    Logger.log(message: "txDetail is already minted \(txDetail)", event: .info)
+                    self.sessionStorage.setAsMinted(tx: txDetail)
                 }
                 
                 // other error
@@ -342,11 +333,4 @@ extension RenVM {
         }
     }
     typealias TxDetails = [TxDetail]
-}
-
-private extension String {
-    var isAlreadyInUseLog: Bool {
-        starts(with: "Allocate: account Address { address: ") &&
-            hasSuffix("} already in use")
-    }
 }
