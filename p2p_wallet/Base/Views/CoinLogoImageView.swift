@@ -31,16 +31,6 @@ class CoinLogoImageView: BEView {
         
         return view
     }()
-    private var placeholderView: UIView? {
-        didSet {
-            oldValue?.removeFromSuperview()
-            guard let placeholderView = placeholderView else {return}
-            placeholderView.removeFromSuperview()
-            insertSubview(placeholderView, at: 0)
-            placeholderView.autoPinEdgesToSuperviewEdges()
-            placeholderView.isHidden = true
-        }
-    }
     
     // MARK: - Initializer
     init(size: CGFloat, cornerRadius: CGFloat = 12) {
@@ -75,32 +65,9 @@ class CoinLogoImageView: BEView {
         wrappingView.alpha = 0
         backgroundColor = .clear
         tokenIcon.isHidden = false
-        placeholderView?.isHidden = true
         
         // with token
-        if let image = token?.image {
-            tokenIcon.image = image
-        } else if let placeholderView = placeholderView {
-            tokenIcon.isHidden = true
-            placeholderView.isHidden = false
-        } else {
-            let jazzicon: Jazzicon
-            if let token = token {
-                let key = token.symbol.isEmpty ? token.address: token.symbol
-                var seed = Self.cachedJazziconSeeds[key]
-                if seed == nil {
-                    seed = UInt64.random(in: 0..<10000000)
-                    Self.cachedJazziconSeeds[key] = seed
-                }
-                
-                jazzicon = Jazzicon(seed: seed!)
-            } else {
-                jazzicon = Jazzicon()
-            }
-            
-            let jazziconImage = jazzicon.generateImage(size: size)
-            tokenIcon.setImage(urlString: token?.logoURI, placeholder: jazziconImage)
-        }
+        tokenIcon.setImage(urlString: token?.logoURI, placeholder: .walletPlaceholder)
         
         // wrapped by
         if let wrappedBy = token?.wrappedBy {
@@ -116,11 +83,6 @@ class CoinLogoImageView: BEView {
     
     func with(token: SolanaSDK.Token?) -> Self {
         setUp(token: token)
-        return self
-    }
-    
-    func with(placeholder: UIView) -> Self {
-        self.placeholderView = placeholder
         return self
     }
 }
