@@ -60,6 +60,12 @@ extension ReceiveToken {
             createRenBTCSubject = .init(
                 request: associatedTokenAccountHandler
                     .createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
+                    .catch {error in
+                        if error.isAlreadyInUseSolanaError {
+                            return .just("")
+                        }
+                        throw error
+                    }
             )
             
             if isRenBTCWalletCreated {
