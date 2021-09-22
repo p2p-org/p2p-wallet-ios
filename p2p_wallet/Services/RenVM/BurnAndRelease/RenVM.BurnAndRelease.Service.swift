@@ -111,11 +111,11 @@ extension RenVM.BurnAndRelease {
             }
             
             requestReleasing(detail)
-                .subscribe(onSuccess: {[weak self] hash in
+                .subscribe(onSuccess: {[weak self] _ in
                     guard let self = self else {return}
                     self.releasingTxs.removeAll(where: {$0.confirmedSignature == detail.confirmedSignature})
                     self.transactionStorage.releaseSubmitedBurnTransaction(detail)
-                }, onFailure: {[weak self] error in
+                }, onFailure: {[weak self] _ in
                     guard let self = self else {return}
                     self.releasingTxs.removeAll(where: {$0.confirmedSignature == detail.confirmedSignature})
                 })
@@ -128,7 +128,7 @@ extension RenVM.BurnAndRelease {
                     let state = try burnAndRelease.getBurnState(burnDetails: detail)
                     return burnAndRelease.release(state: state, details: detail)
                 }
-                .catch {error in
+                .catch {_ in
                     // retry after 3 sec
                     Single<Void>.just(())
                         .delay(.seconds(3), scheduler: self.scheduler)

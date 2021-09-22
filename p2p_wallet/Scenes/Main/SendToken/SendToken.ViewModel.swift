@@ -95,6 +95,7 @@ extension SendToken {
         private let apiClient: SendTokenAPIClient
         private let authenticationHandler: AuthenticationHandler
         let analyticsManager: AnalyticsManagerType
+        private let renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -122,12 +123,14 @@ extension SendToken {
             destinationAddress: String?,
             apiClient: SendTokenAPIClient,
             authenticationHandler: AuthenticationHandler,
-            analyticsManager: AnalyticsManagerType
+            analyticsManager: AnalyticsManagerType,
+            renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         ) {
             self.repository = repository
             self.apiClient = apiClient
             self.authenticationHandler = authenticationHandler
             self.analyticsManager = analyticsManager
+            self.renVMBurnAndReleaseService = renVMBurnAndReleaseService
             
             self.feeSubject = LazySubject<Double>(
                 request: Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
@@ -424,16 +427,27 @@ extension SendToken {
             
             // define token
             var request: Single<String>!
-            if wallet.isNativeSOL {
-                // SOLANA
+            
+            // renBTC: fix later for sending to solana chain
+            if wallet.token.address.isRenBTCMint {
+                request = renVMBurnAndReleaseService.burn(
+                    recipient: receiver,
+                    amount: amount.toLamport(decimals: 8)
+                )
+            }
+            
+            // native solana
+            else if wallet.isNativeSOL {
                 request = apiClient.sendNativeSOL(
                     to: receiver,
                     amount: lamport,
                     withoutFee: Defaults.useFreeTransaction,
                     isSimulation: false
                 )
-            } else {
-                // other tokens
+            }
+            
+            // other tokens
+            else {
                 request = apiClient.sendSPLTokens(
                     mintAddress: wallet.mintAddress,
                     decimals: wallet.token.decimals,
@@ -475,5 +489,12 @@ extension SendToken.ViewModel: WalletDidSelectHandler {
             event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
         )
         input.walletPubkey.onNext(wallet.pubkey)
+    }
+}
+
+private extension String {
+    var isRenBTCMint: Bool {
+        self == SolanaSDK.PublicKey.renBTCMint.base58EncodedString ||
+            self == SolanaSDK.PublicKey.renBTCMintDevnet.base58EncodedString
     }
 }
