@@ -1585,10 +1585,18 @@
 		BCCF23C126FAE76400D08724 /* RenVM */ = {
 			isa = PBXGroup;
 			children = (
+				BCCF23C226FAE9B200D08724 /* LockAndMint */,
+			);
+			path = RenVM;
+			sourceTree = "<group>";
+		};
+		BCCF23C226FAE9B200D08724 /* LockAndMint */ = {
+			isa = PBXGroup;
+			children = (
 				BC80204426F2E6E300C109C2 /* RenVM.LockAndMint.SessionStorage.swift */,
 				BCAF1A6F26F44CE8001851F6 /* RenVM.LockAndMint.Service.swift */,
 			);
-			path = RenVM;
+			path = LockAndMint;
 			sourceTree = "<group>";
 		};
 		BCD5E75225512DA800F51299 /* InvestmentsVC */ = {
