@@ -15,12 +15,12 @@ protocol ChangeNetworkResponder {
 class SelectNetworkVC: ProfileSingleSelectionVC<SolanaSDK.APIEndPoint> {
     let responder: ChangeNetworkResponder
     let analyticsManger: AnalyticsManagerType
-    let renVMService: RenVMServiceType
+    let renVMService: RenVMLockAndMintServiceType
     
     init(
         changeNetworkResponder: ChangeNetworkResponder,
         analyticsManger: AnalyticsManagerType,
-        renVMService: RenVMServiceType
+        renVMService: RenVMLockAndMintServiceType
     ) {
         self.responder = changeNetworkResponder
         self.analyticsManger = analyticsManger
