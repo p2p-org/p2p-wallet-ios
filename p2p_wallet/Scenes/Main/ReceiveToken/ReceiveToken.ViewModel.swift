@@ -42,7 +42,7 @@ extension ReceiveToken {
             solanaTokenWallet: Wallet? = nil,
             analyticsManager: AnalyticsManagerType,
             tokensRepository: TokensRepository,
-            renVMService: RenVMServiceType,
+            renVMService: RenVMLockAndMintServiceType,
             isRenBTCWalletCreated: Bool,
             associatedTokenAccountHandler: AssociatedTokenAccountHandler
         ) {

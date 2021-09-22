@@ -215,7 +215,7 @@
 		BC80203B26F1DD5D00C109C2 /* ReceiveToken.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80203A26F1DD5D00C109C2 /* ReceiveToken.RootView.swift */; };
 		BC80203E26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80203D26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift */; };
 		BC80204026F1EBDA00C109C2 /* ReceiveToken.ReceiveBitcoinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80203F26F1EBDA00C109C2 /* ReceiveToken.ReceiveBitcoinViewModel.swift */; };
-		BC80204526F2E6E300C109C2 /* RenVMSessionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80204426F2E6E300C109C2 /* RenVMSessionStorage.swift */; };
+		BC80204526F2E6E300C109C2 /* RenVM.LockAndMint.SessionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80204426F2E6E300C109C2 /* RenVM.LockAndMint.SessionStorage.swift */; };
 		BC80569A26D8DDE000206ECA /* SwapToken.Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80569926D8DDE000206ECA /* SwapToken.Settings.swift */; };
 		BC85EA66266E1324005006D5 /* ReceiveToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC85EA62266E1324005006D5 /* ReceiveToken.swift */; };
 		BC85EA67266E1324005006D5 /* ReceiveToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC85EA63266E1324005006D5 /* ReceiveToken.ViewController.swift */; };
@@ -260,7 +260,7 @@
 		BCAB206F25DE0563004F4F9D /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAB206E25DE0563004F4F9D /* DependencyContainer.swift */; };
 		BCACA7DC2678942B0091E118 /* ProcessingTransactionsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCACA7DB2678942B0091E118 /* ProcessingTransactionsRepository.swift */; };
 		BCACA7E12679E75E0091E118 /* AnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCACA7E02679E75E0091E118 /* AnalyticsEvent.swift */; };
-		BCAF1A7026F44CE8001851F6 /* RenVMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAF1A6F26F44CE8001851F6 /* RenVMService.swift */; };
+		BCAF1A7026F44CE8001851F6 /* RenVM.LockAndMint.Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAF1A6F26F44CE8001851F6 /* RenVM.LockAndMint.Service.swift */; };
 		BCB0FE5D26A197FD00B02C33 /* FeeRelayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB0FE5C26A197FD00B02C33 /* FeeRelayer.swift */; };
 		BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2231825412AF8002D997F /* AppDelegate.swift */; };
 		BCB2232225412AF8002D997F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232125412AF8002D997F /* Assets.xcassets */; };
@@ -594,7 +594,7 @@
 		BC80203A26F1DD5D00C109C2 /* ReceiveToken.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.RootView.swift; sourceTree = "<group>"; };
 		BC80203D26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ReceiveBitcoinView.swift; sourceTree = "<group>"; };
 		BC80203F26F1EBDA00C109C2 /* ReceiveToken.ReceiveBitcoinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ReceiveBitcoinViewModel.swift; sourceTree = "<group>"; };
-		BC80204426F2E6E300C109C2 /* RenVMSessionStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenVMSessionStorage.swift; sourceTree = "<group>"; };
+		BC80204426F2E6E300C109C2 /* RenVM.LockAndMint.SessionStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenVM.LockAndMint.SessionStorage.swift; sourceTree = "<group>"; };
 		BC80569926D8DDE000206ECA /* SwapToken.Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.Settings.swift; sourceTree = "<group>"; };
 		BC85EA62266E1324005006D5 /* ReceiveToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.swift; sourceTree = "<group>"; };
 		BC85EA63266E1324005006D5 /* ReceiveToken.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ViewController.swift; sourceTree = "<group>"; };
@@ -639,7 +639,7 @@
 		BCAB206E25DE0563004F4F9D /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		BCACA7DB2678942B0091E118 /* ProcessingTransactionsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingTransactionsRepository.swift; sourceTree = "<group>"; };
 		BCACA7E02679E75E0091E118 /* AnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEvent.swift; sourceTree = "<group>"; };
-		BCAF1A6F26F44CE8001851F6 /* RenVMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenVMService.swift; sourceTree = "<group>"; };
+		BCAF1A6F26F44CE8001851F6 /* RenVM.LockAndMint.Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenVM.LockAndMint.Service.swift; sourceTree = "<group>"; };
 		BCB0FE5C26A197FD00B02C33 /* FeeRelayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeeRelayer.swift; sourceTree = "<group>"; };
 		BCB2231525412AF8002D997F /* p2p_wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = p2p_wallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB2231825412AF8002D997F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -1494,8 +1494,7 @@
 				BCF2411E26732B0E00C9F158 /* AnalyticsManager.swift */,
 				BCB0FE5C26A197FD00B02C33 /* FeeRelayer.swift */,
 				BC63110926D78AC300516C38 /* SwapProvider */,
-				BC80204426F2E6E300C109C2 /* RenVMSessionStorage.swift */,
-				BCAF1A6F26F44CE8001851F6 /* RenVMService.swift */,
+				BCCF23C126FAE76400D08724 /* RenVM */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1581,6 +1580,15 @@
 				BCC1F20F269EC7AD003DD648 /* WalletsViewModel+WLNotificationsRepository.swift */,
 			);
 			path = WalletsViewModel;
+			sourceTree = "<group>";
+		};
+		BCCF23C126FAE76400D08724 /* RenVM */ = {
+			isa = PBXGroup;
+			children = (
+				BC80204426F2E6E300C109C2 /* RenVM.LockAndMint.SessionStorage.swift */,
+				BCAF1A6F26F44CE8001851F6 /* RenVM.LockAndMint.Service.swift */,
+			);
+			path = RenVM;
 			sourceTree = "<group>";
 		};
 		BCD5E75225512DA800F51299 /* InvestmentsVC */ = {
@@ -2414,7 +2422,7 @@
 				BC65E256261EF34B00E436C7 /* TransactionInfoViewModel.swift in Sources */,
 				BC2EC1BA2553EC7D006EEDA5 /* UIView+Extensions.swift in Sources */,
 				BCE42DE725DF9BDA0021540E /* CreateOrRestoreWalletViewController.swift in Sources */,
-				BCAF1A7026F44CE8001851F6 /* RenVMService.swift in Sources */,
+				BCAF1A7026F44CE8001851F6 /* RenVM.LockAndMint.Service.swift in Sources */,
 				BC65E17F261EA0AC00E436C7 /* DefisViewModel.swift in Sources */,
 				BCE04C69268D901400CE131A /* ModalPresentationController.swift in Sources */,
 				BC5ED7532562687F0030572D /* PricesManager.swift in Sources */,
@@ -2445,7 +2453,7 @@
 				BCD5E76525512EDC00F51299 /* NewsCell.swift in Sources */,
 				BC5A97E2260DC977009674C4 /* WalletsCollectionView.swift in Sources */,
 				BC3122952580BA1700F3B14F /* LocalAuthVC.swift in Sources */,
-				BC80204526F2E6E300C109C2 /* RenVMSessionStorage.swift in Sources */,
+				BC80204526F2E6E300C109C2 /* RenVM.LockAndMint.SessionStorage.swift in Sources */,
 				BC85EA66266E1324005006D5 /* ReceiveToken.swift in Sources */,
 				BCACA7DC2678942B0091E118 /* ProcessingTransactionsRepository.swift in Sources */,
 				BC18CA8A263265680054E624 /* SolanaSDK.Token+Extensions.swift in Sources */,

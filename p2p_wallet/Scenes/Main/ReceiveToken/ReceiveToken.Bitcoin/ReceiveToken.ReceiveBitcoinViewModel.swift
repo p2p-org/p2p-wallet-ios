@@ -34,7 +34,7 @@ extension ReceiveToken {
         private let disposeBag = DisposeBag()
         
         // MARK: - Dependencies
-        private let renVMService: RenVMServiceType
+        private let renVMService: RenVMLockAndMintServiceType
         private let analyticsManager: AnalyticsManagerType
         private let navigationSubject: BehaviorRelay<NavigatableScene?>
         private let associatedTokenAccountHandler: AssociatedTokenAccountHandler
@@ -46,7 +46,7 @@ extension ReceiveToken {
         
         // MARK: - Initializers
         init(
-            renVMService: RenVMServiceType,
+            renVMService: RenVMLockAndMintServiceType,
             analyticsManager: AnalyticsManagerType,
             navigationSubject: BehaviorRelay<NavigatableScene?>,
             isRenBTCWalletCreated: Bool,
