@@ -297,6 +297,8 @@
 		BCC1F20D269EC712003DD648 /* WLNotificationsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC1F20C269EC712003DD648 /* WLNotificationsRepository.swift */; };
 		BCC1F210269EC7AD003DD648 /* WalletsViewModel+WLNotificationsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC1F20F269EC7AD003DD648 /* WalletsViewModel+WLNotificationsRepository.swift */; };
 		BCC1F212269ED30A003DD648 /* PrimitiveSequence+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */; };
+		BCCF23C526FAED6800D08724 /* RenVM.BurnAndRelease.TransactionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCCF23C426FAED6800D08724 /* RenVM.BurnAndRelease.TransactionStorage.swift */; };
+		BCCF23C826FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCCF23C726FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift */; };
 		BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74825512D2500F51299 /* SectionHeaderView.swift */; };
 		BCD5E76525512EDC00F51299 /* NewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E76425512EDC00F51299 /* NewsCell.swift */; };
 		BCD5E770255130DD00F51299 /* News.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E76F255130DD00F51299 /* News.swift */; };
@@ -682,6 +684,8 @@
 		BCC1F20C269EC712003DD648 /* WLNotificationsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLNotificationsRepository.swift; sourceTree = "<group>"; };
 		BCC1F20F269EC7AD003DD648 /* WalletsViewModel+WLNotificationsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WalletsViewModel+WLNotificationsRepository.swift"; sourceTree = "<group>"; };
 		BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PrimitiveSequence+Extensions.swift"; sourceTree = "<group>"; };
+		BCCF23C426FAED6800D08724 /* RenVM.BurnAndRelease.TransactionStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenVM.BurnAndRelease.TransactionStorage.swift; sourceTree = "<group>"; };
+		BCCF23C726FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenVM.BurnAndRelease.Service.swift; sourceTree = "<group>"; };
 		BCD5E74825512D2500F51299 /* SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		BCD5E76425512EDC00F51299 /* NewsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsCell.swift; sourceTree = "<group>"; };
 		BCD5E76F255130DD00F51299 /* News.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = News.swift; sourceTree = "<group>"; };
@@ -1585,6 +1589,7 @@
 		BCCF23C126FAE76400D08724 /* RenVM */ = {
 			isa = PBXGroup;
 			children = (
+				BCCF23C326FAEA0600D08724 /* BurnAndRelease */,
 				BCCF23C226FAE9B200D08724 /* LockAndMint */,
 			);
 			path = RenVM;
@@ -1597,6 +1602,15 @@
 				BCAF1A6F26F44CE8001851F6 /* RenVM.LockAndMint.Service.swift */,
 			);
 			path = LockAndMint;
+			sourceTree = "<group>";
+		};
+		BCCF23C326FAEA0600D08724 /* BurnAndRelease */ = {
+			isa = PBXGroup;
+			children = (
+				BCCF23C426FAED6800D08724 /* RenVM.BurnAndRelease.TransactionStorage.swift */,
+				BCCF23C726FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift */,
+			);
+			path = BurnAndRelease;
 			sourceTree = "<group>";
 		};
 		BCD5E75225512DA800F51299 /* InvestmentsVC */ = {
@@ -2258,6 +2272,7 @@
 				BCE77E6626537067000B68BB /* DerivableAccountsViewModel.swift in Sources */,
 				BC460ABF257A44310035F6AA /* ProcessingTransactionsManager.swift in Sources */,
 				BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */,
+				BCCF23C526FAED6800D08724 /* RenVM.BurnAndRelease.TransactionStorage.swift in Sources */,
 				BC1FFEF326297BEB0014F027 /* ResetPinCodeWithSeedPhrasesContainer.swift in Sources */,
 				BCA93F5A25E77DE80081DDF6 /* TokenSettings.swift in Sources */,
 				BC11C9D82590987D00E399A9 /* SectionBackgroundView.swift in Sources */,
@@ -2268,6 +2283,7 @@
 				BC38555B26AE971400BD8BF7 /* ChooseWallet.ViewModel.swift in Sources */,
 				BC28A9AF26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift in Sources */,
 				BC185EFC26E4BF3300280FE6 /* UIFont+Extensions.swift in Sources */,
+				BCCF23C826FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift in Sources */,
 				BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */,
 				BC38555E26AE9A2B00BD8BF7 /* ChooseWallet.CollectionView.swift in Sources */,
 				BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */,
