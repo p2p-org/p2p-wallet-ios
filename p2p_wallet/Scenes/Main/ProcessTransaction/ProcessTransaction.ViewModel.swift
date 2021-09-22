@@ -100,7 +100,7 @@ extension ProcessTransaction {
                 )
                 
                 // Verify address
-                guard NSRegularExpression.publicKey.matches(receiver) else {
+                if !NSRegularExpression.publicKey.matches(receiver) && !fromWallet.token.isRenBTC {
                     var tx = transactionSubject.value
                     tx.value = transaction
                     tx.status = .error(L10n.wrongWalletAddress)
