@@ -6,17 +6,28 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
 protocol RenVMBurnAndReleaseTransactionStorageType {
-    func getSubmitedBurnTransactions() -> [RenVM.BurnAndRelease.BurnDetails]
+    func burnTransactionObservable() -> Observable<[RenVM.BurnAndRelease.BurnDetails]>
     func setSubmitedBurnTransaction(_ details: RenVM.BurnAndRelease.BurnDetails)
     func releaseSubmitedBurnTransaction(_ details: RenVM.BurnAndRelease.BurnDetails)
 }
 
 extension RenVM.BurnAndRelease {
-    struct TransactionStorage: RenVMBurnAndReleaseTransactionStorageType {
-        func getSubmitedBurnTransactions() -> [RenVM.BurnAndRelease.BurnDetails] {
-            Defaults.renVMSubmitedBurnTxDetails
+    class TransactionStorage: RenVMBurnAndReleaseTransactionStorageType {
+        var disposable: DefaultsDisposable?
+        var subject = PublishRelay<[RenVM.BurnAndRelease.BurnDetails]>()
+        
+        init() {
+            disposable = Defaults.observe(\.renVMSubmitedBurnTxDetails) {[weak self] update in
+                self?.subject.accept(update.newValue ?? [])
+            }
+        }
+        
+        func burnTransactionObservable() -> Observable<[RenVM.BurnAndRelease.BurnDetails]> {
+            subject.distinctUntilChanged().asObservable()
         }
         
         func setSubmitedBurnTransaction(_ details: RenVM.BurnAndRelease.BurnDetails) {
