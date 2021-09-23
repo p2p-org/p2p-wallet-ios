@@ -124,4 +124,20 @@ extension UIView {
             }
         }
     }
+    
+    static func switchField(text: String, switch switcher: UISwitch) -> UIView {
+        let view = UIView(forAutoLayout: ())
+        
+        let label = UILabel(text: text, textSize: 15, weight: .semibold, numberOfLines: 0)
+        view.addSubview(label)
+        label.autoPinEdgesToSuperviewEdges(with: .init(top: 0, left: 0, bottom: 0, right: 51))
+        
+        view.addSubview(switcher)
+        switcher.autoAlignAxis(.horizontal, toSameAxisOf: label)
+        switcher.autoPinEdge(toSuperviewEdge: .trailing)
+        
+        return view
+            .padding(.init(all: 20), cornerRadius: 12)
+            .border(width: 1, color: .defaultBorder)
+    }
 }

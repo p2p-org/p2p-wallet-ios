@@ -182,7 +182,7 @@ private class ConditionView: BEView {
             
             ReceiveToken.textBuilder(text: L10n.ifYouDoNotFinishYourTransactionWithinThisPeriodSessionTimeFrameYouRiskLosingTheDeposits)
             
-            ReceiveToken.switchField(
+            UIView.switchField(
                 text: L10n.iCanCompleteThisTransactionWithinTime,
                 switch: completeTxWithinTimeSwitcher
             )
