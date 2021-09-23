@@ -49,6 +49,7 @@ extension ReceiveToken {
             ) {
                 ReceiveToken.switchField(text: L10n.iWantToReceiveRenBTC, switch: receiveRenBTCSwitcher)
                     .padding(.init(x: 20, y: 0))
+                    .onTap(self, action: #selector(buttonSelectBTCTypeDidTouch))
                 receiveNormalBTCView
                 receiveRenBTCView
             }
@@ -81,6 +82,10 @@ extension ReceiveToken {
         
         @objc private func receiveRenBTCSwitcherDidTouch(sender: UISwitch) {
             viewModel.toggleIsReceivingRenBTC(isReceivingRenBTC: sender.isOn)
+        }
+        
+        @objc private func buttonSelectBTCTypeDidTouch() {
+            viewModel.showBTCTypeOptions()
         }
     }
 }
