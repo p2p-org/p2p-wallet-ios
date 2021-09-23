@@ -1260,6 +1260,7 @@
 				BC80203F26F1EBDA00C109C2 /* ReceiveToken.ReceiveBitcoinViewModel.swift */,
 				BC80203D26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift */,
 				BC7D078026F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift */,
+				BCDABE7926FC745200E083B8 /* ReceiveToken.SelectBTCTypeViewController.swift */,
 			);
 			path = ReceiveToken.Bitcoin;
 			sourceTree = "<group>";
@@ -1550,7 +1551,6 @@
 				BC8F682F260989F8002FDCCD /* ReceiveToken.QrCodeView.swift */,
 				BCDCAE202682E41B001ED7B4 /* ReceiveToken.HelpViewController.swift */,
 				BC7D078226F86700005F777F /* ReceiveToken.ViewBuilders.swift */,
-				BCDABE7926FC745200E083B8 /* ReceiveToken.SelectBTCTypeViewController.swift */,
 			);
 			path = ReceiveToken;
 			sourceTree = "<group>";

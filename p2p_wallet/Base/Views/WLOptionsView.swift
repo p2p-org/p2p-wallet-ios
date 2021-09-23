@@ -12,6 +12,10 @@ protocol OptionViewType: BEView {
     func setSelected(_ selected: Bool)
 }
 
+protocol SelectOptionViewDelegate: AnyObject {
+    func selectOptionView<Option>(_ view: SelectOptionView<Option>, didChangeSelectedIndexTo selectedIndex: Int)
+}
+
 class SelectOptionView<Option>: BEView {
     // MARK: - Properties
     var options: [Option] {
@@ -26,6 +30,7 @@ class SelectOptionView<Option>: BEView {
     }
     private let cellBuilder: ((Option, Bool) -> OptionViewType)
     var completion: ((Option) -> Void)?
+    weak var delegate: SelectOptionViewDelegate?
     
     // MARK: - Subviews
     private lazy var stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
@@ -78,6 +83,7 @@ class SelectOptionView<Option>: BEView {
               index != selectedIndex
         else {return}
         selectedIndex = index
+        delegate?.selectOptionView(self, didChangeSelectedIndexTo: selectedIndex)
     }
 }
 
