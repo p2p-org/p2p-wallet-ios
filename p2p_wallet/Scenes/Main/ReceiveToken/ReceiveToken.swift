@@ -11,6 +11,7 @@ struct ReceiveToken {
     enum NavigatableScene {
         case showInExplorer(address: String)
         case showBTCExplorer(address: String)
+        case chooseBTCOption(selectedOption: BTCTypeOption)
         case share(address: String)
         case help
     }
