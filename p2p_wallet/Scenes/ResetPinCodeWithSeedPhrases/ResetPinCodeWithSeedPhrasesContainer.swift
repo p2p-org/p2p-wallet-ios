@@ -8,15 +8,7 @@
 import Foundation
 
 class ResetPinCodeWithSeedPhrasesContainer {
-    let accountRepository: AccountRepository
-    lazy var viewModel = ResetPinCodeWithSeedPhrasesViewModel(accountRepository: accountRepository)
-    
-    init(
-        accountRepository: AccountRepository
-    ) {
-        self.accountRepository = accountRepository
-        
-    }
+    lazy var viewModel = ResetPinCodeWithSeedPhrasesViewModel()
     
     func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
     {

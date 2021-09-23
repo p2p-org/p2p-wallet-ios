@@ -14,7 +14,7 @@ class CreateSecurityKeysViewModel {
     
     // MARK: - Properties
     let disposeBag = DisposeBag()
-    let accountStorage: KeychainAccountStorage
+    @Injected private var accountStorage: KeychainAccountStorage
     let createWalletViewModel: CreateWalletViewModel
     let analyticsManager: AnalyticsManagerType
     
@@ -25,8 +25,7 @@ class CreateSecurityKeysViewModel {
     // MARK: - Input
     let checkBoxIsSelectedInput = BehaviorRelay<Bool>(value: false)
     
-    init(accountStorage: KeychainAccountStorage, createWalletViewModel: CreateWalletViewModel, analyticsManager: AnalyticsManagerType) {
-        self.accountStorage = accountStorage
+    init(createWalletViewModel: CreateWalletViewModel, analyticsManager: AnalyticsManagerType) {
         self.createWalletViewModel = createWalletViewModel
         self.analyticsManager = analyticsManager
         createPhrases()

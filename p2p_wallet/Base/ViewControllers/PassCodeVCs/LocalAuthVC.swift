@@ -26,7 +26,7 @@ class LocalAuthVC: PassCodeVC {
             blockingView.isHidden = !isBlocked
         }
     }
-    let accountStorage: KeychainAccountStorage
+    @Injected private var accountStorage: KeychainAccountStorage
     var resetPincodeWithASeedPhrasesHandler: (() -> Void)?
     
     var isResetPinCodeWithASeedPhrasesShown = false {
@@ -56,12 +56,6 @@ class LocalAuthVC: PassCodeVC {
     
     private var inputCircleView: UIView? {
         embededPinVC.pinView.stackView.arrangedSubviews.first
-    }
-    
-    // MARK: - Initializers
-    init(accountStorage: KeychainAccountStorage) {
-        self.accountStorage = accountStorage
-        super.init()
     }
     
     // MARK: - Methods

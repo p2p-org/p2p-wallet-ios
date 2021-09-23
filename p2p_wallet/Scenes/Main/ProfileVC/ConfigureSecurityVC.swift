@@ -21,16 +21,14 @@ class ConfigureSecurityVC: ProfileVCBase {
         return switcher
     }()
     
-    let accountStorage: KeychainAccountStorage
+    @Injected private var accountStorage: KeychainAccountStorage
     let authenticationHandler: AuthenticationHandler
     let analyticsManager: AnalyticsManagerType
     
     init(
-        accountStorage: KeychainAccountStorage,
         authenticationHandler: AuthenticationHandler,
         analyticsManager: AnalyticsManagerType
     ) {
-        self.accountStorage = accountStorage
         self.authenticationHandler = authenticationHandler
         self.analyticsManager = analyticsManager
     }

@@ -22,7 +22,7 @@ extension Root {
         }
         
         // MARK: - Dependencies
-        private let accountStorage: KeychainAccountStorage
+        @Injected private var accountStorage: KeychainAccountStorage
         private let analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
@@ -38,8 +38,7 @@ extension Root {
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
-        init(accountStorage: KeychainAccountStorage, analyticsManager: AnalyticsManagerType) {
-            self.accountStorage = accountStorage
+        init(analyticsManager: AnalyticsManagerType) {
             self.analyticsManager = analyticsManager
             
             self.input = Input()

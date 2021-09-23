@@ -10,19 +10,17 @@ import Foundation
 class RestoreWalletContainer {
     // from parent
     let handler: CreateOrRestoreWalletHandler
-    let accountStorage: KeychainAccountStorage
+    @Injected private var accountStorage: KeychainAccountStorage
     let analyticsManager: AnalyticsManagerType
     
     // longlived dependency
     let viewModel: RestoreWalletViewModel
     
     init(
-        accountStorage: KeychainAccountStorage,
         handler: CreateOrRestoreWalletHandler,
         analyticsManager: AnalyticsManagerType
     ) {
-        self.viewModel = RestoreWalletViewModel(accountStorage: accountStorage, handler: handler, analyticsManager: analyticsManager)
-        self.accountStorage = accountStorage
+        self.viewModel = RestoreWalletViewModel(handler: handler, analyticsManager: analyticsManager)
         self.handler = handler
         self.analyticsManager = analyticsManager
     }

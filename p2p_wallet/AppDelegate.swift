@@ -10,6 +10,7 @@ import Firebase
 @_exported import BEPureLayout
 @_exported import SolanaSwift
 @_exported import SwiftyUserDefaults
+@_exported import Resolver
 import THPinViewController
 import Action
 import BECollectionView
