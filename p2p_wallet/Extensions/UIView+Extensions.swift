@@ -89,4 +89,39 @@ extension UIView {
     static func defaultSeparator(height: CGFloat = 1) -> UIView {
         .separator(height: height, color: .separator)
     }
+    
+    static func createSectionView(
+        title: String? = nil,
+        label: UIView? = nil,
+        contentView: UIView,
+        rightView: UIView? = UIImageView(width: 6, height: 12, image: .nextArrow, tintColor: .h8b94a9.onDarkMode(.white)
+        )
+            .padding(.init(x: 9, y: 6)),
+        addSeparatorOnTop: Bool = true
+    ) -> UIStackView {
+        let stackView = UIStackView(axis: .horizontal, spacing: 5, alignment: .center, distribution: .fill) {
+            UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
+                label ?? UILabel(
+                    text: title,
+                    textSize: 13,
+                    weight: .medium,
+                    textColor: .textSecondary
+                )
+                contentView
+            }
+        }
+        
+        if let rightView = rightView {
+            stackView.addArrangedSubview(rightView)
+        }
+        
+        if !addSeparatorOnTop {
+            return stackView
+        } else {
+            return UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill) {
+                UIView.defaultSeparator()
+                stackView
+            }
+        }
+    }
 }

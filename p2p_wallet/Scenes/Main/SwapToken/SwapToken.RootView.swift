@@ -65,7 +65,7 @@ extension SwapToken {
                 
                 destinationWalletView
                 
-                createSectionView(
+                UIView.createSectionView(
                     title: L10n.currentPrice,
                     contentView: exchangeRateLabel,
                     rightView: exchangeRateReverseButton,
@@ -76,7 +76,7 @@ extension SwapToken {
                 UIView.defaultSeparator()
                     .withTag(2)
                 
-                createSectionView(
+                UIView.createSectionView(
                     title: L10n.maxPriceSlippage,
                     contentView: slippageLabel,
                     addSeparatorOnTop: false
@@ -87,7 +87,7 @@ extension SwapToken {
                 UIView.defaultSeparator()
                     .withTag(4)
                 
-                createSectionView(
+                UIView.createSectionView(
                     label: swapFeeLabel,
                     contentView: UIView(),
                     addSeparatorOnTop: false
@@ -147,7 +147,7 @@ extension SwapToken {
             
             // slippage
             viewModel.slippageDriver
-                .map {slippageAttributedText(slippage: $0 ?? 0)}
+                .map {NSAttributedString.slippageAttributedText(slippage: $0 ?? 0)}
                 .drive(slippageLabel.rx.attributedText)
                 .disposed(by: disposeBag)
             
