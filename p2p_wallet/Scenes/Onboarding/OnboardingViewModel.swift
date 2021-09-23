@@ -26,9 +26,9 @@ class OnboardingViewModel {
     
     // MARK: - Properties
     let bag = DisposeBag()
-    let handler: OnboardingHandler
+    @Injected private var handler: OnboardingHandler
     @Injected private var accountStorage: KeychainAccountStorage
-    let analyticsManager: AnalyticsManagerType
+    @Injected var analyticsManager: AnalyticsManagerType
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<OnboardingNavigatableScene>()
@@ -37,9 +37,7 @@ class OnboardingViewModel {
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializer
-    init(handler: OnboardingHandler, analyticsManager: AnalyticsManagerType) {
-        self.handler = handler
-        self.analyticsManager = analyticsManager
+    init() {
         navigateNext()
     }
     

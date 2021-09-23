@@ -17,7 +17,7 @@ class BackupVC: ProfileVCBase {
     @Injected private var accountStorage: KeychainAccountStorage
     let authenticationHandler: AuthenticationHandler
     let scenesFactory: BackupScenesFactory
-    let analyticsManager: AnalyticsManagerType
+    @Injected private var analyticsManager: AnalyticsManagerType
     
     lazy var didBackupSubject = BehaviorRelay<Bool>(value: accountStorage.didBackupUsingIcloud || Defaults.didBackupOffline)
     var didBackupCompletion: ((Bool) -> Void)?
@@ -28,10 +28,9 @@ class BackupVC: ProfileVCBase {
     lazy var backupUsingIcloudButton = WLButton.stepButton(enabledColor: .blackButtonBackground.onDarkMode(.h2b2b2b), textColor: .white, label: " " + L10n.backupUsingICloud)
     lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .f6f6f8.onDarkMode(.h2b2b2b), textColor: .textBlack, label: L10n.backupManually)
     
-    init(authenticationHandler: AuthenticationHandler, scenesFactory: BackupScenesFactory, analyticsManager: AnalyticsManagerType) {
+    init(authenticationHandler: AuthenticationHandler, scenesFactory: BackupScenesFactory) {
         self.authenticationHandler = authenticationHandler
         self.scenesFactory = scenesFactory
-        self.analyticsManager = analyticsManager
         super.init()
     }
     

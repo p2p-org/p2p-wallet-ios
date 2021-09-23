@@ -9,44 +9,35 @@ import Foundation
 import SolanaSwift
 
 class DependencyContainer {
-    // MARK: - Long lived dependency
-    let sharedRootViewModel: Root.ViewModel
-    let analyticsManager: AnalyticsManagerType
-    
-    init() {
-        self.analyticsManager = AnalyticsManager()
-        self.sharedRootViewModel = Root.ViewModel(analyticsManager: analyticsManager)
-    }
-    
     // MARK: - Root
     func makeRootViewController() -> Root.ViewController {
-        .init(viewModel: sharedRootViewModel, scenesFactory: self)
+        .init(scenesFactory: self)
     }
     
     // MARK: - CreateOrRestore wallet
     func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
     {
-        let container = CreateOrRestoreWalletContainer(handler: sharedRootViewModel, analyticsManager: analyticsManager)
+        let container: CreateOrRestoreWalletContainer = Resolver.resolve()
         return container.makeCreateOrRestoreWalletViewController()
     }
     
     // MARK: - Onboarding
     func makeOnboardingViewController() -> OnboardingViewController {
-        let container = OnboardingContainer(handler: sharedRootViewModel, analyticsManager: analyticsManager)
+        let container: OnboardingContainer = Resolver.resolve()
         return container.makeOnboardingViewController()
     }
     
     func makeWellDoneVC() -> WellDoneVC {
-        WellDoneVC(viewModel: sharedRootViewModel, analyticsManager: analyticsManager)
+        Resolver.resolve()
     }
     
     func makeWelcomeBackVC() -> WelcomeBackVC {
-        WelcomeBackVC(viewModel: sharedRootViewModel, analyticsManager: analyticsManager)
+        Resolver.resolve()
     }
     
     // MARK: - Main
     func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController {
-        let container = MainContainer(rootViewModel: sharedRootViewModel, analyticsManager: analyticsManager)
+        let container: MainContainer = Resolver.resolve()
         return container.makeMainViewController(authenticateWhenAppears: authenticateWhenAppears)
     }
 }

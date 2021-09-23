@@ -23,7 +23,7 @@ extension Root {
         
         // MARK: - Dependencies
         @Injected private var accountStorage: KeychainAccountStorage
-        private let analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -38,9 +38,7 @@ extension Root {
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
-        init(analyticsManager: AnalyticsManagerType) {
-            self.analyticsManager = analyticsManager
-            
+        init() {
             self.input = Input()
             self.output = Output(
                 navigationScene: navigationSubject

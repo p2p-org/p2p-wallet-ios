@@ -9,13 +9,8 @@ import Foundation
 import SwiftUI
 
 class WellDoneVC: WLIntroVC {
-    let viewModel: Root.ViewModel
-    let analyticsManager: AnalyticsManagerType
-    init(viewModel: Root.ViewModel, analyticsManager: AnalyticsManagerType) {
-        self.viewModel = viewModel
-        self.analyticsManager = analyticsManager
-        super.init()
-    }
+    @Injected private var viewModel: Root.ViewModel
+    @Injected private var analyticsManager: AnalyticsManagerType
     
     lazy var acceptButton = WLButton.stepButton(type: .blue, label: nil)
         .onTap(self, action: #selector(finishSetup))

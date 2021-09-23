@@ -10,6 +10,7 @@ import Foundation
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
         register {KeychainAccountStorage()}
-            .implements(AccountRepository.self)
+        register {AnalyticsManager()}.implements(AnalyticsManagerType.self)
+        register {Root.ViewModel()}.implements(CreateOrRestoreWalletHandler.self).implements(OnboardingHandler.self)
     }
 }

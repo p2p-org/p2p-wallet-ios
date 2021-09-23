@@ -14,15 +14,13 @@ extension Root {
         override var preferredStatusBarStyle: UIStatusBarStyle {self.statusBarStyle}
         
         // MARK: - Properties
-        private let viewModel: ViewModel
+        @Injected private var viewModel: ViewModel
         private let scenesFactory: RootViewControllerScenesFactory
         
         // MARK: - Initializer
         init(
-            viewModel: ViewModel,
             scenesFactory: RootViewControllerScenesFactory
         ) {
-            self.viewModel = viewModel
             self.scenesFactory = scenesFactory
             super.init()
         }

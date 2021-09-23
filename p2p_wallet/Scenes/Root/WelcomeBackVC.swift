@@ -12,13 +12,8 @@ class WelcomeBackVC: WLIntroVC {
     lazy var goToWalletButton = WLButton.stepButton(type: .blue, label: L10n.goToWallet)
         .onTap(self, action: #selector(goToWalletButtonDidTouch))
     
-    let viewModel: Root.ViewModel
-    let analyticsManager: AnalyticsManagerType
-    init(viewModel: Root.ViewModel, analyticsManager: AnalyticsManagerType) {
-        self.viewModel = viewModel
-        self.analyticsManager = analyticsManager
-        super.init()
-    }
+    @Injected private var viewModel: Root.ViewModel
+    @Injected private var analyticsManager: AnalyticsManagerType
     
     override func viewDidLoad() {
         super.viewDidLoad()

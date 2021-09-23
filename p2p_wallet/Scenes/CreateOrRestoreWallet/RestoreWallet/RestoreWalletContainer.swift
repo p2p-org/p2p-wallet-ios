@@ -11,18 +11,16 @@ class RestoreWalletContainer {
     // from parent
     let handler: CreateOrRestoreWalletHandler
     @Injected private var accountStorage: KeychainAccountStorage
-    let analyticsManager: AnalyticsManagerType
+    @Injected private var analyticsManager: AnalyticsManagerType
     
     // longlived dependency
     let viewModel: RestoreWalletViewModel
     
     init(
-        handler: CreateOrRestoreWalletHandler,
-        analyticsManager: AnalyticsManagerType
+        handler: CreateOrRestoreWalletHandler
     ) {
-        self.viewModel = RestoreWalletViewModel(handler: handler, analyticsManager: analyticsManager)
+        self.viewModel = RestoreWalletViewModel(handler: handler)
         self.handler = handler
-        self.analyticsManager = analyticsManager
     }
     
     func makeRestoreWalletViewController() -> RestoreWalletViewController
@@ -31,7 +29,7 @@ class RestoreWalletContainer {
     }
     
     func makeEnterPhrasesVC() -> RecoveryEnterSeedsViewController {
-        RecoveryEnterSeedsViewController(handler: viewModel, analyticsManager: analyticsManager)
+        RecoveryEnterSeedsViewController(handler: viewModel)
     }
     
     func makeDerivableAccountsVC(phrases: [String]) -> DerivableAccountsVC {
@@ -40,7 +38,7 @@ class RestoreWalletContainer {
             pricesFetcher: CryptoComparePricesFetcher(),
             handler: viewModel
         )
-        return DerivableAccountsVC(viewModel: viewModel, analyticsManager: analyticsManager)
+        return DerivableAccountsVC(viewModel: viewModel)
     }
 }
 

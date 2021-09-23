@@ -26,7 +26,7 @@ protocol ReceiveTokenViewModelType {
 extension ReceiveToken {
     class ViewModel {
         // MARK: - Dependencies
-        private let analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -41,7 +41,6 @@ extension ReceiveToken {
         init(
             solanaPubkey: SolanaSDK.PublicKey,
             solanaTokenWallet: Wallet? = nil,
-            analyticsManager: AnalyticsManagerType,
             tokensRepository: TokensRepository,
             renVMService: RenVMLockAndMintServiceType,
             isRenBTCWalletCreated: Bool,
@@ -50,14 +49,12 @@ extension ReceiveToken {
             self.receiveSolanaViewModel = ReceiveToken.ReceiveSolanaViewModel(
                 solanaPubkey: solanaPubkey.base58EncodedString,
                 solanaTokenWallet: solanaTokenWallet,
-                analyticsManager: analyticsManager,
                 tokensRepository: tokensRepository,
                 navigationSubject: navigationSubject
             )
             
             self.receiveBitcoinViewModel = ReceiveToken.ReceiveBitcoinViewModel(
                 renVMService: renVMService,
-                analyticsManager: analyticsManager,
                 navigationSubject: navigationSubject,
                 isRenBTCWalletCreated: isRenBTCWalletCreated,
                 associatedTokenAccountHandler: associatedTokenAccountHandler

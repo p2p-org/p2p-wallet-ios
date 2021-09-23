@@ -11,7 +11,7 @@ import BECollectionView
 final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     // MARK: - Properties
     private let viewModel: DerivableAccountsViewModel
-    private let analyticsManager: AnalyticsManagerType
+    @Injected private var analyticsManager: AnalyticsManagerType
     
     // MARK: - Subviews
     private lazy var headerView = UIStackView(axis: .vertical, spacing: 20, alignment: .leading, distribution: .fill) {
@@ -49,9 +49,8 @@ final class DerivableAccountsVC: BaseVC, DerivablePathsVCDelegate {
     }()
     
     // MARK: - Methods
-    init(viewModel: DerivableAccountsViewModel, analyticsManager: AnalyticsManagerType) {
+    init(viewModel: DerivableAccountsViewModel) {
         self.viewModel = viewModel
-        self.analyticsManager = analyticsManager
         super.init()
     }
     

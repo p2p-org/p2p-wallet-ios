@@ -30,7 +30,7 @@ extension WalletDetail {
         private let processingTransactionRepository: ProcessingTransactionsRepository
         private let pubkey: String
         private let symbol: String
-        let analyticsManager: AnalyticsManagerType
+        @Injected var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -50,7 +50,6 @@ extension WalletDetail {
             processingTransactionRepository: ProcessingTransactionsRepository,
             pricesRepository: PricesRepository,
             transactionsRepository: TransactionsRepository,
-            analyticsManager: AnalyticsManagerType,
             feeRelayer: FeeRelayerType,
             notificationsRepository: WLNotificationsRepository
         ) {
@@ -58,7 +57,6 @@ extension WalletDetail {
             self.symbol = symbol
             self.walletsRepository = walletsRepository
             self.processingTransactionRepository = processingTransactionRepository
-            self.analyticsManager = analyticsManager
             
             self.input = Input()
             self.output = Output(
