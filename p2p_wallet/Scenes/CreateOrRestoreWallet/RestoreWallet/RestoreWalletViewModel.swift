@@ -21,7 +21,7 @@ class RestoreWalletViewModel {
     let bag = DisposeBag()
     @Injected private var accountStorage: KeychainAccountStorage
     let handler: CreateOrRestoreWalletHandler
-    let analyticsManager: AnalyticsManagerType
+    @Injected private var analyticsManager: AnalyticsManagerType
     
     private var phrases: [String]?
     
@@ -30,9 +30,8 @@ class RestoreWalletViewModel {
     let errorMessage = PublishSubject<String?>()
     
     // MARK: - Initializer
-    init(handler: CreateOrRestoreWalletHandler, analyticsManager: AnalyticsManagerType) {
+    init(handler: CreateOrRestoreWalletHandler) {
         self.handler = handler
-        self.analyticsManager = analyticsManager
     }
     
     // MARK: - Actions

@@ -9,13 +9,7 @@ import Foundation
 
 class RecoveryEnterSeedsViewController: WLEnterPhrasesVC {
     // MARK: - Dependencies
-    private let analyticsManager: AnalyticsManagerType
-    
-    // MARK: - Initializers
-    init(handler: PhrasesCreationHandler, analyticsManager: AnalyticsManagerType) {
-        self.analyticsManager = analyticsManager
-        super.init(handler: handler)
-    }
+    @Injected private var analyticsManager: AnalyticsManagerType
     
     // MARK: - Methods
     override func viewDidLoad() {

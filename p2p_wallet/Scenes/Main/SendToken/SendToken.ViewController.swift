@@ -77,7 +77,7 @@ extension SendToken {
             case .chooseAddress:
                 break
             case .scanQrCode:
-                let vc = QrCodeScannerVC(analyticsManager: viewModel.analyticsManager)
+                let vc = QrCodeScannerVC()
                 vc.callback = { code in
                     if NSRegularExpression.publicKey.matches(code) {
                         self.viewModel.input.address.onNext(code)

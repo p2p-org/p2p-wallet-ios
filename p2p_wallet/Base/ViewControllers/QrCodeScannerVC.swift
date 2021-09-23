@@ -11,7 +11,7 @@ import UIKit
 
 class QrCodeScannerVC: BaseVC {
     // MARK: - Dependencies
-    let analyticsManager: AnalyticsManagerType
+    @Injected var analyticsManager: AnalyticsManagerType
     
     // MARK: - Properties
     var captureSession: AVCaptureSession!
@@ -28,10 +28,6 @@ class QrCodeScannerVC: BaseVC {
     private lazy var rangeLabel = UILabel(text: L10n.scanQRCode, weight: .medium, textColor: .white, textAlignment: .center)
     private lazy var closeButton = UIButton.closeFill()
         .onTap(self, action: #selector(closeButtonDidTouch))
-    
-    init(analyticsManager: AnalyticsManagerType) {
-        self.analyticsManager = analyticsManager
-    }
 
     override func setUp() {
         super.setUp()

@@ -31,7 +31,7 @@ class CreateOrRestoreWalletViewModel: ViewModelType {
     }
     
     // MARK: - Dependencies
-    let analyticsManager: AnalyticsManagerType
+    @Injected var analyticsManager: AnalyticsManagerType
     
     // MARK: - Properties
     private let bag = DisposeBag()
@@ -39,8 +39,7 @@ class CreateOrRestoreWalletViewModel: ViewModelType {
     let output: Output
     
     // MARK: - Initializer
-    init(analyticsManager: AnalyticsManagerType) {
-        self.analyticsManager = analyticsManager
+    init() {
         self.input = Input()
         self.output = Output(
             navigation: navigationSubject.asDriver()

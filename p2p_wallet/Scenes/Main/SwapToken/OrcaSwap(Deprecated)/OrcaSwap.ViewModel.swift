@@ -44,7 +44,7 @@ extension OrcaSwap {
         private let solWallet: Wallet?
         private let apiClient: OrcaSwapAPIClient
         private let authenticationHandler: AuthenticationHandler
-        let analyticsManager: AnalyticsManagerType
+        @Injected var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -82,13 +82,11 @@ extension OrcaSwap {
         init(
             solWallet: Wallet?,
             apiClient: OrcaSwapAPIClient,
-            authenticationHandler: AuthenticationHandler,
-            analyticsManager: AnalyticsManagerType
+            authenticationHandler: AuthenticationHandler
         ) {
             self.solWallet = solWallet
             self.apiClient = apiClient
             self.authenticationHandler = authenticationHandler
-            self.analyticsManager = analyticsManager
             
             self.input = Input()
             self.output = Output(

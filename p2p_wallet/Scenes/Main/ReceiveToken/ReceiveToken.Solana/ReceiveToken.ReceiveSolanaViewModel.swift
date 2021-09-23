@@ -27,7 +27,7 @@ protocol ReceiveTokenSolanaViewModelType {
 extension ReceiveToken {
     class ReceiveSolanaViewModel {
         // MARK: - Dependencies
-        private let analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManagerType
         private let tokensRepository: TokensRepository
         private let navigationSubject: BehaviorRelay<NavigatableScene?>
         
@@ -43,12 +43,10 @@ extension ReceiveToken {
         init(
             solanaPubkey: String,
             solanaTokenWallet: Wallet? = nil,
-            analyticsManager: AnalyticsManagerType,
             tokensRepository: TokensRepository,
             navigationSubject: BehaviorRelay<NavigatableScene?>
         ) {
             self.pubkey = solanaPubkey
-            self.analyticsManager = analyticsManager
             self.tokensRepository = tokensRepository
             var tokenWallet = solanaTokenWallet
             if solanaTokenWallet?.pubkey == solanaPubkey {

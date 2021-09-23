@@ -23,14 +23,12 @@ class ConfigureSecurityVC: ProfileVCBase {
     
     @Injected private var accountStorage: KeychainAccountStorage
     let authenticationHandler: AuthenticationHandler
-    let analyticsManager: AnalyticsManagerType
+    @Injected private var analyticsManager: AnalyticsManagerType
     
     init(
-        authenticationHandler: AuthenticationHandler,
-        analyticsManager: AnalyticsManagerType
+        authenticationHandler: AuthenticationHandler
     ) {
         self.authenticationHandler = authenticationHandler
-        self.analyticsManager = analyticsManager
     }
     
     override func setUp() {

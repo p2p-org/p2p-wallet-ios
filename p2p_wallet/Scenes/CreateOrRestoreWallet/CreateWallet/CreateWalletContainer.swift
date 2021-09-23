@@ -11,17 +11,15 @@ class CreateWalletContainer {
     // from parent
     let handler: CreateOrRestoreWalletHandler
     @Injected private var accountStorage: KeychainAccountStorage
-    let analyticsManager: AnalyticsManagerType
+    @Injected private var analyticsManager: AnalyticsManagerType
     
     // longlived dependency
     let viewModel: CreateWalletViewModel
     
     init(
-        handler: CreateOrRestoreWalletHandler,
-        analyticsManager: AnalyticsManagerType
+        handler: CreateOrRestoreWalletHandler
     ) {
-        self.analyticsManager = analyticsManager
-        self.viewModel = CreateWalletViewModel(handler: handler, analyticsManager: analyticsManager)
+        self.viewModel = CreateWalletViewModel(handler: handler)
         self.handler = handler
     }
     
@@ -35,7 +33,7 @@ class CreateWalletContainer {
     }
     
     func makeCreateSecurityKeysViewController() -> CreateSecurityKeysViewController {
-        let viewModel = CreateSecurityKeysViewModel(createWalletViewModel: self.viewModel, analyticsManager: analyticsManager)
+        let viewModel = CreateSecurityKeysViewModel(createWalletViewModel: self.viewModel)
         return CreateSecurityKeysViewController(viewModel: viewModel)
     }
 }

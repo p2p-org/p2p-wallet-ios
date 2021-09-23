@@ -41,12 +41,11 @@ class ProfileVC: ProfileVCBase {
     @Injected private var accountStorage: KeychainAccountStorage
     let rootViewModel: Root.ViewModel
     let scenesFactory: ProfileScenesFactory
-    let analyticsManager: AnalyticsManagerType
+    @Injected private var analyticsManager: AnalyticsManagerType
     
-    init(rootViewModel: Root.ViewModel, scenesFactory: ProfileScenesFactory, analyticsManager: AnalyticsManagerType) {
+    init(rootViewModel: Root.ViewModel, scenesFactory: ProfileScenesFactory) {
         self.scenesFactory = scenesFactory
         self.rootViewModel = rootViewModel
-        self.analyticsManager = analyticsManager
     }
     
     deinit {

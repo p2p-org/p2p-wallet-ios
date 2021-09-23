@@ -8,18 +8,10 @@
 import Foundation
 
 class OnboardingContainer {
-    let handler: OnboardingHandler
+    @Injected private var handler: OnboardingHandler
     @Injected private var accountStorage: KeychainAccountStorage
     
-    let viewModel: OnboardingViewModel
-    
-    init(
-        handler: OnboardingHandler,
-        analyticsManager: AnalyticsManagerType
-    ) {
-        self.viewModel = OnboardingViewModel(handler: handler, analyticsManager: analyticsManager)
-        self.handler = handler
-    }
+    let viewModel = OnboardingViewModel()
     
     func makeOnboardingViewController() -> OnboardingViewController {
         OnboardingViewController(viewModel: viewModel, scenesFactory: self)

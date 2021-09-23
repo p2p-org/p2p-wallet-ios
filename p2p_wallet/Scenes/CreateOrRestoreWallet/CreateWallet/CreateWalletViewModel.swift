@@ -24,7 +24,7 @@ class CreateWalletViewModel: ViewModelType {
     
     // MARK: - Dependencies
     private let handler: CreateOrRestoreWalletHandler
-    let analyticsManager: AnalyticsManagerType
+    @Injected var analyticsManager: AnalyticsManagerType
     
     // MARK: - Properties
     private let bag = DisposeBag()
@@ -34,8 +34,7 @@ class CreateWalletViewModel: ViewModelType {
     // MARK: - Subjects
     private let navigationSubject = PublishSubject<CreateWalletNavigatableScene>()
     
-    init(handler: CreateOrRestoreWalletHandler, analyticsManager: AnalyticsManagerType) {
-        self.analyticsManager = analyticsManager
+    init(handler: CreateOrRestoreWalletHandler) {
         self.handler = handler
         
         self.input = Input()
