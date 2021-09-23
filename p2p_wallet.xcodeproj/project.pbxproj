@@ -853,7 +853,6 @@
 				BC1BEBF626CDF6520049A44C /* SwapToken.ViewController.swift */,
 				BC1BEBF826CDF6520049A44C /* SwapToken.RootView.swift */,
 				BC1BEBFD26CDFE290049A44C /* SwapToken.WalletView.swift */,
-				BCDABE7D26FC905400E083B8 /* SwapToken.ViewBuilder.swift */,
 				BC80569826D8DDA700206ECA /* Settings */,
 			);
 			path = SwapToken;
@@ -2332,7 +2331,6 @@
 				BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,
-				BCDABE7E26FC905400E083B8 /* SwapToken.ViewBuilder.swift in Sources */,
 				BC105130258B05DF00398EA2 /* BackupManuallyVC.swift in Sources */,
 				BCEB206D25E1561200B54FEF /* TabBar.swift in Sources */,
 				BC699AB425F9DE3400F57209 /* WLRadioButton.swift in Sources */,

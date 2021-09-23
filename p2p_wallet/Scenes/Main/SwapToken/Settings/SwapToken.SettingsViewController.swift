@@ -46,7 +46,7 @@ extension SwapToken {
         override func bind() {
             super.bind()
             viewModel.slippageDriver
-                .map {slippageAttributedText(slippage: $0 ?? 0)}
+                .map {NSAttributedString.slippageAttributedText(slippage: $0 ?? 0)}
                 .drive(slippageLabel.rx.attributedText)
                 .disposed(by: disposeBag)
             
@@ -70,7 +70,7 @@ extension SwapToken {
         override func setUpContent(stackView: UIStackView) {
             stackView.spacing = 12
             
-            payingTokenSection = createSectionView(
+            payingTokenSection = .createSectionView(
                 title: L10n.payNetworkFeeWith,
                 contentView: payingTokenLabel,
                 addSeparatorOnTop: false
@@ -78,7 +78,7 @@ extension SwapToken {
                 .onTap(self, action: #selector(navigateToPayNetworkFeeWithVC))
             
             stackView.addArrangedSubviews {
-                createSectionView(
+                UIView.createSectionView(
                     title: L10n.slippageSettings,
                     contentView: slippageLabel,
                     addSeparatorOnTop: false
