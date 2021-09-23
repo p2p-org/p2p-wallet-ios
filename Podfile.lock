@@ -129,6 +129,7 @@ PODS:
   - PusherSwift (10.0.0):
     - NWWebSocket (~> 0.5.2)
     - TweetNacl (~> 1.0.0)
+  - Resolver (1.4.4)
   - Runtime (2.2.2)
   - RxAlamofire (6.1.1):
     - RxAlamofire/Core (= 6.1.1)
@@ -186,6 +187,7 @@ DEPENDENCIES:
   - LazySubject (from `LazySubject`)
   - "ListPlaceholder (from `git@github.com:p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)"
   - MBProgressHUD (~> 1.2.0)
+  - Resolver
   - RxAppState
   - RxBiBinding
   - RxBlocking
@@ -230,6 +232,7 @@ SPEC REPOS:
     - PromisesObjC
     - PureLayout
     - PusherSwift
+    - Resolver
     - Runtime
     - RxAlamofire
     - RxAppState
@@ -310,6 +313,7 @@ SPEC CHECKSUMS:
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   PureLayout: a4afb3d79dd958564ce33d22c89f407280d8e6a8
   PusherSwift: 264eaceb921a5f8e166f01a2242371179540c7ff
+  Resolver: ec76daf652ac898b1e8a449cd9df3b45b5ce8196
   Runtime: 67741bd196fb4ad821c4d259ccc527bf734d8806
   RxAlamofire: beb75a1c452d0de225651db4903f5d29d034a620
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
@@ -331,6 +335,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: edc402c475bf14d3b97f8c9517adbe30503760fb
+PODFILE CHECKSUM: c61e673cbafd729af43734fa428034a5a55967c7
 
 COCOAPODS: 1.10.1

@@ -9,17 +9,15 @@ import Foundation
 
 class OnboardingContainer {
     let handler: OnboardingHandler
-    let accountStorage: KeychainAccountStorage
+    @Injected private var accountStorage: KeychainAccountStorage
     
     let viewModel: OnboardingViewModel
     
     init(
-        accountStorage: KeychainAccountStorage,
         handler: OnboardingHandler,
         analyticsManager: AnalyticsManagerType
     ) {
-        self.viewModel = OnboardingViewModel(accountStorage: accountStorage, handler: handler, analyticsManager: analyticsManager)
-        self.accountStorage = accountStorage
+        self.viewModel = OnboardingViewModel(handler: handler, analyticsManager: analyticsManager)
         self.handler = handler
     }
     
