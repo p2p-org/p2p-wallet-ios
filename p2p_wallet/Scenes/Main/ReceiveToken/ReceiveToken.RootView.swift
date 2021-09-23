@@ -46,9 +46,12 @@ extension ReceiveToken {
             
             stackView.spacing = 20
             stackView.addArrangedSubviews {
-                switcher.centeredHorizontallyView
                 receiveSolanaView
                 receiveBTCView
+            }
+            
+            if viewModel.shouldShowChainsSwitcher {
+                stackView.insertArrangedSubview(switcher.centeredHorizontallyView, at: 0)
             }
         }
         

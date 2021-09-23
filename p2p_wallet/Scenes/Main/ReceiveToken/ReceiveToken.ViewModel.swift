@@ -16,6 +16,7 @@ protocol ReceiveTokenViewModelType {
     var updateLayoutDriver: Driver<Void> {get}
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType {get}
     var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {get}
+    var shouldShowChainsSwitcher: Bool {get}
     
     // MARK: - Actions
     func switchToken(_ tokenType: ReceiveToken.TokenType)
@@ -63,6 +64,12 @@ extension ReceiveToken {
             )
             
             self.analyticsManager = analyticsManager
+            
+            if let token = solanaTokenWallet?.token,
+               token.isRenBTC
+            {
+                tokenTypeSubject.accept(.btc)
+            }
         }
     }
 }
@@ -95,5 +102,9 @@ extension ReceiveToken.ViewModel: ReceiveTokenViewModelType {
     func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
         UIApplication.shared.copyToClipboard(address, alert: false)
         analyticsManager.log(event: logEvent)
+    }
+    
+    var shouldShowChainsSwitcher: Bool {
+        receiveSolanaViewModel.tokenWallet == nil
     }
 }
