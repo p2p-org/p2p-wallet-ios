@@ -470,3 +470,4 @@
 "Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL." = "Требуется учетная запись связанного токена Solana.  Для этого вам потребуется подписать транзакцию и потратить немного SOL.";
 "Create Token Account" = "Создать учетную запись токена";
 "Creating Token Account" = "Создание учетной записи токена";
+"Which cryptocurrencies can I use?" = "Какие криптовалюты я могу использовать?";
