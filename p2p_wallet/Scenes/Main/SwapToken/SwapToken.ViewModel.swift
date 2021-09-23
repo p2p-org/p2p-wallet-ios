@@ -9,6 +9,52 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+protocol SwapTokenViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewModelType, SwapTokenSwapFeesViewModelType {
+    // Input
+    var inputAmountSubject: PublishRelay<String?> {get}
+    var estimatedAmountSubject: PublishRelay<String?> {get}
+    
+    // Drivers
+    var navigationDriver: Driver<SwapToken.NavigatableScene?> {get}
+    var initialStateDriver: Driver<LoadableState> {get}
+    
+    var sourceWalletDriver: Driver<Wallet?> {get}
+    var availableAmountDriver: Driver<Double?> {get}
+    var inputAmountDriver: Driver<Double?> {get}
+    
+    var destinationWalletDriver: Driver<Wallet?> {get}
+    var estimatedAmountDriver: Driver<Double?> {get}
+    
+    var exchangeRateDriver: Driver<Loadable<Double>> {get}
+    
+    var slippageDriver: Driver<Double?> {get}
+    
+    var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> {get}
+    
+    var payingTokenDriver: Driver<PayingToken> {get}
+    
+    var errorDriver: Driver<String?> {get}
+    
+    var isExchangeRateReversedDriver: Driver<Bool> {get}
+    
+    // Signals
+    var useAllBalanceDidTapSignal: Signal<Double?> {get}
+    
+    // Actions
+    func reload()
+    func calculateExchangeRateAndFees()
+    func navigate(to: SwapToken.NavigatableScene)
+    func useAllBalance()
+    func log(_ event: AnalyticsEvent)
+    func swapSourceAndDestination()
+    func reverseExchangeRate()
+    func authenticateAndSwap()
+    func changeSlippage(to slippage: Double)
+    func changePayingToken(to payingToken: PayingToken)
+    func getSourceWallet() -> Wallet?
+    func providerSignatureView() -> UIView
+}
+
 extension SwapToken {
     class ViewModel {
         // MARK: - Dependencies
