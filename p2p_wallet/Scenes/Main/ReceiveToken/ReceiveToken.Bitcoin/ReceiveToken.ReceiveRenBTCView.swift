@@ -276,10 +276,11 @@ private class AddressView: BEView {
                 .padding(.zero, cornerRadius: 12)
                 .padding(.init(x: 20, y: 0))
             
-            UILabel(text: L10n.viewInExplorer, textSize: 17, weight: .medium, textColor: .textSecondary, textAlignment: .center)
-                .onTap(self, action: #selector(showBTCAddressInExplorer))
-                .centeredHorizontallyView
-                .padding(.init(x: 20, y: 9))
+            BEStackViewSpacing(50)
+            ReceiveToken.viewInExplorerButton(
+                target: self,
+                selector: #selector(showBTCAddressInExplorer)
+            )
         }
         
         addSubview(stackView)
@@ -322,7 +323,7 @@ private class AddressView: BEView {
         
         viewModel.addressDriver
             .drive(onNext: {[weak self] address in
-                self?.qrCodeView.setUp(string: address)
+                self?.qrCodeView.setUp(string: address, token: .renBTC)
                 self?.currentAddress = address
             })
             .disposed(by: disposeBag)

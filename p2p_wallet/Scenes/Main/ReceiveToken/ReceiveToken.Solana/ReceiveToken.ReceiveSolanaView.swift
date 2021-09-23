@@ -47,74 +47,48 @@ extension ReceiveToken {
         private func layout() {
             let stackView = UIStackView(
                 axis: .vertical,
-                spacing: 20,
+                spacing: 24,
                 alignment: .fill,
                 distribution: .fill
             ) {
-                UILabel(text: L10n.oneUnifiedAddressToReceiveSOLOrSPLTokens, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
-                    .padding(.init(x: 20, y: 0))
+                UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
+                    UILabel(text: L10n.whichCryptocurrenciesCanIUse, textSize: 15, weight: .semibold, numberOfLines: 0)
+                    UIImageView(width: 24, height: 24, image: .questionMarkCircle, tintColor: .a3a5ba)
+                        .onTap(self, action: #selector(showHelp))
+                }
+                    .padding(.init(x: 20, y: 22.5), cornerRadius: 12)
+                    .border(width: 1, color: .defaultBorder)
                 
-                QrCodeView.withFrame(string: viewModel.pubkey)
+                QrCodeView.withFrame(string: viewModel.pubkey, token: viewModel.tokenWallet?.token)
                     .0
                     .centeredHorizontallyView
                 
-                UIView(forAutoLayout: ())
-                    .withModifier {[unowned self] view in
-                        let imageView = UIImageView(width: 92, height: 32, image: .tokenExampleStack)
-                        view.addSubview(imageView)
-                        imageView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .trailing)
-                        let wrapperView = self.tokenCountLabel
-                            .padding(.init(x: 6, y: 4), backgroundColor: .h202020.withAlphaComponent(0.8), cornerRadius: 12)
-                        view.addSubview(wrapperView)
-                        wrapperView.autoPinEdge(toSuperviewEdge: .trailing)
-                        wrapperView.autoAlignAxis(toSuperviewAxis: .horizontal)
-                        wrapperView.autoPinEdge(.leading, to: .trailing, of: imageView, withOffset: -12)
-                        return view
-                    }
-                    .onTap(self, action: #selector(showHelp))
-                    .centeredHorizontallyView
-                
-                UIStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill) {
-                    addressLabel
-                        .padding(.init(all: 20), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
-                        .onTap(self, action: #selector(copyMainPubkeyToClipboard))
-                    
-                    UIImageView(width: 32, height: 32, image: .share, tintColor: .a3a5ba)
-                        .onTap(self, action: #selector(share))
-                        .padding(.init(all: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
-                }
-                    .padding(.zero, cornerRadius: 12)
-                    .padding(.init(x: 20, y: 0))
+                ReceiveToken.copyAndShareableField(
+                    label: addressLabel,
+                    copyTarget: self,
+                    copySelector: #selector(copyMainPubkeyToClipboard),
+                    shareTarget: self, shareSelector: #selector(share)
+                )
             }
             
             if viewModel.tokenWallet != nil {
                 stackView.addArrangedSubviews {
                     detailView
-                    showHideDetailButton.padding(.init(x: 20, y: 0))
-                    BEStackViewSpacing(16)
+                    showHideDetailButton
                 }
             } else {
                 stackView.addArrangedSubviews {
-                    UILabel(text: L10n.viewInExplorer, textSize: 17, weight: .medium, textColor: .textSecondary, textAlignment: .center)
-                        .onTap(self, action: #selector(showSolAddressInExplorer))
-                        .centeredHorizontallyView
-                        .padding(.init(x: 20, y: 9))
-                    BEStackViewSpacing(25)
+                    BEStackViewSpacing(50)
+                    ReceiveToken.viewInExplorerButton(
+                        target: self,
+                        selector: #selector(showSolAddressInExplorer)
+                    )
                 }
-            }
-            
-            stackView.addArrangedSubviews {
-                UIView.defaultSeparator()
-                
-                BEStackViewSpacing(10)
-                
-                UIView.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice()
-                    .padding(.init(x: 20, y: 0))
             }
             
             // add stackView
             addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges()
+            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 0))
         }
         
         private func bind() {

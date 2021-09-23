@@ -10,19 +10,21 @@ import Foundation
 extension ReceiveToken {
     class QrCodeView: BEView {
         private let size: CGFloat
-    //    private let coinLogoSize: CGFloat
+        private let coinLogoSize: CGFloat
         
         private lazy var qrCodeImageView = QrCodeImageView(backgroundColor: .clear)
-    //    private lazy var logoImageView: CoinLogoImageView = {
-    //        let imageView = CoinLogoImageView(size: 50)
-    //        imageView.layer.borderWidth = 2
-    //        imageView.layer.borderColor = UIColor.textWhite.cgColor
-    //        return imageView
-    //    }()
+        private lazy var logoImageView: CoinLogoImageView = {
+            let imageView = CoinLogoImageView(size: coinLogoSize)
+            imageView.layer.borderWidth = 4
+            imageView.layer.borderColor = UIColor.textWhite.cgColor
+            imageView.layer.cornerRadius = coinLogoSize / 2
+            imageView.layer.masksToBounds = true
+            return imageView
+        }()
         
         init(size: CGFloat, coinLogoSize: CGFloat) {
             self.size = size
-    //        self.coinLogoSize = coinLogoSize
+            self.coinLogoSize = coinLogoSize
             super.init(frame: .zero)
         }
         
@@ -30,40 +32,40 @@ extension ReceiveToken {
             super.commonInit()
             configureForAutoLayout()
             autoSetDimensions(to: .init(width: size, height: size))
-    //        logoImageView.autoSetDimensions(to: .init(width: coinLogoSize, height: coinLogoSize))
+            logoImageView.autoSetDimensions(to: .init(width: coinLogoSize, height: coinLogoSize))
             
             addSubview(qrCodeImageView)
             qrCodeImageView.autoPinEdgesToSuperviewEdges()
             
-    //        addSubview(logoImageView)
-    //        logoImageView.autoCenterInSuperview()
+            addSubview(logoImageView)
+            logoImageView.autoCenterInSuperview()
         }
         
         func setUp(wallet: Wallet?) {
             if let pubkey = wallet?.pubkey {
                 qrCodeImageView.setQrCode(string: pubkey)
-    //            logoImageView.setUp(wallet: wallet)
-    //            logoImageView.isHidden = false
+                logoImageView.setUp(wallet: wallet)
+                logoImageView.isHidden = false
             } else {
                 qrCodeImageView.setQrCode(string: "<placeholder>")
-    //            logoImageView.isHidden = true
+                logoImageView.isHidden = true
             }
         }
         
-        func setUp(string: String?) {
+        func setUp(string: String?, token: SolanaSDK.Token? = nil) {
             qrCodeImageView.setQrCode(string: string)
-    //        logoImageView.isHidden = true
+            logoImageView.setUp(token: token ?? .nativeSolana)
         }
         
         @discardableResult
-        func with(string: String?) -> Self {
-            setUp(string: string)
+        func with(string: String?, token: SolanaSDK.Token? = nil) -> Self {
+            setUp(string: string, token: token)
             return self
         }
         
-        static func withFrame(string: String? = nil) -> (UIView, QrCodeView) {
-            let qrCodeView = QrCodeView(size: 190, coinLogoSize: 50)
-                .with(string: string)
+        static func withFrame(string: String? = nil, token: SolanaSDK.Token? = nil) -> (UIView, QrCodeView) {
+            let qrCodeView = QrCodeView(size: 190, coinLogoSize: 32)
+                .with(string: string, token: token)
             
             let view = UIImageView(width: 207, height: 207, image: .receiveQrCodeFrame, tintColor: .f6f6f8.onDarkMode(.h8d8d8d))
                 .withCenteredChild(

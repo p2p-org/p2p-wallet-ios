@@ -15,7 +15,7 @@ extension ReceiveToken {
                 .withContentHuggingPriority(.required, for: .horizontal)
         }
             .padding(.init(all: 20), cornerRadius: 12)
-            .border(width: 1, color: .f6f6f8.onDarkMode(.white.withAlphaComponent(0.5)))
+            .border(width: 1, color: .defaultBorder)
     }
 
     static func textBuilder(text: String) -> UIStackView {
@@ -29,5 +29,34 @@ extension ReceiveToken {
                     lineSpacing: 8
                 )
         }
+    }
+    
+    static func copyAndShareableField(
+        label: UILabel,
+        copyTarget: Any?,
+        copySelector: Selector,
+        shareTarget: Any?,
+        shareSelector: Selector
+    ) -> UIView {
+        UIStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill) {
+            label
+                .padding(.init(all: 20), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
+                .onTap(copyTarget, action: copySelector)
+            
+            UIImageView(width: 32, height: 32, image: .share, tintColor: .a3a5ba)
+                .onTap(shareTarget, action: shareSelector)
+                .padding(.init(all: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
+        }
+            .padding(.zero, cornerRadius: 12)
+    }
+    
+    static func viewInExplorerButton(
+        target: Any?,
+        selector: Selector
+    ) -> UIView {
+        UILabel(text: L10n.viewInExplorer, textSize: 17, weight: .medium, textColor: .textSecondary, textAlignment: .center)
+            .onTap(target, action: selector)
+            .centeredHorizontallyView
+            .padding(.init(x: 0, y: 9))
     }
 }
