@@ -64,7 +64,7 @@ extension OrcaSwap {
                 
                 destinationWalletView
                 
-                createSectionView(
+                OrcaSwap.createSectionView(
                     title: L10n.currentPrice,
                     contentView: exchangeRateLabel,
                     rightView: exchangeRateReverseButton,
@@ -75,7 +75,7 @@ extension OrcaSwap {
                 UIView.defaultSeparator()
                     .withTag(2)
                 
-                createSectionView(
+                OrcaSwap.createSectionView(
                     title: L10n.maxPriceSlippage,
                     contentView: slippageLabel,
                     addSeparatorOnTop: false
@@ -86,7 +86,7 @@ extension OrcaSwap {
                 UIView.defaultSeparator()
                     .withTag(4)
                 
-                createSectionView(
+                OrcaSwap.createSectionView(
                     label: swapFeeLabel,
                     contentView: errorLabel,
                     addSeparatorOnTop: false

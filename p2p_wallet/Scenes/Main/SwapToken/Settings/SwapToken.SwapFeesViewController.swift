@@ -41,7 +41,7 @@ extension SwapToken {
         }
         
         override func setUpContent(stackView: UIStackView) {
-            payingTokenSection = createSectionView(
+            payingTokenSection = .createSectionView(
                 title: L10n.payNetworkFeeWith,
                 contentView: payingTokenLabel,
                 addSeparatorOnTop: false
@@ -49,14 +49,14 @@ extension SwapToken {
                 .onTap(self, action: #selector(navigateToPayNetworkFeeWithVC))
             
             stackView.addArrangedSubviews {
-                createSectionView(
+                UIView.createSectionView(
                     title: L10n.liquidityProviderFee,
                     contentView: liquidityProviderFeeLabel,
                     rightView: nil,
                     addSeparatorOnTop: false
                 )
                 UIView.defaultSeparator()
-                createSectionView(
+                UIView.createSectionView(
                     title: L10n.networkFee,
                     contentView: networkFeeLabel,
                     rightView: nil,
