@@ -62,6 +62,9 @@ extension ReceiveToken {
             case .showBTCExplorer(let address):
                 let url = "https://btc.com/btc/address/\(address)"
                 showWebsite(url: url)
+            case .chooseBTCOption(let selectedOption):
+                let vc = SelectBTCTypeViewController(viewModel: viewModel.receiveBitcoinViewModel, selectedOption: selectedOption)
+                present(vc, interactiveDismissalType: .standard)
             case .share(let address):
                 let vc = UIActivityViewController(activityItems: [address], applicationActivities: nil)
                 present(vc, animated: true, completion: nil)

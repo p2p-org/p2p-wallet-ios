@@ -6,18 +6,10 @@
 //
 
 import Foundation
+import UIKit
+import SwiftUI
 
 extension ReceiveToken {
-    static func switchField(text: String, switch: UISwitch) -> UIView {
-        UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
-            UILabel(text: text, textSize: 15, weight: .semibold, numberOfLines: 0)
-            `switch`
-                .withContentHuggingPriority(.required, for: .horizontal)
-        }
-            .padding(.init(all: 20), cornerRadius: 12)
-            .border(width: 1, color: .defaultBorder)
-    }
-
     static func textBuilder(text: String) -> UIStackView {
         UIStackView(axis: .horizontal, spacing: 10, alignment: .top, distribution: .fill) {
             UIView(width: 3, height: 3, backgroundColor: .textBlack, cornerRadius: 1.5)

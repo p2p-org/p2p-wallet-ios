@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import UIKit
 
 extension ReceiveToken {
     class ReceiveBitcoinView: BEView {
@@ -19,7 +20,7 @@ extension ReceiveToken {
         private let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
         
         // MARK: - Subviews
-        private lazy var receiveRenBTCSwitcher = UISwitch()
+        private lazy var btcTypeLabel = UILabel(textSize: 15, weight: .medium)
         private lazy var receiveNormalBTCView = ReceiveSolanaView(viewModel: receiveSolanaViewModel)
         private lazy var receiveRenBTCView = ReceiveRenBTCView(viewModel: viewModel)
         
@@ -47,8 +48,14 @@ extension ReceiveToken {
                 alignment: .fill,
                 distribution: .fill
             ) {
-                ReceiveToken.switchField(text: L10n.iWantToReceiveRenBTC, switch: receiveRenBTCSwitcher)
+                UIView.createSectionView(
+                    title: L10n.iWantToReceive,
+                    contentView: btcTypeLabel,
+                    addSeparatorOnTop: false
+                )
                     .padding(.init(x: 20, y: 0))
+                    .onTap(self, action: #selector(buttonSelectBTCTypeDidTouch))
+                    .padding(.init(only: .left, inset: 20))
                 receiveNormalBTCView
                 receiveRenBTCView
             }
@@ -62,11 +69,10 @@ extension ReceiveToken {
         }
         
         private func bind() {
-            receiveRenBTCSwitcher
-                .addTarget(self, action: #selector(receiveRenBTCSwitcherDidTouch(sender:)), for: .valueChanged)
-            
             viewModel.isReceivingRenBTCDriver
-                .drive(receiveRenBTCSwitcher.rx.isOn)
+                .map {isRenBTC -> BTCTypeOption in  isRenBTC ? .renBTC: .splBTC}
+                .map {$0.stringValue}
+                .drive(btcTypeLabel.rx.text)
                 .disposed(by: disposeBag)
             
             viewModel.isReceivingRenBTCDriver
@@ -79,8 +85,8 @@ extension ReceiveToken {
                 .disposed(by: disposeBag)
         }
         
-        @objc private func receiveRenBTCSwitcherDidTouch(sender: UISwitch) {
-            viewModel.toggleIsReceivingRenBTC(isReceivingRenBTC: sender.isOn)
+        @objc private func buttonSelectBTCTypeDidTouch() {
+            viewModel.showBTCTypeOptions()
         }
     }
 }
