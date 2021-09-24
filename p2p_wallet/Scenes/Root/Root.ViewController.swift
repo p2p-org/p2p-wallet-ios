@@ -13,7 +13,7 @@ extension Root {
         private var statusBarStyle: UIStatusBarStyle = .default
         override var preferredStatusBarStyle: UIStatusBarStyle {self.statusBarStyle}
         
-        // MARK: - Properties
+        // MARK: - Dependencies
         @Injected private var viewModel: RootViewModelType
         
         // MARK: - Methods
