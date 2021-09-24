@@ -44,17 +44,7 @@ class DerivableAccountCell: BaseCollectionViewCell, BECollectionViewCell {
         
         contentView.alpha = account.isBlured == true ? 0.5: 1
         
-        let token = SolanaSDK.Token(
-            _tags: [],
-            chainId: 101,
-            address: "So11111111111111111111111111111111111111112",
-            symbol: "SOL",
-            name: "Solana",
-            decimals: 9,
-            logoURI: nil,
-            extensions: nil
-        )
-        logoImageView.setUp(token: token)
+        logoImageView.setUp(token: .nativeSolana)
         addressLabel.text = account.info.publicKey.short()
         
         balanceInFiatLabel.text = (account.amount * account.price)
