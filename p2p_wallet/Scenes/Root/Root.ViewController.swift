@@ -45,24 +45,24 @@ extension Root {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .createOrRestoreWallet:
-                let vc: CreateOrRestoreWallet.ViewController = Resolver.resolve()
+                let vc = CreateOrRestoreWallet.ViewController()
                 let nc = BENavigationController(rootViewController: vc)
                 transition(to: nc)
                 
                 changeStatusBarStyle(.lightContent)
                 
             case .onboarding:
-                let vc: OnboardingViewController = Resolver.resolve()
+                let vc = Onboarding.ViewController()
                 transition(to: vc)
                 
                 changeStatusBarStyle(.lightContent)
                 
             case .onboardingDone(let isRestoration):
                 if isRestoration {
-                    let vc: WelcomeBackVC = Resolver.resolve()
+                    let vc = WelcomeBackVC()
                     transition(to: vc)
                 } else {
-                    let vc: WellDoneVC = Resolver.resolve()
+                    let vc = WellDoneVC()
                     transition(to: vc)
                 }
                 
@@ -70,7 +70,8 @@ extension Root {
                 
             case .main(let showAuthenticationWhenAppears):
                 // MainViewController
-                let vc = scenesFactory.makeMainViewController(authenticateWhenAppears: showAuthenticationWhenAppears)
+                let container = MainContainer()
+                let vc = container.makeMainViewController(authenticateWhenAppears: showAuthenticationWhenAppears)
                 transition(to: vc)
                 
                 changeStatusBarStyle(.default)

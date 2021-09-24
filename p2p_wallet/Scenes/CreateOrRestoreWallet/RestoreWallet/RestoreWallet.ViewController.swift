@@ -58,7 +58,13 @@ extension RestoreWallet {
                 let vc = WLModalWrapperVC(wrapped: wrappedVC)
                 present(vc, animated: true, completion: nil)
             case .derivableAccounts(let phrases):
-                let vc = WLModalWrapperVC(wrapped: scenesFactory.makeDerivableAccountsVC(phrases: phrases))
+                let viewModel = DerivableAccountsViewModel(
+                    phrases: phrases,
+                    pricesFetcher: CryptoComparePricesFetcher()
+                )
+                let wrappedVC = DerivableAccountsVC(viewModel: viewModel)
+
+                let vc = WLModalWrapperVC(wrapped: wrappedVC)
                 present(vc, animated: true, completion: nil)
             default:
                 break

@@ -60,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // set rootVC
-        let vc: Root.ViewController = Resolver.resolve()
+        let vc = Root.ViewController()
         window?.rootViewController = vc
         
         window?.makeKeyAndVisible()

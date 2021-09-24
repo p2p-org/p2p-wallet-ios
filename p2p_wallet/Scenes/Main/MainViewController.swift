@@ -12,7 +12,7 @@ import Action
 protocol _MainScenesFactory {
     func makeTabBarVC() -> TabBarVC
     func makeLocalAuthVC() -> LocalAuthVC
-    func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrasesViewController
+    func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrases.ViewController
 }
 
 class MainViewController: BaseVC {
@@ -20,7 +20,7 @@ class MainViewController: BaseVC {
     private let scenesFactory: _MainScenesFactory
     private let viewModel: MainViewModel
     private var localAuthVC: LocalAuthVC?
-    private var resetPinCodeWithASeedPhrasesVC: ResetPinCodeWithSeedPhrasesViewController?
+    private var resetPinCodeWithASeedPhrasesVC: ResetPinCodeWithSeedPhrases.ViewController?
     private let authenticateWhenAppears: Bool
     
     // MARK: - Subviews
