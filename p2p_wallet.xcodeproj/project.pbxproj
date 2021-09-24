@@ -40,7 +40,7 @@
 		BC11CA252592FEA300E399A9 /* BalancesOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11CA242592FEA300E399A9 /* BalancesOverviewView.swift */; };
 		BC123E7F25B181B60043178E /* NSObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC123E7E25B181B60043178E /* NSObject+Extensions.swift */; };
 		BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC123E8325B181D80043178E /* Locale+Extensions.swift */; };
-		BC1255092653A2E400695A2B /* DerivablePathsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1255082653A2E400695A2B /* DerivablePathsVC.swift */; };
+		BC1255092653A2E400695A2B /* DerivablePaths.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1255082653A2E400695A2B /* DerivablePaths.ViewController.swift */; };
 		BC12550B2653A61C00695A2B /* SelectableDerivablePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */; };
 		BC134FA326FCD1E500DB15BF /* AppDelegate+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC134FA226FCD1E500DB15BF /* AppDelegate+Injection.swift */; };
 		BC134FA526FD76E100DB15BF /* CreateOrRestoreWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC134FA426FD76E100DB15BF /* CreateOrRestoreWallet.swift */; };
@@ -51,6 +51,7 @@
 		BC134FAF26FDA6F600DB15BF /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC134FAE26FDA6F600DB15BF /* Onboarding.swift */; };
 		BC1460C62685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */; };
 		BC15EEF026FDD04600F30605 /* DerivableAccounts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC15EEEF26FDD04600F30605 /* DerivableAccounts.swift */; };
+		BC15EEF226FDE10A00F30605 /* DerivablePaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC15EEF126FDE10A00F30605 /* DerivablePaths.swift */; };
 		BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC185EF726E20CFF00280FE6 /* SwapProvider.swift */; };
 		BC185EFA26E3B81F00280FE6 /* LoadableRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC185EF926E3B81F00280FE6 /* LoadableRelay.swift */; };
 		BC185EFC26E4BF3300280FE6 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC185EFB26E4BF3300280FE6 /* UIFont+Extensions.swift */; };
@@ -135,8 +136,8 @@
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */; };
 		BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */; };
-		BC53E21E2654BF88005624CC /* DerivablePathCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E21D2654BF88005624CC /* DerivablePathCell.swift */; };
-		BC53E2202654BFAA005624CC /* DerivablePathsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E21F2654BFAA005624CC /* DerivablePathsViewModel.swift */; };
+		BC53E21E2654BF88005624CC /* DerivablePaths.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E21D2654BF88005624CC /* DerivablePaths.Cell.swift */; };
+		BC53E2202654BFAA005624CC /* DerivablePaths.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E21F2654BFAA005624CC /* DerivablePaths.ViewModel.swift */; };
 		BC53E2222654C018005624CC /* DerivableAccounts.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E2212654C018005624CC /* DerivableAccounts.Cell.swift */; };
 		BC53E2242654ECCD005624CC /* DerivableAccounts.ListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E2232654ECCD005624CC /* DerivableAccounts.ListViewModel.swift */; };
 		BC53E2262654FE56005624CC /* DerivableAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E2252654FE56005624CC /* DerivableAccount.swift */; };
@@ -415,7 +416,7 @@
 		BC11CA242592FEA300E399A9 /* BalancesOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalancesOverviewView.swift; sourceTree = "<group>"; };
 		BC123E7E25B181B60043178E /* NSObject+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSObject+Extensions.swift"; sourceTree = "<group>"; };
 		BC123E8325B181D80043178E /* Locale+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Locale+Extensions.swift"; sourceTree = "<group>"; };
-		BC1255082653A2E400695A2B /* DerivablePathsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePathsVC.swift; sourceTree = "<group>"; };
+		BC1255082653A2E400695A2B /* DerivablePaths.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePaths.ViewController.swift; sourceTree = "<group>"; };
 		BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableDerivablePath.swift; sourceTree = "<group>"; };
 		BC134FA226FCD1E500DB15BF /* AppDelegate+Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Injection.swift"; sourceTree = "<group>"; };
 		BC134FA426FD76E100DB15BF /* CreateOrRestoreWallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreWallet.swift; sourceTree = "<group>"; };
@@ -427,6 +428,7 @@
 		BC1460C42685BBD6000D8CFE /* p2p_walletTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "p2p_walletTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcherTests.swift; sourceTree = "<group>"; };
 		BC15EEEF26FDD04600F30605 /* DerivableAccounts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivableAccounts.swift; sourceTree = "<group>"; };
+		BC15EEF126FDE10A00F30605 /* DerivablePaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePaths.swift; sourceTree = "<group>"; };
 		BC185EF726E20CFF00280FE6 /* SwapProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapProvider.swift; sourceTree = "<group>"; };
 		BC185EF926E3B81F00280FE6 /* LoadableRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadableRelay.swift; sourceTree = "<group>"; };
 		BC185EFB26E4BF3300280FE6 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
@@ -517,8 +519,8 @@
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcher.swift; sourceTree = "<group>"; };
 		BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoComparePricesFetcher+Models.swift"; sourceTree = "<group>"; };
-		BC53E21D2654BF88005624CC /* DerivablePathCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePathCell.swift; sourceTree = "<group>"; };
-		BC53E21F2654BFAA005624CC /* DerivablePathsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePathsViewModel.swift; sourceTree = "<group>"; };
+		BC53E21D2654BF88005624CC /* DerivablePaths.Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePaths.Cell.swift; sourceTree = "<group>"; };
+		BC53E21F2654BFAA005624CC /* DerivablePaths.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePaths.ViewModel.swift; sourceTree = "<group>"; };
 		BC53E2212654C018005624CC /* DerivableAccounts.Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivableAccounts.Cell.swift; sourceTree = "<group>"; };
 		BC53E2232654ECCD005624CC /* DerivableAccounts.ListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivableAccounts.ListViewModel.swift; sourceTree = "<group>"; };
 		BC53E2252654FE56005624CC /* DerivableAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivableAccount.swift; sourceTree = "<group>"; };
@@ -991,9 +993,10 @@
 		BC53E21C2654BF5B005624CC /* DerivablePaths */ = {
 			isa = PBXGroup;
 			children = (
-				BC53E21F2654BFAA005624CC /* DerivablePathsViewModel.swift */,
-				BC53E21D2654BF88005624CC /* DerivablePathCell.swift */,
-				BC1255082653A2E400695A2B /* DerivablePathsVC.swift */,
+				BC15EEF126FDE10A00F30605 /* DerivablePaths.swift */,
+				BC53E21F2654BFAA005624CC /* DerivablePaths.ViewModel.swift */,
+				BC1255082653A2E400695A2B /* DerivablePaths.ViewController.swift */,
+				BC53E21D2654BF88005624CC /* DerivablePaths.Cell.swift */,
 			);
 			path = DerivablePaths;
 			sourceTree = "<group>";
@@ -2278,9 +2281,9 @@
 				BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */,
 				BC22ABD22552A2FC0071C69F /* MenuInteractor.swift in Sources */,
 				BCC0663C269891E00017B34E /* TransactionsCollectionView.SectionHeaderView.swift in Sources */,
-				BC53E21E2654BF88005624CC /* DerivablePathCell.swift in Sources */,
+				BC53E21E2654BF88005624CC /* DerivablePaths.Cell.swift in Sources */,
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
-				BC1255092653A2E400695A2B /* DerivablePathsVC.swift in Sources */,
+				BC1255092653A2E400695A2B /* DerivablePaths.ViewController.swift in Sources */,
 				BC1BEBF926CDF6520049A44C /* SwapToken.swift in Sources */,
 				BC105119258884AA00398EA2 /* SelectNetworkVC.swift in Sources */,
 				BC6D01FB265DF8220001B841 /* FreeTransactionInfoVC.swift in Sources */,
@@ -2290,6 +2293,7 @@
 				BCCF23C526FAED6800D08724 /* RenVM.BurnAndRelease.TransactionStorage.swift in Sources */,
 				BCA93F5A25E77DE80081DDF6 /* TokenSettings.swift in Sources */,
 				BC11C9D82590987D00E399A9 /* SectionBackgroundView.swift in Sources */,
+				BC15EEF226FDE10A00F30605 /* DerivablePaths.swift in Sources */,
 				BC53E2262654FE56005624CC /* DerivableAccount.swift in Sources */,
 				BC65E244261EE04B00E436C7 /* PricesRepository.swift in Sources */,
 				BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */,
@@ -2404,7 +2408,7 @@
 				BC274540263699F500D37CD1 /* SelectFiatVC.swift in Sources */,
 				BCE04C67268D901400CE131A /* OneWayPanGestureRecognizer.swift in Sources */,
 				BC03791625FB57AE00D10EAE /* MyProductsCollectionView+SupplementaryViews.swift in Sources */,
-				BC53E2202654BFAA005624CC /* DerivablePathsViewModel.swift in Sources */,
+				BC53E2202654BFAA005624CC /* DerivablePaths.ViewModel.swift in Sources */,
 				BC28A9B126B3B0440031BE42 /* WLSpinnerView.swift in Sources */,
 				BCBE149925EF3D110014BCE5 /* HomeFriendCell.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */,
