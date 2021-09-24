@@ -24,30 +24,37 @@ extension Resolver: ResolverRegistering {
             .implements(ChangeLanguageResponder.self)
             .implements(CreateOrRestoreWalletHandler.self)
             .implements(OnboardingHandler.self)
+            .scope(.shared)
         
         // MARK: - CreateOrRestoreWallet
         register {CreateOrRestoreWallet.ViewModel()}
             .implements(CreateOrRestoreWalletViewModelType.self)
+            .scope(.shared)
         
         // CreateWallet
         register {CreateWallet.ViewModel()}
             .implements(CreateWalletViewModelType.self)
+            .scope(.shared)
         
         // CreateSecurityKeys
         register {CreateSecurityKeys.ViewModel()}
             .implements(CreateSecurityKeysViewModelType.self)
+            .scope(.shared)
         
         // RestoreWallet
         register {RestoreWallet.ViewModel()}
             .implements(RestoreWalletViewModelType.self)
             .implements(AccountRestorationHandler.self)
+            .scope(.shared)
         
         // MARK: - Onboarding
         register {Onboarding.ViewModel()}
             .implements(OnboardingViewModelType.self)
+            .scope(.shared)
         
         // MARK: - ResetPinCodeWithSeedPhrases
         register {ResetPinCodeWithSeedPhrases.ViewModel()}
             .implements(ResetPinCodeWithSeedPhrasesViewModelType.self)
+            .scope(.shared)
     }
 }
