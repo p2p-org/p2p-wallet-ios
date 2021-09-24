@@ -31,7 +31,7 @@ extension CreateOrRestoreWallet {
                 removeAllChilds()
                 add(child: WelcomeVC())
             case .createWallet:
-                let vc = scenesFactory.makeCreateWalletViewController()
+                let vc = CreateWallet.ViewController()
                 vc.isModalInPresentation = true
                 present(vc, animated: true, completion: nil)
             case .restoreWallet:
