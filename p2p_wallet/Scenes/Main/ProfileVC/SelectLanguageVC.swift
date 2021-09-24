@@ -24,9 +24,9 @@ protocol ChangeLanguageResponder {
 }
 
 class SelectLanguageVC: ProfileSingleSelectionVC<LocalizedLanguage> {
-    let responder: ChangeLanguageResponder
-    init(responder: ChangeLanguageResponder) {
-        self.responder = responder
+    @Injected private var responder: ChangeLanguageResponder
+    
+    override init() {
         super.init()
         data = [LocalizedLanguage: Bool]()
         Bundle.main.localizations.filter({$0 != "Base"}).forEach {
