@@ -11,18 +11,14 @@ import SubviewAttachingTextView
 import RxSwift
 import RxCocoa
 
-protocol PhrasesCreationHandler {
-    func handlePhrases(_ phrases: [String])
-}
-
 class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
         .hidden
     }
     
     // MARK: - Properties
+    var completion: (([String]) -> Void)?
     let error = BehaviorRelay<Error?>(value: nil)
-    let handler: PhrasesCreationHandler
     var dismissAfterCompletion = true
     
     // MARK: - Subviews
@@ -54,10 +50,6 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
     lazy var descriptionLabel = UILabel(text: L10n.enterASeedPhraseFromYourAccount, textSize: 17, textColor: .textSecondary.onDarkMode(.h5887ff), numberOfLines: 0, textAlignment: .center)
     
     // MARK: - Initializers
-    init(handler: PhrasesCreationHandler) {
-        self.handler = handler
-        super.init()
-    }
     
     override func setUp() {
         super.setUp()
@@ -168,11 +160,11 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
             }
             _ = try Mnemonic(phrase: phrases.filter {!$0.isEmpty})
             if dismissAfterCompletion {
-                dismiss(animated: true) {
-                    self.handler.handlePhrases(phrases)
+                dismiss(animated: true) { [weak self] in
+                    self?.completion?(phrases)
                 }
             } else {
-                handler.handlePhrases(phrases)
+                completion?(phrases)
             }
             
         } catch {

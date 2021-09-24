@@ -34,5 +34,14 @@ extension Resolver: ResolverRegistering {
         // CreateSecurityKeys
         register {CreateSecurityKeys.ViewModel()}
             .implements(CreateSecurityKeysViewModelType.self)
+        
+        // RestoreWallet
+        register {RestoreWallet.ViewModel()}
+            .implements(RestoreWalletViewModelType.self)
+            .implements(AccountRestorationHandler.self)
+        
+        // ResetPinCodeWithSeedPhrases
+        register {ResetPinCodeWithSeedPhrases.ViewModel()}
+            .implements(ResetPinCodeWithSeedPhrasesViewModelType.self)
     }
 }
