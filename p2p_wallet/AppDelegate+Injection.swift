@@ -15,7 +15,7 @@ extension Resolver: ResolverRegistering {
             .implements(AnalyticsManagerType.self)
             .scope(.application)
         
-        // Root
+        // MARK: - Root
         register {Root.ViewModel()}
             .implements(RootViewModelType.self)
             .implements(ChangeNetworkResponder.self)
@@ -23,12 +23,16 @@ extension Resolver: ResolverRegistering {
             .implements(CreateOrRestoreWalletHandler.self)
             .implements(OnboardingHandler.self)
         
-        // CreateOrRestoreWallet
+        // MARK: - CreateOrRestoreWallet
         register {CreateOrRestoreWallet.ViewModel()}
             .implements(CreateOrRestoreWalletViewModelType.self)
         
         // CreateWallet
         register {CreateWallet.ViewModel()}
             .implements(CreateWalletViewModelType.self)
+        
+        // CreateSecurityKeys
+        register {CreateSecurityKeys.ViewModel()}
+            .implements(CreateSecurityKeysViewModelType.self)
     }
 }
