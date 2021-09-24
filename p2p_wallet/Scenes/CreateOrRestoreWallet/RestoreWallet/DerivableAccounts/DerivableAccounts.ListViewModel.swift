@@ -1,5 +1,5 @@
 //
-//  AccountsListViewModel.swift
+//  DerivableAccounts.ListViewModel.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 19/05/2021.
@@ -10,18 +10,21 @@ import RxSwift
 import BECollectionView
 import RxAlamofire
 
-extension DerivableAccountsViewModel {
-    class AccountsListViewModel: BEListViewModel<DerivableAccount> {
+protocol DerivableAccountsListViewModelType: BEListViewModelType {
+    func cancelRequest()
+}
+
+extension DerivableAccounts {
+    class ListViewModel: BEListViewModel<DerivableAccount> {
         private let phrases: [String]
-        private let pricesFetcher: PricesFetcher
-        var derivablePath: Path?
+        @Injected private var pricesFetcher: PricesFetcher
+        var derivablePath: SolanaSDK.DerivablePath?
         let disposeBag = DisposeBag()
         var balanceCache = [String: Double]() // PublicKey: Balance
         var priceCache: Double?
         
-        init(phrases: [String], pricesFetcher: PricesFetcher) {
+        init(phrases: [String]) {
             self.phrases = phrases
-            self.pricesFetcher = pricesFetcher
             super.init(initialData: [])
         }
         override func createRequest() -> Single<[DerivableAccount]> {
@@ -61,7 +64,7 @@ extension DerivableAccountsViewModel {
                             let account = try SolanaSDK.Account(
                                 phrase: strongSelf.phrases,
                                 network: Defaults.apiEndPoint.network,
-                                derivablePath: Path(type: path.type, walletIndex: index)
+                                derivablePath: .init(type: path.type, walletIndex: index)
                             )
                             print("successfully created account #\(index)")
                             observer(.success(account))
@@ -143,4 +146,8 @@ extension DerivableAccountsViewModel {
             }
         }
     }
+}
+
+extension DerivableAccounts.ListViewModel: DerivableAccountsListViewModelType {
+    
 }

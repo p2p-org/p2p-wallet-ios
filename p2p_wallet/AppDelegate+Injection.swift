@@ -16,6 +16,9 @@ extension Resolver: ResolverRegistering {
         register {AnalyticsManager()}
             .implements(AnalyticsManagerType.self)
             .scope(.application)
+        register {CryptoComparePricesFetcher()}
+            .implements(PricesFetcher.self)
+            .scope(.application)
         
         // MARK: - Root
         register {Root.ViewModel()}
@@ -45,6 +48,13 @@ extension Resolver: ResolverRegistering {
         register {RestoreWallet.ViewModel()}
             .implements(RestoreWalletViewModelType.self)
             .implements(AccountRestorationHandler.self)
+            .scope(.shared)
+        
+        // DerivableAccounts
+        register { _, args in
+            DerivableAccounts.ViewModel(phrases: args())
+        }
+            .implements(DerivableAccountsListViewModelType.self)
             .scope(.shared)
         
         // MARK: - Onboarding
