@@ -49,6 +49,7 @@ extension DerivableAccounts {
                         self?.fetchBalances(account: account.info.publicKey.base58EncodedString)
                     }
                 })
+                .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
                 .observe(on: MainScheduler.instance)
         }
         
