@@ -32,10 +32,12 @@ class DerivableAccountsViewModel: ViewModelType {
         let navigatingScene: Driver<DerivableAccountsNavigatableScene>
     }
     
+    // MARK: - Dependencies
+    @Injected private var handler: AccountRestorationHandler
+    
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private let phrases: [String]
-    private let handler: AccountRestorationHandler
     
     let input: Input
     let output: Output
@@ -43,9 +45,8 @@ class DerivableAccountsViewModel: ViewModelType {
     // MARK: - Subjects
     
     // MARK: - Initializer
-    init(phrases: [String], pricesFetcher: PricesFetcher, handler: AccountRestorationHandler) {
+    init(phrases: [String], pricesFetcher: PricesFetcher) {
         self.phrases = phrases
-        self.handler = handler
         
         self.input = Input()
         self.output = Output(

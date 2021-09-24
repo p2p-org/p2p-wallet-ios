@@ -10,62 +10,35 @@ import RxSwift
 import RxCocoa
 import RxAppState
 
+protocol RootViewModelType {
+    var navigationSceneDriver: Driver<Root.NavigatableScene?> {get}
+    var isLoadingDriver: Driver<Bool> {get}
+    
+    func reload()
+    func logout()
+    func finishSetup()
+}
+
+protocol CreateOrRestoreWalletHandler {
+    func creatingWalletDidComplete()
+    func restoringWalletDidComplete()
+    func creatingOrRestoringWalletDidCancel()
+}
+
 extension Root {
-    class ViewModel: ViewModelType, ChangeNetworkResponder, ChangeLanguageResponder {
-        // MARK: - Nested type
-        struct Input {
-            
-        }
-        struct Output {
-            let navigationScene: Driver<NavigatableScene?>
-            let isLoading: Driver<Bool>
-        }
-        
+    class ViewModel {
         // MARK: - Dependencies
-        private let accountStorage: KeychainAccountStorage
-        private let analyticsManager: AnalyticsManagerType
+        @Injected private var accountStorage: KeychainAccountStorage
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         private var isRestoration = false
         private var showAuthenticationOnMainOnAppear = true
         
-        let input: Input
-        private(set) var output: Output
-        
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
-        
-        // MARK: - Initializer
-        init(accountStorage: KeychainAccountStorage, analyticsManager: AnalyticsManagerType) {
-            self.accountStorage = accountStorage
-            self.analyticsManager = analyticsManager
-            
-            self.input = Input()
-            self.output = Output(
-                navigationScene: navigationSubject
-                    .asDriver(),
-                isLoading: isLoadingSubject
-                    .asDriver()
-            )
-            
-            bind()
-        }
-        
-        /// Bind subjects
-        private func bind() {
-            bindInputIntoSubjects()
-            bindSubjectsIntoSubjects()
-        }
-        
-        private func bindInputIntoSubjects() {
-            
-        }
-        
-        private func bindSubjectsIntoSubjects() {
-            
-        }
         
         // MARK: - Actions
         func reload() {
@@ -104,22 +77,35 @@ extension Root {
         @objc func finishSetup() {
             reload()
         }
+    }
+}
+
+extension Root.ViewModel: RootViewModelType {
+    var navigationSceneDriver: Driver<Root.NavigatableScene?> {
+        navigationSubject.asDriver()
+    }
+    
+    var isLoadingDriver: Driver<Bool> {
+        isLoadingSubject.asDriver()
+    }
+}
+
+extension Root.ViewModel: ChangeNetworkResponder {
+    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) {
+        Defaults.apiEndPoint = endpoint
         
-        // MARK: - Responder
-        func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) {
-            Defaults.apiEndPoint = endpoint
-            
-            showAuthenticationOnMainOnAppear = false
-            reload()
-        }
+        showAuthenticationOnMainOnAppear = false
+        reload()
+    }
+}
+
+extension Root.ViewModel: ChangeLanguageResponder {
+    func languageDidChange(to language: LocalizedLanguage) {
+        UIApplication.changeLanguage(to: language)
+        analyticsManager.log(event: .settingsLanguageSelected(language: language.code))
         
-        func languageDidChange(to language: LocalizedLanguage) {
-            UIApplication.changeLanguage(to: language)
-            analyticsManager.log(event: .settingsLanguageSelected(language: language.code))
-            
-            showAuthenticationOnMainOnAppear = false
-            reload()
-        }
+        showAuthenticationOnMainOnAppear = false
+        reload()
     }
 }
 

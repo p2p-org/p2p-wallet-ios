@@ -38,6 +38,7 @@ target 'p2p_wallet' do
   # Firebase
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
+  pod 'Resolver'
 
   target 'p2p_walletTests' do
     inherit! :search_paths

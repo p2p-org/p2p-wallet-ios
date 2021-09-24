@@ -32,7 +32,7 @@ extension ProcessTransaction {
         private let walletsRepository: WalletsRepository
         private let apiClient: ProcessTransactionAPIClient
         private let pricesRepository: PricesRepository
-        private let analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -51,8 +51,7 @@ extension ProcessTransaction {
             transactionHandler: ProcessingTransactionsRepository,
             walletsRepository: WalletsRepository,
             pricesRepository: PricesRepository,
-            apiClient: ProcessTransactionAPIClient,
-            analyticsManager: AnalyticsManagerType
+            apiClient: ProcessTransactionAPIClient
         ) {
             self.transactionType = transactionType
             self.request = request
@@ -60,7 +59,6 @@ extension ProcessTransaction {
             self.walletsRepository = walletsRepository
             self.apiClient = apiClient
             self.pricesRepository = pricesRepository
-            self.analyticsManager = analyticsManager
             
             self.input = Input()
             self.output = Output(

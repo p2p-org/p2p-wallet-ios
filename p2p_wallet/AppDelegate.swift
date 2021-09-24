@@ -10,6 +10,7 @@ import Firebase
 @_exported import BEPureLayout
 @_exported import SolanaSwift
 @_exported import SwiftyUserDefaults
+@_exported import Resolver
 import THPinViewController
 import Action
 import BECollectionView
@@ -17,7 +18,6 @@ import BECollectionView
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    let container = DependencyContainer()
     
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -60,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // set rootVC
-        let vc = container.makeRootViewController()
+        let vc = Root.ViewController()
         window?.rootViewController = vc
         
         window?.makeKeyAndVisible()
