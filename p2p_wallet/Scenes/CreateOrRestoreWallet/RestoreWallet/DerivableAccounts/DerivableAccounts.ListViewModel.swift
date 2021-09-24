@@ -12,6 +12,8 @@ import RxAlamofire
 
 protocol DerivableAccountsListViewModelType: BEListViewModelType {
     func cancelRequest()
+    func reload()
+    func setDerivablePath(_ derivablePath: SolanaSDK.DerivablePath)
 }
 
 extension DerivableAccounts {
@@ -149,5 +151,7 @@ extension DerivableAccounts {
 }
 
 extension DerivableAccounts.ListViewModel: DerivableAccountsListViewModelType {
-    
+    func setDerivablePath(_ derivablePath: SolanaSDK.DerivablePath) {
+        self.derivablePath = derivablePath
+    }
 }
