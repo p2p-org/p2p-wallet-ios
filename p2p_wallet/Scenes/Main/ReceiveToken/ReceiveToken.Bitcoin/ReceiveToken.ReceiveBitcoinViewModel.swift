@@ -36,7 +36,7 @@ extension ReceiveToken {
         
         // MARK: - Dependencies
         private let renVMService: RenVMLockAndMintServiceType
-        private let analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManagerType
         private let navigationSubject: BehaviorRelay<NavigatableScene?>
         private let associatedTokenAccountHandler: AssociatedTokenAccountHandler
         
@@ -48,13 +48,11 @@ extension ReceiveToken {
         // MARK: - Initializers
         init(
             renVMService: RenVMLockAndMintServiceType,
-            analyticsManager: AnalyticsManagerType,
             navigationSubject: BehaviorRelay<NavigatableScene?>,
             isRenBTCWalletCreated: Bool,
             associatedTokenAccountHandler: AssociatedTokenAccountHandler
         ) {
             self.renVMService = renVMService
-            self.analyticsManager = analyticsManager
             self.navigationSubject = navigationSubject
             self.associatedTokenAccountHandler = associatedTokenAccountHandler
             

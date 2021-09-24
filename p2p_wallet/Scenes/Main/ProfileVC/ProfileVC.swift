@@ -38,16 +38,14 @@ class ProfileVC: ProfileVCBase {
     }()
     
     var disposables = [DefaultsDisposable]()
-    let accountStorage: KeychainAccountStorage
+    @Injected private var accountStorage: KeychainAccountStorage
     let rootViewModel: Root.ViewModel
     let scenesFactory: ProfileScenesFactory
-    let analyticsManager: AnalyticsManagerType
+    @Injected private var analyticsManager: AnalyticsManagerType
     
-    init(accountStorage: KeychainAccountStorage, rootViewModel: Root.ViewModel, scenesFactory: ProfileScenesFactory, analyticsManager: AnalyticsManagerType) {
-        self.accountStorage = accountStorage
+    init(rootViewModel: Root.ViewModel, scenesFactory: ProfileScenesFactory) {
         self.scenesFactory = scenesFactory
         self.rootViewModel = rootViewModel
-        self.analyticsManager = analyticsManager
     }
     
     deinit {

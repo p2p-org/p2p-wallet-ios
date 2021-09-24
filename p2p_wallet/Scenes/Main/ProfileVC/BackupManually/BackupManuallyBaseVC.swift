@@ -51,12 +51,7 @@ class BackupManuallyBaseVC: BaseVC {
     var phrases: [String] {
         accountStorage.account?.phrase ?? []
     }
-    let accountStorage: KeychainAccountStorage
-    
-    init(accountStorage: KeychainAccountStorage) {
-        self.accountStorage = accountStorage
-        super.init()
-    }
+    @Injected var accountStorage: KeychainAccountStorage
     
     override func setUp() {
         super.setUp()

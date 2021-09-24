@@ -61,7 +61,7 @@ extension SwapToken {
         private let provider: SwapProviderType
         private let apiClient: SwapTokenApiClient
         private let walletsRepository: WalletsRepository
-        private let analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManagerType
         private let authenticationHandler: AuthenticationHandler
         
         // MARK: - Properties
@@ -99,7 +99,6 @@ extension SwapToken {
             provider: SwapProviderType,
             apiClient: SwapTokenApiClient,
             walletsRepository: WalletsRepository,
-            analyticsManager: AnalyticsManagerType,
             authenticationHandler: AuthenticationHandler,
             sourceWallet: Wallet? = nil,
             destinationWallet: Wallet? = nil
@@ -107,7 +106,6 @@ extension SwapToken {
             self.provider = provider
             self.apiClient = apiClient
             self.walletsRepository = walletsRepository
-            self.analyticsManager = analyticsManager
             self.authenticationHandler = authenticationHandler
             self.lamportsPerSignatureRelay = .init(
                 request: apiClient.getLamportsPerSignature()

@@ -11,10 +11,9 @@ import Foundation
 class SelectAppearanceVC: ProfileSingleSelectionVC<UIUserInterfaceStyle> {
     var interfaceStyle: UIUserInterfaceStyle { AppDelegate.shared.window?.overrideUserInterfaceStyle ?? .unspecified }
     
-    let analyticsManager: AnalyticsManagerType
+    @Injected private var analyticsManager: AnalyticsManagerType
     
-    init(analyticsManager: AnalyticsManagerType) {
-        self.analyticsManager = analyticsManager
+    override init() {
         super.init()
         data = [
             .dark: interfaceStyle == .dark,
