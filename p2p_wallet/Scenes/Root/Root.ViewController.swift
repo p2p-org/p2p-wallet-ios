@@ -14,16 +14,7 @@ extension Root {
         override var preferredStatusBarStyle: UIStatusBarStyle {self.statusBarStyle}
         
         // MARK: - Properties
-        @Injected private var viewModel: ViewModel
-        private let scenesFactory: RootViewControllerScenesFactory
-        
-        // MARK: - Initializer
-        init(
-            scenesFactory: RootViewControllerScenesFactory
-        ) {
-            self.scenesFactory = scenesFactory
-            super.init()
-        }
+        @Injected private var viewModel: RootViewModelType
         
         // MARK: - Methods
         override func setUp() {
@@ -34,12 +25,12 @@ extension Root {
         override func bind() {
             super.bind()
             // navigation scene
-            viewModel.output.navigationScene
+            viewModel.navigationSceneDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
             
             // loadingView
-            viewModel.output.isLoading
+            viewModel.isLoadingDriver
                 .drive(onNext: { [weak self] isLoading in
                     if isLoading {
                         self?.showIndetermineHud()
@@ -54,25 +45,31 @@ extension Root {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .createOrRestoreWallet:
-                let vc = scenesFactory.makeCreateOrRestoreWalletViewController()
+                let vc: CreateOrRestoreWalletViewController = Resolver.resolve()
                 let nc = BENavigationController(rootViewController: vc)
                 transition(to: nc)
                 
                 changeStatusBarStyle(.lightContent)
                 
             case .onboarding:
-                let vc = scenesFactory.makeOnboardingViewController()
+                let vc: OnboardingViewController = Resolver.resolve()
                 transition(to: vc)
                 
                 changeStatusBarStyle(.lightContent)
                 
             case .onboardingDone(let isRestoration):
-                let vc: UIViewController = isRestoration ? scenesFactory.makeWelcomeBackVC(): scenesFactory.makeWellDoneVC()
-                transition(to: vc)
+                if isRestoration {
+                    let vc: WelcomeBackVC = Resolver.resolve()
+                    transition(to: vc)
+                } else {
+                    let vc: WellDoneVC = Resolver.resolve()
+                    transition(to: vc)
+                }
                 
                 changeStatusBarStyle(.lightContent)
                 
             case .main(let showAuthenticationWhenAppears):
+                // MainViewController
                 let vc = scenesFactory.makeMainViewController(authenticateWhenAppears: showAuthenticationWhenAppears)
                 transition(to: vc)
                 

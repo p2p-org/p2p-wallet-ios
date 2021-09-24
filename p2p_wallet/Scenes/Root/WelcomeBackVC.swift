@@ -9,12 +9,15 @@ import Foundation
 import SwiftUI
 
 class WelcomeBackVC: WLIntroVC {
+    // MARK: - Dependencies
+    @Injected private var viewModel: RootViewModelType
+    @Injected private var analyticsManager: AnalyticsManagerType
+    
+    // MARK: - Subviews
     lazy var goToWalletButton = WLButton.stepButton(type: .blue, label: L10n.goToWallet)
         .onTap(self, action: #selector(goToWalletButtonDidTouch))
     
-    @Injected private var viewModel: Root.ViewModel
-    @Injected private var analyticsManager: AnalyticsManagerType
-    
+    // MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         analyticsManager.log(event: .setupWelcomeBackOpen)

@@ -18,7 +18,6 @@ import BECollectionView
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    let container = DependencyContainer()
     
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -61,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // set rootVC
-        let vc = container.makeRootViewController()
+        let vc: Root.ViewController = Resolver.resolve()
         window?.rootViewController = vc
         
         window?.makeKeyAndVisible()

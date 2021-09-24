@@ -258,7 +258,6 @@
 		BCA9947525AE94D7005BD8FB /* Montserrat-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCA9946325AE94D7005BD8FB /* Montserrat-SemiBoldItalic.ttf */; };
 		BCA9947625AE94D7005BD8FB /* Montserrat-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCA9946425AE94D7005BD8FB /* Montserrat-ExtraBoldItalic.ttf */; };
 		BCA9948725AEA1C0005BD8FB /* ExpandablePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA9948625AEA1C0005BD8FB /* ExpandablePresentationController.swift */; };
-		BCAB206F25DE0563004F4F9D /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAB206E25DE0563004F4F9D /* DependencyContainer.swift */; };
 		BCACA7DC2678942B0091E118 /* ProcessingTransactionsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCACA7DB2678942B0091E118 /* ProcessingTransactionsRepository.swift */; };
 		BCACA7E12679E75E0091E118 /* AnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCACA7E02679E75E0091E118 /* AnalyticsEvent.swift */; };
 		BCAF1A7026F44CE8001851F6 /* RenVM.LockAndMint.Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAF1A6F26F44CE8001851F6 /* RenVM.LockAndMint.Service.swift */; };
@@ -643,7 +642,6 @@
 		BCA9946325AE94D7005BD8FB /* Montserrat-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		BCA9946425AE94D7005BD8FB /* Montserrat-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		BCA9948625AEA1C0005BD8FB /* ExpandablePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandablePresentationController.swift; sourceTree = "<group>"; };
-		BCAB206E25DE0563004F4F9D /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		BCACA7DB2678942B0091E118 /* ProcessingTransactionsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingTransactionsRepository.swift; sourceTree = "<group>"; };
 		BCACA7E02679E75E0091E118 /* AnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEvent.swift; sourceTree = "<group>"; };
 		BCAF1A6F26F44CE8001851F6 /* RenVM.LockAndMint.Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenVM.LockAndMint.Service.swift; sourceTree = "<group>"; };
@@ -1466,7 +1464,6 @@
 			children = (
 				BCB2231825412AF8002D997F /* AppDelegate.swift */,
 				BC134FA226FCD1E500DB15BF /* AppDelegate+Injection.swift */,
-				BCAB206E25DE0563004F4F9D /* DependencyContainer.swift */,
 				BCB22370254137C2002D997F /* Services */,
 				BC8F684B2609D851002FDCCD /* Repositories */,
 				BC65E9B72542B983005F50CE /* Base */,
@@ -2193,7 +2190,6 @@
 				BC53E2222654C018005624CC /* DerivableAccountCell.swift in Sources */,
 				BC7B2C7225E384F700833656 /* CreateSecurityKeysViewController.swift in Sources */,
 				BC11CA252592FEA300E399A9 /* BalancesOverviewView.swift in Sources */,
-				BCAB206F25DE0563004F4F9D /* DependencyContainer.swift in Sources */,
 				BC6EE772254AEEB300FE1025 /* Error+Extensions.swift in Sources */,
 				BC620D7426C6739C002186ED /* SwapToken.NetworkFeePayerSettingsViewController.swift in Sources */,
 				BCE42DF725DF9C7A0021540E /* OnboardingViewController.swift in Sources */,
