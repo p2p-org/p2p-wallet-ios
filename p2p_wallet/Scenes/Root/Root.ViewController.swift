@@ -45,7 +45,7 @@ extension Root {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .createOrRestoreWallet:
-                let vc: CreateOrRestoreWalletViewController = Resolver.resolve()
+                let vc: CreateOrRestoreWallet.ViewController = Resolver.resolve()
                 let nc = BENavigationController(rootViewController: vc)
                 transition(to: nc)
                 
