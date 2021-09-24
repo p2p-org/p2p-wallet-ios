@@ -101,6 +101,15 @@ extension DerivableAccounts {
                 .map {$0.title}
                 .drive(derivationPathLabel.rx.text)
                 .disposed(by: disposeBag)
+            
+            viewModel.selectedDerivablePathDriver
+                .distinctUntilChanged()
+                .drive(onNext: {[weak self] path in
+                    self?.viewModel.accountsListViewModel.cancelRequest()
+                    self?.viewModel.accountsListViewModel.setDerivablePath(path)
+                    self?.viewModel.accountsListViewModel.reload()
+                })
+                .disposed(by: disposeBag)
         }
         
         private func navigate(to scene: NavigatableScene?) {
