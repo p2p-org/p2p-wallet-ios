@@ -16,23 +16,30 @@ extension Onboarding {
         
         // MARK: - Properties
         var childNavigationController: BENavigationController!
+        var isChildNCPresented = false
         
         // MARK: - Methods
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
-            childNavigationController = BENavigationController()
             
-            let modalVC = WLIndicatorModalVC()
-            modalVC.add(child: childNavigationController, to: modalVC.containerView)
-            
-            modalVC.isModalInPresentation = true
-            present(modalVC, animated: true, completion: nil)
+            if !isChildNCPresented {
+                let modalVC = WLIndicatorModalVC()
+                modalVC.add(child: childNavigationController, to: modalVC.containerView)
+                
+                modalVC.isModalInPresentation = true
+                present(modalVC, animated: true, completion: nil)
+                isChildNCPresented = true
+            }
             
             viewModel.navigateNext()
         }
         
         override func setUp() {
             super.setUp()
+            // add nc
+            childNavigationController = BENavigationController()
+            
+            // set up
             descriptionLabel.isHidden = false
             titleLabel.text = L10n.congratulations
             descriptionLabel.text = L10n.yourWalletHasBeenSuccessfullyCreated
