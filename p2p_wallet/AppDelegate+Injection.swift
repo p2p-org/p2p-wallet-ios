@@ -11,6 +11,11 @@ extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
         register {KeychainAccountStorage()}
         register {AnalyticsManager()}.implements(AnalyticsManagerType.self)
-        register {Root.ViewModel()}.implements(CreateOrRestoreWalletHandler.self).implements(OnboardingHandler.self)
+        register {Root.ViewModel()}
+            .implements(RootViewModelType.self)
+            .implements(ChangeNetworkResponder.self)
+            .implements(ChangeLanguageResponder.self)
+            .implements(CreateOrRestoreWalletHandler.self)
+            .implements(OnboardingHandler.self)
     }
 }

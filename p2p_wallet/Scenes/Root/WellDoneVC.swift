@@ -9,12 +9,15 @@ import Foundation
 import SwiftUI
 
 class WellDoneVC: WLIntroVC {
-    @Injected private var viewModel: Root.ViewModel
+    // MARK: - Dependencies
+    @Injected private var viewModel: RootViewModelType
     @Injected private var analyticsManager: AnalyticsManagerType
     
+    // MARK: - Subviews
     lazy var acceptButton = WLButton.stepButton(type: .blue, label: nil)
         .onTap(self, action: #selector(finishSetup))
     
+    // MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         analyticsManager.log(event: .setupFinishOpen)

@@ -7,14 +7,6 @@
 
 import Foundation
 
-protocol RootViewControllerScenesFactory {
-    func makeCreateOrRestoreWalletViewController() -> CreateOrRestoreWalletViewController
-    func makeOnboardingViewController() -> OnboardingViewController
-    func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController
-    func makeWellDoneVC() -> WellDoneVC
-    func makeWelcomeBackVC() -> WelcomeBackVC
-}
-
 struct Root {
     enum NavigatableScene: Equatable {
         case createOrRestoreWallet
