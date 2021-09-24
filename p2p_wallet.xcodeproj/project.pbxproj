@@ -45,6 +45,7 @@
 		BC134FA326FCD1E500DB15BF /* AppDelegate+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC134FA226FCD1E500DB15BF /* AppDelegate+Injection.swift */; };
 		BC134FA526FD76E100DB15BF /* CreateOrRestoreWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC134FA426FD76E100DB15BF /* CreateOrRestoreWallet.swift */; };
 		BC134FA726FD7C6600DB15BF /* CreateWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC134FA626FD7C6600DB15BF /* CreateWallet.swift */; };
+		BC134FA926FD810200DB15BF /* CreateSecurityKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC134FA826FD810200DB15BF /* CreateSecurityKeys.swift */; };
 		BC1460C62685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */; };
 		BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC185EF726E20CFF00280FE6 /* SwapProvider.swift */; };
 		BC185EFA26E3B81F00280FE6 /* LoadableRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC185EF926E3B81F00280FE6 /* LoadableRelay.swift */; };
@@ -206,9 +207,9 @@
 		BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75339B257F2953007A00D9 /* Date+Extensions.swift */; };
 		BC7533AA257F31D3007A00D9 /* LazyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7533A9257F31D3007A00D9 /* LazyLabel.swift */; };
 		BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7AD0E7254A540700B4A070 /* WLButton.swift */; };
-		BC7B2C7025E384F700833656 /* CreateSecurityKeysViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2C6D25E384F700833656 /* CreateSecurityKeysViewModel.swift */; };
-		BC7B2C7125E384F700833656 /* CreateSecurityKeysRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2C6E25E384F700833656 /* CreateSecurityKeysRootView.swift */; };
-		BC7B2C7225E384F700833656 /* CreateSecurityKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2C6F25E384F700833656 /* CreateSecurityKeysViewController.swift */; };
+		BC7B2C7025E384F700833656 /* CreateSecurityKeys.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2C6D25E384F700833656 /* CreateSecurityKeys.ViewModel.swift */; };
+		BC7B2C7125E384F700833656 /* CreateSecurityKeys.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2C6E25E384F700833656 /* CreateSecurityKeys.RootView.swift */; };
+		BC7B2C7225E384F700833656 /* CreateSecurityKeys.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2C6F25E384F700833656 /* CreateSecurityKeys.ViewController.swift */; };
 		BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */; };
 		BC7BCB7B2562807E0018DECA /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */; };
 		BC7D078126F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7D078026F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift */; };
@@ -418,6 +419,7 @@
 		BC134FA226FCD1E500DB15BF /* AppDelegate+Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Injection.swift"; sourceTree = "<group>"; };
 		BC134FA426FD76E100DB15BF /* CreateOrRestoreWallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreWallet.swift; sourceTree = "<group>"; };
 		BC134FA626FD7C6600DB15BF /* CreateWallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateWallet.swift; sourceTree = "<group>"; };
+		BC134FA826FD810200DB15BF /* CreateSecurityKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.swift; sourceTree = "<group>"; };
 		BC1460C42685BBD6000D8CFE /* p2p_walletTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "p2p_walletTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcherTests.swift; sourceTree = "<group>"; };
 		BC185EF726E20CFF00280FE6 /* SwapProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapProvider.swift; sourceTree = "<group>"; };
@@ -590,9 +592,9 @@
 		BC75339B257F2953007A00D9 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		BC7533A9257F31D3007A00D9 /* LazyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyLabel.swift; sourceTree = "<group>"; };
 		BC7AD0E7254A540700B4A070 /* WLButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLButton.swift; sourceTree = "<group>"; };
-		BC7B2C6D25E384F700833656 /* CreateSecurityKeysViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeysViewModel.swift; sourceTree = "<group>"; };
-		BC7B2C6E25E384F700833656 /* CreateSecurityKeysRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeysRootView.swift; sourceTree = "<group>"; };
-		BC7B2C6F25E384F700833656 /* CreateSecurityKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeysViewController.swift; sourceTree = "<group>"; };
+		BC7B2C6D25E384F700833656 /* CreateSecurityKeys.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.ViewModel.swift; sourceTree = "<group>"; };
+		BC7B2C6E25E384F700833656 /* CreateSecurityKeys.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.RootView.swift; sourceTree = "<group>"; };
+		BC7B2C6F25E384F700833656 /* CreateSecurityKeys.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.ViewController.swift; sourceTree = "<group>"; };
 		BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonfidaPricesFetcher.swift; sourceTree = "<group>"; };
 		BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
 		BC7D078026F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ReceiveRenBTCView.swift; sourceTree = "<group>"; };
@@ -1219,9 +1221,10 @@
 		BC7B2C7625E384FE00833656 /* CreateSecurityKeys */ = {
 			isa = PBXGroup;
 			children = (
-				BC7B2C6D25E384F700833656 /* CreateSecurityKeysViewModel.swift */,
-				BC7B2C6E25E384F700833656 /* CreateSecurityKeysRootView.swift */,
-				BC7B2C6F25E384F700833656 /* CreateSecurityKeysViewController.swift */,
+				BC134FA826FD810200DB15BF /* CreateSecurityKeys.swift */,
+				BC7B2C6D25E384F700833656 /* CreateSecurityKeys.ViewModel.swift */,
+				BC7B2C6F25E384F700833656 /* CreateSecurityKeys.ViewController.swift */,
+				BC7B2C6E25E384F700833656 /* CreateSecurityKeys.RootView.swift */,
 			);
 			path = CreateSecurityKeys;
 			sourceTree = "<group>";
@@ -2188,7 +2191,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC53E2222654C018005624CC /* DerivableAccountCell.swift in Sources */,
-				BC7B2C7225E384F700833656 /* CreateSecurityKeysViewController.swift in Sources */,
+				BC7B2C7225E384F700833656 /* CreateSecurityKeys.ViewController.swift in Sources */,
 				BC11CA252592FEA300E399A9 /* BalancesOverviewView.swift in Sources */,
 				BC6EE772254AEEB300FE1025 /* Error+Extensions.swift in Sources */,
 				BC620D7426C6739C002186ED /* SwapToken.NetworkFeePayerSettingsViewController.swift in Sources */,
@@ -2337,7 +2340,7 @@
 				BC5A974D260C8588009674C4 /* FriendsSection.swift in Sources */,
 				BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */,
 				BCE77E6326536817000B68BB /* DerivableAccountsVC.swift in Sources */,
-				BC7B2C7125E384F700833656 /* CreateSecurityKeysRootView.swift in Sources */,
+				BC7B2C7125E384F700833656 /* CreateSecurityKeys.RootView.swift in Sources */,
 				BC5A9734260C6EA0009674C4 /* HomeHiddenWalletsSection.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				BCBE149E25EF3D110014BCE5 /* HomeViewModel.swift in Sources */,
@@ -2416,6 +2419,7 @@
 				BCDCAE16267C4BA3001ED7B4 /* AnalyticsEvent+eventName.swift in Sources */,
 				BC12550B2653A61C00695A2B /* SelectableDerivablePath.swift in Sources */,
 				BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */,
+				BC134FA926FD810200DB15BF /* CreateSecurityKeys.swift in Sources */,
 				BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */,
 				BCE3D58525F2426D0092F91B /* SystemVersion.swift in Sources */,
 				BC46075C266F325500A12E07 /* WalletDetail.ViewModel.swift in Sources */,
@@ -2426,7 +2430,7 @@
 				BCD5E7962551332200F51299 /* DefiCell.swift in Sources */,
 				BC5A9739260C6F47009674C4 /* HiddenWalletsSection+SupplementaryViews.swift in Sources */,
 				BC105136258B2A2A00398EA2 /* CreateWallet.TermsAndConditionsVC.swift in Sources */,
-				BC7B2C7025E384F700833656 /* CreateSecurityKeysViewModel.swift in Sources */,
+				BC7B2C7025E384F700833656 /* CreateSecurityKeys.ViewModel.swift in Sources */,
 				BC7D078326F86700005F777F /* ReceiveToken.ViewBuilders.swift in Sources */,
 				BCB7C7D12667336800FEC68E /* ProcessTransaction.ViewController.swift in Sources */,
 				BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */,

@@ -45,7 +45,7 @@ extension CreateWallet {
                 let vc = TermsAndConditionsVC()
                 childNavigationController.pushViewController(vc, animated: true)
             case .createPhrases:
-                let vc = scenesFactory.makeCreateSecurityKeysViewController()
+                let vc = CreateSecurityKeys.ViewController()
                 childNavigationController.pushViewController(vc, animated: true)
             case .dismiss:
                 dismiss(animated: true, completion: nil)
