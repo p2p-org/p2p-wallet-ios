@@ -12,6 +12,7 @@ extension Onboarding {
     class ViewController: WLIntroVC {
         // MARK: - Dependencies
         @Injected private var viewModel: OnboardingViewModelType
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         var childNavigationController: BENavigationController!
@@ -53,20 +54,20 @@ extension Onboarding {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .createPincode:
-                let pincodeVC = scenesFactory.makeOnboardingCreatePassCodeVC()
+                let pincodeVC = Onboarding.CreatePassCodeVC()
                 pincodeVC.disableDismissAfterCompletion = true
 
                 pincodeVC.completion = { [weak self, weak pincodeVC] _ in
                     guard let pincode = pincodeVC?.passcode else {return}
                     self?.viewModel.savePincode(pincode)
-                    self?.viewModel.analyticsManager.log(event: .setupPinKeydown2)
+                    self?.analyticsManager.log(event: .setupPinKeydown2)
                 }
                 childNavigationController.viewControllers = [pincodeVC]
             case .setUpBiometryAuthentication:
-                let biometryVC = scenesFactory.makeEnableBiometryVC()
+                let biometryVC = EnableBiometryVC()
                 childNavigationController.pushViewController(biometryVC, animated: true)
             case .setUpNotifications:
-                let enableNotificationsVC = scenesFactory.makeEnableNotificationsVC()
+                let enableNotificationsVC = EnableNotificationsVC()
                 childNavigationController.pushViewController(enableNotificationsVC, animated: true)
             case .dismiss:
                 dismiss(animated: true, completion: nil)
