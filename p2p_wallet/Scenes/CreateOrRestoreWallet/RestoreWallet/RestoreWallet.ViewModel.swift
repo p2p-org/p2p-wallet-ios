@@ -62,7 +62,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     
     func handlePhrases(_ phrases: [String]) {
         self.phrases = phrases
-        navigationSubject.accept(.derivableAccounts(phrases: self.phrases))
+        navigationSubject.accept(.derivableAccounts(phrases: phrases))
     }
 }
 

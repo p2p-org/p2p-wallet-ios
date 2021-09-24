@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import SolanaSwift
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
         register {KeychainAccountStorage()}
+            .implements(SolanaSDKAccountStorage.self)
             .scope(.application)
         register {AnalyticsManager()}
             .implements(AnalyticsManagerType.self)
@@ -40,7 +42,11 @@ extension Resolver: ResolverRegistering {
             .implements(RestoreWalletViewModelType.self)
             .implements(AccountRestorationHandler.self)
         
-        // ResetPinCodeWithSeedPhrases
+        // MARK: - Onboarding
+        register {Onboarding.ViewModel()}
+            .implements(OnboardingViewModelType.self)
+        
+        // MARK: - ResetPinCodeWithSeedPhrases
         register {ResetPinCodeWithSeedPhrases.ViewModel()}
             .implements(ResetPinCodeWithSeedPhrasesViewModelType.self)
     }

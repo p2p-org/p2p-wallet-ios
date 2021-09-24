@@ -35,8 +35,8 @@ extension CreateOrRestoreWallet {
                 vc.isModalInPresentation = true
                 present(vc, animated: true, completion: nil)
             case .restoreWallet:
-                let restoreWaleltViewController = scenesFactory.makeRestoreWalletViewController()
-                show(restoreWaleltViewController, sender: nil)
+                let vc = RestoreWallet.ViewController()
+                show(vc, sender: nil)
             }
         }
     }
