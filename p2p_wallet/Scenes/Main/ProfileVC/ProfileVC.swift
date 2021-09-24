@@ -20,36 +20,36 @@ protocol ProfileScenesFactory {
 }
 
 class ProfileVC: ProfileVCBase {
-    lazy var backupShieldImageView = UIImageView(width: 17, height: 21, image: .backupShield)
-    lazy var fiatLabel = UILabel(weight: .medium, textColor: .textSecondary)
-    lazy var secureMethodsLabel = UILabel(weight: .medium, textColor: .textSecondary)
-    lazy var activeLanguageLabel = UILabel(weight: .medium, textColor: .textSecondary)
-    lazy var appearanceLabel = UILabel(weight: .medium, textColor: .textSecondary)
-    lazy var networkLabel = UILabel(weight: .medium, textColor: .textSecondary)
-    lazy var hideZeroBalancesSwitcher: UISwitch = { [unowned self] in
+    // MARK: - Dependencies
+    @Injected private var accountStorage: KeychainAccountStorage
+    @Injected private var rootViewModel: RootViewModelType
+    @Injected private var analyticsManager: AnalyticsManagerType
+    
+    // MARK: - Properties
+    private var disposables = [DefaultsDisposable]()
+    private let scenesFactory: ProfileScenesFactory
+    
+    // MARK: - Subviews
+    private lazy var backupShieldImageView = UIImageView(width: 17, height: 21, image: .backupShield)
+    private lazy var fiatLabel = UILabel(weight: .medium, textColor: .textSecondary)
+    private lazy var secureMethodsLabel = UILabel(weight: .medium, textColor: .textSecondary)
+    private lazy var activeLanguageLabel = UILabel(weight: .medium, textColor: .textSecondary)
+    private lazy var appearanceLabel = UILabel(weight: .medium, textColor: .textSecondary)
+    private lazy var networkLabel = UILabel(weight: .medium, textColor: .textSecondary)
+    private lazy var hideZeroBalancesSwitcher: UISwitch = { [unowned self] in
         let switcher = UISwitch()
         switcher.addTarget(self, action: #selector(hideZeroBalancesSwitcherDidSwitch(sender:)), for: .valueChanged)
         return switcher
     }()
-    lazy var useFreeTransactionsSwitcher: UISwitch = {[unowned self] in
+    private lazy var useFreeTransactionsSwitcher: UISwitch = {[unowned self] in
         let switcher = UISwitch()
         switcher.addTarget(self, action: #selector(useFreeTransactionsSwitcherDidSwitch(sender:)), for: .valueChanged)
         return switcher
     }()
     
-    var disposables = [DefaultsDisposable]()
-    @Injected private var accountStorage: KeychainAccountStorage
-    let rootViewModel: Root.ViewModel
-    let scenesFactory: ProfileScenesFactory
-    @Injected private var analyticsManager: AnalyticsManagerType
-    
-    init(rootViewModel: Root.ViewModel, scenesFactory: ProfileScenesFactory) {
+    // MARK: - Initializer
+    init(scenesFactory: ProfileScenesFactory) {
         self.scenesFactory = scenesFactory
-        self.rootViewModel = rootViewModel
-    }
-    
-    deinit {
-        disposables.forEach {$0.dispose()}
     }
     
     // MARK: - Methods
