@@ -106,7 +106,7 @@ extension DerivableAccounts {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .selectDerivationPath:
-                let vc = DerivablePathsVC(currentPath: viewModel.getCurrentSelectedDerivablePath())
+                let vc = DerivablePaths.ViewController(currentPath: viewModel.getCurrentSelectedDerivablePath())
                 vc.delegate = self
                 present(vc, animated: true, completion: nil)
             default:
@@ -114,7 +114,7 @@ extension DerivableAccounts {
             }
         }
         
-        func derivablePathsVC(_ vc: DerivablePathsVC, didSelectPath path: SolanaSDK.DerivablePath) {
+        func derivablePathsVC(_ vc: DerivablePaths.ViewController, didSelectPath path: SolanaSDK.DerivablePath) {
             viewModel.selectDerivationPath(path)
             analyticsManager.log(event: .recoveryDerivableAccountsPathSelected(path: path.rawValue))
             vc.dismiss(animated: true, completion: nil)
