@@ -19,6 +19,12 @@ protocol RootViewModelType {
     func finishSetup()
 }
 
+protocol CreateOrRestoreWalletHandler {
+    func creatingWalletDidComplete()
+    func restoringWalletDidComplete()
+    func creatingOrRestoringWalletDidCancel()
+}
+
 extension Root {
     class ViewModel {
         // MARK: - Dependencies
