@@ -4,7 +4,6 @@ PODS:
     - RxSwift (~> 6.0)
   - Alamofire (5.4.3)
   - Amplitude (8.3.0)
-  - ASKSecp256k1 (0.0.6)
   - BECollectionView (0.1.0):
     - PureLayout
     - RxCocoa
@@ -19,9 +18,6 @@ PODS:
     - CocoaLumberjack/Core (= 3.7.2)
   - CocoaLumberjack/Core (3.7.2)
   - CryptoSwift (1.4.1)
-  - Ed25519HDKeySwift (1.2.0):
-    - CryptoSwift
-    - TweetNacl
   - FeeRelayerSwift (1.0.0):
     - RxAlamofire
     - RxSwift
@@ -150,13 +146,14 @@ PODS:
   - RxRelay (6.2.0):
     - RxSwift (= 6.2.0)
   - RxSwift (6.2.0)
-  - SolanaSwift (0.3.0):
-    - ASKSecp256k1 (~> 0.0.6)
+  - secp256k1.swift (0.1.4)
+  - SolanaSwift (1.0.0):
     - BufferLayoutSwift (~> 0.9.0)
-    - Ed25519HDKeySwift (~> 1.2.0)
+    - CryptoSwift (~> 1.4.1)
     - RxAlamofire (~> 6.1.1)
     - RxCocoa (~> 6.2.0)
-    - Starscream (~> 4.0.4)
+    - secp256k1.swift (~> 0.1.0)
+    - Starscream (~> 4.0.0)
     - TweetNacl (~> 1.0.2)
   - Starscream (4.0.4)
   - SubviewAttachingTextView (1.5.0)
@@ -208,12 +205,10 @@ SPEC REPOS:
     - Action
     - Alamofire
     - Amplitude
-    - ASKSecp256k1
     - BufferLayoutSwift
     - Charts
     - CocoaLumberjack
     - CryptoSwift
-    - Ed25519HDKeySwift
     - Firebase
     - FirebaseAnalytics
     - FirebaseCore
@@ -241,6 +236,7 @@ SPEC REPOS:
     - RxCocoa
     - RxRelay
     - RxSwift
+    - secp256k1.swift
     - Starscream
     - SubviewAttachingTextView
     - SwiftGen
@@ -284,14 +280,12 @@ SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
   Amplitude: 5627b4574e36d789a75c1656ba39b3278edf1ade
-  ASKSecp256k1: 58eb44dfa57f9d29ac0b02fe5de5a312064517f2
   BECollectionView: 9120725dd693271cef287447e3d1aa844f77535f
   BEPureLayout: ecb9d52780a665b9ea751b4e82f95df8dc2bc73b
   BufferLayoutSwift: 94e01c016df92afb017b2f7d4bc434f9915a275a
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   CocoaLumberjack: b7e05132ff94f6ae4dfa9d5bce9141893a21d9da
   CryptoSwift: 0bc800a7e6a24c4fc9ebeab97d44b0d5f73a78bd
-  Ed25519HDKeySwift: 68d37145dc6d58ff47033e273829f01648afce58
   FeeRelayerSwift: 0c3d322a5d914c43bc6ab3fd9d15b04bc2c3080b
   Firebase: ff8c73105b90e33e1dc6c8e5445d7adc2ccdc7c1
   FirebaseAnalytics: 96325c1e0acbd2bb805c6a613028b1fe599d6a37
@@ -322,7 +316,8 @@ SPEC CHECKSUMS:
   RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
-  SolanaSwift: 12149fc200f7f12caee541a3dfdd23768a05ba58
+  secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
+  SolanaSwift: 0c2ebc2dfa151d76defb6149ff0264851980cf8c
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SVGKit: 3c8468aab0026048532a3b27a0c81cdd939f0649
