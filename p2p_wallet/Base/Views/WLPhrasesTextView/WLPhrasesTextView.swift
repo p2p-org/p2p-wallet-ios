@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UITextView_Placeholder
 import SubviewAttachingTextView
 
 protocol WLPhrasesTextViewDelegate: AnyObject {
