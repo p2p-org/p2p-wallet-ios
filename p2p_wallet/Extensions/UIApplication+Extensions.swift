@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import MBProgressHUD
 
 extension UIApplication {
     private var kWindow: UIWindow? {

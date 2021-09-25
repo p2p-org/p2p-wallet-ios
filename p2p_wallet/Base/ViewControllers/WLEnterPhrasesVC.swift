@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UITextView_Placeholder
 import SubviewAttachingTextView
 import RxSwift
 import RxCocoa
