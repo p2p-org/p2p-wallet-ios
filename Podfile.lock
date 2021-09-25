@@ -113,7 +113,6 @@ PODS:
     - RxCocoa
     - RxSwift
   - ListPlaceholder (1.5)
-  - MBProgressHUD (1.2.0)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -135,9 +134,6 @@ PODS:
   - RxAppState (1.7.1):
     - RxCocoa (~> 6.2)
     - RxSwift (~> 6.2)
-  - RxBiBinding (0.3.5):
-    - RxCocoa (~> 6.0)
-    - RxSwift (~> 6.0)
   - RxBlocking (6.2.0):
     - RxSwift (= 6.2.0)
   - RxCocoa (6.2.0):
@@ -167,7 +163,6 @@ PODS:
   - TransakSwift (0.2.1):
     - PusherSwift
   - TweetNacl (1.0.2)
-  - "UITextView+Placeholder (1.4.0)"
 
 DEPENDENCIES:
   - Action
@@ -183,10 +178,8 @@ DEPENDENCIES:
   - Kingfisher
   - LazySubject (from `LazySubject`)
   - "ListPlaceholder (from `git@github.com:p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)"
-  - MBProgressHUD (~> 1.2.0)
   - Resolver
   - RxAppState
-  - RxBiBinding
   - RxBlocking
   - RxCocoa
   - SolanaSwift (from `SolanaSwift`)
@@ -198,7 +191,6 @@ DEPENDENCIES:
   - TagListView (~> 1.0)
   - THPinViewController (from `THPinViewController`)
   - TransakSwift (from `TransakSwift`)
-  - "UITextView+Placeholder"
 
 SPEC REPOS:
   trunk:
@@ -221,7 +213,6 @@ SPEC REPOS:
     - JazziconSwift
     - KeychainSwift
     - Kingfisher
-    - MBProgressHUD
     - nanopb
     - NWWebSocket
     - PromisesObjC
@@ -231,7 +222,6 @@ SPEC REPOS:
     - Runtime
     - RxAlamofire
     - RxAppState
-    - RxBiBinding
     - RxBlocking
     - RxCocoa
     - RxRelay
@@ -244,7 +234,6 @@ SPEC REPOS:
     - SwiftyUserDefaults
     - TagListView
     - TweetNacl
-    - "UITextView+Placeholder"
 
 EXTERNAL SOURCES:
   BECollectionView:
@@ -301,7 +290,6 @@ SPEC CHECKSUMS:
   Kingfisher: 016c8b653a35add51dd34a3aba36b580041acc74
   LazySubject: 9eb19a8524f377efd877f44d9f48c17be7962ebd
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
-  MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   NWWebSocket: 21f0c73639815da3272862c912275b26102aa80c
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
@@ -311,7 +299,6 @@ SPEC CHECKSUMS:
   Runtime: 67741bd196fb4ad821c4d259ccc527bf734d8806
   RxAlamofire: beb75a1c452d0de225651db4903f5d29d034a620
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
-  RxBiBinding: c4de0aad6ee668fa73ea6ba423bc0ab5d77b986b
   RxBlocking: 0b29f7d2079109a8de49c411381bed7c33ef1eeb
   RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
@@ -328,8 +315,7 @@ SPEC CHECKSUMS:
   THPinViewController: d9d65cdc5670b99b82d4cef841c954caf4b78299
   TransakSwift: f421c332141a7add72864033164155ecfd78e07a
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
-  "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: c61e673cbafd729af43734fa428034a5a55967c7
+PODFILE CHECKSUM: 882225e174597692719b665b4837267cad50ae4c
 
 COCOAPODS: 1.10.1

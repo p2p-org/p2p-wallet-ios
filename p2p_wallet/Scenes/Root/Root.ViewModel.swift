@@ -8,7 +8,6 @@
 import Foundation
 import RxSwift
 import RxCocoa
-import RxAppState
 
 protocol RootViewModelType {
     var navigationSceneDriver: Driver<Root.NavigatableScene?> {get}
