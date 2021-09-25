@@ -163,6 +163,7 @@ PODS:
   - TransakSwift (0.2.1):
     - PusherSwift
   - TweetNacl (1.0.2)
+  - "UITextView+Placeholder (1.4.0)"
 
 DEPENDENCIES:
   - Action
@@ -191,6 +192,7 @@ DEPENDENCIES:
   - TagListView (~> 1.0)
   - THPinViewController (from `THPinViewController`)
   - TransakSwift (from `TransakSwift`)
+  - "UITextView+Placeholder"
 
 SPEC REPOS:
   trunk:
@@ -234,6 +236,7 @@ SPEC REPOS:
     - SwiftyUserDefaults
     - TagListView
     - TweetNacl
+    - "UITextView+Placeholder"
 
 EXTERNAL SOURCES:
   BECollectionView:
@@ -315,7 +318,8 @@ SPEC CHECKSUMS:
   THPinViewController: d9d65cdc5670b99b82d4cef841c954caf4b78299
   TransakSwift: f421c332141a7add72864033164155ecfd78e07a
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
+  "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 882225e174597692719b665b4837267cad50ae4c
+PODFILE CHECKSUM: 04570ba6d4dba8b961463131fc035e92e3f413c6
 
 COCOAPODS: 1.10.1

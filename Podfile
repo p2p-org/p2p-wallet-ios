@@ -23,6 +23,7 @@ target 'p2p_wallet' do
   pod 'KeychainSwift', '~> 19.0'
   pod 'TagListView', '~> 1.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
+  pod 'UITextView+Placeholder'
   pod 'SubviewAttachingTextView'
   pod 'Charts'
   pod "RxAppState"
