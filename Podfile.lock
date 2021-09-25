@@ -7,7 +7,7 @@ PODS:
   - BECollectionView (0.1.0):
     - PureLayout
     - RxCocoa
-  - BEPureLayout (0.3.0):
+  - BEPureLayout (0.4.0):
     - PureLayout
   - BufferLayoutSwift (0.9.0):
     - Runtime (~> 2.2.2)
@@ -273,7 +273,7 @@ SPEC CHECKSUMS:
   Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
   Amplitude: 5627b4574e36d789a75c1656ba39b3278edf1ade
   BECollectionView: 9120725dd693271cef287447e3d1aa844f77535f
-  BEPureLayout: ecb9d52780a665b9ea751b4e82f95df8dc2bc73b
+  BEPureLayout: 5ed6cf8fe9de51476ed68d6ab54c878d0fe1ae27
   BufferLayoutSwift: 94e01c016df92afb017b2f7d4bc434f9915a275a
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   CocoaLumberjack: b7e05132ff94f6ae4dfa9d5bce9141893a21d9da
