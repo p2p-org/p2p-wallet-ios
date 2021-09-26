@@ -11,6 +11,10 @@ import BECollectionView
 
 extension RestoreICloud {
     class ViewController: BaseVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+        
         // MARK: - Dependencies
         @Injected private var viewModel: RestoreWalletViewModelType
         
@@ -62,6 +66,6 @@ extension RestoreICloud {
 extension RestoreICloud.ViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let account = item as? RestoreICloud.ParsedAccount else {return}
-        
+        viewModel.handlePhrases(account.account.phrase.components(separatedBy: " "))
     }
 }
