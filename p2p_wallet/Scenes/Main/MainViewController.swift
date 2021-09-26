@@ -18,7 +18,7 @@ protocol _MainScenesFactory {
 class MainViewController: BaseVC {
     // MARK: - Properties
     private let scenesFactory: _MainScenesFactory
-    private let viewModel: MainViewModel
+    private let viewModel: MainViewModelType
     private var localAuthVC: LocalAuthVC?
     private var resetPinCodeWithASeedPhrasesVC: ResetPinCodeWithSeedPhrases.ViewController?
     private let authenticateWhenAppears: Bool
@@ -42,7 +42,7 @@ class MainViewController: BaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         if authenticateWhenAppears {
-            viewModel.input.authenticationStatus.accept(.login())
+            viewModel.authenticate(presentationStyle: .login())
         }
     }
     
@@ -57,17 +57,17 @@ class MainViewController: BaseVC {
     override func bind() {
         super.bind()
         // authentication status
-        viewModel.output.currentAuthenticationStatus
+        viewModel.authenticationStatusDriver
             .drive(onNext: {[weak self] in self?.handleAuthenticationStatus($0)})
             .disposed(by: disposeBag)
         
         // reset pin code with a seed phrases
-        viewModel.output.isRessetingPasscodeWithSeedPhrases
+        viewModel.isResettingPasscodeWithSeedPhrasesDriver
             .drive(onNext: {[weak self] in self?.showResetPincodeWithASeedPhrasesVC($0)})
             .disposed(by: disposeBag)
         
         // blurEffectView
-        viewModel.output.currentAuthenticationStatus
+        viewModel.authenticationStatusDriver
             .map {$0 == nil}
             .drive(blurEffectView.rx.isHidden)
             .disposed(by: disposeBag)
@@ -103,13 +103,13 @@ class MainViewController: BaseVC {
         
         // reset with a seed phrase
         localAuthVC?.resetPincodeWithASeedPhrasesHandler = {[weak self] in
-            self?.viewModel.resetPinCodeWithASeedPhrase()
+            self?.viewModel.showResetPinCodeWithASeedPhrase()
         }
         
         // completion
         localAuthVC?.completion = {[weak self] didSuccess in
             if didSuccess {
-                self?.viewModel.input.authenticationStatus.accept(nil)
+                self?.viewModel.authenticate(presentationStyle: nil)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     authStyle.completion?()
                 }
@@ -125,7 +125,7 @@ class MainViewController: BaseVC {
             
             // handle cancelled by tapping <x>
             localAuthVC?.cancelledCompletion = {[weak self] in
-                self?.viewModel.input.authenticationStatus.accept(nil)
+                self?.viewModel.authenticate(presentationStyle: nil)
             }
         }
         
@@ -143,7 +143,7 @@ class MainViewController: BaseVC {
         if isShowing {
             resetPinCodeWithASeedPhrasesVC = scenesFactory.makeResetPinCodeWithSeedPhrasesViewController()
             resetPinCodeWithASeedPhrasesVC!.completion = {[weak self] in
-                self?.viewModel.handleResetPasscodeWithASeedPhrase()
+                self?.viewModel.handleResetPasscodeWithASeedPhraseCompleted()
                 self?.localAuthVC?.completion?(true)
             }
             localAuthVC?.present(resetPinCodeWithASeedPhrasesVC!, animated: true, completion: nil)
