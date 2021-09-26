@@ -39,15 +39,12 @@ private func createAccountSingle(phrase: String) -> Single<SolanaSDK.Account> {
     Single.create { observer in
         DispatchQueue(label: "createAccount#\(phrase)")
             .async {
-                print("creating account for #\(phrase)")
-                
                 do {
                     let account = try SolanaSDK.Account(
                         phrase: phrase.components(separatedBy: " "),
                         network: Defaults.apiEndPoint.network,
                         derivablePath: .default
                     )
-                    print("successfully created account for #\(phrase)")
                     observer(.success(account))
                 } catch {
                     observer(.failure(error))

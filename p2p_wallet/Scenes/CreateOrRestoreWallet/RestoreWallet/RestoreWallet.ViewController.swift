@@ -13,6 +13,9 @@ extension RestoreWallet {
         // MARK: - Dependencies
         @Injected private var viewModel: RestoreWalletViewModelType
         
+        // MARK: - Properties
+        var childNavigationController: BENavigationController?
+        
         // MARK: - Subviews
         lazy var iCloudRestoreButton = WLButton.stepButton(enabledColor: .textWhite, textColor: .textBlack, label: " " + L10n.restoreUsingICloud)
             .onTap(self, action: #selector(restoreFromICloud))
@@ -57,14 +60,18 @@ extension RestoreWallet {
                 let vc = WLModalWrapperVC(wrapped: wrappedVC)
                 present(vc, animated: true, completion: nil)
             case .restoreFromICloud:
-                let wrappedVC = RestoreICloud.ViewController()
-                let vc = WLModalWrapperVC(wrapped: wrappedVC)
+                childNavigationController = BENavigationController(rootViewController: RestoreICloud.ViewController())
+                let vc = WLModalWrapperVC(wrapped: childNavigationController!)
                 present(vc, animated: true, completion: nil)
             case .derivableAccounts(let phrases):
                 let viewModel = DerivableAccounts.ViewModel(phrases: phrases)
-                let wrappedVC = DerivableAccounts.ViewController(viewModel: viewModel)
-                let vc = WLModalWrapperVC(wrapped: wrappedVC)
-                present(vc, animated: true, completion: nil)
+                let dvc = DerivableAccounts.ViewController(viewModel: viewModel)
+                if let nc = childNavigationController {
+                    nc.pushViewController(dvc, animated: true)
+                } else {
+                    let vc = WLModalWrapperVC(wrapped: dvc)
+                    present(vc, animated: true, completion: nil)
+                }
             default:
                 break
             }

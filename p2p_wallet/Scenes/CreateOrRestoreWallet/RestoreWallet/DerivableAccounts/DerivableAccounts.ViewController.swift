@@ -10,6 +10,9 @@ import BECollectionView
 
 extension DerivableAccounts {
     class ViewController: BaseVC, DerivablePathsVCDelegate {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
         // MARK: - Properties
         private let viewModel: DrivableAccountsViewModelType
         @Injected private var analyticsManager: AnalyticsManagerType
