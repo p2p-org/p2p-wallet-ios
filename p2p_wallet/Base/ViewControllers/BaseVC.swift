@@ -12,6 +12,10 @@ class BaseVC: BEViewController {
     let disposeBag = DisposeBag()
     var scrollViewAvoidingTabBar: UIScrollView? {nil}
     
+    deinit {
+        debugPrint("\(String(describing: self)) deinited")
+    }
+    
     override func setUp() {
         super.setUp()
         view.backgroundColor = .background
