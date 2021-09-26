@@ -9,27 +9,20 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-class MainViewModel: ViewModelType {
-    // MARK: - Nested type
-    struct Input {
-        let authenticationStatus = PublishRelay<AuthenticationPresentationStyle?>()
-    }
+protocol MainViewModelType: AuthenticationHandler {
+    var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {get} // nil if non authentication process is processing
+    var isResettingPasscodeWithSeedPhrasesDriver: Driver<Bool> {get}
     
-    struct Output {
-        let currentAuthenticationStatus: Driver<AuthenticationPresentationStyle?> // nil if non authentication process is processing
-        let isRessetingPasscodeWithSeedPhrases: Driver<Bool>
-    }
-    
-    // MARK: - Dependencies
-    
+    func showResetPinCodeWithASeedPhrase()
+    func handleResetPasscodeWithASeedPhraseCompleted()
+}
+
+class MainViewModel {
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private var timeRequiredForAuthentication = 10 // in seconds
     private var lastAuthenticationTimeStamp = 0
     private var isAuthenticationPaused = false
-    
-    let input: Input
-    let output: Output
     
     // MARK: - Subjects
     private let authenticationStatusSubject = BehaviorRelay<AuthenticationPresentationStyle?>(value: nil)
@@ -37,29 +30,11 @@ class MainViewModel: ViewModelType {
     
     // MARK: - Initializer
     init() {
-        self.input = Input()
-        self.output = Output(
-            currentAuthenticationStatus: authenticationStatusSubject
-                .asDriver(),
-            isRessetingPasscodeWithSeedPhrases: isResettingPasscodeWithSeedPhrasesSubject
-                .asDriver()
-        )
-        
         bind()
     }
     
     /// Bind subjects
     private func bind() {
-        bindInputIntoSubjects()
-        bindSubjectsIntoSubjects()
-        observeAppNotifications()
-    }
-    
-    private func bindInputIntoSubjects() {
-        mapInputIntoAuthenticationStatus()
-    }
-    
-    private func bindSubjectsIntoSubjects() {
         authenticationStatusSubject
             .skip(while: {$0 == nil})
             .subscribe(onNext: {[weak self] status in
@@ -68,65 +43,78 @@ class MainViewModel: ViewModelType {
                 }
             })
             .disposed(by: disposeBag)
+        
+        observeAppNotifications()
     }
     
     private func observeAppNotifications() {
         UIApplication.shared.rx.applicationDidBecomeActive
             .subscribe(onNext: {[weak self] _ in
-                guard let strongSelf = self else {return}
-                guard Int(Date().timeIntervalSince1970) >= strongSelf.lastAuthenticationTimeStamp + strongSelf.timeRequiredForAuthentication
+                guard let self = self else {return}
+                guard Int(Date().timeIntervalSince1970) >= self.lastAuthenticationTimeStamp + self.timeRequiredForAuthentication
                 else {return}
-                strongSelf.input.authenticationStatus.accept(.login())
+                self.authenticate(presentationStyle: .login())
             })
             .disposed(by: disposeBag)
     }
+}
+
+extension MainViewModel: MainViewModelType {
+    var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {
+        authenticationStatusSubject.asDriver()
+    }
     
-    // MARK: - Actions
+    var isResettingPasscodeWithSeedPhrasesDriver: Driver<Bool> {
+        isResettingPasscodeWithSeedPhrasesSubject.asDriver()
+    }
+    
+    // MARK: - Authentication
+    func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
+        // check previous and current
+        let previous = self.authenticationStatusSubject.value
+        let current = presentationStyle
+        
+        // prevent duplications
+        guard (previous == nil && current != nil) || (previous != nil && current == nil)
+        else {return}
+        
+        // accept current if nil
+        if current == nil {
+            authenticationStatusSubject.accept(nil)
+            return
+        }
+        
+        // show authentication if the condition has been met
+        if canPerformAuthentication() {
+            authenticationStatusSubject.accept(presentationStyle)
+            return
+        }
+        
+        // force a dissmision if not
+        else {
+            authenticationStatusSubject.accept(nil)
+            return
+        }
+    }
+    
     func pauseAuthentication(_ isPaused: Bool) {
         isAuthenticationPaused = isPaused
     }
     
-    func handleResetPasscodeWithASeedPhrase() {
+    // MARK: - Reset pincode with seed phrase
+    func showResetPinCodeWithASeedPhrase() {
+        isResettingPasscodeWithSeedPhrasesSubject.accept(true)
+    }
+    
+    func handleResetPasscodeWithASeedPhraseCompleted() {
         isResettingPasscodeWithSeedPhrasesSubject.accept(false)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.authenticationStatusSubject.accept(nil)
         }
     }
     
-    @objc func resetPinCodeWithASeedPhrase() {
-        isResettingPasscodeWithSeedPhrasesSubject.accept(true)
-    }
-    
     // MARK: - Helpers
-    private func mapInputIntoAuthenticationStatus() {
-        input.authenticationStatus
-            .filter { [weak self] status in
-                let previous = self?.authenticationStatusSubject.value
-                let current = status
-                return (previous == nil && current != nil) || (previous != nil && current == nil)
-            }
-            .map {[weak self] status -> AuthenticationPresentationStyle? in
-                // dismiss
-                if status == nil {return nil}
-
-                // show authentication if the condition has been met
-                if self?.canPerformAuthentication() == true {
-                    return status
-                } else {
-                    return nil
-                }
-            }
-            .bind(to: authenticationStatusSubject)
-            .disposed(by: disposeBag)
-    }
-    
     private func canPerformAuthentication() -> Bool {
         !isAuthenticationPaused && !isResettingPasscodeWithSeedPhrasesSubject.value
-    }
-}
-
-extension MainViewModel: AuthenticationHandler {
-    func authenticate(presentationStyle: AuthenticationPresentationStyle) {
-        input.authenticationStatus.accept(presentationStyle)
     }
 }
