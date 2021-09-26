@@ -11,11 +11,12 @@ import RxCocoa
 
 extension SendToken {
     class RootView: ScrollableVStackRootView {
-        // MARK: - Constants
-        let disposeBag = DisposeBag()
+        // MARK: - Dependencies
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         let viewModel: ViewModel
+        let disposeBag = DisposeBag()
         
         // MARK: - Subviews
         lazy var balanceLabel = UILabel(text: "0", weight: .medium)
@@ -217,7 +218,7 @@ extension SendToken {
                 .asObservable()
                 .subscribe(onNext: { [weak self] _ in
                     guard let amount = self?.amountTextField.text?.double else {return}
-                    self?.viewModel.analyticsManager.log(event: .sendAmountKeydown(sum: amount))
+                    self?.analyticsManager.log(event: .sendAmountKeydown(sum: amount))
                 })
                 .disposed(by: disposeBag)
             
@@ -229,7 +230,7 @@ extension SendToken {
             addressTextField.rx.controlEvent([.editingDidEnd])
                 .asObservable()
                 .subscribe(onNext: { [weak self] _ in
-                    self?.viewModel.analyticsManager.log(event: .sendAddressKeydown)
+                    self?.analyticsManager.log(event: .sendAddressKeydown)
                 })
                 .disposed(by: disposeBag)
             

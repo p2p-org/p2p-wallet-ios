@@ -12,9 +12,9 @@ class BackupShowPhrasesVC: WLIndicatorModalVC, CustomPresentableViewController {
     var transitionManager: UIViewControllerTransitioningDelegate?
     fileprivate let childVC: _BackupShowPhrasesVC
     
-    init(authenticationHandler: AuthenticationHandler)
+    override init()
     {
-        childVC = _BackupShowPhrasesVC(authenticationHandler: authenticationHandler)
+        childVC = _BackupShowPhrasesVC()
         super.init()
         modalPresentationStyle = .custom
     }
@@ -42,12 +42,7 @@ private class _BackupShowPhrasesVC: BackupManuallyBaseVC {
     )
         .onTap(self, action: #selector(backupUsingICloudButtonDidTouch))
     
-    let authenticationHandler: AuthenticationHandler
-    init(authenticationHandler: AuthenticationHandler)
-    {
-        self.authenticationHandler = authenticationHandler
-        super.init()
-    }
+    @Injected private var authenticationHandler: AuthenticationHandler
     
     override func setUp() {
         super.setUp()

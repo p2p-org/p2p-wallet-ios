@@ -31,10 +31,6 @@ extension OrcaSwap.ViewModel: SwapTokenSettingsViewModelType {
         output.slippage.map(Optional.init)
     }
     
-    func log(_ event: AnalyticsEvent) {
-        analyticsManager.log(event: event)
-    }
-    
     func changeSlippage(to slippage: Double) {
         input.slippage.accept(slippage)
     }
