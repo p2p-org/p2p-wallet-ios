@@ -472,3 +472,5 @@
 "Creating Token Account" = "Создание учетной записи токена";
 "Which cryptocurrencies can I use?" = "Какие криптовалюты я могу использовать?";
 "I want to receive" = "я хочу получить";
+"Choose wallet" = "Выберите кошелек";
+"Multiple wallets found" = "Найдено несколько кошельков";

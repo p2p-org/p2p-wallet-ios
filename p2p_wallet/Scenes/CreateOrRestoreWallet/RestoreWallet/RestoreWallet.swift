@@ -10,6 +10,7 @@ import Foundation
 struct RestoreWallet {
     enum NavigatableScene {
         case enterPhrases
+        case restoreFromICloud
         case derivableAccounts(phrases: [String])
     }
 }

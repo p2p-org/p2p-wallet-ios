@@ -7,8 +7,7 @@
 
 import Foundation
 
-protocol AccountRepository {
-    func phrasesFromICloud() -> String?
+protocol AccountRepository: ICloudStorageType {
     var phrases: [String]? {get}
     func save(_ pinCode: String)
 }

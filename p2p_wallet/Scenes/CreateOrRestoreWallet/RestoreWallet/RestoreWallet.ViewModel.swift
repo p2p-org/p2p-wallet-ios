@@ -26,7 +26,6 @@ extension RestoreWallet {
         @Injected private var handler: CreateOrRestoreWalletHandler
         
         // MARK: - Properties
-        private let bag = DisposeBag()
         private var phrases: [String]?
         
         // MARK: - Subjects
@@ -46,13 +45,21 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     
     // MARK: - Actions
     func restoreFromICloud() {
-        guard let phrases = accountStorage.phrasesFromICloud() else
-        {
+        guard let accounts = accountStorage.accountFromICloud(), accounts.count > 0
+        else {
             errorSubject.accept(L10n.thereIsNoP2PWalletSavedInYourICloud)
             return
         }
         analyticsManager.log(event: .recoveryRestoreIcloudClick)
-        handlePhrases(phrases.components(separatedBy: " "))
+        
+        // if there is only 1 account saved in iCloud
+        if accounts.count == 1 {
+            handlePhrases(accounts[0].phrase.components(separatedBy: " "))
+            return
+        }
+        
+        // if there are more than 1 account saved in iCloud
+        navigationSubject.accept(.restoreFromICloud)
     }
     
     func restoreManually() {

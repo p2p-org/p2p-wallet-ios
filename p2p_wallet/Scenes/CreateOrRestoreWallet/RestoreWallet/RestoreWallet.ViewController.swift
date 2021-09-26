@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import Resolver
 
 extension RestoreWallet {
     class ViewController: WLIntroVC {
@@ -55,6 +54,10 @@ extension RestoreWallet {
                 wrappedVC.completion = {[weak self] phrases in
                     self?.viewModel.handlePhrases(phrases)
                 }
+                let vc = WLModalWrapperVC(wrapped: wrappedVC)
+                present(vc, animated: true, completion: nil)
+            case .restoreFromICloud:
+                let wrappedVC = RestoreICloud.ViewController()
                 let vc = WLModalWrapperVC(wrapped: wrappedVC)
                 present(vc, animated: true, completion: nil)
             case .derivableAccounts(let phrases):

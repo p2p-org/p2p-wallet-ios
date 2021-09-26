@@ -140,4 +140,8 @@ extension UIView {
             .padding(.init(all: 20), cornerRadius: 12)
             .border(width: 1, color: .defaultBorder)
     }
+    
+    static func defaultNextArrow() -> UIView {
+        UIImageView(width: 6, height: 12, image: .nextArrow, tintColor: .h8b94a9.onDarkMode(.white))
+    }
 }
