@@ -66,5 +66,11 @@ extension Resolver: ResolverRegistering {
         register {ResetPinCodeWithSeedPhrases.ViewModel()}
             .implements(ResetPinCodeWithSeedPhrasesViewModelType.self)
             .scope(.shared)
+        
+        // MARK: - Main
+        register {MainViewModel()}
+            .implements(MainViewModelType.self)
+            .implements(AuthenticationHandler.self)
+            .scope(.shared)
     }
 }

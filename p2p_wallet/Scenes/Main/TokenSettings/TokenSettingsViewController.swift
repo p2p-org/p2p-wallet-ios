@@ -22,7 +22,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
-    let authenticationHandler: AuthenticationHandler
+    @Injected private var authenticationHandler: AuthenticationHandler
     let scenesFactory: TokenSettingsScenesFactory
     weak var delegate: TokenSettingsViewControllerDelegate?
     
@@ -38,11 +38,9 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     // MARK: - Initializer
     init(
         viewModel: TokenSettingsViewModel,
-        authenticationHandler: AuthenticationHandler,
         scenesFactory: TokenSettingsScenesFactory
     ) {
         self.viewModel = viewModel
-        self.authenticationHandler = authenticationHandler
         self.scenesFactory = scenesFactory
         super.init()
     }

@@ -43,8 +43,8 @@ extension OrcaSwap {
         // MARK: - Dependencies
         private let solWallet: Wallet?
         private let apiClient: OrcaSwapAPIClient
-        private let authenticationHandler: AuthenticationHandler
-        @Injected var analyticsManager: AnalyticsManagerType
+        @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -81,12 +81,10 @@ extension OrcaSwap {
         // MARK: - Initializer
         init(
             solWallet: Wallet?,
-            apiClient: OrcaSwapAPIClient,
-            authenticationHandler: AuthenticationHandler
+            apiClient: OrcaSwapAPIClient
         ) {
             self.solWallet = solWallet
             self.apiClient = apiClient
-            self.authenticationHandler = authenticationHandler
             
             self.input = Input()
             self.output = Output(
@@ -326,6 +324,10 @@ extension OrcaSwap {
         }
         
         // MARK: - Actions
+        func log(_ event: AnalyticsEvent) {
+            analyticsManager.log(event: event)
+        }
+        
         @objc func reload() {
             poolsSubject.reload()
             lamportsPerSignatureSubject.reload()

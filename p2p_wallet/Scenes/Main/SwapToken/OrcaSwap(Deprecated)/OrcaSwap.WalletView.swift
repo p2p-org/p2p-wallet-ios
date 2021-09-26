@@ -20,6 +20,7 @@ extension OrcaSwap {
         private let disposeBag = DisposeBag()
         private let viewModel: ViewModel
         private let type: WalletType
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         private lazy var balanceView = BalanceView(forAutoLayout: ())
         private lazy var iconImageView = CoinLogoImageView(size: 32, cornerRadius: 16)
@@ -221,7 +222,7 @@ extension OrcaSwap {
                 .subscribe(onNext: { [weak self] _ in
                     guard let amount = self?.amountTextField.text?.double else {return}
                     let event = textFieldKeydownEvent(amount)
-                    self?.viewModel.analyticsManager.log(event: event)
+                    self?.analyticsManager.log(event: event)
                 })
                 .disposed(by: disposeBag)
             

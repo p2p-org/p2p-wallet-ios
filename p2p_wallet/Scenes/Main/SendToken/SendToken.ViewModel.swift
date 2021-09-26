@@ -93,8 +93,8 @@ extension SendToken {
         // MARK: - Dependencies
         private let repository: WalletsRepository
         private let apiClient: SendTokenAPIClient
-        private let authenticationHandler: AuthenticationHandler
-        @Injected var analyticsManager: AnalyticsManagerType
+        @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var analyticsManager: AnalyticsManagerType
         private let renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         
         // MARK: - Properties
@@ -122,12 +122,10 @@ extension SendToken {
             walletPubkey: String?,
             destinationAddress: String?,
             apiClient: SendTokenAPIClient,
-            authenticationHandler: AuthenticationHandler,
             renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         ) {
             self.repository = repository
             self.apiClient = apiClient
-            self.authenticationHandler = authenticationHandler
             self.renVMBurnAndReleaseService = renVMBurnAndReleaseService
             
             self.feeSubject = LazySubject<Double>(

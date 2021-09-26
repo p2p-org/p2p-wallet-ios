@@ -22,14 +22,8 @@ class ConfigureSecurityVC: ProfileVCBase {
     }()
     
     @Injected private var accountStorage: KeychainAccountStorage
-    let authenticationHandler: AuthenticationHandler
+    @Injected private var authenticationHandler: AuthenticationHandler
     @Injected private var analyticsManager: AnalyticsManagerType
-    
-    init(
-        authenticationHandler: AuthenticationHandler
-    ) {
-        self.authenticationHandler = authenticationHandler
-    }
     
     override func setUp() {
         title = L10n.security

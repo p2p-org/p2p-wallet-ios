@@ -16,9 +16,11 @@ protocol _MainScenesFactory {
 }
 
 class MainViewController: BaseVC {
+    // MARK: - Dependencies
+    @Injected private var viewModel: MainViewModelType
+    
     // MARK: - Properties
     private let scenesFactory: _MainScenesFactory
-    private let viewModel: MainViewModelType
     private var localAuthVC: LocalAuthVC?
     private var resetPinCodeWithASeedPhrasesVC: ResetPinCodeWithSeedPhrases.ViewController?
     private let authenticateWhenAppears: Bool
@@ -31,9 +33,8 @@ class MainViewController: BaseVC {
     }()
     
     // MARK: - Initializer
-    init(viewModel: MainViewModel, scenesFactory: _MainScenesFactory, authenticateWhenAppears: Bool)
+    init(scenesFactory: _MainScenesFactory, authenticateWhenAppears: Bool)
     {
-        self.viewModel = viewModel
         self.scenesFactory = scenesFactory
         self.authenticateWhenAppears = authenticateWhenAppears
         super.init()
