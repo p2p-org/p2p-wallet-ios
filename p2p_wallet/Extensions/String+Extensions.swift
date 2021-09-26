@@ -45,9 +45,9 @@ extension String {
     }
     // swiftlint:enable swiftgen_strings
     
-    func truncatingMiddle(numOfSymbolsRevealed: Int = 4) -> String {
-        if count <= 2 * numOfSymbolsRevealed {return self}
-        return prefix(numOfSymbolsRevealed) + "..." + suffix(numOfSymbolsRevealed)
+    func truncatingMiddle(numOfSymbolsRevealed: Int = 4, numOfSymbolsRevealedInSuffix: Int? = nil) -> String {
+        if count <= numOfSymbolsRevealed + (numOfSymbolsRevealedInSuffix ?? numOfSymbolsRevealed) {return self}
+        return prefix(numOfSymbolsRevealed) + "..." + suffix(numOfSymbolsRevealedInSuffix ?? numOfSymbolsRevealed)
     }
 }
 

@@ -8,14 +8,19 @@
 import Foundation
 import KeychainSwift
 
-class KeychainAccountStorage: SolanaSDKAccountStorage {
+protocol ICloudStorageType {
+    func saveToICloud(account: Account)
+    func accountFromICloud() -> [Account]?
+}
+
+class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType {
     // MARK: - Constants
     private let pincodeKey: String
     private let phrasesKey: String
     private let derivableTypeKey: String
     private let walletIndexKey: String
     
-    private let iCloudPhrasesKey = "Keychain.Phrases"
+    private let iCloudAccountsKey = "Keychain.Accounts"
     
     // MARK: - Properties
     private var _account: SolanaSDK.Account?
@@ -104,7 +109,8 @@ class KeychainAccountStorage: SolanaSDKAccountStorage {
     
     // MARK: - Helpers
     var didBackupUsingIcloud: Bool {
-        phrasesFromICloud() == account?.phrase.joined(separator: " ")
+        guard let phrases = account?.phrase.joined(separator: " ") else {return false}
+        return accountFromICloud()?.contains(where: {$0.phrase == phrases}) == true
     }
     
     var phrases: [String]? {
@@ -121,12 +127,29 @@ class KeychainAccountStorage: SolanaSDKAccountStorage {
     }
     
     // MARK: - iCloud
-    func saveICloud(phrases: String) {
-        iCloudStore.set(phrases, forKey: iCloudPhrasesKey)
+    func saveToICloud(account: Account) {
+        var accountsToSave = [account]
+        
+        // if accounts exists
+        if var currentAccounts = accountFromICloud() {
+            // remove (for overriding)
+            currentAccounts.removeAll(where: {$0.phrase == account.phrase})
+            
+            // add
+            currentAccounts.append(account)
+            
+            accountsToSave = currentAccounts
+        }
+        
+        // save
+        if let data = try? JSONEncoder().encode(accountsToSave) {
+            iCloudStore.set(data, forKey: iCloudAccountsKey)
+        }
     }
     
-    func phrasesFromICloud() -> String? {
-        iCloudStore.string(forKey: iCloudPhrasesKey)
+    func accountFromICloud() -> [Account]? {
+        guard let data = iCloudStore.data(forKey: iCloudAccountsKey) else {return nil}
+        return try? JSONDecoder().decode([Account].self, from: data)
     }
     
     // MARK: - Clearance

@@ -122,7 +122,11 @@ class BackupVC: ProfileVCBase {
                 isRequired: false,
                 isFullScreen: false,
                 completion: { [weak self] in
-                    self?.accountStorage.saveICloud(phrases: account.joined(separator: " "))
+                    self?.accountStorage.saveToICloud(
+                        account: .init(
+                            phrase: account.joined(separator: " ")
+                        )
+                    )
                     self?.didBackupSubject.accept(true)
                 }
             )

@@ -12,6 +12,7 @@ extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
         register {KeychainAccountStorage()}
             .implements(SolanaSDKAccountStorage.self)
+            .implements(ICloudStorageType.self)
             .scope(.application)
         register {AnalyticsManager()}
             .implements(AnalyticsManagerType.self)

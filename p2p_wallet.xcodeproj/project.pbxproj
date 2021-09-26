@@ -69,6 +69,11 @@
 		BC1FFEE8262977940014F027 /* WLEnterPhrasesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFEE7262977940014F027 /* WLEnterPhrasesVC.swift */; };
 		BC1FFF0626298D6C0014F027 /* AccountRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFF0526298D6C0014F027 /* AccountRepository.swift */; };
 		BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC2288022542E1CC0028CE8F /* Localizable.strings */; };
+		BC2297912700A274003F7118 /* RestoreICloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22978D2700A274003F7118 /* RestoreICloud.swift */; };
+		BC2297922700A274003F7118 /* RestoreICloud.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22978E2700A274003F7118 /* RestoreICloud.ViewController.swift */; };
+		BC2297962700A320003F7118 /* RestoreICloud.AccountsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2297952700A320003F7118 /* RestoreICloud.AccountsListViewModel.swift */; };
+		BC2297982700A578003F7118 /* RestoreICloud.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2297972700A578003F7118 /* RestoreICloud.Cell.swift */; };
+		BC22979A2700AB07003F7118 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2297992700AB07003F7118 /* Account.swift */; };
 		BC22A5E825D2726700F7026D /* ScrollableVStackRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22A5E725D2726700F7026D /* ScrollableVStackRootView.swift */; };
 		BC22ABD22552A2FC0071C69F /* MenuInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABD12552A2FC0071C69F /* MenuInteractor.swift */; };
 		BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABD62552A30B0071C69F /* MenuHelper.swift */; };
@@ -452,6 +457,11 @@
 		BC2288062542E1CF0028CE8F /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		BC2288072542E1D00028CE8F /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		BC2288082542E1D10028CE8F /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BC22978D2700A274003F7118 /* RestoreICloud.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreICloud.swift; sourceTree = "<group>"; };
+		BC22978E2700A274003F7118 /* RestoreICloud.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreICloud.ViewController.swift; sourceTree = "<group>"; };
+		BC2297952700A320003F7118 /* RestoreICloud.AccountsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreICloud.AccountsListViewModel.swift; sourceTree = "<group>"; };
+		BC2297972700A578003F7118 /* RestoreICloud.Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreICloud.Cell.swift; sourceTree = "<group>"; };
+		BC2297992700AB07003F7118 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		BC22A5E725D2726700F7026D /* ScrollableVStackRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollableVStackRootView.swift; sourceTree = "<group>"; };
 		BC22ABD12552A2FC0071C69F /* MenuInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuInteractor.swift; sourceTree = "<group>"; };
 		BC22ABD62552A30B0071C69F /* MenuHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuHelper.swift; sourceTree = "<group>"; };
@@ -886,6 +896,17 @@
 			path = ResetPinCodeWithSeedPhrases;
 			sourceTree = "<group>";
 		};
+		BC22978C2700A265003F7118 /* RestoreICloud */ = {
+			isa = PBXGroup;
+			children = (
+				BC22978D2700A274003F7118 /* RestoreICloud.swift */,
+				BC2297952700A320003F7118 /* RestoreICloud.AccountsListViewModel.swift */,
+				BC22978E2700A274003F7118 /* RestoreICloud.ViewController.swift */,
+				BC2297972700A578003F7118 /* RestoreICloud.Cell.swift */,
+			);
+			path = RestoreICloud;
+			sourceTree = "<group>";
+		};
 		BC22A5D825D2716400F7026D /* SendToken */ = {
 			isa = PBXGroup;
 			children = (
@@ -1219,6 +1240,7 @@
 				BCDCAE14267C4B90001ED7B4 /* AnalyticsEvent */,
 				BC59392B26D883EF0044EF5B /* SwapFee.swift */,
 				BC185EF926E3B81F00280FE6 /* LoadableRelay.swift */,
+				BC2297992700AB07003F7118 /* Account.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1764,6 +1786,7 @@
 				BCE42E1525DFA5100021540E /* RestoreWallet.ViewModel.swift */,
 				BCE42E1725DFA5100021540E /* RestoreWallet.ViewController.swift */,
 				BCDCAE1A267C5570001ED7B4 /* RecoveryEnterSeedsViewController.swift */,
+				BC22978C2700A265003F7118 /* RestoreICloud */,
 				BCE77E6426536F77000B68BB /* DerivableAccounts */,
 			);
 			path = RestoreWallet;
@@ -2351,6 +2374,7 @@
 				BC5A9734260C6EA0009674C4 /* HomeHiddenWalletsSection.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				BCBE149E25EF3D110014BCE5 /* HomeViewModel.swift in Sources */,
+				BC2297912700A274003F7118 /* RestoreICloud.swift in Sources */,
 				BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */,
 				BC0A9E9025F09BDE0063F9E3 /* Onboarding.CreatePassCodeVC.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
@@ -2385,6 +2409,7 @@
 				BCEB207225E1563B00B54FEF /* MainContainer.swift in Sources */,
 				BC59392C26D883EF0044EF5B /* SwapFee.swift in Sources */,
 				BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */,
+				BC2297922700A274003F7118 /* RestoreICloud.ViewController.swift in Sources */,
 				BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */,
 				BC3122332580B34B00F3B14F /* PassCodeVC.swift in Sources */,
 				BC80569A26D8DDE000206ECA /* SwapToken.Settings.swift in Sources */,
@@ -2437,6 +2462,7 @@
 				BC6EE7C5254BBEC000FE1025 /* Onboarding.EnableNotificationsVC.swift in Sources */,
 				BCD5E7962551332200F51299 /* DefiCell.swift in Sources */,
 				BC5A9739260C6F47009674C4 /* HiddenWalletsSection+SupplementaryViews.swift in Sources */,
+				BC2297982700A578003F7118 /* RestoreICloud.Cell.swift in Sources */,
 				BC105136258B2A2A00398EA2 /* CreateWallet.TermsAndConditionsVC.swift in Sources */,
 				BC7B2C7025E384F700833656 /* CreateSecurityKeys.ViewModel.swift in Sources */,
 				BC7D078326F86700005F777F /* ReceiveToken.ViewBuilders.swift in Sources */,
@@ -2499,6 +2525,7 @@
 				BCB7C7E22669E50B00FEC68E /* TransactionSummaryView.swift in Sources */,
 				BCD5E76525512EDC00F51299 /* NewsCell.swift in Sources */,
 				BC5A97E2260DC977009674C4 /* WalletsCollectionView.swift in Sources */,
+				BC22979A2700AB07003F7118 /* Account.swift in Sources */,
 				BC3122952580BA1700F3B14F /* LocalAuthVC.swift in Sources */,
 				BC80204526F2E6E300C109C2 /* RenVM.LockAndMint.SessionStorage.swift in Sources */,
 				BC85EA66266E1324005006D5 /* ReceiveToken.swift in Sources */,
@@ -2511,6 +2538,7 @@
 				BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */,
 				BC80203B26F1DD5D00C109C2 /* ReceiveToken.RootView.swift in Sources */,
 				BC134FA326FCD1E500DB15BF /* AppDelegate+Injection.swift in Sources */,
+				BC2297962700A320003F7118 /* RestoreICloud.AccountsListViewModel.swift in Sources */,
 				BC185EFA26E3B81F00280FE6 /* LoadableRelay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
