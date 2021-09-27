@@ -112,6 +112,20 @@ extension SendToken {
                 .bind(to: currencyModeSubject)
                 .disposed(by: disposeBag)
             
+            // detect renBTC
+            walletSubject.distinctUntilChanged()
+                .map {wallet -> SendRenBTCInfo? in
+                    if wallet?.token.address.isRenBTCMint == true {
+                        return .init(
+                            network: .bitcoin,
+                            receiveAtLeast: nil
+                        )
+                    }
+                    return nil
+                }
+                .bind(to: renBTCInfoSubject)
+                .disposed(by: disposeBag)
+            
             // verify
             Observable.combineLatest(
                 walletSubject.distinctUntilChanged().asObservable(),
