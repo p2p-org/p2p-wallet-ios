@@ -15,12 +15,12 @@ extension SendToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
-        let viewModel: ViewModel
+        let viewModel: SendTokenViewModelType
         let disposeBag = DisposeBag()
         
         // MARK: - Subviews
         lazy var balanceLabel = UILabel(text: "0", weight: .medium)
-            .onTap(viewModel, action: #selector(ViewModel.useAllBalance))
+            .onTap(self, action: #selector(useAllBalance))
         lazy var coinImageView = CoinLogoImageView(size: 44)
         lazy var amountTextField = TokenAmountTextField(
             font: .systemFont(ofSize: 27, weight: .semibold),
@@ -46,15 +46,15 @@ extension SendToken {
             return textField
         }()
         lazy var clearAddressButton = UIImageView(width: 24, height: 24, image: .closeFill, tintColor: UIColor.black.withAlphaComponent(0.6))
-            .onTap(viewModel, action: #selector(ViewModel.clearDestinationAddress))
+            .onTap(self, action: #selector(clearDestinationAddress))
         lazy var qrCodeImageView = UIImageView(width: 35, height: 35, image: .scanQr3, tintColor: .a3a5ba)
-            .onTap(viewModel, action: #selector(ViewModel.scanQrCode))
+            .onTap(self, action: #selector(scanQrCode))
         lazy var errorLabel = UILabel(text: " ", textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
         
         lazy var feeLabel = LazyLabel<Double>(textColor: .textSecondary)
         
         lazy var feeInfoButton = UIImageView(width: 16.67, height: 16.67, image: .infoCircle, tintColor: .a3a5ba)
-            .onTap(viewModel, action: #selector(ViewModel.showFeeInfo))
+            .onTap(self, action: #selector(showFeeInfo))
         
         lazy var checkingAddressValidityView = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fill) {
             checkingAddressValidityIndicatorView
@@ -85,10 +85,10 @@ extension SendToken {
         lazy var ignoreNoFundAddressSwitch = UISwitch()
         
         lazy var sendButton = WLButton.stepButton(type: .blue, label: L10n.sendNow)
-            .onTap(viewModel, action: #selector(ViewModel.authenticateAndSend))
+            .onTap(self, action: #selector(authenticateAndSend))
         
         // MARK: - Initializers
-        init(viewModel: ViewModel) {
+        init(viewModel: SendTokenViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
@@ -122,14 +122,14 @@ extension SendToken {
                         coinImageView
                         UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textBlack)
                     }
-                        .onTap(viewModel, action: #selector(ViewModel.chooseWallet))
+                        .onTap(self, action: #selector(chooseWallet))
                     
                     amountTextField
                     
                     changeModeButton
                         .withContentHuggingPriority(.required, for: .horizontal)
                         .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12)
-                        .onTap(viewModel, action: #selector(ViewModel.switchCurrencyMode))
+                        .onTap(self, action: #selector(switchCurrencyMode))
                 }
                 BEStackViewSpacing(6)
                 
@@ -207,75 +207,8 @@ extension SendToken {
         }
         
         private func bind() {
-            // bind control to viewModel's input
-            amountTextField.rx.text
-                .map {$0?.double}
-                .distinctUntilChanged()
-                .bind(to: viewModel.input.amount)
-                .disposed(by: disposeBag)
-            
-            amountTextField.rx.controlEvent([.editingDidEnd])
-                .asObservable()
-                .subscribe(onNext: { [weak self] _ in
-                    guard let amount = self?.amountTextField.text?.double else {return}
-                    self?.analyticsManager.log(event: .sendAmountKeydown(sum: amount))
-                })
-                .disposed(by: disposeBag)
-            
-            addressTextField.rx.text
-                .skip(while: {$0?.isEmpty == true})
-                .bind(to: viewModel.input.address)
-                .disposed(by: disposeBag)
-            
-            addressTextField.rx.controlEvent([.editingDidEnd])
-                .asObservable()
-                .subscribe(onNext: { [weak self] _ in
-                    self?.analyticsManager.log(event: .sendAddressKeydown)
-                })
-                .disposed(by: disposeBag)
-            
-            ignoreNoFundAddressSwitch.rx.isOn
-                .skip(while: {!$0})
-                .bind(to: viewModel.input.noFundsConfirmation)
-                .disposed(by: disposeBag)
-            
-            // bind viewModel's output
-            
-            // use all balance did touch
-            viewModel.output.useAllBalanceDidTouch
-                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
-                .drive(amountTextField.rx.text)
-                .disposed(by: disposeBag)
-            
-            // available amount
-            Driver.combineLatest(
-                viewModel.output.currentWallet,
-                viewModel.output.availableAmount,
-                viewModel.output.currencyMode
-            )
-            .map { (wallet, amount, mode) -> String? in
-                guard let wallet = wallet, let amount = amount else {return nil}
-                var string = L10n.available + ": "
-                string += amount.toString(maximumFractionDigits: 9)
-                string += " "
-                if mode == .fiat {
-                    string += Defaults.fiat.code
-                } else {
-                    string += wallet.token.symbol
-                }
-                return string
-            }
-            .drive(balanceLabel.rx.text)
-            .disposed(by: disposeBag)
-            
-            // available amount's color
-            viewModel.output.error
-                .map {($0 == L10n.insufficientFunds || $0 == L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee || $0 == L10n.amountIsNotValid) ? UIColor.red: UIColor.h5887ff}
-                .drive(balanceLabel.rx.textColor)
-                .disposed(by: disposeBag)
-            
             // current wallet
-            viewModel.output.currentWallet
+            viewModel.currentWalletDriver
                 .drive(onNext: {[weak self] wallet in
                     self?.coinImageView.setUp(wallet: wallet)
                     self?.symbolLabel.text = wallet?.token.symbol
@@ -283,19 +216,25 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             // equity label
-            viewModel.output.currentWallet
+            viewModel.currentWalletDriver
                 .map {$0?.priceInCurrentFiat == nil}
                 .map {$0 ? 0: 1}
                 .asDriver(onErrorJustReturn: 1)
                 .drive(equityValueLabel.rx.alpha)
                 .disposed(by: disposeBag)
             
-            Driver.combineLatest(
-                viewModel.output.currentWallet,
-                viewModel.output.currencyMode,
-                viewModel.input.amount.asDriver(onErrorJustReturn: nil)
+            Observable.merge(
+                amountTextField.rx.text.map {$0?.double}.asObservable(),
+                viewModel.useAllBalanceSignal.asObservable()
             )
-                .map { (wallet, currencyMode, amount) -> String in
+                .withLatestFrom(
+                    Driver.combineLatest(
+                        viewModel.currentWalletDriver,
+                        viewModel.currentCurrencyModeDriver
+                    ),
+                    resultSelector: {($0, $1.0, $1.1)}
+                )
+                .map { (amount, wallet, currencyMode) -> String in
                     guard let wallet = wallet else {return ""}
                     var equityValue = amount * wallet.priceInCurrentFiat
                     var equityValueSymbol = Defaults.fiat.code
@@ -309,15 +248,14 @@ extension SendToken {
                     }
                     return "≈ " + equityValue.toString(maximumFractionDigits: 9) + " " + equityValueSymbol
                 }
+                .asDriver(onErrorJustReturn: nil)
                 .drive(equityValueLabel.rx.text)
                 .disposed(by: disposeBag)
             
             // change currency mode button
-            Driver.combineLatest(
-                viewModel.output.currentWallet,
-                viewModel.output.currencyMode
-            )
-                .map {(wallet, currencyMode) -> String? in
+            viewModel.currentCurrencyModeDriver
+                .withLatestFrom(viewModel.currentWalletDriver, resultSelector: {($0, $1)})
+                .map {(currencyMode, wallet) -> String? in
                     if currencyMode == .fiat {
                         return Defaults.fiat.code
                     } else {
@@ -327,35 +265,113 @@ extension SendToken {
                 .drive(changeModeButton.rx.text)
                 .disposed(by: disposeBag)
             
+            // amount
+            amountTextField.rx.text
+                .map {$0?.double}
+                .distinctUntilChanged()
+                .subscribe(onNext: {[weak self] amount in
+                    self?.viewModel.enterAmount(amount)
+                })
+                .disposed(by: disposeBag)
+            
+            amountTextField.rx.controlEvent([.editingDidEnd])
+                .asObservable()
+                .withLatestFrom(amountTextField.rx.text)
+                .subscribe(onNext: {[weak self] amount in
+                    guard let amount = amount?.double else {return}
+                    self?.analyticsManager.log(event: .sendAmountKeydown(sum: amount))
+                })
+                .disposed(by: disposeBag)
+            
+            // available amount
+            viewModel.availableAmountDriver
+                .withLatestFrom(
+                    Driver.combineLatest(
+                        viewModel.currentWalletDriver,
+                        viewModel.currentCurrencyModeDriver
+                    ),
+                    resultSelector: {($0, $1.0, $1.1)}
+                )
+                .map { (amount, wallet, mode) -> String? in
+                    guard let wallet = wallet, let amount = amount else {return nil}
+                    var string = L10n.available + ": "
+                    string += amount.toString(maximumFractionDigits: 9)
+                    string += " "
+                    if mode == .fiat {
+                        string += Defaults.fiat.code
+                    } else {
+                        string += wallet.token.symbol
+                    }
+                    return string
+                }
+                .drive(balanceLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.errorDriver
+                .map {($0 == L10n.insufficientFunds || $0 == L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee || $0 == L10n.amountIsNotValid) ? UIColor.red: UIColor.h5887ff}
+                .drive(balanceLabel.rx.textColor)
+                .disposed(by: disposeBag)
+            
+            // use all balance
+            viewModel.useAllBalanceSignal
+                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
+                .emit(onNext: {[weak self] amount in
+                    self?.amountTextField.text = amount
+                })
+                .disposed(by: disposeBag)
+            
+            // address
+            addressTextField.rx.text
+                .skip(while: {$0?.isEmpty == true})
+                .subscribe(onNext: {[weak self] address in
+                    self?.viewModel.enterWalletAddress(address)
+                })
+                .disposed(by: disposeBag)
+            
+            addressTextField.rx.controlEvent([.editingDidEnd])
+                .asObservable()
+                .subscribe(onNext: { [weak self] _ in
+                    self?.analyticsManager.log(event: .sendAddressKeydown)
+                })
+                .disposed(by: disposeBag)
+            
+            // ignore no fund address
+            ignoreNoFundAddressSwitch.rx.isOn
+                .skip(while: {!$0})
+                .subscribe(onNext: {[weak self] isIgnored in
+                    self?.viewModel.ignoreEmptyBalance(isIgnored)
+                })
+                .disposed(by: disposeBag)
+            
             // price labels
-            viewModel.output.currentWallet
+            viewModel.currentWalletDriver
                 .map {$0?.token.symbol != nil ? "1 \($0!.token.symbol):": nil}
                 .drive(coinSymbolPriceLabel.rx.text)
                 .disposed(by: disposeBag)
             
-            viewModel.output.currentWallet
+            viewModel.currentWalletDriver
                 .map {$0?.priceInCurrentFiat ?? 0}
                 .map {"\($0.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"}
                 .drive(coinPriceLabel.rx.text)
                 .disposed(by: disposeBag)
             
             // fee
-            feeLabel.subscribed(to: viewModel.output.fee) {
-                "\($0.toString(maximumFractionDigits: 9)) SOL"
-            }
-                .disposed(by: disposeBag)
+//            feeLabel.subscribed(to: viewModel.output.fee) {
+//                "\($0.toString(maximumFractionDigits: 9)) SOL"
+//            }
+//                .disposed(by: disposeBag)
             
             // receiver address
-            viewModel.output.receiverAddress
+            viewModel.receiverAddressDriver
                 .drive(addressTextField.rx.text)
                 .disposed(by: disposeBag)
             
-            viewModel.output.receiverAddress
+            viewModel.receiverAddressDriver
                 .map {!NSRegularExpression.publicKey.matches($0 ?? "")}
                 .drive(walletIconView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            let destinationAddressInputEmpty = viewModel.output.receiverAddress
+            let destinationAddressInputEmpty = viewModel.receiverAddressDriver
                 .map {$0 == nil || $0!.isEmpty}
             
             destinationAddressInputEmpty
@@ -370,7 +386,7 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             // error
-            viewModel.output.error
+            viewModel.errorDriver
                 .map {
                     if $0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid
                     {
@@ -383,17 +399,17 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             // no fund
-            viewModel.output.addressValidationStatus
+            viewModel.addressValidationStatusDriver
                 .map {$0 == .uncheck || $0 == .valid || $0 == .fetching}
                 .drive(noFundAddressView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            viewModel.output.addressValidationStatus
+            viewModel.addressValidationStatusDriver
                 .map {$0 != .fetching}
                 .drive(checkingAddressValidityView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            viewModel.output.addressValidationStatus
+            viewModel.addressValidationStatusDriver
                 .map {
                     if $0 == .fetchingError {
                         return L10n.ErrorCheckingAddressValidity.areYouSureItSCorrect
@@ -403,17 +419,49 @@ extension SendToken {
                 .drive(noFundAddressViewLabel.rx.text)
                 .disposed(by: disposeBag)
             
-            viewModel.output.addressValidationStatus
+            viewModel.addressValidationStatusDriver
                 .filter {$0 != .invalidIgnored}
                 .map {_ in false}
                 .drive(ignoreNoFundAddressSwitch.rx.isOn)
                 .disposed(by: disposeBag)
             
             // send button
-            viewModel.output.isValid
+            viewModel.isValidDriver
                 .drive(sendButton.rx.isEnabled)
                 .disposed(by: disposeBag)
         }
+    }
+}
+
+private extension SendToken.RootView {
+    @objc func useAllBalance() {
+        viewModel.useAllBalance()
+    }
+    
+    @objc func chooseWallet() {
+        viewModel.navigate(to: .chooseWallet)
+    }
+    
+    @objc func switchCurrencyMode() {
+        viewModel.switchCurrencyMode()
+    }
+    
+    @objc func clearDestinationAddress() {
+        viewModel.clearDestinationAddress()
+    }
+    
+    @objc func scanQrCode() {
+        analyticsManager.log(event: .sendScanQrClick)
+        analyticsManager.log(event: .scanQrOpen(fromPage: "send"))
+        viewModel.navigate(to: .scanQrCode)
+    }
+    
+    @objc func showFeeInfo() {
+        viewModel.navigate(to: .feeInfo)
+    }
+    
+    @objc func authenticateAndSend() {
+        viewModel.authenticateAndSend()
     }
 }
 

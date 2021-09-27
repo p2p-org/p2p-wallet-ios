@@ -10,11 +10,11 @@ import RxSwift
 import RxCocoa
 import LazySubject
 
-protocol SendTokenViewModelType {
+protocol SendTokenViewModelType: WalletDidSelectHandler {
     var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {get}
     var currentWalletDriver: Driver<Wallet?> {get}
     var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {get}
-    var amountDriver: Driver<Double?> {get}
+    var useAllBalanceSignal: Signal<Double?> {get}
     var feeDriver: Driver<Loadable<Double>> {get}
     var availableAmountDriver: Driver<Double?> {get}
     var isValidDriver: Driver<Bool> {get}
@@ -26,7 +26,7 @@ protocol SendTokenViewModelType {
     func navigate(to scene: SendToken.NavigatableScene)
     func chooseWallet(_ wallet: Wallet)
     func enterAmount(_ amount: Double?)
-    func changeCurrencyMode(to mode: SendToken.CurrencyMode)
+    func switchCurrencyMode()
     func useAllBalance()
     
     func enterWalletAddress(_ address: String?)
@@ -34,6 +34,12 @@ protocol SendTokenViewModelType {
     func ignoreEmptyBalance(_ isIgnored: Bool)
     
     func authenticateAndSend()
+}
+
+extension SendTokenViewModelType {
+    func walletDidSelect(_ wallet: Wallet) {
+        chooseWallet(wallet)
+    }
 }
 
 extension SendToken {
@@ -53,6 +59,7 @@ extension SendToken {
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
+        private let useAllBalanceSubject = PublishRelay<Double?>()
         private let destinationAddressSubject = BehaviorRelay<String?>(value: nil)
         private let feeSubject: LoadableRelay<Double>
         private let errorSubject = BehaviorRelay<String?>(value: nil)
@@ -229,23 +236,23 @@ extension SendToken {
 
 extension SendToken.ViewModel: SendTokenViewModelType {
     var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {
-        <#code#>
+        navigationSubject.asDriver()
     }
     
     var currentWalletDriver: Driver<Wallet?> {
-        <#code#>
+        walletSubject.asDriver()
     }
     
     var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {
-        <#code#>
+        currencyModeSubject.asDriver()
     }
     
-    var amountDriver: Driver<Double?> {
-        <#code#>
+    var useAllBalanceSignal: Signal<Double?> {
+        useAllBalanceSubject.asSignal()
     }
     
     var feeDriver: Driver<Loadable<Double>> {
-        <#code#>
+        feeSubject.asDriver()
     }
     
     var availableAmountDriver: Driver<Double?> {
@@ -272,22 +279,22 @@ extension SendToken.ViewModel: SendTokenViewModelType {
             errorDriver.map {$0 == nil},
             currentWalletDriver.map {$0 != nil},
             receiverAddressDriver.map {$0 != nil && !$0!.isEmpty},
-            amountDriver.map {$0 != nil},
+            amountSubject.asDriver().map {$0 != nil},
             addressValidationStatusDriver.map {$0 == .valid || $0 == .invalidIgnored}
         ])
             .map {$0.allSatisfy {$0}}
     }
     
     var errorDriver: Driver<String?> {
-        <#code#>
+        errorSubject.asDriver()
     }
     
     var receiverAddressDriver: Driver<String?> {
-        <#code#>
+        destinationAddressSubject.asDriver()
     }
     
     var addressValidationStatusDriver: Driver<SendToken.AddressValidationStatus> {
-        <#code#>
+        addressValidationStatusSubject.asDriver()
     }
     
     // MARK: - Actions
@@ -298,23 +305,6 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     func navigate(to scene: SendToken.NavigatableScene) {
         navigationSubject.accept(scene)
     }
-    
-//    @objc func chooseWallet() {
-//        navigationSubject.onNext(.chooseWallet)
-//    }
-//
-//    @objc func chooseAddress() {
-//        navigationSubject.onNext(.chooseAddress)
-//    }
-//
-//    @objc func scanQrCode() {
-//        analyticsManager.log(event: .sendScanQrClick)
-//        analyticsManager.log(event: .scanQrOpen(fromPage: "send"))
-//        navigationSubject.onNext(.scanQrCode)
-//    }
-//    @objc func showFeeInfo() {
-//        navigationSubject.onNext(.feeInfo)
-//    }
     
     func chooseWallet(_ wallet: Wallet) {
         analyticsManager.log(
@@ -327,7 +317,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         amountSubject.accept(amount)
     }
     
-    func changeCurrencyMode(to mode: SendToken.CurrencyMode) {
+    func switchCurrencyMode() {
         if walletSubject.value?.priceInCurrentFiat == nil {
             if currencyModeSubject.value == .fiat {
                 currencyModeSubject.accept(.token)
@@ -344,10 +334,15 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     }
     
     func useAllBalance() {
-        let amount = availableAmountSubject.value
+        let amount = calculateAvailableAmount(
+            wallet: walletSubject.value,
+            currencyMode: currencyModeSubject.value,
+            feeInSOL: feeSubject.value
+        )
         if let amount = amount {
             analyticsManager.log(event: .sendAvailableClick(sum: amount))
         }
+        useAllBalanceSubject.accept(amount)
         amountSubject.accept(amount)
     }
     
@@ -378,12 +373,6 @@ extension SendToken.ViewModel: SendTokenViewModelType {
                     }
                 )
         )
-    }
-}
-
-extension SendToken.ViewModel: WalletDidSelectHandler {
-    func walletDidSelect(_ wallet: Wallet) {
-        chooseWallet(wallet)
     }
 }
 
