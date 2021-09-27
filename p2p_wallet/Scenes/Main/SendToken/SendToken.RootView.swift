@@ -223,17 +223,14 @@ extension SendToken {
                 .drive(equityValueLabel.rx.alpha)
                 .disposed(by: disposeBag)
             
-            Observable.merge(
-                amountTextField.rx.text.map {$0?.double}.asObservable(),
-                viewModel.useAllBalanceSignal.asObservable()
+            Driver.combineLatest(
+                Observable.merge(
+                    amountTextField.rx.text.map {$0?.double}.asObservable(),
+                    viewModel.useAllBalanceSignal.asObservable()
+                ).asDriver(onErrorJustReturn: nil),
+                viewModel.currentWalletDriver,
+                viewModel.currentCurrencyModeDriver
             )
-                .withLatestFrom(
-                    Driver.combineLatest(
-                        viewModel.currentWalletDriver,
-                        viewModel.currentCurrencyModeDriver
-                    ),
-                    resultSelector: {($0, $1.0, $1.1)}
-                )
                 .map { (amount, wallet, currencyMode) -> String in
                     guard let wallet = wallet else {return ""}
                     var equityValue = amount * wallet.priceInCurrentFiat
