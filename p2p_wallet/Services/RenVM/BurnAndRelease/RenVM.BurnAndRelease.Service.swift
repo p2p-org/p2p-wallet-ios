@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol RenVMBurnAndReleaseServiceType {
+    func getFee() -> Single<Double>
     func burn(recipient: String, amount: UInt64) -> Single<String>
 }
 
@@ -85,6 +86,11 @@ extension RenVM.BurnAndRelease {
         
         func reload() {
             burnAndReleaseSubject.reload()
+        }
+        
+        func getFee() -> Single<Double> {
+            rpcClient.getTransactionFee(mintTokenSymbol: mintTokenSymbol)
+                .map {$0.convertToBalance(decimals: 8)}
         }
         
         func burn(recipient: String, amount: UInt64) -> Single<String> {
