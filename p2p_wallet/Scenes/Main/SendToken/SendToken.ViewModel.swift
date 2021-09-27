@@ -82,14 +82,7 @@ extension SendToken {
             self.apiClient = apiClient
             self.renVMBurnAndReleaseService = renVMBurnAndReleaseService
             
-            self.feeSubject = .init(
-                request: Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
-                    .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
-                    .map {
-                        let decimals = repository.nativeWallet?.token.decimals
-                        return $0.convertToBalance(decimals: decimals)
-                    }
-            )
+            self.feeSubject = .init(request: .just(0))
             
             bind()
             reload()
@@ -125,6 +118,16 @@ extension SendToken {
                     return nil
                 }
                 .bind(to: renBTCInfoSubject)
+                .disposed(by: disposeBag)
+            
+            renBTCInfoSubject
+                .map {$0?.network}
+                .distinctUntilChanged()
+                .subscribe(onNext: {[weak self] network in
+                    guard let self = self else {return}
+                    self.feeSubject.request = self.feeRequest(network: network)
+                    self.feeSubject.reload()
+                })
                 .disposed(by: disposeBag)
             
             // verify
@@ -198,8 +201,9 @@ extension SendToken {
             // define token
             var request: Single<String>!
             
-            // renBTC: fix later for sending to solana chain
-            if wallet.token.address.isRenBTCMint {
+            // renBTC
+            if wallet.token.address.isRenBTCMint && renBTCInfoSubject.value?.network == .bitcoin
+            {
                 request = renVMBurnAndReleaseService.burn(
                     recipient: receiver,
                     amount: amount.toLamport(decimals: 8)
@@ -250,6 +254,18 @@ extension SendToken {
                 )
             )
         }
+        
+        private func feeRequest(network: SendRenBTCInfo.Network?) -> Single<Double> {
+            if network == .bitcoin {
+                return renVMBurnAndReleaseService.getFee()
+            }
+            return Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
+                .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
+                .map { [weak self] in
+                    let decimals = self?.repository.nativeWallet?.token.decimals
+                    return $0.convertToBalance(decimals: decimals)
+                }
+        }
     }
 }
 
@@ -288,7 +304,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
                 return calculateAvailableAmount(
                     wallet: wallet,
                     currencyMode: currencyMode,
-                    feeInSOL: feeInSOL
+                    fee: feeInSOL
                 )
             }
     }
@@ -365,7 +381,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         let amount = calculateAvailableAmount(
             wallet: walletSubject.value,
             currencyMode: currencyModeSubject.value,
-            feeInSOL: feeSubject.value
+            fee: feeSubject.value
         )
         if let amount = amount {
             analyticsManager.log(event: .sendAvailableClick(sum: amount))
@@ -414,17 +430,22 @@ extension SendToken.ViewModel: SendTokenViewModelType {
 private func calculateAvailableAmount(
     wallet: Wallet?,
     currencyMode: SendToken.CurrencyMode,
-    feeInSOL: Double?
+    fee: Double?
 ) -> Double? {
     guard let wallet = wallet,
-          let feeInSOL = feeInSOL
+          let fee = fee
     else {return nil}
     // all amount
     var availableAmount = wallet.amount ?? 0
     
     // minus fee if wallet is native sol
     if wallet.isNativeSOL == true {
-        availableAmount = availableAmount - feeInSOL
+        availableAmount = availableAmount - fee
+    }
+    
+    // renBTC fee
+    else if wallet.token.address.isRenBTCMint {
+        availableAmount = availableAmount - fee
     }
     
     // convert to fiat in fiat mode
@@ -466,7 +487,7 @@ private func verifyError(
         }
         
         // Verify amount
-        let amountToCompare = calculateAvailableAmount(wallet: wallet, currencyMode: currencyMode, feeInSOL: fee)
+        let amountToCompare = calculateAvailableAmount(wallet: wallet, currencyMode: currencyMode, fee: fee)
         if amount.rounded(decimals: Int(wallet?.token.decimals ?? 0)) > amountToCompare?.rounded(decimals: Int(wallet?.token.decimals ?? 0))
         {
             return L10n.insufficientFunds
