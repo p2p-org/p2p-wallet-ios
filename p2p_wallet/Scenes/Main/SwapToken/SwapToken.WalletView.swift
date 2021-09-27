@@ -21,7 +21,7 @@ extension SwapToken {
         private let viewModel: SwapTokenViewModelType
         private let type: WalletType
         
-        private lazy var balanceView = BalanceView(forAutoLayout: ())
+        private lazy var balanceView = WLBalanceView(forAutoLayout: ())
         private lazy var iconImageView = CoinLogoImageView(size: 32, cornerRadius: 16)
         
         private lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
@@ -269,33 +269,6 @@ extension SwapToken {
         
         @objc private func useAllBalance() {
             viewModel.useAllBalance()
-        }
-    }
-}
-
-private extension SwapToken.WalletView {
-    class BalanceView: BEView {
-        private let disposeBag = DisposeBag()
-        lazy var walletView = UIImageView(width: 16, height: 16, image: .walletIcon)
-        lazy var balanceLabel = UILabel(textSize: 13, weight: .medium)
-        
-        override var tintColor: UIColor! {
-            didSet {
-                self.walletView.tintColor = tintColor
-                self.balanceLabel.textColor = tintColor
-            }
-        }
-        
-        override func commonInit() {
-            super.commonInit()
-            let stackView = UIStackView(axis: .horizontal, spacing: 5.33, alignment: .center, distribution: .fill) {
-                walletView
-                balanceLabel
-            }
-            addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges()
-            
-            walletView.isHidden = true
         }
     }
 }

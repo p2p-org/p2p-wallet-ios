@@ -15,23 +15,11 @@ extension SendToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
-        let viewModel: SendTokenViewModelType
-        let disposeBag = DisposeBag()
+        private let viewModel: SendTokenViewModelType
+        private let disposeBag = DisposeBag()
         
         // MARK: - Subviews
-        lazy var balanceLabel = UILabel(text: "0", weight: .medium)
-            .onTap(self, action: #selector(useAllBalance))
-        lazy var coinImageView = CoinLogoImageView(size: 44)
-        lazy var amountTextField = TokenAmountTextField(
-            font: .systemFont(ofSize: 27, weight: .semibold),
-            textColor: .textBlack,
-            keyboardType: .decimalPad,
-            placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
-            autocorrectionType: .no
-        )
-        lazy var changeModeButton = UILabel(weight: .semibold, textColor: .a3a5ba)
-        lazy var symbolLabel = UILabel(weight: .semibold)
-        lazy var equityValueLabel = UILabel(text: "≈", textColor: .textSecondary)
+        private lazy var walletView = WalletView(viewModel: viewModel)
         lazy var coinSymbolPriceLabel = UILabel(textColor: .textSecondary)
         lazy var coinPriceLabel = UILabel(textColor: .textSecondary)
         
@@ -98,45 +86,12 @@ extension SendToken {
             super.commonInit()
             layout()
             bind()
-            amountTextField.delegate = self
-        }
-        
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { [weak self] in
-                self?.amountTextField.becomeFirstResponder()
-            }
         }
         
         // MARK: - Layout
         private func layout() {
             stackView.addArrangedSubviews {
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing) {
-                    UILabel(text: L10n.from, weight: .bold)
-                    balanceLabel
-                }
-                BEStackViewSpacing(30)
-                
-                UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
-                    UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
-                        coinImageView
-                        UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .textBlack)
-                    }
-                        .onTap(self, action: #selector(chooseWallet))
-                    
-                    amountTextField
-                    
-                    changeModeButton
-                        .withContentHuggingPriority(.required, for: .horizontal)
-                        .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12)
-                        .onTap(self, action: #selector(switchCurrencyMode))
-                }
-                BEStackViewSpacing(6)
-                
-                UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-                    UIView(),
-                    equityValueLabel
-                ])
+                walletView
                 BEStackViewSpacing(20)
                 
                 UIView.defaultSeparator()
@@ -195,128 +150,12 @@ extension SendToken {
                 UIView.allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice()
             }
             
-            equityValueLabel.autoPinEdge(.leading, to: .leading, of: amountTextField)
-            
-            scrollView.contentView.addSubview(symbolLabel)
-            symbolLabel.centerXAnchor.constraint(equalTo: coinImageView.centerXAnchor).isActive = true
-            symbolLabel.centerYAnchor.constraint(equalTo: equityValueLabel.centerYAnchor).isActive = true
-            
             feeInfoButton.isHidden = !Defaults.useFreeTransaction
             
             checkingAddressValidityIndicatorView.startAnimating()
         }
         
         private func bind() {
-            // current wallet
-            viewModel.currentWalletDriver
-                .drive(onNext: {[weak self] wallet in
-                    self?.coinImageView.setUp(wallet: wallet)
-                    self?.symbolLabel.text = wallet?.token.symbol
-                })
-                .disposed(by: disposeBag)
-            
-            // equity label
-            viewModel.currentWalletDriver
-                .map {$0?.priceInCurrentFiat == nil}
-                .map {$0 ? 0: 1}
-                .asDriver(onErrorJustReturn: 1)
-                .drive(equityValueLabel.rx.alpha)
-                .disposed(by: disposeBag)
-            
-            Driver.combineLatest(
-                Observable.merge(
-                    amountTextField.rx.text.map {$0?.double}.asObservable(),
-                    viewModel.useAllBalanceSignal.asObservable()
-                ).asDriver(onErrorJustReturn: nil),
-                viewModel.currentWalletDriver,
-                viewModel.currentCurrencyModeDriver
-            )
-                .map { (amount, wallet, currencyMode) -> String in
-                    guard let wallet = wallet else {return ""}
-                    var equityValue = amount * wallet.priceInCurrentFiat
-                    var equityValueSymbol = Defaults.fiat.code
-                    if currencyMode == .fiat {
-                        if wallet.priceInCurrentFiat > 0 {
-                            equityValue = amount / wallet.priceInCurrentFiat
-                        } else {
-                            equityValue = 0
-                        }
-                        equityValueSymbol = wallet.token.symbol
-                    }
-                    return "≈ " + equityValue.toString(maximumFractionDigits: 9) + " " + equityValueSymbol
-                }
-                .asDriver(onErrorJustReturn: nil)
-                .drive(equityValueLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            // change currency mode button
-            viewModel.currentCurrencyModeDriver
-                .withLatestFrom(viewModel.currentWalletDriver, resultSelector: {($0, $1)})
-                .map {(currencyMode, wallet) -> String? in
-                    if currencyMode == .fiat {
-                        return Defaults.fiat.code
-                    } else {
-                        return wallet?.token.symbol
-                    }
-                }
-                .drive(changeModeButton.rx.text)
-                .disposed(by: disposeBag)
-            
-            // amount
-            amountTextField.rx.text
-                .map {$0?.double}
-                .distinctUntilChanged()
-                .subscribe(onNext: {[weak self] amount in
-                    self?.viewModel.enterAmount(amount)
-                })
-                .disposed(by: disposeBag)
-            
-            amountTextField.rx.controlEvent([.editingDidEnd])
-                .asObservable()
-                .withLatestFrom(amountTextField.rx.text)
-                .subscribe(onNext: {[weak self] amount in
-                    guard let amount = amount?.double else {return}
-                    self?.analyticsManager.log(event: .sendAmountKeydown(sum: amount))
-                })
-                .disposed(by: disposeBag)
-            
-            // available amount
-            viewModel.availableAmountDriver
-                .withLatestFrom(
-                    Driver.combineLatest(
-                        viewModel.currentWalletDriver,
-                        viewModel.currentCurrencyModeDriver
-                    ),
-                    resultSelector: {($0, $1.0, $1.1)}
-                )
-                .map { (amount, wallet, mode) -> String? in
-                    guard let wallet = wallet, let amount = amount else {return nil}
-                    var string = L10n.available + ": "
-                    string += amount.toString(maximumFractionDigits: 9)
-                    string += " "
-                    if mode == .fiat {
-                        string += Defaults.fiat.code
-                    } else {
-                        string += wallet.token.symbol
-                    }
-                    return string
-                }
-                .drive(balanceLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            viewModel.errorDriver
-                .map {($0 == L10n.insufficientFunds || $0 == L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee || $0 == L10n.amountIsNotValid) ? UIColor.red: UIColor.h5887ff}
-                .drive(balanceLabel.rx.textColor)
-                .disposed(by: disposeBag)
-            
-            // use all balance
-            viewModel.useAllBalanceSignal
-                .map {$0?.toString(maximumFractionDigits: 9, groupingSeparator: "")}
-                .emit(onNext: {[weak self] amount in
-                    self?.amountTextField.text = amount
-                })
-                .disposed(by: disposeBag)
-            
             // address
             addressTextField.rx.text
                 .skip(while: {$0?.isEmpty == true})
@@ -432,18 +271,6 @@ extension SendToken {
 }
 
 private extension SendToken.RootView {
-    @objc func useAllBalance() {
-        viewModel.useAllBalance()
-    }
-    
-    @objc func chooseWallet() {
-        viewModel.navigate(to: .chooseWallet)
-    }
-    
-    @objc func switchCurrencyMode() {
-        viewModel.switchCurrencyMode()
-    }
-    
     @objc func clearDestinationAddress() {
         viewModel.clearDestinationAddress()
     }
@@ -460,14 +287,5 @@ private extension SendToken.RootView {
     
     @objc func authenticateAndSend() {
         viewModel.authenticateAndSend()
-    }
-}
-
-extension SendToken.RootView: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if let textField = textField as? TokenAmountTextField {
-            return textField.shouldChangeCharactersInRange(range, replacementString: string)
-        }
-        return true
     }
 }
