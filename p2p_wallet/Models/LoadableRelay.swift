@@ -131,19 +131,14 @@ extension UILabel {
         isUserInteractionEnabled = false
         switch loadableValue.state {
         case .notRequested:
-            attributedText = NSMutableAttributedString()
-                .text(L10n.loading + "...")
+            text = L10n.loading + "..."
         case .loading:
-            attributedText = NSMutableAttributedString()
-                .text(L10n.loading + "...")
+            text = L10n.loading + "..."
         case .loaded:
-            attributedText = NSMutableAttributedString()
-                .text(onLoaded(loadableValue.value) ?? "")
+            text = onLoaded(loadableValue.value)
         case .error(_):
             isUserInteractionEnabled = true
-            
-            attributedText = NSMutableAttributedString()
-                .text(L10n.error.uppercaseFirst + ". " + L10n.tapToTryAgain, size: font.pointSize, weight: font.weight, color: .alert)
+            text = L10n.error.uppercaseFirst + ". " + L10n.tapToTryAgain
             
             let gesture = LoadableTapGesture(target: self, action: #selector(loadableTextDidTap(gesture:)))
             gesture.reloadAction = loadableValue.reloadAction
