@@ -103,18 +103,24 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             viewModel.renBTCInfoDriver
+                .map {$0 != nil}
+                .drive(feeInfoButton.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            viewModel.renBTCInfoDriver
                 .map {$0?.network.rawValue.uppercaseFirst.localized()}
                 .drive(renBTCNetworkLabel.rx.text)
                 .disposed(by: disposeBag)
             
             // fee
             viewModel.feeDriver
-                .drive(feeLabel.rx.loadableText(onLoaded: { fee in
+                .drive(feeLabel.rx.loadableText(onLoaded: {[weak self] fee in
                     let fee = fee ?? 0
                     if fee == 0 {
                         return L10n.free
                     }
-                    return "\(fee.toString(maximumFractionDigits: 9)) SOL"
+                    
+                    return "\(fee.toString(maximumFractionDigits: 9)) \(self?.viewModel.getPayingTokenSymbol() ?? "SOL")"
                 }))
                 .disposed(by: disposeBag)
             
