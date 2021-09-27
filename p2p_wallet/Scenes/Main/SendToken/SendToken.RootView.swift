@@ -20,8 +20,8 @@ extension SendToken {
         
         // MARK: - Subviews
         private lazy var walletView = WalletView(viewModel: viewModel)
-        lazy var coinSymbolPriceLabel = UILabel(textColor: .textSecondary)
-        lazy var coinPriceLabel = UILabel(textColor: .textSecondary)
+        private lazy var priceLabel = UILabel(textSize: 15, weight: .medium)
+        private lazy var feeLabel = UILabel(textSize: 15, weight: .medium)
         
         lazy var addressStackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
             walletIconView, addressTextField, clearAddressButton, qrCodeImageView
@@ -38,8 +38,6 @@ extension SendToken {
         lazy var qrCodeImageView = UIImageView(width: 35, height: 35, image: .scanQr3, tintColor: .a3a5ba)
             .onTap(self, action: #selector(scanQrCode))
         lazy var errorLabel = UILabel(text: " ", textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
-        
-        lazy var feeLabel = LazyLabel<Double>(textColor: .textSecondary)
         
         lazy var feeInfoButton = UIImageView(width: 16.67, height: 16.67, image: .infoCircle, tintColor: .a3a5ba)
             .onTap(self, action: #selector(showFeeInfo))
@@ -90,32 +88,25 @@ extension SendToken {
         
         // MARK: - Layout
         private func layout() {
+            stackView.spacing = 20
             stackView.addArrangedSubviews {
                 walletView
-                BEStackViewSpacing(20)
+                
+                UIView.createSectionView(
+                    title: L10n.currentPrice,
+                    contentView: priceLabel,
+                    rightView: nil,
+                    addSeparatorOnTop: false
+                )
+                
+                UIView.createSectionView(
+                    title: L10n.transferFee,
+                    contentView: feeLabel,
+                    rightView: feeInfoButton,
+                    addSeparatorOnTop: true
+                )
                 
                 UIView.defaultSeparator()
-                BEStackViewSpacing(20)
-                
-                UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
-                    UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalSpacing) {
-                        coinSymbolPriceLabel
-                        coinPriceLabel
-                    }
-                    
-                    UIStackView(axis: .horizontal, spacing: 6.67, alignment: .center, distribution: .fill) {
-                        UILabel(text: L10n.fee + ":", textColor: .textSecondary)
-                        feeLabel
-                            .withContentHuggingPriority(.required, for: .horizontal)
-                        feeInfoButton
-                            .withContentHuggingPriority(.required, for: .horizontal)
-                    }
-                }
-                
-                BEStackViewSpacing(20)
-                
-                UIView.defaultSeparator()
-                BEStackViewSpacing(20)
                 
                 UILabel(text: L10n.sendTo, weight: .bold)
                 addressStackView
@@ -131,8 +122,6 @@ extension SendToken {
                 BEStackViewSpacing(30)
                 
                 UIView.defaultSeparator()
-                
-                BEStackViewSpacing(20)
                 
                 sendButton
                 
@@ -181,20 +170,18 @@ extension SendToken {
             
             // price labels
             viewModel.currentWalletDriver
-                .map {$0?.token.symbol != nil ? "1 \($0!.token.symbol):": nil}
-                .drive(coinSymbolPriceLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            viewModel.currentWalletDriver
-                .map {$0?.priceInCurrentFiat ?? 0}
-                .map {"\($0.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"}
-                .drive(coinPriceLabel.rx.text)
+                .map {"\(Defaults.fiat.symbol)\(($0?.priceInCurrentFiat ?? 0).toString(maximumFractionDigits: 9)) \(L10n.per) \($0?.token.symbol ?? "")"}
+                .drive(priceLabel.rx.text)
                 .disposed(by: disposeBag)
             
             // fee
             viewModel.feeDriver
                 .drive(feeLabel.rx.loadableText(onLoaded: { fee in
-                    "\(fee.toString(maximumFractionDigits: 9)) SOL"
+                    let fee = fee ?? 0
+                    if fee == 0 {
+                        return L10n.free
+                    }
+                    return "\(fee.toString(maximumFractionDigits: 9)) SOL"
                 }))
                 .disposed(by: disposeBag)
             
