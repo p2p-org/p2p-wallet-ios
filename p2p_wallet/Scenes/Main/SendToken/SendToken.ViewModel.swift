@@ -25,6 +25,7 @@ protocol SendTokenViewModelType: WalletDidSelectHandler {
     
     func reload()
     func navigate(to scene: SendToken.NavigatableScene)
+    func navigateToSelectBTCNetwork()
     func chooseWallet(_ wallet: Wallet)
     func enterAmount(_ amount: Double?)
     func switchCurrencyMode()
@@ -326,6 +327,11 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func navigate(to scene: SendToken.NavigatableScene) {
         navigationSubject.accept(scene)
+    }
+    
+    func navigateToSelectBTCNetwork() {
+        guard let selectedNetwork = renBTCInfoSubject.value?.network else {return}
+        navigationSubject.accept(.chooseBTCNetwork(selectedNetwork: selectedNetwork))
     }
     
     func chooseWallet(_ wallet: Wallet) {

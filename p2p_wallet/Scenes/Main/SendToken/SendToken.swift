@@ -13,7 +13,7 @@ struct SendToken {
         case chooseWallet
         case chooseAddress
         case scanQrCode
-        case chooseBTCNetwork
+        case chooseBTCNetwork(selectedNetwork: SendRenBTCInfo.Network)
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
         case feeInfo
     }
