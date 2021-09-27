@@ -64,7 +64,7 @@ extension SendToken {
                     addSeparatorOnTop: false
                 )
                 
-                renBTCNetworkLabel
+                renBTCNetworkSection
                 
                 UIView.createSectionView(
                     title: L10n.transferFee,
@@ -102,7 +102,7 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             viewModel.renBTCInfoDriver
-                .map {$0?.network.rawValue.uppercased().localized()}
+                .map {$0?.network.rawValue.uppercaseFirst.localized()}
                 .drive(renBTCNetworkLabel.rx.text)
                 .disposed(by: disposeBag)
             
