@@ -17,8 +17,8 @@ extension ReceiveToken {
         init(viewModel: ReceiveTokenBitcoinViewModelType, selectedOption: BTCTypeOption) {
             self.viewModel = viewModel
             self.selectView = .init(options: options, selectedIndex: options.firstIndex(of: selectedOption)!) { option, isSelected in
-                let view = BTCOptionView()
-                view.setOption(option)
+                let view = WLDefaultOptionView()
+                view.label.text = option.stringValue
                 view.setSelected(isSelected)
                 return view
             }
@@ -53,33 +53,6 @@ extension ReceiveToken {
             case .renBTC:
                 return "renBTC"
             }
-        }
-    }
-    
-    class BTCOptionView: BEView, OptionViewType {
-        private lazy var label = UILabel(text: nil)
-        
-        private lazy var radioButton: WLRadioButton = {
-            let checkBox = WLRadioButton()
-            checkBox.isUserInteractionEnabled = false
-            return checkBox
-        }()
-        
-        override func commonInit() {
-            super.commonInit()
-            let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-                radioButton, label
-            ])
-            addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 0, y: 20))
-        }
-        
-        func setOption(_ option: BTCTypeOption) {
-            label.text = option.stringValue
-        }
-        
-        func setSelected(_ selected: Bool) {
-            radioButton.isSelected = selected
         }
     }
 }

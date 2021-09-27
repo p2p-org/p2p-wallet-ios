@@ -89,6 +89,21 @@ extension SendToken {
                 }
                 vc.modalPresentationStyle = .custom
                 self.present(vc, animated: true, completion: nil)
+            case .chooseBTCNetwork:
+                let selectionVC = SingleSelectionViewController<SendRenBTCInfo.Network>(
+                    title: L10n.destinationNetwork,
+                    options: [.solana, .bitcoin],
+                    selectedOption: .bitcoin)
+                { option, isSelected in
+                    let view = WLDefaultOptionView()
+                    view.label.text = option.rawValue.uppercaseFirst.localized()
+                    view.setSelected(isSelected)
+                    return view
+                }
+                selectionVC.completion = {[weak self] option in
+                    self?.viewModel.changeRenBTCNetwork(to: option)
+                }
+                self.present(selectionVC, interactiveDismissalType: .standard)
             case .processTransaction(let request, let transactionType):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
                 self.present(vc, animated: true, completion: nil)
