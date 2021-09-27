@@ -174,21 +174,26 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             // destination address
-            destinationAddressSubject
-                .distinctUntilChanged()
+            Observable.combineLatest(
+                destinationAddressSubject.distinctUntilChanged(),
+                renBTCInfoSubject
+            )
                 .do(onNext: { [weak self] _ in
                     self?.addressValidationStatusSubject.accept(.fetching)
                 })
                 .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-                .flatMap {[weak self] address -> Single<AddressValidationStatus> in
-                    guard let address = address, !address.isEmpty else {
+                .flatMap {[weak self] address, renBTCInfo -> Single<AddressValidationStatus> in
+                    guard let self = self, let address = address, !address.isEmpty else {
                         return .just(.uncheck)
                     }
-                    self?.addressValidationStatusSubject.accept(.fetching)
-                    return (self?.apiClient.checkAccountValidation(account: address) ?? .just(false))
-                        .map {isValid -> AddressValidationStatus in
-                            isValid ? .valid: .invalid
-                        }
+                    self.addressValidationStatusSubject.accept(.fetching)
+                    let request: Single<Bool>
+                    if renBTCInfo?.network == .bitcoin {
+                        request = .just(address.isValidBitcoinAddress())
+                    } else {
+                        request = self.apiClient.checkAccountValidation(account: address)
+                    }
+                    return request.map {$0 ? .valid: .invalid}
                         .catchAndReturn(.fetchingError)
                 }
                 
@@ -532,5 +537,12 @@ private extension String {
     var isRenBTCMint: Bool {
         self == SolanaSDK.PublicKey.renBTCMint.base58EncodedString ||
             self == SolanaSDK.PublicKey.renBTCMintDevnet.base58EncodedString
+    }
+    
+    func isValidBitcoinAddress() -> Bool {
+        let pattern = "^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$"
+        let r = startIndex..<endIndex
+        let r2 = range(of: pattern, options: .regularExpression)
+        return r == r2
     }
 }
