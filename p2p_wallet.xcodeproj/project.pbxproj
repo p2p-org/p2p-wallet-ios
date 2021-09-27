@@ -1191,7 +1191,6 @@
 		BC65E9B72542B983005F50CE /* Base */ = {
 			isa = PBXGroup;
 			children = (
-				BC7A8EB1255BCE360023C918 /* Models */,
 				BCEE522B2626D3F900271AB9 /* Views */,
 				BC1ABC37255BD0B8002FCE65 /* ViewModels */,
 				BCB58370255D28E100B10F65 /* ViewControllers */,
@@ -1333,9 +1332,10 @@
 			path = Repositories;
 			sourceTree = "<group>";
 		};
-		BC9DFA152541F777009DB93E /* Extensions */ = {
+		BC9DFA152541F777009DB93E /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				BC65E9B72542B983005F50CE /* Base */,
 				BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */,
 				BC6EE771254AEEB300FE1025 /* Error+Extensions.swift */,
 				BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */,
@@ -1373,7 +1373,7 @@
 				BC423D8B26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift */,
 				BC185EFB26E4BF3300280FE6 /* UIFont+Extensions.swift */,
 			);
-			path = Extensions;
+			path = UIKit;
 			sourceTree = "<group>";
 		};
 		BCA93F4F25E77C070081DDF6 /* TokenSettings */ = {
@@ -1494,11 +1494,10 @@
 			children = (
 				BCB2231825412AF8002D997F /* AppDelegate.swift */,
 				BC134FA226FCD1E500DB15BF /* AppDelegate+Injection.swift */,
-				BCB22370254137C2002D997F /* Services */,
-				BC8F684B2609D851002FDCCD /* Repositories */,
-				BC65E9B72542B983005F50CE /* Base */,
-				BC9DFA152541F777009DB93E /* Extensions */,
 				BC65E9D52542BD1F005F50CE /* Scenes */,
+				BC7A8EB1255BCE360023C918 /* Models */,
+				BCB22370254137C2002D997F /* Services */,
+				BC9DFA152541F777009DB93E /* UIKit */,
 				BC753397257F28A8007A00D9 /* Resources */,
 			);
 			path = p2p_wallet;
@@ -1527,6 +1526,7 @@
 		BCB22370254137C2002D997F /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				BC8F684B2609D851002FDCCD /* Repositories */,
 				BC32A3AB254A8884002156F0 /* AccountStorage.swift */,
 				BC6EE77C254BB8F400FE1025 /* Defaults.swift */,
 				BC5257CD25CBA6A60076317E /* PriceAPIs */,
