@@ -28,7 +28,7 @@ extension SendToken {
             placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
             autocorrectionType: .no
         )
-        lazy var changeModeButton = UILabel(weight: .semibold, textColor: .a3a5ba)
+        lazy var changeModeButton = UILabel(textSize: 13, weight: .semibold, textColor: .a3a5ba)
         lazy var symbolLabel = UILabel(weight: .semibold)
         lazy var equityValueLabel = UILabel(text: "≈", textColor: .textSecondary, textAlignment: .right)
         
@@ -172,8 +172,7 @@ extension SendToken {
                 )
                 .map { (amount, wallet, mode) -> String? in
                     guard let wallet = wallet, let amount = amount else {return nil}
-                    var string = L10n.available + ": "
-                    string += amount.toString(maximumFractionDigits: 9)
+                    var string = amount.toString(maximumFractionDigits: 9)
                     string += " "
                     if mode == .fiat {
                         string += Defaults.fiat.code
