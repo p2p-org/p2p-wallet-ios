@@ -132,20 +132,42 @@ extension SendToken {
                 })
                 .disposed(by: disposeBag)
             
+            // receive at least
+            Observable.combineLatest(
+                amountSubject.distinctUntilChanged(),
+                feeSubject.valueObservable.distinctUntilChanged()
+            )
+                .withLatestFrom(renBTCInfoSubject, resultSelector: {($1, $0.0, $0.1)})
+                .subscribe(onNext: {[weak self] info, amount, fee in
+                    guard var info = info else {return}
+                    var receiveAtLeast: Double?
+                    if let amount = amount,
+                       let fee = fee
+                    {
+                        receiveAtLeast = amount - fee
+                        if receiveAtLeast! < 0 {receiveAtLeast = 0}
+                    }
+                    info.receiveAtLeast = receiveAtLeast
+                    self?.renBTCInfoSubject.accept(info)
+                })
+                .disposed(by: disposeBag)
+            
             // verify
             Observable.combineLatest(
                 walletSubject.distinctUntilChanged().asObservable(),
                 currencyModeSubject.distinctUntilChanged().asObservable(),
                 amountSubject.distinctUntilChanged(),
-                feeSubject.valueObservable.distinctUntilChanged()
+                feeSubject.valueObservable.distinctUntilChanged(),
+                renBTCInfoSubject.distinctUntilChanged()
             )
-                .map { [weak self] wallet, currencyMode, amount, fee in
+                .map { [weak self] wallet, currencyMode, amount, fee, renBTCInfo in
                     verifyError(
                         wallet: wallet,
                         nativeWallet: self?.repository.nativeWallet,
                         currencyMode: currencyMode,
                         amount: amount,
-                        fee: fee
+                        fee: fee,
+                        renBTCInfo: renBTCInfo
                     )
                 }
                 .bind(to: errorSubject)
@@ -452,11 +474,6 @@ private func calculateAvailableAmount(
         availableAmount = availableAmount - fee
     }
     
-    // renBTC fee
-    else if wallet.token.address.isRenBTCMint {
-        availableAmount = availableAmount - fee
-    }
-    
     // convert to fiat in fiat mode
     if currencyMode == .fiat {
         availableAmount = availableAmount * wallet.priceInCurrentFiat
@@ -473,7 +490,8 @@ private func verifyError(
     nativeWallet: Wallet?,
     currencyMode: SendToken.CurrencyMode,
     amount: Double?,
-    fee: Double?
+    fee: Double?,
+    renBTCInfo: SendToken.SendRenBTCInfo?
 ) -> String? {
     // Verify wallet
     guard wallet != nil else {
@@ -488,9 +506,13 @@ private func verifyError(
         }
         
         // Verify with fee
-        if let fee = fee,
-           let solAmount = nativeWallet?.amount,
-           fee > solAmount
+        if let info = renBTCInfo, info.network == .bitcoin {
+            if let receiveAtLeast = info.receiveAtLeast, receiveAtLeast <= 0 {
+                return L10n.amountIsTooSmall
+            }
+        } else if let fee = fee,
+                let solAmount = nativeWallet?.amount,
+                fee > solAmount
         {
             return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
         }

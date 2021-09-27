@@ -477,3 +477,4 @@
 "Transfer fee" = "Transfer fee";
 "Free" = "Free";
 "Destination network" = "Destination network";
+"Receive at least: %@ %@" = "Receive at least: %@ %@";

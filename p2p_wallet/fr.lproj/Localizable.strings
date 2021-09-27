@@ -477,3 +477,4 @@
 "Transfer fee" = "Frais de transfert";
 "Free" = "Libérer";
 "Destination network" = "Réseau de destination";
+"Receive at least: %@ %@" = "Recevoir au moins : %@ %@";

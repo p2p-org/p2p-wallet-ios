@@ -477,3 +477,4 @@
 "Transfer fee" = "Стоимость трансфера";
 "Free" = "Бесплатно";
 "Destination network" = "Целевая сеть";
+"Receive at least: %@ %@" = "Получите как минимум: %@ %@";
