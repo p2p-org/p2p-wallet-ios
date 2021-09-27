@@ -33,7 +33,7 @@ extension SendToken {
         
         private lazy var errorLabel = UILabel(text: " ", textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
         
-        private lazy var feeInfoButton = UIImageView(width: 16.67, height: 16.67, image: .infoCircle, tintColor: .a3a5ba)
+        private lazy var feeInfoButton = UIImageView(width: 20, height: 20, image: .infoCircle, tintColor: .a3a5ba)
             .onTap(self, action: #selector(showFeeInfo))
         
         private lazy var sendButton = WLButton.stepButton(type: .blue, label: L10n.sendNow)
