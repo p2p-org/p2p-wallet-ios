@@ -21,6 +21,7 @@ protocol SendTokenViewModelType: WalletDidSelectHandler {
     var errorDriver: Driver<String?> {get}
     var receiverAddressDriver: Driver<String?> {get}
     var addressValidationStatusDriver: Driver<SendToken.AddressValidationStatus> {get}
+    var renBTCInfoDriver: Driver<SendToken.SendRenBTCInfo?> {get}
     
     func reload()
     func navigate(to scene: SendToken.NavigatableScene)
@@ -32,6 +33,8 @@ protocol SendTokenViewModelType: WalletDidSelectHandler {
     func enterWalletAddress(_ address: String?)
     func clearDestinationAddress()
     func ignoreEmptyBalance(_ isIgnored: Bool)
+    
+    func changeRenBTCNetwork(to network: SendToken.SendRenBTCInfo.Network)
     
     func authenticateAndSend()
 }
@@ -64,6 +67,7 @@ extension SendToken {
         private let feeSubject: LoadableRelay<Double>
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let addressValidationStatusSubject = BehaviorRelay<AddressValidationStatus>(value: .fetching)
+        private let renBTCInfoSubject = BehaviorRelay<SendRenBTCInfo?>(value: nil)
         
         // MARK: - Initializer
         init(
@@ -297,6 +301,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         addressValidationStatusSubject.asDriver()
     }
     
+    var renBTCInfoDriver: Driver<SendToken.SendRenBTCInfo?> {
+        renBTCInfoSubject.asDriver()
+    }
+    
     // MARK: - Actions
     func reload() {
         feeSubject.reload()
@@ -360,6 +368,12 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         } else {
             addressValidationStatusSubject.accept(.invalid)
         }
+    }
+    
+    func changeRenBTCNetwork(to network: SendToken.SendRenBTCInfo.Network) {
+        guard var info = renBTCInfoSubject.value else {return}
+        info.network = network
+        renBTCInfoSubject.accept(info)
     }
     
     func authenticateAndSend() {

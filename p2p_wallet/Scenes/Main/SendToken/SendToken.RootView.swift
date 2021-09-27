@@ -21,6 +21,12 @@ extension SendToken {
         // MARK: - Subviews
         private lazy var walletView = WalletView(viewModel: viewModel)
         private lazy var priceLabel = UILabel(textSize: 15, weight: .medium)
+        private lazy var renBTCNetworkSection = UIView.createSectionView(
+            title: L10n.destinationNetwork,
+            contentView: renBTCNetworkLabel,
+            addSeparatorOnTop: true
+        )
+        private lazy var renBTCNetworkLabel = UILabel(textSize: 15, weight: .medium)
         private lazy var feeLabel = UILabel(textSize: 15, weight: .medium)
         private lazy var recipientView = RecipientView(viewModel: viewModel)
         
@@ -58,6 +64,8 @@ extension SendToken {
                     addSeparatorOnTop: false
                 )
                 
+                renBTCNetworkLabel
+                
                 UIView.createSectionView(
                     title: L10n.transferFee,
                     contentView: feeLabel,
@@ -85,6 +93,17 @@ extension SendToken {
             viewModel.currentWalletDriver
                 .map {"\(Defaults.fiat.symbol)\(($0?.priceInCurrentFiat ?? 0).toString(maximumFractionDigits: 9)) \(L10n.per) \($0?.token.symbol ?? "")"}
                 .drive(priceLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // renBTC
+            viewModel.renBTCInfoDriver
+                .map {$0 == nil}
+                .drive(renBTCNetworkSection.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            viewModel.renBTCInfoDriver
+                .map {$0?.network.rawValue.uppercased().localized()}
+                .drive(renBTCNetworkLabel.rx.text)
                 .disposed(by: disposeBag)
             
             // fee

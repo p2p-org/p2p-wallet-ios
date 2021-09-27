@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import RxSwift
+import RxCocoa
 
 protocol SendTokenScenesFactory {
     func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
@@ -56,9 +57,10 @@ extension SendToken {
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
             
-            viewModel.addressValidationStatusDriver
-                .skip(1)
-                .distinctUntilChanged()
+            Driver.combineLatest(
+                viewModel.addressValidationStatusDriver,
+                viewModel.renBTCInfoDriver
+            )
                 .debounce(.milliseconds(300))
                 .drive(onNext: {[weak self] _ in self?.updatePresentationLayout(animated: true)})
                 .disposed(by: disposeBag)
