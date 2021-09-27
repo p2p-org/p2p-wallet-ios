@@ -24,8 +24,8 @@ xcuserdata/
 *.xcscmblueprint
 
 ## Swiftgen
-p2p_wallet/Extensions/Strings+Generated.swift
-p2p_wallet/Extensions/Asset+Generated.swift
+p2p_wallet/UIKit/Strings+Generated.swift
+p2p_wallet/UIKit/Asset+Generated.swift
 
 ## Obj-C/Swift specific
 *.hmap
