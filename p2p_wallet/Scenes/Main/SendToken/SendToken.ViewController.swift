@@ -18,7 +18,7 @@ extension SendToken {
     class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
         // MARK: - Properties
         var transitionManager: UIViewControllerTransitioningDelegate?
-        let viewModel: ViewModel
+        let viewModel: SendTokenViewModelType
         let scenesFactory: SendTokenScenesFactory
         lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
             UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
@@ -29,7 +29,7 @@ extension SendToken {
         lazy var rootView = RootView(viewModel: viewModel)
         
         // MARK: - Initializer
-        init(viewModel: ViewModel, scenesFactory: SendTokenScenesFactory)
+        init(viewModel: SendTokenViewModelType, scenesFactory: SendTokenScenesFactory)
         {
             self.viewModel = viewModel
             self.scenesFactory = scenesFactory
@@ -52,11 +52,11 @@ extension SendToken {
         
         override func bind() {
             super.bind()
-            viewModel.output.navigationScene
+            viewModel.navigatableSceneDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
             
-            viewModel.output.addressValidationStatus
+            viewModel.addressValidationStatusDriver
                 .skip(1)
                 .distinctUntilChanged()
                 .debounce(.milliseconds(300))
@@ -65,7 +65,7 @@ extension SendToken {
         }
         
         // MARK: - Navigation
-        private func navigate(to scene: NavigatableScene) {
+        private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .chooseWallet:
                 let vc = scenesFactory.makeChooseWalletViewController(
@@ -78,9 +78,9 @@ extension SendToken {
                 break
             case .scanQrCode:
                 let vc = QrCodeScannerVC()
-                vc.callback = { code in
+                vc.callback = { [weak self] code in
                     if NSRegularExpression.publicKey.matches(code) {
-                        self.viewModel.input.address.onNext(code)
+                        self?.viewModel.enterWalletAddress(code)
                         return true
                     }
                     return false
@@ -93,6 +93,8 @@ extension SendToken {
             case .feeInfo:
                 let vc = FreeTransactionInfoVC()
                 self.present(vc, animated: true, completion: nil)
+            case .none:
+                break
             }
         }
         
