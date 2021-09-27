@@ -59,6 +59,7 @@
 		BC18CA8A263265680054E624 /* SolanaSDK.Token+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */; };
 		BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8E2632694F0054E624 /* TokensRepository.swift */; };
 		BC18CAA3263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CAA2263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift */; };
+		BC19DF4F270169CF00A3A8D8 /* SendTokenAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC19DF4E270169CF00A3A8D8 /* SendTokenAPIClient.swift */; };
 		BC1BEBF926CDF6520049A44C /* SwapToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF526CDF6520049A44C /* SwapToken.swift */; };
 		BC1BEBFA26CDF6520049A44C /* SwapToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF626CDF6520049A44C /* SwapToken.ViewController.swift */; };
 		BC1BEBFC26CDF6520049A44C /* SwapToken.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF826CDF6520049A44C /* SwapToken.RootView.swift */; };
@@ -441,6 +442,7 @@
 		BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Token+Extensions.swift"; sourceTree = "<group>"; };
 		BC18CA8E2632694F0054E624 /* TokensRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokensRepository.swift; sourceTree = "<group>"; };
 		BC18CAA2263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.WrappingToken+Extensions.swift"; sourceTree = "<group>"; };
+		BC19DF4E270169CF00A3A8D8 /* SendTokenAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenAPIClient.swift; sourceTree = "<group>"; };
 		BC1BEBF526CDF6520049A44C /* SwapToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.swift; sourceTree = "<group>"; };
 		BC1BEBF626CDF6520049A44C /* SwapToken.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.ViewController.swift; sourceTree = "<group>"; };
 		BC1BEBF726CDF6520049A44C /* SwapToken.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.ViewModel.swift; sourceTree = "<group>"; };
@@ -911,6 +913,7 @@
 			isa = PBXGroup;
 			children = (
 				BCB7C7C22665EEC400FEC68E /* SendToken.swift */,
+				BC19DF4E270169CF00A3A8D8 /* SendTokenAPIClient.swift */,
 				BCB7C7C32665EEC400FEC68E /* SendToken.ViewModel.swift */,
 				BCB7C7C42665EEC400FEC68E /* SendToken.ViewController.swift */,
 				BCB7C7C52665EEC400FEC68E /* SendToken.RootView.swift */,
@@ -2288,6 +2291,7 @@
 				BC2EC1D02553ED1B006EEDA5 /* DimmingPresentationController.swift in Sources */,
 				BC54DD232587169400A65566 /* ValueByDateChartMarker.swift in Sources */,
 				BCE42DF525DF9C7A0021540E /* Onboarding.ViewModel.swift in Sources */,
+				BC19DF4F270169CF00A3A8D8 /* SendTokenAPIClient.swift in Sources */,
 				BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */,
 				BCDCAE1B267C5570001ED7B4 /* RecoveryEnterSeedsViewController.swift in Sources */,
 				BCB7C7DE2668D29500FEC68E /* OrcaSwap.ViewController.swift in Sources */,
