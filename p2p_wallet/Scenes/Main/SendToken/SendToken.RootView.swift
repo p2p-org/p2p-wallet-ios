@@ -27,6 +27,7 @@ extension SendToken {
             addSeparatorOnTop: true
         )
         private lazy var renBTCNetworkLabel = UILabel(textSize: 15, weight: .medium)
+            .onTap(self, action: #selector(chooseBTCNetwork))
         private lazy var feeLabel = UILabel(textSize: 15, weight: .medium)
         private lazy var recipientView = RecipientView(viewModel: viewModel)
         
@@ -141,6 +142,10 @@ extension SendToken {
 private extension SendToken.RootView {
     @objc func showFeeInfo() {
         viewModel.navigate(to: .feeInfo)
+    }
+    
+    @objc func chooseBTCNetwork() {
+        viewModel.navigate(to: .chooseBTCNetwork)
     }
     
     @objc func authenticateAndSend() {
