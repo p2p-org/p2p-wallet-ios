@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol RenVMBurnAndReleaseServiceType {
+    func isTestNet() -> Bool
     func getFee() -> Single<Double>
     func burn(recipient: String, amount: UInt64) -> Single<String>
 }
@@ -86,6 +87,10 @@ extension RenVM.BurnAndRelease {
         
         func reload() {
             burnAndReleaseSubject.reload()
+        }
+        
+        func isTestNet() -> Bool {
+            rpcClient.network.isTestnet
         }
         
         func getFee() -> Single<Double> {

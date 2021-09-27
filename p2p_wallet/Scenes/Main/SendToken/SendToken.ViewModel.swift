@@ -189,7 +189,7 @@ extension SendToken {
                     self.addressValidationStatusSubject.accept(.fetching)
                     let request: Single<Bool>
                     if renBTCInfo?.network == .bitcoin {
-                        request = .just(address.isValidBitcoinAddress())
+                        request = .just(address.isValidBitcoinAddress(isTestnet: self.renVMBurnAndReleaseService.isTestNet()))
                     } else {
                         request = self.apiClient.checkAccountValidation(account: address)
                     }
@@ -539,8 +539,8 @@ private extension String {
             self == SolanaSDK.PublicKey.renBTCMintDevnet.base58EncodedString
     }
     
-    func isValidBitcoinAddress() -> Bool {
-        let pattern = "^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$"
+    func isValidBitcoinAddress(isTestnet: Bool) -> Bool {
+        let pattern = "^(\(isTestnet ? "tb1|": "")bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$"
         let r = startIndex..<endIndex
         let r2 = range(of: pattern, options: .regularExpression)
         return r == r2
