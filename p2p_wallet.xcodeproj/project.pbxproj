@@ -60,6 +60,8 @@
 		BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CA8E2632694F0054E624 /* TokensRepository.swift */; };
 		BC18CAA3263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CAA2263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift */; };
 		BC19DF4F270169CF00A3A8D8 /* SendTokenAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC19DF4E270169CF00A3A8D8 /* SendTokenAPIClient.swift */; };
+		BC19DF5127019E6D00A3A8D8 /* SendToken.WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC19DF5027019E6D00A3A8D8 /* SendToken.WalletView.swift */; };
+		BC19DF532701A24E00A3A8D8 /* WLBalanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC19DF522701A24E00A3A8D8 /* WLBalanceView.swift */; };
 		BC1BEBF926CDF6520049A44C /* SwapToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF526CDF6520049A44C /* SwapToken.swift */; };
 		BC1BEBFA26CDF6520049A44C /* SwapToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF626CDF6520049A44C /* SwapToken.ViewController.swift */; };
 		BC1BEBFC26CDF6520049A44C /* SwapToken.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF826CDF6520049A44C /* SwapToken.RootView.swift */; };
@@ -443,6 +445,8 @@
 		BC18CA8E2632694F0054E624 /* TokensRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokensRepository.swift; sourceTree = "<group>"; };
 		BC18CAA2263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.WrappingToken+Extensions.swift"; sourceTree = "<group>"; };
 		BC19DF4E270169CF00A3A8D8 /* SendTokenAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenAPIClient.swift; sourceTree = "<group>"; };
+		BC19DF5027019E6D00A3A8D8 /* SendToken.WalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.WalletView.swift; sourceTree = "<group>"; };
+		BC19DF522701A24E00A3A8D8 /* WLBalanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBalanceView.swift; sourceTree = "<group>"; };
 		BC1BEBF526CDF6520049A44C /* SwapToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.swift; sourceTree = "<group>"; };
 		BC1BEBF626CDF6520049A44C /* SwapToken.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.ViewController.swift; sourceTree = "<group>"; };
 		BC1BEBF726CDF6520049A44C /* SwapToken.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.ViewModel.swift; sourceTree = "<group>"; };
@@ -917,6 +921,7 @@
 				BCB7C7C32665EEC400FEC68E /* SendToken.ViewModel.swift */,
 				BCB7C7C42665EEC400FEC68E /* SendToken.ViewController.swift */,
 				BCB7C7C52665EEC400FEC68E /* SendToken.RootView.swift */,
+				BC19DF5027019E6D00A3A8D8 /* SendToken.WalletView.swift */,
 			);
 			path = SendToken;
 			sourceTree = "<group>";
@@ -1877,6 +1882,7 @@
 				BCB7C7E12669E50B00FEC68E /* TransactionSummaryView.swift */,
 				BC28A9B026B3B0440031BE42 /* WLSpinnerView.swift */,
 				BCDABE7B26FC7E1C00E083B8 /* WLOptionsView.swift */,
+				BC19DF522701A24E00A3A8D8 /* WLBalanceView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2445,6 +2451,7 @@
 				BC8F67742608738D002FDCCD /* WLPhrasesTextView+Attachments.swift in Sources */,
 				BCB7C7DF2668D29500FEC68E /* OrcaSwap.ViewModel.swift in Sources */,
 				BCDABE7C26FC7E1C00E083B8 /* WLOptionsView.swift in Sources */,
+				BC19DF5127019E6D00A3A8D8 /* SendToken.WalletView.swift in Sources */,
 				BC3B3DAA258C653000C6117E /* WLIndicatorModalVC.swift in Sources */,
 				BC65E18B261EA24C00E436C7 /* InvestmentsCollectionView.swift in Sources */,
 				BC604A2226C6121E00B1DF0F /* PayingToken.swift in Sources */,
@@ -2531,6 +2538,7 @@
 				BC5A97E2260DC977009674C4 /* WalletsCollectionView.swift in Sources */,
 				BC22979A2700AB07003F7118 /* Account.swift in Sources */,
 				BC3122952580BA1700F3B14F /* LocalAuthVC.swift in Sources */,
+				BC19DF532701A24E00A3A8D8 /* WLBalanceView.swift in Sources */,
 				BC80204526F2E6E300C109C2 /* RenVM.LockAndMint.SessionStorage.swift in Sources */,
 				BC85EA66266E1324005006D5 /* ReceiveToken.swift in Sources */,
 				BCACA7DC2678942B0091E118 /* ProcessingTransactionsRepository.swift in Sources */,
