@@ -37,6 +37,8 @@ protocol SendTokenViewModelType: WalletDidSelectHandler {
     
     func changeRenBTCNetwork(to network: SendToken.SendRenBTCInfo.Network)
     
+    func getPayingTokenSymbol() -> String
+    
     func authenticateAndSend()
 }
 
@@ -410,6 +412,13 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         guard var info = renBTCInfoSubject.value else {return}
         info.network = network
         renBTCInfoSubject.accept(info)
+    }
+    
+    func getPayingTokenSymbol() -> String {
+        if renBTCInfoSubject.value?.network == .bitcoin {
+            return "BTC"
+        }
+        return "SOL"
     }
     
     func authenticateAndSend() {
