@@ -89,11 +89,11 @@ extension SendToken {
                 }
                 vc.modalPresentationStyle = .custom
                 self.present(vc, animated: true, completion: nil)
-            case .chooseBTCNetwork:
+            case .chooseBTCNetwork(let selectedNetwork):
                 let selectionVC = SingleSelectionViewController<SendRenBTCInfo.Network>(
                     title: L10n.destinationNetwork,
                     options: [.solana, .bitcoin],
-                    selectedOption: .bitcoin)
+                    selectedOption: selectedNetwork)
                 { option, isSelected in
                     let view = WLDefaultOptionView()
                     view.label.text = option.rawValue.uppercaseFirst.localized()
