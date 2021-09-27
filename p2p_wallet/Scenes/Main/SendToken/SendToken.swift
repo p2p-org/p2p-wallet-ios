@@ -20,4 +20,13 @@ struct SendToken {
     enum CurrencyMode {
         case token, fiat
     }
+    
+    enum AddressValidationStatus {
+        case uncheck
+        case fetching
+        case valid
+        case invalid
+        case fetchingError
+        case invalidIgnored
+    }
 }
