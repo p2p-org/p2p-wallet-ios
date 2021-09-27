@@ -103,7 +103,7 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             viewModel.renBTCInfoDriver
-                .map {$0 != nil}
+                .map {$0?.network == .bitcoin}
                 .drive(feeInfoButton.rx.isHidden)
                 .disposed(by: disposeBag)
             
