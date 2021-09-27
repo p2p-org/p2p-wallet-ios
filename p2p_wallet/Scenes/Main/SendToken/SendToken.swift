@@ -29,4 +29,13 @@ struct SendToken {
         case fetchingError
         case invalidIgnored
     }
+    
+    struct SendRenBTCInfo: Equatable {
+        enum Network: String {
+            case solana
+            case bitcoin
+        }
+        var network: Network
+        var receiveAtLeast: Double?
+    }
 }
