@@ -353,10 +353,11 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             // fee
-//            feeLabel.subscribed(to: viewModel.output.fee) {
-//                "\($0.toString(maximumFractionDigits: 9)) SOL"
-//            }
-//                .disposed(by: disposeBag)
+            viewModel.feeDriver
+                .drive(feeLabel.rx.loadableText(onLoaded: { fee in
+                    "\(fee.toString(maximumFractionDigits: 9)) SOL"
+                }))
+                .disposed(by: disposeBag)
             
             // receiver address
             viewModel.receiverAddressDriver
