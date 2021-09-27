@@ -10,38 +10,34 @@ import RxSwift
 import RxCocoa
 import LazySubject
 
+protocol SendTokenViewModelType {
+    var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {get}
+    var currentWalletDriver: Driver<Wallet?> {get}
+    var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {get}
+    var amountDriver: Driver<Double?> {get}
+    var feeDriver: Driver<Loadable<Double>> {get}
+    var availableAmountDriver: Driver<Double?> {get}
+    var isValidDriver: Driver<Bool> {get}
+    var errorDriver: Driver<String?> {get}
+    var receiverAddressDriver: Driver<String?> {get}
+    var addressValidationStatusDriver: Driver<SendToken.AddressValidationStatus> {get}
+    
+    func reload()
+    func navigate(to scene: SendToken.NavigatableScene)
+    func chooseWallet(_ wallet: Wallet)
+    func enterAmount(_ amount: Double?)
+    func changeCurrencyMode(to mode: SendToken.CurrencyMode)
+    func useAllBalance()
+    
+    func enterWalletAddress(_ address: String?)
+    func clearDestinationAddress()
+    func ignoreEmptyBalance(_ isIgnored: Bool)
+    
+    func authenticateAndSend()
+}
+
 extension SendToken {
-    class ViewModel: ViewModelType {
-        enum AddressValidationStatus {
-            case uncheck
-            case fetching
-            case valid
-            case invalid
-            case fetchingError
-            case invalidIgnored
-        }
-        
-        // MARK: - Nested type
-        struct Input {
-            let walletPubkey = PublishSubject<String?>()
-            let amount = PublishSubject<Double?>()
-            let address = PublishSubject<String?>()
-            let currencyMode = PublishSubject<CurrencyMode>()
-            let noFundsConfirmation = PublishSubject<Bool>()
-        }
-        struct Output {
-            let navigationScene: Driver<NavigatableScene>
-            let currentWallet: Driver<Wallet?>
-            let currencyMode: Driver<CurrencyMode>
-            let fee: LazySubject<Double>
-            let availableAmount: Driver<Double?>
-            let isValid: Driver<Bool>
-            let error: Driver<String?>
-            let useAllBalanceDidTouch: Driver<Double?>
-            let receiverAddress: Driver<String?>
-            let addressValidationStatus: Driver<AddressValidationStatus>
-        }
-        
+    class ViewModel {
         // MARK: - Dependencies
         private let repository: WalletsRepository
         private let apiClient: SendTokenAPIClient
@@ -52,20 +48,14 @@ extension SendToken {
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         
-        let input: Input
-        let output: Output
-        
         // MARK: - Subject
-        private let navigationSubject = PublishSubject<NavigatableScene>()
+        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
-        private let amountSubject = BehaviorRelay<Double?>(value: nil)
-        private let addressSubject = BehaviorRelay<String?>(value: nil)
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
-        private let feeSubject: LazySubject<Double>
-        private let availableAmountSubject = BehaviorRelay<Double?>(value: nil)
-        private let isValidSubject = BehaviorRelay<Bool>(value: false)
+        private let amountSubject = BehaviorRelay<Double?>(value: nil)
+        private let destinationAddressSubject = BehaviorRelay<String?>(value: nil)
+        private let feeSubject: LoadableRelay<Double>
         private let errorSubject = BehaviorRelay<String?>(value: nil)
-        private let useAllBalanceDidTouchSubject = PublishSubject<Double?>()
         private let addressValidationStatusSubject = BehaviorRelay<AddressValidationStatus>(value: .fetching)
         
         // MARK: - Initializer
@@ -80,7 +70,7 @@ extension SendToken {
             self.apiClient = apiClient
             self.renVMBurnAndReleaseService = renVMBurnAndReleaseService
             
-            self.feeSubject = LazySubject<Double>(
+            self.feeSubject = .init(
                 request: Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
                     .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
                     .map {
@@ -88,118 +78,50 @@ extension SendToken {
                         return $0.convertToBalance(decimals: decimals)
                     }
             )
-            self.input = Input()
-            self.output = Output(
-                navigationScene: navigationSubject
-                    .asDriver(onErrorJustReturn: .chooseWallet),
-                currentWallet: walletSubject
-                    .asDriver(onErrorJustReturn: nil),
-                currencyMode: currencyModeSubject
-                    .asDriver(onErrorJustReturn: .token),
-                fee: feeSubject,
-                availableAmount: availableAmountSubject
-                    .asDriver(onErrorJustReturn: nil),
-                isValid: isValidSubject
-                    .asDriver(onErrorJustReturn: false),
-                error: errorSubject
-                    .asDriver(onErrorJustReturn: nil),
-                useAllBalanceDidTouch: useAllBalanceDidTouchSubject
-                    .asDriver(onErrorJustReturn: nil),
-                receiverAddress: addressSubject
-                    .asDriver(onErrorJustReturn: nil),
-                addressValidationStatus: addressValidationStatusSubject
-                    .asDriver()
-            )
             
             bind()
-            feeSubject.reload()
+            reload()
             
-            input.walletPubkey.onNext(walletPubkey ?? repository.getWallets().first?.pubkey)
-            input.address.onNext(destinationAddress)
+            // accept initial values
+            if let pubkey = walletPubkey {
+                walletSubject.accept(repository.getWallets().first(where: {$0.pubkey == pubkey}))
+            } else {
+                walletSubject.accept(repository.nativeWallet)
+            }
+            
+            destinationAddressSubject.accept(destinationAddress)
         }
         
         /// Bind output into input
         private func bind() {
-            bindInputToSubjects()
-            
-            bindSubjectsToSubjects()
-        }
-        
-        private func bindInputToSubjects() {
-            // wallet
-            input.walletPubkey
-                .map {pubkey in
-                    self.repository.getWallets().first(where: {$0.pubkey == pubkey})
-                }
-                .bind(to: walletSubject)
-                .disposed(by: disposeBag)
-            
-            // amount
-            input.amount
-                .bind(to: amountSubject)
-                .disposed(by: disposeBag)
-            
-            // address
-            input.address
-                .bind(to: addressSubject)
-                .disposed(by: disposeBag)
-            
-            // currency mode
-            input.currencyMode
+            // detect if price isn't available
+            walletSubject.distinctUntilChanged()
+                .filter {$0 != nil && $0?.priceInCurrentFiat == nil}
+                .map {_ in CurrencyMode.token}
                 .bind(to: currencyModeSubject)
                 .disposed(by: disposeBag)
             
-            // no funds confirmation
-            input.noFundsConfirmation
-                .map {isIgnoring -> AddressValidationStatus in
-                    if isIgnoring {
-                        return .invalidIgnored
-                    }
-                    return .invalid
-                }
-                .bind(to: addressValidationStatusSubject)
-                .disposed(by: disposeBag)
-        }
-        
-        private func bindSubjectsToSubjects() {
-            // detect if price isn't available
-            walletSubject.distinctUntilChanged()
-                .subscribe(onNext: {[weak self] wallet in
-                    if wallet?.priceInCurrentFiat == nil && self?.currencyModeSubject.value == .fiat
-                    {
-                        self?.currencyModeSubject.accept(.token)
-                    }
-                })
-                .disposed(by: disposeBag)
-            
-            // available amount
+            // verify
             Observable.combineLatest(
-                walletSubject.asObservable(),
-                currencyModeSubject.asObservable()
-            )
-                .map {(wallet, currencyMode) -> Double? in
-                    guard let wallet = wallet else {return nil}
-                    return Self.calculateAvailableAmount(wallet: wallet, currencyMode: currencyMode)
-                }
-                .bind(to: availableAmountSubject)
-                .disposed(by: disposeBag)
-            
-            // error subject
-            Observable.combineLatest(
-                walletSubject.distinctUntilChanged(),
+                walletSubject.distinctUntilChanged().asObservable(),
+                currencyModeSubject.distinctUntilChanged().asObservable(),
                 amountSubject.distinctUntilChanged(),
-                addressSubject.distinctUntilChanged(),
-                currencyModeSubject.distinctUntilChanged(),
-                feeSubject.observable.distinctUntilChanged()
+                feeSubject.valueObservable.distinctUntilChanged()
             )
-                .map {[weak self] params in
-                    self?.verifyError(wallet: params.0, amount: params.1, fee: self?.feeSubject.value)
+                .map { [weak self] wallet, currencyMode, amount, fee in
+                    verifyError(
+                        wallet: wallet,
+                        nativeWallet: self?.repository.nativeWallet,
+                        currencyMode: currencyMode,
+                        amount: amount,
+                        fee: fee
+                    )
                 }
                 .bind(to: errorSubject)
                 .disposed(by: disposeBag)
             
-            // address info
-            addressSubject
+            // destination address
+            destinationAddressSubject
                 .distinctUntilChanged()
                 .do(onNext: { [weak self] _ in
                     self?.addressValidationStatusSubject.accept(.fetching)
@@ -219,132 +141,6 @@ extension SendToken {
                 
                 .bind(to: addressValidationStatusSubject)
                 .disposed(by: disposeBag)
-            
-            // is valid subject
-            let observables: [Observable<Bool>] = [
-                errorSubject.map {$0 == nil},
-                walletSubject.map {$0 != nil},
-                addressSubject.map {$0 != nil && !$0!.isEmpty},
-                amountSubject.map {$0 != nil},
-                addressValidationStatusSubject.map {$0 == .valid || $0 == .invalidIgnored}
-            ]
-            
-            Observable.combineLatest(observables)
-                .map {$0.allSatisfy {$0}}
-                .bind(to: isValidSubject)
-                .disposed(by: disposeBag)
-        }
-        
-        // MARK: - Actions
-        @objc func useAllBalance() {
-            let amount = availableAmountSubject.value
-            input.amount.onNext(amount)
-            if let amount = amount {
-                analyticsManager.log(event: .sendAvailableClick(sum: amount))
-            }
-            useAllBalanceDidTouchSubject.onNext(amount)
-        }
-        
-        @objc func clearDestinationAddress() {
-            input.address.onNext(nil)
-        }
-        
-        @objc func chooseWallet() {
-            navigationSubject.onNext(.chooseWallet)
-        }
-        
-        @objc func chooseAddress() {
-            navigationSubject.onNext(.chooseAddress)
-        }
-        
-        @objc func scanQrCode() {
-            analyticsManager.log(event: .sendScanQrClick)
-            analyticsManager.log(event: .scanQrOpen(fromPage: "send"))
-            navigationSubject.onNext(.scanQrCode)
-        }
-        
-        @objc func showFeeInfo() {
-            navigationSubject.onNext(.feeInfo)
-        }
-        
-        @objc func switchCurrencyMode() {
-            if walletSubject.value?.priceInCurrentFiat == nil {
-                if currencyModeSubject.value == .fiat {
-                    currencyModeSubject.accept(.token)
-                }
-            } else {
-                if currencyModeSubject.value == .fiat {
-                    currencyModeSubject.accept(.token)
-                } else {
-                    currencyModeSubject.accept(.fiat)
-                }
-            }
-            
-            analyticsManager.log(event: .sendChangeInputMode(selectedValue: currencyModeSubject.value == .token ? "token": "fiat"))
-        }
-        
-        @objc func authenticateAndSend() {
-            authenticationHandler.authenticate(
-                presentationStyle:
-                    .init(
-                        isRequired: false,
-                        isFullScreen: false,
-                        completion: { [weak self] in
-                            self?.send()
-                        }
-                    )
-            )
-        }
-        
-        // MARK: - Helpers
-        private static func calculateAvailableAmount(
-            wallet: Wallet?,
-            currencyMode: CurrencyMode
-        ) -> Double? {
-            switch currencyMode {
-            case .token:
-                return wallet?.amount
-            case .fiat:
-                return wallet?.amountInCurrentFiat
-            }
-        }
-        
-        /// Verify current context
-        /// - Returns: Error string, nil if no error appear
-        private func verifyError(
-            wallet: Wallet?,
-            amount: Double?,
-            fee: Double?
-        ) -> String? {
-            // Verify wallet
-            guard wallet != nil else {
-                return L10n.youMustSelectAWalletToSend
-            }
-            
-            // Verify amount if it has been entered
-            if let amount = amount {
-                // Amount is not valid
-                if amount <= 0 {
-                    return L10n.amountIsNotValid
-                }
-                
-                // Verify with fee
-                if let fee = fee,
-                   let solAmount = repository.nativeWallet?.amount,
-                   fee > solAmount
-                {
-                    return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
-                }
-                
-                // Verify amount
-                let amountToCompare = self.availableAmountSubject.value
-                if amount.rounded(decimals: Int(wallet?.token.decimals ?? 0)) > amountToCompare?.rounded(decimals: Int(wallet?.token.decimals ?? 0))
-                {
-                    return L10n.insufficientFunds
-                }
-            }
-            
-            return nil
         }
         
         private func send() {
@@ -352,7 +148,7 @@ extension SendToken {
             guard errorSubject.value == nil,
                   let wallet = walletSubject.value,
                   let sender = wallet.pubkey,
-                  let receiver = addressSubject.value,
+                  let receiver = destinationAddressSubject.value,
                   var amount = amountSubject.value
             else {
                 return
@@ -416,7 +212,7 @@ extension SendToken {
             )
             
             // show processing scene
-            navigationSubject.onNext(
+            navigationSubject.accept(
                 .processTransaction(
                     request: request.map {$0 as ProcessTransactionResponseType},
                     transactionType: .send(
@@ -431,13 +227,230 @@ extension SendToken {
     }
 }
 
-extension SendToken.ViewModel: WalletDidSelectHandler {
-    func walletDidSelect(_ wallet: Wallet) {
+extension SendToken.ViewModel: SendTokenViewModelType {
+    var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {
+        <#code#>
+    }
+    
+    var currentWalletDriver: Driver<Wallet?> {
+        <#code#>
+    }
+    
+    var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {
+        <#code#>
+    }
+    
+    var amountDriver: Driver<Double?> {
+        <#code#>
+    }
+    
+    var feeDriver: Driver<Loadable<Double>> {
+        <#code#>
+    }
+    
+    var availableAmountDriver: Driver<Double?> {
+        Driver.combineLatest(
+            currentWalletDriver,
+            currentCurrencyModeDriver,
+            feeDriver
+        )
+            .map {wallet, currencyMode, fee -> Double? in
+                guard let wallet = wallet,
+                      fee.state == .loaded,
+                      let feeInSOL = fee.value
+                else {return nil}
+                return calculateAvailableAmount(
+                    wallet: wallet,
+                    currencyMode: currencyMode,
+                    feeInSOL: feeInSOL
+                )
+            }
+    }
+    
+    var isValidDriver: Driver<Bool> {
+        Driver.combineLatest([
+            errorDriver.map {$0 == nil},
+            currentWalletDriver.map {$0 != nil},
+            receiverAddressDriver.map {$0 != nil && !$0!.isEmpty},
+            amountDriver.map {$0 != nil},
+            addressValidationStatusDriver.map {$0 == .valid || $0 == .invalidIgnored}
+        ])
+            .map {$0.allSatisfy {$0}}
+    }
+    
+    var errorDriver: Driver<String?> {
+        <#code#>
+    }
+    
+    var receiverAddressDriver: Driver<String?> {
+        <#code#>
+    }
+    
+    var addressValidationStatusDriver: Driver<SendToken.AddressValidationStatus> {
+        <#code#>
+    }
+    
+    // MARK: - Actions
+    func reload() {
+        feeSubject.reload()
+    }
+    
+    func navigate(to scene: SendToken.NavigatableScene) {
+        navigationSubject.accept(scene)
+    }
+    
+//    @objc func chooseWallet() {
+//        navigationSubject.onNext(.chooseWallet)
+//    }
+//
+//    @objc func chooseAddress() {
+//        navigationSubject.onNext(.chooseAddress)
+//    }
+//
+//    @objc func scanQrCode() {
+//        analyticsManager.log(event: .sendScanQrClick)
+//        analyticsManager.log(event: .scanQrOpen(fromPage: "send"))
+//        navigationSubject.onNext(.scanQrCode)
+//    }
+//    @objc func showFeeInfo() {
+//        navigationSubject.onNext(.feeInfo)
+//    }
+    
+    func chooseWallet(_ wallet: Wallet) {
         analyticsManager.log(
             event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
         )
-        input.walletPubkey.onNext(wallet.pubkey)
+        walletSubject.accept(wallet)
     }
+    
+    func enterAmount(_ amount: Double?) {
+        amountSubject.accept(amount)
+    }
+    
+    func changeCurrencyMode(to mode: SendToken.CurrencyMode) {
+        if walletSubject.value?.priceInCurrentFiat == nil {
+            if currencyModeSubject.value == .fiat {
+                currencyModeSubject.accept(.token)
+            }
+        } else {
+            if currencyModeSubject.value == .fiat {
+                currencyModeSubject.accept(.token)
+            } else {
+                currencyModeSubject.accept(.fiat)
+            }
+        }
+        
+        analyticsManager.log(event: .sendChangeInputMode(selectedValue: currencyModeSubject.value == .token ? "token": "fiat"))
+    }
+    
+    func useAllBalance() {
+        let amount = availableAmountSubject.value
+        if let amount = amount {
+            analyticsManager.log(event: .sendAvailableClick(sum: amount))
+        }
+        amountSubject.accept(amount)
+    }
+    
+    func enterWalletAddress(_ address: String?) {
+        destinationAddressSubject.accept(address)
+    }
+    
+    func clearDestinationAddress() {
+        destinationAddressSubject.accept(nil)
+    }
+    
+    func ignoreEmptyBalance(_ isIgnored: Bool) {
+        if isIgnored {
+            addressValidationStatusSubject.accept(.invalidIgnored)
+        } else {
+            addressValidationStatusSubject.accept(.invalid)
+        }
+    }
+    
+    func authenticateAndSend() {
+        authenticationHandler.authenticate(
+            presentationStyle:
+                .init(
+                    isRequired: false,
+                    isFullScreen: false,
+                    completion: { [weak self] in
+                        self?.send()
+                    }
+                )
+        )
+    }
+}
+
+extension SendToken.ViewModel: WalletDidSelectHandler {
+    func walletDidSelect(_ wallet: Wallet) {
+        chooseWallet(wallet)
+    }
+}
+
+// MARK: - Helpers
+private func calculateAvailableAmount(
+    wallet: Wallet?,
+    currencyMode: SendToken.CurrencyMode,
+    feeInSOL: Double?
+) -> Double? {
+    guard let wallet = wallet,
+          let feeInSOL = feeInSOL
+    else {return nil}
+    // all amount
+    var availableAmount = wallet.amount ?? 0
+    
+    // minus fee if wallet is native sol
+    if wallet.isNativeSOL == true {
+        availableAmount = availableAmount - feeInSOL
+    }
+    
+    // convert to fiat in fiat mode
+    if currencyMode == .fiat {
+        availableAmount = availableAmount * wallet.priceInCurrentFiat
+    }
+    
+    // return
+    return availableAmount > 0 ? availableAmount: 0
+}
+
+/// Verify current context
+/// - Returns: Error string, nil if no error appear
+private func verifyError(
+    wallet: Wallet?,
+    nativeWallet: Wallet?,
+    currencyMode: SendToken.CurrencyMode,
+    amount: Double?,
+    fee: Double?
+) -> String? {
+    // Verify wallet
+    guard wallet != nil else {
+        return L10n.youMustSelectAWalletToSend
+    }
+    
+    // Verify amount if it has been entered
+    if let amount = amount {
+        // Amount is not valid
+        if amount <= 0 {
+            return L10n.amountIsNotValid
+        }
+        
+        // Verify with fee
+        if let fee = fee,
+           let solAmount = nativeWallet?.amount,
+           fee > solAmount
+        {
+            return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
+        }
+        
+        // Verify amount
+        let amountToCompare = calculateAvailableAmount(wallet: wallet, currencyMode: currencyMode, feeInSOL: fee)
+        if amount.rounded(decimals: Int(wallet?.token.decimals ?? 0)) > amountToCompare?.rounded(decimals: Int(wallet?.token.decimals ?? 0))
+        {
+            return L10n.insufficientFunds
+        }
+    }
+    
+    return nil
 }
 
 private extension String {
