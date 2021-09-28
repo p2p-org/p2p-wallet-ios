@@ -123,6 +123,7 @@
 		BC38555C26AE971400BD8BF7 /* ChooseWallet.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC38555826AE971400BD8BF7 /* ChooseWallet.RootView.swift */; };
 		BC38555E26AE9A2B00BD8BF7 /* ChooseWallet.CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC38555D26AE9A2B00BD8BF7 /* ChooseWallet.CollectionView.swift */; };
 		BC38556126AE9CD100BD8BF7 /* ChooseWallet.CollectionsView+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC38556026AE9CD100BD8BF7 /* ChooseWallet.CollectionsView+Subviews.swift */; };
+		BC3AB76827021E180096E4D8 /* NSRegularExpression+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */; };
 		BC3ADE822570B005002B3B16 /* FlexibleHeightVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE812570B005002B3B16 /* FlexibleHeightVC.swift */; };
 		BC3ADE8D2570B832002B3B16 /* WLCenterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADE8C2570B832002B3B16 /* WLCenterSheet.swift */; };
 		BC3B3DAA258C653000C6117E /* WLIndicatorModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3B3DA9258C653000C6117E /* WLIndicatorModalVC.swift */; };
@@ -517,6 +518,7 @@
 		BC38555826AE971400BD8BF7 /* ChooseWallet.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWallet.RootView.swift; sourceTree = "<group>"; };
 		BC38555D26AE9A2B00BD8BF7 /* ChooseWallet.CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWallet.CollectionView.swift; sourceTree = "<group>"; };
 		BC38556026AE9CD100BD8BF7 /* ChooseWallet.CollectionsView+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChooseWallet.CollectionsView+Subviews.swift"; sourceTree = "<group>"; };
+		BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSRegularExpression+Extensions.swift"; sourceTree = "<group>"; };
 		BC3ADE812570B005002B3B16 /* FlexibleHeightVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexibleHeightVC.swift; sourceTree = "<group>"; };
 		BC3ADE8C2570B832002B3B16 /* WLCenterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLCenterSheet.swift; sourceTree = "<group>"; };
 		BC3B3DA9258C653000C6117E /* WLIndicatorModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLIndicatorModalVC.swift; sourceTree = "<group>"; };
@@ -1387,6 +1389,7 @@
 				BC28A9AE26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift */,
 				BC423D8B26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift */,
 				BC185EFB26E4BF3300280FE6 /* UIFont+Extensions.swift */,
+				BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -2434,6 +2437,7 @@
 				BC3122332580B34B00F3B14F /* PassCodeVC.swift in Sources */,
 				BC80569A26D8DDE000206ECA /* SwapToken.Settings.swift in Sources */,
 				BC0378FA25FB538D00D10EAE /* MyProductsViewController.swift in Sources */,
+				BC3AB76827021E180096E4D8 /* NSRegularExpression+Extensions.swift in Sources */,
 				BC63110D26D78F9800516C38 /* SerumSwap+SwapProviderType.swift in Sources */,
 				BC134FA526FD76E100DB15BF /* CreateOrRestoreWallet.swift in Sources */,
 				BCE42E1825DFA5100021540E /* RestoreWallet.ViewModel.swift in Sources */,

@@ -135,7 +135,12 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             viewModel.receiverAddressDriver
-                .map {!NSRegularExpression.publicKey.matches($0 ?? "")}
+                .map {[weak self] address in
+                    guard let address = address else {return true}
+                    return !address.matches(
+                        oneOf: .publicKey, .bitcoinAddress(isTestnet: self?.viewModel.isTestNet() ?? true)
+                    )
+                }
                 .drive(walletIconView.rx.isHidden)
                 .disposed(by: disposeBag)
             
@@ -165,11 +170,16 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             viewModel.addressValidationStatusDriver
-                .map {
-                    if $0 == .fetchingError {
-                        return L10n.ErrorCheckingAddressValidity.areYouSureItSCorrect
+                .withLatestFrom(viewModel.renBTCInfoDriver, resultSelector: {($0, $1)})
+                .map { status, renBTCInfo -> String in
+                    if renBTCInfo != nil {
+                        return L10n.areYouSureThatThisAddressIsValid(L10n.bitcoin)
+                    } else {
+                        if status == .fetchingError {
+                            return L10n.ErrorCheckingAddressValidity.areYouSureItSCorrect
+                        }
+                        return L10n.ThisAddressHasNoFunds.areYouSureItSCorrect
                     }
-                    return L10n.ThisAddressHasNoFunds.areYouSureItSCorrect
                 }
                 .drive(noFundAddressViewLabel.rx.text)
                 .disposed(by: disposeBag)
@@ -178,6 +188,12 @@ extension SendToken {
                 .filter {$0 != .invalidIgnored}
                 .map {_ in false}
                 .drive(ignoreNoFundAddressSwitch.rx.isOn)
+                .disposed(by: disposeBag)
+            
+            ignoreNoFundAddressSwitch.rx.isOn
+                .map {$0 ? UIColor.textSecondary: UIColor.alert}
+                .asDriver(onErrorJustReturn: .textSecondary)
+                .drive(noFundAddressViewLabel.rx.textColor)
                 .disposed(by: disposeBag)
         }
     }
