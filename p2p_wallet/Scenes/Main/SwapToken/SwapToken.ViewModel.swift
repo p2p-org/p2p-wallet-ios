@@ -26,6 +26,7 @@ protocol SwapTokenViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewMo
     var estimatedAmountDriver: Driver<Double?> {get}
     
     var exchangeRateDriver: Driver<Loadable<Double>> {get}
+    var minOrderSizeDriver: Driver<Loadable<Double>> {get}
     
     var slippageDriver: Driver<Double?> {get}
     
@@ -42,7 +43,7 @@ protocol SwapTokenViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewMo
     
     // Actions
     func reload()
-    func calculateExchangeRateAndFees()
+    func calculateExchangeRateFeesAndMinOrderSize()
     func navigate(to: SwapToken.NavigatableScene)
     func useAllBalance()
     func log(_ event: AnalyticsEvent)
@@ -88,6 +89,7 @@ extension SwapToken {
         
         private var exchangeRateRelay: LoadableRelay<Double>
         private let feesRelay: LoadableRelay<[FeeType: SwapFee]>
+        private let minOrderSizeRelay: LoadableRelay<Double>
         
         private let slippageRelay = BehaviorRelay<Double?>(value: Defaults.slippage)
         private let payingTokenRelay = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
@@ -113,6 +115,7 @@ extension SwapToken {
             )
             self.exchangeRateRelay = .init(request: .just(0)) // placeholder, change request later
             self.feesRelay = .init(request: .just([:])) // placeholder, change request later
+            self.minOrderSizeRelay = .init(request: .just(0)) // placeholder, change request later
             bind()
             
             sourceWalletRelay.accept(sourceWallet)
@@ -143,7 +146,7 @@ extension SwapToken {
             )
                 .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
                 .subscribe(onNext: {[weak self] _ in
-                    self?.calculateExchangeRateAndFees()
+                    self?.calculateExchangeRateFeesAndMinOrderSize()
                 })
                 .disposed(by: disposeBag)
             
@@ -152,6 +155,7 @@ extension SwapToken {
                 .filter {$0 == .loaded}
                 .subscribe(onNext: {[weak self] _ in
                     self?.feesRelay.reload()
+                    self?.minOrderSizeRelay.reload()
                 })
                 .disposed(by: disposeBag)
             
@@ -251,11 +255,14 @@ extension SwapToken.ViewModel: SwapTokenViewModelType {
             inputAmountDriver,
             destinationWalletDriver,
             estimatedAmountDriver,
-            exchangeRateDriver,
-            feesDriver,
+            Driver.combineLatest(
+                exchangeRateDriver,
+                feesDriver,
+                minOrderSizeDriver
+            ),
             slippageDriver
         )
-            .map {[weak self] initialState, sourceWallet, inputAmount, destinationWallet, estimatedAmount, exchangeRate, fees, slippage -> String? in
+            .map {[weak self] initialState, sourceWallet, inputAmount, destinationWallet, estimatedAmount, providerInfo, slippage -> String? in
                 guard let self = self else {return nil}
                 return validate(
                     provider: self.provider,
@@ -264,14 +271,16 @@ extension SwapToken.ViewModel: SwapTokenViewModelType {
                     inputAmount: inputAmount,
                     destinationWallet: destinationWallet,
                     estimatedAmount: estimatedAmount,
-                    exchangeRate: exchangeRate,
-                    fees: fees,
+                    exchangeRate: providerInfo.0,
+                    fees: providerInfo.1,
                     solWallet: self.walletsRepository.nativeWallet,
-                    slippage: slippage
+                    slippage: slippage,
+                    minOrderSize: providerInfo.2
                 )
             }
     }
     var exchangeRateDriver: Driver<Loadable<Double>> { exchangeRateRelay.asDriver() }
+    var minOrderSizeDriver: Driver<Loadable<Double>> { minOrderSizeRelay.asDriver() }
     var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> { feesRelay.asDriver() }
     var payingTokenDriver: Driver<PayingToken> {
         payingTokenRelay.asDriver()
@@ -292,10 +301,12 @@ extension SwapToken.ViewModel {
         creatingAccountFeeRelay.reload()
     }
     
-    func calculateExchangeRateAndFees() {
+    func calculateExchangeRateFeesAndMinOrderSize() {
         // reset exchange rate and fees
         exchangeRateRelay.flush()
         feesRelay.flush()
+        minOrderSizeRelay.flush()
+        
         isExchangeRateReversed.accept(false)
         
         // if source wallet or destinationWallet is undefined
@@ -319,6 +330,11 @@ extension SwapToken.ViewModel {
             destinationWallet: destinationWallet,
             lamportsPerSignature: lamportsPerSignature,
             creatingAccountFee: creatingAccountFee
+        )
+        
+        minOrderSizeRelay.request = provider.calculateMinOrderSize(
+            fromMint: sourceWallet.token.address,
+            toMint: destinationWallet.token.address
         )
         
         // request exchange rate and fee (feesRelay will reload after exchangeRateRelay reloaded by a binding in function bind, it's faster because market has been cached after requesting exchange rate)
@@ -415,7 +431,8 @@ private func validate(
     exchangeRate: Loadable<Double>,
     fees: Loadable<[FeeType: SwapFee]>,
     solWallet: Wallet?,
-    slippage: Double?
+    slippage: Double?,
+    minOrderSize: Loadable<Double>
 ) -> String? {
     // if swap is initializing, loading exchange rate or calculating fees
     if [initialState, exchangeRate.state, fees.state].combined != .loaded
@@ -440,11 +457,13 @@ private func validate(
           let destinationWallet = destinationWallet,
           let exchangeRate = exchangeRate.value,
           let fees = fees.value,
+          let minOrderSize = minOrderSize.value,
           let slippage = slippage
     else {return L10n.someParametersAreMissing}
     
     // verify amount
     if inputAmount <= 0 {return L10n.amountIsNotValid}
+    if inputAmount < minOrderSize {return L10n.amountIsTooSmall}
     
     // verify if input amount
     if inputAmount.isGreaterThan(

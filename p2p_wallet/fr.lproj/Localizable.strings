@@ -479,3 +479,4 @@
 "Destination network" = "Réseau de destination";
 "Receive at least: %@ %@" = "Recevoir au moins : %@ %@";
 "Are you sure that this %@ address is valid?" = "Êtes-vous sûr que cette adresse %@ est valide ?";
+"Input amount is too small, minimum amount for swapping is %@" = "Le montant saisi est trop petit, le montant minimum pour l'échange est %@";
