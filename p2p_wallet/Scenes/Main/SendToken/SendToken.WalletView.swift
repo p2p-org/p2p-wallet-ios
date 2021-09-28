@@ -14,13 +14,13 @@ extension SendToken {
         // MARK: - Properties
         @Injected private var analyticsManager: AnalyticsManagerType
         private let disposeBag = DisposeBag()
-        let viewModel: SendTokenViewModelType
+        private let viewModel: SendTokenViewModelType
         
         // MARK: - Subviews
         private lazy var balanceView = WLBalanceView(forAutoLayout: ())
             .onTap(self, action: #selector(useAllBalance))
-        lazy var coinImageView = CoinLogoImageView(size: 32, cornerRadius: 16)
-        lazy var amountTextField = TokenAmountTextField(
+        private lazy var coinImageView = CoinLogoImageView(size: 32, cornerRadius: 16)
+        private lazy var amountTextField = TokenAmountTextField(
             font: .systemFont(ofSize: 27, weight: .semibold),
             textColor: .textBlack,
             textAlignment: .right,
@@ -28,9 +28,10 @@ extension SendToken {
             placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
             autocorrectionType: .no
         )
-        lazy var changeModeButton = UILabel(textSize: 13, weight: .semibold, textColor: .a3a5ba)
-        lazy var symbolLabel = UILabel(weight: .semibold)
-        lazy var equityValueLabel = UILabel(text: "≈", textColor: .textSecondary, textAlignment: .right)
+        
+        private lazy var symbolLabel = UILabel(weight: .semibold)
+        private lazy var fiatSymbolLabel = UILabel(text: Defaults.fiat.symbol, textSize: 27, weight: .semibold, textAlignment: .right)
+        private lazy var equityValueLabel = UILabel(text: "≈", textColor: .textSecondary, textAlignment: .right)
         
         // MARK: - Initializer
         init(viewModel: SendTokenViewModelType) {
@@ -68,17 +69,25 @@ extension SendToken {
                         .onTap(self, action: #selector(chooseWallet))
                     UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
                         .onTap(self, action: #selector(chooseWallet))
+                    BEStackViewSpacing(0)
+                    UIView.spacer
                     BEStackViewSpacing(12)
-                    changeModeButton
+                    
+                    fiatSymbolLabel
                         .withContentHuggingPriority(.required, for: .horizontal)
-                        .padding(.init(all: 10), backgroundColor: .grayPanel, cornerRadius: 12)
-                        .onTap(self, action: #selector(switchCurrencyMode))
                     amountTextField
                 }
                 
-                BEStackViewSpacing(0)
+                BEStackViewSpacing(8)
                 
-                equityValueLabel
+                UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fill) {
+                    UIView.spacer
+                    
+                    equityValueLabel
+                        .padding(.init(all: 8), cornerRadius: 12)
+                        .border(width: 1, color: .a3a5ba)
+                        .onTap(self, action: #selector(switchCurrencyMode))
+                }
             }
                 .padding(.init(all: 16), cornerRadius: 12)
                 .border(width: 1, color: .defaultBorder)
@@ -132,15 +141,8 @@ extension SendToken {
             
             // change currency mode button
             viewModel.currentCurrencyModeDriver
-                .withLatestFrom(viewModel.currentWalletDriver, resultSelector: {($0, $1)})
-                .map {(currencyMode, wallet) -> String? in
-                    if currencyMode == .fiat {
-                        return Defaults.fiat.code
-                    } else {
-                        return wallet?.token.symbol
-                    }
-                }
-                .drive(changeModeButton.rx.text)
+                .map {$0 != .fiat}
+                .drive(fiatSymbolLabel.rx.isHidden)
                 .disposed(by: disposeBag)
             
             // amount
