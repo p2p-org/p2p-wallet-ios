@@ -474,3 +474,8 @@
 "I want to receive" = "I want to receive";
 "Choose wallet" = "Choose wallet";
 "Multiple wallets found" = "Multiple wallets found";
+"Transfer fee" = "Transfer fee";
+"Free" = "Free";
+"Destination network" = "Destination network";
+"Receive at least: %@ %@" = "Receive at least: %@ %@";
+"Are you sure that this %@ address is valid?" = "Are you sure that this %@ address is valid?";
