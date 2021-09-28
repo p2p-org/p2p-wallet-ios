@@ -474,3 +474,8 @@
 "I want to receive" = "Tôi muốn nhận";
 "Choose wallet" = "Chọn ví";
 "Multiple wallets found" = "Đã tìm thấy nhiều ví";
+"Transfer fee" = "Phí chuyển tiền";
+"Free" = "Miễn phí";
+"Destination network" = "Chuyển tới mạng";
+"Receive at least: %@ %@" = "Nhận ít nhất: %@ %@";
+"Are you sure that this %@ address is valid?" = "Bạn có chắc rằng địa chỉ %@ này hợp lệ không?";

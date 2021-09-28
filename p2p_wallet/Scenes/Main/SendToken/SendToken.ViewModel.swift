@@ -10,38 +10,47 @@ import RxSwift
 import RxCocoa
 import LazySubject
 
+protocol SendTokenViewModelType: WalletDidSelectHandler {
+    var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {get}
+    var currentWalletDriver: Driver<Wallet?> {get}
+    var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {get}
+    var useAllBalanceSignal: Signal<Double?> {get}
+    var feeDriver: Driver<Loadable<Double>> {get}
+    var availableAmountDriver: Driver<Double?> {get}
+    var isValidDriver: Driver<Bool> {get}
+    var errorDriver: Driver<String?> {get}
+    var receiverAddressDriver: Driver<String?> {get}
+    var addressValidationStatusDriver: Driver<SendToken.AddressValidationStatus> {get}
+    var renBTCInfoDriver: Driver<SendToken.SendRenBTCInfo?> {get}
+    
+    func reload()
+    func navigate(to scene: SendToken.NavigatableScene)
+    func navigateToSelectBTCNetwork()
+    func chooseWallet(_ wallet: Wallet)
+    func enterAmount(_ amount: Double?)
+    func switchCurrencyMode()
+    func useAllBalance()
+    
+    func enterWalletAddress(_ address: String?)
+    func clearDestinationAddress()
+    func ignoreEmptyBalance(_ isIgnored: Bool)
+    
+    func changeRenBTCNetwork(to network: SendToken.SendRenBTCInfo.Network)
+    
+    func getPayingTokenSymbol() -> String
+    func isTestNet() -> Bool
+    
+    func authenticateAndSend()
+}
+
+extension SendTokenViewModelType {
+    func walletDidSelect(_ wallet: Wallet) {
+        chooseWallet(wallet)
+    }
+}
+
 extension SendToken {
-    class ViewModel: ViewModelType {
-        enum AddressValidationStatus {
-            case uncheck
-            case fetching
-            case valid
-            case invalid
-            case fetchingError
-            case invalidIgnored
-        }
-        
-        // MARK: - Nested type
-        struct Input {
-            let walletPubkey = PublishSubject<String?>()
-            let amount = PublishSubject<Double?>()
-            let address = PublishSubject<String?>()
-            let currencyMode = PublishSubject<CurrencyMode>()
-            let noFundsConfirmation = PublishSubject<Bool>()
-        }
-        struct Output {
-            let navigationScene: Driver<NavigatableScene>
-            let currentWallet: Driver<Wallet?>
-            let currencyMode: Driver<CurrencyMode>
-            let fee: LazySubject<Double>
-            let availableAmount: Driver<Double?>
-            let isValid: Driver<Bool>
-            let error: Driver<String?>
-            let useAllBalanceDidTouch: Driver<Double?>
-            let receiverAddress: Driver<String?>
-            let addressValidationStatus: Driver<AddressValidationStatus>
-        }
-        
+    class ViewModel {
         // MARK: - Dependencies
         private let repository: WalletsRepository
         private let apiClient: SendTokenAPIClient
@@ -52,21 +61,17 @@ extension SendToken {
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         
-        let input: Input
-        let output: Output
-        
         // MARK: - Subject
-        private let navigationSubject = PublishSubject<NavigatableScene>()
+        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
-        private let amountSubject = BehaviorRelay<Double?>(value: nil)
-        private let addressSubject = BehaviorRelay<String?>(value: nil)
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
-        private let feeSubject: LazySubject<Double>
-        private let availableAmountSubject = BehaviorRelay<Double?>(value: nil)
-        private let isValidSubject = BehaviorRelay<Bool>(value: false)
+        private let amountSubject = BehaviorRelay<Double?>(value: nil)
+        private let useAllBalanceSubject = PublishRelay<Double?>()
+        private let destinationAddressSubject = BehaviorRelay<String?>(value: nil)
+        private let feeSubject: LoadableRelay<Double>
         private let errorSubject = BehaviorRelay<String?>(value: nil)
-        private let useAllBalanceDidTouchSubject = PublishSubject<Double?>()
         private let addressValidationStatusSubject = BehaviorRelay<AddressValidationStatus>(value: .fetching)
+        private let renBTCInfoSubject = BehaviorRelay<SendRenBTCInfo?>(value: nil)
         
         // MARK: - Initializer
         init(
@@ -80,271 +85,120 @@ extension SendToken {
             self.apiClient = apiClient
             self.renVMBurnAndReleaseService = renVMBurnAndReleaseService
             
-            self.feeSubject = LazySubject<Double>(
-                request: Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
-                    .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
-                    .map {
-                        let decimals = repository.nativeWallet?.token.decimals
-                        return $0.convertToBalance(decimals: decimals)
-                    }
-            )
-            self.input = Input()
-            self.output = Output(
-                navigationScene: navigationSubject
-                    .asDriver(onErrorJustReturn: .chooseWallet),
-                currentWallet: walletSubject
-                    .asDriver(onErrorJustReturn: nil),
-                currencyMode: currencyModeSubject
-                    .asDriver(onErrorJustReturn: .token),
-                fee: feeSubject,
-                availableAmount: availableAmountSubject
-                    .asDriver(onErrorJustReturn: nil),
-                isValid: isValidSubject
-                    .asDriver(onErrorJustReturn: false),
-                error: errorSubject
-                    .asDriver(onErrorJustReturn: nil),
-                useAllBalanceDidTouch: useAllBalanceDidTouchSubject
-                    .asDriver(onErrorJustReturn: nil),
-                receiverAddress: addressSubject
-                    .asDriver(onErrorJustReturn: nil),
-                addressValidationStatus: addressValidationStatusSubject
-                    .asDriver()
-            )
+            self.feeSubject = .init(request: .just(0))
             
             bind()
-            feeSubject.reload()
+            reload()
             
-            input.walletPubkey.onNext(walletPubkey ?? repository.getWallets().first?.pubkey)
-            input.address.onNext(destinationAddress)
+            // accept initial values
+            if let pubkey = walletPubkey {
+                walletSubject.accept(repository.getWallets().first(where: {$0.pubkey == pubkey}))
+            } else {
+                walletSubject.accept(repository.nativeWallet)
+            }
+            
+            destinationAddressSubject.accept(destinationAddress)
         }
         
-        /// Bind output into input
         private func bind() {
-            bindInputToSubjects()
-            
-            bindSubjectsToSubjects()
-        }
-        
-        private func bindInputToSubjects() {
-            // wallet
-            input.walletPubkey
-                .map {pubkey in
-                    self.repository.getWallets().first(where: {$0.pubkey == pubkey})
-                }
-                .bind(to: walletSubject)
-                .disposed(by: disposeBag)
-            
-            // amount
-            input.amount
-                .bind(to: amountSubject)
-                .disposed(by: disposeBag)
-            
-            // address
-            input.address
-                .bind(to: addressSubject)
-                .disposed(by: disposeBag)
-            
-            // currency mode
-            input.currencyMode
+            // detect if price isn't available
+            walletSubject.distinctUntilChanged()
+                .filter {$0 != nil && $0?.priceInCurrentFiat == nil}
+                .map {_ in CurrencyMode.token}
                 .bind(to: currencyModeSubject)
                 .disposed(by: disposeBag)
             
-            // no funds confirmation
-            input.noFundsConfirmation
-                .map {isIgnoring -> AddressValidationStatus in
-                    if isIgnoring {
-                        return .invalidIgnored
-                    }
-                    return .invalid
-                }
-                .bind(to: addressValidationStatusSubject)
-                .disposed(by: disposeBag)
-        }
-        
-        private func bindSubjectsToSubjects() {
-            // detect if price isn't available
+            // detect renBTC
             walletSubject.distinctUntilChanged()
-                .subscribe(onNext: {[weak self] wallet in
-                    if wallet?.priceInCurrentFiat == nil && self?.currencyModeSubject.value == .fiat
-                    {
-                        self?.currencyModeSubject.accept(.token)
+                .map {wallet -> SendRenBTCInfo? in
+                    if wallet?.token.address.isRenBTCMint == true {
+                        return .init(
+                            network: .bitcoin,
+                            receiveAtLeast: nil
+                        )
                     }
+                    return nil
+                }
+                .bind(to: renBTCInfoSubject)
+                .disposed(by: disposeBag)
+            
+            renBTCInfoSubject
+                .map {$0?.network}
+                .distinctUntilChanged()
+                .subscribe(onNext: {[weak self] network in
+                    guard let self = self else {return}
+                    self.feeSubject.request = self.feeRequest(network: network)
+                    self.feeSubject.reload()
                 })
                 .disposed(by: disposeBag)
             
-            // available amount
+            // receive at least
             Observable.combineLatest(
-                walletSubject.asObservable(),
-                currencyModeSubject.asObservable()
+                amountSubject.distinctUntilChanged(),
+                feeSubject.valueObservable.distinctUntilChanged()
             )
-                .map {(wallet, currencyMode) -> Double? in
-                    guard let wallet = wallet else {return nil}
-                    return Self.calculateAvailableAmount(wallet: wallet, currencyMode: currencyMode)
-                }
-                .bind(to: availableAmountSubject)
+                .withLatestFrom(renBTCInfoSubject, resultSelector: {($1, $0.0, $0.1)})
+                .subscribe(onNext: {[weak self] info, amount, fee in
+                    guard var info = info else {return}
+                    var receiveAtLeast: Double?
+                    if let amount = amount,
+                       let fee = fee
+                    {
+                        receiveAtLeast = amount - fee
+                        if receiveAtLeast! < 0 {receiveAtLeast = 0}
+                    }
+                    info.receiveAtLeast = receiveAtLeast
+                    self?.renBTCInfoSubject.accept(info)
+                })
                 .disposed(by: disposeBag)
             
-            // error subject
+            // verify
             Observable.combineLatest(
-                walletSubject.distinctUntilChanged(),
+                walletSubject.distinctUntilChanged().asObservable(),
+                currencyModeSubject.distinctUntilChanged().asObservable(),
                 amountSubject.distinctUntilChanged(),
-                addressSubject.distinctUntilChanged(),
-                currencyModeSubject.distinctUntilChanged(),
-                feeSubject.observable.distinctUntilChanged()
+                feeSubject.valueObservable.distinctUntilChanged(),
+                renBTCInfoSubject.distinctUntilChanged()
             )
-                .map {[weak self] params in
-                    self?.verifyError(wallet: params.0, amount: params.1, fee: self?.feeSubject.value)
+                .map { [weak self] wallet, currencyMode, amount, fee, renBTCInfo in
+                    verifyError(
+                        wallet: wallet,
+                        nativeWallet: self?.repository.nativeWallet,
+                        currencyMode: currencyMode,
+                        amount: amount,
+                        fee: fee,
+                        renBTCInfo: renBTCInfo
+                    )
                 }
                 .bind(to: errorSubject)
                 .disposed(by: disposeBag)
             
-            // address info
-            addressSubject
-                .distinctUntilChanged()
+            // destination address
+            Observable.combineLatest(
+                destinationAddressSubject.distinctUntilChanged(),
+                renBTCInfoSubject
+            )
                 .do(onNext: { [weak self] _ in
                     self?.addressValidationStatusSubject.accept(.fetching)
                 })
                 .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-                .flatMap {[weak self] address -> Single<AddressValidationStatus> in
-                    guard let address = address, !address.isEmpty else {
+                .flatMap {[weak self] address, renBTCInfo -> Single<AddressValidationStatus> in
+                    guard let self = self, let address = address, !address.isEmpty else {
                         return .just(.uncheck)
                     }
-                    self?.addressValidationStatusSubject.accept(.fetching)
-                    return (self?.apiClient.checkAccountValidation(account: address) ?? .just(false))
-                        .map {isValid -> AddressValidationStatus in
-                            isValid ? .valid: .invalid
-                        }
+                    self.addressValidationStatusSubject.accept(.fetching)
+                    let request: Single<Bool>
+                    if renBTCInfo?.network == .bitcoin {
+                        request = .just(false)
+                    } else {
+                        request = self.apiClient.checkAccountValidation(account: address)
+                    }
+                    return request.map {$0 ? .valid: .invalid}
                         .catchAndReturn(.fetchingError)
                 }
                 
                 .bind(to: addressValidationStatusSubject)
                 .disposed(by: disposeBag)
-            
-            // is valid subject
-            let observables: [Observable<Bool>] = [
-                errorSubject.map {$0 == nil},
-                walletSubject.map {$0 != nil},
-                addressSubject.map {$0 != nil && !$0!.isEmpty},
-                amountSubject.map {$0 != nil},
-                addressValidationStatusSubject.map {$0 == .valid || $0 == .invalidIgnored}
-            ]
-            
-            Observable.combineLatest(observables)
-                .map {$0.allSatisfy {$0}}
-                .bind(to: isValidSubject)
-                .disposed(by: disposeBag)
-        }
-        
-        // MARK: - Actions
-        @objc func useAllBalance() {
-            let amount = availableAmountSubject.value
-            input.amount.onNext(amount)
-            if let amount = amount {
-                analyticsManager.log(event: .sendAvailableClick(sum: amount))
-            }
-            useAllBalanceDidTouchSubject.onNext(amount)
-        }
-        
-        @objc func clearDestinationAddress() {
-            input.address.onNext(nil)
-        }
-        
-        @objc func chooseWallet() {
-            navigationSubject.onNext(.chooseWallet)
-        }
-        
-        @objc func chooseAddress() {
-            navigationSubject.onNext(.chooseAddress)
-        }
-        
-        @objc func scanQrCode() {
-            analyticsManager.log(event: .sendScanQrClick)
-            analyticsManager.log(event: .scanQrOpen(fromPage: "send"))
-            navigationSubject.onNext(.scanQrCode)
-        }
-        
-        @objc func showFeeInfo() {
-            navigationSubject.onNext(.feeInfo)
-        }
-        
-        @objc func switchCurrencyMode() {
-            if walletSubject.value?.priceInCurrentFiat == nil {
-                if currencyModeSubject.value == .fiat {
-                    currencyModeSubject.accept(.token)
-                }
-            } else {
-                if currencyModeSubject.value == .fiat {
-                    currencyModeSubject.accept(.token)
-                } else {
-                    currencyModeSubject.accept(.fiat)
-                }
-            }
-            
-            analyticsManager.log(event: .sendChangeInputMode(selectedValue: currencyModeSubject.value == .token ? "token": "fiat"))
-        }
-        
-        @objc func authenticateAndSend() {
-            authenticationHandler.authenticate(
-                presentationStyle:
-                    .init(
-                        isRequired: false,
-                        isFullScreen: false,
-                        completion: { [weak self] in
-                            self?.send()
-                        }
-                    )
-            )
-        }
-        
-        // MARK: - Helpers
-        private static func calculateAvailableAmount(
-            wallet: Wallet?,
-            currencyMode: CurrencyMode
-        ) -> Double? {
-            switch currencyMode {
-            case .token:
-                return wallet?.amount
-            case .fiat:
-                return wallet?.amountInCurrentFiat
-            }
-        }
-        
-        /// Verify current context
-        /// - Returns: Error string, nil if no error appear
-        private func verifyError(
-            wallet: Wallet?,
-            amount: Double?,
-            fee: Double?
-        ) -> String? {
-            // Verify wallet
-            guard wallet != nil else {
-                return L10n.youMustSelectAWalletToSend
-            }
-            
-            // Verify amount if it has been entered
-            if let amount = amount {
-                // Amount is not valid
-                if amount <= 0 {
-                    return L10n.amountIsNotValid
-                }
-                
-                // Verify with fee
-                if let fee = fee,
-                   let solAmount = repository.nativeWallet?.amount,
-                   fee > solAmount
-                {
-                    return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
-                }
-                
-                // Verify amount
-                let amountToCompare = self.availableAmountSubject.value
-                if amount.rounded(decimals: Int(wallet?.token.decimals ?? 0)) > amountToCompare?.rounded(decimals: Int(wallet?.token.decimals ?? 0))
-                {
-                    return L10n.insufficientFunds
-                }
-            }
-            
-            return nil
         }
         
         private func send() {
@@ -352,7 +206,7 @@ extension SendToken {
             guard errorSubject.value == nil,
                   let wallet = walletSubject.value,
                   let sender = wallet.pubkey,
-                  let receiver = addressSubject.value,
+                  let receiver = destinationAddressSubject.value,
                   var amount = amountSubject.value
             else {
                 return
@@ -376,8 +230,9 @@ extension SendToken {
             // define token
             var request: Single<String>!
             
-            // renBTC: fix later for sending to solana chain
-            if wallet.token.address.isRenBTCMint {
+            // renBTC
+            if wallet.token.address.isRenBTCMint && renBTCInfoSubject.value?.network == .bitcoin
+            {
                 request = renVMBurnAndReleaseService.burn(
                     recipient: receiver,
                     amount: amount.toLamport(decimals: 8)
@@ -416,7 +271,7 @@ extension SendToken {
             )
             
             // show processing scene
-            navigationSubject.onNext(
+            navigationSubject.accept(
                 .processTransaction(
                     request: request.map {$0 as ProcessTransactionResponseType},
                     transactionType: .send(
@@ -428,16 +283,253 @@ extension SendToken {
                 )
             )
         }
+        
+        private func feeRequest(network: SendRenBTCInfo.Network?) -> Single<Double> {
+            if network == .bitcoin {
+                return renVMBurnAndReleaseService.getFee()
+            }
+            return Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
+                .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
+                .map { [weak self] in
+                    let decimals = self?.repository.nativeWallet?.token.decimals
+                    return $0.convertToBalance(decimals: decimals)
+                }
+        }
     }
 }
 
-extension SendToken.ViewModel: WalletDidSelectHandler {
-    func walletDidSelect(_ wallet: Wallet) {
+extension SendToken.ViewModel: SendTokenViewModelType {
+    var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {
+        navigationSubject.asDriver()
+    }
+    
+    var currentWalletDriver: Driver<Wallet?> {
+        walletSubject.asDriver()
+    }
+    
+    var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {
+        currencyModeSubject.asDriver()
+    }
+    
+    var useAllBalanceSignal: Signal<Double?> {
+        useAllBalanceSubject.asSignal()
+    }
+    
+    var feeDriver: Driver<Loadable<Double>> {
+        feeSubject.asDriver()
+    }
+    
+    var availableAmountDriver: Driver<Double?> {
+        Driver.combineLatest(
+            currentWalletDriver,
+            currentCurrencyModeDriver,
+            feeDriver
+        )
+            .map {wallet, currencyMode, fee -> Double? in
+                calculateAvailableAmount(
+                    wallet: wallet,
+                    currencyMode: currencyMode,
+                    fee: fee.value
+                )
+            }
+    }
+    
+    var isValidDriver: Driver<Bool> {
+        Driver.combineLatest([
+            errorDriver.map {$0 == nil},
+            currentWalletDriver.map {$0 != nil},
+            receiverAddressDriver.map {$0 != nil && !$0!.isEmpty},
+            amountSubject.asDriver().map {$0 != nil},
+            addressValidationStatusDriver.map {$0 == .valid || $0 == .invalidIgnored}
+        ])
+            .map {$0.allSatisfy {$0}}
+    }
+    
+    var errorDriver: Driver<String?> {
+        errorSubject.asDriver()
+    }
+    
+    var receiverAddressDriver: Driver<String?> {
+        destinationAddressSubject.asDriver()
+    }
+    
+    var addressValidationStatusDriver: Driver<SendToken.AddressValidationStatus> {
+        addressValidationStatusSubject.asDriver()
+    }
+    
+    var renBTCInfoDriver: Driver<SendToken.SendRenBTCInfo?> {
+        renBTCInfoSubject.asDriver()
+    }
+    
+    // MARK: - Actions
+    func reload() {
+        feeSubject.reload()
+    }
+    
+    func navigate(to scene: SendToken.NavigatableScene) {
+        navigationSubject.accept(scene)
+    }
+    
+    func navigateToSelectBTCNetwork() {
+        guard let selectedNetwork = renBTCInfoSubject.value?.network else {return}
+        navigationSubject.accept(.chooseBTCNetwork(selectedNetwork: selectedNetwork))
+    }
+    
+    func chooseWallet(_ wallet: Wallet) {
         analyticsManager.log(
             event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
         )
-        input.walletPubkey.onNext(wallet.pubkey)
+        walletSubject.accept(wallet)
     }
+    
+    func enterAmount(_ amount: Double?) {
+        amountSubject.accept(amount)
+    }
+    
+    func switchCurrencyMode() {
+        if walletSubject.value?.priceInCurrentFiat == nil {
+            if currencyModeSubject.value == .fiat {
+                currencyModeSubject.accept(.token)
+            }
+        } else {
+            if currencyModeSubject.value == .fiat {
+                currencyModeSubject.accept(.token)
+            } else {
+                currencyModeSubject.accept(.fiat)
+            }
+        }
+        
+        analyticsManager.log(event: .sendChangeInputMode(selectedValue: currencyModeSubject.value == .token ? "token": "fiat"))
+    }
+    
+    func useAllBalance() {
+        let amount = calculateAvailableAmount(
+            wallet: walletSubject.value,
+            currencyMode: currencyModeSubject.value,
+            fee: feeSubject.value
+        )
+        if let amount = amount {
+            analyticsManager.log(event: .sendAvailableClick(sum: amount))
+        }
+        useAllBalanceSubject.accept(amount)
+        amountSubject.accept(amount)
+    }
+    
+    func enterWalletAddress(_ address: String?) {
+        destinationAddressSubject.accept(address)
+    }
+    
+    func clearDestinationAddress() {
+        destinationAddressSubject.accept(nil)
+    }
+    
+    func ignoreEmptyBalance(_ isIgnored: Bool) {
+        if isIgnored {
+            addressValidationStatusSubject.accept(.invalidIgnored)
+        } else {
+            addressValidationStatusSubject.accept(.invalid)
+        }
+    }
+    
+    func changeRenBTCNetwork(to network: SendToken.SendRenBTCInfo.Network) {
+        guard var info = renBTCInfoSubject.value else {return}
+        info.network = network
+        renBTCInfoSubject.accept(info)
+    }
+    
+    func isTestNet() -> Bool {
+        renVMBurnAndReleaseService.isTestNet()
+    }
+    
+    func getPayingTokenSymbol() -> String {
+        if renBTCInfoSubject.value?.network == .bitcoin {
+            return "BTC"
+        }
+        return "SOL"
+    }
+    
+    func authenticateAndSend() {
+        authenticationHandler.authenticate(
+            presentationStyle:
+                .init(
+                    isRequired: false,
+                    isFullScreen: false,
+                    completion: { [weak self] in
+                        self?.send()
+                    }
+                )
+        )
+    }
+}
+
+// MARK: - Helpers
+private func calculateAvailableAmount(
+    wallet: Wallet?,
+    currencyMode: SendToken.CurrencyMode,
+    fee: Double?
+) -> Double? {
+    guard let wallet = wallet else {return nil}
+    // all amount
+    var availableAmount = wallet.amount ?? 0
+    
+    // minus fee if wallet is native sol
+    if wallet.isNativeSOL == true {
+        guard let fee = fee else {return nil}
+        availableAmount = availableAmount - fee
+    }
+    
+    // convert to fiat in fiat mode
+    if currencyMode == .fiat {
+        availableAmount = availableAmount * wallet.priceInCurrentFiat
+    }
+    
+    // return
+    return availableAmount > 0 ? availableAmount: 0
+}
+
+/// Verify current context
+/// - Returns: Error string, nil if no error appear
+private func verifyError(
+    wallet: Wallet?,
+    nativeWallet: Wallet?,
+    currencyMode: SendToken.CurrencyMode,
+    amount: Double?,
+    fee: Double?,
+    renBTCInfo: SendToken.SendRenBTCInfo?
+) -> String? {
+    // Verify wallet
+    guard wallet != nil else {
+        return L10n.youMustSelectAWalletToSend
+    }
+    
+    // Verify amount if it has been entered
+    if let amount = amount {
+        // Amount is not valid
+        if amount <= 0 {
+            return L10n.amountIsNotValid
+        }
+        
+        // Verify with fee
+        if let info = renBTCInfo, info.network == .bitcoin {
+            if let receiveAtLeast = info.receiveAtLeast, receiveAtLeast <= 0 {
+                return L10n.amountIsTooSmall
+            }
+        } else if let fee = fee,
+                let solAmount = nativeWallet?.amount,
+                fee > solAmount
+        {
+            return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
+        }
+        
+        // Verify amount
+        let amountToCompare = calculateAvailableAmount(wallet: wallet, currencyMode: currencyMode, fee: fee)
+        if amount.rounded(decimals: Int(wallet?.token.decimals ?? 0)) > amountToCompare?.rounded(decimals: Int(wallet?.token.decimals ?? 0))
+        {
+            return L10n.insufficientFunds
+        }
+    }
+    
+    return nil
 }
 
 private extension String {

@@ -474,3 +474,8 @@
 "I want to receive" = "я хочу получить";
 "Choose wallet" = "Выберите кошелек";
 "Multiple wallets found" = "Найдено несколько кошельков";
+"Transfer fee" = "Стоимость трансфера";
+"Free" = "Бесплатно";
+"Destination network" = "Целевая сеть";
+"Receive at least: %@ %@" = "Получите как минимум: %@ %@";
+"Are you sure that this %@ address is valid?" = "Вы уверены, что этот адрес %@ действителен?";

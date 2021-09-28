@@ -474,3 +474,8 @@
 "I want to receive" = "je veux recevoir";
 "Choose wallet" = "Choisir le portefeuille";
 "Multiple wallets found" = "Plusieurs portefeuilles trouvés";
+"Transfer fee" = "Frais de transfert";
+"Free" = "Libérer";
+"Destination network" = "Réseau de destination";
+"Receive at least: %@ %@" = "Recevoir au moins : %@ %@";
+"Are you sure that this %@ address is valid?" = "Êtes-vous sûr que cette adresse %@ est valide ?";
