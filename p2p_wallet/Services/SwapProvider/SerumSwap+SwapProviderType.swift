@@ -81,6 +81,13 @@ extension SerumSwap: SwapProviderType {
             }
     }
     
+    func calculateMinOrderSize(
+        fromMint: String,
+        toMint: String
+    ) -> Single<Double> {
+        loadMinOrderSize(fromMint: fromMint, toMint: toMint)
+    }
+    
     func calculateAvailableAmount(
         sourceWallet: Wallet?,
         fee: SwapFee?

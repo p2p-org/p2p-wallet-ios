@@ -161,6 +161,8 @@ extension SwapToken {
             
             // error label
             let presentableErrorDriver = Driver.combineLatest(
+                viewModel.inputAmountDriver,
+                viewModel.minOrderSizeDriver,
                 viewModel.exchangeRateDriver.map {$0.state},
                 viewModel.feesDriver.map {$0.state},
                 viewModel.errorDriver
@@ -320,13 +322,23 @@ private func generateSwapButtonText(
 }
 
 private func generateErrorText(
+    amount: Double?,
+    minOrderSize: Loadable<Double>,
     exrate: LoadableState,
     fees: LoadableState,
     error: String?
 ) -> String? {
     // if failed to get exchange rate and fees
-    if exrate.isError || fees.isError {
+    if exrate.isError || fees.isError || minOrderSize.state.isError {
         return L10n.couldNotCalculateExchangeRateOrSwappingFeesFromCurrentTokenPair
+    }
+    
+    // if amount is too small
+    if let amount = amount,
+       let minOrderSize = minOrderSize.value,
+       amount < minOrderSize
+    {
+        return L10n.inputAmountIsTooSmallMinimumAmountForSwappingIs(minOrderSize.toString(maximumFractionDigits: 9))
     }
 
     guard let error = error else {return nil}
