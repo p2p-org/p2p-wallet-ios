@@ -199,20 +199,26 @@ extension RenVM.LockAndMint {
         private func mint(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: TxDetail) throws {
             
             prepareMintRequest(response: response, txDetail: txDetail)
-                .do(onSuccess: {[weak self] signature in
-                    Logger.log(message: "renBTC event mint signature: \(signature)", event: .info)
+                .do(onSuccess: {[weak self] response in
+                    Logger.log(message: "renBTC event mint response: \(response)", event: .info)
                     self?.sessionStorage.setAsMinted(tx: txDetail)
 
-                    let value = txDetail.value.convertToBalance(decimals: 8)
+                    let amount = UInt64(response.amountOut ?? "")
+                    let value = (amount ?? txDetail.value).convertToBalance(decimals: 8)
                         .toString(maximumFractionDigits: 8)
                     UIApplication.shared.showToast(message: L10n.receivingRenBTCPending(value))
                 })
-                .flatMapCompletable(transactionHandler.observeTransactionCompletion(signature:))
-                .subscribe(onCompleted: {
-                    let value = txDetail.value.convertToBalance(decimals: 8)
+                .flatMap {[weak self] response -> Single<(amountOut: String?, signature: String)> in
+                    guard let self = self else {throw RenVM.Error.unknown}
+                    return self.transactionHandler.observeTransactionCompletion(signature: response.signature)
+                        .andThen(.just(response))
+                }
+                .subscribe(onSuccess: { response in
+                    let amount = UInt64(response.amountOut ?? "")
+                    let value = (amount ?? txDetail.value).convertToBalance(decimals: 8)
                         .toString(maximumFractionDigits: 8)
                     UIApplication.shared.showToast(message: L10n.receivedRenBTC(value))
-                }, onError: { [weak self] error in
+                }, onFailure: { [weak self] error in
                     guard let self = self else {return}
 
                     // already minted
@@ -230,7 +236,7 @@ extension RenVM.LockAndMint {
                 .disposed(by: disposeBag)
         }
         
-        private func prepareMintRequest(response: GatewayAddressResponse, txDetail: TxDetail) -> Single<String>
+        private func prepareMintRequest(response: GatewayAddressResponse, txDetail: TxDetail) -> Single<(amountOut: String?, signature: String)>
         {
             guard let lockAndMint = lockAndMint else {
                 return .error(RenVM.Error.unknown)
