@@ -12,18 +12,18 @@ extension TransakWidgetViewController {
     struct CryptoCurrency: OptionSet {
         let rawValue: Int
         
-        static let usdc = CryptoCurrency(rawValue: 1 << 0)
+        static let usdt = CryptoCurrency(rawValue: 1 << 0)
         static let sol = CryptoCurrency(rawValue: 1 << 1)
-        static var all: Self {[usdc, sol]}
+        static var all: Self {[usdt, sol]}
         
         var code: String {
             switch self {
-            case .usdc:
-                return "USDC"
+            case .usdt:
+                return "USDT"
             case .sol:
                 return "SOL"
             case .all:
-                return "USDC,SOL"
+                return "USDT,SOL"
             default:
                 fatalError()
             }
