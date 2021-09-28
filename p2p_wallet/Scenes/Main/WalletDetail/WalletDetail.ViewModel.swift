@@ -81,7 +81,7 @@ extension WalletDetail {
                     feeRelayer: feeRelayer,
                     notificationsRepository: notificationsRepository
                 ),
-                canBuyToken: symbol == "SOL" || symbol == "USDC"
+                canBuyToken: symbol == "SOL" || symbol == "USDT"
             )
             
             bind()
@@ -138,8 +138,8 @@ extension WalletDetail {
             if symbol == "SOL" {
                 tokens = .sol
             }
-            if symbol == "USDC" {
-                tokens = .usdc
+            if symbol == "USDT" {
+                tokens = .usdt
             }
             analyticsManager.log(event: .tokenDetailsBuyClick)
             navigationSubject.accept(.buy(tokens: tokens))
