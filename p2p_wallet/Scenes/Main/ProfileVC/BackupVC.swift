@@ -124,7 +124,8 @@ class BackupVC: ProfileVCBase {
                 completion: { [weak self] in
                     self?.accountStorage.saveToICloud(
                         account: .init(
-                            phrase: account.joined(separator: " ")
+                            phrase: account.joined(separator: " "),
+                            derivablePath: self?.accountStorage.getDerivablePath()
                         )
                     )
                     self?.didBackupSubject.accept(true)

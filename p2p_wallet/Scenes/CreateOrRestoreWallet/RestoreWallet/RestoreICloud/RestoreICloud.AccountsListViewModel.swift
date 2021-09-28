@@ -22,7 +22,7 @@ extension RestoreICloud {
             
             return accountsRequest
                 .flatMap {accounts in
-                    Single.zip(accounts.map {createAccountSingle(phrase: $0.phrase)})
+                    Single.zip(accounts.map {createAccountSingle(account: $0)})
                         .map {createdAccounts in
                             var parsedAccounts = [ParsedAccount]()
                             for (index, account) in accounts.enumerated() {
@@ -35,15 +35,15 @@ extension RestoreICloud {
     }
 }
 
-private func createAccountSingle(phrase: String) -> Single<SolanaSDK.Account> {
+private func createAccountSingle(account: Account) -> Single<SolanaSDK.Account> {
     Single.create { observer in
-        DispatchQueue(label: "createAccount#\(phrase)")
+        DispatchQueue(label: "createAccount#\(account.phrase)")
             .async {
                 do {
                     let account = try SolanaSDK.Account(
-                        phrase: phrase.components(separatedBy: " "),
+                        phrase: account.phrase.components(separatedBy: " "),
                         network: Defaults.apiEndPoint.network,
-                        derivablePath: .default
+                        derivablePath: account.derivablePath
                     )
                     observer(.success(account))
                 } catch {

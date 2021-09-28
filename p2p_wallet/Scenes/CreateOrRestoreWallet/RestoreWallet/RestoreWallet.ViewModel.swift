@@ -14,6 +14,7 @@ protocol RestoreWalletViewModelType {
     var errorSignal: Signal<String> {get}
     
     func handlePhrases(_ phrases: [String])
+    func handleICloudAccount(_ account: Account)
     func restoreFromICloud()
     func restoreManually()
 }
@@ -70,6 +71,11 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     func handlePhrases(_ phrases: [String]) {
         self.phrases = phrases
         navigationSubject.accept(.derivableAccounts(phrases: phrases))
+    }
+    
+    func handleICloudAccount(_ account: Account) {
+        self.phrases = account.phrase.components(separatedBy: " ")
+        derivablePathDidSelect(account.derivablePath)
     }
 }
 

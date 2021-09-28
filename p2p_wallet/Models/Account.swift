@@ -8,11 +8,13 @@
 import Foundation
 
 struct Account: Codable, Hashable {
-    init(phrase: String) {
+    init(phrase: String, derivablePath: SolanaSDK.DerivablePath?) {
         self.name = nil // TODO: - Name service
         self.phrase = phrase
+        self.derivablePath = derivablePath ?? .default
     }
     
     let name: String?
     let phrase: String
+    let derivablePath: SolanaSDK.DerivablePath
 }
