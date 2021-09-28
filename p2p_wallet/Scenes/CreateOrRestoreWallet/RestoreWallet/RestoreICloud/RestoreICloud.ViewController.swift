@@ -66,6 +66,8 @@ extension RestoreICloud {
 extension RestoreICloud.ViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let account = item as? RestoreICloud.ParsedAccount else {return}
-        viewModel.handlePhrases(account.account.phrase.components(separatedBy: " "))
+        self.dismiss(animated: true) { [weak self] in
+            self?.viewModel.handleICloudAccount(account.account)
+        }
     }
 }

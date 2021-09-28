@@ -77,6 +77,17 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType {
         _account = nil
     }
     
+    func getDerivablePath() -> SolanaSDK.DerivablePath? {
+        guard let derivableTypeRaw = keychain.get(derivableTypeKey),
+              let derivableType = SolanaSDK.DerivablePath.DerivableType(rawValue: derivableTypeRaw)
+        else {return nil}
+        
+        let walletIndexRaw = keychain.get(walletIndexKey)
+        let walletIndex = Int(walletIndexRaw ?? "0")
+        
+        return .init(type: derivableType, walletIndex: walletIndex ?? 0)
+    }
+    
     var account: SolanaSDK.Account? {
         if let account = _account {
             return account

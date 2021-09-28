@@ -74,7 +74,12 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     
     @objc func saveToICloud() {
         analyticsManager.log(event: .createWalletBackupToIcloudClick)
-        accountStorage.saveToICloud(account: .init(phrase: phrasesSubject.value.joined(separator: " ")))
+        accountStorage.saveToICloud(
+            account: .init(
+                phrase: phrasesSubject.value.joined(separator: " "),
+                derivablePath: .default
+            )
+        )
         UIApplication.shared.showToast(message: "✅ " + L10n.savedToICloud)
     }
     

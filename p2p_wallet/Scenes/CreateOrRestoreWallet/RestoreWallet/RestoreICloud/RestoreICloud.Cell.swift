@@ -33,28 +33,7 @@ extension RestoreICloud {
         
         func setUp(with item: AnyHashable?) {
             guard let account = item as? ParsedAccount else {return}
-            addressLabel.text = account.account.phrase.truncatedSeed
+            addressLabel.text = account.parsedAccount.publicKey.base58EncodedString.truncatingMiddle(numOfSymbolsRevealed: 12, numOfSymbolsRevealedInSuffix: 4)
         }
-    }
-}
-
-private extension String {
-    var truncatedSeed: String {
-        let components = components(separatedBy: " ")
-        
-        var string = ""
-        var truncatedComponents = [String]()
-        if let first = components.first {truncatedComponents.append(first)}
-        if let second = components[safe: 1] {truncatedComponents.append(second)}
-        
-        string = truncatedComponents.joined(separator: " ")
-        string += "..."
-        
-        truncatedComponents = []
-        if let prelast = components[safe: components.count-2] {truncatedComponents.append(prelast)}
-        if let last = components.last {truncatedComponents.append(last)}
-        
-        string += truncatedComponents.joined(separator: " ")
-        return string
     }
 }
