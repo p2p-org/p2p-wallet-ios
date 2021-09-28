@@ -17,6 +17,7 @@ protocol PricesStorage {
 class PricesManager {
     enum Error: Swift.Error {
         case notFound
+        case unknown
     }
     // MARK: - Properties
     var tokensRepository: TokensRepository
@@ -65,9 +66,22 @@ class PricesManager {
         
         // request new records
         fetchAllTokenPricesDisposable = tokensRepository.getTokensList()
-            .flatMap { tokens -> Single<[String: CurrentPrice?]> in
-                let coins = tokens.excludingSpecialTokens().map {$0.symbol}
+            .flatMap { [weak self] tokens -> Single<[String: CurrentPrice?]> in
+                guard let self = self else {throw Error.unknown}
+                let coins = tokens.excludingSpecialTokens()
+                    .map { token -> String in
+                        var symbol = token.symbol
+                        if symbol == "renBTC" {symbol = "BTC"}
+                        return symbol
+                    }
+                    .filter {!$0.contains("-") && !$0.contains("/")}
+                    .unique
                 return self.fetcher.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
+                    .map {prices in
+                        var prices = prices
+                        prices["renBTC"] = prices["BTC"]
+                        return prices
+                    }
             }
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: {[weak self] prices in
@@ -121,5 +135,16 @@ extension PricesManager {
         }
         pricesStorage.savePrices(prices)
         currentPrices.accept(prices)
+    }
+}
+
+private extension Array where Element: Equatable {
+    var unique: [Element] {
+        var uniqueValues: [Element] = []
+        forEach { item in
+            guard !uniqueValues.contains(item) else { return }
+            uniqueValues.append(item)
+        }
+        return uniqueValues
     }
 }
