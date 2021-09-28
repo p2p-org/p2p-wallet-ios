@@ -100,7 +100,6 @@ extension SendToken {
             destinationAddressSubject.accept(destinationAddress)
         }
         
-        /// Bind output into input
         private func bind() {
             // detect if price isn't available
             walletSubject.distinctUntilChanged()
@@ -327,14 +326,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
             feeDriver
         )
             .map {wallet, currencyMode, fee -> Double? in
-                guard let wallet = wallet,
-                      fee.state == .loaded,
-                      let feeInSOL = fee.value
-                else {return nil}
-                return calculateAvailableAmount(
+                calculateAvailableAmount(
                     wallet: wallet,
                     currencyMode: currencyMode,
-                    fee: feeInSOL
+                    fee: fee.value
                 )
             }
     }
@@ -473,14 +468,13 @@ private func calculateAvailableAmount(
     currencyMode: SendToken.CurrencyMode,
     fee: Double?
 ) -> Double? {
-    guard let wallet = wallet,
-          let fee = fee
-    else {return nil}
+    guard let wallet = wallet else {return nil}
     // all amount
     var availableAmount = wallet.amount ?? 0
     
     // minus fee if wallet is native sol
     if wallet.isNativeSOL == true {
+        guard let fee = fee else {return nil}
         availableAmount = availableAmount - fee
     }
     
