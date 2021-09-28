@@ -38,6 +38,7 @@ protocol SendTokenViewModelType: WalletDidSelectHandler {
     func changeRenBTCNetwork(to network: SendToken.SendRenBTCInfo.Network)
     
     func getPayingTokenSymbol() -> String
+    func isTestNet() -> Bool
     
     func authenticateAndSend()
 }
@@ -189,7 +190,7 @@ extension SendToken {
                     self.addressValidationStatusSubject.accept(.fetching)
                     let request: Single<Bool>
                     if renBTCInfo?.network == .bitcoin {
-                        request = .just(address.isValidBitcoinAddress(isTestnet: self.renVMBurnAndReleaseService.isTestNet()))
+                        request = .just(false)
                     } else {
                         request = self.apiClient.checkAccountValidation(account: address)
                     }
@@ -441,6 +442,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         renBTCInfoSubject.accept(info)
     }
     
+    func isTestNet() -> Bool {
+        renVMBurnAndReleaseService.isTestNet()
+    }
+    
     func getPayingTokenSymbol() -> String {
         if renBTCInfoSubject.value?.network == .bitcoin {
             return "BTC"
@@ -537,12 +542,5 @@ private extension String {
     var isRenBTCMint: Bool {
         self == SolanaSDK.PublicKey.renBTCMint.base58EncodedString ||
             self == SolanaSDK.PublicKey.renBTCMintDevnet.base58EncodedString
-    }
-    
-    func isValidBitcoinAddress(isTestnet: Bool) -> Bool {
-        let pattern = "^(\(isTestnet ? "tb1|": "")bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$"
-        let r = startIndex..<endIndex
-        let r2 = range(of: pattern, options: .regularExpression)
-        return r == r2
     }
 }

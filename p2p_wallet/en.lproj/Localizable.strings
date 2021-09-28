@@ -478,3 +478,4 @@
 "Free" = "Free";
 "Destination network" = "Destination network";
 "Receive at least: %@ %@" = "Receive at least: %@ %@";
+"Are you sure that this %@ address is valid?" = "Are you sure that this %@ address is valid?";

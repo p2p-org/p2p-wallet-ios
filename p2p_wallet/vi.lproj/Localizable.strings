@@ -478,3 +478,4 @@
 "Free" = "Miễn phí";
 "Destination network" = "Chuyển tới mạng";
 "Receive at least: %@ %@" = "Nhận ít nhất: %@ %@";
+"Are you sure that this %@ address is valid?" = "Bạn có chắc rằng địa chỉ %@ này hợp lệ không?";
