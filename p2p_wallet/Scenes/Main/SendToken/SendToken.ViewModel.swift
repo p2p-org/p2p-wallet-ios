@@ -87,9 +87,6 @@ extension SendToken {
             
             self.feeSubject = .init(request: .just(0))
             
-            bind()
-            reload()
-            
             // accept initial values
             if let pubkey = walletPubkey {
                 walletSubject.accept(repository.getWallets().first(where: {$0.pubkey == pubkey}))
@@ -98,6 +95,9 @@ extension SendToken {
             }
             
             destinationAddressSubject.accept(destinationAddress)
+            
+            bind()
+            reload()
         }
         
         private func bind() {
@@ -120,16 +120,6 @@ extension SendToken {
                     return nil
                 }
                 .bind(to: renBTCInfoSubject)
-                .disposed(by: disposeBag)
-            
-            renBTCInfoSubject
-                .map {$0?.network}
-                .distinctUntilChanged()
-                .subscribe(onNext: {[weak self] network in
-                    guard let self = self else {return}
-                    self.feeSubject.request = self.feeRequest(network: network)
-                    self.feeSubject.reload()
-                })
                 .disposed(by: disposeBag)
             
             // receive at least
@@ -284,6 +274,11 @@ extension SendToken {
             )
         }
         
+        private func reloadFee() {
+            feeSubject.request = feeRequest(network: renBTCInfoSubject.value?.network)
+            feeSubject.reload()
+        }
+        
         private func feeRequest(network: SendRenBTCInfo.Network?) -> Single<Double> {
             if network == .bitcoin {
                 return renVMBurnAndReleaseService.getFee()
@@ -363,7 +358,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     // MARK: - Actions
     func reload() {
-        feeSubject.reload()
+        reloadFee()
     }
     
     func navigate(to scene: SendToken.NavigatableScene) {
@@ -435,6 +430,11 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         guard var info = renBTCInfoSubject.value else {return}
         info.network = network
         renBTCInfoSubject.accept(info)
+        
+        // re-calculate fee
+        feeSubject.cancelRequest()
+        feeSubject.request = self.feeRequest(network: network)
+        feeSubject.reload()
     }
     
     func isTestNet() -> Bool {
