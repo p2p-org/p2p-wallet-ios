@@ -106,6 +106,10 @@ extension SendToken {
                 .drive(receiveAtLeastLabel.rx.text)
                 .disposed(by: disposeBag)
             
+            viewModel.renBTCInfoDriver.map {$0?.network != .bitcoin}
+                .drive(receiveAtLeastLabel.rx.isHidden)
+                .disposed(by: disposeBag)
+            
             // address
             addressTextField.rx.text
                 .skip(while: {$0?.isEmpty == true})
