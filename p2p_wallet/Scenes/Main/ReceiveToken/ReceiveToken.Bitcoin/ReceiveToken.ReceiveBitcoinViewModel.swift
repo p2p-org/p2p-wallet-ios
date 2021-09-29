@@ -41,7 +41,7 @@ extension ReceiveToken {
         private let associatedTokenAccountHandler: AssociatedTokenAccountHandler
         
         // MARK: - Subjects
-        private let isReceivingRenBTCSubject = BehaviorRelay<Bool>(value: false)
+        private let isReceivingRenBTCSubject = BehaviorRelay<Bool>(value: true)
         private let createRenBTCSubject: LoadableRelay<String>
         private let timerSubject = PublishRelay<Void>()
         

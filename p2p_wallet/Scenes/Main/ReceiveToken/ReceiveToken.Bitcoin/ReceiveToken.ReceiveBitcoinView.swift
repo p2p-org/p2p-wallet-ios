@@ -48,14 +48,14 @@ extension ReceiveToken {
                 alignment: .fill,
                 distribution: .fill
             ) {
-                UIView.createSectionView(
-                    title: L10n.iWantToReceive,
-                    contentView: btcTypeLabel,
-                    addSeparatorOnTop: false
-                )
-                    .padding(.init(x: 20, y: 0))
-                    .onTap(self, action: #selector(buttonSelectBTCTypeDidTouch))
-                    .padding(.init(only: .left, inset: 20))
+//                UIView.createSectionView(
+//                    title: L10n.iWantToReceive,
+//                    contentView: btcTypeLabel,
+//                    addSeparatorOnTop: false
+//                )
+//                    .padding(.init(x: 20, y: 0))
+//                    .onTap(self, action: #selector(buttonSelectBTCTypeDidTouch))
+//                    .padding(.init(only: .left, inset: 20))
                 receiveNormalBTCView
                 receiveRenBTCView
             }

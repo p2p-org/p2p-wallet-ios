@@ -113,7 +113,7 @@ extension SendToken {
                 .map {wallet -> SendRenBTCInfo? in
                     if wallet?.token.address.isRenBTCMint == true {
                         return .init(
-                            network: .bitcoin,
+                            network: .solana,
                             receiveAtLeast: nil
                         )
                     }
