@@ -72,6 +72,7 @@ extension SendToken {
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let addressValidationStatusSubject = BehaviorRelay<AddressValidationStatus>(value: .fetching)
         private let renBTCInfoSubject = BehaviorRelay<SendRenBTCInfo?>(value: nil)
+        private let burnAndReleaseFeeSubject: LoadableRelay<Double>
         
         // MARK: - Initializer
         init(
@@ -85,7 +86,8 @@ extension SendToken {
             self.apiClient = apiClient
             self.renVMBurnAndReleaseService = renVMBurnAndReleaseService
             
-            self.feeSubject = .init(request: .just(0))
+            self.feeSubject = .init(request: .just(0)) // placeholder
+            self.burnAndReleaseFeeSubject = .init(request: renVMBurnAndReleaseService.getFee())
             
             // accept initial values
             if let pubkey = walletPubkey {
@@ -125,15 +127,13 @@ extension SendToken {
             // receive at least
             Observable.combineLatest(
                 amountSubject.distinctUntilChanged(),
-                feeSubject.valueObservable.distinctUntilChanged()
+                burnAndReleaseFeeSubject.valueObservable
             )
                 .withLatestFrom(renBTCInfoSubject, resultSelector: {($1, $0.0, $0.1)})
                 .subscribe(onNext: {[weak self] info, amount, fee in
                     guard var info = info else {return}
-                    var receiveAtLeast: Double?
-                    if let amount = amount,
-                       let fee = fee
-                    {
+                    var receiveAtLeast = amount
+                    if let amount = amount, let fee = fee {
                         receiveAtLeast = amount - fee
                         if receiveAtLeast! < 0 {receiveAtLeast = 0}
                     }
@@ -281,7 +281,7 @@ extension SendToken {
         
         private func feeRequest(network: SendRenBTCInfo.Network?) -> Single<Double> {
             if network == .bitcoin {
-                return renVMBurnAndReleaseService.getFee()
+                return .just(0.001571)
             }
             return Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
                 .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
@@ -359,6 +359,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     // MARK: - Actions
     func reload() {
         reloadFee()
+        burnAndReleaseFeeSubject.reload()
     }
     
     func navigate(to scene: SendToken.NavigatableScene) {
