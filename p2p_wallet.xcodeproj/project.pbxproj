@@ -88,7 +88,6 @@
 		BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */; };
 		BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */; };
 		BC274540263699F500D37CD1 /* SelectFiatVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC27453F263699F500D37CD1 /* SelectFiatVC.swift */; };
-		BC28A9AF26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC28A9AE26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift */; };
 		BC28A9B126B3B0440031BE42 /* WLSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC28A9B026B3B0440031BE42 /* WLSpinnerView.swift */; };
 		BC290A00256B9C95002A727C /* OrcaSwap.WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2909FF256B9C95002A727C /* OrcaSwap.WalletView.swift */; };
 		BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC290A04256BA36F002A727C /* TokenAmountTextField.swift */; };
@@ -279,6 +278,8 @@
 		BCA9948725AEA1C0005BD8FB /* ExpandablePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA9948625AEA1C0005BD8FB /* ExpandablePresentationController.swift */; };
 		BCACA7DC2678942B0091E118 /* ProcessingTransactionsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCACA7DB2678942B0091E118 /* ProcessingTransactionsRepository.swift */; };
 		BCACA7E12679E75E0091E118 /* AnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCACA7E02679E75E0091E118 /* AnalyticsEvent.swift */; };
+		BCAD1097270411E00098C697 /* BuyToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAD1093270411E00098C697 /* BuyToken.swift */; };
+		BCAD1098270411E00098C697 /* BuyToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAD1094270411E00098C697 /* BuyToken.ViewController.swift */; };
 		BCAF1A7026F44CE8001851F6 /* RenVM.LockAndMint.Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAF1A6F26F44CE8001851F6 /* RenVM.LockAndMint.Service.swift */; };
 		BCB0FE5D26A197FD00B02C33 /* FeeRelayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB0FE5C26A197FD00B02C33 /* FeeRelayer.swift */; };
 		BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2231825412AF8002D997F /* AppDelegate.swift */; };
@@ -483,7 +484,6 @@
 		BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeScannerVC.swift; sourceTree = "<group>"; };
 		BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionView.swift; sourceTree = "<group>"; };
 		BC27453F263699F500D37CD1 /* SelectFiatVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectFiatVC.swift; sourceTree = "<group>"; };
-		BC28A9AE26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransakWidgetViewController+Extensions.swift"; sourceTree = "<group>"; };
 		BC28A9B026B3B0440031BE42 /* WLSpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLSpinnerView.swift; sourceTree = "<group>"; };
 		BC2909FF256B9C95002A727C /* OrcaSwap.WalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwap.WalletView.swift; sourceTree = "<group>"; };
 		BC290A04256BA36F002A727C /* TokenAmountTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAmountTextField.swift; sourceTree = "<group>"; };
@@ -678,6 +678,8 @@
 		BCA9948625AEA1C0005BD8FB /* ExpandablePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandablePresentationController.swift; sourceTree = "<group>"; };
 		BCACA7DB2678942B0091E118 /* ProcessingTransactionsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingTransactionsRepository.swift; sourceTree = "<group>"; };
 		BCACA7E02679E75E0091E118 /* AnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEvent.swift; sourceTree = "<group>"; };
+		BCAD1093270411E00098C697 /* BuyToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyToken.swift; sourceTree = "<group>"; };
+		BCAD1094270411E00098C697 /* BuyToken.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyToken.ViewController.swift; sourceTree = "<group>"; };
 		BCAF1A6F26F44CE8001851F6 /* RenVM.LockAndMint.Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenVM.LockAndMint.Service.swift; sourceTree = "<group>"; };
 		BCB0FE5C26A197FD00B02C33 /* FeeRelayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeeRelayer.swift; sourceTree = "<group>"; };
 		BCB2231525412AF8002D997F /* p2p_wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = p2p_wallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1386,7 +1388,6 @@
 				BC2F8F0B269D3D200048009D /* UIScrollView+Extensions.swift */,
 				BCC1F206269E96A1003DD648 /* SolanaSDK.DerivablePath+Extensions.swift */,
 				BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */,
-				BC28A9AE26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift */,
 				BC423D8B26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift */,
 				BC185EFB26E4BF3300280FE6 /* UIFont+Extensions.swift */,
 				BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */,
@@ -1483,6 +1484,15 @@
 				BC10511D258884D800398EA2 /* ConfigureSecurityVC.swift */,
 			);
 			path = ProfileVC;
+			sourceTree = "<group>";
+		};
+		BCAD1092270411BA0098C697 /* BuyToken */ = {
+			isa = PBXGroup;
+			children = (
+				BCAD1093270411E00098C697 /* BuyToken.swift */,
+				BCAD1094270411E00098C697 /* BuyToken.ViewController.swift */,
+			);
+			path = BuyToken;
 			sourceTree = "<group>";
 		};
 		BCB2230C25412AF8002D997F = {
@@ -1836,6 +1846,7 @@
 				BCD5E75225512DA800F51299 /* InvestmentsVC */,
 				BCE3D55725F2127B0092F91B /* WalletDetail */,
 				BCABF69D2588746400749EEC /* ProfileVC */,
+				BCAD1092270411BA0098C697 /* BuyToken */,
 				BC22A5D825D2716400F7026D /* SendToken */,
 				BCBBE1822563C0F400533F6B /* ReceiveToken */,
 				BC1BEBDC26CDEEBB0049A44C /* SwapToken */,
@@ -2345,7 +2356,6 @@
 				BC134FAB26FD874500DB15BF /* RestoreWallet.swift in Sources */,
 				BC5A97D0260DA82B009674C4 /* BaseHiddenWalletSection.swift in Sources */,
 				BC38555B26AE971400BD8BF7 /* ChooseWallet.ViewModel.swift in Sources */,
-				BC28A9AF26B3A89D0031BE42 /* TransakWidgetViewController+Extensions.swift in Sources */,
 				BC185EFC26E4BF3300280FE6 /* UIFont+Extensions.swift in Sources */,
 				BCCF23C826FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift in Sources */,
 				BCB5835A255CE96B00B10F65 /* ProfileVC.swift in Sources */,
@@ -2394,6 +2404,7 @@
 				BC105111258882BE00398EA2 /* ProfileVCBase.swift in Sources */,
 				BCE77E6326536817000B68BB /* DerivableAccounts.ViewController.swift in Sources */,
 				BC7B2C7125E384F700833656 /* CreateSecurityKeys.RootView.swift in Sources */,
+				BCAD1097270411E00098C697 /* BuyToken.swift in Sources */,
 				BC5A9734260C6EA0009674C4 /* HomeHiddenWalletsSection.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				BCBE149E25EF3D110014BCE5 /* HomeViewModel.swift in Sources */,
@@ -2423,6 +2434,7 @@
 				BC604A2726C65F5000B1DF0F /* SwapToken.SlippageSettingsViewController.swift in Sources */,
 				BCA9948725AEA1C0005BD8FB /* ExpandablePresentationController.swift in Sources */,
 				BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */,
+				BCAD1098270411E00098C697 /* BuyToken.ViewController.swift in Sources */,
 				BCE04C6C268D901400CE131A /* ModalTransitionManager.swift in Sources */,
 				BC620D7626C6EFDB002186ED /* SwapToken.SwapFeesViewController.swift in Sources */,
 				BC4593A326423F0100E11A52 /* ConnectionErrorVC.swift in Sources */,

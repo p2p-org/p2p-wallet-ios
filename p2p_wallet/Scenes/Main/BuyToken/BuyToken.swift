@@ -1,14 +1,15 @@
 //
-//  TransakWidgetViewController+Extensions.swift
+//  BuyToken.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 30/07/2021.
+//  Created by Chung Tran on 29/09/2021.
 //
 
 import Foundation
+import RxCocoa
 import TransakSwift
 
-extension TransakWidgetViewController {
+struct BuyToken {
     struct CryptoCurrency: OptionSet {
         let rawValue: Int
         
