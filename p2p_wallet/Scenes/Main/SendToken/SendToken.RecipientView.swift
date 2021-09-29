@@ -98,7 +98,7 @@ extension SendToken {
             viewModel.renBTCInfoDriver.map {$0?.receiveAtLeast}
                 .map {amount -> String? in
                     if let amount = amount {
-                        return L10n.receiveAtLeast(amount.toString(maximumFractionDigits: 9), "renBTC")
+                        return L10n.receiveAtLeast(amount.toString(maximumFractionDigits: 9), "BTC")
                     } else {
                         return nil
                     }
