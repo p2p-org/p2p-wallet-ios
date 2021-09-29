@@ -172,7 +172,7 @@ extension SendToken {
             viewModel.addressValidationStatusDriver
                 .withLatestFrom(viewModel.renBTCInfoDriver, resultSelector: {($0, $1)})
                 .map { status, renBTCInfo -> String in
-                    if renBTCInfo != nil {
+                    if renBTCInfo?.network == .bitcoin {
                         return L10n.areYouSureThatThisAddressIsValid(L10n.bitcoin)
                     } else {
                         if status == .fetchingError {

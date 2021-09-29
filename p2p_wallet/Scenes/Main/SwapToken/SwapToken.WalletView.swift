@@ -70,6 +70,8 @@ extension SwapToken {
                 .onTap(self, action: #selector(useAllBalance))
             balanceView.tintColor = type == .source ? .h5887ff: .textSecondary.onDarkMode(.white)
             
+            let downArrow = UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
+            
             let stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill) {
                 UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .equalCentering) {
                     UILabel(text: type == .source ? L10n.from: L10n.to, textSize: 15, weight: .semibold)
@@ -78,16 +80,9 @@ extension SwapToken {
                 
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
                     iconImageView
-                        .onTap(self, action: action)
-                        .withContentHuggingPriority(.required, for: .horizontal)
                     tokenSymbolLabel
-                        .onTap(self, action: action)
                         .withContentHuggingPriority(.required, for: .horizontal)
-                    UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
-                        iconImageView
-                        UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
-                    }
-                        .onTap(self, action: action)
+                    downArrow
                     
                     BEStackViewSpacing(12)
                     maxButton
@@ -106,6 +101,15 @@ extension SwapToken {
             
             addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 16))
+            
+            // for increasing touchable area
+            let chooseWalletView = UIView(forAutoLayout: ())
+                .onTap(self, action: action)
+            addSubview(chooseWalletView)
+            chooseWalletView.autoPinEdge(.leading, to: .leading, of: iconImageView)
+            chooseWalletView.autoPinEdge(.trailing, to: .trailing, of: downArrow)
+            chooseWalletView.autoPinEdge(.top, to: .top, of: iconImageView, withOffset: -10)
+            chooseWalletView.autoPinEdge(.bottom, to: .bottom, of: iconImageView, withOffset: 10)
         }
         
         private func bind() {

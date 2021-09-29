@@ -54,6 +54,8 @@ extension SendToken {
         }
         
         private func layout() {
+            let downArrow = UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
+            
             let contentView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill) {
                 
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .equalSpacing) {
@@ -63,12 +65,9 @@ extension SendToken {
                 
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
                     coinImageView
-                        .onTap(self, action: #selector(chooseWallet))
                     symbolLabel
                         .withContentHuggingPriority(.required, for: .horizontal)
-                        .onTap(self, action: #selector(chooseWallet))
-                    UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
-                        .onTap(self, action: #selector(chooseWallet))
+                    downArrow
                     BEStackViewSpacing(0)
                     UIView.spacer
                     BEStackViewSpacing(12)
@@ -94,6 +93,15 @@ extension SendToken {
             
             addSubview(contentView)
             contentView.autoPinEdgesToSuperviewEdges()
+            
+            // for increasing touchable area
+            let chooseWalletView = UIView(forAutoLayout: ())
+                .onTap(self, action: #selector(chooseWallet))
+            addSubview(chooseWalletView)
+            chooseWalletView.autoPinEdge(.leading, to: .leading, of: coinImageView)
+            chooseWalletView.autoPinEdge(.trailing, to: .trailing, of: downArrow)
+            chooseWalletView.autoPinEdge(.top, to: .top, of: coinImageView, withOffset: -10)
+            chooseWalletView.autoPinEdge(.bottom, to: .bottom, of: coinImageView, withOffset: 10)
         }
         
         private func bind() {
