@@ -433,9 +433,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         renBTCInfoSubject.accept(info)
         
         // re-calculate fee
-        feeSubject.cancelRequest()
-        feeSubject.request = self.feeRequest(network: network)
-        feeSubject.reload()
+        reloadFee()
     }
     
     func isTestNet() -> Bool {
