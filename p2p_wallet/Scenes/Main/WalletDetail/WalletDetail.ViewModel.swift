@@ -8,7 +8,6 @@
 import Foundation
 import RxSwift
 import RxCocoa
-import TransakSwift
 
 extension WalletDetail {
     class ViewModel: ViewModelType {
@@ -134,7 +133,7 @@ extension WalletDetail {
         }
         
         @objc func buyTokens() {
-            var tokens = TransakWidgetViewController.CryptoCurrency.all
+            var tokens = BuyToken.CryptoCurrency.all
             if symbol == "SOL" {
                 tokens = .sol
             }
