@@ -482,3 +482,7 @@
 "Input amount is too small, minimum amount for swapping is %@" = "Сумма ввода слишком мала, минимальная сумма для обмена составляет %@";
 "Calculating minimum transaction amount…" = "Расчет минимальной суммы транзакции…";
 "Enter the recipient's address" = "Введите адрес получателя";
+"Account creation fee" = "Комиссия за создание учетной записи";
+"Serum order creation (paid once per pair)" = "Создание заказа на Серуме (оплачивается один раз за пару)";
+"Transaction fee" = "Комиссия на перевод";
+"Total fees" = "Итого комиссии";

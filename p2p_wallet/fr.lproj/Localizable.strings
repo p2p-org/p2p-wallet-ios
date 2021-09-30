@@ -482,3 +482,7 @@
 "Input amount is too small, minimum amount for swapping is %@" = "Le montant saisi est trop petit, le montant minimum pour l'échange est %@";
 "Calculating minimum transaction amount…" = "Calcul du montant minimum de la transaction…";
 "Enter the recipient's address" = "Entrez l'adresse du destinataire";
+"Account creation fee" = "Frais de création de compte";
+"Serum order creation (paid once per pair)" = "Création de commande de Serum (payé une fois par paire)";
+"Transaction fee" = "Frais de transaction";
+"Total fees" = "Total des frais";

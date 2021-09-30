@@ -482,3 +482,7 @@
 "Input amount is too small, minimum amount for swapping is %@" = "Input amount is too small, minimum amount for swapping is %@";
 "Calculating minimum transaction amount…" = "Calculating minimum transaction amount…";
 "Enter the recipient's address" = "Enter the recipient's address";
+"Account creation fee" = "Account creation fee";
+"Serum order creation (paid once per pair)" = "Serum order creation (paid once per pair)";
+"Transaction fee" = "Transaction fee";
+"Total fees" = "Total fees";
