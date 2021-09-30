@@ -218,6 +218,7 @@ private class ConditionView: BEView {
 private class AddressView: BEView {
     private let disposeBag = DisposeBag()
     private let viewModel: ReceiveTokenBitcoinViewModelType
+    private var label2: UILabel!
     private var label3: UILabel!
     private var qrCodeView: ReceiveToken.QrCodeView!
     private var isCopying = false
@@ -240,13 +241,12 @@ private class AddressView: BEView {
         (line1.arrangedSubviews.last as! UILabel).text = text1
         semiboldText(L10n.onlyBitcoin, in: line1.arrangedSubviews.last as! UILabel)
         
-        let text2 = L10n.minimumTransactionAmountOf("0.000112 BTC")
-        let line2 = ReceiveToken.textBuilder(text: text2)
-        (line2.arrangedSubviews.last as! UILabel).text = text2
-        semiboldText("0.000112 BTC", in: line2.arrangedSubviews.last as! UILabel)
+        let line2 = ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC"))
+        label2 = (line2.arrangedSubviews.last as! UILabel)
+            .onTap(self, action: #selector(reloadMinimumTransactionAmount))
         
         let line3 = ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59"))
-        label3 = (line3.arrangedSubviews.last as! UILabel)
+        label3 = line3.arrangedSubviews.last as? UILabel
         
         let qrCodeViewAndFrame = ReceiveToken.QrCodeView.withFrame()
             
@@ -328,6 +328,26 @@ private class AddressView: BEView {
             })
             .disposed(by: disposeBag)
         
+        viewModel.minimumTransactionAmountDriver
+            .drive(onNext: {[weak self] loadable in
+                guard let self = self else {return}
+                self.label2.isUserInteractionEnabled = false
+                
+                switch loadable.state {
+                case .notRequested, .loading:
+                    self.label2.text = L10n.calculatingMinimumTransactionAmount
+                case .loaded:
+                    let amount = (loadable.value ?? 0) * 2
+                    let amountString = amount.toString(maximumFractionDigits: 9) + " BTC"
+                    self.label2.text = L10n.minimumTransactionAmountOf(amountString)
+                    self.semiboldText(amountString, in: self.label2)
+                case .error(_):
+                    self.label2.isUserInteractionEnabled = true
+                    self.label2.text = L10n.error.uppercaseFirst + ". " + L10n.tapToTryAgain
+                }
+            })
+            .disposed(by: disposeBag)
+        
         viewModel.timerSignal
             .emit(onNext: { [weak self] in
                 guard let self = self else {return}
@@ -378,6 +398,10 @@ private class AddressView: BEView {
     
     @objc private func showBTCAddressInExplorer() {
         viewModel.showBTCAddressInExplorer()
+    }
+    
+    @objc private func reloadMinimumTransactionAmount() {
+        viewModel.reloadMinimumTransactionAmount()
     }
 }
 
