@@ -35,7 +35,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         transactionsSubject.asObservable()
     }
     
-    func request(_ request: Single<ProcessTransactionResponseType>, transaction: SolanaSDK.ParsedTransaction, fee: SwapFee) -> Int {
+    func request(_ request: Single<ProcessTransactionResponseType>, transaction: SolanaSDK.ParsedTransaction, fees: [SwapToken.Fee]) -> Int {
         // modify blocktime
         var transaction = transaction
         transaction.blockTime = Date()
@@ -47,7 +47,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         transactionsSubject.accept(transactions)
         
         // update balance before sending
-        updateRepository(transactionIndex: index, fee: fee, isReversed: false)
+        updateRepository(transactionIndex: index, fees: fees, isReversed: false)
         
         // request
         request
@@ -90,7 +90,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                 self?.updateTransactionStatus(transactionIndex: index, status: .confirmed)
             }, onError: {[weak self] error in
                 self?.updateTransactionStatus(transactionIndex: index, status: .error(error.readableDescription))
-                self?.updateRepository(transactionIndex: index, fee: fee, isReversed: true)
+                self?.updateRepository(transactionIndex: index, fees: fees, isReversed: true)
                 
                 // show alert
                 UIApplication.shared.showToast(message: "❌ " + L10n.errorSendingTransaction + ": " + error.readableDescription)
@@ -120,7 +120,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         }
     }
     
-    private func updateRepository(transactionIndex: Int, fee: SwapFee, isReversed: Bool) {
+    private func updateRepository(transactionIndex: Int, fees: [SwapToken.Fee], isReversed: Bool) {
         guard let tx = transactionsSubject.value[safe: transactionIndex],
               let transaction = tx.value
         else {
@@ -157,15 +157,17 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                 }
                 
                 // update SOL wallet (minus fee)
-                if let index = wallets.firstIndex(where: {$0.token.address == fee.token.address})
-                {
-                    if isReversed {
-                        wallets[index].increaseBalance(diffInLamports: fee.lamports)
-                    } else {
-                        wallets[index].decreaseBalance(diffInLamports: fee.lamports)
+                for fee in fees {
+                    if let index = wallets.firstIndex(where: {$0.token.address == fee.token.address})
+                    {
+                        if isReversed {
+                            wallets[index].increaseBalance(diffInLamports: fee.lamports)
+                        } else {
+                            wallets[index].decreaseBalance(diffInLamports: fee.lamports)
+                        }
                     }
-                    
                 }
+                
                 return wallets
             })
         }
@@ -236,12 +238,14 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                 }
 
                 // update sol wallet (minus fee)
-                if let index = wallets.firstIndex(where: {$0.token.address == fee.token.address})
-                {
-                    if isReversed {
-                        wallets[index].increaseBalance(diffInLamports: fee.lamports)
-                    } else {
-                        wallets[index].decreaseBalance(diffInLamports: fee.lamports)
+                for fee in fees {
+                    if let index = wallets.firstIndex(where: {$0.token.address == fee.token.address})
+                    {
+                        if isReversed {
+                            wallets[index].increaseBalance(diffInLamports: fee.lamports)
+                        } else {
+                            wallets[index].decreaseBalance(diffInLamports: fee.lamports)
+                        }
                     }
                 }
 

@@ -37,7 +37,7 @@ extension OrcaSwap.ViewModel: SwapTokenSettingsViewModelType {
 }
 
 extension OrcaSwap.ViewModel: SwapTokenSwapFeesViewModelType {
-    var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> {
+    var feesDriver: Driver<Loadable<[SwapToken.Fee]>> {
         Driver.combineLatest(
             output.feeInLamports,
             output.liquidityProviderFee,
@@ -45,27 +45,39 @@ extension OrcaSwap.ViewModel: SwapTokenSwapFeesViewModelType {
             output.destinationWallet
         )
             .map {fee, liquidityProviderFee, source, destination in
-                var result = [FeeType: SwapFee]()
+                var result = [SwapToken.Fee]()
                 guard let source = source, let destination = destination
                 else {return (value: result, state: .loaded, reloadAction: nil)}
 
                 if let fee = liquidityProviderFee {
-                    result[.liquidityProvider] = .init(
-                        lamports: fee.toLamport(decimals: destination.token.decimals),
-                        token: destination.token
+                    result.append(
+                        .init(
+                            type: .liquidityProviderFee,
+                            lamports: fee.toLamport(decimals: destination.token.decimals),
+                            token: destination.token,
+                            toString: nil
+                        )
                     )
                 }
 
                 if let fee = fee {
                     if OrcaSwap.isFeeRelayerEnabled(source: source, destination: destination) {
-                        result[.default] = .init(
-                            lamports: fee,
-                            token: source.token
+                        result.append(
+                            .init(
+                                type: .networkFee,
+                                lamports: fee,
+                                token: source.token,
+                                toString: nil
+                            )
                         )
                     } else {
-                        result[.default] = .init(
-                            lamports: fee,
-                            token: .nativeSolana
+                        result.append(
+                            .init(
+                                type: .networkFee,
+                                lamports: fee,
+                                token: .nativeSolana,
+                                toString: nil
+                            )
                         )
                     }
                 }

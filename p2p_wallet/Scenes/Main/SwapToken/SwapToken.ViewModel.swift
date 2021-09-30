@@ -30,7 +30,7 @@ protocol SwapTokenViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewMo
     
     var slippageDriver: Driver<Double?> {get}
     
-    var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> {get}
+    var feesDriver: Driver<Loadable<[SwapToken.Fee]>> {get}
     
     var payingTokenDriver: Driver<PayingToken> {get}
     
@@ -88,7 +88,7 @@ extension SwapToken {
         private let estimatedAmountRelay = BehaviorRelay<Double?>(value: nil)
         
         private var exchangeRateRelay: LoadableRelay<Double>
-        private let feesRelay: LoadableRelay<[FeeType: SwapFee]>
+        private let feesRelay: LoadableRelay<[Fee]>
         private let minOrderSizeRelay: LoadableRelay<Double>
         
         private let slippageRelay = BehaviorRelay<Double?>(value: Defaults.slippage)
@@ -114,7 +114,7 @@ extension SwapToken {
                 request: apiClient.getCreatingTokenAccountFee()
             )
             self.exchangeRateRelay = .init(request: .just(0)) // placeholder, change request later
-            self.feesRelay = .init(request: .just([:])) // placeholder, change request later
+            self.feesRelay = .init(request: .just([])) // placeholder, change request later
             self.minOrderSizeRelay = .init(request: .just(0)) // placeholder, change request later
             bind()
             
@@ -196,7 +196,7 @@ extension SwapToken {
                   let destinationWallet = destinationWalletRelay.value,
                   let inputAmount = inputAmountRelay.value,
                   let estimatedAmount = estimatedAmountRelay.value,
-                  let fee = feesRelay.value?[.default],
+                  let fees = feesRelay.value,
                   let slippage = slippageRelay.value
             else {return}
             
@@ -213,7 +213,7 @@ extension SwapToken {
                         to: destinationWallet,
                         inputAmount: inputAmount,
                         estimatedAmount: estimatedAmount,
-                        networkFee: fee,
+                        fees: fees,
                         slippage: slippage,
                         isSimulation: false
                     )
@@ -242,7 +242,7 @@ extension SwapToken.ViewModel: SwapTokenViewModelType {
             sourceWalletRelay,
             feesRelay.valueObservable
         )
-            .map {[weak self] in self?.provider.calculateAvailableAmount(sourceWallet: $0, fee: $1?[.default])}
+            .map {[weak self] in self?.provider.calculateAvailableAmount(sourceWallet: $0, fees: $1)}
             .asDriver(onErrorJustReturn: nil)
     }
     var inputAmountDriver: Driver<Double?> { inputAmountRelay.asDriver() }
@@ -281,7 +281,7 @@ extension SwapToken.ViewModel: SwapTokenViewModelType {
     }
     var exchangeRateDriver: Driver<Loadable<Double>> { exchangeRateRelay.asDriver() }
     var minOrderSizeDriver: Driver<Loadable<Double>> { minOrderSizeRelay.asDriver() }
-    var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> { feesRelay.asDriver() }
+    var feesDriver: Driver<Loadable<[SwapToken.Fee]>> { feesRelay.asDriver() }
     var payingTokenDriver: Driver<PayingToken> {
         payingTokenRelay.asDriver()
     }
@@ -360,7 +360,7 @@ extension SwapToken.ViewModel {
     }
     
     func useAllBalance() {
-        guard let amount = provider.calculateAvailableAmount(sourceWallet: sourceWalletRelay.value, fee: feesRelay.value?[.default])
+        guard let amount = provider.calculateAvailableAmount(sourceWallet: sourceWalletRelay.value, fees: feesRelay.value)
         else {return}
         analyticsManager.log(event: .swapAvailableClick(sum: amount))
         useAllBalanceSubject.accept(amount)
@@ -429,7 +429,7 @@ private func validate(
     destinationWallet: Wallet?,
     estimatedAmount: Double?,
     exchangeRate: Loadable<Double>,
-    fees: Loadable<[FeeType: SwapFee]>,
+    fees: Loadable<[SwapToken.Fee]>,
     solWallet: Wallet?,
     slippage: Double?,
     minOrderSize: Loadable<Double>
@@ -442,10 +442,10 @@ private func validate(
     
     // verify fee
     if let fees = fees.value,
-       fees[.default]?.token.symbol == "SOL",
-       let balance = solWallet?.lamports,
-       let fee = fees[.default]?.lamports
+       fees.networkFee.token.symbol == "SOL",
+       let balance = solWallet?.lamports
     {
+        let fee = fees.networkFee.lamports
         if balance < fee {
             return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
         }
@@ -467,7 +467,7 @@ private func validate(
     
     // verify if input amount
     if inputAmount.isGreaterThan(
-        provider.calculateAvailableAmount(sourceWallet: sourceWallet, fee: fees[.default]),
+        provider.calculateAvailableAmount(sourceWallet: sourceWallet, fees: fees),
         decimals: sourceWallet.token.decimals
     ) {return L10n.insufficientFunds}
     
