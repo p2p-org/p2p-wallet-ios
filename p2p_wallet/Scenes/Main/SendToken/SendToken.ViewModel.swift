@@ -16,6 +16,7 @@ protocol SendTokenViewModelType: WalletDidSelectHandler {
     var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {get}
     var useAllBalanceSignal: Signal<Double?> {get}
     var feeDriver: Driver<Loadable<Double>> {get}
+    var amountDriver: Driver<Double?> {get}
     var availableAmountDriver: Driver<Double?> {get}
     var isValidDriver: Driver<Bool> {get}
     var errorDriver: Driver<String?> {get}
@@ -311,6 +312,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     var feeDriver: Driver<Loadable<Double>> {
         feeSubject.asDriver()
+    }
+    
+    var amountDriver: Driver<Double?> {
+        amountSubject.asDriver()
     }
     
     var availableAmountDriver: Driver<Double?> {
