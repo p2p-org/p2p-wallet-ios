@@ -611,10 +611,11 @@ extension OrcaSwap {
                         to: destinationWallet,
                         inputAmount: lamports,
                         estimatedAmount: estimatedAmount.toLamport(decimals: destinationWallet.token.decimals),
-                        fee: .init(
+                        fees: [.init(
+                            type: .transactionFee,
                             lamports: feeInLamportsSubject.value ?? 0,
                             token: Defaults.payingToken == .nativeSOL ? .nativeSolana: sourceWallet.token
-                        )
+                        )]
                     )
                 )
             )

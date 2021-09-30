@@ -86,7 +86,7 @@ extension ProcessTransaction {
             var requestIndex: Int
             
             switch transactionType {
-            case .send(let fromWallet, let receiver, let lamports, let fee):
+            case .send(let fromWallet, let receiver, let lamports, let networkFee):
                 // form transaction
                 let transaction = SolanaSDK.TransferTransaction(
                     source: fromWallet,
@@ -109,9 +109,11 @@ extension ProcessTransaction {
                 // Execute
                 requestIndex = markAsRequestingAndSendRequest(
                     transaction: transaction,
-                    fee: .init(lamports: fee, token: .nativeSolana)
+                    fees: [
+                        .init(type: .networkFee, lamports: networkFee, token: fromWallet.token, toString: nil)
+                    ]
                 )
-            case .orcaSwap(let from, let to, let inputAmount, let estimatedAmount, let fee):
+            case .orcaSwap(let from, let to, let inputAmount, let estimatedAmount, let fees):
                 // form transaction
                 let transaction = SolanaSDK.SwapTransaction(
                     source: from,
@@ -122,9 +124,12 @@ extension ProcessTransaction {
                 )
                 
                 // Execute
-                requestIndex = markAsRequestingAndSendRequest(transaction: transaction, fee: fee)
+                requestIndex = markAsRequestingAndSendRequest(
+                    transaction: transaction,
+                    fees: fees
+                )
                 
-            case .swap(let provider, let from, let to, let inputAmount, let estimatedAmount, let networkFee, let slippage, let isSimulation):
+            case .swap(let provider, let from, let to, let inputAmount, let estimatedAmount, let fees, let slippage, let isSimulation):
                 // form transaction
                 let transaction = SolanaSDK.SwapTransaction(
                     source: from,
@@ -137,7 +142,7 @@ extension ProcessTransaction {
                 // Execute
                 requestIndex = markAsRequestingAndSendRequest(
                     transaction: transaction,
-                    fee: networkFee,
+                    fees: fees,
                     overridingRequest: provider
                         .swap(
                             fromWallet: from,
@@ -159,7 +164,7 @@ extension ProcessTransaction {
                 // Execute
                 requestIndex = markAsRequestingAndSendRequest(
                     transaction: transaction,
-                    fee: .init(lamports: 0, token: .nativeSolana)
+                    fees: [.init(type: .networkFee, lamports: 0, token: .nativeSolana, toString: nil)]
                 )
             }
             
@@ -257,7 +262,7 @@ extension ProcessTransaction {
         /// - Returns: transaction index in repository (for observing)
         private func markAsRequestingAndSendRequest(
             transaction: AnyHashable,
-            fee: SwapFee,
+            fees: [SwapToken.Fee],
             overridingRequest: Single<ProcessTransactionResponseType>? = nil
         ) -> Int {
             // mark as requesting
@@ -267,7 +272,7 @@ extension ProcessTransaction {
             transactionSubject.accept(tx)
             
             // send transaction
-            return transactionHandler.request(overridingRequest ?? request, transaction: transactionSubject.value, fee: fee)
+            return transactionHandler.request(overridingRequest ?? request, transaction: transactionSubject.value, fees: fees)
         }
         
         /// Observe status of current transaction

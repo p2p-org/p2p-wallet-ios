@@ -9,7 +9,7 @@ import Foundation
 import RxCocoa
 
 protocol SwapTokenSwapFeesViewModelType {
-    var feesDriver: Driver<Loadable<[FeeType: SwapFee]>> {get}
+    var feesDriver: Driver<Loadable<[SwapToken.Fee]>> {get}
     var sourceWalletDriver: Driver<Wallet?> {get}
     var destinationWalletDriver: Driver<Wallet?> {get}
     var payingTokenDriver: Driver<PayingToken> {get}
@@ -70,7 +70,7 @@ extension SwapToken {
         override func bind() {
             super.bind()
             // fee
-            viewModel.feesDriver.map {$0.value?[.liquidityProvider]}
+            viewModel.feesDriver.map {$0.value?.first(where: {$0.type == .liquidityProviderFee})}
                 .map {fee -> String? in
                     if let toString = fee?.toString {
                         return toString()
@@ -84,7 +84,7 @@ extension SwapToken {
                 .drive(liquidityProviderFeeLabel.rx.text)
                 .disposed(by: disposeBag)
             
-            viewModel.feesDriver.map {$0.value?[.default]}
+            viewModel.feesDriver.map {$0.value?.networkFee}
                 .map {fee -> String? in
                     if let toString = fee?.toString {
                         return toString()

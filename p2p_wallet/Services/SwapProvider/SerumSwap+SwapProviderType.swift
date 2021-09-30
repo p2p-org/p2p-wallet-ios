@@ -22,14 +22,19 @@ extension SerumSwap: SwapProviderType {
         destinationWallet: Wallet?,
         lamportsPerSignature: SolanaSDK.Lamports?,
         creatingAccountFee: SolanaSDK.Lamports?
-    ) -> Single<[FeeType: SwapFee]> {
-        var fees = [FeeType: SwapFee]()
-        fees[.liquidityProvider] = .init(
-            lamports: 0,
-            token: .unsupported(mint: nil),
-            toString: {
-                (BASE_TAKER_FEE_BPS*100).toString() + "%"
-            }
+    ) -> Single<[SwapToken.Fee]> {
+        var fees = [SwapToken.Fee]()
+        
+        // liquidity provider fee
+        fees.append(
+            .init(
+                type: .liquidityProviderFee,
+                lamports: 0,
+                token: .unsupported(mint: nil),
+                toString: {
+                    (BASE_TAKER_FEE_BPS*100).toString() + "%"
+                }
+            )
         )
         
         guard let sourceWallet = sourceWallet,
@@ -48,10 +53,14 @@ extension SerumSwap: SwapProviderType {
         )
         
         return networkFeeRequest
-            .flatMap {networkFee in
+            .flatMap {networkFees in
                 // if paying directly with SOL
                 if isPayingWithSOL {
-                    fees[.default] = .init(lamports: networkFee, token: .nativeSolana, toString: nil)
+                    fees.append(contentsOf: [
+                        .init(type: .accountCreationFee, lamports: networkFees.accountCreationFee, token: .nativeSolana, toString: nil),
+                        .init(type: .orderCreationFee, lamports: networkFees.serumOrderCreationFee, token: .nativeSolana, toString: nil),
+                        .init(type: .transactionFee, lamports: networkFees.transactionFee, token: .nativeSolana, toString: nil)
+                    ])
                     return .just(fees)
                 }
                 
@@ -61,17 +70,38 @@ extension SerumSwap: SwapProviderType {
                     do {
                         let fromMint = try SolanaSDK.PublicKey(string: sourceWallet.mintAddress)
                         return loadFair(fromMint: fromMint, toMint: .solMint)
-                            .map {
-                                calculateNeededInputAmount(
-                                    forReceivingEstimatedAmount: networkFee.convertToBalance(decimals: 9),
-                                    rate: $0,
+                            .map { rate -> (SolanaSDK.Lamports, SolanaSDK.Lamports, SolanaSDK.Lamports) in
+                                let accountCreationFee = calculateNeededInputAmount(
+                                    forReceivingEstimatedAmount: networkFees.accountCreationFee
+                                        .convertToBalance(decimals: 9),
+                                    rate: rate,
                                     slippage: 0.01
                                 )
+                                let orderCreationFee = calculateNeededInputAmount(
+                                    forReceivingEstimatedAmount: networkFees.serumOrderCreationFee
+                                        .convertToBalance(decimals: 9),
+                                    rate: rate,
+                                    slippage: 0.01
+                                )
+                                let transactionFee = calculateNeededInputAmount(
+                                    forReceivingEstimatedAmount: networkFees.transactionFee
+                                        .convertToBalance(decimals: 9),
+                                    rate: rate,
+                                    slippage: 0.01
+                                )
+                                let decimals = sourceWallet.token.decimals
+                                return (
+                                    accountCreationFee?.toLamport(decimals: decimals) ?? 0,
+                                    orderCreationFee?.toLamport(decimals: decimals) ?? 0,
+                                    transactionFee?.toLamport(decimals: decimals) ?? 0
+                                )
                             }
-                            .map { neededAmount -> [FeeType: SwapFee] in
-                                guard let lamports = neededAmount?.toLamport(decimals: sourceWallet.token.decimals)
-                                else {return [:]}
-                                fees[.default] = .init(lamports: lamports, token: sourceWallet.token, toString: nil)
+                            .map { neededAmounts -> [SwapToken.Fee] in
+                                fees.append(contentsOf: [
+                                    .init(type: .accountCreationFee, lamports: neededAmounts.0, token: sourceWallet.token, toString: nil),
+                                    .init(type: .orderCreationFee, lamports: neededAmounts.1, token: sourceWallet.token, toString: nil),
+                                    .init(type: .transactionFee, lamports: neededAmounts.2, token: sourceWallet.token, toString: nil)
+                                ])
                                 return fees
                             }
                     } catch {
@@ -90,21 +120,14 @@ extension SerumSwap: SwapProviderType {
     
     func calculateAvailableAmount(
         sourceWallet: Wallet?,
-        fee: SwapFee?
+        fees: [SwapToken.Fee]?
     ) -> Double? {
         guard let sourceWallet = sourceWallet else {return nil}
-        guard let fee = fee else {return sourceWallet.amount}
+        guard let fees = fees else {return sourceWallet.amount}
         guard var amount = sourceWallet.lamports else {return nil}
         
-        if fee.token.symbol == "SOL" {
-            if sourceWallet.isNativeSOL {
-                if amount > fee.lamports {
-                    amount -= fee.lamports
-                } else {
-                    amount = 0
-                }
-            }
-        } else if fee.token.symbol == sourceWallet.token.symbol {
+        // available amount is remainder when amount subtracts all fees that have to pay by current wallet
+        for fee in fees where fee.token.address == sourceWallet.token.address {
             if amount > fee.lamports {
                 amount -= fee.lamports
             } else {
