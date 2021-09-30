@@ -481,3 +481,4 @@
 "Are you sure that this %@ address is valid?" = "Bạn có chắc rằng địa chỉ %@ này hợp lệ không?";
 "Input amount is too small, minimum amount for swapping is %@" = "Số tiền quá nhỏ, số tiền tối thiểu để hoán đổi là %@";
 "Calculating minimum transaction amount…" = "Đang tính số tiền giao dịch tối thiểu…";
+"Enter the recipient's address" = "Nhập địa chỉ của người nhận";
