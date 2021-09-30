@@ -482,3 +482,7 @@
 "Input amount is too small, minimum amount for swapping is %@" = "Số tiền quá nhỏ, số tiền tối thiểu để hoán đổi là %@";
 "Calculating minimum transaction amount…" = "Đang tính số tiền giao dịch tối thiểu…";
 "Enter the recipient's address" = "Nhập địa chỉ của người nhận";
+"Account creation fee" = "Phí tạo tài khoản";
+"Serum order creation (paid once per pair)" = "Tạo order Serum (thanh toán một lần cho mỗi cặp)";
+"Transaction fee" = "Phí giao dịch";
+"Total fees" = "Tổng các khoản phí";

@@ -32,6 +32,21 @@ struct SwapToken {
         let lamports: SolanaSDK.Lamports
         let token: SolanaSDK.Token
         var toString: (() -> String?)?
+        
+        var headerString: String {
+            switch type {
+            case .liquidityProviderFee:
+                return L10n.liquidityProviderFee
+            case .networkFee:
+                return L10n.networkFee
+            case .accountCreationFee:
+                return L10n.accountCreationFee
+            case .orderCreationFee:
+                return L10n.serumOrderCreationPaidOncePerPair
+            case .transactionFee:
+                return L10n.transactionFee
+            }
+        }
     }
 }
 
