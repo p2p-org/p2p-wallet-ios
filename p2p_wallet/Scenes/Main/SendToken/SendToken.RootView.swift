@@ -114,13 +114,13 @@ extension SendToken {
             
             // fee
             viewModel.feeDriver
-                .drive(feeLabel.rx.loadableText(onLoaded: {[weak self] fee in
+                .drive(feeLabel.rx.loadableText(onLoaded: { fee in
                     let fee = fee ?? 0
                     if fee == 0 {
                         return L10n.free
                     }
                     
-                    return "\(fee.toString(maximumFractionDigits: 9)) \(self?.viewModel.getPayingTokenSymbol() ?? "SOL")"
+                    return "\(fee.toString(maximumFractionDigits: 9)) SOL"
                 }))
                 .disposed(by: disposeBag)
             
