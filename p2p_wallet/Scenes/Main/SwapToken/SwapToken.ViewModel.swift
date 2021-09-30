@@ -30,7 +30,7 @@ protocol SwapTokenViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewMo
     
     var slippageDriver: Driver<Double?> {get}
     
-    var feesDriver: Driver<Loadable<[SwapToken.Fee]>> {get}
+    var feesDriver: Driver<Loadable<[PayingFee]>> {get}
     
     var payingTokenDriver: Driver<PayingToken> {get}
     
@@ -88,7 +88,7 @@ extension SwapToken {
         private let estimatedAmountRelay = BehaviorRelay<Double?>(value: nil)
         
         private var exchangeRateRelay: LoadableRelay<Double>
-        private let feesRelay: LoadableRelay<[Fee]>
+        private let feesRelay: LoadableRelay<[PayingFee]>
         private let minOrderSizeRelay: LoadableRelay<Double>
         
         private let slippageRelay = BehaviorRelay<Double?>(value: Defaults.slippage)
@@ -281,7 +281,7 @@ extension SwapToken.ViewModel: SwapTokenViewModelType {
     }
     var exchangeRateDriver: Driver<Loadable<Double>> { exchangeRateRelay.asDriver() }
     var minOrderSizeDriver: Driver<Loadable<Double>> { minOrderSizeRelay.asDriver() }
-    var feesDriver: Driver<Loadable<[SwapToken.Fee]>> { feesRelay.asDriver() }
+    var feesDriver: Driver<Loadable<[PayingFee]>> { feesRelay.asDriver() }
     var payingTokenDriver: Driver<PayingToken> {
         payingTokenRelay.asDriver()
     }
@@ -429,7 +429,7 @@ private func validate(
     destinationWallet: Wallet?,
     estimatedAmount: Double?,
     exchangeRate: Loadable<Double>,
-    fees: Loadable<[SwapToken.Fee]>,
+    fees: Loadable<[PayingFee]>,
     solWallet: Wallet?,
     slippage: Double?,
     minOrderSize: Loadable<Double>
@@ -442,11 +442,11 @@ private func validate(
     
     // verify fee
     if let fees = fees.value,
-       fees.networkFee.token.symbol == "SOL",
+       let totalFee = fees.totalFee,
+       totalFee.token.isNativeSOL,
        let balance = solWallet?.lamports
     {
-        let fee = fees.networkFee.lamports
-        if balance < fee {
+        if balance < totalFee.lamports {
             return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
         }
     }

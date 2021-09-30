@@ -9,7 +9,7 @@ import Foundation
 import RxCocoa
 
 protocol SwapTokenSwapFeesViewModelType {
-    var feesDriver: Driver<Loadable<[SwapToken.Fee]>> {get}
+    var feesDriver: Driver<Loadable<[PayingFee]>> {get}
     var sourceWalletDriver: Driver<Wallet?> {get}
     var destinationWalletDriver: Driver<Wallet?> {get}
     var payingTokenDriver: Driver<PayingToken> {get}
@@ -53,7 +53,7 @@ extension SwapToken {
         
         override func bind() {
             super.bind()
-            // liquidity provider fee
+            // fees
             viewModel.feesDriver.map {$0.value}
                 .drive(onNext: {[weak self] fees in
                     guard let self = self else {return}
@@ -135,7 +135,7 @@ extension SwapToken {
     }
 }
 
-private func feeToLabel(_ fee: SwapToken.Fee) -> UILabel {
+private func feeToLabel(_ fee: PayingFee) -> UILabel {
     if let toString = fee.toString {
         return UILabel(text: toString(), textSize: 15, weight: .semibold)
     }
