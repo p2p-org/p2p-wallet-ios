@@ -71,7 +71,10 @@ extension SwapToken {
                             rightView: nil,
                             addSeparatorOnTop: false
                         )
-                        self.feeSections.addArrangedSubview(view)
+                        self.feeSections.addArrangedSubviews {
+                            view
+                            UIView.defaultSeparator()
+                        }
                     }
                     
                     let sections = fees.map {fee -> [UIView] in
