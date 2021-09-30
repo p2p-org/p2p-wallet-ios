@@ -35,7 +35,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         transactionsSubject.asObservable()
     }
     
-    func request(_ request: Single<ProcessTransactionResponseType>, transaction: SolanaSDK.ParsedTransaction, fees: [SwapToken.Fee]) -> Int {
+    func request(_ request: Single<ProcessTransactionResponseType>, transaction: SolanaSDK.ParsedTransaction, fees: [PayingFee]) -> Int {
         // modify blocktime
         var transaction = transaction
         transaction.blockTime = Date()
@@ -120,7 +120,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
         }
     }
     
-    private func updateRepository(transactionIndex: Int, fees: [SwapToken.Fee], isReversed: Bool) {
+    private func updateRepository(transactionIndex: Int, fees: [PayingFee], isReversed: Bool) {
         guard let tx = transactionsSubject.value[safe: transactionIndex],
               let transaction = tx.value
         else {

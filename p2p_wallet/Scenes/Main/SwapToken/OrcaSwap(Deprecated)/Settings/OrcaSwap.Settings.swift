@@ -37,7 +37,7 @@ extension OrcaSwap.ViewModel: SwapTokenSettingsViewModelType {
 }
 
 extension OrcaSwap.ViewModel: SwapTokenSwapFeesViewModelType {
-    var feesDriver: Driver<Loadable<[SwapToken.Fee]>> {
+    var feesDriver: Driver<Loadable<[PayingFee]>> {
         Driver.combineLatest(
             output.feeInLamports,
             output.liquidityProviderFee,
@@ -45,7 +45,7 @@ extension OrcaSwap.ViewModel: SwapTokenSwapFeesViewModelType {
             output.destinationWallet
         )
             .map {fee, liquidityProviderFee, source, destination in
-                var result = [SwapToken.Fee]()
+                var result = [PayingFee]()
                 guard let source = source, let destination = destination
                 else {return (value: result, state: .loaded, reloadAction: nil)}
 
@@ -64,7 +64,7 @@ extension OrcaSwap.ViewModel: SwapTokenSwapFeesViewModelType {
                     if OrcaSwap.isFeeRelayerEnabled(source: source, destination: destination) {
                         result.append(
                             .init(
-                                type: .networkFee,
+                                type: .transactionFee,
                                 lamports: fee,
                                 token: source.token,
                                 toString: nil
@@ -73,7 +73,7 @@ extension OrcaSwap.ViewModel: SwapTokenSwapFeesViewModelType {
                     } else {
                         result.append(
                             .init(
-                                type: .networkFee,
+                                type: .transactionFee,
                                 lamports: fee,
                                 token: .nativeSolana,
                                 toString: nil

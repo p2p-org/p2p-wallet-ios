@@ -22,8 +22,8 @@ extension SerumSwap: SwapProviderType {
         destinationWallet: Wallet?,
         lamportsPerSignature: SolanaSDK.Lamports?,
         creatingAccountFee: SolanaSDK.Lamports?
-    ) -> Single<[SwapToken.Fee]> {
-        var fees = [SwapToken.Fee]()
+    ) -> Single<[PayingFee]> {
+        var fees = [PayingFee]()
         
         // liquidity provider fee
         fees.append(
@@ -96,7 +96,7 @@ extension SerumSwap: SwapProviderType {
                                     transactionFee?.toLamport(decimals: decimals) ?? 0
                                 )
                             }
-                            .map { neededAmounts -> [SwapToken.Fee] in
+                            .map { neededAmounts -> [PayingFee] in
                                 fees.append(contentsOf: [
                                     .init(type: .accountCreationFee, lamports: neededAmounts.0, token: sourceWallet.token, toString: nil),
                                     .init(type: .orderCreationFee, lamports: neededAmounts.1, token: sourceWallet.token, toString: nil),
@@ -120,7 +120,7 @@ extension SerumSwap: SwapProviderType {
     
     func calculateAvailableAmount(
         sourceWallet: Wallet?,
-        fees: [SwapToken.Fee]?
+        fees: [PayingFee]?
     ) -> Double? {
         guard let sourceWallet = sourceWallet else {return nil}
         guard let fees = fees else {return sourceWallet.amount}

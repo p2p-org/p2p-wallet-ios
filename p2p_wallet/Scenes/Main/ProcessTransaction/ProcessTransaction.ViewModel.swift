@@ -110,7 +110,7 @@ extension ProcessTransaction {
                 requestIndex = markAsRequestingAndSendRequest(
                     transaction: transaction,
                     fees: [
-                        .init(type: .networkFee, lamports: networkFee, token: fromWallet.token, toString: nil)
+                        .init(type: .transactionFee, lamports: networkFee, token: fromWallet.token, toString: nil)
                     ]
                 )
             case .orcaSwap(let from, let to, let inputAmount, let estimatedAmount, let fees):
@@ -164,7 +164,7 @@ extension ProcessTransaction {
                 // Execute
                 requestIndex = markAsRequestingAndSendRequest(
                     transaction: transaction,
-                    fees: [.init(type: .networkFee, lamports: 0, token: .nativeSolana, toString: nil)]
+                    fees: [.init(type: .transactionFee, lamports: 0, token: .nativeSolana, toString: nil)]
                 )
             }
             
@@ -262,7 +262,7 @@ extension ProcessTransaction {
         /// - Returns: transaction index in repository (for observing)
         private func markAsRequestingAndSendRequest(
             transaction: AnyHashable,
-            fees: [SwapToken.Fee],
+            fees: [PayingFee],
             overridingRequest: Single<ProcessTransactionResponseType>? = nil
         ) -> Int {
             // mark as requesting
