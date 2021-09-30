@@ -61,6 +61,19 @@ extension SwapToken {
                     
                     guard let fees = fees else {return}
                     
+                    if let fee = fees.totalFee,
+                       let double = fees.totalFee?.lamports.convertToBalance(decimals: fees.totalFee?.token.decimals)
+                    {
+                        let text = double.toString(maximumFractionDigits: 9) + " " + fee.token.symbol
+                        let view = UIView.createSectionView(
+                            title: L10n.totalFees,
+                            contentView: UILabel(text: text, textSize: 15, weight: .medium),
+                            rightView: nil,
+                            addSeparatorOnTop: false
+                        )
+                        self.feeSections.addArrangedSubview(view)
+                    }
+                    
                     let sections = fees.map {fee -> [UIView] in
                         [
                             .createSectionView(
