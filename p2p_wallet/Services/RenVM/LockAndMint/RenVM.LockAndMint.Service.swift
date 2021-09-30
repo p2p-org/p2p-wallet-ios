@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxAlamofire
 import RxSwift
 import RxCocoa
 
@@ -14,8 +15,10 @@ protocol RenVMLockAndMintServiceType {
     var errorDriver: Driver<String?> {get}
     var conditionAcceptedDriver: Driver<Bool> {get}
     var addressDriver: Driver<String?> {get}
+    var minimumTransactionAmountDriver: Driver<Loadable<Double>> {get}
     
     func reload()
+    func reloadMinimumTransactionAmount()
     func acceptConditionAndLoadAddress()
     func expireCurrentSession()
     func getSessionEndDate() -> Date?
@@ -49,6 +52,7 @@ extension RenVM.LockAndMint {
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let addressSubject = BehaviorRelay<String?>(value: nil)
         private let conditionAcceptedSubject = BehaviorRelay<Bool>(value: false)
+        private let minimumTransactionAmountSubject: LoadableRelay<Double>
         
         // MARK: - Initializers
         init(
@@ -63,8 +67,13 @@ extension RenVM.LockAndMint {
             self.account = account
             self.sessionStorage = sessionStorage
             self.transactionHandler = transactionHandler
+            self.minimumTransactionAmountSubject = .init(
+                request: rpcClient.getTransactionFee(mintTokenSymbol: mintTokenSymbol)
+                    .map {$0.convertToBalance(decimals: 8)}
+            )
             
             reload()
+            reloadMinimumTransactionAmount()
         }
         
         func reload() {
@@ -84,6 +93,10 @@ extension RenVM.LockAndMint {
                     acceptConditionAndLoadAddress()
                 }
             }
+        }
+        
+        func reloadMinimumTransactionAmount() {
+            minimumTransactionAmountSubject.reload()
         }
         
         func acceptConditionAndLoadAddress() {
@@ -124,7 +137,7 @@ extension RenVM.LockAndMint {
                     // generate address
                     return self.lockAndMint!.generateGatewayAddress()
                 }
-                .subscribe(on: MainScheduler.instance)
+                .observe(on: MainScheduler.instance)
                 .subscribe(onSuccess: {[weak self] response in
                     self?.isLoadingSubject.accept(false)
                     self?.addressSubject.accept(Base58.encode(response.gatewayAddress.bytes))
@@ -171,10 +184,10 @@ extension RenVM.LockAndMint {
             url += "/api/address/\(address)/utxo"
             let request = try URLRequest(url: url, method: .get)
             
-            URLSession(configuration: .default)
-                .rx.data(request: request)
+            RxAlamofire.request(request)
+                .responseData()
                 .take(1).asSingle()
-                .map {try JSONDecoder().decode(TxDetails.self, from: $0)}
+                .map {try JSONDecoder().decode(TxDetails.self, from: $1)}
                 .map {$0.filter {$0.status.confirmed == true}}
                 .map {[weak self] array -> TxDetails in
                     guard let self = self else {throw RenVM.Error.unknown}
@@ -307,6 +320,10 @@ extension RenVM.LockAndMint.Service: RenVMLockAndMintServiceType {
     
     var addressDriver: Driver<String?> {
         addressSubject.asDriver()
+    }
+    
+    var minimumTransactionAmountDriver: Driver<Loadable<Double>> {
+        minimumTransactionAmountSubject.asDriver()
     }
     
     func getSessionEndDate() -> Date? {

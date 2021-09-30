@@ -480,3 +480,4 @@
 "Receive at least: %@ %@" = "Receive at least: %@ %@";
 "Are you sure that this %@ address is valid?" = "Are you sure that this %@ address is valid?";
 "Input amount is too small, minimum amount for swapping is %@" = "Input amount is too small, minimum amount for swapping is %@";
+"Calculating minimum transaction amount…" = "Calculating minimum transaction amount…";

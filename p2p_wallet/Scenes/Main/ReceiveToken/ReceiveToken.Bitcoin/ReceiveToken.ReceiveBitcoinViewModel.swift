@@ -17,8 +17,10 @@ protocol ReceiveTokenBitcoinViewModelType {
     var conditionAcceptedDriver: Driver<Bool> {get}
     var addressDriver: Driver<String?> {get}
     var timerSignal: Signal<Void> {get}
+    var minimumTransactionAmountDriver: Driver<Loadable<Double>> {get}
     
     func reload()
+    func reloadMinimumTransactionAmount()
     func getSessionEndDate() -> Date?
     func createRenBTCWallet()
     func acceptConditionAndLoadAddress()
@@ -56,7 +58,7 @@ extension ReceiveToken {
             self.navigationSubject = navigationSubject
             self.associatedTokenAccountHandler = associatedTokenAccountHandler
             
-            createRenBTCSubject = .init(
+            self.createRenBTCSubject = .init(
                 request: associatedTokenAccountHandler
                     .createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
                     .catch {error in
@@ -140,6 +142,10 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         timerSubject.asSignal()
     }
     
+    var minimumTransactionAmountDriver: Driver<Loadable<Double>> {
+        renVMService.minimumTransactionAmountDriver
+    }
+    
     func getSessionEndDate() -> Date? {
         renVMService.getSessionEndDate()
     }
@@ -159,5 +165,9 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         guard let address = renVMService.getCurrentAddress() else {return}
         analyticsManager.log(event: .receiveViewExplorerOpen)
         navigationSubject.accept(.showBTCExplorer(address: address))
+    }
+    
+    func reloadMinimumTransactionAmount() {
+        renVMService.reloadMinimumTransactionAmount()
     }
 }

@@ -480,3 +480,4 @@
 "Receive at least: %@ %@" = "Получите как минимум: %@ %@";
 "Are you sure that this %@ address is valid?" = "Вы уверены, что этот адрес %@ действителен?";
 "Input amount is too small, minimum amount for swapping is %@" = "Сумма ввода слишком мала, минимальная сумма для обмена составляет %@";
+"Calculating minimum transaction amount…" = "Расчет минимальной суммы транзакции…";
