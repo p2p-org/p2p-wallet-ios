@@ -89,7 +89,7 @@ extension SendToken {
                 }
             }
                 .padding(.init(all: 16), cornerRadius: 12)
-                .border(width: 1, color: .defaultBorder)
+                .border(width: 1, color: .separator)
             
             addSubview(contentView)
             contentView.autoPinEdgesToSuperviewEdges()
