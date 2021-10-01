@@ -11,7 +11,7 @@ import RxCocoa
 extension RenVM.LockAndMint {
     struct ProcessingTx: Codable, Hashable {
         enum Status: String, Codable, Equatable {
-            case waitingForConfirmation, confirmed, submitting, submitted, minting, minted
+            case waitingForConfirmation, confirmed, submitted, minted
         }
         var tx: TxDetail
         var status: Status
@@ -23,12 +23,8 @@ extension RenVM.LockAndMint {
                 return L10n.waitingForDepositConfirmation
             case .confirmed:
                 return L10n.depositConfirmed
-            case .submitting:
-                return L10n.submittingToRenVM
             case .submitted:
                 return L10n.submittedToRenVM
-            case .minting:
-                return L10n.minting
             case .minted:
                 return L10n.successfullyMintedRenBTC(tx.value.convertToBalance(decimals: 8).toString())
             }
@@ -44,7 +40,6 @@ protocol RenVMLockAndMintSessionStorageType {
     var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {get}
     func set(_ status: RenVM.LockAndMint.ProcessingTx.Status, for txDetail: RenVM.LockAndMint.TxDetail)
     func isMinted(txid: String) -> Bool
-    func isProcessing(txid: String) -> Bool
     func getProcessingTx(txid: String) -> RenVM.LockAndMint.ProcessingTx?
 }
 
@@ -87,12 +82,6 @@ extension RenVM.LockAndMint {
             guard let tx = Defaults.renVMProcessingTxs.first(where: {$0.tx.txid == txid})
             else { return false }
             return tx.status == .minted
-        }
-        
-        func isProcessing(txid: String) -> Bool {
-            guard let tx = Defaults.renVMProcessingTxs.first(where: {$0.tx.txid == txid})
-            else {return false}
-            return tx.status == .submitting || tx.status == .minting
         }
         
         func getProcessingTx(txid: String) -> RenVM.LockAndMint.ProcessingTx? {
