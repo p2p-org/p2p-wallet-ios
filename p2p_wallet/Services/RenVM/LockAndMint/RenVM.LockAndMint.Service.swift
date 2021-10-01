@@ -54,6 +54,7 @@ extension RenVM.LockAndMint {
         private let addressSubject = BehaviorRelay<String?>(value: nil)
         private let conditionAcceptedSubject = BehaviorRelay<Bool>(value: false)
         private let minimumTransactionAmountSubject: LoadableRelay<Double>
+        private var processingTxs = [String]()
         
         // MARK: - Initializers
         init(
@@ -220,10 +221,12 @@ extension RenVM.LockAndMint {
                     guard let self = self else {return}
                     
                     // filter out processing txs
-                    let txs = txs.filter {!self.sessionStorage.isProcessing(txid: $0.txid)}
+                    let txs = txs.filter { !self.processingTxs.contains($0.txid) }
                     
                     // log
-                    Logger.log(message: "renBTC event new transactions: \(txs)", event: .info)
+                    if !txs.isEmpty {
+                        Logger.log(message: "renBTC event new transactions: \(txs)", event: .info)
+                    }
                     
                     // save processing txs to storage
                     for tx in txs {
@@ -234,7 +237,10 @@ extension RenVM.LockAndMint {
         }
         
         private func processConfirmedAndSubmitedTransaction(_ tx: ProcessingTx, response: RenVM.LockAndMint.GatewayAddressResponse) throws {
-            prepareRequest(response: response, tx: tx)
+            guard !processingTxs.contains(tx.tx.txid) else {return}
+            
+            processingTxs.append(tx.tx.txid)
+            return prepareRequest(response: response, tx: tx)
                 .observe(on: MainScheduler.instance)
                 .do(onSuccess: { response in
                     Logger.log(message: "renBTC event mint response: \(response)", event: .info)
