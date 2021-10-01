@@ -321,20 +321,12 @@ extension RenVM.LockAndMint {
         ) -> Completable {
             lockAndMint.submitMintTransaction(state: state)
                 .asCompletable()
-                .catch { error in
-                    if let error = error as? RenVM.Error,
-                       error.message.contains("context deadline exceeded")
-                    {
-                        return .empty()
-                    }
-                    throw error
-                }
-                .do(onError: {[weak self] _ in
-                    // back to confirmed
-                    self?.sessionStorage.set(.confirmed, for: tx.tx)
-                }, onCompleted: { [weak self] in
+                .do(onCompleted: { [weak self] in
                     self?.sessionStorage.set(.submitted, for: tx.tx)
                 })
+                .catch { _ in
+                    .empty() // try to mint no matter what
+                }
         }
         
         private func mint(
@@ -349,8 +341,6 @@ extension RenVM.LockAndMint {
                     if error.isAlreadyInUseSolanaError {
                         Logger.log(message: "txDetail is already minted \(tx)", event: .error)
                         self?.sessionStorage.set(.minted, for: tx.tx)
-                    } else {
-                        self?.sessionStorage.set(.submitted, for: tx.tx)
                     }
                 })
         }
