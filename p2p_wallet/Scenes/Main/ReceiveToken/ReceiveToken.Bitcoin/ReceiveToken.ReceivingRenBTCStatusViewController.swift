@@ -70,7 +70,7 @@ private extension ReceiveToken.ReceivingRenBTCStatusViewController {
         // MARK: - Subviews
         private lazy var statusLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
         private lazy var timestampLabel = UILabel(textSize: 13, weight: .medium, textColor: .textSecondary)
-        private lazy var resultLabel = UILabel(textSize: 15, weight: .semibold, textColor: .textGreen)
+        private lazy var resultLabel = UILabel(textSize: 15, weight: .semibold)
         
         // MARK: - Methods
         override func commonInit() {
@@ -91,6 +91,24 @@ private extension ReceiveToken.ReceivingRenBTCStatusViewController {
         func setUp(with item: AnyHashable?) {
             guard let tx = item as? RenVM.LockAndMint.ProcessingTx else {return}
             statusLabel.text = tx.stringValue
+            resultLabel.isHidden = true
+            timestampLabel.text = tx.updatedAt.string(withFormat: "MMMM dd, YYYY HH:mm a")
+            switch tx.status {
+            case .waitingForConfirmation:
+                resultLabel.isHidden = false
+                let vout = tx.tx.vout
+                let max = 3
+                resultLabel.text = "\(tx.tx.vout)/3"
+                if vout == 0 {
+                    resultLabel.textColor = .alert
+                } else if vout == max {
+                    resultLabel.textColor = .textGreen
+                } else {
+                    resultLabel.textColor = .textBlack
+                }
+            default:
+                break
+            }
         }
     }
 }

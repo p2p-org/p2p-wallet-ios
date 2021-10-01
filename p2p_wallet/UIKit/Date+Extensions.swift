@@ -10,7 +10,7 @@ import Foundation
 extension Date {
     func string(withFormat format: String) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale.current
+        dateFormatter.locale = Locale.shared
         dateFormatter.dateFormat = format
         return dateFormatter.string(from: self)
     }
