@@ -184,8 +184,7 @@ extension RenVM.LockAndMint {
                     
                     // get confirmed and submited transactions
                     let txs = txs.filter {
-                        $0.status != .confirmed &&
-                            $0.status != .submitted
+                        $0.status == .confirmed || $0.status == .submitted
                     }
                     
                     // mint
@@ -237,9 +236,11 @@ extension RenVM.LockAndMint {
         }
         
         private func processConfirmedAndSubmitedTransaction(_ tx: ProcessingTx, response: RenVM.LockAndMint.GatewayAddressResponse) throws {
+            // Mark as processing
             guard !processingTxs.contains(tx.tx.txid) else {return}
-            
             processingTxs.append(tx.tx.txid)
+            
+            // request
             return prepareRequest(response: response, tx: tx)
                 .observe(on: MainScheduler.instance)
                 .do(onSuccess: { response in
@@ -316,6 +317,7 @@ extension RenVM.LockAndMint {
                                 return self.prepareRequest(response: response, tx: tx)
                             }
                     }
+                    self.processingTxs.removeAll(where: {$0 == tx.tx.txid})
                     throw error
                 }
         }
@@ -325,11 +327,7 @@ extension RenVM.LockAndMint {
             state: RenVM.State,
             tx: ProcessingTx
         ) -> Completable {
-            // set as submitting
-            sessionStorage.set(.submitting, for: tx.tx)
-            
-            // submit
-            return lockAndMint.submitMintTransaction(state: state)
+            lockAndMint.submitMintTransaction(state: state)
                 .asCompletable()
                 .do(onError: {[weak self] _ in
                     // back to confirmed
@@ -344,11 +342,7 @@ extension RenVM.LockAndMint {
             state: RenVM.State,
             tx: ProcessingTx
         ) -> Single<(amountOut: String?, signature: String)> {
-            // set as submitting
-            sessionStorage.set(.minting, for: tx.tx)
-            
-            // mint
-            return lockAndMint.mint(state: state, signer: self.account.secretKey)
+            lockAndMint.mint(state: state, signer: self.account.secretKey)
                 .do(onSuccess: { [weak self] _ in
                     self?.sessionStorage.set(.minted, for: tx.tx)
                 }, onError: {[weak self] error in
