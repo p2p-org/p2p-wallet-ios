@@ -9,13 +9,30 @@ import Foundation
 import RxCocoa
 
 extension RenVM.LockAndMint {
-    struct ProcessingTx: Codable {
-        enum Status: String, Codable {
+    struct ProcessingTx: Codable, Hashable {
+        enum Status: String, Codable, Equatable {
             case waitingForConfirmation, confirmed, submitting, submitted, minting, minted
         }
         var tx: TxDetail
         var status: Status
         var updatedAt: Date
+        
+        var stringValue: String {
+            switch status {
+            case .waitingForConfirmation:
+                return L10n.waitingForDepositConfirmation
+            case .confirmed:
+                return L10n.depositConfirmed
+            case .submitting:
+                return L10n.submittingToRenVM
+            case .submitted:
+                return L10n.submittedToRenVM
+            case .minting:
+                return L10n.minting
+            case .minted:
+                return L10n.successfullyMintedRenBTC(tx.value.convertToBalance(decimals: 8).toString())
+            }
+        }
     }
 }
 

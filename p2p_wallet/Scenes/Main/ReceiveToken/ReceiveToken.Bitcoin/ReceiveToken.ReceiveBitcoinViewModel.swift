@@ -18,6 +18,7 @@ protocol ReceiveTokenBitcoinViewModelType {
     var addressDriver: Driver<String?> {get}
     var timerSignal: Signal<Void> {get}
     var minimumTransactionAmountDriver: Driver<Loadable<Double>> {get}
+    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {get}
     
     func reload()
     func reloadMinimumTransactionAmount()
@@ -26,6 +27,7 @@ protocol ReceiveTokenBitcoinViewModelType {
     func acceptConditionAndLoadAddress()
     func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool)
     func showBTCTypeOptions()
+    func showReceivingStatuses()
     func copyToClipboard(address: String, logEvent: AnalyticsEvent)
     func share()
     func showBTCAddressInExplorer()
@@ -146,6 +148,10 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         renVMService.minimumTransactionAmountDriver
     }
     
+    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {
+        renVMService.processingTxsDriver
+    }
+    
     func getSessionEndDate() -> Date? {
         renVMService.getSessionEndDate()
     }
@@ -169,5 +175,9 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     
     func reloadMinimumTransactionAmount() {
         renVMService.reloadMinimumTransactionAmount()
+    }
+    
+    func showReceivingStatuses() {
+        navigationSubject.accept(.showRenBTCReceivingStatus)
     }
 }

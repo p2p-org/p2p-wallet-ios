@@ -486,3 +486,10 @@
 "Serum order creation (paid once per pair)" = "Tạo order Serum (thanh toán một lần cho mỗi cặp)";
 "Transaction fee" = "Phí giao dịch";
 "Total fees" = "Tổng các khoản phí";
+"Receiving status" = "Trạng thái nhận";
+"Waiting for deposit confirmation" = "Đang chờ xác nhận tiền gửi";
+"Deposit confirmed" = "Đã xác nhận tiền gửi";
+"Submitting to RenVM" = "Gửi tới RenVM";
+"Submitted to RenVM" = "Đã gửi đến RenVM";
+"Minting" = "Đang mint";
+"Successfully minted %@ renBTC!" = "Đã đào thành công %@ renBTC!";
