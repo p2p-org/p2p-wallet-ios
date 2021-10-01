@@ -16,6 +16,7 @@ protocol RenVMLockAndMintServiceType {
     var conditionAcceptedDriver: Driver<Bool> {get}
     var addressDriver: Driver<String?> {get}
     var minimumTransactionAmountDriver: Driver<Loadable<Double>> {get}
+    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {get}
     
     func reload()
     func reloadMinimumTransactionAmount()
@@ -377,6 +378,10 @@ extension RenVM.LockAndMint.Service: RenVMLockAndMintServiceType {
         minimumTransactionAmountSubject.asDriver()
     }
     
+    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {
+        sessionStorage.processingTxsDriver
+    }
+    
     func getSessionEndDate() -> Date? {
         sessionStorage.loadSession()?.endAt
     }
@@ -388,13 +393,13 @@ extension RenVM.LockAndMint.Service: RenVMLockAndMintServiceType {
 
 extension RenVM.LockAndMint {
     // MARK: - TxDetailElement
-    struct TxDetail: Codable {
+    struct TxDetail: Codable, Hashable {
         let txid: String
         let vout: UInt64
         let status: Status
         let value: UInt64
         
-        struct Status: Codable {
+        struct Status: Codable, Hashable {
             let confirmed: Bool
             let blockHeight: Int?
             let blockHash: String?
