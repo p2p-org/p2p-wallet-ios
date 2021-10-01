@@ -28,6 +28,7 @@ protocol RenVMLockAndMintSessionStorageType {
     func set(_ status: RenVM.LockAndMint.ProcessingTx.Status, for txDetail: RenVM.LockAndMint.TxDetail)
     func isMinted(txid: String) -> Bool
     func isProcessing(txid: String) -> Bool
+    func getProcessingTx(txid: String) -> RenVM.LockAndMint.ProcessingTx?
 }
 
 extension RenVM.LockAndMint {
@@ -76,33 +77,10 @@ extension RenVM.LockAndMint {
             else {return false}
             return tx.status == .submitting || tx.status == .minting
         }
-//
-//        func isSubmited(txid: String) -> Bool {
-//            Defaults.renVMProcessingTxs.contains(where: {$0.tx.txid == txid})
-//        }
-//
-//        func setAsMinted(tx: TxDetail) {
-//            var txs = Defaults.renVMProcessingTxs
-//
-//            if let index = txs.firstIndex(where: {$0.tx.txid == tx.txid}) {
-//                var tx = txs[index]
-//                tx.isMinted = true
-//                txs[index] = tx
-//            }
-//
-//            Defaults.renVMProcessingTxs = txs
-//        }
-//
-//        func setAsSubmited(tx: TxDetail) {
-//            if Defaults.renVMProcessingTxs.contains(where: {$0.tx.txid == tx.txid}) {return}
-//            var txs = Defaults.renVMProcessingTxs
-//            txs.append(.init(tx: tx, isMinted: false))
-//            Defaults.renVMProcessingTxs = txs
-//        }
-//
-//        func getSubmitedButUnmintedTxId() -> [TxDetail] {
-//            Defaults.renVMProcessingTxs.filter {$0.isMinted == false}.map {$0.tx}
-//        }
+        
+        func getProcessingTx(txid: String) -> RenVM.LockAndMint.ProcessingTx? {
+            Defaults.renVMProcessingTxs.first(where: {$0.tx.txid == txid})
+        }
     }
 }
 
