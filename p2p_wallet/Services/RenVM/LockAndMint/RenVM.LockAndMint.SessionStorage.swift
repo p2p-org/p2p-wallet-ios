@@ -26,7 +26,10 @@ extension RenVM.LockAndMint {
             case .submitted:
                 return L10n.minting
             case .minted:
-                return L10n.successfullyMintedRenBTC(tx.value.convertToBalance(decimals: 8).toString())
+                return L10n.successfullyMintedRenBTC(
+                    tx.value.convertToBalance(decimals: 8)
+                        .toString(maximumFractionDigits: 9)
+                )
             }
         }
     }
