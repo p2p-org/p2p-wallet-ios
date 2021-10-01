@@ -6,11 +6,32 @@
 //
 
 import Foundation
+import RxCocoa
 
 extension RenVM.LockAndMint {
-    struct SubmitedTx: Codable {
-        let tx: TxDetail
-        var isMinted: Bool
+    struct ProcessingTx: Codable, Hashable {
+        enum Status: String, Codable, Equatable {
+            case waitingForConfirmation, confirmed, submitted, minted
+        }
+        var tx: TxDetail
+        var status: Status
+        var updatedAt: Date
+        
+        var stringValue: String {
+            switch status {
+            case .waitingForConfirmation:
+                return L10n.waitingForDepositConfirmation
+            case .confirmed:
+                return L10n.submittingToRenVM
+            case .submitted:
+                return L10n.minting
+            case .minted:
+                return L10n.successfullyMintedRenBTC(
+                    tx.value.convertToBalance(decimals: 8)
+                        .toString(maximumFractionDigits: 9)
+                )
+            }
+        }
     }
 }
 
@@ -19,15 +40,24 @@ protocol RenVMLockAndMintSessionStorageType {
     func saveSession(_ session: RenVM.Session)
     func expireCurrentSession()
     
+    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {get}
+    func set(_ status: RenVM.LockAndMint.ProcessingTx.Status, for txDetail: RenVM.LockAndMint.TxDetail)
     func isMinted(txid: String) -> Bool
-    func isSubmited(txid: String) -> Bool
-    func setAsMinted(tx: RenVM.LockAndMint.TxDetail)
-    func setAsSubmited(tx: RenVM.LockAndMint.TxDetail)
-    func getSubmitedButUnmintedTxId() -> [RenVM.LockAndMint.TxDetail]
+    func getProcessingTx(txid: String) -> RenVM.LockAndMint.ProcessingTx?
+    func getAllProcessingTx() -> [RenVM.LockAndMint.ProcessingTx]
 }
 
 extension RenVM.LockAndMint {
-    struct SessionStorage: RenVMLockAndMintSessionStorageType {
+    class SessionStorage: RenVMLockAndMintSessionStorageType {
+        private let processingTxsSubject = BehaviorRelay<[ProcessingTx]>(value: Defaults.renVMProcessingTxs)
+        private var disposable: DefaultsDisposable!
+        
+        init() {
+            disposable = Defaults.observe(\.renVMProcessingTxs, handler: { [weak self] update in
+                self?.processingTxsSubject.accept(update.newValue ?? [])
+            })
+        }
+        
         func loadSession() -> RenVM.Session? {
             Defaults.renVMSession
         }
@@ -38,38 +68,53 @@ extension RenVM.LockAndMint {
         
         func expireCurrentSession() {
             Defaults.renVMSession = nil
-            Defaults.renVMSubmitedTxDetail = []
+            Defaults.renVMProcessingTxs = []
+        }
+        
+        var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {
+            processingTxsSubject.asDriver()
+        }
+        
+        func set(
+            _ status: RenVM.LockAndMint.ProcessingTx.Status,
+            for txDetail: RenVM.LockAndMint.TxDetail
+        ) {
+            Defaults.renVMProcessingTxs = Defaults.renVMProcessingTxs.seted(status, for: txDetail)
         }
         
         func isMinted(txid: String) -> Bool {
-            Defaults.renVMSubmitedTxDetail.first(where: {$0.tx.txid == txid})?.isMinted == true
+            guard let tx = Defaults.renVMProcessingTxs.first(where: {$0.tx.txid == txid})
+            else { return false }
+            return tx.status == .minted
         }
         
-        func isSubmited(txid: String) -> Bool {
-            Defaults.renVMSubmitedTxDetail.contains(where: {$0.tx.txid == txid})
+        func getProcessingTx(txid: String) -> RenVM.LockAndMint.ProcessingTx? {
+            Defaults.renVMProcessingTxs.first(where: {$0.tx.txid == txid})
         }
         
-        func setAsMinted(tx: TxDetail) {
-            var txs = Defaults.renVMSubmitedTxDetail
-            
-            if let index = txs.firstIndex(where: {$0.tx.txid == tx.txid}) {
-                var tx = txs[index]
-                tx.isMinted = true
-                txs[index] = tx
-            }
-            
-            Defaults.renVMSubmitedTxDetail = txs
+        func getAllProcessingTx() -> [RenVM.LockAndMint.ProcessingTx] {
+            Defaults.renVMProcessingTxs
         }
-        
-        func setAsSubmited(tx: TxDetail) {
-            if Defaults.renVMSubmitedTxDetail.contains(where: {$0.tx.txid == tx.txid}) {return}
-            var txs = Defaults.renVMSubmitedTxDetail
-            txs.append(.init(tx: tx, isMinted: false))
-            Defaults.renVMSubmitedTxDetail = txs
+    }
+}
+
+private extension Array where Element == RenVM.LockAndMint.ProcessingTx {
+    func seted(_ status: RenVM.LockAndMint.ProcessingTx.Status, for txDetail: RenVM.LockAndMint.TxDetail) -> Self
+    {
+        var current = self
+        if let index = current.firstIndex(where: {$0.tx.txid == txDetail.txid}) {
+            current[index].tx = txDetail
+            current[index].status = status
+            current[index].updatedAt = Date()
+        } else {
+            current.append(
+                .init(
+                    tx: txDetail,
+                    status: status,
+                    updatedAt: Date()
+                )
+            )
         }
-        
-        func getSubmitedButUnmintedTxId() -> [TxDetail] {
-            Defaults.renVMSubmitedTxDetail.filter {$0.isMinted == false}.map {$0.tx}
-        }
+        return current
     }
 }
