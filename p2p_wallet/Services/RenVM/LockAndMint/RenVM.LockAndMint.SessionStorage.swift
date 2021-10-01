@@ -22,9 +22,9 @@ extension RenVM.LockAndMint {
             case .waitingForConfirmation:
                 return L10n.waitingForDepositConfirmation
             case .confirmed:
-                return L10n.depositConfirmed
+                return L10n.submittingToRenVM
             case .submitted:
-                return L10n.submittedToRenVM
+                return L10n.minting
             case .minted:
                 return L10n.successfullyMintedRenBTC(tx.value.convertToBalance(decimals: 8).toString())
             }
