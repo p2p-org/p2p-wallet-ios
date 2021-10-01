@@ -108,6 +108,7 @@
 		BC2EC1DE2553EFC6006EEDA5 /* SwipeDownInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1DB2553EFC6006EEDA5 /* SwipeDownInteractor.swift */; };
 		BC2EC1F92553FF6A006EEDA5 /* DashedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1F82553FF6A006EEDA5 /* DashedButton.swift */; };
 		BC2EC93A2705C1E9005FC432 /* PayingFee.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC9392705C1E9005FC432 /* PayingFee.swift */; };
+		BC2EC93E270711BE005FC432 /* ReceiveToken.ReceivingRenBTCStatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC93D270711BE005FC432 /* ReceiveToken.ReceivingRenBTCStatusViewController.swift */; };
 		BC2F8F0C269D3D200048009D /* UIScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2F8F0B269D3D200048009D /* UIScrollView+Extensions.swift */; };
 		BC3122332580B34B00F3B14F /* PassCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3122322580B34B00F3B14F /* PassCodeVC.swift */; };
 		BC31223C2580B37E00F3B14F /* CreatePassCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC31223B2580B37E00F3B14F /* CreatePassCodeVC.swift */; };
@@ -504,6 +505,7 @@
 		BC2EC1DB2553EFC6006EEDA5 /* SwipeDownInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeDownInteractor.swift; sourceTree = "<group>"; };
 		BC2EC1F82553FF6A006EEDA5 /* DashedButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashedButton.swift; sourceTree = "<group>"; };
 		BC2EC9392705C1E9005FC432 /* PayingFee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayingFee.swift; sourceTree = "<group>"; };
+		BC2EC93D270711BE005FC432 /* ReceiveToken.ReceivingRenBTCStatusViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ReceivingRenBTCStatusViewController.swift; sourceTree = "<group>"; };
 		BC2F8F0B269D3D200048009D /* UIScrollView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		BC3122322580B34B00F3B14F /* PassCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassCodeVC.swift; sourceTree = "<group>"; };
 		BC31223B2580B37E00F3B14F /* CreatePassCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePassCodeVC.swift; sourceTree = "<group>"; };
@@ -1309,6 +1311,7 @@
 				BC80203D26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift */,
 				BC7D078026F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift */,
 				BCDABE7926FC745200E083B8 /* ReceiveToken.SelectBTCTypeViewController.swift */,
+				BC2EC93D270711BE005FC432 /* ReceiveToken.ReceivingRenBTCStatusViewController.swift */,
 			);
 			path = ReceiveToken.Bitcoin;
 			sourceTree = "<group>";
@@ -2525,6 +2528,7 @@
 				BC036C3126959F6C005C1BEC /* BaseCollectionReusableView.swift in Sources */,
 				BC460768266F4B3200A12E07 /* ObservableType+Extensions.swift in Sources */,
 				BC460764266F40F400A12E07 /* Root.ViewModel.swift in Sources */,
+				BC2EC93E270711BE005FC432 /* ReceiveToken.ReceivingRenBTCStatusViewController.swift in Sources */,
 				BC2EC1D22553ED1B006EEDA5 /* FlexibleHeightPresentationController.swift in Sources */,
 				BCB7C7E02668D29500FEC68E /* OrcaSwap.RootView.swift in Sources */,
 				BC89ADB825E0FCB3001A6791 /* Onboarding.BaseOnboardingVC.swift in Sources */,

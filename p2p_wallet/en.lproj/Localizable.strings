@@ -486,3 +486,10 @@
 "Serum order creation (paid once per pair)" = "Serum order creation (paid once per pair)";
 "Transaction fee" = "Transaction fee";
 "Total fees" = "Total fees";
+"Receiving status" = "Receiving status";
+"Waiting for deposit confirmation" = "Waiting for deposit confirmation";
+"Deposit confirmed" = "Deposit confirmed";
+"Submitting to RenVM" = "Submitting to RenVM";
+"Submitted to RenVM" = "Submitted to RenVM";
+"Minting" = "Minting";
+"Successfully minted %@ renBTC!" = "Successfully minted %@ renBTC!";

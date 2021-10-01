@@ -12,6 +12,7 @@ struct ReceiveToken {
         case showInExplorer(address: String)
         case showBTCExplorer(address: String)
         case chooseBTCOption(selectedOption: BTCTypeOption)
+        case showRenBTCReceivingStatus
         case share(address: String)
         case help
     }

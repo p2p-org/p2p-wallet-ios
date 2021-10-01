@@ -227,6 +227,14 @@ private class AddressView: BEView {
     private lazy var loadingView = BESpinnerView(size: 30, endColor: .h5887ff)
     private lazy var addressLabel = UILabel(text: nil, textSize: 15, weight: .semibold, textAlignment: .center)
         .lineBreakMode(.byTruncatingMiddle)
+    private lazy var receivingStatusSection = UIView.createSectionView(
+        title: L10n.receivingStatus,
+        contentView: receivingStatusLabel,
+        addSeparatorOnTop: false
+    )
+        .onTap(self, action: #selector(buttonReceivingStatusDidTouch))
+        .padding(.init(only: .left, inset: 20))
+    private lazy var receivingStatusLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
     
     init(viewModel: ReceiveTokenBitcoinViewModelType) {
         self.viewModel = viewModel
@@ -274,7 +282,9 @@ private class AddressView: BEView {
                     .padding(.init(all: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
             }
                 .padding(.zero, cornerRadius: 12)
-                .padding(.init(x: 20, y: 0))
+            
+            BEStackViewSpacing(16)
+            receivingStatusSection
             
             BEStackViewSpacing(50)
             ReceiveToken.viewInExplorerButton(
@@ -365,6 +375,16 @@ private class AddressView: BEView {
                 self.semiboldText(countdown, in: self.label3)
             })
             .disposed(by: disposeBag)
+        
+        viewModel.processingTxsDriver
+            .map {$0.isEmpty}
+            .drive(receivingStatusSection.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.processingTxsDriver
+            .map {$0.reversed().first?.stringValue}
+            .drive(receivingStatusLabel.rx.text)
+            .disposed(by: disposeBag)
     }
     
     private func semiboldText(_ text: String, in label: UILabel) {
@@ -402,6 +422,10 @@ private class AddressView: BEView {
     
     @objc private func reloadMinimumTransactionAmount() {
         viewModel.reloadMinimumTransactionAmount()
+    }
+    
+    @objc private func buttonReceivingStatusDidTouch() {
+        viewModel.showReceivingStatuses()
     }
 }
 

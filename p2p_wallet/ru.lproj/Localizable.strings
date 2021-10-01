@@ -486,3 +486,10 @@
 "Serum order creation (paid once per pair)" = "Создание заказа на Серуме (оплачивается один раз за пару)";
 "Transaction fee" = "Комиссия на перевод";
 "Total fees" = "Итого комиссии";
+"Receiving status" = "Статус получения";
+"Waiting for deposit confirmation" = "Ожидание подтверждения депозита";
+"Deposit confirmed" = "Депозит подтвержден";
+"Submitting to RenVM" = "Отправка в RenVM";
+"Submitted to RenVM" = "Отправлено в RenVM";
+"Minting" = "Чеканка";
+"Successfully minted %@ renBTC!" = "Успешно отчеканено %@ renBTC!";
