@@ -47,6 +47,7 @@ extension RenVM.LockAndMint {
         private var lockAndMint: RenVM.LockAndMint?
         private let mintQueue = DispatchQueue(label: "mintQueue", qos: .background)
         private lazy var scheduler = SerialDispatchQueueScheduler(queue: mintQueue, internalSerialQueueName: "mintQueue")
+        private var observingTxStreamDisposable: Disposable?
         
         // MARK: - Subjects
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
@@ -144,6 +145,7 @@ extension RenVM.LockAndMint {
                 .subscribe(onSuccess: {[weak self] response in
                     self?.isLoadingSubject.accept(false)
                     self?.addressSubject.accept(Base58.encode(response.gatewayAddress.bytes))
+                    self?.mintStoredTxs(response: response)
                     self?.observeTxStreamAndMint(response: response)
                 }, onFailure: {[weak self] error in
                     self?.isLoadingSubject.accept(false)
@@ -156,14 +158,20 @@ extension RenVM.LockAndMint {
             reload()
         }
         
-        // MARK: - Processing transactions
-        private var observingTxStreamDisposable: Disposable?
-        private var observingProcessingTxsDisposable: Disposable?
+        private func mintStoredTxs(response: RenVM.LockAndMint.GatewayAddressResponse) {
+            // get all confirmed and submited txs in storage
+            let txs = sessionStorage.getAllProcessingTx()
+                .filter {$0.status == .confirmed || $0.status == .submitted}
+            
+            // process txs
+            for tx in txs {
+                processConfirmedAndSubmitedTransaction(tx, response: response)
+            }
+        }
         
         private func observeTxStreamAndMint(response: RenVM.LockAndMint.GatewayAddressResponse) {
             // cancel previous observing
             observingTxStreamDisposable?.dispose()
-            observingProcessingTxsDisposable?.dispose()
             
             // refreshing
             observingTxStreamDisposable = Timer.observable(
@@ -173,24 +181,6 @@ extension RenVM.LockAndMint {
                 .observe(on: scheduler)
                 .subscribe(onNext: { [weak self] in
                     try? self?.observeTxStatusAndMint(response: response)
-                })
-            
-            // minting
-            observingProcessingTxsDisposable = sessionStorage.processingTxsDriver
-                .asObservable()
-                .observe(on: scheduler)
-                .subscribe(onNext: { [weak self] txs in
-                    guard let self = self else {return}
-                    
-                    // get confirmed and submited transactions
-                    let txs = txs.filter {
-                        $0.status == .confirmed || $0.status == .submitted
-                    }
-                    
-                    // mint
-                    for tx in txs {
-                        try? self.processConfirmedAndSubmitedTransaction(tx, response: response)
-                    }
                 })
         }
         
@@ -227,15 +217,17 @@ extension RenVM.LockAndMint {
                         Logger.log(message: "renBTC event new transactions: \(txs)", event: .info)
                     }
                     
-                    // save processing txs to storage
+                    // save processing txs to storage and process confirmed transactions
                     for tx in txs {
                         self.sessionStorage.set(tx.status.confirmed ? .confirmed: .waitingForConfirmation, for: tx)
+                        
+                        self.mintStoredTxs(response: response)
                     }
                 })
                 .disposed(by: disposeBag)
         }
         
-        private func processConfirmedAndSubmitedTransaction(_ tx: ProcessingTx, response: RenVM.LockAndMint.GatewayAddressResponse) throws {
+        private func processConfirmedAndSubmitedTransaction(_ tx: ProcessingTx, response: RenVM.LockAndMint.GatewayAddressResponse) {
             // Mark as processing
             guard !processingTxs.contains(tx.tx.txid) else {return}
             processingTxs.append(tx.tx.txid)
