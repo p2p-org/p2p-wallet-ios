@@ -111,8 +111,22 @@ extension ReceiveToken {
         }
         
         private func createDetailView() -> UIStackView {
-            
             UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
+                UIView.defaultSeparator()
+            
+                UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
+                    directAddressHeaderLabel
+                    
+                    UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
+                        UILabel(text: viewModel.tokenWallet?.pubkey, textSize: 15, weight: .medium, numberOfLines: 0)
+                            .onTap(self, action: #selector(copyTokenPubKeyToClipboard))
+                        
+                        UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
+                            .padding(.init(all: 10), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
+                            .onTap(self, action: #selector(showTokenPubkeyAddressInExplorer))
+                    }
+                }
+                
                 UIView.defaultSeparator()
                 
                 UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
@@ -127,7 +141,6 @@ extension ReceiveToken {
                             .onTap(self, action: #selector(showTokenMintAddressInExplorer))
                     }
                 }
-                    .padding(.init(x: 20, y: 0))
                 
                 UIView.defaultSeparator()
             }
