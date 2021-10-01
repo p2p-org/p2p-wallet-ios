@@ -253,6 +253,11 @@ extension RenVM.LockAndMint {
                     let value = (amount ?? tx.tx.value).convertToBalance(decimals: 8)
                         .toString(maximumFractionDigits: 8)
                     UIApplication.shared.showToast(message: L10n.receivedRenBTC(value))
+                    
+                    // remove minted after 1 minute
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(60)) { [weak self] in
+                        self?.sessionStorage.removeMintedTx(txid: tx.tx.txid)
+                    }
                 }, onFailure: { [weak self] error in
                     // other error
                     Logger.log(message: "renBTC event mint error: \(error), tx: \(String(describing: self?.sessionStorage.getProcessingTx(txid: tx.tx.txid)))", event: .error)
