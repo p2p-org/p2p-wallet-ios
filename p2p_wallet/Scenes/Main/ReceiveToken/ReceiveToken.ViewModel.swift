@@ -87,7 +87,8 @@ extension ReceiveToken.ViewModel: ReceiveTokenViewModelType {
             receiveBitcoinViewModel.isReceivingRenBTCDriver,
             receiveBitcoinViewModel.renBTCWalletCreatingDriver,
             receiveBitcoinViewModel.conditionAcceptedDriver,
-            receiveBitcoinViewModel.addressDriver
+            receiveBitcoinViewModel.addressDriver,
+            receiveBitcoinViewModel.processingTxsDriver
         )
             .map {_ in ()}.asDriver()
     }

@@ -106,6 +106,10 @@ private extension ReceiveToken.ReceivingRenBTCStatusViewController {
                 } else {
                     resultLabel.textColor = .textBlack
                 }
+            case .minted:
+                resultLabel.isHidden = false
+                resultLabel.text = "+ \(tx.tx.value.convertToBalance(decimals: 8).toString(maximumFractionDigits: 9)) renBTC"
+                resultLabel.textColor = .textGreen
             default:
                 break
             }
