@@ -41,6 +41,7 @@ protocol RenVMLockAndMintSessionStorageType {
     func set(_ status: RenVM.LockAndMint.ProcessingTx.Status, for txDetail: RenVM.LockAndMint.TxDetail)
     func isMinted(txid: String) -> Bool
     func getProcessingTx(txid: String) -> RenVM.LockAndMint.ProcessingTx?
+    func getAllProcessingTx() -> [RenVM.LockAndMint.ProcessingTx]
 }
 
 extension RenVM.LockAndMint {
@@ -86,6 +87,10 @@ extension RenVM.LockAndMint {
         
         func getProcessingTx(txid: String) -> RenVM.LockAndMint.ProcessingTx? {
             Defaults.renVMProcessingTxs.first(where: {$0.tx.txid == txid})
+        }
+        
+        func getAllProcessingTx() -> [RenVM.LockAndMint.ProcessingTx] {
+            Defaults.renVMProcessingTxs
         }
     }
 }
