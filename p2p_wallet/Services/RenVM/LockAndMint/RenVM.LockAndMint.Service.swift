@@ -234,12 +234,11 @@ extension RenVM.LockAndMint {
         
         private func processConfirmedAndSubmitedTransaction(_ tx: ProcessingTx, response: RenVM.LockAndMint.GatewayAddressResponse) throws {
             prepareRequest(response: response, tx: tx)
-                .do(onSuccess: {[weak self] response in
+                .observe(on: MainScheduler.instance)
+                .do(onSuccess: { response in
                     Logger.log(message: "renBTC event mint response: \(response)", event: .info)
-                    self?.sessionStorage.setAsMinted(tx: txDetail)
-
                     let amount = UInt64(response.amountOut ?? "")
-                    let value = (amount ?? txDetail.value).convertToBalance(decimals: 8)
+                    let value = (amount ?? tx.tx.value).convertToBalance(decimals: 8)
                         .toString(maximumFractionDigits: 8)
                     UIApplication.shared.showToast(message: L10n.receivingRenBTCPending(value))
                 })
@@ -248,25 +247,15 @@ extension RenVM.LockAndMint {
                     return self.transactionHandler.observeTransactionCompletion(signature: response.signature)
                         .andThen(.just(response))
                 }
+                .observe(on: MainScheduler.instance)
                 .subscribe(onSuccess: { response in
                     let amount = UInt64(response.amountOut ?? "")
-                    let value = (amount ?? txDetail.value).convertToBalance(decimals: 8)
+                    let value = (amount ?? tx.tx.value).convertToBalance(decimals: 8)
                         .toString(maximumFractionDigits: 8)
                     UIApplication.shared.showToast(message: L10n.receivedRenBTC(value))
                 }, onFailure: { [weak self] error in
-                    guard let self = self else {return}
-
-                    // already minted
-                    if error.isAlreadyInUseSolanaError {
-                        Logger.log(message: "txDetail is already minted \(txDetail)", event: .info)
-                        self.sessionStorage.setAsMinted(tx: txDetail)
-                    }
-                    
                     // other error
-                    Logger.log(message: "renBTC event mint error: \(error), isSubmited: \(self.sessionStorage.isSubmited(txid: txDetail.txid)), isMinted: \(self.sessionStorage.isMinted(txid: txDetail.txid))", event: .error)
-                    
-                    // remove from handling list
-                    self.handlingTxIds.removeAll(where: {$0 == txDetail.txid})
+                    Logger.log(message: "renBTC event mint error: \(error), tx: \(String(describing: self?.sessionStorage.getProcessingTx(txid: tx.tx.txid)))", event: .error)
                 })
                 .disposed(by: disposeBag)
         }
@@ -277,6 +266,7 @@ extension RenVM.LockAndMint {
                 return .error(RenVM.Error.unknown)
             }
             
+            // get state
             let state: RenVM.State
             
             do {
@@ -301,33 +291,12 @@ extension RenVM.LockAndMint {
             
             // confirmed (non-submited) transaction
             else {
-                // set as submitting
-                sessionStorage.set(.submitting, for: tx.tx)
-                
-                // request
-                submitMintRequest = lockAndMint.submitMintTransaction(state: state)
-                    .asCompletable()
-                    .do(onError: {[weak self] _ in
-                        // back to confirmed
-                        self?.sessionStorage.set(.confirmed, for: tx.tx)
-                    }, onCompleted: { [weak self] in
-                        self?.sessionStorage.set(.submitted, for: tx.tx)
-                    })
+                submitMintRequest = submitTransaction(lockAndMint: lockAndMint, state: state, tx: tx)
             }
             
             // send request
             return submitMintRequest
-                .do(onCompleted: { [weak self] in
-                    self?.sessionStorage.set(.minting, for: tx.tx)
-                })
-                .andThen(
-                    lockAndMint.mint(state: state, signer: self.account.secretKey)
-                        .do(onSuccess: { _ in
-                            self.sessionStorage.set(.minted, for: tx.tx)
-                        }, onError: {_ in
-                            self.sessionStorage.set(.submitted, for: tx.tx)
-                        })
-                )
+                .andThen(mint(lockAndMint: lockAndMint, state: state, tx: tx))
                 .catch {[weak self] error in
                     guard let self = self else {throw RenVM.Error.unknown}
                     if let error = error as? RenVM.Error,
@@ -342,6 +311,47 @@ extension RenVM.LockAndMint {
                     }
                     throw error
                 }
+        }
+        
+        private func submitTransaction(
+            lockAndMint: RenVM.LockAndMint,
+            state: RenVM.State,
+            tx: ProcessingTx
+        ) -> Completable {
+            // set as submitting
+            sessionStorage.set(.submitting, for: tx.tx)
+            
+            // submit
+            return lockAndMint.submitMintTransaction(state: state)
+                .asCompletable()
+                .do(onError: {[weak self] _ in
+                    // back to confirmed
+                    self?.sessionStorage.set(.confirmed, for: tx.tx)
+                }, onCompleted: { [weak self] in
+                    self?.sessionStorage.set(.submitted, for: tx.tx)
+                })
+        }
+        
+        private func mint(
+            lockAndMint: RenVM.LockAndMint,
+            state: RenVM.State,
+            tx: ProcessingTx
+        ) -> Single<(amountOut: String?, signature: String)> {
+            // set as submitting
+            sessionStorage.set(.minting, for: tx.tx)
+            
+            // mint
+            return lockAndMint.mint(state: state, signer: self.account.secretKey)
+                .do(onSuccess: { [weak self] _ in
+                    self?.sessionStorage.set(.minted, for: tx.tx)
+                }, onError: {[weak self] error in
+                    if error.isAlreadyInUseSolanaError {
+                        Logger.log(message: "txDetail is already minted \(tx)", event: .error)
+                        self?.sessionStorage.set(.minted, for: tx.tx)
+                    } else {
+                        self?.sessionStorage.set(.submitted, for: tx.tx)
+                    }
+                })
         }
     }
 }
