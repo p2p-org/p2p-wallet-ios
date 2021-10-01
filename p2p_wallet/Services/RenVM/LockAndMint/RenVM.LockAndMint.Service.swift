@@ -28,6 +28,8 @@ protocol RenVMLockAndMintServiceType {
 extension RenVM.LockAndMint {
     class Service {
         // MARK: - Constants
+        private let refreshRate = 3 // in seconds, refreshing frequency
+        private let mintingRate = 60 // in seconds, time between 2 minting attempts
         private let mintTokenSymbol = "BTC"
         private let version = "1"
         private let disposeBag = DisposeBag()
@@ -41,11 +43,9 @@ extension RenVM.LockAndMint {
         
         // MARK: - Properties
         private var loadingDisposable: Disposable?
-        private var observingTxStreamDisposable: Disposable?
         private var lockAndMint: RenVM.LockAndMint?
         private let mintQueue = DispatchQueue(label: "mintQueue", qos: .background)
         private lazy var scheduler = SerialDispatchQueueScheduler(queue: mintQueue, internalSerialQueueName: "mintQueue")
-        private lazy var handlingTxIds = [String]()
         
         // MARK: - Subjects
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
@@ -76,6 +76,7 @@ extension RenVM.LockAndMint {
             reloadMinimumTransactionAmount()
         }
         
+        // MARK: - Sessions
         func reload() {
             // clear old values
             isLoadingSubject.accept(false)
@@ -153,18 +154,42 @@ extension RenVM.LockAndMint {
             reload()
         }
         
+        // MARK: - Processing transactions
+        private var observingTxStreamDisposable: Disposable?
+        private var observingProcessingTxsDisposable: Disposable?
+        
         private func observeTxStreamAndMint(response: RenVM.LockAndMint.GatewayAddressResponse) {
             // cancel previous observing
             observingTxStreamDisposable?.dispose()
+            observingProcessingTxsDisposable?.dispose()
             
-            // do request each 3 seconds in background
+            // refreshing
             observingTxStreamDisposable = Timer.observable(
-                seconds: 3,
+                seconds: refreshRate,
                 scheduler: scheduler
             )
                 .observe(on: scheduler)
                 .subscribe(onNext: { [weak self] in
                     try? self?.observeTxStatusAndMint(response: response)
+                })
+            
+            // minting
+            observingProcessingTxsDisposable = sessionStorage.processingTxsDriver
+                .asObservable()
+                .observe(on: scheduler)
+                .subscribe(onNext: { [weak self] txs in
+                    guard let self = self else {return}
+                    
+                    // get confirmed and submited transactions
+                    let txs = txs.filter {
+                        $0.status != .confirmed &&
+                            $0.status != .submitted
+                    }
+                    
+                    // mint
+                    for tx in txs {
+                        try? self.processConfirmedAndSubmitedTransaction(tx, response: response)
+                    }
                 })
         }
         
@@ -188,30 +213,27 @@ extension RenVM.LockAndMint {
                 .responseData()
                 .take(1).asSingle()
                 .map {try JSONDecoder().decode(TxDetails.self, from: $1)}
-                .map {$0.filter {$0.status.confirmed == true}}
-                .map {[weak self] array -> TxDetails in
-                    guard let self = self else {throw RenVM.Error.unknown}
-                    var array = array.filter {!self.sessionStorage.isMinted(txid: $0.txid)}
-                    array += self.sessionStorage.getSubmitedButUnmintedTxId()
-                    return array.filter {!self.handlingTxIds.contains($0.txid)}
-                }
-                .subscribe(onSuccess: { [weak self] details in
-                    guard !details.isEmpty else {return}
-                    Logger.log(message: "renBTC event: \(details)", event: .info)
+                
+                // merge result to storage
+                .subscribe(onSuccess: {[weak self] txs in
+                    guard let self = self else {return}
                     
-                    for detail in details {
-                        self?.handlingTxIds.append(detail.txid)
-                        try? self?.mint(response: response, txDetail: detail)
+                    // filter out processing txs
+                    let txs = txs.filter {!self.sessionStorage.isProcessing(txid: $0.txid)}
+                    
+                    // log
+                    Logger.log(message: "renBTC event new transactions: \(txs)", event: .info)
+                    
+                    // save processing txs to storage
+                    for tx in txs {
+                        self.sessionStorage.set(tx.status.confirmed ? .confirmed: .waitingForConfirmation, for: tx)
                     }
-                }, onFailure: { error in
-                    Logger.log(message: "renBTC event error: \(error)", event: .error)
                 })
                 .disposed(by: disposeBag)
         }
         
-        private func mint(response: RenVM.LockAndMint.GatewayAddressResponse, txDetail: TxDetail) throws {
-            
-            prepareMintRequest(response: response, txDetail: txDetail)
+        private func processConfirmedAndSubmitedTransaction(_ tx: ProcessingTx, response: RenVM.LockAndMint.GatewayAddressResponse) throws {
+            prepareRequest(response: response, tx: tx)
                 .do(onSuccess: {[weak self] response in
                     Logger.log(message: "renBTC event mint response: \(response)", event: .info)
                     self?.sessionStorage.setAsMinted(tx: txDetail)
@@ -249,7 +271,7 @@ extension RenVM.LockAndMint {
                 .disposed(by: disposeBag)
         }
         
-        private func prepareMintRequest(response: GatewayAddressResponse, txDetail: TxDetail) -> Single<(amountOut: String?, signature: String)>
+        private func prepareRequest(response: GatewayAddressResponse, tx: ProcessingTx) -> Single<(amountOut: String?, signature: String)>
         {
             guard let lockAndMint = lockAndMint else {
                 return .error(RenVM.Error.unknown)
@@ -259,9 +281,9 @@ extension RenVM.LockAndMint {
             
             do {
                 state = try lockAndMint.getDepositState(
-                    transactionHash: txDetail.txid,
-                    txIndex: String(txDetail.vout),
-                    amount: String(txDetail.value),
+                    transactionHash: tx.tx.txid,
+                    txIndex: String(tx.tx.vout),
+                    amount: String(tx.tx.value),
                     sendTo: response.sendTo,
                     gHash: response.gHash,
                     gPubkey: response.gPubkey
@@ -272,20 +294,39 @@ extension RenVM.LockAndMint {
             
             let submitMintRequest: Completable
             
-            // the transaction hasn't already been submitted
-            if sessionStorage.isSubmited(txid: txDetail.txid) {
+            // submited transaction
+            if tx.status == .submitted {
                 submitMintRequest = .empty()
-            } else {
+            }
+            
+            // confirmed (non-submited) transaction
+            else {
+                // set as submitting
+                sessionStorage.set(.submitting, for: tx.tx)
+                
+                // request
                 submitMintRequest = lockAndMint.submitMintTransaction(state: state)
                     .asCompletable()
-                    .do(onCompleted: { [weak self] in
-                        self?.sessionStorage.setAsSubmited(tx: txDetail)
+                    .do(onError: {[weak self] _ in
+                        // back to confirmed
+                        self?.sessionStorage.set(.confirmed, for: tx.tx)
+                    }, onCompleted: { [weak self] in
+                        self?.sessionStorage.set(.submitted, for: tx.tx)
                     })
             }
             
+            // send request
             return submitMintRequest
+                .do(onCompleted: { [weak self] in
+                    self?.sessionStorage.set(.minting, for: tx.tx)
+                })
                 .andThen(
                     lockAndMint.mint(state: state, signer: self.account.secretKey)
+                        .do(onSuccess: { _ in
+                            self.sessionStorage.set(.minted, for: tx.tx)
+                        }, onError: {_ in
+                            self.sessionStorage.set(.submitted, for: tx.tx)
+                        })
                 )
                 .catch {[weak self] error in
                     guard let self = self else {throw RenVM.Error.unknown}
@@ -293,10 +334,10 @@ extension RenVM.LockAndMint {
                        error == .paramsMissing
                     {
                         return Single<Void>.just(())
-                            .delay(.seconds(3), scheduler: self.scheduler)
+                            .delay(.seconds(self.mintingRate), scheduler: self.scheduler)
                             .flatMap {[weak self] in
                                 guard let self = self else {throw RenVM.Error.unknown}
-                                return self.prepareMintRequest(response: response, txDetail: txDetail)
+                                return self.prepareRequest(response: response, tx: tx)
                             }
                     }
                     throw error
