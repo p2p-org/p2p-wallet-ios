@@ -321,6 +321,14 @@ extension RenVM.LockAndMint {
         ) -> Completable {
             lockAndMint.submitMintTransaction(state: state)
                 .asCompletable()
+                .catch { error in
+                    if let error = error as? RenVM.Error,
+                       error.message.contains("context deadline exceeded")
+                    {
+                        return .empty()
+                    }
+                    throw error
+                }
                 .do(onError: {[weak self] _ in
                     // back to confirmed
                     self?.sessionStorage.set(.confirmed, for: tx.tx)
