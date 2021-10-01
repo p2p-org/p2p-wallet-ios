@@ -8,7 +8,7 @@
 import Foundation
 
 extension RenVM.LockAndMint {
-    struct SubmitedTx: Codable {
+    struct ProcessingTx: Codable {
         let tx: TxDetail
         var isMinted: Bool
     }
@@ -38,19 +38,19 @@ extension RenVM.LockAndMint {
         
         func expireCurrentSession() {
             Defaults.renVMSession = nil
-            Defaults.renVMSubmitedTxDetail = []
+            Defaults.renVMProcessingTxs = []
         }
         
         func isMinted(txid: String) -> Bool {
-            Defaults.renVMSubmitedTxDetail.first(where: {$0.tx.txid == txid})?.isMinted == true
+            Defaults.renVMProcessingTxs.first(where: {$0.tx.txid == txid})?.isMinted == true
         }
         
         func isSubmited(txid: String) -> Bool {
-            Defaults.renVMSubmitedTxDetail.contains(where: {$0.tx.txid == txid})
+            Defaults.renVMProcessingTxs.contains(where: {$0.tx.txid == txid})
         }
         
         func setAsMinted(tx: TxDetail) {
-            var txs = Defaults.renVMSubmitedTxDetail
+            var txs = Defaults.renVMProcessingTxs
             
             if let index = txs.firstIndex(where: {$0.tx.txid == tx.txid}) {
                 var tx = txs[index]
@@ -58,18 +58,18 @@ extension RenVM.LockAndMint {
                 txs[index] = tx
             }
             
-            Defaults.renVMSubmitedTxDetail = txs
+            Defaults.renVMProcessingTxs = txs
         }
         
         func setAsSubmited(tx: TxDetail) {
-            if Defaults.renVMSubmitedTxDetail.contains(where: {$0.tx.txid == tx.txid}) {return}
-            var txs = Defaults.renVMSubmitedTxDetail
+            if Defaults.renVMProcessingTxs.contains(where: {$0.tx.txid == tx.txid}) {return}
+            var txs = Defaults.renVMProcessingTxs
             txs.append(.init(tx: tx, isMinted: false))
-            Defaults.renVMSubmitedTxDetail = txs
+            Defaults.renVMProcessingTxs = txs
         }
         
         func getSubmitedButUnmintedTxId() -> [TxDetail] {
-            Defaults.renVMSubmitedTxDetail.filter {$0.isMinted == false}.map {$0.tx}
+            Defaults.renVMProcessingTxs.filter {$0.isMinted == false}.map {$0.tx}
         }
     }
 }
