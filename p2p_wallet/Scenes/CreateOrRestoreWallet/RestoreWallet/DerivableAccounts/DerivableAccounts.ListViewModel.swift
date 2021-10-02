@@ -18,6 +18,13 @@ protocol DerivableAccountsListViewModelType: BEListViewModelType {
 
 extension DerivableAccounts {
     class ListViewModel: BEListViewModel<DerivableAccount> {
+        private var queues: [DispatchQueue] {
+            var queues = [DispatchQueue]()
+            for i in 0..<5 {
+                queues.append(.init(label: "create-account-\(i)", qos: .userInitiated))
+            }
+            return queues
+        }
         private let phrases: [String]
         @Injected private var pricesFetcher: PricesFetcher
         var derivablePath: SolanaSDK.DerivablePath?
@@ -43,6 +50,7 @@ extension DerivableAccounts {
                         }
                 }
             )
+                .observe(on: MainScheduler.instance)
                 .do(onSuccess: {[weak self] accounts in
                     self?.fetchSOLPrice()
                     for account in accounts {
@@ -54,29 +62,25 @@ extension DerivableAccounts {
         
         private func createAccountSingle(index: Int) -> Single<SolanaSDK.Account> {
             Single.create { [weak self] observer in
-                DispatchQueue(label: "createAccount#\(index)")
-                    .async { [weak self] in
-                        print("creating account #\(index)")
-                        guard let strongSelf = self, let path = strongSelf.derivablePath else {
-                            observer(.failure(SolanaSDK.Error.unknown))
-                            return
-                        }
-                        
-                        do {
-                            let account = try SolanaSDK.Account(
-                                phrase: strongSelf.phrases,
-                                network: Defaults.apiEndPoint.network,
-                                derivablePath: .init(type: path.type, walletIndex: index)
-                            )
-                            print("successfully created account #\(index)")
-                            observer(.success(account))
-                        } catch {
-                            observer(.failure(error))
-                        }
-                        
-                    }
+                guard let strongSelf = self, let path = strongSelf.derivablePath else {
+                    observer(.failure(SolanaSDK.Error.unknown))
+                    return Disposables.create()
+                }
+                
+                do {
+                    let account = try SolanaSDK.Account(
+                        phrase: strongSelf.phrases,
+                        network: Defaults.apiEndPoint.network,
+                        derivablePath: .init(type: path.type, walletIndex: index)
+                    )
+                    print("successfully created account #\(index)")
+                    observer(.success(account))
+                } catch {
+                    observer(.failure(error))
+                }
                 return Disposables.create()
             }
+                .subscribe(on: ConcurrentDispatchQueueScheduler(queue: queues[index]))
         }
         
         private func fetchSOLPrice() {
