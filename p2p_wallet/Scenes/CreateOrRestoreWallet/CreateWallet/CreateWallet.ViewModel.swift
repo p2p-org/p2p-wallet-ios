@@ -42,11 +42,13 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     
     // MARK: - Actions
     func kickOff() {
-        if !Defaults.isTermAndConditionsAccepted {
-            navigateToTermsAndCondition()
-        } else {
-            navigateToCreatePhrases()
-        }
+        navigateToCreatePhrases()
+        // TODO: - Terms and condition
+//        if !Defaults.isTermAndConditionsAccepted {
+//            navigateToTermsAndCondition()
+//        } else {
+//            navigateToCreatePhrases()
+//        }
     }
     
     func finish() {
