@@ -49,9 +49,11 @@ private extension ReceiveToken.ReceivingRenBTCStatusViewController {
             case waitingForConfirmation, confirmed, submitted, minted
         }
         
-        let tx: RenVM.LockAndMint.TxDetail
+        let txid: String
         let status: Status
         let time: Date
+        var vout: UInt64?
+        var amount: UInt64?
         
         var stringValue: String {
             switch status {
@@ -63,7 +65,7 @@ private extension ReceiveToken.ReceivingRenBTCStatusViewController {
                 return L10n.minting
             case .minted:
                 return L10n.successfullyMintedRenBTC(
-                    tx.value.convertToBalance(decimals: 8)
+                    (amount ?? 0).convertToBalance(decimals: 8)
                         .toString(maximumFractionDigits: 9)
                 )
             }
@@ -84,24 +86,40 @@ private extension ReceiveToken.ReceivingRenBTCStatusViewController {
                     var records = [Record]()
                     for tx in processingTxs {
                         if let mintedAt = tx.mintedAt {
-                            records.append(.init(tx: tx.tx, status: .minted, time: mintedAt))
+                            records.append(.init(txid: tx.tx.txid, status: .minted, time: mintedAt, amount: tx.tx.value))
                         }
                         
                         if let submittedAt = tx.submittedAt {
-                            records.append(.init(tx: tx.tx, status: .submitted, time: submittedAt))
+                            records.append(.init(txid: tx.tx.txid, status: .submitted, time: submittedAt))
                         }
                         
                         if let confirmedAt = tx.confirmedAt {
-                            records.append(.init(tx: tx.tx, status: .confirmed, time: confirmedAt))
+                            records.append(.init(txid: tx.tx.txid, status: .confirmed, time: confirmedAt))
                         }
                         
-                        if let receivedAt = tx.receivedAt {
-                            records.append(.init(tx: tx.tx, status: .waitingForConfirmation, time: receivedAt))
+                        if let threeVoteAt = tx.threeVoteAt {
+                            records.append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: threeVoteAt, vout: 3))
+                        }
+                        
+                        if let twoVoteAt = tx.twoVoteAt {
+                            records.append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: twoVoteAt, vout: 2))
+                        }
+                        
+                        if let oneVoteAt = tx.oneVoteAt {
+                            records.append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: oneVoteAt, vout: 1))
+                        }
+                        
+                        if let receiveAt = tx.receivedAt {
+                            records.append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: receiveAt, vout: 0))
                         }
                     }
                     
                     records.sort { rc1, rc2 in
-                        rc1.time > rc2.time
+                        if rc1.time == rc2.time {
+                            return (rc1.vout ?? 0) > (rc2.vout ?? 0)
+                        } else {
+                            return rc1.time > rc2.time
+                        }
                     }
                     
                     self?.records = records
@@ -147,9 +165,9 @@ private extension ReceiveToken.ReceivingRenBTCStatusViewController {
             switch tx.status {
             case .waitingForConfirmation:
                 resultLabel.isHidden = false
-                let vout = tx.tx.vout
+                let vout = tx.vout ?? 0
                 let max = 3
-                resultLabel.text = "\(tx.tx.vout)/3"
+                resultLabel.text = "\(vout)/\(max)"
                 if vout == 0 {
                     resultLabel.textColor = .alert
                 } else if vout == max {
@@ -159,7 +177,7 @@ private extension ReceiveToken.ReceivingRenBTCStatusViewController {
                 }
             case .minted:
                 resultLabel.isHidden = false
-                resultLabel.text = "+ \(tx.tx.value.convertToBalance(decimals: 8).toString(maximumFractionDigits: 9)) renBTC"
+                resultLabel.text = "+ \((tx.amount ?? 0).convertToBalance(decimals: 8).toString(maximumFractionDigits: 9)) renBTC"
                 resultLabel.textColor = .textGreen
             default:
                 break
