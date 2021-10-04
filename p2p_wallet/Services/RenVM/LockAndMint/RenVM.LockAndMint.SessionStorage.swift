@@ -12,6 +12,9 @@ extension RenVM.LockAndMint {
     struct ProcessingTx: Codable, Hashable {
         var tx: TxDetail
         var receivedAt: Date?
+        var oneVoteAt: Date?
+        var twoVoteAt: Date?
+        var threeVoteAt: Date?
         var confirmedAt: Date?
         var submittedAt: Date?
         var mintedAt: Date?
@@ -90,8 +93,24 @@ extension RenVM.LockAndMint {
         
         func processingTx(tx: RenVM.LockAndMint.TxDetail, didReceiveAt receivedAt: Date) {
             save { current in
-                guard current.hasTx(tx) == false else {return false}
-                current.append(.init(tx: tx, receivedAt: receivedAt))
+                guard let index = current.indexOf(tx) else {
+                    current.append(.init(tx: tx, receivedAt: receivedAt))
+                    return true
+                }
+                
+                if tx.vout == 3 && current[index].threeVoteAt == nil  {
+                    current[index].threeVoteAt = receivedAt
+                }
+                if tx.vout == 2 && current[index].twoVoteAt == nil{
+                    current[index].twoVoteAt = receivedAt
+                }
+                if tx.vout == 1 && current[index].oneVoteAt == nil {
+                    current[index].oneVoteAt = receivedAt
+                }
+                if tx.vout == 0 && current[index].receivedAt == nil {
+                    current[index].receivedAt = receivedAt
+                }
+                
                 return true
             }
         }
