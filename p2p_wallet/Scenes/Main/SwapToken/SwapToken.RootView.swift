@@ -284,11 +284,11 @@ private func generateExchangeRateText(
     }
     var string = rate.toString(maximumFractionDigits: 9)
     string += " "
-    string += source.token.symbol
+    string += isReversed ? destination.token.symbol: source.token.symbol
     string += " "
     string += L10n.per
     string += " "
-    string += destination.token.symbol
+    string += isReversed ? source.token.symbol: destination.token.symbol
     return string
 }
 
