@@ -382,7 +382,7 @@ private class AddressView: BEView {
             .disposed(by: disposeBag)
         
         viewModel.processingTxsDriver
-            .map {$0.reversed().first?.stringValue}
+            .map {$0.last?.statusString}
             .drive(receivingStatusLabel.rx.text)
             .disposed(by: disposeBag)
     }
