@@ -26,8 +26,11 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType {
     private var _account: SolanaSDK.Account?
     
     // MARK: - Services
-    let keychain = KeychainSwift()
-    let iCloudStore = NSUbiquitousKeyValueStore()
+    let keychain: KeychainSwift = {
+        let kc = KeychainSwift()
+        kc.synchronizable = true
+        return kc
+    }()
     
     // MARK: - Initializers
     init() {
@@ -57,8 +60,10 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType {
             self.walletIndexKey = walletIndexKey
             Defaults.keychainWalletIndexKey = walletIndexKey
             
-            keychain.clear()
+            removeCurrentAccount()
         }
+        
+        migrate()
     }
     
     // MARK: - SolanaSDKAccountStorage
@@ -154,18 +159,40 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType {
         
         // save
         if let data = try? JSONEncoder().encode(accountsToSave) {
-            iCloudStore.set(data, forKey: iCloudAccountsKey)
+            keychain.set(data, forKey: iCloudAccountsKey)
         }
     }
     
     func accountFromICloud() -> [Account]? {
-        guard let data = iCloudStore.data(forKey: iCloudAccountsKey) else {return nil}
+        guard let data = keychain.getData(iCloudAccountsKey) else {return nil}
         return try? JSONDecoder().decode([Account].self, from: data)
     }
     
     // MARK: - Clearance
     func clear() {
-        keychain.clear()
+        removeCurrentAccount()
+    }
+    
+    func removeCurrentAccount() {
+        keychain.delete(pincodeKey)
+        keychain.delete(phrasesKey)
+        keychain.delete(derivableTypeKey)
+        keychain.delete(walletIndexKey)
+        
         removeAccountCache()
+    }
+    
+    // MARK: - Migration
+    func migrate() {
+        // migrate iCloud storage from NSUbiquitousKeyValueStore to keychain
+        let ubiquitousKeyValueStoreToKeychain = "UbiquitousKeyValueStoreToKeychain"
+        if !UserDefaults.standard.bool(forKey: ubiquitousKeyValueStoreToKeychain) {
+            let ubiquitousStore = NSUbiquitousKeyValueStore()
+            if let data = ubiquitousStore.data(forKey: iCloudAccountsKey) {
+                keychain.set(data, forKey: iCloudAccountsKey)
+            }
+            // mark as completed
+            UserDefaults.standard.set(true, forKey: ubiquitousKeyValueStoreToKeychain)
+        }
     }
 }
