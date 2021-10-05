@@ -10,6 +10,7 @@ import RxCocoa
 
 extension RenVM.LockAndMint {
     struct ProcessingTx: Codable, Hashable {
+        static let maxVote: UInt64 = 3
         var tx: TxDetail
         var receivedAt: Date?
         var oneVoteAt: Date?
@@ -36,10 +37,14 @@ extension RenVM.LockAndMint {
             }
             
             if receivedAt != nil {
-                return L10n.waitingForDepositConfirmation
+                return L10n.waitingForDepositConfirmation + " \(tx.vout)/\(Self.maxVote)"
             }
             
             return nil
+        }
+        
+        var value: Double {
+            tx.value.convertToBalance(decimals: 8)
         }
     }
 }

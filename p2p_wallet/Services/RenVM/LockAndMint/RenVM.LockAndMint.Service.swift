@@ -243,16 +243,9 @@ extension RenVM.LockAndMint {
             
             // request
             return prepareRequest(response: response, tx: tx)
-                .observe(on: MainScheduler.instance)
-                .do(onSuccess: { response in
-                    Logger.log(message: "renBTC event mint response: \(response)", event: .info)
-                    let amount = UInt64(response.amountOut ?? "")
-                    let value = (amount ?? tx.tx.value).convertToBalance(decimals: 8)
-                        .toString(maximumFractionDigits: 8)
-                    UIApplication.shared.showToast(message: L10n.receivingRenBTCPending(value))
-                })
                 .flatMap {[weak self] response -> Single<(amountOut: String?, signature: String)> in
                     guard let self = self else {throw RenVM.Error.unknown}
+                    Logger.log(message: "renBTC event mint response: \(response)", event: .info)
                     return self.transactionHandler.observeTransactionCompletion(signature: response.signature)
                         .andThen(.just(response))
                 }
