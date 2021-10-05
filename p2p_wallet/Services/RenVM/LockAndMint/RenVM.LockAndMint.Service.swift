@@ -161,7 +161,7 @@ extension RenVM.LockAndMint {
         private func mintStoredTxs(response: RenVM.LockAndMint.GatewayAddressResponse) {
             // get all confirmed and submited txs in storage
             let txs = sessionStorage.getAllProcessingTx()
-                .filter {$0.status == .confirmed || $0.status == .submitted}
+                .filter {$0.mintedAt == nil && ($0.confirmedAt != nil || $0.submittedAt != nil)}
             
             // process txs
             for tx in txs {
@@ -219,7 +219,16 @@ extension RenVM.LockAndMint {
                     
                     // save processing txs to storage and process confirmed transactions
                     for tx in txs {
-                        self.sessionStorage.set(tx.status.confirmed ? .confirmed: .waitingForConfirmation, for: tx)
+                        var date = Date()
+                        if let blocktime = tx.status.blockTime {
+                            date = Date(timeIntervalSince1970: TimeInterval(blocktime))
+                        }
+                        
+                        if tx.status.confirmed {
+                            self.sessionStorage.processingTx(tx: tx, didConfirmAt: date)
+                        } else {
+                            self.sessionStorage.processingTx(tx: tx, didReceiveAt: date)
+                        }
                         
                         self.mintStoredTxs(response: response)
                     }
@@ -234,16 +243,9 @@ extension RenVM.LockAndMint {
             
             // request
             return prepareRequest(response: response, tx: tx)
-                .observe(on: MainScheduler.instance)
-                .do(onSuccess: { response in
-                    Logger.log(message: "renBTC event mint response: \(response)", event: .info)
-                    let amount = UInt64(response.amountOut ?? "")
-                    let value = (amount ?? tx.tx.value).convertToBalance(decimals: 8)
-                        .toString(maximumFractionDigits: 8)
-                    UIApplication.shared.showToast(message: L10n.receivingRenBTCPending(value))
-                })
                 .flatMap {[weak self] response -> Single<(amountOut: String?, signature: String)> in
                     guard let self = self else {throw RenVM.Error.unknown}
+                    Logger.log(message: "renBTC event mint response: \(response)", event: .info)
                     return self.transactionHandler.observeTransactionCompletion(signature: response.signature)
                         .andThen(.just(response))
                 }
@@ -289,12 +291,12 @@ extension RenVM.LockAndMint {
             
             let submitMintRequest: Completable
             
-            // submited transaction
-            if tx.status == .submitted {
+            // submitted
+            if tx.submittedAt != nil {
                 submitMintRequest = .empty()
             }
             
-            // confirmed (non-submited) transaction
+            // not yet submitted
             else {
                 submitMintRequest = submitTransaction(lockAndMint: lockAndMint, state: state, tx: tx)
             }
@@ -327,7 +329,7 @@ extension RenVM.LockAndMint {
             lockAndMint.submitMintTransaction(state: state)
                 .asCompletable()
                 .do(onCompleted: { [weak self] in
-                    self?.sessionStorage.set(.submitted, for: tx.tx)
+                    self?.sessionStorage.processingTx(tx: tx.tx, didSubmitAt: Date())
                 })
                 .catch { _ in
                     .empty() // try to mint no matter what
@@ -341,11 +343,11 @@ extension RenVM.LockAndMint {
         ) -> Single<(amountOut: String?, signature: String)> {
             lockAndMint.mint(state: state, signer: self.account.secretKey)
                 .do(onSuccess: { [weak self] _ in
-                    self?.sessionStorage.set(.minted, for: tx.tx)
+                    self?.sessionStorage.processingTx(tx: tx.tx, didMintAt: Date())
                 }, onError: {[weak self] error in
                     if error.isAlreadyInUseSolanaError {
                         Logger.log(message: "txDetail is already minted \(tx)", event: .error)
-                        self?.sessionStorage.set(.minted, for: tx.tx)
+                        self?.sessionStorage.processingTx(tx: tx.tx, didMintAt: Date())
                     }
                 })
         }

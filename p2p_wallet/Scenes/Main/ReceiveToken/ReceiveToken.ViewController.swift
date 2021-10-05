@@ -66,8 +66,10 @@ extension ReceiveToken {
                 let vc = SelectBTCTypeViewController(viewModel: viewModel.receiveBitcoinViewModel, selectedOption: selectedOption)
                 present(vc, interactiveDismissalType: .standard)
             case .showRenBTCReceivingStatus:
-                let vc = ReceivingRenBTCStatusViewController(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel)
-                present(vc, interactiveDismissalType: .standard)
+                let vm = RenBTCReceivingStatuses.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel)
+                let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
+                let nc = FlexibleHeightNavigationController(rootViewController: vc)
+                present(nc, interactiveDismissalType: .standard)
             case .share(let address):
                 let vc = UIActivityViewController(activityItems: [address], applicationActivities: nil)
                 present(vc, animated: true, completion: nil)

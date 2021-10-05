@@ -227,14 +227,12 @@ private class AddressView: BEView {
     private lazy var loadingView = BESpinnerView(size: 30, endColor: .h5887ff)
     private lazy var addressLabel = UILabel(text: nil, textSize: 15, weight: .semibold, textAlignment: .center)
         .lineBreakMode(.byTruncatingMiddle)
-    private lazy var receivingStatusSection = UIView.createSectionView(
-        title: L10n.receivingStatus,
-        contentView: receivingStatusLabel,
-        addSeparatorOnTop: false
-    )
+    private lazy var receivingStatusSection = UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
+        UILabel(text: L10n.receivingStatuses, textSize: 15, weight: .medium)
+        UIView.defaultNextArrow()
+    }
+        .padding(.init(x: 20, y: 15))
         .onTap(self, action: #selector(buttonReceivingStatusDidTouch))
-        .padding(.init(only: .left, inset: 20))
-    private lazy var receivingStatusLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
     
     init(viewModel: ReceiveTokenBitcoinViewModelType) {
         self.viewModel = viewModel
@@ -379,11 +377,6 @@ private class AddressView: BEView {
         viewModel.processingTxsDriver
             .map {$0.isEmpty}
             .drive(receivingStatusSection.rx.isHidden)
-            .disposed(by: disposeBag)
-        
-        viewModel.processingTxsDriver
-            .map {$0.reversed().first?.stringValue}
-            .drive(receivingStatusLabel.rx.text)
             .disposed(by: disposeBag)
     }
     
