@@ -104,6 +104,8 @@ extension ReserveName {
             }
             
             footerLabel.autoPinEdge(.bottom, to: .bottom, of: self, withOffset: -20)
+            constraints.first(where: {$0 is AvoidingKeyboardLayoutConstraint})?.isActive = false
+            scrollView.autoPinEdge(toSuperviewEdge: .bottom)
         }
         
         private func bind() {
