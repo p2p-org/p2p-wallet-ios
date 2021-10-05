@@ -493,3 +493,5 @@
 "Submitted to RenVM" = "Отправлено в RenVM";
 "Minting" = "Чеканка";
 "Successfully minted %@ renBTC!" = "Успешно отчеканено %@ renBTC!";
+"Receiving statuses" = "Статусы получения";
+"Receiving %@ renBTC" = "Получение %@ renBTC";
