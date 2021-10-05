@@ -44,7 +44,7 @@ extension ReserveName {
                 textSize: 15,
                 numberOfLines: 0
             )
-            semiboldText(L10n.skip, in: label)
+            semiboldText([L10n.skip], in: label)
             return label.onTap(self, action: #selector(skipLabelDidTouch))
         }()
         
@@ -54,8 +54,7 @@ extension ReserveName {
             .onTap(self, action: #selector(skipButtonDidTouch))
         private lazy var footerLabel: UILabel = {
             let label = UILabel(text: L10n.byContinuingYouAgreeToWalletSAnd(L10n.termsOfUse, L10n.privacyPolicy), textSize: 15, numberOfLines: 0, textAlignment: .center)
-            semiboldText(L10n.termsOfUse, in: label)
-            semiboldText(L10n.privacyPolicy, in: label)
+            semiboldText([L10n.termsOfUse, L10n.privacyPolicy], in: label)
             return label
         }()
         
@@ -92,8 +91,7 @@ extension ReserveName {
                 BEStackViewSpacing(20)
                 skipLabel
                 
-                UIView.spacer
-                
+                BEStackViewSpacing(100)
                 continueButton
                 
                 BEStackViewSpacing(10)
@@ -102,10 +100,6 @@ extension ReserveName {
                 BEStackViewSpacing(20)
                 footerLabel
             }
-            
-            footerLabel.autoPinEdge(.bottom, to: .bottom, of: self, withOffset: -20)
-            constraints.first(where: {$0 is AvoidingKeyboardLayoutConstraint})?.isActive = false
-            scrollView.autoPinEdge(toSuperviewEdge: .bottom)
         }
         
         private func bind() {
@@ -126,10 +120,12 @@ extension ReserveName {
     }
 }
 
-private func semiboldText(_ text: String, in label: UILabel) {
+private func semiboldText(_ texts: [String], in label: UILabel) {
     let aStr = NSMutableAttributedString(string: label.text!)
-    let range = NSString(string: label.text!).range(of: text)
-    aStr.addAttribute(.font, value: UIFont.systemFont(ofSize: 15, weight: .semibold), range: range)
-    aStr.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: range)
+    for text in texts {
+        let range = NSString(string: label.text!).range(of: text)
+        aStr.addAttribute(.font, value: UIFont.systemFont(ofSize: 15, weight: .semibold), range: range)
+        aStr.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: range)
+    }
     label.attributedText = aStr
 }
