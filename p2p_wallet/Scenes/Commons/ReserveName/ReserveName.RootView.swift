@@ -36,7 +36,7 @@ extension ReserveName {
         )
             .border(width: 1, color: .a3a5ba.withAlphaComponent(0.5))
         
-        private lazy var verificationLabel = UILabel(text: L10n.youCanAlsoThisStepAndReserveAUsernameLater(L10n.skip), textSize: 15, numberOfLines: 0)
+        private lazy var verificationLabel = UILabel(text: L10n.useAnyLatinAndSpecialSymbolsOrEmojis, textSize: 15, textColor: .textSecondary, numberOfLines: 0)
         
         private lazy var skipLabel: UILabel = {
             let label = UILabel(
@@ -50,9 +50,14 @@ extension ReserveName {
         
         private lazy var continueButton: WLButton = .stepButton(type: .blue, label: L10n.continue)
             .onTap(self, action: #selector(continueButtonDidTouch))
-        private lazy var skipButton: WLButton = .stepButton(type: .sub, label: L10n.skip)
+        private lazy var skipButton: WLButton = .stepButton(type: .gray, label: L10n.skip.uppercaseFirst)
             .onTap(self, action: #selector(skipButtonDidTouch))
-        private lazy var footerLabel: UILabel = .init(text: L10n.byContinuingYouAgreeToWalletSAnd(L10n.termsOfUse, L10n.privacyPolicy), textSize: 15, numberOfLines: 0, textAlignment: .center)
+        private lazy var footerLabel: UILabel = {
+            let label = UILabel(text: L10n.byContinuingYouAgreeToWalletSAnd(L10n.termsOfUse, L10n.privacyPolicy), textSize: 15, numberOfLines: 0, textAlignment: .center)
+            semiboldText(L10n.termsOfUse, in: label)
+            semiboldText(L10n.privacyPolicy, in: label)
+            return label
+        }()
         
         // MARK: - Methods
         override func commonInit() {
@@ -97,6 +102,8 @@ extension ReserveName {
                 BEStackViewSpacing(20)
                 footerLabel
             }
+            
+            footerLabel.autoPinEdge(.bottom, to: .bottom, of: self, withOffset: -20)
         }
         
         private func bind() {
