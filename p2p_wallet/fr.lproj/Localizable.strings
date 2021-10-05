@@ -501,3 +501,6 @@
 "Use any latin and special symbols or emojis." = "Utilisez des symboles ou des emojis latins et spéciaux.";
 "You can also %@ this step and reserve a username later." = "Vous pouvez également %@ cette étape et réserver un nom d'utilisateur plus tard.";
 "skip" = "sauter";
+"By continuing, you agree to wallet's %@ and %@" = "En continuant, vous acceptez les %@ et %@ du portefeuille";
+"Terms of Use" = "Conditions d'utilisation";
+"Privacy Policy" = "Politique de confidentialité";
