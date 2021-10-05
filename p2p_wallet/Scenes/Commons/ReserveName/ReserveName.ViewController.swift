@@ -26,6 +26,9 @@ extension ReserveName {
             super.setUp()
             view.addSubview(navigationBar)
             navigationBar.titleLabel.text = L10n.reserveYourP2PUsername
+            navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
+            navigationBar.autoPinEdge(toSuperviewEdge: .leading)
+            navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
             
             let separator = UIView.defaultSeparator()
             view.addSubview(separator)
