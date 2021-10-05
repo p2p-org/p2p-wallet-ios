@@ -1,0 +1,101 @@
+//
+//  ReserveName.RootView.swift
+//  p2p_wallet
+//
+//  Created by Chung Tran on 05/10/2021.
+//
+
+import UIKit
+import RxSwift
+
+extension ReserveName {
+    class RootView: ScrollableVStackRootView {
+        // MARK: - Constants
+        let disposeBag = DisposeBag()
+        
+        // MARK: - Properties
+        @Injected private var viewModel: ReserveNameViewModelType
+        
+        // MARK: - Subviews
+        private lazy var textField = UITextField(
+            height: 56,
+            backgroundColor: .f6f6f8,
+            cornerRadius: 12,
+            keyboardType: .asciiCapableNumberPad,
+            placeholder: L10n.username,
+            placeholderTextColor: .textSecondary,
+            autocorrectionType: .no,
+            autocapitalizationType: UITextAutocapitalizationType.none,
+            spellCheckingType: .no,
+            textContentType: .username,
+            horizontalPadding: 18,
+            rightView: UILabel(text: ".p2p.sol", textSize: 17, weight: .semibold, textColor: .textSecondary),
+            rightViewMode: .always,
+            showClearButton: false
+        )
+        
+        private lazy var skipLabel: UILabel = {
+            let label = UILabel(
+                text: L10n.youCanAlsoThisStepAndReserveAUsernameLater(L10n.skip),
+                textSize: 15,
+                numberOfLines: 0
+            )
+            semiboldText(L10n.skip, in: label)
+            return label.onTap(self, action: #selector(skipLabelDidTouch))
+        }()
+        
+        // MARK: - Methods
+        override func commonInit() {
+            super.commonInit()
+            layout()
+            bind()
+        }
+        
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            
+        }
+        
+        // MARK: - Layout
+        private func layout() {
+            stackView.spacing = 15
+            stackView.addArrangedSubviews {
+                UILabel(
+                    text:
+                        L10n.YouCanReceiveAndSendTokensUsingYourP2PUsernameOrLink.alsoUsersWhoKnowYourURLOrUsernameCanSendYouAnyTokenEvenIfYouDonTHaveItInYourWalletsList,
+                    textSize: 15,
+                    numberOfLines: 0
+                )
+                textField
+                
+                BEStackViewSpacing(8)
+                
+                UILabel(text: L10n.useAnyLatinAndSpecialSymbolsOrEmojis, textSize: 15, textColor: .textSecondary, numberOfLines: 0)
+                
+                BEStackViewSpacing(20)
+                
+                UIView.defaultSeparator()
+                
+                BEStackViewSpacing(20)
+                
+                skipLabel
+            }
+        }
+        
+        private func bind() {
+            
+        }
+        
+        @objc func skipLabelDidTouch() {
+            
+        }
+    }
+}
+
+private func semiboldText(_ text: String, in label: UILabel) {
+    let aStr = NSMutableAttributedString(string: label.text!)
+    let range = NSString(string: label.text!).range(of: text)
+    aStr.addAttribute(.font, value: UIFont.systemFont(ofSize: 15, weight: .semibold), range: range)
+    aStr.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: range)
+    label.attributedText = aStr
+}
