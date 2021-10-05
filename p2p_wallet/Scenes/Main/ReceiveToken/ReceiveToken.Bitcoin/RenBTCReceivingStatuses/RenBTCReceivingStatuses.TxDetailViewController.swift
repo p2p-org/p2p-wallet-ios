@@ -47,7 +47,8 @@ extension RenBTCReceivingStatuses {
         override func bind() {
             super.bind()
             viewModel.processingTxsDriver
-                .drive(onNext: {[weak self] _ in
+                .drive(onNext: {[weak self] txs in
+                    self?.title = L10n.receivingRenBTC(txs.first(where: {$0.tx.txid == self?.viewModel.txid})?.value.toString(maximumFractionDigits: 9) ?? "") 
                     self?.updatePresentationLayout(animated: true)
                 })
                 .disposed(by: disposeBag)

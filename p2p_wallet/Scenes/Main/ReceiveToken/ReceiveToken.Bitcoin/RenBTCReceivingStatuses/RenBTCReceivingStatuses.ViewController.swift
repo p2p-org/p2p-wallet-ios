@@ -39,7 +39,7 @@ extension RenBTCReceivingStatuses {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            title = L10n.receivingStatus
+            title = L10n.receivingStatuses
             
             stackView.addArrangedSubview(collectionView)
             collectionView.delegate = self
