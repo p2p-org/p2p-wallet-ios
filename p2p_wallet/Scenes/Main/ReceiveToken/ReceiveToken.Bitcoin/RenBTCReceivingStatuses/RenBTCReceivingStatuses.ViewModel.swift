@@ -12,7 +12,7 @@ import BECollectionView
 
 protocol RenBTCReceivingStatusesViewModelType: BEListViewModelType {
     var navigationDriver: Driver<RenBTCReceivingStatuses.NavigatableScene?> {get}
-    var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {get}
+    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {get}
     func showDetail(txid: String)
 }
 
@@ -86,6 +86,10 @@ extension RenBTCReceivingStatuses.ViewModel: BEListViewModelType {
 extension RenBTCReceivingStatuses.ViewModel: RenBTCReceivingStatusesViewModelType {
     var navigationDriver: Driver<RenBTCReceivingStatuses.NavigatableScene?> {
         navigationSubject.asDriver()
+    }
+    
+    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {
+        receiveBitcoinViewModel.processingTxsDriver
     }
     
     // MARK: - Actions

@@ -8,6 +8,7 @@
 import Foundation
 import BECollectionView
 import RxSwift
+import RxCocoa
 
 extension RenBTCReceivingStatuses {
     class TxDetailViewController: WLIndicatorModalFlexibleHeightVC {
@@ -43,14 +44,24 @@ extension RenBTCReceivingStatuses {
             stackView.addArrangedSubview(collectionView)
         }
         
+        override func bind() {
+            super.bind()
+            viewModel.processingTxsDriver
+                .drive(onNext: {[weak self] _ in
+                    self?.updatePresentationLayout(animated: true)
+                })
+                .disposed(by: disposeBag)
+        }
+        
         override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
-            .infinity
+            super.calculateFittingHeightForPresentedView(targetWidth: targetWidth) +
+                CGFloat(viewModel.data.count) * 72
         }
     }
     
     class TxDetailViewModel: BEListViewModelType {
         // MARK: - Dependencies
-        let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
+        let processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]>
         let txid: String
         
         // MARK: - Properties
@@ -58,14 +69,14 @@ extension RenBTCReceivingStatuses {
         var data = [Record]()
         
         // MARK: - Initializer
-        init(receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType, txid: String) {
-            self.receiveBitcoinViewModel = receiveBitcoinViewModel
+        init(processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]>, txid: String) {
+            self.processingTxsDriver = processingTxsDriver
             self.txid = txid
             bind()
         }
         
         func bind() {
-            receiveBitcoinViewModel.processingTxsDriver
+            processingTxsDriver
                 .drive(onNext: { [weak self] in
                     let new = Array($0.reversed())
                     // transform processingTxs to records
@@ -115,7 +126,7 @@ extension RenBTCReceivingStatuses {
         }
         
         var dataDidChange: Observable<Void> {
-            receiveBitcoinViewModel.processingTxsDriver.map {_ in ()}.asObservable()
+            processingTxsDriver.map {_ in ()}.asObservable()
         }
         
         var currentState: BEFetcherState {

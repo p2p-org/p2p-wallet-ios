@@ -17,6 +17,7 @@ extension RenBTCReceivingStatuses {
         
         // MARK: - Dependencies
         private var viewModel: RenBTCReceivingStatusesViewModelType
+        private var cellsHeight: CGFloat = 0
         
         // MARK: - Properties
         private lazy var collectionView: BEStaticSectionsCollectionView = .init(
@@ -49,13 +50,20 @@ extension RenBTCReceivingStatuses {
             viewModel.navigationDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
+            
+            viewModel.processingTxsDriver
+                .drive(onNext: {[weak self] txs in
+                    self?.cellsHeight = CGFloat(txs.count) * 72
+                    self?.updatePresentationLayout(animated: true)
+                })
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .detail(let txid):
-                let vc = TxDetailViewController(viewModel: .init(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel, txid: txid))
+                let vc = TxDetailViewController(viewModel: .init(processingTxsDriver: viewModel.processingTxsDriver, txid: txid))
                 show(vc, sender: nil)
             case .none:
                 break
@@ -63,7 +71,8 @@ extension RenBTCReceivingStatuses {
         }
         
         override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
-            .infinity
+            super.calculateFittingHeightForPresentedView(targetWidth: targetWidth) +
+                cellsHeight
         }
     }
 }
