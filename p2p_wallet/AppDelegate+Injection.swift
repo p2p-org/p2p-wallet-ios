@@ -13,6 +13,7 @@ extension Resolver: ResolverRegistering {
         register {KeychainAccountStorage()}
             .implements(SolanaSDKAccountStorage.self)
             .implements(ICloudStorageType.self)
+            .implements(NameStorageType.self)
             .scope(.application)
         register {AnalyticsManager()}
             .implements(AnalyticsManagerType.self)
