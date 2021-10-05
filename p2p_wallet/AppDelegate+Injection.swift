@@ -74,5 +74,10 @@ extension Resolver: ResolverRegistering {
             .implements(MainViewModelType.self)
             .implements(AuthenticationHandler.self)
             .scope(.shared)
+        
+        // MARK: - ReserveName
+        register {ReserveName.ViewModel()}
+            .implements(ReserveNameViewModelType.self)
+            .scope(.shared)
     }
 }
