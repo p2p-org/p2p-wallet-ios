@@ -60,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // set rootVC
-        let vc = ReserveName.ViewController()
+        let vc = Root.ViewController()
         window?.rootViewController = vc
         
         window?.makeKeyAndVisible()
