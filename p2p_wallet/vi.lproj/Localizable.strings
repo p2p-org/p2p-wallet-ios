@@ -501,3 +501,6 @@
 "Use any latin and special symbols or emojis." = "Sử dụng bất kỳ ký hiệu hoặc biểu tượng cảm xúc nào bằng tiếng latin và đặc biệt.";
 "You can also %@ this step and reserve a username later." = "Bạn cũng có thể %@ bước này và đặt tên người dùng sau.";
 "skip" = "bỏ qua";
+"By continuing, you agree to wallet's %@ and %@" = "Bằng cách tiếp tục, bạn đồng ý với %@ và %@ của wallet";
+"Terms of Use" = "Điều khoản sử dụng";
+"Privacy Policy" = "Chính sách bảo mật";

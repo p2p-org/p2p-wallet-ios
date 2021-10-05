@@ -48,6 +48,12 @@ extension ReserveName {
             return label.onTap(self, action: #selector(skipLabelDidTouch))
         }()
         
+        private lazy var continueButton: WLButton = .stepButton(type: .blue, label: L10n.continue)
+            .onTap(self, action: #selector(continueButtonDidTouch))
+        private lazy var skipButton: WLButton = .stepButton(type: .sub, label: L10n.skip)
+            .onTap(self, action: #selector(skipButtonDidTouch))
+        private lazy var footerLabel: UILabel = .init(text: L10n.byContinuingYouAgreeToWalletSAnd(L10n.termsOfUse, L10n.privacyPolicy), textSize: 15, numberOfLines: 0, textAlignment: .center)
+        
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
@@ -80,6 +86,16 @@ extension ReserveName {
                 
                 BEStackViewSpacing(20)
                 skipLabel
+                
+                UIView.spacer
+                
+                continueButton
+                
+                BEStackViewSpacing(10)
+                skipButton
+                
+                BEStackViewSpacing(20)
+                footerLabel
             }
         }
         
@@ -88,6 +104,14 @@ extension ReserveName {
         }
         
         @objc func skipLabelDidTouch() {
+            
+        }
+        
+        @objc func continueButtonDidTouch() {
+            
+        }
+        
+        @objc func skipButtonDidTouch() {
             
         }
     }
