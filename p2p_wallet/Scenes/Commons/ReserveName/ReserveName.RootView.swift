@@ -29,10 +29,14 @@ extension ReserveName {
             spellCheckingType: .no,
             textContentType: .username,
             horizontalPadding: 18,
-            rightView: UILabel(text: ".p2p.sol", textSize: 17, weight: .semibold, textColor: .textSecondary),
+            rightView: UILabel(text: ".p2p.sol", textSize: 17, weight: .semibold, textColor: .textSecondary)
+                .padding(.init(only: .right, inset: 18)),
             rightViewMode: .always,
             showClearButton: false
         )
+            .border(width: 1, color: .a3a5ba.withAlphaComponent(0.5))
+        
+        private lazy var verificationLabel = UILabel(text: L10n.youCanAlsoThisStepAndReserveAUsernameLater(L10n.skip), textSize: 15, numberOfLines: 0)
         
         private lazy var skipLabel: UILabel = {
             let label = UILabel(
@@ -69,15 +73,12 @@ extension ReserveName {
                 textField
                 
                 BEStackViewSpacing(8)
-                
-                UILabel(text: L10n.useAnyLatinAndSpecialSymbolsOrEmojis, textSize: 15, textColor: .textSecondary, numberOfLines: 0)
+                verificationLabel
                 
                 BEStackViewSpacing(20)
-                
                 UIView.defaultSeparator()
                 
                 BEStackViewSpacing(20)
-                
                 skipLabel
             }
         }
