@@ -229,11 +229,26 @@ extension ReserveName.RootView: UITextFieldDelegate {
 
 extension ReserveName.RootView: GT3CaptchaManagerDelegate {
     func gtCaptcha(_ manager: GT3CaptchaManager, errorHandler error: GT3Error) {
-        print(error)
+        UIApplication.shared.showToast(message: "❌ \(error.readableDescription)")
+    }
+    
+    func gtCaptcha(_ manager: GT3CaptchaManager, didReceiveCaptchaCode code: String, result: [AnyHashable: Any]?, message: String?) {
+        guard code == "1",
+              let geetest_seccode = result?["geetest_seccode"] as? String,
+              let geetest_challenge = result?["geetest_challenge"] as? String,
+              let geetest_validate = result?["geetest_validate"] as? String
+        else {
+            return
+        }
+        
+    }
+    
+    func shouldUseDefaultSecondaryValidate(_ manager: GT3CaptchaManager) -> Bool {
+        false
     }
     
     func gtCaptcha(_ manager: GT3CaptchaManager, didReceiveSecondaryCaptchaData data: Data?, response: URLResponse?, error: GT3Error?, decisionHandler: @escaping (GT3SecondaryCaptchaPolicy) -> Void) {
-        print(data)
+        
     }
 }
 
