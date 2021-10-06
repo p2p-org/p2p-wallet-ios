@@ -84,7 +84,7 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
         currentName = name
         // check for availability
         if let name = name {
-            isNameValidLoadableSubject.request = nameService.isNameAvailable(name, owner: owner)
+            isNameValidLoadableSubject.request = nameService.isNameAvailable(name)
         } else {
             isNameValidLoadableSubject.request = .just(false)
         }
