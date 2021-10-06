@@ -45,6 +45,8 @@ extension ReserveName {
             view.addSubview(rootView)
             rootView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
             rootView.autoPinEdge(.top, to: .bottom, of: separator)
+            
+            navigationBar.backButton.onTap(self, action: #selector(back))
         }
         
         override func bind() {

@@ -22,7 +22,7 @@ extension ReserveName {
             height: 56,
             backgroundColor: .f6f6f8,
             cornerRadius: 12,
-            keyboardType: .asciiCapableNumberPad,
+            keyboardType: .asciiCapable,
             placeholder: L10n.username,
             placeholderTextColor: .textSecondary,
             autocorrectionType: .no,
