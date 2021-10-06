@@ -228,6 +228,7 @@
 		BC6FED9F270C475B002B6255 /* ReserveName.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6FED9B270C475B002B6255 /* ReserveName.ViewController.swift */; };
 		BC6FEDA0270C475B002B6255 /* ReserveName.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6FED9C270C475B002B6255 /* ReserveName.ViewModel.swift */; };
 		BC6FEDA1270C475B002B6255 /* ReserveName.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6FED9D270C475B002B6255 /* ReserveName.RootView.swift */; };
+		BC6FEDA3270D57D1002B6255 /* NameService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6FEDA2270D57D1002B6255 /* NameService.swift */; };
 		BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75339B257F2953007A00D9 /* Date+Extensions.swift */; };
 		BC7533AA257F31D3007A00D9 /* LazyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7533A9257F31D3007A00D9 /* LazyLabel.swift */; };
 		BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7AD0E7254A540700B4A070 /* WLButton.swift */; };
@@ -637,6 +638,7 @@
 		BC6FED9B270C475B002B6255 /* ReserveName.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.ViewController.swift; sourceTree = "<group>"; };
 		BC6FED9C270C475B002B6255 /* ReserveName.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.ViewModel.swift; sourceTree = "<group>"; };
 		BC6FED9D270C475B002B6255 /* ReserveName.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.RootView.swift; sourceTree = "<group>"; };
+		BC6FEDA2270D57D1002B6255 /* NameService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameService.swift; sourceTree = "<group>"; };
 		BC75339B257F2953007A00D9 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		BC7533A9257F31D3007A00D9 /* LazyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyLabel.swift; sourceTree = "<group>"; };
 		BC7AD0E7254A540700B4A070 /* WLButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLButton.swift; sourceTree = "<group>"; };
@@ -1615,6 +1617,7 @@
 				BCB0FE5C26A197FD00B02C33 /* FeeRelayer.swift */,
 				BC63110926D78AC300516C38 /* SwapProvider */,
 				BCCF23C126FAE76400D08724 /* RenVM */,
+				BC6FEDA2270D57D1002B6255 /* NameService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -2422,6 +2425,7 @@
 				BC65DFEF261D695200E436C7 /* TransactionCell.swift in Sources */,
 				BCA9941F25AE93D5005BD8FB /* Fonts+Generated.swift in Sources */,
 				BCBE149C25EF3D110014BCE5 /* HomeCollectionView.swift in Sources */,
+				BC6FEDA3270D57D1002B6255 /* NameService.swift in Sources */,
 				BCB7C7C82665EEC400FEC68E /* SendToken.ViewController.swift in Sources */,
 				BCEE508526244B6300271AB9 /* WLEmptyCell.swift in Sources */,
 				BC6FED9F270C475B002B6255 /* ReserveName.ViewController.swift in Sources */,
