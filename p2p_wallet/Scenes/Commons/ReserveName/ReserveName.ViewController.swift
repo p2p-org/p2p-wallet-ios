@@ -15,11 +15,17 @@ extension ReserveName {
         }
         
         // MARK: - Dependencies
-        @Injected private var viewModel: ReserveNameViewModelType
+        private var viewModel: ReserveNameViewModelType
         
         // MARK: - Properties
         private lazy var navigationBar = WLNavigationBar(forAutoLayout: ())
-        private lazy var rootView = RootView()
+        private lazy var rootView = RootView(viewModel: viewModel)
+        
+        // MARK: - Initializer
+        init(viewModel: ReserveNameViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {

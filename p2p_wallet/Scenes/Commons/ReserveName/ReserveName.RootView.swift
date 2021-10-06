@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import Action
 
 extension ReserveName {
     class RootView: ScrollableVStackRootView {
@@ -14,7 +15,7 @@ extension ReserveName {
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        @Injected private var viewModel: ReserveNameViewModelType
+        private var viewModel: ReserveNameViewModelType
         
         // MARK: - Subviews
         private lazy var textField = UITextField(
@@ -57,6 +58,12 @@ extension ReserveName {
             semiboldText([L10n.termsOfUse, L10n.privacyPolicy], in: label)
             return label
         }()
+        
+        // MARK: - Initializer
+        init(viewModel: ReserveNameViewModelType) {
+            self.viewModel = viewModel
+            super.init(frame: .zero)
+        }
         
         // MARK: - Methods
         override func commonInit() {
@@ -103,7 +110,57 @@ extension ReserveName {
         }
         
         private func bind() {
+            viewModel.initializingStateDriver
+                .drive(onNext: { [weak self] loadingState in
+                    switch loadingState {
+                    case .notRequested, .loading:
+                        self?.showIndetermineHud()
+                    case .loaded:
+                        self?.hideHud()
+                    case .error:
+                        self?.showErrorView(title: L10n.error, description: L10n.somethingWentWrongPleaseTryAgainLater, retryAction: .init(workFactory: {[weak self] _ in
+                            self?.viewModel.reload()
+                            return .just(())
+                        }))
+                    }
+                })
+                .disposed(by: disposeBag)
             
+            viewModel.isNameValidLoadableDriver
+                .drive(onNext: {[weak self] loadableBool in
+                    let textColor: UIColor
+                    let text: String?
+                    switch loadableBool.state {
+                    case .notRequested:
+                        textColor = .textSecondary
+                        text = L10n.useAnyLatinAndSpecialSymbolsOrEmojis
+                    case .loading:
+                        textColor = .textSecondary
+                        text = L10n.checkingNameSAvailability
+                    case .loaded:
+                        // valid name
+                        if loadableBool.value == true {
+                            textColor = .attentionGreen
+                            text = L10n.isAvailable(self?.viewModel.currentName ?? L10n.name)
+                        } else {
+                            textColor = .alert
+                            text = L10n.isnTAvailable(self?.viewModel.currentName ?? L10n.name)
+                        }
+                    case .error(_):
+                        textColor = .alert
+                        text = L10n.CouldNotCheckNameSAvailability.pleaseCheckYourInternetConnection
+                    }
+                    self?.verificationLabel.text = text
+                    self?.verificationLabel.textColor = textColor
+                })
+                .disposed(by: disposeBag)
+            
+            textField.rx.text
+                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+                .subscribe(onNext: {[weak self] text in
+                    self?.viewModel.userDidEnter(name: text)
+                })
+                .disposed(by: disposeBag)
         }
         
         @objc func skipLabelDidTouch() {

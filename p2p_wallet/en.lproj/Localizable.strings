@@ -504,3 +504,8 @@
 "By continuing, you agree to wallet's %@ and %@" = "By continuing, you agree to wallet's %@ and %@";
 "Terms of Use" = "Terms of Use";
 "Privacy Policy" = "Privacy Policy";
+"Checking name’s availability" = "Checking name’s availability";
+"%@ is available" = "%@ is available";
+"name" = "name";
+"%@ isn’t available" = "%@ isn’t available";
+"Could not check name’s availability. Please check your internet connection!" = "Could not check name’s availability. Please check your internet connection!";

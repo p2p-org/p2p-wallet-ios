@@ -504,3 +504,8 @@
 "By continuing, you agree to wallet's %@ and %@" = "Продолжая, вы соглашаетесь с %@ и %@ кошелька.";
 "Terms of Use" = "Условия эксплуатации";
 "Privacy Policy" = "Политика конфиденциальности";
+"Checking name’s availability" = "Проверка доступности имени";
+"%@ is available" = "%@ доступен";
+"name" = "имя";
+"%@ isn’t available" = "%@ недоступен";
+"Could not check name’s availability. Please check your internet connection!" = "Не удалось проверить наличие имени. Пожалуйста, проверьте ваше интернет-соединение!";
