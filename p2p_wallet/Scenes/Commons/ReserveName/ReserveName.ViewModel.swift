@@ -23,7 +23,7 @@ protocol ReserveNameViewModelType {
     func reload()
     func userDidEnter(name: String?)
     
-    func showCaptcha()
+    func process()
     
     func nameDidReserve(_ name: String)
     func skip()
@@ -98,7 +98,7 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
         
     }
     
-    func showCaptcha() {
+    func process() {
         navigationSubject.accept(.showCaptcha)
     }
     

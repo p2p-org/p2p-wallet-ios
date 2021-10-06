@@ -188,7 +188,7 @@ extension ReserveName {
         }
         
         @objc func continueButtonDidTouch() {
-            
+            viewModel.process()
         }
         
         @objc func skipButtonDidTouch() {
