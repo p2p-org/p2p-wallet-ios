@@ -83,7 +83,7 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     func userDidEnter(name: String?) {
         currentName = name
         // check for availability
-        if let name = name {
+        if let name = name, !name.isEmpty {
             isNameValidLoadableSubject.request = nameService.isNameAvailable(name)
             isNameValidLoadableSubject.reload()
         } else {
