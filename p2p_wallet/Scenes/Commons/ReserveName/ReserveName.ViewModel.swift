@@ -11,17 +11,26 @@ import RxCocoa
 
 protocol ReserveNameViewModelType {
     var navigationDriver: Driver<ReserveName.NavigatableScene?> {get}
+    
     func showCaptcha()
 }
 
 extension ReserveName {
     class ViewModel {
         // MARK: - Dependencies
+        @Injected private var nameService: NameServiceType
+        private let owner: String
         
         // MARK: - Properties
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        
+        // MARK: - Initializer
+        init(owner: String) {
+            self.owner = owner
+        }
+        
     }
 }
 

@@ -76,8 +76,13 @@ extension Resolver: ResolverRegistering {
             .scope(.shared)
         
         // MARK: - ReserveName
-        register {ReserveName.ViewModel()}
+        register { _, args in
+            ReserveName.ViewModel(owner: args())
+        }
             .implements(ReserveNameViewModelType.self)
             .scope(.shared)
+        
+        register {NameService()}
+            .implements(NameServiceType.self)
     }
 }
