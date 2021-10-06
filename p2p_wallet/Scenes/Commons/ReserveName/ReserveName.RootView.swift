@@ -70,6 +70,7 @@ extension ReserveName {
             super.commonInit()
             layout()
             bind()
+            onTap(self, action: #selector(viewDidTap))
         }
         
         override func didMoveToWindow() {
@@ -159,10 +160,20 @@ extension ReserveName {
                 .disposed(by: disposeBag)
             
             textField.rx.text
+                .distinctUntilChanged()
                 .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
                 .subscribe(onNext: {[weak self] text in
                     self?.viewModel.userDidEnter(name: text)
                 })
+                .disposed(by: disposeBag)
+            
+            // button
+            viewModel.isNameValidLoadableDriver
+                .withLatestFrom(viewModel.initializingStateDriver, resultSelector: {($1, $0)})
+                .map { initState, isValid -> Bool in
+                    initState == .loaded && isValid.state == .loaded && isValid.value == true
+                }
+                .drive(continueButton.rx.isEnabled)
                 .disposed(by: disposeBag)
         }
         
@@ -176,6 +187,10 @@ extension ReserveName {
         
         @objc func skipButtonDidTouch() {
             
+        }
+        
+        @objc func viewDidTap() {
+            endEditing(true)
         }
     }
 }
