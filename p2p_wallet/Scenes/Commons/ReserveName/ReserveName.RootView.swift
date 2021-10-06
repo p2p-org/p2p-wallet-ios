@@ -8,14 +8,23 @@
 import UIKit
 import RxSwift
 import Action
+import GT3Captcha
 
 extension ReserveName {
     class RootView: ScrollableVStackRootView {
         // MARK: - Constants
         let disposeBag = DisposeBag()
         
+        // MARK: - Dependencies
+        @Injected private var nameService: NameServiceType
+        
         // MARK: - Properties
         private var viewModel: ReserveNameViewModelType
+        private lazy var manager: GT3CaptchaManager = {
+            let manager = GT3CaptchaManager(api1: nameService.captchaAPI1Url, api2: nil, timeout: 10)
+            manager.delegate = self
+            return manager
+        }()
         
         // MARK: - Subviews
         private lazy var textField = UITextField(
@@ -63,6 +72,7 @@ extension ReserveName {
         init(viewModel: ReserveNameViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
+            manager.registerCaptcha(nil)
         }
         
         // MARK: - Methods
@@ -188,7 +198,7 @@ extension ReserveName {
         }
         
         @objc func continueButtonDidTouch() {
-            viewModel.process()
+            manager.startGTCaptchaWith(animated: true)
         }
         
         @objc func skipButtonDidTouch() {
@@ -214,6 +224,16 @@ extension ReserveName.RootView: UITextFieldDelegate {
         let doNotContains2HyphensNextToEachOther = !updatedText.contains("--")
         
         return containsOnlyAllowedCharacters && doNotContains2HyphensNextToEachOther
+    }
+}
+
+extension ReserveName.RootView: GT3CaptchaManagerDelegate {
+    func gtCaptcha(_ manager: GT3CaptchaManager, errorHandler error: GT3Error) {
+        print(error)
+    }
+    
+    func gtCaptcha(_ manager: GT3CaptchaManager, didReceiveSecondaryCaptchaData data: Data?, response: URLResponse?, error: GT3Error?, decisionHandler: @escaping (GT3SecondaryCaptchaPolicy) -> Void) {
+        print(data)
     }
 }
 
