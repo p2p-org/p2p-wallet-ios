@@ -504,3 +504,8 @@
 "By continuing, you agree to wallet's %@ and %@" = "Bằng cách tiếp tục, bạn đồng ý với %@ và %@ của wallet";
 "Terms of Use" = "Điều khoản sử dụng";
 "Privacy Policy" = "Chính sách bảo mật";
+"Checking name’s availability" = "Kiểm tra tính khả dụng của tên";
+"%@ is available" = "%@ hợp lệ";
+"name" = "tên";
+"%@ isn’t available" = "%@ không khả dụng";
+"Could not check name’s availability. Please check your internet connection!" = "Không thể kiểm tra tính khả dụng của tên. Xin vui lòng kiểm tra kết nối Internet của bạn!";

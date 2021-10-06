@@ -504,3 +504,8 @@
 "By continuing, you agree to wallet's %@ and %@" = "En continuant, vous acceptez les %@ et %@ du portefeuille";
 "Terms of Use" = "Conditions d'utilisation";
 "Privacy Policy" = "Politique de confidentialité";
+"Checking name’s availability" = "Vérification de la disponibilité du nom";
+"%@ is available" = "%@ est disponible";
+"name" = "nom";
+"%@ isn’t available" = "%@ n'est pas disponible";
+"Could not check name’s availability. Please check your internet connection!" = "Impossible de vérifier la disponibilité du nom. S'il vous plait, vérifiez votre connexion internet!";

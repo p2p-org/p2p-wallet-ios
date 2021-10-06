@@ -85,10 +85,11 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
         // check for availability
         if let name = name {
             isNameValidLoadableSubject.request = nameService.isNameAvailable(name)
+            isNameValidLoadableSubject.reload()
         } else {
-            isNameValidLoadableSubject.request = .just(false)
+            isNameValidLoadableSubject.accept(false, state: .loaded)
         }
-        isNameValidLoadableSubject.reload()
+        
     }
     
     func showCaptcha() {
