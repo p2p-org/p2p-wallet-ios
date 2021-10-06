@@ -9,6 +9,10 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+protocol ReserveNameHandler {
+    func handleName(_ name: String?)
+}
+
 protocol ReserveNameViewModelType {
     var currentName: String? {get}
     
@@ -22,6 +26,7 @@ protocol ReserveNameViewModelType {
     func showCaptcha()
     
     func nameDidReserve(_ name: String)
+    func skip()
 }
 
 extension ReserveName {
@@ -29,6 +34,7 @@ extension ReserveName {
         // MARK: - Dependencies
         @Injected private var nameService: NameServiceType
         private let owner: String
+        private let handler: ReserveNameHandler
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -40,9 +46,9 @@ extension ReserveName {
         private let isNameValidLoadableSubject = LoadableRelay<Bool>(request: .just(false))
         
         // MARK: - Initializer
-        init(owner: String) {
+        init(owner: String, handler: ReserveNameHandler) {
             self.owner = owner
-            
+            self.handler = handler
             reload()
         }
         
@@ -97,6 +103,10 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     }
     
     func nameDidReserve(_ name: String) {
-        
+        handler.handleName(name)
+    }
+    
+    func skip() {
+        handler.handleName(nil)
     }
 }
