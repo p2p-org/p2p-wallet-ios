@@ -60,8 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // set rootVC
-        let vm = ReserveName.ViewModel(owner: "D7XYERWodEGaoN2X855T2qLvse28BSjfkvfCyW2EDBWy")
-        let vc = ReserveName.ViewController(viewModel: vm)
+        let vc = Root.ViewController()
         window?.rootViewController = vc
         
         window?.makeKeyAndVisible()
