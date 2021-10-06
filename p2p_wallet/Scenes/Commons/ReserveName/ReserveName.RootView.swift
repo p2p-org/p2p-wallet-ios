@@ -68,6 +68,7 @@ extension ReserveName {
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
+            textField.delegate = self
             layout()
             bind()
             onTap(self, action: #selector(viewDidTap))
@@ -178,7 +179,12 @@ extension ReserveName {
         }
         
         @objc func skipLabelDidTouch() {
-            
+//            let skipRange = (skipLabel.text! as NSString).range(of: L10n.skip)
+//            if didTapAttributedTextInLabel(label: skipLabel, inRange: skipRange) {
+//                skipButtonDidTouch()
+//            } else {
+//                viewDidTap()
+//            }
         }
         
         @objc func continueButtonDidTouch() {
@@ -192,6 +198,21 @@ extension ReserveName {
         @objc func viewDidTap() {
             endEditing(true)
         }
+    }
+}
+
+extension ReserveName.RootView: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        // only allow small latin, hyphens and numbers
+        let set = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789-")
+            .inverted
+        let containsOnlyAllowedCharacters = string.rangeOfCharacter(from: set) == nil
+        
+        // don't allow 2 hyphens next to each other
+        var updatedText = (textField.text ?? "").replacingCharacters(in: stringRange, with: string)
+        let doNotContains2HyphensNextToEachOther = !updatedText.contains("--")
+        
+        return containsOnlyAllowedCharacters && doNotContains2HyphensNextToEachOther
     }
 }
 
