@@ -209,7 +209,8 @@ extension ReserveName.RootView: UITextFieldDelegate {
         let containsOnlyAllowedCharacters = string.rangeOfCharacter(from: set) == nil
         
         // don't allow 2 hyphens next to each other
-        var updatedText = (textField.text ?? "").replacingCharacters(in: range, with: string)
+        guard let stringRange = Range(range, in: textField.text ?? "") else { return false }
+        let updatedText = (textField.text ?? "").replacingCharacters(in: stringRange, with: string)
         let doNotContains2HyphensNextToEachOther = !updatedText.contains("--")
         
         return containsOnlyAllowedCharacters && doNotContains2HyphensNextToEachOther
