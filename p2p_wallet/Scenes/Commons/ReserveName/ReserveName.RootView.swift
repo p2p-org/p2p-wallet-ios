@@ -142,9 +142,12 @@ extension ReserveName {
                         if loadableBool.value == true {
                             textColor = .attentionGreen
                             text = L10n.isAvailable(self?.viewModel.currentName ?? L10n.name)
-                        } else {
+                        } else if self?.viewModel.currentName?.isEmpty == false {
                             textColor = .alert
                             text = L10n.isnTAvailable(self?.viewModel.currentName ?? L10n.name)
+                        } else {
+                            textColor = .textSecondary
+                            text = L10n.useAnyLatinAndSpecialSymbolsOrEmojis
                         }
                     case .error(_):
                         textColor = .alert
