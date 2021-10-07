@@ -49,6 +49,10 @@ extension String {
         if count <= numOfSymbolsRevealed + (numOfSymbolsRevealedInSuffix ?? numOfSymbolsRevealed) {return self}
         return prefix(numOfSymbolsRevealed) + "..." + suffix(numOfSymbolsRevealedInSuffix ?? numOfSymbolsRevealed)
     }
+    
+    func withNameServiceSuffix() -> String {
+        self + ".p2p.sol"
+    }
 }
 
 extension String {

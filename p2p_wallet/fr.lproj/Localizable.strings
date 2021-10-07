@@ -495,3 +495,17 @@
 "Successfully minted %@ renBTC!" = "Frappé avec succès %@ renBTC !";
 "Receiving statuses" = "Statuts de réception";
 "Receiving %@ renBTC" = "Réception de %@ renBTC";
+"Reserve your P2P username" = "Réservez votre nom d'utilisateur P2P";
+"You can receive and send tokens using your P2P username or link. Also, users, who know your URL or username, can send you any token, even if you don’t have it in your wallets list." = "Vous pouvez recevoir et envoyer des jetons en utilisant votre nom d'utilisateur ou votre lien P2P.  De plus, les utilisateurs qui connaissent votre URL ou votre nom d'utilisateur peuvent vous envoyer n'importe quel jeton, même si vous ne l'avez pas dans votre liste de portefeuilles.";
+"username" = "Nom d'utilisateur";
+"Use any latin and special symbols or emojis." = "Utilisez des symboles ou des emojis latins et spéciaux.";
+"You can also %@ this step and reserve a username later." = "Vous pouvez également %@ cette étape et réserver un nom d'utilisateur plus tard.";
+"skip" = "sauter";
+"By continuing, you agree to wallet's %@ and %@" = "En continuant, vous acceptez les %@ et %@ du portefeuille";
+"Terms of Use" = "Conditions d'utilisation";
+"Privacy Policy" = "Politique de confidentialité";
+"Checking name’s availability" = "Vérification de la disponibilité du nom";
+"%@ is available" = "%@ est disponible";
+"name" = "nom";
+"%@ isn’t available" = "%@ n'est pas disponible";
+"Could not check name’s availability. Please check your internet connection!" = "Impossible de vérifier la disponibilité du nom. S'il vous plait, vérifiez votre connexion internet!";

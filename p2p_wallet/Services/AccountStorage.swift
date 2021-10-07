@@ -13,12 +13,18 @@ protocol ICloudStorageType {
     func accountFromICloud() -> [Account]?
 }
 
-class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType {
+protocol NameStorageType {
+    func save(name: String)
+    func getName() -> String?
+}
+
+class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameStorageType {
     // MARK: - Constants
     private let pincodeKey: String
     private let phrasesKey: String
     private let derivableTypeKey: String
     private let walletIndexKey: String
+    private let nameKey: String
     
     private let iCloudAccountsKey = "Keychain.Accounts"
     
@@ -34,6 +40,13 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType {
     
     // MARK: - Initializers
     init() {
+        if let nameKey = Defaults.keychainNameKey {
+            self.nameKey = nameKey
+        } else {
+            self.nameKey = UUID().uuidString
+            Defaults.keychainNameKey = nameKey
+        }
+        
         if let pincodeKey = Defaults.keychainPincodeKey,
               let phrasesKey = Defaults.keychainPhrasesKey,
               let derivableTypeKey = Defaults.keychainDerivableTypeKey,
@@ -123,6 +136,27 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType {
         _account = nil
     }
     
+    // MARK: - Name register
+    func save(name: String) {
+        keychain.set(name, forKey: nameKey)
+        saveNameToICloudIfAccountSaved()
+    }
+    
+    func getName() -> String? {
+        keychain.get(nameKey)
+    }
+    
+    func saveNameToICloudIfAccountSaved() {
+        if let account = accountFromICloud()?.first(where: {$0.phrase.components(separatedBy: " ") == phrases}) {
+            let account = Account(
+                name: getName(),
+                phrase: account.phrase,
+                derivablePath: account.derivablePath
+            )
+            saveToICloud(account: account)
+        }
+    }
+    
     // MARK: - Helpers
     var didBackupUsingIcloud: Bool {
         guard let phrases = account?.phrase.joined(separator: " ") else {return false}
@@ -146,14 +180,15 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType {
     func saveToICloud(account: Account) {
         var accountsToSave = [account]
         
-        // if accounts exists
         if var currentAccounts = accountFromICloud() {
-            // remove (for overriding)
-            currentAccounts.removeAll(where: {$0.phrase == account.phrase})
-            
-            // add
-            currentAccounts.append(account)
-            
+            // if account exists
+            if let index = currentAccounts.firstIndex(where: {$0.phrase == account.phrase}) {
+                currentAccounts[index] = account
+            }
+            // new account
+            else {
+                currentAccounts.append(account)
+            }
             accountsToSave = currentAccounts
         }
         
@@ -178,6 +213,7 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType {
         keychain.delete(phrasesKey)
         keychain.delete(derivableTypeKey)
         keychain.delete(walletIndexKey)
+        keychain.delete(nameKey)
         
         removeAccountCache()
     }

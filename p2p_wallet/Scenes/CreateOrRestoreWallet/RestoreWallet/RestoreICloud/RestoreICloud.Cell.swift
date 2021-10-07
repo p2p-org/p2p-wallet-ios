@@ -12,7 +12,8 @@ extension RestoreICloud {
     class Cell: BaseCollectionViewCell, BECollectionViewCell {
         override var padding: UIEdgeInsets {.init(x: 20, y: 12)}
         
-        lazy var addressLabel = UILabel(text: "<address>", textSize: 15, weight: .medium)
+        lazy var topLabel = UILabel(text: "<top>", textSize: 13, weight: .medium, textColor: .textSecondary)
+        lazy var bottomLabel = UILabel(text: "<bottom>", textSize: 15, weight: .medium)
         
         override func commonInit() {
             super.commonInit()
@@ -20,7 +21,10 @@ extension RestoreICloud {
             stackView.alignment = .center
             
             stackView.addArrangedSubviews {
-                addressLabel
+                UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
+                    topLabel
+                    bottomLabel
+                }
                 UIView.defaultNextArrow()
             }
             
@@ -33,7 +37,17 @@ extension RestoreICloud {
         
         func setUp(with item: AnyHashable?) {
             guard let account = item as? ParsedAccount else {return}
-            addressLabel.text = account.parsedAccount.publicKey.base58EncodedString.truncatingMiddle(numOfSymbolsRevealed: 12, numOfSymbolsRevealedInSuffix: 4)
+            let pubkey = account.parsedAccount.publicKey.base58EncodedString.truncatingMiddle(numOfSymbolsRevealed: 12, numOfSymbolsRevealedInSuffix: 4)
+            
+            topLabel.isHidden = false
+            
+            if let name = account.account.name {
+                topLabel.text = pubkey
+                bottomLabel.text = name.withNameServiceSuffix()
+            } else {
+                topLabel.isHidden = true
+                bottomLabel.text = pubkey
+            }
         }
     }
 }

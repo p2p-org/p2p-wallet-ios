@@ -495,3 +495,17 @@
 "Successfully minted %@ renBTC!" = "Đã đào thành công %@ renBTC!";
 "Receiving statuses" = "Trạng thái nhận";
 "Receiving %@ renBTC" = "Nhận %@ renBTC";
+"Reserve your P2P username" = "Nhận P2P username";
+"You can receive and send tokens using your P2P username or link. Also, users, who know your URL or username, can send you any token, even if you don’t have it in your wallets list." = "Bạn có thể nhận và gửi tokens bằng tên người dùng hoặc liên kết P2P của bạn.  Ngoài ra, người dùng biết URL hoặc tên người dùng của bạn có thể gửi cho bạn bất kỳ token nào, ngay cả khi bạn không có token đó trong ví của bạn.";
+"username" = "tên tài khoản";
+"Use any latin and special symbols or emojis." = "Sử dụng bất kỳ ký hiệu hoặc biểu tượng cảm xúc nào bằng tiếng latin và đặc biệt.";
+"You can also %@ this step and reserve a username later." = "Bạn cũng có thể %@ bước này và đặt tên người dùng sau.";
+"skip" = "bỏ qua";
+"By continuing, you agree to wallet's %@ and %@" = "Bằng cách tiếp tục, bạn đồng ý với %@ và %@ của wallet";
+"Terms of Use" = "Điều khoản sử dụng";
+"Privacy Policy" = "Chính sách bảo mật";
+"Checking name’s availability" = "Kiểm tra tính khả dụng của tên";
+"%@ is available" = "%@ hợp lệ";
+"name" = "tên";
+"%@ isn’t available" = "%@ không khả dụng";
+"Could not check name’s availability. Please check your internet connection!" = "Không thể kiểm tra tính khả dụng của tên. Xin vui lòng kiểm tra kết nối Internet của bạn!";
