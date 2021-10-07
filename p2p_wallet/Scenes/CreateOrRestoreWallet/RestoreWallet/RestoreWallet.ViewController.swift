@@ -54,6 +54,12 @@ extension RestoreWallet {
                     self?.showAlert(title: L10n.error, message: message)
                 })
                 .disposed(by: disposeBag)
+            
+            viewModel.finishedSignal
+                .emit(onNext: { [weak self] in
+                    self?.childNavigationControllerVCWrapper.dismiss(animated: true, completion: nil)
+                })
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Navigation
