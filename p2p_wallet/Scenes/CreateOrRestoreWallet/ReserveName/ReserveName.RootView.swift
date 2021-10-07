@@ -39,7 +39,7 @@ extension ReserveName {
             spellCheckingType: .no,
             textContentType: .username,
             horizontalPadding: 18,
-            rightView: UILabel(text: ".p2p.sol", textSize: 17, weight: .semibold, textColor: .textSecondary)
+            rightView: UILabel(text: "".withNameServiceSuffix(), textSize: 17, weight: .semibold, textColor: .textSecondary)
                 .padding(.init(only: .right, inset: 18)),
             rightViewMode: .always,
             showClearButton: false

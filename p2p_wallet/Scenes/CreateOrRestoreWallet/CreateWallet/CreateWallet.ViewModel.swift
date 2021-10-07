@@ -85,34 +85,12 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     }
     
     func finish() {
-        guard let phrases = phrases else {return}
-        
-        UIApplication.shared.showIndetermineHud()
-        DispatchQueue.global().async { [weak self] in
-            do {
-                try self?.accountStorage.save(phrases: phrases)
-                
-                let derivablePath = SolanaSDK.DerivablePath.default
-                try self?.accountStorage.save(derivableType: derivablePath.type)
-                try self?.accountStorage.save(walletIndex: derivablePath.walletIndex)
-                
-                if let name = self?.name {
-                    self?.accountStorage.save(name: name)
-                }
-                
-                DispatchQueue.main.async { [weak self] in
-                    UIApplication.shared.hideHud()
-                    self?.navigationSubject.accept(.dismiss)
-                    self?.handler.creatingWalletDidComplete()
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    UIApplication.shared.hideHud()
-                    UIApplication.shared.showToast(message: (error as? SolanaSDK.Error)?.errorDescription ?? error.localizedDescription)
-                }
-            }
-        }
-        
+        navigationSubject.accept(.dismiss)
+        handler.creatingWalletDidComplete(
+            phrases: phrases,
+            derivablePath: .default,
+            name: name
+        )
     }
     
     func navigateToTermsAndCondition() {

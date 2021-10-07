@@ -19,8 +19,8 @@ protocol RootViewModelType {
 }
 
 protocol CreateOrRestoreWalletHandler {
-    func creatingWalletDidComplete()
-    func restoringWalletDidComplete()
+    func creatingWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?)
+    func restoringWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?)
     func creatingOrRestoringWalletDidCancel()
 }
 
@@ -109,20 +109,52 @@ extension Root.ViewModel: ChangeLanguageResponder {
 }
 
 extension Root.ViewModel: CreateOrRestoreWalletHandler {
-    func creatingWalletDidComplete() {
-        self.isRestoration = false
+    func creatingWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
+        isRestoration = false
         navigationSubject.accept(.onboarding)
         analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
+        saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
     }
     
-    func restoringWalletDidComplete() {
-        self.isRestoration = true
+    func restoringWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
+        isRestoration = true
         navigationSubject.accept(.onboarding)
         analyticsManager.log(event: .setupOpen(fromPage: "recovery"))
+        saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
     }
     
     func creatingOrRestoringWalletDidCancel() {
         logout()
+    }
+    
+    private func saveAccountToStorage(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
+        guard let phrases = phrases, let derivablePath = derivablePath else {
+            creatingOrRestoringWalletDidCancel()
+            return
+        }
+        
+        isLoadingSubject.accept(true)
+        DispatchQueue.global().async { [weak self] in
+            do {
+                try self?.accountStorage.save(phrases: phrases)
+                try self?.accountStorage.save(derivableType: derivablePath.type)
+                try self?.accountStorage.save(walletIndex: derivablePath.walletIndex)
+                
+                if let name = name {
+                    self?.accountStorage.save(name: name)
+                }
+                
+                DispatchQueue.main.async { [weak self] in
+                    self?.isLoadingSubject.accept(false)
+                }
+            } catch {
+                self?.isLoadingSubject.accept(false)
+                DispatchQueue.main.async {
+                    UIApplication.shared.showToast(message: (error as? SolanaSDK.Error)?.errorDescription ?? error.localizedDescription)
+                    self?.creatingOrRestoringWalletDidCancel()
+                }
+            }
+        }
     }
 }
 
