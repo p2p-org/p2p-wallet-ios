@@ -13,6 +13,7 @@ protocol RestoreWalletViewModelType: ReserveNameHandler {
     var navigatableSceneDriver: Driver<RestoreWallet.NavigatableScene?> {get}
     var isLoadingDriver: Driver<Bool> {get}
     var errorSignal: Signal<String> {get}
+    var finishedSignal: Signal<Void> {get}
     
     func handlePhrases(_ phrases: [String])
     func handleICloudAccount(_ account: Account)
@@ -38,6 +39,7 @@ extension RestoreWallet {
         private let navigationSubject = BehaviorRelay<RestoreWallet.NavigatableScene?>(value: nil)
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
         private let errorSubject = PublishRelay<String>()
+        private let finishedSubject = PublishRelay<Void>()
     }
 }
 
@@ -52,6 +54,10 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     
     var errorSignal: Signal<String> {
         errorSubject.asSignal()
+    }
+    
+    var finishedSignal: Signal<Void> {
+        finishedSubject.asSignal()
     }
     
     // MARK: - Actions
@@ -169,6 +175,7 @@ private extension RestoreWallet.ViewModel {
                 accountStorage.save(name: name)
             }
             
+            finishedSubject.accept(())
             handler.restoringWalletDidComplete()
         } catch {
             errorSubject.accept(error.readableDescription)
