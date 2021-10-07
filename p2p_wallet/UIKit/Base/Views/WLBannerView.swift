@@ -73,12 +73,12 @@ class WLBannerView: BEView {
     }
 }
 
-//handy radians
-private func radian(degree: Double) -> Double {    return degree * Double.pi / 180 }
-private func radian(degree: CGFloat) -> CGFloat {   return degree * CGFloat(Double.pi / 180) }
+// handy radians
+private func radian(degree: Double) -> Double { return degree * Double.pi / 180 }
+private func radian(degree: CGFloat) -> CGFloat { return degree * CGFloat(Double.pi / 180) }
 
 private func gradientPoints(size: CGSize, cssAngle: CGFloat) -> (start: CGPoint, end: CGPoint) {
-    //default value of gradients from CAGradientLayer
+    // default value of gradients from CAGradientLayer
     var start = CGPoint(x: 0.0, y: 1.0)
     var end = CGPoint(x: 0.0, y: 0.0)
 
@@ -87,7 +87,7 @@ private func gradientPoints(size: CGSize, cssAngle: CGFloat) -> (start: CGPoint,
     // special tuple for computation angle and flag, indicating top side angle or not (see picture)
     var directionAngle:(angle: CGFloat, topSide: Bool) = (normalizedAngle, true)
 
-    let angleDiff:CGFloat = abs(normalizedAngle) > 270.0 ? 360.0:180.0 // shorthand for diff for equathion
+    let angleDiff: CGFloat = abs(normalizedAngle) > 270.0 ? 360.0:180.0 // shorthand for diff for equathion
     // next we should computate the angle and their side (top side or not) by considering the sign of incoming angle
     if (90.0...270.0).contains(normalizedAngle) { // these angles - bottom side of half
         directionAngle = (normalizedAngle - angleDiff, false) // differ used for additional normalization angle for this range (90...270)
@@ -97,8 +97,7 @@ private func gradientPoints(size: CGSize, cssAngle: CGFloat) -> (start: CGPoint,
     // and we make the same for negative anlges
     else if normalizedAngle < -90 && normalizedAngle > -270 {
         directionAngle = (abs(abs(normalizedAngle) - angleDiff), false) // note: here,we use ABS to cast the valid angle to bottom side, unlike 90..270 positive angles (see above)
-    }
-    else if normalizedAngle <= -270 {directionAngle = (abs(abs(normalizedAngle) - angleDiff), true)} // in fact the same rules
+    } else if normalizedAngle <= -270 {directionAngle = (abs(abs(normalizedAngle) - angleDiff), true)} // in fact the same rules
     else {
         directionAngle = normalizedAngle > 0 ? (normalizedAngle, true):(normalizedAngle, true) // other angles between -90 and 90
     }
@@ -108,7 +107,6 @@ private func gradientPoints(size: CGSize, cssAngle: CGFloat) -> (start: CGPoint,
     case 90, -90.0: // simples values
         start = CGPoint(x: (90-directionAngle.angle)/180, y: 0.5)
         end = CGPoint(x: (90+directionAngle.angle)/180, y: 0.5)
-        break
     case -90..<90:
         var angle = radian(degree: directionAngle.angle)
         var tAngle = tan(angle)
@@ -139,5 +137,5 @@ private func gradientPoints(size: CGSize, cssAngle: CGFloat) -> (start: CGPoint,
         break
     }
     // if topside == false, we need swap start and end points
-    return directionAngle.topSide ? (start, end):(end,start)
+    return directionAngle.topSide ? (start, end):(end, start)
 }
