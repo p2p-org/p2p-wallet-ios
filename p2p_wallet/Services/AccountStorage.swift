@@ -180,14 +180,15 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameSt
     func saveToICloud(account: Account) {
         var accountsToSave = [account]
         
-        // if accounts exists
         if var currentAccounts = accountFromICloud() {
-            // remove (for overriding)
-            currentAccounts.removeAll(where: {$0.phrase == account.phrase})
-            
-            // add
-            currentAccounts.append(account)
-            
+            // if account exists
+            if let index = currentAccounts.firstIndex(where: {$0.phrase == account.phrase}) {
+                currentAccounts[index] = account
+            }
+            // new account
+            else {
+                currentAccounts.append(account)
+            }
             accountsToSave = currentAccounts
         }
         
