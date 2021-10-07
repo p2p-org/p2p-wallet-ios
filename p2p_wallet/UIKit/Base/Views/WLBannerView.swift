@@ -22,6 +22,14 @@ class WLBannerView: BEView {
     }
     
     // MARK: - Subviews
+    private lazy var imageLayer: CALayer = {
+        let image1 = UIImage.bannerBackground.cgImage
+        let layer = CALayer()
+        layer.contents = image1
+        layer.transform = CATransform3DMakeAffineTransform(CGAffineTransform(a: 1, b: 0, c: 0, d: 3.19, tx: 0, ty: -1.1))
+        return layer
+    }()
+    
     private lazy var gradientLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.colors = [
@@ -34,8 +42,8 @@ class WLBannerView: BEView {
         return layer
     }()
     
-    private lazy var titleLabel = UILabel(text: L10n.reserveYourP2PUsernameNow, textSize: 15, weight: .medium, numberOfLines: 0)
-    private lazy var descriptionLabel = UILabel(text: L10n.anyTokenCanBeReceivedUsingUsernameRegardlessOfWhetherItIsInYourWalletsList, textSize: 13, numberOfLines: 0)
+    private lazy var titleLabel = UILabel(text: L10n.reserveYourP2PUsernameNow, textSize: 15, weight: .medium, textColor: .black, numberOfLines: 0)
+    private lazy var descriptionLabel = UILabel(text: L10n.anyTokenCanBeReceivedUsingUsernameRegardlessOfWhetherItIsInYourWalletsList, textSize: 13, textColor: .black, numberOfLines: 0)
     
     // MARK: - Initializers
     init(title: String?, description: String?) {
@@ -47,6 +55,11 @@ class WLBannerView: BEView {
     
     override func commonInit() {
         super.commonInit()
+        layer.addSublayer(imageLayer)
+        layer.addSublayer(gradientLayer)
+        layer.cornerRadius = 12
+        layer.masksToBounds = true
+        
         let stackView = UIStackView(axis: .horizontal, spacing: 8, alignment: .top, distribution: .fill) {
             UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
                 titleLabel
@@ -56,13 +69,12 @@ class WLBannerView: BEView {
         }
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(top: 18, left: 15, bottom: 29, right: 12))
-        layer.addSublayer(gradientLayer)
-        layer.cornerRadius = 12
-        layer.masksToBounds = true
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        imageLayer.bounds = bounds.insetBy(dx: -20, dy: 0)
+        imageLayer.position = center
         
         gradientLayer.position = center
         gradientLayer.bounds = bounds.insetBy(dx: -0.5*bounds.size.width, dy: -0.5*bounds.size.height)
