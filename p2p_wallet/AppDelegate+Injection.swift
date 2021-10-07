@@ -21,6 +21,9 @@ extension Resolver: ResolverRegistering {
         register {CryptoComparePricesFetcher()}
             .implements(PricesFetcher.self)
             .scope(.application)
+        register {NameService()}
+            .implements(NameServiceType.self)
+            .scope(.application)
         
         // MARK: - Root
         register {Root.ViewModel()}
@@ -74,9 +77,5 @@ extension Resolver: ResolverRegistering {
             .implements(MainViewModelType.self)
             .implements(AuthenticationHandler.self)
             .scope(.shared)
-        
-        // MARK: - ReserveName
-        register {NameService()}
-            .implements(NameServiceType.self)
     }
 }

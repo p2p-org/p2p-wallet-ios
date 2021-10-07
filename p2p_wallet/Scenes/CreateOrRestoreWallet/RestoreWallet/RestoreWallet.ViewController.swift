@@ -65,7 +65,12 @@ extension RestoreWallet {
                 let dvc = DerivableAccounts.ViewController(viewModel: viewModel)
                 let vc = WLModalWrapperVC(wrapped: dvc)
                 present(vc, animated: true, completion: nil)
-            default:
+            case .reserveName(let owner):
+                let viewModel = ReserveName.ViewModel(owner: owner, handler: viewModel)
+                let rnvc = ReserveName.ViewController(viewModel: viewModel)
+                let vc = WLModalWrapperVC(wrapped: rnvc)
+                present(vc, animated: true, completion: nil)
+            case .none:
                 break
             }
         }
