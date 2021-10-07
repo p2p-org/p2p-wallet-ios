@@ -10,11 +10,16 @@ import Action
 
 extension HomeCollectionView.ActiveWalletsSection {
     class HeaderView: SectionHeaderView {
-        lazy var avatarImageView = UIImageView(width: 30, height: 30, backgroundColor: .c4c4c4, cornerRadius: 15)
+        private lazy var avatarImageView = UIImageView(width: 30, height: 30, backgroundColor: .c4c4c4, cornerRadius: 15)
             .onTap(self, action: #selector(avatarImageViewDidTouch))
-        lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
+        private lazy var activeStatusView = UIView(width: 8, height: 8, backgroundColor: .red, cornerRadius: 4)
             .onTap(self, action: #selector(avatarImageViewDidTouch))
         var openProfileAction: CocoaAction?
+        
+        private lazy var bannerView = WLBannerView(
+            title: L10n.reserveYourP2PUsernameNow,
+            description: L10n.anyTokenCanBeReceivedUsingUsernameRegardlessOfWhetherItIsInYourWalletsList
+        )
         
         override func commonInit() {
             super.commonInit()
@@ -32,6 +37,7 @@ extension HomeCollectionView.ActiveWalletsSection {
             activeStatusView.autoPinEdge(.trailing, to: .trailing, of: avatarImageView)
             
             stackView.addArrangedSubview(headerView.padding(.init(x: 20, y: 0)))
+            stackView.addArrangedSubview(bannerView.padding(.init(x: 20, y: 0)))
         }
         
         @objc func avatarImageViewDidTouch() {
