@@ -27,6 +27,7 @@ extension DefaultsKeys {
     var keychainPhrasesKey: DefaultsKey<String?> {.init(#function, defaultValue: nil)}
     var keychainDerivableTypeKey: DefaultsKey<String?> {.init(#function, defaultValue: nil)}
     var keychainWalletIndexKey: DefaultsKey<String?> {.init(#function, defaultValue: nil)}
+    var keychainNameKey: DefaultsKey<String?> {.init(#function, defaultValue: nil)}
     
     var didSetEnableBiometry: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var isBiometryEnabled: DefaultsKey<Bool> {.init(#function, defaultValue: false)}

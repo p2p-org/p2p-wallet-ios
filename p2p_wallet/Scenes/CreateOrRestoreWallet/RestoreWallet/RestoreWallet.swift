@@ -11,6 +11,7 @@ struct RestoreWallet {
     enum NavigatableScene {
         case enterPhrases
         case restoreFromICloud
+        case reserveName(owner: String)
         case derivableAccounts(phrases: [String])
     }
 }

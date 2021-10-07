@@ -37,6 +37,8 @@ target 'p2p_wallet' do
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
   pod 'Resolver'
+  
+  pod 'GT3Captcha-iOS'
 
   target 'p2p_walletTests' do
     inherit! :search_paths

@@ -76,6 +76,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         analyticsManager.log(event: .createWalletBackupToIcloudClick)
         accountStorage.saveToICloud(
             account: .init(
+                name: nil,
                 phrase: phrasesSubject.value.joined(separator: " "),
                 derivablePath: .default
             )
@@ -88,26 +89,6 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
             analyticsManager.log(event: .createWalletIHaveSavedWordsClick)
         }
         analyticsManager.log(event: .createWalletNextClick)
-        
-        UIApplication.shared.showIndetermineHud()
-        DispatchQueue.global().async {
-            do {
-                try self.accountStorage.save(phrases: self.phrasesSubject.value)
-                
-                let derivablePath = SolanaSDK.DerivablePath.default
-                try self.accountStorage.save(derivableType: derivablePath.type)
-                try self.accountStorage.save(walletIndex: derivablePath.walletIndex)
-                
-                DispatchQueue.main.async {
-                    UIApplication.shared.hideHud()
-                    self.createWalletViewModel.finish()
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    UIApplication.shared.hideHud()
-                    self.errorSubject.accept((error as? SolanaSDK.Error)?.errorDescription ?? error.localizedDescription)
-                }
-            }
-        }
+        createWalletViewModel.handlePhrases(self.phrasesSubject.value)
     }
 }

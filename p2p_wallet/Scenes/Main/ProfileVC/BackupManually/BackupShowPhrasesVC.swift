@@ -68,8 +68,9 @@ private class _BackupShowPhrasesVC: BackupManuallyBaseVC {
                 completion: { [weak self] in
                     self?.accountStorage.saveToICloud(
                         account: .init(
+                            name: self?.accountStorage.getName(),
                             phrase: account.joined(separator: " "),
-                            derivablePath: self?.accountStorage.getDerivablePath()
+                            derivablePath: self?.accountStorage.getDerivablePath() ?? .default
                         )
                     )
                     self?.backupUsingIcloudButton.isEnabled = false

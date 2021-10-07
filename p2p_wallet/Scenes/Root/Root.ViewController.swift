@@ -32,11 +32,7 @@ extension Root {
             // loadingView
             viewModel.isLoadingDriver
                 .drive(onNext: { [weak self] isLoading in
-                    if isLoading {
-                        self?.showIndetermineHud()
-                    } else {
-                        self?.hideHud()
-                    }
+                    isLoading ? self?.showIndetermineHud(): self?.hideHud()
                 })
                 .disposed(by: disposeBag)
         }

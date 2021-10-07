@@ -495,3 +495,17 @@
 "Successfully minted %@ renBTC!" = "Успешно отчеканено %@ renBTC!";
 "Receiving statuses" = "Статусы получения";
 "Receiving %@ renBTC" = "Получение %@ renBTC";
+"Reserve your P2P username" = "Зарезервируйте свое имя пользователя P2P";
+"You can receive and send tokens using your P2P username or link. Also, users, who know your URL or username, can send you any token, even if you don’t have it in your wallets list." = "Вы можете получать и отправлять токены, используя свое имя пользователя P2P или ссылку.  Кроме того, пользователи, которые знают ваш URL или имя пользователя, могут отправить вам любой токен, даже если у вас его нет в списке ваших кошельков.";
+"username" = "имя пользователя";
+"Use any latin and special symbols or emojis." = "Используйте любые латинские и специальные символы или смайлики.";
+"You can also %@ this step and reserve a username later." = "Вы также можете %@ на этом шаге и зарезервировать имя пользователя позже.";
+"skip" = "пропускать";
+"By continuing, you agree to wallet's %@ and %@" = "Продолжая, вы соглашаетесь с %@ и %@ кошелька.";
+"Terms of Use" = "Условия эксплуатации";
+"Privacy Policy" = "Политика конфиденциальности";
+"Checking name’s availability" = "Проверка доступности имени";
+"%@ is available" = "%@ доступен";
+"name" = "имя";
+"%@ isn’t available" = "%@ недоступен";
+"Could not check name’s availability. Please check your internet connection!" = "Не удалось проверить наличие имени. Пожалуйста, проверьте ваше интернет-соединение!";

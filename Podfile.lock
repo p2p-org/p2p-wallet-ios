@@ -106,6 +106,7 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.5.0):
     - GoogleUtilities/Logger
+  - GT3Captcha-iOS (0.14.9)
   - JazziconSwift (1.0.0)
   - KeychainSwift (19.0.0)
   - Kingfisher (6.3.1)
@@ -174,6 +175,7 @@ DEPENDENCIES:
   - FeeRelayerSwift (from `FeeRelayerSwift`)
   - Firebase/Analytics
   - Firebase/Crashlytics
+  - GT3Captcha-iOS
   - JazziconSwift
   - KeychainSwift (~> 19.0)
   - Kingfisher
@@ -212,6 +214,7 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
+    - GT3Captcha-iOS
     - JazziconSwift
     - KeychainSwift
     - Kingfisher
@@ -288,6 +291,7 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: 8d10c1c470fcb0e5143ed74fddd164f0a0384800
   GoogleDataTransport: 85fd18ff3019bb85d3f2c551d04c481dedf71fc9
   GoogleUtilities: eea970f4a389963963bffe8d8fabe43540678b9c
+  GT3Captcha-iOS: b6d458bdbd936ece760b6c76e12f8a160570f523
   JazziconSwift: 0e92431adad8e4d0a8dcb50fd82c414784c86afe
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: 016c8b653a35add51dd34a3aba36b580041acc74
@@ -320,6 +324,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 04570ba6d4dba8b961463131fc035e92e3f413c6
+PODFILE CHECKSUM: 88693cc59244894b404dbf71346830729edb875d
 
 COCOAPODS: 1.10.1

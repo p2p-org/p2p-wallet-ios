@@ -13,10 +13,14 @@ extension RestoreWallet {
         // MARK: - Dependencies
         @Injected private var viewModel: RestoreWalletViewModelType
         
+        // MARK: - Subviewcontrollers
+        private lazy var childNavigationController: BENavigationController = .init()
+        private lazy var childNavigationControllerVCWrapper: WLModalWrapperVC = .init(wrapped: childNavigationController)
+        
         // MARK: - Subviews
-        lazy var iCloudRestoreButton = WLButton.stepButton(enabledColor: .textWhite, textColor: .textBlack, label: " " + L10n.restoreUsingICloud)
+        private lazy var iCloudRestoreButton = WLButton.stepButton(enabledColor: .textWhite, textColor: .textBlack, label: " " + L10n.restoreUsingICloud)
             .onTap(self, action: #selector(restoreFromICloud))
-        lazy var restoreManuallyButton = WLButton.stepButton(type: .sub, label: L10n.restoreManually)
+        private lazy var restoreManuallyButton = WLButton.stepButton(type: .sub, label: L10n.restoreManually)
             .onTap(self, action: #selector(restoreManually))
         
         // MARK: - Methods
@@ -39,34 +43,52 @@ extension RestoreWallet {
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
             
+            viewModel.isLoadingDriver
+                .drive(onNext: {[weak self] isLoading in
+                    isLoading ? self?.childNavigationControllerVCWrapper.showIndetermineHud(): self?.childNavigationControllerVCWrapper.hideHud()
+                })
+                .disposed(by: disposeBag)
+            
             viewModel.errorSignal
                 .emit(onNext: {[weak self] message in
                     self?.showAlert(title: L10n.error, message: message)
+                })
+                .disposed(by: disposeBag)
+            
+            viewModel.finishedSignal
+                .emit(onNext: { [weak self] in
+                    self?.childNavigationControllerVCWrapper.dismiss(animated: true, completion: nil)
                 })
                 .disposed(by: disposeBag)
         }
         
         // MARK: - Navigation
         private func navigate(to scene: RestoreWallet.NavigatableScene?) {
+            guard let scene = scene else {return}
+            if childNavigationControllerVCWrapper.presentingViewController == nil {
+                present(childNavigationControllerVCWrapper, animated: true, completion: nil)
+            }
+            
             switch scene {
             case .enterPhrases:
-                let wrappedVC = RecoveryEnterSeedsViewController()
-                wrappedVC.completion = {[weak self] phrases in
+                let vc = RecoveryEnterSeedsViewController()
+                vc.dismissAfterCompletion = false
+                vc.completion = {[weak self] phrases in
                     self?.viewModel.handlePhrases(phrases)
                 }
-                let vc = WLModalWrapperVC(wrapped: wrappedVC)
-                present(vc, animated: true, completion: nil)
+                
+                childNavigationController.setViewControllers([vc], animated: false)
             case .restoreFromICloud:
-                let wrappedVC = RestoreICloud.ViewController()
-                let vc = WLModalWrapperVC(wrapped: wrappedVC)
-                present(vc, animated: true, completion: nil)
+                let vc = RestoreICloud.ViewController()
+                childNavigationController.setViewControllers([vc], animated: false)
             case .derivableAccounts(let phrases):
                 let viewModel = DerivableAccounts.ViewModel(phrases: phrases)
-                let dvc = DerivableAccounts.ViewController(viewModel: viewModel)
-                let vc = WLModalWrapperVC(wrapped: dvc)
-                present(vc, animated: true, completion: nil)
-            default:
-                break
+                let vc = DerivableAccounts.ViewController(viewModel: viewModel)
+                childNavigationController.pushViewController(vc, animated: true)
+            case .reserveName(let owner):
+                let viewModel = ReserveName.ViewModel(owner: owner, handler: viewModel)
+                let vc = ReserveName.ViewController(viewModel: viewModel)
+                childNavigationController.pushViewController(vc, animated: true)
             }
         }
         

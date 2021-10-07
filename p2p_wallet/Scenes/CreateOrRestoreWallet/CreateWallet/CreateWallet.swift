@@ -11,6 +11,7 @@ struct CreateWallet {
     enum NavigatableScene {
         case termsAndConditions
         case createPhrases
+        case reserveName(owner: String)
         case dismiss
     }
 }
