@@ -85,7 +85,7 @@ extension DerivableAccounts {
             separator2.autoPinEdge(toSuperviewEdge: .trailing)
             
             let button = WLButton.stepButton(type: .black, label: L10n.restore)
-                .onTap(self, action: #selector(dismissAndRestore))
+                .onTap(self, action: #selector(restore))
             view.addSubview(button)
             button.autoPinEdge(.top, to: .bottom, of: separator2, withOffset: 16)
             button.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
@@ -136,10 +136,8 @@ extension DerivableAccounts {
             viewModel.chooseDerivationPath()
         }
         
-        @objc func dismissAndRestore() {
-            self.dismiss(animated: true) { [weak self] in
-                self?.viewModel.restoreAccount()
-            }
+        @objc func restore() {
+            viewModel.restoreAccount()
         }
     }
 }
