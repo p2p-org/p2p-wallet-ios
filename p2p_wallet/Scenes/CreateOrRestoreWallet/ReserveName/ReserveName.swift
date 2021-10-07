@@ -9,7 +9,5 @@ import Foundation
 import RxCocoa
 
 struct ReserveName {
-    enum NavigatableScene {
-        case showCaptcha
-    }
+    
 }
