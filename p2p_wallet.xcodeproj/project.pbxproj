@@ -229,6 +229,7 @@
 		BC6FEDA0270C475B002B6255 /* ReserveName.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6FED9C270C475B002B6255 /* ReserveName.ViewModel.swift */; };
 		BC6FEDA1270C475B002B6255 /* ReserveName.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6FED9D270C475B002B6255 /* ReserveName.RootView.swift */; };
 		BC6FEDA3270D57D1002B6255 /* NameService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6FEDA2270D57D1002B6255 /* NameService.swift */; };
+		BC6FEDA7270EEFEF002B6255 /* WLBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6FEDA6270EEFEF002B6255 /* WLBannerView.swift */; };
 		BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75339B257F2953007A00D9 /* Date+Extensions.swift */; };
 		BC7533AA257F31D3007A00D9 /* LazyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7533A9257F31D3007A00D9 /* LazyLabel.swift */; };
 		BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7AD0E7254A540700B4A070 /* WLButton.swift */; };
@@ -639,6 +640,7 @@
 		BC6FED9C270C475B002B6255 /* ReserveName.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.ViewModel.swift; sourceTree = "<group>"; };
 		BC6FED9D270C475B002B6255 /* ReserveName.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.RootView.swift; sourceTree = "<group>"; };
 		BC6FEDA2270D57D1002B6255 /* NameService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameService.swift; sourceTree = "<group>"; };
+		BC6FEDA6270EEFEF002B6255 /* WLBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBannerView.swift; sourceTree = "<group>"; };
 		BC75339B257F2953007A00D9 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		BC7533A9257F31D3007A00D9 /* LazyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyLabel.swift; sourceTree = "<group>"; };
 		BC7AD0E7254A540700B4A070 /* WLButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLButton.swift; sourceTree = "<group>"; };
@@ -1952,6 +1954,7 @@
 				BCDABE7B26FC7E1C00E083B8 /* WLOptionsView.swift */,
 				BC19DF522701A24E00A3A8D8 /* WLBalanceView.swift */,
 				BC19DF582701BC9100A3A8D8 /* WLDefaultOptionView.swift */,
+				BC6FEDA6270EEFEF002B6255 /* WLBannerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2386,6 +2389,7 @@
 				BC699AB925F9E69B00F57209 /* WLPhrasesListView.swift in Sources */,
 				BC32A393254A77A9002156F0 /* UIViewController+Extensions.swift in Sources */,
 				BC53E23E26578224005624CC /* AuthenticationHandler.swift in Sources */,
+				BC6FEDA7270EEFEF002B6255 /* WLBannerView.swift in Sources */,
 				BC8F6945260AE69E002FDCCD /* WLSectionHeaderView.swift in Sources */,
 				BCBE148725EF3CF90014BCE5 /* EditableWalletCell.swift in Sources */,
 				BC46075A266F325500A12E07 /* WalletDetail.swift in Sources */,
