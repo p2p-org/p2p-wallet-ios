@@ -12,6 +12,7 @@ import Action
 extension HomeCollectionView {
     class ActiveWalletsSection: WalletsSection {
         var openProfileAction: CocoaAction?
+        var reserveNameAction: CocoaAction?
         
         init(index: Int, viewModel: WalletsRepository) {
             super.init(
@@ -30,6 +31,7 @@ extension HomeCollectionView {
         override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
             let view = super.configureHeader(indexPath: indexPath) as? HeaderView
             view?.openProfileAction = openProfileAction
+            view?.reserveNameAction = reserveNameAction
             return view
         }
     }

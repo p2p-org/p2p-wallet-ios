@@ -23,6 +23,13 @@ class HomeCollectionView: WalletsCollectionView {
             (self.activeWalletsSection as! ActiveWalletsSection).openProfileAction = openProfileAction
         }
     }
+    
+    var reserveNameAction: CocoaAction? {
+        didSet {
+            (self.activeWalletsSection as! ActiveWalletsSection).reserveNameAction = reserveNameAction
+        }
+    }
+    
     var buyAction: CocoaAction? {
         didSet {
             friendSection.buyAction = buyAction

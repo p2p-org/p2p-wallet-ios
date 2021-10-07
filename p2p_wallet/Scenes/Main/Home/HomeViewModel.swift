@@ -18,12 +18,16 @@ enum HomeNavigatableScene {
     case swapToken
     case allProducts
     case profile
+    case reserveName(owner: String)
     case walletDetail(wallet: Wallet)
     case walletSettings(wallet: Wallet)
 }
 
 class HomeViewModel {
     // MARK: - Constants
+    
+    // MARK: - Dependencies
+    @Injected var keychainStorage: KeychainAccountStorage
     
     // MARK: - Properties
     let walletsRepository: WalletsRepository
@@ -70,4 +74,10 @@ class HomeViewModel {
 //    @objc func showDetail() {
 //        
 //    }
+}
+
+extension HomeViewModel: ReserveNameHandler {
+    func handleName(_ name: String?) {
+        print(name)
+    }
 }
