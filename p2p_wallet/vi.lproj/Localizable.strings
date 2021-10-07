@@ -509,3 +509,5 @@
 "name" = "tên";
 "%@ isn’t available" = "%@ không khả dụng";
 "Could not check name’s availability. Please check your internet connection!" = "Không thể kiểm tra tính khả dụng của tên. Xin vui lòng kiểm tra kết nối Internet của bạn!";
+"Reserve your P2P username now" = "Đặt tên người dùng P2P của bạn ngay bây giờ";
+"Any token can be received using username regardless of whether it is in your wallets list" = "Bất kỳ token nào cũng có thể được nhận bằng tên người dùng bất kể nó có trong danh sách ví của bạn hay không";
