@@ -1248,7 +1248,6 @@
 				BCE42DF125DF9C360021540E /* Onboarding */,
 				BCEB206825E1559500B54FEF /* Main */,
 				BC1FFECD2629748F0014F027 /* ResetPinCodeWithSeedPhrases */,
-				BC6FED99270C4732002B6255 /* Commons */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -1274,14 +1273,6 @@
 				BC6FED9D270C475B002B6255 /* ReserveName.RootView.swift */,
 			);
 			path = ReserveName;
-			sourceTree = "<group>";
-		};
-		BC6FED99270C4732002B6255 /* Commons */ = {
-			isa = PBXGroup;
-			children = (
-				BC6FED98270C4709002B6255 /* ReserveName */,
-			);
-			path = Commons;
 			sourceTree = "<group>";
 		};
 		BC753397257F28A8007A00D9 /* Resources */ = {
@@ -1832,6 +1823,7 @@
 				BC32A355254A69EA002156F0 /* CreateOrRestoreWallet.WelcomeVC.swift */,
 				BCE42DFE25DFA0830021540E /* CreateWallet */,
 				BCE42E1425DFA4F90021540E /* RestoreWallet */,
+				BC6FED98270C4709002B6255 /* ReserveName */,
 			);
 			path = CreateOrRestoreWallet;
 			sourceTree = "<group>";

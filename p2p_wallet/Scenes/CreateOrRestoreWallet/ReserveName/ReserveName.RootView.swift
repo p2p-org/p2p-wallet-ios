@@ -198,6 +198,7 @@ extension ReserveName {
         }
         
         @objc func continueButtonDidTouch() {
+            endEditing(true)
             manager.startGTCaptchaWith(animated: true)
         }
         
@@ -240,7 +241,7 @@ extension ReserveName.RootView: GT3CaptchaManagerDelegate {
         else {
             return
         }
-        
+        viewModel.reserveName(geetest_seccode: geetest_seccode, geetest_challenge: geetest_challenge, geetest_validate: geetest_validate)
     }
     
     func shouldUseDefaultSecondaryValidate(_ manager: GT3CaptchaManager) -> Bool {

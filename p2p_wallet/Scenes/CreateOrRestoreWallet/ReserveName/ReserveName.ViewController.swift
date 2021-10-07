@@ -51,19 +51,11 @@ extension ReserveName {
         
         override func bind() {
             super.bind()
-            viewModel.navigationDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+            viewModel.isPostingDriver
+                .drive(onNext: {[weak self] isPosting in
+                    isPosting ? self?.showIndetermineHud(): self?.hideHud()
+                })
                 .disposed(by: disposeBag)
-        }
-        
-        // MARK: - Navigation
-        private func navigate(to scene: NavigatableScene?) {
-            switch scene {
-            case .showCaptcha:
-                break
-            case .none:
-                break
-            }
         }
     }
 }
