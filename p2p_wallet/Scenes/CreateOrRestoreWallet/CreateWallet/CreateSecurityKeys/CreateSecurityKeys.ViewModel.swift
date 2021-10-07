@@ -76,6 +76,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         analyticsManager.log(event: .createWalletBackupToIcloudClick)
         accountStorage.saveToICloud(
             account: .init(
+                name: nil,
                 phrase: phrasesSubject.value.joined(separator: " "),
                 derivablePath: .default
             )

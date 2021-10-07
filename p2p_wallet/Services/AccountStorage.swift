@@ -139,10 +139,22 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameSt
     // MARK: - Name register
     func save(name: String) {
         keychain.set(name, forKey: nameKey)
+        saveNameToICloudIfAccountSaved()
     }
     
     func getName() -> String? {
         keychain.get(nameKey)
+    }
+    
+    func saveNameToICloudIfAccountSaved() {
+        if let account = accountFromICloud()?.first(where: {$0.phrase.components(separatedBy: " ") == phrases}) {
+            let account = Account(
+                name: getName(),
+                phrase: account.phrase,
+                derivablePath: account.derivablePath
+            )
+            saveToICloud(account: account)
+        }
     }
     
     // MARK: - Helpers

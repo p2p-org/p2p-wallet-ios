@@ -122,13 +122,15 @@ class BackupVC: ProfileVCBase {
                 isRequired: false,
                 isFullScreen: false,
                 completion: { [weak self] in
-                    self?.accountStorage.saveToICloud(
+                    guard let self = self else {return}
+                    self.accountStorage.saveToICloud(
                         account: .init(
+                            name: self.accountStorage.getName(),
                             phrase: account.joined(separator: " "),
-                            derivablePath: self?.accountStorage.getDerivablePath()
+                            derivablePath: self.accountStorage.getDerivablePath() ?? .default
                         )
                     )
-                    self?.didBackupSubject.accept(true)
+                    self.didBackupSubject.accept(true)
                 }
             )
         )
