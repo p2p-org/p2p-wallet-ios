@@ -161,27 +161,11 @@ extension RestoreWallet.ViewModel: ReserveNameHandler {
 
 private extension RestoreWallet.ViewModel {
     func finish() {
-        guard let derivablePath = derivablePath else {return}
-        
-        do {
-            guard let phrases = self.phrases else {
-                handler.creatingOrRestoringWalletDidCancel()
-                return
-            }
-            try accountStorage.save(phrases: phrases)
-            try accountStorage.save(derivableType: derivablePath.type)
-            try accountStorage.save(walletIndex: derivablePath.walletIndex)
-            if let name = self.name {
-                accountStorage.save(name: name)
-            }
-            
-            finishedSubject.accept(())
-            handler.restoringWalletDidComplete()
-        } catch {
-            errorSubject.accept(error.readableDescription)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-                self?.handler.creatingOrRestoringWalletDidCancel()
-            }
-        }
+        finishedSubject.accept(())
+        handler.restoringWalletDidComplete(
+            phrases: phrases,
+            derivablePath: derivablePath,
+            name: name
+        )
     }
 }
