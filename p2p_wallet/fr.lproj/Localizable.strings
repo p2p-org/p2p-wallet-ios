@@ -509,3 +509,5 @@
 "name" = "nom";
 "%@ isn’t available" = "%@ n'est pas disponible";
 "Could not check name’s availability. Please check your internet connection!" = "Impossible de vérifier la disponibilité du nom. S'il vous plait, vérifiez votre connexion internet!";
+"Reserve your P2P username now" = "Réservez votre nom d'utilisateur P2P maintenant";
+"Any token can be received using username regardless of whether it is in your wallets list" = "N'importe quel jeton peut être reçu en utilisant le nom d'utilisateur, qu'il soit ou non dans votre liste de portefeuilles";
