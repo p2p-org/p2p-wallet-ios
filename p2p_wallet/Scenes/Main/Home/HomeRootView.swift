@@ -20,6 +20,7 @@ class HomeRootView: BEView {
         let collectionView = HomeCollectionView(walletsRepository: viewModel.walletsRepository)
         collectionView.delegate = self
         collectionView.openProfileAction = viewModel.navigationAction(scene: .profile)
+        collectionView.reserveNameAction = viewModel.navigationAction(scene: .reserveName(owner: viewModel.keychainStorage.account?.publicKey.base58EncodedString ?? ""))
         collectionView.buyAction = viewModel.navigationAction(scene: .buyToken)
         collectionView.receiveAction = viewModel.navigationAction(scene: .receiveToken)
         collectionView.sendAction = viewModel.navigationAction(scene: .scanQr)
