@@ -180,10 +180,10 @@ private class CustomReserveNameVC: WLIndicatorModalVC, CustomPresentableViewCont
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        view.addSubview(headerView)
+        containerView.addSubview(headerView)
         headerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
         
-        view.addSubview(rootView)
+        containerView.addSubview(rootView)
         rootView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         rootView.autoPinEdge(.top, to: .bottom, of: headerView)
     }
