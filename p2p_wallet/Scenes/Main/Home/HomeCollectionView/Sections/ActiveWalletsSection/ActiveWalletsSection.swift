@@ -12,6 +12,8 @@ import Action
 extension HomeCollectionView {
     class ActiveWalletsSection: WalletsSection {
         var openProfileAction: CocoaAction?
+        var reserveNameAction: CocoaAction?
+        @Injected private var keychainStorage: KeychainAccountStorage
         
         init(index: Int, viewModel: WalletsRepository) {
             super.init(
@@ -30,7 +32,15 @@ extension HomeCollectionView {
         override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
             let view = super.configureHeader(indexPath: indexPath) as? HeaderView
             view?.openProfileAction = openProfileAction
+            view?.reserveNameAction = reserveNameAction
             return view
+        }
+        
+        override func dataDidLoad() {
+            super.dataDidLoad()
+            let shouldShowBanner = keychainStorage.getName() == nil && !Defaults.forceCloseNameServiceBanner
+            let view = headerView() as? HeaderView
+            view?.setHideBanner(!shouldShowBanner)
         }
     }
 }

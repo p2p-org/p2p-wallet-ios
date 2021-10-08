@@ -56,6 +56,14 @@ extension ReserveName {
                     isPosting ? self?.showIndetermineHud(): self?.hideHud()
                 })
                 .disposed(by: disposeBag)
+            
+            viewModel.didReserveSignal
+                .emit(onNext: { [weak self] in
+                    if self?.viewModel.goBackOnReserved == true {
+                        self?.back()
+                    }
+                })
+                .disposed(by: disposeBag)
         }
     }
 }

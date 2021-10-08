@@ -23,6 +23,13 @@ class HomeCollectionView: WalletsCollectionView {
             (self.activeWalletsSection as! ActiveWalletsSection).openProfileAction = openProfileAction
         }
     }
+    
+    var reserveNameAction: CocoaAction? {
+        didSet {
+            (self.activeWalletsSection as! ActiveWalletsSection).reserveNameAction = reserveNameAction
+        }
+    }
+    
     var buyAction: CocoaAction? {
         didSet {
             friendSection.buyAction = buyAction
@@ -58,6 +65,13 @@ class HomeCollectionView: WalletsCollectionView {
             activeWalletsSection: ActiveWalletsSection(index: 0, viewModel: walletsRepository),
             hiddenWalletsSection: HomeHiddenWalletsSection(index: 1, viewModel: walletsRepository),
             additionalSections: [friendSection]
+        )
+    }
+    
+    override func dataDidChangeObservable() -> Observable<Void> {
+        Observable.merge(
+            walletsRepository.dataDidChange,
+            UserDefaults.standard.rx.observe(Bool.self, "forceCloseNameServiceBanner").skip(1).map {_ in ()}
         )
     }
 }
