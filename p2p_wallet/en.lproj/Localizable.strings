@@ -512,3 +512,4 @@
 "Reserve your P2P username now" = "Reserve your P2P username now";
 "Any token can be received using username regardless of whether it is in your wallets list" = "Any token can be received using username regardless of whether it is in your wallets list";
 "Username %@.p2p.sol has already been reserved for this user" = "Username %@.p2p.sol has already been reserved for this user";
+"Username %@ is successfully reserved" = "Username %@ is successfully reserved";
