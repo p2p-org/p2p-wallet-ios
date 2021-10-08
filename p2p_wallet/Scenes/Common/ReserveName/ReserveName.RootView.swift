@@ -103,8 +103,9 @@ extension ReserveName {
                 textField
                 
                 BEStackViewSpacing(8)
-                UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
+                UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
                     verificationIndicatorView
+                        .withContentHuggingPriority(.required, for: .horizontal)
                     verificationLabel
                 }
                 
