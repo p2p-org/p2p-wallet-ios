@@ -84,7 +84,7 @@ class UsernameVC: ProfileVCBase {
         contentView.stackView.axis = .vertical
         contentView.stackView.spacing = 22
         contentView.stackView.addArrangedSubviews {
-            UILabel(text: accountStorage.getName(), textSize: 21, weight: .semibold)
+            UILabel(text: accountStorage.getName()?.withNameServiceSuffix(), textSize: 21, weight: .semibold)
             ReceiveToken.QrCodeView(size: 220, coinLogoSize: 56)
                 .with(string: accountStorage.account?.publicKey.base58EncodedString, token: .nativeSolana)
                 .centeredHorizontallyView
@@ -93,16 +93,37 @@ class UsernameVC: ProfileVCBase {
     }
     
     @objc private func copyToClipboardButtonDidTouch() {
-        UIApplication.shared.copyToClipboard(accountStorage.getName(), alert: true, alertMessage: L10n.copiedToClipboard)
+        UIApplication.shared.copyToClipboard(accountStorage.getName()?.withNameServiceSuffix(), alert: true, alertMessage: L10n.copiedToClipboard)
     }
     
     @objc private func shareButtonDidTouch() {
-        guard let name = accountStorage.getName() else {return}
+        guard let name = accountStorage.getName()?.withNameServiceSuffix() else {return}
         let vc = UIActivityViewController(activityItems: [name], applicationActivities: nil)
         present(vc, animated: true, completion: nil)
     }
     
     @objc private func saveButtonDidTouch() {
-        
+        UIImageWriteToSavedPhotosAlbum(contentView.asImage(), self, #selector(saveImageCallback), nil)
+    }
+    
+    @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer)
+    {
+        if let error = error {
+            showError(error)
+        } else {
+            UIApplication.shared.showToast(message: "✅ \(L10n.savedToPhotoLibrary)")
+        }
+    }
+}
+
+private extension UIView {
+    
+    // Using a function since `var image` might conflict with an existing variable
+    // (like on `UIImageView`)
+    func asImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
+        }
     }
 }
