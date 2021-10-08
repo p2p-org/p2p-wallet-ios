@@ -512,3 +512,4 @@
 "Reserve your P2P username now" = "Đặt tên người dùng P2P của bạn ngay bây giờ";
 "Any token can be received using username regardless of whether it is in your wallets list" = "Bất kỳ token nào cũng có thể được nhận bằng tên người dùng bất kể nó có trong danh sách ví của bạn hay không";
 "Username %@.p2p.sol has already been reserved for this user" = "Tên người dùng %@.p2p.sol đã được dành riêng cho người dùng này";
+"Username %@ is successfully reserved" = "Tên người dùng %@ đã được bảo lưu thành công";

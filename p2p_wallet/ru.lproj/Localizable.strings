@@ -512,3 +512,4 @@
 "Reserve your P2P username now" = "Зарезервируйте свое имя пользователя P2P прямо сейчас";
 "Any token can be received using username regardless of whether it is in your wallets list" = "Любой токен можно получить, используя имя пользователя, независимо от того, есть ли он в списке ваших кошельков.";
 "Username %@.p2p.sol has already been reserved for this user" = "Имя пользователя %@.p2p.sol уже зарезервировано для этого пользователя.";
+"Username %@ is successfully reserved" = "Имя пользователя %@ успешно зарезервировано";
