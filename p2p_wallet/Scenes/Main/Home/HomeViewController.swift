@@ -134,7 +134,9 @@ class HomeViewController: BaseVC {
             let profileVC = scenesFactory.makeProfileVC(reserveNameHandler: viewModel)
             self.show(profileVC, sender: nil)
         case .reserveName(let owner):
-            let vc = scenesFactory.makeReserveNameVC(owner: owner, handler: viewModel)
+            let vm = ReserveName.ViewModel(owner: owner, handler: viewModel)
+            vm.goBackOnReserved = true
+            let vc = CustomReserveNameVC(viewModel: vm)
             self.show(vc, sender: nil)
         case .walletDetail(let wallet):
             guard let pubkey = wallet.pubkey else {return}
@@ -148,5 +150,64 @@ class HomeViewController: BaseVC {
             let vc = scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
             self.present(vc, animated: true, completion: nil)
         }
+    }
+}
+
+private class CustomReserveNameVC: WLIndicatorModalVC, CustomPresentableViewController {
+    var transitionManager: UIViewControllerTransitioningDelegate?
+    
+    // MARK: - Dependencies
+    private var viewModel: ReserveNameViewModelType
+    
+    private lazy var headerView: UIView = {
+        let view = UIView(forAutoLayout: ())
+        let label = UILabel(text: L10n.reserveYourP2PUsername, textSize: 17, weight: .semibold)
+        view.addSubview(label)
+        label.autoPinEdgesToSuperviewEdges(with: .init(all: 20))
+        let separator = UIView.defaultSeparator()
+        view.addSubview(separator)
+        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        return view
+    }()
+    private lazy var rootView = ReserveName.RootView(viewModel: viewModel)
+    
+    // MARK: - Initializer
+    init(viewModel: ReserveNameViewModelType) {
+        self.viewModel = viewModel
+        super.init()
+    }
+    
+    // MARK: - Methods
+    override func setUp() {
+        super.setUp()
+        view.addSubview(headerView)
+        headerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
+        
+        view.addSubview(rootView)
+        rootView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        rootView.autoPinEdge(.top, to: .bottom, of: headerView)
+    }
+    
+    override func bind() {
+        super.bind()
+        viewModel.isPostingDriver
+            .drive(onNext: {[weak self] isPosting in
+                isPosting ? self?.showIndetermineHud(): self?.hideHud()
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.didReserveSignal
+            .emit(onNext: { [weak self] in
+                if self?.viewModel.goBackOnReserved == true {
+                    self?.back()
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
+        super.calculateFittingHeightForPresentedView(targetWidth: targetWidth)
+            + headerView.fittingHeight(targetWidth: targetWidth)
+            + rootView.fittingHeight(targetWidth: targetWidth)
     }
 }
