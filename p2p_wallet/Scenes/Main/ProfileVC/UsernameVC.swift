@@ -18,6 +18,8 @@ class UsernameVC: ProfileVCBase {
         contentInset: .init(x: 38, y: 24)
     )
     
+    private lazy var addressLabel = UILabel(text: accountStorage.account?.publicKey.base58EncodedString, textSize: 14, weight: .medium, numberOfLines: 0, textAlignment: .center)
+    
     override func setUp() {
         title = L10n.yourP2pUsername
         super.setUp()
@@ -88,8 +90,10 @@ class UsernameVC: ProfileVCBase {
             ReceiveToken.QrCodeView(size: 220, coinLogoSize: 56)
                 .with(string: accountStorage.account?.publicKey.base58EncodedString, token: .nativeSolana)
                 .centeredHorizontallyView
-            UILabel(text: accountStorage.account?.publicKey.base58EncodedString, textSize: 14, weight: .medium, numberOfLines: 0, textAlignment: .center)
+            addressLabel
         }
+        
+        configureAddressLabel()
     }
     
     @objc private func copyToClipboardButtonDidTouch() {
@@ -113,6 +117,16 @@ class UsernameVC: ProfileVCBase {
         } else {
             UIApplication.shared.showToast(message: "✅ \(L10n.savedToPhotoLibrary)")
         }
+    }
+    
+    private func configureAddressLabel() {
+        guard let text = addressLabel.text,
+              text.count > 10 else {return}
+        let aStr = NSMutableAttributedString()
+            .text(text, size: 14, weight: .medium)
+        aStr.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: NSRange(location: 0, length: 4))
+        aStr.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: NSRange(location: text.count - 4, length: 4))
+        addressLabel.attributedText = aStr
     }
 }
 
