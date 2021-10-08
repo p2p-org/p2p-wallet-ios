@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import Action
+import RxCocoa
 
 protocol HomeScenesFactory {
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController
@@ -212,7 +213,6 @@ private class CustomReserveNameVC: WLIndicatorModalVC, CustomPresentableViewCont
                             
                             if choose == 1 {
                                 self?.viewModel.skip()
-                                self?.back()
                             }
                         }
                     )
@@ -226,7 +226,10 @@ private class CustomReserveNameVC: WLIndicatorModalVC, CustomPresentableViewCont
             })
             .disposed(by: disposeBag)
         
-        viewModel.didReserveSignal
+        Signal.merge(
+            viewModel.didReserveSignal,
+            viewModel.didSkipSignal
+        )
             .emit(onNext: { [weak self] in
                 if self?.viewModel.goBackOnReserved == true {
                     self?.back()

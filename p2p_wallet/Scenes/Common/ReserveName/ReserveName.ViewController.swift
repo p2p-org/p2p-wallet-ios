@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import RxCocoa
 
 extension ReserveName {
     class ViewController: BaseVC {
@@ -86,7 +87,10 @@ extension ReserveName {
                 })
                 .disposed(by: disposeBag)
             
-            viewModel.didReserveSignal
+            Signal.merge(
+                viewModel.didReserveSignal,
+                viewModel.didSkipSignal
+            )
                 .emit(onNext: { [weak self] in
                     if self?.viewModel.goBackOnReserved == true {
                         self?.back()
