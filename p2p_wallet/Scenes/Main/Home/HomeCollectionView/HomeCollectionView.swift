@@ -67,4 +67,11 @@ class HomeCollectionView: WalletsCollectionView {
             additionalSections: [friendSection]
         )
     }
+    
+    override func dataDidChangeObservable() -> Observable<Void> {
+        Observable.merge(
+            walletsRepository.dataDidChange,
+            UserDefaults.standard.rx.observe(Bool.self, "forceCloseNameServiceBanner").skip(1).map {_ in ()}
+        )
+    }
 }

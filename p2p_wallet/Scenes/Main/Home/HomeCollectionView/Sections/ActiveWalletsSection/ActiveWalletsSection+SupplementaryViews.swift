@@ -17,11 +17,17 @@ extension HomeCollectionView.ActiveWalletsSection {
         var openProfileAction: CocoaAction?
         var reserveNameAction: CocoaAction?
         
-        private lazy var bannerView = WLBannerView(
-            title: L10n.reserveYourP2PUsernameNow,
-            description: L10n.anyTokenCanBeReceivedUsingUsernameRegardlessOfWhetherItIsInYourWalletsList
-        )
-            .onTap(self, action: #selector(bannerDidTouch))
+        private lazy var bannerView: WLBannerView = {
+            let bannerView = WLBannerView(
+                title: L10n.reserveYourP2PUsernameNow,
+                description: L10n.anyTokenCanBeReceivedUsingUsernameRegardlessOfWhetherItIsInYourWalletsList
+            )
+                .onTap(self, action: #selector(bannerDidTouch))
+            bannerView.closeButtonCompletion = {
+                Defaults.forceCloseNameServiceBanner = true
+            }
+            return bannerView
+        }()
         
         override func commonInit() {
             super.commonInit()
@@ -40,6 +46,10 @@ extension HomeCollectionView.ActiveWalletsSection {
             
             stackView.addArrangedSubview(headerView.padding(.init(x: 20, y: 0)))
             stackView.addArrangedSubview(bannerView.padding(.init(x: 20, y: 0)))
+        }
+        
+        func setHideBanner(_ isHidden: Bool) {
+            bannerView.superview!.isHidden = isHidden
         }
         
         @objc func avatarImageViewDidTouch() {

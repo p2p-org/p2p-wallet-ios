@@ -21,6 +21,8 @@ class WLBannerView: BEView {
         }
     }
     
+    var closeButtonCompletion: (() -> Void)?
+    
     // MARK: - Subviews
     private lazy var imageLayer: CALayer = {
         let image1 = UIImage.bannerBackground.cgImage
@@ -66,6 +68,7 @@ class WLBannerView: BEView {
                 descriptionLabel
             }
             UIImageView(width: 32, height: 32, image: .closeBanner)
+                .onTap(self, action: #selector(closeButtonDidTouch))
         }
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(top: 18, left: 15, bottom: 29, right: 12))
@@ -82,6 +85,10 @@ class WLBannerView: BEView {
         let points = gradientPoints(size: gradientLayer.bounds.size, cssAngle: 258.88)
         gradientLayer.startPoint = points.start
         gradientLayer.endPoint = points.end
+    }
+    
+    @objc func closeButtonDidTouch() {
+        closeButtonCompletion?()
     }
 }
 

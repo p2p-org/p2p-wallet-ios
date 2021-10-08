@@ -70,6 +70,7 @@ extension Root {
             Defaults.didBackupOffline = false
             Defaults.renVMSession = nil
             Defaults.renVMProcessingTxs = []
+            Defaults.forceCloseNameServiceBanner = false
             reload()
         }
         

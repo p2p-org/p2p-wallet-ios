@@ -78,6 +78,9 @@ class HomeViewModel {
 
 extension HomeViewModel: ReserveNameHandler {
     func handleName(_ name: String?) {
-        print(name)
+        if let name = name {
+            keychainStorage.save(name: name)
+            Defaults.forceCloseNameServiceBanner = true
+        }
     }
 }
