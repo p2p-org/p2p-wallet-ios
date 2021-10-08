@@ -514,3 +514,6 @@
 "Username %@.p2p.sol has already been reserved for this user" = "Le nom d'utilisateur %@.p2p.sol a déjà été réservé pour cet utilisateur";
 "Username %@ is successfully reserved" = "Le nom d'utilisateur %@ est réservé avec succès";
 "Not yet reserved" = "Pas encore réservé";
+"Your p2p username" = "Votre nom d'utilisateur p2p";
+"Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Votre nom d'utilisateur P2P vous permet de recevoir n'importe quel jeton au sein du réseau Solana même s'il n'est pas inclus dans votre liste de portefeuille.";
+"Save" = "Sauvegarder";

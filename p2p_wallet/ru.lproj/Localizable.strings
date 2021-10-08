@@ -514,3 +514,6 @@
 "Username %@.p2p.sol has already been reserved for this user" = "Имя пользователя %@.p2p.sol уже зарезервировано для этого пользователя.";
 "Username %@ is successfully reserved" = "Имя пользователя %@ успешно зарезервировано";
 "Not yet reserved" = "Еще не зарезервировано";
+"Your p2p username" = "Ваше имя пользователя p2p";
+"Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Ваше имя пользователя P2P позволяет вам получать любой токен в сети Solana, даже если он не включен в список вашего кошелька.";
+"Save" = "Сохранить";
