@@ -16,7 +16,7 @@ protocol HomeScenesFactory {
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> CustomPresentableViewController
     func makeMyProductsViewController() -> MyProductsViewController
-    func makeProfileVC() -> ProfileVC
+    func makeProfileVC(reserveNameHandler: ReserveNameHandler) -> ProfileVC
     func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
 }
@@ -131,7 +131,7 @@ class HomeViewController: BaseVC {
         case .profile:
             analyticsManager.log(event: .mainScreenSettingsOpen)
             analyticsManager.log(event: .settingsOpen(fromPage: "main_screen"))
-            let profileVC = scenesFactory.makeProfileVC()
+            let profileVC = scenesFactory.makeProfileVC(reserveNameHandler: viewModel)
             self.show(profileVC, sender: nil)
         case .reserveName(let owner):
             let vc = scenesFactory.makeReserveNameVC(owner: owner, handler: viewModel)

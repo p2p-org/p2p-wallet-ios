@@ -10,7 +10,6 @@ import Foundation
 protocol TabBarScenesFactory {
     func makeHomeViewController() -> HomeViewController
     func makeInvestmentsViewController() -> InvestmentsViewController
-    func makeProfileVC() -> ProfileVC
 }
 
 class TabBarVC: BEPagesVC {
@@ -87,14 +86,6 @@ class TabBarVC: BEPagesVC {
     @objc func switchTab(_ gesture: UIGestureRecognizer) {
         let tag = gesture.view!.tag
         
-        // show profile modal
-        if tag == 3 {
-            let vc = scenesFactory.makeProfileVC()
-            present(vc, animated: true, completion: nil)
-            return
-        }
-        
-        // or switch page
         moveToPage(tag)
     }
     
