@@ -51,6 +51,35 @@ extension ReserveName {
         
         override func bind() {
             super.bind()
+            viewModel.initializingStateDriver
+                .drive(onNext: { [weak self] loadingState in
+                    switch loadingState {
+                    case .notRequested, .loading:
+                        self?.showIndetermineHud()
+                    case .loaded:
+                        self?.hideHud()
+                    case .error:
+                        self?.hideHud()
+                        self?.showAlert(
+                            title: L10n.error,
+                            message:
+                                L10n.ThereIsAnErrorOccurred.youCanEitherRetryOrReserveNameLaterInSettings,
+                            buttonTitles: [L10n.retry.uppercaseFirst, L10n.doThisLater],
+                            highlightedButtonIndex: 0,
+                            completion: { [weak self] choose in
+                                if choose == 0 {
+                                    self?.viewModel.reload()
+                                }
+                                
+                                if choose == 1 {
+                                    self?.viewModel.skip()
+                                }
+                            }
+                        )
+                    }
+                })
+                .disposed(by: disposeBag)
+            
             viewModel.isPostingDriver
                 .drive(onNext: {[weak self] isPosting in
                     isPosting ? self?.showIndetermineHud(): self?.hideHud()

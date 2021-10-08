@@ -127,22 +127,6 @@ extension ReserveName {
         }
         
         private func bind() {
-            viewModel.initializingStateDriver
-                .drive(onNext: { [weak self] loadingState in
-                    switch loadingState {
-                    case .notRequested, .loading:
-                        self?.showIndetermineHud()
-                    case .loaded:
-                        self?.hideHud()
-                    case .error:
-                        self?.showErrorView(title: L10n.error, description: L10n.somethingWentWrongPleaseTryAgainLater, retryAction: .init(workFactory: {[weak self] _ in
-                            self?.viewModel.reload()
-                            return .just(())
-                        }))
-                    }
-                })
-                .disposed(by: disposeBag)
-            
             viewModel.isNameValidLoadableDriver
                 .drive(onNext: {[weak self] loadableBool in
                     let textColor: UIColor
