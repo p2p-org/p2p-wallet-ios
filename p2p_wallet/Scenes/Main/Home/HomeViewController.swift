@@ -137,7 +137,7 @@ class HomeViewController: BaseVC {
             let vm = ReserveName.ViewModel(owner: owner, handler: viewModel)
             vm.goBackOnReserved = true
             let vc = CustomReserveNameVC(viewModel: vm)
-            self.show(vc, sender: nil)
+            self.present(vc, interactiveDismissalType: .standard)
         case .walletDetail(let wallet):
             guard let pubkey = wallet.pubkey else {return}
             
