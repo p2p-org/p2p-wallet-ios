@@ -82,6 +82,7 @@ extension ReserveName {
                 .disposed(by: disposeBag)
             
             viewModel.isPostingDriver
+                .skip(1)
                 .drive(onNext: {[weak self] isPosting in
                     isPosting ? self?.showIndetermineHud(): self?.hideHud()
                 })
