@@ -518,3 +518,4 @@
 "Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Ваше имя пользователя P2P позволяет вам получать любой токен в сети Solana, даже если он не включен в список вашего кошелька.";
 "Save" = "Сохранить";
 "Saved to photo library" = "Сохранено в фото-библиотеке";
+"There is an error occurred. You can either retry or reserve name later in Settings" = "Произошла ошибка. Вы можете повторить попытку или зарезервировать имя позже в настройках";

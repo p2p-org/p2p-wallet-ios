@@ -146,7 +146,7 @@ extension RestoreWallet.ViewModel: AccountRestorationHandler {
                 }
             }, onFailure: {[weak self] _ in
                 self?.isLoadingSubject.accept(false)
-                self?.navigationSubject.accept(.reserveName(owner: owner))
+                self?.finish()
             })
             .disposed(by: disposeBag)
     }
