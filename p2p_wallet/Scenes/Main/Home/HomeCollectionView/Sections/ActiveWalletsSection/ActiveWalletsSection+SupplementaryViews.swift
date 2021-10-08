@@ -46,6 +46,8 @@ extension HomeCollectionView.ActiveWalletsSection {
             
             stackView.addArrangedSubview(headerView.padding(.init(x: 20, y: 0)))
             stackView.addArrangedSubview(bannerView.padding(.init(x: 20, y: 0)))
+            
+            setHideBanner(true)
         }
         
         func setHideBanner(_ isHidden: Bool) {
