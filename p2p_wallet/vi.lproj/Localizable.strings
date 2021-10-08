@@ -514,3 +514,6 @@
 "Username %@.p2p.sol has already been reserved for this user" = "Tên người dùng %@.p2p.sol đã được dành riêng cho người dùng này";
 "Username %@ is successfully reserved" = "Tên người dùng %@ đã được bảo lưu thành công";
 "Not yet reserved" = "Chưa được đặt trước";
+"Your p2p username" = "Tên người dùng p2p của bạn";
+"Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Tên người dùng P2P của bạn cho phép bạn nhận bất kỳ token nào trong mạng Solana ngay cả khi nó không có trong danh sách ví của bạn.";
+"Save" = "Lưu";

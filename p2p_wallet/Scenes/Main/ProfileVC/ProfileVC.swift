@@ -73,6 +73,8 @@ class ProfileVC: ProfileVCBase {
                 .withTag(0)
                 .onTap(self, action: #selector(cellDidTouch(_:)))
             
+            BEStackViewSpacing(16)
+            
             createCell(
                 image: .settingsBackup,
                 text: L10n.backup,
@@ -252,7 +254,8 @@ class ProfileVC: ProfileVCBase {
                 let vc = scenesFactory.makeReserveNameVC(owner: accountStorage.account?.publicKey.base58EncodedString ?? "", handler: reserveNameHandler)
                 show(vc, sender: nil)
             } else {
-                // TODO: Show profile
+                let vc = UsernameVC()
+                show(vc, sender: nil)
             }
             
         case 1:
