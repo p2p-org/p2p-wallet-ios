@@ -513,3 +513,4 @@
 "Any token can be received using username regardless of whether it is in your wallets list" = "N'importe quel jeton peut être reçu en utilisant le nom d'utilisateur, qu'il soit ou non dans votre liste de portefeuilles";
 "Username %@.p2p.sol has already been reserved for this user" = "Le nom d'utilisateur %@.p2p.sol a déjà été réservé pour cet utilisateur";
 "Username %@ is successfully reserved" = "Le nom d'utilisateur %@ est réservé avec succès";
+"Not yet reserved" = "Pas encore réservé";

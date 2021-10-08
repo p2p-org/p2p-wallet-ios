@@ -11,6 +11,7 @@ import LocalAuthentication
 import SwiftUI
 
 protocol ProfileScenesFactory {
+    func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController
     func makeBackupVC() -> BackupVC
     func makeSelectFiatVC() -> SelectFiatVC
     func makeSelectNetworkVC() -> SelectNetworkVC
@@ -28,8 +29,10 @@ class ProfileVC: ProfileVCBase {
     // MARK: - Properties
     private var disposables = [DefaultsDisposable]()
     private let scenesFactory: ProfileScenesFactory
+    private let reserveNameHandler: ReserveNameHandler
     
     // MARK: - Subviews
+    private lazy var usernameLabel = UILabel(weight: .medium, textColor: .textSecondary)
     private lazy var backupShieldImageView = UIImageView(width: 17, height: 21, image: .backupShield)
     private lazy var fiatLabel = UILabel(weight: .medium, textColor: .textSecondary)
     private lazy var secureMethodsLabel = UILabel(weight: .medium, textColor: .textSecondary)
@@ -48,7 +51,8 @@ class ProfileVC: ProfileVCBase {
     }()
     
     // MARK: - Initializer
-    init(scenesFactory: ProfileScenesFactory) {
+    init(scenesFactory: ProfileScenesFactory, reserveNameHandler: ReserveNameHandler) {
+        self.reserveNameHandler = reserveNameHandler
         self.scenesFactory = scenesFactory
     }
     
@@ -60,14 +64,22 @@ class ProfileVC: ProfileVCBase {
         var languageTitle = L10n.language
         if languageTitle != "Language" {languageTitle += " (Language)"}
         
-        stackView.addArrangedSubviews([
+        stackView.addArrangedSubviews {
+            createCell(
+                image: .settingsUsername,
+                text: L10n.username.uppercaseFirst,
+                descriptionView: usernameLabel
+            )
+                .withTag(0)
+                .onTap(self, action: #selector(cellDidTouch(_:)))
+            
             createCell(
                 image: .settingsBackup,
                 text: L10n.backup,
                 descriptionView: backupShieldImageView
             )
                 .withTag(1)
-                .onTap(self, action: #selector(cellDidTouch(_:))),
+                .onTap(self, action: #selector(cellDidTouch(_:)))
             
             createCell(
                 image: .settingsCurrency,
@@ -75,7 +87,7 @@ class ProfileVC: ProfileVCBase {
                 descriptionView: fiatLabel
             )
                 .withTag(2)
-                .onTap(self, action: #selector(cellDidTouch(_:))),
+                .onTap(self, action: #selector(cellDidTouch(_:)))
             
             createCell(
                 image: .settingsNetwork,
@@ -83,7 +95,7 @@ class ProfileVC: ProfileVCBase {
                 descriptionView: networkLabel
             )
                 .withTag(3)
-                .onTap(self, action: #selector(cellDidTouch(_:))),
+                .onTap(self, action: #selector(cellDidTouch(_:)))
             
             createCell(
                 image: .settingsSecurity,
@@ -91,7 +103,7 @@ class ProfileVC: ProfileVCBase {
                 descriptionView: secureMethodsLabel
             )
                 .withTag(4)
-                .onTap(self, action: #selector(cellDidTouch(_:))),
+                .onTap(self, action: #selector(cellDidTouch(_:)))
             
             createCell(
                 image: .settingsLanguage,
@@ -99,7 +111,7 @@ class ProfileVC: ProfileVCBase {
                 descriptionView: activeLanguageLabel
             )
                 .withTag(5)
-                .onTap(self, action: #selector(cellDidTouch(_:))),
+                .onTap(self, action: #selector(cellDidTouch(_:)))
             
             createCell(
                 image: .settingsAppearance,
@@ -107,23 +119,23 @@ class ProfileVC: ProfileVCBase {
                 descriptionView: appearanceLabel
             )
                 .withTag(6)
-                .onTap(self, action: #selector(cellDidTouch(_:))),
+                .onTap(self, action: #selector(cellDidTouch(_:)))
             
             createCell(
                 image: .visibilityHide,
                 text: L10n.hideZeroBalances,
                 descriptionView: hideZeroBalancesSwitcher,
                 showRightArrow: false
-            ),
+            )
             
 //            createCell(
 //                image: .settingsFreeTransactions,
 //                text: L10n.useFreeTransactions,
 //                descriptionView: useFreeTransactionsSwitcher,
 //                showRightArrow: false
-//            ),
+//            )
             
-            BEStackViewSpacing(16),
+            BEStackViewSpacing(16)
             
             createCell(
                 image: .settingsLogout,
@@ -132,7 +144,9 @@ class ProfileVC: ProfileVCBase {
                 isAlert: true
             )
                 .onTap(self, action: #selector(buttonLogoutDidTouch))
-        ])
+        }
+        
+        setUpUsername()
         
         setUpBackupShield(didBackup: accountStorage.didBackupUsingIcloud || Defaults.didBackupOffline)
         
@@ -154,6 +168,10 @@ class ProfileVC: ProfileVCBase {
     override func bind() {
         super.bind()
         
+        disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) {[weak self] _ in
+            self?.setUpUsername()
+        })
+        
         disposables.append(Defaults.observe(\.isBiometryEnabled) { [weak self] update in
             self?.setUp(enabledBiometry: update.newValue)
         })
@@ -165,6 +183,16 @@ class ProfileVC: ProfileVCBase {
         disposables.append(Defaults.observe(\.fiat){ [weak self] update in
             self?.setUp(fiat: update.newValue)
         })
+    }
+    
+    func setUpUsername() {
+        usernameLabel.textColor = .textSecondary
+        guard let name = accountStorage.getName() else {
+            usernameLabel.textColor = .alert
+            usernameLabel.text = L10n.notYetReserved
+            return
+        }
+        usernameLabel.text = name.withNameServiceSuffix()
     }
     
     func setUpBackupShield(didBackup: Bool) {
@@ -219,6 +247,14 @@ class ProfileVC: ProfileVCBase {
     @objc func cellDidTouch(_ gesture: UIGestureRecognizer) {
         guard let tag = gesture.view?.tag else {return}
         switch tag {
+        case 0:
+            if accountStorage.getName() == nil {
+                let vc = scenesFactory.makeReserveNameVC(owner: accountStorage.account?.publicKey.base58EncodedString ?? "", handler: reserveNameHandler)
+                show(vc, sender: nil)
+            } else {
+                // TODO: Show profile
+            }
+            
         case 1:
             let vc = scenesFactory.makeBackupVC()
             vc.didBackupCompletion = { [weak self] didBackup in
