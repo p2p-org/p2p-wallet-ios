@@ -87,7 +87,7 @@ extension RestoreWallet {
                 childNavigationController.pushViewController(vc, animated: true)
             case .reserveName(let owner):
                 let viewModel = ReserveName.ViewModel(owner: owner, handler: viewModel)
-                let vc = ReserveName.ViewController(viewModel: viewModel)
+                let vc = ReserveNameVC(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
             }
         }
@@ -100,5 +100,16 @@ extension RestoreWallet {
         @objc func restoreManually() {
             viewModel.restoreManually()
         }
+    }
+}
+
+private class ReserveNameVC: ReserveName.ViewController {
+    override func bind() {
+        super.bind()
+        viewModel.isPostingDriver
+            .drive(onNext: {[weak self] isPosting in
+                self?.navigationController?.parent?.isModalInPresentation = isPosting
+            })
+            .disposed(by: disposeBag)
     }
 }

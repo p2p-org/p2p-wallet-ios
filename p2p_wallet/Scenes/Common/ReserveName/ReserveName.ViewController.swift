@@ -16,11 +16,11 @@ extension ReserveName {
         }
         
         // MARK: - Dependencies
-        private var viewModel: ReserveNameViewModelType
+        var viewModel: ReserveNameViewModelType
         
         // MARK: - Properties
         private lazy var navigationBar = WLNavigationBar(forAutoLayout: ())
-        private lazy var rootView = RootView(viewModel: viewModel)
+        lazy var rootView = RootView(viewModel: viewModel)
         
         // MARK: - Initializer
         init(viewModel: ReserveNameViewModelType) {
@@ -84,17 +84,6 @@ extension ReserveName {
             viewModel.isPostingDriver
                 .drive(onNext: {[weak self] isPosting in
                     isPosting ? self?.showIndetermineHud(): self?.hideHud()
-                })
-                .disposed(by: disposeBag)
-            
-            Signal.merge(
-                viewModel.didReserveSignal,
-                viewModel.didSkipSignal
-            )
-                .emit(onNext: { [weak self] in
-                    if self?.viewModel.goBackOnReserved == true {
-                        self?.back()
-                    }
                 })
                 .disposed(by: disposeBag)
         }

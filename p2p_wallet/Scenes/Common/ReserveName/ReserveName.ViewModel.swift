@@ -15,13 +15,10 @@ protocol ReserveNameHandler {
 
 protocol ReserveNameViewModelType {
     var currentName: String? {get}
-    var goBackOnReserved: Bool {get}
     
     var initializingStateDriver: Driver<LoadableState> {get}
     var isNameValidLoadableDriver: Driver<Loadable<Bool>> {get}
     var isPostingDriver: Driver<Bool> {get}
-    var didReserveSignal: Signal<Void> {get}
-    var didSkipSignal: Signal<Void> {get}
     
     func reload()
     func userDidEnter(name: String?)
@@ -41,14 +38,11 @@ extension ReserveName {
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         var currentName: String?
-        var goBackOnReserved: Bool = false
         
         // MARK: - Subject
         private let initializingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         private let isNameValidLoadableSubject = LoadableRelay<Bool>(request: .just(false))
         private let isPostingSubject = BehaviorRelay<Bool>(value: false)
-        private let didReserveSubject = PublishRelay<Void>()
-        private let didSkipSubject = PublishRelay<Void>()
         
         // MARK: - Initializer
         init(owner: String, handler: ReserveNameHandler) {
@@ -85,14 +79,6 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     
     var isPostingDriver: Driver<Bool> {
         isPostingSubject.asDriver()
-    }
-    
-    var didReserveSignal: Signal<Void> {
-        didReserveSubject.asSignal()
-    }
-    
-    var didSkipSignal: Signal<Void> {
-        didSkipSubject.asSignal()
     }
     
     // MARK: - Actions
@@ -137,11 +123,9 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     
     func nameDidReserve(_ name: String) {
         handler.handleName(name)
-        didReserveSubject.accept(())
     }
     
     func skip() {
         handler.handleName(nil)
-        didSkipSubject.accept(())
     }
 }
