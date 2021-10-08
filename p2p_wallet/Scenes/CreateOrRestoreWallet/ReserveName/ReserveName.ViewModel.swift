@@ -15,17 +15,18 @@ protocol ReserveNameHandler {
 
 protocol ReserveNameViewModelType {
     var currentName: String? {get}
+    var goBackOnReserved: Bool {get}
     
     var initializingStateDriver: Driver<LoadableState> {get}
     var isNameValidLoadableDriver: Driver<Loadable<Bool>> {get}
     var isPostingDriver: Driver<Bool> {get}
+    var didReserveSignal: Signal<Void> {get}
     
     func reload()
     func userDidEnter(name: String?)
     
     func reserveName(geetest_seccode: String, geetest_challenge: String, geetest_validate: String)
     
-    func nameDidReserve(_ name: String)
     func skip()
 }
 
@@ -39,11 +40,13 @@ extension ReserveName {
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         var currentName: String?
+        var goBackOnReserved: Bool = false
         
         // MARK: - Subject
         private let initializingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         private let isNameValidLoadableSubject = LoadableRelay<Bool>(request: .just(false))
         private let isPostingSubject = BehaviorRelay<Bool>(value: false)
+        private let didReserveSubject = PublishRelay<Void>()
         
         // MARK: - Initializer
         init(owner: String, handler: ReserveNameHandler) {
@@ -58,6 +61,7 @@ extension ReserveName {
                 .subscribe(onSuccess: {[weak self] names in
                     self?.initializingStateSubject.accept(.loaded)
                     if !names.isEmpty {
+                        UIApplication.shared.showToast(message: L10n.Username.P2p.solHasAlreadyBeenReservedForThisUser(names.first!.name))
                         self?.nameDidReserve(names.first!.name)
                     }
                 }, onFailure: {[weak self] error in
@@ -79,6 +83,10 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     
     var isPostingDriver: Driver<Bool> {
         isPostingSubject.asDriver()
+    }
+    
+    var didReserveSignal: Signal<Void> {
+        didReserveSubject.asSignal()
     }
     
     // MARK: - Actions
@@ -123,6 +131,7 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     
     func nameDidReserve(_ name: String) {
         handler.handleName(name)
+        didReserveSubject.accept(())
     }
     
     func skip() {
