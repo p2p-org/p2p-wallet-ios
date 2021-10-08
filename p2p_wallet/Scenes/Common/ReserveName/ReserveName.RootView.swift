@@ -46,6 +46,7 @@ extension ReserveName {
         )
             .border(width: 1, color: .a3a5ba.withAlphaComponent(0.5))
         
+        private lazy var verificationIndicatorView = UIActivityIndicatorView()
         private lazy var verificationLabel = UILabel(text: L10n.useAnyLatinAndSpecialSymbolsOrEmojis, textSize: 15, textColor: .textSecondary, numberOfLines: 0)
         
         private lazy var skipLabel: UILabel = {
@@ -86,7 +87,7 @@ extension ReserveName {
         
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            
+            verificationIndicatorView.startAnimating()
         }
         
         // MARK: - Layout
@@ -102,7 +103,10 @@ extension ReserveName {
                 textField
                 
                 BEStackViewSpacing(8)
-                verificationLabel
+                UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
+                    verificationIndicatorView
+                    verificationLabel
+                }
                 
                 BEStackViewSpacing(20)
                 UIView.defaultSeparator()
@@ -142,6 +146,7 @@ extension ReserveName {
                 .drive(onNext: {[weak self] loadableBool in
                     let textColor: UIColor
                     let text: String?
+                    var indicatorHidden = true
                     switch loadableBool.state {
                     case .notRequested:
                         textColor = .textSecondary
@@ -149,6 +154,7 @@ extension ReserveName {
                     case .loading:
                         textColor = .textSecondary
                         text = L10n.checkingNameSAvailability
+                        indicatorHidden = false
                     case .loaded:
                         // valid name
                         if loadableBool.value == true {
@@ -167,6 +173,7 @@ extension ReserveName {
                     }
                     self?.verificationLabel.text = text
                     self?.verificationLabel.textColor = textColor
+                    self?.verificationIndicatorView.isHidden = indicatorHidden
                 })
                 .disposed(by: disposeBag)
             
