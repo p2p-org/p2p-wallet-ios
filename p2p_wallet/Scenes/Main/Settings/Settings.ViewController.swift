@@ -28,6 +28,17 @@ extension Settings {
             viewModel.navigationDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
+            
+            viewModel.logoutAlertSignal
+                .emit(onNext: { [weak self] in
+                    self?.showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { [weak self] (index) in
+                        guard index == 0 else {return}
+                        self?.dismiss(animated: true, completion: { [weak self] in
+                            self?.viewModel.logout()
+                        })
+                    }
+                })
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Navigation
