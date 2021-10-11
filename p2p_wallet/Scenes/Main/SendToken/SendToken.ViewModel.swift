@@ -56,6 +56,7 @@ extension SendToken {
         private let apiClient: SendTokenAPIClient
         @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var nameService: NameServiceType
         private let renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         
         // MARK: - Properties
@@ -181,7 +182,7 @@ extension SendToken {
                     if renBTCInfo?.network == .bitcoin {
                         request = .just(false)
                     } else {
-                        request = self.apiClient.checkAccountValidation(account: address)
+                        request = self.apiClient.checkNameOrAccountValidation(nameOrAccount: address, nameService: self.nameService)
                     }
                     return request.map {$0 ? .valid: .invalid}
                         .catchAndReturn(.fetchingError)
@@ -220,7 +221,7 @@ extension SendToken {
             // define token
             var request: Single<String>!
             
-            // renBTC
+            // BTC network
             if wallet.token.address.isRenBTCMint && renBTCInfoSubject.value?.network == .bitcoin
             {
                 request = renVMBurnAndReleaseService.burn(
@@ -229,27 +230,53 @@ extension SendToken {
                 )
             }
             
-            // native solana
-            else if wallet.isNativeSOL {
-                request = apiClient.sendNativeSOL(
-                    to: receiver,
-                    amount: lamport,
-                    withoutFee: Defaults.useFreeTransaction,
-                    isSimulation: false
-                )
-            }
-            
-            // other tokens
+            // solana network
             else {
-                request = apiClient.sendSPLTokens(
-                    mintAddress: wallet.mintAddress,
-                    decimals: wallet.token.decimals,
-                    from: sender,
-                    to: receiver,
-                    amount: lamport,
-                    withoutFee: Defaults.useFreeTransaction,
-                    isSimulation: false
-                )
+                // check address
+                var addressRequest = Single<String>.just(receiver)
+                if receiver.hasSuffix(.nameServiceSuffix) {
+                    let name = receiver.replacingOccurrences(of: String.nameServiceSuffix, with: "")
+                    addressRequest = nameService.getOwner(name)
+                        .map {
+                            guard let owner = $0?.owner else {
+                                throw SolanaSDK.Error.other(L10n.theUsernameIsNotAvailable(receiver))
+                            }
+                            return owner
+                        }
+                }
+                
+                // native solana
+                if wallet.isNativeSOL {
+                    request = addressRequest
+                        .flatMap {[weak self] receiver in
+                            guard let self = self else {throw SolanaSDK.Error.unknown}
+                            
+                            return self.apiClient.sendNativeSOL(
+                                to: receiver,
+                                amount: lamport,
+                                withoutFee: Defaults.useFreeTransaction,
+                                isSimulation: false
+                            )
+                        }
+                }
+                
+                // other tokens
+                else {
+                    request = addressRequest
+                        .flatMap {[weak self] receiver in
+                            guard let self = self else {throw SolanaSDK.Error.unknown}
+                            
+                            return self.apiClient.sendSPLTokens(
+                                mintAddress: wallet.mintAddress,
+                                decimals: wallet.token.decimals,
+                                from: sender,
+                                to: receiver,
+                                amount: lamport,
+                                withoutFee: Defaults.useFreeTransaction,
+                                isSimulation: false
+                            )
+                        }
+                }
             }
             
             // log

@@ -11,7 +11,7 @@ import FeeRelayerSwift
 
 protocol SendTokenAPIClient {
     func getFees() -> Single<SolanaSDK.Fee>
-    func checkAccountValidation(account: String) -> Single<Bool>
+    func checkNameOrAccountValidation(nameOrAccount: String, nameService: NameServiceType) -> Single<Bool>
     func sendNativeSOL(
         to destination: String,
         amount: UInt64,
@@ -30,6 +30,14 @@ protocol SendTokenAPIClient {
 }
 
 extension SolanaSDK: SendTokenAPIClient {
+    func checkNameOrAccountValidation(nameOrAccount: String, nameService: NameServiceType) -> Single<Bool> {
+        if nameOrAccount.hasSuffix(.nameServiceSuffix) {
+            return nameService.getOwner(nameOrAccount).map {$0 != nil}
+        } else {
+            return checkAccountValidation(account: nameOrAccount)
+        }
+    }
+    
     func sendNativeSOL(to destination: String, amount: UInt64, withoutFee: Bool, isSimulation: Bool) -> Single<TransactionID> {
         sendNativeSOL(
             to: destination,
