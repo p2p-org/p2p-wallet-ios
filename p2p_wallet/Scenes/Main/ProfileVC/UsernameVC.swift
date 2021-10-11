@@ -86,7 +86,7 @@ class UsernameVC: ProfileVCBase {
         contentView.stackView.axis = .vertical
         contentView.stackView.spacing = 22
         contentView.stackView.addArrangedSubviews {
-            UILabel(text: accountStorage.getName()?.withNameServiceSuffix(), textSize: 21, weight: .semibold)
+            UILabel(text: accountStorage.getName()?.withNameServiceDomain(), textSize: 21, weight: .semibold)
             ReceiveToken.QrCodeView(size: 220, coinLogoSize: 56)
                 .with(string: accountStorage.account?.publicKey.base58EncodedString, token: .nativeSolana)
                 .centeredHorizontallyView
@@ -97,11 +97,11 @@ class UsernameVC: ProfileVCBase {
     }
     
     @objc private func copyToClipboardButtonDidTouch() {
-        UIApplication.shared.copyToClipboard(accountStorage.getName()?.withNameServiceSuffix(), alert: true, alertMessage: L10n.copiedToClipboard)
+        UIApplication.shared.copyToClipboard(accountStorage.getName()?.withNameServiceDomain(), alert: true, alertMessage: L10n.copiedToClipboard)
     }
     
     @objc private func shareButtonDidTouch() {
-        guard let name = accountStorage.getName()?.withNameServiceSuffix() else {return}
+        guard let name = accountStorage.getName()?.withNameServiceDomain() else {return}
         let vc = UIActivityViewController(activityItems: [name], applicationActivities: nil)
         present(vc, animated: true, completion: nil)
     }

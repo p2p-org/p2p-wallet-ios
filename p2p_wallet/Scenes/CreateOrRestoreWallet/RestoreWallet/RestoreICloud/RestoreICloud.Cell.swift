@@ -43,7 +43,7 @@ extension RestoreICloud {
             
             if let name = account.account.name {
                 topLabel.text = pubkey
-                bottomLabel.text = name.withNameServiceSuffix()
+                bottomLabel.text = name.withNameServiceDomain()
             } else {
                 topLabel.isHidden = true
                 bottomLabel.text = pubkey
