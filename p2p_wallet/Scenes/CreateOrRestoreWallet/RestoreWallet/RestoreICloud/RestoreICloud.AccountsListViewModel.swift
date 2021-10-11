@@ -38,7 +38,7 @@ private func createAccountSingle(account: Account, nameService: NameServiceType,
                 accountRequest = .just(account)
             } else {
                 accountRequest = nameService.getName(solanaAccount.publicKey.base58EncodedString)
-                    .map {Account(name: $0.first?.name, phrase: account.phrase, derivablePath: account.derivablePath)}
+                    .map {Account(name: $0, phrase: account.phrase, derivablePath: account.derivablePath)}
                     .do(onSuccess: {[weak storage] account in
                         storage?.saveToICloud(account: account)
                     })

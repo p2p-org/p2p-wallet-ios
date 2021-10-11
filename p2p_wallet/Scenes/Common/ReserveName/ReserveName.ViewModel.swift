@@ -54,11 +54,11 @@ extension ReserveName {
         private func checkIfOwnerHasAlreadyRegistered() {
             initializingStateSubject.accept(.loading)
             nameService.getName(owner)
-                .subscribe(onSuccess: {[weak self] names in
+                .subscribe(onSuccess: {[weak self] name in
                     self?.initializingStateSubject.accept(.loaded)
-                    if !names.isEmpty {
-                        UIApplication.shared.showToast(message: L10n.Username.P2p.solHasAlreadyBeenReservedForThisUser(names.first!.name))
-                        self?.nameDidReserve(names.first!.name)
+                    if let name = name {
+                        UIApplication.shared.showToast(message: L10n.Username.P2p.solHasAlreadyBeenReservedForThisUser(name))
+                        self?.nameDidReserve(name)
                     }
                 }, onFailure: {[weak self] error in
                     self?.initializingStateSubject.accept(.error(error.readableDescription))

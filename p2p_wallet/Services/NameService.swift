@@ -13,8 +13,8 @@ import RxAlamofire
 protocol NameServiceType {
     var captchaAPI1Url: String {get}
     
-    func getName(_ owner: String) -> Single<[NameService.Name]>
-    func getOwner(_ name: String) -> Single<NameService.Owner?>
+    func getName(_ owner: String) -> Single<String?>
+    func getOwner(_ name: String) -> Single<String?>
     func post(name: String, params: NameService.PostParams) -> Single<NameService.PostResponse>
 }
 
@@ -29,13 +29,14 @@ struct NameService: NameServiceType {
     
     var captchaAPI1Url: String {endpoint + "/auth/gt/register"}
     
-    func getName(_ owner: String) -> Single<[Name]> {
-        request(url: endpoint + "/lookup/\(owner)")
-            
+    func getName(_ owner: String) -> Single<String?> {
+        (request(url: endpoint + "/lookup/\(owner)") as Single<[Name]>)
+            .map {$0.last(where: {$0.name != nil})?.name}
     }
     
-    func getOwner(_ name: String) -> Single<Owner?> {
-        request(url: endpoint + "/\(name)")
+    func getOwner(_ name: String) -> Single<String?> {
+        (request(url: endpoint + "/\(name)") as Single<Owner?>)
+            .map {$0?.owner}
             .catch { error in
                 if let error = error as? AFError {
                     switch error {
@@ -92,9 +93,9 @@ struct NameService: NameServiceType {
 
 extension NameService {
     struct Name: Decodable {
-        let address: String
-        let name: String
-        let parent: String
+        let address: String?
+        let name: String?
+        let parent: String?
     }
     
     struct Owner: Decodable {

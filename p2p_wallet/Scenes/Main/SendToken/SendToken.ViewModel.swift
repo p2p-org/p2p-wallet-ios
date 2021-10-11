@@ -238,8 +238,11 @@ extension SendToken {
                     let name = receiver.replacingOccurrences(of: String.nameServiceDomain, with: "")
                     addressRequest = nameService.getOwner(name)
                         .map {
-                            guard let owner = $0?.owner else {
+                            guard let owner = $0 else {
                                 throw SolanaSDK.Error.other(L10n.theUsernameIsNotAvailable(receiver))
+                            }
+                            if owner == sender {
+                                throw SolanaSDK.Error.other(L10n.youCanNotSendTokensToYourself)
                             }
                             return owner
                         }
