@@ -64,7 +64,9 @@ extension AnalyticsEvent {
         case .tokenDetailsDetailsOpen: return "token_details_details_open"
         // receive
         case .receiveOpen: return "receive_open"
+        case .receiveNameCopy: return "receive_name_copy"
         case .receiveAddressCopy: return "receive_address_copy"
+        case .receiveNameShare: return "receive_name_share"
         case .receiveAddressShare: return "receive_address_share"
         case .receiveViewExplorerOpen: return "receive_view_explorer_open"
         // send

@@ -64,7 +64,9 @@ extension AnalyticsEvent {
         case .tokenDetailsDetailsOpen: return nil
         // receive
         case .receiveOpen(let fromPage): return ["fromPage": fromPage]
+        case .receiveNameCopy: return nil
         case .receiveAddressCopy: return nil
+        case .receiveNameShare: return nil
         case .receiveAddressShare: return nil
         case .receiveViewExplorerOpen: return nil
         // send

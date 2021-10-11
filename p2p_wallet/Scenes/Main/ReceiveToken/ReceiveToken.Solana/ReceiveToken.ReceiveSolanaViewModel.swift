@@ -15,10 +15,12 @@ protocol ReceiveTokenSolanaViewModelType {
     var tokenWallet: Wallet? {get}
     var tokensCountDriver: Driver<Int> {get}
     
+    func getUsername() -> String?
     func showSOLAddressInExplorer()
     func showTokenMintAddressInExplorer()
     func showTokenPubkeyAddressInExplorer()
-    func share()
+    func shareName()
+    func sharePubkey()
     func showHelp()
     func toggleIsShowingDetail()
     func copyToClipboard(address: String, logEvent: AnalyticsEvent)
@@ -27,6 +29,7 @@ protocol ReceiveTokenSolanaViewModelType {
 extension ReceiveToken {
     class ReceiveSolanaViewModel {
         // MARK: - Dependencies
+        @Injected private var accountStorage: KeychainAccountStorage
         @Injected private var analyticsManager: AnalyticsManagerType
         private let tokensRepository: TokensRepository
         private let navigationSubject: BehaviorRelay<NavigatableScene?>
@@ -69,6 +72,10 @@ extension ReceiveToken.ReceiveSolanaViewModel: ReceiveTokenSolanaViewModelType {
             .asDriver(onErrorJustReturn: 554)
     }
     
+    func getUsername() -> String? {
+        accountStorage.getName()
+    }
+    
     func showSOLAddressInExplorer() {
         analyticsManager.log(event: .receiveViewExplorerOpen)
         navigationSubject.accept(.showInExplorer(address: pubkey))
@@ -86,7 +93,12 @@ extension ReceiveToken.ReceiveSolanaViewModel: ReceiveTokenSolanaViewModelType {
         navigationSubject.accept(.showInExplorer(address: pubkey))
     }
     
-    func share() {
+    func shareName() {
+        analyticsManager.log(event: .receiveNameShare)
+        navigationSubject.accept(.share(address: getUsername()?.withNameServiceSuffix() ?? ""))
+    }
+    
+    func sharePubkey() {
         analyticsManager.log(event: .receiveAddressShare)
         navigationSubject.accept(.share(address: pubkey))
     }
