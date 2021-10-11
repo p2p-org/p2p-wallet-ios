@@ -98,7 +98,7 @@ extension ProcessTransaction {
                 )
                 
                 // Verify address
-                if !NSRegularExpression.publicKey.matches(receiver) && !fromWallet.token.isRenBTC {
+                if !NSRegularExpression.publicKey.matches(receiver) && !fromWallet.token.isRenBTC && !receiver.hasSuffix(.nameServiceDomain) {
                     var tx = transactionSubject.value
                     tx.value = transaction
                     tx.status = .error(L10n.wrongWalletAddress)

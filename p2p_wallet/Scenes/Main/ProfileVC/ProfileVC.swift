@@ -194,7 +194,7 @@ class ProfileVC: ProfileVCBase {
             usernameLabel.text = L10n.notYetReserved
             return
         }
-        usernameLabel.text = name.withNameServiceSuffix()
+        usernameLabel.text = name.withNameServiceDomain()
     }
     
     func setUpBackupShield(didBackup: Bool) {

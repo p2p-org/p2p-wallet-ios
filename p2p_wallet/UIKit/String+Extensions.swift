@@ -50,11 +50,11 @@ extension String {
         return prefix(numOfSymbolsRevealed) + "..." + suffix(numOfSymbolsRevealedInSuffix ?? numOfSymbolsRevealed)
     }
     
-    func withNameServiceSuffix() -> String {
-        self + Self.nameServiceSuffix
+    func withNameServiceDomain() -> String {
+        self + Self.nameServiceDomain
     }
     
-    static var nameServiceSuffix: String {
+    static var nameServiceDomain: String {
         ".p2p.sol"
     }
 }

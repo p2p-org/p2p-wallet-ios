@@ -234,8 +234,8 @@ extension SendToken {
             else {
                 // check address
                 var addressRequest = Single<String>.just(receiver)
-                if receiver.hasSuffix(.nameServiceSuffix) {
-                    let name = receiver.replacingOccurrences(of: String.nameServiceSuffix, with: "")
+                if receiver.hasSuffix(.nameServiceDomain) {
+                    let name = receiver.replacingOccurrences(of: String.nameServiceDomain, with: "")
                     addressRequest = nameService.getOwner(name)
                         .map {
                             guard let owner = $0?.owner else {

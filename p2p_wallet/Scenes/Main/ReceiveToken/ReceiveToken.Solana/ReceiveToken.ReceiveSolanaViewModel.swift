@@ -95,7 +95,7 @@ extension ReceiveToken.ReceiveSolanaViewModel: ReceiveTokenSolanaViewModelType {
     
     func shareName() {
         analyticsManager.log(event: .receiveNameShare)
-        navigationSubject.accept(.share(address: getUsername()?.withNameServiceSuffix() ?? ""))
+        navigationSubject.accept(.share(address: getUsername()?.withNameServiceDomain() ?? ""))
     }
     
     func sharePubkey() {

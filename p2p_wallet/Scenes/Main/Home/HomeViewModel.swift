@@ -85,7 +85,7 @@ extension HomeViewModel: ReserveNameHandler {
         if let name = name {
             keychainStorage.save(name: name)
             Defaults.forceCloseNameServiceBanner = true
-            UIApplication.shared.showToast(message: "✅ \(L10n.usernameIsSuccessfullyReserved(name.withNameServiceSuffix()))")
+            UIApplication.shared.showToast(message: "✅ \(L10n.usernameIsSuccessfullyReserved(name.withNameServiceDomain()))")
         }
         nameDidReserveSubject.accept(())
     }

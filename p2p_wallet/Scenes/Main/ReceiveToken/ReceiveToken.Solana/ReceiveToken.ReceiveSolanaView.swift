@@ -20,7 +20,7 @@ extension ReceiveToken {
         
         // MARK: - Subviews
         private lazy var tokenCountLabel = UILabel(text: "+", textSize: 12, weight: .semibold, textColor: .white)
-        private lazy var nameLabel = UILabel(text: viewModel.getUsername()?.withNameServiceSuffix(), textSize: 15, weight: .semibold, textAlignment: .center)
+        private lazy var nameLabel = UILabel(text: viewModel.getUsername()?.withNameServiceDomain(), textSize: 15, weight: .semibold, textAlignment: .center)
         private lazy var addressLabel = UILabel(text: viewModel.pubkey, textSize: 15, weight: .semibold, textAlignment: .center)
             .lineBreakMode(.byTruncatingMiddle)
         
@@ -215,7 +215,7 @@ extension ReceiveToken {
         }
         
         @objc private func copyNameToClipboard() {
-            copyToClipboard(viewModel.getUsername()?.withNameServiceSuffix() ?? "", event: .receiveNameCopy, onLabel: nameLabel, message: L10n.nameCopiedToClipboard)
+            copyToClipboard(viewModel.getUsername()?.withNameServiceDomain() ?? "", event: .receiveNameCopy, onLabel: nameLabel, message: L10n.nameCopiedToClipboard)
         }
         
         @objc private func copyMainPubkeyToClipboard() {
