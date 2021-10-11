@@ -129,7 +129,7 @@ class HomeViewController: BaseVC {
             analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
             present(vc, interactiveDismissalType: .standard, completion: nil)
         case .swapToken:
-            let vc = scenesFactory.makeSwapTokenViewController(provider: .serum, fromWallet: nil)
+            let vc = scenesFactory.makeSwapTokenViewController(provider: .orca, fromWallet: nil)
             analyticsManager.log(event: .mainScreenSwapOpen)
             analyticsManager.log(event: .swapOpen(fromPage: "main_screen"))
             present(vc, interactiveDismissalType: .standard, completion: nil)
