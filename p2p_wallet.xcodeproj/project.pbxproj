@@ -146,9 +146,9 @@
 		BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC490CBD256CB796006E7AC9 /* WalletCell.swift */; };
 		BC4B9E772713F940005B9ECA /* MainContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E762713F940005B9ECA /* MainContainer.swift */; };
 		BC4B9E792713F96C005B9ECA /* BuyToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E782713F96C005B9ECA /* BuyToken.ViewController.swift */; };
+		BC4B9E7B2713FB99005B9ECA /* CryptoComparePricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E7A2713FB99005B9ECA /* CryptoComparePricesFetcher.swift */; };
 		BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */; };
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
-		BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */; };
 		BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */; };
 		BC53E21E2654BF88005624CC /* DerivablePaths.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E21D2654BF88005624CC /* DerivablePaths.Cell.swift */; };
 		BC53E2202654BFAA005624CC /* DerivablePaths.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E21F2654BFAA005624CC /* DerivablePaths.ViewModel.swift */; };
@@ -555,9 +555,9 @@
 		BC4B9E732713EE57005B9ECA /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		BC4B9E762713F940005B9ECA /* MainContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContainer.swift; sourceTree = "<group>"; };
 		BC4B9E782713F96C005B9ECA /* BuyToken.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyToken.ViewController.swift; sourceTree = "<group>"; };
+		BC4B9E7A2713FB99005B9ECA /* CryptoComparePricesFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcher.swift; sourceTree = "<group>"; };
 		BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BonfidaPricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
-		BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcher.swift; sourceTree = "<group>"; };
 		BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoComparePricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC53E21D2654BF88005624CC /* DerivablePaths.Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePaths.Cell.swift; sourceTree = "<group>"; };
 		BC53E21F2654BFAA005624CC /* DerivablePaths.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePaths.ViewModel.swift; sourceTree = "<group>"; };
@@ -1049,7 +1049,7 @@
 		BC5257EB25CBB14E0076317E /* CryptoCompare */ = {
 			isa = PBXGroup;
 			children = (
-				BC5257EC25CBB1650076317E /* CryptoComparePricesFetcher.swift */,
+				BC4B9E7A2713FB99005B9ECA /* CryptoComparePricesFetcher.swift */,
 				BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */,
 			);
 			path = CryptoCompare;
@@ -2412,6 +2412,7 @@
 				BC65E191261EA4B100E436C7 /* NewsSection.swift in Sources */,
 				BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */,
 				BCEE51372625425E00271AB9 /* TransactionIndicatorView.swift in Sources */,
+				BC4B9E7B2713FB99005B9ECA /* CryptoComparePricesFetcher.swift in Sources */,
 				BC123E7F25B181B60043178E /* NSObject+Extensions.swift in Sources */,
 				BCB7C7D02667336800FEC68E /* ProcessTransaction.swift in Sources */,
 				BCACA7E12679E75E0091E118 /* AnalyticsEvent.swift in Sources */,
@@ -2537,7 +2538,6 @@
 				BC11C9C225908F3700E399A9 /* CGFloat+Extensions.swift in Sources */,
 				BC604A2726C65F5000B1DF0F /* SwapToken.SlippageSettingsViewController.swift in Sources */,
 				BCA9948725AEA1C0005BD8FB /* ExpandablePresentationController.swift in Sources */,
-				BC5257ED25CBB1650076317E /* CryptoComparePricesFetcher.swift in Sources */,
 				BCE04C6C268D901400CE131A /* ModalTransitionManager.swift in Sources */,
 				BC620D7626C6EFDB002186ED /* SwapToken.SwapFeesViewController.swift in Sources */,
 				BC4593A326423F0100E11A52 /* ConnectionErrorVC.swift in Sources */,
