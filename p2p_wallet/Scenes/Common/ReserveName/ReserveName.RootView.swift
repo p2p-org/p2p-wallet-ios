@@ -141,16 +141,24 @@ extension ReserveName {
                         text = L10n.checkingNameSAvailability
                         indicatorHidden = false
                     case .loaded:
-                        // valid name
-                        if loadableBool.value == true {
-                            textColor = .attentionGreen
-                            text = L10n.isAvailable(self?.viewModel.currentName ?? L10n.name)
-                        } else if self?.viewModel.currentName?.isEmpty == false {
-                            textColor = .alert
-                            text = L10n.isnTAvailable(self?.viewModel.currentName ?? L10n.name)
+                        if let name = self?.viewModel.currentName,
+                           !name.isEmpty
+                        {
+                            if name.count > 15 {
+                                textColor = .alert
+                                text = L10n.nameMustContainLessThan15Characters
+                            } else {
+                                if loadableBool.value == true {
+                                    textColor = .attentionGreen
+                                    text = L10n.isAvailable(self?.viewModel.currentName ?? L10n.name)
+                                } else {
+                                    textColor = .alert
+                                    text = L10n.isnTAvailable(self?.viewModel.currentName ?? L10n.name)
+                                }
+                            }
                         } else {
                             textColor = .textSecondary
-                            text = L10n.useAnyLatinAndSpecialSymbolsOrEmojis
+                            text = L10n.useAnyLowercasedLatinCharactersAndHyphens
                         }
                     case .error(_):
                         textColor = .alert
@@ -214,9 +222,10 @@ extension ReserveName.RootView: UITextFieldDelegate {
         // don't allow 2 hyphens next to each other
         guard let stringRange = Range(range, in: textField.text ?? "") else { return false }
         let updatedText = (textField.text ?? "").replacingCharacters(in: stringRange, with: string)
+        let hyphenDoesNotStandInTheBeginingOfTheText = !updatedText.starts(with: "-")
         let doNotContains2HyphensNextToEachOther = !updatedText.contains("--")
         
-        return containsOnlyAllowedCharacters && doNotContains2HyphensNextToEachOther
+        return containsOnlyAllowedCharacters && hyphenDoesNotStandInTheBeginingOfTheText && doNotContains2HyphensNextToEachOther
     }
 }
 
