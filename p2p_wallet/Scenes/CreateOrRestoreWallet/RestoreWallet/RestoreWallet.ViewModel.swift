@@ -137,10 +137,10 @@ extension RestoreWallet.ViewModel: AccountRestorationHandler {
     
     private func checkIfNameIsReservedAndReserveNameIfNeeded(owner: String) {
         nameService.getName(owner)
-            .subscribe(onSuccess: {[weak self] names in
+            .subscribe(onSuccess: {[weak self] name in
                 self?.isLoadingSubject.accept(false)
-                if !names.isEmpty {
-                    self?.handleName(names.first?.name)
+                if let name = name {
+                    self?.handleName(name)
                 } else {
                     self?.navigationSubject.accept(.reserveName(owner: owner))
                 }
