@@ -89,8 +89,8 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     func userDidEnter(name: String?) {
         currentName = name
         // check for availability
-        if let name = name, !name.isEmpty {
-            isNameValidLoadableSubject.request = nameService.isNameAvailable(name)
+        if isNameValid(name) {
+            isNameValidLoadableSubject.request = nameService.isNameAvailable(name!)
             isNameValidLoadableSubject.reload()
         } else {
             isNameValidLoadableSubject.accept(false, state: .loaded)
@@ -128,4 +128,11 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     func skip() {
         handler.handleName(nil)
     }
+}
+
+private func isNameValid(_ name: String?) -> Bool {
+    guard let name = name else {return false}
+    let nameIsNotEmpty = !name.isEmpty
+    let nameIsNotMoreThan15Characters = name.count <= 15
+    return nameIsNotEmpty && nameIsNotMoreThan15Characters
 }
