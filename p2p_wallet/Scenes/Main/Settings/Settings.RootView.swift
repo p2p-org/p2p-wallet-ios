@@ -133,13 +133,7 @@ extension Settings {
         
         // MARK: - Action
         @objc func buttonLogoutDidTouch() {
-            showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { [weak self] (index) in
-                guard index == 0 else {return}
-                self?.analyticsManager.log(event: .settingsLogoutClick)
-                self?.dismiss(animated: true) {
-                    self?.rootViewModel.logout()
-                }
-            }
+            viewModel.showLogoutAlert()
         }
         
         @objc func cellDidTouch(_ gesture: UIGestureRecognizer) {

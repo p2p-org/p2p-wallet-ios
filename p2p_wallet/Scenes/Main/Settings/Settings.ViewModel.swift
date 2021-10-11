@@ -20,6 +20,7 @@ protocol SettingsViewModelType {
     var currentLanguageDriver: Driver<String?> {get}
     var themeDriver: Driver<UIUserInterfaceStyle?> {get}
     var hideZeroBalancesDriver: Driver<Bool> {get}
+    var logoutAlertSignal: Signal<Void> {get}
     
     func navigate(to scene: Settings.NavigatableScene)
     func setDidBackup(_ didBackup: Bool)
@@ -30,6 +31,7 @@ protocol SettingsViewModelType {
     func setTheme(_ theme: UIUserInterfaceStyle?)
     func setHideZeroBalances(_ hideZeroBalances: Bool)
     
+    func showLogoutAlert()
     func logout()
 }
 
@@ -38,6 +40,7 @@ extension Settings {
         // MARK: - Dependencies
         @Injected private var accountStorage: KeychainAccountStorage
         @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var rootViewModel: RootViewModelType
         
         // MARK: - Properties
         
@@ -51,6 +54,7 @@ extension Settings {
         private let currentLanguageSubject = BehaviorRelay<String?>(value: Locale.current.uiLanguageLocalizedString?.uppercaseFirst)
         private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?.overrideUserInterfaceStyle)
         private let hideZeroBalancesSubject = BehaviorRelay<Bool>(value: Defaults.hideZeroBalances)
+        private let logoutAlertSubject = PublishRelay<Void>()
         
         // MARK: - Methods
         private func getSecurityMethods() -> [String] {
@@ -101,6 +105,10 @@ extension Settings.ViewModel: SettingsViewModelType {
         hideZeroBalancesSubject.asDriver()
     }
     
+    var logoutAlertSignal: Signal<Void> {
+        logoutAlertSubject.asSignal()
+    }
+    
     // MARK: - Actions
     func navigate(to scene: Settings.NavigatableScene) {
         navigationSubject.accept(scene)
@@ -135,7 +143,12 @@ extension Settings.ViewModel: SettingsViewModelType {
         analyticsManager.log(event: .settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
     }
     
+    func showLogoutAlert() {
+        logoutAlertSubject.accept(())
+    }
+    
     func logout() {
-        
+        analyticsManager.log(event: .settingsLogoutClick)
+        rootViewModel.logout()
     }
 }
