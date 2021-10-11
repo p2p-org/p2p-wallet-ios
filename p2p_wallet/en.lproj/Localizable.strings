@@ -521,3 +521,4 @@
 "There is an error occurred. You can either retry or reserve name later in Settings" = "There is an error occurred. You can either retry or reserve name later in Settings";
 "Name must contain less than 15 characters" = "Name must contain less than 15 characters";
 "Use any lowercased latin characters and hyphens" = "Use any lowercased latin characters and hyphens";
+"Name copied to clipboard" = "Name copied to clipboard";

@@ -62,7 +62,9 @@ enum AnalyticsEvent {
     case tokenDetailsDetailsOpen
     // receive
     case receiveOpen(fromPage: String)
+    case receiveNameCopy
     case receiveAddressCopy
+    case receiveNameShare
     case receiveAddressShare
     case receiveViewExplorerOpen
     // send

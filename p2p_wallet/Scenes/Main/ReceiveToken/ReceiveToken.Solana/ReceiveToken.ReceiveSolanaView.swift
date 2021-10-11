@@ -20,6 +20,7 @@ extension ReceiveToken {
         
         // MARK: - Subviews
         private lazy var tokenCountLabel = UILabel(text: "+", textSize: 12, weight: .semibold, textColor: .white)
+        private lazy var nameLabel = UILabel(text: viewModel.getUsername()?.withNameServiceSuffix(), textSize: 15, weight: .semibold, textAlignment: .center)
         private lazy var addressLabel = UILabel(text: viewModel.pubkey, textSize: 15, weight: .semibold, textAlignment: .center)
             .lineBreakMode(.byTruncatingMiddle)
         
@@ -64,10 +65,21 @@ extension ReceiveToken {
                     .centeredHorizontallyView
                 
                 ReceiveToken.copyAndShareableField(
+                    label: nameLabel,
+                    copyTarget: self,
+                    copySelector: #selector(copyNameToClipboard),
+                    shareTarget: self,
+                    shareSelector: #selector(shareName)
+                )
+                
+                BEStackViewSpacing(8)
+                
+                ReceiveToken.copyAndShareableField(
                     label: addressLabel,
                     copyTarget: self,
                     copySelector: #selector(copyMainPubkeyToClipboard),
-                    shareTarget: self, shareSelector: #selector(share)
+                    shareTarget: self,
+                    shareSelector: #selector(sharePubkey)
                 )
             }
             
@@ -158,8 +170,12 @@ extension ReceiveToken {
             viewModel.showSOLAddressInExplorer()
         }
         
-        @objc func share() {
-            viewModel.share()
+        @objc func sharePubkey() {
+            viewModel.sharePubkey()
+        }
+        
+        @objc func shareName() {
+            viewModel.shareName()
         }
         
         @objc func showTokenPubkeyAddressInExplorer() {
@@ -198,20 +214,28 @@ extension ReceiveToken {
             }
         }
         
+        @objc private func copyNameToClipboard() {
+            copyToClipboard(viewModel.getUsername()?.withNameServiceSuffix() ?? "", event: .receiveNameCopy, onLabel: nameLabel, message: L10n.nameCopiedToClipboard)
+        }
+        
         @objc private func copyMainPubkeyToClipboard() {
+            copyToClipboard(viewModel.pubkey, event: .receiveAddressCopy, onLabel: addressLabel, message: L10n.addressCopiedToClipboard)
+        }
+        
+        private func copyToClipboard(_ textToCopy: String, event: AnalyticsEvent, onLabel label: UILabel, message: String) {
             guard !isCopying else {return}
             isCopying = true
             
-            viewModel.copyToClipboard(address: viewModel.pubkey, logEvent: .receiveAddressCopy)
+            viewModel.copyToClipboard(address: textToCopy, logEvent: event)
             
-            let addressLabelOriginalColor = addressLabel.textColor
-            addressLabel.textColor = .h5887ff
+            let originalColor = label.textColor
+            label.textColor = .h5887ff
             
             UIApplication.shared.showToast(
-                message: "✅ " + L10n.addressCopiedToClipboard
+                message: "✅ " + message
             ) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-                    self?.addressLabel.textColor = addressLabelOriginalColor
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self, weak label] in
+                    label?.textColor = originalColor
                     self?.isCopying = false
                 }
             }

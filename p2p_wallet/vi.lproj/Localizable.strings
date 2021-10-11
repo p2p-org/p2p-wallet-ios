@@ -521,3 +521,4 @@
 "There is an error occurred. You can either retry or reserve name later in Settings" = "Có một lỗi xảy ra. Bạn có thể thử lại hoặc đặt tên sau trong Cài đặt";
 "Name must contain less than 15 characters" = "Tên phải có ít hơn 15 ký tự";
 "Use any lowercased latin characters and hyphens" = "Sử dụng bất kỳ ký tự Latinh viết thường nào và dấu gạch nối";
+"Name copied to clipboard" = "Đã sao chép tên vào khay nhớ tạm";
