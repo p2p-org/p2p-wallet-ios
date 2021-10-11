@@ -18,7 +18,9 @@ extension Settings {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            stackView.addArrangedSubview(rootView)
+            stackView.addArrangedSubview(
+                rootView.padding(.init(x: 20, y: 0))
+            )
         }
         
         override func bind() {

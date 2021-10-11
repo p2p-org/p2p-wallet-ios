@@ -28,6 +28,7 @@ protocol SettingsViewModelType {
     func setEnabledBiometry(_ enabledBiometry: Bool)
     func setLanguage(_ language: String?)
     func setTheme(_ theme: UIUserInterfaceStyle?)
+    func setHideZeroBalances(_ hideZeroBalances: Bool)
     
     func logout()
 }
@@ -36,6 +37,7 @@ extension Settings {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var accountStorage: KeychainAccountStorage
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         
@@ -126,6 +128,11 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func setTheme(_ theme: UIUserInterfaceStyle?) {
         
+    }
+    
+    func setHideZeroBalances(_ hideZeroBalances: Bool) {
+        Defaults.hideZeroBalances.toggle()
+        analyticsManager.log(event: .settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
     }
     
     func logout() {
