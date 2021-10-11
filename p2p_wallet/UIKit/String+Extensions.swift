@@ -51,7 +51,11 @@ extension String {
     }
     
     func withNameServiceSuffix() -> String {
-        self + ".p2p.sol"
+        self + Self.nameServiceSuffix
+    }
+    
+    static var nameServiceSuffix: String {
+        ".p2p.sol"
     }
 }
 
