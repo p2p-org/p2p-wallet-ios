@@ -147,6 +147,7 @@
 		BC4B9E772713F940005B9ECA /* MainContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E762713F940005B9ECA /* MainContainer.swift */; };
 		BC4B9E792713F96C005B9ECA /* BuyToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E782713F96C005B9ECA /* BuyToken.ViewController.swift */; };
 		BC4B9E7B2713FB99005B9ECA /* CryptoComparePricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E7A2713FB99005B9ECA /* CryptoComparePricesFetcher.swift */; };
+		BC4B9E7D2713FCFB005B9ECA /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E7C2713FCFB005B9ECA /* AnalyticsManager.swift */; };
 		BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */; };
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */; };
@@ -373,7 +374,6 @@
 		BCEB206D25E1561200B54FEF /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB206B25E1561200B54FEF /* TabBar.swift */; };
 		BCEE508526244B6300271AB9 /* WLEmptyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE508426244B6300271AB9 /* WLEmptyCell.swift */; };
 		BCEE51372625425E00271AB9 /* TransactionIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */; };
-		BCF2411F26732B0E00C9F158 /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF2411E26732B0E00C9F158 /* AnalyticsManager.swift */; };
 		BCF241212676548200C9F158 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF241202676548200C9F158 /* MainViewModel.swift */; };
 		BCF7D953256220F100961D31 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF7D952256220F100961D31 /* ErrorView.swift */; };
 		BCFC768825E2EAB800FBE148 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFC768525E2EAB800FBE148 /* MainViewController.swift */; };
@@ -556,6 +556,7 @@
 		BC4B9E762713F940005B9ECA /* MainContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContainer.swift; sourceTree = "<group>"; };
 		BC4B9E782713F96C005B9ECA /* BuyToken.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyToken.ViewController.swift; sourceTree = "<group>"; };
 		BC4B9E7A2713FB99005B9ECA /* CryptoComparePricesFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcher.swift; sourceTree = "<group>"; };
+		BC4B9E7C2713FCFB005B9ECA /* AnalyticsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsManager.swift; sourceTree = "<group>"; };
 		BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BonfidaPricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoComparePricesFetcher+Models.swift"; sourceTree = "<group>"; };
@@ -792,7 +793,6 @@
 		BCEB206B25E1561200B54FEF /* TabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		BCEE508426244B6300271AB9 /* WLEmptyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLEmptyCell.swift; sourceTree = "<group>"; };
 		BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionIndicatorView.swift; sourceTree = "<group>"; };
-		BCF2411E26732B0E00C9F158 /* AnalyticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsManager.swift; sourceTree = "<group>"; };
 		BCF241202676548200C9F158 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		BCF7D952256220F100961D31 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		BCFC768525E2EAB800FBE148 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -1614,13 +1614,13 @@
 		BCB22370254137C2002D997F /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				BC4B9E7C2713FCFB005B9ECA /* AnalyticsManager.swift */,
 				BC8F684B2609D851002FDCCD /* Repositories */,
 				BC32A3AB254A8884002156F0 /* AccountStorage.swift */,
 				BC6EE77C254BB8F400FE1025 /* Defaults.swift */,
 				BC5257CD25CBA6A60076317E /* PriceAPIs */,
 				BC460ABE257A44310035F6AA /* ProcessingTransactionsManager.swift */,
 				BCE3D58425F2426D0092F91B /* SystemVersion.swift */,
-				BCF2411E26732B0E00C9F158 /* AnalyticsManager.swift */,
 				BCB0FE5C26A197FD00B02C33 /* FeeRelayer.swift */,
 				BC63110926D78AC300516C38 /* SwapProvider */,
 				BCCF23C126FAE76400D08724 /* RenVM */,
@@ -2366,7 +2366,6 @@
 				BCC1F207269E96A1003DD648 /* SolanaSDK.DerivablePath+Extensions.swift in Sources */,
 				BC6342E1268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift in Sources */,
 				BC134FA726FD7C6600DB15BF /* CreateWallet.swift in Sources */,
-				BCF2411F26732B0E00C9F158 /* AnalyticsManager.swift in Sources */,
 				BCE42E0425DFA0B50021540E /* CreateWallet.ViewController.swift in Sources */,
 				BC22ABE12552A4B70071C69F /* DismissMenuAnimator.swift in Sources */,
 				BCA93FA425ECD16E0081DDF6 /* TokenSettingsSection.swift in Sources */,
@@ -2684,6 +2683,7 @@
 				BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */,
 				BC80203B26F1DD5D00C109C2 /* ReceiveToken.RootView.swift in Sources */,
 				BC134FA326FCD1E500DB15BF /* AppDelegate+Injection.swift in Sources */,
+				BC4B9E7D2713FCFB005B9ECA /* AnalyticsManager.swift in Sources */,
 				BC2297962700A320003F7118 /* RestoreICloud.AccountsListViewModel.swift in Sources */,
 				BC185EFA26E3B81F00280FE6 /* LoadableRelay.swift in Sources */,
 			);
