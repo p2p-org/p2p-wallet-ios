@@ -140,35 +140,19 @@ extension Settings {
             guard let tag = gesture.view?.tag else {return}
             switch tag {
             case 0:
-                if accountStorage.getName() == nil {
-                    let vc = scenesFactory.makeReserveNameVC(owner: accountStorage.account?.publicKey.base58EncodedString ?? "", handler: reserveNameHandler)
-                    show(vc, sender: nil)
-                } else {
-                    let vc = UsernameVC()
-                    show(vc, sender: nil)
-                }
-                
+                viewModel.showOrReserveUsername()
             case 1:
-                let vc = scenesFactory.makeBackupVC()
-                vc.didBackupCompletion = { [weak self] didBackup in
-                    self?.setUpBackupShield(didBackup: didBackup)
-                }
-                show(vc, sender: nil)
+                viewModel.navigate(to: .backup)
             case 2:
-                let vc = scenesFactory.makeSelectFiatVC()
-                show(vc, sender: nil)
+                viewModel.navigate(to: .currency)
             case 3:
-                let vc = scenesFactory.makeSelectNetworkVC()
-                show(vc, sender: nil)
+                viewModel.navigate(to: .network)
             case 4:
-                let vc = scenesFactory.makeConfigureSecurityVC()
-                show(vc, sender: nil)
+                viewModel.navigate(to: .security)
             case 5:
-                let vc = scenesFactory.makeSelectLanguageVC()
-                show(vc, sender: nil)
+                viewModel.navigate(to: .language)
             case 6:
-                let vc = scenesFactory.makeSelectAppearanceVC()
-                show(vc, sender: nil)
+                viewModel.navigate(to: .appearance)
             default:
                 return
             }
@@ -179,7 +163,6 @@ extension Settings {
         }
     }
 }
-
 
 private func createCell(image: UIImage?, text: String, descriptionView: UIView? = nil, showRightArrow: Bool = true, isAlert: Bool = false) -> UIView
 {
