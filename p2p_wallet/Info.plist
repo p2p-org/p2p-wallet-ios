@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CRYPTO_COMPARE_API_KEY</key>
+	<string>$(CRYPTO_COMPARE_API_KEY)</string>
 	<key>TRANSAK_STAGING_API_KEY</key>
 	<string>$(TRANSAK_STAGING_API_KEY)</string>
 	<key>TRANSAK_PRODUCTION_API_KEY</key>
