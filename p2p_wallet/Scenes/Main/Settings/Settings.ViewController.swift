@@ -43,12 +43,25 @@ extension Settings {
         
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
-//            switch scene {
-//            case .detail:
-//                break
-//            default:
-//                break
-//            }
+            guard let scene = scene else {return}
+            switch scene {
+            case .username:
+                <#code#>
+            case .reserveUsername(owner: let owner, handler: let handler):
+                <#code#>
+            case .backup:
+                <#code#>
+            case .currency:
+                <#code#>
+            case .network:
+                <#code#>
+            case .security:
+                <#code#>
+            case .language:
+                <#code#>
+            case .appearance:
+                <#code#>
+            }
         }
     }
 }

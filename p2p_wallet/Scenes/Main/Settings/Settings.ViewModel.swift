@@ -23,6 +23,7 @@ protocol SettingsViewModelType {
     var logoutAlertSignal: Signal<Void> {get}
     
     func navigate(to scene: Settings.NavigatableScene)
+    func showOrReserveUsername()
     func setDidBackup(_ didBackup: Bool)
     func setFiat(_ fiat: Fiat)
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint)
@@ -41,6 +42,7 @@ extension Settings {
         @Injected private var accountStorage: KeychainAccountStorage
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var rootViewModel: RootViewModelType
+        private var reserveNameHandler: ReserveNameHandler
         
         // MARK: - Properties
         
@@ -55,6 +57,11 @@ extension Settings {
         private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?.overrideUserInterfaceStyle)
         private let hideZeroBalancesSubject = BehaviorRelay<Bool>(value: Defaults.hideZeroBalances)
         private let logoutAlertSubject = PublishRelay<Void>()
+        
+        // MARK: - Initializer
+        init(reserveNameHandler: ReserveNameHandler) {
+            self.reserveNameHandler = reserveNameHandler
+        }
         
         // MARK: - Methods
         private func getSecurityMethods() -> [String] {
@@ -112,6 +119,14 @@ extension Settings.ViewModel: SettingsViewModelType {
     // MARK: - Actions
     func navigate(to scene: Settings.NavigatableScene) {
         navigationSubject.accept(scene)
+    }
+    
+    func showOrReserveUsername() {
+        if accountStorage.getName() != nil {
+            navigate(to: .username)
+        } else if let owner = accountStorage.account?.publicKey.base58EncodedString {
+            navigate(to: .reserveUsername(owner: owner, handler: reserveNameHandler))
+        }
     }
     
     func setDidBackup(_ didBackup: Bool) {
