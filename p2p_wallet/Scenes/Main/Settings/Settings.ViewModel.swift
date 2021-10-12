@@ -55,8 +55,8 @@ extension Settings {
         @Injected private var rootViewModel: RootViewModelType
         private var reserveNameHandler: ReserveNameHandler
         @Injected private var authenticationHandler: AuthenticationHandler
-        @Injected private var changeFiatResponder: ChangeFiatResponder
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
+        let changeFiatResponder: ChangeFiatResponder
         let renVMService: RenVMLockAndMintServiceType
         
         // MARK: - Properties
@@ -75,8 +75,13 @@ extension Settings {
         private let logoutAlertSubject = PublishRelay<Void>()
         
         // MARK: - Initializer
-        init(reserveNameHandler: ReserveNameHandler, renVMService: RenVMLockAndMintServiceType) {
+        init(
+            reserveNameHandler: ReserveNameHandler,
+            changeFiatResponder: ChangeFiatResponder,
+            renVMService: RenVMLockAndMintServiceType
+        ) {
             self.reserveNameHandler = reserveNameHandler
+            self.changeFiatResponder = changeFiatResponder
             self.renVMService = renVMService
             bind()
         }
@@ -221,10 +226,6 @@ extension Settings.ViewModel: SettingsViewModelType {
         }
         
         changeNetworkResponder.changeAPIEndpoint(to: endpoint)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            UIApplication.shared.showToast(message: "✅ " + L10n.networkChanged)
-        }
     }
     
     func setEnabledBiometry(_ enabledBiometry: Bool) {

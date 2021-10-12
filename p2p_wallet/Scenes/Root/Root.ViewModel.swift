@@ -96,6 +96,10 @@ extension Root.ViewModel: ChangeNetworkResponder {
         
         showAuthenticationOnMainOnAppear = false
         reload()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            UIApplication.shared.showToast(message: "✅ " + L10n.networkChanged)
+        }
     }
 }
 
