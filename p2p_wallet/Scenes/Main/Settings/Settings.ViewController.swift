@@ -8,6 +8,15 @@
 import Foundation
 import UIKit
 
+protocol SettingsScenesFactory {
+    func makeBackupVC() -> BackupVC
+    func makeSelectFiatVC() -> SelectFiatVC
+    func makeSelectNetworkVC() -> SelectNetworkVC
+    func makeConfigureSecurityVC() -> ConfigureSecurityVC
+    func makeSelectLanguageVC() -> SelectLanguageVC
+    func makeSelectAppearanceVC() -> SelectAppearanceVC
+}
+
 extension Settings {
     class ViewController: BaseViewController {
         // MARK: - Properties
@@ -46,9 +55,13 @@ extension Settings {
             guard let scene = scene else {return}
             switch scene {
             case .username:
-                <#code#>
+                let vc = UsernameVC()
+                show(vc, sender: nil)
             case .reserveUsername(owner: let owner, handler: let handler):
-                <#code#>
+                let vm = ReserveName.ViewModel(owner: owner, handler: handler)
+                let vc = ReserveName.ViewController(viewModel: vm)
+                vc.rootView.hideSkipButtons()
+                show(vc, sender: nil)
             case .backup:
                 <#code#>
             case .currency:
