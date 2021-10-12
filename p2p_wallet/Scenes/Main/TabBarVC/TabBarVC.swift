@@ -13,9 +13,13 @@ protocol TabBarScenesFactory {
 }
 
 class TabBarVC: BEPagesVC {
-    @Injected private var scenesFactory: TabBarScenesFactory
-    
     lazy var tabBar = TabBar(cornerRadius: 20)
+    
+    let scenesFactory: TabBarScenesFactory
+    init(scenesFactory: TabBarScenesFactory) {
+        self.scenesFactory = scenesFactory
+        super.init()
+    }
     
     override func setUp() {
         super.setUp()
