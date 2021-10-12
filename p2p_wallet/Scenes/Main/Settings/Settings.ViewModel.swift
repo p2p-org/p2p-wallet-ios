@@ -10,6 +10,10 @@ import RxSwift
 import RxCocoa
 import LocalAuthentication
 
+protocol ChangeFiatResponder {
+    func changeFiat(to fiat: Fiat)
+}
+
 protocol SettingsViewModelType {
     var navigationDriver: Driver<Settings.NavigatableScene?> {get}
     var usernameDriver: Driver<String?> {get}
@@ -51,6 +55,7 @@ extension Settings {
         @Injected private var rootViewModel: RootViewModelType
         private var reserveNameHandler: ReserveNameHandler
         @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var changeFiatResponder: ChangeFiatResponder
         
         // MARK: - Properties
         private var disposables = [DefaultsDisposable]()
@@ -198,7 +203,10 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func setFiat(_ fiat: Fiat) {
+        analyticsManager.log(event: .settingsСurrencySelected(сurrency: fiat.code))
+        changeFiatResponder.changeFiat(to: fiat)
         fiatSubject.accept(fiat)
+        UIApplication.shared.showToast(message: "✅ " + L10n.currencyChanged)
     }
     
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint) {
