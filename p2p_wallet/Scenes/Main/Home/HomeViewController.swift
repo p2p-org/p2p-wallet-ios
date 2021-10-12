@@ -210,6 +210,7 @@ private class CustomReserveNameVC: WLIndicatorModalVC, CustomPresentableViewCont
         childReserveNameVC.view.subviews.forEach {$0.removeFromSuperview()}
         childReserveNameVC.view.addSubview(childReserveNameVC.rootView)
         childReserveNameVC.rootView.autoPinEdgesToSuperviewEdges()
+        childReserveNameVC.rootView.hideSkipButtons()
     }
     
     override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {

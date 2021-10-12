@@ -146,7 +146,7 @@ extension ReserveName {
                         {
                             if name.count > 15 {
                                 textColor = .alert
-                                text = L10n.nameMustContainLessThan15Characters
+                                text = L10n.usernameMustContainLessThan15Characters
                             } else {
                                 if loadableBool.value == true {
                                     textColor = .attentionGreen
@@ -158,7 +158,7 @@ extension ReserveName {
                             }
                         } else {
                             textColor = .textSecondary
-                            text = L10n.useAnyLowercasedLatinCharactersAndHyphens
+                            text = L10n.maximum15LatinCharactersAndHyphens
                         }
                     case .error(_):
                         textColor = .alert
@@ -208,6 +208,12 @@ extension ReserveName {
         
         @objc func viewDidTap() {
             endEditing(true)
+        }
+        
+        func hideSkipButtons() {
+            skipLabel.isHidden = true
+            skipButton.isHidden = true
+            stackView.setCustomSpacing(150, after: stackView.arrangedSubviews[3])
         }
     }
 }
