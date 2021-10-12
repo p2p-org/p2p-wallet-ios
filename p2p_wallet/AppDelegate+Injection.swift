@@ -77,5 +77,19 @@ extension Resolver: ResolverRegistering {
             .implements(MainViewModelType.self)
             .implements(AuthenticationHandler.self)
             .scope(.shared)
+        
+        register {MainContainer()}
+            .implements(TabBarScenesFactory.self)
+            .implements(MyProductsScenesFactory.self)
+            .implements(ProfileScenesFactory.self)
+            .implements(OrcaSwapScenesFactory.self)
+            .implements(SwapTokenScenesFactory.self)
+            .implements(WalletDetailScenesFactory.self)
+            .implements(SendTokenScenesFactory.self)
+            .implements(BackupScenesFactory.self)
+            .implements(HomeScenesFactory.self)
+            .implements(TokenSettingsScenesFactory.self)
+            .implements(_MainScenesFactory.self)
+            .scope(.shared)
     }
 }
