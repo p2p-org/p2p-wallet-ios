@@ -176,6 +176,10 @@ extension Settings {
                 .map {$0.joined(separator: ", ")}
                 .drive(secureMethodsLabel.rx.text)
                 .disposed(by: disposeBag)
+            
+            viewModel.currentLanguageDriver
+                .drive(activeLanguageLabel.rx.text)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Action
