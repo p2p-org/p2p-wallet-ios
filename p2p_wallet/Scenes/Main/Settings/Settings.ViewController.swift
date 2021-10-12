@@ -53,8 +53,20 @@ extension Settings {
                 vc.rootView.hideSkipButtons()
                 show(vc, sender: nil)
             case .backup:
-                let vc = Backup.ViewController()
+                let vc = BackupViewController(viewModel: viewModel)
                 show(vc, sender: nil)
+            case .backupManually:
+                let vc = BackupManuallyVC()
+                vc.delegate = self
+                let nc = BENavigationController(rootViewController: vc)
+            
+                let modalVC = WLIndicatorModalVC()
+                modalVC.add(child: nc, to: modalVC.containerView)
+            
+                present(modalVC, animated: true, completion: nil)
+            case .backupShowPhrases:
+                let vc = BackupShowPhrasesVC()
+                present(vc, interactiveDismissalType: .standard, completion: nil)
             case .currency:
                 let vc = SelectFiatViewController(viewModel: viewModel)
                 show(vc, sender: nil)
@@ -75,5 +87,11 @@ extension Settings {
                 present(vc, animated: true, completion: nil)
             }
         }
+    }
+}
+
+extension Settings.ViewController: BackupManuallyVCDelegate {
+    func backupManuallyVCDidBackup(_ vc: BackupManuallyVC) {
+        viewModel.setDidBackupOffline()
     }
 }

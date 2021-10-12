@@ -140,8 +140,10 @@ class HomeViewController: BaseVC {
         case .profile:
             analyticsManager.log(event: .mainScreenSettingsOpen)
             analyticsManager.log(event: .settingsOpen(fromPage: "main_screen"))
-            let profileVC = scenesFactory.makeProfileVC(reserveNameHandler: viewModel)
-            self.show(profileVC, sender: nil)
+            
+            let vm = Settings.ViewModel(reserveNameHandler: viewModel)
+            let vc = Settings.ViewController(viewModel: vm)
+            self.show(vc, sender: nil)
         case .reserveName(let owner):
             let vm = ReserveName.ViewModel(owner: owner, handler: viewModel)
             let vc = CustomReserveNameVC(viewModel: vm)

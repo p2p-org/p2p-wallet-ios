@@ -26,6 +26,9 @@ protocol SettingsViewModelType {
     
     func navigate(to scene: Settings.NavigatableScene)
     func showOrReserveUsername()
+    func backupUsingICloud()
+    func backupManually()
+    func setDidBackupOffline()
     func setDidBackup(_ didBackup: Bool)
     func setFiat(_ fiat: Fiat)
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint)
@@ -47,6 +50,7 @@ extension Settings {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var rootViewModel: RootViewModelType
         private var reserveNameHandler: ReserveNameHandler
+        @Injected private var authenticationHandler: AuthenticationHandler
         
         // MARK: - Properties
         private var disposables = [DefaultsDisposable]()
@@ -143,6 +147,50 @@ extension Settings.ViewModel: SettingsViewModelType {
         } else if let owner = accountStorage.account?.publicKey.base58EncodedString {
             navigate(to: .reserveUsername(owner: owner, handler: reserveNameHandler))
         }
+    }
+    
+    func backupUsingICloud() {
+        guard let account = accountStorage.account?.phrase else {return}
+        authenticationHandler.authenticate(
+            presentationStyle: .init(
+                isRequired: false,
+                isFullScreen: false,
+                completion: { [weak self] in
+                    guard let self = self else {return}
+                    self.accountStorage.saveToICloud(
+                        account: .init(
+                            name: self.accountStorage.getName(),
+                            phrase: account.joined(separator: " "),
+                            derivablePath: self.accountStorage.getDerivablePath() ?? .default
+                        )
+                    )
+                    self.setDidBackup(true)
+                }
+            )
+        )
+    }
+    
+    func backupManually() {
+        if didBackupSubject.value {
+            authenticationHandler.authenticate(
+                presentationStyle: .init(
+                    isRequired: false,
+                    isFullScreen: false,
+                    completion: { [weak self] in
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                            self?.navigate(to: .backupShowPhrases)
+                        }
+                    }
+                )
+            )
+        } else {
+            navigate(to: .backupManually)
+        }
+    }
+    
+    func setDidBackupOffline() {
+        Defaults.didBackupOffline = true
+        setDidBackup(true)
     }
     
     func setDidBackup(_ didBackup: Bool) {
