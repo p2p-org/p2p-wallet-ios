@@ -180,6 +180,11 @@ extension Settings {
             viewModel.currentLanguageDriver
                 .drive(activeLanguageLabel.rx.text)
                 .disposed(by: disposeBag)
+            
+            viewModel.themeDriver
+                .map {$0?.localizedString}
+                .drive(appearanceLabel.rx.text)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Action
