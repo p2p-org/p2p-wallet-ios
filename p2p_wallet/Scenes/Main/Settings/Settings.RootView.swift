@@ -147,7 +147,15 @@ extension Settings {
         }
         
         private func bind() {
+            viewModel.usernameDriver
+                .map {$0 != nil ? $0!: L10n.notYetReserved}
+                .drive(usernameLabel.rx.text)
+                .disposed(by: disposeBag)
             
+            viewModel.usernameDriver
+                .map {$0 == nil ? UIColor.alert: UIColor.textBlack}
+                .drive(usernameLabel.rx.textColor)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Action

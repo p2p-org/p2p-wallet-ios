@@ -49,6 +49,7 @@ extension Settings {
         private var reserveNameHandler: ReserveNameHandler
         
         // MARK: - Properties
+        private var disposables = [DefaultsDisposable]()
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -65,6 +66,13 @@ extension Settings {
         // MARK: - Initializer
         init(reserveNameHandler: ReserveNameHandler) {
             self.reserveNameHandler = reserveNameHandler
+            bind()
+        }
+        
+        func bind() {
+            disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) {[weak self] _ in
+                self?.usernameSubject.accept(self?.accountStorage.getName()?.withNameServiceDomain())
+            })
         }
         
         // MARK: - Methods
