@@ -8,21 +8,12 @@
 import Foundation
 import UIKit
 
-protocol SettingsScenesFactory {
-    func makeBackupVC() -> BackupVC
-    func makeSelectFiatVC() -> SelectFiatVC
-    func makeSelectNetworkVC() -> SelectNetworkVC
-    func makeConfigureSecurityVC() -> ConfigureSecurityVC
-    func makeSelectLanguageVC() -> SelectLanguageVC
-    func makeSelectAppearanceVC() -> SelectAppearanceVC
-}
-
 extension Settings {
     class ViewController: BaseViewController {
         // MARK: - Properties
         
         // MARK: - Subviews
-        private lazy var rootView = RootView()
+        private lazy var rootView = RootView(viewModel: viewModel)
         
         // MARK: - Methods
         override func setUp() {
@@ -55,7 +46,7 @@ extension Settings {
             guard let scene = scene else {return}
             switch scene {
             case .username:
-                let vc = UsernameVC()
+                let vc = UsernameViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .reserveUsername(owner: let owner, handler: let handler):
                 let vm = ReserveName.ViewModel(owner: owner, handler: handler)
@@ -63,17 +54,23 @@ extension Settings {
                 vc.rootView.hideSkipButtons()
                 show(vc, sender: nil)
             case .backup:
-                <#code#>
+                let vc = Backup.ViewController()
+                show(vc, sender: nil)
             case .currency:
-                <#code#>
+                let vc = SelectFiatViewController(viewModel: viewModel)
+                show(vc, sender: nil)
             case .network:
-                <#code#>
+                let vc = SelectNetworkViewController(viewModel: viewModel)
+                show(vc, sender: nil)
             case .security:
-                <#code#>
+                let vc = ConfigureSecurityVC()
+                show(vc, sender: nil)
             case .language:
-                <#code#>
+                let vc = SelectLanguageViewController(viewModel: viewModel)
+                show(vc, sender: nil)
             case .appearance:
-                <#code#>
+                let vc = SelectAppearanceViewController(viewModel: viewModel)
+                show(vc, sender: nil)
             }
         }
     }

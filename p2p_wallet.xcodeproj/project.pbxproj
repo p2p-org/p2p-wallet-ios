@@ -153,7 +153,16 @@
 		BC4B9E87271425B9005B9ECA /* Settings.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E83271425B9005B9ECA /* Settings.ViewModel.swift */; };
 		BC4B9E88271425B9005B9ECA /* Settings.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E84271425B9005B9ECA /* Settings.RootView.swift */; };
 		BC4B9E8A27142AF5005B9ECA /* Settings.Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */; };
-		BC4B9E8C27153430005B9ECA /* Settings.UsernameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E8B27153430005B9ECA /* Settings.UsernameVC.swift */; };
+		BC4B9E8C27153430005B9ECA /* Settings.UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E8B27153430005B9ECA /* Settings.UsernameViewController.swift */; };
+		BC4B9E9427153EBB005B9ECA /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9027153EBB005B9ECA /* Backup.swift */; };
+		BC4B9E9527153EBB005B9ECA /* Backup.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9127153EBB005B9ECA /* Backup.ViewController.swift */; };
+		BC4B9E9627153EBB005B9ECA /* Backup.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9227153EBB005B9ECA /* Backup.ViewModel.swift */; };
+		BC4B9E9727153EBB005B9ECA /* Backup.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9327153EBB005B9ECA /* Backup.RootView.swift */; };
+		BC4B9E9927153F49005B9ECA /* Settings.SelectFiatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9827153F49005B9ECA /* Settings.SelectFiatViewController.swift */; };
+		BC4B9E9B27153F8D005B9ECA /* Settings.SelectNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9A27153F8D005B9ECA /* Settings.SelectNetworkViewController.swift */; };
+		BC4B9E9D27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9C27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift */; };
+		BC4B9E9F2715401F005B9ECA /* Settings.SelectLanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9E2715401F005B9ECA /* Settings.SelectLanguageViewController.swift */; };
+		BC4B9EA127154050005B9ECA /* Settings.SelectAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EA027154050005B9ECA /* Settings.SelectAppearanceViewController.swift */; };
 		BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */; };
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */; };
@@ -568,7 +577,16 @@
 		BC4B9E83271425B9005B9ECA /* Settings.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.ViewModel.swift; sourceTree = "<group>"; };
 		BC4B9E84271425B9005B9ECA /* Settings.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.RootView.swift; sourceTree = "<group>"; };
 		BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.Helpers.swift; sourceTree = "<group>"; };
-		BC4B9E8B27153430005B9ECA /* Settings.UsernameVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.UsernameVC.swift; sourceTree = "<group>"; };
+		BC4B9E8B27153430005B9ECA /* Settings.UsernameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.UsernameViewController.swift; sourceTree = "<group>"; };
+		BC4B9E9027153EBB005B9ECA /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
+		BC4B9E9127153EBB005B9ECA /* Backup.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.ViewController.swift; sourceTree = "<group>"; };
+		BC4B9E9227153EBB005B9ECA /* Backup.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.ViewModel.swift; sourceTree = "<group>"; };
+		BC4B9E9327153EBB005B9ECA /* Backup.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.RootView.swift; sourceTree = "<group>"; };
+		BC4B9E9827153F49005B9ECA /* Settings.SelectFiatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.SelectFiatViewController.swift; sourceTree = "<group>"; };
+		BC4B9E9A27153F8D005B9ECA /* Settings.SelectNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.SelectNetworkViewController.swift; sourceTree = "<group>"; };
+		BC4B9E9C27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.ConfigureSecurityViewController.swift; sourceTree = "<group>"; };
+		BC4B9E9E2715401F005B9ECA /* Settings.SelectLanguageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.SelectLanguageViewController.swift; sourceTree = "<group>"; };
+		BC4B9EA027154050005B9ECA /* Settings.SelectAppearanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.SelectAppearanceViewController.swift; sourceTree = "<group>"; };
 		BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BonfidaPricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoComparePricesFetcher+Models.swift"; sourceTree = "<group>"; };
@@ -1052,13 +1070,38 @@
 			isa = PBXGroup;
 			children = (
 				BC4B9E81271425B9005B9ECA /* Settings.swift */,
-				BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */,
 				BC4B9E83271425B9005B9ECA /* Settings.ViewModel.swift */,
+				BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */,
 				BC4B9E82271425B9005B9ECA /* Settings.ViewController.swift */,
 				BC4B9E84271425B9005B9ECA /* Settings.RootView.swift */,
-				BC4B9E8B27153430005B9ECA /* Settings.UsernameVC.swift */,
+				BC4B9EA227154088005B9ECA /* Subscenes */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		BC4B9E8F27153E99005B9ECA /* Backup */ = {
+			isa = PBXGroup;
+			children = (
+				BC4B9E9027153EBB005B9ECA /* Backup.swift */,
+				BC4B9E9227153EBB005B9ECA /* Backup.ViewModel.swift */,
+				BC4B9E9127153EBB005B9ECA /* Backup.ViewController.swift */,
+				BC4B9E9327153EBB005B9ECA /* Backup.RootView.swift */,
+			);
+			path = Backup;
+			sourceTree = "<group>";
+		};
+		BC4B9EA227154088005B9ECA /* Subscenes */ = {
+			isa = PBXGroup;
+			children = (
+				BC4B9E8B27153430005B9ECA /* Settings.UsernameViewController.swift */,
+				BC4B9E8F27153E99005B9ECA /* Backup */,
+				BC4B9E9827153F49005B9ECA /* Settings.SelectFiatViewController.swift */,
+				BC4B9E9A27153F8D005B9ECA /* Settings.SelectNetworkViewController.swift */,
+				BC4B9E9C27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift */,
+				BC4B9E9E2715401F005B9ECA /* Settings.SelectLanguageViewController.swift */,
+				BC4B9EA027154050005B9ECA /* Settings.SelectAppearanceViewController.swift */,
+			);
+			path = Subscenes;
 			sourceTree = "<group>";
 		};
 		BC5257CD25CBA6A60076317E /* PriceAPIs */ = {
@@ -2372,6 +2415,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC53E2222654C018005624CC /* DerivableAccounts.Cell.swift in Sources */,
+				BC4B9E9727153EBB005B9ECA /* Backup.RootView.swift in Sources */,
 				BC7B2C7225E384F700833656 /* CreateSecurityKeys.ViewController.swift in Sources */,
 				BC11CA252592FEA300E399A9 /* BalancesOverviewView.swift in Sources */,
 				BC6EE772254AEEB300FE1025 /* Error+Extensions.swift in Sources */,
@@ -2435,6 +2479,7 @@
 				BC8F676B26083B18002FDCCD /* WLPhrasesTextView.swift in Sources */,
 				BC4B9E792713F96C005B9ECA /* BuyToken.ViewController.swift in Sources */,
 				BC65E191261EA4B100E436C7 /* NewsSection.swift in Sources */,
+				BC4B9E9B27153F8D005B9ECA /* Settings.SelectNetworkViewController.swift in Sources */,
 				BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */,
 				BCEE51372625425E00271AB9 /* TransactionIndicatorView.swift in Sources */,
 				BC4B9E7B2713FB99005B9ECA /* CryptoComparePricesFetcher.swift in Sources */,
@@ -2465,6 +2510,7 @@
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
 				BC1255092653A2E400695A2B /* DerivablePaths.ViewController.swift in Sources */,
 				BC1BEBF926CDF6520049A44C /* SwapToken.swift in Sources */,
+				BC4B9E9527153EBB005B9ECA /* Backup.ViewController.swift in Sources */,
 				BC105119258884AA00398EA2 /* SelectNetworkVC.swift in Sources */,
 				BC6D01FB265DF8220001B841 /* FreeTransactionInfoVC.swift in Sources */,
 				BCE77E6626537067000B68BB /* DerivableAccounts.ViewModel.swift in Sources */,
@@ -2474,6 +2520,7 @@
 				BC6FED97270C30D6002B6255 /* RenBTCReceivingStatuses.TxDetailViewController.swift in Sources */,
 				BCA93F5A25E77DE80081DDF6 /* TokenSettings.swift in Sources */,
 				BC11C9D82590987D00E399A9 /* SectionBackgroundView.swift in Sources */,
+				BC4B9EA127154050005B9ECA /* Settings.SelectAppearanceViewController.swift in Sources */,
 				BC15EEF226FDE10A00F30605 /* DerivablePaths.swift in Sources */,
 				BC53E2262654FE56005624CC /* DerivableAccount.swift in Sources */,
 				BC65E244261EE04B00E436C7 /* PricesRepository.swift in Sources */,
@@ -2523,6 +2570,7 @@
 				BCE04C68268D901400CE131A /* CustomPresentableViewController.swift in Sources */,
 				BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
+				BC4B9E9F2715401F005B9ECA /* Settings.SelectLanguageViewController.swift in Sources */,
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,
 				BC105130258B05DF00398EA2 /* BackupManuallyVC.swift in Sources */,
 				BCEB206D25E1561200B54FEF /* TabBar.swift in Sources */,
@@ -2584,8 +2632,9 @@
 				BC134FA526FD76E100DB15BF /* CreateOrRestoreWallet.swift in Sources */,
 				BCE42E1825DFA5100021540E /* RestoreWallet.ViewModel.swift in Sources */,
 				BC104A7B259974CE0048C834 /* WLLoadingView.swift in Sources */,
+				BC4B9E9427153EBB005B9ECA /* Backup.swift in Sources */,
 				BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */,
-				BC4B9E8C27153430005B9ECA /* Settings.UsernameVC.swift in Sources */,
+				BC4B9E8C27153430005B9ECA /* Settings.UsernameViewController.swift in Sources */,
 				BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */,
 				BC03791125FB570900D10EAE /* MyProductsCollectionView.swift in Sources */,
 				BC31223C2580B37E00F3B14F /* CreatePassCodeVC.swift in Sources */,
@@ -2594,8 +2643,10 @@
 				BC1FFEE8262977940014F027 /* WLEnterPhrasesVC.swift in Sources */,
 				BC38555A26AE971400BD8BF7 /* ChooseWallet.ViewController.swift in Sources */,
 				BC036C3D2696B186005C1BEC /* TransactionsCollectionView.ChartView.swift in Sources */,
+				BC4B9E9D27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift in Sources */,
 				BCE04C6B268D901400CE131A /* UIViewController+Transitions.swift in Sources */,
 				BCA93F8125E883A50081DDF6 /* Array+Extensions.swift in Sources */,
+				BC4B9E9927153F49005B9ECA /* Settings.SelectFiatViewController.swift in Sources */,
 				BC134FAD26FD8E0800DB15BF /* ResetPinCodeWithSeedPhrases.swift in Sources */,
 				BC2EC1F92553FF6A006EEDA5 /* DashedButton.swift in Sources */,
 				BC274540263699F500D37CD1 /* SelectFiatVC.swift in Sources */,
@@ -2644,6 +2695,7 @@
 				BC460762266F40F400A12E07 /* Root.swift in Sources */,
 				BC65E19F261EA75600E436C7 /* InvestmentsViewController.swift in Sources */,
 				BC0978E825AEDEE200DB02E9 /* ResizablePresentationController.swift in Sources */,
+				BC4B9E9627153EBB005B9ECA /* Backup.ViewModel.swift in Sources */,
 				BC22A5E825D2726700F7026D /* ScrollableVStackRootView.swift in Sources */,
 				BCF7D953256220F100961D31 /* ErrorView.swift in Sources */,
 				BC85EA67266E1324005006D5 /* ReceiveToken.ViewController.swift in Sources */,
