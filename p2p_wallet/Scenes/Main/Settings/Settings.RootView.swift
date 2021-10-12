@@ -171,6 +171,11 @@ extension Settings {
                 .map {$0.network.cluster}
                 .drive(networkLabel.rx.text)
                 .disposed(by: disposeBag)
+            
+            viewModel.securityMethodsDriver
+                .map {$0.joined(separator: ", ")}
+                .drive(secureMethodsLabel.rx.text)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Action

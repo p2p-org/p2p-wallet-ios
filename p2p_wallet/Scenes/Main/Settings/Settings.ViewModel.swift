@@ -36,7 +36,7 @@ protocol SettingsViewModelType {
     func setDidBackup(_ didBackup: Bool)
     func setFiat(_ fiat: Fiat)
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint)
-    func setEnabledBiometry(_ enabledBiometry: Bool)
+    func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void)
     func setLanguage(_ language: String?)
     func setTheme(_ theme: UIUserInterfaceStyle?)
     func setHideZeroBalances(_ hideZeroBalances: Bool)
@@ -228,8 +228,30 @@ extension Settings.ViewModel: SettingsViewModelType {
         changeNetworkResponder.changeAPIEndpoint(to: endpoint)
     }
     
-    func setEnabledBiometry(_ enabledBiometry: Bool) {
-        securityMethodsSubject.accept(getSecurityMethods())
+    func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void) {
+        // pause authentication
+        authenticationHandler.pauseAuthentication(true)
+        
+        // get context
+        let context = LAContext()
+        let reason = L10n.identifyYourself
+
+        // evaluate Policy
+        context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { (success, authenticationError) in
+            DispatchQueue.main.async { [weak self] in
+                if success {
+                    Defaults.isBiometryEnabled.toggle()
+                    self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
+                    self?.securityMethodsSubject.accept(self?.getSecurityMethods() ?? [])
+                } else {
+                    onError(authenticationError)
+                }
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self?.authenticationHandler.pauseAuthentication(false)
+            }
+        }
     }
     
     func setLanguage(_ language: String?) {
