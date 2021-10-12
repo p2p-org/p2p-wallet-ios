@@ -74,7 +74,7 @@ extension Settings {
                 let vc = SelectNetworkViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .security:
-                let vc = ConfigureSecurityVC()
+                let vc = ConfigureSecurityViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .language:
                 let vc = SelectLanguageViewController(viewModel: viewModel)
