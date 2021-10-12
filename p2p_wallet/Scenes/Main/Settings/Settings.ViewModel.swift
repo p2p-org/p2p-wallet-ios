@@ -39,7 +39,7 @@ protocol SettingsViewModelType {
     func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void)
     func changePincode()
     func savePincode(_ pincode: String)
-    func setLanguage(_ language: String?)
+    func setLanguage(_ language: LocalizedLanguage)
     func setTheme(_ theme: UIUserInterfaceStyle?)
     func setHideZeroBalances(_ hideZeroBalances: Bool)
     
@@ -58,6 +58,7 @@ extension Settings {
         private var reserveNameHandler: ReserveNameHandler
         @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
+        @Injected private var changeLanguageResponder: ChangeLanguageResponder
         let changeFiatResponder: ChangeFiatResponder
         let renVMService: RenVMLockAndMintServiceType
         
@@ -275,8 +276,8 @@ extension Settings.ViewModel: SettingsViewModelType {
         accountStorage.save(pincode)
     }
     
-    func setLanguage(_ language: String?) {
-        
+    func setLanguage(_ language: LocalizedLanguage) {
+        changeLanguageResponder.languageDidChange(to: language)
     }
     
     func setTheme(_ theme: UIUserInterfaceStyle?) {
