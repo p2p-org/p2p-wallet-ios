@@ -289,6 +289,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     func setHideZeroBalances(_ hideZeroBalances: Bool) {
         Defaults.hideZeroBalances.toggle()
         analyticsManager.log(event: .settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
+        hideZeroBalancesSubject.accept(hideZeroBalances)
     }
     
     func showLogoutAlert() {
