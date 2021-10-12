@@ -160,6 +160,7 @@
 		BC4B9E9D27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9C27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift */; };
 		BC4B9E9F2715401F005B9ECA /* Settings.SelectLanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9E2715401F005B9ECA /* Settings.SelectLanguageViewController.swift */; };
 		BC4B9EA127154050005B9ECA /* Settings.SelectAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EA027154050005B9ECA /* Settings.SelectAppearanceViewController.swift */; };
+		BC4B9EA427158886005B9ECA /* LocalizedLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EA327158886005B9ECA /* LocalizedLanguage.swift */; };
 		BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */; };
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */; };
@@ -581,6 +582,7 @@
 		BC4B9E9C27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.ConfigureSecurityViewController.swift; sourceTree = "<group>"; };
 		BC4B9E9E2715401F005B9ECA /* Settings.SelectLanguageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.SelectLanguageViewController.swift; sourceTree = "<group>"; };
 		BC4B9EA027154050005B9ECA /* Settings.SelectAppearanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.SelectAppearanceViewController.swift; sourceTree = "<group>"; };
+		BC4B9EA327158886005B9ECA /* LocalizedLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedLanguage.swift; sourceTree = "<group>"; };
 		BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BonfidaPricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoComparePricesFetcher+Models.swift"; sourceTree = "<group>"; };
@@ -1377,6 +1379,7 @@
 				BC185EF926E3B81F00280FE6 /* LoadableRelay.swift */,
 				BC2297992700AB07003F7118 /* Account.swift */,
 				BC2EC9392705C1E9005FC432 /* PayingFee.swift */,
+				BC4B9EA327158886005B9ECA /* LocalizedLanguage.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2620,6 +2623,7 @@
 				BC3AB76827021E180096E4D8 /* NSRegularExpression+Extensions.swift in Sources */,
 				BC63110D26D78F9800516C38 /* SerumSwap+SwapProviderType.swift in Sources */,
 				BC134FA526FD76E100DB15BF /* CreateOrRestoreWallet.swift in Sources */,
+				BC4B9EA427158886005B9ECA /* LocalizedLanguage.swift in Sources */,
 				BCE42E1825DFA5100021540E /* RestoreWallet.ViewModel.swift in Sources */,
 				BC104A7B259974CE0048C834 /* WLLoadingView.swift in Sources */,
 				BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */,
