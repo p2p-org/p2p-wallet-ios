@@ -43,7 +43,7 @@ extension Settings {
         }
     }
     
-    class SingleSelectionVC<T: Hashable>: BaseViewController {
+    class SingleSelectionViewController<T: Hashable>: BaseViewController {
         // MARK: - Data
         var data: [T: Bool] = [T: Bool]()
         var cells: [Cell<T>] {stackView.arrangedSubviews.filter {$0 is Cell<T>} as! [Cell<T>]}
@@ -102,7 +102,7 @@ extension Settings {
     }
 }
 
-extension Settings.SingleSelectionVC {
+extension Settings.SingleSelectionViewController {
     class Cell<T>: BEView {
         var item: T?
         
