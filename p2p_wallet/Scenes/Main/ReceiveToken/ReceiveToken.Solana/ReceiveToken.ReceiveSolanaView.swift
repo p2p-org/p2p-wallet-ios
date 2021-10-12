@@ -65,22 +65,27 @@ extension ReceiveToken {
                     .centeredHorizontallyView
                 
                 ReceiveToken.copyAndShareableField(
-                    label: nameLabel,
-                    copyTarget: self,
-                    copySelector: #selector(copyNameToClipboard),
-                    shareTarget: self,
-                    shareSelector: #selector(shareName)
-                )
-                
-                BEStackViewSpacing(8)
-                
-                ReceiveToken.copyAndShareableField(
                     label: addressLabel,
                     copyTarget: self,
                     copySelector: #selector(copyMainPubkeyToClipboard),
                     shareTarget: self,
                     shareSelector: #selector(sharePubkey)
                 )
+            }
+            
+            if viewModel.getUsername() != nil {
+                var index = 2
+                stackView.insertArrangedSubviews(at: &index) {
+                    ReceiveToken.copyAndShareableField(
+                        label: nameLabel,
+                        copyTarget: self,
+                        copySelector: #selector(copyNameToClipboard),
+                        shareTarget: self,
+                        shareSelector: #selector(shareName)
+                    )
+                    
+                    BEStackViewSpacing(8)
+                }
             }
             
             if viewModel.tokenWallet != nil {

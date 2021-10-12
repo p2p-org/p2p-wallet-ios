@@ -266,7 +266,9 @@ class MainContainer {
     // MARK: - Reserve name
     func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController {
         let vm = ReserveName.ViewModel(owner: owner, handler: handler)
-        return .init(viewModel: vm)
+        let vc = ReserveName.ViewController(viewModel: vm)
+        vc.rootView.hideSkipButtons()
+        return vc
     }
     
     // MARK: - Token edit
