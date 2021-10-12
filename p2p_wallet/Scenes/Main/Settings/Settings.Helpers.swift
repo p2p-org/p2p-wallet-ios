@@ -46,7 +46,7 @@ extension Settings {
     class SingleSelectionViewController<T: Hashable>: BaseViewController {
         // MARK: - Data
         var data: [T: Bool] = [T: Bool]()
-        var cells: [Cell<T>] {stackView.arrangedSubviews.filter {$0 is Cell<T>} as! [Cell<T>]}
+        var cells: [Cell<T>] {innerStackView.arrangedSubviews.filter {$0 is Cell<T>} as! [Cell<T>]}
         var selectedItem: T? {data.first(where: {$0.value})?.key}
         
         // MARK: - Subviews
@@ -62,7 +62,7 @@ extension Settings {
             innerStackView.autoPinEdgesToSuperviewEdges()
             
             // views
-            stackView.addArrangedSubviews(data.keys.sorted(by: {(data[$0] ?? data[$1] ?? false)}).map {self.createCell(item: $0)})
+            innerStackView.addArrangedSubviews(data.keys.sorted(by: {(data[$0] ?? data[$1] ?? false)}).map {self.createCell(item: $0)})
             
             // reload
             reloadData()
