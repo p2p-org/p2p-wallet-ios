@@ -12,9 +12,10 @@ protocol ChangeFiatResponder {
 }
 
 class SelectFiatVC: ProfileSingleSelectionVC<Fiat> {
-    @Injected private var responder: ChangeFiatResponder
+    let responder: ChangeFiatResponder
     @Injected private var analyticsManager: AnalyticsManagerType
-    override init() {
+    init(responder: ChangeFiatResponder) {
+        self.responder = responder
         super.init()
         
         // init data
