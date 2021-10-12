@@ -11,13 +11,7 @@ import LocalAuthentication
 import SwiftUI
 
 protocol ProfileScenesFactory {
-    func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController
-    func makeBackupVC() -> BackupVC
-    func makeSelectFiatVC() -> SelectFiatVC
     func makeSelectNetworkVC() -> SelectNetworkVC
-    func makeConfigureSecurityVC() -> ConfigureSecurityVC
-    func makeSelectLanguageVC() -> SelectLanguageVC
-    func makeSelectAppearanceVC() -> SelectAppearanceVC
 }
 
 class ProfileVC: ProfileVCBase {
@@ -250,7 +244,9 @@ class ProfileVC: ProfileVCBase {
         switch tag {
         case 0:
             if accountStorage.getName() == nil {
-                let vc = scenesFactory.makeReserveNameVC(owner: accountStorage.account?.publicKey.base58EncodedString ?? "", handler: reserveNameHandler)
+                let vm = ReserveName.ViewModel(owner: accountStorage.account?.publicKey.base58EncodedString ?? "", handler: reserveNameHandler)
+                let vc = ReserveName.ViewController(viewModel: vm)
+                vc.rootView.hideSkipButtons()
                 show(vc, sender: nil)
             } else {
                 let vc = UsernameVC()
@@ -258,25 +254,25 @@ class ProfileVC: ProfileVCBase {
             }
             
         case 1:
-            let vc = scenesFactory.makeBackupVC()
+            let vc = BackupVC()
             vc.didBackupCompletion = { [weak self] didBackup in
                 self?.setUpBackupShield(didBackup: didBackup)
             }
             show(vc, sender: nil)
         case 2:
-            let vc = scenesFactory.makeSelectFiatVC()
+            let vc = SelectFiatVC()
             show(vc, sender: nil)
         case 3:
             let vc = scenesFactory.makeSelectNetworkVC()
             show(vc, sender: nil)
         case 4:
-            let vc = scenesFactory.makeConfigureSecurityVC()
+            let vc = ConfigureSecurityVC()
             show(vc, sender: nil)
         case 5:
-            let vc = scenesFactory.makeSelectLanguageVC()
+            let vc = SelectLanguageVC()
             show(vc, sender: nil)
         case 6:
-            let vc = scenesFactory.makeSelectAppearanceVC()
+            let vc = SelectAppearanceVC()
             show(vc, sender: nil)
         default:
             return
