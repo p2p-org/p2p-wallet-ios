@@ -33,7 +33,12 @@ class WLNavigationBar: BEView {
     
     override func commonInit() {
         super.commonInit()
+        stackView.spacing = 8
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewSafeArea(with: .init(all: 20))
+    }
+    
+    func setTitle(_ title: String?) {
+        titleLabel.text = title
     }
 }

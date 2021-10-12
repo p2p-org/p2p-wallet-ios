@@ -17,7 +17,7 @@ enum HomeNavigatableScene {
     case sendToken(address: String? = nil)
     case swapToken
     case allProducts
-    case profile
+    case settings
     case reserveName(owner: String)
     case walletDetail(wallet: Wallet)
     case walletSettings(wallet: Wallet)
@@ -35,7 +35,7 @@ class HomeViewModel {
     // MARK: - Subjects
     private let navigationSubject = PublishSubject<HomeNavigatableScene>()
     var navigationDriver: Driver<HomeNavigatableScene> {
-        navigationSubject.asDriver(onErrorJustReturn: .profile)
+        navigationSubject.asDriver(onErrorJustReturn: .settings)
     }
     private let nameDidReserveSubject = PublishRelay<Void>()
     var nameDidReserveSignal: Signal<Void> {
