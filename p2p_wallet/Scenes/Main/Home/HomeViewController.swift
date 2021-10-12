@@ -26,16 +26,17 @@ class HomeViewController: BaseVC {
         .hidden
     }
     
-    // MARK: - Properties
-    let viewModel: HomeViewModel
-    let scenesFactory: HomeScenesFactory
+    // MARK: - Dependencies
+    @Injected private var scenesFactory: HomeScenesFactory
     @Injected private var analyticsManager: AnalyticsManagerType
     
+    // MARK: - Properties
+    let viewModel: HomeViewModel
+    
     // MARK: - Initializer
-    init(viewModel: HomeViewModel, scenesFactory: HomeScenesFactory)
+    init(viewModel: HomeViewModel)
     {
         self.viewModel = viewModel
-        self.scenesFactory = scenesFactory
         super.init()
     }
     

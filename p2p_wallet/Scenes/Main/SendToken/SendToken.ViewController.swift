@@ -17,10 +17,12 @@ protocol SendTokenScenesFactory {
 
 extension SendToken {
     class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
+        // MARK: - Dependencies
+        @Injected private var scenesFactory: SendTokenScenesFactory
+        
         // MARK: - Properties
         var transitionManager: UIViewControllerTransitioningDelegate?
         let viewModel: SendTokenViewModelType
-        let scenesFactory: SendTokenScenesFactory
         lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
             UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
                 .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
@@ -30,10 +32,9 @@ extension SendToken {
         lazy var rootView = RootView(viewModel: viewModel)
         
         // MARK: - Initializer
-        init(viewModel: SendTokenViewModelType, scenesFactory: SendTokenScenesFactory)
+        init(viewModel: SendTokenViewModelType)
         {
             self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
             super.init()
             modalPresentationStyle = .custom
         }

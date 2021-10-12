@@ -11,10 +11,12 @@ import RxCocoa
 
 extension SwapToken {
     class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
+        // MARK: - Dependencies
+        @Injected private var scenesFactory: SwapTokenScenesFactory
+        
         // MARK: - Properties
         var transitionManager: UIViewControllerTransitioningDelegate?
         private let viewModel: SwapTokenViewModelType
-        private let scenesFactory: SwapTokenScenesFactory
         
         // MARK: - Subviews
         private lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
@@ -28,12 +30,8 @@ extension SwapToken {
         private lazy var rootView = RootView(viewModel: viewModel)
         
         // MARK: - Initializer
-        init(
-            viewModel: SwapTokenViewModelType,
-            scenesFactory: SwapTokenScenesFactory)
-        {
+        init(viewModel: SwapTokenViewModelType) {
             self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
             super.init()
             modalPresentationStyle = .custom
         }

@@ -75,11 +75,11 @@ class MainContainer {
     }
     
     func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController {
-        MainViewController(scenesFactory: self, authenticateWhenAppears: authenticateWhenAppears)
+        MainViewController(authenticateWhenAppears: authenticateWhenAppears)
     }
     
     func makeTabBarVC() -> TabBarVC {
-        TabBarVC(scenesFactory: self)
+        TabBarVC()
     }
     
     // MARK: - Authentication
@@ -95,7 +95,7 @@ class MainContainer {
     
     func makeHomeViewController() -> HomeViewController {
         let vm = HomeViewModel(walletsRepository: walletsViewModel)
-        return HomeViewController(viewModel: vm, scenesFactory: self)
+        return HomeViewController(viewModel: vm)
     }
     
     func makeInvestmentsViewController() -> InvestmentsViewController {
@@ -110,7 +110,7 @@ class MainContainer {
     
     func makeMyProductsViewController() -> MyProductsViewController {
         let viewModel = MyProductsViewModel(walletsRepository: walletsViewModel)
-        return MyProductsViewController(viewModel: viewModel, scenesFactory: self)
+        return MyProductsViewController(viewModel: viewModel)
     }
     
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController {
@@ -125,7 +125,7 @@ class MainContainer {
             notificationsRepository: walletsViewModel
         )
         
-        return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)
+        return WalletDetail.ViewController(viewModel: viewModel)
     }
     
     func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController
@@ -169,7 +169,7 @@ class MainContainer {
             apiClient: solanaSDK,
             renVMBurnAndReleaseService: renVMBurnAndReleaseService
         )
-        let vc = SendToken.ViewController(viewModel: vm, scenesFactory: self)
+        let vc = SendToken.ViewController(viewModel: vm)
         return vc
     }
     
@@ -182,7 +182,7 @@ class MainContainer {
                 apiClient: solanaSDK
             )
             vm.input.sourceWallet.accept(wallet ?? walletsViewModel.nativeWallet)
-            return OrcaSwap.ViewController(viewModel: vm, scenesFactory: self)
+            return OrcaSwap.ViewController(viewModel: vm)
         case .serum:
             let provider = SerumSwap(
                 client: solanaSDK,
@@ -196,7 +196,7 @@ class MainContainer {
                 walletsRepository: walletsViewModel,
                 sourceWallet: wallet ?? walletsViewModel.nativeWallet
             )
-            let vc = SwapToken.ViewController(viewModel: vm, scenesFactory: self)
+            let vc = SwapToken.ViewController(viewModel: vm)
             return vc
         }
     }
@@ -228,11 +228,11 @@ class MainContainer {
     
     // MARK: - Profile VCs
     func makeProfileVC(reserveNameHandler: ReserveNameHandler) -> ProfileVC {
-        ProfileVC(scenesFactory: self, reserveNameHandler: reserveNameHandler)
+        ProfileVC(reserveNameHandler: reserveNameHandler)
     }
     
     func makeBackupVC() -> BackupVC {
-        BackupVC(scenesFactory: self)
+        BackupVC()
     }
     
     func makeBackupManuallyVC() -> BackupManuallyVC {
@@ -279,8 +279,7 @@ class MainContainer {
                 pubkey: pubkey,
                 solanaSDK: solanaSDK,
                 pricesRepository: pricesManager
-            ),
-            scenesFactory: self
+            )
         )
     }
     
