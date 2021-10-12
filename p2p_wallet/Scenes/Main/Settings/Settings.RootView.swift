@@ -185,6 +185,10 @@ extension Settings {
                 .map {$0?.localizedString}
                 .drive(appearanceLabel.rx.text)
                 .disposed(by: disposeBag)
+            
+            viewModel.hideZeroBalancesDriver
+                .drive(hideZeroBalancesSwitcher.rx.isOn)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Action
