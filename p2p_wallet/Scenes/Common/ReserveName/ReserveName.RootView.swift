@@ -213,6 +213,7 @@ extension ReserveName {
         func hideSkipButtons() {
             skipLabel.isHidden = true
             skipButton.isHidden = true
+            stackView.setCustomSpacing(150, after: stackView.arrangedSubviews[3])
         }
     }
 }
