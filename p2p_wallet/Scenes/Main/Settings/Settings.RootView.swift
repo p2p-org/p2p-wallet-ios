@@ -166,6 +166,11 @@ extension Settings {
                 .map {$0.name}
                 .drive(fiatLabel.rx.text)
                 .disposed(by: disposeBag)
+            
+            viewModel.endpointDriver
+                .map {$0.network.cluster}
+                .drive(networkLabel.rx.text)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Action

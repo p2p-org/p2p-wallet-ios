@@ -231,6 +231,11 @@ class MainContainer {
         ProfileVC(reserveNameHandler: reserveNameHandler)
     }
     
+    func makeSettingsVC(reserveNameHandler: ReserveNameHandler) -> Settings.ViewController {
+        let vm = Settings.ViewModel(reserveNameHandler: reserveNameHandler, renVMService: renVMLockAndMintService)
+        return .init(viewModel: vm)
+    }
+    
     func makeSelectNetworkVC() -> SelectNetworkVC {
         SelectNetworkVC(renVMService: renVMLockAndMintService)
     }

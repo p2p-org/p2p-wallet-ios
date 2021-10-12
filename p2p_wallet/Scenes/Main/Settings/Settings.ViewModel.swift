@@ -56,6 +56,8 @@ extension Settings {
         private var reserveNameHandler: ReserveNameHandler
         @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var changeFiatResponder: ChangeFiatResponder
+        @Injected private var changeNetworkResponder: ChangeNetworkResponder
+        let renVMService: RenVMLockAndMintServiceType
         
         // MARK: - Properties
         private var disposables = [DefaultsDisposable]()
@@ -73,8 +75,9 @@ extension Settings {
         private let logoutAlertSubject = PublishRelay<Void>()
         
         // MARK: - Initializer
-        init(reserveNameHandler: ReserveNameHandler) {
+        init(reserveNameHandler: ReserveNameHandler, renVMService: RenVMLockAndMintServiceType) {
             self.reserveNameHandler = reserveNameHandler
+            self.renVMService = renVMService
             bind()
         }
         
@@ -211,6 +214,17 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint) {
         endpointSubject.accept(endpoint)
+        
+        analyticsManager.log(event: .settingsNetworkSelected(network: endpoint.url))
+        if Defaults.apiEndPoint.network != endpoint.network {
+            renVMService.expireCurrentSession()
+        }
+        
+        changeNetworkResponder.changeAPIEndpoint(to: endpoint)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            UIApplication.shared.showToast(message: "✅ " + L10n.networkChanged)
+        }
     }
     
     func setEnabledBiometry(_ enabledBiometry: Bool) {
