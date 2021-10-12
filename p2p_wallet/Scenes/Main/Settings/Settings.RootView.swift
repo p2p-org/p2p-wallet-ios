@@ -153,13 +153,18 @@ extension Settings {
                 .disposed(by: disposeBag)
             
             viewModel.usernameDriver
-                .map {$0 == nil ? UIColor.alert: UIColor.textBlack}
+                .map {$0 == nil ? UIColor.alert: UIColor.textSecondary}
                 .drive(usernameLabel.rx.textColor)
                 .disposed(by: disposeBag)
             
             viewModel.didBackupDriver
                 .map {$0 ? UIColor.attentionGreen: UIColor.alertOrange}
                 .drive(backupShieldImageView.rx.tintColor)
+                .disposed(by: disposeBag)
+            
+            viewModel.fiatDriver
+                .map {$0.name}
+                .drive(fiatLabel.rx.text)
                 .disposed(by: disposeBag)
         }
         
