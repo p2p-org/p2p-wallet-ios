@@ -23,8 +23,9 @@ extension Settings {
         }
         
         // MARK: - Subviews
-        lazy var stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
+        lazy var stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
             navigationBar
+            UIView.defaultSeparator()
         }
         
         lazy var navigationBar: WLNavigationBar = {
@@ -36,6 +37,7 @@ extension Settings {
         
         override func setUp() {
             super.setUp()
+            view.backgroundColor = .listBackground
             view.addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges()
         }

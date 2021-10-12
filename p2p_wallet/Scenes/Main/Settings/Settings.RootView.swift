@@ -39,6 +39,7 @@ extension Settings {
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
+            scrollView.contentInset = .init(x: 0, y: 16)
             layout()
             bind()
         }
@@ -67,6 +68,8 @@ extension Settings {
                     .withTag(1)
                     .onTap(self, action: #selector(cellDidTouch(_:)))
                 
+                BEStackViewSpacing(1)
+                
                 createCell(
                     image: .settingsCurrency,
                     text: L10n.currency,
@@ -74,6 +77,8 @@ extension Settings {
                 )
                     .withTag(2)
                     .onTap(self, action: #selector(cellDidTouch(_:)))
+                
+                BEStackViewSpacing(1)
                 
                 createCell(
                     image: .settingsNetwork,
@@ -83,6 +88,8 @@ extension Settings {
                     .withTag(3)
                     .onTap(self, action: #selector(cellDidTouch(_:)))
                 
+                BEStackViewSpacing(1)
+                
                 createCell(
                     image: .settingsSecurity,
                     text: L10n.security,
@@ -90,6 +97,8 @@ extension Settings {
                 )
                     .withTag(4)
                     .onTap(self, action: #selector(cellDidTouch(_:)))
+                
+                BEStackViewSpacing(1)
                 
                 createCell(
                     image: .settingsLanguage,
@@ -99,6 +108,8 @@ extension Settings {
                     .withTag(5)
                     .onTap(self, action: #selector(cellDidTouch(_:)))
                 
+                BEStackViewSpacing(1)
+                
                 createCell(
                     image: .settingsAppearance,
                     text: L10n.appearance,
@@ -106,6 +117,8 @@ extension Settings {
                 )
                     .withTag(6)
                     .onTap(self, action: #selector(cellDidTouch(_:)))
+                
+                BEStackViewSpacing(1)
                 
                 createCell(
                     image: .visibilityHide,
