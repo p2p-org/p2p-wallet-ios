@@ -51,10 +51,11 @@ extension Settings {
         
         // MARK: - Subviews
         private lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .zero)
-        private lazy var innerStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
+        private lazy var innerStackView = UIStackView(axis: .vertical, spacing: 1, alignment: .fill, distribution: .fill)
         
         override func setUp() {
             super.setUp()
+            stackView.setCustomSpacing(10, after: stackView.arrangedSubviews[1]) // after separator
             stackView.addArrangedSubview(scrollView)
             
             // stackView
