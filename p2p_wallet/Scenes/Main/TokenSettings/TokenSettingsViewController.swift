@@ -19,12 +19,11 @@ protocol TokenSettingsScenesFactory {
 }
 
 class TokenSettingsViewController: WLIndicatorModalVC {
-    // MARK: - Dependencies
-    @Injected private var authenticationHandler: AuthenticationHandler
-    @Injected private var scenesFactory: TokenSettingsScenesFactory
     
     // MARK: - Properties
     let viewModel: TokenSettingsViewModel
+    @Injected private var authenticationHandler: AuthenticationHandler
+    let scenesFactory: TokenSettingsScenesFactory
     weak var delegate: TokenSettingsViewControllerDelegate?
     
     // MARK: - Subviews
@@ -37,8 +36,12 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     }()
     
     // MARK: - Initializer
-    init(viewModel: TokenSettingsViewModel) {
+    init(
+        viewModel: TokenSettingsViewModel,
+        scenesFactory: TokenSettingsScenesFactory
+    ) {
         self.viewModel = viewModel
+        self.scenesFactory = scenesFactory
         super.init()
     }
     

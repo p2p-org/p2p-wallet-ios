@@ -8,9 +8,15 @@
 import Foundation
 import RxCocoa
 
+protocol BackupScenesFactory {
+    func makeBackupManuallyVC() -> BackupManuallyVC
+    func makeBackupShowPhrasesVC() -> BackupShowPhrasesVC
+}
+
 class BackupVC: ProfileVCBase {
     @Injected private var accountStorage: KeychainAccountStorage
     @Injected private var authenticationHandler: AuthenticationHandler
+    let scenesFactory: BackupScenesFactory
     @Injected private var analyticsManager: AnalyticsManagerType
     
     lazy var didBackupSubject = BehaviorRelay<Bool>(value: accountStorage.didBackupUsingIcloud || Defaults.didBackupOffline)
@@ -21,6 +27,11 @@ class BackupVC: ProfileVCBase {
     lazy var descriptionLabel = UILabel(textSize: 15, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
     lazy var backupUsingIcloudButton = WLButton.stepButton(enabledColor: .blackButtonBackground.onDarkMode(.h2b2b2b), textColor: .white, label: " " + L10n.backupUsingICloud)
     lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .f6f6f8.onDarkMode(.h2b2b2b), textColor: .textBlack, label: L10n.backupManually)
+    
+    init(scenesFactory: BackupScenesFactory) {
+        self.scenesFactory = scenesFactory
+        super.init()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -144,7 +155,7 @@ class BackupVC: ProfileVCBase {
     }
     
     private func showBackupManuallyVC() {
-        let vc = BackupManuallyVC()
+        let vc = scenesFactory.makeBackupManuallyVC()
         vc.delegate = self
         let nc = BENavigationController(rootViewController: vc)
         
@@ -155,7 +166,7 @@ class BackupVC: ProfileVCBase {
     }
     
     private func showSeedPhrasesVC() {
-        let vc = BackupShowPhrasesVC()
+        let vc = scenesFactory.makeBackupShowPhrasesVC()
         present(vc, interactiveDismissalType: .standard, completion: nil)
     }
 }
