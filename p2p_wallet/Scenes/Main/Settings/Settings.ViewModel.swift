@@ -40,7 +40,7 @@ protocol SettingsViewModelType {
     func changePincode()
     func savePincode(_ pincode: String)
     func setLanguage(_ language: LocalizedLanguage)
-    func setTheme(_ theme: UIUserInterfaceStyle?)
+    func setTheme(_ theme: UIUserInterfaceStyle)
     func setHideZeroBalances(_ hideZeroBalances: Bool)
     
     func showLogoutAlert()
@@ -280,8 +280,10 @@ extension Settings.ViewModel: SettingsViewModelType {
         changeLanguageResponder.languageDidChange(to: language)
     }
     
-    func setTheme(_ theme: UIUserInterfaceStyle?) {
-        
+    func setTheme(_ theme: UIUserInterfaceStyle) {
+        themeSubject.accept(theme)
+        analyticsManager.log(event: .settingsAppearanceSelected(appearance: theme.name))
+        AppDelegate.shared.changeThemeTo(theme)
     }
     
     func setHideZeroBalances(_ hideZeroBalances: Bool) {
