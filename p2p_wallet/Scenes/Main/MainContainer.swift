@@ -75,11 +75,11 @@ class MainContainer {
     }
     
     func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController {
-        MainViewController(authenticateWhenAppears: authenticateWhenAppears)
+        MainViewController(scenesFactory: self, authenticateWhenAppears: authenticateWhenAppears)
     }
     
     func makeTabBarVC() -> TabBarVC {
-        TabBarVC()
+        TabBarVC(scenesFactory: self)
     }
     
     // MARK: - Authentication
@@ -95,7 +95,7 @@ class MainContainer {
     
     func makeHomeViewController() -> HomeViewController {
         let vm = HomeViewModel(walletsRepository: walletsViewModel)
-        return HomeViewController(viewModel: vm)
+        return HomeViewController(viewModel: vm, scenesFactory: self)
     }
     
     func makeInvestmentsViewController() -> InvestmentsViewController {
@@ -110,7 +110,7 @@ class MainContainer {
     
     func makeMyProductsViewController() -> MyProductsViewController {
         let viewModel = MyProductsViewModel(walletsRepository: walletsViewModel)
-        return MyProductsViewController(viewModel: viewModel)
+        return MyProductsViewController(viewModel: viewModel, scenesFactory: self)
     }
     
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController {
@@ -125,7 +125,7 @@ class MainContainer {
             notificationsRepository: walletsViewModel
         )
         
-        return WalletDetail.ViewController(viewModel: viewModel)
+        return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)
     }
     
     func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController
@@ -169,7 +169,7 @@ class MainContainer {
             apiClient: solanaSDK,
             renVMBurnAndReleaseService: renVMBurnAndReleaseService
         )
-        let vc = SendToken.ViewController(viewModel: vm)
+        let vc = SendToken.ViewController(viewModel: vm, scenesFactory: self)
         return vc
     }
     
@@ -182,7 +182,7 @@ class MainContainer {
                 apiClient: solanaSDK
             )
             vm.input.sourceWallet.accept(wallet ?? walletsViewModel.nativeWallet)
-            return OrcaSwap.ViewController(viewModel: vm)
+            return OrcaSwap.ViewController(viewModel: vm, scenesFactory: self)
         case .serum:
             let provider = SerumSwap(
                 client: solanaSDK,
@@ -196,7 +196,7 @@ class MainContainer {
                 walletsRepository: walletsViewModel,
                 sourceWallet: wallet ?? walletsViewModel.nativeWallet
             )
-            let vc = SwapToken.ViewController(viewModel: vm)
+            let vc = SwapToken.ViewController(viewModel: vm, scenesFactory: self)
             return vc
         }
     }
@@ -228,7 +228,23 @@ class MainContainer {
     
     // MARK: - Profile VCs
     func makeProfileVC(reserveNameHandler: ReserveNameHandler) -> ProfileVC {
-        ProfileVC(reserveNameHandler: reserveNameHandler)
+        ProfileVC(scenesFactory: self, reserveNameHandler: reserveNameHandler)
+    }
+    
+    func makeBackupVC() -> BackupVC {
+        BackupVC(scenesFactory: self)
+    }
+    
+    func makeBackupManuallyVC() -> BackupManuallyVC {
+        BackupManuallyVC()
+    }
+    
+    func makeBackupShowPhrasesVC() -> BackupShowPhrasesVC {
+        BackupShowPhrasesVC()
+    }
+    
+    func makeSelectFiatVC() -> SelectFiatVC {
+        SelectFiatVC(responder: self)
     }
     
     func makeSettingsVC(reserveNameHandler: ReserveNameHandler) -> Settings.ViewController {
@@ -240,6 +256,26 @@ class MainContainer {
         SelectNetworkVC(renVMService: renVMLockAndMintService)
     }
     
+    func makeConfigureSecurityVC() -> ConfigureSecurityVC {
+        ConfigureSecurityVC()
+    }
+    
+    func makeSelectLanguageVC() -> SelectLanguageVC {
+        SelectLanguageVC()
+    }
+    
+    func makeSelectAppearanceVC() -> SelectAppearanceVC {
+        SelectAppearanceVC()
+    }
+    
+    // MARK: - Reserve name
+    func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController {
+        let vm = ReserveName.ViewModel(owner: owner, handler: handler)
+        let vc = ReserveName.ViewController(viewModel: vm)
+        vc.rootView.hideSkipButtons()
+        return vc
+    }
+    
     // MARK: - Token edit
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController {
         TokenSettingsViewController(
@@ -248,7 +284,8 @@ class MainContainer {
                 pubkey: pubkey,
                 solanaSDK: solanaSDK,
                 pricesRepository: pricesManager
-            )
+            ),
+            scenesFactory: self
         )
     }
     
@@ -267,6 +304,7 @@ extension MainContainer: TabBarScenesFactory,
                          SwapTokenScenesFactory,
                          WalletDetailScenesFactory,
                          SendTokenScenesFactory,
+                         BackupScenesFactory,
                          HomeScenesFactory,
                          ChangeFiatResponder,
                          TokenSettingsScenesFactory,
