@@ -7,10 +7,6 @@
 
 import Foundation
 
-protocol ChangeFiatResponder {
-    func changeFiat(to fiat: Fiat)
-}
-
 class SelectFiatVC: ProfileSingleSelectionVC<Fiat> {
     @Injected private var responder: ChangeFiatResponder
     @Injected private var analyticsManager: AnalyticsManagerType
