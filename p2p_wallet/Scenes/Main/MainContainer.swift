@@ -248,7 +248,7 @@ class MainContainer {
     }
     
     func makeSettingsVC(reserveNameHandler: ReserveNameHandler) -> Settings.ViewController {
-        let vm = Settings.ViewModel(reserveNameHandler: reserveNameHandler, renVMService: renVMLockAndMintService)
+        let vm = Settings.ViewModel(reserveNameHandler: reserveNameHandler, changeFiatResponder: self, renVMService: renVMLockAndMintService)
         return .init(viewModel: vm)
     }
     
