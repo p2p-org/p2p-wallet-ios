@@ -154,10 +154,7 @@
 		BC4B9E88271425B9005B9ECA /* Settings.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E84271425B9005B9ECA /* Settings.RootView.swift */; };
 		BC4B9E8A27142AF5005B9ECA /* Settings.Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */; };
 		BC4B9E8C27153430005B9ECA /* Settings.UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E8B27153430005B9ECA /* Settings.UsernameViewController.swift */; };
-		BC4B9E9427153EBB005B9ECA /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9027153EBB005B9ECA /* Backup.swift */; };
-		BC4B9E9527153EBB005B9ECA /* Backup.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9127153EBB005B9ECA /* Backup.ViewController.swift */; };
-		BC4B9E9627153EBB005B9ECA /* Backup.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9227153EBB005B9ECA /* Backup.ViewModel.swift */; };
-		BC4B9E9727153EBB005B9ECA /* Backup.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9327153EBB005B9ECA /* Backup.RootView.swift */; };
+		BC4B9E9527153EBB005B9ECA /* Settings.BackupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9127153EBB005B9ECA /* Settings.BackupViewController.swift */; };
 		BC4B9E9927153F49005B9ECA /* Settings.SelectFiatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9827153F49005B9ECA /* Settings.SelectFiatViewController.swift */; };
 		BC4B9E9B27153F8D005B9ECA /* Settings.SelectNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9A27153F8D005B9ECA /* Settings.SelectNetworkViewController.swift */; };
 		BC4B9E9D27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9C27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift */; };
@@ -578,10 +575,7 @@
 		BC4B9E84271425B9005B9ECA /* Settings.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.RootView.swift; sourceTree = "<group>"; };
 		BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.Helpers.swift; sourceTree = "<group>"; };
 		BC4B9E8B27153430005B9ECA /* Settings.UsernameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.UsernameViewController.swift; sourceTree = "<group>"; };
-		BC4B9E9027153EBB005B9ECA /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
-		BC4B9E9127153EBB005B9ECA /* Backup.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.ViewController.swift; sourceTree = "<group>"; };
-		BC4B9E9227153EBB005B9ECA /* Backup.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.ViewModel.swift; sourceTree = "<group>"; };
-		BC4B9E9327153EBB005B9ECA /* Backup.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.RootView.swift; sourceTree = "<group>"; };
+		BC4B9E9127153EBB005B9ECA /* Settings.BackupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.BackupViewController.swift; sourceTree = "<group>"; };
 		BC4B9E9827153F49005B9ECA /* Settings.SelectFiatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.SelectFiatViewController.swift; sourceTree = "<group>"; };
 		BC4B9E9A27153F8D005B9ECA /* Settings.SelectNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.SelectNetworkViewController.swift; sourceTree = "<group>"; };
 		BC4B9E9C27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.ConfigureSecurityViewController.swift; sourceTree = "<group>"; };
@@ -1082,10 +1076,8 @@
 		BC4B9E8F27153E99005B9ECA /* Backup */ = {
 			isa = PBXGroup;
 			children = (
-				BC4B9E9027153EBB005B9ECA /* Backup.swift */,
-				BC4B9E9227153EBB005B9ECA /* Backup.ViewModel.swift */,
-				BC4B9E9127153EBB005B9ECA /* Backup.ViewController.swift */,
-				BC4B9E9327153EBB005B9ECA /* Backup.RootView.swift */,
+				BC4B9E9127153EBB005B9ECA /* Settings.BackupViewController.swift */,
+				BCE04C34268C631300CE131A /* BackupManually */,
 			);
 			path = Backup;
 			sourceTree = "<group>";
@@ -1604,7 +1596,6 @@
 				BCB58359255CE96B00B10F65 /* ProfileVC.swift */,
 				BC6FEDA827103516002B6255 /* UsernameVC.swift */,
 				BC10510825887F7D00398EA2 /* BackupVC.swift */,
-				BCE04C34268C631300CE131A /* BackupManually */,
 				BC105118258884AA00398EA2 /* SelectNetworkVC.swift */,
 				BC0E7DC625B178BF009AD08B /* SelectLanguageVC.swift */,
 				BC27453F263699F500D37CD1 /* SelectFiatVC.swift */,
@@ -2415,7 +2406,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC53E2222654C018005624CC /* DerivableAccounts.Cell.swift in Sources */,
-				BC4B9E9727153EBB005B9ECA /* Backup.RootView.swift in Sources */,
 				BC7B2C7225E384F700833656 /* CreateSecurityKeys.ViewController.swift in Sources */,
 				BC11CA252592FEA300E399A9 /* BalancesOverviewView.swift in Sources */,
 				BC6EE772254AEEB300FE1025 /* Error+Extensions.swift in Sources */,
@@ -2510,7 +2500,7 @@
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
 				BC1255092653A2E400695A2B /* DerivablePaths.ViewController.swift in Sources */,
 				BC1BEBF926CDF6520049A44C /* SwapToken.swift in Sources */,
-				BC4B9E9527153EBB005B9ECA /* Backup.ViewController.swift in Sources */,
+				BC4B9E9527153EBB005B9ECA /* Settings.BackupViewController.swift in Sources */,
 				BC105119258884AA00398EA2 /* SelectNetworkVC.swift in Sources */,
 				BC6D01FB265DF8220001B841 /* FreeTransactionInfoVC.swift in Sources */,
 				BCE77E6626537067000B68BB /* DerivableAccounts.ViewModel.swift in Sources */,
@@ -2632,7 +2622,6 @@
 				BC134FA526FD76E100DB15BF /* CreateOrRestoreWallet.swift in Sources */,
 				BCE42E1825DFA5100021540E /* RestoreWallet.ViewModel.swift in Sources */,
 				BC104A7B259974CE0048C834 /* WLLoadingView.swift in Sources */,
-				BC4B9E9427153EBB005B9ECA /* Backup.swift in Sources */,
 				BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */,
 				BC4B9E8C27153430005B9ECA /* Settings.UsernameViewController.swift in Sources */,
 				BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */,
@@ -2695,7 +2684,6 @@
 				BC460762266F40F400A12E07 /* Root.swift in Sources */,
 				BC65E19F261EA75600E436C7 /* InvestmentsViewController.swift in Sources */,
 				BC0978E825AEDEE200DB02E9 /* ResizablePresentationController.swift in Sources */,
-				BC4B9E9627153EBB005B9ECA /* Backup.ViewModel.swift in Sources */,
 				BC22A5E825D2726700F7026D /* ScrollableVStackRootView.swift in Sources */,
 				BCF7D953256220F100961D31 /* ErrorView.swift in Sources */,
 				BC85EA67266E1324005006D5 /* ReceiveToken.ViewController.swift in Sources */,
