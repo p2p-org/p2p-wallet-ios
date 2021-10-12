@@ -231,44 +231,8 @@ class MainContainer {
         ProfileVC(reserveNameHandler: reserveNameHandler)
     }
     
-    func makeBackupVC() -> BackupVC {
-        BackupVC()
-    }
-    
-    func makeBackupManuallyVC() -> BackupManuallyVC {
-        BackupManuallyVC()
-    }
-    
-    func makeBackupShowPhrasesVC() -> BackupShowPhrasesVC {
-        BackupShowPhrasesVC()
-    }
-    
-    func makeSelectFiatVC() -> SelectFiatVC {
-        SelectFiatVC(responder: self)
-    }
-    
     func makeSelectNetworkVC() -> SelectNetworkVC {
         SelectNetworkVC(renVMService: renVMLockAndMintService)
-    }
-    
-    func makeConfigureSecurityVC() -> ConfigureSecurityVC {
-        ConfigureSecurityVC()
-    }
-    
-    func makeSelectLanguageVC() -> SelectLanguageVC {
-        SelectLanguageVC()
-    }
-    
-    func makeSelectAppearanceVC() -> SelectAppearanceVC {
-        SelectAppearanceVC()
-    }
-    
-    // MARK: - Reserve name
-    func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController {
-        let vm = ReserveName.ViewModel(owner: owner, handler: handler)
-        let vc = ReserveName.ViewController(viewModel: vm)
-        vc.rootView.hideSkipButtons()
-        return vc
     }
     
     // MARK: - Token edit
@@ -298,7 +262,6 @@ extension MainContainer: TabBarScenesFactory,
                          SwapTokenScenesFactory,
                          WalletDetailScenesFactory,
                          SendTokenScenesFactory,
-                         BackupScenesFactory,
                          HomeScenesFactory,
                          ChangeFiatResponder,
                          TokenSettingsScenesFactory,
