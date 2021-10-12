@@ -86,10 +86,10 @@ extension Resolver: ResolverRegistering {
             .implements(SwapTokenScenesFactory.self)
             .implements(WalletDetailScenesFactory.self)
             .implements(SendTokenScenesFactory.self)
+            .implements(BackupScenesFactory.self)
             .implements(HomeScenesFactory.self)
             .implements(TokenSettingsScenesFactory.self)
             .implements(_MainScenesFactory.self)
-            .implements(ChangeFiatResponder.self)
             .scope(.shared)
     }
 }

@@ -8,9 +8,15 @@
 import Foundation
 import RxCocoa
 
+protocol BackupScenesFactory {
+    func makeBackupManuallyVC() -> BackupManuallyVC
+    func makeBackupShowPhrasesVC() -> BackupShowPhrasesVC
+}
+
 class BackupVC: ProfileVCBase {
     @Injected private var accountStorage: KeychainAccountStorage
     @Injected private var authenticationHandler: AuthenticationHandler
+    @Injected private var scenesFactory: BackupScenesFactory
     @Injected private var analyticsManager: AnalyticsManagerType
     
     lazy var didBackupSubject = BehaviorRelay<Bool>(value: accountStorage.didBackupUsingIcloud || Defaults.didBackupOffline)
@@ -144,7 +150,7 @@ class BackupVC: ProfileVCBase {
     }
     
     private func showBackupManuallyVC() {
-        let vc = BackupManuallyVC()
+        let vc = scenesFactory.makeBackupManuallyVC()
         vc.delegate = self
         let nc = BENavigationController(rootViewController: vc)
         
@@ -155,7 +161,7 @@ class BackupVC: ProfileVCBase {
     }
     
     private func showSeedPhrasesVC() {
-        let vc = BackupShowPhrasesVC()
+        let vc = scenesFactory.makeBackupShowPhrasesVC()
         present(vc, interactiveDismissalType: .standard, completion: nil)
     }
 }
