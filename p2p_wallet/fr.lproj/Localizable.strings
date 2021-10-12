@@ -519,7 +519,8 @@
 "Save" = "Sauvegarder";
 "Saved to photo library" = "Enregistré dans la photothèque";
 "There is an error occurred. You can either retry or reserve name later in Settings" = "Une erreur s'est produite. Vous pouvez réessayer ou réserver le nom plus tard dans les paramètres";
-"Name must contain less than 15 characters" = "Le nom doit contenir moins de 15 caractères";
 "Use any lowercased latin characters and hyphens" = "Utilisez des caractères latins minuscules et des tirets";
 "Name copied to clipboard" = "Nom copié dans le presse-papiers";
 "The username %@ is not available" = "Le nom d'utilisateur %@ n'est pas disponible";
+"Maximum 15 latin characters and hyphens" = "Maximum 15 caractères latins et tirets";
+"Username must contain less than 15 characters" = "Le nom d'utilisateur doit contenir moins de 15 caractères";
