@@ -25,10 +25,10 @@ class ProfileVC: ProfileVCBase {
     @Injected private var accountStorage: KeychainAccountStorage
     @Injected private var rootViewModel: RootViewModelType
     @Injected private var analyticsManager: AnalyticsManagerType
-    @Injected private var scenesFactory: ProfileScenesFactory
     
     // MARK: - Properties
     private var disposables = [DefaultsDisposable]()
+    private let scenesFactory: ProfileScenesFactory
     private let reserveNameHandler: ReserveNameHandler
     
     // MARK: - Subviews
@@ -51,8 +51,9 @@ class ProfileVC: ProfileVCBase {
     }()
     
     // MARK: - Initializer
-    init(reserveNameHandler: ReserveNameHandler) {
+    init(scenesFactory: ProfileScenesFactory, reserveNameHandler: ReserveNameHandler) {
         self.reserveNameHandler = reserveNameHandler
+        self.scenesFactory = scenesFactory
     }
     
     // MARK: - Methods
