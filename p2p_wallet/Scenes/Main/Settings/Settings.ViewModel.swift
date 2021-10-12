@@ -10,6 +10,14 @@ import RxSwift
 import RxCocoa
 import LocalAuthentication
 
+protocol ChangeLanguageResponder {
+    func languageDidChange(to: LocalizedLanguage)
+}
+
+protocol ChangeNetworkResponder {
+    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint)
+}
+
 protocol ChangeFiatResponder {
     func changeFiat(to fiat: Fiat)
 }
