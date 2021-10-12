@@ -22,6 +22,8 @@ protocol SettingsViewModelType {
     var hideZeroBalancesDriver: Driver<Bool> {get}
     var logoutAlertSignal: Signal<Void> {get}
     
+    func getUserAddress() -> String?
+    
     func navigate(to scene: Settings.NavigatableScene)
     func showOrReserveUsername()
     func setDidBackup(_ didBackup: Bool)
@@ -33,6 +35,8 @@ protocol SettingsViewModelType {
     func setHideZeroBalances(_ hideZeroBalances: Bool)
     
     func showLogoutAlert()
+    func copyUsernameToClipboard()
+    func shareUsername()
     func logout()
 }
 
@@ -48,7 +52,7 @@ extension Settings {
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private lazy var usernameSubject = BehaviorRelay<String?>(value: accountStorage.getName())
+        private lazy var usernameSubject = BehaviorRelay<String?>(value: accountStorage.getName()?.withNameServiceDomain())
         private lazy var didBackupSubject = BehaviorRelay<Bool>(value: accountStorage.didBackupUsingIcloud || Defaults.didBackupOffline)
         private let fiatSubject = BehaviorRelay<Fiat>(value: Defaults.fiat)
         private let endpointSubject = BehaviorRelay<SolanaSDK.APIEndPoint>(value: Defaults.apiEndPoint)
@@ -116,6 +120,10 @@ extension Settings.ViewModel: SettingsViewModelType {
         logoutAlertSubject.asSignal()
     }
     
+    func getUserAddress() -> String? {
+        accountStorage.account?.publicKey.base58EncodedString
+    }
+    
     // MARK: - Actions
     func navigate(to scene: Settings.NavigatableScene) {
         navigationSubject.accept(scene)
@@ -160,6 +168,16 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func showLogoutAlert() {
         logoutAlertSubject.accept(())
+    }
+    
+    func copyUsernameToClipboard() {
+        guard let username = accountStorage.getName()?.withNameServiceDomain() else {return}
+        UIApplication.shared.copyToClipboard(username, alert: true, alertMessage: L10n.copiedToClipboard)
+    }
+    
+    func shareUsername() {
+        guard let username = accountStorage.getName()?.withNameServiceDomain() else {return}
+        navigate(to: .share(item: username))
     }
     
     func logout() {

@@ -18,9 +18,8 @@ extension Settings {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            stackView.addArrangedSubview(
-                rootView.padding(.init(x: 20, y: 0))
-            )
+            navigationBar.titleLabel.text = L10n.settings
+            stackView.addArrangedSubview(rootView)
         }
         
         override func bind() {
@@ -71,6 +70,9 @@ extension Settings {
             case .appearance:
                 let vc = SelectAppearanceViewController(viewModel: viewModel)
                 show(vc, sender: nil)
+            case .share(let item):
+                let vc = UIActivityViewController(activityItems: [item], applicationActivities: nil)
+                present(vc, animated: true, completion: nil)
             }
         }
     }

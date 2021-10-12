@@ -18,5 +18,6 @@ struct Settings {
         case security
         case language
         case appearance
+        case share(item: Any)
     }
 }
