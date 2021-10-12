@@ -10,19 +10,16 @@ import UIKit
 
 extension WalletDetail {
     class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
-        var transitionManager: UIViewControllerTransitioningDelegate?
+        // MARK: - Dependencies
+        @Injected private var scenesFactory: WalletDetailScenesFactory
         
         // MARK: - Properties
+        var transitionManager: UIViewControllerTransitioningDelegate?
         let viewModel: ViewModel
-        let scenesFactory: WalletDetailScenesFactory
         
         // MARK: - Initializer
-        init(
-            viewModel: ViewModel,
-            scenesFactory: WalletDetailScenesFactory
-        ) {
+        init(viewModel: ViewModel) {
             self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
             super.init()
         }
         

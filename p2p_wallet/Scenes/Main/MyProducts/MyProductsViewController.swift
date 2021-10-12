@@ -14,17 +14,17 @@ protocol MyProductsScenesFactory {
 }
 
 class MyProductsViewController: WLIndicatorModalVC {
+    // MARK: - Dependencies
+    @Injected private var scenesFactory: MyProductsScenesFactory
     
     // MARK: - Properties
     let viewModel: MyProductsViewModel
-    let scenesFactory: MyProductsScenesFactory
     lazy var rootView = MyProductsRootView(viewModel: viewModel)
     
     // MARK: - Initializer
-    init(viewModel: MyProductsViewModel, scenesFactory: MyProductsScenesFactory)
+    init(viewModel: MyProductsViewModel)
     {
         self.viewModel = viewModel
-        self.scenesFactory = scenesFactory
         super.init()
     }
     

@@ -16,10 +16,12 @@ protocol OrcaSwapScenesFactory {
 
 extension OrcaSwap {
     class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
+        // MARK: - Dependencies
+        @Injected private var scenesFactory: OrcaSwapScenesFactory
+        
         // MARK: - Properties
         var transitionManager: UIViewControllerTransitioningDelegate?
         let viewModel: ViewModel
-        let scenesFactory: OrcaSwapScenesFactory
         
         lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
             UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
@@ -32,11 +34,8 @@ extension OrcaSwap {
         lazy var rootView = RootView(viewModel: viewModel)
         
         // MARK: - Initializer
-        init(viewModel: ViewModel,
-             scenesFactory: OrcaSwapScenesFactory)
-        {
+        init(viewModel: ViewModel) {
             self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
             super.init()
             modalPresentationStyle = .custom
         }
