@@ -21,7 +21,7 @@ extension Settings {
         override func setUp() {
             super.setUp()
             navigationBar.titleLabel.text = L10n.security
-            
+            stackView.setCustomSpacing(10, after: stackView.arrangedSubviews[1]) // separator
             stackView.addArrangedSubviews {
                 UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
                     UIView.squareRoundedCornerIcon(image: .settingsPincode)
@@ -67,38 +67,7 @@ extension Settings {
         }
         
         @objc func buttonChangePinCodeDidTouch() {
-//            authenticationHandler.authenticate(
-//                presentationStyle: .init(
-//                    title: L10n.enterCurrentPINCode,
-//                    isRequired: false,
-//                    isFullScreen: false,
-//                    useBiometry: false,
-//                    completion: { [weak self] in
-//                        // pin code vc
-//                        let vc = CreatePassCodeVC(promptTitle: L10n.newPINCode)
-//                        vc.disableDismissAfterCompletion = true
-//                        vc.completion = {[weak self, weak vc] _ in
-//                            guard let pincode = vc?.passcode else {return}
-//                            self?.accountStorage.save(pincode)
-//                            vc?.dismiss(animated: true) { [weak self] in
-//                                let vc = PinCodeChangedVC()
-//                                self?.present(vc, animated: true, completion: nil)
-//                            }
-//                        }
-//
-//                        // navigation
-//                        let nc = BENavigationController()
-//                        nc.viewControllers = [vc]
-//
-//                        // modal
-//                        let modalVC = WLIndicatorModalVC()
-//                        modalVC.add(child: nc, to: modalVC.containerView)
-//
-//        //                modalVC.isModalInPresentation = true
-//                        self?.present(modalVC, animated: true, completion: nil)
-//                    }
-//                )
-//            )
+            viewModel.changePincode()
         }
     }
 }

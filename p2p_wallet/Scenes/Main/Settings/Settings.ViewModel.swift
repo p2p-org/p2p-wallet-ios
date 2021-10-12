@@ -37,6 +37,8 @@ protocol SettingsViewModelType {
     func setFiat(_ fiat: Fiat)
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint)
     func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void)
+    func changePincode()
+    func savePincode(_ pincode: String)
     func setLanguage(_ language: String?)
     func setTheme(_ theme: UIUserInterfaceStyle?)
     func setHideZeroBalances(_ hideZeroBalances: Bool)
@@ -252,6 +254,25 @@ extension Settings.ViewModel: SettingsViewModelType {
                 self?.authenticationHandler.pauseAuthentication(false)
             }
         }
+    }
+    
+    func changePincode() {
+        authenticationHandler.authenticate(
+            presentationStyle: .init(
+                title: L10n.enterCurrentPINCode,
+                isRequired: false,
+                isFullScreen: false,
+                useBiometry: false,
+                completion: { [weak self] in
+                    // pin code vc
+                    self?.navigate(to: .changePincode)
+                }
+            )
+        )
+    }
+    
+    func savePincode(_ pincode: String) {
+        accountStorage.save(pincode)
     }
     
     func setLanguage(_ language: String?) {

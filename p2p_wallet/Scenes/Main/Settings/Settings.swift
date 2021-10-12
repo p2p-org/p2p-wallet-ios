@@ -18,6 +18,7 @@ struct Settings {
         case currency
         case network
         case security
+        case changePincode
         case language
         case appearance
         case share(item: Any)
