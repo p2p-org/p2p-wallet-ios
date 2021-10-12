@@ -19,7 +19,7 @@ class HomeRootView: BEView {
     lazy var collectionView: HomeCollectionView = {
         let collectionView = HomeCollectionView(walletsRepository: viewModel.walletsRepository)
         collectionView.delegate = self
-        collectionView.openProfileAction = viewModel.navigationAction(scene: .profile)
+        collectionView.openProfileAction = viewModel.navigationAction(scene: .settings)
         collectionView.reserveNameAction = viewModel.navigationAction(scene: .reserveName(owner: viewModel.keychainStorage.account?.publicKey.base58EncodedString ?? ""))
         collectionView.buyAction = viewModel.navigationAction(scene: .buyToken)
         collectionView.receiveAction = viewModel.navigationAction(scene: .receiveToken)
