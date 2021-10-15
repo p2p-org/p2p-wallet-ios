@@ -17,6 +17,9 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     var isTokenPairValidDriver: Driver<Loadable<Bool>> {get}
     var inputAmountDriver: Driver<Double?> {get}
     var estimatedAmountDriver: Driver<Double?> {get}
+    var feesDriver: Driver<SolanaSDK.Lamports?> {get}
+    var availableAmountDriver: Driver<Double?> {get}
+    var slippageDriver: Driver<Double> {get}
     
     func reload()
     func chooseSourceWallet()
@@ -25,6 +28,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     func useAllBalance()
     func enterInputAmount(_ amount: Double?)
     func enterEstimatedAmount(_ amount: Double?)
+    func changeSlippage(to slippage: Double)
 }
 
 extension OrcaSwapV2 {
@@ -46,6 +50,8 @@ extension OrcaSwapV2 {
         private let bestPoolsPairSubject = BehaviorRelay<OrcaSwap.PoolsPair?>(value: nil)
         private let inputAmountSubject = BehaviorRelay<Double?>(value: nil)
         private let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
+        private let feesSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil) // FIXME
+        private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
         
         // MARK: - Initializer
         init(
@@ -105,6 +111,10 @@ extension OrcaSwapV2 {
                     }
                 })
                 .disposed(by: disposeBag)
+            
+            // TODO: - Calculate fees
+            
+            
         }
     }
 }
@@ -139,6 +149,25 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     
     var estimatedAmountDriver: Driver<Double?> {
         estimatedAmountSubject.asDriver()
+    }
+    
+    var feesDriver: Driver<SolanaSDK.Lamports?> {
+        feesSubject.asDriver()
+    }
+    
+    var availableAmountDriver: Driver<Double?> {
+        Driver.combineLatest(
+            sourceWalletDriver,
+            destinationWalletDriver,
+            feesDriver
+        )
+            .map {sourceWallet, destinationWallet, feeInLamports -> Double? in
+                calculateAvailableAmount(sourceWallet: sourceWallet, destinationWallet: destinationWallet, feeInLamports: feeInLamports)
+            }
+    }
+    
+    var slippageDriver: Driver<Double> {
+        slippageSubject.asDriver()
     }
     
     // MARK: - Actions
@@ -221,4 +250,23 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             inputAmountSubject.accept(bestInputAmount.convertToBalance(decimals: sourceDecimals))
         }
     }
+    
+    func changeSlippage(to slippage: Double) {
+        slippageSubject.accept(slippage)
+    }
+}
+
+// MARK: - Helpers
+private func calculateAvailableAmount(sourceWallet wallet: Wallet?, destinationWallet: Wallet?, feeInLamports: SolanaSDK.Lamports?) -> Double?
+{
+    guard let sourceWallet = wallet,
+          let feeInLamports = feeInLamports
+    else {return wallet?.amount}
+    
+    // if token is not nativeSolana and are not using fee relayer
+    if !sourceWallet.isNativeSOL && !OrcaSwapV2.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
+    {return sourceWallet.amount}
+    
+    let availableAmount = (sourceWallet.amount ?? 0) - feeInLamports.convertToBalance(decimals: sourceWallet.token.decimals)
+    return availableAmount > 0 ? availableAmount: 0
 }
