@@ -54,11 +54,85 @@ extension OrcaSwapV2 {
         
         // MARK: - Layout
         private func layout() {
-            
+            stackView.spacing = 16
+            stackView.addArrangedSubviews {
+                sourceWalletView
+                
+                swapSourceAndDestinationView()
+                
+                destinationWalletView
+                
+                OrcaSwapV1.createSectionView(
+                    title: L10n.currentPrice,
+                    contentView: exchangeRateLabel,
+                    rightView: exchangeRateReverseButton,
+                    addSeparatorOnTop: false
+                )
+                    .withTag(1)
+                
+                UIView.defaultSeparator()
+                    .withTag(2)
+                
+                OrcaSwapV1.createSectionView(
+                    title: L10n.maxPriceSlippage,
+                    contentView: slippageLabel,
+                    addSeparatorOnTop: false
+                )
+                    .onTap(self, action: #selector(chooseSlippage))
+                    .withTag(3)
+                
+                UIView.defaultSeparator()
+                    .withTag(4)
+                
+                OrcaSwapV1.createSectionView(
+                    label: swapFeeLabel,
+                    contentView: errorLabel,
+                    addSeparatorOnTop: false
+                )
+                    .withModifier { view in
+                        let view = view
+                        view.autoSetDimension(.height, toSize: 48, relation: .greaterThanOrEqual)
+                        return view
+                    }
+                    .onTap(self, action: #selector(showSwapFees))
+                    .withTag(5)
+                
+                swapButton
+                
+                BEStackViewSpacing(20)
+                UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
+                    UILabel(text: L10n.poweredBy, textSize: 13, textColor: .textSecondary, textAlignment: .center)
+                    UIImageView(width: 24, height: 24, image: .orcaLogo)
+                    UIImageView(width: 68, height: 13, image: .orcaText, tintColor: .textBlack)
+                }
+                    .centeredHorizontallyView
+            }
         }
         
         private func bind() {
+            // loading swap
+            viewModel.loadingStateDriver
+                .drive(onNext: {[weak self] state in
+                    self?.setUp(state, reloadAction: { [weak self] in
+                        self?.viewModel.reload()
+                    })
+                })
+                .disposed(by: disposeBag)
+        }
+        
+        // MARK: - Helpers
+        private func swapSourceAndDestinationView() -> UIView {
+            let view = UIView(forAutoLayout: ())
+            let separator = UIView.defaultSeparator()
+            view.addSubview(separator)
+            separator.autoPinEdge(toSuperviewEdge: .leading, withInset: 8)
+            separator.autoAlignAxis(toSuperviewAxis: .horizontal)
             
+            view.addSubview(reverseButton)
+            reverseButton.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .leading)
+            separator.autoPinEdge(.trailing, to: .leading, of: reverseButton, withOffset: -8)
+            
+            return view
         }
         
         @objc func swapSourceAndDestination() {
@@ -71,6 +145,14 @@ extension OrcaSwapV2 {
         
         @objc func authenticateAndSwap() {
             viewModel.authenticateAndSwap()
+        }
+        
+        @objc func chooseSlippage() {
+            viewModel.navigate(to: .chooseSlippage)
+        }
+        
+        @objc func showSwapFees() {
+            viewModel.navigate(to: .swapFees)
         }
     }
 }

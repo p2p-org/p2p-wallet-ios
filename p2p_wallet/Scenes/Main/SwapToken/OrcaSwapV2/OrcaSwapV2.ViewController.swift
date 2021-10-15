@@ -62,14 +62,6 @@ extension OrcaSwapV2 {
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
             
-            viewModel.loadingStateDriver
-                .drive(onNext: {[weak self] state in
-                    self?.setUp(state, reloadAction: { [weak self] in
-                        self?.viewModel.reload()
-                    })
-                })
-                .disposed(by: disposeBag)
-            
             viewModel.errorDriver
                 .distinctUntilChanged()
                 .drive(onNext: {[weak self] _ in
