@@ -15,10 +15,15 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     var sourceWalletDriver: Driver<Wallet?> {get}
     var destinationWalletDriver: Driver<Wallet?> {get}
     var isTokenPairValidDriver: Driver<Loadable<Bool>> {get}
+    var inputAmountDriver: Driver<Double?> {get}
+    var estimatedAmountDriver: Driver<Double?> {get}
     
     func reload()
     func chooseSourceWallet()
     func chooseDestinationWallet()
+    func useAllBalance()
+    func enterInputAmount(_ amount: Double?)
+    func enterEstimatedAmount(_ amount: Double?)
 }
 
 extension OrcaSwapV2 {
@@ -38,6 +43,8 @@ extension OrcaSwapV2 {
         private let destinationWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let tradablePoolsPairsSubject = LoadableRelay<[OrcaSwap.PoolsPair]>(request: .just([]))
         private let bestPoolsPairSubject = BehaviorRelay<OrcaSwap.PoolsPair?>(value: nil)
+        private let inputAmountSubject = BehaviorRelay<Double?>(value: nil)
+        private let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
         
         // MARK: - Initializer
         init(
@@ -83,6 +90,20 @@ extension OrcaSwapV2 {
                     self.tradablePoolsPairsSubject.reload()
                 })
                 .disposed(by: disposeBag)
+            
+            // FIXME: - fill input amount and estimated amount after loaded
+            tradablePoolsPairsSubject.stateObservable
+                .distinctUntilChanged()
+                .filter {$0 == .loaded}
+                .subscribe(onNext: { [weak self] _ in
+                    guard let self = self else {return}
+                    if let inputAmount = self.inputAmountSubject.value {
+                        self.enterInputAmount(inputAmount)
+                    } else if let estimatedAmount = self.estimatedAmountSubject.value {
+                        self.enterEstimatedAmount(estimatedAmount)
+                    }
+                })
+                .disposed(by: disposeBag)
         }
     }
 }
@@ -109,6 +130,14 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             .map { value, state, reloadAction in
                 (value?.isEmpty == false, state, reloadAction)
             }
+    }
+    
+    var inputAmountDriver: Driver<Double?> {
+        inputAmountSubject.asDriver()
+    }
+    
+    var estimatedAmountDriver: Driver<Double?> {
+        estimatedAmountSubject.asDriver()
     }
     
     // MARK: - Actions
@@ -143,6 +172,46 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         } else {
             analyticsManager.log(event: .swapTokenBSelectClick(tokenTicker: wallet.token.symbol))
             destinationWalletSubject.accept(wallet)
+        }
+    }
+    
+    func useAllBalance() {
+        // TODO: - useAllBalance
+//        // calculate available balance
+//
+//        // input
+//        enterInputAmount(availableBalance)
+    }
+    
+    func enterInputAmount(_ amount: Double?) {
+        inputAmountSubject.accept(amount)
+        
+        // calculate estimated amount
+        if let sourceDecimals = sourceWalletSubject.value?.token.decimals,
+           let destinationDecimals = destinationWalletSubject.value?.token.decimals,
+           let inputAmount = amount?.toLamport(decimals: sourceDecimals),
+           let poolsPairs = tradablePoolsPairsSubject.value,
+           let bestPoolsPair = try? orcaSwap.findBestPoolsPairForInputAmount(inputAmount, from: poolsPairs),
+           let bestEstimatedAmount = bestPoolsPair.getOutputAmount(fromInputAmount: inputAmount)
+        {
+            bestPoolsPairSubject.accept(bestPoolsPair)
+            estimatedAmountSubject.accept(bestEstimatedAmount.convertToBalance(decimals: destinationDecimals))
+        }
+    }
+    
+    func enterEstimatedAmount(_ amount: Double?) {
+        estimatedAmountSubject.accept(amount)
+        
+        // calculate input amount
+        if let sourceDecimals = sourceWalletSubject.value?.token.decimals,
+           let destinationDecimals = destinationWalletSubject.value?.token.decimals,
+           let estimatedAmount = amount?.toLamport(decimals: destinationDecimals),
+           let poolsPairs = tradablePoolsPairsSubject.value,
+           let bestPoolsPair = try? orcaSwap.findBestPoolForEstimatedAmount(estimatedAmount, from: poolsPairs),
+           let bestInputAmount = bestPoolsPair.getInputAmount(fromEstimatedAmount: estimatedAmount)
+        {
+            bestPoolsPairSubject.accept(bestPoolsPair)
+            inputAmountSubject.accept(bestInputAmount.convertToBalance(decimals: sourceDecimals))
         }
     }
 }
