@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import FeeRelayerSwift
 
-protocol OrcaSwapAPIClient {
+protocol OrcaSwapV1APIClient {
     func getSwapPools() -> Single<[SolanaSDK.Pool]>
     func getPoolWithTokenBalances(pool: SolanaSDK.Pool) -> Single<SolanaSDK.Pool>
     func swap(
@@ -27,7 +27,7 @@ protocol OrcaSwapAPIClient {
     func getCreatingTokenAccountFee() -> Single<UInt64>
 }
 
-extension SolanaSDK: OrcaSwapAPIClient {
+extension SolanaSDK: OrcaSwapV1APIClient {
     func swap(account: Account?, pool: Pool?, source: PublicKey, sourceMint: PublicKey, destination: PublicKey?, destinationMint: PublicKey, slippage: Double, amount: UInt64, isSimulation: Bool) -> Single<SwapResponse> {
         swap(
             account: account,

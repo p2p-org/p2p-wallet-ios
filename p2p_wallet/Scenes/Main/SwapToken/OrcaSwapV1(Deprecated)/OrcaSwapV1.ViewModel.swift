@@ -42,7 +42,7 @@ extension OrcaSwapV1 {
         
         // MARK: - Dependencies
         private let solWallet: Wallet?
-        private let apiClient: OrcaSwapAPIClient
+        private let apiClient: OrcaSwapV1APIClient
         @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var analyticsManager: AnalyticsManagerType
         
@@ -81,7 +81,7 @@ extension OrcaSwapV1 {
         // MARK: - Initializer
         init(
             solWallet: Wallet?,
-            apiClient: OrcaSwapAPIClient
+            apiClient: OrcaSwapV1APIClient
         ) {
             self.solWallet = solWallet
             self.apiClient = apiClient
