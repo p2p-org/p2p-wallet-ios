@@ -14,6 +14,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     var loadingStateDriver: Driver<LoadableState> {get}
     var sourceWalletDriver: Driver<Wallet?> {get}
     var destinationWalletDriver: Driver<Wallet?> {get}
+    var isTokenPairValidDriver: Driver<Loadable<Bool>> {get}
     
     func reload()
     func chooseSourceWallet()
@@ -32,9 +33,11 @@ extension OrcaSwapV2 {
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private lazy var loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
-        private lazy var sourceWalletSubject = BehaviorRelay<Wallet?>(value: nil)
-        private lazy var destinationWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        private let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
+        private let sourceWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        private let destinationWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        private let tradablePoolsPairsSubject = LoadableRelay<[OrcaSwap.PoolsPair]>(request: .just([]))
+        private let bestPoolsPairSubject = BehaviorRelay<OrcaSwap.PoolsPair?>(value: nil)
         
         // MARK: - Initializer
         init(
@@ -57,6 +60,29 @@ extension OrcaSwapV2 {
                     })
                     .disposed(by: disposeBag)
             }
+            
+            // get tradable pools pair for each token pair
+            Observable.combineLatest(
+                sourceWalletSubject,
+                destinationWalletSubject
+            )
+                .subscribe(onNext: {[weak self] sourceWallet, destinationWallet in
+                    guard let self = self,
+                          let sourceWallet = sourceWallet,
+                          let destinationWallet = destinationWallet
+                    else {
+                        self?.tradablePoolsPairsSubject.request = .just([])
+                        self?.tradablePoolsPairsSubject.reload()
+                        return
+                    }
+                    
+                    self.tradablePoolsPairsSubject.request = self.orcaSwap.getTradablePoolsPairs(
+                        fromMint: sourceWallet.token.address,
+                        toMint: destinationWallet.token.address
+                    )
+                    self.tradablePoolsPairsSubject.reload()
+                })
+                .disposed(by: disposeBag)
         }
     }
 }
@@ -76,6 +102,13 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     
     var destinationWalletDriver: Driver<Wallet?> {
         destinationWalletSubject.asDriver()
+    }
+    
+    var isTokenPairValidDriver: Driver<Loadable<Bool>> {
+        tradablePoolsPairsSubject.asDriver()
+            .map { value, state, reloadAction in
+                (value?.isEmpty == false, state, reloadAction)
+            }
     }
     
     // MARK: - Actions
