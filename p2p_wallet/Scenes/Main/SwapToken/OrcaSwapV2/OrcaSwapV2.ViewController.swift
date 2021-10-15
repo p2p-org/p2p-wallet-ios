@@ -124,5 +124,17 @@ extension OrcaSwapV2 {
         @objc func showSettings() {
             viewModel.navigate(to: .settings)
         }
+        
+        // MARK: - Transitions
+        override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
+            super.calculateFittingHeightForPresentedView(targetWidth: targetWidth)
+                + headerView.fittingHeight(targetWidth: targetWidth)
+                + 1 // separator
+                + rootView.fittingHeight(targetWidth: targetWidth)
+        }
+        
+        override var scrollViewAvoidingTabBar: UIScrollView? {
+            rootView.scrollView
+        }
     }
 }
