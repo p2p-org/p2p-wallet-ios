@@ -14,11 +14,16 @@ extension OrcaSwapV2 {
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        @Injected private var viewModel: OrcaSwapV2ViewModelType
+        let viewModel: OrcaSwapV2ViewModelType
         
         // MARK: - Subviews
         
         // MARK: - Methods
+        init(viewModel: OrcaSwapV2ViewModelType) {
+            self.viewModel = viewModel
+            super.init(frame: .zero)
+        }
+        
         override func commonInit() {
             super.commonInit()
             layout()
