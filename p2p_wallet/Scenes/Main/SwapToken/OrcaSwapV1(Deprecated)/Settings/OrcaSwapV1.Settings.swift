@@ -27,8 +27,8 @@ extension OrcaSwapV1.ViewModel: SwapTokenSettingsViewModelType {
         output.destinationWallet
     }
     
-    var slippageDriver: Driver<Double?> {
-        output.slippage.map(Optional.init)
+    var slippageDriver: Driver<Double> {
+        output.slippage
     }
     
     func changeSlippage(to slippage: Double) {

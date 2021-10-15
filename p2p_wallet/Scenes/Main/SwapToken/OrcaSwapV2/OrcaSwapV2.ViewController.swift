@@ -80,12 +80,44 @@ extension OrcaSwapV2 {
         
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
-//            switch scene {
-//            case .detail:
-//                break
-//            default:
-//                break
-//            }
+            switch scene {
+            case .chooseSourceWallet:
+                let vc = scenesFactory.makeChooseWalletViewController(
+                    customFilter: {$0.amount > 0},
+                    showOtherWallets: false,
+                    handler: viewModel
+                )
+                present(vc, animated: true, completion: nil)
+            case .chooseDestinationWallet(let validMints, let sourceWalletPubkey):
+                let vc = scenesFactory.makeChooseWalletViewController(
+                    customFilter: {
+                        $0.pubkey != sourceWalletPubkey &&
+                            validMints.contains($0.mintAddress)
+                    },
+                    showOtherWallets: true,
+                    handler: viewModel
+                )
+                present(vc, animated: true, completion: nil)
+            case .settings:
+                let vc = SettingsViewController(viewModel: viewModel)
+                let nc = SettingsNavigationController(rootViewController: vc)
+                nc.modalPresentationStyle = .custom
+                present(nc, interactiveDismissalType: .standard)
+            case .chooseSlippage:
+                let vc = SlippageSettingsViewController()
+                vc.completion = {[weak self] slippage in
+                    self?.viewModel.changeSlippage(to: slippage)
+                }
+                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+            case .swapFees:
+                let vc = SwapFeesViewController(viewModel: viewModel)
+                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+            case .processTransaction(let request, let transactionType):
+                let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
+                self.present(vc, animated: true, completion: nil)
+            default:
+                break
+            }
         }
         
         // MARK: - Actions
