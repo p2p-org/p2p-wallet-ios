@@ -22,6 +22,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     var slippageDriver: Driver<Double> {get}
     var minimumReceiveAmountDriver: Driver<Double?> {get}
     var exchangeRateDriver: Driver<Double?> {get}
+    var payingTokenDriver: Driver<PayingToken> {get}
     
     func reload()
     func chooseSourceWallet()
@@ -32,6 +33,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     func enterEstimatedAmount(_ amount: Double?)
     func changeSlippage(to slippage: Double)
     func reverseExchangeRate()
+    func setPayingToken(_ payingToken: PayingToken)
 }
 
 extension OrcaSwapV2 {
@@ -56,6 +58,7 @@ extension OrcaSwapV2 {
         private let feesSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil) // FIXME
         private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
         private let isExchangeRateReversedSubject = BehaviorRelay<Bool>(value: false)
+        private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
         
         // MARK: - Initializer
         init(
@@ -212,6 +215,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             .asDriver(onErrorJustReturn: nil)
     }
     
+    var payingTokenDriver: Driver<PayingToken> {
+        payingTokenSubject.asDriver()
+    }
+    
     // MARK: - Actions
     func reload() {
         loadingStateSubject.accept(.loading)
@@ -294,11 +301,17 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
     
     func changeSlippage(to slippage: Double) {
+        Defaults.slippage = slippage
         slippageSubject.accept(slippage)
     }
     
     func reverseExchangeRate() {
         isExchangeRateReversedSubject.accept(!isExchangeRateReversedSubject.value)
+    }
+    
+    func setPayingToken(_ payingToken: PayingToken) {
+        Defaults.payingToken = payingToken
+        payingTokenSubject.accept(payingToken)
     }
 }
 
