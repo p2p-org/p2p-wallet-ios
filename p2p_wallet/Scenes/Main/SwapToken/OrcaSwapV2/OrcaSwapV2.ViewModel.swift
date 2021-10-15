@@ -20,6 +20,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     var feesDriver: Driver<SolanaSDK.Lamports?> {get}
     var availableAmountDriver: Driver<Double?> {get}
     var slippageDriver: Driver<Double> {get}
+    var minimumReceiveAmountDriver: Driver<Double?> {get}
     
     func reload()
     func chooseSourceWallet()
@@ -168,6 +169,27 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     
     var slippageDriver: Driver<Double> {
         slippageSubject.asDriver()
+    }
+    
+    var minimumReceiveAmountDriver: Driver<Double?> {
+        bestPoolsPairSubject
+            .withLatestFrom(
+                Observable.combineLatest(
+                    inputAmountSubject,
+                    slippageSubject,
+                    sourceWalletSubject,
+                    destinationWalletSubject
+                )
+            ) { ($0, $1.0, $1.1, $1.2, $1.3) }
+            .map { poolsPair, inputAmount, slippage, sourceWallet, destinationWallet in
+                guard let poolsPair = poolsPair,
+                      let sourceDecimals = sourceWallet?.token.decimals,
+                      let inputAmount = inputAmount?.toLamport(decimals: sourceDecimals),
+                      let destinationDecimals = destinationWallet?.token.decimals
+                else {return nil}
+                return poolsPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)?.convertToBalance(decimals: destinationDecimals)
+            }
+            .asDriver(onErrorJustReturn: nil)
     }
     
     // MARK: - Actions
