@@ -21,6 +21,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     var availableAmountDriver: Driver<Double?> {get}
     var slippageDriver: Driver<Double> {get}
     var minimumReceiveAmountDriver: Driver<Double?> {get}
+    var exchangeRateDriver: Driver<Double?> {get}
     
     func reload()
     func chooseSourceWallet()
@@ -30,6 +31,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     func enterInputAmount(_ amount: Double?)
     func enterEstimatedAmount(_ amount: Double?)
     func changeSlippage(to slippage: Double)
+    func reverseExchangeRate()
 }
 
 extension OrcaSwapV2 {
@@ -53,6 +55,7 @@ extension OrcaSwapV2 {
         private let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
         private let feesSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil) // FIXME
         private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
+        private let isExchangeRateReversedSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
         init(
@@ -192,6 +195,23 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             .asDriver(onErrorJustReturn: nil)
     }
     
+    var exchangeRateDriver: Driver<Double?> {
+        Observable.combineLatest(
+            inputAmountSubject,
+            estimatedAmountSubject
+        )
+            .withLatestFrom(isExchangeRateReversedSubject.asObservable()) {($0.0, $0.1, $1)}
+            .map { inputAmount, estimatedAmount, isReversed in
+                guard let inputAmount = inputAmount,
+                      let estimatedAmount = estimatedAmount,
+                      inputAmount > 0,
+                      estimatedAmount > 0
+                else {return nil}
+                return isReversed ? inputAmount / estimatedAmount: estimatedAmount / inputAmount
+            }
+            .asDriver(onErrorJustReturn: nil)
+    }
+    
     // MARK: - Actions
     func reload() {
         loadingStateSubject.accept(.loading)
@@ -275,6 +295,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     
     func changeSlippage(to slippage: Double) {
         slippageSubject.accept(slippage)
+    }
+    
+    func reverseExchangeRate() {
+        isExchangeRateReversedSubject.accept(!isExchangeRateReversedSubject.value)
     }
 }
 
