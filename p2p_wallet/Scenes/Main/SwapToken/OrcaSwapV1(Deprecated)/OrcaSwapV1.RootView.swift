@@ -1,5 +1,5 @@
 //
-//  OrcaSwap.RootView.swift
+//  OrcaSwapV1.RootView.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 03/06/2021.
@@ -10,7 +10,7 @@ import RxSwift
 import Action
 import RxCocoa
 
-extension OrcaSwap {
+extension OrcaSwapV1 {
     class RootView: ScrollableVStackRootView {
         // MARK: - Constants
         let disposeBag = DisposeBag()
@@ -22,7 +22,7 @@ extension OrcaSwap {
         lazy var sourceWalletView = WalletView(viewModel: viewModel, type: .source)
         lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
             .onTap(viewModel, action: #selector(ViewModel.swapSourceAndDestination))
-        lazy var destinationWalletView = OrcaSwap.WalletView(viewModel: viewModel, type: .destination)
+        lazy var destinationWalletView = OrcaSwapV1.WalletView(viewModel: viewModel, type: .destination)
         
         lazy var exchangeRateLabel = UILabel(textSize: 15, weight: .medium)
         lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
@@ -64,7 +64,7 @@ extension OrcaSwap {
                 
                 destinationWalletView
                 
-                OrcaSwap.createSectionView(
+                OrcaSwapV1.createSectionView(
                     title: L10n.currentPrice,
                     contentView: exchangeRateLabel,
                     rightView: exchangeRateReverseButton,
@@ -75,7 +75,7 @@ extension OrcaSwap {
                 UIView.defaultSeparator()
                     .withTag(2)
                 
-                OrcaSwap.createSectionView(
+                OrcaSwapV1.createSectionView(
                     title: L10n.maxPriceSlippage,
                     contentView: slippageLabel,
                     addSeparatorOnTop: false
@@ -86,7 +86,7 @@ extension OrcaSwap {
                 UIView.defaultSeparator()
                     .withTag(4)
                 
-                OrcaSwap.createSectionView(
+                OrcaSwapV1.createSectionView(
                     label: swapFeeLabel,
                     contentView: errorLabel,
                     addSeparatorOnTop: false

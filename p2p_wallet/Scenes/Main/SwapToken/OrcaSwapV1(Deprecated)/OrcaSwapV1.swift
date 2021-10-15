@@ -1,5 +1,5 @@
 //
-//  OrcaSwap.swift
+//  OrcaSwapV1.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 03/06/2021.
@@ -48,7 +48,7 @@ extension SolanaSDK: OrcaSwapAPIClient {
     }
 }
 
-struct OrcaSwap {
+struct OrcaSwapV1 {
     enum NavigatableScene {
         case chooseSourceWallet
         case chooseDestinationWallet(validMints: Set<String>, excludedSourceWalletPubkey: String?)

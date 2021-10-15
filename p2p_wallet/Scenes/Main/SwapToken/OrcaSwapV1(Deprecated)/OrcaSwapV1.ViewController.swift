@@ -1,5 +1,5 @@
 //
-//  OrcaSwap.ViewController.swift
+//  OrcaSwapV1.ViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 03/06/2021.
@@ -14,7 +14,7 @@ protocol OrcaSwapScenesFactory {
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
 
-extension OrcaSwap {
+extension OrcaSwapV1 {
     class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
         // MARK: - Properties
         var transitionManager: UIViewControllerTransitioningDelegate?

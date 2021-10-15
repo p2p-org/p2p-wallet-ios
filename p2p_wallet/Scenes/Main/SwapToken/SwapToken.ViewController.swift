@@ -114,12 +114,12 @@ extension SwapToken {
                 nc.modalPresentationStyle = .custom
                 present(nc, interactiveDismissalType: .standard)
             case .chooseSlippage:
-                let vc = OrcaSwap.SlippageSettingsViewController()
+                let vc = OrcaSwapV1.SlippageSettingsViewController()
                 vc.completion = {[weak self] slippage in
                     Defaults.slippage = slippage / 100
                     self?.viewModel.changeSlippage(to: Defaults.slippage)
                 }
-                present(OrcaSwap.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+                present(OrcaSwapV1.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .swapFees:
                 let vc = SwapFeesViewController(viewModel: viewModel)
                 present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)

@@ -1,5 +1,5 @@
 //
-//  OrcaSwap.Settings.swift
+//  OrcaSwapV1.Settings.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 12/08/2021.
@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-extension OrcaSwap {
+extension OrcaSwapV1 {
     // Forward to NewSwap, remove later
     typealias SettingsNavigationController = SwapToken.SettingsNavigationController
     typealias SettingsBaseViewController = SwapToken.SettingsBaseViewController
@@ -18,7 +18,7 @@ extension OrcaSwap {
     typealias SwapFeesViewController = SwapToken.SwapFeesViewController
 }
 
-extension OrcaSwap.ViewModel: SwapTokenSettingsViewModelType {
+extension OrcaSwapV1.ViewModel: SwapTokenSettingsViewModelType {
     var sourceWalletDriver: Driver<Wallet?> {
         output.sourceWallet
     }
@@ -36,7 +36,7 @@ extension OrcaSwap.ViewModel: SwapTokenSettingsViewModelType {
     }
 }
 
-extension OrcaSwap.ViewModel: SwapTokenSwapFeesViewModelType {
+extension OrcaSwapV1.ViewModel: SwapTokenSwapFeesViewModelType {
     var feesDriver: Driver<Loadable<[PayingFee]>> {
         Driver.combineLatest(
             output.feeInLamports,
@@ -61,7 +61,7 @@ extension OrcaSwap.ViewModel: SwapTokenSwapFeesViewModelType {
                 }
 
                 if let fee = fee {
-                    if OrcaSwap.isFeeRelayerEnabled(source: source, destination: destination) {
+                    if OrcaSwapV1.isFeeRelayerEnabled(source: source, destination: destination) {
                         result.append(
                             .init(
                                 type: .transactionFee,

@@ -11,7 +11,7 @@ import RxCocoa
 import LazySubject
 
 // DEPRECATED: Use NewSwap instead
-extension OrcaSwap {
+extension OrcaSwapV1 {
     class ViewModel: ViewModelType {
         // MARK: - Nested type
         struct Input {
@@ -623,7 +623,7 @@ extension OrcaSwap {
     }
 }
 
-extension OrcaSwap.ViewModel: WalletDidSelectHandler {
+extension OrcaSwapV1.ViewModel: WalletDidSelectHandler {
     func walletDidSelect(_ wallet: Wallet) {
         if isSelectingSourceWallet {
             analyticsManager.log(event: .swapTokenASelectClick(tokenTicker: wallet.token.symbol))
@@ -635,7 +635,7 @@ extension OrcaSwap.ViewModel: WalletDidSelectHandler {
     }
 }
 
-private extension OrcaSwap.ViewModel {
+private extension OrcaSwapV1.ViewModel {
     // MARK: - Calculator
     private var sourceDecimals: UInt8? {
         sourceWalletSubject.value?.token.decimals
@@ -716,7 +716,7 @@ private func calculateFeeInLamport(sourceWallet: Wallet?, destinationWallet: Wal
     }
     
     // fee relayer
-    if OrcaSwap.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
+    if OrcaSwapV1.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
     {
         feeInLamports += lPS // fee for creating a SOL account
     }
@@ -731,7 +731,7 @@ private func calculateAvailableAmount(sourceWallet wallet: Wallet?, destinationW
     else {return wallet?.amount}
     
     // if token is not nativeSolana and are not using fee relayer
-    if !sourceWallet.isNativeSOL && !OrcaSwap.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
+    if !sourceWallet.isNativeSOL && !OrcaSwapV1.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
     {return sourceWallet.amount}
     
     let availableAmount = (sourceWallet.amount ?? 0) - feeInLamports.convertToBalance(decimals: sourceWallet.token.decimals)
