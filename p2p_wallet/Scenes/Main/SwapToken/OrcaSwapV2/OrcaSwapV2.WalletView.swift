@@ -18,7 +18,7 @@ extension OrcaSwapV2 {
         
         var wallet: Wallet?
         private let disposeBag = DisposeBag()
-        private let viewModel: ViewModel
+        private let viewModel: OrcaSwapV2ViewModelType
         private let type: WalletType
         @Injected private var analyticsManager: AnalyticsManagerType
         
@@ -49,7 +49,7 @@ extension OrcaSwapV2 {
         
         private lazy var equityValueLabel = UILabel(text: "≈ 0.00 \(Defaults.fiat.symbol)", textSize: 13, weight: .medium, textColor: .textSecondary.onDarkMode(.white), textAlignment: .right)
         
-        init(viewModel: ViewModel, type: WalletType) {
+        init(viewModel: OrcaSwapV2ViewModelType, type: WalletType) {
             self.viewModel = viewModel
             self.type = type
             super.init(frame: .zero)

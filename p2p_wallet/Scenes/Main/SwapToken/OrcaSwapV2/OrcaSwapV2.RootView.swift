@@ -19,13 +19,13 @@ extension OrcaSwapV2 {
         // MARK: - Subviews
         lazy var sourceWalletView = WalletView(viewModel: viewModel, type: .source)
         lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
-            .onTap(viewModel, action: #selector(ViewModel.swapSourceAndDestination))
-        lazy var destinationWalletView = OrcaSwapV1.WalletView(viewModel: viewModel, type: .destination)
+            .onTap(self, action: #selector(swapSourceAndDestination))
+        lazy var destinationWalletView = WalletView(viewModel: viewModel, type: .destination)
         
         lazy var exchangeRateLabel = UILabel(textSize: 15, weight: .medium)
         lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
             .padding(.init(all: 3))
-            .onTap(viewModel, action: #selector(ViewModel.reverseExchangeRate))
+            .onTap(self, action: #selector(reverseExchangeRate))
         
         lazy var slippageLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
         
@@ -33,7 +33,7 @@ extension OrcaSwapV2 {
         lazy var errorLabel = UILabel(textSize: 15, weight: .medium, textColor: .alert, numberOfLines: 0)
         
         lazy var swapButton = WLButton.stepButton(type: .blue, label: L10n.swapNow)
-            .onTap(viewModel, action: #selector(ViewModel.authenticateAndSwap))
+            .onTap(self, action: #selector(authenticateAndSwap))
         
         // MARK: - Methods
         init(viewModel: OrcaSwapV2ViewModelType) {
@@ -59,6 +59,18 @@ extension OrcaSwapV2 {
         
         private func bind() {
             
+        }
+        
+        @objc func swapSourceAndDestination() {
+            viewModel.swapSourceAndDestination()
+        }
+        
+        @objc func reverseExchangeRate() {
+            viewModel.reverseExchangeRate()
+        }
+        
+        @objc func authenticateAndSwap() {
+            viewModel.authenticateAndSwap()
         }
     }
 }
