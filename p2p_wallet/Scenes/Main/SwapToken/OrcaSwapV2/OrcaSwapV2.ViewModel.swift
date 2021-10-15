@@ -57,8 +57,6 @@ extension OrcaSwapV2 {
                     })
                     .disposed(by: disposeBag)
             }
-            
-            
         }
     }
 }
@@ -98,7 +96,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
     
     func chooseDestinationWallet() {
+        guard let sourceWallet = sourceWalletSubject.value,
+              let destinationMints = try? orcaSwap.findPosibleDestinationMints(fromMint: sourceWallet.token.address)
+        else {return}
         isSelectingSourceWallet = false
+        navigationSubject.accept(.chooseDestinationWallet(validMints: Set(destinationMints), excludedSourceWalletPubkey: sourceWallet.pubkey))
     }
     
     func walletDidSelect(_ wallet: Wallet) {
