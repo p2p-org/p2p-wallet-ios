@@ -54,7 +54,7 @@ extension ReserveName {
             super.bind()
             viewModel.initializingStateDriver
                 .drive(onNext: { [weak self] loadingState in
-                    self?.setUp(loadingState, overridingErrorAction: { [weak self] in
+                    self?.view.setUp(loadingState, overridingErrorAction: { [weak self] in
                         self?.showAlert(
                             title: L10n.error,
                             message:

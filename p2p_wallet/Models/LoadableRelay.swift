@@ -23,7 +23,7 @@ public enum LoadableState: Equatable {
     }
 }
 
-extension UIViewController {
+extension UIView {
     func setUp(
         _ loadableState: LoadableState,
         reloadAction: @escaping (() -> Void)
