@@ -1,5 +1,5 @@
 //
-//  OrcaSwap.WalletView.swift
+//  OrcaSwapV1.WalletView.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 23/11/2020.
@@ -10,7 +10,7 @@ import Action
 import RxSwift
 import RxCocoa
 
-extension OrcaSwap {
+extension OrcaSwapV1 {
     class WalletView: BEView {
         enum WalletType {
             case source, destination
@@ -256,7 +256,7 @@ extension OrcaSwap {
 }
 
 // MARK: - TextField delegate
-extension OrcaSwap.WalletView: UITextFieldDelegate {
+extension OrcaSwapV1.WalletView: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let textField = textField as? TokenAmountTextField {
             return textField.shouldChangeCharactersInRange(range, replacementString: string)
@@ -265,7 +265,7 @@ extension OrcaSwap.WalletView: UITextFieldDelegate {
     }
 }
 
-private extension OrcaSwap.WalletView {
+private extension OrcaSwapV1.WalletView {
     class BalanceView: BEView {
         private let disposeBag = DisposeBag()
         lazy var walletView = UIImageView(width: 16, height: 16, image: .walletIcon)
