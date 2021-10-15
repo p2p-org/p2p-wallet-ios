@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 
 extension OrcaSwapV2 {
-    class RootView: BEView {
+    class RootView: ScrollableVStackRootView {
         // MARK: - Constants
         let disposeBag = DisposeBag()
         
@@ -17,6 +17,23 @@ extension OrcaSwapV2 {
         let viewModel: OrcaSwapV2ViewModelType
         
         // MARK: - Subviews
+        lazy var sourceWalletView = WalletView(viewModel: viewModel, type: .source)
+        lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
+            .onTap(viewModel, action: #selector(ViewModel.swapSourceAndDestination))
+        lazy var destinationWalletView = OrcaSwapV1.WalletView(viewModel: viewModel, type: .destination)
+        
+        lazy var exchangeRateLabel = UILabel(textSize: 15, weight: .medium)
+        lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
+            .padding(.init(all: 3))
+            .onTap(viewModel, action: #selector(ViewModel.reverseExchangeRate))
+        
+        lazy var slippageLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
+        
+        lazy var swapFeeLabel = UILabel(text: L10n.swapFees, textSize: 15, weight: .medium)
+        lazy var errorLabel = UILabel(textSize: 15, weight: .medium, textColor: .alert, numberOfLines: 0)
+        
+        lazy var swapButton = WLButton.stepButton(type: .blue, label: L10n.swapNow)
+            .onTap(viewModel, action: #selector(ViewModel.authenticateAndSwap))
         
         // MARK: - Methods
         init(viewModel: OrcaSwapV2ViewModelType) {

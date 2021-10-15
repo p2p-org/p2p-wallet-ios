@@ -159,6 +159,7 @@
 		BC4B9EBE27191843005B9ECA /* OrcaSwapV2.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EBA27191843005B9ECA /* OrcaSwapV2.ViewModel.swift */; };
 		BC4B9EBF27191843005B9ECA /* OrcaSwapV2.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EBB27191843005B9ECA /* OrcaSwapV2.RootView.swift */; };
 		BC4B9EC127197DF5005B9ECA /* OrcaSwapV2.Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EC027197DF5005B9ECA /* OrcaSwapV2.Settings.swift */; };
+		BC4B9EC3271988A8005B9ECA /* OrcaSwapV2.WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EC2271988A8005B9ECA /* OrcaSwapV2.WalletView.swift */; };
 		BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */; };
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */; };
@@ -576,6 +577,7 @@
 		BC4B9EBA27191843005B9ECA /* OrcaSwapV2.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ViewModel.swift; sourceTree = "<group>"; };
 		BC4B9EBB27191843005B9ECA /* OrcaSwapV2.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.RootView.swift; sourceTree = "<group>"; };
 		BC4B9EC027197DF5005B9ECA /* OrcaSwapV2.Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.Settings.swift; sourceTree = "<group>"; };
+		BC4B9EC2271988A8005B9ECA /* OrcaSwapV2.WalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.WalletView.swift; sourceTree = "<group>"; };
 		BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BonfidaPricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoComparePricesFetcher+Models.swift"; sourceTree = "<group>"; };
@@ -1087,6 +1089,7 @@
 				BC4B9EBA27191843005B9ECA /* OrcaSwapV2.ViewModel.swift */,
 				BC4B9EB927191843005B9ECA /* OrcaSwapV2.ViewController.swift */,
 				BC4B9EBB27191843005B9ECA /* OrcaSwapV2.RootView.swift */,
+				BC4B9EC2271988A8005B9ECA /* OrcaSwapV2.WalletView.swift */,
 				BC4B9EC027197DF5005B9ECA /* OrcaSwapV2.Settings.swift */,
 			);
 			path = OrcaSwapV2;
@@ -2553,6 +2556,7 @@
 				BCBE149E25EF3D110014BCE5 /* HomeViewModel.swift in Sources */,
 				BC2297912700A274003F7118 /* RestoreICloud.swift in Sources */,
 				BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */,
+				BC4B9EC3271988A8005B9ECA /* OrcaSwapV2.WalletView.swift in Sources */,
 				BC4B9E88271425B9005B9ECA /* Settings.RootView.swift in Sources */,
 				BC0A9E9025F09BDE0063F9E3 /* Onboarding.CreatePassCodeVC.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
