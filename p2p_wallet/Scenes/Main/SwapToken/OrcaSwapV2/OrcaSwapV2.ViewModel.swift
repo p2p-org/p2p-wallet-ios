@@ -37,6 +37,8 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
     func changeSlippage(to slippage: Double)
     func reverseExchangeRate()
     func changePayingToken(to payingToken: PayingToken)
+    
+    func authenticateAndSwap()
 }
 
 extension OrcaSwapV2 {
@@ -144,6 +146,10 @@ extension OrcaSwapV2 {
                 .map {[weak self] _ in self?.verify() }
                 .bind(to: errorSubject)
                 .disposed(by: disposeBag)
+        }
+        
+        func authenticateAndSwap() {
+            fatalError("Implementing")
         }
     }
 }
