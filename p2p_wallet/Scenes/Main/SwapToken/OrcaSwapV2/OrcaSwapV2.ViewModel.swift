@@ -23,6 +23,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     var minimumReceiveAmountDriver: Driver<Double?> {get}
     var exchangeRateDriver: Driver<Double?> {get}
     var payingTokenDriver: Driver<PayingToken> {get}
+    var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}
     
     func reload()
     func chooseSourceWallet()
@@ -41,6 +42,7 @@ extension OrcaSwapV2 {
         // MARK: - Dependencies
         @Injected private var analyticsManager: AnalyticsManagerType
         private let orcaSwap: OrcaSwapType
+        private let walletsRepository: WalletsRepository
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -59,13 +61,16 @@ extension OrcaSwapV2 {
         private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
         private let isExchangeRateReversedSubject = BehaviorRelay<Bool>(value: false)
         private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
+        private let errorSubject = BehaviorRelay<VerificationError?>(value: nil)
         
         // MARK: - Initializer
         init(
             orcaSwap: OrcaSwapType,
+            walletsRepository: WalletsRepository,
             initialWallet: Wallet?
         ) {
             self.orcaSwap = orcaSwap
+            self.walletsRepository = walletsRepository
             
             bind(initialWallet: initialWallet)
         }
@@ -94,6 +99,7 @@ extension OrcaSwapV2 {
                     else {
                         self?.tradablePoolsPairsSubject.request = .just([])
                         self?.tradablePoolsPairsSubject.reload()
+                        self?.fixPayingToken()
                         return
                     }
                     
@@ -102,6 +108,7 @@ extension OrcaSwapV2 {
                         toMint: destinationWallet.token.address
                     )
                     self.tradablePoolsPairsSubject.reload()
+                    self.fixPayingToken()
                 })
                 .disposed(by: disposeBag)
             
@@ -121,7 +128,20 @@ extension OrcaSwapV2 {
             
             // TODO: - Calculate fees
             
-            
+            // Error
+            Observable.combineLatest(
+                loadingStateSubject,
+                sourceWalletSubject,
+                destinationWalletSubject,
+                tradablePoolsPairsSubject.stateObservable,
+                bestPoolsPairSubject,
+                feesSubject,
+                slippageSubject,
+                payingTokenSubject
+            )
+                .map {[weak self] _ in self?.verify() }
+                .bind(to: errorSubject)
+                .disposed(by: disposeBag)
         }
     }
 }
@@ -168,9 +188,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             destinationWalletDriver,
             feesDriver
         )
-            .map {sourceWallet, destinationWallet, feeInLamports -> Double? in
-                calculateAvailableAmount(sourceWallet: sourceWallet, destinationWallet: destinationWallet, feeInLamports: feeInLamports)
-            }
+            .map {[weak self] _ in self?.calculateAvailableAmount()}
     }
     
     var slippageDriver: Driver<Double> {
@@ -217,6 +235,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     
     var payingTokenDriver: Driver<PayingToken> {
         payingTokenSubject.asDriver()
+    }
+    
+    var errorDriver: Driver<OrcaSwapV2.VerificationError?> {
+        errorSubject.asDriver()
     }
     
     // MARK: - Actions
@@ -311,21 +333,133 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     
     func setPayingToken(_ payingToken: PayingToken) {
         Defaults.payingToken = payingToken
-        payingTokenSubject.accept(payingToken)
+        fixPayingToken()
     }
 }
 
 // MARK: - Helpers
-private func calculateAvailableAmount(sourceWallet wallet: Wallet?, destinationWallet: Wallet?, feeInLamports: SolanaSDK.Lamports?) -> Double?
-{
-    guard let sourceWallet = wallet,
-          let feeInLamports = feeInLamports
-    else {return wallet?.amount}
+private extension OrcaSwapV2.ViewModel {
+    func fixPayingToken() {
+        var payingToken = Defaults.payingToken
+        
+        // Force using native sol when source or destination is nativeSOL
+        if sourceWalletSubject.value?.isNativeSOL == true ||
+            destinationWalletSubject.value?.isNativeSOL == true // FIXME: - Fee relayer will support case where destination is native sol
+        {
+            payingToken = .nativeSOL
+        }
+        
+        payingTokenSubject.accept(payingToken)
+    }
     
-    // if token is not nativeSolana and are not using fee relayer
-    if !sourceWallet.isNativeSOL && !OrcaSwapV2.isFeeRelayerEnabled(source: sourceWallet, destination: destinationWallet)
-    {return sourceWallet.amount}
+    /// Verify error in current context IN ORDER
+    /// - Returns: String or nil if no error
+    func verify() -> OrcaSwapV2.VerificationError? {
+        // loading state
+        if loadingStateSubject.value != .loaded {
+            return .swappingIsNotAvailable
+        }
+        
+        // source wallet
+        guard let sourceWallet = sourceWalletSubject.value else {
+            return .sourceWalletIsEmpty
+        }
+        
+        // destination wallet
+        guard let destinationWallet = destinationWalletSubject.value else {
+            return .destinationWalletIsEmpty
+        }
+        
+        // prevent swap the same token
+        if sourceWallet.token.address == destinationWallet.token.address {
+            return .canNotSwapToItSelf
+        }
+        
+        // pools pairs
+        if tradablePoolsPairsSubject.state != .loaded {
+            return .tradablePoolsPairsNotLoaded
+        }
+        
+        // fees
+        guard let fees = feesSubject.value else {
+            return .couldNotCalculatingFees
+        }
+        
+        // inputAmount
+        guard let inputAmount = inputAmountSubject.value else {
+            return .inputAmountIsEmpty
+        }
+        
+        if inputAmount.rounded(decimals: sourceWallet.token.decimals) <= 0 {
+            return .inputAmountIsNotValid
+        }
+        
+        if inputAmount > calculateAvailableAmount() {
+            return .insufficientFunds
+        }
+        
+        // estimated amount
+        guard let estimatedAmount = estimatedAmountSubject.value else {
+            return .estimatedAmountIsNotValid
+        }
+        
+        if estimatedAmount.rounded(decimals: destinationWallet.token.decimals) <= 0 {
+            return .estimatedAmountIsNotValid
+        }
+        
+        // best pools pairs
+        if bestPoolsPairSubject.value == nil {
+            return .bestPoolsPairsIsEmpty
+        }
+        
+        // paying with SOL
+        if payingTokenSubject.value == .nativeSOL {
+            guard let wallet = walletsRepository.nativeWallet else {
+                return .nativeWalletNotFound
+            }
+            
+            if fees > (wallet.lamports ?? 0) {
+                return .notEnoughSOLToCoverFees
+            }
+        }
+        
+        // paying with SPL token
+        else {
+            // TODO: - fee compensation
+            //                if feeCompensationPool == nil {
+            //                    return L10n.feeCompensationPoolNotFound
+            //                }
+            if fees > (sourceWallet.lamports ?? 0) {
+                return .notEnoughBalanceToCoverFees
+            }
+        }
+        
+        // slippage
+        if !isSlippageValid() {
+            return .slippageIsNotValid
+        }
+        
+        return nil
+    }
     
-    let availableAmount = (sourceWallet.amount ?? 0) - feeInLamports.convertToBalance(decimals: sourceWallet.token.decimals)
-    return availableAmount > 0 ? availableAmount: 0
+    private func calculateAvailableAmount() -> Double? {
+        guard let sourceWallet = sourceWalletSubject.value,
+              let fees = feesSubject.value
+        else {return sourceWalletSubject.value?.amount}
+        
+        // paying with native wallet
+        if payingTokenSubject.value == .nativeSOL && !sourceWallet.isNativeSOL {
+            return sourceWallet.amount
+        }
+        
+        // paying with wallet itself
+        else {
+            let availableAmount = (sourceWallet.amount ?? 0) - fees.convertToBalance(decimals: sourceWallet.token.decimals)
+            return availableAmount > 0 ? availableAmount: 0
+        }
+    }
+    
+    private func isSlippageValid() -> Bool {
+        slippageSubject.value <= .maxSlippage && slippageSubject.value > 0
+    }
 }

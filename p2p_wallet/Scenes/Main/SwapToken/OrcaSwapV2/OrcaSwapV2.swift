@@ -18,6 +18,25 @@ struct OrcaSwapV2 {
         case swapFees
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
     }
+    
+    enum VerificationError: String {
+        case swappingIsNotAvailable
+        case sourceWalletIsEmpty
+        case destinationWalletIsEmpty
+        case canNotSwapToItSelf
+        case tradablePoolsPairsNotLoaded
+        case couldNotCalculatingFees
+        case inputAmountIsEmpty
+        case inputAmountIsNotValid
+        case insufficientFunds
+        case estimatedAmountIsNotValid
+        case bestPoolsPairsIsEmpty
+        case slippageIsNotValid
+        case nativeWalletNotFound
+        case notEnoughSOLToCoverFees
+        case notEnoughBalanceToCoverFees
+        case unknown
+    }
 }
 
 // MARK: - Helpers
