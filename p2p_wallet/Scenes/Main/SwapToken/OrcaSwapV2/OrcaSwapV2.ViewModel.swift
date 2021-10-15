@@ -26,6 +26,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}
     
     func reload()
+    func navigate(to scene: OrcaSwapV2.NavigatableScene)
     func chooseSourceWallet()
     func chooseDestinationWallet()
     func swapSourceAndDestination()
@@ -251,6 +252,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                 self.loadingStateSubject.accept(.error(error.readableDescription))
             })
             .disposed(by: disposeBag)
+    }
+    
+    func navigate(to scene: OrcaSwapV2.NavigatableScene) {
+        navigationSubject.accept(scene)
     }
     
     func chooseSourceWallet() {

@@ -272,6 +272,7 @@ class MainContainer {
 extension MainContainer: TabBarScenesFactory,
                          MyProductsScenesFactory,
                          OrcaSwapV1ScenesFactory,
+                         OrcaSwapV2ScenesFactory,
                          SwapTokenScenesFactory,
                          WalletDetailScenesFactory,
                          SendTokenScenesFactory,
