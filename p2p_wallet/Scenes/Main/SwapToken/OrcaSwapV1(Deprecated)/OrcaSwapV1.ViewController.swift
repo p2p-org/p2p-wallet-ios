@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import RxSwift
 
-protocol OrcaSwapScenesFactory {
+protocol OrcaSwapV1ScenesFactory {
     func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
@@ -19,7 +19,7 @@ extension OrcaSwapV1 {
         // MARK: - Properties
         var transitionManager: UIViewControllerTransitioningDelegate?
         let viewModel: ViewModel
-        let scenesFactory: OrcaSwapScenesFactory
+        let scenesFactory: OrcaSwapV1ScenesFactory
         
         lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
             UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
@@ -33,7 +33,7 @@ extension OrcaSwapV1 {
         
         // MARK: - Initializer
         init(viewModel: ViewModel,
-             scenesFactory: OrcaSwapScenesFactory)
+             scenesFactory: OrcaSwapV1ScenesFactory)
         {
             self.viewModel = viewModel
             self.scenesFactory = scenesFactory
