@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
+protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewModelType, SwapTokenSwapFeesViewModelType {
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {get}
     var loadingStateDriver: Driver<LoadableState> {get}
     var sourceWalletDriver: Driver<Wallet?> {get}
@@ -17,7 +17,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     var isTokenPairValidDriver: Driver<Loadable<Bool>> {get}
     var inputAmountDriver: Driver<Double?> {get}
     var estimatedAmountDriver: Driver<Double?> {get}
-    var feesDriver: Driver<SolanaSDK.Lamports?> {get}
+    var feesDriver: Driver<Loadable<[PayingFee]>> {get}
     var availableAmountDriver: Driver<Double?> {get}
     var slippageDriver: Driver<Double> {get}
     var minimumReceiveAmountDriver: Driver<Double?> {get}
@@ -26,6 +26,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}
     
     func reload()
+    func log(_ event: AnalyticsEvent)
     func navigate(to scene: OrcaSwapV2.NavigatableScene)
     func chooseSourceWallet()
     func chooseDestinationWallet()
@@ -35,7 +36,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     func enterEstimatedAmount(_ amount: Double?)
     func changeSlippage(to slippage: Double)
     func reverseExchangeRate()
-    func setPayingToken(_ payingToken: PayingToken)
+    func changePayingToken(to payingToken: PayingToken)
 }
 
 extension OrcaSwapV2 {
@@ -58,7 +59,7 @@ extension OrcaSwapV2 {
         private let bestPoolsPairSubject = BehaviorRelay<OrcaSwap.PoolsPair?>(value: nil)
         private let inputAmountSubject = BehaviorRelay<Double?>(value: nil)
         private let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
-        private let feesSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil) // FIXME
+        private let feesSubject = LoadableRelay<[PayingFee]>(request: .just([.init(type: .transactionFee, lamports: 0, token: .nativeSolana)])) // FIXME
         private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
         private let isExchangeRateReversedSubject = BehaviorRelay<Bool>(value: false)
         private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
@@ -136,7 +137,7 @@ extension OrcaSwapV2 {
                 destinationWalletSubject,
                 tradablePoolsPairsSubject.stateObservable,
                 bestPoolsPairSubject,
-                feesSubject,
+                feesSubject.valueObservable,
                 slippageSubject,
                 payingTokenSubject
             )
@@ -179,7 +180,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         estimatedAmountSubject.asDriver()
     }
     
-    var feesDriver: Driver<SolanaSDK.Lamports?> {
+    var feesDriver: Driver<Loadable<[PayingFee]>> {
         feesSubject.asDriver()
     }
     
@@ -252,6 +253,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                 self.loadingStateSubject.accept(.error(error.readableDescription))
             })
             .disposed(by: disposeBag)
+    }
+    
+    func log(_ event: AnalyticsEvent) {
+        analyticsManager.log(event: event)
     }
     
     func navigate(to scene: OrcaSwapV2.NavigatableScene) {
@@ -336,7 +341,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         isExchangeRateReversedSubject.accept(!isExchangeRateReversedSubject.value)
     }
     
-    func setPayingToken(_ payingToken: PayingToken) {
+    func changePayingToken(to payingToken: PayingToken) {
         Defaults.payingToken = payingToken
         fixPayingToken()
     }
@@ -386,7 +391,7 @@ private extension OrcaSwapV2.ViewModel {
         }
         
         // fees
-        guard let fees = feesSubject.value else {
+        guard let fees = feesSubject.value?.totalFee?.lamports else {
             return .couldNotCalculatingFees
         }
         
@@ -449,7 +454,7 @@ private extension OrcaSwapV2.ViewModel {
     
     private func calculateAvailableAmount() -> Double? {
         guard let sourceWallet = sourceWalletSubject.value,
-              let fees = feesSubject.value
+              let fees = feesSubject.value?.totalFee?.lamports
         else {return sourceWalletSubject.value?.amount}
         
         // paying with native wallet
