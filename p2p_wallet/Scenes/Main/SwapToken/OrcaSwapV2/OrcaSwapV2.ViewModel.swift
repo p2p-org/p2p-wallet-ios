@@ -21,6 +21,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler {
     func reload()
     func chooseSourceWallet()
     func chooseDestinationWallet()
+    func swapSourceAndDestination()
     func useAllBalance()
     func enterInputAmount(_ amount: Double?)
     func enterEstimatedAmount(_ amount: Double?)
@@ -163,6 +164,12 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         else {return}
         isSelectingSourceWallet = false
         navigationSubject.accept(.chooseDestinationWallet(validMints: Set(destinationMints), excludedSourceWalletPubkey: sourceWallet.pubkey))
+    }
+    
+    func swapSourceAndDestination() {
+        let source = sourceWalletSubject.value
+        sourceWalletSubject.accept(destinationWalletSubject.value)
+        destinationWalletSubject.accept(source)
     }
     
     func walletDidSelect(_ wallet: Wallet) {
