@@ -29,7 +29,9 @@ extension UIView {
         reloadAction: @escaping (() -> Void)
     ) {
         switch loadableState {
-        case .notRequested, .loading:
+        case .notRequested:
+            hideHud()
+        case .loading:
             showIndetermineHud()
         case .loaded:
             hideHud()
