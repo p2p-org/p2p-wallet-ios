@@ -524,3 +524,5 @@
 "The username %@ is not available" = "Le nom d'utilisateur %@ n'est pas disponible";
 "Maximum 15 latin characters and hyphens" = "Maximum 15 caractères latins et tirets";
 "Username must contain less than 15 characters" = "Le nom d'utilisateur doit contenir moins de 15 caractères";
+"Finding swapping routes" = "Trouver des itinéraires d'échange";
+"No routes for swapping current token pair" = "Aucune route pour échanger la paire de jetons actuelle";

@@ -524,3 +524,5 @@
 "The username %@ is not available" = "Tên người dùng %@ không khả dụng";
 "Maximum 15 latin characters and hyphens" = "Tối đa 15 ký tự latin và dấu gạch nối";
 "Username must contain less than 15 characters" = "Tên người dùng phải có ít hơn 15 ký tự";
+"Finding swapping routes" = "Tìm các tuyến hoán đổi";
+"No routes for swapping current token pair" = "Không có tuyến đường nào để hoán đổi cặp token hiện tại";

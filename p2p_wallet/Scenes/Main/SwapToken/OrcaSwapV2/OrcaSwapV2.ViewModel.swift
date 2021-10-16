@@ -22,6 +22,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
     var slippageDriver: Driver<Double> {get}
     var minimumReceiveAmountDriver: Driver<Double?> {get}
     var exchangeRateDriver: Driver<Double?> {get}
+    var isExchangeRateReversed: Driver<Bool> {get}
     var payingTokenDriver: Driver<PayingToken> {get}
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}
     
@@ -93,8 +94,8 @@ extension OrcaSwapV2 {
             
             // get tradable pools pair for each token pair
             Observable.combineLatest(
-                sourceWalletSubject,
-                destinationWalletSubject
+                sourceWalletSubject.distinctUntilChanged(),
+                destinationWalletSubject.distinctUntilChanged()
             )
                 .subscribe(onNext: {[weak self] sourceWallet, destinationWallet in
                     guard let self = self,
@@ -146,6 +147,9 @@ extension OrcaSwapV2 {
                 .map {[weak self] _ in self?.verify() }
                 .bind(to: errorSubject)
                 .disposed(by: disposeBag)
+            
+            // TODO: - Remove later
+            feesSubject.reload()
         }
         
         func authenticateAndSwap() {
@@ -164,11 +168,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
     
     var sourceWalletDriver: Driver<Wallet?> {
-        sourceWalletSubject.asDriver()
+        sourceWalletSubject.asDriver().distinctUntilChanged()
     }
     
     var destinationWalletDriver: Driver<Wallet?> {
-        destinationWalletSubject.asDriver()
+        destinationWalletSubject.asDriver().distinctUntilChanged()
     }
     
     var isTokenPairValidDriver: Driver<Loadable<Bool>> {
@@ -227,9 +231,9 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     var exchangeRateDriver: Driver<Double?> {
         Observable.combineLatest(
             inputAmountSubject,
-            estimatedAmountSubject
+            estimatedAmountSubject,
+            isExchangeRateReversedSubject
         )
-            .withLatestFrom(isExchangeRateReversedSubject.asObservable()) {($0.0, $0.1, $1)}
             .map { inputAmount, estimatedAmount, isReversed in
                 guard let inputAmount = inputAmount,
                       let estimatedAmount = estimatedAmount,
@@ -239,6 +243,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                 return isReversed ? inputAmount / estimatedAmount: estimatedAmount / inputAmount
             }
             .asDriver(onErrorJustReturn: nil)
+    }
+    
+    var isExchangeRateReversed: Driver<Bool> {
+        isExchangeRateReversedSubject.asDriver()
     }
     
     var payingTokenDriver: Driver<PayingToken> {

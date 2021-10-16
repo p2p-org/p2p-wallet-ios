@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 extension OrcaSwapV2 {
     class RootView: ScrollableVStackRootView {
@@ -21,6 +22,16 @@ extension OrcaSwapV2 {
         lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
             .onTap(self, action: #selector(swapSourceAndDestination))
         lazy var destinationWalletView = WalletView(viewModel: viewModel, type: .destination)
+        lazy var loadingRoutesView: UIStackView = {
+            let indicator = UIActivityIndicatorView()
+            indicator.startAnimating()
+            let view = UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
+                indicator
+                UILabel(text: L10n.findingSwappingRoutes, textColor: .textSecondary)
+            }
+            return view
+        }()
+        lazy var routesView = UILabel(text: nil)
         
         lazy var exchangeRateLabel = UILabel(textSize: 15, weight: .medium)
         lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
@@ -49,7 +60,7 @@ extension OrcaSwapV2 {
         
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            
+            viewModel.reload()
         }
         
         // MARK: - Layout
@@ -61,6 +72,14 @@ extension OrcaSwapV2 {
                 swapSourceAndDestinationView()
                 
                 destinationWalletView
+                
+                BEStackViewSpacing(8)
+                
+                loadingRoutesView
+                
+                routesView
+                
+                BEStackViewSpacing(16)
                 
                 OrcaSwapV1.createSectionView(
                     title: L10n.currentPrice,
@@ -117,6 +136,83 @@ extension OrcaSwapV2 {
                         self?.viewModel.reload()
                     })
                 })
+                .disposed(by: disposeBag)
+            
+            // loading routes
+            viewModel.isTokenPairValidDriver
+                .drive(onNext: {[weak self] isValid in
+                    switch isValid.state {
+                    case .notRequested:
+                        self?.routesView.isHidden = true
+                        self?.loadingRoutesView.isHidden = true
+                    case .loading:
+                        self?.routesView.isHidden = true
+                        self?.loadingRoutesView.isHidden = false
+                    case .loaded:
+                        self?.routesView.isHidden = false
+                        self?.loadingRoutesView.isHidden = true
+                    case .error(_):
+                        self?.routesView.isHidden = false
+                        self?.loadingRoutesView.isHidden = false
+                        self?.routesView.text = L10n.noRoutesForSwappingCurrentTokenPair
+                    }
+                })
+                .disposed(by: disposeBag)
+            
+            // exchange rate
+            let isExchangeRateEmpty = viewModel.exchangeRateDriver
+                .map {$0 == nil}
+                
+            isExchangeRateEmpty
+                .drive(stackView.viewWithTag(1)!.rx.isHidden)
+                .disposed(by: disposeBag)
+            isExchangeRateEmpty
+                .drive(stackView.viewWithTag(2)!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            Driver.combineLatest(
+                viewModel.exchangeRateDriver,
+                viewModel.isExchangeRateReversed,
+                viewModel.sourceWalletDriver,
+                viewModel.destinationWalletDriver
+            )
+                .map { rate, isReversed, source, destination -> String? in
+                    guard let rate = rate, let sourceSymbol = source?.token.symbol, let destinationSymbol = destination?.token.symbol
+                    else {return nil}
+                    
+                    var fromSymbol = sourceSymbol
+                    var toSymbol = destinationSymbol
+                    if isReversed {
+                        fromSymbol = destinationSymbol
+                        toSymbol = sourceSymbol
+                    }
+                    
+                    return "\(rate.toString(maximumFractionDigits: 9)) \(toSymbol) \(L10n.per) \(fromSymbol)"
+                }
+                .drive(exchangeRateLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // slippage
+            viewModel.slippageDriver
+                .map {slippageAttributedText(slippage: $0)}
+                .drive(slippageLabel.rx.attributedText)
+                .disposed(by: disposeBag)
+            
+            // swap fees
+            viewModel.isTokenPairValidDriver
+                .map {$0.state != .loaded}
+                .drive(stackView.viewWithTag(4)!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            viewModel.isTokenPairValidDriver
+                .map {$0.state != .loaded}
+                .drive(stackView.viewWithTag(5)!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            // error
+            viewModel.errorDriver
+                .map {$0?.rawValue}
+                .drive(errorLabel.rx.text)
                 .disposed(by: disposeBag)
         }
         

@@ -177,12 +177,17 @@ class MainContainer {
     {
         switch provider {
         case .orca:
-            let vm = OrcaSwapV1.ViewModel(
-                solWallet: walletsViewModel.nativeWallet,
-                apiClient: solanaSDK
+            let vm = OrcaSwapV2.ViewModel(
+                orcaSwap: OrcaSwap(
+                    apiClient: OrcaSwap.APIClient(
+                        network: Defaults.apiEndPoint.network.cluster
+                    ),
+                    solanaClient: solanaSDK
+                ),
+                walletsRepository: walletsViewModel,
+                initialWallet: wallet
             )
-            vm.input.sourceWallet.accept(wallet ?? walletsViewModel.nativeWallet)
-            return OrcaSwapV1.ViewController(viewModel: vm, scenesFactory: self)
+            return OrcaSwapV2.ViewController(viewModel: vm, scenesFactory: self)
         case .serum:
             let provider = SerumSwap(
                 client: solanaSDK,
