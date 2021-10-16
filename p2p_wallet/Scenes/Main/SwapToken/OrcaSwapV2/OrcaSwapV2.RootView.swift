@@ -160,15 +160,15 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
             
             // exchange rate
-            let isExchangeRateEmpty = viewModel.exchangeRateDriver
-                .map {$0 == nil}
-                
-            isExchangeRateEmpty
-                .drive(stackView.viewWithTag(1)!.rx.isHidden)
-                .disposed(by: disposeBag)
-            isExchangeRateEmpty
-                .drive(stackView.viewWithTag(2)!.rx.isHidden)
-                .disposed(by: disposeBag)
+//            let isExchangeRateEmpty = viewModel.exchangeRateDriver
+//                .map {$0 == nil}
+//
+//            isExchangeRateEmpty
+//                .drive(stackView.viewWithTag(1)!.rx.isHidden)
+//                .disposed(by: disposeBag)
+//            isExchangeRateEmpty
+//                .drive(stackView.viewWithTag(2)!.rx.isHidden)
+//                .disposed(by: disposeBag)
             
             Driver.combineLatest(
                 viewModel.exchangeRateDriver,
@@ -199,15 +199,15 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
             
             // swap fees
-            viewModel.isTokenPairValidDriver
-                .map {$0.state != .loaded}
-                .drive(stackView.viewWithTag(4)!.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            viewModel.isTokenPairValidDriver
-                .map {$0.state != .loaded}
-                .drive(stackView.viewWithTag(5)!.rx.isHidden)
-                .disposed(by: disposeBag)
+//            viewModel.isTokenPairValidDriver
+//                .map {$0.state != .loaded}
+//                .drive(stackView.viewWithTag(4)!.rx.isHidden)
+//                .disposed(by: disposeBag)
+//            
+//            viewModel.isTokenPairValidDriver
+//                .map {$0.state != .loaded}
+//                .drive(stackView.viewWithTag(5)!.rx.isHidden)
+//                .disposed(by: disposeBag)
             
             // error
             viewModel.errorDriver

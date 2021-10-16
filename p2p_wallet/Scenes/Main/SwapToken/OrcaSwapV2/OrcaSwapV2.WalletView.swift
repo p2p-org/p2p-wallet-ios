@@ -219,7 +219,6 @@ extension OrcaSwapV2 {
             amountTextField.rx.text
                 .filter {[weak self] _ in self?.amountTextField.isFirstResponder == true}
                 .distinctUntilChanged()
-                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
                 .map {$0?.double}
                 .subscribe(onNext: {[weak self] double in
                     if self?.type == .source {
