@@ -283,11 +283,14 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
     
     func chooseDestinationWallet() {
-        guard let sourceWallet = sourceWalletSubject.value,
-              let destinationMints = try? orcaSwap.findPosibleDestinationMints(fromMint: sourceWallet.token.address)
-        else {return}
+        var destinationMints = [String]()
+        if let sourceWallet = sourceWalletSubject.value,
+           let validMints = try? orcaSwap.findPosibleDestinationMints(fromMint: sourceWallet.token.address)
+        {
+            destinationMints = validMints
+        }
         isSelectingSourceWallet = false
-        navigationSubject.accept(.chooseDestinationWallet(validMints: Set(destinationMints), excludedSourceWalletPubkey: sourceWallet.pubkey))
+        navigationSubject.accept(.chooseDestinationWallet(validMints: Set(destinationMints), excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey))
     }
     
     func swapSourceAndDestination() {
