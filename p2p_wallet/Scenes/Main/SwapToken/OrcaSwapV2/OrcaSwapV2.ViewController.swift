@@ -98,7 +98,7 @@ extension OrcaSwapV2 {
             case .chooseSlippage:
                 let vc = SlippageSettingsViewController()
                 vc.completion = {[weak self] slippage in
-                    self?.viewModel.changeSlippage(to: slippage)
+                    self?.viewModel.changeSlippage(to: slippage / 100)
                 }
                 present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .swapFees:
