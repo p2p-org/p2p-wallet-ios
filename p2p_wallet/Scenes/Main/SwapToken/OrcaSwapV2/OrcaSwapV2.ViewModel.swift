@@ -327,6 +327,9 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         {
             bestPoolsPairSubject.accept(bestPoolsPair)
             estimatedAmountSubject.accept(bestEstimatedAmount.convertToBalance(decimals: destinationDecimals))
+        } else {
+            bestPoolsPairSubject.accept(nil)
+            estimatedAmountSubject.accept(nil)
         }
     }
     
@@ -343,6 +346,9 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         {
             bestPoolsPairSubject.accept(bestPoolsPair)
             inputAmountSubject.accept(bestInputAmount.convertToBalance(decimals: sourceDecimals))
+        } else {
+            bestPoolsPairSubject.accept(nil)
+            inputAmountSubject.accept(nil)
         }
     }
     
