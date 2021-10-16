@@ -159,6 +159,20 @@ extension OrcaSwapV2 {
                 })
                 .disposed(by: disposeBag)
             
+            // best routes
+            viewModel.bestPoolsPairDriver
+                .withLatestFrom(
+                    Driver.combineLatest(
+                        viewModel.inputAmountDriver,
+                        viewModel.sourceWalletDriver.map {$0?.token.decimals ?? 0},
+                        viewModel.slippageDriver
+                    ),
+                    resultSelector: {($0, $1.0, $1.1, $1.2)}
+                )
+                .map {$0?.getIntermediaryToken(inputAmount: $1?.toLamport(decimals: $2) ?? 0, slippage: $3)?.tokenName}
+                .drive(routesView.rx.text)
+                .disposed(by: disposeBag)
+            
             // exchange rate
 //            let isExchangeRateEmpty = viewModel.exchangeRateDriver
 //                .map {$0 == nil}

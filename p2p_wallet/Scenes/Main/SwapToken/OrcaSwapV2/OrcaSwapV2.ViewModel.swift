@@ -15,6 +15,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
     var sourceWalletDriver: Driver<Wallet?> {get}
     var destinationWalletDriver: Driver<Wallet?> {get}
     var isTokenPairValidDriver: Driver<Loadable<Bool>> {get}
+    var bestPoolsPairDriver: Driver<OrcaSwap.PoolsPair?> {get}
     var inputAmountDriver: Driver<Double?> {get}
     var estimatedAmountDriver: Driver<Double?> {get}
     var feesDriver: Driver<Loadable<[PayingFee]>> {get}
@@ -180,6 +181,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             .map { value, state, reloadAction in
                 (value?.isEmpty == false, state, reloadAction)
             }
+    }
+    
+    var bestPoolsPairDriver: Driver<OrcaSwap.PoolsPair?> {
+        bestPoolsPairSubject.asDriver()
     }
     
     var inputAmountDriver: Driver<Double?> {
