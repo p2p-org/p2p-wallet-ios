@@ -54,23 +54,29 @@ extension OrcaSwapV2 {
     static func createSectionView(
         title: String? = nil,
         label: UIView? = nil,
-        contentView: UIView,
+        contentView: UIView?,
         rightView: UIView? = UIImageView(width: 6, height: 12, image: .nextArrow, tintColor: .h8b94a9.onDarkMode(.white)
         )
             .padding(.init(x: 9, y: 6)),
         addSeparatorOnTop: Bool = true
     ) -> UIStackView {
-        let stackView = UIStackView(axis: .horizontal, spacing: 5, alignment: .center, distribution: .fill) {
-            UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
-                label ?? UILabel(
-                    text: title,
-                    textSize: 13,
-                    weight: .medium,
-                    textColor: .textSecondary
-                )
-                contentView
-            }
+        let innerStackView = UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
+            label ?? UILabel(
+                text: title,
+                textSize: 13,
+                weight: .medium,
+                textColor: .textSecondary
+            )
         }
+        
+        if let contentView = contentView {
+            innerStackView.addArrangedSubview(contentView)
+        }
+        
+        let stackView = UIStackView(axis: .horizontal, spacing: 5, alignment: .center, distribution: .fill) {
+            innerStackView
+        }
+        
         if let rightView = rightView {
             stackView.addArrangedSubview(rightView)
         }
