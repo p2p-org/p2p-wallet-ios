@@ -527,3 +527,4 @@
 "Finding swapping routes" = "Finding swapping routes";
 "No routes for swapping current token pair" = "No routes for swapping current token pair";
 "Error finding swapping routes. Tap here to try again!" = "Error finding swapping routes. Tap here to try again!";
+"This trading pair is not supported" = "This trading pair is not supported";
