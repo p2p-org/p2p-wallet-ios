@@ -527,3 +527,4 @@
 "Finding swapping routes" = "Поиск маршрутов обмена";
 "No routes for swapping current token pair" = "Нет маршрутов для обмена текущей пары токенов";
 "Error finding swapping routes. Tap here to try again!" = "Ошибка при поиске маршрутов подкачки. Нажмите здесь, чтобы попробовать еще раз!";
+"This trading pair is not supported" = "Эта торговая пара не поддерживается";

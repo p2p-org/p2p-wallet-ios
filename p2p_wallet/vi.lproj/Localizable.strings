@@ -527,3 +527,4 @@
 "Finding swapping routes" = "Tìm các tuyến hoán đổi";
 "No routes for swapping current token pair" = "Không có tuyến đường nào để hoán đổi cặp token hiện tại";
 "Error finding swapping routes. Tap here to try again!" = "Lỗi khi tìm các tuyến hoán đổi. Nhấn vào đây để thử lại!";
+"This trading pair is not supported" = "Cặp giao dịch này không được hỗ trợ";

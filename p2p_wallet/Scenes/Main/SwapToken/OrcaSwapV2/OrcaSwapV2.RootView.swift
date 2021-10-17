@@ -29,7 +29,7 @@ extension OrcaSwapV2 {
             return indicator
         }()
         
-        lazy var loadingRoutesLabel = UILabel(text: L10n.findingSwappingRoutes, textColor: .textSecondary, numberOfLines: 0)
+        lazy var loadingRoutesLabel = UILabel(text: L10n.findingSwappingRoutes, textColor: .textSecondary, numberOfLines: 2)
             .onTap(self, action: #selector(retryLoadingRoutes))
         
         lazy var exchangeRateLabel = UILabel(textSize: 15, weight: .medium)
@@ -78,7 +78,9 @@ extension OrcaSwapV2 {
                     loadingRoutesIndicatorView
                         .withContentHuggingPriority(.required, for: .horizontal)
                     loadingRoutesLabel
+                        .withContentHuggingPriority(.required, for: .vertical)
                 }
+                    .withContentHuggingPriority(.required, for: .vertical)
                 
                 BEStackViewSpacing(16)
                 
@@ -140,38 +142,24 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
             
             // loading routes
-            Driver.combineLatest(
-                viewModel.isTokenPairValidDriver,
-                viewModel.sourceWalletDriver.map {$0?.token.symbol},
-                viewModel.destinationWalletDriver.map {$0?.token.symbol}
-            )
-                .drive(onNext: {[weak self] isValid, sourceSymbol, destinationSymbol in
+            viewModel.isTokenPairValidDriver
+                .drive(onNext: {[weak self] isValid in
                     self?.loadingRoutesIndicatorView.isHidden = true
                     self?.loadingRoutesLabel.isHidden = true
                     self?.loadingRoutesLabel.textColor = .textSecondary
                     self?.loadingRoutesLabel.isUserInteractionEnabled = false
-                    
-                    guard let sourceSymbol = sourceSymbol,
-                          let destinationSymbol = destinationSymbol
-                    else {return}
                     
                     switch isValid.state {
                     case .loading:
                         self?.loadingRoutesIndicatorView.isHidden = false
                         self?.loadingRoutesLabel.isHidden = false
                         self?.loadingRoutesLabel.text = L10n.findingSwappingRoutes
-                    case .error(_):
+                    case .error:
                         self?.loadingRoutesLabel.isHidden = false
                         self?.loadingRoutesLabel.textColor = .alert
                         self?.loadingRoutesLabel.text = L10n.ErrorFindingSwappingRoutes.tapHereToTryAgain
                     default:
                         break
-                    }
-                    
-                    if isValid.value == false && isValid.state == .loaded {
-                        self?.loadingRoutesLabel.isHidden = false
-                        self?.loadingRoutesLabel.textColor = .alert
-                        self?.loadingRoutesLabel.text = L10n.swappingFromToIsCurrentlyUnsupported(sourceSymbol, destinationSymbol)
                     }
                 })
                 .disposed(by: disposeBag)
@@ -220,18 +208,29 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
             
             // swap fees
-            isTokenPairInvalidDriver
-                .drive(stackView.viewWithTag(4)!.rx.isHidden)
-                .disposed(by: disposeBag)
-
-            isTokenPairInvalidDriver
-                .drive(stackView.viewWithTag(5)!.rx.isHidden)
-                .disposed(by: disposeBag)
             
             // error
             viewModel.errorDriver
                 .map {$0?.rawValue}
                 .drive(errorLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // button
+            Driver.combineLatest(
+                viewModel.isTokenPairValidDriver.map {$0.value == false},
+                viewModel.errorDriver
+            )
+                .map {isTokenPairInvalid, error -> String in
+                    // token pair is invalid
+                    if isTokenPairInvalid {
+                        return L10n.thisTradingPairIsNotSupported
+                    }
+                    
+                    // error
+                    
+                    return L10n.swapNow
+                }
+                .drive(swapButton.rx.title())
                 .disposed(by: disposeBag)
         }
         

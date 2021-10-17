@@ -338,11 +338,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let bestPoolsPair = try? orcaSwap.findBestPoolsPairForInputAmount(inputAmount, from: poolsPairs),
            let bestEstimatedAmount = bestPoolsPair.getOutputAmount(fromInputAmount: inputAmount)
         {
-            bestPoolsPairSubject.accept(bestPoolsPair)
             estimatedAmountSubject.accept(bestEstimatedAmount.convertToBalance(decimals: destinationDecimals))
+            bestPoolsPairSubject.accept(bestPoolsPair)
         } else {
-            bestPoolsPairSubject.accept(nil)
             estimatedAmountSubject.accept(nil)
+            bestPoolsPairSubject.accept(nil)
         }
     }
     
@@ -357,11 +357,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let bestPoolsPair = try? orcaSwap.findBestPoolForEstimatedAmount(estimatedAmount, from: poolsPairs),
            let bestInputAmount = bestPoolsPair.getInputAmount(fromEstimatedAmount: estimatedAmount)
         {
-            bestPoolsPairSubject.accept(bestPoolsPair)
             inputAmountSubject.accept(bestInputAmount.convertToBalance(decimals: sourceDecimals))
+            bestPoolsPairSubject.accept(bestPoolsPair)
         } else {
-            bestPoolsPairSubject.accept(nil)
             inputAmountSubject.accept(nil)
+            bestPoolsPairSubject.accept(nil)
         }
     }
     
