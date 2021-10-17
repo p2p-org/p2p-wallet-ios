@@ -526,3 +526,4 @@
 "Username must contain less than 15 characters" = "Le nom d'utilisateur doit contenir moins de 15 caractères";
 "Finding swapping routes" = "Trouver des itinéraires d'échange";
 "No routes for swapping current token pair" = "Aucune route pour échanger la paire de jetons actuelle";
+"Error finding swapping routes. Tap here to try again!" = "Erreur lors de la recherche d'itinéraires d'échange. Appuyez ici pour réessayer !";

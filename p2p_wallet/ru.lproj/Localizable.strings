@@ -526,3 +526,4 @@
 "Username must contain less than 15 characters" = "Имя пользователя должно содержать менее 15 символов.";
 "Finding swapping routes" = "Поиск маршрутов обмена";
 "No routes for swapping current token pair" = "Нет маршрутов для обмена текущей пары токенов";
+"Error finding swapping routes. Tap here to try again!" = "Ошибка при поиске маршрутов подкачки. Нажмите здесь, чтобы попробовать еще раз!";

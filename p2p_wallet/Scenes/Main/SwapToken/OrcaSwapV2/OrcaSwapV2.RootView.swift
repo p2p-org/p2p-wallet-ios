@@ -22,16 +22,15 @@ extension OrcaSwapV2 {
         lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
             .onTap(self, action: #selector(swapSourceAndDestination))
         lazy var destinationWalletView = WalletView(viewModel: viewModel, type: .destination)
-        lazy var loadingRoutesView: UIStackView = {
+        
+        lazy var loadingRoutesIndicatorView: UIActivityIndicatorView = {
             let indicator = UIActivityIndicatorView()
             indicator.startAnimating()
-            let view = UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
-                indicator
-                UILabel(text: L10n.findingSwappingRoutes, textColor: .textSecondary)
-            }
-            return view
+            return indicator
         }()
-        lazy var routesView = UILabel(text: nil)
+        
+        lazy var loadingRoutesLabel = UILabel(text: L10n.findingSwappingRoutes, textColor: .textSecondary, numberOfLines: 0)
+            .onTap(self, action: #selector(retryLoadingRoutes))
         
         lazy var exchangeRateLabel = UILabel(textSize: 15, weight: .medium)
         lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
@@ -75,9 +74,11 @@ extension OrcaSwapV2 {
                 
                 BEStackViewSpacing(8)
                 
-                loadingRoutesView
-                
-                routesView
+                UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
+                    loadingRoutesIndicatorView
+                        .withContentHuggingPriority(.required, for: .horizontal)
+                    loadingRoutesLabel
+                }
                 
                 BEStackViewSpacing(16)
                 
@@ -140,49 +141,52 @@ extension OrcaSwapV2 {
             
             // loading routes
             viewModel.isTokenPairValidDriver
-                .drive(onNext: {[weak self] isValid in
+                .withLatestFrom(
+                    Driver.combineLatest(
+                        viewModel.sourceWalletDriver.map {$0?.token.symbol},
+                        viewModel.destinationWalletDriver.map {$0?.token.symbol}
+                    ),
+                    resultSelector: {($0, $1.0, $1.1)})
+                .drive(onNext: {[weak self] isValid, sourceSymbol, destinationSymbol in
+                    guard let sourceSymbol = sourceSymbol,
+                          let destinationSymbol = destinationSymbol
+                    else {return}
+                    
+                    self?.loadingRoutesIndicatorView.isHidden = true
+                    self?.loadingRoutesLabel.isHidden = true
+                    self?.loadingRoutesLabel.textColor = .textSecondary
+                    self?.loadingRoutesLabel.isUserInteractionEnabled = false
                     switch isValid.state {
-                    case .notRequested:
-                        self?.routesView.isHidden = true
-                        self?.loadingRoutesView.isHidden = true
                     case .loading:
-                        self?.routesView.isHidden = true
-                        self?.loadingRoutesView.isHidden = false
-                    case .loaded:
-                        self?.routesView.isHidden = false
-                        self?.loadingRoutesView.isHidden = true
+                        self?.loadingRoutesIndicatorView.isHidden = false
+                        self?.loadingRoutesLabel.isHidden = false
+                        self?.loadingRoutesLabel.text = L10n.findingSwappingRoutes
                     case .error(_):
-                        self?.routesView.isHidden = false
-                        self?.loadingRoutesView.isHidden = false
-                        self?.routesView.text = L10n.noRoutesForSwappingCurrentTokenPair
+                        self?.loadingRoutesLabel.isHidden = false
+                        self?.loadingRoutesLabel.textColor = .alert
+                        self?.loadingRoutesLabel.text = L10n.ErrorFindingSwappingRoutes.tapHereToTryAgain
+                    default:
+                        break
+                    }
+                    
+                    if isValid.value == false && isValid.state == .loaded {
+                        self?.loadingRoutesLabel.isHidden = false
+                        self?.loadingRoutesLabel.textColor = .alert
+                        self?.loadingRoutesLabel.text = L10n.swappingFromToIsCurrentlyUnsupported(sourceSymbol, destinationSymbol)
                     }
                 })
                 .disposed(by: disposeBag)
             
-            // best routes
-            viewModel.bestPoolsPairDriver
-                .withLatestFrom(
-                    Driver.combineLatest(
-                        viewModel.inputAmountDriver,
-                        viewModel.sourceWalletDriver.map {$0?.token.decimals ?? 0},
-                        viewModel.slippageDriver
-                    ),
-                    resultSelector: {($0, $1.0, $1.1, $1.2)}
-                )
-                .map {$0?.getIntermediaryToken(inputAmount: $1?.toLamport(decimals: $2) ?? 0, slippage: $3)?.tokenName}
-                .drive(routesView.rx.text)
+            // exchange rate
+            let isTokenPairInvalidDriver = viewModel.isTokenPairValidDriver.map {$0.value != true}
+
+            isTokenPairInvalidDriver
+                .drive(stackView.viewWithTag(1)!.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            // exchange rate
-//            let isExchangeRateEmpty = viewModel.exchangeRateDriver
-//                .map {$0 == nil}
-//
-//            isExchangeRateEmpty
-//                .drive(stackView.viewWithTag(1)!.rx.isHidden)
-//                .disposed(by: disposeBag)
-//            isExchangeRateEmpty
-//                .drive(stackView.viewWithTag(2)!.rx.isHidden)
-//                .disposed(by: disposeBag)
+            isTokenPairInvalidDriver
+                .drive(stackView.viewWithTag(2)!.rx.isHidden)
+                .disposed(by: disposeBag)
             
             Driver.combineLatest(
                 viewModel.exchangeRateDriver,
@@ -213,15 +217,13 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
             
             // swap fees
-//            viewModel.isTokenPairValidDriver
-//                .map {$0.state != .loaded}
-//                .drive(stackView.viewWithTag(4)!.rx.isHidden)
-//                .disposed(by: disposeBag)
-//            
-//            viewModel.isTokenPairValidDriver
-//                .map {$0.state != .loaded}
-//                .drive(stackView.viewWithTag(5)!.rx.isHidden)
-//                .disposed(by: disposeBag)
+            isTokenPairInvalidDriver
+                .drive(stackView.viewWithTag(4)!.rx.isHidden)
+                .disposed(by: disposeBag)
+
+            isTokenPairInvalidDriver
+                .drive(stackView.viewWithTag(5)!.rx.isHidden)
+                .disposed(by: disposeBag)
             
             // error
             viewModel.errorDriver
@@ -263,6 +265,10 @@ extension OrcaSwapV2 {
         
         @objc func showSwapFees() {
             viewModel.navigate(to: .swapFees)
+        }
+        
+        @objc func retryLoadingRoutes() {
+            viewModel.retryLoadingRoutes()
         }
     }
 }

@@ -526,3 +526,4 @@
 "Username must contain less than 15 characters" = "Username must contain less than 15 characters";
 "Finding swapping routes" = "Finding swapping routes";
 "No routes for swapping current token pair" = "No routes for swapping current token pair";
+"Error finding swapping routes. Tap here to try again!" = "Error finding swapping routes. Tap here to try again!";

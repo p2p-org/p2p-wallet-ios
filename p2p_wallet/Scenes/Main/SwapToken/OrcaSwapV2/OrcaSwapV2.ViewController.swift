@@ -62,8 +62,7 @@ extension OrcaSwapV2 {
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
             
-            viewModel.errorDriver
-                .distinctUntilChanged()
+            viewModel.isTokenPairValidDriver
                 .drive(onNext: {[weak self] _ in
                     self?.updatePresentationLayout(animated: true)
                 })
