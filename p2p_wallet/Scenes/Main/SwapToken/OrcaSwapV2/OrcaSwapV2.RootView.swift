@@ -84,7 +84,7 @@ extension OrcaSwapV2 {
                 
                 BEStackViewSpacing(16)
                 
-                OrcaSwapV1.createSectionView(
+                OrcaSwapV2.createSectionView(
                     title: L10n.currentPrice,
                     contentView: exchangeRateLabel,
                     rightView: exchangeRateReverseButton,
@@ -95,7 +95,7 @@ extension OrcaSwapV2 {
                 UIView.defaultSeparator()
                     .withTag(2)
                 
-                OrcaSwapV1.createSectionView(
+                OrcaSwapV2.createSectionView(
                     title: L10n.maxPriceSlippage,
                     contentView: slippageLabel,
                     addSeparatorOnTop: false
@@ -106,9 +106,9 @@ extension OrcaSwapV2 {
                 UIView.defaultSeparator()
                     .withTag(4)
                 
-                OrcaSwapV1.createSectionView(
+                OrcaSwapV2.createSectionView(
                     label: swapFeeLabel,
-                    contentView: errorLabel,
+                    contentView: nil,
                     addSeparatorOnTop: false
                 )
                     .withModifier { view in
@@ -118,6 +118,8 @@ extension OrcaSwapV2 {
                     }
                     .onTap(self, action: #selector(showSwapFees))
                     .withTag(5)
+                
+                errorLabel
                 
                 swapButton
                 
