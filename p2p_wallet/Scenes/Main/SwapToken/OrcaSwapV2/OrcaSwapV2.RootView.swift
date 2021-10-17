@@ -140,22 +140,21 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
             
             // loading routes
-            viewModel.isTokenPairValidDriver
-                .withLatestFrom(
-                    Driver.combineLatest(
-                        viewModel.sourceWalletDriver.map {$0?.token.symbol},
-                        viewModel.destinationWalletDriver.map {$0?.token.symbol}
-                    ),
-                    resultSelector: {($0, $1.0, $1.1)})
+            Driver.combineLatest(
+                viewModel.isTokenPairValidDriver,
+                viewModel.sourceWalletDriver.map {$0?.token.symbol},
+                viewModel.destinationWalletDriver.map {$0?.token.symbol}
+            )
                 .drive(onNext: {[weak self] isValid, sourceSymbol, destinationSymbol in
-                    guard let sourceSymbol = sourceSymbol,
-                          let destinationSymbol = destinationSymbol
-                    else {return}
-                    
                     self?.loadingRoutesIndicatorView.isHidden = true
                     self?.loadingRoutesLabel.isHidden = true
                     self?.loadingRoutesLabel.textColor = .textSecondary
                     self?.loadingRoutesLabel.isUserInteractionEnabled = false
+                    
+                    guard let sourceSymbol = sourceSymbol,
+                          let destinationSymbol = destinationSymbol
+                    else {return}
+                    
                     switch isValid.state {
                     case .loading:
                         self?.loadingRoutesIndicatorView.isHidden = false
@@ -211,6 +210,10 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
             
             // slippage
+            isTokenPairInvalidDriver
+                .drive(stackView.viewWithTag(3)!.rx.isHidden)
+                .disposed(by: disposeBag)
+            
             viewModel.slippageDriver
                 .map {slippageAttributedText(slippage: $0)}
                 .drive(slippageLabel.rx.attributedText)
