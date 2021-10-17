@@ -32,6 +32,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
     func navigate(to scene: OrcaSwapV2.NavigatableScene)
     func chooseSourceWallet()
     func chooseDestinationWallet()
+    func retryLoadingRoutes()
     func swapSourceAndDestination()
     func useAllBalance()
     func enterInputAmount(_ amount: Double?)
@@ -302,6 +303,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         let source = sourceWalletSubject.value
         sourceWalletSubject.accept(destinationWalletSubject.value)
         destinationWalletSubject.accept(source)
+    }
+    
+    func retryLoadingRoutes() {
+        tradablePoolsPairsSubject.reload()
     }
     
     func walletDidSelect(_ wallet: Wallet) {

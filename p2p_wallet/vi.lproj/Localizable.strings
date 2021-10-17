@@ -526,3 +526,4 @@
 "Username must contain less than 15 characters" = "Tên người dùng phải có ít hơn 15 ký tự";
 "Finding swapping routes" = "Tìm các tuyến hoán đổi";
 "No routes for swapping current token pair" = "Không có tuyến đường nào để hoán đổi cặp token hiện tại";
+"Error finding swapping routes. Tap here to try again!" = "Lỗi khi tìm các tuyến hoán đổi. Nhấn vào đây để thử lại!";
