@@ -40,7 +40,7 @@ extension OrcaSwapV2 {
         lazy var slippageLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
         
         lazy var swapFeeLabel = UILabel(text: L10n.swapFees, textSize: 15, weight: .medium)
-        lazy var errorLabel = UILabel(textSize: 15, weight: .medium, textColor: .alert, numberOfLines: 0)
+        lazy var errorLabel = UILabel(textSize: 15, weight: .medium, textColor: .alert, numberOfLines: 0, textAlignment: .center)
         
         lazy var swapButton = WLButton.stepButton(type: .blue, label: L10n.swapNow)
             .onTap(self, action: #selector(authenticateAndSwap))
