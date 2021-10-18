@@ -320,11 +320,8 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
     
     func useAllBalance() {
-        // TODO: - useAllBalance
-//        // calculate available balance
-//
-//        // input
-//        enterInputAmount(availableBalance)
+        let availableAmount = calculateAvailableAmount()
+        enterInputAmount(availableAmount)
     }
     
     func enterInputAmount(_ amount: Double?) {
