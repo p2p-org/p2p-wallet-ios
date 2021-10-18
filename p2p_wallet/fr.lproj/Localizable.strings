@@ -528,3 +528,13 @@
 "No routes for swapping current token pair" = "Aucune route pour échanger la paire de jetons actuelle";
 "Error finding swapping routes. Tap here to try again!" = "Erreur lors de la recherche d'itinéraires d'échange. Appuyez ici pour réessayer !";
 "This trading pair is not supported" = "Cette paire de trading n'est pas prise en charge";
+"Choose source wallet" = "Choisir le portefeuille source";
+"Choose destination wallet" = "Choisir le portefeuille de destination";
+"Enter input amount" = "Saisir le montant d'entrée";
+"Choose another destination wallet" = "Choisissez un autre portefeuille de destination";
+"Could not calculating fees" = "Impossible de calculer les frais";
+"Input amount is not valid" = "Le montant saisi n'est pas valide";
+"Choose another slippage" = "Choisissez un autre glissement";
+"Could not connect to wallet" = "Impossible de se connecter au portefeuille";
+"Invalid estimated amount" = "Montant estimé non valide";
+"Your account does not have enough %@ to cover fees" = "Votre compte n'a pas assez de %@ pour couvrir les frais";

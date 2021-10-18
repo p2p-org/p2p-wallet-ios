@@ -528,3 +528,13 @@
 "No routes for swapping current token pair" = "Нет маршрутов для обмена текущей пары токенов";
 "Error finding swapping routes. Tap here to try again!" = "Ошибка при поиске маршрутов подкачки. Нажмите здесь, чтобы попробовать еще раз!";
 "This trading pair is not supported" = "Эта торговая пара не поддерживается";
+"Choose source wallet" = "Выберите исходный кошелек";
+"Choose destination wallet" = "Выберите целевой кошелек";
+"Enter input amount" = "Введите сумму ввода";
+"Choose another destination wallet" = "Выберите другой кошелек назначения";
+"Could not calculating fees" = "Не удалось рассчитать комиссию";
+"Input amount is not valid" = "Сумма ввода недействительна";
+"Choose another slippage" = "Выберите другое проскальзывание";
+"Could not connect to wallet" = "Не удалось подключиться к кошельку";
+"Invalid estimated amount" = "Неверная расчетная сумма";
+"Your account does not have enough %@ to cover fees" = "В вашем аккаунте недостаточно %@ для покрытия комиссий";

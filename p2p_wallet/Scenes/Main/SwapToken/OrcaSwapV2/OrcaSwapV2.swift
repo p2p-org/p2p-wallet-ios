@@ -25,6 +25,8 @@ struct OrcaSwapV2 {
         case destinationWalletIsEmpty
         case canNotSwapToItSelf
         case tradablePoolsPairsNotLoaded
+        case tradingPairNotSupported
+        case feesIsBeingCalculated
         case couldNotCalculatingFees
         case inputAmountIsEmpty
         case inputAmountIsNotValid

@@ -423,9 +423,10 @@ private extension OrcaSwapV2.ViewModel {
             return .tradablePoolsPairsNotLoaded
         }
         
-        // fees
-        guard let fees = feesSubject.value?.totalFee?.lamports else {
-            return .couldNotCalculatingFees
+        if tradablePoolsPairsSubject.value == nil ||
+            tradablePoolsPairsSubject.value?.isEmpty == true
+        {
+            return .tradingPairNotSupported
         }
         
         // inputAmount
@@ -453,6 +454,15 @@ private extension OrcaSwapV2.ViewModel {
         // best pools pairs
         if bestPoolsPairSubject.value == nil {
             return .bestPoolsPairsIsEmpty
+        }
+        
+        // fees
+        if feesSubject.state.isError {
+            return .couldNotCalculatingFees
+        }
+        
+        guard let fees = feesSubject.value?.totalFee?.lamports else {
+            return .feesIsBeingCalculated
         }
         
         // paying with SOL

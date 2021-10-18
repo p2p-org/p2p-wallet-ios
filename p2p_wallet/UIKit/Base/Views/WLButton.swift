@@ -46,6 +46,7 @@ class WLButton: UIButton {
         let button = WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: labelFont, textColor: labelColor != nil ? labelColor!: type.textColor)
         button.enabledColor = type.backgroundColor
         button.disabledColor = type.disabledColor
+        button.titleLabel?.lineBreakMode = .byWordWrapping
         return button
     }
     
