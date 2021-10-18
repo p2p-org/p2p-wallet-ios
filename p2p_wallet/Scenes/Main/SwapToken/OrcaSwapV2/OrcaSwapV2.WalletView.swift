@@ -24,6 +24,7 @@ extension OrcaSwapV2 {
         
         private lazy var balanceView = BalanceView(forAutoLayout: ())
         private lazy var iconImageView = CoinLogoImageView(size: 32, cornerRadius: 16)
+        private lazy var downArrow = UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
         
         private lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
         
@@ -86,7 +87,7 @@ extension OrcaSwapV2 {
                         .withContentHuggingPriority(.required, for: .horizontal)
                     UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
                         iconImageView
-                        UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
+                        downArrow
                     }
                         .onTap(self, action: action)
                     
@@ -107,6 +108,15 @@ extension OrcaSwapV2 {
             
             addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 16))
+            
+            // for increasing touchable area
+            let chooseWalletView = UIView(forAutoLayout: ())
+                .onTap(self, action: action)
+            addSubview(chooseWalletView)
+            chooseWalletView.autoPinEdge(.leading, to: .leading, of: iconImageView)
+            chooseWalletView.autoPinEdge(.trailing, to: .trailing, of: downArrow)
+            chooseWalletView.autoPinEdge(.top, to: .top, of: iconImageView, withOffset: -10)
+            chooseWalletView.autoPinEdge(.bottom, to: .bottom, of: iconImageView, withOffset: 10)
         }
         
         private func bind() {
