@@ -212,25 +212,69 @@ extension OrcaSwapV2 {
             // swap fees
             
             // error
+            #if DEBUG
+            viewModel.errorDriver.map {$0 == nil}
+                .drive(errorLabel.rx.isHidden)
+                .disposed(by: disposeBag)
+            
             viewModel.errorDriver
                 .map {$0?.rawValue}
                 .drive(errorLabel.rx.text)
                 .disposed(by: disposeBag)
+            #else
+            errorLabel.isHidden = true
+            #endif
             
             // button
+            viewModel.errorDriver.map {$0 == nil}
+                .drive(swapButton.rx.isEnabled)
+                .disposed(by: disposeBag)
+            
             Driver.combineLatest(
-                viewModel.isTokenPairValidDriver.map {$0.value == false},
-                viewModel.errorDriver
+                viewModel.errorDriver,
+                viewModel.sourceWalletDriver.map {$0?.token.symbol}
             )
-                .map {isTokenPairInvalid, error -> String in
-                    // token pair is invalid
-                    if isTokenPairInvalid {
+                .map {error, sourceSymbol -> String in
+                    switch error {
+                    case .swappingIsNotAvailable:
+                        return L10n.swappingIsCurrentlyUnavailable
+                    case .sourceWalletIsEmpty:
+                        return L10n.chooseSourceWallet
+                    case .destinationWalletIsEmpty:
+                        return L10n.chooseDestinationWallet
+                    case .canNotSwapToItSelf:
+                        return L10n.chooseAnotherDestinationWallet
+                    case .tradablePoolsPairsNotLoaded:
+                        return L10n.loading
+                    case .tradingPairNotSupported:
                         return L10n.thisTradingPairIsNotSupported
+                    case .feesIsBeingCalculated:
+                        return L10n.calculatingFees
+                    case .couldNotCalculatingFees:
+                        return L10n.couldNotCalculatingFees
+                    case .inputAmountIsEmpty:
+                        return L10n.enterInputAmount
+                    case .inputAmountIsNotValid:
+                        return L10n.inputAmountIsNotValid
+                    case .insufficientFunds:
+                        return L10n.insufficientFunds
+                    case .estimatedAmountIsNotValid:
+                        return L10n.invalidEstimatedAmount
+                    case .bestPoolsPairsIsEmpty:
+                        return L10n.thisTradingPairIsNotSupported
+                    case .slippageIsNotValid:
+                        return L10n.chooseAnotherSlippage
+                    case .nativeWalletNotFound:
+                        return L10n.couldNotConnectToWallet
+                    case .notEnoughSOLToCoverFees:
+                        return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
+                    case .notEnoughBalanceToCoverFees:
+                        return L10n.yourAccountDoesNotHaveEnoughToCoverFees(sourceSymbol ?? "")
+                    case .unknown:
+                        return L10n.unknownError
+                    case .none:
+                        return L10n.swapNow
                     }
-                    
-                    // error
-                    
-                    return L10n.swapNow
                 }
                 .drive(swapButton.rx.title())
                 .disposed(by: disposeBag)

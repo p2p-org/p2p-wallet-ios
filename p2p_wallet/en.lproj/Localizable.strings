@@ -528,3 +528,13 @@
 "No routes for swapping current token pair" = "No routes for swapping current token pair";
 "Error finding swapping routes. Tap here to try again!" = "Error finding swapping routes. Tap here to try again!";
 "This trading pair is not supported" = "This trading pair is not supported";
+"Choose source wallet" = "Choose source wallet";
+"Choose destination wallet" = "Choose destination wallet";
+"Enter input amount" = "Enter input amount";
+"Choose another destination wallet" = "Choose another destination wallet";
+"Could not calculating fees" = "Could not calculating fees";
+"Input amount is not valid" = "Input amount is not valid";
+"Choose another slippage" = "Choose another slippage";
+"Could not connect to wallet" = "Could not connect to wallet";
+"Invalid estimated amount" = "Invalid estimated amount";
+"Your account does not have enough %@ to cover fees" = "Your account does not have enough %@ to cover fees";
