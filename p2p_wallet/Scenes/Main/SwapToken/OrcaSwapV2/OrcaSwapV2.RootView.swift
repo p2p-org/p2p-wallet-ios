@@ -259,7 +259,7 @@ extension OrcaSwapV2 {
                     case .insufficientFunds:
                         return L10n.insufficientFunds
                     case .estimatedAmountIsNotValid:
-                        return L10n.invalidEstimatedAmount
+                        return L10n.amountIsTooSmall
                     case .bestPoolsPairsIsEmpty:
                         return L10n.thisTradingPairIsNotSupported
                     case .slippageIsNotValid:
