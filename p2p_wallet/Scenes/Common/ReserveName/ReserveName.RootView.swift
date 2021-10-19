@@ -170,6 +170,11 @@ extension ReserveName {
                 })
                 .disposed(by: disposeBag)
             
+            bindTextField()
+            bindButton()
+        }
+
+        private func bindTextField() {
             textField.rx.text
                 .distinctUntilChanged()
                 .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
@@ -177,17 +182,21 @@ extension ReserveName {
                     self?.viewModel.userDidEnter(name: text)
                 })
                 .disposed(by: disposeBag)
-            
-            // button
+        }
+
+        private func bindButton() {
             viewModel.isNameValidLoadableDriver
                 .withLatestFrom(viewModel.initializingStateDriver, resultSelector: {($1, $0)})
                 .map { initState, isValid -> Bool in
-                    initState == .loaded && isValid.state == .loaded && isValid.value == true
+                    let isAppropriateInitialState = initState == .loaded
+                    let isAppropriateCurrentState = isValid.state == .loaded && isValid.value == true
+
+                    return isAppropriateInitialState && isAppropriateCurrentState
                 }
                 .drive(continueButton.rx.isEnabled)
                 .disposed(by: disposeBag)
         }
-        
+
         @objc func skipLabelDidTouch(gesture: UITapGestureRecognizer) {
             let skipRange = (skipLabel.text! as NSString).range(of: L10n.skip)
             if gesture.didTapAttributedTextInLabel(label: skipLabel, inRange: skipRange) {
