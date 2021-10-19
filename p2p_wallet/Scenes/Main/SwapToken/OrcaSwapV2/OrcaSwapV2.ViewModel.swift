@@ -171,32 +171,42 @@ extension OrcaSwapV2 {
         func swap() {
             guard verify() == nil else {return}
             
-            let request = orcaSwap.swap(
-                fromWalletPubkey: sourceWalletSubject.value!.pubkey!,
-                toWalletPubkey: destinationWalletSubject.value!.pubkey!,
-                bestPoolsPair: bestPoolsPairSubject.value!,
-                amount: inputAmountSubject.value!,
-                slippage: slippageSubject.value,
-                isSimulation: false
-            )
-            .map {$0 as ProcessTransactionResponseType}
-            
-            // calculate amount
+            let sourceWallet = sourceWalletSubject.value!
+            let destinationWallet = destinationWalletSubject.value!
+            let bestPoolsPair = bestPoolsPairSubject.value!
             let inputAmount = inputAmountSubject.value!
             let estimatedAmount = estimatedAmountSubject.value!
             
             // log
-            analyticsManager.log(event: .swapSwapClick(tokenA: sourceWalletSubject.value!.token.symbol, tokenB: destinationWalletSubject.value!.token.symbol, sumA: inputAmount, sumB: estimatedAmount))
+            analyticsManager.log(
+                event: .swapSwapClick(
+                    tokenA: sourceWallet.token.symbol,
+                    tokenB: destinationWallet.token.symbol,
+                    sumA: inputAmount,
+                    sumB: estimatedAmount
+                )
+            )
+            
+            // form request
+            let request = orcaSwap.swap(
+                fromWalletPubkey: sourceWallet.pubkey!,
+                toWalletPubkey: destinationWallet.pubkey,
+                bestPoolsPair: bestPoolsPair,
+                amount: inputAmount,
+                slippage: slippageSubject.value,
+                isSimulation: false
+            )
+                .map {$0 as ProcessTransactionResponseType}
             
             // show processing scene
             navigationSubject.accept(
                 .processTransaction(
                     request: request,
                     transactionType: .orcaSwap(
-                        from: sourceWalletSubject.value!,
-                        to: destinationWalletSubject.value!,
-                        inputAmount: inputAmount.toLamport(decimals: sourceWalletSubject.value!.token.decimals),
-                        estimatedAmount: estimatedAmount.toLamport(decimals: destinationWalletSubject.value!.token.decimals),
+                        from: sourceWallet,
+                        to: destinationWallet,
+                        inputAmount: inputAmount.toLamport(decimals: sourceWallet.token.decimals),
+                        estimatedAmount: estimatedAmount.toLamport(decimals: destinationWallet.token.decimals),
                         fees: [.init(
                             type: .transactionFee,
                             lamports: 0, // TODO: - feeInLamportsSubject.value ?? 0,
