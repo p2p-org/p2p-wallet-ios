@@ -47,6 +47,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
 extension OrcaSwapV2 {
     class ViewModel {
         // MARK: - Dependencies
+        @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var analyticsManager: AnalyticsManagerType
         private let orcaSwap: OrcaSwapType
         private let walletsRepository: WalletsRepository
@@ -155,7 +156,55 @@ extension OrcaSwapV2 {
         }
         
         func authenticateAndSwap() {
-            fatalError("Implementing")
+            authenticationHandler.authenticate(
+                presentationStyle:
+                    .init(
+                        isRequired: false,
+                        isFullScreen: false,
+                        completion: { [weak self] in
+                            self?.swap()
+                        }
+                    )
+            )
+        }
+        
+        func swap() {
+            guard verify() == nil else {return}
+            
+            let request = orcaSwap.swap(
+                fromWalletPubkey: sourceWalletSubject.value!.pubkey!,
+                toWalletPubkey: destinationWalletSubject.value!.pubkey!,
+                bestPoolsPair: bestPoolsPairSubject.value!,
+                amount: inputAmountSubject.value!,
+                slippage: slippageSubject.value,
+                isSimulation: false
+            )
+            .map {$0 as ProcessTransactionResponseType}
+            
+            // calculate amount
+            let inputAmount = inputAmountSubject.value!
+            let estimatedAmount = estimatedAmountSubject.value!
+            
+            // log
+            analyticsManager.log(event: .swapSwapClick(tokenA: sourceWalletSubject.value!.token.symbol, tokenB: destinationWalletSubject.value!.token.symbol, sumA: inputAmount, sumB: estimatedAmount))
+            
+            // show processing scene
+            navigationSubject.accept(
+                .processTransaction(
+                    request: request,
+                    transactionType: .orcaSwap(
+                        from: sourceWalletSubject.value!,
+                        to: destinationWalletSubject.value!,
+                        inputAmount: inputAmount.toLamport(decimals: sourceWalletSubject.value!.token.decimals),
+                        estimatedAmount: estimatedAmount.toLamport(decimals: destinationWalletSubject.value!.token.decimals),
+                        fees: [.init(
+                            type: .transactionFee,
+                            lamports: 0, // TODO: - feeInLamportsSubject.value ?? 0,
+                            token: .nativeSolana // Defaults.payingToken == .nativeSOL ? .nativeSolana: sourceWallet.token
+                        )]
+                    )
+                )
+            )
         }
     }
 }
@@ -351,7 +400,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let destinationDecimals = destinationWalletSubject.value?.token.decimals,
            let estimatedAmount = amount?.toLamport(decimals: destinationDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
-           let bestPoolsPair = try? orcaSwap.findBestPoolForEstimatedAmount(estimatedAmount, from: poolsPairs),
+           let bestPoolsPair = try? orcaSwap.findBestPoolsPairForEstimatedAmount(estimatedAmount, from: poolsPairs),
            let bestInputAmount = bestPoolsPair.getInputAmount(fromEstimatedAmount: estimatedAmount)
         {
             inputAmountSubject.accept(bestInputAmount.convertToBalance(decimals: sourceDecimals))
