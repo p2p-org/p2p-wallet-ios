@@ -43,16 +43,22 @@ class WLButton: UIButton {
     }
     
     static func stepButton(type: StepButtonType, label: String?, labelFont: UIFont = UIFont.systemFont(ofSize: 17, weight: .semibold), labelColor: UIColor? = nil) -> WLButton {
-        let button = WLButton(height: 56, backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: labelFont, textColor: labelColor != nil ? labelColor!: type.textColor)
+        let button = WLButton(backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: labelFont, textColor: labelColor != nil ? labelColor!: type.textColor)
         button.enabledColor = type.backgroundColor
         button.disabledColor = type.disabledColor
+        button.titleLabel?.lineBreakMode = .byWordWrapping
+        button.titleLabel?.textAlignment = .center
+        button.contentEdgeInsets = .init(x: 15, y: 20)
         return button
     }
     
     static func stepButton(enabledColor: UIColor, disabledColor: UIColor? = nil, textColor: UIColor, label: String?) -> WLButton {
-        let button = WLButton(height: 56, backgroundColor: enabledColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .semibold), textColor: textColor)
+        let button = WLButton(backgroundColor: enabledColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .semibold), textColor: textColor)
         button.enabledColor = enabledColor
         button.disabledColor = disabledColor
+        button.titleLabel?.lineBreakMode = .byWordWrapping
+        button.titleLabel?.textAlignment = .center
+        button.contentEdgeInsets = .init(x: 15, y: 20)
         return button
     }
     var enabledColor: UIColor?

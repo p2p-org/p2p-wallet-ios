@@ -28,7 +28,7 @@ protocol SwapTokenViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewMo
     var exchangeRateDriver: Driver<Loadable<Double>> {get}
     var minOrderSizeDriver: Driver<Loadable<Double>> {get}
     
-    var slippageDriver: Driver<Double?> {get}
+    var slippageDriver: Driver<Double> {get}
     
     var feesDriver: Driver<Loadable<[PayingFee]>> {get}
     
@@ -91,7 +91,7 @@ extension SwapToken {
         private let feesRelay: LoadableRelay<[PayingFee]>
         private let minOrderSizeRelay: LoadableRelay<Double>
         
-        private let slippageRelay = BehaviorRelay<Double?>(value: Defaults.slippage)
+        private let slippageRelay = BehaviorRelay<Double>(value: Defaults.slippage)
         private let payingTokenRelay = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
         
         private let isExchangeRateReversed = BehaviorRelay<Bool>(value: false)
@@ -196,9 +196,10 @@ extension SwapToken {
                   let destinationWallet = destinationWalletRelay.value,
                   let inputAmount = inputAmountRelay.value,
                   let estimatedAmount = estimatedAmountRelay.value,
-                  let fees = feesRelay.value,
-                  let slippage = slippageRelay.value
+                  let fees = feesRelay.value
             else {return}
+            
+            let slippage = slippageRelay.value
             
             // log
             log(.swapSwapClick(tokenA: sourceWallet.token.symbol, tokenB: destinationWallet.token.symbol, sumA: inputAmount, sumB: estimatedAmount))
@@ -285,7 +286,7 @@ extension SwapToken.ViewModel: SwapTokenViewModelType {
     var payingTokenDriver: Driver<PayingToken> {
         payingTokenRelay.asDriver()
     }
-    var slippageDriver: Driver<Double?> { slippageRelay.asDriver() }
+    var slippageDriver: Driver<Double> { slippageRelay.asDriver() }
     var isExchangeRateReversedDriver: Driver<Bool> {isExchangeRateReversed.asDriver()}
     
     var useAllBalanceDidTapSignal: Signal<Double?> {useAllBalanceSubject.asSignal(onErrorJustReturn: nil)}

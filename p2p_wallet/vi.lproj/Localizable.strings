@@ -524,3 +524,17 @@
 "The username %@ is not available" = "Tên người dùng %@ không khả dụng";
 "Maximum 15 latin characters and hyphens" = "Tối đa 15 ký tự latin và dấu gạch nối";
 "Username must contain less than 15 characters" = "Tên người dùng phải có ít hơn 15 ký tự";
+"Finding swapping routes" = "Tìm các tuyến hoán đổi";
+"No routes for swapping current token pair" = "Không có tuyến đường nào để hoán đổi cặp token hiện tại";
+"Error finding swapping routes. Tap here to try again!" = "Lỗi khi tìm các tuyến hoán đổi. Nhấn vào đây để thử lại!";
+"This trading pair is not supported" = "Cặp giao dịch này không được hỗ trợ";
+"Choose source wallet" = "Chọn ví nguồn";
+"Choose destination wallet" = "Chọn ví đích";
+"Enter input amount" = "Nhập giá trị muốn quy đổi";
+"Choose another destination wallet" = "Chọn một ví đích khác";
+"Could not calculating fees" = "Không thể tính phí";
+"Input amount is not valid" = "Số tiền đầu vào không hợp lệ";
+"Choose another slippage" = "Chọn một mức trượt giá khác";
+"Could not connect to wallet" = "Không thể kết nối với ví";
+"Invalid estimated amount" = "Số tiền ước tính không hợp lệ";
+"Your account does not have enough %@ to cover fees" = "Tài khoản của bạn không có đủ %@ để trả phí";

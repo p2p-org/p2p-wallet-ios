@@ -54,13 +54,7 @@ extension ReserveName {
             super.bind()
             viewModel.initializingStateDriver
                 .drive(onNext: { [weak self] loadingState in
-                    switch loadingState {
-                    case .notRequested, .loading:
-                        self?.showIndetermineHud()
-                    case .loaded:
-                        self?.hideHud()
-                    case .error:
-                        self?.hideHud()
+                    self?.view.setUp(loadingState, overridingErrorAction: { [weak self] in
                         self?.showAlert(
                             title: L10n.error,
                             message:
@@ -77,7 +71,7 @@ extension ReserveName {
                                 }
                             }
                         )
-                    }
+                    })
                 })
                 .disposed(by: disposeBag)
             
