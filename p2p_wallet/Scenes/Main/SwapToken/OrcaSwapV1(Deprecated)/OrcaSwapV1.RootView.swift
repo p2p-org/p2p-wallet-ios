@@ -22,7 +22,7 @@ extension OrcaSwapV1 {
         lazy var sourceWalletView = WalletView(viewModel: viewModel, type: .source)
         lazy var reverseButton = UIImageView(width: 44, height: 44, cornerRadius: 12, image: .reverseButton)
             .onTap(viewModel, action: #selector(ViewModel.swapSourceAndDestination))
-        lazy var destinationWalletView = OrcaSwapV1.WalletView(viewModel: viewModel, type: .destination)
+        lazy var destinationWalletView = WalletView(viewModel: viewModel, type: .destination)
         
         lazy var exchangeRateLabel = UILabel(textSize: 15, weight: .medium)
         lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)

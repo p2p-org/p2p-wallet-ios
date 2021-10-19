@@ -23,6 +23,44 @@ public enum LoadableState: Equatable {
     }
 }
 
+extension UIView {
+    func setUp(
+        _ loadableState: LoadableState,
+        reloadAction: @escaping (() -> Void)
+    ) {
+        switch loadableState {
+        case .notRequested:
+            hideHud()
+        case .loading:
+            showIndetermineHud()
+        case .loaded:
+            hideHud()
+        case .error:
+            hideHud()
+            
+            showErrorView(title: L10n.error, description: L10n.somethingWentWrong + ". " + L10n.pleaseTryAgainLater.uppercaseFirst, retryAction: .init(workFactory: { _ in
+                reloadAction()
+                return .just(())
+            }))
+        }
+    }
+    
+    func setUp(
+        _ loadableState: LoadableState,
+        overridingErrorAction: @escaping (() -> Void)
+    ) {
+        switch loadableState {
+        case .notRequested, .loading:
+            showIndetermineHud()
+        case .loaded:
+            hideHud()
+        case .error:
+            hideHud()
+            overridingErrorAction()
+        }
+    }
+}
+
 extension Collection where Element == LoadableState {
     var combined: Element {
         // if there is some error, return error

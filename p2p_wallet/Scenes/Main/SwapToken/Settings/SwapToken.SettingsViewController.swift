@@ -11,7 +11,7 @@ import RxCocoa
 protocol SwapTokenSettingsViewModelType {
     var sourceWalletDriver: Driver<Wallet?> {get}
     var destinationWalletDriver: Driver<Wallet?> {get}
-    var slippageDriver: Driver<Double?> {get}
+    var slippageDriver: Driver<Double> {get}
     var payingTokenDriver: Driver<PayingToken> {get}
     func log(_ event: AnalyticsEvent)
     func changeSlippage(to slippage: Double)
