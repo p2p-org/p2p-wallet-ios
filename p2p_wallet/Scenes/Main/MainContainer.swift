@@ -182,7 +182,9 @@ class MainContainer {
                     apiClient: OrcaSwap.APIClient(
                         network: Defaults.apiEndPoint.network.cluster
                     ),
-                    solanaClient: solanaSDK
+                    solanaClient: solanaSDK,
+                    accountProvider: solanaSDK,
+                    notificationHandler: socket
                 ),
                 walletsRepository: walletsViewModel,
                 initialWallet: wallet
