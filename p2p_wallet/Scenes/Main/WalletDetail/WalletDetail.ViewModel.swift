@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 extension WalletDetail {
-    class ViewModel: ViewModelType {
+    class ViewModel {
         // MARK: - Nested type
         struct Input {
             let walletName = PublishRelay<String>()
