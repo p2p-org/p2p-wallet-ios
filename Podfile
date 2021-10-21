@@ -16,7 +16,6 @@ target 'p2p_wallet' do
   pod 'THPinViewController', :path => 'THPinViewController'
   pod 'BECollectionView', :path => 'BECollectionView'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
-  pod 'TransakSwift', :path => 'TransakSwift'
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
   pod 'Action'

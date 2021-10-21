@@ -16,6 +16,3 @@
 [submodule "FeeRelayerSwift"]
 	path = FeeRelayerSwift
 	url = git@github.com:p2p-org/FeeRelayerSwift.git
-[submodule "TransakSwift"]
-	path = TransakSwift
-	url = git@github.com:p2p-org/TransakSwift.git
