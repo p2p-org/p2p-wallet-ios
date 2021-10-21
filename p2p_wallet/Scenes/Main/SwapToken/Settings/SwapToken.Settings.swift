@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension SwapToken {
+extension SerumSwapV1 {
     class SettingsNavigationController: BENavigationController, CustomPresentableViewController {
         var transitionManager: UIViewControllerTransitioningDelegate?
         

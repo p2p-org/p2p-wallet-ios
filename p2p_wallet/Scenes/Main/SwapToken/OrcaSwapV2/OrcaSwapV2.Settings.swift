@@ -10,10 +10,10 @@ import RxCocoa
 
 extension OrcaSwapV2 {
     // Forward to NewSwap, remove later
-    typealias SettingsNavigationController = SwapToken.SettingsNavigationController
-    typealias SettingsBaseViewController = SwapToken.SettingsBaseViewController
-    typealias SettingsViewController = SwapToken.SettingsViewController
-    typealias SlippageSettingsViewController = SwapToken.SlippageSettingsViewController
-    typealias NetworkFeePayerSettingsViewController = SwapToken.NetworkFeePayerSettingsViewController
-    typealias SwapFeesViewController = SwapToken.SwapFeesViewController
+    typealias SettingsNavigationController = SerumSwapV1.SettingsNavigationController
+    typealias SettingsBaseViewController = SerumSwapV1.SettingsBaseViewController
+    typealias SettingsViewController = SerumSwapV1.SettingsViewController
+    typealias SlippageSettingsViewController = SerumSwapV1.SlippageSettingsViewController
+    typealias NetworkFeePayerSettingsViewController = SerumSwapV1.NetworkFeePayerSettingsViewController
+    typealias SwapFeesViewController = SerumSwapV1.SwapFeesViewController
 }
