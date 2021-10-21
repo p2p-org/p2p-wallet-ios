@@ -14,7 +14,7 @@ extension SolanaSDK.TransactionID: ProcessTransactionResponseType {}
 extension SolanaSDK.SwapResponse: ProcessTransactionResponseType {}
 
 extension ProcessTransaction {
-    class ViewModel: ViewModelType {
+    class ViewModel {
         // MARK: - Nested type
         struct Input {}
         struct Output {
