@@ -13,7 +13,7 @@ public struct MoonpayProvider: BuyProvider {
 
     let environment: Environment
     let apiKey: String
-    let showOnlyCurrencies: String
+    let showOnlyCurrencies: String?
     let defaultCurrencyCode: String?
     let walletAddress: String?
     let walletAddresses: String?
@@ -26,7 +26,7 @@ public struct MoonpayProvider: BuyProvider {
             walletAddress: String?,
             walletAddresses: String?
     ) {
-        self.environment = environment;
+        self.environment = environment
         self.apiKey = apiKey
         self.showOnlyCurrencies = showOnlyCurrencies
         self.defaultCurrencyCode = defaultCurrencyCode
@@ -40,7 +40,7 @@ public struct MoonpayProvider: BuyProvider {
             "showOnlyCurrencies": showOnlyCurrencies,
             "defaultCurrencyCode": defaultCurrencyCode,
             "walletAddress": walletAddress,
-            "walletAddresses": walletAddresses
+            "walletAddresses": walletAddresses,
         ]
 
         let paramStr = params.query
