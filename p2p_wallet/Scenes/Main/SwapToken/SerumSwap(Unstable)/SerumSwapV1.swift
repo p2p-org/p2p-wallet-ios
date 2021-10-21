@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-struct SwapToken {
+struct SerumSwapV1 {
     enum NavigatableScene {
         case chooseSourceWallet
         case chooseDestinationWallet
@@ -30,4 +30,8 @@ protocol SwapTokenApiClient {
     func getCreatingTokenAccountFee() -> Single<UInt64>
 }
 
-extension SolanaSDK: SwapTokenApiClient {}
+extension SolanaSDK: SwapTokenApiClient {
+    func getLamportsPerSignature() -> Single<Lamports> {
+        getFees().map {$0.feeCalculator?.lamportsPerSignature}.map {$0 ?? 0}
+    }
+}

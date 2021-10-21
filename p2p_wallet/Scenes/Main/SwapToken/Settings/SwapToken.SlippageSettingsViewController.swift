@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension SwapToken {
+extension SerumSwapV1 {
     class SlippageSettingsViewController: SettingsBaseViewController {
         // MARK: - Properties
         private let quickSelectableSlippages: [Double] = [0.1, 0.5, 1, 5]
@@ -198,7 +198,7 @@ extension SwapToken {
     }
 }
 
-extension SwapToken.SlippageSettingsViewController: UITextFieldDelegate {
+extension SerumSwapV1.SlippageSettingsViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == customSlippageTextField {
             return customSlippageTextField.shouldChangeCharactersInRange(range, replacementString: string)

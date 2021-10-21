@@ -197,13 +197,13 @@ class MainContainer {
                 tokenListContainer: solanaSDK,
                 signatureNotificationHandler: solanaSDK
             )
-            let vm = SwapToken.ViewModel(
+            let vm = SerumSwapV1.ViewModel(
                 provider: provider,
                 apiClient: solanaSDK,
                 walletsRepository: walletsViewModel,
                 sourceWallet: wallet ?? walletsViewModel.nativeWallet
             )
-            let vc = SwapToken.ViewController(viewModel: vm, scenesFactory: self)
+            let vc = SerumSwapV1.ViewController(viewModel: vm, scenesFactory: self)
             return vc
         }
     }
@@ -278,7 +278,6 @@ class MainContainer {
 
 extension MainContainer: TabBarScenesFactory,
                          MyProductsScenesFactory,
-                         OrcaSwapV1ScenesFactory,
                          OrcaSwapV2ScenesFactory,
                          SwapTokenScenesFactory,
                          WalletDetailScenesFactory,

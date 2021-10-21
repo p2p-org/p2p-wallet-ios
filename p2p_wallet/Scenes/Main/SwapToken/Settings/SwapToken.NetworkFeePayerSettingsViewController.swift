@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension SwapToken {
+extension SerumSwapV1 {
     class NetworkFeePayerSettingsViewController: SettingsBaseViewController {
         // MARK: - Properties
         private let transactionTokenName: String?
@@ -64,7 +64,7 @@ extension SwapToken {
     }
 }
 
-private extension SwapToken {
+private extension SerumSwapV1 {
     class RadioCell: BEView {
         var method: PayingToken?
         
