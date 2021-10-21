@@ -232,6 +232,10 @@ class MainContainer {
         )
         return ProcessTransaction.ViewController(viewModel: viewModel)
     }
+
+    func makeSelectRecepientViewController(handler: WalletDidSelectHandler) -> SelectRecepient.ViewController {
+        .init()
+    }
     
     // MARK: - Profile VCs
     func makeBackupManuallyVC() -> BackupManuallyVC {

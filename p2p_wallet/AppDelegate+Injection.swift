@@ -77,5 +77,10 @@ extension Resolver: ResolverRegistering {
             .implements(MainViewModelType.self)
             .implements(AuthenticationHandler.self)
             .scope(.shared)
+
+        // MARK: - SelectRecepient
+        register { SelectRecepient.ViewModel() }
+            .implements(SelectRecepientViewModelType.self)
+            .scope(.shared)
     }
 }
