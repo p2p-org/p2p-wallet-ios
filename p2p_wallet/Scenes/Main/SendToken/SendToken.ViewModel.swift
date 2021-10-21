@@ -10,9 +10,10 @@ import RxSwift
 import RxCocoa
 import LazySubject
 
-protocol SendTokenViewModelType: WalletDidSelectHandler {
+protocol SendTokenViewModelType: AnyObject, WalletDidSelectHandler {
     var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {get}
     var currentWalletDriver: Driver<Wallet?> {get}
+    var currentAddressContentDriver: Driver<SendToken.AddressContentType> { get }
     var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {get}
     var useAllBalanceSignal: Signal<Double?> {get}
     var feeDriver: Driver<Loadable<Double>> {get}
@@ -34,6 +35,7 @@ protocol SendTokenViewModelType: WalletDidSelectHandler {
     
     func enterWalletAddress(_ address: String?)
     func clearDestinationAddress()
+    func scanQRCode()
     func ignoreEmptyBalance(_ isIgnored: Bool)
     
     func changeRenBTCNetwork(to network: SendToken.SendRenBTCInfo.Network)
@@ -65,6 +67,7 @@ extension SendToken {
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
+        private let addressContentSubject = BehaviorRelay<AddressContentType>(value: .empty)
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         private let useAllBalanceSubject = PublishRelay<Double?>()
@@ -324,6 +327,12 @@ extension SendToken {
 }
 
 extension SendToken.ViewModel: SendTokenViewModelType {
+    func scanQRCode() {
+        analyticsManager.log(event: .sendScanQrClick)
+        analyticsManager.log(event: .scanQrOpen(fromPage: "send"))
+        navigate(to: .scanQrCode)
+    }
+
     var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {
         navigationSubject.asDriver()
     }
@@ -331,7 +340,11 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     var currentWalletDriver: Driver<Wallet?> {
         walletSubject.asDriver()
     }
-    
+
+    var currentAddressContentDriver: Driver<SendToken.AddressContentType> {
+        addressContentSubject.asDriver()
+    }
+
     var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {
         currencyModeSubject.asDriver()
     }

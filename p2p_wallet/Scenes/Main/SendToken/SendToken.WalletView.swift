@@ -232,9 +232,11 @@ private extension SendToken.WalletView {
 
 extension SendToken.WalletView: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if let textField = textField as? TokenAmountTextField {
-            return textField.shouldChangeCharactersInRange(range, replacementString: string)
+        switch textField {
+        case let amountTextField as TokenAmountTextField:
+            return amountTextField.shouldChangeCharactersInRange(range, replacementString: string)
+        default:
+            return true
         }
-        return true
     }
 }
