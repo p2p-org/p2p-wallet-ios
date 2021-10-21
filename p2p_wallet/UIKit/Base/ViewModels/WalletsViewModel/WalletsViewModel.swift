@@ -150,7 +150,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     }
     
     @objc private func getNewWallet() {
-        solanaSDK.getTokenWallets()
+        solanaSDK.getTokenWallets(log: false)
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .map { [weak self] newData -> [Wallet] in
                 guard let self = self else {return []}
