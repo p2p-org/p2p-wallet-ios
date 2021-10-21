@@ -184,10 +184,10 @@ class MainContainer {
                     ),
                     solanaClient: solanaSDK,
                     accountProvider: solanaSDK,
-                    notificationHandler: socket
+                    notificationHandler: solanaSDK
                 ),
                 walletsRepository: walletsViewModel,
-                initialWallet: wallet
+                initialWallet: wallet ?? walletsViewModel.nativeWallet
             )
             return OrcaSwapV2.ViewController(viewModel: vm, scenesFactory: self)
         case .serum:
@@ -195,7 +195,7 @@ class MainContainer {
                 client: solanaSDK,
                 accountProvider: solanaSDK,
                 tokenListContainer: solanaSDK,
-                signatureNotificationHandler: socket
+                signatureNotificationHandler: solanaSDK
             )
             let vm = SwapToken.ViewModel(
                 provider: provider,
