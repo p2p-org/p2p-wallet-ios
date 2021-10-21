@@ -18,19 +18,21 @@ public struct TransakProvider: BuyProvider {
     let hostURL: String?
     let apiKey: String
     let defaultCryptoCurrency: String?
-    let walletAddressesData: String
+    let walletAddress: String?
+    let walletAddressesData: String?
     let disableWalletAddressForm: String
     let hideMenu: String
 
     let extraParams: BuyProviderUtils.Params = [:]
-    
+
     public init(environment: Environment,
                 networks: [String],
                 cryptoCurrencies: String,
                 themeColor: String = "5887FF",
                 hostURL: String?, apiKey: String,
                 defaultCryptoCurrency: String?,
-                walletAddressesData: String,
+                walletAddress: String?,
+                walletAddressesData: String?,
                 disableWalletAddressForm: String = "true",
                 hideMenu: String = "true"
     ) {
@@ -41,6 +43,7 @@ public struct TransakProvider: BuyProvider {
         self.hostURL = hostURL
         self.apiKey = apiKey
         self.defaultCryptoCurrency = defaultCryptoCurrency
+        self.walletAddress = walletAddress
         self.walletAddressesData = walletAddressesData
         self.disableWalletAddressForm = disableWalletAddressForm
         self.hideMenu = hideMenu
@@ -54,6 +57,7 @@ public struct TransakProvider: BuyProvider {
             "hostURL": hostURL,
             "apiKey": apiKey,
             "defaultCryptoCurrency": defaultCryptoCurrency,
+            "walletAddress": walletAddress,
             "walletAddressesData": walletAddressesData,
             "disableWalletAddressForm": disableWalletAddressForm,
             "hideMenu": hideMenu

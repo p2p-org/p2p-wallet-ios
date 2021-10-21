@@ -77,7 +77,7 @@ private func getEnvironmentAndParams(type: BuyProviderType, token: BuyToken.Cryp
                         return nil
                     }
                 }(),
-                walletAddressesData: try {
+                walletAddress: try {
                     switch token {
                     case .sol:
                         guard let address = wallets.first(where: { $0.isNativeSOL })?.pubkey else {
@@ -90,6 +90,13 @@ private func getEnvironmentAndParams(type: BuyProviderType, token: BuyToken.Cryp
                         }
                         return address
                     case .all:
+                        return nil
+                    default:
+                        throw SolanaSDK.Error.unknown
+                    }
+                }(),
+                walletAddressesData: try {
+                    if token == .all {
                         guard let solAddress = wallets.first(where: { $0.isNativeSOL })?.pubkey else {
                             throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("SOL"))
                         }
@@ -101,9 +108,8 @@ private func getEnvironmentAndParams(type: BuyProviderType, token: BuyToken.Cryp
                         let data = try JSONEncoder().encode(dataStruct)
                         let string = String(data: data, encoding: .utf8)
                         return string!
-                    default:
-                        throw SolanaSDK.Error.unknown
                     }
+                    return nil
                 }())
     case .moonpay:
         // Create MoonpayProvider
