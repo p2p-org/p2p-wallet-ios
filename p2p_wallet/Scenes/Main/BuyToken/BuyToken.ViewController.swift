@@ -21,7 +21,7 @@ extension BuyToken {
 
         // MARK: - Methods
         init(token: CryptoCurrency, repository: WalletsRepository) throws {
-            let provider = try getEnvironmentAndParams(type: .transak, token: token, repository: repository)
+            let provider = try getEnvironmentAndParams(type: .moonpay, token: token, repository: repository)
             transakVC = .init(provider: provider, loadingView: WLSpinnerView(size: 65, endColor: .h5887ff))
             super.init()
         }
@@ -50,16 +50,22 @@ enum BuyProviderType {
 }
 
 private func getEnvironmentAndParams(type: BuyProviderType, token: BuyToken.CryptoCurrency, repository: WalletsRepository) throws -> BuyProvider {
-
+    let wallets = repository.getWallets()
     switch type {
     case .transak:
         // Create TransakProvider
-        let wallets = repository.getWallets()
+
         return TransakProvider(
-                environment: .production,
+                environment: {
+                    if Defaults.apiEndPoint.network == .mainnetBeta {
+                        return .production
+                    } else {
+                        return .staging
+                    }
+                }(),
                 networks: ["solana", "mainnet"],
                 cryptoCurrencies: token.code,
-                hostURL: Bundle.main.infoDictionary!["TRANSAK_PRODUCTION_API_KEY"] as? String,
+                hostURL: "https://" + (Bundle.main.infoDictionary!["TRANSAK_HOST_URL"] as! String),
                 apiKey: {
                     if Defaults.apiEndPoint.network == .mainnetBeta {
                         return Bundle.main.infoDictionary!["TRANSAK_PRODUCTION_API_KEY"] as! String
@@ -112,8 +118,66 @@ private func getEnvironmentAndParams(type: BuyProviderType, token: BuyToken.Cryp
                     return nil
                 }())
     case .moonpay:
-        // Create MoonpayProvider
-        return MoonpayProvider()
+        return MoonpayProvider(
+                environment: {
+                    if Defaults.apiEndPoint.network == .mainnetBeta {
+                        return .production
+                    } else {
+                        return .staging
+                    }
+                }(),
+                apiKey: {
+                    if Defaults.apiEndPoint.network == .mainnetBeta {
+                        return Bundle.main.infoDictionary!["MOONPAY_PRODUCTION_API_KEY"] as! String
+                    } else {
+                        return Bundle.main.infoDictionary!["MOONPAY_STAGING_API_KEY"] as! String
+                    }
+                }(),
+                showOnlyCurrencies: token.code,
+                defaultCurrencyCode: {
+                    switch token {
+                    case .sol, .all:
+                        return "SOL"
+                    case .usdt:
+                        return "USDT"
+                    default:
+                        return nil
+                    }
+                }(),
+                walletAddress: try {
+                    switch token {
+                    case .sol:
+                        guard let address = wallets.first(where: { $0.isNativeSOL })?.pubkey else {
+                            throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("SOL"))
+                        }
+                        return address
+                    case .usdt:
+                        guard let address = wallets.first(where: { $0.token.symbol == "USDT" })?.pubkey else {
+                            throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("USDT"))
+                        }
+                        return address
+                    case .all:
+                        return nil
+                    default:
+                        throw SolanaSDK.Error.unknown
+                    }
+                }(),
+                walletAddresses: try {
+                    if token == .all {
+                        guard let solAddress = wallets.first(where: { $0.isNativeSOL })?.pubkey else {
+                            throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("SOL"))
+                        }
+                        let usdtAddress = wallets.first(where: { $0.token.address == "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB" })?.pubkey
+                        let dataStruct = WalletAddressesData(
+                                networks: .init(solana: .init(address: solAddress)),
+                                coins: .init(USDT: usdtAddress == nil ? nil : .init(address: usdtAddress!), SOL: .init(address: solAddress))
+                        )
+                        let data = try JSONEncoder().encode(dataStruct)
+                        let string = String(data: data, encoding: .utf8)
+                        return string!
+                    }
+                    return nil
+                }())
     }
 }
 
