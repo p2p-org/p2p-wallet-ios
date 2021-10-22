@@ -16,6 +16,10 @@
 	<string>$(TRANSAK_PRODUCTION_API_KEY)</string>
 	<key>TRANSAK_HOST_URL</key>
 	<string>$(TRANSAK_HOST_URL)</string>
+    <key>MOONPAY_STAGING_API_KEY</key>
+    <string>$(MOONPAY_STAGING_API_KEY)</string>
+    <key>MOONPAY_PRODUCTION_API_KEY</key>
+    <string>$(MOONPAY_PRODUCTION_API_KEY)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
