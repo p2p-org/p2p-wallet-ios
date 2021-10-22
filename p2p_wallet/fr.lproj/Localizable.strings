@@ -539,3 +539,4 @@
 "Invalid estimated amount" = "Montant estimé non valide";
 "Your account does not have enough %@ to cover fees" = "Votre compte n'a pas assez de %@ pour couvrir les frais";
 "Security key can't be saved into icloud. Please try again." = "La clé de sécurité ne peut pas être enregistrée dans icloud.  Veuillez réessayer.";
+"You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list." = "Vous pouvez recevoir et envoyer des jetons en utilisant votre nom d'utilisateur P2P.  De plus, les utilisateurs qui connaissent votre nom d'utilisateur peuvent vous envoyer n'importe quel jeton, même si vous ne l'avez pas dans votre liste de portefeuilles.";
