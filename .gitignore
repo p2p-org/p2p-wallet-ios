@@ -26,6 +26,7 @@ xcuserdata/
 ## Swiftgen
 p2p_wallet/Strings+Generated.swift
 p2p_wallet/Asset+Generated.swift
+p2p_wallet/Fonts+Generated.swift
 
 ## Obj-C/Swift specific
 *.hmap
