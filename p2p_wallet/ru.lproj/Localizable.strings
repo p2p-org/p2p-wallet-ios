@@ -538,3 +538,4 @@
 "Could not connect to wallet" = "Не удалось подключиться к кошельку";
 "Invalid estimated amount" = "Неверная расчетная сумма";
 "Your account does not have enough %@ to cover fees" = "В вашем аккаунте недостаточно %@ для покрытия комиссий";
+"Security key can't be saved into icloud. Please try again." = "Электронный ключ нельзя сохранить в icloud.  Пожалуйста, попробуйте еще раз.";

@@ -538,3 +538,4 @@
 "Could not connect to wallet" = "Không thể kết nối với ví";
 "Invalid estimated amount" = "Số tiền ước tính không hợp lệ";
 "Your account does not have enough %@ to cover fees" = "Tài khoản của bạn không có đủ %@ để trả phí";
+"Security key can't be saved into icloud. Please try again." = "Không thể lưu khóa bảo mật vào icloud.  Vui lòng thử lại.";
