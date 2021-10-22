@@ -95,8 +95,7 @@ extension ReserveName {
             stackView.spacing = 15
             stackView.addArrangedSubviews {
                 UILabel(
-                    text:
-                        L10n.YouCanReceiveAndSendTokensUsingYourP2PUsernameOrLink.alsoUsersWhoKnowYourURLOrUsernameCanSendYouAnyTokenEvenIfYouDonTHaveItInYourWalletsList,
+                    text: L10n.YouCanReceiveAndSendTokensUsingYourP2PUsername.alsoUsersWhoKnowYourUsernameCanSendYouAnyTokenEvenIfYouDonTHaveItInYourWalletsList,
                     textSize: 15,
                     numberOfLines: 0
                 )
