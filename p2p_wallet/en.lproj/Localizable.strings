@@ -496,7 +496,6 @@
 "Receiving statuses" = "Receiving statuses";
 "Receiving %@ renBTC" = "Receiving %@ renBTC";
 "Reserve your P2P username" = "Reserve your P2P username";
-"You can receive and send tokens using your P2P username or link. Also, users, who know your URL or username, can send you any token, even if you don’t have it in your wallets list." = "You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list.";
 "username" = "username";
 "Use any latin and special symbols or emojis." = "Use any latin and special symbols or emojis.";
 "You can also %@ this step and reserve a username later." = "You can also %@ this step and reserve a username later.";
