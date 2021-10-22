@@ -538,4 +538,8 @@
 "Could not connect to wallet" = "Không thể kết nối với ví";
 "Invalid estimated amount" = "Số tiền ước tính không hợp lệ";
 "Your account does not have enough %@ to cover fees" = "Tài khoản của bạn không có đủ %@ để trả phí";
+<<<<<<< HEAD
 "Security key can't be saved into icloud. Please try again." = "Không thể lưu khóa bảo mật vào icloud.  Vui lòng thử lại.";
+=======
+"You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list." = "Bạn có thể nhận và gửi mã thông báo bằng tên người dùng P2P của mình.  Ngoài ra, người dùng biết tên người dùng của bạn có thể gửi cho bạn bất kỳ mã thông báo nào, ngay cả khi bạn không có mã đó trong danh sách ví của mình.";
+>>>>>>> 3d855309 (fix(localization): P2PW-995)

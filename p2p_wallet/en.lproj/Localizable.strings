@@ -539,3 +539,4 @@
 "Invalid estimated amount" = "Invalid estimated amount";
 "Your account does not have enough %@ to cover fees" = "Your account does not have enough %@ to cover fees";
 "Security key can't be saved into icloud. Please try again." = "Security key can't be saved into icloud. Please try again.";
+"You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list." = "You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list.";
