@@ -7,7 +7,6 @@
 
 import Foundation
 import RxCocoa
-import TransakSwift
 
 struct BuyToken {
     struct CryptoCurrency: OptionSet {
@@ -32,7 +31,7 @@ struct BuyToken {
     }
 }
 
-extension WLSpinnerView: TransakWidgetLoadingView {
+extension WLSpinnerView: BuyTokenWidgetLoadingView {
     public func startLoading() {
         animate()
     }
