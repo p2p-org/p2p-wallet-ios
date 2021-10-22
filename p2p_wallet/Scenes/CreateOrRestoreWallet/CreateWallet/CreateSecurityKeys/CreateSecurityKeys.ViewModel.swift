@@ -14,7 +14,7 @@ protocol CreateSecurityKeysViewModelType {
     var errorSignal: Signal<String> {get}
     var isCheckboxSelectedDriver: Driver<Bool> {get}
     
-    func toggleCheckbox(selected: Bool)
+    func toggleCheckbox()
     func createPhrases()
     func copyToClipboard()
     func saveToICloud()
@@ -57,8 +57,8 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
     
     // MARK: - Actions
-    func toggleCheckbox(selected: Bool) {
-        isCheckboxSelectedSubject.accept(selected)
+    func toggleCheckbox() {
+        isCheckboxSelectedSubject.accept(!isCheckboxSelectedSubject.value)
     }
     
     func createPhrases() {
