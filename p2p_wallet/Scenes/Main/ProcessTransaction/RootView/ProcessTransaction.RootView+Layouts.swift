@@ -13,7 +13,7 @@ extension ProcessTransaction.RootView {
         // summary view
         summaryView?.removeFromSuperview()
         
-        switch viewModel.output.transactionType {
+        switch viewModel.transactionType {
         case .orcaSwap(let from, let to, let inputAmount, let estimatedAmount, _):
             let sv = SwapTransactionSummaryView(forAutoLayout: ())
             sv.setUp(from: from.token, to: to.token, inputAmount: inputAmount, estimatedAmount: estimatedAmount)
@@ -27,17 +27,17 @@ extension ProcessTransaction.RootView {
             let symbol = fromWallet.token.symbol
             
             let sv = DefaultTransactionSummaryView(forAutoLayout: ())
-            let equityValue = sentAmount * viewModel.output.pricesRepository.currentPrice(for: symbol)?.value
+            let equityValue = sentAmount * viewModel.pricesRepository.currentPrice(for: symbol)?.value
             sv.amountInTokenLabel.text = "\(sentAmount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
             sv.amountInFiatLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
             
             summaryView = sv
         case .closeAccount:
-            let amount = viewModel.output.reimbursedAmount ?? 0
+            let amount = viewModel.reimbursedAmount ?? 0
             let symbol = "SOL"
             
             let sv = DefaultTransactionSummaryView(forAutoLayout: ())
-            let equityValue = amount * viewModel.output.pricesRepository.currentPrice(for: symbol)?.value
+            let equityValue = amount * viewModel.pricesRepository.currentPrice(for: symbol)?.value
             sv.amountInTokenLabel.text = "\(amount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
             sv.amountInFiatLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
             
@@ -91,7 +91,7 @@ extension ProcessTransaction.RootView {
     }
     
     private func layoutProcessingTransaction() {
-        switch viewModel.output.transactionType {
+        switch viewModel.transactionType {
         case .send, .closeAccount:
             self.titleLabel.text = L10n.sending + "..."
             self.subtitleLabel.text = L10n.transactionProcessing
@@ -103,7 +103,7 @@ extension ProcessTransaction.RootView {
         self.transactionStatusImageView.image = .transactionProcessing
         self.buttonStackView.addArrangedSubview(
             WLButton.stepButton(type: .blue, label: L10n.done)
-                .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.done))
+                .onTap(self, action: #selector(doneButtonDidTouch))
         )
     }
     
@@ -113,12 +113,12 @@ extension ProcessTransaction.RootView {
         self.transactionStatusImageView.image = .transactionSuccess
         self.buttonStackView.addArrangedSubview(
             WLButton.stepButton(type: .blue, label: L10n.done)
-                .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.done))
+                .onTap(self, action: #selector(doneButtonDidTouch))
         )
     }
     
     private func layoutTransactionError(_ error: String) {
-        let transactionType = viewModel.output.transactionType
+        let transactionType = viewModel.transactionType
         // specific errors
         
         // When trying to send a wrapped token to a new SOL wallet (which is not yet in the blockchain)
@@ -197,10 +197,10 @@ extension ProcessTransaction.RootView {
             self.transactionStatusImageView.image = .transactionError
             self.buttonStackView.addArrangedSubviews([
                 WLButton.stepButton(type: .blue, label: L10n.tryAgain)
-                    .onTap(self.viewModel, action: #selector(ProcessTransaction.ViewModel.tryAgain)),
+                    .onTap(self, action: #selector(tryAgain)),
                 createSecondaryButton(
                     label: L10n.cancel,
-                    action: #selector(ProcessTransaction.ViewModel.cancel)
+                    action: #selector(cancel)
                 )
             ])
         }
@@ -227,7 +227,7 @@ extension ProcessTransaction.RootView {
         buttonStackView.addArrangedSubview(
             createSecondaryButton(
                 label: L10n.ok,
-                action: #selector(ProcessTransaction.ViewModel.cancel)
+                action: #selector(cancel)
             )
         )
     }
@@ -252,6 +252,6 @@ extension ProcessTransaction.RootView {
             textColor: .h5887ff.onDarkMode(.white),
             label: label
         )
-            .onTap(viewModel, action: action)
+            .onTap(self, action: action)
     }
 }
