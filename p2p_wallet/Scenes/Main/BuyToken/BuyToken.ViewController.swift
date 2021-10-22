@@ -54,7 +54,9 @@ private func getEnvironmentAndParams(type: BuyProviderType, token: BuyToken.Cryp
     let defaultCryptoCurrency: String? = {
         switch token {
         case .sol, .all:
-            return "SOL"
+            // TODO: this line should return SOL.
+            // Moonpay doesn't support SOL currency.
+            return type == .moonpay ? nil : "SOL"
         case .usdt:
             return "USDT"
         default:

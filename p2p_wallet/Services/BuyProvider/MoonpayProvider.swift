@@ -21,7 +21,7 @@ public struct MoonpayProvider: BuyProvider {
     public init(
             environment: Environment,
             apiKey: String,
-            showOnlyCurrencies: String,
+            showOnlyCurrencies: String?,
             defaultCurrencyCode: String?,
             walletAddress: String?,
             walletAddresses: String?
