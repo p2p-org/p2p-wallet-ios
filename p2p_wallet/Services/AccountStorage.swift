@@ -9,7 +9,7 @@ import Foundation
 import KeychainSwift
 
 protocol ICloudStorageType {
-    func saveToICloud(account: Account)
+    func saveToICloud(account: Account) -> Bool
     func accountFromICloud() -> [Account]?
 }
 
@@ -177,7 +177,7 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameSt
     }
     
     // MARK: - iCloud
-    func saveToICloud(account: Account) {
+    func saveToICloud(account: Account) -> Bool {
         var accountsToSave = [account]
         
         if var currentAccounts = accountFromICloud() {
@@ -194,8 +194,9 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameSt
         
         // save
         if let data = try? JSONEncoder().encode(accountsToSave) {
-            keychain.set(data, forKey: iCloudAccountsKey)
+            return keychain.set(data, forKey: iCloudAccountsKey)
         }
+        return false;
     }
     
     func accountFromICloud() -> [Account]? {

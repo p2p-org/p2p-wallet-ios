@@ -538,3 +538,4 @@
 "Could not connect to wallet" = "Impossible de se connecter au portefeuille";
 "Invalid estimated amount" = "Montant estimé non valide";
 "Your account does not have enough %@ to cover fees" = "Votre compte n'a pas assez de %@ pour couvrir les frais";
+"Security key can't be saved into icloud. Please try again." = "La clé de sécurité ne peut pas être enregistrée dans icloud.  Veuillez réessayer.";
