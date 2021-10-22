@@ -17,7 +17,7 @@ extension WalletDetail {
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        let viewModel: ViewModel
+        let viewModel: WalletDetailViewModelType
         
         // MARK: - Subviews
         lazy var headerStackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
@@ -36,14 +36,14 @@ extension WalletDetail {
         
         lazy var collectionView: TransactionsCollectionView = {
             let collectionView = TransactionsCollectionView(
-                transactionViewModel: viewModel.output.transactionsViewModel,
-                graphViewModel: viewModel.output.graphViewModel,
+                transactionViewModel: viewModel.transactionsViewModel,
+                graphViewModel: viewModel.graphViewModel,
                 scanQrCodeAction: CocoaAction { [weak self] in
-                    self?.viewModel.receiveTokens()
+                    self?.receiveTokens()
                     return .just(())
                 },
-                wallet: viewModel.output.wallet,
-                nativePubkey: viewModel.output.nativePubkey
+                wallet: viewModel.walletDriver,
+                nativePubkey: viewModel.nativePubkey
             )
             collectionView.delegate = self
             return collectionView
@@ -56,7 +56,7 @@ extension WalletDetail {
         }()
         
         // MARK: - Initializers
-        init(viewModel: ViewModel) {
+        init(viewModel: WalletDetailViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
@@ -90,7 +90,7 @@ extension WalletDetail {
                     ]),
                     BEStackViewSpacing(10),
                     settingsButton
-                        .onTap(viewModel, action: #selector(ViewModel.showWalletSettings))
+                        .onTap(self, action: #selector(showWalletSettings))
                 ])
                     .padding(.init(x: 20, y: 0)),
                 BEStackViewSpacing(20),
@@ -112,20 +112,20 @@ extension WalletDetail {
             tabBar.stackView.addArrangedSubviews([
                 UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
                     .padding(.init(all: 16))
-                    .onTap(viewModel, action: #selector(ViewModel.receiveTokens)),
+                    .onTap(self, action: #selector(receiveTokens)),
                 UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
                     .padding(.init(all: 16))
-                    .onTap(viewModel, action: #selector(ViewModel.sendTokens)),
+                    .onTap(self, action: #selector(sendTokens)),
                 UIImageView(width: 24, height: 24, image: .walletSwap, tintColor: .white)
                     .padding(.init(all: 16))
-                    .onTap(viewModel, action: #selector(ViewModel.swapTokens))
+                    .onTap(self, action: #selector(swapTokens))
             ])
             
-            if viewModel.output.canBuyToken {
+            if viewModel.canBuyToken {
                 tabBar.stackView.insertArrangedSubview(
                     UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .white)
                         .padding(.init(all: 16))
-                        .onTap(viewModel, action: #selector(ViewModel.buyTokens)),
+                        .onTap(self, action: #selector(buyTokens)),
                     at: 0
                 )
             }
@@ -137,41 +137,65 @@ extension WalletDetail {
                 .skip(1)
                 .map {$0.trimmingCharacters(in: .whitespacesAndNewlines)}
                 .distinctUntilChanged()
-                .bind(to: viewModel.input.walletName)
+                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+                .subscribe(onNext: {[weak self] name in
+                    self?.viewModel.renameWallet(to: name)
+                })
                 .disposed(by: disposeBag)
             
             // bind viewModel's output to controls
-            viewModel.output.wallet
+            viewModel.walletDriver
                 .map {$0?.isNativeSOL == true}
                 .drive(settingsButton.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            viewModel.output.wallet
+            viewModel.walletDriver
                 .map {$0?.name}
                 .drive(walletNameTextField.rx.text)
                 .disposed(by: disposeBag)
             
-            viewModel.output.wallet
+            viewModel.walletDriver
                 .map {$0?.token.name}
                 .drive(walletDescriptionLabel.rx.text)
                 .disposed(by: disposeBag)
             
-            viewModel.output.wallet
+            viewModel.walletDriver
                 .drive(onNext: { [weak self] wallet in
                     self?.coinLogoImageView.setUp(wallet: wallet)
                 })
                 .disposed(by: disposeBag)
             
             // log
-            viewModel.output.transactionsViewModel
+            viewModel.transactionsViewModel
                 .dataDidChange
-                .map {[weak self] _ in self?.viewModel.output.transactionsViewModel.getCurrentPage()}
+                .map {[weak self] _ in self?.viewModel.transactionsViewModel.getCurrentPage()}
                 .distinctUntilChanged()
                 .subscribe(onNext: {[weak self] currentPage in
                     guard let currentPage = currentPage else {return}
-                    self?.viewModel.analyticsManager.log(event: .tokenDetailsActivityScroll(pageNum: currentPage))
+                    self?.viewModel.tokenDetailsActivityDidScroll(to: currentPage)
                 })
                 .disposed(by: disposeBag)
+        }
+        
+        // MARK: - Actions
+        @objc func receiveTokens() {
+            viewModel.receiveTokens()
+        }
+        
+        @objc func showWalletSettings() {
+            viewModel.showWalletSettings()
+        }
+        
+        @objc func sendTokens() {
+            viewModel.sendTokens()
+        }
+        
+        @objc func swapTokens() {
+            viewModel.swapTokens()
+        }
+        
+        @objc func buyTokens() {
+            viewModel.buyTokens()
         }
     }
 }
