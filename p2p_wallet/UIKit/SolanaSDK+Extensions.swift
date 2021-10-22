@@ -7,4 +7,10 @@
 
 import Foundation
 
-extension SolanaSDK: OrcaSwapSolanaClient {}
+extension SolanaSDK.APIEndPoint {
+    static var definedEndpoints: [Self] {
+        var endpoints = defaultEndpoints
+        endpoints.insert(.init(address: "https://p2p.rpcpool.com", network: .mainnetBeta, additionalQuery: Bundle.main.infoDictionary!["RPCPOOL_API_KEY"] as? String), at: 0)
+        return endpoints
+    }
+}
