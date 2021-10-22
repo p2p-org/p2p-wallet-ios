@@ -1097,6 +1097,48 @@
 			path = "SerumSwap(Unstable)";
 			sourceTree = "<group>";
 		};
+		BC4B9EC927231035005B9ECA /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				BC6EE771254AEEB300FE1025 /* Error+Extensions.swift */,
+				BC65E9E22542BE43005F50CE /* String+Extensions.swift */,
+				BC32A360254A761B002156F0 /* Button+Extensions.swift */,
+				BC2EC1B92553EC7D006EEDA5 /* UIView+Extensions.swift */,
+				BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */,
+				BC32A392254A77A9002156F0 /* UIViewController+Extensions.swift */,
+				BC6EE7C9254BBF8900FE1025 /* UIApplication+Extensions.swift */,
+				BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */,
+				BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */,
+				BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */,
+				BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */,
+				BC75339B257F2953007A00D9 /* Date+Extensions.swift */,
+				BC11C9C125908F3700E399A9 /* CGFloat+Extensions.swift */,
+				BC11CA112591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift */,
+				BCA9941E25AE93D5005BD8FB /* Fonts+Generated.swift */,
+				BC123E7E25B181B60043178E /* NSObject+Extensions.swift */,
+				BC0E7DCB25B17AB2009AD08B /* Bundle+Extensions.swift */,
+				BC123E8325B181D80043178E /* Locale+Extensions.swift */,
+				BCA93F8025E883A50081DDF6 /* Array+Extensions.swift */,
+				BC699AC925FB114D00F57209 /* UINavigationController+Extensions.swift */,
+				BC65E27E2620341B00E436C7 /* SolanaSDK.ParsedTransaction+Extensions.swift */,
+				BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */,
+				BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */,
+				BC18CAA2263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift */,
+				BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */,
+				BC460767266F4B3200A12E07 /* ObservableType+Extensions.swift */,
+				BCDCAE1C267C69D1001ED7B4 /* UIUserInterfaceStyle+Extensions.swift */,
+				BC036C152692C070005C1BEC /* Collection+Extensions.swift */,
+				BC2F8F0B269D3D200048009D /* UIScrollView+Extensions.swift */,
+				BCC1F206269E96A1003DD648 /* SolanaSDK.DerivablePath+Extensions.swift */,
+				BC4B9EC4271A791A005B9ECA /* SolanaSDK+Extensions.swift */,
+				BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */,
+				BC423D8B26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift */,
+				BC185EFB26E4BF3300280FE6 /* UIFont+Extensions.swift */,
+				BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		BC5257CD25CBA6A60076317E /* PriceAPIs */ = {
 			isa = PBXGroup;
 			children = (
@@ -1285,19 +1327,6 @@
 			path = TransactionInfo;
 			sourceTree = "<group>";
 		};
-		BC65E9B72542B983005F50CE /* Base */ = {
-			isa = PBXGroup;
-			children = (
-				BCEE522B2626D3F900271AB9 /* Views */,
-				BC1ABC37255BD0B8002FCE65 /* ViewModels */,
-				BCB58370255D28E100B10F65 /* ViewControllers */,
-				BCE04C5D268D8FFB00CE131A /* Transitions */,
-				BC2EC1C12553ED1B006EEDA5 /* UIPresentationControllers */,
-				BCD83E7D25677673006DD29F /* UIViewControllerAnimatedTransitioning */,
-			);
-			path = Base;
-			sourceTree = "<group>";
-		};
 		BC65E9D52542BD1F005F50CE /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
@@ -1345,6 +1374,8 @@
 		BC753397257F28A8007A00D9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */,
+				BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */,
 				BCA9945125AE94D7005BD8FB /* Fonts */,
 				BC6EE7E6254BD30600FE1025 /* p2p_wallet.entitlements */,
 				BCB2232125412AF8002D997F /* Assets.xcassets */,
@@ -1467,44 +1498,12 @@
 		BC9DFA152541F777009DB93E /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
-				BC65E9B72542B983005F50CE /* Base */,
-				BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */,
-				BC6EE771254AEEB300FE1025 /* Error+Extensions.swift */,
-				BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */,
-				BC65E9E22542BE43005F50CE /* String+Extensions.swift */,
-				BC32A360254A761B002156F0 /* Button+Extensions.swift */,
-				BC2EC1B92553EC7D006EEDA5 /* UIView+Extensions.swift */,
-				BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */,
-				BC32A392254A77A9002156F0 /* UIViewController+Extensions.swift */,
-				BC6EE7C9254BBF8900FE1025 /* UIApplication+Extensions.swift */,
-				BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */,
-				BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */,
-				BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */,
-				BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */,
-				BC75339B257F2953007A00D9 /* Date+Extensions.swift */,
-				BC11C9C125908F3700E399A9 /* CGFloat+Extensions.swift */,
-				BC11CA112591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift */,
-				BCA9941E25AE93D5005BD8FB /* Fonts+Generated.swift */,
-				BC123E7E25B181B60043178E /* NSObject+Extensions.swift */,
-				BC0E7DCB25B17AB2009AD08B /* Bundle+Extensions.swift */,
-				BC123E8325B181D80043178E /* Locale+Extensions.swift */,
-				BCA93F8025E883A50081DDF6 /* Array+Extensions.swift */,
-				BC699AC925FB114D00F57209 /* UINavigationController+Extensions.swift */,
-				BC65E27E2620341B00E436C7 /* SolanaSDK.ParsedTransaction+Extensions.swift */,
-				BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */,
-				BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */,
-				BC18CAA2263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift */,
-				BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */,
-				BC460767266F4B3200A12E07 /* ObservableType+Extensions.swift */,
-				BCDCAE1C267C69D1001ED7B4 /* UIUserInterfaceStyle+Extensions.swift */,
-				BC036C152692C070005C1BEC /* Collection+Extensions.swift */,
-				BC2F8F0B269D3D200048009D /* UIScrollView+Extensions.swift */,
-				BCC1F206269E96A1003DD648 /* SolanaSDK.DerivablePath+Extensions.swift */,
-				BC4B9EC4271A791A005B9ECA /* SolanaSDK+Extensions.swift */,
-				BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */,
-				BC423D8B26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift */,
-				BC185EFB26E4BF3300280FE6 /* UIFont+Extensions.swift */,
-				BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */,
+				BCEE522B2626D3F900271AB9 /* Views */,
+				BC1ABC37255BD0B8002FCE65 /* ViewModels */,
+				BCB58370255D28E100B10F65 /* ViewControllers */,
+				BCE04C5D268D8FFB00CE131A /* Transitions */,
+				BC2EC1C12553ED1B006EEDA5 /* UIPresentationControllers */,
+				BCD83E7D25677673006DD29F /* UIViewControllerAnimatedTransitioning */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -1625,6 +1624,7 @@
 				BC7A8EB1255BCE360023C918 /* Models */,
 				BCB22370254137C2002D997F /* Services */,
 				BC9DFA152541F777009DB93E /* UIKit */,
+				BC4B9EC927231035005B9ECA /* Extensions */,
 				BC753397257F28A8007A00D9 /* Resources */,
 			);
 			path = p2p_wallet;

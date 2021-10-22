@@ -119,12 +119,8 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
-  - NWWebSocket (0.5.2)
   - PromisesObjC (2.0.0)
   - PureLayout (3.1.8)
-  - PusherSwift (10.0.0):
-    - NWWebSocket (~> 0.5.2)
-    - TweetNacl (~> 1.0.0)
   - Resolver (1.4.4)
   - Runtime (2.2.2)
   - RxAlamofire (6.1.1):
@@ -161,8 +157,6 @@ PODS:
   - SwiftyUserDefaults (5.3.0)
   - TagListView (1.4.1)
   - THPinViewController (1.2.8)
-  - TransakSwift (0.2.1):
-    - PusherSwift
   - TweetNacl (1.0.2)
   - "UITextView+Placeholder (1.4.0)"
 
@@ -193,7 +187,6 @@ DEPENDENCIES:
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
   - THPinViewController (from `THPinViewController`)
-  - TransakSwift (from `TransakSwift`)
   - "UITextView+Placeholder"
 
 SPEC REPOS:
@@ -219,10 +212,8 @@ SPEC REPOS:
     - KeychainSwift
     - Kingfisher
     - nanopb
-    - NWWebSocket
     - PromisesObjC
     - PureLayout
-    - PusherSwift
     - Resolver
     - Runtime
     - RxAlamofire
@@ -260,8 +251,6 @@ EXTERNAL SOURCES:
     :git: https://github.com/SVGKit/SVGKit.git
   THPinViewController:
     :path: THPinViewController
-  TransakSwift:
-    :path: TransakSwift
 
 CHECKOUT OPTIONS:
   ListPlaceholder:
@@ -298,10 +287,8 @@ SPEC CHECKSUMS:
   LazySubject: 9eb19a8524f377efd877f44d9f48c17be7962ebd
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
-  NWWebSocket: 21f0c73639815da3272862c912275b26102aa80c
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   PureLayout: a4afb3d79dd958564ce33d22c89f407280d8e6a8
-  PusherSwift: 264eaceb921a5f8e166f01a2242371179540c7ff
   Resolver: ec76daf652ac898b1e8a449cd9df3b45b5ce8196
   Runtime: 67741bd196fb4ad821c4d259ccc527bf734d8806
   RxAlamofire: beb75a1c452d0de225651db4903f5d29d034a620
@@ -320,10 +307,9 @@ SPEC CHECKSUMS:
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   THPinViewController: d9d65cdc5670b99b82d4cef841c954caf4b78299
-  TransakSwift: f421c332141a7add72864033164155ecfd78e07a
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 88693cc59244894b404dbf71346830729edb875d
+PODFILE CHECKSUM: 63fcf146442ff9304c177e344314c48caf4440b6
 
 COCOAPODS: 1.10.1
