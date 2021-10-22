@@ -15,7 +15,7 @@ extension ProcessTransaction {
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        let viewModel: ViewModel
+        let viewModel: ProcessTransactionViewModelType
         var transactionStatusDidChange: (() -> Void)?
         
         // MARK: - Subviews
@@ -41,7 +41,7 @@ extension ProcessTransaction {
                 
                 UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
                     .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
-                    .onTap(viewModel, action: #selector(ViewModel.showExplorer))
+                    .onTap(self, action: #selector(showExplorer))
             }
                 .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(20),
@@ -50,7 +50,7 @@ extension ProcessTransaction {
         lazy var buttonStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
         
         // MARK: - Initializers
-        init(viewModel: ViewModel) {
+        init(viewModel: ProcessTransactionViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
@@ -76,7 +76,7 @@ extension ProcessTransaction {
         }
         
         private func bind() {
-            switch viewModel.output.transactionType {
+            switch viewModel.transactionType {
             case .closeAccount:
                 viewModel.fetchReimbursedAmountForClosingTransaction()
                     .subscribe(onSuccess: {[weak self] _ in
@@ -89,12 +89,29 @@ extension ProcessTransaction {
         }
         
         private func bindLayout() {
-            viewModel.output.transaction
+            viewModel.transactionDriver
                 .drive(onNext: { [weak self] transaction in
                     self?.layout(transaction: transaction)
                     self?.transactionStatusDidChange?()
                 })
                 .disposed(by: disposeBag)
+        }
+        
+        // MARK: - Actions
+        @objc private func showExplorer() {
+            viewModel.showExplorer()
+        }
+        
+        @objc func doneButtonDidTouch() {
+            viewModel.markAsDone()
+        }
+        
+        @objc func tryAgain() {
+            viewModel.tryAgain()
+        }
+        
+        @objc func cancel() {
+            viewModel.cancel()
         }
     }
 }
