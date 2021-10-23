@@ -38,6 +38,7 @@ target 'p2p_wallet' do
   pod 'Resolver'
   
   pod 'GT3Captcha-iOS'
+  pod 'Down'
 
   target 'p2p_walletTests' do
     inherit! :search_paths
