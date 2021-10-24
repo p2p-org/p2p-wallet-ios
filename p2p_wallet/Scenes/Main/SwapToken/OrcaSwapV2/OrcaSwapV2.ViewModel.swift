@@ -65,7 +65,7 @@ extension OrcaSwapV2 {
         private let bestPoolsPairSubject = BehaviorRelay<OrcaSwap.PoolsPair?>(value: nil)
         private let inputAmountSubject = BehaviorRelay<Double?>(value: nil)
         private let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
-        private let feesSubject = LoadableRelay<[PayingFee]>(request: .just([.init(type: .transactionFee, lamports: 0, token: .nativeSolana)])) // FIXME
+        private let feesSubject = LoadableRelay<[PayingFee]>(request: .just([]))
         private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
         private let isExchangeRateReversedSubject = BehaviorRelay<Bool>(value: false)
         private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
@@ -120,7 +120,7 @@ extension OrcaSwapV2 {
                 })
                 .disposed(by: disposeBag)
             
-            // FIXME: - fill input amount and estimated amount after loaded
+            // Fill input amount and estimated amount after loaded
             tradablePoolsPairsSubject.stateObservable
                 .distinctUntilChanged()
                 .filter {$0 == .loaded}
@@ -134,7 +134,18 @@ extension OrcaSwapV2 {
                 })
                 .disposed(by: disposeBag)
             
-            // TODO: - Calculate fees
+            // fees
+            Observable.combineLatest(
+                bestPoolsPairSubject,
+                inputAmountSubject,
+                slippageSubject
+            )
+                .map {[weak self] _ in self?.calculateFees() ?? []}
+                .subscribe(onNext: {[weak self] fees in
+                    self?.feesSubject.request = .just(fees)
+                    self?.feesSubject.reload()
+                })
+                .disposed(by: disposeBag)
             
             // Error
             Observable.combineLatest(
@@ -150,9 +161,6 @@ extension OrcaSwapV2 {
                 .map {[weak self] _ in self?.verify() }
                 .bind(to: errorSubject)
                 .disposed(by: disposeBag)
-            
-            // TODO: - Remove later
-            feesSubject.reload()
         }
         
         func authenticateAndSwap() {
@@ -570,5 +578,42 @@ private extension OrcaSwapV2.ViewModel {
     
     private func isSlippageValid() -> Bool {
         slippageSubject.value <= .maxSlippage && slippageSubject.value > 0
+    }
+    
+    private func calculateFees() -> [PayingFee] {
+        guard let sourceWallet = sourceWalletSubject.value,
+              let sourceWalletPubkey = sourceWallet.pubkey,
+              let destinationWallet = destinationWalletSubject.value,
+              let bestPoolsPair = bestPoolsPairSubject.value,
+              let inputAmount = inputAmountSubject.value
+        else {return []}
+        
+        let myWalletsMints = walletsRepository.getWallets().compactMap {$0.token.address}
+        
+        guard let fees = try? orcaSwap.getFees(
+            myWalletsMints: myWalletsMints,
+            fromWalletPubkey: sourceWalletPubkey,
+            toWalletPubkey: destinationWallet.pubkey,
+            feeRelayerFeePayerPubkey: nil, // TODO: - Fee relayer
+            bestPoolsPair: bestPoolsPair,
+            inputAmount: inputAmount,
+            slippage: slippageSubject.value,
+            lamportsPerSignature: 5000,
+            minRentExempt: 2039280
+        ) else {return []}
+        
+        let liquidityProviderFees: [PayingFee]
+        
+        if fees.liquidityProviderFees.count == 1 {
+            liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.first!, token: destinationWallet.token)
+            ]
+        } else if fees.liquidityProviderFees.count == 2 {
+            liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.last!, token: destinationWallet.token)
+            ]
+        } else {
+            liquidityProviderFees = []
+        }
+            
+        return liquidityProviderFees + [.init(type: .transactionFee, lamports: fees.transactionFees, token: .nativeSolana)]
     }
 }

@@ -254,6 +254,7 @@ extension OrcaSwapV2 {
         }
         
         @objc private func useAllBalance() {
+            amountTextField.resignFirstResponder()
             viewModel.useAllBalance()
         }
         
