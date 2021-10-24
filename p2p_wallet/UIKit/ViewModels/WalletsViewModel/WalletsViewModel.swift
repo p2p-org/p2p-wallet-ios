@@ -268,7 +268,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private func appDidBecomeActive() {
         // update balance
         if shouldUpdateBalance {
-            reload()
+            getNewWallet()
             shouldUpdateBalance = false
         }
     }
