@@ -39,6 +39,7 @@ extension CreateWallet {
                 UILabel(text: L10n.termsAndConditions, textSize: 21, weight: .medium)
                     .padding(.init(x: 20, y: 0))
                 UIView.defaultSeparator()
+                BEStackViewSpacing(0)
                 downView
             }
             view.addSubview(stackView)
