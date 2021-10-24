@@ -443,16 +443,17 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 // MARK: - Helpers
 private extension OrcaSwapV2.ViewModel {
     func fixPayingToken() {
-        var payingToken = Defaults.payingToken
-        
-        // Force using native sol when source or destination is nativeSOL
-        if sourceWalletSubject.value?.isNativeSOL == true ||
-            destinationWalletSubject.value?.isNativeSOL == true // FIXME: - Fee relayer will support case where destination is native sol
-        {
-            payingToken = .nativeSOL
-        }
-        
-        payingTokenSubject.accept(payingToken)
+        // TODO: - Later
+//        var payingToken = Defaults.payingToken
+//
+//        // Force using native sol when source or destination is nativeSOL
+//        if sourceWalletSubject.value?.isNativeSOL == true ||
+//            destinationWalletSubject.value?.isNativeSOL == true // FIXME: - Fee relayer will support case where destination is native sol
+//        {
+//            payingToken = .nativeSOL
+//        }
+//
+//        payingTokenSubject.accept(payingToken)
     }
     
     /// Verify error in current context IN ORDER
