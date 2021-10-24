@@ -167,7 +167,7 @@ DEPENDENCIES:
   - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
   - Charts
-  - Down
+  - "Down (from `git@github.com:p2p-org/Down.git`)"
   - FeeRelayerSwift (from `FeeRelayerSwift`)
   - Firebase/Analytics
   - Firebase/Crashlytics
@@ -200,7 +200,6 @@ SPEC REPOS:
     - Charts
     - CocoaLumberjack
     - CryptoSwift
-    - Down
     - Firebase
     - FirebaseAnalytics
     - FirebaseCore
@@ -240,6 +239,8 @@ EXTERNAL SOURCES:
     :path: BECollectionView
   BEPureLayout:
     :path: BEPureLayout
+  Down:
+    :git: "git@github.com:p2p-org/Down.git"
   FeeRelayerSwift:
     :path: FeeRelayerSwift
   LazySubject:
@@ -256,6 +257,9 @@ EXTERNAL SOURCES:
     :path: THPinViewController
 
 CHECKOUT OPTIONS:
+  Down:
+    :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
+    :git: "git@github.com:p2p-org/Down.git"
   ListPlaceholder:
     :commit: a729fd45aa22b9d087477d1ccedb9f4292762a58
     :git: "git@github.com:p2p-org/ListPlaceholder.git"
@@ -314,6 +318,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 37b11efe0d5abab52cae239a2cdf1c767ef5ceea
+PODFILE CHECKSUM: 2083acd9ca9d695cf4b2acb655e54681f069e434
 
 COCOAPODS: 1.10.1
