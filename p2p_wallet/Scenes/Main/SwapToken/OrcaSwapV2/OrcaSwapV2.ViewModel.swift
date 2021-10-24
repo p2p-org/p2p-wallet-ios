@@ -68,7 +68,7 @@ extension OrcaSwapV2 {
         private let feesSubject = LoadableRelay<[PayingFee]>(request: .just([]))
         private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
         private let isExchangeRateReversedSubject = BehaviorRelay<Bool>(value: false)
-        private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
+        private let payingTokenSubject = BehaviorRelay<PayingToken>(value: .nativeSOL) // FIXME
         private let errorSubject = BehaviorRelay<VerificationError?>(value: nil)
         
         // MARK: - Initializer
@@ -215,11 +215,7 @@ extension OrcaSwapV2 {
                         to: destinationWallet,
                         inputAmount: inputAmount.toLamport(decimals: sourceWallet.token.decimals),
                         estimatedAmount: estimatedAmount.toLamport(decimals: destinationWallet.token.decimals),
-                        fees: [.init(
-                            type: .transactionFee,
-                            lamports: 0, // TODO: - feeInLamportsSubject.value ?? 0,
-                            token: .nativeSolana // Defaults.payingToken == .nativeSOL ? .nativeSolana: sourceWallet.token
-                        )]
+                        fees: feesSubject.value?.filter {$0.type != .liquidityProviderFee} ?? []
                     )
                 )
             )

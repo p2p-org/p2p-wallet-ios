@@ -45,7 +45,7 @@ extension Array where Element == PayingFee {
             return nil
         }
         
-        let lamports = reduce(SolanaSDK.Lamports(0), {$0 + $1.lamports})
+        let lamports = array.reduce(SolanaSDK.Lamports(0), {$0 + $1.lamports})
         
         return (lamports: lamports, token: token)
     }

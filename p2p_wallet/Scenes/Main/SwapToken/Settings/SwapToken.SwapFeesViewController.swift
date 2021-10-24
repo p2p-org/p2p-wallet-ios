@@ -47,7 +47,7 @@ extension SerumSwapV1 {
         override func setUpContent(stackView: UIStackView) {
             stackView.addArrangedSubviews {
                 feeSections
-                payingTokenSection
+//                payingTokenSection // FIXME: Fee relayer
             }
         }
         
