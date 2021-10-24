@@ -18,6 +18,7 @@ PODS:
     - CocoaLumberjack/Core (= 3.7.2)
   - CocoaLumberjack/Core (3.7.2)
   - CryptoSwift (1.4.1)
+  - Down (0.11.0)
   - FeeRelayerSwift (1.0.0):
     - RxAlamofire
     - RxSwift
@@ -166,6 +167,7 @@ DEPENDENCIES:
   - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
   - Charts
+  - Down
   - FeeRelayerSwift (from `FeeRelayerSwift`)
   - Firebase/Analytics
   - Firebase/Crashlytics
@@ -198,6 +200,7 @@ SPEC REPOS:
     - Charts
     - CocoaLumberjack
     - CryptoSwift
+    - Down
     - Firebase
     - FirebaseAnalytics
     - FirebaseCore
@@ -270,6 +273,7 @@ SPEC CHECKSUMS:
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   CocoaLumberjack: b7e05132ff94f6ae4dfa9d5bce9141893a21d9da
   CryptoSwift: 0bc800a7e6a24c4fc9ebeab97d44b0d5f73a78bd
+  Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: 0c3d322a5d914c43bc6ab3fd9d15b04bc2c3080b
   Firebase: ff8c73105b90e33e1dc6c8e5445d7adc2ccdc7c1
   FirebaseAnalytics: 96325c1e0acbd2bb805c6a613028b1fe599d6a37
@@ -310,6 +314,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 63fcf146442ff9304c177e344314c48caf4440b6
+PODFILE CHECKSUM: 37b11efe0d5abab52cae239a2cdf1c767ef5ceea
 
 COCOAPODS: 1.10.1
