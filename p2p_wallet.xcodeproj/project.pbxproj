@@ -84,7 +84,6 @@
 		BC22ABE12552A4B70071C69F /* DismissMenuAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABE02552A4B70071C69F /* DismissMenuAnimator.swift */; };
 		BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */; };
 		BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */; };
-		BC28003E27254F200064CAB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC28003D27254F200064CAB2 /* GoogleService-Info.plist */; };
 		BC28A9B126B3B0440031BE42 /* WLSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC28A9B026B3B0440031BE42 /* WLSpinnerView.swift */; };
 		BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC290A04256BA36F002A727C /* TokenAmountTextField.swift */; };
 		BC2DA294260B079100B50738 /* WLAddTokenButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2DA293260B079100B50738 /* WLAddTokenButton.swift */; };
@@ -275,6 +274,7 @@
 		BC8F684D2609D866002FDCCD /* WalletsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F684C2609D866002FDCCD /* WalletsRepository.swift */; };
 		BC8F6945260AE69E002FDCCD /* WLSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F6944260AE69E002FDCCD /* WLSectionHeaderView.swift */; };
 		BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */; };
+		BCA44E2A27256A9A00179A97 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BCA44E2927256A9A00179A97 /* GoogleService-Info.plist */; };
 		BCA93F5325E77C240081DDF6 /* TokenSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5025E77C240081DDF6 /* TokenSettingsViewModel.swift */; };
 		BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5125E77C240081DDF6 /* TokenSettingsRootView.swift */; };
 		BCA93F5525E77C240081DDF6 /* TokenSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5225E77C240081DDF6 /* TokenSettingsViewController.swift */; };
@@ -479,7 +479,6 @@
 		BC22ABE02552A4B70071C69F /* DismissMenuAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissMenuAnimator.swift; sourceTree = "<group>"; };
 		BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeScannerVC.swift; sourceTree = "<group>"; };
 		BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionView.swift; sourceTree = "<group>"; };
-		BC28003D27254F200064CAB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BC28A9B026B3B0440031BE42 /* WLSpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLSpinnerView.swift; sourceTree = "<group>"; };
 		BC290A04256BA36F002A727C /* TokenAmountTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAmountTextField.swift; sourceTree = "<group>"; };
 		BC2DA293260B079100B50738 /* WLAddTokenButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLAddTokenButton.swift; sourceTree = "<group>"; };
@@ -675,6 +674,7 @@
 		BC8F684C2609D866002FDCCD /* WalletsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletsRepository.swift; sourceTree = "<group>"; };
 		BC8F6944260AE69E002FDCCD /* WLSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLSectionHeaderView.swift; sourceTree = "<group>"; };
 		BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
+		BCA44E2927256A9A00179A97 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BCA93F5025E77C240081DDF6 /* TokenSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsViewModel.swift; sourceTree = "<group>"; };
 		BCA93F5125E77C240081DDF6 /* TokenSettingsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsRootView.swift; sourceTree = "<group>"; };
 		BCA93F5225E77C240081DDF6 /* TokenSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsViewController.swift; sourceTree = "<group>"; };
@@ -1339,7 +1339,7 @@
 				BC65E9F82542C181005F50CE /* Colors.xcassets */,
 				BCB2232325412AF9002D997F /* LaunchScreen.storyboard */,
 				BCB2232625412AF9002D997F /* Info.plist */,
-				BC28003D27254F200064CAB2 /* GoogleService-Info.plist */,
+				BCA44E2927256A9A00179A97 /* GoogleService-Info.plist */,
 				BC2288022542E1CC0028CE8F /* Localizable.strings */,
 				BC5DB13425F739F9003D00BE /* Localizable.stringsdict */,
 				BC4B9E732713EE57005B9ECA /* Config.xcconfig */,
@@ -2013,7 +2013,7 @@
 			files = (
 				BCA9946725AE94D7005BD8FB /* Montserrat-BoldItalic.ttf in Resources */,
 				BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */,
-				BC28003E27254F200064CAB2 /* GoogleService-Info.plist in Resources */,
+				BCA44E2A27256A9A00179A97 /* GoogleService-Info.plist in Resources */,
 				BCA9946D25AE94D7005BD8FB /* Montserrat-MediumItalic.ttf in Resources */,
 				BC4B9ED7272428A0005B9ECA /* Terms_of_service.txt in Resources */,
 				BCA9946E25AE94D7005BD8FB /* Montserrat-BlackItalic.ttf in Resources */,
