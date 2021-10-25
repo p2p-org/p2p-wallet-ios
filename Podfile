@@ -40,16 +40,14 @@ target 'p2p_wallet' do
   pod 'GT3Captcha-iOS'
   pod 'Down', :git => 'git@github.com:p2p-org/Down.git'
 
-  target 'p2p_walletTests' do
-    inherit! :search_paths
-    common_pods
-    # Pods for testing
-    pod 'RxBlocking'
-  end
+#  target 'p2p_walletTests' do
+#    inherit! :search_paths
+#    common_pods
+#    pod 'RxBlocking'
+#  end
 
-  target 'p2p_walletUITests' do
-    # Pods for testing
-  end
+#  target 'p2p_walletUITests' do
+#  end
 
 end
 
