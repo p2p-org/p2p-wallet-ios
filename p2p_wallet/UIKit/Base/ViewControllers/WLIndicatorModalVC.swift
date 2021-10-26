@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class WLIndicatorModalVC: BaseVC {
     lazy var containerView = UIView(backgroundColor: .grayMain)
@@ -33,10 +34,12 @@ class WLIndicatorModalVC: BaseVC {
         containerView.autoPinEdge(toSuperviewEdge: .bottom)
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.delegate = self
         containerView.addGestureRecognizer(tapGesture)
         
         if modalPresentationStyle == .custom {
             swipeGesture = UIPanGestureRecognizer(target: self, action: #selector(viewDidSwipe(_:)))
+            swipeGesture?.delegate = self
             view.addGestureRecognizer(swipeGesture!)
             view.isUserInteractionEnabled = true
         }
@@ -52,6 +55,16 @@ class WLIndicatorModalVC: BaseVC {
     
     func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
         5 + 8 // indicatorHeight + space
+    }
+}
+
+extension WLIndicatorModalVC: UIGestureRecognizerDelegate {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldReceive touch: UITouch
+    ) -> Bool {
+        // FIXME: SelectRecipient tableViewCell is not selectable, so find another way
+        !(touch.view?.superview is UITableViewCell)
     }
 }
 
