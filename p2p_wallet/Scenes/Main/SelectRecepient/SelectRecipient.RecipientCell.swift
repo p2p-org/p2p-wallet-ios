@@ -33,13 +33,9 @@ extension SelectRecipient {
         }
 
         private func setConstraints() {
-            let constraints = [
-                recipientView.autoAlignAxis(toSuperviewAxis: .horizontal),
-                recipientView.autoPinEdge(toSuperviewEdge: .leading, withInset: 20),
-                recipientView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-            ]
-
-            NSLayoutConstraint.activate(constraints)
+            recipientView.autoAlignAxis(toSuperviewAxis: .horizontal)
+            recipientView.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
+            recipientView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
         }
     }
 }

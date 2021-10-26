@@ -33,12 +33,10 @@ class WLIndicatorModalVC: BaseVC {
         containerView.autoPinEdge(toSuperviewEdge: .bottom)
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGesture.cancelsTouchesInView = false
         containerView.addGestureRecognizer(tapGesture)
         
         if modalPresentationStyle == .custom {
             swipeGesture = UIPanGestureRecognizer(target: self, action: #selector(viewDidSwipe(_:)))
-            swipeGesture?.cancelsTouchesInView = false
             view.addGestureRecognizer(swipeGesture!)
             view.isUserInteractionEnabled = true
         }

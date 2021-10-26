@@ -57,6 +57,7 @@ extension SelectRecipient {
         }
 
         override func paste(_ sender: Any?) {
+            addressTextField.becomeFirstResponder()
             addressTextField.paste(nil)
         }
 
@@ -98,13 +99,6 @@ extension SelectRecipient {
             destinationAddressInputNotEmpty
                 .drive(qrCodeImageView.rx.isHidden)
                 .disposed(by: disposeBag)
-
-//            addressTextField.rx.text
-//                .skip(while: {$0?.isEmpty == true})
-//                .subscribe(onNext: {[weak self] address in
-//                    self?.viewModel.enterWalletAddress(address)
-//                })
-//                .disposed(by: disposeBag)
         }
 
         @objc

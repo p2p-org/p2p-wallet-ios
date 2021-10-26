@@ -58,19 +58,14 @@ extension SelectRecipient {
         private func layout() {
             [navigationBar, wrappedAddressView, tableView, toolBar].forEach(addSubview)
 
-            NSLayoutConstraint.activate(navigationBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom))
-            NSLayoutConstraint.activate(
-                [
-                    wrappedAddressView.autoPinEdge(.top, to: .bottom, of: navigationBar),
-                    wrappedAddressView.autoPinEdge(toSuperviewEdge: .leading, withInset: 20),
-                    wrappedAddressView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-                ]
-            )
+            navigationBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
 
-            NSLayoutConstraint.activate(
-                [tableView.autoPinEdge(.top, to: .bottom, of: wrappedAddressView)]
-                + tableView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
-            )
+            wrappedAddressView.autoPinEdge(.top, to: .bottom, of: navigationBar)
+            wrappedAddressView.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
+            wrappedAddressView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
+
+            tableView.autoPinEdge(.top, to: .bottom, of: wrappedAddressView)
+            tableView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
 
             toolBar.setConstraints()
         }
