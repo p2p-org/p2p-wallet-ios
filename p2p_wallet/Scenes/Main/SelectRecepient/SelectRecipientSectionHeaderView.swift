@@ -34,13 +34,8 @@ final class SelectRecipientSectionHeaderView: UITableViewHeaderFooterView {
     }
 
     private func setConstraints() {
-        let constraints = [
-            titleLabel.autoAlignAxis(toSuperviewAxis: .horizontal),
-            titleLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20),
+            titleLabel.autoAlignAxis(toSuperviewAxis: .horizontal)
+            titleLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             titleLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-        ]
-
-        NSLayoutConstraint.activate(constraints)
     }
-
 }

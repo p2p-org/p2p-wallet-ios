@@ -56,6 +56,6 @@ final class RecipientView: UIStackView {
     }
 
     private func setConstraints() {
-        NSLayoutConstraint.activate(recipientIcon.autoSetDimensions(to: CGSize(width: 45, height: 45)))
+        recipientIcon.autoSetDimensions(to: CGSize(width: 45, height: 45))
     }
 }

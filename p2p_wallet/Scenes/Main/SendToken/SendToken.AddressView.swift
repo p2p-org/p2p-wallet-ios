@@ -83,6 +83,5 @@ extension SendToken {
         private func scanQrCode() {
             viewModel.scanQRCode()
         }
-
     }
 }
