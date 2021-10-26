@@ -1,5 +1,5 @@
 //
-//  WLTermsAndServiceView.swift
+//  WLMarkdownView.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 26/10/2021.
@@ -10,9 +10,17 @@ import BEPureLayout
 import Down
 import UIKit
 
-class WLTermsAndServiceView: BEView {
+class WLMarkdownView: BEView {
+    // MARK: - Properties
+    private let fileName: String
+    
     private let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(top: 20, left: 20, bottom: 0, right: 20))
     private let label = UILabel(text: nil, textSize: 15, numberOfLines: 0)
+    
+    init(bundledMarkdownTxtFileName: String) {
+        self.fileName = bundledMarkdownTxtFileName
+        super.init(frame: .zero)
+    }
     
     override func commonInit() {
         super.commonInit()
@@ -28,9 +36,9 @@ class WLTermsAndServiceView: BEView {
         // markdown
         showIndetermineHud()
         
-        DispatchQueue.global(qos: .userInteractive).async {
+        DispatchQueue.global(qos: .userInteractive).async { [unowned self] in
             // TODO: - Localization
-            let filepath = Bundle.main.path(forResource: "Terms_of_service", ofType: "txt")!
+            let filepath = Bundle.main.path(forResource: self.fileName, ofType: "txt")!
             let contents = try! String(contentsOfFile: filepath)
             
             let down = Down(markdownString: contents)

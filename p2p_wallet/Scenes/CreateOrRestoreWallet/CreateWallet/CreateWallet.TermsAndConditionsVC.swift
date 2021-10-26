@@ -18,13 +18,13 @@ extension CreateWallet {
         @Injected private var viewModel: CreateWalletViewModelType
         
         // MARK: - Subviews
-        private let termsOfServiceView = WLTermsAndServiceView(forAutoLayout: ())
-        private lazy var label = UILabel(text: nil, textSize: 15, numberOfLines: 0)
-        private lazy var tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
-        private lazy var declineButton = UIButton(label: L10n.decline, labelFont: .systemFont(ofSize: 17), textColor: .alert)
+        private let termsOfServiceView = WLMarkdownView(bundledMarkdownTxtFileName: "Terms_of_service")
+        private let label = UILabel(text: nil, textSize: 15, numberOfLines: 0)
+        private let tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
+        private let declineButton = UIButton(label: L10n.decline, labelFont: .systemFont(ofSize: 17), textColor: .alert)
             .onTap(self, action: #selector(declineTermsAndConditions))
         
-        private lazy var acceptButton = UIButton(label: L10n.accept, labelFont: .boldSystemFont(ofSize: 17), textColor: .h5887ff)
+        private let acceptButton = UIButton(label: L10n.accept, labelFont: .boldSystemFont(ofSize: 17), textColor: .h5887ff)
             .onTap(self, action: #selector(acceptTermsAndConditions))
         
         // MARK: - Methods
