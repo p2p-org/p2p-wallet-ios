@@ -12,6 +12,7 @@ import RxCocoa
 protocol SelectRecipientViewModelType: AnyObject {
     var navigationDriver: Driver<SelectRecipient.NavigatableScene?> { get }
     var recipientSearchDriver: Driver<String?> { get }
+    var searchErrorDriver: Driver<String?> { get }
     var recipientSectionsDriver: Driver<[RecipientsSection]> { get }
     var recipientSearchSubject: BehaviorRelay<String?> { get }
 
@@ -37,6 +38,7 @@ extension SelectRecipient {
         let recipientSearchSubject = BehaviorRelay<String?>(value: nil)
         private let recipientSectionsSubject = BehaviorRelay<[RecipientsSection]>(value: [])
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        private let searchErrorSubject = BehaviorRelay<String?>(value: nil)
 
         init(
             nameService: NameServiceType,
@@ -88,9 +90,13 @@ extension SelectRecipient {
                 }
                 .subscribe(
                     onSuccess: { [weak self] recipientSections in
+                        self?.searchErrorSubject.accept(
+                            recipientSections.isEmpty && !name.isEmpty
+                                ? L10n.thisUsernameIsNotAssociatedWithAnyone
+                                : nil
+                        )
                         self?.recipientSectionsSubject.accept(recipientSections)
-                    },
-                    onFailure: { _ in }
+                    }
                 )
                 .disposed(by: disposeBag)
         }
@@ -114,9 +120,9 @@ extension SelectRecipient {
                 }
                 .subscribe(
                     onSuccess: { [weak self] recipientSections in
+                        self?.searchErrorSubject.accept(nil)
                         self?.recipientSectionsSubject.accept(recipientSections)
-                    },
-                    onFailure: { _ in }
+                    }
                 )
                 .disposed(by: disposeBag)
         }
@@ -135,6 +141,10 @@ extension SelectRecipient.ViewModel: SelectRecipientViewModelType {
 
     var navigationDriver: Driver<SelectRecipient.NavigatableScene?> {
         navigationSubject.asDriver()
+    }
+
+    var searchErrorDriver: Driver<String?> {
+        searchErrorSubject.asDriver()
     }
     
     // MARK: - Actions

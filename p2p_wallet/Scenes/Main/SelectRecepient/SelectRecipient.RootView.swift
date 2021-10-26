@@ -22,9 +22,10 @@ extension SelectRecipient {
         private let addressView: UIView
         private let wrappedAddressView: UIView
         private let tableView = UITableView()
+        private let errorLabel = UILabel(textSize: 15, weight: .regular, textColor: .ff4444, numberOfLines: 0)
         private lazy var toolBar = KeyboardDependingToolBar(
             nextHandler: { [weak self] in
-                self?.resignFirstResponder()
+                self?.endEditing(true)
             },
             pasteHandler: { [weak addressView] in
                 addressView?.paste(nil)
@@ -56,13 +57,17 @@ extension SelectRecipient {
 
         // MARK: - Layout
         private func layout() {
-            [navigationBar, wrappedAddressView, tableView, toolBar].forEach(addSubview)
+            [navigationBar, wrappedAddressView, errorLabel, tableView, toolBar].forEach(addSubview)
 
             navigationBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
 
             wrappedAddressView.autoPinEdge(.top, to: .bottom, of: navigationBar)
             wrappedAddressView.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             wrappedAddressView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
+
+            errorLabel.autoPinEdge(.top, to: .bottom, of: wrappedAddressView)
+            errorLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
+            errorLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
 
             tableView.autoPinEdge(.top, to: .bottom, of: wrappedAddressView)
             tableView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
@@ -94,6 +99,22 @@ extension SelectRecipient {
 
             viewModel.recipientSectionsDriver
                 .drive(tableView.rx.items(dataSource: createDataSource()))
+                .disposed(by: disposeBag)
+
+            viewModel.searchErrorDriver
+                .drive(errorLabel.rx.text)
+                .disposed(by: disposeBag)
+
+            let errorIsEmpty = viewModel.searchErrorDriver
+                .map { $0 == nil || $0!.isEmpty }
+
+            errorIsEmpty
+                .drive(errorLabel.rx.isHidden)
+                .disposed(by: disposeBag)
+
+            errorIsEmpty
+                .map { !$0 }
+                .drive(tableView.rx.isHidden)
                 .disposed(by: disposeBag)
 
             Observable
