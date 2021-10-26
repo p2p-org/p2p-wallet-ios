@@ -542,3 +542,4 @@
 "0x, ESN or p2p username" = "Tên người dùng 0x, ESN hoặc p2p";
 "Found associated wallet address" = "Đã tìm thấy địa chỉ ví được liên kết";
 "Result" = "Kết quả";
+"Send to SOL or any SPL token address" = "Gửi đến SOL hoặc bất kỳ địa chỉ mã thông báo SPL nào";

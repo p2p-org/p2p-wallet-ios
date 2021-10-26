@@ -234,8 +234,13 @@ class MainContainer {
         return ProcessTransaction.ViewController(viewModel: viewModel)
     }
 
-    func makeSelectRecipientViewController(handler: WalletDidSelectHandler) -> SelectRecipient.ViewController {
-        Resolver.resolve()
+    func makeSelectRecipientViewController(handler: @escaping (Recipient) -> Void) -> SelectRecipient.ViewController {
+        let viewModel = SelectRecipient.ViewModel(
+            nameService: Resolver.resolve(),
+            addressFormatter: Resolver.resolve(),
+            recipientSelectedHandler: handler
+        )
+        return SelectRecipient.ViewController(viewModel: viewModel)
     }
     
     // MARK: - Profile VCs

@@ -13,7 +13,7 @@ import RxCocoa
 protocol SendTokenScenesFactory {
     func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
-    func makeSelectRecipientViewController(handler: WalletDidSelectHandler) -> SelectRecipient.ViewController
+    func makeSelectRecipientViewController(handler: @escaping (Recipient) -> Void) -> SelectRecipient.ViewController
 }
 
 extension SendToken {
@@ -80,7 +80,10 @@ extension SendToken {
             case .chooseAddress:
                 break
             case .selectRecipient:
-                let vc = scenesFactory.makeSelectRecipientViewController(handler: viewModel)
+                let changeRecipient: (Recipient) -> Void = { [weak viewModel] recipient in
+                    viewModel?.recipientChanged(recipient)
+                }
+                let vc = scenesFactory.makeSelectRecipientViewController(handler: changeRecipient)
                 self.present(vc, animated: true)
             case .scanQrCode:
                 let vc = QrCodeScannerVC()

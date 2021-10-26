@@ -11,7 +11,7 @@ import RxCocoa
 import UIKit
 
 extension SendToken {
-    class RecipientView: BEView {
+    class DestinationView: BEView {
         // MARK: - Properties
         @Injected private var analyticsManager: AnalyticsManagerType
         private let disposeBag = DisposeBag()
@@ -63,7 +63,11 @@ extension SendToken {
             let contentView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill) {
                 
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .top, distribution: .fill) {
-                    UILabel(text: L10n.to, textSize: 15, weight: .semibold)
+                    UILabel(
+                        text: L10n.sendToSOLOrAnySPLTokenAddress,
+                        textSize: 15,
+                        weight: .semibold
+                    )
                     receiveAtLeastLabel
                 }
                 
@@ -74,9 +78,7 @@ extension SendToken {
                     
                 noFundAddressView
             }
-                .padding(.init(all: 16), cornerRadius: 12)
-                .border(width: 1, color: .separator)
-            
+
             addSubview(contentView)
             contentView.autoPinEdgesToSuperviewEdges()
         }
@@ -147,7 +149,7 @@ extension SendToken {
     }
 }
 
-private extension SendToken.RecipientView {
+private extension SendToken.DestinationView {
     @objc func clearDestinationAddress() {
         viewModel.clearDestinationAddress()
     }

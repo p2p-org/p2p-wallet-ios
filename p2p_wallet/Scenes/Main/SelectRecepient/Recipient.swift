@@ -7,5 +7,6 @@
 
 struct Recipient {
     let address: String
+    let shortAddress: String
     let name: String?
 }
