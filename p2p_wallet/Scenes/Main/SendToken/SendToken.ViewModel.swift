@@ -468,7 +468,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     }
     
     func clearDestinationAddress() {
-        destinationAddressSubject.accept(nil)
+        addressContentSubject.accept(.empty)
     }
     
     func ignoreEmptyBalance(_ isIgnored: Bool) {
