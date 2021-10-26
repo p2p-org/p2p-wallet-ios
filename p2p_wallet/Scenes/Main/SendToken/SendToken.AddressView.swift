@@ -14,14 +14,8 @@ extension SendToken {
         private let disposeBag = DisposeBag()
 
         private let addressButton = AddressButton()
-//        private lazy var addressTextField: UITextField = {
-//            let textField = UITextField(height: 44, backgroundColor: .clear, placeholder: L10n.walletAddress, autocorrectionType: .none, autocapitalizationType: UITextAutocapitalizationType.none, spellCheckingType: .no, horizontalPadding: 8)
-//            textField.attributedPlaceholder = NSAttributedString(string: L10n.walletAddress, attributes: [.foregroundColor: UIColor.a3a5ba.onDarkMode(.h5887ff)])
-//            return textField
-//        }()
 
         private let clearAddressButton = UIImageView(width: 24, height: 24, image: .closeFill, tintColor: UIColor.black.withAlphaComponent(0.6))
-            .onTap(self, action: #selector(clearDestinationAddress))
         private let qrCodeImageView = UIImageView(width: 35, height: 35, image: .scanQr3, tintColor: .a3a5ba)
             .onTap(self, action: #selector(scanQrCode))
 
@@ -50,24 +44,11 @@ extension SendToken {
         }
 
         private func configureSubviews() {
-
+            clearAddressButton.onTap(self, action: #selector(clearDestinationAddress))
+            qrCodeImageView.onTap(self, action: #selector(scanQrCode))
         }
 
         private func bind() {
-//            viewModel.receiverAddressDriver
-//                .drive(addressTextField.rx.text)
-//                .disposed(by: disposeBag)
-
-//            viewModel.receiverAddressDriver
-//                .map {[weak self] address in
-//                    guard let address = address else {return true}
-//                    return !address.matches(
-//                        oneOf: .publicKey, .bitcoinAddress(isTestnet: self?.viewModel.isTestNet() ?? true)
-//                    )
-//                }
-//                .drive(walletIconView.rx.isHidden)
-//                .disposed(by: disposeBag)
-
             let destinationAddressInputEmpty = viewModel.receiverAddressDriver
                 .map {$0 == nil || $0!.isEmpty}
 
@@ -91,20 +72,6 @@ extension SendToken {
                     viewModel?.navigate(to: .selectRecipient)
                 })
                 .disposed(by: disposeBag)
-
-//            addressTextField.rx.text
-//                .skip(while: {$0?.isEmpty == true})
-//                .subscribe(onNext: {[weak self] address in
-//                    self?.viewModel.enterWalletAddress(address)
-//                })
-//                .disposed(by: disposeBag)
-//
-//            addressTextField.rx.controlEvent([.editingDidEnd])
-//                .asObservable()
-//                .subscribe(onNext: { [weak self] _ in
-//                    self?.analyticsManager.log(event: .sendAddressKeydown)
-//                })
-//                .disposed(by: disposeBag)
         }
 
         @objc

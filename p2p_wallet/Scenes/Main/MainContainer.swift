@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import FeeRelayerSwift
+import Resolver
 
 class MainContainer {
     // MARK: - Properties
@@ -233,8 +234,8 @@ class MainContainer {
         return ProcessTransaction.ViewController(viewModel: viewModel)
     }
 
-    func makeSelectRecepientViewController(handler: WalletDidSelectHandler) -> SelectRecepient.ViewController {
-        .init()
+    func makeSelectRecipientViewController(handler: WalletDidSelectHandler) -> SelectRecipient.ViewController {
+        Resolver.resolve()
     }
     
     // MARK: - Profile VCs

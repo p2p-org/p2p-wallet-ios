@@ -538,3 +538,5 @@
 "Could not connect to wallet" = "Could not connect to wallet";
 "Invalid estimated amount" = "Invalid estimated amount";
 "Your account does not have enough %@ to cover fees" = "Your account does not have enough %@ to cover fees";
+"Recipient" = "Recipient";
+"0x, ESN or p2p username" = "0x, ESN or p2p username";

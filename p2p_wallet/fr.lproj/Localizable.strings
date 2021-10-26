@@ -538,3 +538,5 @@
 "Could not connect to wallet" = "Impossible de se connecter au portefeuille";
 "Invalid estimated amount" = "Montant estimé non valide";
 "Your account does not have enough %@ to cover fees" = "Votre compte n'a pas assez de %@ pour couvrir les frais";
+"Recipient" = "Destinataire";
+"0x, ESN or p2p username" = "0x, nom d'utilisateur ESN ou p2p";

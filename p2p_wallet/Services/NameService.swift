@@ -15,6 +15,7 @@ protocol NameServiceType {
     
     func getName(_ owner: String) -> Single<String?>
     func getOwner(_ name: String) -> Single<String?>
+    func getOwners(_ name: String) -> Single<[NameService.Owner]>
     func post(name: String, params: NameService.PostParams) -> Single<NameService.PostResponse>
 }
 
@@ -33,27 +34,28 @@ struct NameService: NameServiceType {
         (request(url: endpoint + "/lookup/\(owner)") as Single<[Name]>)
             .map {$0.last(where: {$0.name != nil})?.name}
     }
-    
+
+    func getOwners(_ name: String) -> Single<[Owner]> {
+        print(endpoint + "/resolve/\(name)")
+        return (request(url: endpoint + "/resolve/\(name)") as Single<[Owner]>)
+            .catch { error in
+                guard case AFError.responseValidationFailed(.unacceptableStatusCode(404)) = error else {
+                    throw error
+                }
+
+                return .just([])
+            }
+    }
+
     func getOwner(_ name: String) -> Single<String?> {
         (request(url: endpoint + "/\(name)") as Single<Owner?>)
             .map {$0?.owner}
             .catch { error in
-                if let error = error as? AFError {
-                    switch error {
-                    case .responseValidationFailed(let reason):
-                        switch reason {
-                        case .unacceptableStatusCode(let code):
-                            if code == 404 {
-                                return .just(nil)
-                            }
-                        default:
-                            break
-                        }
-                    default:
-                        break
-                    }
+                guard case AFError.responseValidationFailed(.unacceptableStatusCode(404)) = error else {
+                    throw error
                 }
-                throw error
+
+                return .just(nil)
             }
     }
     
@@ -97,15 +99,17 @@ extension NameService {
         let name: String?
         let parent: String?
     }
-    
+
     struct Owner: Decodable {
         let parentName, owner, ownerClass: String
+        let name: String?
 //        let data: [JSONAny]
         
         enum CodingKeys: String, CodingKey {
             case parentName = "parent_name"
             case owner
             case ownerClass = "class"
+            case name
 //            case data
         }
     }
