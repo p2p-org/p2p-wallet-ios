@@ -12,7 +12,7 @@ import RxCocoa
 protocol SelectRecipientViewModelType: AnyObject {
     var navigationDriver: Driver<SelectRecipient.NavigatableScene?> { get }
     var recipientSearchDriver: Driver<String?> { get }
-    var recipientsDriver: Driver<[Recipient]> { get }
+    var recipientSectionsDriver: Driver<[RecipientsSection]> { get }
     var recipientSearchSubject: BehaviorRelay<String?> { get }
 
     func recipientSelected(_: Recipient)
@@ -32,7 +32,7 @@ extension SelectRecipient {
         
         // MARK: - Subject
         let recipientSearchSubject = BehaviorRelay<String?>(value: nil)
-        private let recipientsSubject = BehaviorRelay<[Recipient]>(value: [])
+        private let recipientSectionsSubject = BehaviorRelay<[RecipientsSection]>(value: [])
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
 
         init(nameService: NameServiceType) {
@@ -44,8 +44,8 @@ extension SelectRecipient {
 }
 
 extension SelectRecipient.ViewModel: SelectRecipientViewModelType {
-    var recipientsDriver: Driver<[Recipient]> {
-        recipientsSubject
+    var recipientSectionsDriver: Driver<[RecipientsSection]> {
+        recipientSectionsSubject
             .asDriver()
     }
 
@@ -86,7 +86,7 @@ extension SelectRecipient.ViewModel: SelectRecipientViewModelType {
 
     private func findRecipients(for text: String?) {
         guard let text = text, !text.isEmpty else {
-            return recipientsSubject.accept([])
+            return recipientSectionsSubject.accept([])
         }
 
         // < 40 is a logic from web
@@ -97,11 +97,14 @@ extension SelectRecipient.ViewModel: SelectRecipientViewModelType {
         nameService
             .getOwners(name)
             .map {
-                $0.map{ Recipient(address: $0.owner, name: $0.name)}
+                $0.map { Recipient(address: $0.owner, name: $0.name) }
+            }
+            .map {
+                $0.isEmpty ? [] : [RecipientsSection(header: L10n.foundAssociatedWalletAddress, items: $0)]
             }
             .subscribe(
-                onSuccess: { [weak self] recipients in
-                    self?.recipientsSubject.accept(recipients)
+                onSuccess: { [weak self] recipientSections in
+                    self?.recipientSectionsSubject.accept(recipientSections)
                 },
                 onFailure: { _ in }
             )
@@ -111,9 +114,15 @@ extension SelectRecipient.ViewModel: SelectRecipientViewModelType {
     private func findRecipientBy(address: String) {
         nameService
             .getName(address)
+            .map {
+                [Recipient(address: address, name: $0)]
+            }
+            .map {
+                [RecipientsSection(header: L10n.result, items: $0)]
+            }
             .subscribe(
-                onSuccess: { [weak self] name in
-                    self?.recipientsSubject.accept([.init(address: address, name: name)])
+                onSuccess: { [weak self] recipientSections in
+                    self?.recipientSectionsSubject.accept(recipientSections)
                 },
                 onFailure: { _ in }
             )

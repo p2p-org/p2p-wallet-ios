@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxDataSources
 
 extension SelectRecipient {
     class RootView: BEView {
@@ -21,8 +22,6 @@ extension SelectRecipient {
         private let addressView: UIView
         private let tableView = UITableView()
 
-        private let cellIdentifier = "RecipientCell"
-        
         // MARK: - Methods
         init(viewModel: SelectRecipientViewModelType) {
             self.viewModel = viewModel
@@ -65,7 +64,7 @@ extension SelectRecipient {
             addressView.layer.borderWidth = 1
             addressView.layer.borderColor = UIColor.a3a5ba.cgColor
 
-            tableView.register(RecipientCell.self, forCellReuseIdentifier: cellIdentifier)
+            tableView.register(RecipientCell.self, forCellReuseIdentifier: RecipientCell.cellIdentifier)
             tableView.rx
                 .setDelegate(self)
                 .disposed(by: disposeBag)
@@ -79,28 +78,34 @@ extension SelectRecipient {
                 })
                 .disposed(by: disposeBag)
 
-            let dataSource = RxTableViewSectionedReloadDataSource<SectionModel<String, String>>(
-                configureCell: { (_, tv, indexPath, element) in
-                    let cell = tv.dequeueReusableCell(withIdentifier: "Cell")!
-                    cell.textLabel?.text = element
-                    return cell
-                },
-                titleForHeaderInSection: { dataSource, sectionIndex in
-                    return dataSource[sectionIndex].model
-                }
-            )
-            viewModel.recipientsDriver
-                .drive(
-                    tableView.rx.items(cellIdentifier: cellIdentifier, cellType: RecipientCell.self)
-                ) { _, recipient, cell in
-                    cell.setRecipient(recipient)
-                }
+            viewModel.recipientSectionsDriver
+                .drive(tableView.rx.items(dataSource: createDataSource()))
                 .disposed(by: disposeBag)
+
             tableView.rx.modelSelected(Recipient.self)
                 .subscribe(onNext: { [weak viewModel] recipient in
                     viewModel?.recipientSelected(recipient)
                 })
                 .disposed(by: disposeBag)
+        }
+
+        private func createDataSource() -> RxTableViewSectionedReloadDataSource<RecipientsSection> {
+            .init(
+                configureCell: { _, tableView, _, recipient in
+                    guard let cell = tableView.dequeueReusableCell(withIdentifier: RecipientCell.cellIdentifier) as? RecipientCell else {
+                        assertionFailure("Wrong cell")
+                        return UITableViewCell()
+                    }
+
+                    cell.setRecipient(recipient)
+
+                    return cell
+                },
+                titleForHeaderInSection: { dataSource, sectionIndex in
+                    dataSource[sectionIndex].header
+                }
+            )
+
         }
     }
 }

@@ -540,3 +540,5 @@
 "Your account does not have enough %@ to cover fees" = "Your account does not have enough %@ to cover fees";
 "Recipient" = "Recipient";
 "0x, ESN or p2p username" = "0x, ESN or p2p username";
+"Found associated wallet address" = "Found associated wallet address";
+"Result" = "Result";

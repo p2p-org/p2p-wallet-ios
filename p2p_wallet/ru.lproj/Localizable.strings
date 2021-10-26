@@ -540,3 +540,5 @@
 "Your account does not have enough %@ to cover fees" = "В вашем аккаунте недостаточно %@ для покрытия комиссий";
 "Recipient" = "Получатель";
 "0x, ESN or p2p username" = "0x, ESN или p2p имя пользователя";
+"Found associated wallet address" = "Найден связанный адрес кошелька";
+"Result" = "Результат";

@@ -9,6 +9,7 @@ import UIKit
 
 extension SelectRecipient {
     final class RecipientCell: UITableViewCell {
+        static let cellIdentifier = "RecipientCell"
         private let recipientView = RecipientView()
 
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
