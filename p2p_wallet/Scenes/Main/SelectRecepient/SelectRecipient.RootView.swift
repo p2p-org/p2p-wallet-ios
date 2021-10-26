@@ -77,7 +77,7 @@ extension SelectRecipient {
 
         private func configureSubviews() {
             wrappedAddressView.layer.borderWidth = 1
-            wrappedAddressView.layer.borderColor = UIColor.a3a5ba.cgColor
+            wrappedAddressView.layer.borderColor = UIColor.a3a5ba.withAlphaComponent(0.5).cgColor
 
             tableView.register(RecipientCell.self, forCellReuseIdentifier: RecipientCell.cellIdentifier)
             tableView.register(
