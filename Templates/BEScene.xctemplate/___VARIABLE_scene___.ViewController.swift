@@ -34,10 +34,11 @@ extension ___VARIABLE_scene___ {
         
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
+            guard let scene = scene else {return}
             switch scene {
             case .detail:
-                break
-            default:
+//                let vc = Detail.ViewController()
+//                present(vc, completion: nil)
                 break
             }
         }
