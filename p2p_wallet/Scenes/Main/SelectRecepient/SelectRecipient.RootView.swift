@@ -20,12 +20,23 @@ extension SelectRecipient {
         // MARK: - Subviews
         private let navigationBar = TitleWithCloseButtonNavigationBar(title: L10n.recipient)
         private let addressView: UIView
+        private let wrappedAddressView: UIView
         private let tableView = UITableView()
+        private lazy var toolBar = KeyboardDependingToolBar(
+            nextHandler: { [weak self] in
+                self?.resignFirstResponder()
+            },
+            pasteHandler: { [weak addressView] in
+                addressView?.paste(nil)
+            }
+        )
 
         // MARK: - Methods
         init(viewModel: SelectRecipientViewModelType) {
             self.viewModel = viewModel
+
             self.addressView = AddressView(viewModel: viewModel)
+            self.wrappedAddressView = addressView
                 .padding(.init(all: 8), backgroundColor: .a3a5ba.onDarkMode(.h8d8d8d).withAlphaComponent(0.1), cornerRadius: 12)
 
             super.init(frame: .zero)
@@ -39,32 +50,40 @@ extension SelectRecipient {
             bind()
         }
 
+        func startRecipientInput() {
+            addressView.becomeFirstResponder()
+        }
+
         // MARK: - Layout
         private func layout() {
-            addSubview(navigationBar)
-            addSubview(addressView)
-            addSubview(tableView)
+            [navigationBar, wrappedAddressView, tableView, toolBar].forEach(addSubview)
 
             NSLayoutConstraint.activate(navigationBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom))
             NSLayoutConstraint.activate(
                 [
-                    addressView.autoPinEdge(.top, to: .bottom, of: navigationBar),
-                    addressView.autoPinEdge(toSuperviewEdge: .leading, withInset: 20),
-                    addressView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
+                    wrappedAddressView.autoPinEdge(.top, to: .bottom, of: navigationBar),
+                    wrappedAddressView.autoPinEdge(toSuperviewEdge: .leading, withInset: 20),
+                    wrappedAddressView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
                 ]
             )
 
             NSLayoutConstraint.activate(
-                [tableView.autoPinEdge(.top, to: .bottom, of: addressView)] + tableView.autoPinEdgesToSuperviewSafeArea(with: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20), excludingEdge: .top)
-
+                [tableView.autoPinEdge(.top, to: .bottom, of: wrappedAddressView)]
+                + tableView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
             )
+
+            toolBar.setConstraints()
         }
 
         private func configureSubviews() {
-            addressView.layer.borderWidth = 1
-            addressView.layer.borderColor = UIColor.a3a5ba.cgColor
+            wrappedAddressView.layer.borderWidth = 1
+            wrappedAddressView.layer.borderColor = UIColor.a3a5ba.cgColor
 
             tableView.register(RecipientCell.self, forCellReuseIdentifier: RecipientCell.cellIdentifier)
+            tableView.register(
+                SelectRecipientSectionHeaderView.self,
+                forHeaderFooterViewReuseIdentifier: SelectRecipientSectionHeaderView.identifier
+            )
             tableView.rx
                 .setDelegate(self)
                 .disposed(by: disposeBag)
@@ -82,10 +101,12 @@ extension SelectRecipient {
                 .drive(tableView.rx.items(dataSource: createDataSource()))
                 .disposed(by: disposeBag)
 
-            tableView.rx.modelSelected(Recipient.self)
-                .subscribe(onNext: { [weak viewModel] recipient in
-                    viewModel?.recipientSelected(recipient)
-                })
+            Observable
+                .zip(tableView.rx.itemSelected, tableView.rx.modelSelected(Recipient.self))
+                .bind { [weak self] indexPath, recipient in
+                    self?.tableView.deselectRow(at: indexPath, animated: true)
+                    self?.viewModel.recipientSelected(recipient)
+                }
                 .disposed(by: disposeBag)
         }
 
@@ -114,4 +135,17 @@ extension SelectRecipient.RootView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         76
     }
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: SelectRecipientSectionHeaderView.identifier) as? SelectRecipientSectionHeaderView else {
+            assertionFailure("wrong header")
+            return nil
+        }
+
+        header.setTitle(tableView.dataSource?.tableView?(tableView, titleForHeaderInSection: section))
+
+        return header
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat { 40 }
 }

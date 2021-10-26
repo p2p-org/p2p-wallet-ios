@@ -27,6 +27,7 @@ extension SelectRecipient {
             let rootView = RootView(viewModel: viewModel)
             containerView.addSubview(rootView)
             rootView.autoPinEdgesToSuperviewEdges()
+            rootView.startRecipientInput()
         }
         
         override func bind() {
@@ -41,7 +42,19 @@ extension SelectRecipient {
             switch scene {
             case .close:
                 dismiss(animated: true)
-            default:
+            case .scanQRCode:
+                let vc = QrCodeScannerVC()
+                vc.callback = { [weak self] code in
+                    if NSRegularExpression.publicKey.matches(code) {
+                        self?.viewModel.enterWalletAddress(code)
+                        return true
+                    }
+                    return false
+                }
+                vc.modalPresentationStyle = .custom
+
+                self.present(vc, animated: true, completion: nil)
+            case .none:
                 break
             }
         }

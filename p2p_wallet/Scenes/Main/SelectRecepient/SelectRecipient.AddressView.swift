@@ -17,16 +17,20 @@ extension SelectRecipient {
             let textField = UITextField(
                 height: 44,
                 backgroundColor: .clear,
-                placeholder: L10n._0xESNOrP2pUsername,
+                placeholder: nil,
                 autocorrectionType: .none,
                 autocapitalizationType: UITextAutocapitalizationType.none,
                 spellCheckingType: .no,
                 horizontalPadding: 8
             )
             textField.attributedPlaceholder = NSAttributedString(
-                string: L10n.walletAddress,
-                attributes: [.foregroundColor: UIColor.a3a5ba.onDarkMode(.h5887ff)]
+                string: L10n._0xESNOrP2pUsername,
+                attributes: [
+                    .foregroundColor: UIColor.a3a5ba.onDarkMode(.h5887ff),
+                    .font: UIFont.systemFont(ofSize: 15, weight: .medium)
+                ]
             )
+            textField.font = .systemFont(ofSize: 15, weight: .medium)
             return textField
         }()
 
@@ -46,6 +50,14 @@ extension SelectRecipient {
             configureSelf()
             configureSubviews()
             bind()
+        }
+
+        override func becomeFirstResponder() -> Bool {
+            addressTextField.becomeFirstResponder()
+        }
+
+        override func paste(_ sender: Any?) {
+            addressTextField.paste(nil)
         }
 
         private func configureSelf() {

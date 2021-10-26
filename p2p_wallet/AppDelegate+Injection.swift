@@ -24,6 +24,9 @@ extension Resolver: ResolverRegistering {
         register {NameService()}
             .implements(NameServiceType.self)
             .scope(.application)
+        register { AddressFormatter() }
+            .implements(AddressFormatterType.self)
+            .scope(.application)
         
         // MARK: - Root
         register {Root.ViewModel()}
@@ -76,12 +79,6 @@ extension Resolver: ResolverRegistering {
         register {MainViewModel()}
             .implements(MainViewModelType.self)
             .implements(AuthenticationHandler.self)
-            .scope(.shared)
-
-        // MARK: - SelectRecipient
-        register { SelectRecipient.ViewController(viewModel: resolve()) }
-        register { SelectRecipient.ViewModel(nameService: resolve()) }
-            .implements(SelectRecipientViewModelType.self)
             .scope(.shared)
     }
 }

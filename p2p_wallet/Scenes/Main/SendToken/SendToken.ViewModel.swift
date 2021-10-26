@@ -34,6 +34,7 @@ protocol SendTokenViewModelType: AnyObject, WalletDidSelectHandler {
     func useAllBalance()
     
     func enterWalletAddress(_ address: String?)
+    func recipientChanged(_ recipient: Recipient)
     func clearDestinationAddress()
     func scanQRCode()
     func ignoreEmptyBalance(_ isIgnored: Bool)
@@ -327,6 +328,10 @@ extension SendToken {
 }
 
 extension SendToken.ViewModel: SendTokenViewModelType {
+    func recipientChanged(_ recipient: Recipient) {
+        addressContentSubject.accept(.recipient(recipient))
+    }
+
     func scanQRCode() {
         analyticsManager.log(event: .sendScanQrClick)
         analyticsManager.log(event: .scanQrOpen(fromPage: "send"))

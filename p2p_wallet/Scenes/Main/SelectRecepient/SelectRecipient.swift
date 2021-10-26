@@ -7,6 +7,7 @@
 
 struct SelectRecipient {
     enum NavigatableScene {
+        case scanQRCode
         case close
     }
 }

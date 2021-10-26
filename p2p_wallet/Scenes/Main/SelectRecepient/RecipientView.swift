@@ -16,8 +16,8 @@ final class RecipientView: UIStackView {
         alignment: .leading,
         distribution: .equalSpacing
     )
-    private let recipientName = UILabel(textSize: 17, textColor: .black)
-    private let recipientAddress = UILabel(textSize: 15, textColor: .a3a5ba)
+    private let recipientName = UILabel(textSize: 17, weight: .semibold, textColor: .black)
+    private let recipientAddress = UILabel(textSize: 15, weight: .regular, textColor: .a3a5ba)
 
     init() {
         super.init(frame: .zero)
@@ -36,7 +36,7 @@ final class RecipientView: UIStackView {
     func setRecipient(_ recipient: Recipient) {
         recipientName.isHidden = recipient.name == nil
         recipientName.text = recipient.name
-        recipientAddress.text = recipient.address
+        recipientAddress.text = recipient.shortAddress
     }
 
     private func configureSelf() {

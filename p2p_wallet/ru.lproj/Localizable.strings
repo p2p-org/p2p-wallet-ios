@@ -542,3 +542,4 @@
 "0x, ESN or p2p username" = "0x, ESN или p2p имя пользователя";
 "Found associated wallet address" = "Найден связанный адрес кошелька";
 "Result" = "Результат";
+"Send to SOL or any SPL token address" = "Отправить на SOL или любой адрес токена SPL";
