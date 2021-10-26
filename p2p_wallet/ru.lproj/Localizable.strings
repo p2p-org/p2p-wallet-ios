@@ -543,3 +543,4 @@
 "Found associated wallet address" = "Найден связанный адрес кошелька";
 "Result" = "Результат";
 "Send to SOL or any SPL token address" = "Отправить на SOL или любой адрес токена SPL";
+"This username is not associated with anyone" = "Это имя пользователя ни с кем не связано";
