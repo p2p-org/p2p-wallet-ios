@@ -16,6 +16,7 @@ protocol ReserveNameHandler {
 protocol ReserveNameViewModelType {
     var currentName: String? {get}
     
+    var navigatableSceneDriver: Driver<ReserveName.NavigatableScene?> {get}
     var initializingStateDriver: Driver<LoadableState> {get}
     var isNameValidLoadableDriver: Driver<Loadable<Bool>> {get}
     var isPostingDriver: Driver<Bool> {get}
@@ -24,6 +25,8 @@ protocol ReserveNameViewModelType {
     func userDidEnter(name: String?)
     
     func reserveName(geetest_seccode: String, geetest_challenge: String, geetest_validate: String)
+    
+    func navigate(to scene: ReserveName.NavigatableScene)
     
     func skip()
 }
@@ -40,6 +43,7 @@ extension ReserveName {
         var currentName: String?
         
         // MARK: - Subject
+        private let navigatableSceneSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let initializingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         private let isNameValidLoadableSubject = LoadableRelay<Bool>(request: .just(false))
         private let isPostingSubject = BehaviorRelay<Bool>(value: false)
@@ -69,6 +73,10 @@ extension ReserveName {
 }
 
 extension ReserveName.ViewModel: ReserveNameViewModelType {
+    var navigatableSceneDriver: Driver<ReserveName.NavigatableScene?> {
+        navigatableSceneSubject.asDriver()
+    }
+    
     var initializingStateDriver: Driver<LoadableState> {
         initializingStateSubject.asDriver()
     }
@@ -127,6 +135,10 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     
     func skip() {
         handler.handleName(nil)
+    }
+    
+    func navigate(to scene: ReserveName.NavigatableScene) {
+        navigatableSceneSubject.accept(scene)
     }
 }
 
