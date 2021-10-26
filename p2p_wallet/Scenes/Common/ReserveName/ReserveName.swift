@@ -9,5 +9,8 @@ import Foundation
 import RxCocoa
 
 struct ReserveName {
-    
+    enum NavigatableScene {
+        case termsOfUse
+        case privacyPolicy
+    }
 }

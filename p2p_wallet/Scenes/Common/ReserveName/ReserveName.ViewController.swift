@@ -52,6 +52,10 @@ extension ReserveName {
         
         override func bind() {
             super.bind()
+            viewModel.navigatableSceneDriver
+                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .disposed(by: disposeBag)
+            
             viewModel.initializingStateDriver
                 .drive(onNext: { [weak self] loadingState in
                     self?.view.setUp(loadingState, overridingErrorAction: { [weak self] in
@@ -81,6 +85,19 @@ extension ReserveName {
                     isPosting ? self?.showIndetermineHud(): self?.hideHud()
                 })
                 .disposed(by: disposeBag)
+        }
+        
+        private func navigate(to scene: NavigatableScene?) {
+            switch scene {
+            case .termsOfUse:
+                let vc = WLMarkdownVC(title: L10n.termsOfUse.uppercaseFirst, bundledMarkdownTxtFileName: "Terms_of_service")
+                present(vc, interactiveDismissalType: .standard, completion: nil)
+            case .privacyPolicy:
+                let vc = WLMarkdownVC(title: L10n.privacyPolicy.uppercaseFirst, bundledMarkdownTxtFileName: "Privacy_policy")
+                present(vc, interactiveDismissalType: .standard, completion: nil)
+            case .none:
+                break
+            }
         }
     }
 }
