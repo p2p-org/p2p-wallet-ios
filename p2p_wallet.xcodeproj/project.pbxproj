@@ -382,7 +382,7 @@
 		BCF241212676548200C9F158 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF241202676548200C9F158 /* MainViewModel.swift */; };
 		BCF7D953256220F100961D31 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF7D952256220F100961D31 /* ErrorView.swift */; };
 		BCFC768825E2EAB800FBE148 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFC768525E2EAB800FBE148 /* MainViewController.swift */; };
-		BCFEDBFC2727A9F0008AE4AD /* WLTermsAndServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFEDBFB2727A9F0008AE4AD /* WLTermsAndServiceView.swift */; };
+		BCFEDBFC2727A9F0008AE4AD /* WLMarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFEDBFB2727A9F0008AE4AD /* WLMarkdownView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -785,7 +785,7 @@
 		BCF241202676548200C9F158 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		BCF7D952256220F100961D31 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		BCFC768525E2EAB800FBE148 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
-		BCFEDBFB2727A9F0008AE4AD /* WLTermsAndServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLTermsAndServiceView.swift; sourceTree = "<group>"; };
+		BCFEDBFB2727A9F0008AE4AD /* WLMarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLMarkdownView.swift; sourceTree = "<group>"; };
 		CCD9F8F81880F7B23634EBE4 /* Pods-p2p_wallet-p2p_walletUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.release.xcconfig"; sourceTree = "<group>"; };
 		E65B1C647C0DE910BEFF2221 /* Pods-p2p wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p wallet/Pods-p2p wallet.debug.xcconfig"; sourceTree = "<group>"; };
 		FBFCA911E1A96478DD7C04ED /* Pods-p2p_walletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.debug.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1943,7 +1943,7 @@
 				BC19DF522701A24E00A3A8D8 /* WLBalanceView.swift */,
 				BC19DF582701BC9100A3A8D8 /* WLDefaultOptionView.swift */,
 				BC6FEDA6270EEFEF002B6255 /* WLBannerView.swift */,
-				BCFEDBFB2727A9F0008AE4AD /* WLTermsAndServiceView.swift */,
+				BCFEDBFB2727A9F0008AE4AD /* WLMarkdownView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2266,7 +2266,7 @@
 				BC65E244261EE04B00E436C7 /* PricesRepository.swift in Sources */,
 				BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */,
 				BC134FAB26FD874500DB15BF /* RestoreWallet.swift in Sources */,
-				BCFEDBFC2727A9F0008AE4AD /* WLTermsAndServiceView.swift in Sources */,
+				BCFEDBFC2727A9F0008AE4AD /* WLMarkdownView.swift in Sources */,
 				BC5A97D0260DA82B009674C4 /* BaseHiddenWalletSection.swift in Sources */,
 				BC38555B26AE971400BD8BF7 /* ChooseWallet.ViewModel.swift in Sources */,
 				BC185EFC26E4BF3300280FE6 /* UIFont+Extensions.swift in Sources */,
