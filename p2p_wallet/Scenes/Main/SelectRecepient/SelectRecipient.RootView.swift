@@ -65,7 +65,7 @@ extension SelectRecipient {
             wrappedAddressView.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             wrappedAddressView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
 
-            errorLabel.autoPinEdge(.top, to: .bottom, of: wrappedAddressView)
+            errorLabel.autoPinEdge(.top, to: .bottom, of: wrappedAddressView, withOffset: 8)
             errorLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             errorLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
 
