@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Down
+import UIKit
 
 extension CreateWallet {
     class TermsAndConditionsVC: BaseVC {
@@ -18,6 +18,8 @@ extension CreateWallet {
         @Injected private var viewModel: CreateWalletViewModelType
         
         // MARK: - Subviews
+        private let termsOfServiceView = WLTermsAndServiceView(forAutoLayout: ())
+        private lazy var label = UILabel(text: nil, textSize: 15, numberOfLines: 0)
         private lazy var tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
         private lazy var declineButton = UIButton(label: L10n.decline, labelFont: .systemFont(ofSize: 17), textColor: .alert)
             .onTap(self, action: #selector(declineTermsAndConditions))
@@ -29,18 +31,13 @@ extension CreateWallet {
         override func setUp() {
             super.setUp()
             
-            // markdown
-            let filepath = Bundle.main.path(forResource: "Terms_of_service", ofType: "txt")!
-            let contents = try! String(contentsOfFile: filepath)
-            let downView = try! DownView(frame: self.view.bounds, markdownString: contents)
-            
             // stack view
             let stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
                 UILabel(text: L10n.termsAndConditions, textSize: 21, weight: .medium)
                     .padding(.init(x: 20, y: 0))
                 UIView.defaultSeparator()
                 BEStackViewSpacing(0)
-                downView
+                termsOfServiceView
             }
             view.addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 0, y: 20), excludingEdge: .bottom)
@@ -50,6 +47,8 @@ extension CreateWallet {
             tabBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
             tabBar.autoPinEdge(.top, to: .bottom, of: stackView)
             tabBar.stackView.addArrangedSubviews([declineButton, acceptButton])
+            
+            termsOfServiceView.load()
         }
         
         @objc func acceptTermsAndConditions() {
