@@ -14,7 +14,7 @@ class WLMarkdownView: BEView {
     // MARK: - Properties
     private let fileName: String
     
-    private let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(top: 20, left: 20, bottom: 0, right: 20))
+    let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(top: 20, left: 20, bottom: 0, right: 20))
     private let label = UILabel(text: nil, textSize: 15, numberOfLines: 0)
     
     init(bundledMarkdownTxtFileName: String) {

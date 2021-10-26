@@ -66,7 +66,7 @@ extension ReserveName {
         private lazy var footerLabel: UILabel = {
             let label = UILabel(text: L10n.byContinuingYouAgreeToWalletSAnd(L10n.termsOfUse, L10n.privacyPolicy), textSize: 15, numberOfLines: 0, textAlignment: .center)
             semiboldText([L10n.termsOfUse, L10n.privacyPolicy], in: label)
-            return label
+            return label.onTap(self, action: #selector(footerLabelDidTouch))
         }()
         
         // MARK: - Initializer
@@ -214,6 +214,19 @@ extension ReserveName {
             viewModel.skip()
         }
         
+        @objc func footerLabelDidTouch(gesture: UITapGestureRecognizer) {
+            let termsOfUseRange = (footerLabel.text! as NSString).range(of: L10n.termsOfUse)
+            let privacyPolicyRange = (footerLabel.text! as NSString).range(of: L10n.privacyPolicy)
+            
+            if gesture.didTapAttributedTextInLabel(label: footerLabel, inRange: termsOfUseRange) {
+                viewModel.navigate(to: .termsOfUse)
+            } else if gesture.didTapAttributedTextInLabel(label: footerLabel, inRange: privacyPolicyRange) {
+                viewModel.navigate(to: .privacyPolicy)
+            } else {
+                viewDidTap()
+            }
+        }
+        
         @objc func viewDidTap() {
             endEditing(true)
         }
@@ -299,11 +312,11 @@ private extension UITapGestureRecognizer {
          // Find the tapped character location and compare it to the specified range
          let locationOfTouchInLabel = self.location(in: label)
          let textBoundingBox = layoutManager.usedRect(for: textContainer)
-         //let textContainerOffset = CGPointMake((labelSize.width - textBoundingBox.size.width) * 0.5 - textBoundingBox.origin.x,
-                                               //(labelSize.height - textBoundingBox.size.height) * 0.5 - textBoundingBox.origin.y);
+         // let textContainerOffset = CGPointMake((labelSize.width - textBoundingBox.size.width) * 0.5 - textBoundingBox.origin.x,
+                                               // (labelSize.height - textBoundingBox.size.height) * 0.5 - textBoundingBox.origin.y);
          let textContainerOffset = CGPoint(x: (labelSize.width - textBoundingBox.size.width) * 0.5 - textBoundingBox.origin.x, y: (labelSize.height - textBoundingBox.size.height) * 0.5 - textBoundingBox.origin.y)
 
-         //let locationOfTouchInTextContainer = CGPointMake(locationOfTouchInLabel.x - textContainerOffset.x,
+         // let locationOfTouchInTextContainer = CGPointMake(locationOfTouchInLabel.x - textContainerOffset.x,
                                                          // locationOfTouchInLabel.y - textContainerOffset.y);
          let locationOfTouchInTextContainer = CGPoint(x: locationOfTouchInLabel.x - textContainerOffset.x, y: locationOfTouchInLabel.y - textContainerOffset.y)
          let indexOfCharacter = layoutManager.characterIndex(for: locationOfTouchInTextContainer, in: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
