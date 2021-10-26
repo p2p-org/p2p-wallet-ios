@@ -538,3 +538,5 @@
 "Could not connect to wallet" = "Не удалось подключиться к кошельку";
 "Invalid estimated amount" = "Неверная расчетная сумма";
 "Your account does not have enough %@ to cover fees" = "В вашем аккаунте недостаточно %@ для покрытия комиссий";
+"Recipient" = "Получатель";
+"0x, ESN or p2p username" = "0x, ESN или p2p имя пользователя";

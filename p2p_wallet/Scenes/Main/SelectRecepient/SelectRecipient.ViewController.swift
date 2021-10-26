@@ -1,5 +1,5 @@
 //
-//  SelectRecepient.ViewController.swift
+//  SelectRecipient.ViewController.swift
 //  p2p_wallet
 //
 //  Created by Andrew Vasiliev on 20.10.2021.
@@ -7,22 +7,26 @@
 
 import Foundation
 import UIKit
+import RxSwift
 
-extension SelectRecepient {
+extension SelectRecipient {
     class ViewController: WLIndicatorModalVC {
+
         // MARK: - Dependencies
-        @Injected private var viewModel: SelectRecepientViewModelType
-        
+        private let viewModel: SelectRecipientViewModelType
         // MARK: - Properties
         
         // MARK: - Methods
-        override func loadView() {
-            view = RootView()
+        init(viewModel: SelectRecipientViewModelType) {
+            self.viewModel = viewModel
         }
-        
+
         override func setUp() {
             super.setUp()
-            
+
+            let rootView = RootView(viewModel: viewModel)
+            containerView.addSubview(rootView)
+            rootView.autoPinEdgesToSuperviewEdges()
         }
         
         override func bind() {
@@ -35,8 +39,8 @@ extension SelectRecepient {
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
-            case .detail:
-                break
+            case .close:
+                dismiss(animated: true)
             default:
                 break
             }
