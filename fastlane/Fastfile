@@ -24,7 +24,7 @@ platform :ios do
     firebase_app_distribution(
       app: "1:553127941597:ios:a6c953f38501ab112c5234",
       groups: "dev_team",
-      firebase_cli_token: "1//0gUzt1upHlHsgCgYIARAAGBASNwF-L9IrBzgI7lc_uYC-E3WvHl2_Po4r7aMRryHHsqO740iRxgOCoCYZLvPUgmkQGcaNfU6YQ5Y"
+      firebase_cli_token: "1//0e7sQVYQPvT2vCgYIARAAGA4SNwF-L9Irle7o4pw3SQrwWwwUdjFi_z8Jl3NI3fj3h9EOn6zjPX-_nBHtRKn9gNoHoY9HaUR7Wnw"
     )    
     # upload to browserstack
     upload_to_browserstack_app_live(
