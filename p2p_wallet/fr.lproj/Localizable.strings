@@ -540,3 +540,5 @@
 "Your account does not have enough %@ to cover fees" = "Votre compte n'a pas assez de %@ pour couvrir les frais";
 "Recipient" = "Destinataire";
 "0x, ESN or p2p username" = "0x, nom d'utilisateur ESN ou p2p";
+"Found associated wallet address" = "Adresse de portefeuille associée trouvée";
+"Result" = "Résultat";
