@@ -4,7 +4,6 @@ platform :ios, '13.0'
 inhibit_all_warnings!
 def common_pods
   pod 'RxCocoa'
-  pod 'RxDataSources'
   pod 'SolanaSwift', :path => 'SolanaSwift'
 end
 
