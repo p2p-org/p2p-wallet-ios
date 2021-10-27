@@ -64,6 +64,14 @@ extension SendToken {
                 .disposed(by: disposeBag)
 
             viewModel.currentAddressContentDriver
+                .map {
+                    switch $0 {
+                    case .none:
+                        return .empty
+                    case let .some(recipient):
+                        return .recipient(recipient)
+                    }
+                }
                 .drive(addressButton.rx.addressContent)
                 .disposed(by: disposeBag)
 

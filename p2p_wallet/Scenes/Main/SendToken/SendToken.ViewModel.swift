@@ -13,7 +13,7 @@ import LazySubject
 protocol SendTokenViewModelType: AnyObject, WalletDidSelectHandler {
     var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {get}
     var currentWalletDriver: Driver<Wallet?> {get}
-    var currentAddressContentDriver: Driver<SendToken.AddressContentType> { get }
+    var currentAddressContentDriver: Driver<Recipient?> { get }
     var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {get}
     var useAllBalanceSignal: Signal<Double?> {get}
     var feeDriver: Driver<Loadable<Double>> {get}
@@ -69,11 +69,12 @@ extension SendToken {
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
-        private let addressContentSubject = BehaviorRelay<AddressContentType>(value: .empty)
+        private let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         private let useAllBalanceSubject = PublishRelay<Double?>()
-        private let destinationAddressSubject = BehaviorRelay<String?>(value: nil)
+        private lazy var destinationAddressSubject = recipientSubject
+            .map { $0?.address }
         private let feeSubject: LoadableRelay<Double>
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let addressValidationStatusSubject = BehaviorRelay<AddressValidationStatus>(value: .fetching)
@@ -103,9 +104,9 @@ extension SendToken {
             } else {
                 walletSubject.accept(repository.nativeWallet)
             }
-            
-            destinationAddressSubject.accept(destinationAddress)
-            
+
+            acceptAddressToRecipient(address: destinationAddress)
+
             bind()
             reload()
         }
@@ -130,20 +131,6 @@ extension SendToken {
                     return nil
                 }
                 .bind(to: renBTCInfoSubject)
-                .disposed(by: disposeBag)
-
-            addressContentSubject
-                .map {
-                    switch $0 {
-                    case .empty:
-                        return nil
-                    case let .recipient(recipient):
-                        return recipient.address
-                    }
-                }
-                .subscribe(onNext: { [weak self] address in
-                    self?.destinationAddressSubject.accept(address)
-                })
                 .disposed(by: disposeBag)
 
             // receive at least
@@ -218,7 +205,7 @@ extension SendToken {
             guard errorSubject.value == nil,
                   let wallet = walletSubject.value,
                   let sender = wallet.pubkey,
-                  let receiver = destinationAddressSubject.value,
+                  let receiver = recipientSubject.value.map(\.address),
                   var amount = amountSubject.value
             else {
                 return
@@ -356,7 +343,7 @@ extension SendToken {
 
 extension SendToken.ViewModel: SendTokenViewModelType {
     func recipientChanged(_ recipient: Recipient) {
-        addressContentSubject.accept(.recipient(recipient))
+        recipientSubject.accept(recipient)
     }
 
     func scanQRCode() {
@@ -373,8 +360,8 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         walletSubject.asDriver()
     }
 
-    var currentAddressContentDriver: Driver<SendToken.AddressContentType> {
-        addressContentSubject.asDriver()
+    var currentAddressContentDriver: Driver<Recipient?> {
+        recipientSubject.asDriver()
     }
 
     var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {
@@ -424,7 +411,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     }
     
     var receiverAddressDriver: Driver<String?> {
-        destinationAddressSubject.asDriver()
+        destinationAddressSubject.asDriver(onErrorJustReturn: nil)
     }
     
     var addressValidationStatusDriver: Driver<SendToken.AddressValidationStatus> {
@@ -491,11 +478,11 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     }
     
     func enterWalletAddress(_ address: String?) {
-        destinationAddressSubject.accept(address)
+        acceptAddressToRecipient(address: address)
     }
     
     func clearDestinationAddress() {
-        addressContentSubject.accept(.empty)
+        acceptAddressToRecipient(address: nil)
     }
     
     func ignoreEmptyBalance(_ isIgnored: Bool) {
@@ -530,6 +517,20 @@ extension SendToken.ViewModel: SendTokenViewModelType {
                     }
                 )
         )
+    }
+
+    private func acceptAddressToRecipient(address: String?) {
+        let recipient = address
+            .flatMap { $0.isEmpty ? nil : $0 }
+            .map {
+                Recipient(
+                    address: $0,
+                    shortAddress: addressFormatter.shortAddress(of: $0),
+                    name: nil
+                )
+            }
+
+        recipientSubject.accept(recipient)
     }
 }
 
