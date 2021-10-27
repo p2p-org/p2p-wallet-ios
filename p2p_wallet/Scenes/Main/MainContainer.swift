@@ -168,7 +168,8 @@ class MainContainer {
             walletPubkey: walletPubkey,
             destinationAddress: destinationAddress,
             apiClient: solanaSDK,
-            renVMBurnAndReleaseService: renVMBurnAndReleaseService
+            renVMBurnAndReleaseService: renVMBurnAndReleaseService,
+            addressFormatter: Resolver.resolve()
         )
         let vc = SendToken.ViewController(viewModel: vm, scenesFactory: self)
         return vc
