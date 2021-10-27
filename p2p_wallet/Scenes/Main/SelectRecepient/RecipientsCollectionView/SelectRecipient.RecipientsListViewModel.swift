@@ -22,15 +22,18 @@ extension SelectRecipient {
             searchString?.count ?? 0 > 40
         }
 
-        var searchStringIsEmpty: Bool {
-            searchString?.isEmpty ?? true
-        }
-        
         // MARK: - Methods
         /// The only methods that MUST be inheritted
         override func createRequest() -> Single<[Recipient]> {
-            guard let name = searchString, !name.isEmpty else {return .just([])}
-            return nameService
+            guard let searchString = searchString, !searchString.isEmpty else { return .just([]) }
+
+            return isSearchingByAddress
+                ? findRecipientBy(address: searchString)
+                : findRecipientsBy(name: searchString)
+        }
+
+        private func findRecipientsBy(name: String) -> Single<[Recipient]> {
+            nameService
                 .getOwners(name)
                 .map { [weak addressFormatter] in
                     guard let addressFormatter = addressFormatter else { return [] }
@@ -42,6 +45,22 @@ extension SelectRecipient {
                             name: $0.name
                         )
                     }
+                }
+        }
+
+        private func findRecipientBy(address: String) -> Single<[Recipient]> {
+            nameService
+                .getName(address)
+                .map { [weak addressFormatter] in
+                    guard let addressFormatter = addressFormatter else { return [] }
+
+                    let recipient = Recipient(
+                        address: address,
+                        shortAddress: addressFormatter.shortAddress(of: address),
+                        name: $0
+                    )
+
+                    return [recipient]
                 }
         }
     }
