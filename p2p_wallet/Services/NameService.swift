@@ -31,13 +31,13 @@ struct NameService: NameServiceType {
     var captchaAPI1Url: String {endpoint + "/auth/gt/register"}
     
     func getName(_ owner: String) -> Single<String?> {
-        (request(url: endpoint + "/lookup/\(owner)") as Single<[Name]>)
+        request(url: endpoint + "/lookup/\(owner)", decodedTo: [Name].self)
             .map {$0.last(where: {$0.name != nil})?.name}
     }
 
     func getOwners(_ name: String) -> Single<[Owner]> {
         print(endpoint + "/resolve/\(name)")
-        return (request(url: endpoint + "/resolve/\(name)") as Single<[Owner]>)
+        return request(url: endpoint + "/resolve/\(name)", decodedTo: [Owner].self)
             .catch { error in
                 guard case AFError.responseValidationFailed(.unacceptableStatusCode(404)) = error else {
                     throw error
@@ -48,7 +48,7 @@ struct NameService: NameServiceType {
     }
 
     func getOwner(_ name: String) -> Single<String?> {
-        (request(url: endpoint + "/\(name)") as Single<Owner?>)
+        request(url: endpoint + "/\(name)", decodedTo: Optional<Owner>.self)
             .map {$0?.owner}
             .catch { error in
                 guard case AFError.responseValidationFailed(.unacceptableStatusCode(404)) = error else {
@@ -81,7 +81,7 @@ struct NameService: NameServiceType {
         }
     }
     
-    private func request<T: Decodable>(url: String) -> Single<T> {
+    private func request<T: Decodable>(url: String, decodedTo: T.Type) -> Single<T> {
         RxAlamofire.request(.get, url)
             .validate(statusCode: 200 ..< 300)
             .responseData()
