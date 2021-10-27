@@ -61,6 +61,7 @@ extension SendToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var nameService: NameServiceType
         private let renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+        private let addressFormatter: AddressFormatterType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -85,8 +86,10 @@ extension SendToken {
             walletPubkey: String?,
             destinationAddress: String?,
             apiClient: SendTokenAPIClient,
-            renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+            renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType,
+            addressFormatter: AddressFormatterType
         ) {
+            self.addressFormatter = addressFormatter
             self.repository = repository
             self.apiClient = apiClient
             self.renVMBurnAndReleaseService = renVMBurnAndReleaseService
