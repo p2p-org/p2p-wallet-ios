@@ -243,7 +243,7 @@ extension SendToken {
                 var addressRequest = Single<String>.just(receiver)
                 if receiver.hasSuffix(.nameServiceDomain) {
                     let name = receiver.replacingOccurrences(of: String.nameServiceDomain, with: "")
-                    addressRequest = nameService.getOwner(name)
+                    addressRequest = nameService.getOwnerAddress(name)
                         .map {
                             guard let owner = $0 else {
                                 throw SolanaSDK.Error.other(L10n.theUsernameIsNotAvailable(receiver))

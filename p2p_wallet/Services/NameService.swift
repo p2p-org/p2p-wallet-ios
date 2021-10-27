@@ -14,14 +14,14 @@ protocol NameServiceType {
     var captchaAPI1Url: String {get}
     
     func getName(_ owner: String) -> Single<String?>
-    func getOwner(_ name: String) -> Single<String?>
+    func getOwnerAddress(_ name: String) -> Single<String?>
     func getOwners(_ name: String) -> Single<[NameService.Owner]>
     func post(name: String, params: NameService.PostParams) -> Single<NameService.PostResponse>
 }
 
 extension NameServiceType {
     func isNameAvailable(_ name: String) -> Single<Bool> {
-        getOwner(name).map {$0 == nil}
+        getOwnerAddress(name).map {$0 == nil}
     }
 }
 
@@ -31,13 +31,12 @@ struct NameService: NameServiceType {
     var captchaAPI1Url: String {endpoint + "/auth/gt/register"}
     
     func getName(_ owner: String) -> Single<String?> {
-        (request(url: endpoint + "/lookup/\(owner)") as Single<[Name]>)
+        getNames(owner)
             .map {$0.last(where: {$0.name != nil})?.name}
     }
 
     func getOwners(_ name: String) -> Single<[Owner]> {
-        print(endpoint + "/resolve/\(name)")
-        return (request(url: endpoint + "/resolve/\(name)") as Single<[Owner]>)
+        request(url: endpoint + "/resolve/\(name)")
             .catch { error in
                 guard case AFError.responseValidationFailed(.unacceptableStatusCode(404)) = error else {
                     throw error
@@ -47,8 +46,8 @@ struct NameService: NameServiceType {
             }
     }
 
-    func getOwner(_ name: String) -> Single<String?> {
-        (request(url: endpoint + "/\(name)") as Single<Owner?>)
+    func getOwnerAddress(_ name: String) -> Single<String?> {
+        getOwner(name)
             .map {$0?.owner}
             .catch { error in
                 guard case AFError.responseValidationFailed(.unacceptableStatusCode(404)) = error else {
@@ -79,6 +78,14 @@ struct NameService: NameServiceType {
         } catch {
             return .error(error)
         }
+    }
+
+    private func getOwner(_ name: String) -> Single<Owner?> {
+        request(url: endpoint + "/\(name)")
+    }
+
+    private func getNames(_ owner: String) -> Single<[Name]> {
+        request(url: endpoint + "/lookup/\(owner)")
     }
     
     private func request<T: Decodable>(url: String) -> Single<T> {

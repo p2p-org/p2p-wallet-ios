@@ -32,7 +32,12 @@ protocol SendTokenAPIClient {
 extension SolanaSDK: SendTokenAPIClient {
     func checkNameOrAccountValidation(nameOrAccount: String, nameService: NameServiceType) -> Single<Bool> {
         if nameOrAccount.hasSuffix(.nameServiceDomain) {
-            return nameService.getOwner(nameOrAccount.replacingOccurrences(of: String.nameServiceDomain, with: "")).map {$0 != nil}
+            return nameService.getOwnerAddress(
+                nameOrAccount.replacingOccurrences(
+                    of: String.nameServiceDomain,
+                    with: ""
+                )
+            ).map {$0 != nil}
         } else {
             return checkAccountValidation(account: nameOrAccount)
         }
