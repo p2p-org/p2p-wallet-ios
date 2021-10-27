@@ -10,6 +10,8 @@ import RxSwift
 import RxCocoa
 
 protocol SelectRecipientViewModelType: AnyObject {
+    var recipientsListViewModel: SelectRecipient.RecipientsListViewModel {get}
+    
     var navigationDriver: Driver<SelectRecipient.NavigatableScene?> { get }
     var recipientSearchDriver: Driver<String?> { get }
     var searchErrorDriver: Driver<String?> { get }
@@ -33,6 +35,8 @@ extension SelectRecipient {
         private let disposeBag = DisposeBag()
         private let recipientSelectedHandler: (Recipient) -> Void
         
+        let recipientsListViewModel = RecipientsListViewModel()
+        
         // MARK: - Subject
         let recipientSearchSubject = BehaviorRelay<String?>(value: nil)
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -54,7 +58,8 @@ extension SelectRecipient {
             recipientSearchSubject
                 .subscribe(
                     onNext: { [weak self] searchText in
-//                        self?.findRecipients(for: searchText)
+                        self?.recipientsListViewModel.name = searchText
+                        self?.recipientsListViewModel.reload()
                     }
                 )
                 .disposed(by: disposeBag)
