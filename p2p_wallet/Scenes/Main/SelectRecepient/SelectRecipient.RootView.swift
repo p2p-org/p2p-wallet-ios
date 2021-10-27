@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import BECollectionView
 
 extension SelectRecipient {
     class RootView: BEView {
@@ -20,7 +21,11 @@ extension SelectRecipient {
         private let navigationBar = TitleWithCloseButtonNavigationBar(title: L10n.recipient)
         private let addressView: UIView
         private let wrappedAddressView: UIView
-//        private let tableView = UITableView()
+        private lazy var recipientCollectionView: RecipientsCollectionView = {
+            let collectionView = RecipientsCollectionView(recipientsListViewModel: viewModel.recipientsListViewModel)
+            collectionView.delegate = self
+            return collectionView
+        }()
         private let errorLabel = UILabel(textSize: 15, weight: .regular, textColor: .ff4444, numberOfLines: 0)
         private lazy var toolBar = KeyboardDependingToolBar(
             nextHandler: { [weak self] in
@@ -67,9 +72,9 @@ extension SelectRecipient {
             errorLabel.autoPinEdge(.top, to: .bottom, of: wrappedAddressView, withOffset: 8)
             errorLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             errorLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-
-//            tableView.autoPinEdge(.top, to: .bottom, of: wrappedAddressView)
-//            tableView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
+            
+            recipientCollectionView.autoPinEdge(.top, to: .bottom, of: wrappedAddressView)
+            recipientCollectionView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
 
             toolBar.setConstraints()
         }
@@ -77,16 +82,6 @@ extension SelectRecipient {
         private func configureSubviews() {
             wrappedAddressView.layer.borderWidth = 1
             wrappedAddressView.layer.borderColor = UIColor.a3a5ba.withAlphaComponent(0.5).cgColor
-
-//            tableView.register(RecipientCell.self, forCellReuseIdentifier: RecipientCell.cellIdentifier)
-//            tableView.register(
-//                SelectRecipientSectionHeaderView.self,
-//                forHeaderFooterViewReuseIdentifier: SelectRecipientSectionHeaderView.identifier
-//            )
-//            tableView.rx
-//                .setDelegate(self)
-//                .disposed(by: disposeBag)
-//            tableView.separatorStyle = .none
         }
         
         private func bind() {
@@ -107,18 +102,17 @@ extension SelectRecipient {
                 .drive(errorLabel.rx.isHidden)
                 .disposed(by: disposeBag)
 
-//            errorIsEmpty
-//                .map { !$0 }
-//                .drive(tableView.rx.isHidden)
-//                .disposed(by: disposeBag)
-
-//            Observable
-//                .zip(tableView.rx.itemSelected, tableView.rx.modelSelected(Recipient.self))
-//                .bind { [weak self] indexPath, recipient in
-//                    self?.tableView.deselectRow(at: indexPath, animated: true)
-//                    self?.viewModel.recipientSelected(recipient)
-//                }
-//                .disposed(by: disposeBag)
+            errorIsEmpty
+                .map { !$0 }
+                .drive(recipientCollectionView.rx.isHidden)
+                .disposed(by: disposeBag)
         }
+    }
+}
+
+extension SelectRecipient.RootView: BECollectionViewDelegate {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
+        guard let recipient = item as? Recipient else {return}
+        viewModel.recipientSelected(recipient)
     }
 }

@@ -152,6 +152,23 @@ extension SelectRecipient {
     }
 }
 
+// ViewController.swift
+private lazy var recipientCollectionView: RecipientsCollectionView = {
+    let collectionView = RecipientsCollectionView(recipientsListViewModel: recipientsListViewModel)
+    collectionView.delegate = self
+    return collectionView
+}()
+
+```
+
+## Delegation
+```swift
+extension SelectRecipient.RootView: BECollectionViewDelegate {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
+        guard let recipient = item as? Recipient else {return}
+        viewModel.recipientSelected(recipient)
+    }
+}
 ```
 
 ## Controll data flow
