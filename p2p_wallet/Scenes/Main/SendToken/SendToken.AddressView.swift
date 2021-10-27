@@ -16,6 +16,19 @@ extension SendToken {
         private let addressButton = AddressButton()
 
         private let clearAddressButton = UIImageView(width: 24, height: 24, image: .closeFill, tintColor: UIColor.black.withAlphaComponent(0.6))
+        private lazy var addressTextField: UITextField = {
+            let textField = UITextField(
+                height: 44,
+                backgroundColor: .clear,
+                placeholder: L10n.walletAddress,
+                autocorrectionType: .none,
+                autocapitalizationType: UITextAutocapitalizationType.none,
+                spellCheckingType: .no,
+                horizontalPadding: 8
+            )
+            textField.attributedPlaceholder = NSAttributedString(string: L10n.walletAddress, attributes: [.foregroundColor: UIColor.a3a5ba.onDarkMode(.h5887ff)])
+            return textField
+        }()
         private let qrCodeImageView = UIImageView(width: 35, height: 35, image: .scanQr3, tintColor: .a3a5ba)
             .onTap(self, action: #selector(scanQrCode))
 
@@ -40,7 +53,7 @@ extension SendToken {
             alignment = .center
             distribution = .fill
 
-            [addressButton, clearAddressButton, qrCodeImageView].forEach(addArrangedSubview)
+            [addressButton, addressTextField, clearAddressButton, qrCodeImageView].forEach(addArrangedSubview)
         }
 
         private func configureSubviews() {
@@ -79,6 +92,27 @@ extension SendToken {
                 .subscribe(onNext: { [weak viewModel] in
                     viewModel?.navigate(to: .selectRecipient)
                 })
+                .disposed(by: disposeBag)
+
+            addressTextField.rx.text
+                .distinctUntilChanged()
+                .subscribe(onNext: { [weak viewModel] text in
+                    viewModel?.enterWalletAddress(text)
+                })
+                .disposed(by: disposeBag)
+
+            viewModel.isSolanaTransactionDriver
+                .drive(addressTextField.rx.isHidden)
+                .disposed(by: disposeBag)
+
+            viewModel.isSolanaTransactionDriver
+                .map { !$0 }
+                .drive(addressButton.rx.isHidden)
+                .disposed(by: disposeBag)
+
+            viewModel.receiverAddressDriver
+                .distinctUntilChanged()
+                .drive(addressTextField.rx.text)
                 .disposed(by: disposeBag)
         }
 
