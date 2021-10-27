@@ -36,26 +36,20 @@ struct NameService: NameServiceType {
     }
 
     func getOwners(_ name: String) -> Single<[Owner]> {
-        request(url: endpoint + "/resolve/\(name)")
-            .catch { error in
-                guard case AFError.responseValidationFailed(.unacceptableStatusCode(404)) = error else {
-                    throw error
-                }
-
-                return .just([])
-            }
+        catchNotFound(
+            observable: request(url: endpoint + "/resolve/\(name)"),
+            defaultValue: []
+        )
     }
 
     func getOwnerAddress(_ name: String) -> Single<String?> {
-        getOwner(name)
+        let getAddress = getOwner(name)
             .map {$0?.owner}
-            .catch { error in
-                guard case AFError.responseValidationFailed(.unacceptableStatusCode(404)) = error else {
-                    throw error
-                }
 
-                return .just(nil)
-            }
+        return catchNotFound(
+            observable: getAddress,
+            defaultValue: nil
+        )
     }
     
     func post(name: String, params: PostParams) -> Single<PostResponse> {
@@ -72,7 +66,8 @@ struct NameService: NameServiceType {
                 .take(1)
                 .asSingle()
                 .debug()
-                .map {_, data in
+                .map { $1 }
+                .map { data in
                     try JSONDecoder().decode(PostResponse.self, from: data)
                 }
         } catch {
@@ -87,6 +82,17 @@ struct NameService: NameServiceType {
     private func getNames(_ owner: String) -> Single<[Name]> {
         request(url: endpoint + "/lookup/\(owner)")
     }
+
+    private func catchNotFound<T>(observable: Single<T>, defaultValue: T) -> Single<T> {
+        observable
+            .catch { error in
+                guard case AFError.responseValidationFailed(.unacceptableStatusCode(404)) = error else {
+                    throw error
+                }
+
+                return .just(defaultValue)
+            }
+    }
     
     private func request<T: Decodable>(url: String) -> Single<T> {
         RxAlamofire.request(.get, url)
@@ -94,7 +100,8 @@ struct NameService: NameServiceType {
             .responseData()
             .take(1)
             .asSingle()
-            .map {_, data in
+            .map { $1 }
+            .map { data in
                 try JSONDecoder().decode(T.self, from: data)
             }
     }
