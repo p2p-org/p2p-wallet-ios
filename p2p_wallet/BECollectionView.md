@@ -56,4 +56,27 @@ class RecipientsListViewModel: BEListViewModel<Recipient> {
 ```
 
 ## Create a UICollectionViewCell that conform to BECollectionViewCell
+No need to explain, this class is required to have `setUp(with:)` to handling data presentation, `hideLoading()` and `showLoading()` for handling loading state.
+
+```swift
+class RecipientCell: UICollectionViewCell, BECollectionViewCell {
+    private let recipientView = RecipientView()
+    
+    ...
+    
+    // MARK: - BECollectionViewCell implementation
+    func setUp(with item: AnyHashable?) {
+        guard let recipient = item as? Recipient else {return}
+        recipientView.setRecipient(recipient)
+    }
+    
+    func hideLoading() {
+        recipientView.hideLoader()
+    }
+    
+    func showLoading() {
+        recipientView.showLoader()
+    }
+}
+```
 
