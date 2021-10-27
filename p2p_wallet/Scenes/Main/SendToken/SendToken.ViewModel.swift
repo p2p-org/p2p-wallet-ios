@@ -14,6 +14,7 @@ protocol SendTokenViewModelType: AnyObject, WalletDidSelectHandler {
     var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {get}
     var currentWalletDriver: Driver<Wallet?> {get}
     var currentAddressContentDriver: Driver<Recipient?> { get }
+    var isSolanaTransactionDriver: Driver<Bool> { get }
     var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {get}
     var useAllBalanceSignal: Signal<Double?> {get}
     var feeDriver: Driver<Loadable<Double>> {get}
@@ -342,6 +343,25 @@ extension SendToken {
 }
 
 extension SendToken.ViewModel: SendTokenViewModelType {
+    var isSolanaTransactionDriver: Driver<Bool> {
+        let tokenIsRen = walletSubject.map {
+            $0?.token.address.isRenBTCMint == true
+        }
+
+        let isBtcNetwork = renBTCInfoSubject.map {
+            $0?.network == .bitcoin
+        }
+
+        return Observable.combineLatest(tokenIsRen, isBtcNetwork)
+            .map { isRen, isBtcNetwork in
+                isRen && isBtcNetwork
+            }
+            .map {
+                !$0
+            }
+            .asDriver(onErrorJustReturn: false)
+    }
+
     func recipientChanged(_ recipient: Recipient) {
         recipientSubject.accept(recipient)
     }
