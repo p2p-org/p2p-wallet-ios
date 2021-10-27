@@ -7,7 +7,6 @@
 
 import UIKit
 import RxSwift
-import RxDataSources
 
 extension SelectRecipient {
     class RootView: BEView {
@@ -21,7 +20,7 @@ extension SelectRecipient {
         private let navigationBar = TitleWithCloseButtonNavigationBar(title: L10n.recipient)
         private let addressView: UIView
         private let wrappedAddressView: UIView
-        private let tableView = UITableView()
+//        private let tableView = UITableView()
         private let errorLabel = UILabel(textSize: 15, weight: .regular, textColor: .ff4444, numberOfLines: 0)
         private lazy var toolBar = KeyboardDependingToolBar(
             nextHandler: { [weak self] in
@@ -57,7 +56,7 @@ extension SelectRecipient {
 
         // MARK: - Layout
         private func layout() {
-            [navigationBar, wrappedAddressView, errorLabel, tableView, toolBar].forEach(addSubview)
+            [navigationBar, wrappedAddressView, errorLabel, /*tableView,*/ toolBar].forEach(addSubview)
 
             navigationBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
 
@@ -69,8 +68,8 @@ extension SelectRecipient {
             errorLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             errorLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
 
-            tableView.autoPinEdge(.top, to: .bottom, of: wrappedAddressView)
-            tableView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
+//            tableView.autoPinEdge(.top, to: .bottom, of: wrappedAddressView)
+//            tableView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
 
             toolBar.setConstraints()
         }
@@ -79,15 +78,15 @@ extension SelectRecipient {
             wrappedAddressView.layer.borderWidth = 1
             wrappedAddressView.layer.borderColor = UIColor.a3a5ba.withAlphaComponent(0.5).cgColor
 
-            tableView.register(RecipientCell.self, forCellReuseIdentifier: RecipientCell.cellIdentifier)
-            tableView.register(
-                SelectRecipientSectionHeaderView.self,
-                forHeaderFooterViewReuseIdentifier: SelectRecipientSectionHeaderView.identifier
-            )
-            tableView.rx
-                .setDelegate(self)
-                .disposed(by: disposeBag)
-            tableView.separatorStyle = .none
+//            tableView.register(RecipientCell.self, forCellReuseIdentifier: RecipientCell.cellIdentifier)
+//            tableView.register(
+//                SelectRecipientSectionHeaderView.self,
+//                forHeaderFooterViewReuseIdentifier: SelectRecipientSectionHeaderView.identifier
+//            )
+//            tableView.rx
+//                .setDelegate(self)
+//                .disposed(by: disposeBag)
+//            tableView.separatorStyle = .none
         }
         
         private func bind() {
@@ -95,10 +94,6 @@ extension SelectRecipient {
                 .subscribe(onNext: { [weak viewModel] in
                     viewModel?.closeScene()
                 })
-                .disposed(by: disposeBag)
-
-            viewModel.recipientSectionsDriver
-                .drive(tableView.rx.items(dataSource: createDataSource()))
                 .disposed(by: disposeBag)
 
             viewModel.searchErrorDriver
@@ -112,37 +107,18 @@ extension SelectRecipient {
                 .drive(errorLabel.rx.isHidden)
                 .disposed(by: disposeBag)
 
-            errorIsEmpty
-                .map { !$0 }
-                .drive(tableView.rx.isHidden)
-                .disposed(by: disposeBag)
+//            errorIsEmpty
+//                .map { !$0 }
+//                .drive(tableView.rx.isHidden)
+//                .disposed(by: disposeBag)
 
-            Observable
-                .zip(tableView.rx.itemSelected, tableView.rx.modelSelected(Recipient.self))
-                .bind { [weak self] indexPath, recipient in
-                    self?.tableView.deselectRow(at: indexPath, animated: true)
-                    self?.viewModel.recipientSelected(recipient)
-                }
-                .disposed(by: disposeBag)
-        }
-
-        private func createDataSource() -> RxTableViewSectionedReloadDataSource<RecipientsSection> {
-            .init(
-                configureCell: { _, tableView, _, recipient in
-                    guard let cell = tableView.dequeueReusableCell(withIdentifier: RecipientCell.cellIdentifier) as? RecipientCell else {
-                        assertionFailure("Wrong cell")
-                        return UITableViewCell()
-                    }
-
-                    cell.setRecipient(recipient)
-
-                    return cell
-                },
-                titleForHeaderInSection: { dataSource, sectionIndex in
-                    dataSource[sectionIndex].header
-                }
-            )
-
+//            Observable
+//                .zip(tableView.rx.itemSelected, tableView.rx.modelSelected(Recipient.self))
+//                .bind { [weak self] indexPath, recipient in
+//                    self?.tableView.deselectRow(at: indexPath, animated: true)
+//                    self?.viewModel.recipientSelected(recipient)
+//                }
+//                .disposed(by: disposeBag)
         }
     }
 }
