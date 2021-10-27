@@ -20,9 +20,10 @@ extension SelectRecipient {
             let section = BEStaticSectionsCollectionView.Section(
                 index: 0,
                 layout: .init(
-                    header: .init(viewClass: SectionHeaderView.self, heightDimension: .absolute(76)),
+                    header: .init(viewClass: SectionHeaderView.self, heightDimension: .absolute(40)),
                     cellType: RecipientCell.self,
-                    numberOfLoadingCells: 2
+                    numberOfLoadingCells: 2,
+                    itemHeight: .estimated(76)
                 ),
                 viewModel: recipientsListViewModel
             )
@@ -41,7 +42,7 @@ extension SelectRecipient {
             super.dataDidLoad()
 
             if let header = sectionHeaderView(sectionIndex: 0) as? SectionHeaderView {
-                guard !recipientsListViewModel.searchStringIsEmpty else {
+                guard !recipientsListViewModel.isEmpty else {
                     return header.setTitle(nil)
                 }
 
