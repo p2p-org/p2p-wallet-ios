@@ -36,13 +36,14 @@ class WLMarkdownView: BEView {
         // markdown
         showIndetermineHud()
         
+        let color = traitCollection.userInterfaceStyle == .dark ? "white": "black"
         DispatchQueue.global(qos: .userInteractive).async { [unowned self] in
             // TODO: - Localization
             let filepath = Bundle.main.path(forResource: self.fileName, ofType: "txt")!
             let contents = try! String(contentsOfFile: filepath)
             
             let down = Down(markdownString: contents)
-            let attributedString = try! down.toAttributedString(.default, stylesheet: "* {font-family: Helvetica; font-size: 15px } code, pre { font-family: Menlo; font-size: 15px }")
+            let attributedString = try! down.toAttributedString(.default, stylesheet: "* {font-family: Helvetica; font-size: 15px; color: \(color); } code, pre { font-family: Menlo; font-size: 15px }")
             
             DispatchQueue.main.async { [weak self] in
                 self?.hideHud()
