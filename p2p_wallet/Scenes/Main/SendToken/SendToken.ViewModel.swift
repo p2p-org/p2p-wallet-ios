@@ -131,7 +131,21 @@ extension SendToken {
                 }
                 .bind(to: renBTCInfoSubject)
                 .disposed(by: disposeBag)
-            
+
+            addressContentSubject
+                .map {
+                    switch $0 {
+                    case .empty:
+                        return nil
+                    case let .recipient(recipient):
+                        return recipient.address
+                    }
+                }
+                .subscribe(onNext: { [weak self] address in
+                    self?.destinationAddressSubject.accept(address)
+                })
+                .disposed(by: disposeBag)
+
             // receive at least
             Observable.combineLatest(
                 amountSubject.distinctUntilChanged(),
@@ -317,10 +331,20 @@ extension SendToken {
         }
         
         private func feeRequest(network: SendRenBTCInfo.Network?) -> Single<Double> {
-            if network == .bitcoin {
-                return .just(0.001571)
+            switch network {
+            case .none, .solana:
+                return solanaFee()
+            case .bitcoin:
+                return btcFee()
             }
-            return Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
+        }
+
+        private func btcFee() -> Single<Double> {
+            .just(0.001571)
+        }
+
+        private func solanaFee() -> Single<Double> {
+            Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
                 .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
                 .map { [weak self] in
                     let decimals = self?.repository.nativeWallet?.token.decimals
