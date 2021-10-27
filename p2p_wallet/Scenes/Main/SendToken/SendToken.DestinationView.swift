@@ -64,7 +64,7 @@ extension SendToken {
                 
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .top, distribution: .fill) {
                     UILabel(
-                        text: L10n.sendToSOLOrAnySPLTokenAddress,
+                        text: L10n.sendTo,
                         textSize: 15,
                         weight: .semibold
                     )
