@@ -290,6 +290,7 @@
 		BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */; };
 		BCA7D83427290A29007B070A /* BECollectionView.md in Resources */ = {isa = PBXBuildFile; fileRef = BCA7D83327290A29007B070A /* BECollectionView.md */; };
 		BCA7D83727290F33007B070A /* SelectRecipient.RecipientsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA7D83627290F33007B070A /* SelectRecipient.RecipientsListViewModel.swift */; };
+		BCA7D83927291BCE007B070A /* SelectRecipient.RecipientsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA7D83827291BCE007B070A /* SelectRecipient.RecipientsCollectionView.swift */; };
 		BCA93F5325E77C240081DDF6 /* TokenSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5025E77C240081DDF6 /* TokenSettingsViewModel.swift */; };
 		BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5125E77C240081DDF6 /* TokenSettingsRootView.swift */; };
 		BCA93F5525E77C240081DDF6 /* TokenSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5225E77C240081DDF6 /* TokenSettingsViewController.swift */; };
@@ -729,6 +730,7 @@
 		BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		BCA7D83327290A29007B070A /* BECollectionView.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = BECollectionView.md; sourceTree = "<group>"; };
 		BCA7D83627290F33007B070A /* SelectRecipient.RecipientsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRecipient.RecipientsListViewModel.swift; sourceTree = "<group>"; };
+		BCA7D83827291BCE007B070A /* SelectRecipient.RecipientsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRecipient.RecipientsCollectionView.swift; sourceTree = "<group>"; };
 		BCA93F5025E77C240081DDF6 /* TokenSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsViewModel.swift; sourceTree = "<group>"; };
 		BCA93F5125E77C240081DDF6 /* TokenSettingsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsRootView.swift; sourceTree = "<group>"; };
 		BCA93F5225E77C240081DDF6 /* TokenSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsViewController.swift; sourceTree = "<group>"; };
@@ -1576,6 +1578,7 @@
 				BCA7D83627290F33007B070A /* SelectRecipient.RecipientsListViewModel.swift */,
 				417BB3512727EF3400EDE6AE /* SelectRecipient.SectionHeaderView.swift */,
 				417DC9162725A45F0048106B /* SelectRecipient.RecipientCell.swift */,
+				BCA7D83827291BCE007B070A /* SelectRecipient.RecipientsCollectionView.swift */,
 			);
 			path = RecipientsCollectionView;
 			sourceTree = "<group>";
@@ -2778,6 +2781,7 @@
 				BC2EC1D52553ED1B006EEDA5 /* CustomHeightPresentationController.swift in Sources */,
 				BC1FFED1262975200014F027 /* ResetPinCodeWithSeedPhrases.ViewModel.swift in Sources */,
 				417BB3562728284600EDE6AE /* KeyboardDependingToolBar.swift in Sources */,
+				BCA7D83927291BCE007B070A /* SelectRecipient.RecipientsCollectionView.swift in Sources */,
 				BC5ED749256237AB0030572D /* EmptyView.swift in Sources */,
 				BC80203926F1DA7000C109C2 /* ReceiveToken.ReceiveSolanaViewModel.swift in Sources */,
 				BC6EE77D254BB8F400FE1025 /* Defaults.swift in Sources */,
