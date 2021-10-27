@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
-		417BB3522727EF3400EDE6AE /* SelectRecipientSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417BB3512727EF3400EDE6AE /* SelectRecipientSectionHeaderView.swift */; };
+		417BB3522727EF3400EDE6AE /* SelectRecipient.SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417BB3512727EF3400EDE6AE /* SelectRecipient.SectionHeaderView.swift */; };
 		417BB3542727FCDD00EDE6AE /* AddressFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417BB3532727FCDD00EDE6AE /* AddressFormatter.swift */; };
 		417BB3562728284600EDE6AE /* KeyboardDependingToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417BB3552728284600EDE6AE /* KeyboardDependingToolBar.swift */; };
 		417DC904271FF1180048106B /* SelectRecipient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417DC900271FF1180048106B /* SelectRecipient.swift */; };
@@ -427,7 +427,7 @@
 		1B5A5C216DC945B1D5206FAB /* Pods-p2p walletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p walletTests.debug.xcconfig"; path = "Target Support Files/Pods-p2p walletTests/Pods-p2p walletTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2AFD2F1D2405B9F7006F36C3 /* Pods-p2p walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p walletTests/Pods-p2p walletTests.release.xcconfig"; sourceTree = "<group>"; };
 		3F4012EDABF9EA99EA5E792B /* Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		417BB3512727EF3400EDE6AE /* SelectRecipientSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRecipientSectionHeaderView.swift; sourceTree = "<group>"; };
+		417BB3512727EF3400EDE6AE /* SelectRecipient.SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRecipient.SectionHeaderView.swift; sourceTree = "<group>"; };
 		417BB3532727FCDD00EDE6AE /* AddressFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressFormatter.swift; sourceTree = "<group>"; };
 		417BB3552728284600EDE6AE /* KeyboardDependingToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardDependingToolBar.swift; sourceTree = "<group>"; };
 		417DC900271FF1180048106B /* SelectRecipient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRecipient.swift; sourceTree = "<group>"; };
@@ -919,7 +919,6 @@
 				417DC903271FF1180048106B /* SelectRecipient.RootView.swift */,
 				417DC910272299F80048106B /* TitleWithCloseButtonNavigationBar.swift */,
 				417DC9142722F88C0048106B /* SelectRecipient.AddressView.swift */,
-				417BB3512727EF3400EDE6AE /* SelectRecipientSectionHeaderView.swift */,
 				417DC9182726F2780048106B /* RecipientView.swift */,
 				417BB3532727FCDD00EDE6AE /* AddressFormatter.swift */,
 				417BB3552728284600EDE6AE /* KeyboardDependingToolBar.swift */,
@@ -1575,6 +1574,7 @@
 			isa = PBXGroup;
 			children = (
 				BCA7D83627290F33007B070A /* SelectRecipient.RecipientsListViewModel.swift */,
+				417BB3512727EF3400EDE6AE /* SelectRecipient.SectionHeaderView.swift */,
 				417DC9162725A45F0048106B /* SelectRecipient.RecipientCell.swift */,
 			);
 			path = RecipientsCollectionView;
@@ -2612,7 +2612,7 @@
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
 				BC4B9E9F2715401F005B9ECA /* Settings.SelectLanguageViewController.swift in Sources */,
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,
-				417BB3522727EF3400EDE6AE /* SelectRecipientSectionHeaderView.swift in Sources */,
+				417BB3522727EF3400EDE6AE /* SelectRecipient.SectionHeaderView.swift in Sources */,
 				BC105130258B05DF00398EA2 /* BackupManuallyVC.swift in Sources */,
 				BCEB206D25E1561200B54FEF /* TabBar.swift in Sources */,
 				BC699AB425F9DE3400F57209 /* WLRadioButton.swift in Sources */,
