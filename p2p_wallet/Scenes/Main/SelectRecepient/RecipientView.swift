@@ -16,8 +16,8 @@ final class RecipientView: UIStackView {
         alignment: .leading,
         distribution: .equalSpacing
     )
-    private let recipientName = UILabel(textSize: 17, weight: .semibold, textColor: .black)
-    private let recipientAddress = UILabel(textSize: 15, weight: .regular, textColor: .a3a5ba)
+    private let recipientName = UILabel(text: "<recipientName>", textSize: 17, weight: .semibold, textColor: .black)
+    private let recipientAddress = UILabel(text: "<recipientAddress>", textSize: 15, weight: .regular, textColor: .a3a5ba)
 
     init() {
         super.init(frame: .zero)
