@@ -122,22 +122,3 @@ extension SelectRecipient {
         }
     }
 }
-
-extension SelectRecipient.RootView: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        76
-    }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: SelectRecipientSectionHeaderView.identifier) as? SelectRecipientSectionHeaderView else {
-            assertionFailure("wrong header")
-            return nil
-        }
-
-        header.setTitle(tableView.dataSource?.tableView?(tableView, titleForHeaderInSection: section))
-
-        return header
-    }
-
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat { 40 }
-}
