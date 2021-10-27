@@ -350,6 +350,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func useAllBalance() {
         let availableAmount = calculateAvailableAmount()
         enterInputAmount(availableAmount)
+        
+        // fees depends on input amount, so after entering availableAmount, fees has changed, so needed to calculate availableAmount again
+        let availableAmountUpdated = calculateAvailableAmount()
+        enterInputAmount(availableAmountUpdated)
     }
     
     func enterInputAmount(_ amount: Double?) {
@@ -544,18 +548,18 @@ private extension OrcaSwapV2.ViewModel {
     
     private func calculateFees() -> [PayingFee] {
         guard let sourceWallet = sourceWalletSubject.value,
-              let sourceWalletPubkey = sourceWallet.pubkey,
-              let destinationWallet = destinationWalletSubject.value,
-              let bestPoolsPair = bestPoolsPairSubject.value,
-              let inputAmount = inputAmountSubject.value
+              let sourceWalletPubkey = sourceWallet.pubkey
         else {return []}
         
+        let destinationWallet = destinationWalletSubject.value
+        let bestPoolsPair = bestPoolsPairSubject.value
+        let inputAmount = inputAmountSubject.value
         let myWalletsMints = walletsRepository.getWallets().compactMap {$0.token.address}
         
         guard let fees = try? orcaSwap.getFees(
             myWalletsMints: myWalletsMints,
             fromWalletPubkey: sourceWalletPubkey,
-            toWalletPubkey: destinationWallet.pubkey,
+            toWalletPubkey: destinationWallet?.pubkey,
             feeRelayerFeePayerPubkey: nil, // TODO: - Fee relayer
             bestPoolsPair: bestPoolsPair,
             inputAmount: inputAmount,
@@ -566,16 +570,20 @@ private extension OrcaSwapV2.ViewModel {
         
         let liquidityProviderFees: [PayingFee]
         
-        if fees.liquidityProviderFees.count == 1 {
-            liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.first!, token: destinationWallet.token)
-            ]
-        } else if fees.liquidityProviderFees.count == 2 {
-            liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.last!, token: destinationWallet.token)
-            ]
+        if let destinationWallet = destinationWallet {
+            if fees.liquidityProviderFees.count == 1 {
+                liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.first!, token: destinationWallet.token)
+                ]
+            } else if fees.liquidityProviderFees.count == 2 {
+                liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.last!, token: destinationWallet.token)
+                ]
+            } else {
+                liquidityProviderFees = []
+            }
         } else {
             liquidityProviderFees = []
         }
-            
+        
         return liquidityProviderFees + [.init(type: .transactionFee, lamports: fees.transactionFees, token: .nativeSolana)]
     }
 }
