@@ -61,7 +61,7 @@ extension SelectRecipient {
 
         // MARK: - Layout
         private func layout() {
-            [navigationBar, wrappedAddressView, errorLabel, /*tableView,*/ toolBar].forEach(addSubview)
+            [navigationBar, wrappedAddressView, errorLabel, recipientCollectionView, toolBar].forEach(addSubview)
 
             navigationBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
 
