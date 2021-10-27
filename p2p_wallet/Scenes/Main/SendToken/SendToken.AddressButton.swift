@@ -66,12 +66,9 @@ extension SendToken {
         }
 
         private func setConstraints() {
-            addressPlaceholder.autoPinEdgesToSuperviewEdges(
-                with: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            addressPlaceholder.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(x: 16, y: 0)
             )
-            filledAddress.autoPinEdgesToSuperviewEdges(
-                with: .zero
-            )
+            filledAddress.autoPinEdgesToSuperviewEdges()
         }
     }
 }
