@@ -58,7 +58,7 @@ extension SelectRecipient {
             recipientSearchSubject
                 .subscribe(
                     onNext: { [weak self] searchText in
-                        self?.recipientsListViewModel.name = searchText
+                        self?.recipientsListViewModel.searchString = searchText
                         self?.recipientsListViewModel.reload()
                     }
                 )

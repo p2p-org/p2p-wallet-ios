@@ -16,12 +16,20 @@ extension SelectRecipient {
         @Injected private var addressFormatter: AddressFormatterType
         
         // MARK: - Properties
-        var name: String?
+        var searchString: String?
+
+        var isSearchingByAddress: Bool {
+            searchString?.count ?? 0 > 40
+        }
+
+        var searchStringIsEmpty: Bool {
+            searchString?.isEmpty ?? true
+        }
         
         // MARK: - Methods
         /// The only methods that MUST be inheritted
         override func createRequest() -> Single<[Recipient]> {
-            guard let name = name, !name.isEmpty else {return .just([])}
+            guard let name = searchString, !name.isEmpty else {return .just([])}
             return nameService
                 .getOwners(name)
                 .map { [weak addressFormatter] in

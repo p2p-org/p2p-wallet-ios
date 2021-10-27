@@ -17,7 +17,7 @@ extension SelectRecipient {
         init(recipientsListViewModel: RecipientsListViewModel) {
             self.recipientsListViewModel = recipientsListViewModel
             
-            let section: BEStaticSectionsCollectionView.Section = .init(
+            let section = BEStaticSectionsCollectionView.Section(
                 index: 0,
                 layout: .init(
                     header: .init(viewClass: SectionHeaderView.self, heightDimension: .absolute(76)),
@@ -39,9 +39,18 @@ extension SelectRecipient {
         /// Do anything after a snapshot of data has been loaded (update header for example)
         override func dataDidLoad() {
             super.dataDidLoad()
-//            let header = sectionHeaderView(sectionIndex: 0) as? SectionHeaderView {
-//                // do something with header
-//            }
+
+            if let header = sectionHeaderView(sectionIndex: 0) as? SectionHeaderView {
+                guard !recipientsListViewModel.searchStringIsEmpty else {
+                    return header.setTitle(nil)
+                }
+
+                let title = recipientsListViewModel.isSearchingByAddress
+                    ? L10n.result
+                    : L10n.foundAssociatedWalletAddress
+
+                header.setTitle(title)
+            }
         }
     }
 }

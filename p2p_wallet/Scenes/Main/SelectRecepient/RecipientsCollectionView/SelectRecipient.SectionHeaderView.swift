@@ -15,12 +15,15 @@ extension SelectRecipient {
             super.init(frame: frame)
             addSubviews()
             setConstraints()
-            titleLabel.text = L10n.foundAssociatedWalletAddress
         }
 
         @available(*, unavailable)
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
+        }
+
+        func setTitle(_ title: String?) {
+            titleLabel.text = title
         }
 
         private func addSubviews() {
