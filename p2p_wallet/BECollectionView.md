@@ -87,30 +87,19 @@ extension SelectRecipient {
     final class SectionHeaderView: UICollectionReusableView {
         private let titleLabel = UILabel(textSize: 15, weight: .medium, textColor: .a3a5ba)
         
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            addSubviews()
-            setConstraints()
-        }
-
-        @available(*, unavailable)
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-
-        func setTitle(_ title: String?) {
-            titleLabel.text = title
-        }
+        ...
 
         private func addSubviews() {
             [titleLabel].forEach(addSubview)
         }
 
         private func setConstraints() {
-            titleLabel.autoAlignAxis(toSuperviewAxis: .horizontal)
-            titleLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
-            titleLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
+            ...
         }
     }
 }
 ```
+
+## Create instance of BECollectionView or subclass it
+
+Now you have anything you need for a section in collection view: section header, footer (optional), cells and viewModel (for handling data flow), now you can set up this Section and put it into a `BECollectionView` like this:

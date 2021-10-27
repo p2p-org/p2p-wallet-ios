@@ -16,12 +16,12 @@ extension SelectRecipient {
         @Injected private var addressFormatter: AddressFormatterType
         
         // MARK: - Properties
-        var name: String = ""
+        var name: String?
         
         // MARK: - Methods
         /// The only methods that MUST be inheritted
         override func createRequest() -> Single<[Recipient]> {
-            guard !name.isEmpty else {return .just([])}
+            guard let name = name, !name.isEmpty else {return .just([])}
             return nameService
                 .getOwners(name)
                 .map { [weak addressFormatter] in
