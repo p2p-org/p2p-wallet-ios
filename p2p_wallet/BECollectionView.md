@@ -100,6 +100,80 @@ extension SelectRecipient {
 }
 ```
 
-## Create instance of BECollectionView or subclass it
+## Create instance of `BECollectionView` or subclass it
+There are 2 types of `BECollectionView`: `BEStaticSectionsCollectionView` and `BEDynamicSectionsCollectionView`. But you can concentrate on just `BEStaticSectionsCollectionView` right now, `BEDynamicSectionsCollectionView` will be explained later (Example: `TransactionsCollectionView`)
 
-Now you have anything you need for a section in collection view: section header, footer (optional), cells and viewModel (for handling data flow), now you can set up this Section and put it into a `BECollectionView` like this:
+Now you have anything you need for a section in collection view: section header, footer (optional), cells and viewModel (for handling data flow), now you can construct a section:
+
+```swift
+let section: BEStaticSectionsCollectionView.Section = .init(
+    index: 0,
+    layout: .init(
+        header: .init(viewClass: SectionHeaderView.self, heightDimension: .absolute(76)),
+        cellType: RecipientCell.self,
+        numberOfLoadingCells: 2
+    ),
+    viewModel: recipientsListViewModel
+)
+```
+
+After that you can create an instance of `BEStaticSectionsCollectionView` or subclass it (but i recommend you to subclass it for easily modifying header, footer in section):
+
+```swift
+import BECollectionView
+
+extension SelectRecipient {
+    final class RecipientsCollectionView: BEStaticSectionsCollectionView {
+        // MARK: - Dependencies
+        private let recipientsListViewModel: RecipientsListViewModel
+        
+        // MARK: - Initializer
+        init(recipientsListViewModel: RecipientsListViewModel) {
+            self.recipientsListViewModel = recipientsListViewModel
+            
+            let section: BEStaticSectionsCollectionView.Section = .init(...)
+            
+            super.init(
+                header: nil,
+                sections: [section],
+                footer: nil
+            )
+        }
+        
+        // MARK: -
+        
+        /// Do anything after a snapshot of data has been loaded (update header for example)
+        override func dataDidLoad() {
+            super.dataDidLoad()
+//            let header = sectionHeaderView(sectionIndex: 0) as? SectionHeaderView {
+//                // do something with header
+//            }
+        }
+    }
+}
+
+```
+
+## Controll data flow
+After adding `RecipientsCollectionView`, and setting up `RecipientsListViewModel`, you can controll it's data flow by injecting data and calling method `reload()` on listViewModel like this:
+
+```swift
+recipientSearchSubject
+    .subscribe(
+        onNext: { [weak self] searchText in
+            self?.recipientsListViewModel.name = searchText
+            self?.recipientsListViewModel.reload()
+        }
+    )
+    .disposed(by: disposeBag)
+```
+
+## What you got after doing this?
+- Pull to refresh by default (can be turned off)
+- Loading cell shown when data is loading
+- 2 columns in landscape mode
+
+## Disclaimer
+- I know that `UIKit` is dying and being replaced by `SwiftUI`. `SwiftUI` has very clarify way to define `ListView` with lack of efforts, but it is right now unstable for iOS13, so I think `BECollectionView` is a good solution right now for easily implementing `ListView` in `UIKit` for iOS earlier than iOS15.
+- This lib is in early state of developing, API may be changed frequently.
+- If you have any idea, please constribute.
