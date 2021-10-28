@@ -5,11 +5,8 @@
 //  Created by Chung Tran on 12/10/2021.
 //
 
-import Resolver
-
 extension Settings {
     class SelectLanguageViewController: SingleSelectionViewController<LocalizedLanguage> {
-        @Injected private var localizationManager: LocalizationManagerType
 
         override init(viewModel: SettingsViewModelType) {
             super.init(viewModel: viewModel)
@@ -48,7 +45,7 @@ extension Settings {
         }
 
         private func setSelectableLanguages() {
-            data = localizationManager.selectableLanguages()
+            data = viewModel.selectableLanguages
         }
     }
 }
