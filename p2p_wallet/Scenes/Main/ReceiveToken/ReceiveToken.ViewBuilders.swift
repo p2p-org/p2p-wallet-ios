@@ -5,9 +5,7 @@
 //  Created by Chung Tran on 20/09/2021.
 //
 
-import Foundation
 import UIKit
-import SwiftUI
 
 extension ReceiveToken {
     static func textBuilder(text: String) -> UIStackView {
@@ -43,10 +41,11 @@ extension ReceiveToken {
     }
     
     static func viewInExplorerButton(
+        title: String,
         target: Any?,
         selector: Selector
     ) -> UIView {
-        UILabel(text: L10n.viewInExplorer, textSize: 17, weight: .medium, textColor: .textSecondary, textAlignment: .center)
+        UILabel(text: title, textSize: 17, weight: .medium, textColor: .textSecondary, textAlignment: .center)
             .onTap(target, action: selector)
             .centeredHorizontallyView
             .padding(.init(x: 0, y: 9))

@@ -97,6 +97,7 @@ extension ReceiveToken {
                 stackView.addArrangedSubviews {
                     BEStackViewSpacing(50)
                     ReceiveToken.viewInExplorerButton(
+                        title: L10n.viewInExplorer(L10n.solana),
                         target: self,
                         selector: #selector(showSolAddressInExplorer)
                     )
