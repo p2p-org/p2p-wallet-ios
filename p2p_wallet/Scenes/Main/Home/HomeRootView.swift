@@ -8,9 +8,12 @@
 import UIKit
 import Action
 import BECollectionView
+import BEPureLayout
+import RxSwift
 
 class HomeRootView: BEView {
     // MARK: - Constants
+    let disposeBag = DisposeBag()
     
     // MARK: - Properties
     private let viewModel: HomeViewModel
@@ -36,6 +39,8 @@ class HomeRootView: BEView {
         collectionView.contentInset.modify(dTop: 20)
         return collectionView
     }()
+    
+    private lazy var balancesOverviewView = BalancesOverviewView()
     
     // MARK: - Initializers
     init(viewModel: HomeViewModel) {
@@ -63,6 +68,12 @@ class HomeRootView: BEView {
                     .onTap(self, action: #selector(buttonSettingsDidTouch))
             }
                 .padding(.init(x: 24, y: 16))
+            
+            balancesOverviewView
+                .padding(.init(x: 20, y: 0))
+            
+            BEStackViewSpacing(20)
+            
             collectionView
         }
         addSubview(stackView)
@@ -70,7 +81,16 @@ class HomeRootView: BEView {
     }
     
     private func bind() {
+        let walletsRepository = viewModel.walletsRepository
         
+        walletsRepository
+            .dataObservable
+            .withLatestFrom(walletsRepository.stateObservable, resultSelector: {  ($0, $1) })
+            .asDriver(onErrorJustReturn: ([], .loading))
+            .drive(onNext: {[weak balancesOverviewView] in
+                balancesOverviewView?.setUp(state: $1, data: $0 ?? [])
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Actions
