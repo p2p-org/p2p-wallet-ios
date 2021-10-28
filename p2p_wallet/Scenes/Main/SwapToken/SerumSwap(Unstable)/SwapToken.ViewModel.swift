@@ -15,7 +15,7 @@ protocol SwapTokenViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewMo
     var estimatedAmountSubject: PublishRelay<String?> {get}
     
     // Drivers
-    var navigationDriver: Driver<SwapToken.NavigatableScene?> {get}
+    var navigationDriver: Driver<SerumSwapV1.NavigatableScene?> {get}
     var initialStateDriver: Driver<LoadableState> {get}
     
     var sourceWalletDriver: Driver<Wallet?> {get}
@@ -44,7 +44,7 @@ protocol SwapTokenViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewMo
     // Actions
     func reload()
     func calculateExchangeRateFeesAndMinOrderSize()
-    func navigate(to: SwapToken.NavigatableScene)
+    func navigate(to: SerumSwapV1.NavigatableScene)
     func useAllBalance()
     func log(_ event: AnalyticsEvent)
     func swapSourceAndDestination()
@@ -56,7 +56,7 @@ protocol SwapTokenViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewMo
     func providerSignatureView() -> UIView
 }
 
-extension SwapToken {
+extension SerumSwapV1 {
     class ViewModel {
         // MARK: - Dependencies
         private let provider: SwapProviderType
@@ -224,9 +224,9 @@ extension SwapToken {
     }
 }
 
-extension SwapToken.ViewModel: SwapTokenViewModelType {
+extension SerumSwapV1.ViewModel: SwapTokenViewModelType {
     // MARK: - Output
-    var navigationDriver: Driver<SwapToken.NavigatableScene?> {
+    var navigationDriver: Driver<SerumSwapV1.NavigatableScene?> {
         navigationRelay.asDriver()
     }
     var initialStateDriver: Driver<LoadableState> {
@@ -295,7 +295,7 @@ extension SwapToken.ViewModel: SwapTokenViewModelType {
     }
 }
 
-extension SwapToken.ViewModel {
+extension SerumSwapV1.ViewModel {
     // MARK: - Actions
     func reload() {
         lamportsPerSignatureRelay.reload()
@@ -342,7 +342,7 @@ extension SwapToken.ViewModel {
         exchangeRateRelay.reload()
     }
     
-    func navigate(to scene: SwapToken.NavigatableScene) {
+    func navigate(to scene: SerumSwapV1.NavigatableScene) {
         switch scene {
         case .chooseSourceWallet:
             isSelectingSourceWallet = true

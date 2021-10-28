@@ -8,15 +8,6 @@
 import Foundation
 import RxSwift
 
-protocol ProcessTransactionAPIClient {
-    func getReimbursedAmountForClosingToken() -> Single<Double>
-}
-extension SolanaSDK: ProcessTransactionAPIClient {
-    func getReimbursedAmountForClosingToken() -> Single<Double> {
-        getCreatingTokenAccountFee().map {$0.convertToBalance(decimals: 9)}
-    }
-}
-
 struct ProcessTransaction {
     enum NavigatableScene {
         case showExplorer(transactionID: String)
@@ -31,3 +22,16 @@ struct ProcessTransaction {
         case closeAccount(Wallet)
     }
 }
+
+protocol ProcessTransactionAPIClient {
+    func getReimbursedAmountForClosingToken() -> Single<Double>
+}
+extension SolanaSDK: ProcessTransactionAPIClient {
+    func getReimbursedAmountForClosingToken() -> Single<Double> {
+        getCreatingTokenAccountFee().map {$0.convertToBalance(decimals: 9)}
+    }
+}
+
+protocol ProcessTransactionResponseType {}
+extension SolanaSDK.TransactionID: ProcessTransactionResponseType {}
+extension SolanaSDK.SwapResponse: ProcessTransactionResponseType {}

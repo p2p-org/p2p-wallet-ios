@@ -9,39 +9,39 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol ProcessTransactionResponseType {}
-extension SolanaSDK.TransactionID: ProcessTransactionResponseType {}
-extension SolanaSDK.SwapResponse: ProcessTransactionResponseType {}
+protocol ProcessTransactionViewModelType {
+    var transactionType: ProcessTransaction.TransactionType {get}
+    var pricesRepository: PricesRepository {get}
+    var reimbursedAmount: Double? {get}
+    
+    var navigatableSceneDriver: Driver<ProcessTransaction.NavigatableScene?> {get}
+    var transactionDriver: Driver<SolanaSDK.ParsedTransaction> {get}
+    
+    func fetchReimbursedAmountForClosingTransaction() -> Single<Double>
+    func showExplorer()
+    func markAsDone()
+    func tryAgain()
+    func cancel()
+}
 
 extension ProcessTransaction {
-    class ViewModel: ViewModelType {
-        // MARK: - Nested type
-        struct Input {}
-        struct Output {
-            let navigationScene: Driver<NavigatableScene>
-            let transactionType: TransactionType
-            let transaction: Driver<SolanaSDK.ParsedTransaction>
-            let pricesRepository: PricesRepository
-            var reimbursedAmount: Double?
-        }
-        
+    class ViewModel {
         // MARK: - Dependencies
-        private let transactionType: TransactionType
-        private let request: Single<ProcessTransactionResponseType>
+        @Injected private var analyticsManager: AnalyticsManagerType
         private let transactionHandler: ProcessingTransactionsRepository
         private let walletsRepository: WalletsRepository
         private let apiClient: ProcessTransactionAPIClient
-        private let pricesRepository: PricesRepository
-        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
-        private let disposeBag = DisposeBag()
+        let transactionType: TransactionType
+        let pricesRepository: PricesRepository
         
-        let input: Input
-        var output: Output
+        private let disposeBag = DisposeBag()
+        private(set) var reimbursedAmount: Double?
+        private let request: Single<ProcessTransactionResponseType>
         
         // MARK: - Subject
-        private let navigationSubject = PublishSubject<NavigatableScene>()
+        private let navigatableSceneSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let transactionSubject = BehaviorRelay<SolanaSDK.ParsedTransaction>(value: .init(status: .requesting, signature: nil, value: nil, slot: nil, blockTime: nil, fee: nil, blockhash: nil))
         
         // MARK: - Initializer
@@ -60,26 +60,7 @@ extension ProcessTransaction {
             self.apiClient = apiClient
             self.pricesRepository = pricesRepository
             
-            self.input = Input()
-            self.output = Output(
-                navigationScene: navigationSubject
-                    .asDriver(onErrorJustReturn: .showExplorer(transactionID: "")),
-                transactionType: transactionType,
-                transaction: transactionSubject
-                    .asDriver(),
-                pricesRepository: pricesRepository
-            )
-            
             execute()
-        }
-        
-        // MARK: - Actions
-        func fetchReimbursedAmountForClosingTransaction() -> Single<Double> {
-            apiClient.getReimbursedAmountForClosingToken()
-                .catchAndReturn(0)
-                .do(onSuccess: {[weak self] amount in
-                    self?.output.reimbursedAmount = amount
-                })
         }
         
         @objc func execute() {
@@ -157,7 +138,7 @@ extension ProcessTransaction {
             case .closeAccount(let wallet):
                 // form transaction
                 let transaction = SolanaSDK.CloseAccountTransaction(
-                    reimbursedAmount: output.reimbursedAmount,
+                    reimbursedAmount: reimbursedAmount,
                     closedWallet: wallet
                 )
                 
@@ -170,88 +151,6 @@ extension ProcessTransaction {
             
             // observe
             observeTransaction(requestIndex: requestIndex)
-        }
-        
-        @objc func tryAgain() {
-            // log
-            var event: AnalyticsEvent?
-            
-            if let error = transactionSubject.value.status.getError()?.readableDescription
-            {
-                switch transactionType {
-                case .send:
-                    event = .sendTryAgainClick(error: error)
-                case .orcaSwap, .swap:
-                    event = .swapTryAgainClick(error: error)
-                case .closeAccount:
-                    break
-                }
-            }
-            
-            if let event = event {
-                analyticsManager.log(event: event)
-            }
-            
-            // execute
-            execute()
-        }
-        
-        @objc func showExplorer() {
-            guard let id = transactionSubject.value.signature else {return}
-            
-            // log
-            let transactionStatus = transactionSubject.value.status.rawValue
-            switch transactionType {
-            case .send:
-                analyticsManager.log(event: .sendExplorerClick(txStatus: transactionStatus))
-            case .orcaSwap, .swap:
-                analyticsManager.log(event: .swapExplorerClick(txStatus: transactionStatus))
-            case .closeAccount:
-                break
-            }
-            
-            // navigate
-            navigationSubject.onNext(.showExplorer(transactionID: id))
-        }
-        
-        @objc func done() {
-            // log
-            let transactionStatus = transactionSubject.value.status.rawValue
-            switch transactionType {
-            case .send:
-                analyticsManager.log(event: .sendDoneClick(txStatus: transactionStatus))
-            case .orcaSwap, .swap:
-                analyticsManager.log(event: .swapDoneClick(txStatus: transactionStatus))
-            case .closeAccount:
-                break
-            }
-            
-            // navigate
-            navigationSubject.onNext(.done)
-        }
-        
-        @objc func cancel() {
-            // log
-            var event: AnalyticsEvent?
-            
-            if let error = transactionSubject.value.status.getError()?.readableDescription
-            {
-                switch transactionType {
-                case .send:
-                    event = .sendCancelClick(error: error)
-                case .orcaSwap, .swap:
-                    event = .swapCancelClick(error: error)
-                case .closeAccount:
-                    break
-                }
-            }
-            
-            if let event = event {
-                analyticsManager.log(event: event)
-            }
-            
-            // cancel
-            navigationSubject.onNext(.cancel)
         }
         
         // MARK: - Helpers
@@ -285,5 +184,106 @@ extension ProcessTransaction {
                 .bind(to: transactionSubject)
                 .disposed(by: disposeBag)
         }
+    }
+}
+
+extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
+    var navigatableSceneDriver: Driver<ProcessTransaction.NavigatableScene?> {
+        navigatableSceneSubject.asDriver()
+    }
+    
+    var transactionDriver: Driver<SolanaSDK.ParsedTransaction> {
+        transactionSubject.asDriver()
+    }
+    
+    // MARK: - Actions
+    func fetchReimbursedAmountForClosingTransaction() -> Single<Double> {
+        apiClient.getReimbursedAmountForClosingToken()
+            .catchAndReturn(0)
+            .do(onSuccess: {[weak self] amount in
+                self?.reimbursedAmount = amount
+            })
+    }
+    
+    func showExplorer() {
+        guard let id = transactionSubject.value.signature else {return}
+        
+        // log
+        let transactionStatus = transactionSubject.value.status.rawValue
+        switch transactionType {
+        case .send:
+            analyticsManager.log(event: .sendExplorerClick(txStatus: transactionStatus))
+        case .orcaSwap, .swap:
+            analyticsManager.log(event: .swapExplorerClick(txStatus: transactionStatus))
+        case .closeAccount:
+            break
+        }
+        
+        // navigate
+        navigatableSceneSubject.accept(.showExplorer(transactionID: id))
+    }
+    
+    func markAsDone() {
+        // log
+        let transactionStatus = transactionSubject.value.status.rawValue
+        switch transactionType {
+        case .send:
+            analyticsManager.log(event: .sendDoneClick(txStatus: transactionStatus))
+        case .orcaSwap, .swap:
+            analyticsManager.log(event: .swapDoneClick(txStatus: transactionStatus))
+        case .closeAccount:
+            break
+        }
+        
+        // navigate
+        navigatableSceneSubject.accept(.done)
+    }
+    
+    func tryAgain() {
+        // log
+        var event: AnalyticsEvent?
+        
+        if let error = transactionSubject.value.status.getError()?.readableDescription
+        {
+            switch transactionType {
+            case .send:
+                event = .sendTryAgainClick(error: error)
+            case .orcaSwap, .swap:
+                event = .swapTryAgainClick(error: error)
+            case .closeAccount:
+                break
+            }
+        }
+        
+        if let event = event {
+            analyticsManager.log(event: event)
+        }
+        
+        // execute
+        execute()
+    }
+    
+    func cancel() {
+        // log
+        var event: AnalyticsEvent?
+        
+        if let error = transactionSubject.value.status.getError()?.readableDescription
+        {
+            switch transactionType {
+            case .send:
+                event = .sendCancelClick(error: error)
+            case .orcaSwap, .swap:
+                event = .swapCancelClick(error: error)
+            case .closeAccount:
+                break
+            }
+        }
+        
+        if let event = event {
+            analyticsManager.log(event: event)
+        }
+        
+        // cancel
+        navigatableSceneSubject.accept(.cancel)
     }
 }

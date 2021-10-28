@@ -16,7 +16,7 @@ protocol SwapTokenSwapFeesViewModelType {
     func log(_ event: AnalyticsEvent)
 }
 
-extension SwapToken {
+extension SerumSwapV1 {
     class SwapFeesViewController: SettingsBaseViewController {
         // MARK: - Properties
         private let viewModel: SwapTokenSwapFeesViewModelType
@@ -47,7 +47,7 @@ extension SwapToken {
         override func setUpContent(stackView: UIStackView) {
             stackView.addArrangedSubviews {
                 feeSections
-                payingTokenSection
+//                payingTokenSection // FIXME: Fee relayer
             }
         }
         

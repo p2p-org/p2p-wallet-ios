@@ -496,7 +496,6 @@
 "Receiving statuses" = "Trạng thái nhận";
 "Receiving %@ renBTC" = "Nhận %@ renBTC";
 "Reserve your P2P username" = "Nhận P2P username";
-"You can receive and send tokens using your P2P username or link. Also, users, who know your URL or username, can send you any token, even if you don’t have it in your wallets list." = "Bạn có thể nhận và gửi tokens bằng tên người dùng hoặc liên kết P2P của bạn.  Ngoài ra, người dùng biết URL hoặc tên người dùng của bạn có thể gửi cho bạn bất kỳ token nào, ngay cả khi bạn không có token đó trong ví của bạn.";
 "username" = "tên tài khoản";
 "Use any latin and special symbols or emojis." = "Sử dụng bất kỳ ký hiệu hoặc biểu tượng cảm xúc nào bằng tiếng latin và đặc biệt.";
 "You can also %@ this step and reserve a username later." = "Bạn cũng có thể %@ bước này và đặt tên người dùng sau.";
@@ -544,3 +543,5 @@
 "Result" = "Kết quả";
 "This username is not associated with anyone" = "Tên người dùng này không được liên kết với bất kỳ ai";
 "There is an error occured, please try typing name again." = "Đã xảy ra lỗi, vui lòng thử nhập lại tên.";
+"Security key can't be saved into icloud. Please try again." = "Không thể lưu khóa bảo mật vào icloud.  Vui lòng thử lại.";
+"You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list." = "Bạn có thể nhận và gửi mã thông báo bằng tên người dùng P2P của mình.  Ngoài ra, người dùng biết tên người dùng của bạn có thể gửi cho bạn bất kỳ mã thông báo nào, ngay cả khi bạn không có mã đó trong danh sách ví của mình.";

@@ -1,0 +1,125 @@
+_Last updated: October 22, 2021_
+
+This privacy policy (&quot; **Policy**&quot;) explains how **P2P Wallet** or any other entity authorized by **P2P Wallet** (&quot; **us**&quot; or &quot; **we**&quot;) collects, stores, uses and protects personal data, when you (&quot;you&quot;, &quot;your&quot;, or &quot;User&quot;) when you use our mobile application P2P Wallet or access our website **http://wallet.p2p.org** (including any and all mobile platforms and versions of the mobile application, and any and all subdomains, collectively, the &quot; **Web**** site**&quot;) and/or use our services or any other features, technologies or functionalities offered by us through the Website (collectively, the &quot;**Services**&quot;).
+
+Company is the controller, processors and responsible for your personal data. Being the controller, the Company independently determines the personal data processing purposes and means. This Policy is drafted in accordance with the provisions of GDPR Regulation - Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and the free movement of such data and repealing Directive 95/46/EC (General Data Protection Regulation) and other applicable laws and regulations.
+
+We will provide notice of any amendment to this Policy by posting any revised document to the Website and updating the &quot;Last updated&quot; field above accordingly and we will notify you prior to such an amendment come into effect. We are not obligated to provide notice in any other method beyond these. Any change to this Policy will be effective immediately upon such notice and apply to any ongoing or subsequent use of the Website and Services.
+
+The processing of your personal data in relation to your use of Website and/or use of Services, will be subject to this Policy. If you disagree with any part, of this Policy then you may not access the Website and/or use Services. Should you disagree with any provision of this Policy you shall cease using the Website or any Services immediately. If you are using the Website, Services in your own name or on behalf of any entity, you acknowledge this Policy on your or such entity&#39;s behalf (when applicable).
+
+## 1. **Definitions**
+
+&quot; **Processing**&quot; means any operation or set of operations which is performed on personal data or on sets of Personal Data, whether or not by automated means, such as collection, recording, organization, structuring, storage, adaptation or alteration, retrieval, examination, use, disclosure by transmission, dissemination or otherwise making available, alignment or combination, sampling, erasure or destruction.
+
+&quot; **Agreement**&quot; means any agreement between you and Company, including License to use Services and Website, an any other agreements concluded between you and Company while using Services and/or Website.
+
+**&quot;Legitimate interest**&quot; means the interest of our business in conducting and managing our business to enable us to give you the best service/product and the best and most secure experience. We make sure we consider and balance any potential impact on you (both positive and negative) and your rights before we process your personal data for our legitimate interests. We do not use your personal data for activities where our interests are overridden by the impact on you (unless we have your consent or are otherwise required or permitted to by law).
+
+&quot; **Personal data**&quot; means any information relating to you as an identified or identifiable natural person (&quot; **Data Subject**&quot;); an identifiable natural person is one who can be identified, directly or indirectly, in particular by reference to an identifier such as a name, an online identifier or to one or more factors specific to your physical, physiological, genetic, mental, economic, cultural or social identity.
+
+## 2. **General Provisions**
+
+### **2.1. Collecting and Using of Data**
+
+The Company may use different methods to collect data from and about you by its own or with engage of third parties include through:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a)&nbsp;&nbsp;&nbsp;&nbsp;**Direct interactions****.** You may give to the Company information while using the Website and/or the Services. This may include personal data you provide when you enquire us for a technical support, subscribe to our mailing lists, newsletters, or promotions.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(b)&nbsp;&nbsp;&nbsp;&nbsp;**Automated technologies or interactions****.** As you interact with our Website and Services, the Company may automatically collect technical and usage data about your equipment, browsing actions and patterns. The Company collects this data by using cookies, and other similar technologies.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#40;c)&nbsp;&nbsp;&nbsp;&nbsp;**Third parties or publicly available sources****.** The Company may receive personal data about you from various third parties, namely technical data (like usage data, and other information automatically collected from your browser or mobile device. This allows the Company to record and analyse how you use Website and Services. Company uses this data on the basis of its legitimate interest as a business in improving our understanding of your needs and preferences in order to constantly enhance our services and improve our Website and Services. You may at any time disable collection of your data by these analytics providers.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(d)&nbsp;&nbsp;&nbsp;&nbsp;**Do Not Track**. Our Services and Website currently does not respond to &quot;Do Not Track&quot; signals and operates as described in this Policy whether or not a Do Not Track signal is received. If we do so in the future, we will describe how we do so in this Policy.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(e)&nbsp;&nbsp;&nbsp;&nbsp;**Aggregated Data.** The Company also may collect, use and share aggregated data such as statistical or demographic data for any purpose. Aggregated data may be derived from your personal data but is not considered personal data in law as this data does not directly or indirectly reveal your identity. For example, the Company may aggregate your usage data to calculate the percentage of users accessing a specific website feature. However, if the Company combines or connects aggregated data with your personal data so that it can directly or indirectly identify you, the Company treats the combined data as personal data which will be used in accordance with this Policy.
+
+In this Policy, we will provide multiple examples of how personal data we collect may be used and why it is important. For example, when you use our Website and Services, we must collect your name, email address, proof of identity, proof of residence, source of funds information and another information required to complete the agreement. Some of the reasons that we collect personal data include to:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a)&nbsp;&nbsp;&nbsp;&nbsp; Provide our products and services, including our Website and Services, and improve them over time;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(b)&nbsp;&nbsp;&nbsp;&nbsp;Investigate, respond to, and manage inquiries or events;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#40;c)&nbsp;&nbsp;&nbsp;&nbsp;Work with and respond to law enforcement and regulators; and
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(d)&nbsp;&nbsp;&nbsp;&nbsp;Research matters relating to our business such as security threats and vulnerabilities.
+
+
+### **2.2. Bases for Data Processing**
+The data we collect and the data you provide to us is processed:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a)&nbsp;&nbsp;&nbsp;&nbsp;For the performance of the agreement between you and us and/or taking steps, at your request, to enter into such a contract;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(b)&nbsp;&nbsp;&nbsp;&nbsp;For our legitimate interests, namely the proper administration of our business, the monitoring and improving of our Website and Services, and the protection and assertion of our legal rights, your legal rights and the legal rights of others; and
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#40;c)&nbsp;&nbsp;&nbsp;&nbsp;In limited circumstances, further to your consent.
+
+### **2.3. Period of your personal data processing**
+If you are a citizen of a European Union country, your personal data processing period ends in 5 (five) years from the termination of interaction between you and company under the agreement. The personal data storage period may be extended from 5 (five) to 7 (seven) years upon the competent authority request. If you are not a citizen of a European Union country, your personal data processing period ends in 10 (ten) years from the termination of interaction between you and company under the agreement. In some circumstances you can ask us to delete your data. Please note that if personal data is erased at your request, we will only retain such copies of the information as are necessary to protect our or third-party legitimate interests, comply with governmental orders, resolve disputes, troubleshoot problems, or enforce any agreement you have entered into with us. In some circumstances we may anonymize your personal data (so that it can no longer be associated with you) for research or statistical purposes in which case we may use this information indefinitely without further notice to you.
+
+### 2.4. **Your Legal Rights**
+Under certain circumstances, you have rights under data protection laws in relation to your personal data. You have the right to:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a)&nbsp;&nbsp;&nbsp;&nbsp;**Request access to your personal data** (commonly known as a &quot;data subject access request&quot;). This enables you to receive a copy of the personal data we hold about you and to check that we are lawfully processing it;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(b)&nbsp;&nbsp;&nbsp;&nbsp;**Request correction of the personal data that we hold about you.** This enables you to have any incomplete or inaccurate data we hold about you corrected, though we may need to verify the accuracy of the new data you provide to us;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#40;c)&nbsp;&nbsp;&nbsp;&nbsp;**Request erasure of your personal data.** This enables you to ask us to delete or remove personal data where there is no good reason for us continuing to process it. You also have the right to ask us to delete or remove your personal data where you have successfully exercised your right to object to processing, where we may have processed your information unlawfully or where we are required to erase your personal data to comply with local law. Note, however, that we may not always be able to comply with your request of erasure for specific legal reasons which will be notified to you, if applicable, at the time of your request;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(d)&nbsp;&nbsp;&nbsp;&nbsp;**Object to processing of your personal data.** Object to processing of your personal data where we are relying on a legitimate interest (or those of a third party) and there is something about your particular situation which makes you want to object to processing on this ground as you feel it impacts on your fundamental rights and freedoms. You also have the right to object where we are processing your personal data for direct marketing purposes. In some cases, we may demonstrate that we have compelling legitimate grounds to process your information which override your rights and freedoms;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(e)&nbsp;&nbsp;&nbsp;&nbsp;**Request restriction of processing of your personal data.** This enables you to ask us to suspend the processing of your personal data in the following scenarios: (a) if you want us to establish the data&#39;s accuracy; (b) where our use of the data is unlawful but you do not want us to erase it; (c) where you need us to hold the data even if we no longer require it as you need it to establish, exercise or defend legal claims; or (d) you have objected to our use of your data but we need to verify whether we have overriding legitimate grounds to use it;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(f)&nbsp;&nbsp;&nbsp;&nbsp;**Request the transfer of your personal data to you or to a third party.** We will provide to you, or a third party you have chosen, your personal data in a structured, commonly used, machine-readable format. Note that this right only applies to automated information which you initially provided consent for us to use or where we used the information to perform the Agreement with you;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(g)&nbsp;&nbsp;&nbsp;&nbsp;**Withdraw consent at any time where we are relying on consent to process your personal data.** However, this will not affect the lawfulness of any processing carried out before you withdraw your consent. If you withdraw your consent, we may not be able to provide certain products or services to you. We will advise you if this is the case at the time you withdraw your consent.
+
+If you wish to exercise any of the rights set out above, please contact us.
+
+### **2.5. Data Security**
+TheCompany has put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorized way, altered or disclosed. In addition, the Company limits access to your personal data to those employees, agents, contractors and other third parties who have a business need to know. They will only process your personal data on instructions of the Company and they are subject to a duty of confidentiality. The Company has put in place procedures to deal with any suspected personal data breach and will notify you and any applicable regulator of a breach where we are legally required to do so. Numerous studies have established that data stored in the cloud is less likely to be lost, deleted or leaked than data stored on a personal computer. All the Company&#39;s data is fully encrypted at rest and in transit, and Company employs state-of-the-art firewall and back-up technology. All the Company&#39;s data is continuously backed up in several high security access-controlled data centers in different locations.
+
+### **2.6. Sharing Data**
+We may share your information as follows:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a)&nbsp;&nbsp;&nbsp;&nbsp;If we&#39;ve aggregated or de-identified the information, so that it cannot reasonably be used to identify you;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(b)&nbsp;&nbsp;&nbsp;&nbsp;With third party service providers who we use in delivering our Services and Website, including certain advertising, referral, operations, financial services and technology services (such as hosting providers, identity verification, support, payment, and email service providers);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#40;c)&nbsp;&nbsp;&nbsp;&nbsp;If required by applicable law or legal process, or if we believe it is in accordance with applicable law or legal process;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(d)&nbsp;&nbsp;&nbsp;&nbsp;To protect the rights, property and safety of the Company, our users and the public, including, for example, in connection with court proceedings, or to detect or prevent criminal activity, fraud, material misrepresentation, or to establish our rights or defend against legal claims; or
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(e)&nbsp;&nbsp;&nbsp;&nbsp;In connection with selling, merging, transferring, or reorganizing all or parts of our business.
+
+### **2.7. Email Communications**
+If you opted-in to receive information about our products, updates and offers, we will use your name and email address to send this information to you. If you no longer wish to receive these communications, you can unsubscribe by following the instructions contained in the emails you receive or on our Website. Please note that we may send you transactional and relationship messages, even if you have unsubscribed from our marketing communications. For instance, if our Services/Website are going to be temporarily suspended for maintenance, we might send you an email to update you.
+
+### **2.8. Data Transfers**
+We and our service providers may transfer your personal data to, or access it in, jurisdictions that may not provide equivalent levels of data protection as your home jurisdiction. We will take steps to ensure that your personal data receives an adequate level of protection in the jurisdictions in which we process it. If you are located in the EEA, we provide adequate protection for the transfer of personal data to countries outside of the EEA through a series of intercompany agreements based on the Standard Contractual Clauses authorized under the Article 46 of the General Data Protection Regulation.
+
+### **2.9. Information About Our Use of Cookies**
+
+Our Website and Services uses cookies to distinguish you from other users of our Website and Services. This helps us to provide you with a good experience when you browse our Website, use Services and also allows us to improve our Website and Services. By continuing to browse the Website and/or using of Services, you are agreeing to our use of cookies.
+
+A cookie is a small file of letters and numbers that we store on your browser or the hard drive of your computer if you agree. Cookies contain information that is transferred to your computer&#39;s hard drive. A cookie enables the Website to remember your actions and preferences ‒ such as login, language, font size and other display preferences ‒ over a period, so you don&#39;t have to keep re-entering them whenever you come back to the site or browse from one page to another.
+
+Cookies are placed on your device only if you consent, unless cookies are required for strictly technical functioning of the Website and Services. However, note that if you do not consent to the use of cookies, certain functions of the Website and Services may not function properly or may not function at all.
+
+The legal basis for the use of cookies is our legitimate interest in ensuring the technical functionality of the Website and Services. When cookies are used to remember your choices or for statistical purposes, the legal basis is your consent.
+
+We use the following cookies:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a)&nbsp;&nbsp;&nbsp;&nbsp;**Strictly necessary cookies**. These are cookies that are required for the operation of our Website and Services. They include, for example, cookies that enable you to log into secure areas of our Website;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(b)&nbsp;&nbsp;&nbsp;&nbsp;**Analytical/performance cookies**. They allow us to recognize and count the number of visitors and to see how visitors move around our Website when they are using it. This helps us to improve the way our Website and Services works, for example, by ensuring that users are finding what they are looking for easily;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#40;c)&nbsp;&nbsp;&nbsp;&nbsp;**Functionality cookies**. These are used to recognize you when you return to our Website and Services. This enables us to personalize our content for you and remember your preferences (for example, your choice of language or region);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(d)&nbsp;&nbsp;&nbsp;&nbsp;**Security cookies**. They are used to ensure and improve security of our Website and Services and your warrant your secure access to the Website and Services.
+
+Please note that third parties (including, for example providers of external services like web traffic analysis services) may also use cookies, over which we have no control. These cookies are likely to be analytical/performance cookies or targeting cookies.
+
+You can control and/or delete cookies as you wish. You can delete all cookies that are already on your computer and you can set most browsers to prevent them from being placed. But if you do this you may have to manually adjust some preferences every time you visit the Website or use the Services, while some services and functionalities may not work.
+
+Except for essential cookies, all cookies will expire after a short term (a day, a week or a month), though in some cases they may remain valid for up to a year.

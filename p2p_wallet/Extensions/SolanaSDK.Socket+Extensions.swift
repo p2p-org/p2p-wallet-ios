@@ -7,4 +7,4 @@
 
 import Foundation
 
-extension SolanaSDK.Socket: SerumSwapSignatureNotificationHandler {}
+extension SolanaSDK: SerumSwapSignatureConfirmationHandler {}
