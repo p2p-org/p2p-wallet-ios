@@ -22,17 +22,12 @@ extension SelectRecipient {
                 layout: .init(
                     header: .init(viewClass: SectionHeaderView.self, heightDimension: .absolute(40)),
                     cellType: RecipientCell.self,
-                    numberOfLoadingCells: 2,
                     itemHeight: .estimated(76)
                 ),
                 viewModel: recipientsListViewModel
             )
             
-            super.init(
-                header: nil,
-                sections: [section],
-                footer: nil
-            )
+            super.init(sections: [section])
         }
         
         // MARK: -

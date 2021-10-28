@@ -544,3 +544,4 @@
 "Result" = "Kết quả";
 "Send to SOL or any SPL token address" = "Gửi đến SOL hoặc bất kỳ địa chỉ mã thông báo SPL nào";
 "This username is not associated with anyone" = "Tên người dùng này không được liên kết với bất kỳ ai";
+"There is an error occured, please try typing name again." = "Đã xảy ra lỗi, vui lòng thử nhập lại tên.";

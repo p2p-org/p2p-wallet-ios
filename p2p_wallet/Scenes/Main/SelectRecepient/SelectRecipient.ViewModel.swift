@@ -14,7 +14,6 @@ protocol SelectRecipientViewModelType: AnyObject {
     
     var navigationDriver: Driver<SelectRecipient.NavigatableScene?> { get }
     var recipientSearchDriver: Driver<String?> { get }
-    var searchErrorDriver: Driver<String?> { get }
     var recipientSearchSubject: BehaviorRelay<String?> { get }
 
     func recipientSelected(_: Recipient)
@@ -40,7 +39,6 @@ extension SelectRecipient {
         // MARK: - Subject
         let recipientSearchSubject = BehaviorRelay<String?>(value: nil)
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let searchErrorSubject = BehaviorRelay<String?>(value: nil)
 
         init(
             nameService: NameServiceType,
@@ -74,10 +72,6 @@ extension SelectRecipient.ViewModel: SelectRecipientViewModelType {
 
     var navigationDriver: Driver<SelectRecipient.NavigatableScene?> {
         navigationSubject.asDriver()
-    }
-
-    var searchErrorDriver: Driver<String?> {
-        searchErrorSubject.asDriver()
     }
     
     // MARK: - Actions

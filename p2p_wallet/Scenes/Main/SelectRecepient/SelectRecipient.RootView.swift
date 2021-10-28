@@ -90,18 +90,36 @@ extension SelectRecipient {
                     viewModel?.closeScene()
                 })
                 .disposed(by: disposeBag)
-
-            viewModel.searchErrorDriver
-                .drive(errorLabel.rx.text)
+            
+            // error text
+            let errorTextDriver = viewModel.recipientsListViewModel
+                .dataDidChange
+                .asDriver(onErrorJustReturn: ())
+                .map { [weak self] _ -> String? in
+                    guard let self = self else {return nil}
+                    let vm = self.viewModel.recipientsListViewModel
+                    
+                    switch vm.currentState {
+                    case .error:
+                        return L10n.thereIsAnErrorOccuredPleaseTryTypingNameAgain
+                    case .loaded where vm.searchString?.isEmpty != true && vm.data.isEmpty:
+                        return L10n.thisUsernameIsNotAssociatedWithAnyone
+                    default:
+                        return nil
+                    }
+                }
+                
+            errorTextDriver.drive(errorLabel.rx.text)
                 .disposed(by: disposeBag)
 
-            let errorIsEmpty = viewModel.searchErrorDriver
-                .map { $0 == nil || $0!.isEmpty }
+            let errorIsEmpty = errorTextDriver.map {$0 == nil}
 
+            // error visibility
             errorIsEmpty
                 .drive(errorLabel.rx.isHidden)
                 .disposed(by: disposeBag)
 
+            // collectionView visibility
             errorIsEmpty
                 .map { !$0 }
                 .drive(recipientCollectionView.rx.isHidden)
