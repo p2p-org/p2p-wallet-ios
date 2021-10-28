@@ -8,7 +8,7 @@
 import Foundation
 
 protocol TabBarScenesFactory {
-    func makeHomeViewController() -> HomeViewController
+    func makeHomeViewController() -> Home.ViewController
     func makeInvestmentsViewController() -> InvestmentsViewController
 }
 
