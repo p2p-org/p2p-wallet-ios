@@ -18,7 +18,7 @@ extension MyProductsCollectionView {
                 header: .init(
                     viewClass: FirstSectionHeaderView.self
                 ),
-                cellType: HomeWalletCell.self
+                cellType: Home.WalletCell.self
             )
         }
         
