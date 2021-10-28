@@ -26,8 +26,16 @@ class BalancesOverviewView: BERoundedCornerShadowView {
         return chartView
     }()
     private lazy var sendButton = createButton(image: .buttonSend, title: L10n.send)
+        .onTap(self, action: #selector(buttonSendDidTouch))
     private lazy var receiveButton = createButton(image: .buttonReceive, title: L10n.receive)
+        .onTap(self, action: #selector(buttonReceiveDidTouch))
     private lazy var swapButton = createButton(image: .buttonSwap, title: L10n.swap)
+        .onTap(self, action: #selector(buttonSwapDidTouch))
+    
+    // MARK: - Callbacks
+    var didTapSend: (() -> Void)?
+    var didTapReceive: (() -> Void)?
+    var didTapSwap: (() -> Void)?
     
     // MARK: - Initializer
     init() {
@@ -113,10 +121,25 @@ class BalancesOverviewView: BERoundedCornerShadowView {
     
     func showLoading() {
         stackView.arrangedSubviews.forEach {$0.hideLoader()}
-        stackView.arrangedSubviews.forEach {$0.showLoader()}
+        stackView.arrangedSubviews.forEach {$0.showLoader(customGradientColor: .defaultLoaderGradientColors)}
     }
     func hideLoading() {
         stackView.arrangedSubviews.forEach {$0.hideLoader()}
+    }
+    
+    @objc
+    private func buttonSendDidTouch() {
+        didTapSend?()
+    }
+    
+    @objc
+    private func buttonReceiveDidTouch() {
+        didTapReceive?()
+    }
+    
+    @objc
+    private func buttonSwapDidTouch() {
+        didTapSwap?()
     }
 }
 
