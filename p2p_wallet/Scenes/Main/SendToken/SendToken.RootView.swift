@@ -29,7 +29,7 @@ extension SendToken {
             .onTap(self, action: #selector(chooseBTCNetwork))
         private lazy var renBTCNetworkLabel = UILabel(textSize: 15, weight: .medium)
         private lazy var feeLabel = UILabel(textSize: 15, weight: .medium)
-        private lazy var recipientView = RecipientView(viewModel: viewModel)
+        private lazy var recipientView = DestinationView(viewModel: viewModel)
         
         private lazy var errorLabel = UILabel(text: " ", textSize: 12, weight: .medium, textColor: .red, numberOfLines: 0, textAlignment: .center)
         

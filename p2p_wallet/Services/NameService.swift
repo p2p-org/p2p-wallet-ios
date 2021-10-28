@@ -14,13 +14,14 @@ protocol NameServiceType {
     var captchaAPI1Url: String {get}
     
     func getName(_ owner: String) -> Single<String?>
-    func getOwner(_ name: String) -> Single<String?>
+    func getOwnerAddress(_ name: String) -> Single<String?>
+    func getOwners(_ name: String) -> Single<[NameService.Owner]>
     func post(name: String, params: NameService.PostParams) -> Single<NameService.PostResponse>
 }
 
 extension NameServiceType {
     func isNameAvailable(_ name: String) -> Single<Bool> {
-        getOwner(name).map {$0 == nil}
+        getOwnerAddress(name).map {$0 == nil}
     }
 }
 
@@ -30,31 +31,25 @@ struct NameService: NameServiceType {
     var captchaAPI1Url: String {endpoint + "/auth/gt/register"}
     
     func getName(_ owner: String) -> Single<String?> {
-        (request(url: endpoint + "/lookup/\(owner)") as Single<[Name]>)
+        getNames(owner)
             .map {$0.last(where: {$0.name != nil})?.name}
     }
-    
-    func getOwner(_ name: String) -> Single<String?> {
-        (request(url: endpoint + "/\(name)") as Single<Owner?>)
+
+    func getOwners(_ name: String) -> Single<[Owner]> {
+        catchNotFound(
+            observable: request(url: endpoint + "/resolve/\(name)"),
+            defaultValue: []
+        )
+    }
+
+    func getOwnerAddress(_ name: String) -> Single<String?> {
+        let getAddress = getOwner(name)
             .map {$0?.owner}
-            .catch { error in
-                if let error = error as? AFError {
-                    switch error {
-                    case .responseValidationFailed(let reason):
-                        switch reason {
-                        case .unacceptableStatusCode(let code):
-                            if code == 404 {
-                                return .just(nil)
-                            }
-                        default:
-                            break
-                        }
-                    default:
-                        break
-                    }
-                }
-                throw error
-            }
+
+        return catchNotFound(
+            observable: getAddress,
+            defaultValue: nil
+        )
     }
     
     func post(name: String, params: PostParams) -> Single<PostResponse> {
@@ -71,12 +66,32 @@ struct NameService: NameServiceType {
                 .take(1)
                 .asSingle()
                 .debug()
-                .map {_, data in
+                .map { $1 }
+                .map { data in
                     try JSONDecoder().decode(PostResponse.self, from: data)
                 }
         } catch {
             return .error(error)
         }
+    }
+
+    private func getOwner(_ name: String) -> Single<Owner?> {
+        request(url: endpoint + "/\(name)")
+    }
+
+    private func getNames(_ owner: String) -> Single<[Name]> {
+        request(url: endpoint + "/lookup/\(owner)")
+    }
+
+    private func catchNotFound<T>(observable: Single<T>, defaultValue: T) -> Single<T> {
+        observable
+            .catch { error in
+                guard case AFError.responseValidationFailed(.unacceptableStatusCode(404)) = error else {
+                    throw error
+                }
+
+                return .just(defaultValue)
+            }
     }
     
     private func request<T: Decodable>(url: String) -> Single<T> {
@@ -85,7 +100,8 @@ struct NameService: NameServiceType {
             .responseData()
             .take(1)
             .asSingle()
-            .map {_, data in
+            .map { $1 }
+            .map { data in
                 try JSONDecoder().decode(T.self, from: data)
             }
     }
@@ -97,15 +113,17 @@ extension NameService {
         let name: String?
         let parent: String?
     }
-    
+
     struct Owner: Decodable {
         let parentName, owner, ownerClass: String
+        let name: String?
 //        let data: [JSONAny]
         
         enum CodingKeys: String, CodingKey {
             case parentName = "parent_name"
             case owner
             case ownerClass = "class"
+            case name
 //            case data
         }
     }

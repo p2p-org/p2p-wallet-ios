@@ -8,31 +8,19 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import UIKit
 
 extension SendToken {
-    class RecipientView: BEView {
+    class DestinationView: BEView {
         // MARK: - Properties
         @Injected private var analyticsManager: AnalyticsManagerType
         private let disposeBag = DisposeBag()
         private let viewModel: SendTokenViewModelType
         
         // MARK: - Subviews
-        private lazy var receiveAtLeastLabel = UILabel(text: nil, textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 1, textAlignment: .right)
-        private lazy var addressStackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-            walletIconView, addressTextField, clearAddressButton, qrCodeImageView
-        ])
-        private lazy var walletIconView = UIImageView(width: 24, height: 24, image: .walletIcon, tintColor: .a3a5ba)
-            .padding(.init(all: 10), backgroundColor: .white.onDarkMode(.h404040), cornerRadius: 12)
-        private lazy var addressTextField: UITextField = {
-            let textField = UITextField(height: 44, backgroundColor: .clear, placeholder: L10n.walletAddress, autocorrectionType: .none, autocapitalizationType: UITextAutocapitalizationType.none, spellCheckingType: .no, horizontalPadding: 8)
-            textField.attributedPlaceholder = NSAttributedString(string: L10n.walletAddress, attributes: [.foregroundColor: UIColor.a3a5ba.onDarkMode(.h5887ff)])
-            return textField
-        }()
-        private lazy var clearAddressButton = UIImageView(width: 24, height: 24, image: .closeFill, tintColor: UIColor.black.withAlphaComponent(0.6))
-            .onTap(self, action: #selector(clearDestinationAddress))
-        private lazy var qrCodeImageView = UIImageView(width: 35, height: 35, image: .scanQr3, tintColor: .a3a5ba)
-            .onTap(self, action: #selector(scanQrCode))
-        
+        private let receiveAtLeastLabel = UILabel(text: nil, textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 1, textAlignment: .right)
+        private let addressView: AddressView
+
         private lazy var checkingAddressValidityView = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fill) {
             checkingAddressValidityIndicatorView
             
@@ -40,7 +28,7 @@ extension SendToken {
                 .padding(.init(x: 20, y: 0))
         }
         
-        private lazy var checkingAddressValidityIndicatorView = UIActivityIndicatorView()
+        private let checkingAddressValidityIndicatorView = UIActivityIndicatorView()
         
         private lazy var noFundAddressView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill) {
             noFundAddressViewLabel
@@ -51,16 +39,16 @@ extension SendToken {
                 UILabel(text: L10n.imSureItSCorrect, textSize: 15, weight: .semibold)
                 ignoreNoFundAddressSwitch
             }
-            
         }
         
-        private lazy var noFundAddressViewLabel = UILabel(text: L10n.ThisAddressHasNoFunds.areYouSureItSCorrect, textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0)
+        private let noFundAddressViewLabel = UILabel(text: L10n.ThisAddressHasNoFunds.areYouSureItSCorrect, textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0)
         
-        private lazy var ignoreNoFundAddressSwitch = UISwitch()
+        private let ignoreNoFundAddressSwitch = UISwitch()
         
         // MARK: - Initializer
         init(viewModel: SendTokenViewModelType) {
             self.viewModel = viewModel
+            addressView = AddressView(viewModel: viewModel)
             super.init(frame: .zero)
         }
         
@@ -75,20 +63,22 @@ extension SendToken {
             let contentView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill) {
                 
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .top, distribution: .fill) {
-                    UILabel(text: L10n.to, textSize: 15, weight: .semibold)
+                    UILabel(
+                        text: L10n.sendTo,
+                        textSize: 15,
+                        weight: .semibold
+                    )
                     receiveAtLeastLabel
                 }
                 
-                addressStackView
+                addressView
                     .padding(.init(all: 8), backgroundColor: .a3a5ba.onDarkMode(.h8d8d8d).withAlphaComponent(0.1), cornerRadius: 12)
                 
                 checkingAddressValidityView
                     
                 noFundAddressView
             }
-                .padding(.init(all: 16), cornerRadius: 12)
-                .border(width: 1, color: .separator)
-            
+
             addSubview(contentView)
             contentView.autoPinEdgesToSuperviewEdges()
         }
@@ -109,57 +99,13 @@ extension SendToken {
             viewModel.renBTCInfoDriver.map {$0?.network != .bitcoin}
                 .drive(receiveAtLeastLabel.rx.isHidden)
                 .disposed(by: disposeBag)
-            
-            // address
-            addressTextField.rx.text
-                .skip(while: {$0?.isEmpty == true})
-                .subscribe(onNext: {[weak self] address in
-                    self?.viewModel.enterWalletAddress(address)
-                })
-                .disposed(by: disposeBag)
-            
-            addressTextField.rx.controlEvent([.editingDidEnd])
-                .asObservable()
-                .subscribe(onNext: { [weak self] _ in
-                    self?.analyticsManager.log(event: .sendAddressKeydown)
-                })
-                .disposed(by: disposeBag)
-            
+                        
             // ignore no fund address
             ignoreNoFundAddressSwitch.rx.isOn
                 .skip(while: {!$0})
                 .subscribe(onNext: {[weak self] isIgnored in
                     self?.viewModel.ignoreEmptyBalance(isIgnored)
                 })
-                .disposed(by: disposeBag)
-            
-            // receiver address
-            viewModel.receiverAddressDriver
-                .drive(addressTextField.rx.text)
-                .disposed(by: disposeBag)
-            
-            viewModel.receiverAddressDriver
-                .map {[weak self] address in
-                    guard let address = address else {return true}
-                    return !address.matches(
-                        oneOf: .publicKey, .bitcoinAddress(isTestnet: self?.viewModel.isTestNet() ?? true)
-                    )
-                }
-                .drive(walletIconView.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            let destinationAddressInputEmpty = viewModel.receiverAddressDriver
-                .map {$0 == nil || $0!.isEmpty}
-            
-            destinationAddressInputEmpty
-                .drive(clearAddressButton.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            let destinationAddressInputNotEmpty = destinationAddressInputEmpty
-                .map {!$0}
-            
-            destinationAddressInputNotEmpty
-                .drive(qrCodeImageView.rx.isHidden)
                 .disposed(by: disposeBag)
             
             // no fund
@@ -203,7 +149,7 @@ extension SendToken {
     }
 }
 
-private extension SendToken.RecipientView {
+private extension SendToken.DestinationView {
     @objc func clearDestinationAddress() {
         viewModel.clearDestinationAddress()
     }
