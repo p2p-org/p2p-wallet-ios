@@ -544,3 +544,4 @@
 "Result" = "Résultat";
 "Send to SOL or any SPL token address" = "Envoyer à SOL ou à n'importe quelle adresse de jeton SPL";
 "This username is not associated with anyone" = "Ce nom d'utilisateur n'est associé à personne";
+"There is an error occured, please try typing name again." = "Une erreur s'est produite, veuillez réessayer de saisir le nom.";

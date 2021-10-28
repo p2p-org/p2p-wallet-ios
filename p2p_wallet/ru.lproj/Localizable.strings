@@ -544,3 +544,4 @@
 "Result" = "Результат";
 "Send to SOL or any SPL token address" = "Отправить на SOL или любой адрес токена SPL";
 "This username is not associated with anyone" = "Это имя пользователя ни с кем не связано";
+"There is an error occured, please try typing name again." = "Произошла ошибка, попробуйте ввести имя еще раз.";
