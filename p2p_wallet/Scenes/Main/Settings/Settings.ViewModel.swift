@@ -23,6 +23,7 @@ protocol ChangeFiatResponder {
 }
 
 protocol SettingsViewModelType {
+    var selectableLanguages: [LocalizedLanguage: Bool] { get }
     var navigationDriver: Driver<Settings.NavigatableScene?> {get}
     var usernameDriver: Driver<String?> {get}
     var didBackupDriver: Driver<Bool> {get}
@@ -67,6 +68,7 @@ extension Settings {
         @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
         @Injected private var changeLanguageResponder: ChangeLanguageResponder
+        @Injected private var localizationManager: LocalizationManagerType
         let changeFiatResponder: ChangeFiatResponder
         let renVMService: RenVMLockAndMintServiceType
         
@@ -116,6 +118,10 @@ extension Settings {
 }
 
 extension Settings.ViewModel: SettingsViewModelType {
+    var selectableLanguages: [LocalizedLanguage: Bool] {
+        localizationManager.selectableLanguages()
+    }
+
     var navigationDriver: Driver<Settings.NavigatableScene?> {
         navigationSubject.asDriver()
     }
@@ -285,6 +291,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func setLanguage(_ language: LocalizedLanguage) {
+        localizationManager.changeCurrentLanguage(language)
         changeLanguageResponder.languageDidChange(to: language)
     }
     

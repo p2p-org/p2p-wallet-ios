@@ -8,14 +8,7 @@
 import Foundation
 
 extension Bundle {
-    fileprivate static var current: Bundle = {
-        if let bundlePath = Bundle.main.path(forResource: Defaults.localizedLanguage.code, ofType: "lproj")
-        {
-            return Bundle(path: bundlePath) ?? main
-        }
-        
-        return main
-    }()
+    fileprivate static var current: Bundle = valueForCurrentBundle()
     
     static func swizzleLocalization() {
         swizzle(
@@ -28,18 +21,17 @@ extension Bundle {
     @objc func myLocalizedString(forKey key: String, value: String?, table: String?) -> String {
         Bundle.current.myLocalizedString(forKey: key, value: value, table: table)
     }
+
+    fileprivate static func valueForCurrentBundle() -> Bundle {
+        let currentLanguage = LocalizationManager().currentLanguage()
+
+        return main.path(forResource: currentLanguage.code, ofType: "lproj")
+            .flatMap(Bundle.init(path:)) ?? main
+    }
 }
 
 extension UIApplication {
-    static func changeLanguage(to language: LocalizedLanguage) {
-        Defaults.localizedLanguage = language
-        
-        // change current bundle
-        if let bundlePath = Bundle.main.path(forResource: Defaults.localizedLanguage.code, ofType: "lproj")
-        {
-            Bundle.current = Bundle(path: bundlePath) ?? Bundle.main
-        } else {
-            Bundle.current = Bundle.main
-        }
+    static func languageChanged() {
+        Bundle.current = Bundle.valueForCurrentBundle()
     }
 }
