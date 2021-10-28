@@ -10,10 +10,10 @@ import RxSwift
 import RxCocoa
 
 protocol SelectRecipientViewModelType: AnyObject {
+    var recipientsListViewModel: SelectRecipient.RecipientsListViewModel {get}
+    
     var navigationDriver: Driver<SelectRecipient.NavigatableScene?> { get }
     var recipientSearchDriver: Driver<String?> { get }
-    var searchErrorDriver: Driver<String?> { get }
-    var recipientSectionsDriver: Driver<[RecipientsSection]> { get }
     var recipientSearchSubject: BehaviorRelay<String?> { get }
 
     func recipientSelected(_: Recipient)
@@ -34,11 +34,11 @@ extension SelectRecipient {
         private let disposeBag = DisposeBag()
         private let recipientSelectedHandler: (Recipient) -> Void
         
+        let recipientsListViewModel = RecipientsListViewModel()
+        
         // MARK: - Subject
         let recipientSearchSubject = BehaviorRelay<String?>(value: nil)
-        private let recipientSectionsSubject = BehaviorRelay<[RecipientsSection]>(value: [])
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let searchErrorSubject = BehaviorRelay<String?>(value: nil)
 
         init(
             nameService: NameServiceType,
@@ -56,72 +56,8 @@ extension SelectRecipient {
             recipientSearchSubject
                 .subscribe(
                     onNext: { [weak self] searchText in
-                        self?.findRecipients(for: searchText)
-                    }
-                )
-                .disposed(by: disposeBag)
-        }
-
-        private func findRecipients(for text: String?) {
-            guard let text = text, !text.isEmpty else {
-                return recipientSectionsSubject.accept([])
-            }
-
-            // < 40 is a logic from web
-            text.count < 40 ? findRecipientsBy(name: text) : findRecipientBy(address: text)
-        }
-
-        private func findRecipientsBy(name: String) {
-            nameService
-                .getOwners(name)
-                .map { [weak addressFormatter] in
-                    guard let addressFormatter = addressFormatter else { return [] }
-
-                    return $0.map {
-                        Recipient(
-                            address: $0.owner,
-                            shortAddress: addressFormatter.shortAddress(of: $0.owner),
-                            name: $0.name
-                        )
-                    }
-                }
-                .map {
-                    $0.isEmpty ? [] : [RecipientsSection(header: L10n.foundAssociatedWalletAddress, items: $0)]
-                }
-                .subscribe(
-                    onSuccess: { [weak self] recipientSections in
-                        self?.searchErrorSubject.accept(
-                            recipientSections.isEmpty && !name.isEmpty
-                                ? L10n.thisUsernameIsNotAssociatedWithAnyone
-                                : nil
-                        )
-                        self?.recipientSectionsSubject.accept(recipientSections)
-                    }
-                )
-                .disposed(by: disposeBag)
-        }
-
-        private func findRecipientBy(address: String) {
-            nameService
-                .getName(address)
-                .map { [weak addressFormatter] in
-                    guard let addressFormatter = addressFormatter else { return [] }
-
-                    let recipient = Recipient(
-                        address: address,
-                        shortAddress: addressFormatter.shortAddress(of: address),
-                        name: $0
-                    )
-
-                    return [recipient]
-                }
-                .map {
-                    [RecipientsSection(header: L10n.result, items: $0)]
-                }
-                .subscribe(
-                    onSuccess: { [weak self] recipientSections in
-                        self?.searchErrorSubject.accept(nil)
-                        self?.recipientSectionsSubject.accept(recipientSections)
+                        self?.recipientsListViewModel.searchString = searchText
+                        self?.recipientsListViewModel.reload()
                     }
                 )
                 .disposed(by: disposeBag)
@@ -130,21 +66,12 @@ extension SelectRecipient {
 }
 
 extension SelectRecipient.ViewModel: SelectRecipientViewModelType {
-    var recipientSectionsDriver: Driver<[RecipientsSection]> {
-        recipientSectionsSubject
-            .asDriver()
-    }
-
     var recipientSearchDriver: Driver<String?> {
         recipientSearchSubject.asDriver()
     }
 
     var navigationDriver: Driver<SelectRecipient.NavigatableScene?> {
         navigationSubject.asDriver()
-    }
-
-    var searchErrorDriver: Driver<String?> {
-        searchErrorSubject.asDriver()
     }
     
     // MARK: - Actions

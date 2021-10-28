@@ -6,15 +6,14 @@
 //
 
 import UIKit
+import BECollectionView
 
 extension SelectRecipient {
-    final class RecipientCell: UITableViewCell {
-        static let cellIdentifier = "RecipientCell"
+    final class RecipientCell: UICollectionViewCell, BECollectionViewCell {
         private let recipientView = RecipientView()
-
-        override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-            super.init(style: style, reuseIdentifier: reuseIdentifier)
-
+        
+        override init(frame: CGRect) {
+            super.init(frame: frame)
             addSubviews()
             setConstraints()
         }
@@ -36,6 +35,20 @@ extension SelectRecipient {
             recipientView.autoAlignAxis(toSuperviewAxis: .horizontal)
             recipientView.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             recipientView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
+        }
+        
+        // MARK: - BECollectionViewCell implementation
+        func setUp(with item: AnyHashable?) {
+            guard let recipient = item as? Recipient else {return}
+            recipientView.setRecipient(recipient)
+        }
+        
+        func hideLoading() {
+            recipientView.hideLoader()
+        }
+        
+        func showLoading() {
+            recipientView.showLoader()
         }
     }
 }

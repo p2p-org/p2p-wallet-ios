@@ -543,3 +543,4 @@
 "Found associated wallet address" = "Adresse de portefeuille associée trouvée";
 "Result" = "Résultat";
 "This username is not associated with anyone" = "Ce nom d'utilisateur n'est associé à personne";
+"There is an error occured, please try typing name again." = "Une erreur s'est produite, veuillez réessayer de saisir le nom.";
