@@ -38,5 +38,10 @@ extension ___VARIABLE_scene___ {
         private func bind() {
             
         }
+        
+        // MARK: - Actions
+        @objc private func showDetail() {
+            viewModel.navigate(to: detail)
+        }
     }
 }

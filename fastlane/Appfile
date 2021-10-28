@@ -1,8 +1,8 @@
-app_identifier("org.p2p.p2p-wallet") # The bundle identifier of your app
+app_identifier("org.p2p.wallet") # The bundle identifier of your app
 apple_id("bigearsenal@gmail.com") # Your Apple email address
 
-itc_team_id("119657954") # App Store Connect Team ID
-team_id("5G8856SBG8") # Developer Portal Team ID
+itc_team_id("1288494456") # App Store Connect Team ID
+team_id("E23BKKUH5D") # Developer Portal Team ID
 
 # For more information about the Appfile, see:
 #     https://docs.fastlane.tools/advanced/#appfile

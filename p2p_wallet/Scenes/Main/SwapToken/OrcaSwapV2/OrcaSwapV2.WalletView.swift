@@ -225,12 +225,6 @@ extension OrcaSwapV2 {
                 .drive(equityValueLabel.rx.text)
                 .disposed(by: disposeBag)
             
-            // input amount
-            viewModel.isTokenPairValidDriver
-                .map {$0.value != false}
-                .drive(amountTextField.rx.isUserInteractionEnabled)
-                .disposed(by: disposeBag)
-            
             amountTextField.rx.text
                 .filter {[weak self] _ in self?.amountTextField.isFirstResponder == true}
                 .distinctUntilChanged()
@@ -260,6 +254,7 @@ extension OrcaSwapV2 {
         }
         
         @objc private func useAllBalance() {
+            amountTextField.resignFirstResponder()
             viewModel.useAllBalance()
         }
         

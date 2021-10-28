@@ -33,6 +33,7 @@ extension CreateSecurityKeys {
         private lazy var savedCheckBox: BECheckbox = {
             let checkbox = BECheckbox(width: 20, height: 20, cornerRadius: 6)
             checkbox.layer.borderColor = UIColor.a3a5ba.cgColor
+            checkbox.isUserInteractionEnabled = false // forward interaction to parent view
             return checkbox
         }()
         
@@ -82,12 +83,14 @@ extension CreateSecurityKeys {
                 UILabel(text: L10n.securityKey.uppercaseFirst, textSize: 27, weight: .bold),
                 BEStackViewSpacing(15),
                 phrasesListViews,
-                BEStackViewSpacing(27),
+                BEStackViewSpacing(16),
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
                     savedCheckBox,
                     UILabel(text: L10n.iHaveSavedTheseWordsInASafePlace, weight: .medium, textColor: .textSecondary)
-                ]),
-                BEStackViewSpacing(27),
+                ])
+                    .padding(.init(x: 0, y: 10))
+                    .onTap(self, action: #selector(toggleCheckbox)),
+                BEStackViewSpacing(16),
                 saveToICloudButton
                     .onTap(self, action: #selector(saveToICloud)),
                 BEStackViewSpacing(16),
@@ -110,12 +113,6 @@ extension CreateSecurityKeys {
                 .drive(savedCheckBox.rx.isSelected)
                 .disposed(by: disposeBag)
             
-            savedCheckBox.rx.tap
-                .subscribe(onNext: {[weak self] in
-                    self?.viewModel.toggleCheckbox(selected: self?.savedCheckBox.isSelected ?? false)
-                })
-                .disposed(by: disposeBag)
-            
             viewModel.isCheckboxSelectedDriver
                 .drive(continueButton.rx.isEnabled)
                 .disposed(by: disposeBag)
@@ -124,6 +121,10 @@ extension CreateSecurityKeys {
         // MARK: - Actions
         @objc func createPhrases() {
             viewModel.createPhrases()
+        }
+        
+        @objc func toggleCheckbox() {
+            viewModel.toggleCheckbox()
         }
         
         @objc func saveToICloud() {

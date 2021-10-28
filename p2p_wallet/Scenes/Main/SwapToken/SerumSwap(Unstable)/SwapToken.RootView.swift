@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import Action
 
-extension SwapToken {
+extension SerumSwapV1 {
     class RootView: ScrollableVStackRootView {
         // MARK: - Constants
         private let disposeBag = DisposeBag()
@@ -240,7 +240,7 @@ extension SwapToken {
     }
 }
 
-extension SwapToken.RootView {
+extension SerumSwapV1.RootView {
     private func setUp(initialState: LoadableState) {
         removeErrorView()
         stackView.isHidden = false

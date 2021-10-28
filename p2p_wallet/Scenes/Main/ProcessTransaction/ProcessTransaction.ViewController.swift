@@ -16,11 +16,11 @@ extension ProcessTransaction {
     class ViewController: WLIndicatorModalVC {
         
         // MARK: - Properties
-        private let viewModel: ViewModel
+        private let viewModel: ProcessTransactionViewModelType
         weak var delegate: ProcessTransactionViewControllerDelegate?
         
         // MARK: - Initializer
-        init(viewModel: ViewModel)
+        init(viewModel: ProcessTransactionViewModelType)
         {
             self.viewModel = viewModel
             super.init()
@@ -45,13 +45,13 @@ extension ProcessTransaction {
         
         override func bind() {
             super.bind()
-            viewModel.output.navigationScene
+            viewModel.navigatableSceneDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
         }
         
         // MARK: - Navigation
-        private func navigate(to scene: NavigatableScene) {
+        private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .showExplorer(let transactionID):
                 self.showWebsite(url: "https://explorer.solana.com/tx/" + transactionID)
@@ -66,6 +66,8 @@ extension ProcessTransaction {
                 }
             case .cancel:
                 self.dismiss(animated: true, completion: nil)
+            case .none:
+                break
             }
         }
     }

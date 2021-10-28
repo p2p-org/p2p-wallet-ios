@@ -22,7 +22,11 @@
 		417DC9152722F88C0048106B /* SelectRecipient.AddressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417DC9142722F88C0048106B /* SelectRecipient.AddressView.swift */; };
 		417DC9172725A45F0048106B /* SelectRecipient.RecipientCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417DC9162725A45F0048106B /* SelectRecipient.RecipientCell.swift */; };
 		417DC9192726F2780048106B /* RecipientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417DC9182726F2780048106B /* RecipientView.swift */; };
-		90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */; };
+		846993CA42DD22FB3BA39BB1 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699683F51C51791FD590A0 /* Utils.swift */; };
+		8469949E8213E3F341DA2668 /* MoonpayProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699587C4376EAA8208663D /* MoonpayProvider.swift */; };
+		846996337A75FF7A91B26EEE /* BuyTokenWidgetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699D9AB33F93112713FF93 /* BuyTokenWidgetViewController.swift */; };
+		8469999E0EBB5974E6962119 /* BuyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469967326CA93BB243D75A9 /* BuyProvider.swift */; };
+		84699B6058901C761662F138 /* TransakProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C355CE538F8E06A9A33 /* TransakProvider.swift */; };
 		BC036C162692C070005C1BEC /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC036C152692C070005C1BEC /* Collection+Extensions.swift */; };
 		BC036C1B269449A7005C1BEC /* AccountNotificationsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC036C1A269449A7005C1BEC /* AccountNotificationsRepository.swift */; };
 		BC036C3126959F6C005C1BEC /* BaseCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC036C3026959F6C005C1BEC /* BaseCollectionReusableView.swift */; };
@@ -57,7 +61,6 @@
 		BC134FAB26FD874500DB15BF /* RestoreWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC134FAA26FD874500DB15BF /* RestoreWallet.swift */; };
 		BC134FAD26FD8E0800DB15BF /* ResetPinCodeWithSeedPhrases.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC134FAC26FD8E0800DB15BF /* ResetPinCodeWithSeedPhrases.swift */; };
 		BC134FAF26FDA6F600DB15BF /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC134FAE26FDA6F600DB15BF /* Onboarding.swift */; };
-		BC1460C62685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */; };
 		BC15EEF026FDD04600F30605 /* DerivableAccounts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC15EEEF26FDD04600F30605 /* DerivableAccounts.swift */; };
 		BC15EEF226FDE10A00F30605 /* DerivablePaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC15EEF126FDE10A00F30605 /* DerivablePaths.swift */; };
 		BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC185EF726E20CFF00280FE6 /* SwapProvider.swift */; };
@@ -73,7 +76,7 @@
 		BC19DF552701AC4400A3A8D8 /* SendToken.DestinationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC19DF542701AC4400A3A8D8 /* SendToken.DestinationView.swift */; };
 		BC19DF572701B7A100A3A8D8 /* SingleSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC19DF562701B7A100A3A8D8 /* SingleSelectionViewController.swift */; };
 		BC19DF592701BC9100A3A8D8 /* WLDefaultOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC19DF582701BC9100A3A8D8 /* WLDefaultOptionView.swift */; };
-		BC1BEBF926CDF6520049A44C /* SwapToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF526CDF6520049A44C /* SwapToken.swift */; };
+		BC1BEBF926CDF6520049A44C /* SerumSwapV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF526CDF6520049A44C /* SerumSwapV1.swift */; };
 		BC1BEBFA26CDF6520049A44C /* SwapToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF626CDF6520049A44C /* SwapToken.ViewController.swift */; };
 		BC1BEBFC26CDF6520049A44C /* SwapToken.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF826CDF6520049A44C /* SwapToken.RootView.swift */; };
 		BC1BEBFE26CDFE290049A44C /* SwapToken.WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBFD26CDFE290049A44C /* SwapToken.WalletView.swift */; };
@@ -96,7 +99,6 @@
 		BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */; };
 		BC23B5A1254FBE9500886C9C /* BaseCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */; };
 		BC28A9B126B3B0440031BE42 /* WLSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC28A9B026B3B0440031BE42 /* WLSpinnerView.swift */; };
-		BC290A00256B9C95002A727C /* OrcaSwapV1.WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2909FF256B9C95002A727C /* OrcaSwapV1.WalletView.swift */; };
 		BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC290A04256BA36F002A727C /* TokenAmountTextField.swift */; };
 		BC2DA294260B079100B50738 /* WLAddTokenButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2DA293260B079100B50738 /* WLAddTokenButton.swift */; };
 		BC2DA29A260B0AD700B50738 /* CreateTokenHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2DA299260B0AD700B50738 /* CreateTokenHandler.swift */; };
@@ -123,7 +125,6 @@
 		BC32A361254A761B002156F0 /* Button+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A360254A761B002156F0 /* Button+Extensions.swift */; };
 		BC32A393254A77A9002156F0 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A392254A77A9002156F0 /* UIViewController+Extensions.swift */; };
 		BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A3AB254A8884002156F0 /* AccountStorage.swift */; };
-		BC38555326AE7BEA00BD8BF7 /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC38555226AE7BEA00BD8BF7 /* LocalizationTests.swift */; };
 		BC38555926AE971400BD8BF7 /* ChooseWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC38555526AE971400BD8BF7 /* ChooseWallet.swift */; };
 		BC38555A26AE971400BD8BF7 /* ChooseWallet.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC38555626AE971400BD8BF7 /* ChooseWallet.ViewController.swift */; };
 		BC38555B26AE971400BD8BF7 /* ChooseWallet.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC38555726AE971400BD8BF7 /* ChooseWallet.ViewModel.swift */; };
@@ -175,6 +176,7 @@
 		BC4B9EC127197DF5005B9ECA /* OrcaSwapV2.Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EC027197DF5005B9ECA /* OrcaSwapV2.Settings.swift */; };
 		BC4B9EC3271988A8005B9ECA /* OrcaSwapV2.WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EC2271988A8005B9ECA /* OrcaSwapV2.WalletView.swift */; };
 		BC4B9EC5271A791A005B9ECA /* SolanaSDK+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EC4271A791A005B9ECA /* SolanaSDK+Extensions.swift */; };
+		BC4B9ED7272428A0005B9ECA /* Terms_of_service.txt in Resources */ = {isa = PBXBuildFile; fileRef = BC4B9ED6272428A0005B9ECA /* Terms_of_service.txt */; };
 		BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */; };
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */; };
@@ -204,7 +206,6 @@
 		BC5ED749256237AB0030572D /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED748256237AB0030572D /* EmptyView.swift */; };
 		BC5ED7532562687F0030572D /* PricesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED7522562687F0030572D /* PricesManager.swift */; };
 		BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED757256269FE0030572D /* PriceFetcher.swift */; };
-		BC604A2026C5235A00B1DF0F /* OrcaSwapV1.Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC604A1F26C5235A00B1DF0F /* OrcaSwapV1.Settings.swift */; };
 		BC604A2226C6121E00B1DF0F /* PayingToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC604A2126C6121E00B1DF0F /* PayingToken.swift */; };
 		BC604A2526C65EFF00B1DF0F /* SwapToken.SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC604A2426C65EFF00B1DF0F /* SwapToken.SettingsViewController.swift */; };
 		BC604A2726C65F5000B1DF0F /* SwapToken.SlippageSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC604A2626C65F4F00B1DF0F /* SwapToken.SlippageSettingsViewController.swift */; };
@@ -213,7 +214,6 @@
 		BC63110B26D78AE600516C38 /* SwapProviderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC63110A26D78AE600516C38 /* SwapProviderType.swift */; };
 		BC63110D26D78F9800516C38 /* SerumSwap+SwapProviderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC63110C26D78F9800516C38 /* SerumSwap+SwapProviderType.swift */; };
 		BC6342E1268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */; };
-		BC6366DB255A8D8300D585FD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC6366DA255A8D8300D585FD /* GoogleService-Info.plist */; };
 		BC65DFEF261D695200E436C7 /* TransactionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DFEE261D695200E436C7 /* TransactionCell.swift */; };
 		BC65DFF4261D6AD400E436C7 /* TransactionImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DFF3261D6AD400E436C7 /* TransactionImageView.swift */; };
 		BC65DFFA261D6D3F00E436C7 /* SwapTransactionImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DFF9261D6D3F00E436C7 /* SwapTransactionImageView.swift */; };
@@ -291,6 +291,7 @@
 		BCA7D83427290A29007B070A /* BECollectionView.md in Resources */ = {isa = PBXBuildFile; fileRef = BCA7D83327290A29007B070A /* BECollectionView.md */; };
 		BCA7D83727290F33007B070A /* SelectRecipient.RecipientsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA7D83627290F33007B070A /* SelectRecipient.RecipientsListViewModel.swift */; };
 		BCA7D83927291BCE007B070A /* SelectRecipient.RecipientsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA7D83827291BCE007B070A /* SelectRecipient.RecipientsCollectionView.swift */; };
+		BCA7D83B272A6F89007B070A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BCA7D83A272A6F89007B070A /* GoogleService-Info.plist */; };
 		BCA93F5325E77C240081DDF6 /* TokenSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5025E77C240081DDF6 /* TokenSettingsViewModel.swift */; };
 		BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5125E77C240081DDF6 /* TokenSettingsRootView.swift */; };
 		BCA93F5525E77C240081DDF6 /* TokenSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5225E77C240081DDF6 /* TokenSettingsViewController.swift */; };
@@ -328,7 +329,6 @@
 		BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2231825412AF8002D997F /* AppDelegate.swift */; };
 		BCB2232225412AF8002D997F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232125412AF8002D997F /* Assets.xcassets */; };
 		BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232325412AF9002D997F /* LaunchScreen.storyboard */; };
-		BCB2233B25412AF9002D997F /* p2p_walletUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */; };
 		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58379255D29C500B10F65 /* WLBottomSheet.swift */; };
 		BCB7C7C62665EEC400FEC68E /* SendToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C22665EEC400FEC68E /* SendToken.swift */; };
@@ -340,10 +340,6 @@
 		BCB7C7D22667336800FEC68E /* ProcessTransaction.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7CE2667336800FEC68E /* ProcessTransaction.ViewModel.swift */; };
 		BCB7C7D32667336800FEC68E /* ProcessTransaction.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7CF2667336800FEC68E /* ProcessTransaction.RootView.swift */; };
 		BCB7C7D6266743AC00FEC68E /* ProcessTransaction.RootView+Layouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7D5266743AC00FEC68E /* ProcessTransaction.RootView+Layouts.swift */; };
-		BCB7C7DD2668D29500FEC68E /* OrcaSwapV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7D92668D29500FEC68E /* OrcaSwapV1.swift */; };
-		BCB7C7DE2668D29500FEC68E /* OrcaSwapV1.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7DA2668D29500FEC68E /* OrcaSwapV1.ViewController.swift */; };
-		BCB7C7DF2668D29500FEC68E /* OrcaSwapV1.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7DB2668D29500FEC68E /* OrcaSwapV1.ViewModel.swift */; };
-		BCB7C7E02668D29500FEC68E /* OrcaSwapV1.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7DC2668D29500FEC68E /* OrcaSwapV1.RootView.swift */; };
 		BCB7C7E22669E50B00FEC68E /* TransactionSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7E12669E50B00FEC68E /* TransactionSummaryView.swift */; };
 		BCB92B8025B5386F00FF615E /* WLIntroVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB92B7F25B5386F00FF615E /* WLIntroVC.swift */; };
 		BCBE148725EF3CF90014BCE5 /* EditableWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE148625EF3CF90014BCE5 /* EditableWalletCell.swift */; };
@@ -394,7 +390,6 @@
 		BCE42E1A25DFA5100021540E /* RestoreWallet.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE42E1725DFA5100021540E /* RestoreWallet.ViewController.swift */; };
 		BCE77E6326536817000B68BB /* DerivableAccounts.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE77E6226536817000B68BB /* DerivableAccounts.ViewController.swift */; };
 		BCE77E6626537067000B68BB /* DerivableAccounts.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE77E6526537067000B68BB /* DerivableAccounts.ViewModel.swift */; };
-		BCE77E682653711B000B68BB /* ViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE77E672653711B000B68BB /* ViewModelType.swift */; };
 		BCEA06BE2542FD3F0006E4C3 /* Asset+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */; };
 		BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */; };
 		BCEB206C25E1561200B54FEF /* TabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB206A25E1561200B54FEF /* TabBarVC.swift */; };
@@ -404,25 +399,11 @@
 		BCF241212676548200C9F158 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF241202676548200C9F158 /* MainViewModel.swift */; };
 		BCF7D953256220F100961D31 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF7D952256220F100961D31 /* ErrorView.swift */; };
 		BCFC768825E2EAB800FBE148 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFC768525E2EAB800FBE148 /* MainViewController.swift */; };
-		C1BC9C27F85EDDFE51E0FDB8 /* Pods_p2p_walletTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A342CCD45E7CDE0BA60EFBB2 /* Pods_p2p_walletTests.framework */; };
+		BCFEDBFC2727A9F0008AE4AD /* WLMarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFEDBFB2727A9F0008AE4AD /* WLMarkdownView.swift */; };
+		BCFEDBFE2727B3D7008AE4AD /* Privacy_policy.txt in Resources */ = {isa = PBXBuildFile; fileRef = BCFEDBFD2727B3D7008AE4AD /* Privacy_policy.txt */; };
+		BCFEDC002727B43C008AE4AD /* WLMarkdownVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFEDBFF2727B43C008AE4AD /* WLMarkdownVC.swift */; };
+		BCFEDC032727F860008AE4AD /* OrcaSwapV2ViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFEDC022727F860008AE4AD /* OrcaSwapV2ViewModelType.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		BCB2232C25412AF9002D997F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BCB2230D25412AF8002D997F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BCB2231425412AF8002D997F;
-			remoteInfo = "p2p wallet";
-		};
-		BCB2233725412AF9002D997F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BCB2230D25412AF8002D997F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BCB2231425412AF8002D997F;
-			remoteInfo = "p2p wallet";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1B5A5C216DC945B1D5206FAB /* Pods-p2p walletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p walletTests.debug.xcconfig"; path = "Target Support Files/Pods-p2p walletTests/Pods-p2p walletTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -447,6 +428,11 @@
 		7053CD2D5518767674E98C06 /* Pods-p2p wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p wallet/Pods-p2p wallet.release.xcconfig"; sourceTree = "<group>"; };
 		737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_wallet_p2p_walletUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EF7143B121F6324037B556D /* Pods-p2p wallet-p2p walletUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet-p2p walletUITests.debug.xcconfig"; path = "Target Support Files/Pods-p2p wallet-p2p walletUITests/Pods-p2p wallet-p2p walletUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		84699587C4376EAA8208663D /* MoonpayProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoonpayProvider.swift; sourceTree = "<group>"; };
+		8469967326CA93BB243D75A9 /* BuyProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyProvider.swift; sourceTree = "<group>"; };
+		84699683F51C51791FD590A0 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		84699C355CE538F8E06A9A33 /* TransakProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransakProvider.swift; sourceTree = "<group>"; };
+		84699D9AB33F93112713FF93 /* BuyTokenWidgetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyTokenWidgetViewController.swift; sourceTree = "<group>"; };
 		8EA884C9D04024132EED10F8 /* Pods-p2p wallet-p2p walletUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet-p2p walletUITests.release.xcconfig"; path = "Target Support Files/Pods-p2p wallet-p2p walletUITests/Pods-p2p wallet-p2p walletUITests.release.xcconfig"; sourceTree = "<group>"; };
 		A342CCD45E7CDE0BA60EFBB2 /* Pods_p2p_walletTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_walletTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB6790432D1A5F53BBDB3162 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
@@ -485,8 +471,6 @@
 		BC134FAA26FD874500DB15BF /* RestoreWallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreWallet.swift; sourceTree = "<group>"; };
 		BC134FAC26FD8E0800DB15BF /* ResetPinCodeWithSeedPhrases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPinCodeWithSeedPhrases.swift; sourceTree = "<group>"; };
 		BC134FAE26FDA6F600DB15BF /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
-		BC1460C42685BBD6000D8CFE /* p2p_walletTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "p2p_walletTests-Bridging-Header.h"; sourceTree = "<group>"; };
-		BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcherTests.swift; sourceTree = "<group>"; };
 		BC15EEEF26FDD04600F30605 /* DerivableAccounts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivableAccounts.swift; sourceTree = "<group>"; };
 		BC15EEF126FDE10A00F30605 /* DerivablePaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePaths.swift; sourceTree = "<group>"; };
 		BC185EF726E20CFF00280FE6 /* SwapProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapProvider.swift; sourceTree = "<group>"; };
@@ -502,7 +486,7 @@
 		BC19DF542701AC4400A3A8D8 /* SendToken.DestinationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.DestinationView.swift; sourceTree = "<group>"; };
 		BC19DF562701B7A100A3A8D8 /* SingleSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSelectionViewController.swift; sourceTree = "<group>"; };
 		BC19DF582701BC9100A3A8D8 /* WLDefaultOptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLDefaultOptionView.swift; sourceTree = "<group>"; };
-		BC1BEBF526CDF6520049A44C /* SwapToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.swift; sourceTree = "<group>"; };
+		BC1BEBF526CDF6520049A44C /* SerumSwapV1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerumSwapV1.swift; sourceTree = "<group>"; };
 		BC1BEBF626CDF6520049A44C /* SwapToken.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.ViewController.swift; sourceTree = "<group>"; };
 		BC1BEBF726CDF6520049A44C /* SwapToken.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.ViewModel.swift; sourceTree = "<group>"; };
 		BC1BEBF826CDF6520049A44C /* SwapToken.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.RootView.swift; sourceTree = "<group>"; };
@@ -531,7 +515,6 @@
 		BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeScannerVC.swift; sourceTree = "<group>"; };
 		BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionView.swift; sourceTree = "<group>"; };
 		BC28A9B026B3B0440031BE42 /* WLSpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLSpinnerView.swift; sourceTree = "<group>"; };
-		BC2909FF256B9C95002A727C /* OrcaSwapV1.WalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV1.WalletView.swift; sourceTree = "<group>"; };
 		BC290A04256BA36F002A727C /* TokenAmountTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAmountTextField.swift; sourceTree = "<group>"; };
 		BC2DA293260B079100B50738 /* WLAddTokenButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLAddTokenButton.swift; sourceTree = "<group>"; };
 		BC2DA299260B0AD700B50738 /* CreateTokenHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTokenHandler.swift; sourceTree = "<group>"; };
@@ -558,7 +541,6 @@
 		BC32A360254A761B002156F0 /* Button+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Button+Extensions.swift"; sourceTree = "<group>"; };
 		BC32A392254A77A9002156F0 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		BC32A3AB254A8884002156F0 /* AccountStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountStorage.swift; sourceTree = "<group>"; };
-		BC38555226AE7BEA00BD8BF7 /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 		BC38555526AE971400BD8BF7 /* ChooseWallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWallet.swift; sourceTree = "<group>"; };
 		BC38555626AE971400BD8BF7 /* ChooseWallet.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWallet.ViewController.swift; sourceTree = "<group>"; };
 		BC38555726AE971400BD8BF7 /* ChooseWallet.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseWallet.ViewModel.swift; sourceTree = "<group>"; };
@@ -611,6 +593,7 @@
 		BC4B9EC027197DF5005B9ECA /* OrcaSwapV2.Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.Settings.swift; sourceTree = "<group>"; };
 		BC4B9EC2271988A8005B9ECA /* OrcaSwapV2.WalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.WalletView.swift; sourceTree = "<group>"; };
 		BC4B9EC4271A791A005B9ECA /* SolanaSDK+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK+Extensions.swift"; sourceTree = "<group>"; };
+		BC4B9ED6272428A0005B9ECA /* Terms_of_service.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Terms_of_service.txt; sourceTree = "<group>"; };
 		BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BonfidaPricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoComparePricesFetcher+Models.swift"; sourceTree = "<group>"; };
@@ -643,7 +626,6 @@
 		BC5ED748256237AB0030572D /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		BC5ED7522562687F0030572D /* PricesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricesManager.swift; sourceTree = "<group>"; };
 		BC5ED757256269FE0030572D /* PriceFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceFetcher.swift; sourceTree = "<group>"; };
-		BC604A1F26C5235A00B1DF0F /* OrcaSwapV1.Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV1.Settings.swift; sourceTree = "<group>"; };
 		BC604A2126C6121E00B1DF0F /* PayingToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayingToken.swift; sourceTree = "<group>"; };
 		BC604A2426C65EFF00B1DF0F /* SwapToken.SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.SettingsViewController.swift; sourceTree = "<group>"; };
 		BC604A2626C65F4F00B1DF0F /* SwapToken.SlippageSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapToken.SlippageSettingsViewController.swift; sourceTree = "<group>"; };
@@ -652,7 +634,6 @@
 		BC63110A26D78AE600516C38 /* SwapProviderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapProviderType.swift; sourceTree = "<group>"; };
 		BC63110C26D78F9800516C38 /* SerumSwap+SwapProviderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SerumSwap+SwapProviderType.swift"; sourceTree = "<group>"; };
 		BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.ParsedTransaction.Status+Extensions.swift"; sourceTree = "<group>"; };
-		BC6366DA255A8D8300D585FD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BC65DFEE261D695200E436C7 /* TransactionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionCell.swift; sourceTree = "<group>"; };
 		BC65DFF3261D6AD400E436C7 /* TransactionImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionImageView.swift; sourceTree = "<group>"; };
 		BC65DFF9261D6D3F00E436C7 /* SwapTransactionImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTransactionImageView.swift; sourceTree = "<group>"; };
@@ -731,6 +712,7 @@
 		BCA7D83327290A29007B070A /* BECollectionView.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = BECollectionView.md; sourceTree = "<group>"; };
 		BCA7D83627290F33007B070A /* SelectRecipient.RecipientsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRecipient.RecipientsListViewModel.swift; sourceTree = "<group>"; };
 		BCA7D83827291BCE007B070A /* SelectRecipient.RecipientsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRecipient.RecipientsCollectionView.swift; sourceTree = "<group>"; };
+		BCA7D83A272A6F89007B070A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BCA93F5025E77C240081DDF6 /* TokenSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsViewModel.swift; sourceTree = "<group>"; };
 		BCA93F5125E77C240081DDF6 /* TokenSettingsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsRootView.swift; sourceTree = "<group>"; };
 		BCA93F5225E77C240081DDF6 /* TokenSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettingsViewController.swift; sourceTree = "<group>"; };
@@ -770,11 +752,6 @@
 		BCB2232125412AF8002D997F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BCB2232425412AF9002D997F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BCB2232625412AF9002D997F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCB2232B25412AF9002D997F /* p2p_walletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = p2p_walletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BCB2233125412AF9002D997F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCB2233625412AF9002D997F /* p2p_walletUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = p2p_walletUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = p2p_walletUITests.swift; sourceTree = "<group>"; };
-		BCB2233C25412AF9002D997F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58379255D29C500B10F65 /* WLBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBottomSheet.swift; sourceTree = "<group>"; };
 		BCB7C7C22665EEC400FEC68E /* SendToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.swift; sourceTree = "<group>"; };
@@ -786,10 +763,6 @@
 		BCB7C7CE2667336800FEC68E /* ProcessTransaction.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewModel.swift; sourceTree = "<group>"; };
 		BCB7C7CF2667336800FEC68E /* ProcessTransaction.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.RootView.swift; sourceTree = "<group>"; };
 		BCB7C7D5266743AC00FEC68E /* ProcessTransaction.RootView+Layouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessTransaction.RootView+Layouts.swift"; sourceTree = "<group>"; };
-		BCB7C7D92668D29500FEC68E /* OrcaSwapV1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV1.swift; sourceTree = "<group>"; };
-		BCB7C7DA2668D29500FEC68E /* OrcaSwapV1.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV1.ViewController.swift; sourceTree = "<group>"; };
-		BCB7C7DB2668D29500FEC68E /* OrcaSwapV1.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV1.ViewModel.swift; sourceTree = "<group>"; };
-		BCB7C7DC2668D29500FEC68E /* OrcaSwapV1.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV1.RootView.swift; sourceTree = "<group>"; };
 		BCB7C7E12669E50B00FEC68E /* TransactionSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionSummaryView.swift; sourceTree = "<group>"; };
 		BCB92B7F25B5386F00FF615E /* WLIntroVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLIntroVC.swift; sourceTree = "<group>"; };
 		BCBE148625EF3CF90014BCE5 /* EditableWalletCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditableWalletCell.swift; sourceTree = "<group>"; };
@@ -840,7 +813,6 @@
 		BCE42E1725DFA5100021540E /* RestoreWallet.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreWallet.ViewController.swift; sourceTree = "<group>"; };
 		BCE77E6226536817000B68BB /* DerivableAccounts.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivableAccounts.ViewController.swift; sourceTree = "<group>"; };
 		BCE77E6526537067000B68BB /* DerivableAccounts.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivableAccounts.ViewModel.swift; sourceTree = "<group>"; };
-		BCE77E672653711B000B68BB /* ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelType.swift; sourceTree = "<group>"; };
 		BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Asset+Generated.swift"; sourceTree = "<group>"; };
 		BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
 		BCEB206A25E1561200B54FEF /* TabBarVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarVC.swift; sourceTree = "<group>"; };
@@ -850,6 +822,10 @@
 		BCF241202676548200C9F158 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		BCF7D952256220F100961D31 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		BCFC768525E2EAB800FBE148 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		BCFEDBFB2727A9F0008AE4AD /* WLMarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLMarkdownView.swift; sourceTree = "<group>"; };
+		BCFEDBFD2727B3D7008AE4AD /* Privacy_policy.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Privacy_policy.txt; sourceTree = "<group>"; };
+		BCFEDBFF2727B43C008AE4AD /* WLMarkdownVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLMarkdownVC.swift; sourceTree = "<group>"; };
+		BCFEDC022727F860008AE4AD /* OrcaSwapV2ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2ViewModelType.swift; sourceTree = "<group>"; };
 		CCD9F8F81880F7B23634EBE4 /* Pods-p2p_wallet-p2p_walletUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.release.xcconfig"; sourceTree = "<group>"; };
 		E65B1C647C0DE910BEFF2221 /* Pods-p2p wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p wallet/Pods-p2p wallet.debug.xcconfig"; sourceTree = "<group>"; };
 		FBFCA911E1A96478DD7C04ED /* Pods-p2p_walletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.debug.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -861,22 +837,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCB2232825412AF9002D997F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C1BC9C27F85EDDFE51E0FDB8 /* Pods_p2p_walletTests.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCB2233325412AF9002D997F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				90EF20D40E7E55EE92803B31 /* Pods_p2p_wallet_p2p_walletUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -929,6 +889,17 @@
 			path = SelectRecepient;
 			sourceTree = "<group>";
 		};
+		84699C98681FF7B583A45CA9 /* BuyProvider */ = {
+			isa = PBXGroup;
+			children = (
+				84699683F51C51791FD590A0 /* Utils.swift */,
+				84699C355CE538F8E06A9A33 /* TransakProvider.swift */,
+				84699587C4376EAA8208663D /* MoonpayProvider.swift */,
+				8469967326CA93BB243D75A9 /* BuyProvider.swift */,
+			);
+			path = BuyProvider;
+			sourceTree = "<group>";
+		};
 		BC0378F425FB536C00D10EAE /* MyProducts */ = {
 			isa = PBXGroup;
 			children = (
@@ -956,7 +927,6 @@
 				BCC1F20E269EC791003DD648 /* WalletsViewModel */,
 				BC65E003261D711900E436C7 /* TransactionsViewModel.swift */,
 				BC54DCF82587089700A65566 /* WalletGraphViewModel.swift */,
-				BCE77E672653711B000B68BB /* ViewModelType.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -964,29 +934,11 @@
 		BC1BEBDC26CDEEBB0049A44C /* SwapToken */ = {
 			isa = PBXGroup;
 			children = (
-				BC1D2ACA256B6E7A0064E595 /* OrcaSwapV1(Deprecated) */,
 				BC4B9EB72719182C005B9ECA /* OrcaSwapV2 */,
-				BC1BEBF526CDF6520049A44C /* SwapToken.swift */,
-				BC1BEBF726CDF6520049A44C /* SwapToken.ViewModel.swift */,
-				BC1BEBF626CDF6520049A44C /* SwapToken.ViewController.swift */,
-				BC1BEBF826CDF6520049A44C /* SwapToken.RootView.swift */,
-				BC1BEBFD26CDFE290049A44C /* SwapToken.WalletView.swift */,
+				BC4B9EC6272165BC005B9ECA /* SerumSwap(Unstable) */,
 				BC80569826D8DDA700206ECA /* Settings */,
 			);
 			path = SwapToken;
-			sourceTree = "<group>";
-		};
-		BC1D2ACA256B6E7A0064E595 /* OrcaSwapV1(Deprecated) */ = {
-			isa = PBXGroup;
-			children = (
-				BCB7C7D92668D29500FEC68E /* OrcaSwapV1.swift */,
-				BCB7C7DB2668D29500FEC68E /* OrcaSwapV1.ViewModel.swift */,
-				BCB7C7DA2668D29500FEC68E /* OrcaSwapV1.ViewController.swift */,
-				BCB7C7DC2668D29500FEC68E /* OrcaSwapV1.RootView.swift */,
-				BC2909FF256B9C95002A727C /* OrcaSwapV1.WalletView.swift */,
-				BC604A2326C65EEE00B1DF0F /* Settings */,
-			);
-			path = "OrcaSwapV1(Deprecated)";
 			sourceTree = "<group>";
 		};
 		BC1FFECD2629748F0014F027 /* ResetPinCodeWithSeedPhrases */ = {
@@ -1141,13 +1093,67 @@
 			isa = PBXGroup;
 			children = (
 				BC4B9EB827191843005B9ECA /* OrcaSwapV2.swift */,
-				BC4B9EBA27191843005B9ECA /* OrcaSwapV2.ViewModel.swift */,
+				BCFEDC012727F843008AE4AD /* OrcaSwapV2.ViewModel */,
 				BC4B9EB927191843005B9ECA /* OrcaSwapV2.ViewController.swift */,
 				BC4B9EBB27191843005B9ECA /* OrcaSwapV2.RootView.swift */,
 				BC4B9EC2271988A8005B9ECA /* OrcaSwapV2.WalletView.swift */,
 				BC4B9EC027197DF5005B9ECA /* OrcaSwapV2.Settings.swift */,
 			);
 			path = OrcaSwapV2;
+			sourceTree = "<group>";
+		};
+		BC4B9EC6272165BC005B9ECA /* SerumSwap(Unstable) */ = {
+			isa = PBXGroup;
+			children = (
+				BC1BEBF526CDF6520049A44C /* SerumSwapV1.swift */,
+				BC1BEBF726CDF6520049A44C /* SwapToken.ViewModel.swift */,
+				BC1BEBF626CDF6520049A44C /* SwapToken.ViewController.swift */,
+				BC1BEBF826CDF6520049A44C /* SwapToken.RootView.swift */,
+				BC1BEBFD26CDFE290049A44C /* SwapToken.WalletView.swift */,
+			);
+			path = "SerumSwap(Unstable)";
+			sourceTree = "<group>";
+		};
+		BC4B9EC927231035005B9ECA /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				BC6EE771254AEEB300FE1025 /* Error+Extensions.swift */,
+				BC65E9E22542BE43005F50CE /* String+Extensions.swift */,
+				BC32A360254A761B002156F0 /* Button+Extensions.swift */,
+				BC2EC1B92553EC7D006EEDA5 /* UIView+Extensions.swift */,
+				BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */,
+				BC32A392254A77A9002156F0 /* UIViewController+Extensions.swift */,
+				BC6EE7C9254BBF8900FE1025 /* UIApplication+Extensions.swift */,
+				BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */,
+				BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */,
+				BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */,
+				BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */,
+				BC75339B257F2953007A00D9 /* Date+Extensions.swift */,
+				BC11C9C125908F3700E399A9 /* CGFloat+Extensions.swift */,
+				BC11CA112591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift */,
+				BCA9941E25AE93D5005BD8FB /* Fonts+Generated.swift */,
+				BC123E7E25B181B60043178E /* NSObject+Extensions.swift */,
+				BC0E7DCB25B17AB2009AD08B /* Bundle+Extensions.swift */,
+				BC123E8325B181D80043178E /* Locale+Extensions.swift */,
+				BCA93F8025E883A50081DDF6 /* Array+Extensions.swift */,
+				BC699AC925FB114D00F57209 /* UINavigationController+Extensions.swift */,
+				BC65E27E2620341B00E436C7 /* SolanaSDK.ParsedTransaction+Extensions.swift */,
+				BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */,
+				BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */,
+				BC18CAA2263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift */,
+				BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */,
+				BC460767266F4B3200A12E07 /* ObservableType+Extensions.swift */,
+				BCDCAE1C267C69D1001ED7B4 /* UIUserInterfaceStyle+Extensions.swift */,
+				BC036C152692C070005C1BEC /* Collection+Extensions.swift */,
+				BC2F8F0B269D3D200048009D /* UIScrollView+Extensions.swift */,
+				BCC1F206269E96A1003DD648 /* SolanaSDK.DerivablePath+Extensions.swift */,
+				BC4B9EC4271A791A005B9ECA /* SolanaSDK+Extensions.swift */,
+				BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */,
+				BC423D8B26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift */,
+				BC185EFB26E4BF3300280FE6 /* UIFont+Extensions.swift */,
+				BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		BC5257CD25CBA6A60076317E /* PriceAPIs */ = {
@@ -1249,14 +1255,6 @@
 			path = ProcessTransaction;
 			sourceTree = "<group>";
 		};
-		BC604A2326C65EEE00B1DF0F /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				BC604A1F26C5235A00B1DF0F /* OrcaSwapV1.Settings.swift */,
-			);
-			path = Settings;
-			sourceTree = "<group>";
-		};
 		BC63110926D78AC300516C38 /* SwapProvider */ = {
 			isa = PBXGroup;
 			children = (
@@ -1346,19 +1344,6 @@
 			path = TransactionInfo;
 			sourceTree = "<group>";
 		};
-		BC65E9B72542B983005F50CE /* Base */ = {
-			isa = PBXGroup;
-			children = (
-				BCEE522B2626D3F900271AB9 /* Views */,
-				BC1ABC37255BD0B8002FCE65 /* ViewModels */,
-				BCB58370255D28E100B10F65 /* ViewControllers */,
-				BCE04C5D268D8FFB00CE131A /* Transitions */,
-				BC2EC1C12553ED1B006EEDA5 /* UIPresentationControllers */,
-				BCD83E7D25677673006DD29F /* UIViewControllerAnimatedTransitioning */,
-			);
-			path = Base;
-			sourceTree = "<group>";
-		};
 		BC65E9D52542BD1F005F50CE /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
@@ -1407,13 +1392,17 @@
 			isa = PBXGroup;
 			children = (
 				BCA7D83327290A29007B070A /* BECollectionView.md */,
+				BC4B9ED6272428A0005B9ECA /* Terms_of_service.txt */,
+				BCFEDBFD2727B3D7008AE4AD /* Privacy_policy.txt */,
+				BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */,
+				BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */,
 				BCA9945125AE94D7005BD8FB /* Fonts */,
 				BC6EE7E6254BD30600FE1025 /* p2p_wallet.entitlements */,
 				BCB2232125412AF8002D997F /* Assets.xcassets */,
 				BC65E9F82542C181005F50CE /* Colors.xcassets */,
 				BCB2232325412AF9002D997F /* LaunchScreen.storyboard */,
 				BCB2232625412AF9002D997F /* Info.plist */,
-				BC6366DA255A8D8300D585FD /* GoogleService-Info.plist */,
+				BCA7D83A272A6F89007B070A /* GoogleService-Info.plist */,
 				BC2288022542E1CC0028CE8F /* Localizable.strings */,
 				BC5DB13425F739F9003D00BE /* Localizable.stringsdict */,
 				BC4B9E732713EE57005B9ECA /* Config.xcconfig */,
@@ -1530,44 +1519,12 @@
 		BC9DFA152541F777009DB93E /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
-				BC65E9B72542B983005F50CE /* Base */,
-				BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */,
-				BC6EE771254AEEB300FE1025 /* Error+Extensions.swift */,
-				BCEA06C2254301A70006E4C3 /* Strings+Generated.swift */,
-				BC65E9E22542BE43005F50CE /* String+Extensions.swift */,
-				BC32A360254A761B002156F0 /* Button+Extensions.swift */,
-				BC2EC1B92553EC7D006EEDA5 /* UIView+Extensions.swift */,
-				BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */,
-				BC32A392254A77A9002156F0 /* UIViewController+Extensions.swift */,
-				BC6EE7C9254BBF8900FE1025 /* UIApplication+Extensions.swift */,
-				BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */,
-				BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */,
-				BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */,
-				BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */,
-				BC75339B257F2953007A00D9 /* Date+Extensions.swift */,
-				BC11C9C125908F3700E399A9 /* CGFloat+Extensions.swift */,
-				BC11CA112591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift */,
-				BCA9941E25AE93D5005BD8FB /* Fonts+Generated.swift */,
-				BC123E7E25B181B60043178E /* NSObject+Extensions.swift */,
-				BC0E7DCB25B17AB2009AD08B /* Bundle+Extensions.swift */,
-				BC123E8325B181D80043178E /* Locale+Extensions.swift */,
-				BCA93F8025E883A50081DDF6 /* Array+Extensions.swift */,
-				BC699AC925FB114D00F57209 /* UINavigationController+Extensions.swift */,
-				BC65E27E2620341B00E436C7 /* SolanaSDK.ParsedTransaction+Extensions.swift */,
-				BC18CA8426318F120054E624 /* SolanaSDK.Wallet+Extensions.swift */,
-				BC18CA89263265680054E624 /* SolanaSDK.Token+Extensions.swift */,
-				BC18CAA2263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift */,
-				BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */,
-				BC460767266F4B3200A12E07 /* ObservableType+Extensions.swift */,
-				BCDCAE1C267C69D1001ED7B4 /* UIUserInterfaceStyle+Extensions.swift */,
-				BC036C152692C070005C1BEC /* Collection+Extensions.swift */,
-				BC2F8F0B269D3D200048009D /* UIScrollView+Extensions.swift */,
-				BCC1F206269E96A1003DD648 /* SolanaSDK.DerivablePath+Extensions.swift */,
-				BC4B9EC4271A791A005B9ECA /* SolanaSDK+Extensions.swift */,
-				BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */,
-				BC423D8B26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift */,
-				BC185EFB26E4BF3300280FE6 /* UIFont+Extensions.swift */,
-				BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */,
+				BCEE522B2626D3F900271AB9 /* Views */,
+				BC1ABC37255BD0B8002FCE65 /* ViewModels */,
+				BCB58370255D28E100B10F65 /* ViewControllers */,
+				BCE04C5D268D8FFB00CE131A /* Transitions */,
+				BC2EC1C12553ED1B006EEDA5 /* UIPresentationControllers */,
+				BCD83E7D25677673006DD29F /* UIViewControllerAnimatedTransitioning */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -1663,6 +1620,7 @@
 			children = (
 				BCAD1093270411E00098C697 /* BuyToken.swift */,
 				BC4B9E782713F96C005B9ECA /* BuyToken.ViewController.swift */,
+				84699D9AB33F93112713FF93 /* BuyTokenWidgetViewController.swift */,
 			);
 			path = BuyToken;
 			sourceTree = "<group>";
@@ -1671,8 +1629,6 @@
 			isa = PBXGroup;
 			children = (
 				BCB2231725412AF8002D997F /* p2p_wallet */,
-				BCB2232E25412AF9002D997F /* p2p_walletTests */,
-				BCB2233925412AF9002D997F /* p2p_walletUITests */,
 				BCB2231625412AF8002D997F /* Products */,
 				14A0B50387D380623394B692 /* Pods */,
 				0702C5D804E7759F2AE102B8 /* Frameworks */,
@@ -1683,8 +1639,6 @@
 			isa = PBXGroup;
 			children = (
 				BCB2231525412AF8002D997F /* p2p_wallet.app */,
-				BCB2232B25412AF9002D997F /* p2p_walletTests.xctest */,
-				BCB2233625412AF9002D997F /* p2p_walletUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1698,29 +1652,10 @@
 				BC7A8EB1255BCE360023C918 /* Models */,
 				BCB22370254137C2002D997F /* Services */,
 				BC9DFA152541F777009DB93E /* UIKit */,
+				BC4B9EC927231035005B9ECA /* Extensions */,
 				BC753397257F28A8007A00D9 /* Resources */,
 			);
 			path = p2p_wallet;
-			sourceTree = "<group>";
-		};
-		BCB2232E25412AF9002D997F /* p2p_walletTests */ = {
-			isa = PBXGroup;
-			children = (
-				BCB2233125412AF9002D997F /* Info.plist */,
-				BC1460C52685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift */,
-				BC38555226AE7BEA00BD8BF7 /* LocalizationTests.swift */,
-				BC1460C42685BBD6000D8CFE /* p2p_walletTests-Bridging-Header.h */,
-			);
-			path = p2p_walletTests;
-			sourceTree = "<group>";
-		};
-		BCB2233925412AF9002D997F /* p2p_walletUITests */ = {
-			isa = PBXGroup;
-			children = (
-				BCB2233A25412AF9002D997F /* p2p_walletUITests.swift */,
-				BCB2233C25412AF9002D997F /* Info.plist */,
-			);
-			path = p2p_walletUITests;
 			sourceTree = "<group>";
 		};
 		BCB22370254137C2002D997F /* Services */ = {
@@ -1737,6 +1672,7 @@
 				BC63110926D78AC300516C38 /* SwapProvider */,
 				BCCF23C126FAE76400D08724 /* RenVM */,
 				BC6FEDA2270D57D1002B6255 /* NameService.swift */,
+				84699C98681FF7B583A45CA9 /* BuyProvider */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1758,6 +1694,7 @@
 				BCB92B7F25B5386F00FF615E /* WLIntroVC.swift */,
 				BC1FFEE7262977940014F027 /* WLEnterPhrasesVC.swift */,
 				BC19DF562701B7A100A3A8D8 /* SingleSelectionViewController.swift */,
+				BCFEDBFF2727B43C008AE4AD /* WLMarkdownVC.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -2081,8 +2018,18 @@
 				BC19DF522701A24E00A3A8D8 /* WLBalanceView.swift */,
 				BC19DF582701BC9100A3A8D8 /* WLDefaultOptionView.swift */,
 				BC6FEDA6270EEFEF002B6255 /* WLBannerView.swift */,
+				BCFEDBFB2727A9F0008AE4AD /* WLMarkdownView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		BCFEDC012727F843008AE4AD /* OrcaSwapV2.ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				BCFEDC022727F860008AE4AD /* OrcaSwapV2ViewModelType.swift */,
+				BC4B9EBA27191843005B9ECA /* OrcaSwapV2.ViewModel.swift */,
+			);
+			path = OrcaSwapV2.ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2111,47 +2058,6 @@
 			productReference = BCB2231525412AF8002D997F /* p2p_wallet.app */;
 			productType = "com.apple.product-type.application";
 		};
-		BCB2232A25412AF9002D997F /* p2p_walletTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BCB2234225412AF9002D997F /* Build configuration list for PBXNativeTarget "p2p_walletTests" */;
-			buildPhases = (
-				229F098154DD04FCB7CE44F3 /* [CP] Check Pods Manifest.lock */,
-				BCB2232725412AF9002D997F /* Sources */,
-				BCB2232825412AF9002D997F /* Frameworks */,
-				BCB2232925412AF9002D997F /* Resources */,
-				F9656498A37B977ADD443F2E /* [CP] Embed Pods Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				BCB2232D25412AF9002D997F /* PBXTargetDependency */,
-			);
-			name = p2p_walletTests;
-			productName = "p2p walletTests";
-			productReference = BCB2232B25412AF9002D997F /* p2p_walletTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		BCB2233525412AF9002D997F /* p2p_walletUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BCB2234525412AF9002D997F /* Build configuration list for PBXNativeTarget "p2p_walletUITests" */;
-			buildPhases = (
-				4ADE0FE1B41859214CCED0CE /* [CP] Check Pods Manifest.lock */,
-				BCB2233225412AF9002D997F /* Sources */,
-				BCB2233325412AF9002D997F /* Frameworks */,
-				BCB2233425412AF9002D997F /* Resources */,
-				E10E70E0E1F7BAD44806690F /* [CP] Embed Pods Frameworks */,
-				A9FC84D643088FD0D51834FF /* [CP] Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				BCB2233825412AF9002D997F /* PBXTargetDependency */,
-			);
-			name = p2p_walletUITests;
-			productName = "p2p walletUITests";
-			productReference = BCB2233625412AF9002D997F /* p2p_walletUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2163,15 +2069,6 @@
 				TargetAttributes = {
 					BCB2231425412AF8002D997F = {
 						CreatedOnToolsVersion = 12.0.1;
-					};
-					BCB2232A25412AF9002D997F = {
-						CreatedOnToolsVersion = 12.0.1;
-						LastSwiftMigration = 1250;
-						TestTargetID = BCB2231425412AF8002D997F;
-					};
-					BCB2233525412AF9002D997F = {
-						CreatedOnToolsVersion = 12.0.1;
-						TestTargetID = BCB2231425412AF8002D997F;
 					};
 				};
 			};
@@ -2192,8 +2089,6 @@
 			projectRoot = "";
 			targets = (
 				BCB2231425412AF8002D997F /* p2p_wallet */,
-				BCB2232A25412AF9002D997F /* p2p_walletTests */,
-				BCB2233525412AF9002D997F /* p2p_walletUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -2205,13 +2100,16 @@
 			files = (
 				BCA9946725AE94D7005BD8FB /* Montserrat-BoldItalic.ttf in Resources */,
 				BC2288002542E1CC0028CE8F /* Localizable.strings in Resources */,
+				BCFEDBFE2727B3D7008AE4AD /* Privacy_policy.txt in Resources */,
 				BCA9946D25AE94D7005BD8FB /* Montserrat-MediumItalic.ttf in Resources */,
+				BC4B9ED7272428A0005B9ECA /* Terms_of_service.txt in Resources */,
 				BCA9946E25AE94D7005BD8FB /* Montserrat-BlackItalic.ttf in Resources */,
 				BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */,
 				BC5DB13225F739F9003D00BE /* Localizable.stringsdict in Resources */,
 				BCA9946825AE94D7005BD8FB /* Montserrat-Light.ttf in Resources */,
 				BCA9947425AE94D7005BD8FB /* Montserrat-Italic.ttf in Resources */,
 				BCA9947625AE94D7005BD8FB /* Montserrat-ExtraBoldItalic.ttf in Resources */,
+				BCA7D83B272A6F89007B070A /* GoogleService-Info.plist in Resources */,
 				BCA9946C25AE94D7005BD8FB /* Montserrat-Bold.ttf in Resources */,
 				BCA9947125AE94D7005BD8FB /* Montserrat-ExtraBold.ttf in Resources */,
 				BCA7D83427290A29007B070A /* BECollectionView.md in Resources */,
@@ -2222,26 +2120,11 @@
 				BCA9946A25AE94D7005BD8FB /* Montserrat-ExtraLight.ttf in Resources */,
 				BCA9946625AE94D7005BD8FB /* Montserrat-Medium.ttf in Resources */,
 				BCA9947225AE94D7005BD8FB /* Montserrat-Black.ttf in Resources */,
-				BC6366DB255A8D8300D585FD /* GoogleService-Info.plist in Resources */,
 				BC65E9F92542C181005F50CE /* Colors.xcassets in Resources */,
 				BCA9946B25AE94D7005BD8FB /* Montserrat-Thin.ttf in Resources */,
 				BCA9947025AE94D7005BD8FB /* Montserrat-ExtraLightItalic.ttf in Resources */,
 				BCA9946F25AE94D7005BD8FB /* Montserrat-SemiBold.ttf in Resources */,
 				BCB2232225412AF8002D997F /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCB2232925412AF9002D997F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCB2233425412AF9002D997F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2270,28 +2153,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		229F098154DD04FCB7CE44F3 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-p2p_walletTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		3F0DFDEF46907C0993E62949 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2309,28 +2170,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4ADE0FE1B41859214CCED0CE /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-p2p_wallet-p2p_walletUITests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		78311C6F52E6F43FD0DAC80A /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2346,23 +2185,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A9FC84D643088FD0D51834FF /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BC0E0A252542CAFA00CADA18 /* Swiftlint Run Script */ = {
@@ -2418,40 +2240,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\n";
 		};
-		E10E70E0E1F7BAD44806690F /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F9656498A37B977ADD443F2E /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -2473,7 +2261,6 @@
 				BCBE14A025EF3D110014BCE5 /* HomeRootView.swift in Sources */,
 				BCB7C7C62665EEC400FEC68E /* SendToken.swift in Sources */,
 				BC5A971E260C6D42009674C4 /* ActiveWalletsSection.swift in Sources */,
-				BCE77E682653711B000B68BB /* ViewModelType.swift in Sources */,
 				BC699ACA25FB114D00F57209 /* UINavigationController+Extensions.swift in Sources */,
 				BC8F684D2609D866002FDCCD /* WalletsRepository.swift in Sources */,
 				BCC1F207269E96A1003DD648 /* SolanaSDK.DerivablePath+Extensions.swift in Sources */,
@@ -2536,7 +2323,6 @@
 				BC19DF4F270169CF00A3A8D8 /* SendTokenAPIClient.swift in Sources */,
 				BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */,
 				BCDCAE1B267C5570001ED7B4 /* RecoveryEnterSeedsViewController.swift in Sources */,
-				BCB7C7DE2668D29500FEC68E /* OrcaSwapV1.ViewController.swift in Sources */,
 				BC44532526896F8B0019F37E /* BackupPasteSeedPhrasesVC.swift in Sources */,
 				BC32A356254A69EA002156F0 /* CreateOrRestoreWallet.WelcomeVC.swift in Sources */,
 				BC1FFED3262975200014F027 /* ResetPinCodeWithSeedPhrases.ViewController.swift in Sources */,
@@ -2552,7 +2338,7 @@
 				BC53E21E2654BF88005624CC /* DerivablePaths.Cell.swift in Sources */,
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
 				BC1255092653A2E400695A2B /* DerivablePaths.ViewController.swift in Sources */,
-				BC1BEBF926CDF6520049A44C /* SwapToken.swift in Sources */,
+				BC1BEBF926CDF6520049A44C /* SerumSwapV1.swift in Sources */,
 				BC4B9E9527153EBB005B9ECA /* Settings.BackupViewController.swift in Sources */,
 				BC6D01FB265DF8220001B841 /* FreeTransactionInfoVC.swift in Sources */,
 				BCE77E6626537067000B68BB /* DerivableAccounts.ViewModel.swift in Sources */,
@@ -2568,6 +2354,7 @@
 				BC65E244261EE04B00E436C7 /* PricesRepository.swift in Sources */,
 				BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */,
 				BC134FAB26FD874500DB15BF /* RestoreWallet.swift in Sources */,
+				BCFEDBFC2727A9F0008AE4AD /* WLMarkdownView.swift in Sources */,
 				BC5A97D0260DA82B009674C4 /* BaseHiddenWalletSection.swift in Sources */,
 				BC38555B26AE971400BD8BF7 /* ChooseWallet.ViewModel.swift in Sources */,
 				BC185EFC26E4BF3300280FE6 /* UIFont+Extensions.swift in Sources */,
@@ -2644,12 +2431,11 @@
 				BC5257E725CBACEA0076317E /* Fiat.swift in Sources */,
 				BCDCAE212682E41B001ED7B4 /* ReceiveToken.HelpViewController.swift in Sources */,
 				BC46075D266F325500A12E07 /* WalletDetail.RootView.swift in Sources */,
-				BC290A00256B9C95002A727C /* OrcaSwapV1.WalletView.swift in Sources */,
-				BC604A2026C5235A00B1DF0F /* OrcaSwapV1.Settings.swift in Sources */,
 				BC2DA294260B079100B50738 /* WLAddTokenButton.swift in Sources */,
 				BC4B9E87271425B9005B9ECA /* Settings.ViewModel.swift in Sources */,
 				BCA93FB125ECD2250081DDF6 /* TokenSettingsCloseAccountConfirmationVC.swift in Sources */,
 				BC7533AA257F31D3007A00D9 /* LazyLabel.swift in Sources */,
+				BCFEDC002727B43C008AE4AD /* WLMarkdownVC.swift in Sources */,
 				BCA93F5525E77C240081DDF6 /* TokenSettingsViewController.swift in Sources */,
 				BC6FED95270BF5C1002B6255 /* RenBTCReceivingStatuses.Cells.swift in Sources */,
 				BC6EE7CA254BBF8900FE1025 /* UIApplication+Extensions.swift in Sources */,
@@ -2706,8 +2492,8 @@
 				BC6EE777254AF6E600FE1025 /* Onboarding.EnableBiometryVC.swift in Sources */,
 				BC8F67742608738D002FDCCD /* WLPhrasesTextView+Attachments.swift in Sources */,
 				417DC904271FF1180048106B /* SelectRecipient.swift in Sources */,
-				BCB7C7DF2668D29500FEC68E /* OrcaSwapV1.ViewModel.swift in Sources */,
 				BC6FED92270BF47E002B6255 /* RenBTCReceivingStatuses.ViewModel.swift in Sources */,
+				BCFEDC032727F860008AE4AD /* OrcaSwapV2ViewModelType.swift in Sources */,
 				BCDABE7C26FC7E1C00E083B8 /* WLOptionsView.swift in Sources */,
 				BC19DF5127019E6D00A3A8D8 /* SendToken.WalletView.swift in Sources */,
 				BC3B3DAA258C653000C6117E /* WLIndicatorModalVC.swift in Sources */,
@@ -2764,7 +2550,6 @@
 				BC460768266F4B3200A12E07 /* ObservableType+Extensions.swift in Sources */,
 				BC460764266F40F400A12E07 /* Root.ViewModel.swift in Sources */,
 				BC2EC1D22553ED1B006EEDA5 /* FlexibleHeightPresentationController.swift in Sources */,
-				BCB7C7E02668D29500FEC68E /* OrcaSwapV1.RootView.swift in Sources */,
 				BC89ADB825E0FCB3001A6791 /* Onboarding.BaseOnboardingVC.swift in Sources */,
 				BC65E256261EF34B00E436C7 /* TransactionInfoViewModel.swift in Sources */,
 				BC2EC1BA2553EC7D006EEDA5 /* UIView+Extensions.swift in Sources */,
@@ -2788,7 +2573,6 @@
 				BC11CA122591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift in Sources */,
 				BC80204026F1EBDA00C109C2 /* ReceiveToken.ReceiveBitcoinViewModel.swift in Sources */,
 				BC65E2772620058700E436C7 /* TransactionInfoRootView+Subviews.swift in Sources */,
-				BCB7C7DD2668D29500FEC68E /* OrcaSwapV1.swift in Sources */,
 				BC65E037261D72B200E436C7 /* TransactionsRepository.swift in Sources */,
 				BC2EC1D12553ED1B006EEDA5 /* FittingSizePresentationController.swift in Sources */,
 				BCDABE7826FC6E2400E083B8 /* WLIndicatorModalFlexibleHeightVC.swift in Sources */,
@@ -2826,40 +2610,15 @@
 				BC4B9E7D2713FCFB005B9ECA /* AnalyticsManager.swift in Sources */,
 				BC2297962700A320003F7118 /* RestoreICloud.AccountsListViewModel.swift in Sources */,
 				BC185EFA26E3B81F00280FE6 /* LoadableRelay.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCB2232725412AF9002D997F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BC38555326AE7BEA00BD8BF7 /* LocalizationTests.swift in Sources */,
-				BC1460C62685BBD7000D8CFE /* CryptoComparePricesFetcherTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCB2233225412AF9002D997F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BCB2233B25412AF9002D997F /* p2p_walletUITests.swift in Sources */,
+				846993CA42DD22FB3BA39BB1 /* Utils.swift in Sources */,
+				84699B6058901C761662F138 /* TransakProvider.swift in Sources */,
+				8469949E8213E3F341DA2668 /* MoonpayProvider.swift in Sources */,
+				8469999E0EBB5974E6962119 /* BuyProvider.swift in Sources */,
+				846996337A75FF7A91B26EEE /* BuyTokenWidgetViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		BCB2232D25412AF9002D997F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BCB2231425412AF8002D997F /* p2p_wallet */;
-			targetProxy = BCB2232C25412AF9002D997F /* PBXContainerItemProxy */;
-		};
-		BCB2233825412AF9002D997F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BCB2231425412AF8002D997F /* p2p_wallet */;
-			targetProxy = BCB2233725412AF9002D997F /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		BC2288022542E1CC0028CE8F /* Localizable.strings */ = {
@@ -3036,7 +2795,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5G8856SBG8;
+				DEVELOPMENT_TEAM = E23BKKUH5D;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3063,7 +2822,7 @@
 					"-framework",
 					"\"SolanaSwift\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-wallet";
+				PRODUCT_BUNDLE_IDENTIFIER = org.p2p.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -3081,7 +2840,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5G8856SBG8;
+				DEVELOPMENT_TEAM = E23BKKUH5D;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3108,172 +2867,11 @@
 					"-framework",
 					"\"SolanaSwift\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-wallet";
+				PRODUCT_BUNDLE_IDENTIFIER = org.p2p.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		BCB2234325412AF9002D997F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = FBFCA911E1A96478DD7C04ED /* Pods-p2p_walletTests.debug.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = QPW4XRTF2N;
-				INFOPLIST_FILE = p2p_walletTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					"\"CFNetwork\"",
-					"-framework",
-					"\"Foundation\"",
-					"-framework",
-					"\"RxBlocking\"",
-					"-framework",
-					"\"RxCocoa\"",
-					"-framework",
-					"\"RxRelay\"",
-					"-framework",
-					"\"RxSwift\"",
-					"-framework",
-					"\"SolanaSwift\"",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-walletTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "p2p_walletTests/p2p_walletTests-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/p2p_wallet.app/p2p_wallet";
-			};
-			name = Debug;
-		};
-		BCB2234425412AF9002D997F /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BB7CFE6A2633569A3CAC841A /* Pods-p2p_walletTests.release.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = QPW4XRTF2N;
-				INFOPLIST_FILE = p2p_walletTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					"\"CFNetwork\"",
-					"-framework",
-					"\"Foundation\"",
-					"-framework",
-					"\"RxBlocking\"",
-					"-framework",
-					"\"RxCocoa\"",
-					"-framework",
-					"\"RxRelay\"",
-					"-framework",
-					"\"RxSwift\"",
-					"-framework",
-					"\"SolanaSwift\"",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-walletTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "p2p_walletTests/p2p_walletTests-Bridging-Header.h";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/p2p_wallet.app/p2p_wallet";
-			};
-			name = Release;
-		};
-		BCB2234625412AF9002D997F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3F4012EDABF9EA99EA5E792B /* Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = QPW4XRTF2N;
-				INFOPLIST_FILE = p2p_walletUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					"\"BEPureLayout\"",
-					"-framework",
-					"\"CFNetwork\"",
-					"-framework",
-					"\"Foundation\"",
-					"-framework",
-					"\"PureLayout\"",
-					"-framework",
-					"\"RxCocoa\"",
-					"-framework",
-					"\"RxRelay\"",
-					"-framework",
-					"\"RxSwift\"",
-					"-framework",
-					"\"SolanaSwift\"",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-walletUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = p2p_wallet;
-			};
-			name = Debug;
-		};
-		BCB2234725412AF9002D997F /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = CCD9F8F81880F7B23634EBE4 /* Pods-p2p_wallet-p2p_walletUITests.release.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = QPW4XRTF2N;
-				INFOPLIST_FILE = p2p_walletUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					"\"BEPureLayout\"",
-					"-framework",
-					"\"CFNetwork\"",
-					"-framework",
-					"\"Foundation\"",
-					"-framework",
-					"\"PureLayout\"",
-					"-framework",
-					"\"RxCocoa\"",
-					"-framework",
-					"\"RxRelay\"",
-					"-framework",
-					"\"RxSwift\"",
-					"-framework",
-					"\"SolanaSwift\"",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.p2p.p2p-walletUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = p2p_wallet;
 			};
 			name = Release;
 		};
@@ -3294,24 +2892,6 @@
 			buildConfigurations = (
 				BCB2234025412AF9002D997F /* Debug */,
 				BCB2234125412AF9002D997F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		BCB2234225412AF9002D997F /* Build configuration list for PBXNativeTarget "p2p_walletTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BCB2234325412AF9002D997F /* Debug */,
-				BCB2234425412AF9002D997F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		BCB2234525412AF9002D997F /* Build configuration list for PBXNativeTarget "p2p_walletUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BCB2234625412AF9002D997F /* Debug */,
-				BCB2234725412AF9002D997F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

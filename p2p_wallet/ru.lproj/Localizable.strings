@@ -496,7 +496,6 @@
 "Receiving statuses" = "Статусы получения";
 "Receiving %@ renBTC" = "Получение %@ renBTC";
 "Reserve your P2P username" = "Зарезервируйте свое имя пользователя P2P";
-"You can receive and send tokens using your P2P username or link. Also, users, who know your URL or username, can send you any token, even if you don’t have it in your wallets list." = "Вы можете получать и отправлять токены, используя свое имя пользователя P2P или ссылку.  Кроме того, пользователи, которые знают ваш URL или имя пользователя, могут отправить вам любой токен, даже если у вас его нет в списке ваших кошельков.";
 "username" = "имя пользователя";
 "Use any latin and special symbols or emojis." = "Используйте любые латинские и специальные символы или смайлики.";
 "You can also %@ this step and reserve a username later." = "Вы также можете %@ на этом шаге и зарезервировать имя пользователя позже.";
@@ -544,3 +543,5 @@
 "Result" = "Результат";
 "This username is not associated with anyone" = "Это имя пользователя ни с кем не связано";
 "There is an error occured, please try typing name again." = "Произошла ошибка, попробуйте ввести имя еще раз.";
+"Security key can't be saved into icloud. Please try again." = "Электронный ключ нельзя сохранить в icloud. Пожалуйста, попробуйте еще раз.";
+"You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list." = "Вы можете получать и отправлять токены, используя свое имя пользователя P2P.  Кроме того, пользователи, которые знают ваше имя пользователя, могут отправить вам любой токен, даже если у вас его нет в списке ваших кошельков.";

@@ -2,18 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>FEE_RELAYER_ENDPOINT</key>
-	<string>$(FEE_RELAYER_ENDPOINT)</string>
 	<key>AMPLITUDE_API_KEY</key>
 	<string>$(AMPLITUDE_API_KEY)</string>
-	<key>CRYPTO_COMPARE_API_KEY</key>
-	<string>$(CRYPTO_COMPARE_API_KEY)</string>
-	<key>TRANSAK_STAGING_API_KEY</key>
-	<string>$(TRANSAK_STAGING_API_KEY)</string>
-	<key>TRANSAK_PRODUCTION_API_KEY</key>
-	<string>$(TRANSAK_PRODUCTION_API_KEY)</string>
-	<key>TRANSAK_HOST_URL</key>
-	<string>$(TRANSAK_HOST_URL)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -30,12 +20,30 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CRYPTO_COMPARE_API_KEY</key>
+	<string>$(CRYPTO_COMPARE_API_KEY)</string>
+	<key>FEE_RELAYER_ENDPOINT</key>
+	<string>$(FEE_RELAYER_ENDPOINT)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>MOONPAY_PRODUCTION_API_KEY</key>
+	<string>$(MOONPAY_PRODUCTION_API_KEY)</string>
+	<key>MOONPAY_STAGING_API_KEY</key>
+	<string>$(MOONPAY_STAGING_API_KEY)</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Camera is used for scanning Qr Code</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>We use FaceID to secure your transactions</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Our application needs permission to write photos...</string>
+	<key>RPCPOOL_API_KEY</key>
+	<string>$(RPCPOOL_API_KEY)</string>
+	<key>TRANSAK_HOST_URL</key>
+	<string>$(TRANSAK_HOST_URL)</string>
+	<key>TRANSAK_PRODUCTION_API_KEY</key>
+	<string>$(TRANSAK_PRODUCTION_API_KEY)</string>
+	<key>TRANSAK_STAGING_API_KEY</key>
+	<string>$(TRANSAK_STAGING_API_KEY)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Montserrat-Black.ttf</string>
@@ -84,7 +92,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Our application needs permission to write photos...</string>
 </dict>
 </plist>

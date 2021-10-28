@@ -8,17 +8,26 @@
 import Foundation
 import UIKit
 
+protocol WalletDetailScenesFactory {
+    func makeBuyTokenViewController(token: BuyToken.CryptoCurrency) throws -> UIViewController
+    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
+    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
+    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> CustomPresentableViewController
+    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
+    func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController
+}
+
 extension WalletDetail {
     class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
         var transitionManager: UIViewControllerTransitioningDelegate?
         
         // MARK: - Properties
-        let viewModel: ViewModel
+        let viewModel: WalletDetailViewModelType
         let scenesFactory: WalletDetailScenesFactory
         
         // MARK: - Initializer
         init(
-            viewModel: ViewModel,
+            viewModel: WalletDetailViewModelType,
             scenesFactory: WalletDetailScenesFactory
         ) {
             self.viewModel = viewModel
@@ -36,7 +45,7 @@ extension WalletDetail {
         
         override func bind() {
             super.bind()
-            viewModel.output.navigationScene
+            viewModel.navigatableSceneDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
         }

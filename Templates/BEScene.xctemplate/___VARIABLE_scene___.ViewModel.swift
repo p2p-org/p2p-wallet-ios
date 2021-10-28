@@ -11,7 +11,7 @@ import RxCocoa
 
 protocol ___VARIABLE_scene___ViewModelType {
     var navigationDriver: Driver<___VARIABLE_scene___.NavigatableScene?> {get}
-    func showDetail()
+    func navigate(to scene: ___VARIABLE_scene___.NavigatableScene)
 }
 
 extension ___VARIABLE_scene___ {
@@ -31,7 +31,7 @@ extension ___VARIABLE_scene___.ViewModel: ___VARIABLE_scene___ViewModelType {
     }
     
     // MARK: - Actions
-    func showDetail() {
-        navigationSubject.accept(.detail)
+    func navigate(to scene: ___VARIABLE_scene___.NavigatableScene) {
+        navigationSubject.accept(scene)
     }
 }

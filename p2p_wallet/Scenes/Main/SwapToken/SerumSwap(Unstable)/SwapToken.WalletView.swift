@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-extension SwapToken {
+extension SerumSwapV1 {
     class WalletView: BEView {
         // MARK: - Nested type
         enum WalletType {
@@ -278,7 +278,7 @@ extension SwapToken {
 }
 
 // MARK: - TextField delegate
-extension SwapToken.WalletView: UITextFieldDelegate {
+extension SerumSwapV1.WalletView: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let textField = textField as? TokenAmountTextField {
             return textField.shouldChangeCharactersInRange(range, replacementString: string)

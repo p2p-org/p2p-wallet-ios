@@ -19,10 +19,10 @@ platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
     match
-    gym(scheme: 'p2p_wallet', export_method: 'ad-hoc')
+    gym(scheme: 'p2p_wallet', export_method: 'ad-hoc', export_xcargs: '-allowProvisioningUpdates')
     # upload to firebase
     firebase_app_distribution(
-      app: "1:553127941597:ios:c96032731a2f28562c5234",
+      app: "1:553127941597:ios:a6c953f38501ab112c5234",
       groups: "dev_team",
       firebase_cli_token: "1//0e7sQVYQPvT2vCgYIARAAGA4SNwF-L9Irle7o4pw3SQrwWwwUdjFi_z8Jl3NI3fj3h9EOn6zjPX-_nBHtRKn9gNoHoY9HaUR7Wnw"
     )    

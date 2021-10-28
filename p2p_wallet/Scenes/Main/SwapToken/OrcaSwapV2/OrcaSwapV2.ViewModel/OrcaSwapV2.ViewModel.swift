@@ -9,41 +9,6 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewModelType, SwapTokenSwapFeesViewModelType {
-    var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {get}
-    var loadingStateDriver: Driver<LoadableState> {get}
-    var sourceWalletDriver: Driver<Wallet?> {get}
-    var destinationWalletDriver: Driver<Wallet?> {get}
-    var isTokenPairValidDriver: Driver<Loadable<Bool>> {get}
-    var bestPoolsPairDriver: Driver<OrcaSwap.PoolsPair?> {get}
-    var inputAmountDriver: Driver<Double?> {get}
-    var estimatedAmountDriver: Driver<Double?> {get}
-    var feesDriver: Driver<Loadable<[PayingFee]>> {get}
-    var availableAmountDriver: Driver<Double?> {get}
-    var slippageDriver: Driver<Double> {get}
-    var minimumReceiveAmountDriver: Driver<Double?> {get}
-    var exchangeRateDriver: Driver<Double?> {get}
-    var isExchangeRateReversed: Driver<Bool> {get}
-    var payingTokenDriver: Driver<PayingToken> {get}
-    var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}
-    
-    func reload()
-    func log(_ event: AnalyticsEvent)
-    func navigate(to scene: OrcaSwapV2.NavigatableScene)
-    func chooseSourceWallet()
-    func chooseDestinationWallet()
-    func retryLoadingRoutes()
-    func swapSourceAndDestination()
-    func useAllBalance()
-    func enterInputAmount(_ amount: Double?)
-    func enterEstimatedAmount(_ amount: Double?)
-    func changeSlippage(to slippage: Double)
-    func reverseExchangeRate()
-    func changePayingToken(to payingToken: PayingToken)
-    
-    func authenticateAndSwap()
-}
-
 extension OrcaSwapV2 {
     class ViewModel {
         // MARK: - Dependencies
@@ -65,10 +30,10 @@ extension OrcaSwapV2 {
         private let bestPoolsPairSubject = BehaviorRelay<OrcaSwap.PoolsPair?>(value: nil)
         private let inputAmountSubject = BehaviorRelay<Double?>(value: nil)
         private let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
-        private let feesSubject = LoadableRelay<[PayingFee]>(request: .just([.init(type: .transactionFee, lamports: 0, token: .nativeSolana)])) // FIXME
+        private let feesSubject = LoadableRelay<[PayingFee]>(request: .just([]))
         private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
         private let isExchangeRateReversedSubject = BehaviorRelay<Bool>(value: false)
-        private let payingTokenSubject = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
+        private let payingTokenSubject = BehaviorRelay<PayingToken>(value: .nativeSOL) // FIXME
         private let errorSubject = BehaviorRelay<VerificationError?>(value: nil)
         
         // MARK: - Initializer
@@ -120,7 +85,7 @@ extension OrcaSwapV2 {
                 })
                 .disposed(by: disposeBag)
             
-            // FIXME: - fill input amount and estimated amount after loaded
+            // Fill input amount and estimated amount after loaded
             tradablePoolsPairsSubject.stateObservable
                 .distinctUntilChanged()
                 .filter {$0 == .loaded}
@@ -134,7 +99,18 @@ extension OrcaSwapV2 {
                 })
                 .disposed(by: disposeBag)
             
-            // TODO: - Calculate fees
+            // fees
+            Observable.combineLatest(
+                bestPoolsPairSubject,
+                inputAmountSubject,
+                slippageSubject
+            )
+                .map {[weak self] _ in self?.calculateFees() ?? []}
+                .subscribe(onNext: {[weak self] fees in
+                    self?.feesSubject.request = .just(fees)
+                    self?.feesSubject.reload()
+                })
+                .disposed(by: disposeBag)
             
             // Error
             Observable.combineLatest(
@@ -150,9 +126,6 @@ extension OrcaSwapV2 {
                 .map {[weak self] _ in self?.verify() }
                 .bind(to: errorSubject)
                 .disposed(by: disposeBag)
-            
-            // TODO: - Remove later
-            feesSubject.reload()
         }
         
         func authenticateAndSwap() {
@@ -207,11 +180,7 @@ extension OrcaSwapV2 {
                         to: destinationWallet,
                         inputAmount: inputAmount.toLamport(decimals: sourceWallet.token.decimals),
                         estimatedAmount: estimatedAmount.toLamport(decimals: destinationWallet.token.decimals),
-                        fees: [.init(
-                            type: .transactionFee,
-                            lamports: 0, // TODO: - feeInLamportsSubject.value ?? 0,
-                            token: .nativeSolana // Defaults.payingToken == .nativeSOL ? .nativeSolana: sourceWallet.token
-                        )]
+                        fees: feesSubject.value?.filter {$0.type != .liquidityProviderFee} ?? []
                     )
                 )
             )
@@ -381,6 +350,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func useAllBalance() {
         let availableAmount = calculateAvailableAmount()
         enterInputAmount(availableAmount)
+        
+        // fees depends on input amount, so after entering availableAmount, fees has changed, so needed to calculate availableAmount again
+        let availableAmountUpdated = calculateAvailableAmount()
+        enterInputAmount(availableAmountUpdated)
     }
     
     func enterInputAmount(_ amount: Double?) {
@@ -439,16 +412,17 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 // MARK: - Helpers
 private extension OrcaSwapV2.ViewModel {
     func fixPayingToken() {
-        var payingToken = Defaults.payingToken
-        
-        // Force using native sol when source or destination is nativeSOL
-        if sourceWalletSubject.value?.isNativeSOL == true ||
-            destinationWalletSubject.value?.isNativeSOL == true // FIXME: - Fee relayer will support case where destination is native sol
-        {
-            payingToken = .nativeSOL
-        }
-        
-        payingTokenSubject.accept(payingToken)
+        // TODO: - Later
+//        var payingToken = Defaults.payingToken
+//
+//        // Force using native sol when source or destination is nativeSOL
+//        if sourceWalletSubject.value?.isNativeSOL == true ||
+//            destinationWalletSubject.value?.isNativeSOL == true // FIXME: - Fee relayer will support case where destination is native sol
+//        {
+//            payingToken = .nativeSOL
+//        }
+//
+//        payingTokenSubject.accept(payingToken)
     }
     
     /// Verify error in current context IN ORDER
@@ -570,5 +544,46 @@ private extension OrcaSwapV2.ViewModel {
     
     private func isSlippageValid() -> Bool {
         slippageSubject.value <= .maxSlippage && slippageSubject.value > 0
+    }
+    
+    private func calculateFees() -> [PayingFee] {
+        guard let sourceWallet = sourceWalletSubject.value,
+              let sourceWalletPubkey = sourceWallet.pubkey
+        else {return []}
+        
+        let destinationWallet = destinationWalletSubject.value
+        let bestPoolsPair = bestPoolsPairSubject.value
+        let inputAmount = inputAmountSubject.value
+        let myWalletsMints = walletsRepository.getWallets().compactMap {$0.token.address}
+        
+        guard let fees = try? orcaSwap.getFees(
+            myWalletsMints: myWalletsMints,
+            fromWalletPubkey: sourceWalletPubkey,
+            toWalletPubkey: destinationWallet?.pubkey,
+            feeRelayerFeePayerPubkey: nil, // TODO: - Fee relayer
+            bestPoolsPair: bestPoolsPair,
+            inputAmount: inputAmount,
+            slippage: slippageSubject.value,
+            lamportsPerSignature: 5000,
+            minRentExempt: 2039280
+        ) else {return []}
+        
+        let liquidityProviderFees: [PayingFee]
+        
+        if let destinationWallet = destinationWallet {
+            if fees.liquidityProviderFees.count == 1 {
+                liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.first!, token: destinationWallet.token)
+                ]
+            } else if fees.liquidityProviderFees.count == 2 {
+                liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.last!, token: destinationWallet.token)
+                ]
+            } else {
+                liquidityProviderFees = []
+            }
+        } else {
+            liquidityProviderFees = []
+        }
+        
+        return liquidityProviderFees + [.init(type: .transactionFee, lamports: fees.transactionFees, token: .nativeSolana)]
     }
 }

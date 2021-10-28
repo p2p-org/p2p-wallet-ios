@@ -18,7 +18,7 @@ protocol SwapTokenSettingsViewModelType {
     func changePayingToken(to payingToken: PayingToken)
 }
 
-extension SwapToken {
+extension SerumSwapV1 {
     class SettingsViewController: SettingsBaseViewController {
         // MARK: - Properties
         private let viewModel: SwapTokenSettingsViewModelType

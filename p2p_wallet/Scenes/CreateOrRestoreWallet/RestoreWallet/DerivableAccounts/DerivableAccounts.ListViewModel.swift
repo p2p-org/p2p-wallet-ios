@@ -115,7 +115,7 @@ extension DerivableAccounts {
             let requestAPI = SolanaSDK.RequestAPI(method: bcMethod, params: [account])
             
             do {
-                var urlRequest = try URLRequest(url: SolanaSDK.APIEndPoint.definedEndpoints.first!.url, method: .post, headers: [.contentType("application/json")])
+                var urlRequest = try URLRequest(url: SolanaSDK.APIEndPoint.definedEndpoints.first!.getURL(), method: .post, headers: [.contentType("application/json")])
                 urlRequest.httpBody = try JSONEncoder().encode(requestAPI)
                 
                 RxAlamofire.request(urlRequest)
