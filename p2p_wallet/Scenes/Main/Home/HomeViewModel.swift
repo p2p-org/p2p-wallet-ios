@@ -33,7 +33,7 @@ class HomeViewModel {
     let walletsRepository: WalletsRepository
     
     // MARK: - Subjects
-    private let navigationSubject = PublishSubject<HomeNavigatableScene>()
+    let navigationSubject = PublishSubject<HomeNavigatableScene>()
     var navigationDriver: Driver<HomeNavigatableScene> {
         navigationSubject.asDriver(onErrorJustReturn: .settings)
     }

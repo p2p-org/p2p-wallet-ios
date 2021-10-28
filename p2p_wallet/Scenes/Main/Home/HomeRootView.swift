@@ -13,10 +13,10 @@ class HomeRootView: BEView {
     // MARK: - Constants
     
     // MARK: - Properties
-    let viewModel: HomeViewModel
+    private let viewModel: HomeViewModel
     
     // MARK: - Subviews
-    lazy var collectionView: WalletsCollectionView = {
+    private lazy var collectionView: WalletsCollectionView = {
         let collectionView = WalletsCollectionView(
             walletsRepository: viewModel.walletsRepository,
             activeWalletsSection: .init(
@@ -33,6 +33,7 @@ class HomeRootView: BEView {
         collectionView.delegate = self
         collectionView.walletCellEditAction = viewModel.navigateToWalletSettingsAction()
         collectionView.showHideHiddenWalletsAction = viewModel.showHideHiddenWalletAction()
+        collectionView.contentInset.modify(dTop: 20)
         return collectionView
     }()
     
@@ -48,16 +49,39 @@ class HomeRootView: BEView {
         layout()
         bind()
         collectionView.refresh()
+        
     }
     
     // MARK: - Layout
     private func layout() {
-        addSubview(collectionView)
-        collectionView.autoPinEdgesToSuperviewEdges()
+        let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalCentering) {
+                UIImageView(width: 28, height: 28, image: .scanQr2, tintColor: .textSecondary)
+                    .onTap(self, action: #selector(buttonScanQrCodeDidTouch))
+                UILabel(text: L10n.p2PWallet, textSize: 17, weight: .semibold, textAlignment: .center)
+                UIImageView(width: 28, height: 28, image: .settings, tintColor: .textSecondary)
+                    .onTap(self, action: #selector(buttonSettingsDidTouch))
+            }
+                .padding(.init(x: 24, y: 16))
+            collectionView
+        }
+        addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewSafeArea()
     }
     
     private func bind() {
         
+    }
+    
+    // MARK: - Actions
+    @objc
+    private func buttonScanQrCodeDidTouch() {
+        viewModel.navigationSubject.onNext(.scanQr)
+    }
+    
+    @objc
+    private func buttonSettingsDidTouch() {
+        viewModel.navigationSubject.onNext(.settings)
     }
 }
 
