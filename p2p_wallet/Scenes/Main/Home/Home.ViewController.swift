@@ -33,6 +33,7 @@ extension Home {
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
+        fileprivate let interactor = MenuInteractor()
         
         // MARK: - Initializer
         init(viewModel: HomeViewModelType, scenesFactory: HomeScenesFactory) {
@@ -120,6 +121,25 @@ extension Home {
             case .scanQr:
                 analyticsManager.log(event: .mainScreenQrOpen)
                 analyticsManager.log(event: .scanQrOpen(fromPage: "main_screen"))
+                let vc = QrCodeScannerVC()
+                vc.callback = qrCodeScannerHandler(code:)
+                vc.modalPresentationStyle = .fullScreen
+                present(vc, animated: true, completion: nil)
+            case .scanQrWithSwiper(let progress, let state):
+                MenuHelper.mapGestureStateToInteractor(
+                    gestureState: state,
+                    progress: progress,
+                    interactor: interactor)
+                { [weak self] in
+                    guard let self = self else {return}
+                    self.analyticsManager.log(event: .mainScreenQrOpen)
+                    self.analyticsManager.log(event: .scanQrOpen(fromPage: "main_screen"))
+                    let vc = QrCodeScannerVC()
+                    vc.callback = qrCodeScannerHandler(code:)
+                    vc.transitioningDelegate = self
+                    vc.modalPresentationStyle = .custom
+                    self.present(vc, animated: true, completion: nil)
+                }
             case .sendToken(let address):
                 let vc = scenesFactory
                     .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
@@ -163,6 +183,30 @@ extension Home {
                 self.present(vc, animated: true, completion: nil)
             }
         }
+        
+        private func qrCodeScannerHandler(code: String) -> Bool {
+            if NSRegularExpression.publicKey.matches(code) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                    self?.viewModel.navigate(to: .sendToken(address: code))
+                }
+                return true
+            }
+            return false
+        }
+    }
+}
+
+extension Home.ViewController: UIViewControllerTransitioningDelegate {
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        PresentMenuAnimator()
+    }
+    
+//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        DismissMenuAnimator()
+//    }
+    
+    func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        return interactor.hasStarted ? interactor : nil
     }
 }
 
