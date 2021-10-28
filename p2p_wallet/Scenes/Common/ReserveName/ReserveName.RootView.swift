@@ -37,7 +37,6 @@ extension ReserveName {
             autocorrectionType: .no,
             autocapitalizationType: UITextAutocapitalizationType.none,
             spellCheckingType: .no,
-            textContentType: .username,
             horizontalPadding: 18,
             rightView: UILabel(text: .nameServiceDomain, textSize: 17, weight: .semibold, textColor: .textSecondary)
                 .padding(.init(only: .right, inset: 18)),
