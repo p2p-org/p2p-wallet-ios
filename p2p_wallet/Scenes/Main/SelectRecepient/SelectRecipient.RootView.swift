@@ -7,7 +7,7 @@
 
 import UIKit
 import RxSwift
-import RxDataSources
+import BECollectionView
 
 extension SelectRecipient {
     class RootView: BEView {
@@ -21,7 +21,11 @@ extension SelectRecipient {
         private let navigationBar = TitleWithCloseButtonNavigationBar(title: L10n.recipient)
         private let addressView: UIView
         private let wrappedAddressView: UIView
-        private let tableView = UITableView()
+        private lazy var recipientCollectionView: RecipientsCollectionView = {
+            let collectionView = RecipientsCollectionView(recipientsListViewModel: viewModel.recipientsListViewModel)
+            collectionView.delegate = self
+            return collectionView
+        }()
         private let errorLabel = UILabel(textSize: 15, weight: .regular, textColor: .ff4444, numberOfLines: 0)
         private lazy var toolBar = KeyboardDependingToolBar(
             nextHandler: { [weak self] in
@@ -57,7 +61,7 @@ extension SelectRecipient {
 
         // MARK: - Layout
         private func layout() {
-            [navigationBar, wrappedAddressView, errorLabel, tableView, toolBar].forEach(addSubview)
+            [navigationBar, wrappedAddressView, errorLabel, recipientCollectionView, toolBar].forEach(addSubview)
 
             navigationBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
 
@@ -68,9 +72,9 @@ extension SelectRecipient {
             errorLabel.autoPinEdge(.top, to: .bottom, of: wrappedAddressView, withOffset: 8)
             errorLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             errorLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-
-            tableView.autoPinEdge(.top, to: .bottom, of: wrappedAddressView)
-            tableView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
+            
+            recipientCollectionView.autoPinEdge(.top, to: .bottom, of: wrappedAddressView)
+            recipientCollectionView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
 
             toolBar.setConstraints()
         }
@@ -78,16 +82,6 @@ extension SelectRecipient {
         private func configureSubviews() {
             wrappedAddressView.layer.borderWidth = 1
             wrappedAddressView.layer.borderColor = UIColor.a3a5ba.withAlphaComponent(0.5).cgColor
-
-            tableView.register(RecipientCell.self, forCellReuseIdentifier: RecipientCell.cellIdentifier)
-            tableView.register(
-                SelectRecipientSectionHeaderView.self,
-                forHeaderFooterViewReuseIdentifier: SelectRecipientSectionHeaderView.identifier
-            )
-            tableView.rx
-                .setDelegate(self)
-                .disposed(by: disposeBag)
-            tableView.separatorStyle = .none
         }
         
         private func bind() {
@@ -96,72 +90,47 @@ extension SelectRecipient {
                     viewModel?.closeScene()
                 })
                 .disposed(by: disposeBag)
-
-            viewModel.recipientSectionsDriver
-                .drive(tableView.rx.items(dataSource: createDataSource()))
+            
+            // error text
+            let errorTextDriver = viewModel.recipientsListViewModel
+                .dataDidChange
+                .asDriver(onErrorJustReturn: ())
+                .map { [weak self] _ -> String? in
+                    guard let self = self else {return nil}
+                    let vm = self.viewModel.recipientsListViewModel
+                    
+                    switch vm.currentState {
+                    case .error:
+                        return L10n.thereIsAnErrorOccuredPleaseTryTypingNameAgain
+                    case .loaded where vm.searchString?.isEmpty != true && vm.data.isEmpty:
+                        return L10n.thisUsernameIsNotAssociatedWithAnyone
+                    default:
+                        return nil
+                    }
+                }
+                
+            errorTextDriver.drive(errorLabel.rx.text)
                 .disposed(by: disposeBag)
 
-            viewModel.searchErrorDriver
-                .drive(errorLabel.rx.text)
-                .disposed(by: disposeBag)
+            let errorIsEmpty = errorTextDriver.map {$0 == nil}
 
-            let errorIsEmpty = viewModel.searchErrorDriver
-                .map { $0 == nil || $0!.isEmpty }
-
+            // error visibility
             errorIsEmpty
                 .drive(errorLabel.rx.isHidden)
                 .disposed(by: disposeBag)
 
+            // collectionView visibility
             errorIsEmpty
                 .map { !$0 }
-                .drive(tableView.rx.isHidden)
+                .drive(recipientCollectionView.rx.isHidden)
                 .disposed(by: disposeBag)
-
-            Observable
-                .zip(tableView.rx.itemSelected, tableView.rx.modelSelected(Recipient.self))
-                .bind { [weak self] indexPath, recipient in
-                    self?.tableView.deselectRow(at: indexPath, animated: true)
-                    self?.viewModel.recipientSelected(recipient)
-                }
-                .disposed(by: disposeBag)
-        }
-
-        private func createDataSource() -> RxTableViewSectionedReloadDataSource<RecipientsSection> {
-            .init(
-                configureCell: { _, tableView, _, recipient in
-                    guard let cell = tableView.dequeueReusableCell(withIdentifier: RecipientCell.cellIdentifier) as? RecipientCell else {
-                        assertionFailure("Wrong cell")
-                        return UITableViewCell()
-                    }
-
-                    cell.setRecipient(recipient)
-
-                    return cell
-                },
-                titleForHeaderInSection: { dataSource, sectionIndex in
-                    dataSource[sectionIndex].header
-                }
-            )
-
         }
     }
 }
 
-extension SelectRecipient.RootView: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        76
+extension SelectRecipient.RootView: BECollectionViewDelegate {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
+        guard let recipient = item as? Recipient else {return}
+        viewModel.recipientSelected(recipient)
     }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: SelectRecipientSectionHeaderView.identifier) as? SelectRecipientSectionHeaderView else {
-            assertionFailure("wrong header")
-            return nil
-        }
-
-        header.setTitle(tableView.dataSource?.tableView?(tableView, titleForHeaderInSection: section))
-
-        return header
-    }
-
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat { 40 }
 }

@@ -18,7 +18,6 @@ PODS:
     - CocoaLumberjack/Core (= 3.7.2)
   - CocoaLumberjack/Core (3.7.2)
   - CryptoSwift (1.4.1)
-  - Differentiator (5.0.0)
   - FeeRelayerSwift (1.0.0):
     - RxAlamofire
     - RxSwift
@@ -141,10 +140,6 @@ PODS:
   - RxCocoa (6.2.0):
     - RxRelay (= 6.2.0)
     - RxSwift (= 6.2.0)
-  - RxDataSources (5.0.0):
-    - Differentiator (~> 5.0)
-    - RxCocoa (~> 6.0)
-    - RxSwift (~> 6.0)
   - RxRelay (6.2.0):
     - RxSwift (= 6.2.0)
   - RxSwift (6.2.0)
@@ -190,7 +185,6 @@ DEPENDENCIES:
   - RxAppState
   - RxBlocking
   - RxCocoa
-  - RxDataSources
   - SolanaSwift (from `SolanaSwift`)
   - SubviewAttachingTextView
   - SVGKit (from `https://github.com/SVGKit/SVGKit.git`, branch `3.x`)
@@ -211,7 +205,6 @@ SPEC REPOS:
     - Charts
     - CocoaLumberjack
     - CryptoSwift
-    - Differentiator
     - Firebase
     - FirebaseAnalytics
     - FirebaseCore
@@ -236,7 +229,6 @@ SPEC REPOS:
     - RxAppState
     - RxBlocking
     - RxCocoa
-    - RxDataSources
     - RxRelay
     - RxSwift
     - secp256k1.swift
@@ -289,7 +281,6 @@ SPEC CHECKSUMS:
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   CocoaLumberjack: b7e05132ff94f6ae4dfa9d5bce9141893a21d9da
   CryptoSwift: 0bc800a7e6a24c4fc9ebeab97d44b0d5f73a78bd
-  Differentiator: e8497ceab83c1b10ca233716d547b9af21b9344d
   FeeRelayerSwift: 0c3d322a5d914c43bc6ab3fd9d15b04bc2c3080b
   Firebase: ff8c73105b90e33e1dc6c8e5445d7adc2ccdc7c1
   FirebaseAnalytics: 96325c1e0acbd2bb805c6a613028b1fe599d6a37
@@ -317,7 +308,6 @@ SPEC CHECKSUMS:
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
   RxBlocking: 0b29f7d2079109a8de49c411381bed7c33ef1eeb
   RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
-  RxDataSources: aa47cc1ed6c500fa0dfecac5c979b723542d79cf
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
@@ -334,6 +324,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 1e9ecbd3049932c6d860258b2162ab51d8821513
+PODFILE CHECKSUM: 88693cc59244894b404dbf71346830729edb875d
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.10.1
