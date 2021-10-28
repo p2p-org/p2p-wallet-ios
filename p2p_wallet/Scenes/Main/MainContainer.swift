@@ -94,9 +94,9 @@ class MainContainer {
         .init()
     }
     
-    func makeHomeViewController() -> HomeViewController {
-        let vm = HomeViewModel(walletsRepository: walletsViewModel)
-        return HomeViewController(viewModel: vm, scenesFactory: self)
+    func makeHomeViewController() -> Home.ViewController {
+        let vm = Home.ViewModel(walletsRepository: walletsViewModel)
+        return .init(viewModel: vm, scenesFactory: self)
     }
     
     func makeInvestmentsViewController() -> InvestmentsViewController {
