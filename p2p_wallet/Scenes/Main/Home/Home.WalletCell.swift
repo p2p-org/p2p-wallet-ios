@@ -48,9 +48,7 @@ extension Home {
         
         override func setUp(with item: Wallet) {
             super.setUp(with: item)
-            if item.isNativeSOL {
-                coinFullnameLabel.text = item.pubkey?.truncatingMiddle()
-            } else if item.token.isUndefined {
+            if item.token.isUndefined {
                 coinFullnameLabel.text = L10n.unknownToken
             } else {
                 coinFullnameLabel.text = item.token.name
