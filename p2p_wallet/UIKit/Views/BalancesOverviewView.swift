@@ -28,7 +28,8 @@ class BalancesOverviewView: BERoundedCornerShadowView {
     
     init(textColor: UIColor = .textBlack) {
         self.textColor = textColor
-        super.init(shadowColor: UIColor.black.withAlphaComponent(0.05), radius: 24, offset: CGSize(width: 0, height: 8), opacity: 1, cornerRadius: 12, contentInset: .init(x: 16, y: 14))
+        super.init(shadowColor: UIColor.black.withAlphaComponent(0.05), radius: 8, offset: CGSize(width: 0, height: 1), opacity: 1, cornerRadius: 8, contentInset: .init(x: 16, y: 14))
+        self.border(width: 1, color: .f2f2f7)
     }
     
     override func commonInit() {
