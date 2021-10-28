@@ -40,7 +40,19 @@ class HomeRootView: BEView {
         return collectionView
     }()
     
-    private lazy var balancesOverviewView = BalancesOverviewView()
+    private lazy var balancesOverviewView: BalancesOverviewView = {
+        let view = BalancesOverviewView()
+        view.didTapSend = { [weak self] in
+            self?.viewModel.navigationSubject.onNext(.sendToken(address: nil))
+        }
+        view.didTapReceive = { [weak self] in
+            self?.viewModel.navigationSubject.onNext(.receiveToken)
+        }
+        view.didTapSwap = {[weak self] in
+            self?.viewModel.navigationSubject.onNext(.swapToken)
+        }
+        return view
+    }()
     
     // MARK: - Initializers
     init(viewModel: HomeViewModel) {
