@@ -13,6 +13,7 @@ struct Home {
         case buyToken
         case receiveToken
         case scanQr
+        case scanQrWithSwiper(progress: CGFloat, state: UIGestureRecognizer.State)
         case sendToken(address: String? = nil)
         case swapToken
         case allProducts

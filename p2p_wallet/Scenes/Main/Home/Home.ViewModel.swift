@@ -15,6 +15,7 @@ protocol HomeViewModelType: ReserveNameHandler {
     var walletsRepository: WalletsRepository {get}
     
     func navigate(to scene: Home.NavigatableScene?)
+    func navigateToScanQrCodeWithSwiper(progress: CGFloat, swiperState: UIGestureRecognizer.State)
 }
 
 extension Home {
@@ -45,8 +46,13 @@ extension Home.ViewModel: HomeViewModelType {
         nameDidReserveSubject.asSignal()
     }
     
+    // MARK: - Actions
     func navigate(to scene: Home.NavigatableScene?) {
         navigationSubject.accept(scene)
+    }
+    
+    func navigateToScanQrCodeWithSwiper(progress: CGFloat, swiperState: UIGestureRecognizer.State) {
+        navigationSubject.accept(.scanQrWithSwiper(progress: progress, state: swiperState))
     }
     
     func handleName(_ name: String?) {
