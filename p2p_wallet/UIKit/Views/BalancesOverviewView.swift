@@ -8,12 +8,14 @@
 import Foundation
 import Charts
 import BECollectionView
+import UIKit
 
 class BalancesOverviewView: BERoundedCornerShadowView {
-    lazy var equityValueLabel = UILabel(text: " ", textSize: 21, weight: .bold, textColor: textColor)
-    lazy var changeLabel = UILabel(text: " ", textSize: 13)
-    lazy var chartView: PieChartView = {
-        let chartView = PieChartView(width: 75, height: 75, cornerRadius: 75 / 2)
+    // MARK: - Subviews
+    private lazy var equityValueLabel = UILabel(text: " ", textSize: 20, weight: .bold, textAlignment: .right)
+    private lazy var changeLabel = UILabel(text: " ", textSize: 13)
+    private lazy var chartView: PieChartView = {
+        let chartView = PieChartView(width: 64, height: 64, cornerRadius: 64 / 2)
         chartView.usePercentValuesEnabled = true
         chartView.drawSlicesUnderHoleEnabled = false
         chartView.holeColor = .clear
@@ -23,13 +25,14 @@ class BalancesOverviewView: BERoundedCornerShadowView {
         chartView.noDataText = L10n.noChartDataAvailable
         return chartView
     }()
+    private lazy var sendButton = createButton(image: .buttonSend, title: L10n.send)
+    private lazy var receiveButton = createButton(image: .buttonReceive, title: L10n.receive)
+    private lazy var swapButton = createButton(image: .buttonSwap, title: L10n.swap)
     
-    let textColor: UIColor
-    
-    init(textColor: UIColor = .textBlack) {
-        self.textColor = textColor
-        super.init(shadowColor: UIColor.black.withAlphaComponent(0.05), radius: 8, offset: CGSize(width: 0, height: 1), opacity: 1, cornerRadius: 8, contentInset: .init(x: 16, y: 14))
-        self.border(width: 1, color: .f2f2f7)
+    // MARK: - Initializer
+    init() {
+        super.init(shadowColor: UIColor.black.withAlphaComponent(0.05), radius: 8, offset: CGSize(width: 0, height: 1), opacity: 1, cornerRadius: 8)
+        self.border(width: 1, color: .f2f2f7.onDarkMode(.white.withAlphaComponent(0.1)))
     }
     
     override func commonInit() {
@@ -38,20 +41,27 @@ class BalancesOverviewView: BERoundedCornerShadowView {
         layer.masksToBounds = true
         backgroundColor = .grayMain
         
-        stackView.addArrangedSubviews([
-            {
-                let labelStackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
-                labelStackView.addArrangedSubviews([
-                    UILabel(text: L10n.totalBalance),
-                    BEStackViewSpacing(12),
-                    equityValueLabel,
-                    BEStackViewSpacing(5),
-                    changeLabel
-                ])
-                return labelStackView
-            }(),
-            chartView
-        ])
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.spacing = 0
+        stackView.addArrangedSubviews {
+            UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
+                chartView
+                UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
+                    UILabel(text: L10n.combinedTokensValue, textSize: 13, textColor: .textSecondary, textAlignment: .right)
+                    equityValueLabel
+                }
+            }
+                .padding(.init(x: 24, y: 13))
+            
+            UIView.separator(height: 1, color: .separator)
+            
+            UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fillEqually) {
+                sendButton
+                receiveButton
+                swapButton
+            }
+        }
     }
     
     func setUp(state: BEFetcherState, data: [Wallet]) {
@@ -102,10 +112,26 @@ class BalancesOverviewView: BERoundedCornerShadowView {
     }
     
     func showLoading() {
-        stackView.hideLoader()
-        stackView.showLoader(customGradientColor: .defaultLoaderGradientColors)
+        stackView.arrangedSubviews.forEach {$0.hideLoader()}
+        stackView.arrangedSubviews.forEach {$0.showLoader()}
     }
     func hideLoading() {
-        stackView.hideLoader()
+        stackView.arrangedSubviews.forEach {$0.hideLoader()}
     }
+}
+
+private func createButton(image: UIImage, title: String) -> UIView {
+    let view = UIView(forAutoLayout: ())
+    
+    let stackView = UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill)
+        {
+            UIImageView(width: 24, height: 24, image: image, tintColor: .h5887ff)
+            UILabel(text: title, textSize: 15, weight: .medium, textColor: .h5887ff)
+        }
+    
+    view.addSubview(stackView)
+    stackView.autoAlignAxis(toSuperviewAxis: .vertical)
+    stackView.autoPinEdge(toSuperviewEdge: .top, withInset: 18)
+    stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 18)
+    return view
 }
