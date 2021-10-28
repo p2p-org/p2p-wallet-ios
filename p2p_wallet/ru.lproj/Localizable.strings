@@ -355,7 +355,7 @@
 "Could not retrieve balances for this tokens pair. Please try selecting again!" = "Не удалось получить балансы для этой пары токенов.  Пожалуйста, попробуйте выбрать еще раз!";
 "Scan or copy QR code" = "Отсканируйте или скопируйте QR-код";
 "Direct %@ address" = "Прямой адрес %@";
-"View in explorer" = "Посмотреть в explorer";
+"View in %@ explorer" = "Посмотреть в %@ explorer";
 "Show address detail" = "Показать детали адреса";
 "Hide address detail" = "Скрыть детали адреса";
 "This address has no funds. Are you sure it's correct?" = "На этом адресе нет средств. Вы уверены, что он правильный?";

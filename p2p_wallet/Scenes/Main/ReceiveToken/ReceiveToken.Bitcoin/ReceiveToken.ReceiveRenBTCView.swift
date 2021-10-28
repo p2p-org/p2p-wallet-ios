@@ -286,6 +286,7 @@ private class AddressView: BEView {
             
             BEStackViewSpacing(50)
             ReceiveToken.viewInExplorerButton(
+                title: L10n.viewInExplorer(L10n.bitcoin),
                 target: self,
                 selector: #selector(showBTCAddressInExplorer)
             )
