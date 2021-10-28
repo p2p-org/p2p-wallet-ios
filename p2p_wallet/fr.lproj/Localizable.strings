@@ -355,7 +355,7 @@
 "Could not retrieve balances for this tokens pair. Please try selecting again!" = "Impossible de récupérer les soldes pour cette paire de jetons.  Veuillez réessayer !";
 "Scan or copy QR code" = "Scannez ou copiez le code QR";
 "Direct %@ address" = "Adresse %@ directe";
-"View in explorer" = "Afficher dans l'explorateur";
+"View in %@ explorer" = "Afficher dans %@ l'explorateur";
 "Show address detail" = "Afficher le détail de l'adresse";
 "Hide address detail" = "Masquer le détail de l'adresse";
 "This address has no funds. Are you sure it's correct?" = "Cette adresse n'a pas de fonds. Êtes-vous sûr que c'est correct?";
