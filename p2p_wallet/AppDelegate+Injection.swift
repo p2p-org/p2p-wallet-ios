@@ -24,6 +24,9 @@ extension Resolver: ResolverRegistering {
         register {NameService()}
             .implements(NameServiceType.self)
             .scope(.application)
+        register { AddressFormatter() }
+            .implements(AddressFormatterType.self)
+            .scope(.application)
         
         // MARK: - Root
         register {Root.ViewModel()}

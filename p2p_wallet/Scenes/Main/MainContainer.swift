@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import FeeRelayerSwift
+import Resolver
 
 class MainContainer {
     // MARK: - Properties
@@ -167,7 +168,8 @@ class MainContainer {
             walletPubkey: walletPubkey,
             destinationAddress: destinationAddress,
             apiClient: solanaSDK,
-            renVMBurnAndReleaseService: renVMBurnAndReleaseService
+            renVMBurnAndReleaseService: renVMBurnAndReleaseService,
+            addressFormatter: Resolver.resolve()
         )
         let vc = SendToken.ViewController(viewModel: vm, scenesFactory: self)
         return vc
@@ -231,6 +233,15 @@ class MainContainer {
             apiClient: solanaSDK
         )
         return ProcessTransaction.ViewController(viewModel: viewModel)
+    }
+
+    func makeSelectRecipientViewController(handler: @escaping (Recipient) -> Void) -> SelectRecipient.ViewController {
+        let viewModel = SelectRecipient.ViewModel(
+            nameService: Resolver.resolve(),
+            addressFormatter: Resolver.resolve(),
+            recipientSelectedHandler: handler
+        )
+        return SelectRecipient.ViewController(viewModel: viewModel)
     }
     
     // MARK: - Profile VCs

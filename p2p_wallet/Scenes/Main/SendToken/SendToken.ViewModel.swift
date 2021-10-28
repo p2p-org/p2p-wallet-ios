@@ -10,9 +10,11 @@ import RxSwift
 import RxCocoa
 import LazySubject
 
-protocol SendTokenViewModelType: WalletDidSelectHandler {
+protocol SendTokenViewModelType: AnyObject, WalletDidSelectHandler {
     var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {get}
     var currentWalletDriver: Driver<Wallet?> {get}
+    var currentAddressContentDriver: Driver<Recipient?> { get }
+    var isSolanaTransactionDriver: Driver<Bool> { get }
     var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {get}
     var useAllBalanceSignal: Signal<Double?> {get}
     var feeDriver: Driver<Loadable<Double>> {get}
@@ -33,7 +35,9 @@ protocol SendTokenViewModelType: WalletDidSelectHandler {
     func useAllBalance()
     
     func enterWalletAddress(_ address: String?)
+    func recipientChanged(_ recipient: Recipient)
     func clearDestinationAddress()
+    func scanQRCode()
     func ignoreEmptyBalance(_ isIgnored: Bool)
     
     func changeRenBTCNetwork(to network: SendToken.SendRenBTCInfo.Network)
@@ -58,6 +62,7 @@ extension SendToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var nameService: NameServiceType
         private let renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+        private let addressFormatter: AddressFormatterType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -65,10 +70,12 @@ extension SendToken {
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
+        private let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         private let useAllBalanceSubject = PublishRelay<Double?>()
-        private let destinationAddressSubject = BehaviorRelay<String?>(value: nil)
+        private lazy var destinationAddressSubject = recipientSubject
+            .map { $0?.address }
         private let feeSubject: LoadableRelay<Double>
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let addressValidationStatusSubject = BehaviorRelay<AddressValidationStatus>(value: .fetching)
@@ -81,8 +88,10 @@ extension SendToken {
             walletPubkey: String?,
             destinationAddress: String?,
             apiClient: SendTokenAPIClient,
-            renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+            renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType,
+            addressFormatter: AddressFormatterType
         ) {
+            self.addressFormatter = addressFormatter
             self.repository = repository
             self.apiClient = apiClient
             self.renVMBurnAndReleaseService = renVMBurnAndReleaseService
@@ -96,9 +105,9 @@ extension SendToken {
             } else {
                 walletSubject.accept(repository.nativeWallet)
             }
-            
-            destinationAddressSubject.accept(destinationAddress)
-            
+
+            acceptAddressToRecipient(address: destinationAddress)
+
             bind()
             reload()
         }
@@ -124,7 +133,7 @@ extension SendToken {
                 }
                 .bind(to: renBTCInfoSubject)
                 .disposed(by: disposeBag)
-            
+
             // receive at least
             Observable.combineLatest(
                 amountSubject.distinctUntilChanged(),
@@ -197,7 +206,7 @@ extension SendToken {
             guard errorSubject.value == nil,
                   let wallet = walletSubject.value,
                   let sender = wallet.pubkey,
-                  let receiver = destinationAddressSubject.value,
+                  let receiver = recipientSubject.value.map(\.address),
                   var amount = amountSubject.value
             else {
                 return
@@ -236,7 +245,7 @@ extension SendToken {
                 var addressRequest = Single<String>.just(receiver)
                 if receiver.hasSuffix(.nameServiceDomain) {
                     let name = receiver.replacingOccurrences(of: String.nameServiceDomain, with: "")
-                    addressRequest = nameService.getOwner(name)
+                    addressRequest = nameService.getOwnerAddress(name)
                         .map {
                             guard let owner = $0 else {
                                 throw SolanaSDK.Error.other(L10n.theUsernameIsNotAvailable(receiver))
@@ -310,10 +319,20 @@ extension SendToken {
         }
         
         private func feeRequest(network: SendRenBTCInfo.Network?) -> Single<Double> {
-            if network == .bitcoin {
-                return .just(0.001571)
+            switch network {
+            case .none, .solana:
+                return solanaFee()
+            case .bitcoin:
+                return btcFee()
             }
-            return Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
+        }
+
+        private func btcFee() -> Single<Double> {
+            .just(0.001571)
+        }
+
+        private func solanaFee() -> Single<Double> {
+            Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
                 .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
                 .map { [weak self] in
                     let decimals = self?.repository.nativeWallet?.token.decimals
@@ -324,6 +343,35 @@ extension SendToken {
 }
 
 extension SendToken.ViewModel: SendTokenViewModelType {
+    var isSolanaTransactionDriver: Driver<Bool> {
+        let tokenIsRen = walletSubject.map {
+            $0?.token.address.isRenBTCMint == true
+        }
+
+        let isBtcNetwork = renBTCInfoSubject.map {
+            $0?.network == .bitcoin
+        }
+
+        return Observable.combineLatest(tokenIsRen, isBtcNetwork)
+            .map { isRen, isBtcNetwork in
+                isRen && isBtcNetwork
+            }
+            .map {
+                !$0
+            }
+            .asDriver(onErrorJustReturn: false)
+    }
+
+    func recipientChanged(_ recipient: Recipient) {
+        recipientSubject.accept(recipient)
+    }
+
+    func scanQRCode() {
+        analyticsManager.log(event: .sendScanQrClick)
+        analyticsManager.log(event: .scanQrOpen(fromPage: "send"))
+        navigate(to: .scanQrCode)
+    }
+
     var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {
         navigationSubject.asDriver()
     }
@@ -331,7 +379,11 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     var currentWalletDriver: Driver<Wallet?> {
         walletSubject.asDriver()
     }
-    
+
+    var currentAddressContentDriver: Driver<Recipient?> {
+        recipientSubject.asDriver()
+    }
+
     var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {
         currencyModeSubject.asDriver()
     }
@@ -379,7 +431,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     }
     
     var receiverAddressDriver: Driver<String?> {
-        destinationAddressSubject.asDriver()
+        destinationAddressSubject.asDriver(onErrorJustReturn: nil)
     }
     
     var addressValidationStatusDriver: Driver<SendToken.AddressValidationStatus> {
@@ -446,11 +498,11 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     }
     
     func enterWalletAddress(_ address: String?) {
-        destinationAddressSubject.accept(address)
+        acceptAddressToRecipient(address: address)
     }
     
     func clearDestinationAddress() {
-        destinationAddressSubject.accept(nil)
+        acceptAddressToRecipient(address: nil)
     }
     
     func ignoreEmptyBalance(_ isIgnored: Bool) {
@@ -485,6 +537,20 @@ extension SendToken.ViewModel: SendTokenViewModelType {
                     }
                 )
         )
+    }
+
+    private func acceptAddressToRecipient(address: String?) {
+        let recipient = address
+            .flatMap { $0.isEmpty ? nil : $0 }
+            .map {
+                Recipient(
+                    address: $0,
+                    shortAddress: addressFormatter.shortAddress(of: $0),
+                    name: nil
+                )
+            }
+
+        recipientSubject.accept(recipient)
     }
 }
 
