@@ -11,6 +11,7 @@ import Action
 
 protocol _MainScenesFactory {
     func makeTabBarVC() -> TabBarVC
+    func makeHomeViewController() -> Home.ViewController // FIXME: - Remove later
     func makeLocalAuthVC() -> LocalAuthVC
     func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrases.ViewController
 }
@@ -50,7 +51,7 @@ class MainViewController: BaseVC {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        add(child: scenesFactory.makeTabBarVC())
+        add(child: scenesFactory.makeHomeViewController()) // FIXME: - makeTabBarVC
         view.addSubview(blurEffectView)
         blurEffectView.autoPinEdgesToSuperviewEdges()
     }
