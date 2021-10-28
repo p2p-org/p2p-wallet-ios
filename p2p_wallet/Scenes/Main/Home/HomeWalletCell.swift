@@ -43,9 +43,6 @@ final class HomeWalletCell: EditableWalletCell {
         
         indicatorColorView.heightAnchor.constraint(equalTo: coinLogoImageView.heightAnchor)
             .isActive = true
-        
-        coinSymbolLabel.textColor = .white
-        equityValueLabel.textColor = .white
     }
     
     override func setUp(with item: Wallet) {

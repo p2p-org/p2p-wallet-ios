@@ -16,16 +16,21 @@ class HomeRootView: BEView {
     let viewModel: HomeViewModel
     
     // MARK: - Subviews
-    lazy var collectionView: HomeCollectionView = {
-        let collectionView = HomeCollectionView(walletsRepository: viewModel.walletsRepository)
+    lazy var collectionView: WalletsCollectionView = {
+        let collectionView = WalletsCollectionView(
+            walletsRepository: viewModel.walletsRepository,
+            activeWalletsSection: .init(
+                index: 0,
+                viewModel: viewModel.walletsRepository,
+                cellType: HomeWalletCell.self
+            ),
+            hiddenWalletsSection: HiddenWalletsSection(
+                index: 1,
+                viewModel: viewModel.walletsRepository,
+                header: .init(viewClass: HiddenWalletsSectionHeaderView.self)
+            )
+        )
         collectionView.delegate = self
-        collectionView.openProfileAction = viewModel.navigationAction(scene: .settings)
-        collectionView.reserveNameAction = viewModel.navigationAction(scene: .reserveName(owner: viewModel.keychainStorage.account?.publicKey.base58EncodedString ?? ""))
-        collectionView.buyAction = viewModel.navigationAction(scene: .buyToken)
-        collectionView.receiveAction = viewModel.navigationAction(scene: .receiveToken)
-        collectionView.sendAction = viewModel.navigationAction(scene: .scanQr)
-        collectionView.swapAction = viewModel.navigationAction(scene: .swapToken)
-        collectionView.showAllProductsAction = viewModel.navigationAction(scene: .allProducts)
         collectionView.walletCellEditAction = viewModel.navigateToWalletSettingsAction()
         collectionView.showHideHiddenWalletsAction = viewModel.showHideHiddenWalletAction()
         return collectionView
