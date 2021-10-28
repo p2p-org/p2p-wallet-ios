@@ -85,6 +85,7 @@ extension Home {
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .equalCentering) {
                     UIImageView(width: 28, height: 28, image: .scanQr2, tintColor: .textSecondary)
                         .onTap(self, action: #selector(buttonScanQrCodeDidTouch))
+                        .onSwipe(self, action: #selector(qrScannerDidSwipe(sender:)))
                     UILabel(text: L10n.p2PWallet, textSize: 17, weight: .semibold, textAlignment: .center)
                     UIImageView(width: 28, height: 28, image: .settings, tintColor: .textSecondary)
                         .onTap(self, action: #selector(buttonSettingsDidTouch))
@@ -124,6 +125,15 @@ extension Home {
         @objc
         private func buttonSettingsDidTouch() {
             viewModel.navigate(to: .settings)
+        }
+        
+        // MARK: - Actions
+        @objc
+        private func qrScannerDidSwipe(sender: UIPanGestureRecognizer) {
+            let translation = sender.translation(in: self)
+            let progress = MenuHelper.calculateProgress(translationInView: translation, viewBounds: bounds, direction: .right
+            )
+            viewModel.navigateToScanQrCodeWithSwiper(progress: progress, swiperState: sender.state)
         }
     }
 }

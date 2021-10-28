@@ -120,6 +120,10 @@ extension Home {
             case .scanQr:
                 analyticsManager.log(event: .mainScreenQrOpen)
                 analyticsManager.log(event: .scanQrOpen(fromPage: "main_screen"))
+                let vc = QrCodeScannerVC()
+                vc.callback = qrCodeScannerHandler(code:)
+                vc.modalPresentationStyle = .fullScreen
+                present(vc, animated: true, completion: nil)
             case .sendToken(let address):
                 let vc = scenesFactory
                     .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
@@ -162,6 +166,16 @@ extension Home {
                 let vc = scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
                 self.present(vc, animated: true, completion: nil)
             }
+        }
+        
+        private func qrCodeScannerHandler(code: String) -> Bool {
+            if NSRegularExpression.publicKey.matches(code) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                    self?.viewModel.navigate(to: .sendToken(address: code))
+                }
+                return true
+            }
+            return false
         }
     }
 }
