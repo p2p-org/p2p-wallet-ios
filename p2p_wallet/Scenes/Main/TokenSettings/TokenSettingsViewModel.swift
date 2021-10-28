@@ -54,10 +54,15 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
                 let isWalletVisible = !(wallet?.isHidden ?? true)
                 let isAmountEmpty = wallet?.amount == 0
                 let isNonNativeSOL = (wallet?.token.isNative == false && wallet?.token.symbol == "SOL")
-                return [
-                    .visibility(isWalletVisible),
-                    .close(enabled: isAmountEmpty || isNonNativeSOL)
+                
+                var options: [TokenSettings] = [
+                    .visibility(isWalletVisible)
                 ]
+                
+                #if DEBUG
+                options.append(.close(enabled: isAmountEmpty || isNonNativeSOL))
+                #endif
+                return options
             }
             .asDriver(onErrorJustReturn: [])
             .drive(onNext: { [weak self] (settings) in
