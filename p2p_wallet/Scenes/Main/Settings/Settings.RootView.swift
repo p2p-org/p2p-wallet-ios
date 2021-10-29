@@ -100,15 +100,15 @@ extension Settings {
                 
                 BEStackViewSpacing(1)
                 
-                createCell(
-                    image: .settingsLanguage,
-                    text: languageTitle,
-                    descriptionView: activeLanguageLabel
-                )
-                    .withTag(5)
-                    .onTap(self, action: #selector(cellDidTouch(_:)))
-                
-                BEStackViewSpacing(1)
+//                createCell(
+//                    image: .settingsLanguage,
+//                    text: languageTitle,
+//                    descriptionView: activeLanguageLabel
+//                )
+//                    .withTag(5)
+//                    .onTap(self, action: #selector(cellDidTouch(_:)))
+//                
+//                BEStackViewSpacing(1)
                 
                 createCell(
                     image: .settingsAppearance,
