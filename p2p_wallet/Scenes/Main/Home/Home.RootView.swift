@@ -100,7 +100,8 @@ extension Home {
                 collectionView
             }
             addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewSafeArea()
+            stackView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+            stackView.autoPinEdge(toSuperviewEdge: .bottom)
         }
         
         private func bind() {
