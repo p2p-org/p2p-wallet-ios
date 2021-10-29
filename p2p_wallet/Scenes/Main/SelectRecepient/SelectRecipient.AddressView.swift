@@ -24,7 +24,7 @@ extension SelectRecipient {
                 horizontalPadding: 8
             )
             textField.attributedPlaceholder = NSAttributedString(
-                string: L10n._0xESNOrP2pUsername,
+                string: L10n.p2PUsernameSOLAddress,
                 attributes: [
                     .foregroundColor: UIColor.a3a5ba.onDarkMode(.h5887ff),
                     .font: UIFont.systemFont(ofSize: 15, weight: .medium)
