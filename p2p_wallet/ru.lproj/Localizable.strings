@@ -538,7 +538,6 @@
 "Invalid estimated amount" = "Неверная расчетная сумма";
 "Your account does not have enough %@ to cover fees" = "В вашем аккаунте недостаточно %@ для покрытия комиссий";
 "Recipient" = "Получатель";
-"0x, ESN or p2p username" = "0x, ESN или p2p имя пользователя";
 "Found associated wallet address" = "Найден связанный адрес кошелька";
 "Result" = "Результат";
 "This username is not associated with anyone" = "Это имя пользователя ни с кем не связано";
@@ -546,3 +545,4 @@
 "Security key can't be saved into icloud. Please try again." = "Электронный ключ нельзя сохранить в icloud. Пожалуйста, попробуйте еще раз.";
 "You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list." = "Вы можете получать и отправлять токены, используя свое имя пользователя P2P.  Кроме того, пользователи, которые знают ваше имя пользователя, могут отправить вам любой токен, даже если у вас его нет в списке ваших кошельков.";
 "Combined tokens value" = "Комбинированная стоимость токенов";
+"P2P username / SOL address" = "P2P имя пользователя / адрес SOL";
