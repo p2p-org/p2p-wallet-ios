@@ -11,7 +11,7 @@ import UIKit
 
 final class TitleWithCloseButtonNavigationBar: UIStackView {
     private let padding = UIView()
-    private let titleLabel = UILabel(textSize: 17, weight: .semibold, textColor: .black)
+    private let titleLabel = UILabel(textSize: 17, weight: .semibold)
     private let closeButton = UIButton(
         label: L10n.close,
         labelFont: .systemFont(ofSize: 17, weight: .medium),
