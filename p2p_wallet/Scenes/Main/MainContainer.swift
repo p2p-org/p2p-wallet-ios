@@ -109,11 +109,6 @@ class MainContainer {
         return InvestmentsViewController(viewModel: investmentsViewModel)
     }
     
-    func makeMyProductsViewController() -> MyProductsViewController {
-        let viewModel = MyProductsViewModel(walletsRepository: walletsViewModel)
-        return MyProductsViewController(viewModel: viewModel, scenesFactory: self)
-    }
-    
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController {
         let viewModel = WalletDetail.ViewModel(
             pubkey: pubkey,
@@ -288,7 +283,6 @@ class MainContainer {
 }
 
 extension MainContainer: TabBarScenesFactory,
-                         MyProductsScenesFactory,
                          OrcaSwapV2ScenesFactory,
                          SwapTokenScenesFactory,
                          WalletDetailScenesFactory,

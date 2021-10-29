@@ -16,7 +16,6 @@ protocol HomeScenesFactory {
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> CustomPresentableViewController
-    func makeMyProductsViewController() -> MyProductsViewController
     func makeSettingsVC(reserveNameHandler: ReserveNameHandler) -> Settings.ViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
 }
@@ -151,9 +150,6 @@ extension Home {
                 analyticsManager.log(event: .mainScreenSwapOpen)
                 analyticsManager.log(event: .swapOpen(fromPage: "main_screen"))
                 present(vc, interactiveDismissalType: .standard, completion: nil)
-            case .allProducts:
-                let vc = scenesFactory.makeMyProductsViewController()
-                self.present(vc, animated: true, completion: nil)
             case .settings:
                 analyticsManager.log(event: .mainScreenSettingsOpen)
                 analyticsManager.log(event: .settingsOpen(fromPage: "main_screen"))
