@@ -32,5 +32,9 @@ platform :ios do
       browserstack_username: "veronikadedukhin1",
       browserstack_access_key: "KsDobGNSbeBdS7P8KpES",
     )
+    version = get_version_number
+    build = get_build_number
+    git_commit(path: ["p2p_wallet.xcodeproj/project.pbxproj"], message: "release(beta): version #{version}, build #{build}")
+    add_git_tag
   end
 end
