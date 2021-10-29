@@ -27,6 +27,8 @@ extension Resolver: ResolverRegistering {
         register { AddressFormatter() }
             .implements(AddressFormatterType.self)
             .scope(.application)
+        register { LocalizationManager() }
+            .implements(LocalizationManagerType.self)
         
         // MARK: - Root
         register {Root.ViewModel()}
