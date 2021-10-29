@@ -105,18 +105,16 @@ extension Root.ViewModel: ChangeNetworkResponder {
 
 extension Root.ViewModel: ChangeLanguageResponder {
     func languageDidChange(to language: LocalizedLanguage) {
-        UIApplication.changeLanguage(to: language)
+        UIApplication.languageChanged()
         analyticsManager.log(event: .settingsLanguageSelected(language: language.code))
         
         showAuthenticationOnMainOnAppear = false
         reload()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            if let language = language.originalName {
-                UIApplication.shared.showToast(message: "✅ " + L10n.changedLanguageTo(language))
-            } else {
-                UIApplication.shared.showToast(message: "✅ " + L10n.interfaceLanguageChanged)
-            }
+            let languageChangedText = language.originalName.map(L10n.changedLanguageTo) ?? L10n.interfaceLanguageChanged
+
+            UIApplication.shared.showToast(message: "✅ " + languageChangedText)
         }
     }
 }

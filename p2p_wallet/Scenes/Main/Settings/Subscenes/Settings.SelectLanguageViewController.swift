@@ -5,16 +5,13 @@
 //  Created by Chung Tran on 12/10/2021.
 //
 
-import Foundation
-
 extension Settings {
     class SelectLanguageViewController: SingleSelectionViewController<LocalizedLanguage> {
+
         override init(viewModel: SettingsViewModelType) {
             super.init(viewModel: viewModel)
-            data = [LocalizedLanguage: Bool]()
-            Bundle.main.localizations.filter({$0 != "Base"}).forEach {
-                data[LocalizedLanguage(code: $0)] = $0 == Defaults.localizedLanguage.code
-            }
+
+            setSelectableLanguages()
         }
         
         override func setUp() {
@@ -45,6 +42,10 @@ extension Settings {
         {
             guard let item = originalSelectedItem else {return}
             super.itemDidSelect(item)
+        }
+
+        private func setSelectableLanguages() {
+            data = viewModel.selectableLanguages
         }
     }
 }
