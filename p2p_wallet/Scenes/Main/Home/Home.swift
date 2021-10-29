@@ -16,7 +16,6 @@ struct Home {
         case scanQrWithSwiper(progress: CGFloat, state: UIGestureRecognizer.State)
         case sendToken(address: String? = nil)
         case swapToken
-        case allProducts
         case settings
         case reserveName(owner: String)
         case walletDetail(wallet: Wallet)

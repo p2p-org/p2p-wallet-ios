@@ -75,8 +75,7 @@ class HiddenWalletsSection: WalletsSection {
             viewClass: HiddenWalletsSectionHeaderView.self
         ),
         footer: BECollectionViewSectionFooterLayout? = nil,
-        background: UICollectionReusableView.Type? = nil,
-        limit: Int? = nil
+        background: UICollectionReusableView.Type? = nil
     ) {
         super.init(
             index: index,
@@ -89,8 +88,7 @@ class HiddenWalletsSection: WalletsSection {
             customFilter: { item in
                 guard let wallet = item as? Wallet else {return false}
                 return wallet.isHidden
-            },
-            limit: 4
+            }
         )
     }
     
