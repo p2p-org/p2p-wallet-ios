@@ -49,6 +49,7 @@ git submodule update --init --recursive
 - Override `githook` directory:
 ```zsh
 git config core.hooksPath .githooks
+chmod -R +x .githooks
 ```
 - Run `swiftgen` for the first time
 ```zsh
