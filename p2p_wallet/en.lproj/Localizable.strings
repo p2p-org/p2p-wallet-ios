@@ -538,7 +538,6 @@
 "Invalid estimated amount" = "Invalid estimated amount";
 "Your account does not have enough %@ to cover fees" = "Your account does not have enough %@ to cover fees";
 "Recipient" = "Recipient";
-"0x, ESN or p2p username" = "0x, ESN or p2p username";
 "Found associated wallet address" = "Found associated wallet address";
 "Result" = "Result";
 "This username is not associated with anyone" = "This username is not associated with anyone";
@@ -546,3 +545,4 @@
 "Security key can't be saved into icloud. Please try again." = "Security key can't be saved into icloud. Please try again.";
 "You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list." = "You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list.";
 "Combined tokens value" = "Combined tokens value";
+"P2P username / SOL address" = "P2P username / SOL address";

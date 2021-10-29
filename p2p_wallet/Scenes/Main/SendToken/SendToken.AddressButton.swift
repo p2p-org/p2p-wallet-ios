@@ -58,7 +58,7 @@ extension SendToken {
         }
 
         private func configureSubviews() {
-            addressPlaceholder.text = L10n._0xESNOrP2pUsername
+            addressPlaceholder.text = L10n.p2PUsernameSOLAddress
             addressPlaceholder.font = .systemFont(ofSize: 15)
             addressPlaceholder.textColor = UIColor.a3a5ba.onDarkMode(.h5887ff)
 
