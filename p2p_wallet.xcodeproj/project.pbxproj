@@ -281,7 +281,6 @@
 		BC8F684D2609D866002FDCCD /* WalletsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F684C2609D866002FDCCD /* WalletsRepository.swift */; };
 		BC8F6945260AE69E002FDCCD /* WLSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8F6944260AE69E002FDCCD /* WLSectionHeaderView.swift */; };
 		BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */; };
-		BCA7D83427290A29007B070A /* BECollectionView.md in Resources */ = {isa = PBXBuildFile; fileRef = BCA7D83327290A29007B070A /* BECollectionView.md */; };
 		BCA7D83727290F33007B070A /* SelectRecipient.RecipientsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA7D83627290F33007B070A /* SelectRecipient.RecipientsListViewModel.swift */; };
 		BCA7D83927291BCE007B070A /* SelectRecipient.RecipientsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA7D83827291BCE007B070A /* SelectRecipient.RecipientsCollectionView.swift */; };
 		BCA7D83B272A6F89007B070A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BCA7D83A272A6F89007B070A /* GoogleService-Info.plist */; };
@@ -2008,7 +2007,6 @@
 				BCA7D83B272A6F89007B070A /* GoogleService-Info.plist in Resources */,
 				BCA9946C25AE94D7005BD8FB /* Montserrat-Bold.ttf in Resources */,
 				BCA9947125AE94D7005BD8FB /* Montserrat-ExtraBold.ttf in Resources */,
-				BCA7D83427290A29007B070A /* BECollectionView.md in Resources */,
 				BCA9947325AE94D7005BD8FB /* Montserrat-Regular.ttf in Resources */,
 				BCA9946925AE94D7005BD8FB /* Montserrat-ThinItalic.ttf in Resources */,
 				BCA9946525AE94D7005BD8FB /* Montserrat-LightItalic.ttf in Resources */,
