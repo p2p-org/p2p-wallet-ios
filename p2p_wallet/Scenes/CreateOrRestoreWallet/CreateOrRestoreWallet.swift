@@ -9,7 +9,6 @@ import Foundation
 
 struct CreateOrRestoreWallet {
     enum NavigatableScene {
-        case welcome
         case createWallet
         case restoreWallet
     }
