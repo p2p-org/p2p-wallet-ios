@@ -21,19 +21,35 @@ extension CreateOrRestoreWallet {
             viewControllers = [
                 SlideVC {
                     create3dAppIconView()
-                        .centeredHorizontallyView
-                    UILabel(text: L10n.p2PWallet, textSize: 34, weight: .bold, textAlignment: .center)
-                    UILabel(text: L10n.theFutureOfNonCustodialBankingTheEasyWayToBuySellAndHoldCryptos, textSize: 17, weight: .medium, numberOfLines: 0, textAlignment: .center)
+                    createTitleLabel(text: L10n.p2PWallet)
+                    createSubtitleLabel(text: L10n.theFutureOfNonCustodialBankingTheEasyWayToBuySellAndHoldCryptos)
                 },
-                SlideVC {
-                    UIImageView(width: 196.94, height: 306, image: .p2pCamp)
-                        .centeredHorizontallyView
-                    BEStackViewSpacing(31.34)
-                    UILabel(text: L10n.welcomeToP2PFamilyCamp, textSize: 34, weight: .bold, numberOfLines: 0, textAlignment: .center)
-                }
+                createSlideVC(
+                    image: .introSlide2,
+                    title: L10n.allTheWaysToBuy,
+                    subtitle: L10n.buyCryptosWithCreditCardFiatOrApplePay
+                ),
+                createSlideVC(
+                    image: .introSlide3,
+                    title: L10n.privateAndSecure,
+                    subtitle: L10n.NobodyCanAccessYourPrivateKeys.yourDataIsFullySafe
+                ),
+                createSlideVC(
+                    image: .introSlide4,
+                    title: L10n.noHiddenCosts,
+                    subtitle: L10n.SendBTCETHUSDCWithNoFees.swapBTCWithOnly1
+                )
             ]
             currentPageIndicatorTintColor = .h5887ff
             pageIndicatorTintColor = .d1d1d6
+        }
+        
+        private func createSlideVC(image: UIImage, title: String, subtitle: String) -> SlideVC {
+            SlideVC {
+                createLargeImageView(image: image)
+                createTitleLabel(text: title)
+                createSubtitleLabel(text: subtitle)
+            }
         }
         
         private func create3dAppIconView() -> UIView {
@@ -52,7 +68,20 @@ extension CreateOrRestoreWallet {
             imageView.autoPinEdge(toSuperviewEdge: .bottom)
             imageView.autoAlignAxis(toSuperviewAxis: .vertical)
             
-            return iconView
+            return iconView.centeredHorizontallyView
+        }
+        
+        private func createTitleLabel(text: String) -> UILabel {
+            UILabel(text: text, textSize: 34, weight: .bold, numberOfLines: 0, textAlignment: .center)
+        }
+        
+        private func createSubtitleLabel(text: String) -> UILabel {
+            UILabel(text: text, textSize: 17, weight: .medium, numberOfLines: 0, textAlignment: .center)
+        }
+        
+        private func createLargeImageView(image: UIImage) -> UIView {
+            UIImageView(width: 375, height: 349.35, image: image)
+                .centeredHorizontallyView
         }
     }
 }
