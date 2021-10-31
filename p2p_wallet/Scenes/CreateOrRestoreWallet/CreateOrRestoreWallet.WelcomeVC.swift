@@ -84,7 +84,7 @@ private extension CreateOrRestoreWallet.WelcomeVC {
         override func setUp() {
             super.setUp()
             // pattern background view
-            let patternView = UIImageView(image: .introPatternBg)
+            let patternView = UIImageView(image: .introPatternBg, tintColor: .textSecondary.withAlphaComponent(0.05))
             view.addSubview(patternView)
             patternView.autoPinEdgesToSuperviewEdges()
             
