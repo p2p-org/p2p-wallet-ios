@@ -13,9 +13,6 @@ extension CreateOrRestoreWallet {
         // MARK: - Dependencies
         @Injected private var viewModel: CreateOrRestoreWalletViewModelType
         
-        // MARK: - Properties
-        var childNavigationController: BENavigationController!
-        
         // MARK: - Methods
         override func bind() {
             super.bind()
