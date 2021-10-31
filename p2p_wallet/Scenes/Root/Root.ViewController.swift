@@ -45,7 +45,7 @@ extension Root {
                 let nc = BENavigationController(rootViewController: vc)
                 transition(to: nc)
                 
-                changeStatusBarStyle(.lightContent)
+                changeStatusBarStyle(.default)
                 
             case .onboarding:
                 let vc = Onboarding.ViewController()
