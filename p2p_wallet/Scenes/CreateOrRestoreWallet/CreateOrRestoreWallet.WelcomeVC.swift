@@ -64,7 +64,7 @@ private extension CreateOrRestoreWallet.WelcomeVC {
         private lazy var createWalletButton: UIView = {
             let stackView = UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
                 UIImageView(width: 24, height: 24, image: .walletButtonSmall)
-                UILabel(text: L10n.createNewWallet, textSize: 17, weight: .medium, textColor: .white, numberOfLines: 0)
+                UILabel(text: L10n.createNewWallet.uppercaseFirst, textSize: 17, weight: .medium, textColor: .white, numberOfLines: 0)
             }
             let button = UIView(height: 56, backgroundColor: .h5887ff, cornerRadius: 12)
             button.addSubview(stackView)
@@ -73,8 +73,8 @@ private extension CreateOrRestoreWallet.WelcomeVC {
                 .onTap(self, action: #selector(navigateToCreateWalletScene))
         }()
         lazy var restoreWalletButton: UIView = {
-            let label = UILabel(text: L10n.iVeAlreadyHadAWallet, textSize: 17, weight: .medium, textColor: .h5887ff, numberOfLines: 0)
-            let button = UIView(forAutoLayout: ())
+            let label = UILabel(text: L10n.iVeAlreadyHadAWallet.uppercaseFirst, textSize: 17, weight: .medium, textColor: .h5887ff, numberOfLines: 0)
+            let button = UIView(height: 56)
             button.addSubview(label)
             label.autoCenterInSuperview()
             return button
