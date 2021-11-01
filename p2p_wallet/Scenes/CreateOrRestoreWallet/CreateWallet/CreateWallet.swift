@@ -10,6 +10,7 @@ import Foundation
 struct CreateWallet {
     enum NavigatableScene {
         case termsAndConditions
+        case explanation
         case createPhrases
         case reserveName(owner: String)
         case dismiss

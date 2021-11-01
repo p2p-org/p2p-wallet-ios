@@ -24,9 +24,9 @@ class WLNavigationBar: BEView {
         UIView(width: 35, height: 35)
     ])
     
-    lazy var backButton = UIImageView(width: 35, height: 35, image: .backSquare)
+    lazy var backButton = UIImageView(width: 14, height: 20, image: .chevronLeft).padding(UIEdgeInsets(x: 6, y: 6))
     lazy var titleLabel: UILabel = {
-        let label = UILabel(textSize: 19, weight: .semibold, textAlignment: .center)
+        let label = UILabel(textSize: 17, weight: .semibold, textAlignment: .center)
         label.adjustsFontSizeToFitWidth = true
         return label
     }()

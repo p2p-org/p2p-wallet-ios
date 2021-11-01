@@ -554,3 +554,13 @@
 "No hidden costs" = "Không có chi phí ẩn";
 "Send BTC, ETH, USDC with no fees. Swap BTC with only $1" = "Gửi BTC, ETH, USDC mà không mất phí.\nHoán đổi BTC chỉ với $ 1";
 "Private and secure" = "Riêng tư & an toàn";
+"Show your security key" = "Hiển thị khóa bảo mật của bạn";
+"Secure your wallet" = "Bảo mật ví của bạn";
+"The following words are security key that  that you must keep in a safe place, written in the correct sequence.
+
+If lost, no one can restore it.
+Keep it private, even from us" = "Các từ sau đây là khóa bảo mật mà bạn phải giữ ở một nơi an toàn, được viết theo đúng trình tự.
+
+ Nếu bị mất, không ai có thể khôi phục lại.
+ Giữ nó ở chế độ riêng tư, ngay cả với chúng tôi";
+"Create a new wallet" = "Tạo một ví mới";
