@@ -560,3 +560,6 @@
 "The following words are security key that  that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "The following words are security key that  that you must keep in a safe place, written in the correct sequence.\n\nIf lost, no one can restore it.\nKeep it private, even from us";
 "Import a wallet" = "Import a wallet";
 "iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "iCloud restore is for returning users.\nPasting the security key manually is for everyone";
+"Show your security key" = "Show your security key";
+"Secure your wallet" = "Secure your wallet";
+"Create a new wallet" = "Create a new wallet";

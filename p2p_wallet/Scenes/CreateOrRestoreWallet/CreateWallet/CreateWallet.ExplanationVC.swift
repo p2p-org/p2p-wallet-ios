@@ -12,7 +12,7 @@ extension CreateWallet {
         }
         
         // MARK: - Subviews
-        private lazy var navigationBar: WLNavigationBar = {
+        lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton
                 .onTap(self, action: #selector(back))
@@ -37,7 +37,7 @@ extension CreateWallet {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            
+    
             // pattern background view
             let patternView = UIImageView(image: .introPatternBg, tintColor: .textSecondary.withAlphaComponent(0.05))
             view.addSubview(patternView)
