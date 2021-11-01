@@ -22,7 +22,7 @@ extension CreateWallet {
         
         private lazy var createWalletButton: UIView = {
             let stackView = UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
-                UIImageView(width: 24, height: 24, image: .walletButtonSmall)
+                UIImageView(width: 16, height: 15, image: .key)
                 UILabel(text: L10n.showYourSecurityKey, textSize: 17, weight: .medium, textColor: .white, numberOfLines: 0)
             }
             let button = UIView(height: 56, backgroundColor: .h5887ff, cornerRadius: 12)
@@ -62,7 +62,7 @@ extension CreateWallet {
                     textSize: 17, weight: .medium, numberOfLines: 0, textAlignment: .center)
                     .padding(UIEdgeInsets(only: .top, inset: 10))
                 UIView.spacer
-            }.padding(UIEdgeInsets(x: 18, y: 0))
+            }.padding(UIEdgeInsets(x: 10, y: 0))
             
             view.addSubview(vStack)
             vStack.autoPinEdge(.top, to: .bottom, of: navigationBar)
