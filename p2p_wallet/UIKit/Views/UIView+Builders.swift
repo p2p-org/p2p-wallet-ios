@@ -21,7 +21,7 @@ extension UIView {
         title: String,
         description: String? = nil,
         replacingImageWithCustomView customView: UIView? = nil
-    ) -> UIStackView {
+    ) -> UIView {
         let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
         
         var iconView: UIView?
@@ -50,6 +50,7 @@ extension UIView {
         
         return stackView
             .withContentHuggingPriority(.required, for: .vertical)
+            .centered(.vertical)
     }
     
     /// PatternView with lines
