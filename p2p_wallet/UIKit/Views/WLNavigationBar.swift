@@ -21,21 +21,17 @@ class WLNavigationBar: BEView {
         titleLabel
     ])
     lazy var rightItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-        UIView(width: 35, height: 35)
+        UIView.spacer
     ])
     
-    lazy var backButton = UIImageView(width: 14, height: 20, image: .chevronLeft).padding(UIEdgeInsets(x: 6, y: 6))
-    lazy var titleLabel: UILabel = {
-        let label = UILabel(textSize: 17, weight: .semibold, textAlignment: .center)
-        label.adjustsFontSizeToFitWidth = true
-        return label
-    }()
+    lazy var backButton = UIImageView(width: 14, height: 24, image: UIImage(systemName: "chevron.left"), tintColor: .h5887ff)
+    lazy var titleLabel = UILabel(textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
     
     override func commonInit() {
         super.commonInit()
         stackView.spacing = 8
         addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewSafeArea(with: .init(all: 20))
+        stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 18, y: 12))
     }
     
     func setTitle(_ title: String?) {

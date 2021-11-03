@@ -37,7 +37,7 @@ extension CreateWallet {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-    
+            
             // pattern background view
             let patternView = UIImageView(image: .introPatternBg, tintColor: .textSecondary.withAlphaComponent(0.05))
             view.addSubview(patternView)
@@ -51,28 +51,20 @@ extension CreateWallet {
             navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
             
             // content
-            let vStack = UIStackView(axis: .vertical, alignment: .center, distribution: .fill) {
-                UIView.spacer
-                UIImageView(width: 375, height: 349.35, image: .explanationPicture)
-                    .centeredHorizontallyView
-                UILabel(text: L10n.secureYourWallet, textSize: 34, weight: .bold, numberOfLines: 0, textAlignment: .center)
-                    .padding(UIEdgeInsets(only: .top, inset: 20))
-                UILabel(
-                    text: L10n.TheFollowingWordsAreSecurityKeyThatThatYouMustKeepInASafePlaceWrittenInTheCorrectSequence.IfLostNoOneCanRestoreIt.keepItPrivateEvenFromUs,
-                    textSize: 17, weight: .medium, numberOfLines: 0, textAlignment: .center)
-                    .padding(UIEdgeInsets(only: .top, inset: 10))
-                UIView.spacer
-            }.padding(UIEdgeInsets(x: 10, y: 0))
+            let illustration = UIView.ilustrationView(
+                image: .explanationPicture,
+                title: L10n.secureYourWallet,
+                description: L10n.TheFollowingWordsAreSecurityKeyThatThatYouMustKeepInASafePlaceWrittenInTheCorrectSequence.IfLostNoOneCanRestoreIt.keepItPrivateEvenFromUs)
             
-            view.addSubview(vStack)
-            vStack.autoPinEdge(.top, to: .bottom, of: navigationBar)
-            vStack.autoPinEdge(toSuperviewSafeArea: .left, withInset: 18)
-            vStack.autoPinEdge(toSuperviewSafeArea: .right, withInset: 18)
+            view.addSubview(illustration)
+            illustration.autoPinEdge(.top, to: .bottom, of: navigationBar)
+            illustration.autoPinEdge(toSuperviewSafeArea: .left, withInset: 18)
+            illustration.autoPinEdge(toSuperviewSafeArea: .right, withInset: 18)
             
             // bottom button
             view.addSubview(createWalletButton)
             createWalletButton.autoPinEdgesToSuperviewSafeArea(with: .init(x: 18, y: 20), excludingEdge: .top)
-            createWalletButton.autoPinEdge(.top, to: .bottom, of: vStack, withOffset: 10)
+            createWalletButton.autoPinEdge(.top, to: .bottom, of: illustration, withOffset: 10)
         }
         
         // MARK: - Navigation

@@ -39,7 +39,7 @@ extension Settings {
             super.setUp()
             view.backgroundColor = .listBackground
             view.addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges()
+            stackView.autoPinEdgesToSuperviewSafeArea()
         }
     }
     

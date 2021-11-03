@@ -557,4 +557,6 @@
 "Show your security key" = "Montrez votre clé de sécurité";
 "Secure your wallet" = "Sécurisez votre portefeuille";
 "Create a new wallet" = "Créer un nouveau portefeuille";
-"The following words are security key that  that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Les mots suivants sont une clé de sécurité que vous devez conserver dans un endroit sûr, écrite dans le bon ordre.\nEn cas de perte, personne ne peut la restaurer.\nGardez-la privée, même de notre part";
+"The following words are security key that  that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Les mots suivants sont une clé de sécurité que vous devez conserver dans un endroit sûr, écrite dans le bon ordre.\n\nEn cas de perte, personne ne peut la restaurer.\nGardez-la privée, même de notre part";
+"Import a wallet" = "Importer un portefeuille";
+"iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "La restauration iCloud est destinée aux utilisateurs qui reviennent.\nColler la clé de sécurité manuellement est pour tout le monde";

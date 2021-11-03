@@ -557,4 +557,6 @@
 "Show your security key" = "Покажи свой электронный ключ";
 "Secure your wallet" = "Защитите свой кошелек";
 "Create a new wallet" = "Создать новый кошелек";
-"The following words are security key that  that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Следующие слова являются ключом безопасности, который вы должны хранить в надежном месте и писать в правильной последовательности. \n В случае потери никто не сможет восстановить его. \n Храните его в тайне, даже от нас";
+"The following words are security key that  that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Следующие слова являются ключом безопасности, который вы должны хранить в надежном месте и писать в правильной последовательности.\n\nВ случае потери никто не сможет восстановить его. \n Храните его в тайне, даже от нас";
+"Import a wallet" = "Импортировать кошелек";
+"iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "Восстановление iCloud предназначено для вернувшихся пользователей.\nВставка ключа безопасности вручную предназначена для всех.";
