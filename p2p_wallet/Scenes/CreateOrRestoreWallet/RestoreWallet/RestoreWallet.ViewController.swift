@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import BEPureLayout
 
 extension RestoreWallet {
     class ViewController: BaseVC {
@@ -22,10 +23,25 @@ extension RestoreWallet {
         private lazy var childNavigationControllerVCWrapper: WLModalWrapperVC = .init(wrapped: childNavigationController)
         
         // MARK: - Subviews
-        private lazy var iCloudRestoreButton = WLButton.stepButton(enabledColor: .textWhite, textColor: .textBlack, label: " " + L10n.restoreUsingICloud)
-            .onTap(self, action: #selector(restoreFromICloud))
-        private lazy var restoreManuallyButton = WLButton.stepButton(type: .sub, label: L10n.restoreManually)
-            .onTap(self, action: #selector(restoreManually))
+        private lazy var iCloudRestoreButton: UIView = {
+            let stackView = UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
+                UIImageView(width: 24.adaptiveHeight, height: 24.adaptiveHeight, image: .init(systemName: "applelogo"), tintColor: .white)
+                UILabel(text: L10n.restoreUsingICloud, textSize: 17.adaptiveHeight, weight: .medium, textColor: .white, numberOfLines: 0)
+            }
+            let button = UIView(height: 56.adaptiveHeight, backgroundColor: .h5887ff, cornerRadius: 12)
+            button.addSubview(stackView)
+            stackView.autoCenterInSuperview()
+            return button
+                .onTap(self, action: #selector(restoreFromICloud))
+        }()
+        private lazy var restoreManuallyButton: UIView = {
+            let label = UILabel(text: L10n.restoreManually, textSize: 17.adaptiveHeight, weight: .medium, textColor: .h5887ff, numberOfLines: 0)
+            let button = UIView(height: 56.adaptiveHeight)
+            button.addSubview(label)
+            label.autoCenterInSuperview()
+            return button
+                .onTap(self, action: #selector(restoreManually))
+        }()
         
         // MARK: - Methods
         override func setUp() {
@@ -48,8 +64,9 @@ extension RestoreWallet {
                     title: L10n.importAWallet,
                     description: L10n.ICloudRestoreIsForReturningUsers.pastingTheSecurityKeyManuallyIsForEveryone
                 )
-                iCloudRestoreButton
-                restoreManuallyButton
+                BEStackViewSpacing(55)
+                iCloudRestoreButton.padding(.init(x: 20, y: 0))
+                restoreManuallyButton.padding(.init(x: 20, y: 0))
             }
             
             view.addSubview(stackView)
