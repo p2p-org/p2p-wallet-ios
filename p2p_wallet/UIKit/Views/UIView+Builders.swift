@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension UIView {
     /// Create a stackview that have an image (or a custom view) followed by a title and a description
@@ -50,5 +51,10 @@ extension UIView {
         return stackView
             .withContentHuggingPriority(.required, for: .vertical)
             .centered(.vertical)
+    }
+    
+    /// PatternView with lines
+    static func introPatternView() -> UIImageView {
+        UIImageView(image: .introPatternBg, tintColor: .textSecondary.withAlphaComponent(0.05))
     }
 }

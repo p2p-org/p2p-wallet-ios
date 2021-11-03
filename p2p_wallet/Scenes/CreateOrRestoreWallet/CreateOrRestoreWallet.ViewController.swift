@@ -45,7 +45,7 @@ extension CreateOrRestoreWallet {
             analyticsManager.log(event: .firstInOpen)
             
             // pattern background view
-            let patternView = UIImageView(image: .introPatternBg, tintColor: .textSecondary.withAlphaComponent(0.05))
+            let patternView = UIView.introPatternView()
             view.addSubview(patternView)
             patternView.autoPinEdgesToSuperviewEdges()
             

@@ -554,3 +554,5 @@
 "No hidden costs" = "No hidden costs";
 "Send BTC, ETH, USDC with no fees. Swap BTC with only $1" = "Send BTC, ETH, USDC with no fees.\nSwap BTC with only $1";
 "Private and secure" = "Private & secure";
+"Import a wallet" = "Import a wallet";
+"iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "iCloud restore is for returning users.\nPasting the security key manually is for everyone";
