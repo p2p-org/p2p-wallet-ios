@@ -75,14 +75,14 @@ private class SlideVC: BaseVC {
         .embeded
     }
     
-    private let stackView: UIStackView
+    private let contentView: UIView
     init(
         image: UIImage? = nil,
         title: String,
         description: String? = nil,
         replacingImageWithCustomView customView: UIView? = nil
     ) {
-        self.stackView = .ilustrationView(image: image, title: title, description: description, replacingImageWithCustomView: customView)
+        self.contentView = .ilustrationView(image: image, title: title, description: description, replacingImageWithCustomView: customView)
         super.init()
     }
     
@@ -90,13 +90,10 @@ private class SlideVC: BaseVC {
         super.setUp()
         view.backgroundColor = .clear
         
-        // content stack view
-        let wrappedView = stackView.centered(.vertical)
-        
-        view.addSubview(wrappedView)
-        wrappedView.autoPinEdge(toSuperviewSafeArea: .top)
-        wrappedView.autoPinEdge(toSuperviewSafeArea: .leading, withInset: 20)
-        wrappedView.autoPinEdge(toSuperviewSafeArea: .trailing, withInset: 20)
-        wrappedView.autoPinEdge(toSuperviewSafeArea: .bottom, withInset: 55)
+        view.addSubview(contentView)
+        contentView.autoPinEdge(toSuperviewSafeArea: .top)
+        contentView.autoPinEdge(toSuperviewSafeArea: .leading, withInset: 20)
+        contentView.autoPinEdge(toSuperviewSafeArea: .trailing, withInset: 20)
+        contentView.autoPinEdge(toSuperviewSafeArea: .bottom, withInset: 55)
     }
 }
