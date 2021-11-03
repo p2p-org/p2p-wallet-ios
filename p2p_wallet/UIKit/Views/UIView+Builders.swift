@@ -27,7 +27,7 @@ extension UIView {
         if let customView = customView {
             iconView = customView
         } else if let image = image {
-            iconView = UIImageView(image: image)
+            iconView = UIImageView(height: 349.adaptiveHeight, image: image)
             iconView!.autoAdjustWidthHeightRatio(image.size.width/image.size.height)
         }
         
@@ -36,13 +36,13 @@ extension UIView {
         }
         
         stackView.addArrangedSubview(
-            UILabel(text: title, textSize: 34.adaptiveHeight, weight: .bold, numberOfLines: 2, textAlignment: .center)
+            UILabel(text: title, textSize: 34.adaptiveHeight, weight: .bold, numberOfLines: 0, textAlignment: .center)
                 .withContentHuggingPriority(.required, for: .vertical)
         )
         
         if let description = description {
             stackView.addArrangedSubview(
-                UILabel(text: description, textSize: 17.adaptiveHeight, weight: .medium, numberOfLines: 2, textAlignment: .center)
+                UILabel(text: description, textSize: 17.adaptiveHeight, weight: .medium, numberOfLines: 0, textAlignment: .center)
                     .withContentHuggingPriority(.required, for: .vertical)
             )
         }
