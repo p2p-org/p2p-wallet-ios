@@ -25,7 +25,7 @@ extension RestoreWallet {
         // MARK: - Subviews
         private lazy var iCloudRestoreButton: UIView = {
             let stackView = UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
-                UIImageView(width: 24.adaptiveHeight, height: 24.adaptiveHeight, image: .init(systemName: "applelogo"), tintColor: .white)
+                UIImageView(width: 17.adaptiveHeight, height: 21.adaptiveHeight, image: .init(systemName: "applelogo"), tintColor: .white)
                 UILabel(text: L10n.restoreUsingICloud, textSize: 17.adaptiveHeight, weight: .medium, textColor: .white, numberOfLines: 0)
             }
             let button = UIView(height: 56.adaptiveHeight, backgroundColor: .h5887ff, cornerRadius: 12)
@@ -64,13 +64,14 @@ extension RestoreWallet {
                     title: L10n.importAWallet,
                     description: L10n.ICloudRestoreIsForReturningUsers.pastingTheSecurityKeyManuallyIsForEveryone
                 )
-                BEStackViewSpacing(55)
+                    .padding(.init(x: 20, y: 0))
                 iCloudRestoreButton.padding(.init(x: 20, y: 0))
                 restoreManuallyButton.padding(.init(x: 20, y: 0))
             }
             
             view.addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewSafeArea(with: .zero)
+            stackView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+            stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 20)
         }
         
         override func bind() {

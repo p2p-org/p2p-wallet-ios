@@ -24,8 +24,8 @@ class WLNavigationBar: BEView {
         UIView.spacer
     ])
     
-    lazy var backButton = UIImageView(width: 14, height: 24, image: UIImage(systemName: "chevron.left"), tintColor: .h5887ff)
-    lazy var titleLabel = UILabel(textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
+    lazy var backButton = UIImageView(width: 14.adaptiveHeight, height: 24.adaptiveHeight, image: UIImage(systemName: "chevron.left"), tintColor: .h5887ff)
+    lazy var titleLabel = UILabel(textSize: 17.adaptiveHeight, weight: .semibold, numberOfLines: 0, textAlignment: .center)
     
     override func commonInit() {
         super.commonInit()
