@@ -22,6 +22,7 @@ protocol CreateWalletViewModelType: ReserveNameHandler {
     func acceptTermsAndCondition()
     func navigateToCreatePhrases()
     func navigateToReserveName(owner: String)
+    func back()
 }
 
 extension CreateWallet {
@@ -110,6 +111,10 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     
     func dismiss() {
         navigationSubject.accept(.dismiss)
+    }
+    
+    func back() {
+        navigationSubject.accept(.back)
     }
     
     func navigateToCreatePhrases() {

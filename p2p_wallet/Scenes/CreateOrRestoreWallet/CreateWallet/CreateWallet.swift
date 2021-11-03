@@ -14,5 +14,6 @@ struct CreateWallet {
         case createPhrases
         case reserveName(owner: String)
         case dismiss
+        case back
     }
 }

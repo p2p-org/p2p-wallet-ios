@@ -34,7 +34,7 @@ extension CreateWallet {
         override func bind() {
             super.bind()
             viewModel.navigatableSceneDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
         }
         
@@ -56,6 +56,8 @@ extension CreateWallet {
                 childNavigationController.pushViewController(vc, animated: true)
             case .dismiss:
                 dismiss(animated: true, completion: nil)
+            case .back:
+                childNavigationController.popViewController(animated: true)
             case .none:
                 break
             }
