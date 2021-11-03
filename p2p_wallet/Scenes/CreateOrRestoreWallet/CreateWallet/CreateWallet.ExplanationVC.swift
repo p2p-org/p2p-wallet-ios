@@ -12,7 +12,7 @@ extension CreateWallet {
         }
         
         // MARK: - Subviews
-        lazy var navigationBar: WLNavigationBar = {
+        private lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton
                 .onTap(self, action: #selector(back))

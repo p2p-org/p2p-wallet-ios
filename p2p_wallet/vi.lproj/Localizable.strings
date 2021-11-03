@@ -556,11 +556,5 @@
 "Private and secure" = "Riêng tư & an toàn";
 "Show your security key" = "Hiển thị khóa bảo mật của bạn";
 "Secure your wallet" = "Bảo mật ví của bạn";
-"The following words are security key that  that you must keep in a safe place, written in the correct sequence.
-
-If lost, no one can restore it.
-Keep it private, even from us" = "Các từ sau đây là khóa bảo mật mà bạn phải giữ ở một nơi an toàn, được viết theo đúng trình tự.
-
- Nếu bị mất, không ai có thể khôi phục lại.
- Giữ nó ở chế độ riêng tư, ngay cả với chúng tôi";
 "Create a new wallet" = "Tạo một ví mới";
+"The following words are security key that  that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Các từ sau đây là khóa bảo mật mà bạn phải cất giữ ở nơi an toàn, được viết theo đúng trình tự. \n Nếu bị mất, không ai có thể khôi phục lại. \n Giữ bí mật, kể cả với chúng tôi";

@@ -556,11 +556,5 @@
 "Private and secure" = "Private & secure";
 "Show your security key" = "Show your security key";
 "Secure your wallet" = "Secure your wallet";
-"The following words are security key that  that you must keep in a safe place, written in the correct sequence.
-
-If lost, no one can restore it.
-Keep it private, even from us" = "The following words are security key that  that you must keep in a safe place, written in the correct sequence.
-
-If lost, no one can restore it.
-Keep it private, even from us";
 "Create a new wallet" = "Create a new wallet";
+"The following words are security key that  that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "The following words are security key that  that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us";
