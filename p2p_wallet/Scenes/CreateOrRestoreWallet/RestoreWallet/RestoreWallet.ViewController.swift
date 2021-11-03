@@ -9,7 +9,11 @@ import Foundation
 import UIKit
 
 extension RestoreWallet {
-    class ViewController: WLIntroVC {
+    class ViewController: BaseVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+        
         // MARK: - Dependencies
         @Injected private var viewModel: RestoreWalletViewModelType
         
@@ -26,15 +30,30 @@ extension RestoreWallet {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            backButton.isHidden = false
-            descriptionLabel.isHidden = false
-            titleLabel.text = L10n.p2PWalletRecovery
-            descriptionLabel.text = L10n.recoverYourP2PWalletManuallyOrUsingCloudServices
+            // pattern background view
+            let patternView = UIView.introPatternView()
+            view.addSubview(patternView)
+            patternView.autoPinEdgesToSuperviewEdges()
             
-            buttonsStackView.addArrangedSubviews([
-                iCloudRestoreButton,
+            // navigation bar
+            let navigationBar = WLNavigationBar(forAutoLayout: ())
+            navigationBar.backButton.onTap(self, action: #selector(back))
+            navigationBar.titleLabel.text = L10n.iVeAlreadyHadAWallet
+            
+            // content
+            let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
+                navigationBar
+                UIView.ilustrationView(
+                    image: .introImportAWallet,
+                    title: L10n.importAWallet,
+                    description: L10n.ICloudRestoreIsForReturningUsers.pastingTheSecurityKeyManuallyIsForEveryone
+                )
+                iCloudRestoreButton
                 restoreManuallyButton
-            ])
+            }
+            
+            view.addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewSafeArea(with: .zero)
         }
         
         override func bind() {

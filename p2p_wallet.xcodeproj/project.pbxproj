@@ -1881,6 +1881,7 @@
 		BCEE522B2626D3F900271AB9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BC7DD92027327872000F50D0 /* UIView+Builders.swift */,
 				BC8F676F2608737B002FDCCD /* WLPhrasesTextView */,
 				BC65E085261DB21600E436C7 /* WalletCells */,
 				BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */,
@@ -1919,7 +1920,6 @@
 				BC6FEDA6270EEFEF002B6255 /* WLBannerView.swift */,
 				BCFEDBFB2727A9F0008AE4AD /* WLMarkdownView.swift */,
 				BCA7D83C272A9807007B070A /* WalletsCollectionView */,
-				BC7DD92027327872000F50D0 /* UIView+Builders.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
