@@ -8,6 +8,7 @@
 import UIKit
 import TagListView
 import RxSwift
+import RxCocoa
 import Action
 
 extension CreateSecurityKeys {
@@ -19,13 +20,15 @@ extension CreateSecurityKeys {
         private let disposeBag = DisposeBag()
         
         // MARK: - Subviews
-        lazy var navigationBar: WLNavigationBar = {
+        private let navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton
                 .onTap(self, action: #selector(back))
             navigationBar.titleLabel.text = L10n.yourSecurityKey
             return navigationBar
         }()
+        
+        private let keyView: KeysView = KeysView()
         
         // MARK: - Initializers
         init() {
@@ -47,13 +50,17 @@ extension CreateSecurityKeys {
         // MARK: - Layout
         private func layout() {
             addSubview(navigationBar)
-            navigationBar.titleLabel.text = L10n.createANewWallet
             navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
             navigationBar.autoPinEdge(toSuperviewEdge: .leading)
             navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
+            
+            addSubview(keyView)
+            keyView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets.zero, excludingEdge: .top)
+            keyView.autoPinEdge(.top, to: .bottom, of: navigationBar)
         }
         
         private func bind() {
+            viewModel.phrasesDriver.drive(keyView.rx.keys).disposed(by: disposeBag)
         }
         
         // MARK: - Actions
