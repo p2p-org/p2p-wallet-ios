@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol CreateOrRestoreWalletViewModelType {
-    var navigatableSceneDriver: Driver<CreateOrRestoreWallet.NavigatableScene> {get}
+    var navigatableSceneDriver: Driver<CreateOrRestoreWallet.NavigatableScene?> {get}
     
     func navigateToCreateWalletScene()
     func navigateToRestoreWalletScene()
@@ -25,12 +25,12 @@ extension CreateOrRestoreWallet {
         private let bag = DisposeBag()
         
         // MARK: - Subjects
-        private let navigatableSceneSubject = BehaviorRelay<CreateOrRestoreWallet.NavigatableScene>(value: .welcome)
+        private let navigatableSceneSubject = BehaviorRelay<CreateOrRestoreWallet.NavigatableScene?>(value: nil)
     }
 }
 
 extension CreateOrRestoreWallet.ViewModel: CreateOrRestoreWalletViewModelType {
-    var navigatableSceneDriver: Driver<CreateOrRestoreWallet.NavigatableScene> {
+    var navigatableSceneDriver: Driver<CreateOrRestoreWallet.NavigatableScene?> {
         navigatableSceneSubject.asDriver()
     }
     

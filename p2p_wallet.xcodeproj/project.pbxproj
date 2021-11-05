@@ -265,6 +265,7 @@
 		BC7D078126F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7D078026F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift */; };
 		BC7D078326F86700005F777F /* ReceiveToken.ViewBuilders.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7D078226F86700005F777F /* ReceiveToken.ViewBuilders.swift */; };
 		BC7D078526F87344005F777F /* AssociatedTokenAccountHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7D078426F87344005F777F /* AssociatedTokenAccountHandler.swift */; };
+		BC7DD92127327872000F50D0 /* UIView+Builders.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7DD92027327872000F50D0 /* UIView+Builders.swift */; };
 		BC80203926F1DA7000C109C2 /* ReceiveToken.ReceiveSolanaViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80203826F1DA7000C109C2 /* ReceiveToken.ReceiveSolanaViewModel.swift */; };
 		BC80203B26F1DD5D00C109C2 /* ReceiveToken.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80203A26F1DD5D00C109C2 /* ReceiveToken.RootView.swift */; };
 		BC80203E26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80203D26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift */; };
@@ -673,6 +674,7 @@
 		BC7D078026F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ReceiveRenBTCView.swift; sourceTree = "<group>"; };
 		BC7D078226F86700005F777F /* ReceiveToken.ViewBuilders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ViewBuilders.swift; sourceTree = "<group>"; };
 		BC7D078426F87344005F777F /* AssociatedTokenAccountHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssociatedTokenAccountHandler.swift; sourceTree = "<group>"; };
+		BC7DD92027327872000F50D0 /* UIView+Builders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Builders.swift"; sourceTree = "<group>"; };
 		BC80203826F1DA7000C109C2 /* ReceiveToken.ReceiveSolanaViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ReceiveSolanaViewModel.swift; sourceTree = "<group>"; };
 		BC80203A26F1DD5D00C109C2 /* ReceiveToken.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.RootView.swift; sourceTree = "<group>"; };
 		BC80203D26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ReceiveBitcoinView.swift; sourceTree = "<group>"; };
@@ -1879,6 +1881,7 @@
 		BCEE522B2626D3F900271AB9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BC7DD92027327872000F50D0 /* UIView+Builders.swift */,
 				BC8F676F2608737B002FDCCD /* WLPhrasesTextView */,
 				BC65E085261DB21600E436C7 /* WalletCells */,
 				BC23B5A0254FBE9500886C9C /* BaseCollectionView.swift */,
@@ -2257,6 +2260,7 @@
 				BCE42E1A25DFA5100021540E /* RestoreWallet.ViewController.swift in Sources */,
 				BC1BEBFC26CDF6520049A44C /* SwapToken.RootView.swift in Sources */,
 				BC6FED9E270C475B002B6255 /* ReserveName.swift in Sources */,
+				BC7DD92127327872000F50D0 /* UIView+Builders.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WellDoneVC.swift in Sources */,
 				BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */,
 				BC65DFEF261D695200E436C7 /* TransactionCell.swift in Sources */,

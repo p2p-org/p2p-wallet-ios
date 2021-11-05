@@ -7,9 +7,14 @@
 
 import Foundation
 import UIKit
+import BEPureLayout
 
 extension RestoreWallet {
-    class ViewController: WLIntroVC {
+    class ViewController: BaseVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+        
         // MARK: - Dependencies
         @Injected private var viewModel: RestoreWalletViewModelType
         
@@ -18,23 +23,55 @@ extension RestoreWallet {
         private lazy var childNavigationControllerVCWrapper: WLModalWrapperVC = .init(wrapped: childNavigationController)
         
         // MARK: - Subviews
-        private lazy var iCloudRestoreButton = WLButton.stepButton(enabledColor: .textWhite, textColor: .textBlack, label: " " + L10n.restoreUsingICloud)
-            .onTap(self, action: #selector(restoreFromICloud))
-        private lazy var restoreManuallyButton = WLButton.stepButton(type: .sub, label: L10n.restoreManually)
-            .onTap(self, action: #selector(restoreManually))
+        private lazy var iCloudRestoreButton: UIView = {
+            let stackView = UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
+                UIImageView(width: 17.adaptiveHeight, height: 21.adaptiveHeight, image: .init(systemName: "applelogo"), tintColor: .white)
+                UILabel(text: L10n.restoreUsingICloud, textSize: 17.adaptiveHeight, weight: .medium, textColor: .white, numberOfLines: 0)
+            }
+            let button = UIView(height: 56.adaptiveHeight, backgroundColor: .h5887ff, cornerRadius: 12)
+            button.addSubview(stackView)
+            stackView.autoCenterInSuperview()
+            return button
+                .onTap(self, action: #selector(restoreFromICloud))
+        }()
+        private lazy var restoreManuallyButton: UIView = {
+            let label = UILabel(text: L10n.restoreManually, textSize: 17.adaptiveHeight, weight: .medium, textColor: .h5887ff, numberOfLines: 0)
+            let button = UIView(height: 56.adaptiveHeight)
+            button.addSubview(label)
+            label.autoCenterInSuperview()
+            return button
+                .onTap(self, action: #selector(restoreManually))
+        }()
         
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            backButton.isHidden = false
-            descriptionLabel.isHidden = false
-            titleLabel.text = L10n.p2PWalletRecovery
-            descriptionLabel.text = L10n.recoverYourP2PWalletManuallyOrUsingCloudServices
+            // pattern background view
+            let patternView = UIView.introPatternView()
+            view.addSubview(patternView)
+            patternView.autoPinEdgesToSuperviewEdges()
             
-            buttonsStackView.addArrangedSubviews([
-                iCloudRestoreButton,
-                restoreManuallyButton
-            ])
+            // navigation bar
+            let navigationBar = WLNavigationBar(forAutoLayout: ())
+            navigationBar.backButton.onTap(self, action: #selector(back))
+            navigationBar.titleLabel.text = L10n.iVeAlreadyHadAWallet
+            
+            // content
+            let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
+                navigationBar
+                UIView.ilustrationView(
+                    image: .introImportAWallet,
+                    title: L10n.importAWallet,
+                    description: L10n.ICloudRestoreIsForReturningUsers.pastingTheSecurityKeyManuallyIsForEveryone
+                )
+                    .padding(.init(x: 20, y: 0))
+                iCloudRestoreButton.padding(.init(x: 20, y: 0))
+                restoreManuallyButton.padding(.init(x: 20, y: 0))
+            }
+            
+            view.addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+            stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 20)
         }
         
         override func bind() {
