@@ -121,14 +121,15 @@ extension WalletDetail {
                     .onTap(self, action: #selector(swapTokens))
             ])
             
-            if viewModel.canBuyToken {
-                tabBar.stackView.insertArrangedSubview(
-                    UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .white)
-                        .padding(.init(all: 16))
-                        .onTap(self, action: #selector(buyTokens)),
-                    at: 0
-                )
-            }
+            // TODO: - Add later
+//            if viewModel.canBuyToken {
+//                tabBar.stackView.insertArrangedSubview(
+//                    UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .white)
+//                        .padding(.init(all: 16))
+//                        .onTap(self, action: #selector(buyTokens)),
+//                    at: 0
+//                )
+//            }
         }
         
         private func bind() {

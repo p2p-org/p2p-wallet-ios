@@ -21,24 +21,25 @@ extension CreateOrRestoreWallet {
             viewControllers = [
                 SlideVC(
                     title: L10n.p2PWallet,
-                    description: L10n.theFutureOfNonCustodialBankingTheEasyWayToBuySellAndHoldCryptos,
+                    description: L10n.simpleDecentralizedFinanceForEveryone,
                     replacingImageWithCustomView: create3dAppIconView()
                 ),
-                SlideVC(
-                    image: .introSlide2,
-                    title: L10n.allTheWaysToBuy,
-                    description: L10n.buyCryptosWithCreditCardFiatOrApplePay
-                ),
-                SlideVC(
-                    image: .introSlide3,
-                    title: L10n.privateAndSecure,
-                    description: L10n.NobodyCanAccessYourPrivateKeys.yourDataIsFullySafe
-                ),
-                SlideVC(
-                    image: .introSlide4,
-                    title: L10n.noHiddenCosts,
-                    description: L10n.SendBTCETHUSDCWithNoFees.swapBTCWithOnly1
-                )
+                // TODO: - Add later
+//                SlideVC(
+//                    image: .introSlide2,
+//                    title: L10n.allTheWaysToBuy,
+//                    description: L10n.buyCryptosWithCreditCardFiatOrApplePay
+//                ),
+//                SlideVC(
+//                    image: .introSlide3,
+//                    title: L10n.privateAndSecure,
+//                    description: L10n.NobodyCanAccessYourPrivateKeys.yourDataIsFullySafe
+//                ),
+//                SlideVC(
+//                    image: .introSlide4,
+//                    title: L10n.noHiddenCosts,
+//                    description: L10n.SendBTCETHUSDCWithNoFees.swapBTCWithOnly1
+//                )
             ]
             currentPageIndicatorTintColor = .h5887ff
             pageIndicatorTintColor = .d1d1d6
@@ -48,6 +49,9 @@ extension CreateOrRestoreWallet {
             view.addSubview(pageControl)
             pageControl.autoPinEdge(toSuperviewSafeArea: .bottom, withInset: 30.adaptiveHeight)
             pageControl.autoAlignAxis(toSuperviewAxis: .vertical)
+            
+            // TODO: - Remove later
+            pageControl.isHidden = true
         }
         
         private func create3dAppIconView() -> UIView {
