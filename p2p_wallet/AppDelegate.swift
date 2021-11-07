@@ -51,7 +51,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         THPinNumButton.backgroundHighlightColor = .passcodeHighlightColor
         
         // Use Firebase library to configure APIs
+        #if DEBUG
+        #else
         FirebaseApp.configure()
+        #endif
         
         // set window
         window = UIWindow(frame: UIScreen.main.bounds)
