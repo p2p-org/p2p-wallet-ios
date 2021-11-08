@@ -181,6 +181,7 @@
 		BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */; };
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */; };
+		BC534D6C2738C9B500BF1750 /* WLStepButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC534D6B2738C9B500BF1750 /* WLStepButton.swift */; };
 		BC53E21E2654BF88005624CC /* DerivablePaths.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E21D2654BF88005624CC /* DerivablePaths.Cell.swift */; };
 		BC53E2202654BFAA005624CC /* DerivablePaths.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E21F2654BFAA005624CC /* DerivablePaths.ViewModel.swift */; };
 		BC53E2222654C018005624CC /* DerivableAccounts.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E2212654C018005624CC /* DerivableAccounts.Cell.swift */; };
@@ -586,6 +587,7 @@
 		BC5257D125CBA7770076317E /* BonfidaPricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BonfidaPricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoComparePricesFetcher+Models.swift"; sourceTree = "<group>"; };
+		BC534D6B2738C9B500BF1750 /* WLStepButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLStepButton.swift; sourceTree = "<group>"; };
 		BC53E21D2654BF88005624CC /* DerivablePaths.Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePaths.Cell.swift; sourceTree = "<group>"; };
 		BC53E21F2654BFAA005624CC /* DerivablePaths.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePaths.ViewModel.swift; sourceTree = "<group>"; };
 		BC53E2212654C018005624CC /* DerivableAccounts.Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivableAccounts.Cell.swift; sourceTree = "<group>"; };
@@ -1919,6 +1921,7 @@
 				BC19DF582701BC9100A3A8D8 /* WLDefaultOptionView.swift */,
 				BC6FEDA6270EEFEF002B6255 /* WLBannerView.swift */,
 				BCFEDBFB2727A9F0008AE4AD /* WLMarkdownView.swift */,
+				BC534D6B2738C9B500BF1750 /* WLStepButton.swift */,
 				BCA7D83C272A9807007B070A /* WalletsCollectionView */,
 			);
 			path = Views;
@@ -2339,6 +2342,7 @@
 				BC604A2726C65F5000B1DF0F /* SwapToken.SlippageSettingsViewController.swift in Sources */,
 				BCA9948725AEA1C0005BD8FB /* ExpandablePresentationController.swift in Sources */,
 				BCE04C6C268D901400CE131A /* ModalTransitionManager.swift in Sources */,
+				BC534D6C2738C9B500BF1750 /* WLStepButton.swift in Sources */,
 				BC620D7626C6EFDB002186ED /* SwapToken.SwapFeesViewController.swift in Sources */,
 				BC4593A326423F0100E11A52 /* ConnectionErrorVC.swift in Sources */,
 				BC4B9EC5271A791A005B9ECA /* SolanaSDK+Extensions.swift in Sources */,

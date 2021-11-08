@@ -17,7 +17,7 @@ struct AnalyticsManager: AnalyticsManagerType {
         // Enable sending automatic session events
         Amplitude.instance().trackingSessionEvents = true
         // Initialize SDK
-        Amplitude.instance().initializeApiKey(Bundle.main.infoDictionary!["AMPLITUDE_API_KEY"] as! String)
+        Amplitude.instance().initializeApiKey(.secretConfig("AMPLITUDE_API_KEY")!)
         // FIXME: Set userId later
 //        Amplitude.instance().setUserId("userId")
     }

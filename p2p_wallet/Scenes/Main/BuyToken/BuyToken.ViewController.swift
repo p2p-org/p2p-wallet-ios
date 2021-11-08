@@ -111,12 +111,12 @@ private func getEnvironmentAndParams(type: BuyProviderType, token: BuyToken.Cryp
                 }(),
                 networks: ["solana", "mainnet"],
                 cryptoCurrencies: token.code,
-                hostURL: "https://" + (Bundle.main.infoDictionary!["TRANSAK_HOST_URL"] as! String),
+                hostURL: "https://" + .secretConfig("TRANSAK_HOST_URL")!,
                 apiKey: {
                     if Defaults.apiEndPoint.network == .mainnetBeta {
-                        return Bundle.main.infoDictionary!["TRANSAK_PRODUCTION_API_KEY"] as! String
+                        return .secretConfig("TRANSAK_PRODUCTION_API_KEY")!
                     } else {
-                        return Bundle.main.infoDictionary!["TRANSAK_STAGING_API_KEY"] as! String
+                        return .secretConfig("TRANSAK_STAGING_API_KEY")!
                     }
                 }(),
                 defaultCryptoCurrency: defaultCryptoCurrency,
@@ -133,9 +133,9 @@ private func getEnvironmentAndParams(type: BuyProviderType, token: BuyToken.Cryp
                 }(),
                 apiKey: {
                     if Defaults.apiEndPoint.network == .mainnetBeta {
-                        return Bundle.main.infoDictionary!["MOONPAY_PRODUCTION_API_KEY"] as! String
+                        return .secretConfig("MOONPAY_PRODUCTION_API_KEY")!
                     } else {
-                        return Bundle.main.infoDictionary!["MOONPAY_STAGING_API_KEY"] as! String
+                        return .secretConfig("MOONPAY_STAGING_API_KEY")!
                     }
                 }(),
                 showOnlyCurrencies: token.code,
