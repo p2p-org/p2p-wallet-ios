@@ -21,6 +21,15 @@ class MainContainer {
     let renVMLockAndMintService: RenVMLockAndMintServiceType
     let renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
     
+    private lazy var orcaSwap: OrcaSwapType = OrcaSwap(
+        apiClient: OrcaSwap.APIClient(
+            network: Defaults.apiEndPoint.network.cluster
+        ),
+        solanaClient: solanaSDK,
+        accountProvider: solanaSDK,
+        notificationHandler: solanaSDK
+    )
+    
     init() {
         self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve())
         self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
@@ -175,14 +184,7 @@ class MainContainer {
         switch provider {
         case .orca:
             let vm = OrcaSwapV2.ViewModel(
-                orcaSwap: OrcaSwap(
-                    apiClient: OrcaSwap.APIClient(
-                        network: Defaults.apiEndPoint.network.cluster
-                    ),
-                    solanaClient: solanaSDK,
-                    accountProvider: solanaSDK,
-                    notificationHandler: solanaSDK
-                ),
+                orcaSwap: orcaSwap,
                 walletsRepository: walletsViewModel,
                 initialWallet: wallet ?? walletsViewModel.nativeWallet
             )
