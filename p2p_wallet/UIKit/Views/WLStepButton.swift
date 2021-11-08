@@ -20,7 +20,8 @@ extension WLStepButton {
         .init(
             enabledBgColor: .h5887ff,
             enabledTintColor: .white,
-            disabledBgColor: .a3a5ba.onDarkMode(.h404040),
+            disabledBgColor: .aeaeb2,
+            disabledTintColor: .d1d1d6,
             text: text,
             image: image,
             imageSize: imageSize
