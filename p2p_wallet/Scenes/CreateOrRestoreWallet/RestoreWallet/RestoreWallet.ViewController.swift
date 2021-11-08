@@ -23,25 +23,17 @@ extension RestoreWallet {
         private lazy var childNavigationControllerVCWrapper: WLModalWrapperVC = .init(wrapped: childNavigationController)
         
         // MARK: - Subviews
-        private lazy var iCloudRestoreButton: UIView = {
-            let stackView = UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
-                UIImageView(width: 17.adaptiveHeight, height: 21.adaptiveHeight, image: .init(systemName: "applelogo"), tintColor: .white)
-                UILabel(text: L10n.restoreUsingICloud, textSize: 17.adaptiveHeight, weight: .medium, textColor: .white, numberOfLines: 0)
-            }
-            let button = UIView(height: 56.adaptiveHeight, backgroundColor: .h5887ff, cornerRadius: 12)
-            button.addSubview(stackView)
-            stackView.autoCenterInSuperview()
-            return button
-                .onTap(self, action: #selector(restoreFromICloud))
-        }()
-        private lazy var restoreManuallyButton: UIView = {
-            let label = UILabel(text: L10n.restoreManually, textSize: 17.adaptiveHeight, weight: .medium, textColor: .h5887ff, numberOfLines: 0)
-            let button = UIView(height: 56.adaptiveHeight)
-            button.addSubview(label)
-            label.autoCenterInSuperview()
-            return button
-                .onTap(self, action: #selector(restoreManually))
-        }()
+        private lazy var iCloudRestoreButton = WLStepButton.main(
+            image: .init(systemName: "applelogo"),
+            imageSize: .init(width: 17.adaptiveHeight, height: 21.adaptiveHeight),
+            text: L10n.restoreUsingICloud
+        )
+            .onTap(self, action: #selector(restoreFromICloud))
+        
+        private lazy var restoreManuallyButton = WLStepButton.sub(
+            text: L10n.restoreManually
+        )
+            .onTap(self, action: #selector(restoreManually))
         
         // MARK: - Methods
         override func setUp() {
@@ -71,7 +63,7 @@ extension RestoreWallet {
             
             view.addSubview(stackView)
             stackView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-            stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 20)
+            stackView.autoPinEdge(toSuperviewSafeArea: .bottom, withInset: 20)
         }
         
         override func bind() {
