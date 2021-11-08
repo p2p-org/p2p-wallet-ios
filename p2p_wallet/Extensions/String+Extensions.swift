@@ -57,6 +57,10 @@ extension String {
     static var nameServiceDomain: String {
         ".p2p.sol"
     }
+    
+    static func secretConfig(_ key: String) -> String? {
+        Bundle.main.infoDictionary?[key] as? String
+    }
 }
 
 extension String {

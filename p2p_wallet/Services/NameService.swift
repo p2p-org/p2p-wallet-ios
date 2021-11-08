@@ -26,7 +26,7 @@ extension NameServiceType {
 }
 
 struct NameService: NameServiceType {
-    private let endpoint = "https://\(Bundle.main.infoDictionary!["FEE_RELAYER_ENDPOINT"] as! String)/name_register"
+    private let endpoint = "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)/name_register"
     
     var captchaAPI1Url: String {endpoint + "/auth/gt/register"}
     
