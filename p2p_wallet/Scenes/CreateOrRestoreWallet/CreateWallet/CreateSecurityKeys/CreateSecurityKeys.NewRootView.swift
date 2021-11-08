@@ -28,7 +28,7 @@ extension CreateSecurityKeys {
             return navigationBar
         }()
         
-        private let keyView: KeysView = KeysView()
+        private let keysView: KeysView = KeysView()
         
         // MARK: - Initializers
         init() {
@@ -54,13 +54,14 @@ extension CreateSecurityKeys {
             navigationBar.autoPinEdge(toSuperviewEdge: .leading)
             navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
             
-            addSubview(keyView)
-            keyView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets.zero, excludingEdge: .top)
-            keyView.autoPinEdge(.top, to: .bottom, of: navigationBar)
+
+            addSubview(keysView)
+            keysView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(x: 18, y: 0), excludingEdge: .top)
+            keysView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 10)
         }
         
         private func bind() {
-            viewModel.phrasesDriver.drive(keyView.rx.keys).disposed(by: disposeBag)
+            viewModel.phrasesDriver.drive(keysView.rx.keys).disposed(by: disposeBag)
         }
         
         // MARK: - Actions

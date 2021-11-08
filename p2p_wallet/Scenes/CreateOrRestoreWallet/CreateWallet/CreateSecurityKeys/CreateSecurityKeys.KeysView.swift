@@ -11,18 +11,17 @@ extension CreateSecurityKeys {
     private class Cell: UICollectionViewCell {
         var key: String = "" {
             didSet {
-                textLabel.text = key
+                update()
             }
         }
         
         var index: Int = 0 {
             didSet {
-                indexLabel.text = "\(index)";
+                update()
             }
         }
         
-        private let indexLabel: UILabel = UILabel(weight: .medium, textAlignment: .right, textColor: UIColor.h8e8e93)
-        private let textLabel: UILabel = UILabel(weight: .medium, textAlignment: .left)
+        private let textLabel: UILabel = UILabel(weight: .medium, textAlignment: .center)
         
         override init(frame: CGRect) {
             super.init(frame: frame)
@@ -32,13 +31,16 @@ extension CreateSecurityKeys {
             contentView.layer.cornerRadius = 8
             contentView.layer.masksToBounds = true
             
-            let row = UIStackView(axis: .horizontal, alignment: .center, distribution: .fillEqually) {
-                indexLabel
-                textLabel
-            }
+            contentView.addSubview(textLabel)
+            textLabel.autoPinEdgesToSuperviewEdges()
+        }
+        
+        private func update() {
+            let attrText = NSMutableAttributedString()
+                .text("\(index). ", size: 15, weight: .medium, color: .h8e8e93)
+                .text("\(key)", size: 15)
             
-            contentView.addSubview(row)
-            row.autoPinEdgesToSuperviewEdges()
+            textLabel.attributedText = attrText
         }
         
         required init?(coder: NSCoder) {
