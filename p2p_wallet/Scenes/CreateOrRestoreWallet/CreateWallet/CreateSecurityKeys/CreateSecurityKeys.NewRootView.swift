@@ -28,39 +28,47 @@ extension CreateSecurityKeys {
             return navigationBar
         }()
         
-        private let keysView: KeysView = KeysView()
+        private let saveToICloudButton: WLButton = {
+            let button = WLButton.stepButton(type: .black, label: nil)
+            
+            let attrString = NSMutableAttributedString()
+                .text("  ", size: 25, color: button.currentTitleColor)
+                .text(L10n.backupToICloud, size: 15, weight: .medium, color: button.currentTitleColor, baselineOffset: (25 - 15) / 4)
+            
+            button.setAttributedTitle(attrString, for: .normal)
+            return button
+        }()
+        
+        private let keysView: KeysView = KeysView(footer: nil)
         
         // MARK: - Initializers
-        init() {
-            super.init(frame: .zero)
-        }
-        
-        // MARK: - Methods
         override func commonInit() {
             super.commonInit()
             layout()
             bind()
         }
-        
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-            
-        }
-        
+    
+        // MARK: - Methods
         // MARK: - Layout
         private func layout() {
             addSubview(navigationBar)
             navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
             navigationBar.autoPinEdge(toSuperviewEdge: .leading)
             navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
+    
+            scrollView.contentInset.top = 56
+            stackView.addArrangedSubview(keysView)
             
-
-            addSubview(keysView)
-            keysView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(x: 18, y: 0), excludingEdge: .top)
-            keysView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 10)
+            
+            
+            let bottomStack = UIStackView(axis: .vertical) {
+                saveToICloudButton
+            }
+            addSubview(bottomStack)
+            bottomStack.autoPinEdgesToSuperviewSafeArea(with: .init(x: 18, y: 20), excludingEdge: .top)
         }
         
-        private func bind() {
+        func bind() {
             viewModel.phrasesDriver.drive(keysView.rx.keys).disposed(by: disposeBag)
         }
         
@@ -80,7 +88,7 @@ extension CreateSecurityKeys {
         @objc func goNext() {
             viewModel.next()
         }
-        
+
         @objc func back() {
             viewModel.back()
         }

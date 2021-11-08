@@ -8,7 +8,7 @@ import RxSwift
 import RxCocoa
 
 extension CreateSecurityKeys {
-    private class Cell: UICollectionViewCell {
+    private class KeyView: BEView {
         var key: String = "" {
             didSet {
                 update()
@@ -23,16 +23,25 @@ extension CreateSecurityKeys {
         
         private let textLabel: UILabel = UILabel(weight: .medium, textAlignment: .center)
         
-        override init(frame: CGRect) {
-            super.init(frame: frame)
+        init(index: Int, key: String) {
+            self.index = index
+            self.key = key
             
-            contentView.layer.borderColor = UIColor.f2f2f7.cgColor
-            contentView.layer.borderWidth = 1
-            contentView.layer.cornerRadius = 8
-            contentView.layer.masksToBounds = true
+            super.init(frame: CGRect.zero)
+        }
+        
+        override func commonInit() {
+            super.commonInit()
             
-            contentView.addSubview(textLabel)
+            layer.borderColor = UIColor.f2f2f7.cgColor
+            layer.borderWidth = 1
+            layer.cornerRadius = 8
+            layer.masksToBounds = true
+            
+            addSubview(textLabel)
             textLabel.autoPinEdgesToSuperviewEdges()
+            
+            update()
         }
         
         private func update() {
@@ -48,44 +57,56 @@ extension CreateSecurityKeys {
         }
     }
     
-    class KeysView: BEView, UICollectionViewDataSource {
+    class KeysView: BEView {
+        let footer: UICollectionReusableView.Type?
+        
         var keys: [String] = [] {
             didSet {
-                collectionView.reloadData()
+                update()
             }
         }
-        private let collectionView: UICollectionView = {
-            let layout = ColumnFlowLayout(
-                cellsPerRow: 3,
-                cellHeight: 37,
-                minimumInteritemSpacing: 8,
-                minimumLineSpacing: 8)
-            let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-            return view
-        }()
+        
+        private let numberOfColumns: Int = 3
+        private let spacing: CGFloat = 8
+        private let runSpacing: CGFloat = 8
+        private let keyHeight: CGFloat = 37
+        
+        lazy private var content = UIStackView(axis: .vertical, spacing: runSpacing, alignment: .fill, distribution: .fillEqually)
+        
+        init(footer: UICollectionReusableView.Type?) {
+            self.footer = footer
+            super.init(frame: CGRect.zero)
+        }
         
         override func commonInit() {
             super.commonInit()
-            
-            collectionView.register(Cell.self, forCellWithReuseIdentifier: "cell")
-            collectionView.dataSource = self
-            addSubview(collectionView)
-            collectionView.autoPinEdgesToSuperviewEdges()
+            layout()
+            update()
         }
         
-        func numberOfSections(in collectionView: UICollectionView) -> Int {
-            1
+        func layout() {
+            addSubview(content)
+            content.autoPinEdgesToSuperviewEdges()
         }
         
-        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            keys.count
+        func update() {
+            content.removeAllArrangedSubviews()
+            keys.chunked(into: numberOfColumns).enumerated().forEach { section, chunk in
+                let row = UIStackView(axis: .horizontal, spacing: spacing, alignment: .fill, distribution: .fillEqually)
+                row.heightAnchor.constraint(equalToConstant: keyHeight).isActive = true
+                row.addArrangedSubviews(chunk.enumerated().map { index, key in
+                    KeyView(index: section * numberOfColumns + index + 1, key: key)
+                })
+                content.addArrangedSubview(row)
+            }
         }
-        
-        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! Cell
-            cell.index = indexPath.row
-            cell.key = keys[indexPath.row]
-            return cell
+    }
+    
+    class KeyViewsActions: BEView {
+        lazy private var content = UIStackView(axis: .horizontal, alignment: .fill, distribution: .fillEqually)
+    
+        override func commonInit() {
+            super.commonInit()
         }
     }
 }
