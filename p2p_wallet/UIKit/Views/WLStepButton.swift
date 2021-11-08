@@ -81,6 +81,7 @@ class WLStepButton: BEView {
         numberOfLines: 2,
         textAlignment: .center
     )
+        .withContentCompressionResistancePriority(.required, for: .horizontal)
     
     // MARK: - Initializer
     init(
