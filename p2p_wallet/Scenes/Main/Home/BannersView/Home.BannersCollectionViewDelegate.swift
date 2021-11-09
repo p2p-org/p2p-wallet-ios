@@ -1,9 +1,8 @@
 //
 //  BannersCollectionViewDelegate.swift
-//  CollectionViewPeekingPages
+//  p2p_wallet
 //
 //  Created by Andrew Vasiliev on 08.11.2021.
-//  Copyright © 2021 Shai Balassiano. All rights reserved.
 //
 
 import UIKit
@@ -39,6 +38,14 @@ extension Home {
                 targetContentOffset: targetContentOffset,
                 layout: layout
             )
+        }
+
+        func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+            guard let cell = collectionView.cellForItem(at: indexPath) as? BannerCollectionViewCell else {
+                return assertionFailure("unknown cell")
+            }
+
+            cell.selectionHandler?()
         }
     }
 }

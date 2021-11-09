@@ -1,9 +1,8 @@
 //
 //  HorizontalFlowLayout.swift
-//  CollectionViewPeekingPages
+//  p2p_wallet
 //
 //  Created by Andrew Vasiliev on 29.10.2021.
-//  Copyright © 2021 Shai Balassiano. All rights reserved.
 //
 
 import UIKit

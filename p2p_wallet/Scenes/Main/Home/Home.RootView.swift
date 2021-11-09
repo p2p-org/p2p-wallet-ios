@@ -19,6 +19,9 @@ extension Home {
         private let viewModel: HomeViewModelType
         
         // MARK: - Subviews
+
+        private let bannersCollectionView: UICollectionView
+
         private lazy var collectionView: WalletsCollectionView = {
             let collectionView = WalletsCollectionView(
                 walletsRepository: viewModel.walletsRepository,
@@ -59,11 +62,32 @@ extension Home {
             }
             return view
         }()
+
+        // swiftlint:disable weak_delegate
+        private let bannersDelegate: UICollectionViewDelegate
+        private let bannersDataSource: BannersCollectionViewDataSource
         
         // MARK: - Initializer
         init(viewModel: HomeViewModelType) {
             self.viewModel = viewModel
+
+            let layout = HorizontalFlowLayout(
+                horisontalInset: 20,
+                verticalInset: 15,
+                spacing: 10
+            )
+
+            bannersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+            bannersDataSource = BannersCollectionViewDataSource(collectionView: bannersCollectionView)
+            bannersDelegate = BannersCollectionViewDelegate(
+                collectionView: bannersCollectionView,
+                layout: layout,
+                pageableScrollHandler: PageableHorizontalLayoutScrollHandler()
+            )
+
             super.init(frame: .zero)
+
+            configureBannersView()
         }
         
         // MARK: - Methods
@@ -91,7 +115,7 @@ extension Home {
                         .onTap(self, action: #selector(buttonSettingsDidTouch))
                 }
                     .padding(.init(x: 24, y: 16))
-                
+                bannersCollectionView
                 balancesOverviewView
                     .padding(.init(x: 20, y: 0))
                 
@@ -100,6 +124,7 @@ extension Home {
                 collectionView
             }
             addSubview(stackView)
+            bannersCollectionView.autoSetDimension(.height, toSize: 135)
             stackView.autoPinEdgesToSuperviewSafeArea()
         }
         
@@ -114,6 +139,21 @@ extension Home {
                     balancesOverviewView?.setUp(state: $1, data: $0 ?? [])
                 })
                 .disposed(by: disposeBag)
+
+            viewModel.bannersDriver
+                .drive(onNext: { [weak self] contents in
+                    self?.bannersDataSource.bannersContent = contents
+                    self?.bannersCollectionView.isHidden = contents.isEmpty
+                    self?.bannersCollectionView.reloadData()
+                })
+                .disposed(by: disposeBag)
+        }
+
+        private func configureBannersView() {
+            bannersCollectionView.delegate = bannersDelegate
+            bannersCollectionView.dataSource = bannersDataSource
+
+            bannersCollectionView.showsHorizontalScrollIndicator = false
         }
         
         // MARK: - Actions

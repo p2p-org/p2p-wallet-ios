@@ -556,3 +556,7 @@
 "Private and secure" = "Privé & sécurisé";
 "Import a wallet" = "Importer un portefeuille";
 "iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "La restauration iCloud est destinée aux utilisateurs qui reviennent.\nColler la clé de sécurité manuellement est pour tout le monde";
+"Proceed without a username?" = "Continuer sans nom d'utilisateur ?";
+"Anytime you want, you can easily reserve a username by going to the settings" = "À tout moment, vous pouvez facilement réserver un nom d'utilisateur en allant dans les paramètres";
+"Proceed" = "Procéder";
+"Proceed & don’t show again" = "Continuer et ne plus afficher";
