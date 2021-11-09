@@ -15,7 +15,8 @@ extension WLStepButton {
     static func main(
         image: UIImage? = nil,
         imageSize: CGSize = .init(width: 24.adaptiveHeight, height: 24.adaptiveHeight),
-        text: String?
+        text: String? = nil,
+        attributedString: NSMutableAttributedString? = nil
     ) -> WLStepButton {
         .init(
             enabledBgColor: .h5887ff,
@@ -23,6 +24,7 @@ extension WLStepButton {
             disabledBgColor: .aeaeb2,
             disabledTintColor: .d1d1d6,
             text: text,
+            attributedString: attributedString,
             image: image,
             imageSize: imageSize
         )
@@ -32,13 +34,15 @@ extension WLStepButton {
     static func sub(
         image: UIImage? = nil,
         imageSize: CGSize = .init(width: 24.adaptiveHeight, height: 24.adaptiveHeight),
-        text: String?
+        text: String? = nil,
+        attributedString: NSMutableAttributedString? = nil
     ) -> WLStepButton {
         .init(
             enabledBgColor: .clear,
             enabledTintColor: .h5887ff,
             disabledTintColor: .textSecondary,
-            text: text
+            text: text,
+            attributedString: attributedString
         )
     }
 }
@@ -47,20 +51,30 @@ extension WLStepButton {
 class WLStepButton: BEView {
     // MARK: - Properties
     var enabledBgColor: UIColor {
-        didSet { setUp() }
+        didSet {
+            setUp()
+        }
     }
     var enabledTintColor: UIColor {
-        didSet { setUp() }
+        didSet {
+            setUp()
+        }
     }
     var disabledBgColor: UIColor? {
-        didSet { setUp() }
+        didSet {
+            setUp()
+        }
     }
     var disabledTintColor: UIColor? {
-        didSet { setUp() }
+        didSet {
+            setUp()
+        }
     }
     
     var isEnabled: Bool = true {
-        didSet { setUp() }
+        didSet {
+            setUp()
+        }
     }
     
     // MARK: - Subviews
@@ -90,6 +104,7 @@ class WLStepButton: BEView {
         disabledBgColor: UIColor? = nil,
         disabledTintColor: UIColor? = nil,
         text: String?,
+        attributedString: NSMutableAttributedString?,
         image: UIImage? = nil,
         imageSize: CGSize = .init(width: 24.adaptiveHeight, height: 24.adaptiveHeight)
     ) {
@@ -127,6 +142,9 @@ class WLStepButton: BEView {
         
         // text
         label.text = text
+        if attributedString != nil {
+            label.attributedText = attributedString
+        }
         
         setUp()
     }
@@ -137,13 +155,13 @@ class WLStepButton: BEView {
         isUserInteractionEnabled = isEnabled
         
         // background
-        backgroundColor = isEnabled ? enabledBgColor: disabledBgColor
+        backgroundColor = isEnabled ? enabledBgColor : disabledBgColor
         
         // text color
-        label.textColor = isEnabled ? enabledTintColor: (disabledTintColor ?? enabledTintColor)
+        label.textColor = isEnabled ? enabledTintColor : (disabledTintColor ?? enabledTintColor)
         
         // imageView tintColor
-        imageView.tintColor = isEnabled ? enabledTintColor: (disabledTintColor ?? enabledTintColor)
+        imageView.tintColor = isEnabled ? enabledTintColor : (disabledTintColor ?? enabledTintColor)
     }
 }
 
@@ -155,8 +173,14 @@ extension Reactive where Base: WLStepButton {
     }
     
     var text: Binder<String?> {
-        Binder(base) {view, text in
+        Binder(base) { view, text in
             view.label.text = text
         }
     }
+    
+//    var tapGesture: Any {
+//        base.rx.event.bind(onNext: { recognizer in
+//            print("touches: \(recognizer.numberOfTouches)") //or whatever you like
+//        })
+//    }
 }

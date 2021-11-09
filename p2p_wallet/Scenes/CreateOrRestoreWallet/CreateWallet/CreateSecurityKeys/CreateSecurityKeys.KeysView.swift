@@ -58,8 +58,6 @@ extension CreateSecurityKeys {
     }
     
     class KeysView: BEView {
-        let footer: UICollectionReusableView.Type?
-        
         var keys: [String] = [] {
             didSet {
                 update()
@@ -72,11 +70,6 @@ extension CreateSecurityKeys {
         private let keyHeight: CGFloat = 37
         
         lazy private var content = UIStackView(axis: .vertical, spacing: runSpacing, alignment: .fill, distribution: .fillEqually)
-        
-        init(footer: UICollectionReusableView.Type?) {
-            self.footer = footer
-            super.init(frame: CGRect.zero)
-        }
         
         override func commonInit() {
             super.commonInit()
@@ -102,12 +95,29 @@ extension CreateSecurityKeys {
         }
     }
     
-    class KeyViewsActions: BEView {
+    class KeysViewActions: BEView {
         lazy private var content = UIStackView(axis: .horizontal, alignment: .fill, distribution: .fillEqually)
-    
+        
+        fileprivate let copyButton: UIButton = UIButton.text(text: L10n.copy, image: .copyIcon, tintColor: .h5887ff)
+        fileprivate let saveButton: UIButton = UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
+        fileprivate let refreshButton: UIButton = UIButton.text(text: L10n.renew, image: .refreshIcon, tintColor: .h5887ff)
+        
         override func commonInit() {
             super.commonInit()
+            layout()
         }
+        
+        func layout() {
+            addSubview(content)
+            content.addArrangedSubviews {
+                copyButton
+                saveButton
+                refreshButton
+            }
+            content.autoPinEdgesToSuperviewEdges()
+            content.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        }
+        
     }
 }
 
@@ -116,5 +126,19 @@ extension Reactive where Base: CreateSecurityKeys.KeysView {
         Binder(base) { view, keys in
             view.keys = keys
         }
+    }
+}
+
+extension Reactive where Base: CreateSecurityKeys.KeysViewActions {
+    var onCopy: ControlEvent<Void> {
+        base.copyButton.rx.tap
+    }
+    
+    var onSave: ControlEvent<Void> {
+        base.saveButton.rx.tap
+    }
+    
+    var onRefresh: ControlEvent<Void> {
+        base.refreshButton.rx.tap
     }
 }

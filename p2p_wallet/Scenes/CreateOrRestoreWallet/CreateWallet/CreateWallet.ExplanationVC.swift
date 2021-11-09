@@ -20,16 +20,8 @@ extension CreateWallet {
             return navigationBar
         }()
         
-        private lazy var createWalletButton: UIView = {
-            let stackView = UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
-                UIImageView(width: 16, height: 15, image: .key)
-                UILabel(text: L10n.showYourSecurityKey, textSize: 17, weight: .medium, textColor: .white, numberOfLines: 0)
-            }
-            let button = UIView(height: 56, backgroundColor: .h5887ff, cornerRadius: 12)
-            button.addSubview(stackView)
-            stackView.autoCenterInSuperview()
-            return button.onTap(self, action: #selector(navigateToCreateWalletScene))
-        }()
+        private let createWalletButton: WLStepButton = WLStepButton.main(image: .key, imageSize: CGSize(width: 16, height: 15), text: L10n.showYourSecurityKey)
+        
         
         // MARK: - Dependencies
         @Injected private var viewModel: CreateWalletViewModelType
@@ -37,7 +29,7 @@ extension CreateWallet {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-    
+            
             // pattern background view
             let patternView = UIImageView(image: .introPatternBg, tintColor: .textSecondary.withAlphaComponent(0.05))
             view.addSubview(patternView)
@@ -65,6 +57,7 @@ extension CreateWallet {
             view.addSubview(createWalletButton)
             createWalletButton.autoPinEdgesToSuperviewSafeArea(with: .init(x: 18, y: 20), excludingEdge: .top)
             createWalletButton.autoPinEdge(.top, to: .bottom, of: illustration, withOffset: 10)
+            createWalletButton.onTap(self, action: #selector(navigateToCreateWalletScene))
         }
         
         // MARK: - Navigation
