@@ -74,8 +74,6 @@ extension SendToken {
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         private let useAllBalanceSubject = PublishRelay<Double?>()
-        private lazy var destinationAddressSubject = recipientSubject
-            .map { $0?.address }
         private let feeSubject: LoadableRelay<Double>
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let addressValidationStatusSubject = BehaviorRelay<AddressValidationStatus>(value: .fetching)
@@ -175,7 +173,7 @@ extension SendToken {
             
             // destination address
             Observable.combineLatest(
-                destinationAddressSubject.distinctUntilChanged(),
+                recipientSubject.map{$0?.address}.distinctUntilChanged(),
                 renBTCInfoSubject
             )
                 .do(onNext: { [weak self] _ in
@@ -206,7 +204,7 @@ extension SendToken {
             guard errorSubject.value == nil,
                   let wallet = walletSubject.value,
                   let sender = wallet.pubkey,
-                  let receiver = recipientSubject.value.map(\.address),
+                  let receiver = recipientSubject.value?.address,
                   var amount = amountSubject.value
             else {
                 return
@@ -241,53 +239,31 @@ extension SendToken {
             
             // solana network
             else {
-                // check address
-                var addressRequest = Single<String>.just(receiver)
-                if receiver.hasSuffix(.nameServiceDomain) {
-                    let name = receiver.replacingOccurrences(of: String.nameServiceDomain, with: "")
-                    addressRequest = nameService.getOwnerAddress(name)
-                        .map {
-                            guard let owner = $0 else {
-                                throw SolanaSDK.Error.other(L10n.theUsernameIsNotAvailable(receiver))
-                            }
-                            if owner == sender {
-                                throw SolanaSDK.Error.other(L10n.youCanNotSendTokensToYourself)
-                            }
-                            return owner
-                        }
+                if receiver == sender {
+                    request = .error(SolanaSDK.Error.other(L10n.youCanNotSendTokensToYourself))
                 }
                 
                 // native solana
-                if wallet.isNativeSOL {
-                    request = addressRequest
-                        .flatMap {[weak self] receiver in
-                            guard let self = self else {throw SolanaSDK.Error.unknown}
-                            
-                            return self.apiClient.sendNativeSOL(
-                                to: receiver,
-                                amount: lamport,
-                                withoutFee: Defaults.useFreeTransaction,
-                                isSimulation: false
-                            )
-                        }
+                else if wallet.isNativeSOL {
+                    request = apiClient.sendNativeSOL(
+                        to: receiver,
+                        amount: lamport,
+                        withoutFee: Defaults.useFreeTransaction,
+                        isSimulation: false
+                    )
                 }
                 
                 // other tokens
                 else {
-                    request = addressRequest
-                        .flatMap {[weak self] receiver in
-                            guard let self = self else {throw SolanaSDK.Error.unknown}
-                            
-                            return self.apiClient.sendSPLTokens(
-                                mintAddress: wallet.mintAddress,
-                                decimals: wallet.token.decimals,
-                                from: sender,
-                                to: receiver,
-                                amount: lamport,
-                                withoutFee: Defaults.useFreeTransaction,
-                                isSimulation: false
-                            )
-                        }
+                    request = apiClient.sendSPLTokens(
+                        mintAddress: wallet.mintAddress,
+                        decimals: wallet.token.decimals,
+                        from: sender,
+                        to: receiver,
+                        amount: lamport,
+                        withoutFee: Defaults.useFreeTransaction,
+                        isSimulation: false
+                    )
                 }
             }
             
@@ -431,7 +407,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     }
     
     var receiverAddressDriver: Driver<String?> {
-        destinationAddressSubject.asDriver(onErrorJustReturn: nil)
+        recipientSubject.map{$0?.address}.asDriver(onErrorJustReturn: nil)
     }
     
     var addressValidationStatusDriver: Driver<SendToken.AddressValidationStatus> {
