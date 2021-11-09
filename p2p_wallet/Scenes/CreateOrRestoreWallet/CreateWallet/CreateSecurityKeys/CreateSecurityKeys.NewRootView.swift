@@ -70,8 +70,11 @@ extension CreateSecurityKeys {
         
         func bind() {
             viewModel.phrasesDriver.drive(keysView.rx.keys).disposed(by: disposeBag)
+            
             keysViewAction.rx.onCopy.bind(onNext: viewModel.copyToClipboard).disposed(by: disposeBag)
             keysViewAction.rx.onRefresh.bind(onNext: viewModel.createPhrases).disposed(by: disposeBag)
+            keysViewAction.rx.onSave.bind(onNext: saveToPhoto).disposed(by: disposeBag)
+            
             saveToICloudButton.onTap(self, action: #selector(saveToICloud))
             navigationBar.backButton.onTap(self, action: #selector(back))
         }
@@ -95,6 +98,18 @@ extension CreateSecurityKeys {
         
         @objc func back() {
             viewModel.back()
+        }
+        
+        func saveToPhoto() {
+            UIImageWriteToSavedPhotosAlbum(keysView.asImage(), self, #selector(saveImageCallback), nil)
+        }
+        
+        @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+            if let error = error {
+                showErrorView(error: error)
+            } else {
+                UIApplication.shared.showToast(message: "✅ \(L10n.savedToPhotoLibrary)")
+            }
         }
     }
 }
