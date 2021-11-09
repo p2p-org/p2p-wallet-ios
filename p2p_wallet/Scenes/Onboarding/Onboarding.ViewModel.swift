@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import LocalAuthentication
+import UserNotifications
 
 protocol OnboardingHandler {
     func onboardingDidCancel()
@@ -24,6 +25,7 @@ protocol OnboardingViewModelType {
     func authenticateAndEnableBiometry(errorHandler: ((Error) -> Void)?)
     func enableBiometryLater()
     
+    func requestRemoteNotifications()
     func markNotificationsAsSet()
     
     func navigateNext()
@@ -96,6 +98,22 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
     }
     
     // MARK: - Notification
+    func requestRemoteNotifications() {
+        UNUserNotificationCenter.current()
+            .requestAuthorization(options: [.alert, .sound, .badge]) {[weak self] granted, _ in
+                print("Permission granted: \(granted)")
+                guard granted else {
+                    UIApplication.shared.openAppSettings()
+                    return
+                }
+                
+                DispatchQueue.main.async { [weak self] in
+                    UIApplication.shared.registerForRemoteNotifications()
+                    self?.markNotificationsAsSet()
+                }
+            }
+    }
+    
     func markNotificationsAsSet() {
         Defaults.didSetEnableNotifications = true
         navigateNext()
@@ -121,7 +139,24 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
         }
         
         if !Defaults.didSetEnableNotifications {
-            navigationSubject.accept(.setUpNotifications)
+            UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
+                debugPrint("Notification settings: \(settings)")
+                
+                guard let self = self else {return}
+                
+                // not authorized
+                guard settings.authorizationStatus == .authorized else {
+                    self.navigationSubject.accept(.setUpNotifications)
+                    self.analyticsManager.log(event: .setupAllowPushOpen)
+                    return
+                }
+                
+                // authorized
+                DispatchQueue.main.async { [weak self] in
+                    UIApplication.shared.registerForRemoteNotifications()
+                    self?.markNotificationsAsSet()
+                }
+            }
             return
         }
         
