@@ -79,4 +79,3 @@ final class BannersRepository: BannersRepositoryType {
             .map { $0.allSatisfy { $0 } }
     }
 }
-

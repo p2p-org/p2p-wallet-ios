@@ -19,15 +19,14 @@ extension UIViewController {
         if allButtons.count == 0 {
             allButtons.append("OK")
         }
-        
-        for index in 0..<allButtons.count {
-            let buttonTitle = allButtons[index]
+
+        allButtons.enumerated().forEach { index, buttonTitle in
             let action = UIAlertAction(title: buttonTitle, style: .default, handler: { (_) in
                 completion?(index)
             })
             alertController.addAction(action)
             // Check which button to highlight
-            if let highlightedButtonIndex = highlightedButtonIndex, index == highlightedButtonIndex {
+            if index == highlightedButtonIndex {
                 alertController.preferredAction = action
             }
         }

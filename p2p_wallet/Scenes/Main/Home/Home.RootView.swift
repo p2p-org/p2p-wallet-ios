@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import BECollectionView
 import Action
+import BEPureLayout
 
 extension Home {
     class RootView: BEView {
@@ -73,7 +74,7 @@ extension Home {
 
             let layout = HorizontalFlowLayout(
                 horisontalInset: 20,
-                verticalInset: 15,
+                verticalInset: 0,
                 spacing: 10
             )
 
@@ -116,6 +117,7 @@ extension Home {
                 }
                     .padding(.init(x: 24, y: 16))
                 bannersCollectionView
+                BEStackViewSpacing(15)
                 balancesOverviewView
                     .padding(.init(x: 20, y: 0))
                 
@@ -124,7 +126,7 @@ extension Home {
                 collectionView
             }
             addSubview(stackView)
-            bannersCollectionView.autoSetDimension(.height, toSize: 135)
+            bannersCollectionView.autoSetDimension(.height, toSize: 105)
             stackView.autoPinEdgesToSuperviewSafeArea()
         }
         
@@ -143,10 +145,16 @@ extension Home {
             viewModel.bannersDriver
                 .drive(onNext: { [weak self] contents in
                     self?.bannersDataSource.bannersContent = contents
-                    self?.bannersCollectionView.isHidden = contents.isEmpty
+                    self?.setBannersCollectionViewIsHidden(contents.isEmpty)
                     self?.bannersCollectionView.reloadData()
                 })
                 .disposed(by: disposeBag)
+        }
+
+        private func setBannersCollectionViewIsHidden(_ isHidden: Bool) {
+            UIView.animate(withDuration: 0.3) {
+                self.bannersCollectionView.isHidden = isHidden
+            }
         }
 
         private func configureBannersView() {

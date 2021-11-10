@@ -182,6 +182,7 @@ extension Home {
                     title: L10n.proceedWithoutAUsername,
                     message: L10n.anytimeYouWantYouCanEasilyReserveAUsernameByGoingToTheSettings,
                     buttonTitles: [L10n.proceed, L10n.proceedDonTShowAgain],
+                    highlightedButtonIndex: 0,
                     completion: { buttonIndex in
                         switch buttonIndex {
                         case 0:
