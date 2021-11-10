@@ -46,14 +46,9 @@ extension Root {
             case .onboarding:
                 let vc = Onboarding.ViewController()
                 transition(to: vc)
-            case .onboardingDone(let isRestoration):
-                if isRestoration {
-                    let vc = WelcomeBackVC()
-                    transition(to: vc)
-                } else {
-                    let vc = WellDoneVC()
-                    transition(to: vc)
-                }
+            case .onboardingDone(let isRestoration, let name):
+                let vc = WelcomeViewController(isReturned: isRestoration, name: name)
+                transition(to: vc)
             case .main(let showAuthenticationWhenAppears):
                 // MainViewController
                 let container = MainContainer()
