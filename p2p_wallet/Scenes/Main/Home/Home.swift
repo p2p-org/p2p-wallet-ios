@@ -15,6 +15,7 @@ struct Home {
         case scanQr
         case scanQrWithSwiper(progress: CGFloat, state: UIGestureRecognizer.State)
         case sendToken(address: String? = nil)
+        case closeReserveNameAlert((ClosingBannerType) -> Void)
         case swapToken
         case settings
         case reserveName(owner: String)
