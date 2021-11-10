@@ -7,4 +7,3 @@ import Foundation
 public protocol BuyProvider {
     func getUrl() -> String
 }
-
