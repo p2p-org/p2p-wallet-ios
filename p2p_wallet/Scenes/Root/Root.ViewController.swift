@@ -11,7 +11,6 @@ import UIKit
 extension Root {
     class ViewController: BaseVC {
         private var statusBarStyle: UIStatusBarStyle = .default
-        override var preferredStatusBarStyle: UIStatusBarStyle {self.statusBarStyle}
         
         // MARK: - Dependencies
         @Injected private var viewModel: RootViewModelType
@@ -44,42 +43,20 @@ extension Root {
                 let vc = CreateOrRestoreWallet.ViewController()
                 let nc = BENavigationController(rootViewController: vc)
                 transition(to: nc)
-                
-                changeStatusBarStyle(.default)
-                
             case .onboarding:
                 let vc = Onboarding.ViewController()
                 transition(to: vc)
-                
-                changeStatusBarStyle(.lightContent)
-                
-            case .onboardingDone(let isRestoration):
-                if isRestoration {
-                    let vc = WelcomeBackVC()
-                    transition(to: vc)
-                } else {
-                    let vc = WellDoneVC()
-                    transition(to: vc)
-                }
-                
-                changeStatusBarStyle(.lightContent)
-                
+            case .onboardingDone(let isRestoration, let name):
+                let vc = WelcomeViewController(isReturned: isRestoration, name: name)
+                transition(to: vc)
             case .main(let showAuthenticationWhenAppears):
                 // MainViewController
                 let container = MainContainer()
                 let vc = container.makeMainViewController(authenticateWhenAppears: showAuthenticationWhenAppears)
                 transition(to: vc)
-                
-                changeStatusBarStyle(.default)
-                
             default:
                 break
             }
-        }
-        
-        private func changeStatusBarStyle(_ style: UIStatusBarStyle) {
-            self.statusBarStyle = style
-            setNeedsStatusBarAppearanceUpdate()
         }
     }
 }
