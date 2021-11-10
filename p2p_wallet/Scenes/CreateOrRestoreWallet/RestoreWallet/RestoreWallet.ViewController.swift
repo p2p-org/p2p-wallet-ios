@@ -24,8 +24,7 @@ extension RestoreWallet {
         
         // MARK: - Subviews
         private lazy var iCloudRestoreButton = WLStepButton.main(
-            image: .init(systemName: "applelogo"),
-            imageSize: .init(width: 17.adaptiveHeight, height: 21.adaptiveHeight),
+            image: .appleLogo,
             text: L10n.restoreUsingICloud
         )
             .onTap(self, action: #selector(restoreFromICloud))

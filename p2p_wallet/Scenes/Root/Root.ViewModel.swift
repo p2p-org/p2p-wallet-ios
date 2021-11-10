@@ -34,6 +34,7 @@ extension Root {
         private let disposeBag = DisposeBag()
         private var isRestoration = false
         private var showAuthenticationOnMainOnAppear = true
+        private var resolvedName: String?
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -75,6 +76,7 @@ extension Root {
         }
         
         @objc func finishSetup() {
+            analyticsManager.log(event: .setupFinishClick)
             reload()
         }
     }
@@ -122,6 +124,7 @@ extension Root.ViewModel: ChangeLanguageResponder {
 extension Root.ViewModel: CreateOrRestoreWalletHandler {
     func creatingWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
         isRestoration = false
+        resolvedName = name
         navigationSubject.accept(.onboarding)
         analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
         saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
@@ -129,6 +132,7 @@ extension Root.ViewModel: CreateOrRestoreWalletHandler {
     
     func restoringWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
         isRestoration = true
+        resolvedName = name
         navigationSubject.accept(.onboarding)
         analyticsManager.log(event: .setupOpen(fromPage: "recovery"))
         saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
@@ -175,6 +179,8 @@ extension Root.ViewModel: OnboardingHandler {
     }
     
     @objc func onboardingDidComplete() {
-        navigationSubject.accept(.onboardingDone(isRestoration: isRestoration))
+        let event: AnalyticsEvent = isRestoration ? .setupWelcomeBackOpen: .setupFinishOpen
+        analyticsManager.log(event: event)
+        navigationSubject.accept(.onboardingDone(isRestoration: isRestoration, name: resolvedName))
     }
 }

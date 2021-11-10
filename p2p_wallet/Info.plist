@@ -31,11 +31,11 @@
 	<key>MOONPAY_STAGING_API_KEY</key>
 	<string>$(MOONPAY_STAGING_API_KEY)</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Camera is used for scanning Qr Code</string>
+	<string>This is required for the app to scan QR codes.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>We use FaceID to secure your transactions</string>
+	<string>This is required for the app to authenticate user with TouchID or FaceID.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Our application needs permission to write photos...</string>
+	<string>This is required for the app to save generated QR codes to your photo library.</string>
 	<key>RPCPOOL_API_KEY</key>
 	<string>$(RPCPOOL_API_KEY)</string>
 	<key>TRANSAK_HOST_URL</key>
