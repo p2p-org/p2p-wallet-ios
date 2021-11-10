@@ -9,7 +9,11 @@ import Foundation
 import UIKit
 
 extension CreateWallet {
-    class ViewController: WLIndicatorModalVC {
+    class ViewController: BaseVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+        
         // MARK: - Dependencies
         @Injected private var viewModel: CreateWalletViewModelType
         @Injected private var analyticsManager: AnalyticsManagerType
@@ -28,7 +32,8 @@ extension CreateWallet {
             super.setUp()
             // kickoff
             childNavigationController = BENavigationController()
-            add(child: childNavigationController, to: containerView)
+            childNavigationController.setNavigationBarHidden(true, animated: false)
+            add(child: childNavigationController, to: view)
         }
         
         override func bind() {
@@ -55,9 +60,13 @@ extension CreateWallet {
                 let vc = ReserveName.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)
             case .dismiss:
-                dismiss(animated: true, completion: nil)
+                navigationController?.popViewController(animated: true)
             case .back:
-                childNavigationController.popViewController(animated: true)
+                if childNavigationController.viewControllers.count > 1 {
+                    childNavigationController.popViewController(animated: true)
+                } else {
+                    navigationController?.popViewController(animated: true)
+                }
             case .none:
                 break
             }

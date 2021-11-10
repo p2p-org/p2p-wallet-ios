@@ -111,10 +111,12 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     
     func dismiss() {
         navigationSubject.accept(.dismiss)
+        navigationSubject.accept(.none)
     }
     
     func back() {
         navigationSubject.accept(.back)
+        navigationSubject.accept(.none)
     }
     
     func navigateToCreatePhrases() {
