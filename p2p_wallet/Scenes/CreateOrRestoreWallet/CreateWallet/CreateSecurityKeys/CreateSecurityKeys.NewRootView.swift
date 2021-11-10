@@ -2,7 +2,7 @@
 //  CreateSecurityKeys.RootView.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 22/02/2021.
+//  Created by Giang Long Tran on 05.11.21.
 //
 
 import UIKit
@@ -31,7 +31,7 @@ extension CreateSecurityKeys {
                 .text("  ", size: 25, color: .white)
                 .text(L10n.backupToICloud, size: 15, weight: .medium, color: .white, baselineOffset: (25 - 15) / 4)
             
-            return WLStepButton.main(attributedString: attrString)
+            return WLStepButton.main(image: .appleLogo, text: L10n.backupToICloud)
         }()
         
         private let verifyManualButton: UIView = {
@@ -57,15 +57,17 @@ extension CreateSecurityKeys {
             navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
             
             scrollView.contentInset.top = 56
+            scrollView.contentInset.bottom = 120
             stackView.addArrangedSubview(keysView)
             stackView.addArrangedSubview(keysViewAction)
             
             let bottomStack = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill) {
                 saveToICloudButton
-                verifyManualButton
+                verifyManualButton.padding(UIEdgeInsets(only: .bottom, inset: 20))
             }
+            bottomStack.backgroundColor = .background
             addSubview(bottomStack)
-            bottomStack.autoPinEdgesToSuperviewSafeArea(with: .init(x: 18, y: 20), excludingEdge: .top)
+            bottomStack.autoPinEdgesToSuperviewSafeArea(with: .init(x: 18, y: 0), excludingEdge: .top)
         }
         
         func bind() {

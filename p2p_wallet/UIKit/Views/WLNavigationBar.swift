@@ -35,6 +35,8 @@ class WLNavigationBar: BEView {
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 12, y: 8))
         
         leftItems.widthAnchor.constraint(equalTo: rightItems.widthAnchor).isActive = true
+        
+        backgroundColor = .background
     }
     
     func setTitle(_ title: String?) {

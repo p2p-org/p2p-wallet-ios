@@ -15,8 +15,7 @@ extension WLStepButton {
     static func main(
         image: UIImage? = nil,
         imageSize: CGSize = .init(width: 24.adaptiveHeight, height: 24.adaptiveHeight),
-        text: String? = nil,
-        attributedString: NSMutableAttributedString? = nil
+        text: String?
     ) -> WLStepButton {
         .init(
             enabledBgColor: .h5887ff,
@@ -24,7 +23,6 @@ extension WLStepButton {
             disabledBgColor: .aeaeb2,
             disabledTintColor: .d1d1d6,
             text: text,
-            attributedString: attributedString,
             image: image,
             imageSize: imageSize
         )
@@ -34,15 +32,13 @@ extension WLStepButton {
     static func sub(
         image: UIImage? = nil,
         imageSize: CGSize = .init(width: 24.adaptiveHeight, height: 24.adaptiveHeight),
-        text: String? = nil,
-        attributedString: NSMutableAttributedString? = nil
+        text: String?
     ) -> WLStepButton {
         .init(
             enabledBgColor: .clear,
             enabledTintColor: .h5887ff,
             disabledTintColor: .textSecondary,
-            text: text,
-            attributedString: attributedString
+            text: text
         )
     }
 }
@@ -104,7 +100,6 @@ class WLStepButton: BEView {
         disabledBgColor: UIColor? = nil,
         disabledTintColor: UIColor? = nil,
         text: String?,
-        attributedString: NSMutableAttributedString?,
         image: UIImage? = nil,
         imageSize: CGSize = .init(width: 24.adaptiveHeight, height: 24.adaptiveHeight)
     ) {
@@ -142,9 +137,6 @@ class WLStepButton: BEView {
         
         // text
         label.text = text
-        if attributedString != nil {
-            label.attributedText = attributedString
-        }
         
         setUp()
     }
@@ -177,7 +169,7 @@ extension Reactive where Base: WLStepButton {
             view.label.text = text
         }
     }
-    
+
 //    var tapGesture: Any {
 //        base.rx.event.bind(onNext: { recognizer in
 //            print("touches: \(recognizer.numberOfTouches)") //or whatever you like
