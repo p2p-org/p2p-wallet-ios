@@ -11,7 +11,7 @@ struct Root {
     enum NavigatableScene: Equatable {
         case createOrRestoreWallet
         case onboarding
-        case onboardingDone(isRestoration: Bool)
+        case onboardingDone(isRestoration: Bool, name: String?)
         case main(showAuthenticationWhenAppears: Bool)
     }
 }

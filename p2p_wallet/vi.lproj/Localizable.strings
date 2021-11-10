@@ -557,3 +557,12 @@
 "Import a wallet" = "Nhập ví";
 "iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "Khôi phục iCloud dành cho người dùng cũ.\nDán khóa bảo mật theo cách thủ công là dành cho tất cả mọi người";
 "Simple decentralized finance for everyone" = "Tài chính phi tập trung đơn giản cho mọi người";
+"Proceed without a username?" = "Tiếp tục mà không có tên người dùng?";
+"Anytime you want, you can easily reserve a username by going to the settings" = "Bất cứ lúc nào bạn muốn, bạn có thể dễ dàng đặt trước tên người dùng bằng cách đi tới phần cài đặt";
+"Proceed" = "Tiếp tục";
+"Proceed & don’t show again" = "Tiếp tục và không hiển thị lại" ;
+"Welcome to P2P Family!" = "Chào mừng đến với Gia đình P2P!";
+"Your P2P Wallet is fully set up.\nGet ready to explore the Crypto world" = "Ví P2P của bạn đã được thiết lập đầy đủ.\nHãy sẵn sàng khám phá thế giới tiền điện tử";
+"Start using P2P Wallet" = "Bắt đầu sử dụng Ví P2P";
+"Welcome to P2P Family, %@" = "Chào mừng bạn đến với Gia đình P2P, %@";
+"Welcome back, %@" = "Chào mừng bạn trở lại, %@";
