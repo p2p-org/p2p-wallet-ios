@@ -48,7 +48,7 @@ class WLBannerView: BEView {
     private lazy var descriptionLabel = UILabel(text: L10n.anyTokenCanBeReceivedUsingUsernameRegardlessOfWhetherItIsInYourWalletsList, textSize: 13, textColor: .black, numberOfLines: 0)
     
     // MARK: - Initializers
-    init(title: String?, description: String?) {
+    init(title: String? = nil, description: String? = nil) {
         self.titleText = title
         self.descriptionText = description
         super.init(frame: .zero)
