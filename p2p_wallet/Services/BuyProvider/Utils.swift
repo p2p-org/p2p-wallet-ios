@@ -10,9 +10,9 @@ struct BuyProviderUtils {
 
 extension BuyProviderUtils.Params {
     var query: String {
-        filter() {
+        filter {
             $1 != nil
-        }.map() { key, value in
+        }.map { key, value in
             let value: String = value!.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
             return "\(key)=\(value)"
         }.joined(separator: "&")
