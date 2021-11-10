@@ -10,10 +10,22 @@ import SolanaSwift
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
+        let sessionBannersAvailabilityState = SessionBannersAvailabilityState()
         register {KeychainAccountStorage()}
             .implements(SolanaSDKAccountStorage.self)
             .implements(ICloudStorageType.self)
             .implements(NameStorageType.self)
+            .scope(.application)
+        register {
+            BannersRepository(
+                sessionBannersAvailabilityState: sessionBannersAvailabilityState,
+                persistentBannersAvailabilityState: PersistentBannersAvailabilityState()
+            )
+        }
+            .implements(BannersRepositoryType.self)
+            .scope(.application)
+        register { BannerKindTransformer() }
+            .implements(BannerKindTransformerType.self)
             .scope(.application)
         register {AnalyticsManager()}
             .implements(AnalyticsManagerType.self)
