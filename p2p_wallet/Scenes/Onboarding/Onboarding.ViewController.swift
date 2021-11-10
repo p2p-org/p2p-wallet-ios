@@ -9,45 +9,19 @@ import Foundation
 import UIKit
 
 extension Onboarding {
-    class ViewController: WLIntroVC {
+    class ViewController: BaseVC {
         // MARK: - Dependencies
         @Injected private var viewModel: OnboardingViewModelType
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
-        var childNavigationController: BENavigationController!
-        var isChildNCPresented = false
+        private lazy var childNavigationController = BENavigationController()
         
         // MARK: - Methods
-        override func viewDidAppear(_ animated: Bool) {
-            super.viewDidAppear(animated)
-            
-            if !isChildNCPresented {
-                let modalVC = WLIndicatorModalVC()
-                modalVC.add(child: childNavigationController, to: modalVC.containerView)
-                
-                modalVC.isModalInPresentation = true
-                present(modalVC, animated: true, completion: nil)
-                isChildNCPresented = true
-            }
-            
-            viewModel.navigateNext()
-        }
-        
         override func setUp() {
             super.setUp()
-            // add nc
-            childNavigationController = BENavigationController()
-            
-            // set up
-            descriptionLabel.isHidden = false
-            titleLabel.text = L10n.congratulations
-            descriptionLabel.text = L10n.yourWalletHasBeenSuccessfullyCreated
-            
-            buttonsStackView.addArrangedSubviews([
-                UIView(height: 56),
-                UIView(height: 56)
-            ])
+            add(child: childNavigationController, to: view)
+            viewModel.navigateNext()
         }
         
         override func bind() {

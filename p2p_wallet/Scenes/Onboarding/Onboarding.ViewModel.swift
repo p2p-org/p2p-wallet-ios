@@ -8,6 +8,8 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import LocalAuthentication
+import UserNotifications
 
 protocol OnboardingHandler {
     func onboardingDidCancel()
@@ -17,10 +19,16 @@ protocol OnboardingHandler {
 protocol OnboardingViewModelType {
     var navigatableSceneDriver: Driver<Onboarding.NavigatableScene?> {get}
     
-    func navigateNext()
     func savePincode(_ pincode: String)
-    func setEnableBiometry(_ on: Bool)
+    
+    func getBiometryType() -> LABiometryType
+    func authenticateAndEnableBiometry(errorHandler: ((Error) -> Void)?)
+    func enableBiometryLater()
+    
+    func requestRemoteNotifications()
     func markNotificationsAsSet()
+    
+    func navigateNext()
     func cancelOnboarding()
     func endOnboarding()
 }
@@ -34,6 +42,7 @@ extension Onboarding {
         
         // MARK: - Properties
         private let bag = DisposeBag()
+        private let context = LAContext()
         
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -50,37 +59,110 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
         navigationSubject.asDriver()
     }
     
-    // MARK: - Binding
-    func navigateNext() {
-        if accountStorage.pinCode == nil {
-            navigationSubject.accept(.createPincode)
-        } else if !Defaults.didSetEnableBiometry {
-            navigationSubject.accept(.setUpBiometryAuthentication)
-        } else {
-            navigationSubject.accept(.setUpNotifications)
+    // MARK: - Pincode
+    func savePincode(_ pincode: String) {
+        accountStorage.save(pincode)
+        navigateNext()
+    }
+    
+    // MARK: - Biometry
+    func getBiometryType() -> LABiometryType {
+        context.biometryType
+    }
+    
+    func authenticateAndEnableBiometry(errorHandler: ((Error) -> Void)? = nil) {
+        let reason = L10n.identifyYourself
+
+        context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { (success, authenticationError) in
+
+            DispatchQueue.main.async { [weak self] in
+                if success {
+                    self?.setEnableBiometry(true)
+                } else {
+                    errorHandler?(authenticationError ?? SolanaSDK.Error.unknown)
+                }
+            }
         }
     }
     
-    // MARK: - Actions
-    func savePincode(_ pincode: String) {
-        accountStorage.save(pincode)
-        navigationSubject.accept(.setUpBiometryAuthentication)
+    func enableBiometryLater() {
+        setEnableBiometry(false)
     }
     
-    func setEnableBiometry(_ on: Bool) {
+    private func setEnableBiometry(_ on: Bool) {
         Defaults.isBiometryEnabled = on
         Defaults.didSetEnableBiometry = true
         analyticsManager.log(event: .setupFaceidClick(faceID: on))
         
-        navigationSubject.accept(.setUpNotifications)
+        navigateNext()
+    }
+    
+    // MARK: - Notification
+    func requestRemoteNotifications() {
+        UNUserNotificationCenter.current()
+            .requestAuthorization(options: [.alert, .sound, .badge]) {[weak self] granted, _ in
+                print("Permission granted: \(granted)")
+                DispatchQueue.main.async { [weak self] in
+                    guard granted else {
+                        UIApplication.shared.openAppSettings()
+                        return
+                    }
+                    UIApplication.shared.registerForRemoteNotifications()
+                    self?.markNotificationsAsSet()
+                }
+            }
     }
     
     func markNotificationsAsSet() {
         Defaults.didSetEnableNotifications = true
+        navigateNext()
+    }
+    
+    // MARK: - Navigation
+    func navigateNext() {
+        if accountStorage.pinCode == nil {
+            navigationSubject.accept(.createPincode)
+            return
+        }
+        
+        if !Defaults.didSetEnableBiometry {
+            var error: NSError?
+            if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+                // evaluate
+                navigationSubject.accept(.setUpBiometryAuthentication)
+                analyticsManager.log(event: .setupFaceidOpen)
+            } else {
+                enableBiometryLater()
+            }
+            return
+        }
+        
+        if !Defaults.didSetEnableNotifications {
+            UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
+                debugPrint("Notification settings: \(settings)")
+                
+                guard let self = self else {return}
+                
+                // not authorized
+                guard settings.authorizationStatus == .authorized else {
+                    self.navigationSubject.accept(.setUpNotifications)
+                    self.analyticsManager.log(event: .setupAllowPushOpen)
+                    return
+                }
+                
+                // authorized
+                DispatchQueue.main.async { [weak self] in
+                    UIApplication.shared.registerForRemoteNotifications()
+                    self?.markNotificationsAsSet()
+                }
+            }
+            return
+        }
+        
         endOnboarding()
     }
     
-    @objc func cancelOnboarding() {
+    func cancelOnboarding() {
         navigationSubject.accept(.dismiss)
         handler.onboardingDidCancel()
     }

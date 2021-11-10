@@ -177,6 +177,23 @@ extension Home {
                 guard let pubkey = wallet.pubkey else {return}
                 let vc = scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
                 self.present(vc, animated: true, completion: nil)
+            case let .closeReserveNameAlert(handler):
+                showAlert(
+                    title: L10n.proceedWithoutAUsername,
+                    message: L10n.anytimeYouWantYouCanEasilyReserveAUsernameByGoingToTheSettings,
+                    buttonTitles: [L10n.proceed, L10n.proceedDonTShowAgain],
+                    highlightedButtonIndex: 0,
+                    completion: { buttonIndex in
+                        switch buttonIndex {
+                        case 0:
+                            handler(.temporary)
+                        case 1:
+                            handler(.forever)
+                        default:
+                            assertionFailure("Unknow button")
+                        }
+                    }
+                )
             }
         }
         

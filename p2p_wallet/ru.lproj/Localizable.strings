@@ -566,3 +566,12 @@
 "Verify manually" = "Проверить вручную";
 "Renew" = "Возобновить";
 "The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Следующие слова являются ключом безопасности, который вы должны хранить в надежном месте и писать в правильной последовательности. \n Если он утерян, никто не сможет его восстановить. \n Храните его в тайне, даже от нас";
+"Proceed without a username?" = "Продолжить без имени пользователя?";
+"Anytime you want, you can easily reserve a username by going to the settings" = "В любое время вы можете легко зарезервировать имя пользователя, перейдя в настройки";
+"Proceed" = "Продолжить";
+"Proceed & don’t show again" = "Продолжить и больше не показывать" ;
+"Welcome to P2P Family!" = "Добро пожаловать в семью P2P!";
+"Your P2P Wallet is fully set up.\nGet ready to explore the Crypto world" = "Ваш P2P-кошелек полностью настроен.\nБудьте готовы исследовать мир криптовалют.";
+"Start using P2P Wallet" = "Начать использовать P2P-кошелек";
+"Welcome to P2P Family, %@" = "Добро пожаловать в семью P2P, %@";
+"Welcome back, %@" = "С возвращением, %@";
