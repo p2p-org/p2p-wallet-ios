@@ -34,9 +34,7 @@ extension CreateSecurityKeys {
             return WLStepButton.main(image: .appleLogo, text: L10n.backupToICloud)
         }()
         
-        private let verifyManualButton: UIView = {
-            WLStepButton.sub(text: L10n.verifyManually)
-        }()
+        private let verifyManualButton: WLStepButton = WLStepButton.sub(text: L10n.verifyManually)
         
         private let keysView: KeysView = KeysView()
         private let keysViewAction: KeysViewActions = KeysViewActions()
