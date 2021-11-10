@@ -14,14 +14,11 @@ extension CreateWallet {
         // MARK: - Subviews
         lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
-            navigationBar.backButton
-                .onTap(self, action: #selector(back))
             navigationBar.titleLabel.text = L10n.createANewWallet
             return navigationBar
         }()
         
         private let createWalletButton: WLStepButton = WLStepButton.main(image: .key, imageSize: CGSize(width: 16, height: 15), text: L10n.showYourSecurityKey)
-        
         
         // MARK: - Dependencies
         @Injected private var viewModel: CreateWalletViewModelType
@@ -38,6 +35,7 @@ extension CreateWallet {
             // navigation bar
             view.addSubview(navigationBar)
             navigationBar.titleLabel.text = L10n.createANewWallet
+            navigationBar.backButton.onTap(self, action: #selector(_back))
             navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
             navigationBar.autoPinEdge(toSuperviewEdge: .leading)
             navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
@@ -64,5 +62,10 @@ extension CreateWallet {
         @objc private func navigateToCreateWalletScene() {
             viewModel.navigateToCreatePhrases()
         }
+    
+        @objc private func _back() {
+            viewModel.back()
+        }
+    
     }
 }
