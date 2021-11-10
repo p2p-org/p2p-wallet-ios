@@ -30,10 +30,9 @@ extension CreateWallet {
         
         override func setUp() {
             super.setUp()
-            // kickoff
             childNavigationController = BENavigationController()
             childNavigationController.setNavigationBarHidden(true, animated: false)
-            add(child: childNavigationController, to: view)
+            view.addSubview(childNavigationController.view)
         }
         
         override func bind() {
