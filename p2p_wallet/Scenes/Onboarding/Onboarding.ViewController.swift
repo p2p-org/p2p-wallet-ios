@@ -35,15 +35,11 @@ extension Onboarding {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .createPincode:
-                let pincodeVC = Onboarding.CreatePassCodeVC()
-                pincodeVC.disableDismissAfterCompletion = true
-
-                pincodeVC.completion = { [weak self, weak pincodeVC] _ in
-                    guard let pincode = pincodeVC?.passcode else {return}
-                    self?.viewModel.savePincode(pincode)
-                    self?.analyticsManager.log(event: .setupPinKeydown2)
-                }
+                let pincodeVC = Onboarding.PasscodeVC()
                 childNavigationController.viewControllers = [pincodeVC]
+            case .confirmPincode(let pincode):
+                let pincodeVC = Onboarding.PasscodeVC(currentPincode: pincode)
+                childNavigationController.pushViewController(pincodeVC, animated: true)
             case .setUpBiometryAuthentication:
                 let biometryVC = EnableBiometryVC()
                 childNavigationController.pushViewController(biometryVC, animated: true)
@@ -52,7 +48,7 @@ extension Onboarding {
                 childNavigationController.pushViewController(enableNotificationsVC, animated: true)
             case .dismiss:
                 dismiss(animated: true, completion: nil)
-            default:
+            case .none:
                 break
             }
         }
