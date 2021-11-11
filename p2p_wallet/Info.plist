@@ -31,7 +31,7 @@
 	<key>MOONPAY_STAGING_API_KEY</key>
 	<string>$(MOONPAY_STAGING_API_KEY)</string>
 	<key>NSCameraUsageDescription</key>
-	<string>This is required for the app to scan QR codes.</string>
+	<string>This is required for the app to read wallet addresses from QR codes.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>This is required for the app to authenticate user with TouchID or FaceID.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
