@@ -16,7 +16,7 @@ final class WLPinCodeView: BEView {
     // MARK: - Methods
     override func commonInit() {
         super.commonInit()
-        let stackView = UIStackView(axis: .vertical, spacing: 68.adaptiveHeight, alignment: .center, distribution: .fill) {
+        let stackView = UIStackView(axis: .vertical, spacing: 68, alignment: .center, distribution: .fill) {
             dotsView
             numpadView
         }
@@ -28,32 +28,37 @@ final class WLPinCodeView: BEView {
 private class _PinCodeDotsView: BEView {
     // MARK: - Constants
     private let pincodeLength = 6
-    private let dotSize: CGFloat = 12
-    private let cornerRadius: CGFloat = 12
-    private let padding: UIEdgeInsets = .init(x: 12, y: 8)
+    private let dotSize: CGFloat = 12.adaptiveHeight
+    private let cornerRadius: CGFloat = 12.adaptiveHeight
+    private let padding: UIEdgeInsets = .init(x: 12.adaptiveHeight, y: 8.adaptiveHeight)
     
     // MARK: - Properties
     private var indicatorViewHeightConstraint: NSLayoutConstraint!
     
     // MARK: - Subviews
-    private lazy var dots = [0..<pincodeLength].map { _ in
-        UIView(width: dotSize, height: dotSize, backgroundColor: .d1d1d6, cornerRadius: dotSize/2)
-    }
+    private lazy var dots: [UIView] = {
+        var views = [UIView]()
+        for index in 0..<pincodeLength {
+            let dot = UIView(width: dotSize, height: dotSize, backgroundColor: .d1d1d6, cornerRadius: dotSize/2)
+            views.append(dot)
+        }
+        return views
+    }()
     private lazy var indicatorView = UIView(backgroundColor: .h82a5ff, cornerRadius: cornerRadius)
     
     // MARK: - Methods
     override func commonInit() {
         super.commonInit()
+        // background indicator
+        indicatorViewHeightConstraint = indicatorView.autoSetDimension(.width, toSize: 0)
+        addSubview(indicatorView)
+        indicatorView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .trailing)
+        
         // dots stack view
         let stackView = UIStackView(axis: .horizontal, spacing: padding.left * 2, alignment: .fill, distribution: .fill)
         stackView.addArrangedSubviews(dots)
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: padding)
-        
-        // background indicator
-        indicatorViewHeightConstraint = indicatorView.autoSetDimension(.width, toSize: 0)
-        addSubview(indicatorView)
-        indicatorView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .trailing)
     }
     
     // MARK: - Actions
@@ -61,7 +66,13 @@ private class _PinCodeDotsView: BEView {
         guard numberOfDigits <= pincodeLength else {return}
         indicatorViewHeightConstraint.constant = (dotSize + (padding.left * 2)) * CGFloat(numberOfDigits)
         indicatorView.backgroundColor = .h82a5ff
-        dots.forEach {$0.backgroundColor = .d1d1d6}
+        for i in 0..<dots.count {
+            if i < numberOfDigits {
+                dots[i].backgroundColor = .h5887ff
+            } else {
+                dots[i].backgroundColor = .d1d1d6
+            }
+        }
         UIView.animate(withDuration: 0.3) {
             self.layoutIfNeeded()
         }
@@ -74,7 +85,7 @@ private class _PinCodeDotsView: BEView {
     
     func pincodeSuccess() {
         indicatorView.backgroundColor = .attentionGreen
-        dots.forEach {$0.backgroundColor = .d1d1d6}
+        dots.forEach {$0.backgroundColor = .h34c759}
     }
 }
 
