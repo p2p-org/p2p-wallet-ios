@@ -13,6 +13,7 @@ protocol CreateWalletViewModelType: ReserveNameHandler {
     var navigatableSceneDriver: Driver<CreateWallet.NavigatableScene?> { get }
     
     func kickOff()
+    func verifyPhrase(_ phrases: [String])
     func handlePhrases(_ phrases: [String])
     func handleName(_ name: String?)
     func finish()
@@ -54,6 +55,10 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
         } else {
             navigateToExplanation()
         }
+    }
+    
+    func verifyPhrase(_ phrases: [String]) {
+        navigationSubject.accept(.verifyPhrase(phrases))
     }
     
     func handlePhrases(_ phrases: [String]) {
