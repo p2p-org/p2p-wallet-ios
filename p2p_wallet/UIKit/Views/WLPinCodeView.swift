@@ -8,7 +8,17 @@
 import Foundation
 import UIKit
 
+private let pincodeLength = 6
+
 final class WLPinCodeView: BEView {
+    // MARK: - Properties
+    private let correctPincode: UInt = 123456 // TODO
+    private var currentPincode: UInt? {
+        didSet {
+            validatePincode()
+        }
+    }
+    
     // MARK: - Subviews
     private let dotsView = _PinCodeDotsView()
     private let numpadView = _NumpadView()
@@ -22,12 +32,48 @@ final class WLPinCodeView: BEView {
         }
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
+        
+        numpadView.didChooseNumber = {[weak self] num in
+            // calculate value
+            let newValue = (self?.currentPincode ?? 0) * 10 + UInt(num)
+            let numberOfDigits = String(newValue).count
+            
+            // override
+            guard numberOfDigits <= pincodeLength else {
+                self?.currentPincode = UInt(num)
+                return
+            }
+
+            self?.currentPincode = newValue
+        }
+    }
+    
+    private func validatePincode() {
+        // pin code nil
+        guard let currentPincode = currentPincode,
+              String(currentPincode).count <= pincodeLength
+        else {
+            dotsView.pincodeEntered(numberOfDigits: 0)
+            return
+        }
+        
+        // highlight dots
+        let numberOfDigits = String(currentPincode).count
+        dotsView.pincodeEntered(numberOfDigits: numberOfDigits)
+        
+        // verify
+        if numberOfDigits == pincodeLength {
+            if currentPincode == correctPincode {
+                dotsView.pincodeSuccess()
+            } else {
+                dotsView.pincodeFailed()
+            }
+        }
     }
 }
 
 private class _PinCodeDotsView: BEView {
     // MARK: - Constants
-    private let pincodeLength = 6
     private let dotSize: CGFloat = 12.adaptiveHeight
     private let cornerRadius: CGFloat = 12.adaptiveHeight
     private let padding: UIEdgeInsets = .init(x: 12.adaptiveHeight, y: 8.adaptiveHeight)
@@ -73,7 +119,7 @@ private class _PinCodeDotsView: BEView {
                 dots[i].backgroundColor = .d1d1d6
             }
         }
-        UIView.animate(withDuration: 0.3) {
+        UIView.animate(withDuration: 0.1) {
             self.layoutIfNeeded()
         }
     }
@@ -186,12 +232,10 @@ private class _ButtonView: BEView {
         UIView.animate(withDuration: 0.1) {
             self.layer.backgroundColor = self.customBgColor.tapped.cgColor
             self.label.textColor = self.textColor.tapped
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) {
-            UIView.animate(withDuration: 0.1) { [weak self] in
-                self?.layer.backgroundColor = self?.customBgColor.normal.cgColor
-                self?.label.textColor = self?.textColor.normal
+        } completion: { _ in
+            UIView.animate(withDuration: 0.1) {
+                self.layer.backgroundColor = self.customBgColor.normal.cgColor
+                self.label.textColor = self.textColor.normal
             }
         }
     }
