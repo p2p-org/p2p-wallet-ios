@@ -42,12 +42,12 @@ extension CreateSecurityKeys {
             
             let attrString = NSMutableAttributedString()
                 .text("  ", size: 25, color: button.currentTitleColor)
-                .text(L10n.backupToICloud, size: 15, weight: .medium, color: button.currentTitleColor, baselineOffset: (25-15)/4)
+                .text(L10n.backupToICloud, size: 15, weight: .medium, color: button.currentTitleColor, baselineOffset: (25 - 15) / 4)
             
             button.setAttributedTitle(attrString, for: .normal)
             return button
         }()
-            
+        
         private lazy var continueButton = WLButton.stepButton(type: .blue, label: L10n.next.uppercaseFirst)
             .onTap(self, action: #selector(goNext))
         
@@ -104,7 +104,7 @@ extension CreateSecurityKeys {
         
         private func bind() {
             viewModel.phrasesDriver
-                .drive(onNext: {[weak self] phrases in
+                .drive(onNext: { [weak self] phrases in
                     self?.phrasesListViews.setUp(phrases: phrases)
                 })
                 .disposed(by: disposeBag)
