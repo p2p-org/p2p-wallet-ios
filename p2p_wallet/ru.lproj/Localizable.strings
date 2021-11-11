@@ -575,3 +575,9 @@
 "Start using P2P Wallet" = "Начать использовать P2P-кошелек";
 "Welcome to P2P Family, %@" = "Добро пожаловать в семью P2P, %@";
 "Welcome back, %@" = "С возвращением, %@";
+"Verify your security key" = "Подтвердите свой электронный ключ";
+"Choose correct words" = "Выберите правильные слова";
+"Save & Continue" = "Сохранить & Продолжить";
+"These words don’t match" = "Эти слова не совпадают";
+"The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "Слова в вашем электронном ключе необходимо выбирать в правильном порядке.  Кроме того, вы можете сделать резервную копию iCloud";
+"Go back" = "Вернитесь назад";

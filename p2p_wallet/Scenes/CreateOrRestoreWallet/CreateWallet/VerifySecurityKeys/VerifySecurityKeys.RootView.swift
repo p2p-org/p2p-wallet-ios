@@ -14,11 +14,24 @@ extension VerifySecurityKeys {
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        @Injected private var viewModel: VerifySecurityKeysViewModelType
+        private let viewModel: VerifySecurityKeysViewModelType
         
         // MARK: - Subviews
+        private let navigationBar: WLNavigationBar = {
+            let navigationBar = WLNavigationBar(forAutoLayout: ())
+            navigationBar.titleLabel.text = L10n.verifyYourSecurityKey
+            return navigationBar
+        }()
+        
+        private let questionsView: QuestionsView = QuestionsView()
+        private let nextButton: NextButton = NextButton()
         
         // MARK: - Methods
+        init(viewModel: VerifySecurityKeysViewModelType) {
+            self.viewModel = viewModel
+            super.init(frame: CGRect.zero)
+        }
+        
         override func commonInit() {
             super.commonInit()
             layout()
@@ -27,16 +40,51 @@ extension VerifySecurityKeys {
         
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            
         }
         
         // MARK: - Layout
         private func layout() {
+            addSubview(navigationBar)
+            navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
+            navigationBar.autoPinEdge(toSuperviewEdge: .leading)
+            navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
             
+            addSubview(questionsView)
+            questionsView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets.zero, excludingEdge: .top)
+            questionsView.autoPinEdge(.top, to: .bottom, of: navigationBar)
+            
+            addSubview(nextButton)
+            nextButton.autoPinEdgesToSuperviewSafeArea(with: .init(x: 18, y: 0), excludingEdge: .top)
         }
         
         private func bind() {
+            navigationBar.backButton.onTap(self, action: #selector(back))
+            viewModel.questionsDriver.drive(questionsView.rx.questions).disposed(by: disposeBag)
+            viewModel.validationDriver.drive(nextButton.rx.ready).disposed(by: disposeBag)
+            viewModel.validationDriver.map {
+                $0 == true ? L10n.saveContinue : L10n.chooseCorrectWords
+            }.drive(nextButton.rx.text).disposed(by: disposeBag)
+            viewModel.validationDriver.map {
+                $0 == true ? UIImage.checkMark : nil
+            }.drive(nextButton.rx.image).disposed(by: disposeBag)
             
+            nextButton.onTap(self, action: #selector(verify))
+            
+            questionsView.delegate = self
         }
+        
+        @objc func verify() {
+            viewModel.verify()
+        }
+        
+        @objc func back() {
+            viewModel.back()
+        }
+    }
+}
+
+extension VerifySecurityKeys.RootView: QuestionsDelegate {
+    func giveAnswer(question: VerifySecurityKeys.Question, answer: String) {
+        viewModel.answer(question: question, answer: answer)
     }
 }

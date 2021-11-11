@@ -20,6 +20,7 @@ protocol CreateSecurityKeysViewModelType {
     func saveToICloud()
     func next()
     func back()
+    func verifyPhrase()
 }
 
 extension CreateSecurityKeys {
@@ -89,6 +90,10 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         } else {
             errorSubject.accept(L10n.SecurityKeyCanTBeSavedIntoIcloud.pleaseTryAgain)
         }
+    }
+    
+    func verifyPhrase() {
+        createWalletViewModel.verifyPhrase(phrasesSubject.value)
     }
     
     @objc func next() {

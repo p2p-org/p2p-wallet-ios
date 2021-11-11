@@ -75,6 +75,7 @@ extension CreateSecurityKeys {
             keysViewAction.rx.onRefresh.bind(onNext: viewModel.createPhrases).disposed(by: disposeBag)
             keysViewAction.rx.onSave.bind(onNext: saveToPhoto).disposed(by: disposeBag)
             
+            verifyManualButton.onTap(self, action: #selector(verifyPhrase))
             saveToICloudButton.onTap(self, action: #selector(saveToICloud))
             navigationBar.backButton.onTap(self, action: #selector(back))
         }
@@ -90,6 +91,10 @@ extension CreateSecurityKeys {
         
         @objc func saveToICloud() {
             viewModel.saveToICloud()
+        }
+    
+        @objc func verifyPhrase() {
+            viewModel.verifyPhrase()
         }
         
         @objc func goNext() {

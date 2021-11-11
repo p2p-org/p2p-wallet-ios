@@ -10,6 +10,10 @@ import UIKit
 
 extension VerifySecurityKeys {
     class ViewController: BaseVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+        
         // MARK: - Dependencies
         private let viewModel: VerifySecurityKeysViewModelType
         
@@ -18,15 +22,15 @@ extension VerifySecurityKeys {
         // MARK: - Methods
         init(viewModel: VerifySecurityKeysViewModelType) {
             self.viewModel = viewModel
+            viewModel.generate()
         }
         
         override func loadView() {
-            view = RootView()
+            view = RootView(viewModel: viewModel)
         }
         
         override func setUp() {
             super.setUp()
-            
         }
         
         override func bind() {
@@ -39,8 +43,15 @@ extension VerifySecurityKeys {
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
-            case .detail:
-                break
+            case .onMistake:
+                showAlert(
+                    title: L10n.theseWordsDonTMatch,
+                    message: L10n.TheWordsInYourSecurityKeyNeedToBeSelectedInTheRightOrder.alternativelyYouCanMakeAnICloudBackup,
+                    actions: [
+                        UIAlertAction(title: L10n.goBack, style: .cancel) { _ in self.viewModel.back() },
+                        UIAlertAction(title: L10n.tryAgain, style: .default) { _ in self.viewModel.generate() }
+                    ]
+                )
             default:
                 break
             }
