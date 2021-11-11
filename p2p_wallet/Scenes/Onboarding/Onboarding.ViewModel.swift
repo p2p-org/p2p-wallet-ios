@@ -19,6 +19,7 @@ protocol OnboardingHandler {
 protocol OnboardingViewModelType {
     var navigatableSceneDriver: Driver<Onboarding.NavigatableScene?> {get}
     
+    func confirmPincode(_ newPincode: UInt)
     func savePincode(_ pincode: String)
     
     func getBiometryType() -> LABiometryType
@@ -60,6 +61,10 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
     }
     
     // MARK: - Pincode
+    func confirmPincode(_ newPincode: UInt) {
+        navigationSubject.accept(.confirmPincode(pincode: newPincode))
+    }
+    
     func savePincode(_ pincode: String) {
         accountStorage.save(pincode)
         navigateNext()
