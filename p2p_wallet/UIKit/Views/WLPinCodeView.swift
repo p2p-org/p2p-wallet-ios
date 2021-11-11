@@ -26,7 +26,7 @@ final class WLPinCodeView: BEView {
     
     private var attemptsCount: Int = 0
     
-    // MARK: - Callback
+    // MARK: - Callbacks
     /// onSuccess, return newPincode if needed
     var onSuccess: ((UInt?) -> Void)?
     var onFailed: (() -> Void)?
@@ -47,6 +47,7 @@ final class WLPinCodeView: BEView {
     // MARK: - Methods
     override func commonInit() {
         super.commonInit()
+        // stack view
         let stackView = UIStackView(axis: .vertical, spacing: 68, alignment: .center, distribution: .fill) {
             dotsView
             numpadView
@@ -54,49 +55,47 @@ final class WLPinCodeView: BEView {
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
         
-        setUpErrorLabel()
-        
-        numpadView.didChooseNumber = {[weak self] num in
-            // calculate value
-            let newValue = (self?.currentPincode ?? 0) * 10 + UInt(num)
-            let numberOfDigits = String(newValue).count
-            
-            // override
-            guard numberOfDigits <= pincodeLength else {
-                self?.currentPincode = UInt(num)
-                return
-            }
-
-            self?.currentPincode = newValue
-        }
-        
-        numpadView.didTapDelete = { [weak self] in
-            guard let self = self, let currentPincode = self.currentPincode else {
-                return
-            }
-            
-            let numberOfDigits = String(currentPincode).count
-            if numberOfDigits == 1 {
-                self.currentPincode = nil
-                return
-            }
-            
-            self.currentPincode = currentPincode / 10
-        }
-        
-        // setup
-        currentPincode = nil
-    }
-    
-    func setUpErrorLabel() {
+        // error label
         addSubview(errorLabel)
         errorLabel.autoAlignAxis(toSuperviewAxis: .vertical)
         errorLabel.autoPinEdge(.top, to: .bottom, of: dotsView, withOffset: 10)
+        
+        // calbacks
+        numpadView.didChooseNumber = { [weak self] in self?.add(digit: $0) }
+        
+        numpadView.didTapDelete = { [weak self] in self?.backspace() }
+        
+        // initial setup
+        currentPincode = nil
     }
     
+    // MARK: - Public methods
     func reset() {
         attemptsCount = 0
         currentPincode = nil
+    }
+    
+    // MARK: - Private methods
+    private func add(digit: Int) {
+        // calculate value
+        let newValue = (currentPincode ?? 0) * 10 + UInt(digit)
+        let numberOfDigits = String(newValue).count
+        
+        // override
+        guard numberOfDigits <= pincodeLength else {
+            currentPincode = UInt(digit)
+            return
+        }
+
+        currentPincode = newValue
+    }
+    
+    private func backspace() {
+        guard String(currentPincode ?? 0).count > 1 else {
+            currentPincode = nil
+            return
+        }
+        currentPincode = currentPincode! / 10
     }
     
     private func validatePincode() {
@@ -143,15 +142,15 @@ final class WLPinCodeView: BEView {
                 
                 // compare current attempt with max attempts
                 if attemptsCount >= maxAttemptsCount {
-                    pincodeFailedAndExceededMaxAtempts()
+                    pincodeFailed(exceededMaxAttempts: true)
                 } else {
-                    pincodeFailed()
+                    pincodeFailed(exceededMaxAttempts: false)
                 }
             }
             
             // incorrect pincode without max attempts
             else {
-                pincodeFailed()
+                pincodeFailed(exceededMaxAttempts: false)
             }
         }
     }
@@ -159,22 +158,27 @@ final class WLPinCodeView: BEView {
     private func pincodeSuccess() {
         dotsView.pincodeSuccess()
         onSuccess?(currentPincode)
-        if correctPincode == nil {
+        attemptsCount = 0
+        if correctPincode != nil {
             numpadView.isUserInteractionEnabled = false
         }
     }
     
-    private func pincodeFailed() {
+    private func pincodeFailed(exceededMaxAttempts: Bool) {
         dotsView.pincodeFailed()
         errorLabel.isHidden = false
-        onFailed?()
-    }
-    
-    private func pincodeFailedAndExceededMaxAtempts() {
-        dotsView.pincodeFailed()
-        errorLabel.isHidden = false
-        numpadView.isUserInteractionEnabled = false
-        onFailedAndExceededMaxAttemps?()
+        if let maxAttemptsCount = maxAttemptsCount {
+            errorLabel.text = L10n.wrongPinCodeDAttemptSLeft(maxAttemptsCount - attemptsCount)
+        } else {
+            errorLabel.text = L10n.passcodesDoNotMatch
+        }
+        
+        if exceededMaxAttempts {
+            numpadView.isUserInteractionEnabled = false
+            onFailedAndExceededMaxAttemps?()
+        } else {
+            onFailed?()
+        }
     }
 }
 
