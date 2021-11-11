@@ -12,16 +12,27 @@ private let pincodeLength = 6
 
 final class WLPinCodeView: BEView {
     // MARK: - Properties
-    private let correctPincode: UInt = 123456 // TODO
+    private let correctPincode: UInt? // If correctPincode == nil, the validation will always returns true
     private var currentPincode: UInt? {
         didSet {
             validatePincode()
         }
     }
     
+    // MARK: - Callback
+    var onSuccess: (() -> Void)?
+    var onFailed: (() -> Void)?
+    
     // MARK: - Subviews
     private let dotsView = _PinCodeDotsView()
+    let errorLabel = UILabel(textSize: 13, weight: .semibold, textColor: .ff3b30, numberOfLines: 0, textAlignment: .center)
     private let numpadView = _NumpadView()
+    
+    // MARK: - Initializer
+    init(correctPincode: UInt? = nil) {
+        self.correctPincode = correctPincode
+        super.init(frame: .zero)
+    }
     
     // MARK: - Methods
     override func commonInit() {
@@ -32,6 +43,8 @@ final class WLPinCodeView: BEView {
         }
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
+        
+        setUpErrorLabel()
         
         numpadView.didChooseNumber = {[weak self] num in
             // calculate value
@@ -65,7 +78,16 @@ final class WLPinCodeView: BEView {
         currentPincode = nil
     }
     
+    func setUpErrorLabel() {
+        addSubview(errorLabel)
+        errorLabel.autoAlignAxis(toSuperviewAxis: .vertical)
+        errorLabel.autoPinEdge(.top, to: .bottom, of: dotsView, withOffset: 10)
+    }
+    
     private func validatePincode() {
+        // hide error label
+        errorLabel.isHidden = true
+        
         // pin code nil
         guard let currentPincode = currentPincode,
               String(currentPincode).count <= pincodeLength
@@ -84,13 +106,36 @@ final class WLPinCodeView: BEView {
         
         // verify
         if numberOfDigits == pincodeLength {
-            if currentPincode == correctPincode {
-                dotsView.pincodeSuccess()
-            } else {
-                dotsView.pincodeFailed()
-            }
+            // hide delete button
             numpadView.setDeleteButtonHidden(true)
+            
+            // if no correct pincode, mark as success
+            guard let correctPincode = correctPincode else {
+                pincodeSuccess()
+                return
+            }
+            
+            // correct pincode
+            if currentPincode == correctPincode {
+                pincodeSuccess()
+            }
+            
+            // incorrect pincode
+            else {
+                pincodeFailed()
+            }
         }
+    }
+    
+    private func pincodeSuccess() {
+        dotsView.pincodeSuccess()
+        onSuccess?()
+    }
+    
+    private func pincodeFailed() {
+        dotsView.pincodeFailed()
+        errorLabel.isHidden = false
+        onFailed?()
     }
 }
 
