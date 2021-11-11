@@ -160,7 +160,7 @@ private class _ButtonView: BEView {
     private let textColor = StateColor(normal: .black, tapped: .white)
     
     // MARK: - Subviews
-    fileprivate lazy var label = UILabel(textSize: textSize, weight: .semibold)
+    fileprivate lazy var label = UILabel(textSize: textSize, weight: .semibold, textColor: textColor.normal)
     
     // MARK: - Methods
     override func commonInit() {
@@ -177,7 +177,7 @@ private class _ButtonView: BEView {
             self.label.textColor = self.textColor.tapped
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) {
             UIView.animate(withDuration: 0.1) { [weak self] in
                 self?.layer.backgroundColor = self?.customBgColor.normal.cgColor
                 self?.label.textColor = self?.textColor.normal
