@@ -10,6 +10,6 @@ import RxCocoa
 
 struct VerifySecurityKeys {
     enum NavigatableScene {
-        case detail
+        case onMistake
     }
 }

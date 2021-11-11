@@ -34,6 +34,24 @@ extension UIViewController {
         return alertController
     }
     
+    @discardableResult
+    func showAlert(title: String?, message: String?, actions: [UIAlertAction] = []) -> UIAlertController {
+        view.layer.removeAllAnimations()
+        
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        if actions.count == 0 {
+            alertController.addAction(UIAlertAction(title: "OK", style: .default))
+        }
+        
+        for action in actions {
+            alertController.addAction(action)
+        }
+        
+        present(alertController, animated: true, completion: nil)
+        return alertController
+    }
+    
     func showError(_ error: Error, showPleaseTryAgain: Bool = false, additionalMessage: String? = nil, completion: (() -> Void)? = nil) {
         let description = error.readableDescription
         let vc = tabBarController ?? navigationController ?? parent ?? self
@@ -44,7 +62,7 @@ extension UIViewController {
     }
     
     var errorView: ErrorView? {
-        view.subviews.first(where: {$0 is ErrorView}) as? ErrorView
+        view.subviews.first(where: { $0 is ErrorView }) as? ErrorView
     }
     
     func showErrorView(error: Error?, retryAction: CocoaAction? = nil) {
@@ -61,7 +79,7 @@ extension UIViewController {
     
     func topViewController() -> UIViewController {
         if self.isKind(of: UITabBarController.self) {
-            let tabbarController =  self as! UITabBarController
+            let tabbarController = self as! UITabBarController
             return tabbarController.selectedViewController!.topViewController()
         } else if self.isKind(of: UINavigationController.self) {
             let navigationController = self as! UINavigationController
