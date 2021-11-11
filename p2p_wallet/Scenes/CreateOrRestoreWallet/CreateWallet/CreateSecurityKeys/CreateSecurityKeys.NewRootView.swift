@@ -26,13 +26,7 @@ extension CreateSecurityKeys {
             return navigationBar
         }()
         
-        private let saveToICloudButton: WLStepButton = {
-            let attrString = NSMutableAttributedString()
-                .text("  ", size: 25, color: .white)
-                .text(L10n.backupToICloud, size: 15, weight: .medium, color: .white, baselineOffset: (25 - 15) / 4)
-            
-            return WLStepButton.main(image: .appleLogo, text: L10n.backupToICloud)
-        }()
+        private let saveToICloudButton: WLStepButton = WLStepButton.main(image: .appleLogo, text: L10n.backupToICloud)
         
         private let verifyManualButton: WLStepButton = WLStepButton.sub(text: L10n.verifyManually)
         
