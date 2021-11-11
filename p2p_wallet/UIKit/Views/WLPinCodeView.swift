@@ -79,19 +79,109 @@ private class _PinCodeDotsView: BEView {
 }
 
 private class _NumpadView: BEView {
+    // MARK: - Constants
+    private let buttonSize = 72.adaptiveHeight
+    private let spacing = 30.adaptiveHeight
+    
+    // MARK: - Callback
+    var didChooseNumber: ((Int) -> Void)?
+    var didTapDelete: (() -> Void)?
+    
+    // MARK: - Subviews
+    private lazy var numButtons: [_ButtonView] = {
+        var views = [_ButtonView]()
+        for index in 0..<10 {
+            let view = _ButtonView(width: buttonSize, height: buttonSize, cornerRadius: buttonSize/2)
+            view.label.text = "\(index)"
+            view.tag = index
+            view.onTap(self, action: #selector(numButtonDidTap(_:)))
+            views.append(view)
+        }
+        return views
+    }()
+    
+    private lazy var deleteButton = UIImageView(width: buttonSize, height: buttonSize, image: .pincodeDelete, tintColor: .h8e8e93)
+        .onTap(self, action: #selector(deleteButtonDidTap))
+    
+    // MARK: - Methods
+    override func commonInit() {
+        super.commonInit()
+        let stackView = UIStackView(axis: .vertical, spacing: spacing, alignment: .fill, distribution: .fillEqually)
+        
+        stackView.addArrangedSubview(buttons(from: 1, to: 3))
+        stackView.addArrangedSubview(buttons(from: 4, to: 6))
+        stackView.addArrangedSubview(buttons(from: 7, to: 9))
+        stackView.addArrangedSubview(
+            UIStackView(axis: .horizontal, spacing: spacing, alignment: .fill, distribution: .fillEqually) {
+                UIView.spacer
+                numButtons[0]
+                deleteButton
+            }
+        )
+        
+        addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges()
+    }
+    
+    // MARK: - Actions
+    func setDeleteButtonHidden(_ isHidden: Bool) {
+        deleteButton.isHidden = isHidden
+    }
+    
+    @objc private func numButtonDidTap(_ gesture: UITapGestureRecognizer) {
+        guard let view = gesture.view as? _ButtonView else {return}
+        didChooseNumber?(view.tag)
+        view.animateTapping()
+    }
+    
+    @objc private func deleteButtonDidTap() {
+        didTapDelete?()
+    }
+    
+    // MARK: - Helpers
+    private func buttons(from: Int, to: Int) -> UIStackView {
+        let stackView = UIStackView(axis: .horizontal, spacing: spacing, alignment: .fill, distribution: .fillEqually)
+        for i in from..<to+1 {
+            stackView.addArrangedSubview(numButtons[i])
+        }
+        return stackView
+    }
+}
+
+private class _ButtonView: BEView {
     private struct StateColor {
         let normal: UIColor
         let tapped: UIColor
     }
     
-    // MARK: - Constants
-    private let buttonSize = 72.adaptiveHeight
+    // MARK: - Constant
     private let textSize = 32.adaptiveHeight
-    private let spacing = 30.adaptiveHeight
-    
-    private let buttonBgColor = StateColor(normal: .fafafc, tapped: .passcodeHighlightColor)
-    private let buttonTextColor = StateColor(normal: .black, tapped: .white)
+    private let customBgColor = StateColor(normal: .fafafc, tapped: .passcodeHighlightColor)
+    private let textColor = StateColor(normal: .black, tapped: .white)
     
     // MARK: - Subviews
+    fileprivate lazy var label = UILabel(textSize: textSize, weight: .semibold)
     
+    // MARK: - Methods
+    override func commonInit() {
+        super.commonInit()
+        backgroundColor = customBgColor.normal
+        
+        addSubview(label)
+        label.autoCenterInSuperview()
+    }
+    
+    fileprivate func animateTapping() {
+        UIView.animate(withDuration: 0.1) {
+            self.layer.backgroundColor = self.customBgColor.tapped.cgColor
+            self.label.textColor = self.textColor.tapped
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) {
+            UIView.animate(withDuration: 0.1) { [weak self] in
+                self?.layer.backgroundColor = self?.customBgColor.normal.cgColor
+                self?.label.textColor = self?.textColor.normal
+            }
+        }
+    }
 }
