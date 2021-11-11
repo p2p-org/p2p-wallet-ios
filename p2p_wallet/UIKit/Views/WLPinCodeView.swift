@@ -12,16 +12,25 @@ private let pincodeLength = 6
 
 final class WLPinCodeView: BEView {
     // MARK: - Properties
-    private let correctPincode: UInt? // If correctPincode == nil, the validation will always returns true
+    /// Correct pincode for comparision, if not defined, the validation will always returns true
+    private let correctPincode: UInt?
+    
+    /// Max attempts for retrying, default is nil (infinite)
+    private let maxAttemptsCount: Int?
+    
     private var currentPincode: UInt? {
         didSet {
             validatePincode()
         }
     }
     
+    private var attemptsCount: Int = 0
+    
     // MARK: - Callback
-    var onSuccess: (() -> Void)?
+    /// onSuccess, return newPincode if needed
+    var onSuccess: ((UInt?) -> Void)?
     var onFailed: (() -> Void)?
+    var onFailedAndExceededMaxAttemps: (() -> Void)?
     
     // MARK: - Subviews
     private let dotsView = _PinCodeDotsView()
@@ -29,8 +38,9 @@ final class WLPinCodeView: BEView {
     private let numpadView = _NumpadView()
     
     // MARK: - Initializer
-    init(correctPincode: UInt? = nil) {
+    init(correctPincode: UInt? = nil, maxAttemptsCount: Int? = nil) {
         self.correctPincode = correctPincode
+        self.maxAttemptsCount = maxAttemptsCount
         super.init(frame: .zero)
     }
     
@@ -84,9 +94,15 @@ final class WLPinCodeView: BEView {
         errorLabel.autoPinEdge(.top, to: .bottom, of: dotsView, withOffset: 10)
     }
     
+    func reset() {
+        attemptsCount = 0
+        currentPincode = nil
+    }
+    
     private func validatePincode() {
-        // hide error label
+        // reset
         errorLabel.isHidden = true
+        numpadView.isUserInteractionEnabled = true
         
         // pin code nil
         guard let currentPincode = currentPincode,
@@ -120,7 +136,20 @@ final class WLPinCodeView: BEView {
                 pincodeSuccess()
             }
             
-            // incorrect pincode
+            // incorrect pincode with max attempts
+            else if let maxAttemptsCount = maxAttemptsCount {
+                // increase attempts count
+                attemptsCount += 1
+                
+                // compare current attempt with max attempts
+                if attemptsCount >= maxAttemptsCount {
+                    pincodeFailedAndExceededMaxAtempts()
+                } else {
+                    pincodeFailed()
+                }
+            }
+            
+            // incorrect pincode without max attempts
             else {
                 pincodeFailed()
             }
@@ -129,13 +158,23 @@ final class WLPinCodeView: BEView {
     
     private func pincodeSuccess() {
         dotsView.pincodeSuccess()
-        onSuccess?()
+        onSuccess?(currentPincode)
+        if correctPincode == nil {
+            numpadView.isUserInteractionEnabled = false
+        }
     }
     
     private func pincodeFailed() {
         dotsView.pincodeFailed()
         errorLabel.isHidden = false
         onFailed?()
+    }
+    
+    private func pincodeFailedAndExceededMaxAtempts() {
+        dotsView.pincodeFailed()
+        errorLabel.isHidden = false
+        numpadView.isUserInteractionEnabled = false
+        onFailedAndExceededMaxAttemps?()
     }
 }
 
