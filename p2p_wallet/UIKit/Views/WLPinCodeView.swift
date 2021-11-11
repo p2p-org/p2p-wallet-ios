@@ -46,6 +46,23 @@ final class WLPinCodeView: BEView {
 
             self?.currentPincode = newValue
         }
+        
+        numpadView.didTapDelete = { [weak self] in
+            guard let self = self, let currentPincode = self.currentPincode else {
+                return
+            }
+            
+            let numberOfDigits = String(currentPincode).count
+            if numberOfDigits == 1 {
+                self.currentPincode = nil
+                return
+            }
+            
+            self.currentPincode = currentPincode / 10
+        }
+        
+        // setup
+        currentPincode = nil
     }
     
     private func validatePincode() {
@@ -53,6 +70,7 @@ final class WLPinCodeView: BEView {
         guard let currentPincode = currentPincode,
               String(currentPincode).count <= pincodeLength
         else {
+            numpadView.setDeleteButtonHidden(true)
             dotsView.pincodeEntered(numberOfDigits: 0)
             return
         }
@@ -60,6 +78,9 @@ final class WLPinCodeView: BEView {
         // highlight dots
         let numberOfDigits = String(currentPincode).count
         dotsView.pincodeEntered(numberOfDigits: numberOfDigits)
+        
+        // delete button
+        numpadView.setDeleteButtonHidden(numberOfDigits == 0)
         
         // verify
         if numberOfDigits == pincodeLength {
@@ -182,7 +203,8 @@ private class _NumpadView: BEView {
     
     // MARK: - Actions
     func setDeleteButtonHidden(_ isHidden: Bool) {
-        deleteButton.isHidden = isHidden
+        deleteButton.alpha = isHidden ? 0: 1
+        deleteButton.isUserInteractionEnabled = !isHidden
     }
     
     @objc private func numButtonDidTap(_ gesture: UITapGestureRecognizer) {
