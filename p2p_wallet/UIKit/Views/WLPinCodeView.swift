@@ -89,6 +89,7 @@ final class WLPinCodeView: BEView {
             } else {
                 dotsView.pincodeFailed()
             }
+            numpadView.setDeleteButtonHidden(true)
         }
     }
 }
@@ -160,6 +161,7 @@ private class _NumpadView: BEView {
     // MARK: - Constants
     private let buttonSize = 72.adaptiveHeight
     private let spacing = 30.adaptiveHeight
+    private let deleteButtonColor = StateColor(normal: .h8e8e93, tapped: .textBlack)
     
     // MARK: - Callback
     var didChooseNumber: ((Int) -> Void)?
@@ -178,7 +180,7 @@ private class _NumpadView: BEView {
         return views
     }()
     
-    private lazy var deleteButton = UIImageView(width: buttonSize, height: buttonSize, image: .pincodeDelete, tintColor: .h8e8e93)
+    private lazy var deleteButton = UIImageView(width: buttonSize, height: buttonSize, image: .pincodeDelete, tintColor: deleteButtonColor.normal)
         .onTap(self, action: #selector(deleteButtonDidTap))
     
     // MARK: - Methods
@@ -215,6 +217,14 @@ private class _NumpadView: BEView {
     
     @objc private func deleteButtonDidTap() {
         didTapDelete?()
+        
+        UIView.animate(withDuration: 0.1) {
+            self.deleteButton.tintColor = self.deleteButtonColor.tapped
+        } completion: { _ in
+            UIView.animate(withDuration: 0.1) {
+                self.deleteButton.tintColor = self.deleteButtonColor.normal
+            }
+        }
     }
     
     // MARK: - Helpers
@@ -228,11 +238,6 @@ private class _NumpadView: BEView {
 }
 
 private class _ButtonView: BEView {
-    private struct StateColor {
-        let normal: UIColor
-        let tapped: UIColor
-    }
-    
     // MARK: - Constant
     private let textSize = 32.adaptiveHeight
     private let customBgColor = StateColor(normal: .fafafc, tapped: .passcodeHighlightColor)
@@ -261,4 +266,9 @@ private class _ButtonView: BEView {
             }
         }
     }
+}
+
+private struct StateColor {
+    let normal: UIColor
+    let tapped: UIColor
 }
