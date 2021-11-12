@@ -12,36 +12,37 @@ enum BannerKind {
     case reserveUsername
 }
 
-protocol BannersRepositoryType: AnyObject {
+protocol BannersManagerType: AnyObject {
     var actualBannersSubject: BehaviorRelay<[BannerKind]> { get }
     func removeForever(bannerKind: BannerKind)
     func removeForSession(bannerKind: BannerKind)
 }
 
-final class BannersRepository: BannersRepositoryType {
+final class BannersManager: BannersManagerType {
     let actualBannersSubject = BehaviorRelay<[BannerKind]>(value: [])
-    private let sessionBannersAvailabilityState: BannersAvailabilityStateType
-    private let persistentBannersAvailabilityState: BannersAvailabilityStateType
+    private let usernameBannerRepository: ReserveUsernameBannerAvailabilityRepositoryType
     private let disposeBag = DisposeBag()
 
     private let possibleBanners: [BannerKind] = [.reserveUsername]
 
-    init(
-        sessionBannersAvailabilityState: BannersAvailabilityStateType,
-        persistentBannersAvailabilityState: BannersAvailabilityStateType
-    ) {
-        self.sessionBannersAvailabilityState = sessionBannersAvailabilityState
-        self.persistentBannersAvailabilityState = persistentBannersAvailabilityState
+    init(usernameBannerRepository: ReserveUsernameBannerAvailabilityRepositoryType) {
+        self.usernameBannerRepository = usernameBannerRepository
 
         bind()
     }
 
     func removeForever(bannerKind: BannerKind) {
-        persistentBannersAvailabilityState.setNotAvailableState(banner: bannerKind)
+        switch bannerKind {
+        case .reserveUsername:
+            usernameBannerRepository.removeForever(bannerKind: bannerKind)
+        }
     }
 
     func removeForSession(bannerKind: BannerKind) {
-        sessionBannersAvailabilityState.setNotAvailableState(banner: bannerKind)
+        switch bannerKind {
+        case .reserveUsername:
+            usernameBannerRepository.removeForSession(bannerKind: bannerKind)
+        }
     }
 
     private func bind() {
@@ -63,19 +64,7 @@ final class BannersRepository: BannersRepositoryType {
     private func observableAvailability(bannerKind: BannerKind) -> Observable<Bool> {
         switch bannerKind {
         case .reserveUsername:
-            return combine(
-                states: [sessionBannersAvailabilityState, persistentBannersAvailabilityState],
-                bannerKind: .reserveUsername
-            )
+            return usernameBannerRepository.availabilitySubject()
         }
-    }
-
-    private func combine(states: [BannersAvailabilityStateType], bannerKind: BannerKind) -> Observable<Bool> {
-        Observable.combineLatest(
-            states.map {
-                $0.subject(for: bannerKind)
-            }
-        )
-            .map { $0.allSatisfy { $0 } }
     }
 }

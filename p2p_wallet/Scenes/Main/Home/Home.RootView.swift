@@ -160,6 +160,7 @@ extension Home {
         private func configureBannersView() {
             bannersCollectionView.delegate = bannersDelegate
             bannersCollectionView.dataSource = bannersDataSource
+            bannersCollectionView.backgroundColor = .clear
 
             bannersCollectionView.showsHorizontalScrollIndicator = false
         }
