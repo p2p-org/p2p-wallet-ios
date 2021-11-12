@@ -14,18 +14,29 @@ extension Onboarding {
             .hidden
         }
         
+        // MARK: - Dependencies
         @Injected private var viewModel: OnboardingViewModelType
+        
+        // MARK: - Properties
+        /// current pin code for confirming, if nil, the scene is create pincode
+        private let currentPincode: UInt?
+        override var title: String? {
+            didSet {
+                navigationBar.titleLabel.text = title
+            }
+        }
+        
+        // MARK: - Subviews
         private lazy var navigationBar = WLNavigationBar(forAutoLayout: ())
         private lazy var pincodeView = WLPinCodeView(correctPincode: currentPincode)
         
-        /// current pin code for confirming, if nil, the scene is create pincode
-        private let currentPincode: UInt?
-        
+        // MARK: - Initializer
         init(currentPincode: UInt? = nil) {
             self.currentPincode = currentPincode
             super.init()
         }
         
+        // MARK: - Methods
         override func setUp() {
             super.setUp()
             view.addSubview(navigationBar)
@@ -37,7 +48,12 @@ extension Onboarding {
                 navigationBar.backButton.onTap(self, action: #selector(cancelOnboarding))
             }
             
-            view.addSubview(pincodeView)
+            let pincodeWrapperView = UIView(forAutoLayout: ())
+            view.addSubview(pincodeWrapperView)
+            pincodeWrapperView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
+            pincodeWrapperView.autoPinEdge(.top, to: .bottom, of: navigationBar)
+            
+            pincodeWrapperView.addSubview(pincodeView)
             pincodeView.autoCenterInSuperview()
             
             pincodeView.onSuccess = { [weak self] pincode in
@@ -55,10 +71,12 @@ extension Onboarding {
             }
         }
         
+        // MARK: - Actions
         @objc private func cancelOnboarding() {
             viewModel.cancelOnboarding()
         }
         
+        // MARK: - Helpers
         private func isConfirmingPincode() -> Bool {
             currentPincode != nil
         }

@@ -36,9 +36,11 @@ extension Onboarding {
             switch scene {
             case .createPincode:
                 let pincodeVC = Onboarding.PasscodeVC()
+                pincodeVC.title = L10n.setUpAWalletPIN
                 childNavigationController.viewControllers = [pincodeVC]
             case .confirmPincode(let pincode):
                 let pincodeVC = Onboarding.PasscodeVC(currentPincode: pincode)
+                pincodeVC.title = L10n.confirmYourWalletPIN
                 childNavigationController.pushViewController(pincodeVC, animated: true)
             case .setUpBiometryAuthentication:
                 let biometryVC = EnableBiometryVC()
