@@ -35,22 +35,17 @@ extension Onboarding {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .createPincode:
-                let pincodeVC = WLPincodeVC()
-                pincodeVC.title = L10n.setUpAWalletPIN
-                pincodeVC.onCreate = {[weak self] pincode in
-                    self?.viewModel.confirmPincode(pincode)
-                }
-                pincodeVC.onCancel = {[weak self] in
-                    self?.viewModel.cancelOnboarding()
-                }
-                childNavigationController.viewControllers = [pincodeVC]
-            case .confirmPincode(let pincode):
-                let pincodeVC = WLPincodeVC(currentPincode: pincode)
-                pincodeVC.title = L10n.confirmYourWalletPIN
-                pincodeVC.onSuccess = {[weak self] pincode in
+                let createPincodeVC = WLCreatePincodeVC(
+                    createPincodeTitle: L10n.setUpAWalletPIN,
+                    confirmPincodeTitle: L10n.confirmYourWalletPIN
+                )
+                createPincodeVC.onSuccess = {[weak self] pincode in
                     self?.viewModel.savePincode(String(pincode))
                 }
-                childNavigationController.pushViewController(pincodeVC, animated: true)
+                createPincodeVC.onCancel = {[weak self] in
+                    self?.viewModel.cancelOnboarding()
+                }
+                childNavigationController.viewControllers = [createPincodeVC]
             case .setUpBiometryAuthentication:
                 let biometryVC = EnableBiometryVC()
                 childNavigationController.pushViewController(biometryVC, animated: true)

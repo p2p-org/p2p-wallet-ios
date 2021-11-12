@@ -10,7 +10,6 @@ import Foundation
 struct Onboarding {
     enum NavigatableScene {
         case createPincode
-        case confirmPincode(pincode: UInt)
         case setUpBiometryAuthentication
         case setUpNotifications
         case dismiss
