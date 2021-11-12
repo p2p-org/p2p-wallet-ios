@@ -56,6 +56,10 @@
 		BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */; };
 		BC0978E825AEDEE200DB02E9 /* ResizablePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */; };
 		BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */; };
+		BC09B9A2273ECB03009CAF4E /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC09B99E273ECB03009CAF4E /* Authentication.swift */; };
+		BC09B9A3273ECB03009CAF4E /* Authentication.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC09B99F273ECB03009CAF4E /* Authentication.ViewController.swift */; };
+		BC09B9A4273ECB03009CAF4E /* Authentication.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC09B9A0273ECB03009CAF4E /* Authentication.ViewModel.swift */; };
+		BC09B9A5273ECB03009CAF4E /* Authentication.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC09B9A1273ECB03009CAF4E /* Authentication.RootView.swift */; };
 		BC0E7DCC25B17AB2009AD08B /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0E7DCB25B17AB2009AD08B /* Bundle+Extensions.swift */; };
 		BC104A7B259974CE0048C834 /* WLLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC104A7A259974CE0048C834 /* WLLoadingView.swift */; };
 		BC105130258B05DF00398EA2 /* BackupManuallyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10512F258B05DF00398EA2 /* BackupManuallyVC.swift */; };
@@ -471,6 +475,10 @@
 		BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLResizableModalVC.swift; sourceTree = "<group>"; };
 		BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizablePresentationController.swift; sourceTree = "<group>"; };
 		BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinLogoImageView.swift; sourceTree = "<group>"; };
+		BC09B99E273ECB03009CAF4E /* Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
+		BC09B99F273ECB03009CAF4E /* Authentication.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.ViewController.swift; sourceTree = "<group>"; };
+		BC09B9A0273ECB03009CAF4E /* Authentication.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.ViewModel.swift; sourceTree = "<group>"; };
+		BC09B9A1273ECB03009CAF4E /* Authentication.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.RootView.swift; sourceTree = "<group>"; };
 		BC0E7DCB25B17AB2009AD08B /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
 		BC104A7A259974CE0048C834 /* WLLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLLoadingView.swift; sourceTree = "<group>"; };
 		BC10512F258B05DF00398EA2 /* BackupManuallyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupManuallyVC.swift; sourceTree = "<group>"; };
@@ -942,6 +950,17 @@
 				8469967326CA93BB243D75A9 /* BuyProvider.swift */,
 			);
 			path = BuyProvider;
+			sourceTree = "<group>";
+		};
+		BC09B99D273ECAE0009CAF4E /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				BC09B99E273ECB03009CAF4E /* Authentication.swift */,
+				BC09B9A0273ECB03009CAF4E /* Authentication.ViewModel.swift */,
+				BC09B99F273ECB03009CAF4E /* Authentication.ViewController.swift */,
+				BC09B9A1273ECB03009CAF4E /* Authentication.RootView.swift */,
+			);
+			path = Authentication;
 			sourceTree = "<group>";
 		};
 		BC1ABC37255BD0B8002FCE65 /* ViewModels */ = {
@@ -1912,6 +1931,7 @@
 				BC4B9E762713F940005B9ECA /* MainContainer.swift */,
 				BCF241202676548200C9F158 /* MainViewModel.swift */,
 				BCFC768525E2EAB800FBE148 /* MainViewController.swift */,
+				BC09B99D273ECAE0009CAF4E /* Authentication */,
 				BCEB206925E1561200B54FEF /* TabBarVC */,
 				BCBE148B25EF3D100014BCE5 /* Home */,
 				BC4B9E8027142591005B9ECA /* Settings */,
@@ -2233,6 +2253,7 @@
 				BC134FA726FD7C6600DB15BF /* CreateWallet.swift in Sources */,
 				BCE42E0425DFA0B50021540E /* CreateWallet.ViewController.swift in Sources */,
 				BC22ABE12552A4B70071C69F /* DismissMenuAnimator.swift in Sources */,
+				BC09B9A5273ECB03009CAF4E /* Authentication.RootView.swift in Sources */,
 				BCA93FA425ECD16E0081DDF6 /* TokenSettingsSection.swift in Sources */,
 				BC134FAF26FDA6F600DB15BF /* Onboarding.swift in Sources */,
 				BC1FFF0626298D6C0014F027 /* AccountRepository.swift in Sources */,
@@ -2473,10 +2494,12 @@
 				BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */,
 				417DC90F27218DA00048106B /* Recipient.swift in Sources */,
 				BCE3D58525F2426D0092F91B /* SystemVersion.swift in Sources */,
+				BC09B9A4273ECB03009CAF4E /* Authentication.ViewModel.swift in Sources */,
 				BCEE0201273CE50B00205982 /* WLPinCodeView.swift in Sources */,
 				BC46075C266F325500A12E07 /* WalletDetail.ViewModel.swift in Sources */,
 				BC2DA29A260B0AD700B50738 /* CreateTokenHandler.swift in Sources */,
 				BC63110B26D78AE600516C38 /* SwapProviderType.swift in Sources */,
+				BC09B9A2273ECB03009CAF4E /* Authentication.swift in Sources */,
 				BCC1F212269ED30A003DD648 /* PrimitiveSequence+Extensions.swift in Sources */,
 				BC15EEF026FDD04600F30605 /* DerivableAccounts.swift in Sources */,
 				BC6EE7C5254BBEC000FE1025 /* Onboarding.EnableNotificationsVC.swift in Sources */,
@@ -2576,6 +2599,7 @@
 				BC4B9E7D2713FCFB005B9ECA /* AnalyticsManager.swift in Sources */,
 				BC2297962700A320003F7118 /* RestoreICloud.AccountsListViewModel.swift in Sources */,
 				411F4719273B0C0B0011EBE3 /* Home.ClosingBannerType.swift in Sources */,
+				BC09B9A3273ECB03009CAF4E /* Authentication.ViewController.swift in Sources */,
 				BC185EFA26E3B81F00280FE6 /* LoadableRelay.swift in Sources */,
 				846993CA42DD22FB3BA39BB1 /* Utils.swift in Sources */,
 				84699B6058901C761662F138 /* TransakProvider.swift in Sources */,
