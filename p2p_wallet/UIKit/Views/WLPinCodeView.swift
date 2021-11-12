@@ -344,14 +344,11 @@ private class _ButtonView: BEView {
     }
     
     fileprivate func animateTapping() {
-        UIView.animate(withDuration: 0.1) {
-            self.layer.backgroundColor = self.customBgColor.tapped.cgColor
-            self.label.textColor = self.textColor.tapped
-        } completion: { _ in
-            UIView.animate(withDuration: 0.1) {
-                self.layer.backgroundColor = self.customBgColor.normal.cgColor
-                self.label.textColor = self.textColor.normal
-            }
+        layer.backgroundColor = self.customBgColor.tapped.cgColor
+        label.textColor = self.textColor.tapped
+        UIView.animate(withDuration: 0.05) {
+            self.layer.backgroundColor = self.customBgColor.normal.cgColor
+            self.label.textColor = self.textColor.normal
         }
     }
 }
