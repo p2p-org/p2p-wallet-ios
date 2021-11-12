@@ -17,7 +17,7 @@ public enum LoadableState: Equatable {
     
     var isError: Bool {
         switch self {
-        case .error(_): return true
+        case .error: return true
         default: return false
         }
     }
@@ -174,7 +174,7 @@ extension UILabel {
             text = L10n.loading + "..."
         case .loaded:
             text = onLoaded(loadableValue.value)
-        case .error(_):
+        case .error:
             isUserInteractionEnabled = true
             text = L10n.error.uppercaseFirst + ". " + L10n.tapToTryAgain
             
