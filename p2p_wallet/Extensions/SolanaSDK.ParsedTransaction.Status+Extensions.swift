@@ -12,22 +12,22 @@ extension SolanaSDK.ParsedTransaction.Status {
         switch self {
         case .requesting:
             return L10n.sending.uppercaseFirst
-        case .processing(_):
+        case .processing:
             return L10n.pending.uppercaseFirst
         case .confirmed:
             return L10n.completed.uppercaseFirst
-        case .error(_):
+        case .error:
             return L10n.error.uppercaseFirst
         }
     }
     
     var indicatorColor: UIColor {
         switch self {
-        case .requesting, .processing(_):
+        case .requesting, .processing:
             return .alertOrange
         case .confirmed:
             return .greenConfirmed
-        case .error(_):
+        case .error:
             return .alert
         }
     }

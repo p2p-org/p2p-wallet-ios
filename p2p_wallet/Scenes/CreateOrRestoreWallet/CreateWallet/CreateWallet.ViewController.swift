@@ -9,7 +9,11 @@ import Foundation
 import UIKit
 
 extension CreateWallet {
-    class ViewController: WLIndicatorModalVC {
+    class ViewController: BaseVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+        
         // MARK: - Dependencies
         @Injected private var viewModel: CreateWalletViewModelType
         @Injected private var analyticsManager: AnalyticsManagerType
@@ -26,15 +30,15 @@ extension CreateWallet {
         
         override func setUp() {
             super.setUp()
-            // kickoff
             childNavigationController = BENavigationController()
-            add(child: childNavigationController, to: containerView)
+            childNavigationController.setNavigationBarHidden(true, animated: false)
+            view.addSubview(childNavigationController.view)
         }
         
         override func bind() {
             super.bind()
             viewModel.navigatableSceneDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
         }
         
@@ -44,6 +48,9 @@ extension CreateWallet {
             case .termsAndConditions:
                 let vc = TermsAndConditionsVC()
                 childNavigationController.pushViewController(vc, animated: true)
+            case .explanation:
+                let vc = ExplanationVC()
+                childNavigationController.pushViewController(vc, animated: true)
             case .createPhrases:
                 let vc = CreateSecurityKeys.ViewController()
                 childNavigationController.pushViewController(vc, animated: true)
@@ -52,7 +59,13 @@ extension CreateWallet {
                 let vc = ReserveName.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)
             case .dismiss:
-                dismiss(animated: true, completion: nil)
+                navigationController?.popViewController(animated: true)
+            case .back:
+                if childNavigationController.viewControllers.count > 1 {
+                    childNavigationController.popViewController(animated: true)
+                } else {
+                    navigationController?.popViewController(animated: true)
+                }
             case .none:
                 break
             }
