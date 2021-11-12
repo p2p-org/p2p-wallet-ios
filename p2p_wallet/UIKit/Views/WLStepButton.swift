@@ -47,20 +47,30 @@ extension WLStepButton {
 class WLStepButton: BEView {
     // MARK: - Properties
     var enabledBgColor: UIColor {
-        didSet { setUp() }
+        didSet {
+            setUp()
+        }
     }
     var enabledTintColor: UIColor {
-        didSet { setUp() }
+        didSet {
+            setUp()
+        }
     }
     var disabledBgColor: UIColor? {
-        didSet { setUp() }
+        didSet {
+            setUp()
+        }
     }
     var disabledTintColor: UIColor? {
-        didSet { setUp() }
+        didSet {
+            setUp()
+        }
     }
     
     var isEnabled: Bool = true {
-        didSet { setUp() }
+        didSet {
+            setUp()
+        }
     }
     
     // MARK: - Subviews
@@ -137,13 +147,13 @@ class WLStepButton: BEView {
         isUserInteractionEnabled = isEnabled
         
         // background
-        backgroundColor = isEnabled ? enabledBgColor: disabledBgColor
+        backgroundColor = isEnabled ? enabledBgColor : disabledBgColor
         
         // text color
-        label.textColor = isEnabled ? enabledTintColor: (disabledTintColor ?? enabledTintColor)
+        label.textColor = isEnabled ? enabledTintColor : (disabledTintColor ?? enabledTintColor)
         
         // imageView tintColor
-        imageView.tintColor = isEnabled ? enabledTintColor: (disabledTintColor ?? enabledTintColor)
+        imageView.tintColor = isEnabled ? enabledTintColor : (disabledTintColor ?? enabledTintColor)
     }
 }
 
@@ -155,8 +165,14 @@ extension Reactive where Base: WLStepButton {
     }
     
     var text: Binder<String?> {
-        Binder(base) {view, text in
+        Binder(base) { view, text in
             view.label.text = text
         }
     }
+
+//    var tapGesture: Any {
+//        base.rx.event.bind(onNext: { recognizer in
+//            print("touches: \(recognizer.numberOfTouches)") //or whatever you like
+//        })
+//    }
 }

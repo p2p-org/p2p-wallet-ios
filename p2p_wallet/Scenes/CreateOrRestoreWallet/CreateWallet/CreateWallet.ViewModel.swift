@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol CreateWalletViewModelType: ReserveNameHandler {
-    var navigatableSceneDriver: Driver<CreateWallet.NavigatableScene?> {get}
+    var navigatableSceneDriver: Driver<CreateWallet.NavigatableScene?> { get }
     
     func kickOff()
     func handlePhrases(_ phrases: [String])
@@ -22,6 +22,7 @@ protocol CreateWalletViewModelType: ReserveNameHandler {
     func acceptTermsAndCondition()
     func navigateToCreatePhrases()
     func navigateToReserveName(owner: String)
+    func back()
 }
 
 extension CreateWallet {
@@ -51,7 +52,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
         if !Defaults.isTermAndConditionsAccepted {
             navigateToTermsAndCondition()
         } else {
-            navigateToCreatePhrases()
+            navigateToExplanation()
         }
     }
     
@@ -101,7 +102,21 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     
     func acceptTermsAndCondition() {
         Defaults.isTermAndConditionsAccepted = true
-        navigateToCreatePhrases()
+        navigateToExplanation()
+    }
+    
+    func navigateToExplanation() {
+        navigationSubject.accept(.explanation)
+    }
+    
+    func dismiss() {
+        navigationSubject.accept(.dismiss)
+        navigationSubject.accept(.none)
+    }
+    
+    func back() {
+        navigationSubject.accept(.back)
+        navigationSubject.accept(.none)
     }
     
     func navigateToCreatePhrases() {

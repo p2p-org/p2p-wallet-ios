@@ -74,8 +74,7 @@ extension CreateOrRestoreWallet {
             switch scene {
             case .createWallet:
                 let vc = CreateWallet.ViewController()
-                vc.isModalInPresentation = true
-                present(vc, animated: true, completion: nil)
+                show(vc, sender: nil)
             case .restoreWallet:
                 let vc = RestoreWallet.ViewController()
                 show(vc, sender: nil)
