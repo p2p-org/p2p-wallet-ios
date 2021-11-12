@@ -247,7 +247,7 @@ private class _PinCodeDotsView: BEView {
 
 private class _NumpadView: BEView {
     // MARK: - Constants
-    private let buttonSize = 72.adaptiveHeight
+    private let buttonSize: CGFloat = 72
     private let spacing = 30.adaptiveHeight
     private let deleteButtonColor = StateColor(normal: .h8e8e93, tapped: .textBlack)
     
@@ -327,7 +327,7 @@ private class _NumpadView: BEView {
 
 private class _ButtonView: BEView {
     // MARK: - Constant
-    private let textSize = 32.adaptiveHeight
+    private let textSize: CGFloat = 32
     private let customBgColor = StateColor(normal: .fafafc, tapped: .passcodeHighlightColor)
     private let textColor = StateColor(normal: .black, tapped: .white)
     
