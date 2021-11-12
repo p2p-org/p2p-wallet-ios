@@ -93,9 +93,9 @@ class MainContainer {
     }
     
     // MARK: - Authentication
-    func makeLocalAuthVC() -> LocalAuthVC {
-        LocalAuthVC()
-    }
+//    func makeLocalAuthVC() -> LocalAuthVC {
+//        LocalAuthVC()
+//    }
     
     // MARK: - Reset pincode with seed phrases
     func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrases.ViewController
