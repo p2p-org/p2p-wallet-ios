@@ -133,7 +133,6 @@
 		BC2EC93A2705C1E9005FC432 /* PayingFee.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC9392705C1E9005FC432 /* PayingFee.swift */; };
 		BC2F8F0C269D3D200048009D /* UIScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2F8F0B269D3D200048009D /* UIScrollView+Extensions.swift */; };
 		BC3122332580B34B00F3B14F /* PassCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3122322580B34B00F3B14F /* PassCodeVC.swift */; };
-		BC31223C2580B37E00F3B14F /* CreatePassCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC31223B2580B37E00F3B14F /* CreatePassCodeVC.swift */; };
 		BC3122952580BA1700F3B14F /* LocalAuthVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3122942580BA1700F3B14F /* LocalAuthVC.swift */; };
 		BC32A356254A69EA002156F0 /* CreateOrRestoreWallet.WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A355254A69EA002156F0 /* CreateOrRestoreWallet.WelcomeVC.swift */; };
 		BC32A361254A761B002156F0 /* Button+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC32A360254A761B002156F0 /* Button+Extensions.swift */; };
@@ -557,7 +556,6 @@
 		BC2EC9392705C1E9005FC432 /* PayingFee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayingFee.swift; sourceTree = "<group>"; };
 		BC2F8F0B269D3D200048009D /* UIScrollView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		BC3122322580B34B00F3B14F /* PassCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassCodeVC.swift; sourceTree = "<group>"; };
-		BC31223B2580B37E00F3B14F /* CreatePassCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePassCodeVC.swift; sourceTree = "<group>"; };
 		BC3122942580BA1700F3B14F /* LocalAuthVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalAuthVC.swift; sourceTree = "<group>"; };
 		BC32A355254A69EA002156F0 /* CreateOrRestoreWallet.WelcomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreWallet.WelcomeVC.swift; sourceTree = "<group>"; };
 		BC32A360254A761B002156F0 /* Button+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Button+Extensions.swift"; sourceTree = "<group>"; };
@@ -1047,7 +1045,6 @@
 			isa = PBXGroup;
 			children = (
 				BC3122322580B34B00F3B14F /* PassCodeVC.swift */,
-				BC31223B2580B37E00F3B14F /* CreatePassCodeVC.swift */,
 				BC3122942580BA1700F3B14F /* LocalAuthVC.swift */,
 			);
 			path = PassCodeVCs;
@@ -2448,7 +2445,6 @@
 				BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */,
 				BC4B9E8C27153430005B9ECA /* Settings.UsernameViewController.swift in Sources */,
 				BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */,
-				BC31223C2580B37E00F3B14F /* CreatePassCodeVC.swift in Sources */,
 				BC036C1B269449A7005C1BEC /* AccountNotificationsRepository.swift in Sources */,
 				BC1FFEE8262977940014F027 /* WLEnterPhrasesVC.swift in Sources */,
 				BC38555A26AE971400BD8BF7 /* ChooseWallet.ViewController.swift in Sources */,
