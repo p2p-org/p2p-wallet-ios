@@ -48,7 +48,7 @@ extension VerifySecurityKeys {
                     title: L10n.theseWordsDonTMatch,
                     message: L10n.TheWordsInYourSecurityKeyNeedToBeSelectedInTheRightOrder.alternativelyYouCanMakeAnICloudBackup,
                     actions: [
-                        UIAlertAction(title: L10n.goBack, style: .cancel) { _ in self.viewModel.back() },
+                        UIAlertAction(title: L10n.goBack, style: .destructive) { _ in self.viewModel.back() },
                         UIAlertAction(title: L10n.tryAgain, style: .default) { _ in self.viewModel.generate() }
                     ]
                 )
