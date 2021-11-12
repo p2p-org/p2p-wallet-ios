@@ -11,7 +11,6 @@ import Action
 
 protocol _MainScenesFactory {
     func makeTabBarVC() -> TabBarVC
-    func makeLocalAuthVC() -> LocalAuthVC
     func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrases.ViewController
 }
 
@@ -21,7 +20,6 @@ class MainViewController: BaseVC {
     
     // MARK: - Properties
     private let scenesFactory: _MainScenesFactory
-    private var localAuthVC: LocalAuthVC?
     private var resetPinCodeWithASeedPhrasesVC: ResetPinCodeWithSeedPhrases.ViewController?
     private let authenticateWhenAppears: Bool
     
