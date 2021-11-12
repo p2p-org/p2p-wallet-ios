@@ -56,7 +56,6 @@
 		BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */; };
 		BC0978E825AEDEE200DB02E9 /* ResizablePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */; };
 		BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */; };
-		BC0A9E9025F09BDE0063F9E3 /* Onboarding.CreatePassCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0A9E8F25F09BDE0063F9E3 /* Onboarding.CreatePassCodeVC.swift */; };
 		BC0E7DCC25B17AB2009AD08B /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0E7DCB25B17AB2009AD08B /* Bundle+Extensions.swift */; };
 		BC104A7B259974CE0048C834 /* WLLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC104A7A259974CE0048C834 /* WLLoadingView.swift */; };
 		BC105130258B05DF00398EA2 /* BackupManuallyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10512F258B05DF00398EA2 /* BackupManuallyVC.swift */; };
@@ -402,6 +401,7 @@
 		BCEB206D25E1561200B54FEF /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB206B25E1561200B54FEF /* TabBar.swift */; };
 		BCEE0201273CE50B00205982 /* WLPinCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE0200273CE50B00205982 /* WLPinCodeView.swift */; };
 		BCEE0209273E660F00205982 /* WLPincodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE0208273E660F00205982 /* WLPincodeVC.swift */; };
+		BCEE020B273E688600205982 /* WLCreatePincodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE020A273E688600205982 /* WLCreatePincodeVC.swift */; };
 		BCEE508526244B6300271AB9 /* WLEmptyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE508426244B6300271AB9 /* WLEmptyCell.swift */; };
 		BCEE51372625425E00271AB9 /* TransactionIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */; };
 		BCF241212676548200C9F158 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF241202676548200C9F158 /* MainViewModel.swift */; };
@@ -474,7 +474,6 @@
 		BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLResizableModalVC.swift; sourceTree = "<group>"; };
 		BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizablePresentationController.swift; sourceTree = "<group>"; };
 		BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinLogoImageView.swift; sourceTree = "<group>"; };
-		BC0A9E8F25F09BDE0063F9E3 /* Onboarding.CreatePassCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.CreatePassCodeVC.swift; sourceTree = "<group>"; };
 		BC0E7DCB25B17AB2009AD08B /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
 		BC104A7A259974CE0048C834 /* WLLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLLoadingView.swift; sourceTree = "<group>"; };
 		BC10512F258B05DF00398EA2 /* BackupManuallyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupManuallyVC.swift; sourceTree = "<group>"; };
@@ -834,6 +833,7 @@
 		BCEB206B25E1561200B54FEF /* TabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		BCEE0200273CE50B00205982 /* WLPinCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLPinCodeView.swift; sourceTree = "<group>"; };
 		BCEE0208273E660F00205982 /* WLPincodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLPincodeVC.swift; sourceTree = "<group>"; };
+		BCEE020A273E688600205982 /* WLCreatePincodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLCreatePincodeVC.swift; sourceTree = "<group>"; };
 		BCEE508426244B6300271AB9 /* WLEmptyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLEmptyCell.swift; sourceTree = "<group>"; };
 		BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionIndicatorView.swift; sourceTree = "<group>"; };
 		BCF241202676548200C9F158 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
@@ -1689,6 +1689,7 @@
 				BC19DF562701B7A100A3A8D8 /* SingleSelectionViewController.swift */,
 				BCFEDBFF2727B43C008AE4AD /* WLMarkdownVC.swift */,
 				BCEE0208273E660F00205982 /* WLPincodeVC.swift */,
+				BCEE020A273E688600205982 /* WLCreatePincodeVC.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -1877,7 +1878,6 @@
 				BCE42DF225DF9C7A0021540E /* Onboarding.ViewModel.swift */,
 				BCE42DF425DF9C7A0021540E /* Onboarding.ViewController.swift */,
 				BC89ADB725E0FCB3001A6791 /* Onboarding.BaseOnboardingVC.swift */,
-				BC0A9E8F25F09BDE0063F9E3 /* Onboarding.CreatePassCodeVC.swift */,
 				BC6EE776254AF6E600FE1025 /* Onboarding.EnableBiometryVC.swift */,
 				BC6EE7C4254BBEC000FE1025 /* Onboarding.EnableNotificationsVC.swift */,
 			);
@@ -2400,7 +2400,6 @@
 				BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */,
 				BC4B9EC3271988A8005B9ECA /* OrcaSwapV2.WalletView.swift in Sources */,
 				BC4B9E88271425B9005B9ECA /* Settings.RootView.swift in Sources */,
-				BC0A9E9025F09BDE0063F9E3 /* Onboarding.CreatePassCodeVC.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
 				BC85EA69266E1324005006D5 /* ReceiveToken.ReceiveSolanaView.swift in Sources */,
 				BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */,
@@ -2547,6 +2546,7 @@
 				BC2F8F0C269D3D200048009D /* UIScrollView+Extensions.swift in Sources */,
 				BCD5E82425525C6E00F51299 /* WalletsViewModel.swift in Sources */,
 				BC2EC1D52553ED1B006EEDA5 /* CustomHeightPresentationController.swift in Sources */,
+				BCEE020B273E688600205982 /* WLCreatePincodeVC.swift in Sources */,
 				BC1FFED1262975200014F027 /* ResetPinCodeWithSeedPhrases.ViewModel.swift in Sources */,
 				417BB3562728284600EDE6AE /* KeyboardDependingToolBar.swift in Sources */,
 				41D7F6B3273910F900453B61 /* Home.BannersCollectionViewDelegate.swift in Sources */,
