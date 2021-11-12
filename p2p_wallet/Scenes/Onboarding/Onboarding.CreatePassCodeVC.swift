@@ -9,26 +9,6 @@ import Foundation
 import Resolver
 
 extension Onboarding {
-    class CreatePassCodeVC: p2p_wallet.CreatePassCodeVC {
-        @Injected private var viewModel: OnboardingViewModelType
-        @Injected private var analyticsManager: AnalyticsManagerType
-        
-        override func viewDidLoad() {
-            super.viewDidLoad()
-            backButton
-                .onTap(self, action: #selector(cancelOnboarding))
-        }
-        
-        override func showConfirmPassCodeVC() {
-            super.showConfirmPassCodeVC()
-            analyticsManager.log(event: .setupPinKeydown1)
-        }
-        
-        @objc func cancelOnboarding() {
-            viewModel.cancelOnboarding()
-        }
-    }
-    
     class PasscodeVC: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
@@ -38,6 +18,7 @@ extension Onboarding {
         private lazy var navigationBar = WLNavigationBar(forAutoLayout: ())
         private lazy var pincodeView = WLPinCodeView(correctPincode: currentPincode)
         
+        /// current pin code for confirming, if nil, the scene is create pincode
         private let currentPincode: UInt?
         
         init(currentPincode: UInt? = nil) {
@@ -49,28 +30,37 @@ extension Onboarding {
             super.setUp()
             view.addSubview(navigationBar)
             navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-            navigationBar.backButton.onTap(self, action: #selector(cancelOnboarding))
+            
+            if isConfirmingPincode() {
+                navigationBar.backButton.onTap(self, action: #selector(back))
+            } else {
+                navigationBar.backButton.onTap(self, action: #selector(cancelOnboarding))
+            }
             
             view.addSubview(pincodeView)
             pincodeView.autoCenterInSuperview()
             
             pincodeView.onSuccess = { [weak self] pincode in
-                guard let pincode = pincode else {return}
+                guard let self = self, let pincode = pincode else {return}
                 
-                // if this vc is CreatePincode
-                if self?.currentPincode == nil {
-                    self?.viewModel.confirmPincode(pincode)
+                // confirm pincode scene
+                if self.isConfirmingPincode() {
+                    self.viewModel.savePincode(String(pincode))
                 }
                 
-                // confirm pincode
+                // create pincode scene
                 else {
-                    self?.viewModel.savePincode(String(pincode))
+                    self.viewModel.confirmPincode(pincode)
                 }
             }
         }
         
         @objc private func cancelOnboarding() {
             viewModel.cancelOnboarding()
+        }
+        
+        private func isConfirmingPincode() -> Bool {
+            currentPincode != nil
         }
     }
 }
