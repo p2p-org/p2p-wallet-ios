@@ -64,7 +64,7 @@ public struct TransakProvider: BuyProvider {
         ]
 
         let paramStr = params.merging(extraParams, uniquingKeysWith: { $1 }).query
-        return environment.endpoint + "?" + paramStr;
+        return environment.endpoint + "?" + paramStr
     }
 }
 
@@ -78,4 +78,3 @@ extension TransakProvider.Environment {
         }
     }
 }
-

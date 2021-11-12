@@ -554,9 +554,16 @@
 "No hidden costs" = "No hidden costs";
 "Send BTC, ETH, USDC with no fees. Swap BTC with only $1" = "Send BTC, ETH, USDC with no fees.\nSwap BTC with only $1";
 "Private and secure" = "Private & secure";
+"Show your security key" = "Show your security key";
+"Secure your wallet" = "Secure your wallet";
+"Create a new wallet" = "Create a new wallet";
 "Import a wallet" = "Import a wallet";
 "iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "iCloud restore is for returning users.\nPasting the security key manually is for everyone";
 "Simple decentralized finance for everyone" = "Simple decentralized finance for everyone";
+"Your security key" = "Your security key";
+"Verify manually" = "Verify manually";
+"Renew" = "Renew";
+"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us";
 "Proceed without a username?" = "Proceed without a username?";
 "Anytime you want, you can easily reserve a username by going to the settings" = "Anytime you want, you can easily reserve a username by going to the settings";
 "Proceed" = "Proceed";
