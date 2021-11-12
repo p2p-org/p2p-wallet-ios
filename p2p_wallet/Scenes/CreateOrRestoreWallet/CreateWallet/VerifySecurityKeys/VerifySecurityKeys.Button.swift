@@ -23,6 +23,7 @@ extension VerifySecurityKeys {
         override func commonInit() {
             super.commonInit()
             layout()
+            update()
         }
         
         private func layout() {
@@ -31,12 +32,13 @@ extension VerifySecurityKeys {
         }
         
         func update() {
-            button.isEnabled = style == .save
             switch style {
             case .choose:
                 button.isEnabled = false
+                isUserInteractionEnabled = false
             case .save:
                 button.isEnabled = true
+                isUserInteractionEnabled = true
             }
         }
     }

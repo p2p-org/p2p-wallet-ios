@@ -79,6 +79,8 @@ extension VerifySecurityKeys.ViewModel: VerifySecurityKeysViewModelType {
     
     func verify() {
         let questions = questionsSubject.value
+        for question in questions where question.answer == nil { return }
+        
         for question in questions where question.answer != keyPhrase[question.index] {
             navigationSubject.accept(.onMistake)
             return
