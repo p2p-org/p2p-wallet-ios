@@ -160,7 +160,7 @@ extension ReserveName {
                             textColor = .textSecondary
                             text = L10n.maximum15LatinCharactersAndHyphens
                         }
-                    case .error(_):
+                    case .error:
                         textColor = .alert
                         text = L10n.CouldNotCheckNameSAvailability.pleaseCheckYourInternetConnection
                     }
