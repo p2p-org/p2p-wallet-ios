@@ -401,6 +401,7 @@
 		BCEB206C25E1561200B54FEF /* TabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB206A25E1561200B54FEF /* TabBarVC.swift */; };
 		BCEB206D25E1561200B54FEF /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEB206B25E1561200B54FEF /* TabBar.swift */; };
 		BCEE0201273CE50B00205982 /* WLPinCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE0200273CE50B00205982 /* WLPinCodeView.swift */; };
+		BCEE0209273E660F00205982 /* WLPincodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE0208273E660F00205982 /* WLPincodeVC.swift */; };
 		BCEE508526244B6300271AB9 /* WLEmptyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE508426244B6300271AB9 /* WLEmptyCell.swift */; };
 		BCEE51372625425E00271AB9 /* TransactionIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */; };
 		BCF241212676548200C9F158 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF241202676548200C9F158 /* MainViewModel.swift */; };
@@ -832,6 +833,7 @@
 		BCEB206A25E1561200B54FEF /* TabBarVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarVC.swift; sourceTree = "<group>"; };
 		BCEB206B25E1561200B54FEF /* TabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		BCEE0200273CE50B00205982 /* WLPinCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLPinCodeView.swift; sourceTree = "<group>"; };
+		BCEE0208273E660F00205982 /* WLPincodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLPincodeVC.swift; sourceTree = "<group>"; };
 		BCEE508426244B6300271AB9 /* WLEmptyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLEmptyCell.swift; sourceTree = "<group>"; };
 		BCEE51362625425E00271AB9 /* TransactionIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionIndicatorView.swift; sourceTree = "<group>"; };
 		BCF241202676548200C9F158 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
@@ -1686,6 +1688,7 @@
 				BC1FFEE7262977940014F027 /* WLEnterPhrasesVC.swift */,
 				BC19DF562701B7A100A3A8D8 /* SingleSelectionViewController.swift */,
 				BCFEDBFF2727B43C008AE4AD /* WLMarkdownVC.swift */,
+				BCEE0208273E660F00205982 /* WLPincodeVC.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -2302,6 +2305,7 @@
 				BCE42DF525DF9C7A0021540E /* Onboarding.ViewModel.swift in Sources */,
 				BC19DF4F270169CF00A3A8D8 /* SendTokenAPIClient.swift in Sources */,
 				BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */,
+				BCEE0209273E660F00205982 /* WLPincodeVC.swift in Sources */,
 				BCDCAE1B267C5570001ED7B4 /* RecoveryEnterSeedsViewController.swift in Sources */,
 				BC44532526896F8B0019F37E /* BackupPasteSeedPhrasesVC.swift in Sources */,
 				BC32A356254A69EA002156F0 /* CreateOrRestoreWallet.WelcomeVC.swift in Sources */,
