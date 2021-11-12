@@ -29,7 +29,11 @@ extension UIView {
     }
     
     func removeErrorView() {
-        subviews.filter {$0 is ErrorView}.forEach {$0.removeFromSuperview()}
+        subviews.filter {
+            $0 is ErrorView
+        }.forEach {
+            $0.removeFromSuperview()
+        }
     }
     
     func showErrorView(title: String? = nil, description: String? = nil, retryAction: CocoaAction? = nil) {
@@ -143,5 +147,17 @@ extension UIView {
     
     static func defaultNextArrow() -> UIView {
         UIImageView(width: 6, height: 12, image: .nextArrow, tintColor: .h8b94a9.onDarkMode(.white))
+    }
+}
+
+extension UIView {
+    
+    // Using a function since `var image` might conflict with an existing variable
+    // (like on `UIImageView`)
+    func asImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
+        }
     }
 }

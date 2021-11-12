@@ -23,7 +23,7 @@ extension CreateSecurityKeys {
         
         // MARK: - Methods
         override func loadView() {
-            view = RootView(backButton: backButton)
+            view = NewRootView()
         }
         
         override func bind() {

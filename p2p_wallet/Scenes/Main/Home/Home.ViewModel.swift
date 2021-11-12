@@ -24,7 +24,7 @@ extension Home {
     class ViewModel {
         // MARK: - Dependencies
         @Injected var keychainStorage: KeychainAccountStorage
-        @Injected var bannersManager: BannersRepositoryType
+        @Injected var bannersManager: BannersManagerType
         @Injected var bannersKindTransformer: BannerKindTransformerType
         
         // MARK: - Properties

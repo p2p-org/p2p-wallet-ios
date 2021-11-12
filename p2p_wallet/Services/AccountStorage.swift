@@ -196,7 +196,7 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameSt
         if let data = try? JSONEncoder().encode(accountsToSave) {
             return keychain.set(data, forKey: iCloudAccountsKey)
         }
-        return false;
+        return false
     }
     
     func accountFromICloud() -> [Account]? {
