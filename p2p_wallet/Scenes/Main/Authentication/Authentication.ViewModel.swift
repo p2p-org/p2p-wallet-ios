@@ -24,6 +24,10 @@ extension Authentication {
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        
+        init() {
+            navigationSubject.accept(.pincode)
+        }
     }
 }
 
