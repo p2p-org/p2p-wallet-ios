@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import LocalAuthentication
 
 extension Authentication {
     class ViewController: BaseVC {
@@ -28,7 +29,7 @@ extension Authentication {
         
         var useBiometry: Bool = true {
             didSet {
-                
+                biometryButton?.isHidden = !useBiometry
             }
         }
         
@@ -40,10 +41,29 @@ extension Authentication {
         private let navigationBar = WLNavigationBar(forAutoLayout: ())
         private lazy var pincodeView = WLPinCodeView(
             correctPincode: viewModel.getCurrentPincode() == nil ? nil: UInt(viewModel.getCurrentPincode()!),
-            maxAttemptsCount: 3
+            maxAttemptsCount: 3,
+            bottomLeftButton: biometryButton
         )
+        private lazy var biometryButton: UIButton? = {
+            let biometryType = LABiometryType.current
+            guard let icon = biometryType.icon?.withRenderingMode(.alwaysTemplate) else {
+                return nil
+            }
+            let button = UIButton(frame: .zero)
+            button.tintColor = .textBlack
+            button.setImage(icon, for: .normal)
+            button.onTap(self, action: #selector(authWithBiometric))
+            return button
+        }()
         
         // MARK: - Methods
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            if useBiometry {
+                authWithBiometric()
+            }
+        }
+        
         override func setUp() {
             super.setUp()
             // navigation bar
@@ -60,6 +80,10 @@ extension Authentication {
             
             wrappedView.addSubview(pincodeView)
             pincodeView.autoCenterInSuperview()
+            
+            pincodeView.onSuccess = {[weak self] _ in
+                self?.authenticationDidComplete()
+            }
         }
         
         override func bind() {
@@ -83,6 +107,39 @@ extension Authentication {
         @objc private func cancel() {
             dismiss(animated: true) { [weak self] in
                 self?.onCancel?()
+            }
+        }
+        
+        @objc func authWithBiometric() {
+            let myContext = LAContext()
+            var authError: NSError?
+            if myContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
+                if let error = authError {
+                    print(error)
+                    return
+                }
+                myContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: L10n.confirmItSYou) { (success, _) in
+                    guard success else {return}
+                    DispatchQueue.main.sync { [weak self] in
+                        self?.authenticationDidComplete()
+                    }
+                }
+            } else {
+                showAlert(title: L10n.warning, message: LABiometryType.current.stringValue + " " + L10n.WasTurnedOff.doYouWantToTurnItOn, buttonTitles: [L10n.turnOn, L10n.cancel], highlightedButtonIndex: 0) { (index) in
+                    
+                    if index == 0 {
+                        if let url = URL.init(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        }
+                    }
+                }
+            }
+        }
+        
+        // MARK: - Helpers
+        private func authenticationDidComplete() {
+            dismiss(animated: true) { [weak self] in
+                self?.onSuccess?()
             }
         }
     }
