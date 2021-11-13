@@ -12,11 +12,13 @@ import RxCocoa
 protocol AuthenticationViewModelType {
     var navigationDriver: Driver<Authentication.NavigatableScene?> {get}
     func showResetPincodeWithASeedPhrase()
+    func getCurrentPincode() -> String?
 }
 
 extension Authentication {
     class ViewModel {
         // MARK: - Dependencies
+        @Injected private var accountStorage: KeychainAccountStorage
         
         // MARK: - Properties
         
@@ -33,5 +35,9 @@ extension Authentication.ViewModel: AuthenticationViewModelType {
     // MARK: - Actions
     func showResetPincodeWithASeedPhrase() {
         navigationSubject.accept(.resetPincodeWithASeedPhrase)
+    }
+    
+    func getCurrentPincode() -> String? {
+        accountStorage.pinCode
     }
 }

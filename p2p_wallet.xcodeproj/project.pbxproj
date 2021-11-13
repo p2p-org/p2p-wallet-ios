@@ -59,7 +59,6 @@
 		BC09B9A2273ECB03009CAF4E /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC09B99E273ECB03009CAF4E /* Authentication.swift */; };
 		BC09B9A3273ECB03009CAF4E /* Authentication.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC09B99F273ECB03009CAF4E /* Authentication.ViewController.swift */; };
 		BC09B9A4273ECB03009CAF4E /* Authentication.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC09B9A0273ECB03009CAF4E /* Authentication.ViewModel.swift */; };
-		BC09B9A5273ECB03009CAF4E /* Authentication.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC09B9A1273ECB03009CAF4E /* Authentication.RootView.swift */; };
 		BC0E7DCC25B17AB2009AD08B /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0E7DCB25B17AB2009AD08B /* Bundle+Extensions.swift */; };
 		BC104A7B259974CE0048C834 /* WLLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC104A7A259974CE0048C834 /* WLLoadingView.swift */; };
 		BC105130258B05DF00398EA2 /* BackupManuallyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10512F258B05DF00398EA2 /* BackupManuallyVC.swift */; };
@@ -478,7 +477,6 @@
 		BC09B99E273ECB03009CAF4E /* Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
 		BC09B99F273ECB03009CAF4E /* Authentication.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.ViewController.swift; sourceTree = "<group>"; };
 		BC09B9A0273ECB03009CAF4E /* Authentication.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.ViewModel.swift; sourceTree = "<group>"; };
-		BC09B9A1273ECB03009CAF4E /* Authentication.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.RootView.swift; sourceTree = "<group>"; };
 		BC0E7DCB25B17AB2009AD08B /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
 		BC104A7A259974CE0048C834 /* WLLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLLoadingView.swift; sourceTree = "<group>"; };
 		BC10512F258B05DF00398EA2 /* BackupManuallyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupManuallyVC.swift; sourceTree = "<group>"; };
@@ -958,7 +956,6 @@
 				BC09B99E273ECB03009CAF4E /* Authentication.swift */,
 				BC09B9A0273ECB03009CAF4E /* Authentication.ViewModel.swift */,
 				BC09B99F273ECB03009CAF4E /* Authentication.ViewController.swift */,
-				BC09B9A1273ECB03009CAF4E /* Authentication.RootView.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -2253,7 +2250,6 @@
 				BC134FA726FD7C6600DB15BF /* CreateWallet.swift in Sources */,
 				BCE42E0425DFA0B50021540E /* CreateWallet.ViewController.swift in Sources */,
 				BC22ABE12552A4B70071C69F /* DismissMenuAnimator.swift in Sources */,
-				BC09B9A5273ECB03009CAF4E /* Authentication.RootView.swift in Sources */,
 				BCA93FA425ECD16E0081DDF6 /* TokenSettingsSection.swift in Sources */,
 				BC134FAF26FDA6F600DB15BF /* Onboarding.swift in Sources */,
 				BC1FFF0626298D6C0014F027 /* AccountRepository.swift in Sources */,
