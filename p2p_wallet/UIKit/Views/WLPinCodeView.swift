@@ -35,12 +35,14 @@ final class WLPinCodeView: BEView {
     // MARK: - Subviews
     private let dotsView = _PinCodeDotsView()
     let errorLabel = UILabel(textSize: 13, weight: .semibold, textColor: .ff3b30, numberOfLines: 0, textAlignment: .center)
-    private let numpadView = _NumpadView()
+    private lazy var numpadView = _NumpadView(bottomLeftButton: bottomLeftButton)
+    private let bottomLeftButton: UIView?
     
     // MARK: - Initializer
-    init(correctPincode: UInt? = nil, maxAttemptsCount: Int? = nil) {
+    init(correctPincode: UInt? = nil, maxAttemptsCount: Int? = nil, bottomLeftButton: UIView? = nil) {
         self.correctPincode = correctPincode
         self.maxAttemptsCount = maxAttemptsCount
+        self.bottomLeftButton = bottomLeftButton
         super.init(frame: .zero)
     }
     
@@ -256,6 +258,7 @@ private class _NumpadView: BEView {
     var didTapDelete: (() -> Void)?
     
     // MARK: - Subviews
+    private let bottomLeftButton: UIView?
     private lazy var numButtons: [_ButtonView] = {
         var views = [_ButtonView]()
         for index in 0..<10 {
@@ -271,6 +274,12 @@ private class _NumpadView: BEView {
     private lazy var deleteButton = UIImageView(width: buttonSize, height: buttonSize, image: .pincodeDelete, tintColor: deleteButtonColor.normal)
         .onTap(self, action: #selector(deleteButtonDidTap))
     
+    fileprivate init(bottomLeftButton: UIView? = nil) {
+        self.bottomLeftButton = bottomLeftButton
+        super.init(frame: .zero)
+        configureForAutoLayout()
+    }
+    
     // MARK: - Methods
     override func commonInit() {
         super.commonInit()
@@ -281,7 +290,7 @@ private class _NumpadView: BEView {
         stackView.addArrangedSubview(buttons(from: 7, to: 9))
         stackView.addArrangedSubview(
             UIStackView(axis: .horizontal, spacing: spacing, alignment: .fill, distribution: .fillEqually) {
-                UIView.spacer
+                bottomLeftButton ?? UIView.spacer
                 numButtons[0]
                 deleteButton
             }
