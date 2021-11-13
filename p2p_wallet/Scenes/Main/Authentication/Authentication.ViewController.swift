@@ -33,6 +33,9 @@ extension Authentication {
             pincodeVC.onCancel = {[weak self] in
                 self?.cancel()
             }
+            pincodeVC.didTapResetPincodeWithASeedPhraseButton = {[weak self] in
+                self?.viewModel.showResetPincodeWithASeedPhrase()
+            }
             return pincodeVC
         }()
         
