@@ -106,9 +106,8 @@ extension Authentication {
         
         // MARK: - Actions
         @objc private func cancel() {
-            dismiss(animated: true) { [weak self] in
-                self?.onCancel?()
-            }
+            onCancel?()
+            dismiss(animated: true, completion: nil)
         }
         
         @objc func authWithBiometric() {
@@ -139,9 +138,8 @@ extension Authentication {
         
         // MARK: - Helpers
         private func authenticationDidComplete() {
-            dismiss(animated: true) { [weak self] in
-                self?.onSuccess?()
-            }
+            onSuccess?()
+            dismiss(animated: true, completion: nil)
         }
     }
 }
