@@ -14,12 +14,31 @@ extension Authentication {
         @Injected private var viewModel: AuthenticationViewModelType
         
         // MARK: - Properties
-        
-        // MARK: - Methods
-        override func loadView() {
-            view = RootView()
+        override var title: String? {
+            didSet {
+                
+            }
         }
         
+        var isIgnorable: Bool = false {
+            didSet {
+                
+            }
+        }
+        
+        var useBiometry: Bool = true {
+            didSet {
+                
+            }
+        }
+        
+        // MARK: - Callbacks
+        var onSuccess: (() -> Void)?
+        var onCancel: (() -> Void)?
+        
+        // MARK: - Subviews
+        
+        // MARK: - Methods
         override func setUp() {
             super.setUp()
             
