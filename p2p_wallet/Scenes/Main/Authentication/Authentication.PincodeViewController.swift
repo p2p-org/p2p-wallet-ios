@@ -39,6 +39,7 @@ extension Authentication {
         // MARK: - Callbacks
         var onSuccess: (() -> Void)?
         var onCancel: (() -> Void)?
+        var didTapResetPincodeWithASeedPhraseButton: (() -> Void)?
         
         // MARK: - Subviews
         fileprivate let navigationBar = WLNavigationBar(forAutoLayout: ())
@@ -87,6 +88,11 @@ extension Authentication {
             
             pincodeView.onSuccess = {[weak self] _ in
                 self?.authenticationDidComplete()
+            }
+            
+            pincodeView.onFailedAndExceededMaxAttemps = {[weak self] in
+                self?.isIgnorable = false
+                // TODO: - Lock and show reset pincode with a seed phrase button
             }
         }
         
