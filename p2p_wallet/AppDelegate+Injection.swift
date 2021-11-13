@@ -89,6 +89,10 @@ extension Resolver: ResolverRegistering {
             .implements(OnboardingViewModelType.self)
             .scope(.shared)
         
+        // MARK: - Authentication
+        register {Authentication.ViewModel()}
+            .implements(AuthenticationViewModelType.self)
+        
         // MARK: - ResetPinCodeWithSeedPhrases
         register {ResetPinCodeWithSeedPhrases.ViewModel()}
             .implements(ResetPinCodeWithSeedPhrasesViewModelType.self)

@@ -75,6 +75,7 @@ extension Authentication {
             
             // pincode view
             let wrappedView = UIView(forAutoLayout: ())
+            view.addSubview(wrappedView)
             wrappedView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
             wrappedView.autoPinEdge(.top, to: .bottom, of: navigationBar)
             
