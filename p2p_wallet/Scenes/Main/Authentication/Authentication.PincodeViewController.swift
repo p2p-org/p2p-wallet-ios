@@ -99,6 +99,8 @@ extension Authentication {
             
             wrappedView.addSubview(pincodeView)
             pincodeView.autoCenterInSuperview()
+            pincodeView.autoPinEdge(toSuperviewEdge: .leading, withInset: 20, relation: .greaterThanOrEqual)
+            pincodeView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20, relation: .greaterThanOrEqual)
             
             pincodeView.onSuccess = {[weak self] _ in
                 self?.authenticationDidComplete()
@@ -117,6 +119,7 @@ extension Authentication {
         // MARK: - Actions
         func reset() {
             pincodeView.reset()
+            pincodeView.stackViewSpacing = 68
             resetPinCodeWithASeedPhraseButton.isHidden = true
         }
         
@@ -163,6 +166,8 @@ extension Authentication {
             resetPinCodeWithASeedPhraseButton.isHidden = false
             
             var secondsLeft = lockingTimeInSeconds
+            
+            pincodeView.stackViewSpacing = 108
             
             // Count down to next
             Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
