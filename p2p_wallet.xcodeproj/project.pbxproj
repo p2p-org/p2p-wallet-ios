@@ -959,6 +959,7 @@
 				BC09B9A0273ECB03009CAF4E /* Authentication.ViewModel.swift */,
 				BC09B99F273ECB03009CAF4E /* Authentication.ViewController.swift */,
 				BC35082E273FFC08009D4441 /* Authentication.PincodeViewController.swift */,
+				BC1FFECD2629748F0014F027 /* ResetPinCodeWithSeedPhrases */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -1334,7 +1335,6 @@
 				BCE42DE125DF9B980021540E /* CreateOrRestoreWallet */,
 				BCE42DF125DF9C360021540E /* Onboarding */,
 				BCEB206825E1559500B54FEF /* Main */,
-				BC1FFECD2629748F0014F027 /* ResetPinCodeWithSeedPhrases */,
 				BC6FEDAA27104AFB002B6255 /* Common */,
 			);
 			path = Scenes;
