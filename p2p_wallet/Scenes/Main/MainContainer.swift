@@ -92,17 +92,6 @@ class MainContainer {
         TabBarVC(scenesFactory: self)
     }
     
-    // MARK: - Authentication
-//    func makeLocalAuthVC() -> LocalAuthVC {
-//        LocalAuthVC()
-//    }
-    
-    // MARK: - Reset pincode with seed phrases
-    func makeResetPinCodeWithSeedPhrasesViewController() -> ResetPinCodeWithSeedPhrases.ViewController
-    {
-        .init()
-    }
-    
     func makeHomeViewController() -> Home.ViewController {
         let vm = Home.ViewModel(walletsRepository: walletsViewModel)
         return .init(viewModel: vm, scenesFactory: self)
