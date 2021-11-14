@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import LocalAuthentication
 
 extension Authentication {
     class PincodeViewController: BaseVC {
@@ -25,23 +24,9 @@ extension Authentication {
         @Injected private var viewModel: AuthenticationViewModelType
         
         // MARK: - Properties
-        override var title: String? {
-            didSet {
-                navigationBar.titleLabel.text = title
-            }
-        }
-        
-        var isIgnorable: Bool = false {
-            didSet {
-                navigationBar.backButton.isHidden = !isIgnorable
-            }
-        }
-        
-        var useBiometry: Bool = true {
-            didSet {
-                biometryButton?.isHidden = !useBiometry
-            }
-        }
+        override var title: String? { didSet { navigationBar.titleLabel.text = title } }
+        var isIgnorable: Bool = false { didSet { navigationBar.backButton.isHidden = !isIgnorable } }
+        var useBiometry: Bool = true { didSet { updateBiometryButtonVisibility() } }
         
         // MARK: - Callbacks
         var onSuccess: (() -> Void)?
@@ -56,14 +41,15 @@ extension Authentication {
             bottomLeftButton: biometryButton
         )
         private lazy var biometryButton: UIButton? = {
-            let biometryType = LABiometryType.current
+            let biometryType = viewModel.getCurrentBiometryType()
             guard let icon = biometryType.icon?.withRenderingMode(.alwaysTemplate) else {
                 return nil
             }
             let button = UIButton(frame: .zero)
             button.tintColor = .textBlack
             button.setImage(icon, for: .normal)
-            button.onTap(self, action: #selector(authWithBiometric))
+            button.contentEdgeInsets = .init(top: 12, left: 12, bottom: 12, right: 12)
+            button.onTap(self, action: #selector(authWithBiometry))
             return button
         }()
         private lazy var resetPinCodeWithASeedPhraseButton: UIView = {
@@ -77,8 +63,8 @@ extension Authentication {
         // MARK: - Methods
         override func viewDidLoad() {
             super.viewDidLoad()
-            if useBiometry {
-                authWithBiometric()
+            if isBiometryAvailable() {
+                authWithBiometry()
             }
         }
         
@@ -110,6 +96,9 @@ extension Authentication {
                 self?.numpadDidLock()
             }
             
+            // biometry button
+            updateBiometryButtonVisibility()
+            
             // reset pincode with a seed phrase
             pincodeView.addSubview(resetPinCodeWithASeedPhraseButton)
             resetPinCodeWithASeedPhraseButton.autoPinEdge(.top, to: .bottom, of: pincodeView.errorLabel, withOffset: 10)
@@ -127,22 +116,12 @@ extension Authentication {
             didTapResetPincodeWithASeedPhraseButton?()
         }
         
-        @objc private func authWithBiometric() {
-            let myContext = LAContext()
-            var authError: NSError?
-            if myContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
-                if let error = authError {
-                    print(error)
-                    return
-                }
-                myContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: L10n.confirmItSYou) { (success, _) in
-                    guard success else {return}
-                    DispatchQueue.main.sync { [weak self] in
-                        self?.authenticationDidComplete()
-                    }
-                }
-            } else {
-                showAlert(title: L10n.warning, message: LABiometryType.current.stringValue + " " + L10n.WasTurnedOff.doYouWantToTurnItOn, buttonTitles: [L10n.turnOn, L10n.cancel], highlightedButtonIndex: 0) { (index) in
+        @objc private func authWithBiometry() {
+            viewModel.authWithBiometry { [weak self] in
+                self?.authenticationDidComplete()
+            } onFailure: { [weak self] in
+                guard let self = self else {return}
+                self.showAlert(title: L10n.warning, message: self.viewModel.getCurrentBiometryType().stringValue + " " + L10n.WasTurnedOff.doYouWantToTurnItOn, buttonTitles: [L10n.turnOn, L10n.cancel], highlightedButtonIndex: 0) { (index) in
                     
                     if index == 0 {
                         if let url = URL.init(string: UIApplication.openSettingsURLString) {
@@ -184,6 +163,15 @@ extension Authentication {
                     timer.invalidate()
                 }
             }
+        }
+        
+        // MARK: - Helpers
+        private func isBiometryAvailable() -> Bool {
+            useBiometry && viewModel.isBiometryEnabled()
+        }
+        
+        private func updateBiometryButtonVisibility() {
+            biometryButton?.alpha = isBiometryAvailable() ? 1: 0
         }
     }
 }
