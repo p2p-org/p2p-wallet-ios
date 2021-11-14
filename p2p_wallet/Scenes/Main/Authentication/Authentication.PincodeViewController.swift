@@ -59,6 +59,13 @@ extension Authentication {
             button.onTap(self, action: #selector(authWithBiometric))
             return button
         }()
+        private lazy var resetPinCodeWithASeedPhraseButton: UIView = {
+            let button = UILabel(text: L10n.resetPINWithASeedPhrase, textSize: 13, weight: .semibold, textColor: .textSecondary, textAlignment: .center)
+                .padding(.init(top: 8, left: 19, bottom: 8, right: 19), backgroundColor: .f6f6f8, cornerRadius: 12)
+                .onTap(self, action: #selector(resetPincodeWithASeedPhrase))
+            button.isHidden = true
+            return button
+        }()
         
         // MARK: - Methods
         override func viewDidLoad() {
@@ -92,12 +99,27 @@ extension Authentication {
             
             pincodeView.onFailedAndExceededMaxAttemps = {[weak self] in
                 self?.isIgnorable = false
-                // TODO: - Lock and show reset pincode with a seed phrase button
+                self?.resetPinCodeWithASeedPhraseButton.isHidden = false
+                // TODO: - Lock
             }
+            
+            // reset pincode with a seed phrase
+            pincodeView.addSubview(resetPinCodeWithASeedPhraseButton)
+            resetPinCodeWithASeedPhraseButton.autoPinEdge(.top, to: .bottom, of: pincodeView.errorLabel, withOffset: 10)
+            resetPinCodeWithASeedPhraseButton.autoAlignAxis(toSuperviewAxis: .vertical)
+        }
+        
+        func reset() {
+            pincodeView.reset()
+            resetPinCodeWithASeedPhraseButton.isHidden = true
         }
         
         // MARK: - Actions
-        @objc func authWithBiometric() {
+        @objc private func resetPincodeWithASeedPhrase() {
+            didTapResetPincodeWithASeedPhraseButton?()
+        }
+        
+        @objc private func authWithBiometric() {
             let myContext = LAContext()
             var authError: NSError?
             if myContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
