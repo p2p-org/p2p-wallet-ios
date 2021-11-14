@@ -40,6 +40,11 @@ extension Authentication {
         }()
         
         // MARK: - Methods
+        override func setUp() {
+            super.setUp()
+            add(child: pincodeVC)
+        }
+        
         override func bind() {
             super.bind()
             viewModel.navigationDriver
@@ -51,10 +56,12 @@ extension Authentication {
         private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else {return}
             switch scene {
-            case .pincode:
-                transition(to: pincodeVC)
             case .resetPincodeWithASeedPhrase:
-                transition(to: BaseVC())
+                let vc = ResetPinCodeWithSeedPhrases.ViewController()
+                vc.completion = {[weak self] in
+                    self?.authenticationDidComplete()
+                }
+                present(vc, animated: true, completion: nil)
             }
         }
         

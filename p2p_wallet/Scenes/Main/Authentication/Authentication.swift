@@ -10,7 +10,6 @@ import RxCocoa
 
 struct Authentication {
     enum NavigatableScene {
-        case pincode
         case resetPincodeWithASeedPhrase
     }
 }
