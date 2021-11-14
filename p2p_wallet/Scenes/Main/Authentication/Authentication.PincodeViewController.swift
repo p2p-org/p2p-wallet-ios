@@ -98,9 +98,7 @@ extension Authentication {
             }
             
             pincodeView.onFailedAndExceededMaxAttemps = {[weak self] in
-                self?.isIgnorable = false
-                self?.resetPinCodeWithASeedPhraseButton.isHidden = false
-                // TODO: - Lock
+                self?.numpadDidLock()
             }
             
             // reset pincode with a seed phrase
@@ -109,12 +107,12 @@ extension Authentication {
             resetPinCodeWithASeedPhraseButton.autoAlignAxis(toSuperviewAxis: .vertical)
         }
         
+        // MARK: - Actions
         func reset() {
             pincodeView.reset()
             resetPinCodeWithASeedPhraseButton.isHidden = true
         }
         
-        // MARK: - Actions
         @objc private func resetPincodeWithASeedPhrase() {
             didTapResetPincodeWithASeedPhraseButton?()
         }
@@ -151,6 +149,13 @@ extension Authentication {
         
         private func authenticationDidComplete() {
             onSuccess?()
+        }
+        
+        private func numpadDidLock() {
+            isIgnorable = false
+            resetPinCodeWithASeedPhraseButton.isHidden = false
+            
+            // TODO: - Lock
         }
     }
 
