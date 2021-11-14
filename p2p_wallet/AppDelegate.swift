@@ -11,7 +11,6 @@ import Firebase
 @_exported import SolanaSwift
 @_exported import SwiftyUserDefaults
 @_exported import Resolver
-import THPinViewController
 import Action
 import BECollectionView
 
@@ -43,12 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        let image = UIImage.backButton.withRenderingMode(.alwaysOriginal)
 //        BEPureLayoutConfigs.defaultBackButton = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
         BEPureLayoutConfigs.defaultCheckBoxActiveColor = .h5887ff
-        
-        // THPinViewController
-        THPinInputCircleView.fillColor = .passcodeHighlightColor
-        THPinNumButton.textColor = .textBlack
-        THPinNumButton.textHighlightColor = .white
-        THPinNumButton.backgroundHighlightColor = .passcodeHighlightColor
         
         // Use Firebase library to configure APIs
         #if DEBUG

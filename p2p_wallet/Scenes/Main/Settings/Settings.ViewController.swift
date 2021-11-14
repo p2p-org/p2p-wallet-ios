@@ -77,26 +77,25 @@ extension Settings {
                 let vc = ConfigureSecurityViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .changePincode:
-                let vc = CreatePassCodeVC(promptTitle: L10n.newPINCode)
-                vc.disableDismissAfterCompletion = true
-                vc.completion = {[weak self, weak vc] _ in
-                    guard let pincode = vc?.passcode else {return}
-                    self?.viewModel.savePincode(pincode)
-                    vc?.dismiss(animated: true) { [weak self] in
+                let createPincodeVC = WLCreatePincodeVC(
+                    createPincodeTitle: L10n.newPINCode,
+                    confirmPincodeTitle: L10n.confirmPINCode
+                )
+                createPincodeVC.onSuccess = {[weak self, weak createPincodeVC] pincode in
+                    self?.viewModel.savePincode(String(pincode))
+                    createPincodeVC?.dismiss(animated: true) { [weak self] in
                         let vc = PinCodeChangedVC()
                         self?.present(vc, animated: true, completion: nil)
                     }
                 }
-
-                // navigation
-                let nc = BENavigationController()
-                nc.viewControllers = [vc]
-
+                createPincodeVC.onCancel = {[weak createPincodeVC] in
+                    createPincodeVC?.dismiss(animated: true, completion: nil)
+                }
+                
                 // modal
                 let modalVC = WLIndicatorModalVC()
-                modalVC.add(child: nc, to: modalVC.containerView)
+                modalVC.add(child: createPincodeVC, to: modalVC.containerView)
 
-//                modalVC.isModalInPresentation = true
                 present(modalVC, animated: true, completion: nil)
             case .language:
                 let vc = SelectLanguageViewController(viewModel: viewModel)
