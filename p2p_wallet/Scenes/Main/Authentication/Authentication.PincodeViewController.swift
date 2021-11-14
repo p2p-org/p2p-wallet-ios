@@ -14,6 +14,13 @@ extension Authentication {
             .hidden
         }
         
+        // MARK: - Constants
+        #if DEBUG
+        let lockingTimeInSeconds = 10 // 10 seconds
+        #else
+        let lockingTimeInSeconds = 15 * 60 // 15 minutes
+        #endif
+        
         // MARK: - Dependencies
         @Injected private var viewModel: AuthenticationViewModelType
         
@@ -155,8 +162,27 @@ extension Authentication {
             isIgnorable = false
             resetPinCodeWithASeedPhraseButton.isHidden = false
             
-            // TODO: - Lock
+            var secondsLeft = lockingTimeInSeconds
+            
+            // Count down to next
+            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+                secondsLeft -= 1
+                
+                let minutesAndSeconds = secondsToMinutesSeconds(seconds: secondsLeft)
+                let minutes = minutesAndSeconds.0
+                let seconds = minutesAndSeconds.1
+                
+                self?.pincodeView.errorLabel.text = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)") + " " + L10n.orResetItWithASeedPhrase
+                
+                if secondsLeft == 0 {
+                    self?.reset()
+                    timer.invalidate()
+                }
+            }
         }
     }
+}
 
+private func secondsToMinutesSeconds (seconds: Int) -> (Int, Int) {
+    return ((seconds % 3600) / 60, (seconds % 3600) % 60)
 }
