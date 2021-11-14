@@ -26,6 +26,12 @@ final class WLPinCodeView: BEView {
     
     private var attemptsCount: Int = 0
     
+    var stackViewSpacing: CGFloat = 68 {
+        didSet {
+            stackView.spacing = stackViewSpacing
+        }
+    }
+    
     // MARK: - Callbacks
     /// onSuccess, return newPincode if needed
     var onSuccess: ((UInt?) -> Void)?
@@ -33,6 +39,10 @@ final class WLPinCodeView: BEView {
     var onFailedAndExceededMaxAttemps: (() -> Void)?
     
     // MARK: - Subviews
+    private lazy var stackView = UIStackView(axis: .vertical, spacing: stackViewSpacing, alignment: .center, distribution: .fill) {
+        dotsView
+        numpadView
+    }
     private let dotsView = _PinCodeDotsView()
     let errorLabel = UILabel(textSize: 13, weight: .semibold, textColor: .ff3b30, numberOfLines: 0, textAlignment: .center)
     private lazy var numpadView = _NumpadView(bottomLeftButton: bottomLeftButton)
@@ -50,16 +60,13 @@ final class WLPinCodeView: BEView {
     override func commonInit() {
         super.commonInit()
         // stack view
-        let stackView = UIStackView(axis: .vertical, spacing: 80, alignment: .center, distribution: .fill) {
-            dotsView
-            numpadView
-        }
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
         
         // error label
         addSubview(errorLabel)
-        errorLabel.autoAlignAxis(toSuperviewAxis: .vertical)
+        errorLabel.autoPinEdge(toSuperviewSafeArea: .leading)
+        errorLabel.autoPinEdge(toSuperviewSafeArea: .trailing)
         errorLabel.autoPinEdge(.top, to: .bottom, of: dotsView, withOffset: 10)
         
         // calbacks
