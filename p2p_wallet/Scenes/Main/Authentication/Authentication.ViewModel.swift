@@ -8,11 +8,15 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import LocalAuthentication
 
 protocol AuthenticationViewModelType {
     var navigationDriver: Driver<Authentication.NavigatableScene?> {get}
     func showResetPincodeWithASeedPhrase()
     func getCurrentPincode() -> String?
+    func getCurrentBiometryType() -> LABiometryType
+    func isBiometryEnabled() -> Bool
+    func authWithBiometry(onSuccess: (() -> Void)?, onFailure: (() -> Void)?)
 }
 
 extension Authentication {
@@ -39,5 +43,32 @@ extension Authentication.ViewModel: AuthenticationViewModelType {
     
     func getCurrentPincode() -> String? {
         accountStorage.pinCode
+    }
+    
+    func getCurrentBiometryType() -> LABiometryType {
+        LABiometryType.current
+    }
+    
+    func isBiometryEnabled() -> Bool {
+        Defaults.isBiometryEnabled
+    }
+    
+    func authWithBiometry(onSuccess: (() -> Void)?, onFailure: (() -> Void)?) {
+        let myContext = LAContext()
+        var authError: NSError?
+        if myContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
+            if let error = authError {
+                print(error)
+                return
+            }
+            myContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: L10n.confirmItSYou) { (success, _) in
+                guard success else {return}
+                DispatchQueue.main.sync {
+                    onSuccess?()
+                }
+            }
+        } else {
+            onFailure?()
+        }
     }
 }
