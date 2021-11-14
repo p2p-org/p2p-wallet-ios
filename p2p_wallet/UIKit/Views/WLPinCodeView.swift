@@ -50,7 +50,7 @@ final class WLPinCodeView: BEView {
     override func commonInit() {
         super.commonInit()
         // stack view
-        let stackView = UIStackView(axis: .vertical, spacing: 68, alignment: .center, distribution: .fill) {
+        let stackView = UIStackView(axis: .vertical, spacing: 80, alignment: .center, distribution: .fill) {
             dotsView
             numpadView
         }
