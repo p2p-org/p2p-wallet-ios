@@ -83,7 +83,7 @@ class WLStepButton: BEView {
         imageView
         label
     }
-    private lazy var imageView = UIImageView()
+    fileprivate lazy var imageView = UIImageView()
     fileprivate lazy var label = UILabel(
         textSize: 17.adaptiveHeight,
         weight: .medium,
@@ -167,6 +167,12 @@ extension Reactive where Base: WLStepButton {
     var text: Binder<String?> {
         Binder(base) { view, text in
             view.label.text = text
+        }
+    }
+    
+    var image: Binder<UIImage?> {
+        Binder(base) { view, image in
+            view.imageView.image = image
         }
     }
 

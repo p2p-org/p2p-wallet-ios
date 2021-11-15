@@ -573,5 +573,11 @@
 "Start using P2P Wallet" = "Commencez à utiliser le portefeuille P2P";
 "Welcome to P2P Family, %@" = "Bienvenue dans la famille P2P, %@";
 "Welcome back, %@" = "Bon retour, %@";
+"Verify your security key" = "Vérifiez votre clé de sécurité";
+"Choose correct words" = "Choisissez les mots corrects";
+"Save & Continue" = "sauvegarder";
+"These words don’t match" = "Ces mots ne correspondent pas";
+"The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "Les mots de votre clé de sécurité doivent être sélectionnés dans le bon ordre.  Alternativement, vous pouvez faire une sauvegarde iCloud";
+"Go back" = "Retourner";
 "Set up a wallet PIN" = "Configurer un code PIN de portefeuille";
 "Confirm your wallet PIN" = "Confirmez le code PIN de votre portefeuille";

@@ -573,5 +573,11 @@
 "Start using P2P Wallet" = "Bắt đầu sử dụng Ví P2P";
 "Welcome to P2P Family, %@" = "Chào mừng bạn đến với Gia đình P2P, %@";
 "Welcome back, %@" = "Chào mừng bạn trở lại, %@";
+"Verify your security key" = "Xác minh khóa bảo mật của bạn";
+"Choose correct words" = "Chọn từ đúng";
+"Save & Continue" = "Cứu";
+"These words don’t match" = "Những từ này không khớp";
+"The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "Các từ trong khóa bảo mật của bạn cần được chọn theo đúng thứ tự.  Ngoài ra, bạn có thể tạo bản sao lưu iCloud";
+"Go back" = "Quay lại";
 "Set up a wallet PIN" = "Thiết lập mã PIN cho ví";
 "Confirm your wallet PIN" = "Xác nhận mã PIN cho ví của bạn";
