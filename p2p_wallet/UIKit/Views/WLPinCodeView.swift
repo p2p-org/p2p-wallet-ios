@@ -85,7 +85,7 @@ final class WLPinCodeView: BEView {
     }
     
     func setBlock(_ isBlocked: Bool) {
-        numpadView.isUserInteractionEnabled = isBlocked
+        numpadView.isUserInteractionEnabled = !isBlocked
     }
     
     // MARK: - Private methods
