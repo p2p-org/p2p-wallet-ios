@@ -53,13 +53,13 @@ extension CreateSecurityKeys {
             stackView.addArrangedSubview(keysView)
             stackView.addArrangedSubview(keysViewAction)
             
-            let bottomStack = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill) {
+            let bottomStack = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
                 saveToICloudButton
-                verifyManualButton.padding(UIEdgeInsets(only: .bottom, inset: 20))
+                verifyManualButton
             }
             bottomStack.backgroundColor = .background
             addSubview(bottomStack)
-            bottomStack.autoPinEdgesToSuperviewSafeArea(with: .init(x: 18, y: 0), excludingEdge: .top)
+            bottomStack.autoPinEdgesToSuperviewSafeArea(with: .init(top: 0, left: 18, bottom: 20, right: 18), excludingEdge: .top)
         }
         
         func bind() {
@@ -76,7 +76,8 @@ extension CreateSecurityKeys {
             keysViewAction.rx.onSave
                 .bind(onNext: {[weak self] in self?.saveToPhoto()})
                 .disposed(by: disposeBag)
-            
+    
+            verifyManualButton.onTap(self, action: #selector(verifyPhrase))
             saveToICloudButton.onTap(self, action: #selector(saveToICloud))
             navigationBar.backButton.onTap(self, action: #selector(back))
         }
@@ -97,7 +98,11 @@ extension CreateSecurityKeys {
         @objc func goNext() {
             viewModel.next()
         }
-        
+    
+        @objc func verifyPhrase() {
+            viewModel.verifyPhrase()
+        }
+    
         @objc func back() {
             viewModel.back()
         }

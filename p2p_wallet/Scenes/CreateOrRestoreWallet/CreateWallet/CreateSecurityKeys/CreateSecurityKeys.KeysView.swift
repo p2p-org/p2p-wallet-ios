@@ -8,55 +8,6 @@ import RxSwift
 import RxCocoa
 
 extension CreateSecurityKeys {
-    private class KeyView: BEView {
-        var key: String = "" {
-            didSet {
-                update()
-            }
-        }
-        
-        var index: Int = 0 {
-            didSet {
-                update()
-            }
-        }
-        
-        private let textLabel: UILabel = UILabel(weight: .medium, textAlignment: .center)
-        
-        init(index: Int, key: String) {
-            self.index = index
-            self.key = key
-            
-            super.init(frame: CGRect.zero)
-        }
-        
-        override func commonInit() {
-            super.commonInit()
-            
-            layer.borderColor = UIColor.f2f2f7.cgColor
-            layer.borderWidth = 1
-            layer.cornerRadius = 8
-            layer.masksToBounds = true
-            
-            addSubview(textLabel)
-            textLabel.autoPinEdgesToSuperviewEdges()
-            
-            update()
-        }
-        
-        private func update() {
-            let attrText = NSMutableAttributedString()
-                .text("\(index). ", size: 15, weight: .medium, color: .h8e8e93)
-                .text("\(key)", size: 15)
-            
-            textLabel.attributedText = attrText
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-    }
-    
     class KeysView: BEView {
         var keys: [String] = [] {
             didSet {
@@ -80,6 +31,7 @@ extension CreateSecurityKeys {
         func layout() {
             addSubview(content)
             content.autoPinEdgesToSuperviewEdges()
+            content.backgroundColor = .background
         }
         
         func update() {
@@ -88,7 +40,7 @@ extension CreateSecurityKeys {
                 let row = UIStackView(axis: .horizontal, spacing: spacing, alignment: .fill, distribution: .fillEqually)
                 row.heightAnchor.constraint(equalToConstant: keyHeight).isActive = true
                 row.addArrangedSubviews(chunk.enumerated().map { index, key in
-                    KeyView(index: section * numberOfColumns + index + 1, key: key)
+                   KeyView(index: section * numberOfColumns + index + 1, key: key)
                 })
                 content.addArrangedSubview(row)
             }
