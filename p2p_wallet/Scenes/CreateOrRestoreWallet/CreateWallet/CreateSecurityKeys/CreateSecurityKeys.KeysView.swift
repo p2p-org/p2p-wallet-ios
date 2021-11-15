@@ -31,6 +31,7 @@ extension CreateSecurityKeys {
         func layout() {
             addSubview(content)
             content.autoPinEdgesToSuperviewEdges()
+            content.backgroundColor = .background
         }
         
         func update() {
