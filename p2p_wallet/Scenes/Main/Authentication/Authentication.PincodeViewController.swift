@@ -66,6 +66,7 @@ extension Authentication {
             // is blocking
             if (viewModel.getBlockedTime()) != nil {
                 pincodeView.setBlock(true)
+                pincodeView.errorLabel.isHidden = false
                 numpadDidLock()
             } else {
                 if isBiometryAvailable() {
