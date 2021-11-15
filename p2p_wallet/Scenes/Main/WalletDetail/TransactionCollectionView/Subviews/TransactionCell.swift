@@ -134,10 +134,10 @@ extension TransactionCell: BECollectionViewCell {
         // status
         transactionStatusIndicator.isHidden = true
         switch transaction.status {
-        case .requesting, .processing(_):
+        case .requesting, .processing:
             transactionStatusIndicator.isHidden = false
             transactionStatusIndicator.image = .transactionIndicatorPending
-        case .error(_):
+        case .error:
             transactionStatusIndicator.isHidden = false
             transactionStatusIndicator.image = .transactionIndicatorError
         default:

@@ -160,7 +160,7 @@ extension RenVM.BurnAndRelease {
                 .skip(while: {$0 != .loaded && !$0.isError})
                 .filter {state in
                     switch state {
-                    case .error(_):
+                    case .error:
                         throw RenVM.Error("Could not initialize burn and release service")
                     default:
                         return true

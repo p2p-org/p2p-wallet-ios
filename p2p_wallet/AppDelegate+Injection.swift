@@ -5,28 +5,33 @@
 //  Created by Chung Tran on 23/09/2021.
 //
 
-import Foundation
 import SolanaSwift
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
-        let sessionBannersAvailabilityState = SessionBannersAvailabilityState()
+        register { SessionBannersAvailabilityState() }
+            .scope(.session)
         register {KeychainAccountStorage()}
             .implements(SolanaSDKAccountStorage.self)
             .implements(ICloudStorageType.self)
             .implements(NameStorageType.self)
             .scope(.application)
+        register { PersistentBannersAvailabilityState() }
         register {
-            BannersRepository(
-                sessionBannersAvailabilityState: sessionBannersAvailabilityState,
-                persistentBannersAvailabilityState: PersistentBannersAvailabilityState()
+            ReserveUsernameBannerAvailabilityRepository(
+                sessionBannersAvailabilityState: resolve(SessionBannersAvailabilityState.self),
+                persistentBannersAvailabilityState: resolve(PersistentBannersAvailabilityState.self),
+                nameStorage: resolve()
             )
         }
-            .implements(BannersRepositoryType.self)
-            .scope(.application)
+            .implements(ReserveUsernameBannerAvailabilityRepositoryType.self)
+            .scope(.unique)
+        register { BannersManager(usernameBannerRepository: resolve()) }
+            .implements(BannersManagerType.self)
+            .scope(.unique)
         register { BannerKindTransformer() }
             .implements(BannerKindTransformerType.self)
-            .scope(.application)
+            .scope(.unique)
         register {AnalyticsManager()}
             .implements(AnalyticsManagerType.self)
             .scope(.application)
@@ -84,6 +89,11 @@ extension Resolver: ResolverRegistering {
             .implements(OnboardingViewModelType.self)
             .scope(.shared)
         
+        // MARK: - Authentication
+        register {Authentication.ViewModel()}
+            .implements(AuthenticationViewModelType.self)
+            .scope(.shared)
+        
         // MARK: - ResetPinCodeWithSeedPhrases
         register {ResetPinCodeWithSeedPhrases.ViewModel()}
             .implements(ResetPinCodeWithSeedPhrasesViewModelType.self)
@@ -95,4 +105,8 @@ extension Resolver: ResolverRegistering {
             .implements(AuthenticationHandler.self)
             .scope(.shared)
     }
+}
+
+extension ResolverScope {
+    static let session = ResolverScopeCache()
 }

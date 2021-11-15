@@ -136,7 +136,7 @@ private class CreateWalletView: BEView {
                 case .loaded:
                     self?.createATokenButton.setTitle(L10n.createTokenAccount, for: .normal)
                     self?.createATokenButton.isEnabled = false
-                case .error(_):
+                case .error:
                     self?.createATokenButton.setTitle(L10n.error.uppercaseFirst + ". " + L10n.retry.uppercaseFirst + "?", for: .normal)
                     self?.createATokenButton.isEnabled = true
                 }
@@ -350,7 +350,7 @@ private class AddressView: BEView {
                     let amountString = amount.toString(maximumFractionDigits: 9) + " BTC"
                     self.label2.text = L10n.minimumTransactionAmountOf(amountString)
                     self.semiboldText(amountString, in: self.label2)
-                case .error(_):
+                case .error:
                     self.label2.isUserInteractionEnabled = true
                     self.label2.text = L10n.error.uppercaseFirst + ". " + L10n.tapToTryAgain
                 }
