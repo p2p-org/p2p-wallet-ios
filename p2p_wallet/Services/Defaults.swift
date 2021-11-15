@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftyUserDefaults
 
 extension UIUserInterfaceStyle: DefaultsSerializable {}
 
@@ -56,4 +57,5 @@ extension DefaultsKeys {
     var renVMProcessingTxs: DefaultsKey<[RenVM.LockAndMint.ProcessingTx]> {.init(#function, defaultValue: [])}
     var renVMSubmitedBurnTxDetails: DefaultsKey<[RenVM.BurnAndRelease.BurnDetails]> {.init(#function, defaultValue: [])}
     var forceCloseNameServiceBanner: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
+    var authenticationBlockingTime: DefaultsKey<Date?> {.init(#function, defaultValue: nil)}
 }

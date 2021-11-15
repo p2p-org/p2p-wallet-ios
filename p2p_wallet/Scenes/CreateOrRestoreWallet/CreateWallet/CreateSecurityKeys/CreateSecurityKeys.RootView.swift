@@ -2,12 +2,13 @@
 //  CreateSecurityKeys.RootView.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 22/02/2021.
+//  Created by Giang Long Tran on 05.11.21.
 //
 
 import UIKit
 import TagListView
 import RxSwift
+import RxCocoa
 import Action
 
 extension CreateSecurityKeys {
@@ -19,103 +20,65 @@ extension CreateSecurityKeys {
         private let disposeBag = DisposeBag()
         
         // MARK: - Subviews
-        private let backButton: UIView
-        private lazy var regenerateButton = UIImageView(width: 36, height: 36, image: .regenerateButton, tintColor: .iconSecondary)
-            .onTap(self, action: #selector(createPhrases))
-        private lazy var phrasesListViews: WLPhrasesListView = {
-            let listView = WLPhrasesListView(forAutoLayout: ())
-            listView.copyToClipboardAction = CocoaAction { [weak self] in
-                self?.viewModel.copyToClipboard()
-                return .just(())
-            }
-            return listView
-        }()
-        private lazy var savedCheckBox: BECheckbox = {
-            let checkbox = BECheckbox(width: 20, height: 20, cornerRadius: 6)
-            checkbox.layer.borderColor = UIColor.a3a5ba.cgColor
-            checkbox.isUserInteractionEnabled = false // forward interaction to parent view
-            return checkbox
+        private let navigationBar: WLNavigationBar = {
+            let navigationBar = WLNavigationBar(forAutoLayout: ())
+            navigationBar.titleLabel.text = L10n.yourSecurityKey
+            return navigationBar
         }()
         
-        private lazy var saveToICloudButton: WLButton = {
-            let button = WLButton.stepButton(type: .black, label: nil)
-            
-            let attrString = NSMutableAttributedString()
-                .text("  ", size: 25, color: button.currentTitleColor)
-                .text(L10n.backupToICloud, size: 15, weight: .medium, color: button.currentTitleColor, baselineOffset: (25-15)/4)
-            
-            button.setAttributedTitle(attrString, for: .normal)
-            return button
-        }()
-            
-        private lazy var continueButton = WLButton.stepButton(type: .blue, label: L10n.next.uppercaseFirst)
-            .onTap(self, action: #selector(goNext))
+        private let saveToICloudButton: WLStepButton = WLStepButton.main(image: .appleLogo, text: L10n.backupToICloud)
+        
+        private let verifyManualButton: WLStepButton = WLStepButton.sub(text: L10n.verifyManually)
+        
+        private let keysView: KeysView = KeysView()
+        private let keysViewAction: KeysViewActions = KeysViewActions()
         
         // MARK: - Initializers
-        init(backButton: UIView) {
-            self.backButton = backButton
-            super.init(frame: .zero)
-        }
-        
-        // MARK: - Methods
         override func commonInit() {
             super.commonInit()
             layout()
             bind()
         }
         
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-            
-        }
-        
+        // MARK: - Methods
         // MARK: - Layout
         private func layout() {
-            let topView = UIStackView(axis: .horizontal, alignment: .center, distribution: .equalSpacing, arrangedSubviews: [
-                backButton,
-                regenerateButton
-            ])
-            addSubview(topView)
-            topView.autoPinEdgesToSuperviewEdges(with: .init(all: 20), excludingEdge: .bottom)
+            addSubview(navigationBar)
+            navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
+            navigationBar.autoPinEdge(toSuperviewEdge: .leading)
+            navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
             
-            scrollView.constraintToSuperviewWithAttribute(.top)?.constant = 66
-            stackView.addArrangedSubviews([
-                UILabel(text: L10n.securityKey.uppercaseFirst, textSize: 27, weight: .bold),
-                BEStackViewSpacing(15),
-                phrasesListViews,
-                BEStackViewSpacing(16),
-                UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
-                    savedCheckBox,
-                    UILabel(text: L10n.iHaveSavedTheseWordsInASafePlace, weight: .medium, textColor: .textSecondary)
-                ])
-                    .padding(.init(x: 0, y: 10))
-                    .onTap(self, action: #selector(toggleCheckbox)),
-                BEStackViewSpacing(16),
+            scrollView.contentInset.top = 56
+            scrollView.contentInset.bottom = 120
+            stackView.addArrangedSubview(keysView)
+            stackView.addArrangedSubview(keysViewAction)
+            
+            let bottomStack = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill) {
                 saveToICloudButton
-                    .onTap(self, action: #selector(saveToICloud)),
-                BEStackViewSpacing(16),
-                continueButton,
-                BEStackViewSpacing(30),
-                UIView()
-            ])
-            
-            continueButton.isEnabled = false
+                verifyManualButton.padding(UIEdgeInsets(only: .bottom, inset: 20))
+            }
+            bottomStack.backgroundColor = .background
+            addSubview(bottomStack)
+            bottomStack.autoPinEdgesToSuperviewSafeArea(with: .init(x: 18, y: 0), excludingEdge: .top)
         }
         
-        private func bind() {
+        func bind() {
             viewModel.phrasesDriver
-                .drive(onNext: {[weak self] phrases in
-                    self?.phrasesListViews.setUp(phrases: phrases)
-                })
+                .drive(keysView.rx.keys)
                 .disposed(by: disposeBag)
             
-            viewModel.isCheckboxSelectedDriver
-                .drive(savedCheckBox.rx.isSelected)
+            keysViewAction.rx.onCopy
+                .bind(onNext: {[weak self] in self?.viewModel.copyToClipboard()})
+                .disposed(by: disposeBag)
+            keysViewAction.rx.onRefresh
+                .bind(onNext: {[weak self] in self?.viewModel.createPhrases()})
+                .disposed(by: disposeBag)
+            keysViewAction.rx.onSave
+                .bind(onNext: {[weak self] in self?.saveToPhoto()})
                 .disposed(by: disposeBag)
             
-            viewModel.isCheckboxSelectedDriver
-                .drive(continueButton.rx.isEnabled)
-                .disposed(by: disposeBag)
+            saveToICloudButton.onTap(self, action: #selector(saveToICloud))
+            navigationBar.backButton.onTap(self, action: #selector(back))
         }
         
         // MARK: - Actions
@@ -133,6 +96,22 @@ extension CreateSecurityKeys {
         
         @objc func goNext() {
             viewModel.next()
+        }
+        
+        @objc func back() {
+            viewModel.back()
+        }
+        
+        func saveToPhoto() {
+            UIImageWriteToSavedPhotosAlbum(keysView.asImage(), self, #selector(saveImageCallback), nil)
+        }
+        
+        @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+            if let error = error {
+                showErrorView(error: error)
+            } else {
+                UIApplication.shared.showToast(message: "✅ \(L10n.savedToPhotoLibrary)")
+            }
         }
     }
 }
