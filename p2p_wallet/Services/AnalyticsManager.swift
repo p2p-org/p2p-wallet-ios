@@ -12,7 +12,7 @@ protocol AnalyticsManagerType {
     func log(event: AnalyticsEvent)
 }
 
-struct AnalyticsManager: AnalyticsManagerType {
+class AnalyticsManager: AnalyticsManagerType {
     init() {
         // Enable sending automatic session events
         Amplitude.instance().trackingSessionEvents = true
