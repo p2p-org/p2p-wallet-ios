@@ -581,3 +581,5 @@
 "These words don’t match" = "Эти слова не совпадают";
 "The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "Слова в вашем электронном ключе необходимо выбирать в правильном порядке.  Кроме того, вы можете сделать резервную копию iCloud";
 "Go back" = "Вернитесь назад";
+"Set up a wallet PIN" = "Установите PIN-код кошелька";
+"Confirm your wallet PIN" = "Подтвердите свой PIN-код кошелька";

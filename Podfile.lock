@@ -155,7 +155,6 @@ PODS:
   - SwiftLint (0.43.1)
   - SwiftyUserDefaults (5.3.0)
   - TagListView (1.4.1)
-  - THPinViewController (1.2.8)
   - TweetNacl (1.0.2)
   - "UITextView+Placeholder (1.4.0)"
 
@@ -185,7 +184,6 @@ DEPENDENCIES:
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
-  - THPinViewController (from `THPinViewController`)
   - "UITextView+Placeholder"
 
 SPEC REPOS:
@@ -249,8 +247,6 @@ EXTERNAL SOURCES:
   SVGKit:
     :branch: 3.x
     :git: https://github.com/SVGKit/SVGKit.git
-  THPinViewController:
-    :path: THPinViewController
 
 CHECKOUT OPTIONS:
   Down:
@@ -309,10 +305,9 @@ SPEC CHECKSUMS:
   SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
-  THPinViewController: d9d65cdc5670b99b82d4cef841c954caf4b78299
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 20dd25993b3516a96f4a430d2c625bc0a6628759
+PODFILE CHECKSUM: c3fca6056cc1e9c74891f147c42ef3a8401d1fdd
 
 COCOAPODS: 1.11.2

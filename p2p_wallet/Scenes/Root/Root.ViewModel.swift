@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import Resolver
 
 protocol RootViewModelType {
     var navigationSceneDriver: Driver<Root.NavigatableScene?> {get}
@@ -64,6 +65,7 @@ extension Root {
         }
         
         func logout() {
+            ResolverScope.session.reset()
             accountStorage.clear()
             Defaults.walletName = [:]
             Defaults.didSetEnableBiometry = false

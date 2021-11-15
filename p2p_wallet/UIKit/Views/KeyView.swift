@@ -35,7 +35,7 @@ class KeyView: BEView {
         }
     }
     
-    private let textLabel: UILabel = UILabel(weight: .medium, textAlignment: .center)
+    private let textLabel: UILabel = UILabel(weight: .medium, textColor: .textBlack, textAlignment: .center)
     
     init(index: Int = 0, key: String, hideIndex: Bool = false, style: Style = .none) {
         self.hideIndex = hideIndex
@@ -63,17 +63,15 @@ class KeyView: BEView {
     private func update() {
         var attrText = NSMutableAttributedString()
         if !hideIndex { attrText = attrText.text("\(index). ", size: 15, weight: .medium, color: .h8e8e93) }
-        attrText = attrText.text("\(key)", size: 15)
+        attrText = attrText.text("\(key)", size: 15, color: .textBlack)
         
         textLabel.attributedText = attrText
         
         switch style {
         case .none:
             backgroundColor = .none
-            textLabel.textColor = .black
         case .selected:
             backgroundColor = .h5887ff
-            textLabel.textColor = .white
         }
     }
     

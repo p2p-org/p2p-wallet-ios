@@ -51,21 +51,20 @@ extension ResetPinCodeWithSeedPhrases {
             case .enterSeedPhrases:
                 childNavigationController.pushViewController(enterPhrasesVC, animated: true)
             case .createNewPasscode:
-                let vc = CreatePassCodeVC()
-                vc.disableDismissAfterCompletion = true
-                vc.completion = {[weak self] completed in
-                    if completed {
-                        guard let pincode = vc.passcode else {
-                            return
-                        }
-                        self?.viewModel.savePincode(pincode)
-                        self?.dismiss(animated: true, completion: { [weak self] in
-                            self?.completion?()
-                        })
-                        return
+                let createPincodeVC = WLCreatePincodeVC(
+                    createPincodeTitle: L10n.newPINCode,
+                    confirmPincodeTitle: L10n.confirmPINCode
+                )
+                createPincodeVC.onSuccess = {[weak self] pincode in
+                    self?.viewModel.savePincode(String(pincode))
+                    self?.dismiss(animated: true) { [weak self] in
+                        self?.completion?()
                     }
                 }
-                childNavigationController.pushViewController(vc, animated: true)
+                createPincodeVC.onCancel = {[weak createPincodeVC] in
+                    createPincodeVC?.dismiss(animated: true, completion: nil)
+                }
+                childNavigationController.pushViewController(createPincodeVC, animated: true)
             }
         }
     }
