@@ -59,6 +59,7 @@ extension Authentication {
             case .resetPincodeWithASeedPhrase:
                 let vc = ResetPinCodeWithSeedPhrases.ViewController()
                 vc.completion = {[weak self] in
+                    self?.viewModel.setBlockedTime(nil)
                     self?.authenticationDidComplete()
                 }
                 present(vc, animated: true, completion: nil)
