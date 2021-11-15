@@ -17,6 +17,8 @@ protocol AuthenticationViewModelType {
     func getCurrentBiometryType() -> LABiometryType
     func isBiometryEnabled() -> Bool
     func authWithBiometry(onSuccess: (() -> Void)?, onFailure: (() -> Void)?)
+    func getBlockedTime() -> Date?
+    func setBlockedTime(_ time: Date?)
 }
 
 extension Authentication {
@@ -70,5 +72,13 @@ extension Authentication.ViewModel: AuthenticationViewModelType {
         } else {
             onFailure?()
         }
+    }
+    
+    func getBlockedTime() -> Date? {
+        Defaults.authenticationBlockingTime
+    }
+    
+    func setBlockedTime(_ time: Date?) {
+        Defaults.authenticationBlockingTime = time
     }
 }

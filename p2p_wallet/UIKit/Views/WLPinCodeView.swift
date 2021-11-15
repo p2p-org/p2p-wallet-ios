@@ -84,6 +84,10 @@ final class WLPinCodeView: BEView {
         currentPincode = nil
     }
     
+    func setBlock(_ isBlocked: Bool) {
+        numpadView.isUserInteractionEnabled = isBlocked
+    }
+    
     // MARK: - Private methods
     private func add(digit: Int) {
         // calculate value

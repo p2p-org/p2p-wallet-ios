@@ -63,8 +63,14 @@ extension Authentication {
         // MARK: - Methods
         override func viewDidLoad() {
             super.viewDidLoad()
-            if isBiometryAvailable() {
-                authWithBiometry()
+            // is blocking
+            if (viewModel.getBlockedTime()) != nil {
+                pincodeView.setBlock(true)
+                numpadDidLock()
+            } else {
+                if isBiometryAvailable() {
+                    authWithBiometry()
+                }
             }
         }
         
@@ -93,6 +99,7 @@ extension Authentication {
             }
             
             pincodeView.onFailedAndExceededMaxAttemps = {[weak self] in
+                self?.viewModel.setBlockedTime(Date())
                 self?.numpadDidLock()
             }
             
@@ -141,24 +148,31 @@ extension Authentication {
         }
         
         private func numpadDidLock() {
+            guard let blockTime = viewModel.getBlockedTime() else {return}
+            
             isIgnorable = false
             resetPinCodeWithASeedPhraseButton.isHidden = false
             
-            var secondsLeft = lockingTimeInSeconds
-            
             pincodeView.stackViewSpacing = 108
+            
+            let lockingTimeInSeconds = self.lockingTimeInSeconds
             
             // Count down to next
             Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-                secondsLeft -= 1
+                // get current date
+                let now = Date()
                 
-                let minutesAndSeconds = secondsToMinutesSeconds(seconds: secondsLeft)
+                // check if date > blockTime
+                guard let secondsPassed = (now - blockTime).second, secondsPassed >= 0 else {return}
+                
+                let minutesAndSeconds = secondsToMinutesSeconds(seconds: lockingTimeInSeconds-secondsPassed)
                 let minutes = minutesAndSeconds.0
                 let seconds = minutesAndSeconds.1
                 
                 self?.pincodeView.errorLabel.text = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)") + " " + L10n.orResetItWithASeedPhrase
                 
-                if secondsLeft == 0 {
+                if secondsPassed >= lockingTimeInSeconds {
+                    self?.viewModel.setBlockedTime(nil)
                     self?.reset()
                     timer.invalidate()
                 }
