@@ -55,6 +55,7 @@ extension CreateSecurityKeys {
             
             let bottomStack = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill) {
                 saveToICloudButton
+                BEStackViewSpacing(20)
                 verifyManualButton.padding(UIEdgeInsets(only: .bottom, inset: 20))
             }
             bottomStack.backgroundColor = .background
