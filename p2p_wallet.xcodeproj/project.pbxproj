@@ -2643,6 +2643,10 @@
 				84699D43B0BAEA149C81B17D /* ColumnFlowLayout.swift in Sources */,
 				846999D7A0F0B2DC6E8C8A9B /* UIStackView.swift in Sources */,
 				846993CEE73D894A69FE84A6 /* UIButton.swift in Sources */,
+				8469998D03BF3A0606D0D42D /* VerifySecurityKeys.Question.swift in Sources */,
+				846995192F640AE9B9541C87 /* KeyView.swift in Sources */,
+				84699260E4D199A70FC4ED2A /* VerifySecurityKeys.Button.swift in Sources */,
+				84699F38A20F24A0D2281DE8 /* CreateSecurityKeys.RootView.swift in Sources */,
 				8469991B25D5A9AF775E714B /* CALayer+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
