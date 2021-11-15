@@ -63,11 +63,19 @@ extension CreateSecurityKeys {
         }
         
         func bind() {
-            viewModel.phrasesDriver.drive(keysView.rx.keys).disposed(by: disposeBag)
+            viewModel.phrasesDriver
+                .drive(keysView.rx.keys)
+                .disposed(by: disposeBag)
             
-            keysViewAction.rx.onCopy.bind(onNext: viewModel.copyToClipboard).disposed(by: disposeBag)
-            keysViewAction.rx.onRefresh.bind(onNext: viewModel.createPhrases).disposed(by: disposeBag)
-            keysViewAction.rx.onSave.bind(onNext: saveToPhoto).disposed(by: disposeBag)
+            keysViewAction.rx.onCopy
+                .bind(onNext: {[weak self] in self?.viewModel.copyToClipboard()})
+                .disposed(by: disposeBag)
+            keysViewAction.rx.onRefresh
+                .bind(onNext: {[weak self] in self?.viewModel.createPhrases()})
+                .disposed(by: disposeBag)
+            keysViewAction.rx.onSave
+                .bind(onNext: {[weak self] in self?.saveToPhoto()})
+                .disposed(by: disposeBag)
             
             saveToICloudButton.onTap(self, action: #selector(saveToICloud))
             navigationBar.backButton.onTap(self, action: #selector(back))
