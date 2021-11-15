@@ -58,6 +58,10 @@ extension CreateWallet {
                 let vm = ReserveName.ViewModel(owner: owner, handler: viewModel)
                 let vc = ReserveName.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)
+            case .verifyPhrase(let phrase):
+                let vm = VerifySecurityKeys.ViewModel(keyPhrase: phrase)
+                let vc = VerifySecurityKeys.ViewController(viewModel: vm)
+                childNavigationController.pushViewController(vc, animated: true)
             case .dismiss:
                 navigationController?.popViewController(animated: true)
             case .back:
