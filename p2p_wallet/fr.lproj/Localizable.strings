@@ -585,3 +585,17 @@
 "Confirm your wallet PIN" = "Confirmez le code PIN de votre portefeuille";
 "Choose your wallet" = "Choisissez votre portefeuille";
 "PIN doesn’t match. Try again" = "Le code PIN ne correspond pas. Réessayer";
+"Allow push notifications so you don’t miss any important updates on your account." = "Autorisez les notifications push pour ne manquer aucune mise à jour importante de votre compte.";
+"New staking option available" = "Nouvelle option de jalonnement disponible";
+"Get up to 8%% APY on staking USDC" = "Obtenez jusqu'à 8%% APY sur le jalonnement USDC";
+"just now" = "juste maintenant";
+"%@m ago" = "il y a %@m";
+"%@ successfully sent" = "%@ envoyé avec succès";
+"%@h ago" = "il y a %@h";
+"Received %@" = "Reçu %@";
+"%@ → %@ swapped successfully" = "%@ → %@ échangé avec succès";
+"Let’s stay in touch" = "Restons en contact";
+"Do you want to allow P2P Wallet to use %@?" = "Voulez-vous autoriser P2P Wallet à utiliser %@ ?";
+"P2P Wallet uses %@ to restrict unauthorized users from accessing the app" = "P2P Wallet utilise %@ pour empêcher les utilisateurs non autorisés d'accéder à l'application";
+"Don’t Allow" = "Ne pas autoriser";
+"Allow" = "Permettre";
