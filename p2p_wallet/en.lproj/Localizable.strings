@@ -586,3 +586,12 @@
 "Choose your wallet" = "Choose your wallet";
 "PIN doesn’t match. Try again" = "PIN doesn’t match. Try again";
 "Allow push notifications so you don’t miss any important updates on your account." = "Allow push notifications so you don’t miss any important updates on your account.";
+"New staking option available" = "New staking option available";
+"Get up to 8%% APY on staking USDC" = "Get up to 8%% APY on staking USDC";
+"just now" = "just now";
+"%@m ago" = "%@m ago";
+"%@ successfully sent" = "%@ successfully sent";
+"%@h ago" = "%@h ago";
+"Received %@" = "Received %@";
+"%@ → %@ swapped successfully" = "%@ → %@ swapped successfully";
+"Let’s stay in touch" = "Let’s stay in touch";
