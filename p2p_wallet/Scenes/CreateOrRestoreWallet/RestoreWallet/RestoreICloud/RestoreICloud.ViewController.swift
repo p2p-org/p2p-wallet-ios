@@ -48,7 +48,6 @@ extension RestoreICloud {
             super.setUp()
             
             view.addSubview(navigationBar)
-            navigationBar.titleLabel.text = L10n.createANewWallet
             navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
             navigationBar.autoPinEdge(toSuperviewEdge: .leading)
             navigationBar.autoPinEdge(toSuperviewEdge: .trailing)

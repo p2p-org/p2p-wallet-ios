@@ -41,7 +41,7 @@ extension RestoreWallet {
             // navigation bar
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton.onTap(self, action: #selector(back))
-            navigationBar.titleLabel.text = L10n.iVeAlreadyHadAWallet
+            navigationBar.titleLabel.text = L10n.iVeAlreadyHadAWallet.uppercaseFirst
             
             // content
             let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
