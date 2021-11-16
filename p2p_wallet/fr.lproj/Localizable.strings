@@ -595,3 +595,7 @@
 "Received %@" = "Reçu %@";
 "%@ → %@ swapped successfully" = "%@ → %@ échangé avec succès";
 "Let’s stay in touch" = "Restons en contact";
+"Do you want to allow P2P Wallet to use %@?" = "Voulez-vous autoriser P2P Wallet à utiliser %@ ?";
+"P2P Wallet uses %@ to restrict unauthorized users from accessing the app" = "P2P Wallet utilise %@ pour empêcher les utilisateurs non autorisés d'accéder à l'application";
+"Don’t Allow" = "Ne pas autoriser";
+"Allow" = "Permettre";

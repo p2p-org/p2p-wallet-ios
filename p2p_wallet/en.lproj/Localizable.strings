@@ -595,3 +595,7 @@
 "Received %@" = "Received %@";
 "%@ → %@ swapped successfully" = "%@ → %@ swapped successfully";
 "Let’s stay in touch" = "Let’s stay in touch";
+"Do you want to allow P2P Wallet to use %@?" = "Do you want to allow P2P Wallet to use %@?";
+"P2P Wallet uses %@ to restrict unauthorized users from accessing the app" = "P2P Wallet uses %@ to restrict unauthorized users from accessing the app";
+"Don’t Allow" = "Don’t Allow";
+"Allow" = "Allow";
