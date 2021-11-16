@@ -11,6 +11,14 @@ class RecoveryEnterSeedsViewController: WLEnterPhrasesVC {
     // MARK: - Dependencies
     @Injected private var analyticsManager: AnalyticsManagerType
     
+    // MARK: - Subviews
+    lazy var navigationBar: WLNavigationBar = {
+        let navigationBar = WLNavigationBar(forAutoLayout: ())
+        navigationBar.titleLabel.text = L10n.chooseYourWallet
+        navigationBar.backButton.onTap(self, action: #selector(back))
+        return navigationBar
+    }()
+    
     // MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,6 +27,10 @@ class RecoveryEnterSeedsViewController: WLEnterPhrasesVC {
     
     override func setUp() {
         super.setUp()
+        
+        view.addSubview(navigationBar)
+        navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+        
         var index = 0
         stackView.insertArrangedSubviews(at: &index) {
             UIStackView(axis: .horizontal, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
@@ -28,6 +40,9 @@ class RecoveryEnterSeedsViewController: WLEnterPhrasesVC {
                 .padding(.init(all: 20))
             UIView.separator(height: 1, color: .separator)
         }
+        
+        scrollView.constraintToSuperviewWithAttribute(.top)?.isActive = false
+        scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar)
     }
     
     override func buttonPasteDidTouch() {
