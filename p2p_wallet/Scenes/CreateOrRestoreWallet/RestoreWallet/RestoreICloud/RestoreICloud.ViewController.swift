@@ -22,14 +22,11 @@ extension RestoreICloud {
         private let accountsListViewModel = AccountsListViewModel()
         
         // MARK: - Subviews
-        private lazy var headerView = UIStackView(axis: .vertical, spacing: 20, alignment: .leading, distribution: .fill) {
-            UIImageView(width: 36, height: 36, image: .backSquare)
-                .onTap(self, action: #selector(back))
-            BEStackViewSpacing(30)
-            UILabel(text: L10n.chooseWallet, textSize: 27, weight: .bold, numberOfLines: 0)
-            BEStackViewSpacing(8)
-            UILabel(text: L10n.multipleWalletsFound, textColor: .textSecondary, numberOfLines: 0)
-        }
+        lazy var navigationBar: WLNavigationBar = {
+            let navigationBar = WLNavigationBar(forAutoLayout: ())
+            navigationBar.titleLabel.text = L10n.chooseYourWallet
+            return navigationBar
+        }()
         
         private lazy var walletsCollectionView: BEStaticSectionsCollectionView = .init(
             sections: [
@@ -49,23 +46,32 @@ extension RestoreICloud {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            view.addSubview(headerView)
-            headerView.autoPinEdgesToSuperviewEdges(with: .init(all: 20), excludingEdge: .bottom)
+            
+            view.addSubview(navigationBar)
+            navigationBar.titleLabel.text = L10n.createANewWallet
+            navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
+            navigationBar.autoPinEdge(toSuperviewEdge: .leading)
+            navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
             
             view.addSubview(walletsCollectionView)
-            walletsCollectionView.autoPinEdge(.top, to: .bottom, of: headerView, withOffset: 30)
+            walletsCollectionView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 0)
             walletsCollectionView.autoPinEdge(toSuperviewSafeArea: .leading)
             walletsCollectionView.autoPinEdge(toSuperviewSafeArea: .trailing)
             walletsCollectionView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 30)
             
             walletsCollectionView.delegate = self
         }
+        
+        override func bind() {
+            super.bind()
+            navigationBar.backButton.onTap(self, action: #selector(back))
+        }
     }
 }
 
 extension RestoreICloud.ViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
-        guard let account = item as? RestoreICloud.ParsedAccount else {return}
+        guard let account = item as? RestoreICloud.ParsedAccount else { return }
         viewModel.handleICloudAccount(account.account)
     }
 }
