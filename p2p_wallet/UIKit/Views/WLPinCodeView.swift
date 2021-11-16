@@ -248,7 +248,7 @@ private class _PinCodeDotsView: BEView {
     }
     
     func pincodeFailed() {
-        indicatorView.backgroundColor = .alert
+        indicatorView.backgroundColor = .f88686
         dots.forEach {$0.backgroundColor = .ff3b30}
     }
     
