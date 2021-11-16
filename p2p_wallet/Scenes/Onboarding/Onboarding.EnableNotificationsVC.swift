@@ -6,28 +6,42 @@
 //
 
 import Foundation
+import UIKit
 
 extension Onboarding {
-    class EnableNotificationsVC: BaseOnboardingVC {
+    class EnableNotificationsVC: BaseVC {
         // MARK: - Dependencies
         @Injected private var viewModel: OnboardingViewModelType
         
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            acceptButton.setTitle(L10n.allowNotifications, for: .normal)
+            // navigation bar
+            let navigationBar = WLNavigationBar(forAutoLayout: ())
+            navigationBar.backButton.isHidden = true
             
-            firstDescriptionLabel.text = L10n.weSuggestYouAlsoToEnablePushNotifications
-            secondDescriptionLabel.isHidden = true
+            let skipButton = UIButton(label: L10n.skip, textColor: .h5887ff)
+                .onTap(self, action: #selector(buttonSkipDidTouch))
+            navigationBar.rightItems.addArrangedSubview(skipButton)
             
-            imageView.image = .turnOnNotification
+            view.addSubview(navigationBar)
+            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+            
+            // explanation view
+            let explanationView = UILabel(
+                text: L10n.allowPushNotificationsSoYouDonTMissAnyImportantUpdatesOnYourAccount,
+                textSize: 15,
+                textColor: .black,
+                numberOfLines: 0
+            )
+                .padding(.init(all: 18), backgroundColor: .fafafc, cornerRadius: 12)
         }
         
-        override func buttonAcceptDidTouch() {
+        @objc private func buttonAcceptDidTouch() {
             viewModel.requestRemoteNotifications()
         }
         
-        override func buttonDoThisLaterDidTouch() {
+        @objc private func buttonSkipDidTouch() {
             viewModel.markNotificationsAsSet()
         }
     }
