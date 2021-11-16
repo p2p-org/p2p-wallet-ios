@@ -183,7 +183,7 @@ final class WLPinCodeView: BEView {
         if let maxAttemptsCount = maxAttemptsCount {
             errorLabel.text = L10n.wrongPinCodeDAttemptSLeft(maxAttemptsCount - attemptsCount)
         } else {
-            errorLabel.text = L10n.passcodesDoNotMatch
+            errorLabel.text = L10n.PINDoesnTMatch.tryAgain
         }
         
         if exceededMaxAttempts {
@@ -248,7 +248,7 @@ private class _PinCodeDotsView: BEView {
     }
     
     func pincodeFailed() {
-        indicatorView.backgroundColor = .alert
+        indicatorView.backgroundColor = .f88686
         dots.forEach {$0.backgroundColor = .ff3b30}
     }
     
