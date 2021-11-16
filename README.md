@@ -51,11 +51,11 @@ git submodule update --init --recursive
 git config core.hooksPath .githooks
 chmod -R +x .githooks
 ```
+- Run `pod install`
 - Run `swiftgen` for the first time
 ```zsh
 Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml
 ```
-- Run `pod install`
 
 ## Contribute
 
