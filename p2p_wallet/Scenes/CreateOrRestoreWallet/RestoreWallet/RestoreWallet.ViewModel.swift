@@ -16,7 +16,7 @@ protocol RestoreWalletViewModelType: ReserveNameHandler {
     var errorSignal: Signal<String> { get }
     var finishedSignal: Signal<Void> { get }
     
-    func handlePhrases(_ phrases: [String])
+    func handlePhrases(_ phrases: [String], derivablePath: SolanaSDK.DerivablePath?)
     func handleICloudAccount(_ account: Account)
     func restoreFromICloud()
     func restoreManually()
@@ -78,7 +78,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         
         // if there is only 1 account saved in iCloud
         if accounts.count == 1 {
-            handlePhrases(accounts[0].phrase.components(separatedBy: " "))
+            handlePhrases(accounts[0].phrase.components(separatedBy: " "), derivablePath: accounts[0].derivablePath)
             return
         }
         
@@ -91,9 +91,13 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         navigationSubject.accept(.enterPhrases)
     }
     
-    func handlePhrases(_ phrases: [String]) {
+    func handlePhrases(_ phrases: [String], derivablePath: SolanaSDK.DerivablePath?) {
         self.phrases = phrases
-        derivablePathDidSelect(.default)
+        if let derivablePath = derivablePath {
+            derivablePathDidSelect(derivablePath)
+        } else {
+            navigationSubject.accept(.derivableAccounts(phrases: phrases))
+        }
     }
     
     func handleICloudAccount(_ account: Account) {

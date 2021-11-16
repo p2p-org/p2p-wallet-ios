@@ -68,7 +68,9 @@ extension RestoreWallet {
                 .disposed(by: disposeBag)
             
             viewModel.isLoadingDriver
-                .drive(with: self) { $1 ? $0.showIndetermineHud() : $0.hideHud() }
+                .drive(onNext: {
+                    $0 ? UIApplication.shared.showIndetermineHud(): UIApplication.shared.hideHud()
+                })
                 .disposed(by: disposeBag)
             
             viewModel.errorSignal
@@ -88,7 +90,7 @@ extension RestoreWallet {
                 let vc = RecoveryEnterSeedsViewController()
                 vc.dismissAfterCompletion = false
                 vc.completion = { [weak self] phrases in
-                    self?.viewModel.handlePhrases(phrases)
+                    self?.viewModel.handlePhrases(phrases, derivablePath: nil)
                 }
                 
                 navigationController?.pushViewController(vc, animated: true)

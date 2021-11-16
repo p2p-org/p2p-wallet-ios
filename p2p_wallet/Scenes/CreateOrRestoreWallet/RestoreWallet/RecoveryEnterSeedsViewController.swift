@@ -14,7 +14,7 @@ class RecoveryEnterSeedsViewController: WLEnterPhrasesVC {
     // MARK: - Subviews
     lazy var navigationBar: WLNavigationBar = {
         let navigationBar = WLNavigationBar(forAutoLayout: ())
-        navigationBar.titleLabel.text = L10n.chooseYourWallet
+        navigationBar.titleLabel.text = L10n.securityKey
         navigationBar.backButton.onTap(self, action: #selector(back))
         return navigationBar
     }()
@@ -30,16 +30,6 @@ class RecoveryEnterSeedsViewController: WLEnterPhrasesVC {
         
         view.addSubview(navigationBar)
         navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-        
-        var index = 0
-        stackView.insertArrangedSubviews(at: &index) {
-            UIStackView(axis: .horizontal, spacing: 16, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white),
-                UILabel(text: L10n.securityKey.uppercaseFirst, textSize: 21, weight: .semibold)
-            ])
-                .padding(.init(all: 20))
-            UIView.separator(height: 1, color: .separator)
-        }
         
         scrollView.constraintToSuperviewWithAttribute(.top)?.isActive = false
         scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar)
