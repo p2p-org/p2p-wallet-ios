@@ -14,7 +14,7 @@ class RecoveryEnterSeedsViewController: WLEnterPhrasesVC {
     // MARK: - Subviews
     lazy var navigationBar: WLNavigationBar = {
         let navigationBar = WLNavigationBar(forAutoLayout: ())
-        navigationBar.titleLabel.text = L10n.securityKey
+        navigationBar.titleLabel.text = L10n.securityKey.uppercaseFirst
         navigationBar.backButton.onTap(self, action: #selector(back))
         return navigationBar
     }()
