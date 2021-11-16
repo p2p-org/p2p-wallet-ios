@@ -183,7 +183,7 @@ final class WLPinCodeView: BEView {
         if let maxAttemptsCount = maxAttemptsCount {
             errorLabel.text = L10n.wrongPinCodeDAttemptSLeft(maxAttemptsCount - attemptsCount)
         } else {
-            errorLabel.text = L10n.passcodesDoNotMatch
+            errorLabel.text = L10n.PINDoesnTMatch.tryAgain
         }
         
         if exceededMaxAttempts {

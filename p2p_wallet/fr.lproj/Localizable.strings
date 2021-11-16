@@ -583,3 +583,5 @@
 "Go back" = "Retourner";
 "Set up a wallet PIN" = "Configurer un code PIN de portefeuille";
 "Confirm your wallet PIN" = "Confirmez le code PIN de votre portefeuille";
+"Choose your wallet" = "Choisissez votre portefeuille";
+"PIN doesn’t match. Try again" = "Le code PIN ne correspond pas. Réessayer";
