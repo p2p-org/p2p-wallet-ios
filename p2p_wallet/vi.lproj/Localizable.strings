@@ -583,3 +583,5 @@
 "Go back" = "Quay lại";
 "Set up a wallet PIN" = "Thiết lập mã PIN cho ví";
 "Confirm your wallet PIN" = "Xác nhận mã PIN cho ví của bạn";
+"Choose your wallet" = "Chọn ví của bạn";
+"PIN doesn’t match. Try again" = "Mã PIN không khớp. Thử lại";
