@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Group 877.png",
+      "filename" : "wallet-rounded-icon.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Group 877@2x.png",
+      "filename" : "wallet-rounded-icon@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Group 877@3x.png",
+      "filename" : "wallet-rounded-icon@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

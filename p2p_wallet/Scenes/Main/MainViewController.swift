@@ -107,13 +107,31 @@ class MainViewController: BaseVC {
             }
         }
         
-        // present on top
-        let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-        if var topController = keyWindow?.rootViewController {
-            while let presentedViewController = topController.presentedViewController {
-                topController = presentedViewController
-            }
-            topController.present(localAuthVC!, animated: true, completion: nil)
+        presentLocalAuth()
+    }
+
+    private func presentLocalAuth() {
+        guard let localAuthVC = localAuthVC else {
+            return assertionFailure("There is no local auth controller")
         }
+
+        let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+        let topController = keyWindow?.rootViewController.map(findLastViewController)
+
+        if topController is UIAlertController {
+            let presenting = topController?.presentingViewController
+
+            topController?.dismiss(animated: false) { [weak presenting, weak localAuthVC] in
+                guard let localAuthVC = localAuthVC else { return }
+
+                presenting?.present(localAuthVC, animated: true)
+            }
+        } else {
+            topController?.present(localAuthVC, animated: true)
+        }
+    }
+
+    private func findLastViewController(in controller: UIViewController) -> UIViewController {
+        controller.presentedViewController ?? controller
     }
 }
