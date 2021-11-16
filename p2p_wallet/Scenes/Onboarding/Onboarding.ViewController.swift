@@ -47,8 +47,7 @@ extension Onboarding {
                 }
                 childNavigationController.viewControllers = [createPincodeVC]
             case .setUpBiometryAuthentication:
-                let biometryVC = EnableBiometryVC()
-                childNavigationController.pushViewController(biometryVC, animated: true)
+                askForEnablingBiometry()
             case .setUpNotifications:
                 let enableNotificationsVC = EnableNotificationsVC()
                 childNavigationController.pushViewController(enableNotificationsVC, animated: true)
@@ -57,6 +56,30 @@ extension Onboarding {
             case .none:
                 break
             }
+        }
+        
+        // MARK: - Actions
+        private func askForEnablingBiometry() {
+            // form actions
+            let allowAction = UIAlertAction(title: L10n.allow, style: .default) {[weak self] _ in
+                self?.viewModel.authenticateAndEnableBiometry(errorHandler: nil)
+            }
+            allowAction.setValue(UIColor.h5887ff, forKey: "titleTextColor")
+            
+            let cancelAction = UIAlertAction(title: L10n.donTAllow, style: .destructive) { [weak self] _ in
+                self?.viewModel.enableBiometryLater()
+            }
+            
+            // show alert
+            let biometryType = viewModel.getBiometryType().stringValue
+            showAlert(
+                title: L10n.doYouWantToAllowP2PWalletToUse(biometryType),
+                message: L10n.p2PWalletUsesToRestrictUnauthorizedUsersFromAccessingTheApp(biometryType),
+                actions: [
+                    cancelAction,
+                    allowAction
+                ]
+            )
         }
     }
 }

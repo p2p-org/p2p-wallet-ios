@@ -595,3 +595,7 @@
 "Received %@" = "Đã nhận %@";
 "%@ → %@ swapped successfully" = "%@ → %@ được hoán đổi thành công";
 "Let’s stay in touch" = "Hãy giữ liên lạc";
+"Do you want to allow P2P Wallet to use %@?" = "Bạn có muốn cho phép Ví P2P sử dụng %@ không?";
+"P2P Wallet uses %@ to restrict unauthorized users from accessing the app" = "Ví P2P sử dụng %@ để hạn chế người dùng trái phép truy cập vào ứng dụng";
+"Don’t Allow" = "Không cho phép";
+"Allow" = "Cho phép";

@@ -80,6 +80,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
                     self?.setEnableBiometry(true)
                 } else {
                     errorHandler?(authenticationError ?? SolanaSDK.Error.unknown)
+                    self?.enableBiometryLater()
                 }
             }
         }
@@ -133,6 +134,10 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
                 analyticsManager.log(event: .setupFaceidOpen)
             } else {
                 enableBiometryLater()
+            }
+            
+            if let error = error {
+                debugPrint("deviceOwnerAuthenticationWithBiometrics error: \(error)")
             }
             return
         }

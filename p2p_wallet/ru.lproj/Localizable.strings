@@ -595,3 +595,7 @@
 "Received %@" = "Получено %@";
 "%@ → %@ swapped successfully" = "%@ → %@ успешно заменен";
 "Let’s stay in touch" = "Давайте оставаться на связи";
+"Do you want to allow P2P Wallet to use %@?" = "Вы хотите разрешить P2P-кошельку использовать %@?";
+"P2P Wallet uses %@ to restrict unauthorized users from accessing the app" = "P2P Wallet использует %@ для ограничения доступа неавторизованных пользователей к приложению.";
+"Don’t Allow" = "Не разрешать";
+"Allow" = "Разрешать";
