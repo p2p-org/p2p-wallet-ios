@@ -87,7 +87,7 @@ extension Onboarding {
             view.stackView.axis = .horizontal
             view.stackView.spacing = 10
             view.stackView.alignment = .center
-            let imageView = UIImageView(width: 40, height: 40, image: image)
+            let imageView = UIImageView(width: 40, height: 40, cornerRadius: 10, image: image)
             view.stackView.addArrangedSubviews {
                 imageView
                 UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
@@ -100,7 +100,7 @@ extension Onboarding {
                 }
             }
             if let subimage = subimage {
-                let subImageView = UIImageView(width: 16, height: 16, image: subimage)
+                let subImageView = UIImageView(width: 16, height: 16, cornerRadius: 2, image: subimage)
                 view.addSubview(subImageView)
                 subImageView.autoPinEdge(.trailing, to: .trailing, of: imageView, withOffset: 5.33)
                 subImageView.autoPinEdge(.bottom, to: .bottom, of: imageView, withOffset: 1.33)
