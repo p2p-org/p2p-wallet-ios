@@ -68,6 +68,14 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     
     // MARK: - Actions
     func restoreFromICloud() {
+        Device.requiredOwner { [weak self] in
+            self?._restoreFromIcloud()
+        } onFailure: { [weak self] error in
+            self?.errorSubject.accept(error?.localizedDescription ?? L10n.error)
+        }
+    }
+    
+    private func _restoreFromIcloud() {
         guard let accounts = accountStorage.accountFromICloud(), accounts.count > 0
             else {
             isRestorableUsingIcloudSubject.accept(false)

@@ -180,6 +180,14 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func backupUsingICloud() {
+        Device.requiredOwner { [weak self] in
+            self?._backupUsingICloud()
+        } onFailure: { error in
+            UIApplication.shared.showToast(message: error?.localizedDescription ?? L10n.error)
+        }
+    }
+    
+    private func _backupUsingICloud() {
         guard let account = accountStorage.account?.phrase else {return}
         authenticationHandler.authenticate(
             presentationStyle: .init(
@@ -199,6 +207,7 @@ extension Settings.ViewModel: SettingsViewModelType {
             )
         )
     }
+    
     
     func backupManually() {
         if didBackupSubject.value {
