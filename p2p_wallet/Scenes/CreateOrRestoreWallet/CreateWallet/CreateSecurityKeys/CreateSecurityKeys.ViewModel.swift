@@ -75,6 +75,14 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
     
     @objc func saveToICloud() {
+        Device.requiredOwner { [weak self] in
+            self?._saveToIcloud()
+        } onFailure: { [weak self] error in
+            self?.errorSubject.accept(error?.localizedDescription ?? L10n.error)
+        }
+    }
+    
+    private func _saveToIcloud() {
         analyticsManager.log(event: .createWalletBackupToIcloudClick)
         let result = accountStorage.saveToICloud(
             account: .init(
