@@ -61,9 +61,12 @@ class KeyView: BEView {
     }
     
     private func update() {
+        let textColor = style == .selected ? UIColor.textWhite : UIColor.textBlack
+        let indexColor = style == .selected ? UIColor.textWhite : .h8e8e93
+        
         var attrText = NSMutableAttributedString()
-        if !hideIndex { attrText = attrText.text("\(index). ", size: 15, weight: .medium, color: .h8e8e93) }
-        attrText = attrText.text("\(key)", size: 15, color: .textBlack)
+        if !hideIndex { attrText = attrText.text("\(index). ", size: 15, weight: .medium, color: indexColor) }
+        attrText = attrText.text("\(key)", size: 15, color: textColor)
         
         textLabel.attributedText = attrText
         
