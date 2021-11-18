@@ -10,43 +10,51 @@ import BECollectionView
 
 extension RestoreICloud {
     class Cell: BaseCollectionViewCell, BECollectionViewCell {
-        override var padding: UIEdgeInsets {.init(x: 20, y: 12)}
+        override var padding: UIEdgeInsets {.init(x: 20, y: 9)}
         
-        lazy var topLabel = UILabel(text: "<top>", textSize: 13, weight: .medium, textColor: .textSecondary)
-        lazy var bottomLabel = UILabel(text: "<bottom>", textSize: 15, weight: .medium)
+        lazy var username = UILabel(text: "<top>", textSize: 13, weight: .medium, textColor: .textSecondary)
+        lazy var privateKey = UILabel(text: "<bottom>", textSize: 15, weight: .medium)
         
         override func commonInit() {
             super.commonInit()
+    
+            stackView.layer.borderWidth = 1
+            stackView.layer.borderColor = UIColor.f2f2f7.cgColor
+            stackView.layer.cornerRadius = 12
+            stackView.layer.applyShadow(color: UIColor.black, alpha: 0.05, x: 0, y: 1, blur: 8, spread: 0)
+    
+            stackView.layoutMargins = UIEdgeInsets(top: 15, left: 18, bottom: 15, right: 25)
+            stackView.isLayoutMarginsRelativeArrangement = true
             stackView.axis = .horizontal
             stackView.alignment = .center
             
+            let icon = UIImageView(image: .walletRoundedIcon)
+            icon.autoSetDimensions(to: .init(width: 44, height: 44))
+            
             stackView.addArrangedSubviews {
+                icon
                 UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
-                    topLabel
-                    bottomLabel
+                    privateKey
+                    username
                 }
                 UIView.defaultNextArrow()
             }
             
-            stackView.autoSetDimension(.height, toSize: 48)
-            
-            let separator = UIView.defaultSeparator()
-            contentView.addSubview(separator)
-            separator.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 0), excludingEdge: .top)
+            stackView.autoSetDimension(.height, toSize: 72)
         }
         
         func setUp(with item: AnyHashable?) {
             guard let account = item as? ParsedAccount else {return}
             let pubkey = account.parsedAccount.publicKey.base58EncodedString.truncatingMiddle(numOfSymbolsRevealed: 12, numOfSymbolsRevealedInSuffix: 4)
             
-            topLabel.isHidden = false
+            username.isHidden = false
             
             if let name = account.account.name {
-                topLabel.text = pubkey
-                bottomLabel.text = name.withNameServiceDomain()
+                username.text = pubkey
+                privateKey.text = name.withNameServiceDomain()
             } else {
-                topLabel.isHidden = true
-                bottomLabel.text = pubkey
+                username.isHidden = true
+                privateKey.text = pubkey
             }
         }
     }

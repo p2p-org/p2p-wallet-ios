@@ -29,7 +29,7 @@ extension UIView {
             iconView = customView
         } else if let image = image {
             iconView = UIImageView(height: 349.adaptiveHeight, image: image)
-            iconView!.autoAdjustWidthHeightRatio(image.size.width/image.size.height)
+            iconView!.autoAdjustWidthHeightRatio(image.size.width / image.size.height)
         }
         
         if let iconView = iconView {

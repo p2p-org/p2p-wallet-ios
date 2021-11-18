@@ -22,6 +22,8 @@ extension Home {
         // MARK: - Subviews
 
         private let bannersCollectionView: UICollectionView
+        
+        private let pricesLoadingIndicatorView = WLStatusIndicatorView(forAutoLayout: ())
 
         private lazy var collectionView: WalletsCollectionView = {
             let collectionView = WalletsCollectionView(
@@ -118,6 +120,8 @@ extension Home {
                     .padding(.init(x: 24, y: 16))
                 bannersCollectionView
                 BEStackViewSpacing(15)
+                pricesLoadingIndicatorView
+                BEStackViewSpacing(8)
                 balancesOverviewView
                     .padding(.init(x: 20, y: 0))
                 
@@ -149,6 +153,13 @@ extension Home {
                     self?.bannersCollectionView.reloadData()
                 })
                 .disposed(by: disposeBag)
+            
+            viewModel.currentPricesDriver
+                .map {$0.state}
+                .drive(onNext: {[weak self] state in
+                    self?.configureStatusIndicatorView(state: state)
+                })
+                .disposed(by: disposeBag)
         }
 
         private func setBannersCollectionViewIsHidden(_ isHidden: Bool) {
@@ -163,6 +174,37 @@ extension Home {
             bannersCollectionView.backgroundColor = .clear
 
             bannersCollectionView.showsHorizontalScrollIndicator = false
+        }
+        
+        private func configureStatusIndicatorView(state: LoadableState) {
+            switch state {
+            case .notRequested:
+                pricesLoadingIndicatorView.isHidden = true
+            case .loading:
+                pricesLoadingIndicatorView.setUp(state: .loading, text: L10n.updatingPrices)
+                setStatusIndicatorView(isHidden: false)
+            case .loaded:
+                pricesLoadingIndicatorView.setUp(state: .success, text: L10n.pricesUpdated)
+                setStatusIndicatorView(isHidden: false)
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
+                    self?.setStatusIndicatorView(isHidden: true)
+                }
+            case .error:
+                pricesLoadingIndicatorView.setUp(state: .error, text: L10n.errorWhenUpdatingPrices)
+                
+                setStatusIndicatorView(isHidden: false)
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
+                    self?.setStatusIndicatorView(isHidden: true)
+                }
+            }
+        }
+        
+        private func setStatusIndicatorView(isHidden: Bool) {
+            UIView.animate(withDuration: 0.3) {
+                self.pricesLoadingIndicatorView.isHidden = isHidden
+            }
         }
         
         // MARK: - Actions

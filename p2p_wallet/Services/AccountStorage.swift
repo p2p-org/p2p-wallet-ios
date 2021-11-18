@@ -48,10 +48,9 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameSt
         }
         
         if let pincodeKey = Defaults.keychainPincodeKey,
-              let phrasesKey = Defaults.keychainPhrasesKey,
-              let derivableTypeKey = Defaults.keychainDerivableTypeKey,
-              let walletIndexKey = Defaults.keychainWalletIndexKey
-        {
+           let phrasesKey = Defaults.keychainPhrasesKey,
+           let derivableTypeKey = Defaults.keychainDerivableTypeKey,
+           let walletIndexKey = Defaults.keychainWalletIndexKey {
             self.pincodeKey = pincodeKey
             self.phrasesKey = phrasesKey
             self.derivableTypeKey = derivableTypeKey
@@ -98,7 +97,7 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameSt
     func getDerivablePath() -> SolanaSDK.DerivablePath? {
         guard let derivableTypeRaw = keychain.get(derivableTypeKey),
               let derivableType = SolanaSDK.DerivablePath.DerivableType(rawValue: derivableTypeRaw)
-        else {return nil}
+            else { return nil }
         
         let walletIndexRaw = keychain.get(walletIndexKey)
         let walletIndex = Int(walletIndexRaw ?? "0")
@@ -112,7 +111,7 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameSt
         }
         
         guard let phrases = keychain.get(phrasesKey)?.components(separatedBy: " ")
-        else {
+            else {
             return nil
         }
         let derivableTypeRaw = keychain.get(derivableTypeKey) ?? ""
@@ -147,20 +146,20 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameSt
     }
     
     func saveNameToICloudIfAccountSaved() {
-        if let account = accountFromICloud()?.first(where: {$0.phrase.components(separatedBy: " ") == phrases}) {
+        if let account = accountFromICloud()?.first(where: { $0.phrase.components(separatedBy: " ") == phrases }) {
             let account = Account(
                 name: getName(),
                 phrase: account.phrase,
                 derivablePath: account.derivablePath
             )
-            saveToICloud(account: account)
+            _ = saveToICloud(account: account)
         }
     }
     
     // MARK: - Helpers
     var didBackupUsingIcloud: Bool {
-        guard let phrases = account?.phrase.joined(separator: " ") else {return false}
-        return accountFromICloud()?.contains(where: {$0.phrase == phrases}) == true
+        guard let phrases = account?.phrase.joined(separator: " ") else { return false }
+        return accountFromICloud()?.contains(where: { $0.phrase == phrases }) == true
     }
     
     var phrases: [String]? {
@@ -182,7 +181,7 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameSt
         
         if var currentAccounts = accountFromICloud() {
             // if account exists
-            if let index = currentAccounts.firstIndex(where: {$0.phrase == account.phrase}) {
+            if let index = currentAccounts.firstIndex(where: { $0.phrase == account.phrase }) {
                 currentAccounts[index] = account
             }
             // new account
@@ -200,7 +199,7 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameSt
     }
     
     func accountFromICloud() -> [Account]? {
-        guard let data = keychain.getData(iCloudAccountsKey) else {return nil}
+        guard let data = keychain.getData(iCloudAccountsKey) else { return nil }
         return try? JSONDecoder().decode([Account].self, from: data)
     }
     
