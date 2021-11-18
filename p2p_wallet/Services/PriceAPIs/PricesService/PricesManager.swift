@@ -9,11 +9,6 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol PricesStorage {
-    func retrievePrices() -> [String: CurrentPrice]
-    func savePrices(_ prices: [String: CurrentPrice])
-}
-
 class PricesManager {
     enum Error: Swift.Error {
         case notFound
