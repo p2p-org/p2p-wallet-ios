@@ -347,6 +347,7 @@
 		BCB2232225412AF8002D997F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232125412AF8002D997F /* Assets.xcassets */; };
 		BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232325412AF9002D997F /* LaunchScreen.storyboard */; };
 		BCB2867D2745F4D10074E1D5 /* PricesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2867C2745F4D10074E1D5 /* PricesStorage.swift */; };
+		BCB2867F2745F6330074E1D5 /* PricesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2867E2745F6330074E1D5 /* PricesService.swift */; };
 		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58379255D29C500B10F65 /* WLBottomSheet.swift */; };
 		BCB7C7C62665EEC400FEC68E /* SendToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C22665EEC400FEC68E /* SendToken.swift */; };
@@ -785,6 +786,7 @@
 		BCB2232425412AF9002D997F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BCB2232625412AF9002D997F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCB2867C2745F4D10074E1D5 /* PricesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricesStorage.swift; sourceTree = "<group>"; };
+		BCB2867E2745F6330074E1D5 /* PricesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricesService.swift; sourceTree = "<group>"; };
 		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58379255D29C500B10F65 /* WLBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBottomSheet.swift; sourceTree = "<group>"; };
 		BCB7C7C22665EEC400FEC68E /* SendToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.swift; sourceTree = "<group>"; };
@@ -1450,6 +1452,7 @@
 		BC7BCB6F256274B90018DECA /* PricesService */ = {
 			isa = PBXGroup;
 			children = (
+				BCB2867E2745F6330074E1D5 /* PricesService.swift */,
 				BCB2867C2745F4D10074E1D5 /* PricesStorage.swift */,
 				BC5ED757256269FE0030572D /* PriceFetcher.swift */,
 				BC5ED7522562687F0030572D /* PricesManager.swift */,
@@ -2550,6 +2553,7 @@
 				BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */,
 				41D7F6B2273910F900453B61 /* Home.BannersCollectionViewDataSource.swift in Sources */,
 				BCB7C7C72665EEC400FEC68E /* SendToken.ViewModel.swift in Sources */,
+				BCB2867F2745F6330074E1D5 /* PricesService.swift in Sources */,
 				BCC1F210269EC7AD003DD648 /* WalletsViewModel+WLNotificationsRepository.swift in Sources */,
 				BC19DF592701BC9100A3A8D8 /* WLDefaultOptionView.swift in Sources */,
 				BCFC768825E2EAB800FBE148 /* MainViewController.swift in Sources */,
