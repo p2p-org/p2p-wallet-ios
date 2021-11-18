@@ -35,9 +35,12 @@ protocol AccountStorageType: SolanaSDKAccountStorage {
     func clearAccount()
 }
 
-protocol StorageType: ICloudStorageType, NameStorageType, PincodeStorageType, AccountStorageType {}
+protocol PincodeSeedPhrasesStorage: PincodeStorageType {
+    var phrases: [String]? {get}
+    func save(_ pinCode: String)
+}
 
-class KeychainAccountStorage: StorageType {
+class KeychainStorage {
     // MARK: - Constants
     private let pincodeKey: String
     private let phrasesKey: String
@@ -112,7 +115,7 @@ class KeychainAccountStorage: StorageType {
     }
 }
 
-extension KeychainAccountStorage: ICloudStorageType {
+extension KeychainStorage: ICloudStorageType {
     func saveToICloud(account: Account) -> Bool {
         var accountsToSave = [account]
         
@@ -146,7 +149,7 @@ extension KeychainAccountStorage: ICloudStorageType {
     }
 }
 
-extension KeychainAccountStorage: NameStorageType {
+extension KeychainStorage: NameStorageType {
     func save(name: String) {
         keychain.set(name, forKey: nameKey)
         saveNameToICloudIfAccountSaved()
@@ -168,7 +171,7 @@ extension KeychainAccountStorage: NameStorageType {
     }
 }
 
-extension KeychainAccountStorage: AccountStorageType {
+extension KeychainStorage: AccountStorageType {
     var account: SolanaSDK.Account? {
         if let account = _account {
             return account
@@ -244,7 +247,7 @@ extension KeychainAccountStorage: AccountStorageType {
     }
 }
 
-extension KeychainAccountStorage: PincodeStorageType {
+extension KeychainStorage: PincodeStorageType {
     func save(_ pinCode: String) {
         keychain.set(pinCode, forKey: pincodeKey)
     }
@@ -253,3 +256,5 @@ extension KeychainAccountStorage: PincodeStorageType {
         keychain.get(pincodeKey)
     }
 }
+
+extension KeychainStorage: PincodeSeedPhrasesStorage {}

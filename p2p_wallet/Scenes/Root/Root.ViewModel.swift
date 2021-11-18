@@ -28,7 +28,7 @@ protocol CreateOrRestoreWalletHandler {
 extension Root {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var storage: StorageType
+        @Injected private var storage: AccountStorageType & PincodeStorageType & NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
