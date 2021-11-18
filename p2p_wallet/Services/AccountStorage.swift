@@ -9,7 +9,7 @@ import Foundation
 import KeychainSwift
 import SolanaSwift
 
-protocol ICloudStorageType {
+protocol ICloudStorageType: AnyObject {
     func saveToICloud(account: Account) -> Bool
     func accountFromICloud() -> [Account]?
     var didBackupUsingIcloud: Bool {get}
@@ -35,7 +35,9 @@ protocol AccountStorageType: SolanaSDKAccountStorage {
     func clearAccount()
 }
 
-class KeychainAccountStorage: SolanaSDKAccountStorage {
+protocol StorageType: ICloudStorageType, NameStorageType, PincodeStorageType, AccountStorageType {}
+
+class KeychainAccountStorage: StorageType {
     // MARK: - Constants
     private let pincodeKey: String
     private let phrasesKey: String
