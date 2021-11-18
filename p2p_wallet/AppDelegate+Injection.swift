@@ -99,6 +99,14 @@ extension Resolver: ResolverRegistering {
             .implements(MainViewModelType.self)
             .implements(AuthenticationHandler.self)
             .scope(.shared)
+
+        // MARK: - EnterSeedPhrase
+        register { EnterSeed.ViewModel() }
+            .implements(EnterSeedViewModelType.self)
+            .scope(.unique)
+        register { EnterSeedInfo.ViewModel() }
+            .implements(EnterSeedInfoViewModelType.self)
+            .scope(.unique)
     }
 }
 

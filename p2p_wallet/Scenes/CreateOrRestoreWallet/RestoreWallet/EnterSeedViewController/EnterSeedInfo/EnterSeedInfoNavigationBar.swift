@@ -1,0 +1,38 @@
+//
+//  EnterSeedInfoNavigationBar.swift
+//  p2p_wallet
+//
+//  Created by Andrew Vasiliev on 18.11.2021.
+//
+
+import UIKit
+
+final class EnterSeedInfoNavigationBar: WLNavigationBar {
+    private let doneHandler: () -> Void
+
+    init(doneHandler: @escaping () -> Void) {
+        self.doneHandler = doneHandler
+
+        super.init(frame: .zero)
+
+        leftItems.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
+        configureSelf()
+    }
+
+    private func configureSelf() {
+        titleLabel.text = L10n.whatIsASecurityKey
+        let infoButton = UIButton.init(
+            label: L10n.done,
+            labelFont: .systemFont(ofSize: 17, weight: .bold),
+            textColor: .h5887ff
+        )
+        infoButton.addTarget(self, action: #selector(done), for: .touchUpInside)
+        rightItems.addArrangedSubview(infoButton)
+    }
+
+    @objc
+    func done() {
+        doneHandler()
+    }
+}

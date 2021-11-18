@@ -127,13 +127,7 @@ class WLStepButton: BEView {
         stackView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 16, relation: .greaterThanOrEqual)
         
         // image
-        if let image = image {
-            imageView.isHidden = false
-            imageView.autoSetDimensions(to: imageSize)
-            imageView.image = image
-        } else {
-            imageView.isHidden = true
-        }
+        setImage(image: image, imageSize: imageSize)
         
         // text
         label.text = text
@@ -142,6 +136,21 @@ class WLStepButton: BEView {
     }
     
     // MARK: - Methods
+
+    func setImage(image: UIImage?, imageSize: CGSize) {
+        if let image = image {
+            imageView.isHidden = false
+            imageView.autoSetDimensions(to: imageSize)
+            imageView.image = image
+        } else {
+            imageView.isHidden = true
+        }
+    }
+
+    func setTitle(text: String?) {
+        label.text = text
+    }
+
     private func setUp() {
         // user interaction
         isUserInteractionEnabled = isEnabled

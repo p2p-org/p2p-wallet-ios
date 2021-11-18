@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import BEPureLayout
+import Resolver
 
 extension RestoreWallet {
     class ViewController: BaseVC {
@@ -89,34 +90,44 @@ extension RestoreWallet {
                 })
                 .disposed(by: disposeBag)
         }
-        
+
+        override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+            super.present(viewControllerToPresent, animated: flag, completion: completion)
+        }
+
         // MARK: - Navigation
         private func navigate(to scene: RestoreWallet.NavigatableScene?) {
-            guard let scene = scene else {return}
-            if childNavigationControllerVCWrapper.presentingViewController == nil {
-                present(childNavigationControllerVCWrapper, animated: true, completion: nil)
-            }
-            
             switch scene {
             case .enterPhrases:
-                let vc = RecoveryEnterSeedsViewController()
-                vc.dismissAfterCompletion = false
-                vc.completion = {[weak self] phrases in
-                    self?.viewModel.handlePhrases(phrases)
-                }
-                
-                childNavigationController.setViewControllers([vc], animated: false)
+                let vc = EnterSeed.ViewController(viewModel: Resolver.resolve())
+//                let vc = RecoveryEnterSeedsViewController()
+//                vc.dismissAfterCompletion = false
+//                vc.completion = {[weak self] phrases in
+//                    self?.viewModel.handlePhrases(phrases)
+//                }
+                show(vc, sender: nil)
             case .restoreFromICloud:
+                presentСhildNavigationController()
                 let vc = RestoreICloud.ViewController()
                 childNavigationController.setViewControllers([vc], animated: false)
             case .derivableAccounts(let phrases):
+                presentСhildNavigationController()
                 let viewModel = DerivableAccounts.ViewModel(phrases: phrases)
                 let vc = DerivableAccounts.ViewController(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
             case .reserveName(let owner):
+                presentСhildNavigationController()
                 let viewModel = ReserveName.ViewModel(owner: owner, handler: viewModel)
                 let vc = ReserveNameVC(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
+            case .none:
+                break
+            }
+        }
+
+        private func presentСhildNavigationController() {
+            if childNavigationControllerVCWrapper.presentingViewController == nil {
+                present(childNavigationControllerVCWrapper, animated: true, completion: nil)
             }
         }
         
