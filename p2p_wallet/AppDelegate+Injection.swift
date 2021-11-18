@@ -47,6 +47,14 @@ extension Resolver: ResolverRegistering {
         register { LocalizationManager() }
             .implements(LocalizationManagerType.self)
         
+        // MARK: - PricesService
+        register { UserDefaultsPricesStorage() }
+            .implements(PricesStorage.self)
+            .scope(.application)
+        register { CryptoComparePricesFetcher() }
+            .implements(PricesFetcher.self)
+            .scope(.application)
+        
         // MARK: - Root
         register {Root.ViewModel()}
             .implements(RootViewModelType.self)

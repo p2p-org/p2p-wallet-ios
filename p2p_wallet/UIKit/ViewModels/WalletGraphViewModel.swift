@@ -11,16 +11,16 @@ import BECollectionView
 
 class WalletGraphViewModel: BEListViewModel<PriceRecord> {
     let symbol: String
-    let pricesRepository: PricesRepository
+    let pricesService: PricesServiceType
     var period: Period = .last1h
     
-    init(symbol: String, pricesRepository: PricesRepository) {
+    init(symbol: String, pricesService: PricesServiceType) {
         self.symbol = symbol
-        self.pricesRepository = pricesRepository
+        self.pricesService = pricesService
         super.init()
     }
     
     override func createRequest() -> Single<[PriceRecord]> {
-        pricesRepository.fetchHistoricalPrice(for: symbol, period: period)
+        pricesService.fetchHistoricalPrice(for: symbol, period: period)
     }
 }
