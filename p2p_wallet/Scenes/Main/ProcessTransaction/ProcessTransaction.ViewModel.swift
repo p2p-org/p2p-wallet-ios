@@ -11,7 +11,7 @@ import RxCocoa
 
 protocol ProcessTransactionViewModelType {
     var transactionType: ProcessTransaction.TransactionType {get}
-    var pricesRepository: PricesRepository {get}
+    var pricesService: PricesServiceType {get}
     var reimbursedAmount: Double? {get}
     
     var navigatableSceneDriver: Driver<ProcessTransaction.NavigatableScene?> {get}
@@ -34,7 +34,7 @@ extension ProcessTransaction {
         
         // MARK: - Properties
         let transactionType: TransactionType
-        let pricesRepository: PricesRepository
+        let pricesService: PricesServiceType
         
         private let disposeBag = DisposeBag()
         private(set) var reimbursedAmount: Double?
@@ -50,7 +50,7 @@ extension ProcessTransaction {
             request: Single<ProcessTransactionResponseType>,
             transactionHandler: ProcessingTransactionsRepository,
             walletsRepository: WalletsRepository,
-            pricesRepository: PricesRepository,
+            pricesService: PricesServiceType,
             apiClient: ProcessTransactionAPIClient
         ) {
             self.transactionType = transactionType
@@ -58,7 +58,7 @@ extension ProcessTransaction {
             self.transactionHandler = transactionHandler
             self.walletsRepository = walletsRepository
             self.apiClient = apiClient
-            self.pricesRepository = pricesRepository
+            self.pricesService = pricesService
             
             execute()
         }
