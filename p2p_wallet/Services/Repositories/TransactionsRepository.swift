@@ -15,7 +15,7 @@ protocol TransactionsRepository {
 
 extension SolanaSDK: TransactionsRepository {
     func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int, p2pFeePayerPubkeys: [String]) -> Single<[SolanaSDK.ParsedTransaction]> {
-        getConfirmedSignaturesForAddress2(account: account, configs: RequestConfiguration(limit: limit, before: before))
+        getSignaturesForAddress(address: account, configs: RequestConfiguration(limit: limit, before: before))
             .flatMap {activities in
                 
                 // construct parser
@@ -45,7 +45,7 @@ extension SolanaSDK: TransactionsRepository {
     }
     
     func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType, p2pFeePayerPubkeys: [String]) -> Single<SolanaSDK.ParsedTransaction> {
-        getConfirmedTransaction(transactionSignature: signature)
+        getTransaction(transactionSignature: signature)
             .flatMap { info in
                 let time = info.blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(info.blockTime!)): nil
                 

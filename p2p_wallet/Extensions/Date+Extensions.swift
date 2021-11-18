@@ -15,7 +15,7 @@ extension Date {
         return dateFormatter.string(from: self)
     }
     
-    static func -(recent: Date, previous: Date) -> (month: Int?, day: Int?, hour: Int?, minute: Int?, second: Int?) {
+    static func - (recent: Date, previous: Date) -> (month: Int?, day: Int?, hour: Int?, minute: Int?, second: Int?) {
         let day = Calendar.current.dateComponents([.day], from: previous, to: recent).day
         let month = Calendar.current.dateComponents([.month], from: previous, to: recent).month
         let hour = Calendar.current.dateComponents([.hour], from: previous, to: recent).hour

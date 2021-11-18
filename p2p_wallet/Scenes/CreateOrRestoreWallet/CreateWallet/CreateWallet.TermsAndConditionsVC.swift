@@ -40,7 +40,7 @@ extension CreateWallet {
                 termsOfServiceView
             }
             view.addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 0, y: 20), excludingEdge: .bottom)
+            stackView.autoPinEdgesToSuperviewSafeArea(with: .init(x: 0, y: 20), excludingEdge: .bottom)
             
             // tabBar
             view.addSubview(tabBar)
