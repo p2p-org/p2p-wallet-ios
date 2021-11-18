@@ -16,6 +16,7 @@ protocol PricesServiceType {
     
     func getCurrentPrices() -> [String: CurrentPrice]
     func currentPrice(for coinName: String) -> CurrentPrice?
+    func clearCurrentPrices()
     
     func fetchAllTokensPrice()
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
@@ -37,7 +38,7 @@ class PricesService {
     }
     
     // MARK: - Constants
-    private let refreshInterval: TimeInterval = 30
+    private let refreshInterval: TimeInterval = 2 * 1000 // 2 minutes
     
     // MARK: - Dependencies
     @Injected private var storage: PricesStorage
@@ -121,6 +122,11 @@ extension PricesService: PricesServiceType {
     
     func currentPrice(for coinName: String) -> CurrentPrice? {
         currentPricesSubject.value?[coinName]
+    }
+    
+    func clearCurrentPrices() {
+        currentPricesSubject.flush()
+        storage.savePrices([:])
     }
     
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]> {
