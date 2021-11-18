@@ -10,7 +10,7 @@ class ColumnFlowLayout: UICollectionViewFlowLayout {
     let cellsPerRow: Int
     let cellHeight: CGFloat
     
-    init(cellsPerRow: Int, cellHeight: CGFloat,minimumInteritemSpacing: CGFloat = 0, minimumLineSpacing: CGFloat = 0, sectionInset: UIEdgeInsets = .zero) {
+    init(cellsPerRow: Int, cellHeight: CGFloat, minimumInteritemSpacing: CGFloat = 0, minimumLineSpacing: CGFloat = 0, sectionInset: UIEdgeInsets = .zero) {
         self.cellsPerRow = cellsPerRow
         self.cellHeight = cellHeight
         
