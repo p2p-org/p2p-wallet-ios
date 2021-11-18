@@ -11,12 +11,23 @@ import RxCocoa
 
 protocol PricesServiceType {
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {get}
+    
+    func observePrice(of coinName: String) -> Observable<CurrentPrice?>
+    
+    func getCurrentPrices() -> [String: CurrentPrice]
     func currentPrice(for coinName: String) -> CurrentPrice?
     
+    func fetchAllTokensPrice()
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
     
     func startObserving()
     func stopObserving()
+}
+
+extension PricesServiceType {
+    var solPrice: CurrentPrice? {
+        currentPrice(for: "SOL")
+    }
 }
 
 class PricesService {
@@ -53,7 +64,7 @@ class PricesService {
     }
     
     // MARK: - Methods
-    @objc private func fetchAllTokensPrice() {
+    @objc func fetchAllTokensPrice() {
         currentPricesSubject.reload()
     }
     
@@ -97,6 +108,15 @@ class PricesService {
 extension PricesService: PricesServiceType {
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {
         currentPricesSubject.asDriver()
+    }
+    
+    func observePrice(of coinName: String) -> Observable<CurrentPrice?> {
+        currentPricesSubject.valueObservable
+            .map {$0?[coinName]}
+    }
+    
+    func getCurrentPrices() -> [String: CurrentPrice] {
+        currentPricesSubject.value ?? [:]
     }
     
     func currentPrice(for coinName: String) -> CurrentPrice? {
