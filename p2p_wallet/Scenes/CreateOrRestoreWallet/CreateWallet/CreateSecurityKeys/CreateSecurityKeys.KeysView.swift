@@ -40,7 +40,7 @@ extension CreateSecurityKeys {
                 let row = UIStackView(axis: .horizontal, spacing: spacing, alignment: .fill, distribution: .fillEqually)
                 row.heightAnchor.constraint(equalToConstant: keyHeight).isActive = true
                 row.addArrangedSubviews(chunk.enumerated().map { index, key in
-                   KeyView(index: section * numberOfColumns + index + 1, key: key)
+                    KeyView(index: section * numberOfColumns + index + 1, key: key)
                 })
                 content.addArrangedSubview(row)
             }

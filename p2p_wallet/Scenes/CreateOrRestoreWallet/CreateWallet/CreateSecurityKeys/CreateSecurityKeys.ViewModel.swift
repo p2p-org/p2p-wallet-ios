@@ -29,6 +29,7 @@ extension CreateSecurityKeys {
         @Injected private var accountStorage: KeychainAccountStorage
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var createWalletViewModel: CreateWalletViewModelType
+        @Injected private var authenticationHandler: AuthenticationHandler
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -75,7 +76,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
     
     @objc func saveToICloud() {
-        Device.requiredOwner { [weak self] in
+        authenticationHandler.requiredOwner { [weak self] in
             self?._saveToIcloud()
         } onFailure: { [weak self] error in
             self?.errorSubject.accept(error?.localizedDescription ?? L10n.error)
