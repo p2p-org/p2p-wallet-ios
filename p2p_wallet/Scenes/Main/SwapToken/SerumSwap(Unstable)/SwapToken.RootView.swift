@@ -147,7 +147,7 @@ extension SerumSwapV1 {
             
             // slippage
             viewModel.slippageDriver
-                .map {NSAttributedString.slippageAttributedText(slippage: $0 ?? 0)}
+                .map {NSAttributedString.slippageAttributedText(slippage: $0)}
                 .drive(slippageLabel.rx.attributedText)
                 .disposed(by: disposeBag)
             
