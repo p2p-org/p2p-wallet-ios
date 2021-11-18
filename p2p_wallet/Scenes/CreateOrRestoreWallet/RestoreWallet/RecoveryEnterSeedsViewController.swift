@@ -8,6 +8,10 @@
 import Foundation
 
 class RecoveryEnterSeedsViewController: WLEnterPhrasesVC {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+        .hidden
+    }
+
     // MARK: - Dependencies
     @Injected private var analyticsManager: AnalyticsManagerType
     

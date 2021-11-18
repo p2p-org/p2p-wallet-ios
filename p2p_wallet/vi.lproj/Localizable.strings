@@ -575,3 +575,13 @@
 "Start using P2P Wallet" = "Bắt đầu sử dụng Ví P2P";
 "Welcome to P2P Family, %@" = "Chào mừng bạn đến với Gia đình P2P, %@";
 "Welcome back, %@" = "Chào mừng bạn trở lại, %@";
+"To recover your wallet enter your security key's 12 or 24 words separated by single spaces in the correct order" = "Để khôi phục ví của bạn, hãy nhập 12 hoặc 24 từ của khóa bảo mật được phân tách bằng dấu cách đơn theo đúng thứ tự";
+"Enter your security key" = "Nhập khóa bảo mật của bạn";
+"Save & Continue" = "Lưu & Tiếp tục";
+"Enter correct security key" = "Nhập khóa bảo mật chính xác";
+"You can compare a cryptocurrency wallet" = "Bạn có thể so sánh ví tiền điện tử với trình quản lý mật khẩu cho tiền điện tử và khóa bảo mật với mật khẩu chính.\n\nKhóa bảo mật là một chuỗi gồm 12 hoặc 24 từ do ví tạo ra để cung cấp cho bạn quyền truy cập vào tiền điện tử liên quan của nó.";
+"The definition" = "Định nghĩa";
+"If lost, no one can restore it Keep it private, even from us" = " · Nếu bị mất, không ai có thể khôi phục nó\n · Giữ nó ở chế độ riêng tư, ngay cả với chúng tôi";
+"Where I can find one?" = "Tôi có thể tìm thấy một cái ở đâu?";
+"If you create a new wallet account" = "Nếu bạn tạo một tài khoản ví mới, bạn sẽ nhận được khóa bảo mật mà bạn phải ghi vào một nơi an toàn.  Đây là cách duy nhất để khôi phục ví của bạn.\n\nNếu bạn vẫn có quyền truy cập vào ví cũ của mình, đôi khi bạn có thể khôi phục khóa bảo mật của mình từ đó.\n\nSử dụng ví Custodian, bạn vẫn có tùy chọn lấy lại quyền truy cập vào dữ liệu của mình bằng cách yêu cầu bên thứ ba.";
+"What is a security key?" = "Khóa bảo mật là gì?";
