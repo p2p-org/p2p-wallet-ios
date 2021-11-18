@@ -16,7 +16,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private let solanaSDK: SolanaSDK
     let accountNotificationsRepository: AccountNotificationsRepository
     weak var processingTransactionRepository: ProcessingTransactionsRepository?
-    private let pricesRepository: PricesRepository
+    private let pricesService: PricesServiceType
     
     // MARK: - Properties
     private var defaultsDisposables = [DefaultsDisposable]()
@@ -35,11 +35,11 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     init(
         solanaSDK: SolanaSDK,
         accountNotificationsRepository: AccountNotificationsRepository,
-        pricesRepository: PricesRepository
+        pricesService: PricesServiceType
     ) {
         self.solanaSDK = solanaSDK
         self.accountNotificationsRepository = accountNotificationsRepository
-        self.pricesRepository = pricesRepository
+        self.pricesService = pricesService
         super.init()
         bind()
         startObserving()
@@ -54,8 +54,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         super.bind()
         
         // observe prices
-        pricesRepository.pricesObservable()
-            .subscribe(onNext: { [weak self] _ in
+        pricesService.currentPricesDriver
+            .drive(onNext: { [weak self] _ in
                 self?.updatePrices()
             })
             .disposed(by: disposeBag)
@@ -214,7 +214,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private func mapPrices(wallets: [Wallet]) -> [Wallet] {
         var wallets = wallets
         for i in 0..<wallets.count {
-            wallets[i].price = pricesRepository.currentPrice(for: wallets[i].token.symbol)
+            wallets[i].price = pricesService.currentPrice(for: wallets[i].token.symbol)
         }
         return wallets
     }

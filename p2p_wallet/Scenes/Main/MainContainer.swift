@@ -15,7 +15,7 @@ class MainContainer {
     var solanaSDK: SolanaSDK
     var socket: SolanaSDK.Socket
     let processingTransactionsManager: ProcessingTransactionsManager
-    let pricesManager: PricesManager
+    let pricesService: PricesServiceType
     private(set) var walletsViewModel: WalletsViewModel
     
     let renVMLockAndMintService: RenVMLockAndMintServiceType
@@ -34,15 +34,15 @@ class MainContainer {
         self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve())
         self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
         
-        self.pricesManager = PricesManager(tokensRepository: solanaSDK, pricesStorage: UserDefaultsPricesStorage(), fetcher: CryptoComparePricesFetcher(), refreshAfter: 2 * 1000) // 2 minutes
+        self.pricesService = PricesService(tokensRepository: solanaSDK)
         
         let walletsViewModel = WalletsViewModel(
             solanaSDK: solanaSDK,
             accountNotificationsRepository: socket,
-            pricesRepository: pricesManager
+            pricesService: pricesService
         )
         
-        self.processingTransactionsManager = ProcessingTransactionsManager(handler: socket, walletsRepository: walletsViewModel, pricesRepository: pricesManager)
+        self.processingTransactionsManager = ProcessingTransactionsManager(handler: socket, walletsRepository: walletsViewModel, pricesService: pricesService)
         walletsViewModel.processingTransactionRepository  = self.processingTransactionsManager
         self.walletsViewModel = walletsViewModel
         
@@ -75,13 +75,13 @@ class MainContainer {
         
         defer {
             socket.connect()
-            pricesManager.startObserving()
+            pricesService.startObserving()
         }
     }
     
     deinit {
         socket.disconnect()
-        pricesManager.stopObserving()
+        pricesService.stopObserving()
     }
     
     func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController {
@@ -113,7 +113,7 @@ class MainContainer {
             symbol: symbol,
             walletsRepository: walletsViewModel,
             processingTransactionRepository: processingTransactionsManager,
-            pricesRepository: pricesManager,
+            pricesService: pricesService,
             transactionsRepository: solanaSDK,
             feeRelayer: FeeRelayer(),
             notificationsRepository: walletsViewModel
@@ -215,7 +215,7 @@ class MainContainer {
             request: request,
             transactionHandler: processingTransactionsManager,
             walletsRepository: walletsViewModel,
-            pricesRepository: pricesManager,
+            pricesService: pricesService,
             apiClient: solanaSDK
         )
         return ProcessTransaction.ViewController(viewModel: viewModel)
@@ -259,7 +259,7 @@ class MainContainer {
                 walletsRepository: walletsViewModel,
                 pubkey: pubkey,
                 solanaSDK: solanaSDK,
-                pricesRepository: pricesManager
+                pricesService: pricesService
             ),
             scenesFactory: self
         )
@@ -268,8 +268,8 @@ class MainContainer {
     // MARK: - Helpers
     func changeFiat(to fiat: Fiat) {
         Defaults.fiat = fiat
-        pricesManager.currentPrices.accept([:])
-        pricesManager.fetchAllTokensPrice()
+        pricesService.clearCurrentPrices()
+        pricesService.fetchAllTokensPrice()
     }
 }
 
