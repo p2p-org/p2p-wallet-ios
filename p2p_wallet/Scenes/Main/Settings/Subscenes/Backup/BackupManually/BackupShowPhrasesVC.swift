@@ -66,7 +66,7 @@ private class _BackupShowPhrasesVC: BackupManuallyBaseVC {
                 isRequired: false,
                 isFullScreen: false,
                 completion: { [weak self] in
-                    self?.accountStorage.saveToICloud(
+                    _ = self?.accountStorage.saveToICloud(
                         account: .init(
                             name: self?.accountStorage.getName(),
                             phrase: account.joined(separator: " "),

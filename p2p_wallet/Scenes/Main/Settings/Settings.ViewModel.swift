@@ -187,7 +187,7 @@ extension Settings.ViewModel: SettingsViewModelType {
                 isFullScreen: false,
                 completion: { [weak self] in
                     guard let self = self else {return}
-                    self.accountStorage.saveToICloud(
+                    _ = self.accountStorage.saveToICloud(
                         account: .init(
                             name: self.accountStorage.getName(),
                             phrase: account.joined(separator: " "),

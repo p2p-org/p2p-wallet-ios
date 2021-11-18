@@ -597,3 +597,6 @@
 "P2P Wallet uses %@ to restrict unauthorized users from accessing the app" = "Ví P2P sử dụng %@ để hạn chế người dùng trái phép truy cập vào ứng dụng";
 "Don’t Allow" = "Không cho phép";
 "Allow" = "Cho phép";
+"Updating prices" = "Cập nhật giá";
+"Prices updated" = "Giá đã cập nhật";
+"Error when updating prices" = "Lỗi khi cập nhật giá";

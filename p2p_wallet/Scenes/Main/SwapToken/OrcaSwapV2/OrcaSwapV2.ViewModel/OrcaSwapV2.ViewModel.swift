@@ -555,6 +555,7 @@ private extension OrcaSwapV2.ViewModel {
         let bestPoolsPair = bestPoolsPairSubject.value
         let inputAmount = inputAmountSubject.value
         let myWalletsMints = walletsRepository.getWallets().compactMap {$0.token.address}
+        let slippage = slippageSubject.value
         
         guard let fees = try? orcaSwap.getFees(
             myWalletsMints: myWalletsMints,
@@ -563,7 +564,7 @@ private extension OrcaSwapV2.ViewModel {
             feeRelayerFeePayerPubkey: nil, // TODO: - Fee relayer
             bestPoolsPair: bestPoolsPair,
             inputAmount: inputAmount,
-            slippage: slippageSubject.value,
+            slippage: slippage,
             lamportsPerSignature: 5000,
             minRentExempt: 2039280
         ) else {return []}
@@ -575,7 +576,18 @@ private extension OrcaSwapV2.ViewModel {
                 liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.first!, token: destinationWallet.token)
                 ]
             } else if fees.liquidityProviderFees.count == 2 {
-                liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.last!, token: destinationWallet.token)
+                liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.last!, token: destinationWallet.token, toString: {
+                    var strings = [String]()
+                    if let intermediaryTokenName = bestPoolsPair?[0].tokenBName, let decimals = bestPoolsPair?[0].getTokenBDecimals() {
+                        let value = fees.liquidityProviderFees.first!.convertToBalance(decimals: decimals)
+                        strings.append("\(value.toString(maximumFractionDigits: 9)) \(intermediaryTokenName)")
+                    }
+                    
+                    let value = fees.liquidityProviderFees.last!.convertToBalance(decimals: destinationWallet.token.decimals)
+                    strings.append("\(value.toString(maximumFractionDigits: 9)) \(destinationWallet.token.symbol)")
+                    
+                    return strings.joined(separator: " + ")
+                })
                 ]
             } else {
                 liquidityProviderFees = []

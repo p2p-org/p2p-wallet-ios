@@ -65,7 +65,7 @@ extension DerivableAccounts {
         override func setUp() {
             super.setUp()
             view.addSubview(headerView)
-            headerView.autoPinEdgesToSuperviewEdges(with: .init(all: 20), excludingEdge: .bottom)
+            headerView.autoPinEdgesToSuperviewSafeArea(with: .init(all: 20), excludingEdge: .bottom)
             
             let separator = UIView.defaultSeparator()
             view.addSubview(separator)

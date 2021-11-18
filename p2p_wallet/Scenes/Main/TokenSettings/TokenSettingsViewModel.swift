@@ -23,7 +23,7 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     let walletsRepository: WalletsRepository
     let pubkey: String
     let solanaSDK: SolanaSDK
-    let pricesRepository: PricesRepository
+    let pricesService: PricesServiceType
     @Injected private var accountStorage: KeychainAccountStorage
     var wallet: Wallet? {walletsRepository.getWallets().first(where: {$0.pubkey == pubkey})}
     
@@ -37,12 +37,12 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
         walletsRepository: WalletsRepository,
         pubkey: String,
         solanaSDK: SolanaSDK,
-        pricesRepository: PricesRepository
+        pricesService: PricesServiceType
     ) {
         self.walletsRepository = walletsRepository
         self.pubkey = pubkey
         self.solanaSDK = solanaSDK
-        self.pricesRepository = pricesRepository
+        self.pricesService = pricesService
         super.init()
     }
     

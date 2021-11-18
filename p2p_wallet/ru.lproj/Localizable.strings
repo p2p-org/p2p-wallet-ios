@@ -597,3 +597,6 @@
 "P2P Wallet uses %@ to restrict unauthorized users from accessing the app" = "P2P Wallet использует %@ для ограничения доступа неавторизованных пользователей к приложению.";
 "Don’t Allow" = "Не разрешать";
 "Allow" = "Разрешать";
+"Updating prices" = "Обновление цен";
+"Prices updated" = "Цены обновлены";
+"Error when updating prices" = "Ошибка при обновлении цен";

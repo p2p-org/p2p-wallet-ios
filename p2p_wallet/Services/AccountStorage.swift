@@ -152,7 +152,7 @@ class KeychainAccountStorage: SolanaSDKAccountStorage, ICloudStorageType, NameSt
                 phrase: account.phrase,
                 derivablePath: account.derivablePath
             )
-            saveToICloud(account: account)
+            _ = saveToICloud(account: account)
         }
     }
     

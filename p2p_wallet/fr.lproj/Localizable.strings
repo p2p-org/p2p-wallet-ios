@@ -597,3 +597,6 @@
 "P2P Wallet uses %@ to restrict unauthorized users from accessing the app" = "P2P Wallet utilise %@ pour empêcher les utilisateurs non autorisés d'accéder à l'application";
 "Don’t Allow" = "Ne pas autoriser";
 "Allow" = "Permettre";
+"Updating prices" = "Mise à jour des prix";
+"Prices updated" = "Prix ​​mis à jour";
+"Error when updating prices" = "Erreur lors de la mise à jour des prix";

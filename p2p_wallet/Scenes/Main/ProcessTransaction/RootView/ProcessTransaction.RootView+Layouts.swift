@@ -27,7 +27,7 @@ extension ProcessTransaction.RootView {
             let symbol = fromWallet.token.symbol
             
             let sv = DefaultTransactionSummaryView(forAutoLayout: ())
-            let equityValue = sentAmount * viewModel.pricesRepository.currentPrice(for: symbol)?.value
+            let equityValue = sentAmount * viewModel.pricesService.currentPrice(for: symbol)?.value
             sv.amountInTokenLabel.text = "\(sentAmount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
             sv.amountInFiatLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
             
@@ -37,7 +37,7 @@ extension ProcessTransaction.RootView {
             let symbol = "SOL"
             
             let sv = DefaultTransactionSummaryView(forAutoLayout: ())
-            let equityValue = amount * viewModel.pricesRepository.currentPrice(for: symbol)?.value
+            let equityValue = amount * viewModel.pricesService.currentPrice(for: symbol)?.value
             sv.amountInTokenLabel.text = "\(amount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
             sv.amountInFiatLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
             
