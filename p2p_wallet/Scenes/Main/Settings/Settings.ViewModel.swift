@@ -24,16 +24,16 @@ protocol ChangeFiatResponder {
 
 protocol SettingsViewModelType {
     var selectableLanguages: [LocalizedLanguage: Bool] { get }
-    var navigationDriver: Driver<Settings.NavigatableScene?> {get}
-    var usernameDriver: Driver<String?> {get}
-    var didBackupDriver: Driver<Bool> {get}
-    var fiatDriver: Driver<Fiat> {get}
-    var endpointDriver: Driver<SolanaSDK.APIEndPoint> {get}
-    var securityMethodsDriver: Driver<[String]> {get}
-    var currentLanguageDriver: Driver<String?> {get}
-    var themeDriver: Driver<UIUserInterfaceStyle?> {get}
-    var hideZeroBalancesDriver: Driver<Bool> {get}
-    var logoutAlertSignal: Signal<Void> {get}
+    var navigationDriver: Driver<Settings.NavigatableScene?> { get }
+    var usernameDriver: Driver<String?> { get }
+    var didBackupDriver: Driver<Bool> { get }
+    var fiatDriver: Driver<Fiat> { get }
+    var endpointDriver: Driver<SolanaSDK.APIEndPoint> { get }
+    var securityMethodsDriver: Driver<[String]> { get }
+    var currentLanguageDriver: Driver<String?> { get }
+    var themeDriver: Driver<UIUserInterfaceStyle?> { get }
+    var hideZeroBalancesDriver: Driver<Bool> { get }
+    var logoutAlertSignal: Signal<Void> { get }
     
     func getUserAddress() -> String?
     
@@ -100,7 +100,7 @@ extension Settings {
         }
         
         func bind() {
-            disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) {[weak self] _ in
+            disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) { [weak self] _ in
                 self?.usernameSubject.accept(self?.accountStorage.getName()?.withNameServiceDomain())
             })
         }
@@ -121,7 +121,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     var selectableLanguages: [LocalizedLanguage: Bool] {
         localizationManager.selectableLanguages()
     }
-
+    
     var navigationDriver: Driver<Settings.NavigatableScene?> {
         navigationSubject.asDriver()
     }
@@ -180,7 +180,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func backupUsingICloud() {
-        Device.requiredOwner { [weak self] in
+        authenticationHandler.requiredOwner { [weak self] in
             self?._backupUsingICloud()
         } onFailure: { error in
             UIApplication.shared.showToast(message: error?.localizedDescription ?? L10n.error)
@@ -188,13 +188,13 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     private func _backupUsingICloud() {
-        guard let account = accountStorage.account?.phrase else {return}
+        guard let account = accountStorage.account?.phrase else { return }
         authenticationHandler.authenticate(
             presentationStyle: .init(
                 isRequired: false,
                 isFullScreen: false,
                 completion: { [weak self] in
-                    guard let self = self else {return}
+                    guard let self = self else { return }
                     self.accountStorage.saveToICloud(
                         account: .init(
                             name: self.accountStorage.getName(),
@@ -207,7 +207,6 @@ extension Settings.ViewModel: SettingsViewModelType {
             )
         )
     }
-    
     
     func backupManually() {
         if didBackupSubject.value {
@@ -261,7 +260,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         // get context
         let context = LAContext()
         let reason = L10n.identifyYourself
-
+        
         // evaluate Policy
         context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { (success, authenticationError) in
             DispatchQueue.main.async { [weak self] in
@@ -321,12 +320,12 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func copyUsernameToClipboard() {
-        guard let username = accountStorage.getName()?.withNameServiceDomain() else {return}
+        guard let username = accountStorage.getName()?.withNameServiceDomain() else { return }
         UIApplication.shared.copyToClipboard(username, alert: true, alertMessage: L10n.copiedToClipboard)
     }
     
     func shareUsername() {
-        guard let username = accountStorage.getName()?.withNameServiceDomain() else {return}
+        guard let username = accountStorage.getName()?.withNameServiceDomain() else { return }
         navigate(to: .share(item: username))
     }
     

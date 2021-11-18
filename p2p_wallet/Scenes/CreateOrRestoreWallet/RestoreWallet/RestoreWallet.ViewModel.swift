@@ -29,6 +29,7 @@ extension RestoreWallet {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var nameService: NameServiceType
+        @Injected private var authenticationHandler: AuthenticationHandler
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -68,7 +69,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     
     // MARK: - Actions
     func restoreFromICloud() {
-        Device.requiredOwner { [weak self] in
+        authenticationHandler.requiredOwner { [weak self] in
             self?._restoreFromIcloud()
         } onFailure: { [weak self] error in
             self?.errorSubject.accept(error?.localizedDescription ?? L10n.error)
