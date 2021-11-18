@@ -20,7 +20,7 @@ protocol ResetPinCodeWithSeedPhrasesViewModelType {
 extension ResetPinCodeWithSeedPhrases {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var accountStorage: KeychainAccountStorage
+        @Injected private var storage: PincodeSeedPhrasesStorage
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -42,11 +42,11 @@ extension ResetPinCodeWithSeedPhrases.ViewModel: ResetPinCodeWithSeedPhrasesView
     
     // MARK: - Actions
     func savePincode(_ code: String) {
-        accountStorage.save(code)
+        storage.save(code)
     }
     
     func handlePhrases(_ phrases: [String]) {
-        guard accountStorage.phrases == phrases else {
+        guard storage.phrases == phrases else {
             errorSubject.accept(SolanaSDK.Error.other("Seed phrases is not correct"))
             return
         }
