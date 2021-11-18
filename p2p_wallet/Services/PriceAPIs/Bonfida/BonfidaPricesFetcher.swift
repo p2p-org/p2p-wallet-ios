@@ -10,7 +10,7 @@ import RxCocoa
 import RxAlamofire
 import RxSwift
 
-struct BonfidaPricesFetcher: PricesFetcher {
+class BonfidaPricesFetcher: PricesFetcher {
     let endpoint = "https://serum-api.bonfida.com"
     
     func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[String: CurrentPrice?]> {

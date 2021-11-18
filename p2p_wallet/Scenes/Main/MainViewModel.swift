@@ -11,10 +11,6 @@ import RxCocoa
 
 protocol MainViewModelType: AuthenticationHandler {
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {get} // nil if non authentication process is processing
-    var isResettingPasscodeWithSeedPhrasesDriver: Driver<Bool> {get}
-    
-    func showResetPinCodeWithASeedPhrase()
-    func handleResetPasscodeWithASeedPhraseCompleted()
 }
 
 class MainViewModel {
@@ -26,7 +22,6 @@ class MainViewModel {
     
     // MARK: - Subjects
     private let authenticationStatusSubject = BehaviorRelay<AuthenticationPresentationStyle?>(value: nil)
-    private let isResettingPasscodeWithSeedPhrasesSubject = BehaviorRelay<Bool>(value: false)
     
     // MARK: - Initializer
     init() {
@@ -64,10 +59,6 @@ extension MainViewModel: MainViewModelType {
         authenticationStatusSubject.asDriver()
     }
     
-    var isResettingPasscodeWithSeedPhrasesDriver: Driver<Bool> {
-        isResettingPasscodeWithSeedPhrasesSubject.asDriver()
-    }
-    
     // MARK: - Authentication
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
         // check previous and current
@@ -101,20 +92,8 @@ extension MainViewModel: MainViewModelType {
         isAuthenticationPaused = isPaused
     }
     
-    // MARK: - Reset pincode with seed phrase
-    func showResetPinCodeWithASeedPhrase() {
-        isResettingPasscodeWithSeedPhrasesSubject.accept(true)
-    }
-    
-    func handleResetPasscodeWithASeedPhraseCompleted() {
-        isResettingPasscodeWithSeedPhrasesSubject.accept(false)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            self?.authenticationStatusSubject.accept(nil)
-        }
-    }
-    
     // MARK: - Helpers
     private func canPerformAuthentication() -> Bool {
-        !isAuthenticationPaused && !isResettingPasscodeWithSeedPhrasesSubject.value
+        !isAuthenticationPaused
     }
 }
