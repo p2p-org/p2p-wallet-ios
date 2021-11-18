@@ -66,7 +66,7 @@ extension Root {
         
         func logout() {
             ResolverScope.session.reset()
-            accountStorage.clear()
+            accountStorage.clearAccount()
             Defaults.walletName = [:]
             Defaults.didSetEnableBiometry = false
             Defaults.didSetEnableNotifications = false

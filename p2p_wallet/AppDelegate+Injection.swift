@@ -12,9 +12,11 @@ extension Resolver: ResolverRegistering {
         register { SessionBannersAvailabilityState() }
             .scope(.session)
         register {KeychainAccountStorage()}
-            .implements(SolanaSDKAccountStorage.self)
             .implements(ICloudStorageType.self)
             .implements(NameStorageType.self)
+            .implements(SolanaSDKAccountStorage.self)
+            .implements(PincodeStorageType.self)
+            .implements(AccountStorageType.self)
             .scope(.application)
         register { PersistentBannersAvailabilityState() }
         register {
