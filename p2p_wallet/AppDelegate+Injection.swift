@@ -17,6 +17,7 @@ extension Resolver: ResolverRegistering {
             .implements(SolanaSDKAccountStorage.self)
             .implements(PincodeStorageType.self)
             .implements(AccountStorageType.self)
+            .implements(StorageType.self)
             .scope(.application)
         register { PersistentBannersAvailabilityState() }
         register {

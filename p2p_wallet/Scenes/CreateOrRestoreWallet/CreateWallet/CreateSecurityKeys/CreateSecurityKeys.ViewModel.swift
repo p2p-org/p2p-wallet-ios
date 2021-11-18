@@ -26,7 +26,7 @@ protocol CreateSecurityKeysViewModelType {
 extension CreateSecurityKeys {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var accountStorage: KeychainAccountStorage
+        @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var createWalletViewModel: CreateWalletViewModelType
         
@@ -76,7 +76,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     
     @objc func saveToICloud() {
         analyticsManager.log(event: .createWalletBackupToIcloudClick)
-        let result = accountStorage.saveToICloud(
+        let result = iCloudStorage.saveToICloud(
             account: .init(
                 name: nil,
                 phrase: phrasesSubject.value.joined(separator: " "),
