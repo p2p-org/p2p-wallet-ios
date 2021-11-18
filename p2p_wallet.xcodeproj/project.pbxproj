@@ -346,6 +346,7 @@
 		BCB2232525412AF9002D997F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BCB2232325412AF9002D997F /* LaunchScreen.storyboard */; };
 		BCB2867D2745F4D10074E1D5 /* PricesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2867C2745F4D10074E1D5 /* PricesStorage.swift */; };
 		BCB2867F2745F6330074E1D5 /* PricesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2867E2745F6330074E1D5 /* PricesService.swift */; };
+		BCB2868127460FD90074E1D5 /* WLStatusIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2868027460FD90074E1D5 /* WLStatusIndicatorView.swift */; };
 		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58379255D29C500B10F65 /* WLBottomSheet.swift */; };
 		BCB7C7C62665EEC400FEC68E /* SendToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C22665EEC400FEC68E /* SendToken.swift */; };
@@ -783,6 +784,7 @@
 		BCB2232625412AF9002D997F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCB2867C2745F4D10074E1D5 /* PricesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricesStorage.swift; sourceTree = "<group>"; };
 		BCB2867E2745F6330074E1D5 /* PricesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricesService.swift; sourceTree = "<group>"; };
+		BCB2868027460FD90074E1D5 /* WLStatusIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLStatusIndicatorView.swift; sourceTree = "<group>"; };
 		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58379255D29C500B10F65 /* WLBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBottomSheet.swift; sourceTree = "<group>"; };
 		BCB7C7C22665EEC400FEC68E /* SendToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.swift; sourceTree = "<group>"; };
@@ -2027,6 +2029,7 @@
 				84699D3DBA0FA60C1B1CCD70 /* UIStackView.swift */,
 				8469995401F6BFC283896AD6 /* UIButton.swift */,
 				8469907019755990A0585C61 /* KeyView.swift */,
+				BCB2868027460FD90074E1D5 /* WLStatusIndicatorView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2569,6 +2572,7 @@
 				41D7F6AD2739109D00453B61 /* HorizontalFlowLayout.swift in Sources */,
 				BC2F8F0C269D3D200048009D /* UIScrollView+Extensions.swift in Sources */,
 				BCD5E82425525C6E00F51299 /* WalletsViewModel.swift in Sources */,
+				BCB2868127460FD90074E1D5 /* WLStatusIndicatorView.swift in Sources */,
 				BC2EC1D52553ED1B006EEDA5 /* CustomHeightPresentationController.swift in Sources */,
 				BCEE020B273E688600205982 /* WLCreatePincodeVC.swift in Sources */,
 				BC1FFED1262975200014F027 /* ResetPinCodeWithSeedPhrases.ViewModel.swift in Sources */,
