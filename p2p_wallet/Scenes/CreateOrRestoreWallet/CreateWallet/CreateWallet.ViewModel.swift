@@ -31,7 +31,6 @@ extension CreateWallet {
         // MARK: - Dependencies
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var accountStorage: KeychainAccountStorage
         
         // MARK: - Properties
         private let bag = DisposeBag()
