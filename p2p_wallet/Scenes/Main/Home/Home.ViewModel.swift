@@ -25,7 +25,7 @@ protocol HomeViewModelType: ReserveNameHandler {
 extension Home {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected var keychainStorage: KeychainAccountStorage
+        @Injected var storage: AccountStorageType & NameStorageType
         @Injected var bannersManager: BannersManagerType
         @Injected var bannersKindTransformer: BannerKindTransformerType
         
@@ -85,7 +85,7 @@ extension Home.ViewModel: HomeViewModelType {
     
     func handleName(_ name: String?) {
         if let name = name {
-            keychainStorage.save(name: name)
+            storage.save(name: name)
             Defaults.forceCloseNameServiceBanner = true
             UIApplication.shared.showToast(message: "✅ \(L10n.usernameIsSuccessfullyReserved(name.withNameServiceDomain()))")
         }
@@ -109,7 +109,7 @@ extension Home.ViewModel: HomeViewModelType {
         case .reserveUsername:
             navigationSubject.accept(
                 .reserveName(
-                    owner: keychainStorage.account?.publicKey.base58EncodedString ?? ""
+                    owner: storage.account?.publicKey.base58EncodedString ?? ""
                 )
             )
         }

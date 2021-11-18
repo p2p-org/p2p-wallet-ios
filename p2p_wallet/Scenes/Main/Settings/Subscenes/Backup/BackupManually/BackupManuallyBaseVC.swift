@@ -49,9 +49,9 @@ class BackupManuallyBaseVC: BaseVC {
     }
     
     var phrases: [String] {
-        accountStorage.account?.phrase ?? []
+        storage.account?.phrase ?? []
     }
-    @Injected var accountStorage: KeychainAccountStorage
+    @Injected var storage: ICloudStorageType & AccountStorageType & NameStorageType
     
     override func setUp() {
         super.setUp()
