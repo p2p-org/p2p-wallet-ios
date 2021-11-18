@@ -93,7 +93,7 @@ class MainContainer {
     }
     
     func makeHomeViewController() -> Home.ViewController {
-        let vm = Home.ViewModel(walletsRepository: walletsViewModel)
+        let vm = Home.ViewModel(walletsRepository: walletsViewModel, pricesService: pricesService)
         return .init(viewModel: vm, scenesFactory: self)
     }
     

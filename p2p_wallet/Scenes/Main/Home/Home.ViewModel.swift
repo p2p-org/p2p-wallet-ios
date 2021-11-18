@@ -13,6 +13,8 @@ import Resolver
 protocol HomeViewModelType: ReserveNameHandler {
     var navigationDriver: Driver<Home.NavigatableScene?> {get}
     var bannersDriver: Driver<[BannerViewContent]> { get }
+    var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {get}
+    
     var nameDidReserveSignal: Signal<Void> {get}
     var walletsRepository: WalletsRepository {get}
     
@@ -29,14 +31,16 @@ extension Home {
         
         // MARK: - Properties
         let walletsRepository: WalletsRepository
+        let pricesService: PricesServiceType
         
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let nameDidReserveSubject = PublishRelay<Void>()
         
         // MARK: - Initializers
-        init(walletsRepository: WalletsRepository) {
+        init(walletsRepository: WalletsRepository, pricesService: PricesServiceType) {
             self.walletsRepository = walletsRepository
+            self.pricesService = pricesService
         }
     }
 }
@@ -60,6 +64,10 @@ extension Home.ViewModel: HomeViewModelType {
 
     var navigationDriver: Driver<Home.NavigatableScene?> {
         navigationSubject.asDriver()
+    }
+    
+    var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {
+        pricesService.currentPricesDriver
     }
     
     var nameDidReserveSignal: Signal<Void> {

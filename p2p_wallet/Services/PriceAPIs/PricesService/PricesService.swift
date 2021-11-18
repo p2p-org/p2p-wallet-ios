@@ -38,7 +38,7 @@ class PricesService {
     }
     
     // MARK: - Constants
-    private let refreshInterval: TimeInterval = 2 * 1000 // 2 minutes
+    private let refreshInterval: TimeInterval = 2 * 60 // 2 minutes
     
     // MARK: - Dependencies
     @Injected private var storage: PricesStorage
@@ -66,7 +66,7 @@ class PricesService {
     
     // MARK: - Methods
     @objc func fetchAllTokensPrice() {
-        currentPricesSubject.reload()
+        currentPricesSubject.refresh()
     }
     
     // MARK: - Helpers
@@ -126,6 +126,7 @@ extension PricesService: PricesServiceType {
     
     func clearCurrentPrices() {
         currentPricesSubject.flush()
+        currentPricesSubject.accept(storage.retrievePrices(), state: .notRequested)
         storage.savePrices([:])
     }
     
