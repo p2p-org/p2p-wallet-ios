@@ -10,10 +10,12 @@ import RxSwift
 import RxCocoa
 
 protocol CreateSecurityKeysViewModelType {
+    var showTermsAndConditionsSignal: Signal<Void> { get }
     var phrasesDriver: Driver<[String]> { get }
     var errorSignal: Signal<String> { get }
     var isCheckboxSelectedDriver: Driver<Bool> { get }
     
+    func showTermsAndConditions()
     func toggleCheckbox()
     func createPhrases()
     func copyToClipboard()
@@ -26,7 +28,7 @@ protocol CreateSecurityKeysViewModelType {
 extension CreateSecurityKeys {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var accountStorage: KeychainAccountStorage
+        @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var createWalletViewModel: CreateWalletViewModelType
         
@@ -34,6 +36,7 @@ extension CreateSecurityKeys {
         private let disposeBag = DisposeBag()
         
         // MARK: - Subjects
+        private let showTermsAndConditionsSubject = PublishRelay<Void>()
         private let phrasesSubject = BehaviorRelay<[String]>(value: [])
         private let errorSubject = PublishRelay<String>()
         private let isCheckboxSelectedSubject = BehaviorRelay<Bool>(value: false)
@@ -46,6 +49,10 @@ extension CreateSecurityKeys {
 }
 
 extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
+    var showTermsAndConditionsSignal: Signal<Void> {
+        showTermsAndConditionsSubject.asSignal()
+    }
+    
     var phrasesDriver: Driver<[String]> {
         phrasesSubject.asDriver()
     }
@@ -59,6 +66,10 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
     
     // MARK: - Actions
+    func showTermsAndConditions() {
+        showTermsAndConditionsSubject.accept(())
+    }
+    
     func toggleCheckbox() {
         isCheckboxSelectedSubject.accept(!isCheckboxSelectedSubject.value)
     }
@@ -76,7 +87,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     
     @objc func saveToICloud() {
         analyticsManager.log(event: .createWalletBackupToIcloudClick)
-        let result = accountStorage.saveToICloud(
+        let result = iCloudStorage.saveToICloud(
             account: .init(
                 name: nil,
                 phrase: phrasesSubject.value.joined(separator: " "),

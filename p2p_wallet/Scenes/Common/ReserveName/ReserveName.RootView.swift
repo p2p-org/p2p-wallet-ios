@@ -54,7 +54,8 @@ extension ReserveName {
                 textSize: 15,
                 numberOfLines: 0
             )
-            semiboldText([L10n.skip], in: label)
+            label.semiboldTexts([L10n.skip])
+            label.lineBreakMode = .byWordWrapping
             return label.onTap(self, action: #selector(skipLabelDidTouch))
         }()
         
@@ -64,7 +65,8 @@ extension ReserveName {
             .onTap(self, action: #selector(skipButtonDidTouch))
         private lazy var footerLabel: UILabel = {
             let label = UILabel(text: L10n.byContinuingYouAgreeToWalletSAnd(L10n.termsOfUse, L10n.privacyPolicy), textSize: 15, numberOfLines: 0, textAlignment: .center)
-            semiboldText([L10n.termsOfUse, L10n.privacyPolicy], in: label)
+            label.semiboldTexts([L10n.termsOfUse, L10n.privacyPolicy])
+            label.lineBreakMode = .byWordWrapping
             return label.onTap(self, action: #selector(footerLabelDidTouch))
         }()
         
@@ -79,8 +81,6 @@ extension ReserveName {
         override func commonInit() {
             super.commonInit()
             textField.delegate = self
-            skipLabel.lineBreakMode = .byWordWrapping
-            footerLabel.lineBreakMode = .byWordWrapping
             layout()
             bind()
             onTap(self, action: #selector(viewDidTap))
@@ -199,7 +199,7 @@ extension ReserveName {
 
         @objc func skipLabelDidTouch(gesture: UITapGestureRecognizer) {
             let skipRange = (skipLabel.text! as NSString).range(of: L10n.skip)
-            if gesture.didTapAttributedTextInLabel(label: skipLabel, inRange: skipRange) {
+            if gesture.didTapAttributedTextInRange(skipRange) {
                 skipButtonDidTouch()
             } else {
                 viewDidTap()
@@ -219,9 +219,9 @@ extension ReserveName {
             let termsOfUseRange = (footerLabel.text! as NSString).range(of: L10n.termsOfUse)
             let privacyPolicyRange = (footerLabel.text! as NSString).range(of: L10n.privacyPolicy)
             
-            if gesture.didTapAttributedTextInLabel(label: footerLabel, inRange: termsOfUseRange) {
+            if gesture.didTapAttributedTextInRange(termsOfUseRange) {
                 viewModel.navigate(to: .termsOfUse)
-            } else if gesture.didTapAttributedTextInLabel(label: footerLabel, inRange: privacyPolicyRange) {
+            } else if gesture.didTapAttributedTextInRange(privacyPolicyRange) {
                 viewModel.navigate(to: .privacyPolicy)
             } else {
                 viewDidTap()
@@ -279,50 +279,5 @@ extension ReserveName.RootView: GT3CaptchaManagerDelegate {
     
     func gtCaptcha(_ manager: GT3CaptchaManager, didReceiveSecondaryCaptchaData data: Data?, response: URLResponse?, error: GT3Error?, decisionHandler: @escaping (GT3SecondaryCaptchaPolicy) -> Void) {
         
-    }
-}
-
-private func semiboldText(_ texts: [String], in label: UILabel) {
-    let aStr = NSMutableAttributedString(string: label.text!)
-    for text in texts {
-        let range = NSString(string: label.text!).range(of: text)
-        aStr.addAttribute(.font, value: UIFont.systemFont(ofSize: 15, weight: .semibold), range: range)
-        aStr.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: range)
-    }
-    label.attributedText = aStr
-}
-
-private extension UITapGestureRecognizer {
-    func didTapAttributedTextInLabel(label: UILabel, inRange targetRange: NSRange) -> Bool {
-        // Create instances of NSLayoutManager, NSTextContainer and NSTextStorage
-        let layoutManager = NSLayoutManager()
-        let textContainer = NSTextContainer(size: CGSize.zero)
-        let textStorage = NSTextStorage(attributedString: label.attributedText!)
-        
-        // Configure layoutManager and textStorage
-        layoutManager.addTextContainer(textContainer)
-        textStorage.addLayoutManager(layoutManager)
-        
-        // Configure textContainer
-        textContainer.lineFragmentPadding = 0.0
-        textContainer.lineBreakMode = label.lineBreakMode
-        textContainer.maximumNumberOfLines = label.numberOfLines
-        let labelSize = label.bounds.size
-        textContainer.size = labelSize
-        
-        // Find the tapped character location and compare it to the specified range
-        let locationOfTouchInLabel = self.location(in: label)
-        let textBoundingBox = layoutManager.usedRect(for: textContainer)
-        let textContainerOffset = CGPoint(
-            x: (labelSize.width - textBoundingBox.size.width) * 0.5 - textBoundingBox.origin.x,
-            y: (labelSize.height - textBoundingBox.size.height) * 0.5 - textBoundingBox.origin.y
-        )
-        let locationOfTouchInTextContainer = CGPoint(
-            x: locationOfTouchInLabel.x - textContainerOffset.x,
-            y: locationOfTouchInLabel.y - textContainerOffset.y
-        )
-        let indexOfCharacter = layoutManager.characterIndex(for: locationOfTouchInTextContainer, in: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
-        
-        return NSLocationInRange(indexOfCharacter, targetRange)
     }
 }

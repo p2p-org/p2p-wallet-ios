@@ -563,7 +563,7 @@
 "Your security key" = "Your security key";
 "Verify manually" = "Verify manually";
 "Renew" = "Renew";
-"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us";
+"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "The following words are security key that you must keep in a safe place, written in the correct sequence.\n\nIf lost, no one can restore it.\nKeep it private, even from us";
 "Proceed without a username?" = "Proceed without a username?";
 "Anytime you want, you can easily reserve a username by going to the settings" = "Anytime you want, you can easily reserve a username by going to the settings";
 "Proceed" = "Proceed";
@@ -600,3 +600,6 @@
 "Updating prices" = "Updating prices";
 "Prices updated" = "Prices updated";
 "Error when updating prices" = "Error when updating prices";
+"DApps" = "DApps";
+"Earn" = "Earn";
+"By continuing, you agree to wallet's %@" = "By continuing, you agree to wallet's %@";

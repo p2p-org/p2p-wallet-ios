@@ -24,7 +24,7 @@ protocol AuthenticationViewModelType {
 extension Authentication {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var accountStorage: KeychainAccountStorage
+        @Injected private var pincodeStorage: PincodeStorageType
         
         // MARK: - Properties
         
@@ -44,7 +44,7 @@ extension Authentication.ViewModel: AuthenticationViewModelType {
     }
     
     func getCurrentPincode() -> String? {
-        accountStorage.pinCode
+        pincodeStorage.pinCode
     }
     
     func getCurrentBiometryType() -> LABiometryType {

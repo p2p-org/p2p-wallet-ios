@@ -32,6 +32,12 @@ extension CreateSecurityKeys {
         
         private let keysView: KeysView = KeysView()
         private let keysViewAction: KeysViewActions = KeysViewActions()
+        private lazy var termsAndConditionsLabel: UILabel = {
+            let label = UILabel(text: L10n.byContinuingYouAgreeToWalletS(L10n.termsAndConditions), numberOfLines: 0, textAlignment: .center)
+            label.semiboldTexts([L10n.termsAndConditions])
+            label.lineBreakMode = .byWordWrapping
+            return label.onTap(self, action: #selector(termsAndConditionsLabelDidTouch))
+        }()
         
         // MARK: - Initializers
         override func commonInit() {
@@ -43,16 +49,23 @@ extension CreateSecurityKeys {
         // MARK: - Methods
         // MARK: - Layout
         private func layout() {
+            // navigation bar
             addSubview(navigationBar)
             navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
             navigationBar.autoPinEdge(toSuperviewEdge: .leading)
             navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
             
+            // content
             scrollView.contentInset.top = 56
             scrollView.contentInset.bottom = 120
-            stackView.addArrangedSubview(keysView)
-            stackView.addArrangedSubview(keysViewAction)
+            stackView.addArrangedSubviews {
+                keysView
+                keysViewAction
+                BEStackViewSpacing(10)
+                termsAndConditionsLabel
+            }
             
+            // bottom button
             let bottomStack = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
                 saveToICloudButton
                 verifyManualButton
@@ -116,6 +129,13 @@ extension CreateSecurityKeys {
                 showErrorView(error: error)
             } else {
                 UIApplication.shared.showToast(message: "✅ \(L10n.savedToPhotoLibrary)")
+            }
+        }
+        
+        @objc func termsAndConditionsLabelDidTouch(gesture: UITapGestureRecognizer) {
+            let termsAndConditionsRange = (termsAndConditionsLabel.text! as NSString).range(of: L10n.termsAndConditions)
+            if gesture.didTapAttributedTextInRange(termsAndConditionsRange) {
+                viewModel.showTermsAndConditions()
             }
         }
     }
