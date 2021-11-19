@@ -77,7 +77,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     }
     
     private func _restoreFromIcloud() {
-        guard let accounts = accountStorage.accountFromICloud(), accounts.count > 0
+        guard let accounts = iCloudStorage.accountFromICloud(), accounts.count > 0
             else {
             isRestorableUsingIcloudSubject.accept(false)
             UIApplication.shared.showToast(message: L10n.thereIsNoP2PWalletSavedInYourICloud)
