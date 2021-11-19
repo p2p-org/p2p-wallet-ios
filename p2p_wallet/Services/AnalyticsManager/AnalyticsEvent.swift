@@ -15,9 +15,11 @@ enum AnalyticsEvent: MirrorableEnum {
     // create_wallet
     case createWalletOpen
     case createWalletCopySeedClick
-    case createWalletIHaveSavedWordsClick
+    case createWalletSaveSeedToPhotosClick
+    case createWalletRenewSeedClick
+    case createWalletTermsAndConditionsClick
     case createWalletBackupToIcloudClick
-    case createWalletNextClick
+    case createWalletVerifyManuallyClick
     // setup
     case setupOpen(fromPage: String)
     case setupPinKeydown1

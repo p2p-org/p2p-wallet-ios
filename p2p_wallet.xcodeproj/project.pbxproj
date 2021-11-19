@@ -1427,7 +1427,6 @@
 				BC604A2126C6121E00B1DF0F /* PayingToken.swift */,
 				BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */,
 				BC53E2252654FE56005624CC /* DerivableAccount.swift */,
-				BCDCAE14267C4B90001ED7B4 /* AnalyticsEvent */,
 				BC185EF926E3B81F00280FE6 /* LoadableRelay.swift */,
 				BC2297992700AB07003F7118 /* Account.swift */,
 				BC2EC9392705C1E9005FC432 /* PayingFee.swift */,
@@ -1682,7 +1681,7 @@
 			isa = PBXGroup;
 			children = (
 				BC32A3AB254A8884002156F0 /* Storage.swift */,
-				BC4B9E7C2713FCFB005B9ECA /* AnalyticsManager.swift */,
+				BCB2868D274791300074E1D5 /* AnalyticsManager */,
 				BC8F684B2609D851002FDCCD /* Repositories */,
 				BC6EE77C254BB8F400FE1025 /* Defaults.swift */,
 				BC5257CD25CBA6A60076317E /* PriceAPIs */,
@@ -1696,6 +1695,15 @@
 				41446332272A84560099B327 /* LocalizationManager.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		BCB2868D274791300074E1D5 /* AnalyticsManager */ = {
+			isa = PBXGroup;
+			children = (
+				BCACA7E02679E75E0091E118 /* AnalyticsEvent.swift */,
+				BC4B9E7C2713FCFB005B9ECA /* AnalyticsManager.swift */,
+			);
+			path = AnalyticsManager;
 			sourceTree = "<group>";
 		};
 		BCB58370255D28E100B10F65 /* ViewControllers */ = {
@@ -1834,14 +1842,6 @@
 				BC22ABE02552A4B70071C69F /* DismissMenuAnimator.swift */,
 			);
 			path = LeftSwipeMenu;
-			sourceTree = "<group>";
-		};
-		BCDCAE14267C4B90001ED7B4 /* AnalyticsEvent */ = {
-			isa = PBXGroup;
-			children = (
-				BCACA7E02679E75E0091E118 /* AnalyticsEvent.swift */,
-			);
-			path = AnalyticsEvent;
 			sourceTree = "<group>";
 		};
 		BCE04C34268C631300CE131A /* BackupManually */ = {
