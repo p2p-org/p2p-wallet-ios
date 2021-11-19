@@ -38,7 +38,7 @@
 		417DC9152722F88C0048106B /* SelectRecipient.AddressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417DC9142722F88C0048106B /* SelectRecipient.AddressView.swift */; };
 		417DC9172725A45F0048106B /* SelectRecipient.RecipientCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417DC9162725A45F0048106B /* SelectRecipient.RecipientCell.swift */; };
 		417DC9192726F2780048106B /* RecipientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417DC9182726F2780048106B /* RecipientView.swift */; };
-		417EB68727477B0D00856C6E /* AgreeTermsAndConditionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417EB68627477B0D00856C6E /* AgreeTermsAndConditionsView.swift */; };
+		417EB68927480FA700856C6E /* AgreeTermsAndConditionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417EB68827480FA700856C6E /* AgreeTermsAndConditionsView.swift */; };
 		41D7F6AD2739109D00453B61 /* HorizontalFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D7F6AB2739109D00453B61 /* HorizontalFlowLayout.swift */; };
 		41D7F6AE2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D7F6AC2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift */; };
 		41D7F6B2273910F900453B61 /* Home.BannersCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D7F6B0273910F900453B61 /* Home.BannersCollectionViewDataSource.swift */; };
@@ -466,7 +466,7 @@
 		417DC9142722F88C0048106B /* SelectRecipient.AddressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRecipient.AddressView.swift; sourceTree = "<group>"; };
 		417DC9162725A45F0048106B /* SelectRecipient.RecipientCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRecipient.RecipientCell.swift; sourceTree = "<group>"; };
 		417DC9182726F2780048106B /* RecipientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipientView.swift; sourceTree = "<group>"; };
-		417EB68627477B0D00856C6E /* AgreeTermsAndConditionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AgreeTermsAndConditionsView.swift; path = ../../../../../../Downloads/AgreeTermsAndConditionsView.swift; sourceTree = "<group>"; };
+		417EB68827480FA700856C6E /* AgreeTermsAndConditionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgreeTermsAndConditionsView.swift; sourceTree = "<group>"; };
 		41D7F6AB2739109D00453B61 /* HorizontalFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HorizontalFlowLayout.swift; sourceTree = "<group>"; };
 		41D7F6AC2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageableHorizontalLayoutScrollHandler.swift; sourceTree = "<group>"; };
 		41D7F6B0273910F900453B61 /* Home.BannersCollectionViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.BannersCollectionViewDataSource.swift; sourceTree = "<group>"; };
@@ -2036,6 +2036,7 @@
 		BCEE522B2626D3F900271AB9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				417EB68827480FA700856C6E /* AgreeTermsAndConditionsView.swift */,
 				BC7DD92027327872000F50D0 /* UIView+Builders.swift */,
 				BC8F676F2608737B002FDCCD /* WLPhrasesTextView */,
 				BC65E085261DB21600E436C7 /* WalletCells */,
@@ -2084,7 +2085,6 @@
 				8469995401F6BFC283896AD6 /* UIButton.swift */,
 				8469907019755990A0585C61 /* KeyView.swift */,
 				BCB2868027460FD90074E1D5 /* WLStatusIndicatorView.swift */,
-				417EB68627477B0D00856C6E /* AgreeTermsAndConditionsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2469,7 +2469,7 @@
 				BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
 				BC4B9E9F2715401F005B9ECA /* Settings.SelectLanguageViewController.swift in Sources */,
-				417EB68727477B0D00856C6E /* AgreeTermsAndConditionsView.swift in Sources */,
+				417EB68927480FA700856C6E /* AgreeTermsAndConditionsView.swift in Sources */,
 				412DBFDE273D7B81000F514E /* EnterSeed.ViewModel.swift in Sources */,
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,
 				417BB3522727EF3400EDE6AE /* SelectRecipient.SectionHeaderView.swift in Sources */,
