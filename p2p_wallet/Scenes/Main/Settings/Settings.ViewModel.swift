@@ -101,7 +101,7 @@ extension Settings {
         
         func bind() {
             disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) { [weak self] _ in
-                self?.usernameSubject.accept(self?.accountStorage.getName()?.withNameServiceDomain())
+                self?.usernameSubject.accept(self?.storage.getName()?.withNameServiceDomain())
             })
         }
         
@@ -188,14 +188,14 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     private func _backupUsingICloud() {
-        guard let account = accountStorage.account?.phrase else { return }
+        guard let account = storage.account?.phrase else { return }
         authenticationHandler.authenticate(
             presentationStyle: .init(
                 isRequired: false,
                 isFullScreen: false,
                 completion: { [weak self] in
                     guard let self = self else { return }
-                    self.accountStorage.saveToICloud(
+                    self.storage.saveToICloud(
                         account: .init(
                             name: self.storage.getName(),
                             phrase: account.joined(separator: " "),
@@ -320,7 +320,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func copyUsernameToClipboard() {
-        guard let username = accountStorage.getName()?.withNameServiceDomain() else { return }
+        guard let username = storage.getName()?.withNameServiceDomain() else { return }
         UIApplication.shared.copyToClipboard(username, alert: true, alertMessage: L10n.copiedToClipboard)
     }
     
