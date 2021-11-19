@@ -31,11 +31,16 @@ extension CreateSecurityKeys {
         private let verifyManualButton: WLStepButton = WLStepButton.sub(text: L10n.verifyManually)
         
         private let keysView: KeysView = KeysView()
-        private let keysViewAction: KeysViewActions = KeysViewActions()
+        private let keysViewActions: KeysViewActions = KeysViewActions()
+        private let agreeTermsAndConditions = AgreeTermsAndConditionsView()
         
         // MARK: - Initializers
         override func commonInit() {
             super.commonInit()
+
+            agreeTermsAndConditions.didTouchHyperLink = { [weak viewModel] in
+                viewModel?.termsAndConditions()
+            }
             layout()
             bind()
         }
@@ -51,7 +56,8 @@ extension CreateSecurityKeys {
             scrollView.contentInset.top = 56
             scrollView.contentInset.bottom = 120
             stackView.addArrangedSubview(keysView)
-            stackView.addArrangedSubview(keysViewAction)
+            stackView.addArrangedSubview(keysViewActions)
+            stackView.addArrangedSubview(agreeTermsAndConditions)
             
             let bottomStack = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
                 saveToICloudButton
@@ -67,13 +73,13 @@ extension CreateSecurityKeys {
                 .drive(keysView.rx.keys)
                 .disposed(by: disposeBag)
             
-            keysViewAction.rx.onCopy
+            keysViewActions.rx.onCopy
                 .bind(onNext: {[weak self] in self?.viewModel.copyToClipboard()})
                 .disposed(by: disposeBag)
-            keysViewAction.rx.onRefresh
+            keysViewActions.rx.onRefresh
                 .bind(onNext: {[weak self] in self?.viewModel.createPhrases()})
                 .disposed(by: disposeBag)
-            keysViewAction.rx.onSave
+            keysViewActions.rx.onSave
                 .bind(onNext: {[weak self] in self?.saveToPhoto()})
                 .disposed(by: disposeBag)
     

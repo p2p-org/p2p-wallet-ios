@@ -20,6 +20,7 @@ protocol EnterSeedViewModelType: AnyObject {
     func showInfo()
     func goBack()
     func goForth()
+    func showTermsAndConditions()
 }
 
 extension EnterSeed {
@@ -118,6 +119,10 @@ extension EnterSeed.ViewModel: EnterSeedViewModelType {
 
     func showInfo() {
         navigationSubject.accept(.info)
+    }
+
+    func showTermsAndConditions() {
+        navigationSubject.accept(.termsAndConditions)
     }
 
     var seedTextDriver: Driver<String?> {
