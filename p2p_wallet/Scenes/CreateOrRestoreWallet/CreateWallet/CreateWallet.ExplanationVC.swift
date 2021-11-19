@@ -14,6 +14,7 @@ extension CreateWallet {
         // MARK: - Subviews
         lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
+            navigationBar.backgroundColor = .clear
             navigationBar.titleLabel.text = L10n.createANewWallet
             return navigationBar
         }()
