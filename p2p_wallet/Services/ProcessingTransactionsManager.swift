@@ -13,17 +13,17 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
     // MARK: - Dependencies
     private let handler: TransactionHandler
     private let walletsRepository: WalletsRepository
-    private let pricesRepository: PricesRepository
+    private let pricesService: PricesServiceType
     
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private let transactionsSubject = BehaviorRelay<[SolanaSDK.ParsedTransaction]>(value: [])
     
     // MARK: - Initializer
-    init(handler: TransactionHandler, walletsRepository: WalletsRepository, pricesRepository: PricesRepository) {
+    init(handler: TransactionHandler, walletsRepository: WalletsRepository, pricesService: PricesServiceType) {
         self.handler = handler
         self.walletsRepository = walletsRepository
-        self.pricesRepository = pricesRepository
+        self.pricesService = pricesService
     }
     
     // MARK: - Methods
@@ -268,7 +268,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
             if !wallets.contains(where: {$0.token.symbol == wallet.token.symbol}) {
                 wallet.pubkey = swapResponse.newWalletPubkey
                 wallet.lamports = transaction.destinationAmount?.toLamport(decimals: wallet.token.decimals)
-                wallet.price = pricesRepository.currentPrice(for: wallet.token.symbol)
+                wallet.price = pricesService.currentPrice(for: wallet.token.symbol)
                 wallets.append(wallet)
             }
             

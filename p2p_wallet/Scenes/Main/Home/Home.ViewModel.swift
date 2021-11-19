@@ -13,6 +13,8 @@ import Resolver
 protocol HomeViewModelType: ReserveNameHandler {
     var navigationDriver: Driver<Home.NavigatableScene?> {get}
     var bannersDriver: Driver<[BannerViewContent]> { get }
+    var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {get}
+    
     var nameDidReserveSignal: Signal<Void> {get}
     var walletsRepository: WalletsRepository {get}
     
@@ -23,20 +25,22 @@ protocol HomeViewModelType: ReserveNameHandler {
 extension Home {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected var keychainStorage: KeychainAccountStorage
+        @Injected var storage: AccountStorageType & NameStorageType
         @Injected var bannersManager: BannersManagerType
         @Injected var bannersKindTransformer: BannerKindTransformerType
         
         // MARK: - Properties
         let walletsRepository: WalletsRepository
+        let pricesService: PricesServiceType
         
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let nameDidReserveSubject = PublishRelay<Void>()
         
         // MARK: - Initializers
-        init(walletsRepository: WalletsRepository) {
+        init(walletsRepository: WalletsRepository, pricesService: PricesServiceType) {
             self.walletsRepository = walletsRepository
+            self.pricesService = pricesService
         }
     }
 }
@@ -62,6 +66,10 @@ extension Home.ViewModel: HomeViewModelType {
         navigationSubject.asDriver()
     }
     
+    var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {
+        pricesService.currentPricesDriver
+    }
+    
     var nameDidReserveSignal: Signal<Void> {
         nameDidReserveSubject.asSignal()
     }
@@ -77,7 +85,7 @@ extension Home.ViewModel: HomeViewModelType {
     
     func handleName(_ name: String?) {
         if let name = name {
-            keychainStorage.save(name: name)
+            storage.save(name: name)
             Defaults.forceCloseNameServiceBanner = true
             UIApplication.shared.showToast(message: "✅ \(L10n.usernameIsSuccessfullyReserved(name.withNameServiceDomain()))")
         }
@@ -101,7 +109,7 @@ extension Home.ViewModel: HomeViewModelType {
         case .reserveUsername:
             navigationSubject.accept(
                 .reserveName(
-                    owner: keychainStorage.account?.publicKey.base58EncodedString ?? ""
+                    owner: storage.account?.publicKey.base58EncodedString ?? ""
                 )
             )
         }

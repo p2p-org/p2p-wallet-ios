@@ -9,13 +9,45 @@ import SolanaSwift
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
-        register { SessionBannersAvailabilityState() }
-            .scope(.session)
-        register {KeychainAccountStorage()}
-            .implements(SolanaSDKAccountStorage.self)
+        // MARK: - Lifetime app's services
+        register { KeychainStorage() }
             .implements(ICloudStorageType.self)
             .implements(NameStorageType.self)
+            .implements(SolanaSDKAccountStorage.self)
+            .implements(PincodeStorageType.self)
+            .implements(AccountStorageType.self)
+            .implements(PincodeSeedPhrasesStorage.self)
+            .implements((AccountStorageType & NameStorageType).self)
+            .implements((AccountStorageType & PincodeStorageType & NameStorageType).self)
+            .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
+            .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
+        register {AnalyticsManager()}
+            .implements(AnalyticsManagerType.self)
+            .scope(.application)
+        register {CryptoComparePricesFetcher()}
+            .implements(PricesFetcher.self)
+            .scope(.application)
+        register {NameService()}
+            .implements(NameServiceType.self)
+            .scope(.application)
+        register { AddressFormatter() }
+            .implements(AddressFormatterType.self)
+            .scope(.application)
+        register { LocalizationManager() }
+            .implements(LocalizationManagerType.self)
+        
+        register { UserDefaultsPricesStorage() }
+            .implements(PricesStorage.self)
+            .scope(.application)
+        register { CryptoComparePricesFetcher() }
+            .implements(PricesFetcher.self)
+            .scope(.application)
+        
+        // MARK: - Others
+        register { SessionBannersAvailabilityState() }
+            .scope(.session)
+        
         register { PersistentBannersAvailabilityState() }
         register {
             ReserveUsernameBannerAvailabilityRepository(
@@ -32,20 +64,6 @@ extension Resolver: ResolverRegistering {
         register { BannerKindTransformer() }
             .implements(BannerKindTransformerType.self)
             .scope(.unique)
-        register {AnalyticsManager()}
-            .implements(AnalyticsManagerType.self)
-            .scope(.application)
-        register {CryptoComparePricesFetcher()}
-            .implements(PricesFetcher.self)
-            .scope(.application)
-        register {NameService()}
-            .implements(NameServiceType.self)
-            .scope(.application)
-        register { AddressFormatter() }
-            .implements(AddressFormatterType.self)
-            .scope(.application)
-        register { LocalizationManager() }
-            .implements(LocalizationManagerType.self)
         
         // MARK: - Root
         register {Root.ViewModel()}

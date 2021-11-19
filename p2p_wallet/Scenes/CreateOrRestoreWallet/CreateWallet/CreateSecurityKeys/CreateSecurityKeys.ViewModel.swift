@@ -10,15 +10,15 @@ import RxSwift
 import RxCocoa
 
 protocol CreateSecurityKeysViewModelType {
+    var showTermsAndConditionsSignal: Signal<Void> { get }
     var phrasesDriver: Driver<[String]> { get }
     var errorSignal: Signal<String> { get }
-    var isCheckboxSelectedDriver: Driver<Bool> { get }
     
-    func toggleCheckbox()
-    func createPhrases()
     func copyToClipboard()
+    func renewPhrases()
+    
+    func showTermsAndConditions()
     func saveToICloud()
-    func next()
     func back()
     func verifyPhrase()
 }
@@ -26,7 +26,7 @@ protocol CreateSecurityKeysViewModelType {
 extension CreateSecurityKeys {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var accountStorage: KeychainAccountStorage
+        @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var createWalletViewModel: CreateWalletViewModelType
         @Injected private var authenticationHandler: AuthenticationHandler
@@ -35,18 +35,27 @@ extension CreateSecurityKeys {
         private let disposeBag = DisposeBag()
         
         // MARK: - Subjects
+        private let showTermsAndConditionsSubject = PublishRelay<Void>()
         private let phrasesSubject = BehaviorRelay<[String]>(value: [])
         private let errorSubject = PublishRelay<String>()
-        private let isCheckboxSelectedSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
         init() {
             createPhrases()
         }
+        
+        private func createPhrases() {
+            let mnemonic = Mnemonic()
+            phrasesSubject.accept(mnemonic.phrase)
+        }
     }
 }
 
 extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
+    var showTermsAndConditionsSignal: Signal<Void> {
+        showTermsAndConditionsSubject.asSignal()
+    }
+    
     var phrasesDriver: Driver<[String]> {
         phrasesSubject.asDriver()
     }
@@ -55,22 +64,18 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         errorSubject.asSignal()
     }
     
-    var isCheckboxSelectedDriver: Driver<Bool> {
-        isCheckboxSelectedSubject.asDriver()
-    }
-    
     // MARK: - Actions
-    func toggleCheckbox() {
-        isCheckboxSelectedSubject.accept(!isCheckboxSelectedSubject.value)
+    func showTermsAndConditions() {
+        analyticsManager.log(event: .createWalletTermsAndConditionsClick)
+        showTermsAndConditionsSubject.accept(())
     }
     
-    func createPhrases() {
-        let mnemonic = Mnemonic()
-        phrasesSubject.accept(mnemonic.phrase)
-        isCheckboxSelectedSubject.accept(false)
+    func renewPhrases() {
+        analyticsManager.log(event: .createWalletRenewSeedClick)
+        createPhrases()
     }
     
-    @objc func copyToClipboard() {
+    func copyToClipboard() {
         analyticsManager.log(event: .createWalletCopySeedClick)
         UIApplication.shared.copyToClipboard(phrasesSubject.value.joined(separator: " "), alertMessage: L10n.seedPhraseCopiedToClipboard)
     }
@@ -85,7 +90,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     
     private func _saveToIcloud() {
         analyticsManager.log(event: .createWalletBackupToIcloudClick)
-        let result = accountStorage.saveToICloud(
+        let result = iCloudStorage.saveToICloud(
             account: .init(
                 name: nil,
                 phrase: phrasesSubject.value.joined(separator: " "),
@@ -102,15 +107,8 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
     
     func verifyPhrase() {
+        analyticsManager.log(event: .createWalletVerifyManuallyClick)
         createWalletViewModel.verifyPhrase(phrasesSubject.value)
-    }
-    
-    @objc func next() {
-        if isCheckboxSelectedSubject.value {
-            analyticsManager.log(event: .createWalletIHaveSavedWordsClick)
-        }
-        analyticsManager.log(event: .createWalletNextClick)
-        createWalletViewModel.handlePhrases(self.phrasesSubject.value)
     }
     
     @objc func back() {

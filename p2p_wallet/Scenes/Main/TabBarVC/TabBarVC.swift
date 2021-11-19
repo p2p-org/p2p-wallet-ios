@@ -13,7 +13,7 @@ protocol TabBarScenesFactory {
 }
 
 class TabBarVC: BEPagesVC {
-    lazy var tabBar = TabBar(cornerRadius: 20)
+    lazy var tabBar = NewTabBar()
     
     let scenesFactory: TabBarScenesFactory
     init(scenesFactory: TabBarScenesFactory) {
@@ -30,6 +30,8 @@ class TabBarVC: BEPagesVC {
         viewControllers = [
             BENavigationController(rootViewController: mainVC),
             BENavigationController(rootViewController: investmentsVC),
+            BENavigationController(rootViewController: BaseVC()),
+            BENavigationController(rootViewController: BaseVC()),
             BENavigationController(rootViewController: BaseVC())
         ]
         
@@ -59,15 +61,13 @@ class TabBarVC: BEPagesVC {
     
     // MARK: - Helpers
     private func configureTabBar() {
-        let firstTabItem = buttonTabBarItem(image: .tabbarHome, title: L10n.home, tag: 0)
-        let secondTabItem = buttonTabBarItem(image: .tabbarActivities, title: L10n.savings, tag: 1)
-        let thirdTabItem = buttonTabBarItem(image: .tabbarFriends, title: L10n.friends, tag: 2)
-        
         tabBar.stackView.addArrangedSubviews([
             .spacer,
-            firstTabItem,
-            secondTabItem,
-            thirdTabItem,
+            buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, tag: 0),
+            buttonTabBarItem(image: .tabbarTransaction, title: L10n.earn, tag: 1),
+            buttonTabBarItem(image: .tabbarPlus, title: L10n.buy, tag: 2),
+            buttonTabBarItem(image: .tabbarPlanet, title: L10n.dApps, tag: 3),
+            buttonTabBarItem(image: .tabbarInfo, title: L10n.profile, tag: 4),
             .spacer
         ])
     }
