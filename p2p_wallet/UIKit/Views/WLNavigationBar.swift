@@ -30,7 +30,7 @@ class WLNavigationBar: BEView {
         addSubview(rightItems)
 
         self.autoSetDimension(.height, toSize: 48)
-        leftItems.autoPinEdgesToSuperviewEdges(with: .init(top: 0, left: 12, bottom: 0, right: 0), excludingEdge: .right)
+        leftItems.autoPinEdgesToSuperviewEdges(with: .init(only: .left, inset: 12), excludingEdge: .right)
 
         centerItems.autoAlignAxis(toSuperviewAxis: .vertical)
         centerItems.autoPinEdge(.left, to: .right, of: leftItems, withOffset: 8, relation: .greaterThanOrEqual)
@@ -38,7 +38,7 @@ class WLNavigationBar: BEView {
         centerItems.autoPinEdge(toSuperviewEdge: .top)
         centerItems.autoPinEdge(toSuperviewEdge: .bottom)
 
-        rightItems.autoPinEdgesToSuperviewEdges(with: .init(top: 0, left: 0, bottom: 0, right: 18), excludingEdge: .left)
+        rightItems.autoPinEdgesToSuperviewEdges(with: .init(only: .right, inset: 18), excludingEdge: .left)
 
         backgroundColor = .background
     }
