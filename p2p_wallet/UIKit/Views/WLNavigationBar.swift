@@ -8,13 +8,7 @@
 import Foundation
 
 class WLNavigationBar: BEView {
-    lazy var stackView = UIStackView(axis: .horizontal, alignment: .center, distribution: .equalCentering, arrangedSubviews: [
-        leftItems,
-        centerItems,
-        rightItems
-    ])
-    
-    lazy var leftItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
+    lazy var leftItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
         backButton
     ])
     lazy var centerItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
@@ -30,12 +24,22 @@ class WLNavigationBar: BEView {
 
     override func commonInit() {
         super.commonInit()
-        stackView.spacing = 8
-        addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 12, y: 8))
-        
-        leftItems.widthAnchor.constraint(equalTo: rightItems.widthAnchor).isActive = true
-        
+
+        addSubview(leftItems)
+        addSubview(centerItems)
+        addSubview(rightItems)
+
+        self.autoSetDimension(.height, toSize: 48)
+        leftItems.autoPinEdgesToSuperviewEdges(with: .init(top: 0, left: 12, bottom: 0, right: 0), excludingEdge: .right)
+
+        centerItems.autoAlignAxis(toSuperviewAxis: .vertical)
+        centerItems.autoPinEdge(.left, to: .right, of: leftItems, withOffset: 8, relation: .greaterThanOrEqual)
+        centerItems.autoPinEdge(.right, to: .left, of: rightItems, withOffset: 8, relation: .greaterThanOrEqual)
+        centerItems.autoPinEdge(toSuperviewEdge: .top)
+        centerItems.autoPinEdge(toSuperviewEdge: .bottom)
+
+        rightItems.autoPinEdgesToSuperviewEdges(with: .init(top: 0, left: 0, bottom: 0, right: 18), excludingEdge: .left)
+
         backgroundColor = .background
     }
     
