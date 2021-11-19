@@ -64,7 +64,7 @@ extension EnterSeedInfo {
         
         // MARK: - Layout
         private func layout() {
-            let navigationBar = EnterSeedInfoNavigationBar(doneHandler: { [weak self] in
+            let navigationBar = NavigationBar(doneHandler: { [weak self] in
                 self?.viewModel.done()
             })
 
@@ -72,9 +72,7 @@ extension EnterSeedInfo {
             addSubview(scrollView)
             scrollView.contentView.addSubview(stackView)
 
-            navigationBar.autoPinEdge(toSuperviewEdge: .top, withInset: 14)
-            navigationBar.autoPinEdge(toSuperviewEdge: .leading)
-            navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
+            navigationBar.autoPinEdgesToSuperviewEdges(with: .init(only: .top, inset: 14), excludingEdge: .bottom)
 
             scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 24)
             scrollView.autoPinEdge(toSuperviewEdge: .leading)

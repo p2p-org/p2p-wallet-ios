@@ -72,7 +72,7 @@ extension EnterSeed {
             let separatorView = UIView()
             separatorView.backgroundColor = .c7c7cc
 
-            let navigationBar = EnterSeedNavigationBar(
+            let navigationBar = EnterSeed.NavigationBar(
                 backHandler: { [weak viewModel] in
                     viewModel?.goBack()
                 },
@@ -172,7 +172,7 @@ extension EnterSeed {
             )
         }
 
-        private func setMainButtonContent(type: EnterSeedMainButtonContent) {
+        private func setMainButtonContent(type: EnterSeed.MainButtonContent) {
             let image: UIImage?
             let title: String?
             let isEnabled: Bool

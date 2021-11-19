@@ -12,17 +12,17 @@
 		4114D16B2746272400352CDF /* EnterSeedInfo.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1672746272400352CDF /* EnterSeedInfo.ViewController.swift */; };
 		4114D16C2746272400352CDF /* EnterSeedInfo.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1682746272400352CDF /* EnterSeedInfo.ViewModel.swift */; };
 		4114D16D2746272400352CDF /* EnterSeedInfo.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1692746272400352CDF /* EnterSeedInfo.RootView.swift */; };
-		4114D16F274633DE00352CDF /* EnterSeedInfoNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D16E274633DE00352CDF /* EnterSeedInfoNavigationBar.swift */; };
+		4114D16F274633DE00352CDF /* EnterSeedInfo.NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D16E274633DE00352CDF /* EnterSeedInfo.NavigationBar.swift */; };
 		411F4719273B0C0B0011EBE3 /* Home.ClosingBannerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411F4718273B0C0B0011EBE3 /* Home.ClosingBannerType.swift */; };
 		412DBFCE273D180E000F514E /* ReserveUsernameBannerAvailabilityRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFCD273D180E000F514E /* ReserveUsernameBannerAvailabilityRepository.swift */; };
-		412DBFD7273D79EC000F514E /* EnterSeedNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFD6273D79EC000F514E /* EnterSeedNavigationBar.swift */; };
+		412DBFD7273D79EC000F514E /* EnterSeed.NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFD6273D79EC000F514E /* EnterSeed.NavigationBar.swift */; };
 		412DBFDC273D7B81000F514E /* EnterSeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFD8273D7B81000F514E /* EnterSeed.swift */; };
 		412DBFDD273D7B81000F514E /* EnterSeed.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFD9273D7B81000F514E /* EnterSeed.ViewController.swift */; };
 		412DBFDE273D7B81000F514E /* EnterSeed.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFDA273D7B81000F514E /* EnterSeed.ViewModel.swift */; };
 		412DBFDF273D7B81000F514E /* EnterSeed.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFDB273D7B81000F514E /* EnterSeed.RootView.swift */; };
 		412DBFE1273E9944000F514E /* ExpandableTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFE0273E9944000F514E /* ExpandableTextView.swift */; };
 		412DBFE3273E999E000F514E /* ClearableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFE2273E999E000F514E /* ClearableButton.swift */; };
-		412DBFE527460014000F514E /* EnterSeedMainButtonContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFE427460014000F514E /* EnterSeedMainButtonContent.swift */; };
+		412DBFE527460014000F514E /* EnterSeed.MainButtonContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFE427460014000F514E /* EnterSeed.MainButtonContent.swift */; };
 		41446333272A84560099B327 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41446332272A84560099B327 /* LocalizationManager.swift */; };
 		417BB3522727EF3400EDE6AE /* SelectRecipient.SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417BB3512727EF3400EDE6AE /* SelectRecipient.SectionHeaderView.swift */; };
 		417BB3542727FCDD00EDE6AE /* AddressFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417BB3532727FCDD00EDE6AE /* AddressFormatter.swift */; };
@@ -440,17 +440,17 @@
 		4114D1672746272400352CDF /* EnterSeedInfo.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedInfo.ViewController.swift; sourceTree = "<group>"; };
 		4114D1682746272400352CDF /* EnterSeedInfo.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedInfo.ViewModel.swift; sourceTree = "<group>"; };
 		4114D1692746272400352CDF /* EnterSeedInfo.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedInfo.RootView.swift; sourceTree = "<group>"; };
-		4114D16E274633DE00352CDF /* EnterSeedInfoNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedInfoNavigationBar.swift; sourceTree = "<group>"; };
+		4114D16E274633DE00352CDF /* EnterSeedInfo.NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedInfo.NavigationBar.swift; sourceTree = "<group>"; };
 		411F4718273B0C0B0011EBE3 /* Home.ClosingBannerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.ClosingBannerType.swift; sourceTree = "<group>"; };
 		412DBFCD273D180E000F514E /* ReserveUsernameBannerAvailabilityRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveUsernameBannerAvailabilityRepository.swift; sourceTree = "<group>"; };
-		412DBFD6273D79EC000F514E /* EnterSeedNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedNavigationBar.swift; sourceTree = "<group>"; };
+		412DBFD6273D79EC000F514E /* EnterSeed.NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeed.NavigationBar.swift; sourceTree = "<group>"; };
 		412DBFD8273D7B81000F514E /* EnterSeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeed.swift; sourceTree = "<group>"; };
 		412DBFD9273D7B81000F514E /* EnterSeed.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeed.ViewController.swift; sourceTree = "<group>"; };
 		412DBFDA273D7B81000F514E /* EnterSeed.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeed.ViewModel.swift; sourceTree = "<group>"; };
 		412DBFDB273D7B81000F514E /* EnterSeed.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeed.RootView.swift; sourceTree = "<group>"; };
 		412DBFE0273E9944000F514E /* ExpandableTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableTextView.swift; sourceTree = "<group>"; };
 		412DBFE2273E999E000F514E /* ClearableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearableButton.swift; sourceTree = "<group>"; };
-		412DBFE427460014000F514E /* EnterSeedMainButtonContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedMainButtonContent.swift; sourceTree = "<group>"; };
+		412DBFE427460014000F514E /* EnterSeed.MainButtonContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeed.MainButtonContent.swift; sourceTree = "<group>"; };
 		41446332272A84560099B327 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 		417BB3512727EF3400EDE6AE /* SelectRecipient.SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRecipient.SectionHeaderView.swift; sourceTree = "<group>"; };
 		417BB3532727FCDD00EDE6AE /* AddressFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressFormatter.swift; sourceTree = "<group>"; };
@@ -934,7 +934,7 @@
 				4114D1672746272400352CDF /* EnterSeedInfo.ViewController.swift */,
 				4114D1682746272400352CDF /* EnterSeedInfo.ViewModel.swift */,
 				4114D1692746272400352CDF /* EnterSeedInfo.RootView.swift */,
-				4114D16E274633DE00352CDF /* EnterSeedInfoNavigationBar.swift */,
+				4114D16E274633DE00352CDF /* EnterSeedInfo.NavigationBar.swift */,
 			);
 			path = EnterSeedInfo;
 			sourceTree = "<group>";
@@ -947,8 +947,8 @@
 				412DBFD9273D7B81000F514E /* EnterSeed.ViewController.swift */,
 				412DBFDA273D7B81000F514E /* EnterSeed.ViewModel.swift */,
 				412DBFDB273D7B81000F514E /* EnterSeed.RootView.swift */,
-				412DBFD6273D79EC000F514E /* EnterSeedNavigationBar.swift */,
-				412DBFE427460014000F514E /* EnterSeedMainButtonContent.swift */,
+				412DBFD6273D79EC000F514E /* EnterSeed.NavigationBar.swift */,
+				412DBFE427460014000F514E /* EnterSeed.MainButtonContent.swift */,
 			);
 			path = EnterSeedViewController;
 			sourceTree = "<group>";
@@ -2537,7 +2537,7 @@
 				BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */,
 				BC4B9E8C27153430005B9ECA /* Settings.UsernameViewController.swift in Sources */,
 				BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */,
-				412DBFE527460014000F514E /* EnterSeedMainButtonContent.swift in Sources */,
+				412DBFE527460014000F514E /* EnterSeed.MainButtonContent.swift in Sources */,
 				BC036C1B269449A7005C1BEC /* AccountNotificationsRepository.swift in Sources */,
 				BC1FFEE8262977940014F027 /* WLEnterPhrasesVC.swift in Sources */,
 				BC38555A26AE971400BD8BF7 /* ChooseWallet.ViewController.swift in Sources */,
@@ -2556,7 +2556,7 @@
 				BCE04C67268D901400CE131A /* OneWayPanGestureRecognizer.swift in Sources */,
 				BC53E2202654BFAA005624CC /* DerivablePaths.ViewModel.swift in Sources */,
 				BC28A9B126B3B0440031BE42 /* WLSpinnerView.swift in Sources */,
-				412DBFD7273D79EC000F514E /* EnterSeedNavigationBar.swift in Sources */,
+				412DBFD7273D79EC000F514E /* EnterSeed.NavigationBar.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* AccountStorage.swift in Sources */,
 				BC4B9E8A27142AF5005B9ECA /* Settings.Helpers.swift in Sources */,
 				BC8F67742608738D002FDCCD /* WLPhrasesTextView+Attachments.swift in Sources */,
@@ -2596,7 +2596,7 @@
 				BC2297982700A578003F7118 /* RestoreICloud.Cell.swift in Sources */,
 				BC105136258B2A2A00398EA2 /* TermsAndConditionsVC.swift in Sources */,
 				BC7B2C7025E384F700833656 /* CreateSecurityKeys.ViewModel.swift in Sources */,
-				4114D16F274633DE00352CDF /* EnterSeedInfoNavigationBar.swift in Sources */,
+				4114D16F274633DE00352CDF /* EnterSeedInfo.NavigationBar.swift in Sources */,
 				BC7D078326F86700005F777F /* ReceiveToken.ViewBuilders.swift in Sources */,
 				BCB7C7D12667336800FEC68E /* ProcessTransaction.ViewController.swift in Sources */,
 				BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */,

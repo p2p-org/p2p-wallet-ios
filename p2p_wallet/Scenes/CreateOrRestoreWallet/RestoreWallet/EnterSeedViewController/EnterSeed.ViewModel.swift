@@ -15,7 +15,7 @@ protocol EnterSeedViewModelType: AnyObject {
     var errorDriver: Driver<String?> { get }
     var seedTextSubject: BehaviorRelay<String?> { get }
     var seedTextDriver: Driver<String?> { get }
-    var mainButtonContentDriver: Driver<EnterSeedMainButtonContent> { get }
+    var mainButtonContentDriver: Driver<EnterSeed.MainButtonContent> { get }
 
     func showInfo()
     func goBack()
@@ -33,7 +33,7 @@ extension EnterSeed {
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let errorSubject = BehaviorRelay<String?>(value: nil)
-        private let mainButtonContentSubject = BehaviorRelay<EnterSeedMainButtonContent>(value: .invalid(.empty))
+        private let mainButtonContentSubject = BehaviorRelay<EnterSeed.MainButtonContent>(value: .invalid(.empty))
         private let mainButtonIsEnabledSubject = BehaviorRelay<Bool>(value: false)
 
         let seedTextSubject = BehaviorRelay<String?>(value: nil)
@@ -93,7 +93,7 @@ extension EnterSeed.ViewModel: EnterSeedViewModelType {
         errorSubject.asDriver()
     }
 
-    var mainButtonContentDriver: Driver<EnterSeedMainButtonContent> {
+    var mainButtonContentDriver: Driver<EnterSeed.MainButtonContent> {
         mainButtonContentSubject.asDriver()
     }
 
