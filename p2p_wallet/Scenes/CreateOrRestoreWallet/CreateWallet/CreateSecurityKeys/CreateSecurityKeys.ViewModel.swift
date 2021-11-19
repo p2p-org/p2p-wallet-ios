@@ -9,7 +9,8 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-protocol CreateSecurityKeysViewModelType {
+protocol CreateSecurityKeysViewModelType: AnyObject {
+    var navigationDriver: Driver<CreateSecurityKeys.NavigatableScene?> { get }
     var phrasesDriver: Driver<[String]> { get }
     var errorSignal: Signal<String> { get }
     var isCheckboxSelectedDriver: Driver<Bool> { get }
@@ -21,6 +22,7 @@ protocol CreateSecurityKeysViewModelType {
     func next()
     func back()
     func verifyPhrase()
+    func termsAndConditions()
 }
 
 extension CreateSecurityKeys {
@@ -34,6 +36,7 @@ extension CreateSecurityKeys {
         private let disposeBag = DisposeBag()
         
         // MARK: - Subjects
+        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let phrasesSubject = BehaviorRelay<[String]>(value: [])
         private let errorSubject = PublishRelay<String>()
         private let isCheckboxSelectedSubject = BehaviorRelay<Bool>(value: false)
@@ -46,6 +49,10 @@ extension CreateSecurityKeys {
 }
 
 extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
+    var navigationDriver: Driver<CreateSecurityKeys.NavigatableScene?> {
+        navigationSubject.asDriver()
+    }
+
     var phrasesDriver: Driver<[String]> {
         phrasesSubject.asDriver()
     }
@@ -90,6 +97,10 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         } else {
             errorSubject.accept(L10n.SecurityKeyCanTBeSavedIntoIcloud.pleaseTryAgain)
         }
+    }
+
+    func termsAndConditions() {
+        navigationSubject.accept(.termsAndConditions)
     }
     
     func verifyPhrase() {

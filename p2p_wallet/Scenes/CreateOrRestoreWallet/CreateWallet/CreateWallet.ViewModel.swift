@@ -18,7 +18,6 @@ protocol CreateWalletViewModelType: ReserveNameHandler {
     func handleName(_ name: String?)
     func finish()
     
-    func navigateToTermsAndCondition()
     func declineTermsAndCondition()
     func acceptTermsAndCondition()
     func navigateToCreatePhrases()
@@ -50,11 +49,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     
     // MARK: - Actions
     func kickOff() {
-        if !Defaults.isTermAndConditionsAccepted {
-            navigateToTermsAndCondition()
-        } else {
-            navigateToExplanation()
-        }
+        navigateToExplanation()
     }
     
     func verifyPhrase(_ phrases: [String]) {
@@ -96,17 +91,12 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
             name: name
         )
     }
-    
-    func navigateToTermsAndCondition() {
-        navigationSubject.accept(.termsAndConditions)
-    }
-    
+        
     func declineTermsAndCondition() {
         navigationSubject.accept(.dismiss)
     }
     
     func acceptTermsAndCondition() {
-        Defaults.isTermAndConditionsAccepted = true
         navigateToExplanation()
     }
     

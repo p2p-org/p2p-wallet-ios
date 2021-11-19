@@ -56,6 +56,9 @@ extension EnterSeed {
                 let viewModel = DerivableAccounts.ViewModel(phrases: words)
                 let vc = DerivableAccounts.ViewController(viewModel: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
+            case .termsAndConditions:
+                let vc = TermsAndConditionsVC()
+                present(vc, animated: true)
             }
         }
     }

@@ -12,6 +12,7 @@ struct EnterSeed {
     enum NavigatableScene {
         case info
         case back
+        case termsAndConditions
         case success(words: [String])
     }
 }

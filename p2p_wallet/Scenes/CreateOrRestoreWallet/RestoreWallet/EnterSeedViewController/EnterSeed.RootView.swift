@@ -15,11 +15,12 @@ extension EnterSeed {
         
         // MARK: - Properties
         private let viewModel: EnterSeedViewModelType
-        
+
         // MARK: - Subviews
         lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
         lazy var stackView = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill)
         private let textView = ExpandableTextView()
+        private let agreeTermsAndConditionsView = AgreeTermsAndConditionsView()
 
         lazy var errorLabel = UILabel(textSize: 13, textColor: .alert, numberOfLines: 0, textAlignment: .center)
 
@@ -37,6 +38,10 @@ extension EnterSeed {
             self.viewModel = viewModel
 
             super.init(frame: .zero)
+
+            agreeTermsAndConditionsView.didTouchHyperLink = { [weak self] in
+                self?.viewModel.showTermsAndConditions()
+            }
         }
 
         override func commonInit() {
@@ -104,6 +109,8 @@ extension EnterSeed {
                 BEStackViewSpacing(18)
                 descriptionLabel
                     .padding(.init(all: 18), backgroundColor: .fafafa, cornerRadius: 12)
+                BEStackViewSpacing(18)
+                agreeTermsAndConditionsView
             }
 
             pasteButton.autoMatch(.height, to: .height, of: textView)

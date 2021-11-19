@@ -33,6 +33,22 @@ extension CreateSecurityKeys {
                     self?.showAlert(title: L10n.error, message: error)
                 })
                 .disposed(by: disposeBag)
+            viewModel.navigationDriver
+                .drive(onNext: { [weak self] in
+                    self?.navigate(to: $0)
+                })
+                .disposed(by: disposeBag)
+        }
+
+        // MARK: - Navigation
+        private func navigate(to scene: NavigatableScene?) {
+            switch scene {
+            case .none:
+                break
+            case .termsAndConditions:
+                let vc = TermsAndConditionsVC()
+                present(vc, animated: true)
+            }
         }
     }
 }
