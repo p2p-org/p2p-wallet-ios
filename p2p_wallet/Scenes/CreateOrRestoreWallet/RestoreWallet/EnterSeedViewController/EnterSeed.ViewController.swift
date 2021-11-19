@@ -19,6 +19,7 @@ extension EnterSeed {
         private let viewModel: EnterSeedViewModelType
         
         // MARK: - Properties
+        private lazy var rootView = RootView(viewModel: viewModel)
         
         // MARK: - Methods
         init(viewModel: EnterSeedViewModelType) {
@@ -26,7 +27,7 @@ extension EnterSeed {
         }
 
         override func loadView() {
-            view = RootView(viewModel: viewModel)
+            view = rootView
         }
         
         override func setUp() {
@@ -41,7 +42,11 @@ extension EnterSeed {
                 })
                 .disposed(by: disposeBag)
         }
-        
+
+        override func viewDidAppear(_ animated: Bool) {
+            rootView.startTyping()
+        }
+
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {

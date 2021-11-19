@@ -52,6 +52,10 @@ extension EnterSeed {
             bind()
         }
 
+        func startTyping() {
+            textView.becomeFirstResponder()
+        }
+
         @objc
         private func buttonNextDidTouch() {
             viewModel.goForth()
@@ -120,8 +124,6 @@ extension EnterSeed {
             nextButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             nextButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
             nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
-
-            textView.becomeFirstResponder()
         }
         
         private func bind() {
