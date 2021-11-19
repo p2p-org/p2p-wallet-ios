@@ -28,7 +28,7 @@ protocol CreateOrRestoreWalletHandler {
 extension Root {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var accountStorage: KeychainAccountStorage
+        @Injected private var storage: AccountStorageType & PincodeStorageType & NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
@@ -45,20 +45,20 @@ extension Root {
         func reload() {
             isLoadingSubject.accept(true)
             
-            DispatchQueue.global(qos: .userInteractive).async {
-                let account = self.accountStorage.account
-                DispatchQueue.main.async {
+            DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+                let account = self?.storage.account
+                DispatchQueue.main.async { [weak self] in
                     if account == nil {
-                        self.showAuthenticationOnMainOnAppear = false
-                        self.navigationSubject.accept(.createOrRestoreWallet)
-                    } else if self.accountStorage.pinCode == nil ||
+                        self?.showAuthenticationOnMainOnAppear = false
+                        self?.navigationSubject.accept(.createOrRestoreWallet)
+                    } else if self?.storage.pinCode == nil ||
                                 !Defaults.didSetEnableBiometry ||
                                 !Defaults.didSetEnableNotifications
                     {
-                        self.showAuthenticationOnMainOnAppear = false
-                        self.navigationSubject.accept(.onboarding)
+                        self?.showAuthenticationOnMainOnAppear = false
+                        self?.navigationSubject.accept(.onboarding)
                     } else {
-                        self.navigationSubject.accept(.main(showAuthenticationWhenAppears: self.showAuthenticationOnMainOnAppear))
+                        self?.navigationSubject.accept(.main(showAuthenticationWhenAppears: self?.showAuthenticationOnMainOnAppear ?? false))
                     }
                 }
             }
@@ -66,7 +66,7 @@ extension Root {
         
         func logout() {
             ResolverScope.session.reset()
-            accountStorage.clear()
+            storage.clearAccount()
             Defaults.walletName = [:]
             Defaults.didSetEnableBiometry = false
             Defaults.didSetEnableNotifications = false
@@ -153,12 +153,12 @@ extension Root.ViewModel: CreateOrRestoreWalletHandler {
         isLoadingSubject.accept(true)
         DispatchQueue.global().async { [weak self] in
             do {
-                try self?.accountStorage.save(phrases: phrases)
-                try self?.accountStorage.save(derivableType: derivablePath.type)
-                try self?.accountStorage.save(walletIndex: derivablePath.walletIndex)
+                try self?.storage.save(phrases: phrases)
+                try self?.storage.save(derivableType: derivablePath.type)
+                try self?.storage.save(walletIndex: derivablePath.walletIndex)
                 
                 if let name = name {
-                    self?.accountStorage.save(name: name)
+                    self?.storage.save(name: name)
                 }
                 
                 DispatchQueue.main.async { [weak self] in

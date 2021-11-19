@@ -25,6 +25,7 @@ disabled_rules:
   - type_name
   - opening_brace
   - shorthand_operator
+  - todo
 
 line_length:
   warning: 250
@@ -35,7 +36,7 @@ function_parameter_count:
   error: 20
 
 file_length:
-  warning: 500
+  warning: 700
 
 type_body_length:
   warning: 400

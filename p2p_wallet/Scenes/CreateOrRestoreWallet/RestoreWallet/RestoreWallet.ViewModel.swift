@@ -25,7 +25,7 @@ protocol RestoreWalletViewModelType: ReserveNameHandler {
 extension RestoreWallet {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var accountStorage: KeychainAccountStorage
+        @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var nameService: NameServiceType
@@ -68,7 +68,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     
     // MARK: - Actions
     func restoreFromICloud() {
-        guard let accounts = accountStorage.accountFromICloud(), accounts.count > 0
+        guard let accounts = iCloudStorage.accountFromICloud(), accounts.count > 0
             else {
             isRestorableUsingIcloudSubject.accept(false)
             UIApplication.shared.showToast(message: L10n.thereIsNoP2PWalletSavedInYourICloud)

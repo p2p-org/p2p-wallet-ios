@@ -47,7 +47,6 @@ extension DefaultsKeys {
     var fiat: DefaultsKey<Fiat> {.init(#function, defaultValue: .usd)}
     var hiddenWalletPubkey: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
     var unhiddenWalletPubkey: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
-    var isTermAndConditionsAccepted: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var hideZeroBalances: DefaultsKey<Bool> {.init(#function, defaultValue: true)}
     var useFreeTransaction: DefaultsKey<Bool> {.init(#function, defaultValue: true)}
     var p2pFeePayerPubkeys: DefaultsKey<[String]> {.init(#function, defaultValue: [])}

@@ -61,7 +61,7 @@ protocol SettingsViewModelType {
 extension Settings {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var accountStorage: KeychainAccountStorage
+        @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var rootViewModel: RootViewModelType
         private var reserveNameHandler: ReserveNameHandler
@@ -77,8 +77,8 @@ extension Settings {
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private lazy var usernameSubject = BehaviorRelay<String?>(value: accountStorage.getName()?.withNameServiceDomain())
-        private lazy var didBackupSubject = BehaviorRelay<Bool>(value: accountStorage.didBackupUsingIcloud || Defaults.didBackupOffline)
+        private lazy var usernameSubject = BehaviorRelay<String?>(value: storage.getName()?.withNameServiceDomain())
+        private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults.didBackupOffline)
         private let fiatSubject = BehaviorRelay<Fiat>(value: Defaults.fiat)
         private let endpointSubject = BehaviorRelay<SolanaSDK.APIEndPoint>(value: Defaults.apiEndPoint)
         private lazy var securityMethodsSubject = BehaviorRelay<[String]>(value: getSecurityMethods())
@@ -101,7 +101,7 @@ extension Settings {
         
         func bind() {
             disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) {[weak self] _ in
-                self?.usernameSubject.accept(self?.accountStorage.getName()?.withNameServiceDomain())
+                self?.usernameSubject.accept(self?.storage.getName()?.withNameServiceDomain())
             })
         }
         
@@ -163,7 +163,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func getUserAddress() -> String? {
-        accountStorage.account?.publicKey.base58EncodedString
+        storage.account?.publicKey.base58EncodedString
     }
     
     // MARK: - Actions
@@ -172,26 +172,26 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func showOrReserveUsername() {
-        if accountStorage.getName() != nil {
+        if storage.getName() != nil {
             navigate(to: .username)
-        } else if let owner = accountStorage.account?.publicKey.base58EncodedString {
+        } else if let owner = storage.account?.publicKey.base58EncodedString {
             navigate(to: .reserveUsername(owner: owner, handler: reserveNameHandler))
         }
     }
     
     func backupUsingICloud() {
-        guard let account = accountStorage.account?.phrase else {return}
+        guard let account = storage.account?.phrase else {return}
         authenticationHandler.authenticate(
             presentationStyle: .init(
                 isRequired: false,
                 isFullScreen: false,
                 completion: { [weak self] in
                     guard let self = self else {return}
-                    _ = self.accountStorage.saveToICloud(
+                    _ = self.storage.saveToICloud(
                         account: .init(
-                            name: self.accountStorage.getName(),
+                            name: self.storage.getName(),
                             phrase: account.joined(separator: " "),
-                            derivablePath: self.accountStorage.getDerivablePath() ?? .default
+                            derivablePath: self.storage.getDerivablePath() ?? .default
                         )
                     )
                     self.setDidBackup(true)
@@ -287,7 +287,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func savePincode(_ pincode: String) {
-        accountStorage.save(pincode)
+        storage.save(pincode)
     }
     
     func setLanguage(_ language: LocalizedLanguage) {
@@ -312,12 +312,12 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func copyUsernameToClipboard() {
-        guard let username = accountStorage.getName()?.withNameServiceDomain() else {return}
+        guard let username = storage.getName()?.withNameServiceDomain() else {return}
         UIApplication.shared.copyToClipboard(username, alert: true, alertMessage: L10n.copiedToClipboard)
     }
     
     func shareUsername() {
-        guard let username = accountStorage.getName()?.withNameServiceDomain() else {return}
+        guard let username = storage.getName()?.withNameServiceDomain() else {return}
         navigate(to: .share(item: username))
     }
     
