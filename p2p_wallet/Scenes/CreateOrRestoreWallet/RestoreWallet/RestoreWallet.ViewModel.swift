@@ -29,6 +29,7 @@ extension RestoreWallet {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var nameService: NameServiceType
+        @Injected private var authenticationHandler: AuthenticationHandler
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -68,6 +69,14 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     
     // MARK: - Actions
     func restoreFromICloud() {
+        authenticationHandler.requiredOwner { [weak self] in
+            self?._restoreFromIcloud()
+        } onFailure: { [weak self] error in
+            self?.errorSubject.accept(error?.localizedDescription ?? L10n.error)
+        }
+    }
+    
+    private func _restoreFromIcloud() {
         guard let accounts = iCloudStorage.accountFromICloud(), accounts.count > 0
             else {
             isRestorableUsingIcloudSubject.accept(false)

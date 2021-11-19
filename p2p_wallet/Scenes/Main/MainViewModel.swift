@@ -8,9 +8,10 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import LocalAuthentication
 
 protocol MainViewModelType: AuthenticationHandler {
-    var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {get} // nil if non authentication process is processing
+    var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get } // nil if non authentication process is processing
 }
 
 class MainViewModel {
@@ -31,8 +32,8 @@ class MainViewModel {
     /// Bind subjects
     private func bind() {
         authenticationStatusSubject
-            .skip(while: {$0 == nil})
-            .subscribe(onNext: {[weak self] status in
+            .skip(while: { $0 == nil })
+            .subscribe(onNext: { [weak self] status in
                 if status == nil {
                     self?.lastAuthenticationTimeStamp = Int(Date().timeIntervalSince1970)
                 }
@@ -44,10 +45,10 @@ class MainViewModel {
     
     private func observeAppNotifications() {
         UIApplication.shared.rx.applicationDidBecomeActive
-            .subscribe(onNext: {[weak self] _ in
-                guard let self = self else {return}
+            .subscribe(onNext: { [weak self] _ in
+                guard let self = self else { return }
                 guard Int(Date().timeIntervalSince1970) >= self.lastAuthenticationTimeStamp + self.timeRequiredForAuthentication
-                else {return}
+                    else { return }
                 self.authenticate(presentationStyle: .login())
             })
             .disposed(by: disposeBag)
@@ -55,6 +56,20 @@ class MainViewModel {
 }
 
 extension MainViewModel: MainViewModelType {
+    func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((Error?) -> Void)?) {
+        let myContext = LAContext()
+        
+        myContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: L10n.confirmItSYou) { (success, error) in
+            guard success else {
+                onFailure?(error)
+                return
+            }
+            DispatchQueue.main.sync {
+                onSuccess?()
+            }
+        }
+    }
+    
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {
         authenticationStatusSubject.asDriver()
     }
@@ -67,7 +82,7 @@ extension MainViewModel: MainViewModelType {
         
         // prevent duplications
         guard (previous == nil && current != nil) || (previous != nil && current == nil)
-        else {return}
+            else { return }
         
         // accept current if nil
         if current == nil {
