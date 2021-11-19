@@ -27,7 +27,7 @@ class TabBar: BERoundedCornerShadowView {
 extension TabBarVC {
     class TabBarItemView: BEView {
         lazy var imageView = UIImageView(width: 24, height: 24)
-        lazy var titleLabel = UILabel(textSize: 10, textAlignment: .center)
+        lazy var titleLabel = UILabel(textSize: 10, weight: .medium, textAlignment: .center)
         
         override var tintColor: UIColor! {
             didSet {
@@ -38,7 +38,7 @@ extension TabBarVC {
         
         override func commonInit() {
             super.commonInit()
-            let stackView = UIStackView(axis: .vertical, spacing: 6, alignment: .center, distribution: .fill, arrangedSubviews: [
+            let stackView = UIStackView(axis: .vertical, spacing: 3, alignment: .center, distribution: .fill, arrangedSubviews: [
                 imageView, titleLabel
             ])
             
