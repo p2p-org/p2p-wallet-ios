@@ -29,6 +29,7 @@ extension CreateSecurityKeys {
         @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var createWalletViewModel: CreateWalletViewModelType
+        @Injected private var authenticationHandler: AuthenticationHandler
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -79,7 +80,15 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         UIApplication.shared.copyToClipboard(phrasesSubject.value.joined(separator: " "), alertMessage: L10n.seedPhraseCopiedToClipboard)
     }
     
-    func saveToICloud() {
+    @objc func saveToICloud() {
+        authenticationHandler.requiredOwner { [weak self] in
+            self?._saveToIcloud()
+        } onFailure: { [weak self] error in
+            self?.errorSubject.accept(error?.localizedDescription ?? L10n.error)
+        }
+    }
+    
+    private func _saveToIcloud() {
         analyticsManager.log(event: .createWalletBackupToIcloudClick)
         let result = iCloudStorage.saveToICloud(
             account: .init(
