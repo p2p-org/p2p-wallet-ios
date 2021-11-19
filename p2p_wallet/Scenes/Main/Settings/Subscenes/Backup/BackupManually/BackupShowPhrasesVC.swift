@@ -54,23 +54,23 @@ private class _BackupShowPhrasesVC: BackupManuallyBaseVC {
         }
         
         backupUsingIcloudButton.isHidden = true
-        if Defaults.didBackupOffline && !accountStorage.didBackupUsingIcloud {
+        if Defaults.didBackupOffline && !storage.didBackupUsingIcloud {
             backupUsingIcloudButton.isHidden = false
         }
     }
     
     @objc func backupUsingICloudButtonDidTouch() {
-        guard let account = accountStorage.account?.phrase else {return}
+        guard let account = storage.account?.phrase else {return}
         authenticationHandler.authenticate(
             presentationStyle: .init(
                 isRequired: false,
                 isFullScreen: false,
                 completion: { [weak self] in
-                    self?.accountStorage.saveToICloud(
+                    _ = self?.storage.saveToICloud(
                         account: .init(
-                            name: self?.accountStorage.getName(),
+                            name: self?.storage.getName(),
                             phrase: account.joined(separator: " "),
-                            derivablePath: self?.accountStorage.getDerivablePath() ?? .default
+                            derivablePath: self?.storage.getDerivablePath() ?? .default
                         )
                     )
                     self?.backupUsingIcloudButton.isEnabled = false

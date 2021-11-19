@@ -565,7 +565,7 @@
 "Your security key" = "Khóa bảo mật của bạn";
 "Verify manually" = "Xác minh thủ công";
 "Renew" = "Thay mới";
-"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Các từ sau đây là khóa bảo mật mà bạn phải giữ ở nơi an toàn, được viết theo đúng trình tự. \n Nếu bị mất, không ai có thể khôi phục lại. \n Giữ bí mật, kể cả với chúng tôi";
+"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Các từ sau đây là khóa bảo mật mà bạn phải giữ ở nơi an toàn, được viết theo đúng trình tự.\n\n Nếu bị mất, không ai có thể khôi phục lại. \n Giữ bí mật, kể cả với chúng tôi";
 "Proceed without a username?" = "Tiếp tục mà không có tên người dùng?";
 "Anytime you want, you can easily reserve a username by going to the settings" = "Bất cứ lúc nào bạn muốn, bạn có thể dễ dàng đặt trước tên người dùng bằng cách đi tới phần cài đặt";
 "Proceed" = "Tiếp tục";
@@ -599,3 +599,9 @@
 "P2P Wallet uses %@ to restrict unauthorized users from accessing the app" = "Ví P2P sử dụng %@ để hạn chế người dùng trái phép truy cập vào ứng dụng";
 "Don’t Allow" = "Không cho phép";
 "Allow" = "Cho phép";
+"Updating prices" = "Cập nhật giá";
+"Prices updated" = "Giá đã cập nhật";
+"Error when updating prices" = "Lỗi khi cập nhật giá";
+"DApps" = "DApps";
+"Earn" = "Kiếm";
+"By continuing, you agree to wallet's %@" = "Bằng cách tiếp tục, bạn đồng ý với %@ của wallet";

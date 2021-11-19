@@ -14,23 +14,23 @@ protocol AccountsListViewModelType: BEListViewModelType {}
 extension RestoreICloud {
     class AccountsListViewModel: BEListViewModel<ParsedAccount> {
         // MARK: - Dependencies
-        @Injected private var storage: KeychainAccountStorage
+        @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var nameService: NameServiceType
         
         // MARK: - Methods
         override func createRequest() -> Single<[ParsedAccount]> {
-            let accountsRequest = Single<[Account]>.just(storage.accountFromICloud() ?? [])
+            let accountsRequest = Single<[Account]>.just(iCloudStorage.accountFromICloud() ?? [])
             
             return accountsRequest
                 .flatMap {[weak self] accounts in
                     guard let self = self else {throw SolanaSDK.Error.unknown}
-                    return Single.zip(accounts.map {createAccountSingle(account: $0, nameService: self.nameService, storage: self.storage)})
+                    return Single.zip(accounts.map {createAccountSingle(account: $0, nameService: self.nameService, storage: self.iCloudStorage)})
                 }
         }
     }
 }
 
-private func createAccountSingle(account: Account, nameService: NameServiceType, storage: KeychainAccountStorage) -> Single<RestoreICloud.ParsedAccount> {
+private func createAccountSingle(account: Account, nameService: NameServiceType, storage: ICloudStorageType) -> Single<RestoreICloud.ParsedAccount> {
     createSolanaAccountSingle(account: account)
         .flatMap {solanaAccount -> Single<RestoreICloud.ParsedAccount> in
             let accountRequest: Single<Account>
@@ -40,7 +40,7 @@ private func createAccountSingle(account: Account, nameService: NameServiceType,
                 accountRequest = nameService.getName(solanaAccount.publicKey.base58EncodedString)
                     .map {Account(name: $0, phrase: account.phrase, derivablePath: account.derivablePath)}
                     .do(onSuccess: {[weak storage] account in
-                        storage?.saveToICloud(account: account)
+                        _ = storage?.saveToICloud(account: account)
                     })
                     .catchAndReturn(account)
             }

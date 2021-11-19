@@ -18,9 +18,6 @@ protocol CreateWalletViewModelType: ReserveNameHandler {
     func handleName(_ name: String?)
     func finish()
     
-    func navigateToTermsAndCondition()
-    func declineTermsAndCondition()
-    func acceptTermsAndCondition()
     func navigateToCreatePhrases()
     func navigateToReserveName(owner: String)
     func back()
@@ -31,7 +28,6 @@ extension CreateWallet {
         // MARK: - Dependencies
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var accountStorage: KeychainAccountStorage
         
         // MARK: - Properties
         private let bag = DisposeBag()
@@ -50,11 +46,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     
     // MARK: - Actions
     func kickOff() {
-        if !Defaults.isTermAndConditionsAccepted {
-            navigateToTermsAndCondition()
-        } else {
-            navigateToExplanation()
-        }
+        navigateToExplanation()
     }
     
     func verifyPhrase(_ phrases: [String]) {
@@ -95,19 +87,6 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
             derivablePath: .default,
             name: name
         )
-    }
-    
-    func navigateToTermsAndCondition() {
-        navigationSubject.accept(.termsAndConditions)
-    }
-    
-    func declineTermsAndCondition() {
-        navigationSubject.accept(.dismiss)
-    }
-    
-    func acceptTermsAndCondition() {
-        Defaults.isTermAndConditionsAccepted = true
-        navigateToExplanation()
     }
     
     func navigateToExplanation() {

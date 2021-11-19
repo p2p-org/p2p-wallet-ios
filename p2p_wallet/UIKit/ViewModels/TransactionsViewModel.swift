@@ -16,7 +16,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     private let accountSymbol: String
     private var before: String?
     private let repository: TransactionsRepository
-    private let pricesRepository: PricesRepository
+    private let pricesService: PricesServiceType
     private let processingTransactionRepository: ProcessingTransactionsRepository
     private let feeRelayer: FeeRelayerType
     private let notificationsRepository: WLNotificationsRepository
@@ -34,7 +34,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         account: String,
         accountSymbol: String,
         repository: TransactionsRepository,
-        pricesRepository: PricesRepository,
+        pricesService: PricesServiceType,
         processingTransactionRepository: ProcessingTransactionsRepository,
         feeRelayer: FeeRelayerType,
         notificationsRepository: WLNotificationsRepository
@@ -42,7 +42,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         self.account = account
         self.accountSymbol = accountSymbol
         self.repository = repository
-        self.pricesRepository = pricesRepository
+        self.pricesService = pricesService
         self.processingTransactionRepository = processingTransactionRepository
         self.feeRelayer = feeRelayer
         self.notificationsRepository = notificationsRepository
@@ -51,8 +51,8 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     
     override func bind() {
         super.bind()
-        pricesRepository.pricesObservable()
-            .subscribe(onNext: {[weak self] _ in
+        pricesService.currentPricesDriver
+            .drive(onNext: {[weak self] _ in
                 self?.refreshUI()
             })
             .disposed(by: disposeBag)
@@ -176,7 +176,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     private func updatedTransactionWithPrice(
         transaction: SolanaSDK.ParsedTransaction
     ) -> SolanaSDK.ParsedTransaction {
-        guard let price = pricesRepository.currentPrice(for: transaction.symbol)
+        guard let price = pricesService.currentPrice(for: transaction.symbol)
         else {return transaction}
         
         var transaction = transaction

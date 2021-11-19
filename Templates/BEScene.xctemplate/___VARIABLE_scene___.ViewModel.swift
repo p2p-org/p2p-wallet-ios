@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 // TODO: - Add to AppDelegate+Injection.swift
-//register {___VARIABLE_scene___.ViewModel()}
+// register {___VARIABLE_scene___.ViewModel()}
 //    .implements(___VARIABLE_scene___ViewModelType.self)
 //    .scope(.shared)
 

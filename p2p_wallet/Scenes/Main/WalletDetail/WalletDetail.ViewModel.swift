@@ -31,7 +31,7 @@ extension WalletDetail {
     class ViewModel {
         // MARK: - Dependencies
         private let walletsRepository: WalletsRepository
-        private let pricesRepository: PricesRepository
+        private let pricesService: PricesServiceType
         private let processingTransactionRepository: ProcessingTransactionsRepository
         private let transactionsRepository: TransactionsRepository
         private let notificationsRepository: WLNotificationsRepository
@@ -48,7 +48,7 @@ extension WalletDetail {
         lazy var graphViewModel: WalletGraphViewModel = {
             WalletGraphViewModel(
                 symbol: symbol,
-                pricesRepository: pricesRepository
+                pricesService: pricesService
             )
         }()
         
@@ -56,7 +56,7 @@ extension WalletDetail {
             account: pubkey,
             accountSymbol: symbol,
             repository: transactionsRepository,
-            pricesRepository: pricesRepository,
+            pricesService: pricesService,
             processingTransactionRepository: processingTransactionRepository,
             feeRelayer: feeRelayer,
             notificationsRepository: notificationsRepository
@@ -72,7 +72,7 @@ extension WalletDetail {
             symbol: String,
             walletsRepository: WalletsRepository,
             processingTransactionRepository: ProcessingTransactionsRepository,
-            pricesRepository: PricesRepository,
+            pricesService: PricesServiceType,
             transactionsRepository: TransactionsRepository,
             feeRelayer: FeeRelayerType,
             notificationsRepository: WLNotificationsRepository
@@ -80,7 +80,7 @@ extension WalletDetail {
             self.pubkey = pubkey
             self.symbol = symbol
             self.walletsRepository = walletsRepository
-            self.pricesRepository = pricesRepository
+            self.pricesService = pricesService
             self.processingTransactionRepository = processingTransactionRepository
             self.transactionsRepository = transactionsRepository
             self.feeRelayer = feeRelayer
