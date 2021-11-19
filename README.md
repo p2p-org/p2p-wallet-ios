@@ -18,26 +18,22 @@ P2P Wallet on Solana blockchain
 
 ## Installation
 
-#### Add Config.xconfig (ask team manager)
+#### Add Config.xconfig (ask team manager or use fake key below)
 ```
-RPCPOOL_API_KEY = <your_key>
-
-TRANSAK_STAGING_API_KEY = <your_key>
-TRANSAK_PRODUCTION_API_KEY = <your_key>
-TRANSAK_HOST_URL = <your_key>
+// MARK: - Transak
+TRANSAK_STAGING_API_KEY = fake_api_key
+TRANSAK_PRODUCTION_API_KEY = fake_api_key
+TRANSAK_HOST_URL = p2p.org
 
 // Mark: - Moonpay
-MOONPAY_STAGING_API_KEY = <your_key>
-MOONPAY_PRODUCTION_API_KEY = <your_key>
-
-// MARK: - CryptoCompareAPI
-CRYPTO_COMPARE_API_KEY = <your_key>
+MOONPAY_STAGING_API_KEY = fake_api_key
+MOONPAY_PRODUCTION_API_KEY = fake_api_key
 
 // MARK: - Amplitude
-AMPLITUDE_API_KEY = <your_key>
+AMPLITUDE_API_KEY = fake_api_key
 
 // MARK: - FeeRelayer
-FEE_RELAYER_ENDPOINT = <your_key>
+FEE_RELAYER_ENDPOINT = fee-relayer.solana.p2p.org
 ```
 
 #### Install dependencies (cocoapods)
