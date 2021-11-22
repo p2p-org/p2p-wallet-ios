@@ -14,7 +14,6 @@ import RxCocoa
 class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let graphViewModel: WalletGraphViewModel
     @Injected private var analyticsManager: AnalyticsManagerType
-    let scanQrCodeAction: CocoaAction
     let wallet: Driver<Wallet?>
     let nativePubkey: Driver<String?>
     let disposeBag = DisposeBag()
@@ -22,12 +21,10 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     init(
         transactionViewModel: BEListViewModelType,
         graphViewModel: WalletGraphViewModel,
-        scanQrCodeAction: CocoaAction,
         wallet: Driver<Wallet?>,
         nativePubkey: Driver<String?>
     ) {
         self.graphViewModel = graphViewModel
-        self.scanQrCodeAction = scanQrCodeAction
         self.wallet = wallet
         self.nativePubkey = nativePubkey
         
