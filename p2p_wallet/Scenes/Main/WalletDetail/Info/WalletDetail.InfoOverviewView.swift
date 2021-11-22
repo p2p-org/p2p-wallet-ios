@@ -8,10 +8,12 @@
 import Foundation
 import BEPureLayout
 import UIKit
+import RxSwift
 
 extension WalletDetail {
     class InfoOverviewView: WLOverviewView {
         // MARK: - Properties
+        private let disposeBag = DisposeBag()
         private let viewModel: WalletDetailViewModelType
         
         // MARK: - Subviews
@@ -36,9 +38,13 @@ extension WalletDetail {
         override func createTopView() -> UIView {
             UIStackView(axis: .horizontal, spacing: 18, alignment: .center, distribution: .fill) {
                 coinImageView
-                UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
-                    equityValueLabel
-                    change24hLabel
+                
+                UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
+                    amountLabel
+                    UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
+                        equityValueLabel
+                        change24hLabel
+                    }
                 }
             }
                 .padding(.init(x: 18, y: 21))
@@ -52,7 +58,41 @@ extension WalletDetail {
         }
         
         func bind() {
+            // logo
+            viewModel.walletDriver
+                .drive(onNext: {[weak self] wallet in
+                    self?.coinImageView.setUp(wallet: wallet)
+                })
+                .disposed(by: disposeBag)
             
+            // amountLabel
+            viewModel.walletDriver.map {
+                "\($0?.token.symbol ?? "") \($0?.amount.toString(maximumFractionDigits: 9) ?? "")"
+            }
+                .drive(amountLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // equityValue label
+            viewModel.walletDriver.map {
+                $0?.amountInCurrentFiat
+                    .toString(maximumFractionDigits: 2)
+            }
+                .map {Defaults.fiat.symbol + " " + ($0 ?? "0")}
+                .drive(equityValueLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // changeLabel
+            viewModel.walletDriver.map {
+                "\($0?.price?.change24h?.percentage?.toString(maximumFractionDigits: 2, showPlus: true) ?? "")% \(L10n._24Hours)"
+            }
+                .drive(change24hLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.walletDriver.map {
+                $0?.price?.change24h?.percentage >= 0 ? UIColor.attentionGreen: UIColor.alert
+            }
+                .drive(change24hLabel.rx.textColor)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Actions
