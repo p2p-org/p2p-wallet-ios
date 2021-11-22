@@ -91,7 +91,7 @@ extension ProcessTransaction {
                 requestIndex = markAsRequestingAndSendRequest(
                     transaction: transaction,
                     fees: [
-                        .init(type: .transactionFee, lamports: networkFee, token: fromWallet.token, toString: nil)
+                        .init(type: .transactionFee, lamports: networkFee, token: .nativeSolana, toString: nil)
                     ]
                 )
             case .orcaSwap(let from, let to, let inputAmount, let estimatedAmount, let fees):
