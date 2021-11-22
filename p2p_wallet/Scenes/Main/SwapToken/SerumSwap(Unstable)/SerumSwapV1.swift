@@ -24,14 +24,3 @@ protocol SwapTokenScenesFactory {
     func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
-
-protocol SwapTokenApiClient {
-    func getLamportsPerSignature() -> Single<SolanaSDK.Lamports>
-    func getCreatingTokenAccountFee() -> Single<UInt64>
-}
-
-extension SolanaSDK: SwapTokenApiClient {
-    func getLamportsPerSignature() -> Single<Lamports> {
-        getFees().map {$0.feeCalculator?.lamportsPerSignature}.map {$0 ?? 0}
-    }
-}
