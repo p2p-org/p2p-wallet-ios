@@ -60,7 +60,7 @@ extension SerumSwapV1 {
     class ViewModel {
         // MARK: - Dependencies
         private let provider: SwapProviderType
-        private let apiClient: SwapTokenApiClient
+        private let feeAPIClient: FeeAPIClient
         private let walletsRepository: WalletsRepository
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var authenticationHandler: AuthenticationHandler
@@ -99,19 +99,19 @@ extension SerumSwapV1 {
         // MARK: - Initializer
         init(
             provider: SwapProviderType,
-            apiClient: SwapTokenApiClient,
+            feeAPIClient: FeeAPIClient,
             walletsRepository: WalletsRepository,
             sourceWallet: Wallet? = nil,
             destinationWallet: Wallet? = nil
         ) {
             self.provider = provider
-            self.apiClient = apiClient
+            self.feeAPIClient = feeAPIClient
             self.walletsRepository = walletsRepository
             self.lamportsPerSignatureRelay = .init(
-                request: apiClient.getLamportsPerSignature()
+                request: feeAPIClient.getLamportsPerSignature()
             )
             self.creatingAccountFeeRelay = .init(
-                request: apiClient.getCreatingTokenAccountFee()
+                request: feeAPIClient.getCreatingTokenAccountFee()
             )
             self.exchangeRateRelay = .init(request: .just(0)) // placeholder, change request later
             self.feesRelay = .init(request: .just([])) // placeholder, change request later
