@@ -15,6 +15,7 @@ extension CreateSecurityKeys {
     class RootView: ScrollableVStackRootView {
         // MARK: - Dependencies
         @Injected private var viewModel: CreateSecurityKeysViewModelType
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -84,7 +85,7 @@ extension CreateSecurityKeys {
                 .bind(onNext: {[weak self] in self?.viewModel.copyToClipboard()})
                 .disposed(by: disposeBag)
             keysViewAction.rx.onRefresh
-                .bind(onNext: {[weak self] in self?.viewModel.createPhrases()})
+                .bind(onNext: {[weak self] in self?.viewModel.renewPhrases()})
                 .disposed(by: disposeBag)
             keysViewAction.rx.onSave
                 .bind(onNext: {[weak self] in self?.saveToPhoto()})
@@ -96,20 +97,8 @@ extension CreateSecurityKeys {
         }
         
         // MARK: - Actions
-        @objc func createPhrases() {
-            viewModel.createPhrases()
-        }
-        
-        @objc func toggleCheckbox() {
-            viewModel.toggleCheckbox()
-        }
-        
         @objc func saveToICloud() {
             viewModel.saveToICloud()
-        }
-        
-        @objc func goNext() {
-            viewModel.next()
         }
     
         @objc func verifyPhrase() {
@@ -121,6 +110,7 @@ extension CreateSecurityKeys {
         }
         
         func saveToPhoto() {
+            analyticsManager.log(event: .createWalletSaveSeedToPhotosClick)
             UIImageWriteToSavedPhotosAlbum(keysView.asImage(), self, #selector(saveImageCallback), nil)
         }
         

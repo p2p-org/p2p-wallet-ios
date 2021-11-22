@@ -13,14 +13,12 @@ protocol CreateSecurityKeysViewModelType {
     var showTermsAndConditionsSignal: Signal<Void> { get }
     var phrasesDriver: Driver<[String]> { get }
     var errorSignal: Signal<String> { get }
-    var isCheckboxSelectedDriver: Driver<Bool> { get }
+    
+    func copyToClipboard()
+    func renewPhrases()
     
     func showTermsAndConditions()
-    func toggleCheckbox()
-    func createPhrases()
-    func copyToClipboard()
     func saveToICloud()
-    func next()
     func back()
     func verifyPhrase()
 }
@@ -31,6 +29,7 @@ extension CreateSecurityKeys {
         @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var createWalletViewModel: CreateWalletViewModelType
+        @Injected private var authenticationHandler: AuthenticationHandler
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -39,11 +38,15 @@ extension CreateSecurityKeys {
         private let showTermsAndConditionsSubject = PublishRelay<Void>()
         private let phrasesSubject = BehaviorRelay<[String]>(value: [])
         private let errorSubject = PublishRelay<String>()
-        private let isCheckboxSelectedSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
         init() {
             createPhrases()
+        }
+        
+        private func createPhrases() {
+            let mnemonic = Mnemonic()
+            phrasesSubject.accept(mnemonic.phrase)
         }
     }
 }
@@ -61,31 +64,31 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         errorSubject.asSignal()
     }
     
-    var isCheckboxSelectedDriver: Driver<Bool> {
-        isCheckboxSelectedSubject.asDriver()
-    }
-    
     // MARK: - Actions
     func showTermsAndConditions() {
+        analyticsManager.log(event: .createWalletTermsAndConditionsClick)
         showTermsAndConditionsSubject.accept(())
     }
     
-    func toggleCheckbox() {
-        isCheckboxSelectedSubject.accept(!isCheckboxSelectedSubject.value)
+    func renewPhrases() {
+        analyticsManager.log(event: .createWalletRenewSeedClick)
+        createPhrases()
     }
     
-    func createPhrases() {
-        let mnemonic = Mnemonic()
-        phrasesSubject.accept(mnemonic.phrase)
-        isCheckboxSelectedSubject.accept(false)
-    }
-    
-    @objc func copyToClipboard() {
+    func copyToClipboard() {
         analyticsManager.log(event: .createWalletCopySeedClick)
         UIApplication.shared.copyToClipboard(phrasesSubject.value.joined(separator: " "), alertMessage: L10n.seedPhraseCopiedToClipboard)
     }
     
     @objc func saveToICloud() {
+        authenticationHandler.requiredOwner { [weak self] in
+            self?._saveToIcloud()
+        } onFailure: { [weak self] error in
+            self?.errorSubject.accept(error?.localizedDescription ?? L10n.error)
+        }
+    }
+    
+    private func _saveToIcloud() {
         analyticsManager.log(event: .createWalletBackupToIcloudClick)
         let result = iCloudStorage.saveToICloud(
             account: .init(
@@ -104,15 +107,8 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
     
     func verifyPhrase() {
+        analyticsManager.log(event: .createWalletVerifyManuallyClick)
         createWalletViewModel.verifyPhrase(phrasesSubject.value)
-    }
-    
-    @objc func next() {
-        if isCheckboxSelectedSubject.value {
-            analyticsManager.log(event: .createWalletIHaveSavedWordsClick)
-        }
-        analyticsManager.log(event: .createWalletNextClick)
-        createWalletViewModel.handlePhrases(self.phrasesSubject.value)
     }
     
     @objc func back() {
