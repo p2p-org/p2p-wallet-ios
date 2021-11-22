@@ -13,7 +13,7 @@ protocol DerivablePathsVCDelegate: AnyObject {
 }
 
 extension DerivablePaths {
-    class ViewController: WLIndicatorModalVC, BECollectionViewDelegate {
+    class ViewController: BEViewController, BECollectionViewDelegate {
         // MARK: - Properties
         private let initPath: SolanaSDK.DerivablePath
         private let viewModel: ViewModel
@@ -39,7 +39,6 @@ extension DerivablePaths {
             viewModel = ViewModel(currentPath: currentPath)
             super.init()
             modalPresentationStyle = .custom
-            transitioningDelegate = self
         }
         
         override func viewDidLoad() {
@@ -49,6 +48,16 @@ extension DerivablePaths {
         
         override func setUp() {
             super.setUp()
+    
+            view.backgroundColor = .clear
+            
+            var containerView = UIView(backgroundColor: .grayMain)
+            view.addSubview(containerView)
+            containerView.autoPinEdge(toSuperviewSafeArea: .top)
+            containerView.autoPinEdge(toSuperviewSafeArea: .leading)
+            containerView.autoPinEdge(toSuperviewSafeArea: .trailing)
+            containerView.autoPinEdge(toSuperviewEdge: .bottom)
+            
             let headerStackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
                 UILabel(text: L10n.selectDerivablePath, textSize: 17, weight: .semibold)
                 UILabel(text: L10n.ByDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet.toUseAnAlternativePathTryRestoringAnExistingWallet, textSize: 15, textColor: .textSecondary, numberOfLines: 0)
@@ -69,7 +78,7 @@ extension DerivablePaths {
         }
         
         func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
-            guard let path = item as? SelectableDerivablePath else {return}
+            guard let path = item as? SelectableDerivablePath else { return }
             var paths = viewModel.data
             for i in 0..<paths.count {
                 paths[i].isSelected = false
@@ -86,7 +95,7 @@ extension DerivablePaths {
 extension DerivablePaths.ViewController: UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         CustomHeightPresentationController(
-            height: { 362 },
+            height: { 315 },
             presentedViewController: presented,
             presenting: presenting
         )
