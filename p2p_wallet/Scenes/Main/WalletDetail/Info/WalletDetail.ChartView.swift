@@ -1,14 +1,14 @@
 //
-//  TransactionsCollectionView.ChartView.swift
+//  WalletDetail.ChartView.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 08/07/2021.
+//  Created by Chung Tran on 22/11/2021.
 //
 
 import Foundation
 import Charts
 
-extension TransactionsCollectionView {
+extension WalletDetail {
     class ChartView: LineChartView, LazyView {
         // MARK: - Subviews
         lazy var noDataPlaceholderView: UIView = {
