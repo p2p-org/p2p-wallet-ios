@@ -93,7 +93,7 @@ extension WalletDetail {
         override func setUpContainerView() {
             view.addSubview(containerView)
             containerView.autoPinEdge(.top, to: .bottom, of: segmentedControl, withOffset: 18)
-            containerView.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
+            containerView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
         }
         
         override func setUpPageControl() {

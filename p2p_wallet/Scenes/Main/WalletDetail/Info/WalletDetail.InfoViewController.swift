@@ -19,14 +19,16 @@ extension WalletDetail {
         
         // MARK: - Subviews
         private lazy var overviewView = InfoOverviewView(viewModel: viewModel)
-        lazy var lineChartView = ChartView()
-        lazy var chartPicker: HorizontalPicker = {
+        private lazy var lineChartView = ChartView()
+        private lazy var chartPicker: HorizontalPicker = {
             let chartPicker = HorizontalPicker(forAutoLayout: ())
             chartPicker.labels = Period.allCases.map {$0.shortString}
             chartPicker.selectedIndex = Period.allCases.firstIndex(where: {$0 == .last1h})!
             chartPicker.delegate = self
             return chartPicker
         }()
+        private lazy var showAddressButton = WLStepButton.main(image: .buttonShowQrCode, text: L10n.showWalletAddress)
+            .onTap(self, action: #selector(showAddressButtonDidTouch))
         
         // MARK: - Initializers
         init(viewModel: WalletDetailViewModelType) {
@@ -42,6 +44,7 @@ extension WalletDetail {
                 lineChartView
                 chartPicker
                 UIView.spacer
+                showAddressButton
             }
             view.addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 18, excludingEdge: .top))
@@ -54,6 +57,11 @@ extension WalletDetail {
             lineChartView
                 .subscribed(to: viewModel.graphViewModel)
                 .disposed(by: disposeBag)
+        }
+        
+        // MARK: - Actions
+        @objc private func showAddressButtonDidTouch() {
+            viewModel.receiveTokens()
         }
     }
 }

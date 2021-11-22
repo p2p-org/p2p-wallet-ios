@@ -15,7 +15,8 @@ class WLNavigationBar: BEView {
     ])
     
     lazy var leftItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-        backButton
+        backButton,
+        UIView.spacer
     ])
     lazy var centerItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
         titleLabel

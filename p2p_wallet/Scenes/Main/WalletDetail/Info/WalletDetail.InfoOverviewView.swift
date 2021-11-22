@@ -98,11 +98,11 @@ extension WalletDetail {
         
         // MARK: - Actions
         @objc private func buttonSendDidTouch() {
-            
+            viewModel.sendTokens()
         }
         
         @objc private func buttonSwapDidTouch() {
-            
+            viewModel.swapTokens()
         }
     }
 }

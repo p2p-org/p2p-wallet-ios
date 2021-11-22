@@ -162,7 +162,6 @@
 		BC4593A326423F0100E11A52 /* ConnectionErrorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4593A226423F0100E11A52 /* ConnectionErrorVC.swift */; };
 		BC46075A266F325500A12E07 /* WalletDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460756266F325500A12E07 /* WalletDetail.swift */; };
 		BC46075C266F325500A12E07 /* WalletDetail.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460758266F325500A12E07 /* WalletDetail.ViewModel.swift */; };
-		BC46075D266F325500A12E07 /* WalletDetail.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460759266F325500A12E07 /* WalletDetail.RootView.swift */; };
 		BC460762266F40F400A12E07 /* Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC46075E266F40F400A12E07 /* Root.swift */; };
 		BC460763266F40F400A12E07 /* Root.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC46075F266F40F400A12E07 /* Root.ViewController.swift */; };
 		BC460764266F40F400A12E07 /* Root.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460760266F40F400A12E07 /* Root.ViewModel.swift */; };
@@ -596,7 +595,6 @@
 		BC4593A226423F0100E11A52 /* ConnectionErrorVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionErrorVC.swift; sourceTree = "<group>"; };
 		BC460756266F325500A12E07 /* WalletDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.swift; sourceTree = "<group>"; };
 		BC460758266F325500A12E07 /* WalletDetail.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.ViewModel.swift; sourceTree = "<group>"; };
-		BC460759266F325500A12E07 /* WalletDetail.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.RootView.swift; sourceTree = "<group>"; };
 		BC46075E266F40F400A12E07 /* Root.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.swift; sourceTree = "<group>"; };
 		BC46075F266F40F400A12E07 /* Root.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.ViewController.swift; sourceTree = "<group>"; };
 		BC460760266F40F400A12E07 /* Root.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.ViewModel.swift; sourceTree = "<group>"; };
@@ -1905,7 +1903,6 @@
 				BCB28694274B81FD0074E1D5 /* WalletDetail.ViewController.swift */,
 				BCB2869B274B8ECB0074E1D5 /* Info */,
 				BCB2869A274B8EAE0074E1D5 /* History */,
-				BC460759266F325500A12E07 /* WalletDetail.RootView.swift */,
 			);
 			path = WalletDetail;
 			sourceTree = "<group>";
@@ -2465,7 +2462,6 @@
 				BC7D078126F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift in Sources */,
 				BC5257E725CBACEA0076317E /* Fiat.swift in Sources */,
 				BCDCAE212682E41B001ED7B4 /* ReceiveToken.HelpViewController.swift in Sources */,
-				BC46075D266F325500A12E07 /* WalletDetail.RootView.swift in Sources */,
 				BC2DA294260B079100B50738 /* WLAddTokenButton.swift in Sources */,
 				BC4B9E87271425B9005B9ECA /* Settings.ViewModel.swift in Sources */,
 				BCA93FB125ECD2250081DDF6 /* TokenSettingsCloseAccountConfirmationVC.swift in Sources */,
