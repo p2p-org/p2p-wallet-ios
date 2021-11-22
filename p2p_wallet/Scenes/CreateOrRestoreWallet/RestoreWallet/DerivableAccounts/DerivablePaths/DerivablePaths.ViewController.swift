@@ -78,8 +78,7 @@ extension DerivablePaths {
                                     selected ? UIImageView(width: 22, height: 22, image: .checkBoxIOS) : UIView()
                                 }.padding(.init(top: 0, left: 20, bottom: 0, right: 24))
                                 UIView.defaultSeparator()
-                            }
-                                .withTag(index)
+                            }.withTag(index)
                                 .frame(height: 55)
                                 .onTap(self, action: #selector(onPathSelect))
                             
@@ -88,6 +87,7 @@ extension DerivablePaths {
                 
                 // Cancel
                 WLButton.stepButton(type: .white, label: L10n.cancel)
+                    .onTap(self, action: #selector(back))
             }
             
         }
