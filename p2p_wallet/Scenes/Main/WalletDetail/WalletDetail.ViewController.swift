@@ -36,6 +36,9 @@ extension WalletDetail {
         private lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton.onTap(self, action: #selector(back))
+            let editButton = UIImageView(width: 24, height: 24, image: .navigationBarEdit)
+                .onTap(self, action: #selector(showWalletSettings))
+            navigationBar.rightItems.addArrangedSubview(editButton)
             return navigationBar
         }()
         
@@ -53,7 +56,7 @@ extension WalletDetail {
         }()
         
         private lazy var historyVC: HistoryViewController = {
-            let vc = HistoryViewController()
+            let vc = HistoryViewController(viewModel: viewModel)
             return vc
         }()
         

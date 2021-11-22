@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import Action
+import BECollectionView
 
 extension WalletDetail {
     class HistoryViewController: BaseVC {
@@ -13,11 +15,49 @@ extension WalletDetail {
             .hidden
         }
         
+        // MARK: - Dependencies
+        private let viewModel: WalletDetailViewModelType
+        
+        // MARK: - Subviews
+        private lazy var collectionView: TransactionsCollectionView = {
+            let collectionView = TransactionsCollectionView(
+                transactionViewModel: viewModel.transactionsViewModel,
+                graphViewModel: viewModel.graphViewModel,
+                scanQrCodeAction: CocoaAction { [weak self] in
+                    self?.receiveTokens()
+                    return .just(())
+                },
+                wallet: viewModel.walletDriver,
+                nativePubkey: viewModel.nativePubkey
+            )
+            collectionView.delegate = self
+            return collectionView
+        }()
+        
+        // MARK: - Initializers
+        init(viewModel: WalletDetailViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
+        
         override func setUp() {
             super.setUp()
-            let label = UILabel(text: "History")
-            view.addSubview(label)
-            label.autoCenterInSuperview()
+            view.addSubview(collectionView)
+            collectionView.autoPinEdgesToSuperviewEdges()
+            
+            collectionView.refresh()
         }
+        
+        // MARK: - Actions
+        @objc func receiveTokens() {
+            viewModel.receiveTokens()
+        }
+    }
+}
+
+extension WalletDetail.HistoryViewController: BECollectionViewDelegate {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
+        guard let transaction = item as? SolanaSDK.ParsedTransaction else {return}
+        viewModel.showTransaction(transaction)
     }
 }
