@@ -9,7 +9,7 @@ import Foundation
 import BECollectionView
 
 extension DerivableAccounts {
-    class ViewController: BaseVC, DerivablePathsVCDelegate {
+    class ViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
@@ -31,7 +31,7 @@ extension DerivableAccounts {
                     UILabel(text: L10n.derivationPath, textSize: 17, weight: .semibold)
                     derivationPathLabel
                 }
-                UIImageView(width: 10, height: 8, image: .downArrow, tintColor: .a3a5ba)
+                UIImageView(width: 14, height: 21, image: .nextArrow, tintColor: .h8e8e93)
             }
                 .padding(.init(x: 18, y: 14), backgroundColor: .grayPanel, cornerRadius: 12)
                 .onTap(self, action: #selector(chooseDerivationPath))
@@ -124,18 +124,18 @@ extension DerivableAccounts {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .selectDerivationPath:
-                let vc = DerivablePaths.ViewController(currentPath: viewModel.getCurrentSelectedDerivablePath())
-                vc.delegate = self
+                let vc = DerivablePaths.ViewController(currentPath: viewModel.getCurrentSelectedDerivablePath()) { [weak self] path in
+                    self?.derivablePathsVC(didSelectPath: path)
+                }
                 present(vc, animated: true, completion: nil)
             default:
                 break
             }
         }
         
-        func derivablePathsVC(_ vc: DerivablePaths.ViewController, didSelectPath path: SolanaSDK.DerivablePath) {
+        func derivablePathsVC(didSelectPath path: SolanaSDK.DerivablePath) {
             viewModel.selectDerivationPath(path)
             analyticsManager.log(event: .recoveryDerivableAccountsPathSelected(path: path.rawValue))
-            vc.dismiss(animated: true, completion: nil)
         }
         
         @objc func chooseDerivationPath() {
