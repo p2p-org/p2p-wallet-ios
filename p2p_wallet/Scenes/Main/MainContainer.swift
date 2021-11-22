@@ -173,6 +173,7 @@ class MainContainer {
         switch provider {
         case .orca:
             let vm = OrcaSwapV2.ViewModel(
+                feeAPIClient: solanaSDK,
                 orcaSwap: orcaSwap,
                 walletsRepository: walletsViewModel,
                 initialWallet: wallet ?? walletsViewModel.nativeWallet
