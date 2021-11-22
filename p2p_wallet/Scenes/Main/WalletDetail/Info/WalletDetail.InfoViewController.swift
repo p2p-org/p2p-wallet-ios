@@ -14,11 +14,27 @@ extension WalletDetail {
             .hidden
         }
         
+        // MARK: - Dependencies
+        private let viewModel: WalletDetailViewModelType
+        
+        // MARK: - Subviews
+        private lazy var overviewView = InfoOverviewView(viewModel: viewModel)
+        
+        // MARK: - Initializers
+        init(viewModel: WalletDetailViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
+        
+        // MARK: - Methods
         override func setUp() {
             super.setUp()
-            let label = UILabel(text: "Info")
-            view.addSubview(label)
-            label.autoCenterInSuperview()
+            let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
+                overviewView
+                UIView.spacer
+            }
+            view.addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 18, excludingEdge: .top))
         }
     }
 }

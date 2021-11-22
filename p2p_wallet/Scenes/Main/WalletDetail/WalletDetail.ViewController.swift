@@ -51,7 +51,7 @@ extension WalletDetail {
         
         // MARK: - Subscene
         private lazy var infoVC: InfoViewController = {
-            let vc = InfoViewController()
+            let vc = InfoViewController(viewModel: viewModel)
             return vc
         }()
         
