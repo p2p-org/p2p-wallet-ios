@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import BEPureLayout
+import RxSwift
 import UIKit
 
 protocol WalletDetailScenesFactory {
@@ -18,12 +20,42 @@ protocol WalletDetailScenesFactory {
 }
 
 extension WalletDetail {
-    class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
-        var transitionManager: UIViewControllerTransitioningDelegate?
+    class ViewController: BEPagesVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+        
+        // MARK: - Dependencies
+        private let viewModel: WalletDetailViewModelType
+        private let scenesFactory: WalletDetailScenesFactory
         
         // MARK: - Properties
-        let viewModel: WalletDetailViewModelType
-        let scenesFactory: WalletDetailScenesFactory
+        private let disposeBag = DisposeBag()
+        
+        // MARK: - Subviews
+        private lazy var navigationBar: WLNavigationBar = {
+            let navigationBar = WLNavigationBar(forAutoLayout: ())
+            navigationBar.backButton.onTap(self, action: #selector(back))
+            return navigationBar
+        }()
+        
+        private lazy var segmentedControl: UISegmentedControl = {
+            let control = UISegmentedControl(items: [L10n.info, L10n.history])
+            control.addTarget(self, action: #selector(segmentedValueChanged(_:)), for: .valueChanged)
+            control.autoSetDimension(.width, toSize: 339, relation: .greaterThanOrEqual)
+            return control
+        }()
+        
+        // MARK: - Subscene
+        private lazy var infoVC: InfoViewController = {
+            let vc = InfoViewController()
+            return vc
+        }()
+        
+        private lazy var historyVC: HistoryViewController = {
+            let vc = HistoryViewController()
+            return vc
+        }()
         
         // MARK: - Initializer
         init(
@@ -37,14 +69,40 @@ extension WalletDetail {
         
         // MARK: - Methods
         override func setUp() {
+            view.addSubview(navigationBar)
+            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+            
+            view.addSubview(segmentedControl)
+            segmentedControl.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
+            segmentedControl.autoAlignAxis(toSuperviewAxis: .vertical)
+            
             super.setUp()
-            let rootView = RootView(viewModel: viewModel)
-            containerView.addSubview(rootView)
-            rootView.autoPinEdgesToSuperviewEdges()
+            
+            viewControllers = [infoVC, historyVC]
+            
+            // action
+            currentPage = -1
+            moveToPage(0)
+            
+            segmentedControl.selectedSegmentIndex = 0
+        }
+        
+        override func setUpContainerView() {
+            view.addSubview(containerView)
+            containerView.autoPinEdge(.top, to: .bottom, of: segmentedControl, withOffset: 18)
+            containerView.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
+        }
+        
+        override func setUpPageControl() {
+            // do nothing
         }
         
         override func bind() {
             super.bind()
+            viewModel.walletDriver.map {$0?.name}
+                .drive(navigationBar.titleLabel.rx.text)
+                .disposed(by: disposeBag)
+            
             viewModel.navigatableSceneDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
@@ -83,8 +141,13 @@ extension WalletDetail {
             }
         }
         
-        override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
-            .infinity
+        // MARK: - Actions
+        @objc func segmentedValueChanged(_ sender: UISegmentedControl!) {
+            moveToPage(sender.selectedSegmentIndex)
+        }
+        
+        @objc func showWalletSettings() {
+            viewModel.showWalletSettings()
         }
     }
 }
