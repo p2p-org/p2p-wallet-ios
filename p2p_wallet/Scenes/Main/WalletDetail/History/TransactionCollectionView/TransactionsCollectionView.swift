@@ -14,7 +14,6 @@ import RxCocoa
 class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let graphViewModel: WalletGraphViewModel
     @Injected private var analyticsManager: AnalyticsManagerType
-    let scanQrCodeAction: CocoaAction
     let wallet: Driver<Wallet?>
     let nativePubkey: Driver<String?>
     let disposeBag = DisposeBag()
@@ -22,20 +21,14 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     init(
         transactionViewModel: BEListViewModelType,
         graphViewModel: WalletGraphViewModel,
-        scanQrCodeAction: CocoaAction,
         wallet: Driver<Wallet?>,
         nativePubkey: Driver<String?>
     ) {
         self.graphViewModel = graphViewModel
-        self.scanQrCodeAction = scanQrCodeAction
         self.wallet = wallet
         self.nativePubkey = nativePubkey
         
         super.init(
-            header: .init(
-                viewType: HeaderView.self,
-                heightDimension: .estimated(557)
-            ),
             viewModel: transactionViewModel,
             mapDataToSections: { viewModel in
                 let transactions = viewModel.getData(type: SolanaSDK.ParsedTransaction.self)
@@ -106,18 +99,6 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
 //            })
 //            .disposed(by: disposeBag)
 //    }
-    
-    override func configureHeaderView(kind: String, indexPath: IndexPath) -> UICollectionReusableView? {
-        let headerView = super.configureHeaderView(kind: kind, indexPath: indexPath) as? HeaderView
-        headerView?.setUp(
-            graphViewModel: graphViewModel,
-            analyticsManager: analyticsManager,
-            scanQrCodeAction: scanQrCodeAction,
-            wallet: wallet,
-            solPubkey: nativePubkey
-        )
-        return headerView
-    }
     
     override func configureSectionHeaderView(view: UICollectionReusableView?, sectionIndex: Int) {
         let view = view as? SectionHeaderView
