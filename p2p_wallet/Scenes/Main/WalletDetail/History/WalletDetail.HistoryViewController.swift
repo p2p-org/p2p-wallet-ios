@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Action
 import BECollectionView
 
 extension WalletDetail {
@@ -23,10 +22,6 @@ extension WalletDetail {
             let collectionView = TransactionsCollectionView(
                 transactionViewModel: viewModel.transactionsViewModel,
                 graphViewModel: viewModel.graphViewModel,
-                scanQrCodeAction: CocoaAction { [weak self] in
-                    self?.receiveTokens()
-                    return .just(())
-                },
                 wallet: viewModel.walletDriver,
                 nativePubkey: viewModel.nativePubkey
             )
@@ -46,11 +41,6 @@ extension WalletDetail {
             collectionView.autoPinEdgesToSuperviewEdges()
             
             collectionView.refresh()
-        }
-        
-        // MARK: - Actions
-        @objc func receiveTokens() {
-            viewModel.receiveTokens()
         }
     }
 }

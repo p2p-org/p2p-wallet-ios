@@ -38,10 +38,6 @@ extension WalletDetail {
             let collectionView = TransactionsCollectionView(
                 transactionViewModel: viewModel.transactionsViewModel,
                 graphViewModel: viewModel.graphViewModel,
-                scanQrCodeAction: CocoaAction { [weak self] in
-                    self?.receiveTokens()
-                    return .just(())
-                },
                 wallet: viewModel.walletDriver,
                 nativePubkey: viewModel.nativePubkey
             )
