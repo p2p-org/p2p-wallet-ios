@@ -111,6 +111,16 @@ extension WalletDetail {
                 .disposed(by: disposeBag)
         }
         
+        override func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+            super.pageViewController(pageViewController, didFinishAnimating: finished, previousViewControllers: previousViewControllers, transitionCompleted: completed)
+            if let vc = pageVC.viewControllers?.first,
+               let index = viewControllers.firstIndex(of: vc),
+               segmentedControl.selectedSegmentIndex != index
+            {
+                segmentedControl.selectedSegmentIndex = index
+            }
+        }
+        
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
