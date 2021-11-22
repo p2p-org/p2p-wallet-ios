@@ -32,6 +32,7 @@ extension WalletDetail {
             self.viewModel = viewModel
             super.init()
             bind()
+            change24hLabel.isHidden = true // TODO: - Remove later
         }
         
         // MARK: - Methods
@@ -67,7 +68,7 @@ extension WalletDetail {
             
             // amountLabel
             viewModel.walletDriver.map {
-                "\($0?.token.symbol ?? "") \($0?.amount.toString(maximumFractionDigits: 9) ?? "")"
+                "\($0?.amount.toString(maximumFractionDigits: 9) ?? "") \($0?.token.symbol ?? "")"
             }
                 .drive(amountLabel.rx.text)
                 .disposed(by: disposeBag)
