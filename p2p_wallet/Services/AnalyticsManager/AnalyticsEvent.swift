@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum AnalyticsEvent {
+enum AnalyticsEvent: MirrorableEnum {
     // first_in
     case firstInOpen
     case firstInCreateWalletClick
@@ -15,9 +15,11 @@ enum AnalyticsEvent {
     // create_wallet
     case createWalletOpen
     case createWalletCopySeedClick
-    case createWalletIHaveSavedWordsClick
+    case createWalletSaveSeedToPhotosClick
+    case createWalletRenewSeedClick
+    case createWalletTermsAndConditionsClick
     case createWalletBackupToIcloudClick
-    case createWalletNextClick
+    case createWalletVerifyManuallyClick
     // setup
     case setupOpen(fromPage: String)
     case setupPinKeydown1
@@ -106,10 +108,31 @@ enum AnalyticsEvent {
     case settingsOpen(fromPage: String)
     case settingsNetworkSelected(network: String)
     case settingsHideBalancesClick(hide: Bool)
-    case settingBackupOpen
+    case settingsBackupOpen
     case settingsSecuritySelected(faceId: Bool)
     case settingsLanguageSelected(language: String)
     case settingsAppearanceSelected(appearance: String)
     case settingsСurrencySelected(сurrency: String)
     case settingsLogoutClick
+}
+
+extension AnalyticsEvent {
+    /// eventName is snakeCased of event minus params, for example: firstInOpen(scene: String) becomes first_in_open
+    var eventName: String? {
+        mirror.label.snakeCased()
+    }
+    
+    var params: [AnyHashable: Any]? {
+        mirror.params.isEmpty ? nil: mirror.params
+    }
+}
+
+private extension String {
+    func snakeCased() -> String? {
+        let pattern = "([a-z0-9])([A-Z])"
+        
+        let regex = try? NSRegularExpression(pattern: pattern, options: [])
+        let range = NSRange(location: 0, length: count)
+        return regex?.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: "$1_$2").lowercased()
+    }
 }
