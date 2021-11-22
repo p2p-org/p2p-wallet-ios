@@ -187,7 +187,7 @@ class MainContainer {
             )
             let vm = SerumSwapV1.ViewModel(
                 provider: provider,
-                apiClient: solanaSDK,
+                feeAPIClient: solanaSDK,
                 walletsRepository: walletsViewModel,
                 sourceWallet: wallet ?? walletsViewModel.nativeWallet
             )
