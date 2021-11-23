@@ -10,12 +10,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-protocol SendTokenScenesFactory {
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
-    func makeSelectRecipientViewController(handler: @escaping (Recipient) -> Void) -> SelectRecipient.ViewController
-}
-
 extension SendToken {
     class ViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {

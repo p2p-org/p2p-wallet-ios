@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol SendTokenChooseTokenAndAmountViewModelType {
+protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler {
     var navigationDriver: Driver<SendTokenChooseTokenAndAmount.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
     var currencyModeDriver: Driver<SendTokenChooseTokenAndAmount.CurrencyMode> {get}
@@ -19,13 +19,21 @@ protocol SendTokenChooseTokenAndAmountViewModelType {
     func back()
     func toggleCurrencyMode()
     func enterAmount(_ amount: Double?)
+    func chooseWallet(_ wallet: Wallet)
     
     func calculateAvailableAmount() -> Double?
+}
+
+extension SendTokenChooseTokenAndAmountViewModelType {
+    func walletDidSelect(_ wallet: Wallet) {
+        chooseWallet(wallet)
+    }
 }
 
 extension SendTokenChooseTokenAndAmount {
     class ViewModel {
         // MARK: - Dependencies
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         
@@ -81,6 +89,13 @@ extension SendTokenChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmount
     
     func enterAmount(_ amount: Double?) {
         amountSubject.accept(amount)
+    }
+    
+    func chooseWallet(_ wallet: Wallet) {
+        analyticsManager.log(
+            event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
+        )
+        walletSubject.accept(wallet)
     }
     
     func calculateAvailableAmount() -> Double? {
