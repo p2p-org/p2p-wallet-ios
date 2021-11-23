@@ -80,6 +80,7 @@ extension WalletDetail {
             segmentedControl.autoAlignAxis(toSuperviewAxis: .vertical)
             
             super.setUp()
+            view.backgroundColor = .background
             
             viewControllers = [infoVC, historyVC]
             
