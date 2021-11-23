@@ -605,5 +605,6 @@
 "DApps" = "DApps";
 "Earn" = "Зарабатывать";
 "By continuing, you agree to wallet's %@" = "Продолжая, вы соглашаетесь с %@ кошелька";
+"Derivation path" = "Путь деривации";
 "History" = "История";
 "Show wallet address" = "Показать адрес кошелька";

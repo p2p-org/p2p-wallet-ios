@@ -605,5 +605,6 @@
 "DApps" = "DApps";
 "Earn" = "Gagner";
 "By continuing, you agree to wallet's %@" = "En continuant, vous acceptez les %@ du portefeuille";
+"Derivation path" = "Chemin de dérivation";
 "History" = "Histoire";
 "Show wallet address" = "Afficher l'adresse du portefeuille";

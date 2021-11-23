@@ -605,5 +605,6 @@
 "DApps" = "DApps";
 "Earn" = "Kiếm";
 "By continuing, you agree to wallet's %@" = "Bằng cách tiếp tục, bạn đồng ý với %@ của wallet";
+"Derivation path" = "Đường dẫn xuất phát";
 "History" = "Lịch sử";
 "Show wallet address" = "Hiển thị địa chỉ ví";
