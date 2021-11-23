@@ -17,18 +17,23 @@ protocol SendTokenScenesFactory {
 }
 
 extension SendToken {
-    class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
+    class ViewController: BaseVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+        
         // MARK: - Properties
-        var transitionManager: UIViewControllerTransitioningDelegate?
-        let viewModel: SendTokenViewModelType
-        let scenesFactory: SendTokenScenesFactory
-        lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
-            UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
-                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
-            UILabel(text: L10n.send, textSize: 17, weight: .semibold)
-        ])
-            .padding(.init(all: 20))
-        lazy var rootView = RootView(viewModel: viewModel)
+        private let viewModel: SendTokenViewModelType
+        private let scenesFactory: SendTokenScenesFactory
+        
+        // MARK: - Subviews
+        private lazy var navigationBar: WLNavigationBar = {
+            let navigationBar = WLNavigationBar(forAutoLayout: ())
+            navigationBar.titleLabel.text = L10n.send.uppercaseFirst
+            navigationBar.backButton.onTap(self, action: #selector(back))
+            return navigationBar
+        }()
+        private lazy var rootView = RootView(viewModel: viewModel)
         
         // MARK: - Initializer
         init(viewModel: SendTokenViewModelType, scenesFactory: SendTokenScenesFactory)
@@ -42,28 +47,18 @@ extension SendToken {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
-                headerView
-                UIView.defaultSeparator()
-                rootView
-            }
+            view.addSubview(navigationBar)
+            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
             
-            containerView.addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges()
+            view.addSubview(rootView)
+            rootView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
+            rootView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
         }
         
         override func bind() {
             super.bind()
             viewModel.navigatableSceneDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
-                .disposed(by: disposeBag)
-            
-            Driver.combineLatest(
-                viewModel.addressValidationStatusDriver,
-                viewModel.renBTCInfoDriver
-            )
-                .debounce(.milliseconds(300))
-                .drive(onNext: {[weak self] _ in self?.updatePresentationLayout(animated: true)})
                 .disposed(by: disposeBag)
         }
         
@@ -120,17 +115,6 @@ extension SendToken {
             case .none:
                 break
             }
-        }
-        
-        // MARK: - Transitions
-        override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
-            super.calculateFittingHeightForPresentedView(targetWidth: targetWidth)
-                + headerView.fittingHeight(targetWidth: targetWidth)
-                + 1 // separator
-                + rootView.fittingHeight(targetWidth: targetWidth)
-        }
-        var dismissalHandlingScrollView: UIScrollView? {
-            rootView.scrollView
         }
     }
 }
