@@ -11,13 +11,8 @@ import UIKit
 class WLOverviewView: WLFloatingPanelView {
     override func commonInit() {
         super.commonInit()
-        layer.cornerRadius = 12
-        layer.masksToBounds = true
-        backgroundColor = .grayMain
-        
-        stackView.axis = .vertical
-        stackView.alignment = .fill
         stackView.spacing = 0
+        backgroundColor = .grayMain
         
         stackView.addArrangedSubviews {
             createTopView()
