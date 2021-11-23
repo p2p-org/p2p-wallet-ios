@@ -17,7 +17,7 @@ extension SendTokenChooseTokenAndAmount {
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
         
         // MARK: - Subviews
-        private let balanceLabel = UILabel(text: "0.0", textSize: 15, weight: .medium)
+        private let balanceLabel = UILabel(text: "0.0", textSize: 15, weight: .medium, textColor: .textSecondary)
         private let coinLogoImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
         private let coinSymbolLabel = UILabel(text: "SOL", textSize: 20, weight: .semibold)
         private lazy var amountTextField: TokenAmountTextField = {
@@ -32,6 +32,7 @@ extension SendTokenChooseTokenAndAmount {
             tf.delegate = self
             return tf
         }()
+        private lazy var equityValueLabel = UILabel(text: "$ 0", textSize: 13)
         private lazy var actionButton = WLStepButton.main(text: L10n.chooseDestinationWallet)
         
         // MARK: - Initializer
@@ -45,7 +46,6 @@ extension SendTokenChooseTokenAndAmount {
             super.commonInit()
             layout()
             bind()
-            
         }
         
         override func didMoveToWindow() {
@@ -71,14 +71,23 @@ extension SendTokenChooseTokenAndAmount {
                         .onTap(self, action: #selector(useAllBalance))
                 }
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
-                    coinLogoImageView
-                    coinSymbolLabel
-                    UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
+                    UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
+                        coinLogoImageView
+                            .withContentHuggingPriority(.required, for: .horizontal)
+                        coinSymbolLabel
+                            .withContentHuggingPriority(.required, for: .horizontal)
+                        UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
+                            .withContentHuggingPriority(.required, for: .horizontal)
+                    }
+                        .onTap(self, action: #selector(chooseWallet))
                     amountTextField
                 }
                 UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
                     UIView.spacer
-                    UILabel(text: Defaults.fiat.symbol, textSize: 13)
+                    UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
+                        equityValueLabel
+                        UIImageView(width: 20, height: 20, image: .arrowUpDown)
+                    }
                         .padding(.init(x: 18, y: 8), cornerRadius: 12)
                         .border(width: 1, color: .defaultBorder)
                 }
@@ -90,15 +99,31 @@ extension SendTokenChooseTokenAndAmount {
                 actionButton
             }
             addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18))
+            stackView.autoPinEdgesToSuperviewSafeArea(with: .init(top: 8, left: 18, bottom: 18, right: 18), excludingEdge: .bottom)
+            stackView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
         }
         
         private func bind() {
+            viewModel.walletDriver
+                .drive(onNext: {[weak self] wallet in
+                    self?.coinLogoImageView.setUp(wallet: wallet)
+                    self?.coinSymbolLabel.text = wallet?.token.symbol
+                })
+                .disposed(by: disposeBag)
             
+            // equity label
+            viewModel.walletDriver
+                .map {$0?.priceInCurrentFiat == nil}
+                .drive(equityValueLabel.rx.isHidden)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Actions
         @objc private func useAllBalance() {
+            
+        }
+        
+        @objc private func chooseWallet() {
             
         }
     }

@@ -11,6 +11,7 @@ import RxCocoa
 
 protocol SendTokenChooseTokenAndAmountViewModelType {
     var navigationDriver: Driver<SendTokenChooseTokenAndAmount.NavigatableScene?> {get}
+    var walletDriver: Driver<Wallet?> {get}
     func navigate(to scene: SendTokenChooseTokenAndAmount.NavigatableScene)
     func back()
 }
@@ -26,12 +27,22 @@ extension SendTokenChooseTokenAndAmount {
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
+        
+        // MARK: - Initializer
+        init(wallet: Wallet? = nil) {
+            walletSubject.accept(wallet)
+        }
     }
 }
 
 extension SendTokenChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmountViewModelType {
     var navigationDriver: Driver<SendTokenChooseTokenAndAmount.NavigatableScene?> {
         navigationSubject.asDriver()
+    }
+    
+    var walletDriver: Driver<Wallet?> {
+        walletSubject.asDriver()
     }
     
     // MARK: - Actions

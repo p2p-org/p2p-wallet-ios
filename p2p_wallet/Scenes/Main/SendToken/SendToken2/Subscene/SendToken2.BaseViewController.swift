@@ -14,7 +14,7 @@ extension SendToken2 {
         }
         
         // MARK: - Subviews
-        private lazy var navigationBar: WLNavigationBar = {
+        lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton.onTap(self, action: #selector(back))
             return navigationBar
