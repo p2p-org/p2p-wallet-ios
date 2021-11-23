@@ -353,6 +353,14 @@
 		BCB2869F274B921D0074E1D5 /* Home.BalancesOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2869E274B921D0074E1D5 /* Home.BalancesOverviewView.swift */; };
 		BCB286A1274B9D6A0074E1D5 /* WalletDetail.ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286A0274B9D6A0074E1D5 /* WalletDetail.ChartView.swift */; };
 		BCB286A3274C99870074E1D5 /* WLFloatingPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286A2274C99860074E1D5 /* WLFloatingPanelView.swift */; };
+		BCB286B9274CC2590074E1D5 /* SendToken2.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286B5274CC2590074E1D5 /* SendToken2.swift */; };
+		BCB286BA274CC2590074E1D5 /* SendToken2.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286B6274CC2590074E1D5 /* SendToken2.ViewController.swift */; };
+		BCB286BB274CC2590074E1D5 /* SendToken2.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286B7274CC2590074E1D5 /* SendToken2.ViewModel.swift */; };
+		BCB286C5274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286C1274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.swift */; };
+		BCB286C6274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286C2274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.ViewController.swift */; };
+		BCB286C7274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286C3274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.ViewModel.swift */; };
+		BCB286C8274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286C4274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.RootView.swift */; };
+		BCB286CA274CCABC0074E1D5 /* SendToken2.BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286C9274CCABC0074E1D5 /* SendToken2.BaseViewController.swift */; };
 		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58379255D29C500B10F65 /* WLBottomSheet.swift */; };
 		BCB7C7C62665EEC400FEC68E /* SendToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C22665EEC400FEC68E /* SendToken.swift */; };
@@ -795,6 +803,14 @@
 		BCB2869E274B921D0074E1D5 /* Home.BalancesOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.BalancesOverviewView.swift; sourceTree = "<group>"; };
 		BCB286A0274B9D6A0074E1D5 /* WalletDetail.ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.ChartView.swift; sourceTree = "<group>"; };
 		BCB286A2274C99860074E1D5 /* WLFloatingPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLFloatingPanelView.swift; sourceTree = "<group>"; };
+		BCB286B5274CC2590074E1D5 /* SendToken2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken2.swift; sourceTree = "<group>"; };
+		BCB286B6274CC2590074E1D5 /* SendToken2.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken2.ViewController.swift; sourceTree = "<group>"; };
+		BCB286B7274CC2590074E1D5 /* SendToken2.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken2.ViewModel.swift; sourceTree = "<group>"; };
+		BCB286C1274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenChooseTokenAndAmount.swift; sourceTree = "<group>"; };
+		BCB286C2274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenChooseTokenAndAmount.ViewController.swift; sourceTree = "<group>"; };
+		BCB286C3274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenChooseTokenAndAmount.ViewModel.swift; sourceTree = "<group>"; };
+		BCB286C4274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenChooseTokenAndAmount.RootView.swift; sourceTree = "<group>"; };
+		BCB286C9274CCABC0074E1D5 /* SendToken2.BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken2.BaseViewController.swift; sourceTree = "<group>"; };
 		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58379255D29C500B10F65 /* WLBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBottomSheet.swift; sourceTree = "<group>"; };
 		BCB7C7C22665EEC400FEC68E /* SendToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.swift; sourceTree = "<group>"; };
@@ -1040,6 +1056,7 @@
 		BC22A5D825D2716400F7026D /* SendToken */ = {
 			isa = PBXGroup;
 			children = (
+				BCB286B3274CC2310074E1D5 /* SendToken2 */,
 				BCB7C7C22665EEC400FEC68E /* SendToken.swift */,
 				BC19DF4E270169CF00A3A8D8 /* SendTokenAPIClient.swift */,
 				BCB7C7C32665EEC400FEC68E /* SendToken.ViewModel.swift */,
@@ -1732,6 +1749,37 @@
 			path = Info;
 			sourceTree = "<group>";
 		};
+		BCB286B3274CC2310074E1D5 /* SendToken2 */ = {
+			isa = PBXGroup;
+			children = (
+				BCB286B5274CC2590074E1D5 /* SendToken2.swift */,
+				BCB286B7274CC2590074E1D5 /* SendToken2.ViewModel.swift */,
+				BCB286B6274CC2590074E1D5 /* SendToken2.ViewController.swift */,
+				BCB286BD274CC4200074E1D5 /* Subscene */,
+			);
+			path = SendToken2;
+			sourceTree = "<group>";
+		};
+		BCB286BD274CC4200074E1D5 /* Subscene */ = {
+			isa = PBXGroup;
+			children = (
+				BCB286C9274CCABC0074E1D5 /* SendToken2.BaseViewController.swift */,
+				BCB286C0274CCA800074E1D5 /* ChooseTokenAndAmount */,
+			);
+			path = Subscene;
+			sourceTree = "<group>";
+		};
+		BCB286C0274CCA800074E1D5 /* ChooseTokenAndAmount */ = {
+			isa = PBXGroup;
+			children = (
+				BCB286C1274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.swift */,
+				BCB286C3274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.ViewModel.swift */,
+				BCB286C2274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.ViewController.swift */,
+				BCB286C4274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.RootView.swift */,
+			);
+			path = ChooseTokenAndAmount;
+			sourceTree = "<group>";
+		};
 		BCB58370255D28E100B10F65 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -2297,6 +2345,7 @@
 				BC2DA2A2260B245400B50738 /* TransactionHandler.swift in Sources */,
 				BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */,
 				BCB7C7C62665EEC400FEC68E /* SendToken.swift in Sources */,
+				BCB286BA274CC2590074E1D5 /* SendToken2.ViewController.swift in Sources */,
 				BC699ACA25FB114D00F57209 /* UINavigationController+Extensions.swift in Sources */,
 				BC8F684D2609D866002FDCCD /* WalletsRepository.swift in Sources */,
 				BCC1F207269E96A1003DD648 /* SolanaSDK.DerivablePath+Extensions.swift in Sources */,
@@ -2358,6 +2407,7 @@
 				BCACA7E12679E75E0091E118 /* AnalyticsEvent.swift in Sources */,
 				BC2EC1D02553ED1B006EEDA5 /* DimmingPresentationController.swift in Sources */,
 				BC54DD232587169400A65566 /* ValueByDateChartMarker.swift in Sources */,
+				BCB286C8274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.RootView.swift in Sources */,
 				BCE42DF525DF9C7A0021540E /* Onboarding.ViewModel.swift in Sources */,
 				BC19DF4F270169CF00A3A8D8 /* SendTokenAPIClient.swift in Sources */,
 				BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */,
@@ -2418,6 +2468,7 @@
 				BC5140C5272AC0DB00DB84BD /* Home.WalletCell.swift in Sources */,
 				BCEE508526244B6300271AB9 /* WLEmptyCell.swift in Sources */,
 				BC6FED9F270C475B002B6255 /* ReserveName.ViewController.swift in Sources */,
+				BCB286C6274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.ViewController.swift in Sources */,
 				417DC909272073E60048106B /* SendToken.AddressView.swift in Sources */,
 				BCE42E0225DFA0B50021540E /* CreateWallet.ViewModel.swift in Sources */,
 				BC54DCF92587089700A65566 /* WalletGraphViewModel.swift in Sources */,
@@ -2466,6 +2517,7 @@
 				BC7D078126F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift in Sources */,
 				BC5257E725CBACEA0076317E /* Fiat.swift in Sources */,
 				BCDCAE212682E41B001ED7B4 /* ReceiveToken.HelpViewController.swift in Sources */,
+				BCB286C7274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.ViewModel.swift in Sources */,
 				BC2DA294260B079100B50738 /* WLAddTokenButton.swift in Sources */,
 				BC4B9E87271425B9005B9ECA /* Settings.ViewModel.swift in Sources */,
 				BCA93FB125ECD2250081DDF6 /* TokenSettingsCloseAccountConfirmationVC.swift in Sources */,
@@ -2524,6 +2576,7 @@
 				BC53E2202654BFAA005624CC /* DerivablePaths.ViewModel.swift in Sources */,
 				BC28A9B126B3B0440031BE42 /* WLSpinnerView.swift in Sources */,
 				BC32A3AC254A8884002156F0 /* Storage.swift in Sources */,
+				BCB286BB274CC2590074E1D5 /* SendToken2.ViewModel.swift in Sources */,
 				BC4B9E8A27142AF5005B9ECA /* Settings.Helpers.swift in Sources */,
 				BC8F67742608738D002FDCCD /* WLPhrasesTextView+Attachments.swift in Sources */,
 				417DC904271FF1180048106B /* SelectRecipient.swift in Sources */,
@@ -2601,6 +2654,7 @@
 				BC4B9EBC27191843005B9ECA /* OrcaSwapV2.swift in Sources */,
 				41D7F6AD2739109D00453B61 /* HorizontalFlowLayout.swift in Sources */,
 				BC2F8F0C269D3D200048009D /* UIScrollView+Extensions.swift in Sources */,
+				BCB286CA274CCABC0074E1D5 /* SendToken2.BaseViewController.swift in Sources */,
 				BCD5E82425525C6E00F51299 /* WalletsViewModel.swift in Sources */,
 				BCB2868127460FD90074E1D5 /* WLStatusIndicatorView.swift in Sources */,
 				BC2EC1D52553ED1B006EEDA5 /* CustomHeightPresentationController.swift in Sources */,
@@ -2647,8 +2701,10 @@
 				BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */,
 				BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */,
 				417DC9192726F2780048106B /* RecipientView.swift in Sources */,
+				BCB286C5274CCAA30074E1D5 /* SendTokenChooseTokenAndAmount.swift in Sources */,
 				BC80203B26F1DD5D00C109C2 /* ReceiveToken.RootView.swift in Sources */,
 				BCB2868C274763BA0074E1D5 /* MirrorableEnum.swift in Sources */,
+				BCB286B9274CC2590074E1D5 /* SendToken2.swift in Sources */,
 				BC5140C0272ABC0800DB84BD /* Home.swift in Sources */,
 				BC134FA326FCD1E500DB15BF /* AppDelegate+Injection.swift in Sources */,
 				BC4B9E7D2713FCFB005B9ECA /* AnalyticsManager.swift in Sources */,
