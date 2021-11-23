@@ -22,8 +22,14 @@ extension SendTokenChooseTokenAndAmount {
         }
         
         // MARK: - Methods
-        override func loadView() {
-            view = RootView(viewModel: viewModel)
+        override func setUp() {
+            super.setUp()
+            navigationBar.titleLabel.text = L10n.send
+            
+            let rootView = RootView(viewModel: viewModel)
+            view.addSubview(rootView)
+            rootView.autoPinEdge(.top, to: .bottom, of: navigationBar)
+            rootView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
         }
         
         override func bind() {
