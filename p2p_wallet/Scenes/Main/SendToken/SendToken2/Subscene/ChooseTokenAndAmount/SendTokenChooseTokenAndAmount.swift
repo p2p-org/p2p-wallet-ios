@@ -12,4 +12,8 @@ struct SendTokenChooseTokenAndAmount {
     enum NavigatableScene {
         case chooseWallet
     }
+    
+    enum CurrencyMode {
+        case token, fiat
+    }
 }
