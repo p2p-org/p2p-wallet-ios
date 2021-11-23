@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 extension SendTokenChooseTokenAndAmount {
     class RootView: BEView {
@@ -14,6 +15,7 @@ extension SendTokenChooseTokenAndAmount {
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
+        @Injected private var analyticsManager: AnalyticsManagerType
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
         
         // MARK: - Subviews
@@ -116,11 +118,78 @@ extension SendTokenChooseTokenAndAmount {
                 .map {$0?.priceInCurrentFiat == nil}
                 .drive(equityValueLabel.rx.isHidden)
                 .disposed(by: disposeBag)
+            
+            Driver.combineLatest(
+                viewModel.amountDriver,
+                viewModel.walletDriver,
+                viewModel.currencyModeDriver
+            )
+                .map { (amount, wallet, currencyMode) -> String in
+                    guard let wallet = wallet else {return ""}
+                    var equityValue = amount * wallet.priceInCurrentFiat
+                    var equityValueSymbol = Defaults.fiat.code
+                    if currencyMode == .fiat {
+                        if wallet.priceInCurrentFiat > 0 {
+                            equityValue = amount / wallet.priceInCurrentFiat
+                        } else {
+                            equityValue = 0
+                        }
+                        equityValueSymbol = wallet.token.symbol
+                    }
+                    return equityValueSymbol + " " + equityValue.toString(maximumFractionDigits: 9)
+                }
+                .asDriver(onErrorJustReturn: nil)
+                .drive(equityValueLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // amount
+            amountTextField.rx.text
+                .map {$0?.double}
+                .distinctUntilChanged()
+                .subscribe(onNext: {[weak self] amount in
+                    self?.viewModel.enterAmount(amount)
+                })
+                .disposed(by: disposeBag)
+            
+            amountTextField.rx.controlEvent([.editingDidEnd])
+                .asObservable()
+                .withLatestFrom(amountTextField.rx.text)
+                .subscribe(onNext: {[weak self] amount in
+                    guard let amount = amount?.double else {return}
+                    self?.analyticsManager.log(event: .sendAmountKeydown(sum: amount))
+                })
+                .disposed(by: disposeBag)
+            
+            // available amount
+            let balanceTextDriver = viewModel.walletDriver
+                .withLatestFrom(
+                    viewModel.currencyModeDriver,
+                    resultSelector: {($0, $1)}
+                )
+                .map {[weak self] (wallet, mode) -> String? in
+                    guard let wallet = wallet, let amount = self?.viewModel.calculateAvailableAmount() else {return nil}
+                    var string = amount.toString(maximumFractionDigits: 9)
+                    string += " "
+                    if mode == .fiat {
+                        string += Defaults.fiat.code
+                    } else {
+                        string += wallet.token.symbol
+                    }
+                    return string
+                }
+                
+            balanceTextDriver
+                .drive(balanceLabel.rx.text)
+                .disposed(by: disposeBag)
+            
         }
         
         // MARK: - Actions
         @objc private func useAllBalance() {
-            
+            let availableAmount = viewModel.calculateAvailableAmount()
+            let string = availableAmount.toString(maximumFractionDigits: 9, groupingSeparator: "")
+            amountTextField.text = string
+            amountTextField.sendActions(for: .editingChanged)
         }
         
         @objc private func chooseWallet() {

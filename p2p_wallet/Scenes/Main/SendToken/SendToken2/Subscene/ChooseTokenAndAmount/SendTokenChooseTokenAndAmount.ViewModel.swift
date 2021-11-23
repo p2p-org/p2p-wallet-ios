@@ -19,6 +19,8 @@ protocol SendTokenChooseTokenAndAmountViewModelType {
     func back()
     func toggleCurrencyMode()
     func enterAmount(_ amount: Double?)
+    
+    func calculateAvailableAmount() -> Double?
 }
 
 extension SendTokenChooseTokenAndAmount {
@@ -79,5 +81,19 @@ extension SendTokenChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmount
     
     func enterAmount(_ amount: Double?) {
         amountSubject.accept(amount)
+    }
+    
+    func calculateAvailableAmount() -> Double? {
+        guard let wallet = walletSubject.value else {return nil}
+        // all amount
+        var availableAmount = wallet.amount ?? 0
+        
+        // convert to fiat in fiat mode
+        if currencyModeSubject.value == .fiat {
+            availableAmount = availableAmount * wallet.priceInCurrentFiat
+        }
+        
+        // return
+        return availableAmount > 0 ? availableAmount: 0
     }
 }
