@@ -193,7 +193,7 @@ extension SendTokenChooseTokenAndAmount {
         }
         
         @objc private func chooseWallet() {
-            
+            viewModel.navigate(to: .chooseWallet)
         }
     }
 }

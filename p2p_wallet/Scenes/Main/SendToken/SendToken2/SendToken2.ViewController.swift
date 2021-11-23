@@ -8,6 +8,13 @@
 import Foundation
 import UIKit
 import BEPureLayout
+import RxSwift
+
+protocol SendTokenScenesFactory {
+    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
+    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
+    func makeSelectRecipientViewController(handler: @escaping (Recipient) -> Void) -> SelectRecipient.ViewController
+}
 
 extension SendToken2 {
     class ViewController: BaseVC {
@@ -17,13 +24,15 @@ extension SendToken2 {
         
         // MARK: - Dependencies
         private let viewModel: SendToken2ViewModelType
+        private let scenesFactory: SendTokenScenesFactory
         
         // MARK: - Properties
         private let childNavigationController = BENavigationController()
         
         // MARK: - Initializer
-        init(viewModel: SendToken2ViewModelType) {
+        init(viewModel: SendToken2ViewModelType, scenesFactory: SendTokenScenesFactory) {
             self.viewModel = viewModel
+            self.scenesFactory = scenesFactory
             super.init()
         }
         
@@ -46,7 +55,7 @@ extension SendToken2 {
             switch scene {
             case .chooseTokenAndAmount:
                 let vm = SendTokenChooseTokenAndAmount.ViewModel()
-                let vc = SendTokenChooseTokenAndAmount.ViewController(viewModel: vm)
+                let vc = SendTokenChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
                 childNavigationController.pushViewController(vc, animated: true)
             case .chooseRecipientAndNetwork:
                 break
