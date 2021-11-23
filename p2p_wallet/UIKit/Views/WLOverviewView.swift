@@ -7,15 +7,8 @@
 
 import Foundation
 import UIKit
-import BEPureLayout
 
-class WLOverviewView: BERoundedCornerShadowView {
-    // MARK: - Initializer
-    init() {
-        super.init(shadowColor: UIColor.black.withAlphaComponent(0.05), radius: 8, offset: CGSize(width: 0, height: 1), opacity: 1, cornerRadius: 8)
-        self.border(width: 1, color: .f2f2f7.onDarkMode(.white.withAlphaComponent(0.1)))
-    }
-    
+class WLOverviewView: WLFloatingPanelView {
     override func commonInit() {
         super.commonInit()
         layer.cornerRadius = 12
