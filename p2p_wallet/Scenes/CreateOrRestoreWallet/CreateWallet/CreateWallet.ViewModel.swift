@@ -17,7 +17,7 @@ protocol CreateWalletViewModelType: ReserveNameHandler {
     func handlePhrases(_ phrases: [String])
     func handleName(_ name: String?)
     func finish()
-    
+
     func navigateToCreatePhrases()
     func navigateToReserveName(owner: String)
     func back()
@@ -88,7 +88,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
             name: name
         )
     }
-    
+
     func navigateToExplanation() {
         navigationSubject.accept(.explanation)
     }

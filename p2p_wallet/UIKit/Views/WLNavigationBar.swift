@@ -8,13 +8,7 @@
 import Foundation
 
 class WLNavigationBar: BEView {
-    lazy var stackView = UIStackView(axis: .horizontal, alignment: .center, distribution: .equalCentering, arrangedSubviews: [
-        leftItems,
-        centerItems,
-        rightItems
-    ])
-    
-    lazy var leftItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
+    lazy var leftItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill, arrangedSubviews: [
         backButton,
         UIView.spacer
     ])
@@ -28,15 +22,25 @@ class WLNavigationBar: BEView {
     lazy var backButton = UIImageView(width: 14, height: 24, image: UIImage(systemName: "chevron.left"), tintColor: .h5887ff)
         .padding(.init(x: 6, y: 4))
     lazy var titleLabel = UILabel(textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
-    
+
     override func commonInit() {
         super.commonInit()
-        stackView.spacing = 8
-        addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 12, y: 8))
-        
-        leftItems.widthAnchor.constraint(equalTo: rightItems.widthAnchor).isActive = true
-        
+
+        addSubview(leftItems)
+        addSubview(centerItems)
+        addSubview(rightItems)
+
+        self.autoSetDimension(.height, toSize: 48)
+        leftItems.autoPinEdgesToSuperviewEdges(with: .init(only: .left, inset: 12), excludingEdge: .right)
+
+        centerItems.autoAlignAxis(toSuperviewAxis: .vertical)
+        centerItems.autoPinEdge(.left, to: .right, of: leftItems, withOffset: 8, relation: .greaterThanOrEqual)
+        centerItems.autoPinEdge(.right, to: .left, of: rightItems, withOffset: 8, relation: .greaterThanOrEqual)
+        centerItems.autoPinEdge(toSuperviewEdge: .top)
+        centerItems.autoPinEdge(toSuperviewEdge: .bottom)
+
+        rightItems.autoPinEdgesToSuperviewEdges(with: .init(only: .right, inset: 18), excludingEdge: .left)
+
         backgroundColor = .background
     }
     
