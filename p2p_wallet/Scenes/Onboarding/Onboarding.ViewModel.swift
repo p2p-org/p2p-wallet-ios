@@ -37,7 +37,7 @@ extension Onboarding {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var handler: OnboardingHandler
-        @Injected private var accountStorage: KeychainAccountStorage
+        @Injected private var pinCodeStorage: PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
@@ -61,7 +61,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
     
     // MARK: - Pincode
     func savePincode(_ pincode: String) {
-        accountStorage.save(pincode)
+        pinCodeStorage.save(pincode)
         navigateNext()
     }
     
@@ -121,7 +121,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
     
     // MARK: - Navigation
     func navigateNext() {
-        if accountStorage.pinCode == nil {
+        if pinCodeStorage.pinCode == nil {
             navigationSubject.accept(.createPincode)
             return
         }

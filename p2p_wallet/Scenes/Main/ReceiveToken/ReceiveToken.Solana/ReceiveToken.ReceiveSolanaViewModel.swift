@@ -29,7 +29,7 @@ protocol ReceiveTokenSolanaViewModelType {
 extension ReceiveToken {
     class ReceiveSolanaViewModel {
         // MARK: - Dependencies
-        @Injected private var accountStorage: KeychainAccountStorage
+        @Injected private var nameStorage: NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         private let tokensRepository: TokensRepository
         private let navigationSubject: BehaviorRelay<NavigatableScene?>
@@ -73,7 +73,7 @@ extension ReceiveToken.ReceiveSolanaViewModel: ReceiveTokenSolanaViewModelType {
     }
     
     func getUsername() -> String? {
-        accountStorage.getName()
+        nameStorage.getName()
     }
     
     func showSOLAddressInExplorer() {

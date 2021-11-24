@@ -115,7 +115,7 @@ class MainViewController: BaseVC {
         }
 
         let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-        let topController = keyWindow?.rootViewController.map(findLastViewController)
+        let topController = keyWindow?.rootViewController?.findLastPresentedViewController()
 
         if topController is UIAlertController {
             let presenting = topController?.presentingViewController
@@ -129,8 +129,15 @@ class MainViewController: BaseVC {
             topController?.present(localAuthVC, animated: true)
         }
     }
+}
 
-    private func findLastViewController(in controller: UIViewController) -> UIViewController {
-        controller.presentedViewController ?? controller
+private extension UIViewController {
+    /// Recursively find last presentedViewController
+    /// - Returns: the last presented view controller
+    func findLastPresentedViewController() -> UIViewController {
+        if let presentedViewController = self.presentedViewController {
+            return presentedViewController.findLastPresentedViewController()
+        }
+        return self
     }
 }

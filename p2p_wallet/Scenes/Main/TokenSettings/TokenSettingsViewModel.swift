@@ -24,7 +24,6 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     let pubkey: String
     let solanaSDK: SolanaSDK
     let pricesService: PricesServiceType
-    @Injected private var accountStorage: KeychainAccountStorage
     var wallet: Wallet? {walletsRepository.getWallets().first(where: {$0.pubkey == pubkey})}
     
     // MARK: - Subject
