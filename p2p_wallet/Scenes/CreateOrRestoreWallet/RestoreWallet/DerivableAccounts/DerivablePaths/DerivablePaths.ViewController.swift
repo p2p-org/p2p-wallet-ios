@@ -8,16 +8,18 @@
 import Foundation
 import BECollectionView
 
-protocol DerivablePathsVCDelegate: AnyObject {
-    func derivablePathsVC(_ vc: DerivablePaths.ViewController, didSelectPath path: SolanaSDK.DerivablePath)
-}
-
 extension DerivablePaths {
-    class ViewController: WLIndicatorModalVC, BECollectionViewDelegate {
+    typealias Callback = (SolanaSDK.DerivablePath) -> Void
+    
+    class ViewController: WLBottomSheet, BECollectionViewDelegate {
         // MARK: - Properties
         private let initPath: SolanaSDK.DerivablePath
         private let viewModel: ViewModel
-        weak var delegate: DerivablePathsVCDelegate?
+        private let onSelect: Callback?
+        
+        override var margin: UIEdgeInsets {
+            .init(x: 10, y: 0)
+        }
         
         // MARK: - Subviews
         private lazy var collectionView = BEStaticSectionsCollectionView(
@@ -34,9 +36,10 @@ extension DerivablePaths {
         )
         
         // MARK: - Initializers
-        init(currentPath: SolanaSDK.DerivablePath) {
+        init(currentPath: SolanaSDK.DerivablePath, onSelect: Callback?) {
             initPath = currentPath
             viewModel = ViewModel(currentPath: currentPath)
+            self.onSelect = onSelect
             super.init()
             modalPresentationStyle = .custom
             transitioningDelegate = self
@@ -49,46 +52,52 @@ extension DerivablePaths {
         
         override func setUp() {
             super.setUp()
-            let headerStackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
-                UILabel(text: L10n.selectDerivablePath, textSize: 17, weight: .semibold)
-                UILabel(text: L10n.ByDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet.toUseAnAlternativePathTryRestoringAnExistingWallet, textSize: 15, textColor: .textSecondary, numberOfLines: 0)
+            
+            view.backgroundColor = .clear
+            
+            stackView.addArrangedSubviews {
+                // Actions
+                UIStackView(axis: .vertical, alignment: .fill, distribution: .fill) {
+                    // Header
+                    UILabel(text: L10n.selectDerivablePath, textSize: 13, weight: .semibold, textColor: .textSecondary, textAlignment: .center)
+                        .padding(.init(x: 0, y: 15))
+                    UIView.defaultSeparator()
+                    
+                    // Derivable paths
+                    SolanaSDK.DerivablePath.DerivableType
+                        .allCases
+                        .map { SolanaSDK.DerivablePath(type: $0, walletIndex: 0, accountIndex: 0) }
+                        .enumerated()
+                        .map { (index, path) -> UIView in
+                            let selected = path == initPath
+                            
+                            return UIStackView(axis: .vertical, alignment: .fill, distribution: .fill) {
+                                UIStackView(axis: .horizontal, alignment: .center) {
+                                    UILabel(text: path.title, textSize: 17)
+                                    UIView.spacer
+                                    selected ? UIImageView(width: 22, height: 22, image: .checkBoxIOS) : UIView()
+                                }.padding(.init(top: 0, left: 20, bottom: 0, right: 24))
+                                UIView.defaultSeparator()
+                            }.withTag(index)
+                                .frame(height: 55)
+                                .onTap(self, action: #selector(onPathSelect))
+                            
+                        }
+                }.padding(.zero, backgroundColor: .background, cornerRadius: 14)
+                
+                // Cancel
+                WLButton.stepButton(type: .white, label: L10n.cancel)
+                    .onTap(self, action: #selector(back))
             }
-            containerView.addSubview(headerStackView)
-            headerStackView.autoPinEdgesToSuperviewEdges(with: .init(all: 20), excludingEdge: .bottom)
             
-            let separator = UIView.defaultSeparator()
-            containerView.addSubview(separator)
-            separator.autoPinEdge(.top, to: .bottom, of: headerStackView, withOffset: 20)
-            separator.autoPinEdge(toSuperviewEdge: .leading)
-            separator.autoPinEdge(toSuperviewEdge: .trailing)
-            
-            containerView.addSubview(collectionView)
-            collectionView.autoPinEdge(.top, to: .bottom, of: separator)
-            collectionView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-            collectionView.delegate = self
         }
         
-        func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
-            guard let path = item as? SelectableDerivablePath else {return}
-            var paths = viewModel.data
-            for i in 0..<paths.count {
-                paths[i].isSelected = false
-                if paths[i].path == path.path {
-                    paths[i].isSelected = true
-                }
-            }
-            viewModel.overrideData(by: paths)
-            delegate?.derivablePathsVC(self, didSelectPath: path.path)
+        @objc func onPathSelect(gesture: UITapGestureRecognizer) {
+            dismiss(animated: true)
+            
+            guard let tag = gesture.view?.tag else { return }
+            let pathType = SolanaSDK.DerivablePath.DerivableType.allCases[tag]
+            onSelect?(.init(type: pathType, walletIndex: 0, accountIndex: 0))
         }
-    }
-}
-
-extension DerivablePaths.ViewController: UIViewControllerTransitioningDelegate {
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        CustomHeightPresentationController(
-            height: { 362 },
-            presentedViewController: presented,
-            presenting: presenting
-        )
     }
 }

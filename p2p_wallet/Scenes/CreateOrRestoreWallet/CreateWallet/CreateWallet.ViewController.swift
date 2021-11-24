@@ -44,6 +44,9 @@ extension CreateWallet {
         
         // MARK: - Navigation
         private func navigate(to scene: CreateWallet.NavigatableScene?) {
+            guard let scene = scene else {
+                return
+            }
             switch scene {
             case .explanation:
                 let vc = ExplanationVC()
@@ -67,8 +70,6 @@ extension CreateWallet {
                 } else {
                     navigationController?.popViewController(animated: true)
                 }
-            case .none:
-                break
             }
         }
     }

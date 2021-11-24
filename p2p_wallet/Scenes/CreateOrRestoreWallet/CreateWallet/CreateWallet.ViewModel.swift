@@ -17,9 +17,7 @@ protocol CreateWalletViewModelType: ReserveNameHandler {
     func handlePhrases(_ phrases: [String])
     func handleName(_ name: String?)
     func finish()
-    
-    func declineTermsAndCondition()
-    func acceptTermsAndCondition()
+
     func navigateToCreatePhrases()
     func navigateToReserveName(owner: String)
     func back()
@@ -30,7 +28,6 @@ extension CreateWallet {
         // MARK: - Dependencies
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var accountStorage: KeychainAccountStorage
         
         // MARK: - Properties
         private let bag = DisposeBag()
@@ -91,15 +88,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
             name: name
         )
     }
-        
-    func declineTermsAndCondition() {
-        navigationSubject.accept(.dismiss)
-    }
-    
-    func acceptTermsAndCondition() {
-        navigateToExplanation()
-    }
-    
+
     func navigateToExplanation() {
         navigationSubject.accept(.explanation)
     }

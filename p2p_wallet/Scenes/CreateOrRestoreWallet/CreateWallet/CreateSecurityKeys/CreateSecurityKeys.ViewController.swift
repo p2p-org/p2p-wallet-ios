@@ -28,27 +28,18 @@ extension CreateSecurityKeys {
         
         override func bind() {
             super.bind()
+            viewModel.showTermsAndConditionsSignal
+                .emit(onNext: {[weak self] in
+                    let vc = WLMarkdownVC(title: L10n.termsOfUse.uppercaseFirst, bundledMarkdownTxtFileName: "Terms_of_service")
+                    self?.present(vc, interactiveDismissalType: .standard, completion: nil)
+                })
+                .disposed(by: disposeBag)
+            
             viewModel.errorSignal
                 .emit(onNext: {[weak self] error in
                     self?.showAlert(title: L10n.error, message: error)
                 })
                 .disposed(by: disposeBag)
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in
-                    self?.navigate(to: $0)
-                })
-                .disposed(by: disposeBag)
-        }
-
-        // MARK: - Navigation
-        private func navigate(to scene: NavigatableScene?) {
-            switch scene {
-            case .none:
-                break
-            case .termsAndConditions:
-                let vc = TermsAndConditionsVC()
-                present(vc, animated: true)
-            }
         }
     }
 }

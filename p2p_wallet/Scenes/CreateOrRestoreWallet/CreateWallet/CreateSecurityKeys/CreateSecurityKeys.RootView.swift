@@ -15,7 +15,8 @@ extension CreateSecurityKeys {
     class RootView: ScrollableVStackRootView {
         // MARK: - Dependencies
         @Injected private var viewModel: CreateSecurityKeysViewModelType
-        
+        @Injected private var analyticsManager: AnalyticsManagerType
+
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         
@@ -48,17 +49,23 @@ extension CreateSecurityKeys {
         // MARK: - Methods
         // MARK: - Layout
         private func layout() {
+            // navigation bar
             addSubview(navigationBar)
             navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
             navigationBar.autoPinEdge(toSuperviewEdge: .leading)
             navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
             
+            // content
             scrollView.contentInset.top = 56
             scrollView.contentInset.bottom = 120
-            stackView.addArrangedSubview(keysView)
-            stackView.addArrangedSubview(keysViewActions)
-            stackView.addArrangedSubview(agreeTermsAndConditions)
+            stackView.addArrangedSubviews {
+                keysView
+                keysViewActions
+                BEStackViewSpacing(10)
+                agreeTermsAndConditions
+            }
             
+            // bottom button
             let bottomStack = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
                 saveToICloudButton
                 verifyManualButton
@@ -77,7 +84,7 @@ extension CreateSecurityKeys {
                 .bind(onNext: {[weak self] in self?.viewModel.copyToClipboard()})
                 .disposed(by: disposeBag)
             keysViewActions.rx.onRefresh
-                .bind(onNext: {[weak self] in self?.viewModel.createPhrases()})
+                .bind(onNext: {[weak self] in self?.viewModel.renewPhrases()})
                 .disposed(by: disposeBag)
             keysViewActions.rx.onSave
                 .bind(onNext: {[weak self] in self?.saveToPhoto()})
@@ -89,20 +96,8 @@ extension CreateSecurityKeys {
         }
         
         // MARK: - Actions
-        @objc func createPhrases() {
-            viewModel.createPhrases()
-        }
-        
-        @objc func toggleCheckbox() {
-            viewModel.toggleCheckbox()
-        }
-        
         @objc func saveToICloud() {
             viewModel.saveToICloud()
-        }
-        
-        @objc func goNext() {
-            viewModel.next()
         }
     
         @objc func verifyPhrase() {
@@ -114,6 +109,7 @@ extension CreateSecurityKeys {
         }
         
         func saveToPhoto() {
+            analyticsManager.log(event: .createWalletSaveSeedToPhotosClick)
             UIImageWriteToSavedPhotosAlbum(keysView.asImage(), self, #selector(saveImageCallback), nil)
         }
         

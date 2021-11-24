@@ -172,7 +172,7 @@ extension Home {
                 analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: wallet.token.symbol))
                 
                 let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey, symbol: wallet.token.symbol)
-                present(vc, interactiveDismissalType: .standard)
+                show(vc, sender: nil)
             case .walletSettings(let wallet):
                 guard let pubkey = wallet.pubkey else {return}
                 let vc = scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)

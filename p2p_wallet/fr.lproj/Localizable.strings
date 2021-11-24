@@ -565,7 +565,7 @@
 "Your security key" = "Votre clé de sécurité";
 "Verify manually" = "Vérifier manuellement";
 "Renew" = "Renouveler";
-"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Les mots suivants sont une clé de sécurité que vous devez conserver dans un endroit sûr, écrite dans le bon ordre.\nEn cas de perte, personne ne peut la restaurer.\nGardez-la privée, même de notre part";
+"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Les mots suivants sont une clé de sécurité que vous devez conserver dans un endroit sûr, écrite dans le bon ordre.\n\nEn cas de perte, personne ne peut la restaurer.\nGardez-la privée, même de notre part";
 "Proceed without a username?" = "Continuer sans nom d'utilisateur ?";
 "Anytime you want, you can easily reserve a username by going to the settings" = "À tout moment, vous pouvez facilement réserver un nom d'utilisateur en allant dans les paramètres";
 "Proceed" = "Procéder";
@@ -612,5 +612,10 @@
 "Updating prices" = "Mise à jour des prix";
 "Prices updated" = "Prix ​​mis à jour";
 "Error when updating prices" = "Erreur lors de la mise à jour des prix";
-"By continuing, you agree to wallet's" = "En continuant, vous acceptez les portefeuilles\n%@";
 "Capitalized Terms and Conditions" = "Termes et conditions";
+"DApps" = "DApps";
+"Earn" = "Gagner";
+"By continuing, you agree to wallet's %@" = "En continuant, vous acceptez les %@ du portefeuille";
+"Derivation path" = "Chemin de dérivation";
+"History" = "Histoire";
+"Show wallet address" = "Afficher l'adresse du portefeuille";
