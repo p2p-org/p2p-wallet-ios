@@ -9,18 +9,19 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-protocol CreateSecurityKeysViewModelType {
+protocol CreateSecurityKeysViewModelType: AnyObject {
     var showTermsAndConditionsSignal: Signal<Void> { get }
     var phrasesDriver: Driver<[String]> { get }
     var errorSignal: Signal<String> { get }
-    
+
     func copyToClipboard()
     func renewPhrases()
-    
+
     func showTermsAndConditions()
     func saveToICloud()
     func back()
     func verifyPhrase()
+    func termsAndConditions()
 }
 
 extension CreateSecurityKeys {
@@ -30,7 +31,7 @@ extension CreateSecurityKeys {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var createWalletViewModel: CreateWalletViewModelType
         @Injected private var authenticationHandler: AuthenticationHandler
-        
+
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         
@@ -43,7 +44,7 @@ extension CreateSecurityKeys {
         init() {
             createPhrases()
         }
-        
+
         private func createPhrases() {
             let mnemonic = Mnemonic()
             phrasesSubject.accept(mnemonic.phrase)
@@ -55,7 +56,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     var showTermsAndConditionsSignal: Signal<Void> {
         showTermsAndConditionsSubject.asSignal()
     }
-    
+
     var phrasesDriver: Driver<[String]> {
         phrasesSubject.asDriver()
     }
@@ -63,7 +64,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     var errorSignal: Signal<String> {
         errorSubject.asSignal()
     }
-    
+
     // MARK: - Actions
     func showTermsAndConditions() {
         analyticsManager.log(event: .createWalletTermsAndConditionsClick)
@@ -87,7 +88,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
             self?.errorSubject.accept(error?.localizedDescription ?? L10n.error)
         }
     }
-    
+
     private func _saveToIcloud() {
         analyticsManager.log(event: .createWalletBackupToIcloudClick)
         let result = iCloudStorage.saveToICloud(
@@ -105,12 +106,16 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
             errorSubject.accept(L10n.SecurityKeyCanTBeSavedIntoIcloud.pleaseTryAgain)
         }
     }
-    
+
+    func termsAndConditions() {
+        showTermsAndConditionsSubject.accept(())
+    }
+
     func verifyPhrase() {
         analyticsManager.log(event: .createWalletVerifyManuallyClick)
         createWalletViewModel.verifyPhrase(phrasesSubject.value)
     }
-    
+
     @objc func back() {
         createWalletViewModel.back()
     }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class WLButton: UIButton {
     enum StepButtonType: Equatable {
@@ -45,7 +46,7 @@ class WLButton: UIButton {
             }
         }
     }
-    
+
     static func stepButton(type: StepButtonType, label: String?, labelFont: UIFont = UIFont.systemFont(ofSize: 17, weight: .semibold), labelColor: UIColor? = nil) -> WLButton {
         let button = WLButton(backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: labelFont, textColor: labelColor != nil ? labelColor!: type.textColor)
         button.enabledColor = type.backgroundColor
@@ -60,6 +61,8 @@ class WLButton: UIButton {
         let button = WLButton(backgroundColor: enabledColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .semibold), textColor: textColor)
         button.enabledColor = enabledColor
         button.disabledColor = disabledColor
+        button.setImage(.crossIcon, for: .normal)
+
         button.titleLabel?.lineBreakMode = .byWordWrapping
         button.titleLabel?.textAlignment = .center
         button.contentEdgeInsets = .init(x: 15, y: 20)
