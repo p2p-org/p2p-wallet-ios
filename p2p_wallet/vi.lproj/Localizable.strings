@@ -612,5 +612,5 @@
 "Updating prices" = "Cập nhật giá";
 "Prices updated" = "Giá đã cập nhật";
 "Error when updating prices" = "Lỗi khi cập nhật giá";
-"By continuing, you agree to wallet's" = "Bằng cách tiếp tục, bạn đồng ý với";
+"By continuing, you agree to wallet's" = "Bằng cách tiếp tục, bạn đồng ý với\n%@\ncủa wallet";
 "Capitalized Terms and Conditions" = "Các điều khoản và điều kiện";

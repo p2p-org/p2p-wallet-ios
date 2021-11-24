@@ -6,54 +6,72 @@
 //
 
 import UIKit
+import BEPureLayout
 
-final class AgreeTermsAndConditionsView: UIView {
-    private let topText = UILabel()
-    private let bottomText = UILabel()
+final class AgreeTermsAndConditionsView: BEView, UITextViewDelegate {
+    private lazy var termsAndConditionsLabel: UIView = createAgreeLabel()
 
     var didTouchHyperLink: (() -> Void)?
 
-    init() {
-        super.init(frame: .zero)
-
-        configureSubviews()
+    override func commonInit() {
         addSubviews()
         setConstraints()
     }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func configureSubviews() {
-        topText.textAlignment = .center
-        topText.font = .systemFont(ofSize: 13, weight: .regular)
-        topText.text = L10n.byContinuingYouAgreeToWalletS
-
-        bottomText.textAlignment = .center
-        bottomText.font = .systemFont(ofSize: 13, weight: .regular)
-        bottomText.textColor = .h5887ff
-        bottomText.text = L10n.capitalizedTermsAndConditions
-        bottomText.onTap(self, action: #selector(hyperLinkTapped))
-    }
-
     private func addSubviews() {
-        addSubview(topText)
-        addSubview(bottomText)
+        addSubview(termsAndConditionsLabel)
     }
 
     private func setConstraints() {
-        topText.autoSetDimension(.height, toSize: 18)
-        topText.autoPinEdgesToSuperviewEdges(with: .zero,excludingEdge: .bottom)
-
-        bottomText.autoSetDimension(.height, toSize: 18)
-        bottomText.autoPinEdge(.top, to: .bottom, of: topText)
-        bottomText.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        termsAndConditionsLabel.autoPinEdgesToSuperviewEdges()
     }
 
-    @objc
-    private func hyperLinkTapped() {
+    private func createAgreeLabel() -> UIView {
+        let textView = UITextView()
+        textView.isScrollEnabled = false
+        textView.isEditable = false
+        textView.delegate = self
+
+        let normalFont = UIFont.systemFont(ofSize: 13, weight: .regular)
+        let linkFont = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        let linkAttributes: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.h5887ff]
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.17
+        paragraphStyle.alignment = .center
+
+        let attributedText = NSMutableAttributedString(
+            string: L10n.byContinuingYouAgreeToWalletS(L10n.capitalizedTermsAndConditions),
+            attributes: [
+                .font: normalFont,
+                .kern: -0.24,
+                .paragraphStyle: paragraphStyle
+            ]
+        )
+        let linkRange = (attributedText.string as NSString).range(of: L10n.capitalizedTermsAndConditions)
+        attributedText.addAttribute(.font, value: linkFont, range: linkRange)
+        attributedText.addAttribute(.link, value: "", range: linkRange)
+        textView.attributedText = attributedText
+        textView.linkTextAttributes = linkAttributes
+
+        return textView
+    }
+
+    // MARK: Delegate
+
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith URL: URL,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         didTouchHyperLink?()
+        return false
+    }
+
+    func textViewDidChangeSelection(_ textView: UITextView) {
+        guard textView.selectedTextRange != nil else { return }
+
+        textView.selectedTextRange = nil
     }
 }
