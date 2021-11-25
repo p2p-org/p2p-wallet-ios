@@ -92,7 +92,7 @@ private extension ExpandableTextView {
     func configureTextView() {
         textView.delegate = self
         textView.font = .systemFont(ofSize: 17)
-        textView.textColor = .black
+        textView.textColor = .textBlack
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
         textView.textContainer.lineFragmentPadding = 0
