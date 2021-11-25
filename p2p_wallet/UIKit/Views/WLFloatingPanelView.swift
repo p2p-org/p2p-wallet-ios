@@ -17,7 +17,7 @@ class WLFloatingPanelView: BERoundedCornerShadowView {
     
     override func commonInit() {
         super.commonInit()
-        layer.cornerRadius = 8
+        layer.cornerRadius = 12
         layer.masksToBounds = true
         
         stackView.axis = .vertical

@@ -38,7 +38,13 @@ extension Home {
         var didTapSend: (() -> Void)?
         var didTapReceive: (() -> Void)?
         var didTapSwap: (() -> Void)?
-        
+
+        override func commonInit() {
+            super.commonInit()
+
+            layer.cornerRadius = 8
+        }
+
         override func createTopView() -> UIView {
             UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
                 chartView

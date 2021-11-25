@@ -102,12 +102,7 @@ extension Home {
             collectionView.scrollDelegate = balancesScrollDelegate
             collectionView.refresh()
         }
-        
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-            
-        }
-        
+
         // MARK: - Layout
         private func layout() {
             let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
