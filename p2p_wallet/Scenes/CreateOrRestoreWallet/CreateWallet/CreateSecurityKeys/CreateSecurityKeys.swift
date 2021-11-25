@@ -8,5 +8,7 @@
 import Foundation
 
 struct CreateSecurityKeys {
-    
+    enum NavigatableScene {
+        case termsAndConditions
+    }
 }

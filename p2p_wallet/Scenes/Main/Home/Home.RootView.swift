@@ -22,7 +22,8 @@ extension Home {
         // MARK: - Subviews
 
         private let bannersCollectionView: UICollectionView
-        
+        // swiftlint:disable weak_delegate
+        private lazy var balancesScrollDelegate = BalancesScrollDelegate(balancesView: balancesOverviewView)
         private let pricesLoadingIndicatorView = WLStatusIndicatorView(forAutoLayout: ())
 
         private lazy var collectionView: WalletsCollectionView = {
@@ -48,7 +49,7 @@ extension Home {
                 self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
                 return .just(())
             }
-            collectionView.contentInset.modify(dTop: 20)
+            collectionView.contentInset.modify(dTop: 50)
             return collectionView
         }()
         
@@ -98,14 +99,10 @@ extension Home {
             super.commonInit()
             layout()
             bind()
+            collectionView.scrollDelegate = balancesScrollDelegate
             collectionView.refresh()
         }
-        
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-            
-        }
-        
+
         // MARK: - Layout
         private func layout() {
             let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
@@ -124,14 +121,15 @@ extension Home {
                 BEStackViewSpacing(8)
                 balancesOverviewView
                     .padding(.init(x: 20, y: 0))
-                
-                BEStackViewSpacing(20)
-                
-                collectionView
             }
+
+            addSubview(collectionView)
             addSubview(stackView)
+
+            stackView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+            collectionView.autoPinEdge(.top, to: .bottom, of: stackView, withOffset: -10)
+            collectionView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
             bannersCollectionView.autoSetDimension(.height, toSize: 105)
-            stackView.autoPinEdgesToSuperviewSafeArea()
         }
         
         private func bind() {

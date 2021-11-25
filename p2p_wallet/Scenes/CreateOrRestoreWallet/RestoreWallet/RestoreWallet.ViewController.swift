@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import BEPureLayout
+import Resolver
 
 extension RestoreWallet {
     class ViewController: BaseVC {
@@ -17,7 +18,7 @@ extension RestoreWallet {
         
         // MARK: - Dependencies
         @Injected private var viewModel: RestoreWalletViewModelType
-        
+
         // MARK: - Subviews
         private lazy var iCloudRestoreButton = WLStepButton.main(
                 image: .appleLogo,
@@ -80,19 +81,18 @@ extension RestoreWallet {
             viewModel.isRestorableUsingIcloud.map({ !$0 }).drive(iCloudRestoreButton.rx.isHidden)
                 .disposed(by: disposeBag)
         }
-        
+
+        override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+            super.present(viewControllerToPresent, animated: flag, completion: completion)
+        }
+
         // MARK: - Navigation
         private func navigate(to scene: RestoreWallet.NavigatableScene?) {
             guard let scene = scene else { return }
             
             switch scene {
             case .enterPhrases:
-                let vc = RecoveryEnterSeedsViewController()
-                vc.dismissAfterCompletion = false
-                vc.completion = { [weak self] phrases in
-                    self?.viewModel.handlePhrases(phrases, derivablePath: nil)
-                }
-                
+                let vc = EnterSeed.ViewController(viewModel: Resolver.resolve())
                 navigationController?.pushViewController(vc, animated: true)
             case .restoreFromICloud:
                 let vc = RestoreICloud.ViewController()
@@ -107,7 +107,7 @@ extension RestoreWallet {
                 navigationController?.pushViewController(vc, animated: true)
             }
         }
-        
+
         // MARK: - Actions
         @objc func restoreFromICloud() {
             viewModel.restoreFromICloud()

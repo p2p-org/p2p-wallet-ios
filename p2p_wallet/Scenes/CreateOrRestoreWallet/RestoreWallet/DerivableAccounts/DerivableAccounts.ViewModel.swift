@@ -10,7 +10,7 @@ import RxCocoa
 import RxSwift
 
 protocol AccountRestorationHandler {
-    func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath)
+    func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath, phrases: [String])
 }
 
 protocol DrivableAccountsViewModelType {
@@ -76,6 +76,6 @@ extension DerivableAccounts.ViewModel: DrivableAccountsViewModelType {
         accountsListViewModel.cancelRequest()
         
         // send to handler
-        handler.derivablePathDidSelect(selectedDerivablePathSubject.value)
+        handler.derivablePathDidSelect(selectedDerivablePathSubject.value, phrases: phrases)
     }
 }
