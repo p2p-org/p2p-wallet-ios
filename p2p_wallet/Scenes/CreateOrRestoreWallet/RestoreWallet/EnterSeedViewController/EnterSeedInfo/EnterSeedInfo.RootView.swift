@@ -29,11 +29,13 @@ extension EnterSeedInfo {
             textSize: 17,
             numberOfLines: 0
         )
-        private let firstOptions = UILabel(
-            text: L10n.ifLostNoOneCanRestoreItKeepItPrivateEvenFromUs,
-            textSize: 15,
-            numberOfLines: 0
-        )
+        private let firstOptions: UIView = .greyBannerView {
+            UILabel(
+                text: L10n.ifLostNoOneCanRestoreItKeepItPrivateEvenFromUs,
+                textSize: 15,
+                numberOfLines: 0
+            )
+        }
         private let secondTitle = UILabel(
             text: L10n.whereICanFindOne,
             textSize: 28,
@@ -83,7 +85,6 @@ extension EnterSeedInfo {
                 firstTitle
                 firstDescription
                 firstOptions
-                    .padding(.init(x: 18, y: 18), backgroundColor: .fafafa, cornerRadius: 12)
                 secondTitle
                 secondDescription
             }

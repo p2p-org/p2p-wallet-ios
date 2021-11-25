@@ -111,8 +111,9 @@ extension EnterSeed {
                 BEStackViewSpacing(8)
                 errorLabel
                 BEStackViewSpacing(18)
-                descriptionLabel
-                    .padding(.init(all: 18), backgroundColor: .fafafa, cornerRadius: 12)
+                UIView.greyBannerView {
+                    descriptionLabel
+                }
                 BEStackViewSpacing(18)
                 agreeTermsAndConditionsView
             }
