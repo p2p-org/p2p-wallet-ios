@@ -13,12 +13,15 @@ class WLOverviewView: WLFloatingPanelView {
         super.commonInit()
         stackView.spacing = 0
         backgroundColor = .grayMain
-        
+
+        let buttonsView = createButtonsView()
         stackView.addArrangedSubviews {
             createTopView()
             UIView.separator(height: 1, color: .separator)
-            createButtonsView()
+            buttonsView
         }
+
+        buttonsView.autoMatch(.height, to: .height, of: self, withMultiplier: 1.0, relation: .lessThanOrEqual)
     }
     
     func createTopView() -> UIView {
@@ -49,6 +52,7 @@ class WLOverviewView: WLFloatingPanelView {
         stackView.arrangedSubviews.forEach {$0.hideLoader()}
         stackView.arrangedSubviews.forEach {$0.showLoader(customGradientColor: .defaultLoaderGradientColors)}
     }
+
     func hideLoading() {
         stackView.arrangedSubviews.forEach {$0.hideLoader()}
     }
