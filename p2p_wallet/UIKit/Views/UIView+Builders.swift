@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 extension UIView {
     /// Create a stackview that have an image (or a custom view) followed by a title and a description
@@ -56,5 +57,18 @@ extension UIView {
     /// PatternView with lines
     static func introPatternView() -> UIImageView {
         UIImageView(image: .introPatternBg, tintColor: .textSecondary.withAlphaComponent(0.05))
+    }
+    
+    /// Grey banner
+    static func greyBannerView(
+        contentInset: UIEdgeInsets = .init(all: 18),
+        axis: NSLayoutConstraint.Axis = .vertical,
+        spacing: CGFloat = 8,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill,
+        @BEStackViewBuilder builder: () -> [BEStackViewElement]
+    ) -> UIView {
+        UIStackView(axis: axis, spacing: spacing, alignment: alignment, distribution: distribution, builder: builder)
+            .padding(contentInset, backgroundColor: .a3a5ba.withAlphaComponent(0.05), cornerRadius: 12)
     }
 }
