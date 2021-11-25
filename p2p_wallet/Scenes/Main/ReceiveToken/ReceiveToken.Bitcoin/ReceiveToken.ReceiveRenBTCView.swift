@@ -424,7 +424,7 @@ private class AddressView: BEView {
 }
 
 private func warningView(attributedText: NSAttributedString) -> UIView {
-    .greyBannerView {
+    .greyBannerView(axis: .horizontal, alignment: .top) {
         UIImageView(width: 36, height: 36, image: .warning)
         
         UILabel(text: nil, numberOfLines: 0)
