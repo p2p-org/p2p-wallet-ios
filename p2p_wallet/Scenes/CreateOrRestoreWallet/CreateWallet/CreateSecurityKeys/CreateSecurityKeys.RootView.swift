@@ -16,7 +16,7 @@ extension CreateSecurityKeys {
         // MARK: - Dependencies
         @Injected private var viewModel: CreateSecurityKeysViewModelType
         @Injected private var analyticsManager: AnalyticsManagerType
-        
+
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         
@@ -32,17 +32,16 @@ extension CreateSecurityKeys {
         private let verifyManualButton: WLStepButton = WLStepButton.sub(text: L10n.verifyManually)
         
         private let keysView: KeysView = KeysView()
-        private let keysViewAction: KeysViewActions = KeysViewActions()
-        private lazy var termsAndConditionsLabel: UILabel = {
-            let label = UILabel(text: L10n.byContinuingYouAgreeToWalletS(L10n.termsAndConditions), numberOfLines: 0, textAlignment: .center)
-            label.semiboldTexts([L10n.termsAndConditions])
-            label.lineBreakMode = .byWordWrapping
-            return label.onTap(self, action: #selector(termsAndConditionsLabelDidTouch))
-        }()
+        private let keysViewActions: KeysViewActions = KeysViewActions()
+        private let agreeTermsAndConditions = AgreeTermsAndConditionsView()
         
         // MARK: - Initializers
         override func commonInit() {
             super.commonInit()
+
+            agreeTermsAndConditions.didTouchHyperLink = { [weak viewModel] in
+                viewModel?.termsAndConditions()
+            }
             layout()
             bind()
         }
@@ -61,9 +60,9 @@ extension CreateSecurityKeys {
             scrollView.contentInset.bottom = 120
             stackView.addArrangedSubviews {
                 keysView
-                keysViewAction
+                keysViewActions
                 BEStackViewSpacing(10)
-                termsAndConditionsLabel
+                agreeTermsAndConditions
             }
             
             // bottom button
@@ -81,13 +80,13 @@ extension CreateSecurityKeys {
                 .drive(keysView.rx.keys)
                 .disposed(by: disposeBag)
             
-            keysViewAction.rx.onCopy
+            keysViewActions.rx.onCopy
                 .bind(onNext: {[weak self] in self?.viewModel.copyToClipboard()})
                 .disposed(by: disposeBag)
-            keysViewAction.rx.onRefresh
+            keysViewActions.rx.onRefresh
                 .bind(onNext: {[weak self] in self?.viewModel.renewPhrases()})
                 .disposed(by: disposeBag)
-            keysViewAction.rx.onSave
+            keysViewActions.rx.onSave
                 .bind(onNext: {[weak self] in self?.saveToPhoto()})
                 .disposed(by: disposeBag)
     
@@ -119,13 +118,6 @@ extension CreateSecurityKeys {
                 showErrorView(error: error)
             } else {
                 UIApplication.shared.showToast(message: "✅ \(L10n.savedToPhotoLibrary)")
-            }
-        }
-        
-        @objc func termsAndConditionsLabelDidTouch(gesture: UITapGestureRecognizer) {
-            let termsAndConditionsRange = (termsAndConditionsLabel.text! as NSString).range(of: L10n.termsAndConditions)
-            if gesture.didTapAttributedTextInRange(termsAndConditionsRange) {
-                viewModel.showTermsAndConditions()
             }
         }
     }
