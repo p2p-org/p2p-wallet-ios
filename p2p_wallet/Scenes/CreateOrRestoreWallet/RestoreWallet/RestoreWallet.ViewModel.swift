@@ -103,7 +103,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     func handlePhrases(_ phrases: [String], derivablePath: SolanaSDK.DerivablePath?) {
         self.phrases = phrases
         if let derivablePath = derivablePath {
-            derivablePathDidSelect(derivablePath)
+            derivablePathDidSelect(derivablePath, phrases: phrases)
         } else {
             navigationSubject.accept(.derivableAccounts(phrases: phrases))
         }
@@ -136,9 +136,10 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
 }
 
 extension RestoreWallet.ViewModel: AccountRestorationHandler {
-    func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath) {
+    func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath, phrases: [String]) {
         analyticsManager.log(event: .recoveryRestoreClick)
         self.derivablePath = derivablePath
+        self.phrases = phrases
         
         // create account
         isLoadingSubject.accept(true)
