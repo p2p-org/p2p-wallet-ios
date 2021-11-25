@@ -424,14 +424,10 @@ private class AddressView: BEView {
 }
 
 private func warningView(attributedText: NSAttributedString) -> UIView {
-    let banner = WLGreyBannerView(contentInset: .init(x: 16, y: 12))
-    banner.stackView.axis = .horizontal
-    banner.stackView.alignment = .top
-    banner.stackView.addArrangedSubviews {
+    .greyBannerView {
         UIImageView(width: 36, height: 36, image: .warning)
         
         UILabel(text: nil, numberOfLines: 0)
             .withAttributedText(attributedText)
     }
-    return banner
 }
