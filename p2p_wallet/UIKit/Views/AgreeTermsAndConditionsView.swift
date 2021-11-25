@@ -31,6 +31,7 @@ final class AgreeTermsAndConditionsView: BEView, UITextViewDelegate {
         textView.isScrollEnabled = false
         textView.isEditable = false
         textView.delegate = self
+        textView.backgroundColor = .clear
 
         let normalFont = UIFont.systemFont(ofSize: 13, weight: .regular)
         let linkFont = UIFont.systemFont(ofSize: 13, weight: .semibold)
@@ -45,7 +46,8 @@ final class AgreeTermsAndConditionsView: BEView, UITextViewDelegate {
             attributes: [
                 .font: normalFont,
                 .kern: -0.24,
-                .paragraphStyle: paragraphStyle
+                .paragraphStyle: paragraphStyle,
+                .foregroundColor: UIColor.textBlack
             ]
         )
         let linkRange = (attributedText.string as NSString).range(of: L10n.capitalizedTermsAndConditions)

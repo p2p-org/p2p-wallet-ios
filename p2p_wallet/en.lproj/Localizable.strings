@@ -615,7 +615,7 @@
 "Capitalized Terms and Conditions" = "Terms and Conditions";
 "DApps" = "DApps";
 "Earn" = "Earn";
-"By continuing, you agree to wallet's %@" = "By continuing, you agree to wallet's %@";
+"By continuing, you agree to wallet's %@" = "By continuing, you agree to wallet's\n%@";
 "Derivation path" = "Derivation path";
 "History" = "History";
 "Show wallet address" = "Show wallet address";
