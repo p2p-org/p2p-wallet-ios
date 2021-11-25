@@ -31,6 +31,8 @@ extension Home {
             .onTap(self, action: #selector(buttonReceiveDidTouch))
         private lazy var swapButton = createButton(image: .buttonSwap, title: L10n.swap)
             .onTap(self, action: #selector(buttonSwapDidTouch))
+
+        public lazy var topStackConstraint = stackView.autoPinEdge(toSuperviewEdge: .top)
         
         // MARK: - Callbacks
         var didTapSend: (() -> Void)?
@@ -55,6 +57,12 @@ extension Home {
                 swapButton
             }
         }
+
+        override func layoutStackView() {
+             topStackConstraint.priority = .defaultHigh
+             stackView.autoPinEdge(toSuperviewEdge: .top, withInset: .zero, relation: .lessThanOrEqual)
+             stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+         }
         
         func setUp(state: BEFetcherState, data: [Wallet]) {
             switch state {

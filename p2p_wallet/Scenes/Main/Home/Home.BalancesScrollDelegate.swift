@@ -10,15 +10,14 @@ import BEPureLayout
 
 extension Home {
     final class BalancesScrollDelegate: NSObject, UIScrollViewDelegate {
-        private let balancesView: BERoundedCornerShadowView
+        private let balancesView: BalancesOverviewView
 
-        init(balancesView: BERoundedCornerShadowView) {
+        init(balancesView: BalancesOverviewView) {
             self.balancesView = balancesView
         }
 
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
             balancesView.topStackConstraint.constant = -scrollView.contentOffset.y
-            balancesView.superview?.layoutIfNeeded()
         }
     }
 }
