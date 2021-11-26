@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import WebKit
+import Resolver
 
 protocol DAppContainerViewModelType {
     var navigationDriver: Driver<DAppContainer.NavigatableScene?> { get }
@@ -21,10 +22,10 @@ protocol DAppContainerViewModelType {
 extension DAppContainer {
     class ViewModel: NSObject {
         // MARK: - Dependencies
+        @Injected private var dAppChannel: DAppChannel
         
         // MARK: - Properties
         private var walletsRepository: WalletsRepository?
-        private var dAppChannel: Channel = Channel()
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -58,11 +59,11 @@ extension DAppContainer.ViewModel: DAppContainerViewModelType {
 extension DAppContainer.ViewModel: DAppChannelDelegate {
     func connect() -> Single<String> {
         guard let repository = walletsRepository else {
-            return .error(NSError(domain: "DAppChannel", code: 400, userInfo: [NSLocalizedDescriptionKey: "Platform is not ready"]))
+            return .error(DAppChannelError.platformIsNotReady)
         }
         
         guard let pubKey = repository.getWallets().first(where: { $0.isNativeSOL })?.pubkey else {
-            return .error(NSError(domain: "DAppChannel", code: 400, userInfo: [NSLocalizedDescriptionKey: "Can not find wallet address"]))
+            return .error(DAppChannelError.canNotFindWalletAddress)
         }
         
         return .just(pubKey)
