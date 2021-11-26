@@ -11,7 +11,7 @@ import Action
 import BEPureLayout
 
 protocol _MainScenesFactory {
-    func makeHomeViewController() -> Home.ViewController // FIXME: - Remove later
+    func makeTabBarVC() -> TabBarVC
 }
 
 class MainViewController: BaseVC {
@@ -48,7 +48,7 @@ class MainViewController: BaseVC {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        add(child: BENavigationController(rootViewController: scenesFactory.makeHomeViewController())) // FIXME: - makeTabBarVC
+        add(child: scenesFactory.makeTabBarVC())
         view.addSubview(blurEffectView)
         blurEffectView.autoPinEdgesToSuperviewEdges()
     }
