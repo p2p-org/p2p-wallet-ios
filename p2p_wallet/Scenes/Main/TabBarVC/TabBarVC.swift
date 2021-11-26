@@ -10,6 +10,7 @@ import Foundation
 protocol TabBarScenesFactory {
     func makeHomeViewController() -> Home.ViewController
     func makeInvestmentsViewController() -> InvestmentsViewController
+    func makeDAppContainerViewController() -> DAppContainer.ViewController
 }
 
 class TabBarVC: BEPagesVC {
@@ -26,12 +27,13 @@ class TabBarVC: BEPagesVC {
         // pages
         let mainVC = scenesFactory.makeHomeViewController()
         let investmentsVC = scenesFactory.makeInvestmentsViewController()
+        let dAppContainerVC = scenesFactory.makeDAppContainerViewController()
         
         viewControllers = [
             BENavigationController(rootViewController: mainVC),
             BENavigationController(rootViewController: investmentsVC),
             BENavigationController(rootViewController: BaseVC()),
-            BENavigationController(rootViewController: BaseVC()),
+            BENavigationController(rootViewController: dAppContainerVC),
             BENavigationController(rootViewController: BaseVC())
         ]
         

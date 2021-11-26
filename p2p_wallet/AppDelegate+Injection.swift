@@ -130,6 +130,11 @@ extension Resolver: ResolverRegistering {
         register { EnterSeedInfo.ViewModel() }
             .implements(EnterSeedInfoViewModelType.self)
             .scope(.unique)
+    
+        // MARK: - DAppContainer
+        register {DAppContainer.ViewModel()}
+            .implements(DAppContainerViewModelType.self)
+            .scope(.shared)
     }
 }
 
