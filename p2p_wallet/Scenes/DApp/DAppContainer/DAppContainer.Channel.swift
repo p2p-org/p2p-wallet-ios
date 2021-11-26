@@ -12,7 +12,7 @@ protocol DAppChannelDelegate: AnyObject {
     func signTransactions() -> Single<[String]>
 }
 
-//await window.webkit.messageHandlers.P2PWalletApi.postMessage({method: "connect"})
+// await window.webkit.messageHandlers.P2PWalletApi.postMessage({method: "connect"})
 
 extension DAppContainer {
     
@@ -38,28 +38,25 @@ extension DAppContainer {
         
         }
         
-        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage, replyHandler: @escaping (Any?, String?) -> ()) {
+        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage, replyHandler: @escaping (Any?, String?) -> Void) {
             guard let delegate = delegate else {
                 replyHandler(nil, "Platform is not ready")
                 return
             }
             
-            guard let body = message.body as? Dictionary<String, Any>,
+            guard let body = message.body as? [String: Any],
                   let method = body["method"] as? String else {
                 replyHandler(nil, "Invalid method call")
                 return
             }
             
-            switch (method) {
+            switch method {
             case "connect":
                 delegate.connect().subscribe(onSuccess: { value in replyHandler(value, nil) }).disposed(by: disposeBag)
-                break
             case "signTransaction":
                 delegate.signTransaction().subscribe(onSuccess: { value in replyHandler(value, nil) }).disposed(by: disposeBag)
-                break
             case "signTransactions":
                 delegate.signTransactions().subscribe(onSuccess: { value in replyHandler(value, nil) }).disposed(by: disposeBag)
-                break
             default:
                 replyHandler(nil, "Invalid method call")
             }

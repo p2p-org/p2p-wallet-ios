@@ -12,18 +12,14 @@ import WebKit
 extension DAppContainer {
     class RootView: BEView {
         // MARK: - Constants
-        let disposeBag = DisposeBag()
+        private let disposeBag = DisposeBag()
         
         // MARK: - Properties
         @Injected private var viewModel: DAppContainerViewModelType
         
         // MARK: - Subviews
         private var channel: Channel = Channel()
-        private var webView: WKWebView {
-            get {
-                channel.webView
-            }
-        }
+        private var webView: WKWebView { channel.webView }
         
         // MARK: - Methods
         override func commonInit() {
@@ -33,11 +29,11 @@ extension DAppContainer {
             bind()
             
             viewModel.setupChannel(channel: channel)
-            webView.load(URLRequest(url: URL(string: "https://web.beardict.net/dapp/")!))
         }
         
         override func didMoveToWindow() {
             super.didMoveToWindow()
+            webView.load(URLRequest(url: URL(string: "https://web.beardict.net/dapp/")!))
         }
         
         // MARK: - Layout
