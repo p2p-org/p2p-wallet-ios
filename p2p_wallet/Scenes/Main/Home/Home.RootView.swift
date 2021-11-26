@@ -49,7 +49,7 @@ extension Home {
                 self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
                 return .just(())
             }
-            collectionView.contentInset.modify(dTop: 50)
+            collectionView.contentInset.modify(dTop: 50, dBottom: 50)
             return collectionView
         }()
         

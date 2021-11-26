@@ -42,9 +42,6 @@ extension WalletDetail {
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
-        var canBuyToken: Bool {
-            symbol == "SOL" || symbol == "USDT"
-        }
         lazy var graphViewModel: WalletGraphViewModel = {
             WalletGraphViewModel(
                 symbol: symbol,
@@ -130,6 +127,8 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
             .map {$0?.pubkey}
             .asDriver(onErrorJustReturn: nil)
     }
+    
+    var canBuyToken: Bool { BuyProviderType.default.isSupported(symbol: symbol) }
     
     // MARK: - Actions
     func showWalletSettings() {
