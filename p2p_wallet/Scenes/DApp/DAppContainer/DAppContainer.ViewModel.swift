@@ -16,7 +16,9 @@ protocol DAppContainerViewModelType {
     func navigate(to scene: DAppContainer.NavigatableScene)
     
     func setup(walletsRepository: WalletsRepository)
+    func setup(dapp: DApp)
     func getWebviewConfiguration() -> WKWebViewConfiguration
+    func getDAppURL() -> String
 }
 
 extension DAppContainer {
@@ -25,7 +27,8 @@ extension DAppContainer {
         @Injected private var dAppChannel: DAppChannel
         
         // MARK: - Properties
-        private var walletsRepository: WalletsRepository?
+        private var walletsRepository: WalletsRepository!
+        private var dapp: DApp!
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -51,8 +54,16 @@ extension DAppContainer.ViewModel: DAppContainerViewModelType {
         self.walletsRepository = walletsRepository
     }
     
+    func setup(dapp: DApp) {
+        self.dapp = dapp
+    }
+    
     func getWebviewConfiguration() -> WKWebViewConfiguration {
         dAppChannel.getWebviewConfiguration()
+    }
+    
+    func getDAppURL() -> String {
+        dapp.url
     }
 }
 

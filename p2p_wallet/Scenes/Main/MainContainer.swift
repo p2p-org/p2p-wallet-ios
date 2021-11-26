@@ -245,8 +245,8 @@ class MainContainer {
         return .init(viewModel: vm)
     }
     
-    func makeDAppContainerViewController() -> DAppContainer.ViewController {
-        DAppContainer.ViewController(walletsRepository: walletsViewModel)
+    func makeDAppContainerViewController(dapp: DApp) -> DAppContainer.ViewController {
+        DAppContainer.ViewController(walletsRepository: walletsViewModel, dapp: dapp)
     }
     
     // MARK: - Reserve name
