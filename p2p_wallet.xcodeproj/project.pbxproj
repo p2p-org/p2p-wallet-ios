@@ -1027,23 +1027,12 @@
 			path = Banners;
 			sourceTree = "<group>";
 		};
-		846995CF506696ABD99A7488 /* DApp */ = {
+		846995CF506696ABD99A7488 /* DApps */ = {
 			isa = PBXGroup;
 			children = (
-				8469993620B140D2A4DF88FF /* DAppContainer */,
+				BCB286D62750913F0074E1D5 /* DAppContainer */,
 			);
-			path = DApp;
-			sourceTree = "<group>";
-		};
-		8469993620B140D2A4DF88FF /* DAppContainer */ = {
-			isa = PBXGroup;
-			children = (
-				846991A1202889DFF6E4671A /* DAppContainer.swift */,
-				846992B55E29D7DA05ED2F4C /* DAppContainer.ViewModel.swift */,
-				84699360187D203C37C9FFEB /* DAppContainer.ViewController.swift */,
-				84699455C34FBC56A4B9E122 /* DAppContainer.RootView.swift */,
-			);
-			path = DAppContainer;
+			path = DApps;
 			sourceTree = "<group>";
 		};
 		84699C98681FF7B583A45CA9 /* BuyProvider */ = {
@@ -1455,7 +1444,6 @@
 				BCE42DF125DF9C360021540E /* Onboarding */,
 				BCEB206825E1559500B54FEF /* Main */,
 				BC6FEDAA27104AFB002B6255 /* Common */,
-				846995CF506696ABD99A7488 /* DApp */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -1831,6 +1819,17 @@
 			path = DApps;
 			sourceTree = "<group>";
 		};
+		BCB286D62750913F0074E1D5 /* DAppContainer */ = {
+			isa = PBXGroup;
+			children = (
+				846991A1202889DFF6E4671A /* DAppContainer.swift */,
+				846992B55E29D7DA05ED2F4C /* DAppContainer.ViewModel.swift */,
+				84699360187D203C37C9FFEB /* DAppContainer.ViewController.swift */,
+				84699455C34FBC56A4B9E122 /* DAppContainer.RootView.swift */,
+			);
+			path = DAppContainer;
+			sourceTree = "<group>";
+		};
 		BCB58370255D28E100B10F65 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -2083,6 +2082,7 @@
 				BCBE148B25EF3D100014BCE5 /* Home */,
 				BC4B9E8027142591005B9ECA /* Settings */,
 				BCD5E75225512DA800F51299 /* InvestmentsVC */,
+				846995CF506696ABD99A7488 /* DApps */,
 				BCE3D55725F2127B0092F91B /* WalletDetail */,
 				BCAD1092270411BA0098C697 /* BuyToken */,
 				BC22A5D825D2716400F7026D /* SendToken */,

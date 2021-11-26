@@ -15,8 +15,7 @@ protocol DAppContainerViewModelType {
     var navigationDriver: Driver<DAppContainer.NavigatableScene?> { get }
     func navigate(to scene: DAppContainer.NavigatableScene)
     
-    func setup(walletsRepository: WalletsRepository)
-    func setup(dapp: DApp)
+    func inject(walletsRepository: WalletsRepository, dapp: DApp)
     func getWebviewConfiguration() -> WKWebViewConfiguration
     func getDAppURL() -> String
 }
@@ -50,11 +49,8 @@ extension DAppContainer.ViewModel: DAppContainerViewModelType {
         navigationSubject.accept(scene)
     }
     
-    func setup(walletsRepository: WalletsRepository) {
+    func inject(walletsRepository: WalletsRepository, dapp: DApp) {
         self.walletsRepository = walletsRepository
-    }
-    
-    func setup(dapp: DApp) {
         self.dapp = dapp
     }
     

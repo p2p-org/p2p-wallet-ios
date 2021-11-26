@@ -15,8 +15,7 @@ extension DAppContainer {
         
         init(walletsRepository: WalletsRepository, dapp: DApp) {
             super.init()
-            self.viewModel.setup(walletsRepository: walletsRepository)
-            self.viewModel.setup(dapp: dapp)
+            self.viewModel.inject(walletsRepository: walletsRepository, dapp: dapp)
         }
         
         // MARK: - Properties
