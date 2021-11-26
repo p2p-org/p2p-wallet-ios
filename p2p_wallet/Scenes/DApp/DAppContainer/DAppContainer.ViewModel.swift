@@ -15,7 +15,7 @@ protocol DAppContainerViewModelType {
     func navigate(to scene: DAppContainer.NavigatableScene)
     
     func setup(walletsRepository: WalletsRepository)
-    func setupChannel(channel: DAppContainer.Channel)
+    func getWebviewConfiguration() -> WKWebViewConfiguration
 }
 
 extension DAppContainer {
@@ -24,23 +24,19 @@ extension DAppContainer {
         
         // MARK: - Properties
         private var walletsRepository: WalletsRepository?
-        private var dAppChannel: DAppContainer.Channel?
+        private var dAppChannel: Channel = Channel()
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        
+        override init() {
+            super.init()
+            dAppChannel.setDelegate(self)
+        }
     }
 }
 
 extension DAppContainer.ViewModel: DAppContainerViewModelType {
-    func setup(walletsRepository: WalletsRepository) {
-        self.walletsRepository = walletsRepository
-    }
-    
-    func setupChannel(channel: DAppContainer.Channel) {
-        dAppChannel = channel
-        channel.delegate = self
-    }
-    
     var navigationDriver: Driver<DAppContainer.NavigatableScene?> {
         navigationSubject.asDriver()
     }
@@ -48,6 +44,14 @@ extension DAppContainer.ViewModel: DAppContainerViewModelType {
     // MARK: - Actions
     func navigate(to scene: DAppContainer.NavigatableScene) {
         navigationSubject.accept(scene)
+    }
+    
+    func setup(walletsRepository: WalletsRepository) {
+        self.walletsRepository = walletsRepository
+    }
+    
+    func getWebviewConfiguration() -> WKWebViewConfiguration {
+        dAppChannel.getWebviewConfiguration()
     }
 }
 

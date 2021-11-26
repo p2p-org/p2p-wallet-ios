@@ -18,17 +18,13 @@ extension DAppContainer {
         @Injected private var viewModel: DAppContainerViewModelType
         
         // MARK: - Subviews
-        private var channel: Channel = Channel()
-        private var webView: WKWebView { channel.webView }
+        private lazy var webView = WKWebView(frame: .zero, configuration: viewModel.getWebviewConfiguration())
         
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
-            
             layout()
             bind()
-            
-            viewModel.setupChannel(channel: channel)
         }
         
         override func didMoveToWindow() {
