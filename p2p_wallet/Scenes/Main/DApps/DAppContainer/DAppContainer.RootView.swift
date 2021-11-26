@@ -29,7 +29,7 @@ extension DAppContainer {
         
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            reload()
+            load()
         }
         
         // MARK: - Layout
