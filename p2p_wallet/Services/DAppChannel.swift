@@ -1,5 +1,8 @@
 //
-// Created by Giang Long Tran on 25.11.21.
+//  DAppChannel.swift
+//  p2p_wallet
+//
+//  Created by Chung Tran on 26/11/2021.
 //
 
 import Foundation
@@ -12,23 +15,21 @@ protocol DAppChannelDelegate: AnyObject {
     func signTransactions() -> Single<[String]>
 }
 
-// await window.webkit.messageHandlers.P2PWalletApi.postMessage({method: "connect"})
-
-protocol DAppChannel: AnyObject {
+protocol DAppChannelType: WKScriptMessageHandlerWithReply, WKScriptMessageHandler {
     func getWebviewConfiguration() -> WKWebViewConfiguration
     func setDelegate(_ delegate: DAppChannelDelegate)
 }
 
-extension DAppContainer {
-    @available(iOS 14.0, *)
-    class Channel: NSObject {
-        // MARK: - Properties
-        weak var delegate: DAppChannelDelegate?
-        private let disposeBag = DisposeBag()
-    }
+// await window.webkit.messageHandlers.P2PWalletApi.postMessage({method: "connect"})
+
+@available(iOS 14.0, *)
+class DAppChannel: NSObject {
+    // MARK: - Properties
+    private weak var delegate: DAppChannelDelegate?
+    private let disposeBag = DisposeBag()
 }
 
-extension DAppContainer.Channel: DAppChannel {
+extension DAppChannel: DAppChannelType {
     func getWebviewConfiguration() -> WKWebViewConfiguration {
         // configure target
         let targetInjection = WKUserScript(source: "window.p2pTarget = \"ios\"", injectionTime: .atDocumentStart, forMainFrameOnly: true)
@@ -45,7 +46,7 @@ extension DAppContainer.Channel: DAppChannel {
     }
 }
 
-extension DAppContainer.Channel: WKScriptMessageHandlerWithReply, WKScriptMessageHandler {
+extension DAppChannel: WKScriptMessageHandlerWithReply, WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
     
     }
