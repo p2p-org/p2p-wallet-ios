@@ -374,6 +374,7 @@
 		BCB286A3274C99870074E1D5 /* WLFloatingPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286A2274C99860074E1D5 /* WLFloatingPanelView.swift */; };
 		BCB286CE275084A10074E1D5 /* DAppChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286CD275084A10074E1D5 /* DAppChannel.swift */; };
 		BCB286D1275086B00074E1D5 /* DAppChannelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286D0275086B00074E1D5 /* DAppChannelError.swift */; };
+		BCB286D327508A7E0074E1D5 /* DApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286D227508A7E0074E1D5 /* DApp.swift */; };
 		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58379255D29C500B10F65 /* WLBottomSheet.swift */; };
 		BCB7C7C62665EEC400FEC68E /* SendToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C22665EEC400FEC68E /* SendToken.swift */; };
@@ -836,6 +837,7 @@
 		BCB286A2274C99860074E1D5 /* WLFloatingPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLFloatingPanelView.swift; sourceTree = "<group>"; };
 		BCB286CD275084A10074E1D5 /* DAppChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAppChannel.swift; sourceTree = "<group>"; };
 		BCB286D0275086B00074E1D5 /* DAppChannelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAppChannelError.swift; sourceTree = "<group>"; };
+		BCB286D227508A7E0074E1D5 /* DApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DApp.swift; sourceTree = "<group>"; };
 		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58379255D29C500B10F65 /* WLBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBottomSheet.swift; sourceTree = "<group>"; };
 		BCB7C7C22665EEC400FEC68E /* SendToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.swift; sourceTree = "<group>"; };
@@ -1823,6 +1825,7 @@
 		BCB286CF2750869E0074E1D5 /* DApps */ = {
 			isa = PBXGroup;
 			children = (
+				BCB286D227508A7E0074E1D5 /* DApp.swift */,
 				BCB286D0275086B00074E1D5 /* DAppChannelError.swift */,
 			);
 			path = DApps;
@@ -2475,6 +2478,7 @@
 				BCC0663C269891E00017B34E /* TransactionsCollectionView.SectionHeaderView.swift in Sources */,
 				BC53E21E2654BF88005624CC /* DerivablePaths.Cell.swift in Sources */,
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
+				BCB286D327508A7E0074E1D5 /* DApp.swift in Sources */,
 				BC1255092653A2E400695A2B /* DerivablePaths.ViewController.swift in Sources */,
 				412DBFDC273D7B81000F514E /* EnterSeed.swift in Sources */,
 				BC1BEBF926CDF6520049A44C /* SerumSwapV1.swift in Sources */,

@@ -29,7 +29,7 @@ extension DAppContainer {
         
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            webView.load(URLRequest(url: URL(string: "https://web.beardict.net/dapp/")!))
+            reload()
         }
         
         // MARK: - Layout
@@ -52,10 +52,11 @@ extension DAppContainer {
         // MARK: - Actions
         @objc private func reload() {
             print("reload")
-            webView.load(URLRequest(url: URL(string: "https://web.beardict.net/dapp/")!))
+            load()
         }
         
-        @objc private func showDetail() {
+        private func load() {
+            webView.load(URLRequest(url: URL(string: viewModel.getDAppURL())!))
         }
     }
 }
