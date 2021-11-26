@@ -56,9 +56,10 @@ extension WalletDetail {
         override func createButtonsView() -> UIView {
             let stackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fillEqually)
             var arrangedSubviews = [sendButton, swapButton]
-            if viewModel.canBuyToken {
-                arrangedSubviews.insert(buyButton, at: 0)
-            }
+            // MARK: - Add back later
+//            if viewModel.canBuyToken {
+//                arrangedSubviews.insert(buyButton, at: 0)
+//            }
             stackView.addArrangedSubviews(arrangedSubviews)
             return stackView
         }
