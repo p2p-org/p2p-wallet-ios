@@ -10,7 +10,7 @@ import Foundation
 protocol TabBarScenesFactory {
     func makeHomeViewController() -> Home.ViewController
     func makeInvestmentsViewController() -> InvestmentsViewController
-    func makeDAppContainerViewController(dapp: DApp) -> DAppContainer.ViewController // TODO: - Replace by DAppsCollectionViewController later
+    func makeDAppContainerViewController(dapp: DApp) -> DAppContainer.ViewController // TODO: - Replace by DAppsCollection.ViewController later
 }
 
 class TabBarVC: BEPagesVC {
