@@ -9,38 +9,37 @@ import Foundation
 import RxSwift
 import RxCocoa
 import WebKit
+import Resolver
 
 protocol DAppContainerViewModelType {
     var navigationDriver: Driver<DAppContainer.NavigatableScene?> { get }
     func navigate(to scene: DAppContainer.NavigatableScene)
     
-    func setup(walletsRepository: WalletsRepository)
-    func setupChannel(channel: DAppContainer.Channel)
+    func inject(walletsRepository: WalletsRepository, dapp: DApp)
+    func getWebviewConfiguration() -> WKWebViewConfiguration
+    func getDAppURL() -> String
 }
 
 extension DAppContainer {
     class ViewModel: NSObject {
         // MARK: - Dependencies
+        @Injected private var dAppChannel: DAppChannel
         
         // MARK: - Properties
-        private var walletsRepository: WalletsRepository?
-        private var dAppChannel: DAppContainer.Channel?
+        private var walletsRepository: WalletsRepository!
+        private var dapp: DApp!
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        
+        override init() {
+            super.init()
+            dAppChannel.setDelegate(self)
+        }
     }
 }
 
 extension DAppContainer.ViewModel: DAppContainerViewModelType {
-    func setup(walletsRepository: WalletsRepository) {
-        self.walletsRepository = walletsRepository
-    }
-    
-    func setupChannel(channel: DAppContainer.Channel) {
-        dAppChannel = channel
-        channel.delegate = self
-    }
-    
     var navigationDriver: Driver<DAppContainer.NavigatableScene?> {
         navigationSubject.asDriver()
     }
@@ -49,16 +48,29 @@ extension DAppContainer.ViewModel: DAppContainerViewModelType {
     func navigate(to scene: DAppContainer.NavigatableScene) {
         navigationSubject.accept(scene)
     }
+    
+    func inject(walletsRepository: WalletsRepository, dapp: DApp) {
+        self.walletsRepository = walletsRepository
+        self.dapp = dapp
+    }
+    
+    func getWebviewConfiguration() -> WKWebViewConfiguration {
+        dAppChannel.getWebviewConfiguration()
+    }
+    
+    func getDAppURL() -> String {
+        dapp.url
+    }
 }
 
 extension DAppContainer.ViewModel: DAppChannelDelegate {
     func connect() -> Single<String> {
         guard let repository = walletsRepository else {
-            return .error(NSError(domain: "DAppChannel", code: 400, userInfo: [NSLocalizedDescriptionKey: "Platform is not ready"]))
+            return .error(DAppChannelError.platformIsNotReady)
         }
         
         guard let pubKey = repository.getWallets().first(where: { $0.isNativeSOL })?.pubkey else {
-            return .error(NSError(domain: "DAppChannel", code: 400, userInfo: [NSLocalizedDescriptionKey: "Can not find wallet address"]))
+            return .error(DAppChannelError.canNotFindWalletAddress)
         }
         
         return .just(pubKey)

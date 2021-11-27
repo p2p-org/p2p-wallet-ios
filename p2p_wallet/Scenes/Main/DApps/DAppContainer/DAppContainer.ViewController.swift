@@ -12,10 +12,10 @@ extension DAppContainer {
     class ViewController: BaseVC {
         // MARK: - Dependencies
         @Injected private var viewModel: DAppContainerViewModelType
-        private var walletsRepository: WalletsRepository
         
-        init(walletsRepository: WalletsRepository) {
-            self.walletsRepository = walletsRepository
+        init(walletsRepository: WalletsRepository, dapp: DApp) {
+            super.init()
+            self.viewModel.inject(walletsRepository: walletsRepository, dapp: dapp)
         }
         
         // MARK: - Properties
@@ -27,8 +27,6 @@ extension DAppContainer {
         
         override func setUp() {
             super.setUp()
-            
-            viewModel.setup(walletsRepository: walletsRepository)
         }
         
         override func bind() {
@@ -42,10 +40,10 @@ extension DAppContainer {
         private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else { return }
             switch scene {
-            case .detail:
+//            case .detail:
 //                let vc = Detail.ViewController()
 //                present(vc, completion: nil)
-                break
+//                break
             }
         }
     }
