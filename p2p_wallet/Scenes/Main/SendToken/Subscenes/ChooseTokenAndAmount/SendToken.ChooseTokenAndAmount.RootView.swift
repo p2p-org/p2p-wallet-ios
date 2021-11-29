@@ -1,5 +1,5 @@
 //
-//  SendTokenChooseTokenAndAmount.RootView.swift
+//  SendToken.ChooseTokenAndAmount.RootView.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 23/11/2021.
@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-extension SendTokenChooseTokenAndAmount {
+extension SendToken.ChooseTokenAndAmount {
     class RootView: BEView {
         // MARK: - Constants
         let disposeBag = DisposeBag()
@@ -253,7 +253,7 @@ extension SendTokenChooseTokenAndAmount {
     }
 }
 
-extension SendTokenChooseTokenAndAmount.RootView: UITextFieldDelegate {
+extension SendToken.ChooseTokenAndAmount.RootView: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         switch textField {
         case let amountTextField as TokenAmountTextField:

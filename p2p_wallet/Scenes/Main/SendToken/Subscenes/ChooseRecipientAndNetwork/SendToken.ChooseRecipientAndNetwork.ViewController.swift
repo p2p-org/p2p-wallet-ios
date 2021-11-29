@@ -1,5 +1,5 @@
 //
-//  SendTokenChooseRecipientAndNetwork.ViewController.swift
+//  SendToken.ChooseRecipientAndNetwork.ViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 29/11/2021.
@@ -9,8 +9,8 @@ import Foundation
 import UIKit
 import RxSwift
 
-extension SendTokenChooseRecipientAndNetwork {
-    class ViewController: SendToken2.BaseViewController {
+extension SendToken.ChooseRecipientAndNetwork {
+    class ViewController: SendToken.BaseViewController {
         // MARK: - Dependencies
         private let viewModel: SendTokenChooseRecipientAndNetworkViewModelType
         

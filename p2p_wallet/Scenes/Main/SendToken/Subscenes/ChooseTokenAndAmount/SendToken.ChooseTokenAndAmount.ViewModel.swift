@@ -1,5 +1,5 @@
 //
-//  SendTokenChooseTokenAndAmount.ViewModel.swift
+//  SendToken.ChooseTokenAndAmount.ViewModel.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 23/11/2021.
@@ -11,13 +11,13 @@ import RxCocoa
 
 protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler {
     var isLoadingDriver: Driver<Bool> {get}
-    var navigationDriver: Driver<SendTokenChooseTokenAndAmount.NavigatableScene?> {get}
+    var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
-    var currencyModeDriver: Driver<SendTokenChooseTokenAndAmount.CurrencyMode> {get}
+    var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {get}
     var amountDriver: Driver<Double?> {get}
-    var errorDriver: Driver<SendTokenChooseTokenAndAmount.Error?> {get}
+    var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> {get}
     
-    func navigate(to scene: SendTokenChooseTokenAndAmount.NavigatableScene)
+    func navigate(to scene: SendToken.ChooseTokenAndAmount.NavigatableScene)
     func back()
     func toggleCurrencyMode()
     func enterAmount(_ amount: Double?)
@@ -34,7 +34,7 @@ extension SendTokenChooseTokenAndAmountViewModelType {
     }
 }
 
-extension SendTokenChooseTokenAndAmount {
+extension SendToken.ChooseTokenAndAmount {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var analyticsManager: AnalyticsManagerType
@@ -81,12 +81,12 @@ extension SendTokenChooseTokenAndAmount {
     }
 }
 
-extension SendTokenChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmountViewModelType {
+extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmountViewModelType {
     var isLoadingDriver: Driver<Bool> {
         isLoadingSubject.asDriver()
     }
     
-    var navigationDriver: Driver<SendTokenChooseTokenAndAmount.NavigatableScene?> {
+    var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> {
         navigationSubject.asDriver()
     }
     
@@ -94,7 +94,7 @@ extension SendTokenChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmount
         walletSubject.asDriver()
     }
     
-    var currencyModeDriver: Driver<SendTokenChooseTokenAndAmount.CurrencyMode> {
+    var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {
         currencyModeSubject.asDriver()
     }
     
@@ -102,7 +102,7 @@ extension SendTokenChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmount
         amountSubject.asDriver()
     }
     
-    var errorDriver: Driver<SendTokenChooseTokenAndAmount.Error?> {
+    var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> {
         Driver.combineLatest(
             walletDriver,
             amountDriver,
@@ -117,7 +117,7 @@ extension SendTokenChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmount
     }
     
     // MARK: - Actions
-    func navigate(to scene: SendTokenChooseTokenAndAmount.NavigatableScene) {
+    func navigate(to scene: SendToken.ChooseTokenAndAmount.NavigatableScene) {
         navigationSubject.accept(scene)
     }
     

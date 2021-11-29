@@ -1,5 +1,5 @@
 //
-//  SendToken2.BaseViewController.swift
+//  SendToken.BaseViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 23/11/2021.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension SendToken2 {
+extension SendToken {
     class BaseViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden

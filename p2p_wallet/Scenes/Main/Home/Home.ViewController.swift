@@ -14,7 +14,7 @@ protocol HomeScenesFactory {
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController
     func makeBuyTokenViewController(token: BuyToken.CryptoCurrency) throws -> UIViewController
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
-    func makeSendTokenViewController2(walletPubkey: String?, destinationAddress: String?) -> SendToken2.ViewController
+    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> CustomPresentableViewController
     func makeSettingsVC(reserveNameHandler: ReserveNameHandler) -> Settings.ViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
@@ -141,7 +141,7 @@ extension Home {
                 }
             case .sendToken(let address):
                 let vc = scenesFactory
-                    .makeSendTokenViewController2(walletPubkey: nil, destinationAddress: address)
+                    .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
                 analyticsManager.log(event: .mainScreenSendOpen)
                 analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
                 show(vc, sender: nil)
