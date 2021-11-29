@@ -619,3 +619,8 @@
 "Derivation path" = "Derivation path";
 "History" = "History";
 "Show wallet address" = "Show wallet address";
+"%@ is unavailable" = "%@ is unavailable";
+"No more than 15 alphanumerical latin lowercase characters and dashes" = "No more than 15 alphanumerical latin lowercase characters and dashes";
+"P2P username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it." = "P2P username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it.";
+"Enter username or skip" = "Enter username or skip";
+"Choose available username" = "Choose available username";
