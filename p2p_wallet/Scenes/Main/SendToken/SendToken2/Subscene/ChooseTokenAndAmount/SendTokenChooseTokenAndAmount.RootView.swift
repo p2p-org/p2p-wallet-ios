@@ -19,8 +19,8 @@ extension SendTokenChooseTokenAndAmount {
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
         
         // MARK: - Subviews
-        private let walletImageView = UIImageView(width: 20, height: 20, image: .tabbarWallet)
-        private let balanceLabel = UILabel(text: "0.0", textSize: 15, weight: .medium)
+        private let walletImageView = UIImageView(width: 20, height: 20, image: .tabbarWallet, tintColor: .textSecondary)
+        private let balanceLabel = UILabel(text: "0.0", textSize: 15, weight: .medium, textColor: .textSecondary)
         private let coinLogoImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
         private let coinSymbolLabel = UILabel(text: "SOL", textSize: 20, weight: .semibold)
         private lazy var amountTextField: TokenAmountTextField = {
@@ -193,6 +193,7 @@ extension SendTokenChooseTokenAndAmount {
             
             // error
             let balanceTintColorDriver = viewModel.errorDriver
+                .skip(1)
                 .map {$0 == nil ? UIColor.textSecondary: UIColor.alert}
             
             balanceTintColorDriver
