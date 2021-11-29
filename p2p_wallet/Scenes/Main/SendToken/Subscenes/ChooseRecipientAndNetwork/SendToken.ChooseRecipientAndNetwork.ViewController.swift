@@ -47,6 +47,10 @@ extension SendToken.ChooseRecipientAndNetwork {
             containerView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
             
             add(child: pagesVC, to: containerView)
+            
+            // FIXME: - Remove later (contact is not ready)
+            pagesVC.hideSegmentedControl()
+            pagesVC.disableScrolling()
         }
         
         override func bind() {
