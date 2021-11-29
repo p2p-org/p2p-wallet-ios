@@ -190,9 +190,25 @@ extension SendTokenChooseTokenAndAmount {
                 .drive(balanceLabel.rx.text)
                 .disposed(by: disposeBag)
             
+            // error
+            viewModel.errorDriver
+                .map {$0?.buttonSuggestion ?? L10n.chooseTheRecipient}
+                .drive(actionButton.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.errorDriver
+                .map {$0 == nil ? UIImage.buttonChooseTheRecipient: nil}
+                .drive(actionButton.rx.image)
+                .disposed(by: disposeBag)
+            
+            viewModel.errorDriver
+                .map {$0 == nil}
+                .drive(actionButton.rx.isEnabled)
+                .disposed(by: disposeBag)
+            
             #if DEBUG
             viewModel.errorDriver
-                .map {"\(String(describing: $0))"}
+                .map {String(describing: $0?.rawValue)}
                 .drive(errorLabel.rx.text)
                 .disposed(by: disposeBag)
             #endif
