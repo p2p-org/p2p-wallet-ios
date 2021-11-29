@@ -27,6 +27,9 @@ extension SendToken2 {
         private let initialWalletPubkey: String?
         private let initialDestinationWalletPubkey: String?
         
+        private var selectedWalletPubkey: String?
+        private var selectedAmount: SolanaSDK.Lamports?
+        
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount)
         
@@ -55,6 +58,11 @@ extension SendToken2.ViewModel: SendToken2ViewModelType {
         let vm = SendTokenChooseTokenAndAmount.ViewModel(repository: walletsRepository, walletPubkey: initialWalletPubkey)
         vm.onGoBack = {[weak self] in
             self?.navigate(to: .back)
+        }
+        vm.onSelect = {[weak self] pubkey, lamports in
+            self?.selectedWalletPubkey = pubkey
+            self?.selectedAmount = lamports
+            self?.navigate(to: .chooseRecipientAndNetwork)
         }
         return vm
     }
