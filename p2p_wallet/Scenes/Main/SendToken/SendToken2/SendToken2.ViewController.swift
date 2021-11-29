@@ -27,19 +27,25 @@ extension SendToken2 {
         private let scenesFactory: SendTokenScenesFactory
         
         // MARK: - Properties
-        private let childNavigationController = BENavigationController()
+        private let childNavigationController: BENavigationController
         
         // MARK: - Initializer
         init(viewModel: SendToken2ViewModelType, scenesFactory: SendTokenScenesFactory) {
             self.viewModel = viewModel
             self.scenesFactory = scenesFactory
+            
+            // init with ChooseTokenAndAmountVC
+            let vm = viewModel.createChooseTokenAndAmountViewModel()
+            let vc = SendTokenChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
+            self.childNavigationController = BENavigationController(rootViewController: vc)
+            
             super.init()
         }
         
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            add(child: childNavigationController, to: view)
+            add(child: childNavigationController)
         }
         
         override func bind() {
@@ -53,10 +59,10 @@ extension SendToken2 {
         private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else {return}
             switch scene {
+            case .back:
+                back()
             case .chooseTokenAndAmount:
-                let vm = SendTokenChooseTokenAndAmount.ViewModel()
-                let vc = SendTokenChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
-                childNavigationController.pushViewController(vc, animated: true)
+                break
             case .chooseRecipientAndNetwork:
                 break
             case .confirmation:
