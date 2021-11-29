@@ -22,10 +22,9 @@ extension SendToken.ChooseRecipientAndNetwork {
             .init(label: L10n.contact, viewController: contactVC)
         ])
         
-        private lazy var addressVC: AddressViewController = {
-            let vc = AddressViewController(viewModel: viewModel)
-            return vc
-        }()
+        private lazy var addressVC = SelectAddress.ViewController(
+            viewModel: viewModel.createSelectAddressViewModel()
+        )
         
         private lazy var contactVC: ContactViewController = {
             let vc = ContactViewController(viewModel: viewModel)
