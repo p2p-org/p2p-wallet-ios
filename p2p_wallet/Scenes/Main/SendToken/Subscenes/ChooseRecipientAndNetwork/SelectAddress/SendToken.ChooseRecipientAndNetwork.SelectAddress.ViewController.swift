@@ -1,0 +1,58 @@
+//
+//  SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewController.swift
+//  p2p_wallet
+//
+//  Created by Chung Tran on 29/11/2021.
+//
+
+import Foundation
+import UIKit
+
+extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
+    class ViewController: BaseVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+        
+        // MARK: - Dependencies
+        private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
+        
+        // MARK: - Properties
+        
+        // MARK: - Inititalizer
+        init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
+        
+        // MARK: - Methods
+        override func loadView() {
+            view = RootView(viewModel: viewModel)
+        }
+        
+        override func setUp() {
+            super.setUp()
+            let label = UILabel(text: "address")
+            view.addSubview(label)
+            label.autoCenterInSuperview()
+        }
+        
+        override func bind() {
+            super.bind()
+            viewModel.navigationDriver
+                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .disposed(by: disposeBag)
+        }
+        
+        // MARK: - Navigation
+        private func navigate(to scene: NavigatableScene?) {
+            guard let scene = scene else {return}
+            switch scene {
+            case .detail:
+//                let vc = Detail.ViewController()
+//                present(vc, completion: nil)
+                break
+            }
+        }
+    }
+}
