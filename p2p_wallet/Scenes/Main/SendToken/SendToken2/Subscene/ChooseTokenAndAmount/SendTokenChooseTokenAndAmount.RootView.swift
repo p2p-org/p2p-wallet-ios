@@ -73,7 +73,9 @@ extension SendTokenChooseTokenAndAmount {
                     UILabel(text: L10n.from, textSize: 15, weight: .medium)
                     UIView.spacer
                     walletImageView
+                        .onTap(self, action: #selector(useAllBalance))
                     balanceLabel
+                        .onTap(self, action: #selector(useAllBalance))
                     UILabel(text: L10n.max.uppercased(), textSize: 15, weight: .medium, textColor: .h5887ff)
                         .onTap(self, action: #selector(useAllBalance))
                 }
