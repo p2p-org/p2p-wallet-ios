@@ -39,6 +39,7 @@ extension SendTokenChooseTokenAndAmount {
         
         // MARK: - Properties
         private let initialWalletPubkey: String?
+        private let disposeBag = DisposeBag()
         
         // MARK: - Callback
         var onGoBack: (() -> Void)?
@@ -69,6 +70,9 @@ extension SendTokenChooseTokenAndAmount {
         }
         
         private func bind() {
+            #if DEBUG
+            amountSubject.subscribe(onNext: {print($0 ?? 0)}).disposed(by: disposeBag)
+            #endif
             
         }
     }

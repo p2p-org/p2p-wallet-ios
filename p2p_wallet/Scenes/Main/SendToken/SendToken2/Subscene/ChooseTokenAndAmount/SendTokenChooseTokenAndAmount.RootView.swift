@@ -92,6 +92,7 @@ extension SendTokenChooseTokenAndAmount {
                     }
                         .padding(.init(x: 18, y: 8), cornerRadius: 12)
                         .border(width: 1, color: .defaultBorder)
+                        .onTap(self, action: #selector(toggleCurrencyMode))
                 }
             }
             
@@ -161,11 +162,10 @@ extension SendTokenChooseTokenAndAmount {
                 .disposed(by: disposeBag)
             
             // available amount
-            let balanceTextDriver = viewModel.walletDriver
-                .withLatestFrom(
-                    viewModel.currencyModeDriver,
-                    resultSelector: {($0, $1)}
-                )
+            let balanceTextDriver = Driver.combineLatest(
+                viewModel.walletDriver,
+                viewModel.currencyModeDriver
+            )
                 .map {[weak self] (wallet, mode) -> String? in
                     guard let wallet = wallet, let amount = self?.viewModel.calculateAvailableAmount() else {return nil}
                     var string = amount.toString(maximumFractionDigits: 9)
@@ -194,6 +194,10 @@ extension SendTokenChooseTokenAndAmount {
         
         @objc private func chooseWallet() {
             viewModel.navigate(to: .chooseWallet)
+        }
+        
+        @objc private func toggleCurrencyMode() {
+            viewModel.toggleCurrencyMode()
         }
     }
 }
