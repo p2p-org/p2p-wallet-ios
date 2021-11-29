@@ -37,6 +37,10 @@ extension SendTokenChooseTokenAndAmount {
         private lazy var equityValueLabel = UILabel(text: "$ 0", textSize: 13)
         private lazy var actionButton = WLStepButton.main(text: L10n.chooseDestinationWallet)
         
+        #if DEBUG
+        private lazy var errorLabel = UILabel(textColor: .alert, numberOfLines: 0, textAlignment: .center)
+        #endif
+        
         // MARK: - Initializer
         init(viewModel: SendTokenChooseTokenAndAmountViewModelType) {
             self.viewModel = viewModel
@@ -104,6 +108,10 @@ extension SendTokenChooseTokenAndAmount {
             addSubview(stackView)
             stackView.autoPinEdgesToSuperviewSafeArea(with: .init(top: 8, left: 18, bottom: 18, right: 18), excludingEdge: .bottom)
             stackView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
+            
+            #if DEBUG
+            stackView.addArrangedSubview(errorLabel)
+            #endif
         }
         
         private func bind() {
@@ -181,6 +189,13 @@ extension SendTokenChooseTokenAndAmount {
             balanceTextDriver
                 .drive(balanceLabel.rx.text)
                 .disposed(by: disposeBag)
+            
+            #if DEBUG
+            viewModel.errorDriver
+                .map {"\(String(describing: $0))"}
+                .drive(errorLabel.rx.text)
+                .disposed(by: disposeBag)
+            #endif
             
         }
         

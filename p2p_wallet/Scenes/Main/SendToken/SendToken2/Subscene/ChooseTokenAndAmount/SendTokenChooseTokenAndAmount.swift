@@ -16,4 +16,11 @@ struct SendTokenChooseTokenAndAmount {
     enum CurrencyMode {
         case token, fiat
     }
+    
+    enum Error {
+        case loadingIsNotCompleted
+        case destinationWalletIsMissing
+        case invalidAmount
+        case insufficientFunds
+    }
 }

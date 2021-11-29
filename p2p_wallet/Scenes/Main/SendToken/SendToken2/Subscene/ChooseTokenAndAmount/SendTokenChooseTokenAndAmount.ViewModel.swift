@@ -15,6 +15,7 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler {
     var walletDriver: Driver<Wallet?> {get}
     var currencyModeDriver: Driver<SendTokenChooseTokenAndAmount.CurrencyMode> {get}
     var amountDriver: Driver<Double?> {get}
+    var errorDriver: Driver<SendTokenChooseTokenAndAmount.Error?> {get}
     
     func navigate(to scene: SendTokenChooseTokenAndAmount.NavigatableScene)
     func back()
@@ -97,6 +98,20 @@ extension SendTokenChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmount
     
     var amountDriver: Driver<Double?> {
         amountSubject.asDriver()
+    }
+    
+    var errorDriver: Driver<SendTokenChooseTokenAndAmount.Error?> {
+        Driver.combineLatest(
+            walletDriver,
+            amountDriver,
+            currencyModeDriver
+        )
+            .map {[weak self] wallet, amount, _ in
+                if wallet == nil {return .destinationWalletIsMissing}
+                if amount == nil || (amount ?? 0) <= 0 {return .invalidAmount}
+                if (amount ?? 0) > (self?.calculateAvailableAmount() ?? 0) {return .insufficientFunds}
+                return nil
+            }
     }
     
     // MARK: - Actions
