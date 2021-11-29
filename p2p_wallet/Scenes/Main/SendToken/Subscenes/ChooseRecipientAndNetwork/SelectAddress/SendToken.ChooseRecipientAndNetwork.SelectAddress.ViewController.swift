@@ -30,13 +30,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             view = RootView(viewModel: viewModel)
         }
         
-        override func setUp() {
-            super.setUp()
-            let label = UILabel(text: "address")
-            view.addSubview(label)
-            label.autoCenterInSuperview()
-        }
-        
         override func bind() {
             super.bind()
             viewModel.navigationDriver
