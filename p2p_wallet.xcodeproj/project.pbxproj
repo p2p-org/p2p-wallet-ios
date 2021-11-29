@@ -368,6 +368,7 @@
 		BCB2869F274B921D0074E1D5 /* Home.BalancesOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2869E274B921D0074E1D5 /* Home.BalancesOverviewView.swift */; };
 		BCB286A1274B9D6A0074E1D5 /* WalletDetail.ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286A0274B9D6A0074E1D5 /* WalletDetail.ChartView.swift */; };
 		BCB286A3274C99870074E1D5 /* WLFloatingPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286A2274C99860074E1D5 /* WLFloatingPanelView.swift */; };
+		BCB286E72754C2B40074E1D5 /* WLSegmentedPagesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286E62754C2B40074E1D5 /* WLSegmentedPagesVC.swift */; };
 		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58379255D29C500B10F65 /* WLBottomSheet.swift */; };
 		BCB7C7C62665EEC400FEC68E /* SendToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7C22665EEC400FEC68E /* SendToken.swift */; };
@@ -824,6 +825,7 @@
 		BCB2869E274B921D0074E1D5 /* Home.BalancesOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.BalancesOverviewView.swift; sourceTree = "<group>"; };
 		BCB286A0274B9D6A0074E1D5 /* WalletDetail.ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.ChartView.swift; sourceTree = "<group>"; };
 		BCB286A2274C99860074E1D5 /* WLFloatingPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLFloatingPanelView.swift; sourceTree = "<group>"; };
+		BCB286E62754C2B40074E1D5 /* WLSegmentedPagesVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WLSegmentedPagesVC.swift; sourceTree = "<group>"; };
 		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58379255D29C500B10F65 /* WLBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBottomSheet.swift; sourceTree = "<group>"; };
 		BCB7C7C22665EEC400FEC68E /* SendToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.swift; sourceTree = "<group>"; };
@@ -1804,6 +1806,7 @@
 				BCFEDBFF2727B43C008AE4AD /* WLMarkdownVC.swift */,
 				BCEE0208273E660F00205982 /* WLPincodeVC.swift */,
 				BCEE020A273E688600205982 /* WLCreatePincodeVC.swift */,
+				BCB286E62754C2B40074E1D5 /* WLSegmentedPagesVC.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -2380,6 +2383,7 @@
 				BC3ADE8D2570B832002B3B16 /* WLCenterSheet.swift in Sources */,
 				BC65E004261D711900E436C7 /* TransactionsViewModel.swift in Sources */,
 				BC65E19D261EA75600E436C7 /* InvestmentsViewModel.swift in Sources */,
+				BCB286E72754C2B40074E1D5 /* WLSegmentedPagesVC.swift in Sources */,
 				BCB2869D274B8EF10074E1D5 /* WalletDetail.InfoOverviewView.swift in Sources */,
 				BC65E27F2620341B00E436C7 /* SolanaSDK.ParsedTransaction+Extensions.swift in Sources */,
 				BCF241212676548200C9F158 /* MainViewModel.swift in Sources */,

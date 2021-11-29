@@ -20,7 +20,7 @@ protocol WalletDetailScenesFactory {
 }
 
 extension WalletDetail {
-    class ViewController: BEPagesVC {
+    class ViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
@@ -30,7 +30,6 @@ extension WalletDetail {
         private let scenesFactory: WalletDetailScenesFactory
         
         // MARK: - Properties
-        private let disposeBag = DisposeBag()
         
         // MARK: - Subviews
         private lazy var navigationBar: WLNavigationBar = {
@@ -40,13 +39,6 @@ extension WalletDetail {
                 .onTap(self, action: #selector(showWalletSettings))
             navigationBar.rightItems.addArrangedSubview(editButton)
             return navigationBar
-        }()
-        
-        private lazy var segmentedControl: UISegmentedControl = {
-            let control = UISegmentedControl(items: [L10n.info, L10n.history])
-            control.addTarget(self, action: #selector(segmentedValueChanged(_:)), for: .valueChanged)
-            control.autoSetDimension(.width, toSize: 339, relation: .greaterThanOrEqual)
-            return control
         }()
         
         // MARK: - Subscene
@@ -72,33 +64,20 @@ extension WalletDetail {
         
         // MARK: - Methods
         override func setUp() {
+            super.setUp()
             view.addSubview(navigationBar)
             navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
             
-            view.addSubview(segmentedControl)
-            segmentedControl.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
-            segmentedControl.autoAlignAxis(toSuperviewAxis: .vertical)
-            
-            super.setUp()
-            view.backgroundColor = .background
-            
-            viewControllers = [infoVC, historyVC]
-            
-            // action
-            currentPage = -1
-            moveToPage(0)
-            
-            segmentedControl.selectedSegmentIndex = 0
-        }
-        
-        override func setUpContainerView() {
+            let containerView = UIView(forAutoLayout: ())
             view.addSubview(containerView)
-            containerView.autoPinEdge(.top, to: .bottom, of: segmentedControl, withOffset: 18)
+            containerView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
             containerView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
-        }
-        
-        override func setUpPageControl() {
-            // do nothing
+            
+            let pagesVC = WLSegmentedPagesVC(items: [
+                .init(label: L10n.info, viewController: infoVC),
+                .init(label: L10n.history, viewController: historyVC)
+            ])
+            add(child: pagesVC, to: containerView)
         }
         
         override func bind() {
@@ -110,16 +89,6 @@ extension WalletDetail {
             viewModel.navigatableSceneDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
-        }
-        
-        override func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-            super.pageViewController(pageViewController, didFinishAnimating: finished, previousViewControllers: previousViewControllers, transitionCompleted: completed)
-            if let vc = pageVC.viewControllers?.first,
-               let index = viewControllers.firstIndex(of: vc),
-               segmentedControl.selectedSegmentIndex != index
-            {
-                segmentedControl.selectedSegmentIndex = index
-            }
         }
         
         // MARK: - Navigation
@@ -156,10 +125,6 @@ extension WalletDetail {
         }
         
         // MARK: - Actions
-        @objc func segmentedValueChanged(_ sender: UISegmentedControl!) {
-            moveToPage(sender.selectedSegmentIndex)
-        }
-        
         @objc func showWalletSettings() {
             viewModel.showWalletSettings()
         }
