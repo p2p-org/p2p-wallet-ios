@@ -24,6 +24,8 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler {
     func chooseWallet(_ wallet: Wallet)
     
     func calculateAvailableAmount() -> Double?
+    
+    func next()
 }
 
 extension SendTokenChooseTokenAndAmountViewModelType {
@@ -44,6 +46,7 @@ extension SendTokenChooseTokenAndAmount {
         
         // MARK: - Callback
         var onGoBack: (() -> Void)?
+        var onSelect: ((String, SolanaSDK.Lamports) -> Void)?
         
         // MARK: - Subject
         private let isLoadingSubject = BehaviorRelay<Bool>(value: true)
@@ -74,7 +77,6 @@ extension SendTokenChooseTokenAndAmount {
             #if DEBUG
             amountSubject.subscribe(onNext: {print($0 ?? 0)}).disposed(by: disposeBag)
             #endif
-            
         }
     }
 }
@@ -158,5 +160,26 @@ extension SendTokenChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmount
         
         // return
         return availableAmount > 0 ? availableAmount: 0
+    }
+    
+    func next() {
+        guard let wallet = walletSubject.value,
+              let totalLamports = wallet.lamports,
+              let pubkey = walletSubject.value?.pubkey,
+              var amount = amountSubject.value
+        else {return}
+        
+        // convert value
+        if currencyModeSubject.value == .fiat, (wallet.priceInCurrentFiat ?? 0) > 0 {
+            amount /= wallet.priceInCurrentFiat!
+        }
+        
+        // calculate lamports
+        var lamports = amount.toLamport(decimals: wallet.token.decimals)
+        if lamports > totalLamports {
+            lamports = totalLamports
+        }
+        
+        onSelect?(pubkey, lamports)
     }
 }
