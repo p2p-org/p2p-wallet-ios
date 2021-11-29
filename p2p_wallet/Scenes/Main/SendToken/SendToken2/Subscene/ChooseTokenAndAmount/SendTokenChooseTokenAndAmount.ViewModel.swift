@@ -149,8 +149,12 @@ extension SendTokenChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmount
         
         // convert to fiat in fiat mode
         if currencyModeSubject.value == .fiat {
-            availableAmount = availableAmount * wallet.priceInCurrentFiat
+            availableAmount = (availableAmount * wallet.priceInCurrentFiat).rounded(decimals: wallet.token.decimals)
         }
+        
+        #if DEBUG
+        print("availableAmount \(availableAmount)")
+        #endif
         
         // return
         return availableAmount > 0 ? availableAmount: 0
