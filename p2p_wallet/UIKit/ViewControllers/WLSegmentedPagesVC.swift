@@ -78,4 +78,14 @@ class WLSegmentedPagesVC: BEPagesVC {
     @objc func segmentedValueChanged(_ sender: UISegmentedControl!) {
         moveToPage(sender.selectedSegmentIndex)
     }
+    
+    func hideSegmentedControl() {
+        segmentedControl.isHidden = true
+    }
+    
+    func disableScrolling() {
+        for view in pageVC.view.subviews where view is UIScrollView {
+            (view as! UIScrollView).isScrollEnabled = false
+        }
+    }
 }
