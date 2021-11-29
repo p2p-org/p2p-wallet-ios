@@ -619,3 +619,8 @@
 "Derivation path" = "Путь деривации";
 "History" = "История";
 "Show wallet address" = "Показать адрес кошелька";
+"%@ is unavailable" = "%@ недоступен";
+"No more than 15 alphanumerical latin lowercase characters and dashes" = "Не более 15 буквенно-цифровых латинских строчных букв и тире";
+"P2P username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it." = "Имя пользователя P2P - это ваш общедоступный адрес, который позволяет вам получать любой токен, даже если у вас его нет в списке кошельков.\n\nКрайне важно выбрать именно то имя пользователя, которое вы хотите, так как после установки вы не можете его изменить.";
+"Enter username or skip" = "Введите имя пользователя или пропустите";
+"Choose available username" = "Выберите доступное имя пользователя";

@@ -619,3 +619,8 @@
 "Derivation path" = "Chemin de dérivation";
 "History" = "Histoire";
 "Show wallet address" = "Afficher l'adresse du portefeuille";
+"%@ is unavailable" = "%@ n'est pas disponible";
+"No more than 15 alphanumerical latin lowercase characters and dashes" = "Pas plus de 15 caractères alphanumériques latins minuscules et tirets";
+"P2P username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it." = "Le nom d'utilisateur P2P est votre adresse publique, ce qui vous permet de recevoir n'importe quel jeton même si vous ne l'avez pas dans la liste des portefeuilles.\n\nIl est essentiel que vous sélectionniez le nom d'utilisateur exact que vous souhaitez, car une fois défini, vous ne pouvez pas le modifier.";
+"Enter username or skip" = "Entrez le nom d'utilisateur ou ignorez";
+"Choose available username" = "Choisissez le nom d'utilisateur disponible";

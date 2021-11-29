@@ -40,6 +40,15 @@
 		417DC9172725A45F0048106B /* SelectRecipient.RecipientCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417DC9162725A45F0048106B /* SelectRecipient.RecipientCell.swift */; };
 		417DC9192726F2780048106B /* RecipientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417DC9182726F2780048106B /* RecipientView.swift */; };
 		417EB68927480FA700856C6E /* AgreeTermsAndConditionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417EB68827480FA700856C6E /* AgreeTermsAndConditionsView.swift */; };
+		41CA05752754725200953322 /* CreateOrRestoreReserveName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05712754725200953322 /* CreateOrRestoreReserveName.swift */; };
+		41CA05762754725200953322 /* CreateOrRestoreReserveName.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05722754725200953322 /* CreateOrRestoreReserveName.ViewController.swift */; };
+		41CA05772754725200953322 /* CreateOrRestoreReserveName.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05732754725200953322 /* CreateOrRestoreReserveName.ViewModel.swift */; };
+		41CA05782754725200953322 /* CreateOrRestoreReserveName.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05742754725200953322 /* CreateOrRestoreReserveName.RootView.swift */; };
+		41CA057A2754800D00953322 /* CreateOrRestoreReserveName.NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05792754800D00953322 /* CreateOrRestoreReserveName.NavigationBar.swift */; };
+		41CA057C27548C9900953322 /* AgreeTermsAndPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA057B27548C9900953322 /* AgreeTermsAndPolicyView.swift */; };
+		41CA057E2754A77500953322 /* CreateOrRestoreReserveName.TextFieldState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA057D2754A77500953322 /* CreateOrRestoreReserveName.TextFieldState.swift */; };
+		41CA05802754BC3100953322 /* TopAlignLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA057F2754BC3100953322 /* TopAlignLabel.swift */; };
+		41CA05822754BDD700953322 /* CreateOrRestoreReserveName.MainButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05812754BDD700953322 /* CreateOrRestoreReserveName.MainButtonState.swift */; };
 		41D7F6AD2739109D00453B61 /* HorizontalFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D7F6AB2739109D00453B61 /* HorizontalFlowLayout.swift */; };
 		41D7F6AE2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D7F6AC2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift */; };
 		41D7F6B2273910F900453B61 /* Home.BannersCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D7F6B0273910F900453B61 /* Home.BannersCollectionViewDataSource.swift */; };
@@ -473,6 +482,15 @@
 		417DC9162725A45F0048106B /* SelectRecipient.RecipientCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRecipient.RecipientCell.swift; sourceTree = "<group>"; };
 		417DC9182726F2780048106B /* RecipientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipientView.swift; sourceTree = "<group>"; };
 		417EB68827480FA700856C6E /* AgreeTermsAndConditionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgreeTermsAndConditionsView.swift; sourceTree = "<group>"; };
+		41CA05712754725200953322 /* CreateOrRestoreReserveName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreReserveName.swift; sourceTree = "<group>"; };
+		41CA05722754725200953322 /* CreateOrRestoreReserveName.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreReserveName.ViewController.swift; sourceTree = "<group>"; };
+		41CA05732754725200953322 /* CreateOrRestoreReserveName.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreReserveName.ViewModel.swift; sourceTree = "<group>"; };
+		41CA05742754725200953322 /* CreateOrRestoreReserveName.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreReserveName.RootView.swift; sourceTree = "<group>"; };
+		41CA05792754800D00953322 /* CreateOrRestoreReserveName.NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreReserveName.NavigationBar.swift; sourceTree = "<group>"; };
+		41CA057B27548C9900953322 /* AgreeTermsAndPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgreeTermsAndPolicyView.swift; sourceTree = "<group>"; };
+		41CA057D2754A77500953322 /* CreateOrRestoreReserveName.TextFieldState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreReserveName.TextFieldState.swift; sourceTree = "<group>"; };
+		41CA057F2754BC3100953322 /* TopAlignLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAlignLabel.swift; sourceTree = "<group>"; };
+		41CA05812754BDD700953322 /* CreateOrRestoreReserveName.MainButtonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreReserveName.MainButtonState.swift; sourceTree = "<group>"; };
 		41D7F6AB2739109D00453B61 /* HorizontalFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HorizontalFlowLayout.swift; sourceTree = "<group>"; };
 		41D7F6AC2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageableHorizontalLayoutScrollHandler.swift; sourceTree = "<group>"; };
 		41D7F6B0273910F900453B61 /* Home.BannersCollectionViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.BannersCollectionViewDataSource.swift; sourceTree = "<group>"; };
@@ -978,6 +996,20 @@
 				BCA7D83527290F10007B070A /* RecipientsCollectionView */,
 			);
 			path = SelectRecepient;
+			sourceTree = "<group>";
+		};
+		41CA056E2754722F00953322 /* ReserveName */ = {
+			isa = PBXGroup;
+			children = (
+				41CA05712754725200953322 /* CreateOrRestoreReserveName.swift */,
+				41CA05722754725200953322 /* CreateOrRestoreReserveName.ViewController.swift */,
+				41CA05732754725200953322 /* CreateOrRestoreReserveName.ViewModel.swift */,
+				41CA05742754725200953322 /* CreateOrRestoreReserveName.RootView.swift */,
+				41CA05792754800D00953322 /* CreateOrRestoreReserveName.NavigationBar.swift */,
+				41CA057D2754A77500953322 /* CreateOrRestoreReserveName.TextFieldState.swift */,
+				41CA05812754BDD700953322 /* CreateOrRestoreReserveName.MainButtonState.swift */,
+			);
+			path = ReserveName;
 			sourceTree = "<group>";
 		};
 		41D7F6AA27390FF900453B61 /* CollectionViewAccessories */ = {
@@ -1967,6 +1999,7 @@
 		BCE42DE125DF9B980021540E /* CreateOrRestoreWallet */ = {
 			isa = PBXGroup;
 			children = (
+				41CA056E2754722F00953322 /* ReserveName */,
 				BC134FA426FD76E100DB15BF /* CreateOrRestoreWallet.swift */,
 				BCE42DE225DF9BDA0021540E /* CreateOrRestoreWallet.ViewModel.swift */,
 				BCE42DE425DF9BDA0021540E /* CreateOrRestoreWallet.ViewController.swift */,
@@ -2116,6 +2149,8 @@
 				8469995401F6BFC283896AD6 /* UIButton.swift */,
 				8469907019755990A0585C61 /* KeyView.swift */,
 				BCB2868027460FD90074E1D5 /* WLStatusIndicatorView.swift */,
+				41CA057B27548C9900953322 /* AgreeTermsAndPolicyView.swift */,
+				41CA057F2754BC3100953322 /* TopAlignLabel.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2349,6 +2384,7 @@
 				BC6EE772254AEEB300FE1025 /* Error+Extensions.swift in Sources */,
 				BC620D7426C6739C002186ED /* SwapToken.NetworkFeePayerSettingsViewController.swift in Sources */,
 				BCE42DF725DF9C7A0021540E /* Onboarding.ViewController.swift in Sources */,
+				41CA057A2754800D00953322 /* CreateOrRestoreReserveName.NavigationBar.swift in Sources */,
 				BCC1F20D269EC712003DD648 /* WLNotificationsRepository.swift in Sources */,
 				BC6FED91270BF47E002B6255 /* RenBTCReceivingStatuses.ViewController.swift in Sources */,
 				BC1BEBFF26CE12170049A44C /* SwapToken.ViewModel.swift in Sources */,
@@ -2425,6 +2461,7 @@
 				BC1FFED3262975200014F027 /* ResetPinCodeWithSeedPhrases.ViewController.swift in Sources */,
 				BC65E03E261DA5ED00E436C7 /* TransactionsCollectionView.swift in Sources */,
 				BC65E196261EA58F00E436C7 /* DefisSection.swift in Sources */,
+				41CA057C27548C9900953322 /* AgreeTermsAndPolicyView.swift in Sources */,
 				BC18CAA3263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift in Sources */,
 				BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */,
 				BC2EC1CE2553ED1B006EEDA5 /* CardPresentationController.swift in Sources */,
@@ -2453,6 +2490,7 @@
 				BC18CA8F2632694F0054E624 /* TokensRepository.swift in Sources */,
 				BC134FAB26FD874500DB15BF /* RestoreWallet.swift in Sources */,
 				BCFEDBFC2727A9F0008AE4AD /* WLMarkdownView.swift in Sources */,
+				41CA057E2754A77500953322 /* CreateOrRestoreReserveName.TextFieldState.swift in Sources */,
 				BC5A97D0260DA82B009674C4 /* BaseHiddenWalletSection.swift in Sources */,
 				BC38555B26AE971400BD8BF7 /* ChooseWallet.ViewModel.swift in Sources */,
 				BC185EFC26E4BF3300280FE6 /* UIFont+Extensions.swift in Sources */,
@@ -2473,6 +2511,7 @@
 				BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */,
 				BCB2869F274B921D0074E1D5 /* Home.BalancesOverviewView.swift in Sources */,
 				BC65DFEF261D695200E436C7 /* TransactionCell.swift in Sources */,
+				41CA05822754BDD700953322 /* CreateOrRestoreReserveName.MainButtonState.swift in Sources */,
 				BCA9941F25AE93D5005BD8FB /* Fonts+Generated.swift in Sources */,
 				BC6FEDA3270D57D1002B6255 /* NameService.swift in Sources */,
 				BCB7C7C82665EEC400FEC68E /* SendToken.ViewController.swift in Sources */,
@@ -2489,6 +2528,7 @@
 				BC5140C2272ABC0800DB84BD /* Home.ViewModel.swift in Sources */,
 				4114D16C2746272400352CDF /* EnterSeedInfo.ViewModel.swift in Sources */,
 				BC65E170261E9FB600E436C7 /* Defi.swift in Sources */,
+				41CA05752754725200953322 /* CreateOrRestoreReserveName.swift in Sources */,
 				BCD5E770255130DD00F51299 /* News.swift in Sources */,
 				417DC905271FF1180048106B /* SelectRecipient.ViewController.swift in Sources */,
 				BC65E258261EF34B00E436C7 /* TransactionInfoViewController.swift in Sources */,
@@ -2525,11 +2565,13 @@
 				BC4B9E88271425B9005B9ECA /* Settings.RootView.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
 				BC85EA69266E1324005006D5 /* ReceiveToken.ReceiveSolanaView.swift in Sources */,
+				41CA05762754725200953322 /* CreateOrRestoreReserveName.ViewController.swift in Sources */,
 				BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */,
 				BCA93F6225E77EF50081DDF6 /* TokenSettingsCell.swift in Sources */,
 				BC423D8C26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift in Sources */,
 				BC7D078126F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift in Sources */,
 				BC5257E725CBACEA0076317E /* Fiat.swift in Sources */,
+				41CA05772754725200953322 /* CreateOrRestoreReserveName.ViewModel.swift in Sources */,
 				BCDCAE212682E41B001ED7B4 /* ReceiveToken.HelpViewController.swift in Sources */,
 				BC2DA294260B079100B50738 /* WLAddTokenButton.swift in Sources */,
 				BC4B9E87271425B9005B9ECA /* Settings.ViewModel.swift in Sources */,
@@ -2566,6 +2608,7 @@
 				BC3AB76827021E180096E4D8 /* NSRegularExpression+Extensions.swift in Sources */,
 				BC63110D26D78F9800516C38 /* SerumSwap+SwapProviderType.swift in Sources */,
 				BC134FA526FD76E100DB15BF /* CreateOrRestoreWallet.swift in Sources */,
+				41CA05802754BC3100953322 /* TopAlignLabel.swift in Sources */,
 				BC4B9EA427158886005B9ECA /* LocalizedLanguage.swift in Sources */,
 				BCE42E1825DFA5100021540E /* RestoreWallet.ViewModel.swift in Sources */,
 				BC104A7B259974CE0048C834 /* WLLoadingView.swift in Sources */,
@@ -2669,6 +2712,7 @@
 				BCAF1A7026F44CE8001851F6 /* RenVM.LockAndMint.Service.swift in Sources */,
 				BC65E17F261EA0AC00E436C7 /* DefisViewModel.swift in Sources */,
 				BCE04C69268D901400CE131A /* ModalPresentationController.swift in Sources */,
+				41CA05782754725200953322 /* CreateOrRestoreReserveName.RootView.swift in Sources */,
 				BC4B9E86271425B9005B9ECA /* Settings.ViewController.swift in Sources */,
 				BC4B9EBC27191843005B9ECA /* OrcaSwapV2.swift in Sources */,
 				41D7F6AD2739109D00453B61 /* HorizontalFlowLayout.swift in Sources */,
