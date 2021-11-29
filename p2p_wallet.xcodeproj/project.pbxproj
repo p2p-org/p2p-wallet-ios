@@ -1821,10 +1821,26 @@
 				BCB286D82754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.swift */,
 				BCB286DA2754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.ViewModel.swift */,
 				BCB286D92754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.ViewController.swift */,
-				BCB286E02754B8310074E1D5 /* SendToken.ChooseRecipientAndNetwork.AddressViewController.swift */,
-				BCB286E22754B9680074E1D5 /* SendToken.ChooseRecipientAndNetwork.ContactViewController.swift */,
+				BCB286E82754C9BB0074E1D5 /* SelectAddress */,
+				BCB286E92754C9F20074E1D5 /* SelectContact */,
 			);
 			path = ChooseRecipientAndNetwork;
+			sourceTree = "<group>";
+		};
+		BCB286E82754C9BB0074E1D5 /* SelectAddress */ = {
+			isa = PBXGroup;
+			children = (
+				BCB286E02754B8310074E1D5 /* SendToken.ChooseRecipientAndNetwork.AddressViewController.swift */,
+			);
+			path = SelectAddress;
+			sourceTree = "<group>";
+		};
+		BCB286E92754C9F20074E1D5 /* SelectContact */ = {
+			isa = PBXGroup;
+			children = (
+				BCB286E22754B9680074E1D5 /* SendToken.ChooseRecipientAndNetwork.ContactViewController.swift */,
+			);
+			path = SelectContact;
 			sourceTree = "<group>";
 		};
 		BCB58370255D28E100B10F65 /* ViewControllers */ = {
