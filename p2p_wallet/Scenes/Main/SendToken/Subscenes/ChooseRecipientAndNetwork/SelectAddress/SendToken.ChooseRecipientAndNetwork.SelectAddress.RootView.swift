@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
-    class RootView: BEView {
+    class RootView: ScrollableVStackRootView {
         // MARK: - Constants
         let disposeBag = DisposeBag()
         
@@ -17,6 +17,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
         
         // MARK: - Subviews
+        private lazy var scanQrCodeButton = createButton(image: .scanQr, text: L10n.scanQR)
+        private lazy var pasteQrCodeButton = createButton(image: .buttonPaste, text: L10n.paste.uppercaseFirst)
         
         // MARK: - Initializer
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
@@ -48,6 +50,14 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Actions
         @objc private func showDetail() {
             viewModel.navigate(to: .detail)
+        }
+        
+        // MARK: - Helpers
+        private func createButton(image: UIImage, text: String) -> UIView {
+            UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
+                UIImageView(width: 20, height: 20, image: image)
+                UILabel(text: text, textSize: 15, weight: .medium, textColor: .h5887ff)
+            }
         }
     }
 }
