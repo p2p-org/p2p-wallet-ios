@@ -1,5 +1,5 @@
 //
-//  SendTokenChooseTokenAndAmount.ViewController.swift
+//  SendToken.ChooseTokenAndAmount.ViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 23/11/2021.
@@ -8,8 +8,8 @@
 import Foundation
 import UIKit
 
-extension SendTokenChooseTokenAndAmount {
-    class ViewController: SendToken2.BaseViewController {
+extension SendToken.ChooseTokenAndAmount {
+    class ViewController: SendToken.BaseViewController {
         // MARK: - Dependencies
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
         private let scenesFactory: SendTokenScenesFactory

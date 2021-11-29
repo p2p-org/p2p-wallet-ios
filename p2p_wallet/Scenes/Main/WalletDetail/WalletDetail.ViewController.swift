@@ -13,7 +13,7 @@ import UIKit
 protocol WalletDetailScenesFactory {
     func makeBuyTokenViewController(token: BuyToken.CryptoCurrency) throws -> UIViewController
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
-    func makeSendTokenViewController2(walletPubkey: String?, destinationAddress: String?) -> SendToken2.ViewController
+    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> CustomPresentableViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
     func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController
@@ -106,7 +106,7 @@ extension WalletDetail {
                 vc.delegate = self
                 self.present(vc, animated: true, completion: nil)
             case .send(let wallet):
-                let vc = scenesFactory.makeSendTokenViewController2(walletPubkey: wallet.pubkey, destinationAddress: nil)
+                let vc = scenesFactory.makeSendTokenViewController(walletPubkey: wallet.pubkey, destinationAddress: nil)
                 show(vc, sender: nil)
             case .receive(let pubkey):
                 if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: pubkey)

@@ -1,5 +1,5 @@
 //
-//  SendTokenChooseRecipientAndNetwork.AddressViewController.swift
+//  SendToken.ChooseRecipientAndNetwork.AddressViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 29/11/2021.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-extension SendTokenChooseRecipientAndNetwork {
+extension SendToken.ChooseRecipientAndNetwork {
     final class AddressViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden

@@ -1,5 +1,5 @@
 //
-//  SendTokenChooseRecipientAndNetwork.ContactViewController.swift
+//  SendToken.ChooseRecipientAndNetwork.ContactViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 29/11/2021.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension SendTokenChooseRecipientAndNetwork {
+extension SendToken.ChooseRecipientAndNetwork {
     final class ContactViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
