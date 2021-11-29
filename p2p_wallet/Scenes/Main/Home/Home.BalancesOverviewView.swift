@@ -31,12 +31,20 @@ extension Home {
             .onTap(self, action: #selector(buttonReceiveDidTouch))
         private lazy var swapButton = createButton(image: .buttonSwap, title: L10n.swap)
             .onTap(self, action: #selector(buttonSwapDidTouch))
+
+        public lazy var topStackConstraint = stackView.autoPinEdge(toSuperviewEdge: .top)
         
         // MARK: - Callbacks
         var didTapSend: (() -> Void)?
         var didTapReceive: (() -> Void)?
         var didTapSwap: (() -> Void)?
-        
+
+        override func commonInit() {
+            super.commonInit()
+
+            layer.cornerRadius = 8
+        }
+
         override func createTopView() -> UIView {
             UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
                 chartView
@@ -55,6 +63,12 @@ extension Home {
                 swapButton
             }
         }
+
+        override func layoutStackView() {
+             topStackConstraint.priority = .defaultHigh
+             stackView.autoPinEdge(toSuperviewEdge: .top, withInset: .zero, relation: .lessThanOrEqual)
+             stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+         }
         
         func setUp(state: BEFetcherState, data: [Wallet]) {
             switch state {
