@@ -19,7 +19,8 @@ extension SendTokenChooseTokenAndAmount {
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
         
         // MARK: - Subviews
-        private let balanceLabel = UILabel(text: "0.0", textSize: 15, weight: .medium, textColor: .textSecondary)
+        private let walletImageView = UIImageView(width: 20, height: 20, image: .tabbarWallet)
+        private let balanceLabel = UILabel(text: "0.0", textSize: 15, weight: .medium)
         private let coinLogoImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
         private let coinSymbolLabel = UILabel(text: "SOL", textSize: 20, weight: .semibold)
         private lazy var amountTextField: TokenAmountTextField = {
@@ -71,7 +72,7 @@ extension SendTokenChooseTokenAndAmount {
                 UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
                     UILabel(text: L10n.from, textSize: 15, weight: .medium)
                     UIView.spacer
-                    UIImageView(width: 20, height: 20, image: .tabbarWallet, tintColor: .textSecondary)
+                    walletImageView
                     balanceLabel
                     UILabel(text: L10n.max.uppercased(), textSize: 15, weight: .medium, textColor: .h5887ff)
                         .onTap(self, action: #selector(useAllBalance))
@@ -191,6 +192,17 @@ extension SendTokenChooseTokenAndAmount {
                 .disposed(by: disposeBag)
             
             // error
+            let balanceTintColorDriver = viewModel.errorDriver
+                .map {$0 == nil ? UIColor.textSecondary: UIColor.alert}
+            
+            balanceTintColorDriver
+                .drive(walletImageView.rx.tintColor)
+                .disposed(by: disposeBag)
+            
+            balanceTintColorDriver
+                .drive(balanceLabel.rx.textColor)
+                .disposed(by: disposeBag)
+            
             viewModel.errorDriver
                 .map {$0?.buttonSuggestion ?? L10n.chooseTheRecipient}
                 .drive(actionButton.rx.text)
