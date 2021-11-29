@@ -621,3 +621,5 @@
 "Show wallet address" = "Afficher l'adresse du portefeuille";
 "Enter the amount to proceed" = "Entrez le montant pour continuer";
 "Choose the recipient" = "Choisissez le destinataire";
+"Address" = "Adresse";
+"Contact" = "Contact";

@@ -64,7 +64,9 @@ extension SendToken2 {
             case .chooseTokenAndAmount:
                 break
             case .chooseRecipientAndNetwork:
-                break
+                let vm = viewModel.createChooseRecipientAndNetworkViewModel()
+                let vc = SendTokenChooseRecipientAndNetwork.ViewController(viewModel: vm)
+                childNavigationController.pushViewController(vc, animated: true)
             case .confirmation:
                 break
             }
