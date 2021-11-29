@@ -37,6 +37,7 @@ extension SendTokenChooseTokenAndAmount {
         }()
         private lazy var equityValueLabel = UILabel(text: "$ 0", textSize: 13)
         private lazy var actionButton = WLStepButton.main(text: L10n.chooseDestinationWallet)
+            .onTap(self, action: #selector(actionButtonDidTouch))
         
         #if DEBUG
         private lazy var errorLabel = UILabel(textColor: .alert, numberOfLines: 0, textAlignment: .center)
@@ -244,6 +245,10 @@ extension SendTokenChooseTokenAndAmount {
         
         @objc private func toggleCurrencyMode() {
             viewModel.toggleCurrencyMode()
+        }
+        
+        @objc private func actionButtonDidTouch() {
+            viewModel.next()
         }
     }
 }
