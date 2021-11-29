@@ -1809,18 +1809,18 @@
 				BCB286B5274CC2590074E1D5 /* SendToken2.swift */,
 				BCB286B7274CC2590074E1D5 /* SendToken2.ViewModel.swift */,
 				BCB286B6274CC2590074E1D5 /* SendToken2.ViewController.swift */,
-				BCB286BD274CC4200074E1D5 /* Subscene */,
+				BCB286BD274CC4200074E1D5 /* Subscenes */,
 			);
 			path = SendToken2;
 			sourceTree = "<group>";
 		};
-		BCB286BD274CC4200074E1D5 /* Subscene */ = {
+		BCB286BD274CC4200074E1D5 /* Subscenes */ = {
 			isa = PBXGroup;
 			children = (
 				BCB286C9274CCABC0074E1D5 /* SendToken2.BaseViewController.swift */,
 				BCB286C0274CCA800074E1D5 /* ChooseTokenAndAmount */,
 			);
-			path = Subscene;
+			path = Subscenes;
 			sourceTree = "<group>";
 		};
 		BCB286C0274CCA800074E1D5 /* ChooseTokenAndAmount */ = {
