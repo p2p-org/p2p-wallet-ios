@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler {
+    var isLoadingDriver: Driver<Bool> {get}
     var navigationDriver: Driver<SendTokenChooseTokenAndAmount.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
     var currencyModeDriver: Driver<SendTokenChooseTokenAndAmount.CurrencyMode> {get}
@@ -34,26 +35,50 @@ extension SendTokenChooseTokenAndAmount {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var analyticsManager: AnalyticsManagerType
+        private let repository: WalletsRepository
         
         // MARK: - Properties
+        private let initialWalletPubkey: String?
         
         // MARK: - Callback
         var onGoBack: (() -> Void)?
         
         // MARK: - Subject
+        private let isLoadingSubject = BehaviorRelay<Bool>(value: true)
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         
         // MARK: - Initializer
-        init(wallet: Wallet? = nil) {
-            walletSubject.accept(wallet)
+        init(
+            repository: WalletsRepository,
+            walletPubkey: String?
+        ) {
+            self.repository = repository
+            self.initialWalletPubkey = walletPubkey
+            
+            bind()
+            
+            // accept initial values
+            if let pubkey = initialWalletPubkey {
+                walletSubject.accept(repository.getWallets().first(where: {$0.pubkey == pubkey}))
+            } else {
+                walletSubject.accept(repository.nativeWallet)
+            }
+        }
+        
+        private func bind() {
+            
         }
     }
 }
 
 extension SendTokenChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmountViewModelType {
+    var isLoadingDriver: Driver<Bool> {
+        isLoadingSubject.asDriver()
+    }
+    
     var navigationDriver: Driver<SendTokenChooseTokenAndAmount.NavigatableScene?> {
         navigationSubject.asDriver()
     }

@@ -10,6 +10,7 @@ import RxCocoa
 
 struct SendToken2 {
     enum NavigatableScene {
+        case back
         case chooseTokenAndAmount
         case chooseRecipientAndNetwork
         case confirmation

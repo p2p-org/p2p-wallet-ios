@@ -1112,7 +1112,6 @@
 			children = (
 				BCB286B3274CC2310074E1D5 /* SendToken2 */,
 				BCB7C7C22665EEC400FEC68E /* SendToken.swift */,
-				BC19DF4E270169CF00A3A8D8 /* SendTokenAPIClient.swift */,
 				BCB7C7C32665EEC400FEC68E /* SendToken.ViewModel.swift */,
 				BCB7C7C42665EEC400FEC68E /* SendToken.ViewController.swift */,
 				BCB7C7C52665EEC400FEC68E /* SendToken.RootView.swift */,
@@ -1806,6 +1805,7 @@
 		BCB286B3274CC2310074E1D5 /* SendToken2 */ = {
 			isa = PBXGroup;
 			children = (
+				BC19DF4E270169CF00A3A8D8 /* SendTokenAPIClient.swift */,
 				BCB286B5274CC2590074E1D5 /* SendToken2.swift */,
 				BCB286B7274CC2590074E1D5 /* SendToken2.ViewModel.swift */,
 				BCB286B6274CC2590074E1D5 /* SendToken2.ViewController.swift */,

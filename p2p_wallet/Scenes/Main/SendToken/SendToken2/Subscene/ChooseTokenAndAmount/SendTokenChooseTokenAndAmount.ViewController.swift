@@ -30,6 +30,7 @@ extension SendTokenChooseTokenAndAmount {
         override func setUp() {
             super.setUp()
             navigationBar.titleLabel.text = L10n.send
+            navigationBar.backButton.onTap(self, action: #selector(_back))
             
             let rootView = RootView(viewModel: viewModel)
             view.addSubview(rootView)
@@ -56,6 +57,10 @@ extension SendTokenChooseTokenAndAmount {
                 )
                 self.present(vc, animated: true, completion: nil)
             }
+        }
+        
+        @objc private func _back() {
+            viewModel.back()
         }
     }
 }
