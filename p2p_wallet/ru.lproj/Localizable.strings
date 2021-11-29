@@ -621,3 +621,5 @@
 "Show wallet address" = "Показать адрес кошелька";
 "Enter the amount to proceed" = "Введите сумму, чтобы продолжить";
 "Choose the recipient" = "Выберите получателя";
+"Address" = "Адрес";
+"Contact" = "Контакт";

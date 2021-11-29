@@ -13,6 +13,7 @@ protocol SendToken2ViewModelType {
     var navigationDriver: Driver<SendToken2.NavigatableScene> {get}
     
     func createChooseTokenAndAmountViewModel() -> SendTokenChooseTokenAndAmountViewModelType
+    func createChooseRecipientAndNetworkViewModel() -> SendTokenChooseRecipientAndNetworkViewModelType
     
     func navigate(to scene: SendToken2.NavigatableScene)
 }
@@ -64,6 +65,11 @@ extension SendToken2.ViewModel: SendToken2ViewModelType {
             self?.selectedAmount = lamports
             self?.navigate(to: .chooseRecipientAndNetwork)
         }
+        return vm
+    }
+    
+    func createChooseRecipientAndNetworkViewModel() -> SendTokenChooseRecipientAndNetworkViewModelType {
+        let vm = SendTokenChooseRecipientAndNetwork.ViewModel()
         return vm
     }
     
