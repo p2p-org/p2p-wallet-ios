@@ -182,6 +182,7 @@ extension Reactive where Base: WLStepButton {
     var image: Binder<UIImage?> {
         Binder(base) { view, image in
             view.imageView.image = image
+            view.imageView.isHidden = image == nil
         }
     }
 
