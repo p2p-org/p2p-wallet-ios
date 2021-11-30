@@ -56,6 +56,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private func bind() {
             // input state
             let isEnteringDriver = viewModel.inputStateDriver.map {$0.isEntering}
+                .distinctUntilChanged()
             
             isEnteringDriver.map {!$0}
                 .drive(titleView.scanQrCodeButton.rx.isHidden)
