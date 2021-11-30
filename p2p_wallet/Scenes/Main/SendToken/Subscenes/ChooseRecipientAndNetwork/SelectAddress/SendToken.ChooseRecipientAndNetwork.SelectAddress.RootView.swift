@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import BEPureLayout
+import BECollectionView
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class RootView: ScrollableVStackRootView {
@@ -21,7 +22,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private lazy var titleView = TitleView(forConvenience: ())
         private lazy var addressInputView = AddressInputView(viewModel: viewModel)
         private lazy var addressView = AddressView(forConvenience: ())
-        private lazy var collectionView = UILabel(text: "collection")
+        private lazy var recipientCollectionView: RecipientsCollectionView = {
+            let collectionView = RecipientsCollectionView(recipientsListViewModel: viewModel.recipientsListViewModel)
+            collectionView.delegate = self
+            return collectionView
+        }()
         private lazy var networkView = NetworkView(forConvenience: ())
         
         // MARK: - Initializer
@@ -49,8 +54,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
                 BEStackViewSpacing(18)
                 networkView
-                collectionView
+                recipientCollectionView
             }
+            
+            recipientCollectionView.autoPinEdge(.bottom, to: .bottom, of: self)
         }
         
         private func bind() {
@@ -75,7 +82,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .disposed(by: disposeBag)
             
             isEnteringDriver.map {!$0}
-                .drive(collectionView.rx.isHidden)
+                .drive(recipientCollectionView.rx.isHidden)
                 .disposed(by: disposeBag)
             
             isEnteringDriver
@@ -87,5 +94,12 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         @objc private func showDetail() {
             viewModel.navigate(to: .detail)
         }
+    }
+}
+
+extension SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView: BECollectionViewDelegate {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
+        guard let recipient = item as? Recipient else {return}
+        viewModel.selectRecipient(recipient)
     }
 }

@@ -10,11 +10,13 @@ import RxSwift
 import RxCocoa
 
 protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
+    var recipientsListViewModel: SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel {get}
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?> {get}
     var inputStateDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState> {get}
     
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
     func userDidEnterAddress(_ address: String?)
+    func selectRecipient(_ recipient: Recipient)
 }
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
@@ -22,6 +24,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Dependencies
         
         // MARK: - Properties
+        let recipientsListViewModel = RecipientsListViewModel()
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -45,5 +48,17 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     func userDidEnterAddress(_ address: String?) {
         inputStateSubject.accept(.entering(address))
+        recipientsListViewModel.searchString = address
+        recipientsListViewModel.reload()
+    }
+    
+    func selectRecipient(_ recipient: Recipient) {
+        let type: SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressType
+        if let name = recipient.name {
+            type = .resolvedName(name: name, address: recipient.address)
+        } else {
+            type = .raw(address: recipient.address, hasFunds: false)
+        }
+        inputStateSubject.accept(.selected(type))
     }
 }
