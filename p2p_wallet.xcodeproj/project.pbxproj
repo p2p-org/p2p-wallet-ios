@@ -375,6 +375,7 @@
 		BCB2870B27560F1D0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2870827560F1B0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientCell.swift */; };
 		BCB2870C27560F1D0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2870727560F1B0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsCollectionView.swift */; };
 		BCB2870D27560F1D0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2870927560F1C0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel.swift */; };
+		BCB2870F275631C40074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2870E275631C40074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientView.swift */; };
 		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58379255D29C500B10F65 /* WLBottomSheet.swift */; };
 		BCB7C7D02667336800FEC68E /* ProcessTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7CC2667336800FEC68E /* ProcessTransaction.swift */; };
@@ -834,6 +835,7 @@
 		BCB2870727560F1B0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsCollectionView.swift; sourceTree = "<group>"; };
 		BCB2870827560F1B0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientCell.swift; sourceTree = "<group>"; };
 		BCB2870927560F1C0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel.swift; sourceTree = "<group>"; };
+		BCB2870E275631C40074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientView.swift; sourceTree = "<group>"; };
 		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58379255D29C500B10F65 /* WLBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBottomSheet.swift; sourceTree = "<group>"; };
 		BCB7C7CC2667336800FEC68E /* ProcessTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.swift; sourceTree = "<group>"; };
@@ -1820,6 +1822,7 @@
 				BCB286FA2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift */,
 				BCB286FE2755D7AD0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressView.swift */,
 				BCB287032755DD940074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift */,
+				BCB2870E275631C40074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientView.swift */,
 				BCB2870527560F1A0074E1D5 /* RecipientsCollectionView */,
 			);
 			path = Subviews;
@@ -2631,6 +2634,7 @@
 				412DBFE527460014000F514E /* EnterSeed.MainButtonContent.swift in Sources */,
 				BC036C1B269449A7005C1BEC /* AccountNotificationsRepository.swift in Sources */,
 				BC1FFEE8262977940014F027 /* WLEnterPhrasesVC.swift in Sources */,
+				BCB2870F275631C40074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientView.swift in Sources */,
 				BC38555A26AE971400BD8BF7 /* ChooseWallet.ViewController.swift in Sources */,
 				BC4B9E9D27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift in Sources */,
 				41D7F6BD2739339400453B61 /* BannerTypeTransformer.swift in Sources */,
