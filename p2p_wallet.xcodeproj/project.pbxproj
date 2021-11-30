@@ -381,6 +381,9 @@
 		BCB286F72754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286F32754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewController.swift */; };
 		BCB286F82754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286F42754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel.swift */; };
 		BCB286F92754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286F52754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView.swift */; };
+		BCB286FB2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286FA2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift */; };
+		BCB286FF2755D7AD0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286FE2755D7AD0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressView.swift */; };
+		BCB287022755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB287012755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift */; };
 		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58379255D29C500B10F65 /* WLBottomSheet.swift */; };
 		BCB7C7D02667336800FEC68E /* ProcessTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7CC2667336800FEC68E /* ProcessTransaction.swift */; };
@@ -846,6 +849,9 @@
 		BCB286F32754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewController.swift; sourceTree = "<group>"; };
 		BCB286F42754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel.swift; sourceTree = "<group>"; };
 		BCB286F52754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView.swift; sourceTree = "<group>"; };
+		BCB286FA2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift; sourceTree = "<group>"; };
+		BCB286FE2755D7AD0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressView.swift; sourceTree = "<group>"; };
+		BCB287012755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift; sourceTree = "<group>"; };
 		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58379255D29C500B10F65 /* WLBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBottomSheet.swift; sourceTree = "<group>"; };
 		BCB7C7CC2667336800FEC68E /* ProcessTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.swift; sourceTree = "<group>"; };
@@ -1840,6 +1846,7 @@
 				BCB286F42754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel.swift */,
 				BCB286F32754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewController.swift */,
 				BCB286F52754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView.swift */,
+				BCB287002755D7C20074E1D5 /* Subviews */,
 			);
 			path = SelectAddress;
 			sourceTree = "<group>";
@@ -1850,6 +1857,16 @@
 				BCB286E22754B9680074E1D5 /* SendToken.ChooseRecipientAndNetwork.ContactViewController.swift */,
 			);
 			path = SelectContact;
+			sourceTree = "<group>";
+		};
+		BCB287002755D7C20074E1D5 /* Subviews */ = {
+			isa = PBXGroup;
+			children = (
+				BCB287012755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift */,
+				BCB286FA2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift */,
+				BCB286FE2755D7AD0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressView.swift */,
+			);
+			path = Subviews;
 			sourceTree = "<group>";
 		};
 		BCB58370255D28E100B10F65 /* ViewControllers */ = {
@@ -2577,6 +2594,7 @@
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
 				BC4B9E9F2715401F005B9ECA /* Settings.SelectLanguageViewController.swift in Sources */,
 				417EB68927480FA700856C6E /* AgreeTermsAndConditionsView.swift in Sources */,
+				BCB286FF2755D7AD0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressView.swift in Sources */,
 				412DBFDE273D7B81000F514E /* EnterSeed.ViewModel.swift in Sources */,
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,
 				417BB3522727EF3400EDE6AE /* SelectRecipient.SectionHeaderView.swift in Sources */,
@@ -2731,6 +2749,7 @@
 				BCFC768825E2EAB800FBE148 /* MainViewController.swift in Sources */,
 				BCB2867D2745F4D10074E1D5 /* PricesStorage.swift in Sources */,
 				417DC906271FF1180048106B /* SelectRecipient.ViewModel.swift in Sources */,
+				BCB287022755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift in Sources */,
 				BC036C3126959F6C005C1BEC /* BaseCollectionReusableView.swift in Sources */,
 				BC460768266F4B3200A12E07 /* ObservableType+Extensions.swift in Sources */,
 				BC460764266F40F400A12E07 /* Root.ViewModel.swift in Sources */,
@@ -2812,6 +2831,7 @@
 				84699577969579C1429B4D04 /* CreateSecurityKeys.KeysView.swift in Sources */,
 				84699D43B0BAEA149C81B17D /* ColumnFlowLayout.swift in Sources */,
 				846999D7A0F0B2DC6E8C8A9B /* UIStackView.swift in Sources */,
+				BCB286FB2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift in Sources */,
 				846993CEE73D894A69FE84A6 /* UIButton.swift in Sources */,
 				8469998D03BF3A0606D0D42D /* VerifySecurityKeys.Question.swift in Sources */,
 				846995192F640AE9B9541C87 /* KeyView.swift in Sources */,
