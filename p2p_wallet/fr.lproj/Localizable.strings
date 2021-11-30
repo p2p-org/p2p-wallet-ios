@@ -626,3 +626,4 @@
 "Scan QR" = "Scannez le QR";
 "There’s no address like this" = "Il n'y a pas d'adresse comme ça";
 "This address has no funds" = "Cette adresse n'a pas de fonds";
+"Caution: this address has no funds" = "Attention : cette adresse n'a pas de fonds";
