@@ -63,7 +63,7 @@ final class RecipientView: UIStackView {
     )
     private let titleLabel = UILabel(text: "<recipientName>", textSize: 17, weight: .semibold)
     private let descriptionLabel: UILabel = {
-        let label = UILabel(text: "<recipientAddress>", textSize: 15, weight: .regular, textColor: .a3a5ba)
+        let label = UILabel(text: "<recipientAddress>", textSize: 15, weight: .regular, textColor: .textSecondary)
         label.lineBreakMode = .byTruncatingMiddle
         return label
     }()
@@ -84,9 +84,16 @@ final class RecipientView: UIStackView {
 
     func setRecipient(_ recipient: Recipient) {
         titleLabel.text = recipient.name ?? recipient.address.truncatingMiddle(numOfSymbolsRevealed: 13, numOfSymbolsRevealedInSuffix: 4)
+        recipientIcon.image = .emptyUserAvatar
+        descriptionLabel.textColor = .textSecondary
         if recipient.name == nil {
             descriptionLabel.isHidden = !recipient.hasNoFunds
-            descriptionLabel.text = L10n.thisAddressHasNoFunds
+            descriptionLabel.text = L10n.cautionThisAddressHasNoFunds
+            
+            if recipient.hasNoFunds {
+                recipientIcon.image = .warningUserAvatar
+                descriptionLabel.textColor = .ff9500
+            }
         } else {
             descriptionLabel.isHidden = false
             descriptionLabel.text = recipient.address
