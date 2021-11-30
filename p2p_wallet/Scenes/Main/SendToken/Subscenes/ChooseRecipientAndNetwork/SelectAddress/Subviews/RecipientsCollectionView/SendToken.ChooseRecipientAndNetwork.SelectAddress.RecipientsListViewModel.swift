@@ -10,7 +10,7 @@ import RxSwift
 import BECollectionView
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
-    class RecipientsListViewModel: BEListViewModel<Recipient> {
+    class RecipientsListViewModel: BEListViewModel<SendToken.Recipient> {
         // MARK: - Dependencies
         @Injected private var nameService: NameServiceType
         @Injected private var addressFormatter: AddressFormatterType
@@ -25,7 +25,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         // MARK: - Methods
         /// The only methods that MUST be inheritted
-        override func createRequest() -> Single<[Recipient]> {
+        override func createRequest() -> Single<[SendToken.Recipient]> {
             guard let searchString = searchString, !searchString.isEmpty else { return .just([]) }
 
             return isSearchingByAddress
@@ -33,14 +33,14 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 : findRecipientsBy(name: searchString)
         }
 
-        private func findRecipientsBy(name: String) -> Single<[Recipient]> {
+        private func findRecipientsBy(name: String) -> Single<[SendToken.Recipient]> {
             nameService
                 .getOwners(name)
                 .map { [weak addressFormatter] in
                     guard let addressFormatter = addressFormatter else { return [] }
 
                     return $0.map {
-                        Recipient(
+                        SendToken.Recipient(
                             address: $0.owner,
                             shortAddress: addressFormatter.shortAddress(of: $0.owner),
                             name: $0.name,
@@ -50,7 +50,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
         }
 
-        private func findRecipientBy(address: String) -> Single<[Recipient]> {
+        private func findRecipientBy(address: String) -> Single<[SendToken.Recipient]> {
             nameService
                 .getName(address)
                 .flatMap {[weak self] name -> Single<(String?, Bool)> in
@@ -63,7 +63,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .map { [weak addressFormatter] in
                     guard let addressFormatter = addressFormatter else { return [] }
 
-                    let recipient = Recipient(
+                    let recipient = SendToken.Recipient(
                         address: address,
                         shortAddress: addressFormatter.shortAddress(of: address),
                         name: $0.0,
