@@ -62,7 +62,11 @@ final class RecipientView: UIStackView {
         distribution: .equalSpacing
     )
     private let recipientName = UILabel(text: "<recipientName>", textSize: 17, weight: .semibold)
-    private let recipientAddress = UILabel(text: "<recipientAddress>", textSize: 15, weight: .regular, textColor: .a3a5ba, numberOfLines: 0)
+    private let recipientAddress: UILabel = {
+        let label = UILabel(text: "<recipientAddress>", textSize: 15, weight: .regular, textColor: .a3a5ba)
+        label.lineBreakMode = .byTruncatingMiddle
+        return label
+    }()
 
     init() {
         super.init(frame: .zero)
