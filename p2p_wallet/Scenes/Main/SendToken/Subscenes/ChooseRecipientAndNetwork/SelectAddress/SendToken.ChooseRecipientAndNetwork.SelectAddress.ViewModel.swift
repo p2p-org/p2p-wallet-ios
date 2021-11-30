@@ -53,8 +53,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     func userDidEnterAddress(_ address: String?) {
         inputStateSubject.accept(.entering(address))
-        recipientsListViewModel.searchString = address
-        recipientsListViewModel.reload()
+        if recipientsListViewModel.searchString != address {
+            recipientsListViewModel.searchString = address
+            recipientsListViewModel.reload()
+        }
     }
     
     func selectRecipient(_ recipient: SendToken.Recipient) {
