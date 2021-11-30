@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import BEPureLayout
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class RootView: ScrollableVStackRootView {
@@ -17,8 +18,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
         
         // MARK: - Subviews
-        private lazy var scanQrCodeButton = createButton(image: .scanQr, text: L10n.scanQR)
-        private lazy var pasteQrCodeButton = createButton(image: .buttonPaste, text: L10n.paste.uppercaseFirst)
+        private lazy var titleView = TitleView(forConvenience: ())
+        private lazy var addressInputView = AddressInputView(forConvenience: ())
+        private lazy var addressView = AddressView(forConvenience: ())
         
         // MARK: - Initializer
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
@@ -35,12 +37,19 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            
+            addressInputView.textField.becomeFirstResponder()
         }
         
         // MARK: - Layout
         private func layout() {
-            
+            stackView.addArrangedSubviews {
+                UIView.floatingPanel {
+                    titleView
+                    BEStackViewSpacing(20)
+                    addressInputView
+                    addressView
+                }
+            }
         }
         
         private func bind() {
@@ -50,14 +59,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Actions
         @objc private func showDetail() {
             viewModel.navigate(to: .detail)
-        }
-        
-        // MARK: - Helpers
-        private func createButton(image: UIImage, text: String) -> UIView {
-            UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
-                UIImageView(width: 20, height: 20, image: image)
-                UILabel(text: text, textSize: 15, weight: .medium, textColor: .h5887ff)
-            }
         }
     }
 }
