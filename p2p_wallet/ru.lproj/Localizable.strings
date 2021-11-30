@@ -625,3 +625,4 @@
 "Contact" = "Контакт";
 "Scan QR" = "Сканировать QR";
 "There’s no address like this" = "Нет такого адреса";
+"This address has no funds" = "На этом адресе нет средств";

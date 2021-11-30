@@ -18,6 +18,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType {
 extension SendToken.ChooseRecipientAndNetwork {
     class ViewModel {
         // MARK: - Dependencies
+        var solanaAPIClient: SendTokenAPIClient!
         
         // MARK: - Properties
         
@@ -37,6 +38,8 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     }
     
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
-        SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel()
+        let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel()
+        vm.solanaAPIClient = solanaAPIClient
+        return vm
     }
 }

@@ -41,6 +41,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             super.init(frame: .zero)
         }
         
+        deinit {
+            debugPrint("RootView deinited")
+        }
+        
         // MARK: - Methods
         override func commonInit() {
             super.commonInit()
@@ -104,6 +108,15 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
                 .map {!$0}
                 .drive(noAddressView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isEnteringDriver
+                .skip(1)
+                .drive(onNext: {[weak self] _ in
+                    UIView.animate(withDuration: 0.3) {
+                        self?.layoutIfNeeded()
+                    }
+                })
                 .disposed(by: disposeBag)
         }
         

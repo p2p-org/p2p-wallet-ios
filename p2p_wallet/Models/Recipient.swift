@@ -9,4 +9,5 @@ struct Recipient: Hashable {
     let address: String
     let shortAddress: String
     let name: String?
+    let hasNoFunds: Bool
 }
