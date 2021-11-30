@@ -14,14 +14,9 @@ extension SendToken.ChooseRecipientAndNetwork {
             case detail
         }
         
-        enum AddressType: Equatable {
-            case raw(address: String, hasFunds: Bool)
-            case resolvedName(name: String, address: String)
-        }
-        
         enum InputState: Equatable {
             case entering(String?)
-            case selected(AddressType)
+            case selected(SendToken.Recipient)
             
             var isEntering: Bool {
                 switch self {
@@ -29,6 +24,15 @@ extension SendToken.ChooseRecipientAndNetwork {
                     return true
                 default:
                     return false
+                }
+            }
+            
+            var recipient: SendToken.Recipient? {
+                switch self {
+                case .selected(let recipient):
+                    return recipient
+                default:
+                    return nil
                 }
             }
         }
