@@ -23,6 +23,7 @@ extension SendToken {
         // MARK: - Dependencies
         @Injected private var addressFormatter: AddressFormatterType
         private let walletsRepository: WalletsRepository
+        var solanaAPIClient: SendTokenAPIClient
         
         // MARK: - Properties
         private let initialWalletPubkey: String?
@@ -45,6 +46,7 @@ extension SendToken {
             self.walletsRepository = repository
             self.initialWalletPubkey = walletPubkey
             self.initialDestinationWalletPubkey = destinationAddress
+            self.solanaAPIClient = apiClient
         }
     }
 }
@@ -70,6 +72,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func createChooseRecipientAndNetworkViewModel() -> SendTokenChooseRecipientAndNetworkViewModelType {
         let vm = SendToken.ChooseRecipientAndNetwork.ViewModel()
+        vm.solanaAPIClient = solanaAPIClient
         return vm
     }
     

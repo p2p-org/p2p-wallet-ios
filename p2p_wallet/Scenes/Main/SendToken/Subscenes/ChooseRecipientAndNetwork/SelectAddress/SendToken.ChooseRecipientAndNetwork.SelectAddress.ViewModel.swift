@@ -22,6 +22,11 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class ViewModel {
         // MARK: - Dependencies
+        var solanaAPIClient: SendTokenAPIClient! {
+            didSet {
+                recipientsListViewModel.solanaAPIClient = solanaAPIClient
+            }
+        }
         
         // MARK: - Properties
         let recipientsListViewModel = RecipientsListViewModel()

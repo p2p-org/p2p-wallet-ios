@@ -61,8 +61,8 @@ final class RecipientView: UIStackView {
         alignment: .leading,
         distribution: .equalSpacing
     )
-    private let recipientName = UILabel(text: "<recipientName>", textSize: 17, weight: .semibold)
-    private let recipientAddress: UILabel = {
+    private let titleLabel = UILabel(text: "<recipientName>", textSize: 17, weight: .semibold)
+    private let descriptionLabel: UILabel = {
         let label = UILabel(text: "<recipientAddress>", textSize: 15, weight: .regular, textColor: .a3a5ba)
         label.lineBreakMode = .byTruncatingMiddle
         return label
@@ -83,9 +83,14 @@ final class RecipientView: UIStackView {
     }
 
     func setRecipient(_ recipient: Recipient) {
-        recipientName.isHidden = recipient.name == nil
-        recipientName.text = recipient.name
-        recipientAddress.text = recipient.address
+        titleLabel.text = recipient.name ?? recipient.address.truncatingMiddle(numOfSymbolsRevealed: 13, numOfSymbolsRevealedInSuffix: 4)
+        if recipient.name == nil {
+            descriptionLabel.isHidden = !recipient.hasNoFunds
+            descriptionLabel.text = L10n.thisAddressHasNoFunds
+        } else {
+            descriptionLabel.isHidden = false
+            descriptionLabel.text = recipient.address
+        }
     }
 
     private func configureSelf() {
@@ -97,7 +102,7 @@ final class RecipientView: UIStackView {
 
     private func configureSubviews() {
         recipientIcon.image = .emptyUserAvatar
-        [recipientName, recipientAddress].forEach(textFieldsStackView.addArrangedSubview)
+        [titleLabel, descriptionLabel].forEach(textFieldsStackView.addArrangedSubview)
     }
 
     private func addSubviews() {
