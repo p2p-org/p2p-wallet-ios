@@ -61,7 +61,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         
         // MARK: - Actions
-        @objc private func clearButtonDidTouch() {
+        @objc func clearButtonDidTouch() {
             textField.text = nil
             textField.sendActions(for: .editingChanged)
         }
