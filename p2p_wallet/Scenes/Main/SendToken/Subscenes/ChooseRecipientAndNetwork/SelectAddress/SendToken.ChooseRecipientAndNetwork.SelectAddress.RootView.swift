@@ -142,7 +142,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         
         @objc private func clearRecipientButtonDidTouch() {
-            viewModel.userDidEnterAddress(nil)
+            addressInputView.clearButtonDidTouch()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                 self?.addressInputView.textField.becomeFirstResponder()
             }
