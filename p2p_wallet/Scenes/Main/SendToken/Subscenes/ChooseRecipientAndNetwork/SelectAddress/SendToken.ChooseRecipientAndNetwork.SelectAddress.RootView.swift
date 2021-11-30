@@ -21,6 +21,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private lazy var titleView = TitleView(forConvenience: ())
         private lazy var addressInputView = AddressInputView(forConvenience: ())
         private lazy var addressView = AddressView(forConvenience: ())
+        // private lazy var collectionView
+        private lazy var networkView = NetworkView(forConvenience: ())
         
         // MARK: - Initializer
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
@@ -49,6 +51,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     addressInputView
                     addressView
                 }
+                BEStackViewSpacing(18)
+                networkView
             }
         }
         

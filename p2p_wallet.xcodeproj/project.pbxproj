@@ -384,6 +384,7 @@
 		BCB286FB2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286FA2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift */; };
 		BCB286FF2755D7AD0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286FE2755D7AD0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressView.swift */; };
 		BCB287022755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB287012755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift */; };
+		BCB287042755DD940074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB287032755DD940074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift */; };
 		BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */; };
 		BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB58379255D29C500B10F65 /* WLBottomSheet.swift */; };
 		BCB7C7D02667336800FEC68E /* ProcessTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7C7CC2667336800FEC68E /* ProcessTransaction.swift */; };
@@ -852,6 +853,7 @@
 		BCB286FA2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift; sourceTree = "<group>"; };
 		BCB286FE2755D7AD0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressView.swift; sourceTree = "<group>"; };
 		BCB287012755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift; sourceTree = "<group>"; };
+		BCB287032755DD940074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift; sourceTree = "<group>"; };
 		BCB4237825C7BE7900F8A7A9 /* PercentSuffixTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentSuffixTextField.swift; sourceTree = "<group>"; };
 		BCB58379255D29C500B10F65 /* WLBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLBottomSheet.swift; sourceTree = "<group>"; };
 		BCB7C7CC2667336800FEC68E /* ProcessTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.swift; sourceTree = "<group>"; };
@@ -1865,6 +1867,7 @@
 				BCB287012755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift */,
 				BCB286FA2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift */,
 				BCB286FE2755D7AD0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressView.swift */,
+				BCB287032755DD940074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -2760,6 +2763,7 @@
 				BCAF1A7026F44CE8001851F6 /* RenVM.LockAndMint.Service.swift in Sources */,
 				BC65E17F261EA0AC00E436C7 /* DefisViewModel.swift in Sources */,
 				BCE04C69268D901400CE131A /* ModalPresentationController.swift in Sources */,
+				BCB287042755DD940074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift in Sources */,
 				BC4B9E86271425B9005B9ECA /* Settings.ViewController.swift in Sources */,
 				BC4B9EBC27191843005B9ECA /* OrcaSwapV2.swift in Sources */,
 				41D7F6AD2739109D00453B61 /* HorizontalFlowLayout.swift in Sources */,
