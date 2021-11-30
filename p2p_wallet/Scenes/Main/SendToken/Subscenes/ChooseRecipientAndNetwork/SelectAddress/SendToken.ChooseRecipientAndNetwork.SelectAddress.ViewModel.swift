@@ -58,12 +58,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     func selectRecipient(_ recipient: SendToken.Recipient) {
-        let type: SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressType
-        if let name = recipient.name {
-            type = .resolvedName(name: name, address: recipient.address)
-        } else {
-            type = .raw(address: recipient.address, hasFunds: false)
-        }
-        inputStateSubject.accept(.selected(type))
+        inputStateSubject.accept(.selected(recipient))
     }
 }

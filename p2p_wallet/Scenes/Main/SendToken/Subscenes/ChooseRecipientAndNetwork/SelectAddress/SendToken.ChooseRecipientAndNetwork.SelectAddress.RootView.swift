@@ -22,7 +22,14 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Subviews
         private lazy var titleView = TitleView(forConvenience: ())
         private lazy var addressInputView = AddressInputView(viewModel: viewModel)
-        private lazy var addressView = RecipientView()
+        private lazy var recipientView: RecipientView = {
+            let view = RecipientView()
+            view.addArrangedSubview(
+                UIImageView(width: 17, height: 17, image: .crossIcon)
+                    .onTap(self, action: #selector(clearRecipientButtonDidTouch))
+            )
+            return view
+        }()
         private lazy var recipientCollectionView: RecipientsCollectionView = {
             let collectionView = RecipientsCollectionView(recipientsListViewModel: viewModel.recipientsListViewModel)
             collectionView.delegate = self
@@ -60,7 +67,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     titleView
                     BEStackViewSpacing(20)
                     addressInputView
-                    addressView
+                    recipientView
                 }
                 BEStackViewSpacing(18)
                 networkView
@@ -89,7 +96,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .disposed(by: disposeBag)
             
             isEnteringDriver
-                .drive(addressView.rx.isHidden)
+                .drive(recipientView.rx.isHidden)
                 .disposed(by: disposeBag)
             
             isEnteringDriver.map {!$0}
@@ -118,11 +125,30 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     }
                 })
                 .disposed(by: disposeBag)
+            
+            // address
+            viewModel.inputStateDriver
+                .drive(onNext: {[weak self] state in
+                    switch state {
+                    case .entering(let key):
+                        break
+                    case .selected(let recipient):
+                        self?.recipientView.setRecipient(recipient)
+                    }
+                })
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Actions
         @objc private func showDetail() {
             viewModel.navigate(to: .detail)
+        }
+        
+        @objc private func clearRecipientButtonDidTouch() {
+            viewModel.userDidEnterAddress(addressInputView.textField.text)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.addressInputView.textField.becomeFirstResponder()
+            }
         }
     }
 }
