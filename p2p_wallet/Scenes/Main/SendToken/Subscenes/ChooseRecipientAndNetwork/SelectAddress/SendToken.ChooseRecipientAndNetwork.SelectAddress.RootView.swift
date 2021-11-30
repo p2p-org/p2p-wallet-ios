@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 import BEPureLayout
 import BECollectionView
 
@@ -28,6 +29,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             return collectionView
         }()
         private lazy var networkView = NetworkView(forConvenience: ())
+        private lazy var noAddressView = UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
+            UIImageView(width: 44, height: 44, image: .errorUserAvatar)
+            UILabel(text: L10n.thereSNoAddressLikeThis, textSize: 17, textColor: .ff3b30, numberOfLines: 0)
+        }
+            .padding(.init(x: 20, y: 0))
         
         // MARK: - Initializer
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
@@ -54,6 +60,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
                 BEStackViewSpacing(18)
                 networkView
+                noAddressView
                 recipientCollectionView
             }
             
@@ -87,6 +94,16 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             
             isEnteringDriver
                 .drive(networkView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            viewModel.recipientsListViewModel
+                .stateObservable
+                .asDriver(onErrorJustReturn: .initializing)
+                .map {[weak self] in
+                    $0 == .loaded && self?.viewModel.recipientsListViewModel.getData(type: Recipient.self).count == 0 && self?.addressInputView.textField.text?.isEmpty == false
+                }
+                .map {!$0}
+                .drive(noAddressView.rx.isHidden)
                 .disposed(by: disposeBag)
         }
         
