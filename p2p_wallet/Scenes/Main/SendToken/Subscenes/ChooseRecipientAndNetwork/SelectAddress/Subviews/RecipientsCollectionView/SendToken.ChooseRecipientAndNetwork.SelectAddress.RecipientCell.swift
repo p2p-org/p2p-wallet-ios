@@ -23,7 +23,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             fatalError("init(coder:) has not been implemented")
         }
 
-        func setRecipient(_ recipient: Recipient) {
+        func setRecipient(_ recipient: SendToken.Recipient) {
             recipientView.setRecipient(recipient)
         }
 
@@ -39,7 +39,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         // MARK: - BECollectionViewCell implementation
         func setUp(with item: AnyHashable?) {
-            guard let recipient = item as? Recipient else {return}
+            guard let recipient = item as? SendToken.Recipient else {return}
             recipientView.setRecipient(recipient)
         }
         
@@ -82,7 +82,7 @@ final class RecipientView: UIStackView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setRecipient(_ recipient: Recipient) {
+    func setRecipient(_ recipient: SendToken.Recipient) {
         titleLabel.text = recipient.name ?? recipient.address.truncatingMiddle(numOfSymbolsRevealed: 13, numOfSymbolsRevealedInSuffix: 4)
         recipientIcon.image = .emptyUserAvatar
         descriptionLabel.textColor = .textSecondary

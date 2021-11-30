@@ -22,7 +22,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Subviews
         private lazy var titleView = TitleView(forConvenience: ())
         private lazy var addressInputView = AddressInputView(viewModel: viewModel)
-        private lazy var addressView = AddressView(forConvenience: ())
+        private lazy var addressView = RecipientView()
         private lazy var recipientCollectionView: RecipientsCollectionView = {
             let collectionView = RecipientsCollectionView(recipientsListViewModel: viewModel.recipientsListViewModel)
             collectionView.delegate = self
@@ -104,7 +104,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .stateObservable
                 .asDriver(onErrorJustReturn: .initializing)
                 .map {[weak self] in
-                    $0 == .loaded && self?.viewModel.recipientsListViewModel.getData(type: Recipient.self).count == 0 && self?.addressInputView.textField.text?.isEmpty == false
+                    $0 == .loaded && self?.viewModel.recipientsListViewModel.getData(type: SendToken.Recipient.self).count == 0 && self?.addressInputView.textField.text?.isEmpty == false
                 }
                 .map {!$0}
                 .drive(noAddressView.rx.isHidden)
@@ -129,7 +129,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
-        guard let recipient = item as? Recipient else {return}
+        guard let recipient = item as? SendToken.Recipient else {return}
         viewModel.selectRecipient(recipient)
     }
 }

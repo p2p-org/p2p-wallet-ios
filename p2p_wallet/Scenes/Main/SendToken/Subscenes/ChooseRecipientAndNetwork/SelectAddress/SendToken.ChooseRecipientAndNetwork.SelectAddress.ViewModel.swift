@@ -16,7 +16,7 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
     func userDidEnterAddress(_ address: String?)
-    func selectRecipient(_ recipient: Recipient)
+    func selectRecipient(_ recipient: SendToken.Recipient)
 }
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
@@ -57,7 +57,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         recipientsListViewModel.reload()
     }
     
-    func selectRecipient(_ recipient: Recipient) {
+    func selectRecipient(_ recipient: SendToken.Recipient) {
         let type: SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressType
         if let name = recipient.name {
             type = .resolvedName(name: name, address: recipient.address)
