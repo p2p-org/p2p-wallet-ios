@@ -19,9 +19,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         // MARK: - Subviews
         private lazy var titleView = TitleView(forConvenience: ())
-        private lazy var addressInputView = AddressInputView(forConvenience: ())
+        private lazy var addressInputView = AddressInputView(viewModel: viewModel)
         private lazy var addressView = AddressView(forConvenience: ())
-        // private lazy var collectionView
+        private lazy var collectionView = UILabel(text: "collection")
         private lazy var networkView = NetworkView(forConvenience: ())
         
         // MARK: - Initializer
@@ -37,11 +37,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             bind()
         }
         
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-            addressInputView.textField.becomeFirstResponder()
-        }
-        
         // MARK: - Layout
         private func layout() {
             scrollView.contentInset.modify(dTop: -.defaultPadding)
@@ -54,11 +49,37 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
                 BEStackViewSpacing(18)
                 networkView
+                collectionView
             }
         }
         
         private func bind() {
+            // input state
+            let isEnteringDriver = viewModel.inputStateDriver.map {$0.isEntering}
             
+            isEnteringDriver.map {!$0}
+                .drive(titleView.scanQrCodeButton.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isEnteringDriver.map {!$0}
+                .drive(titleView.pasteQrCodeButton.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isEnteringDriver.map {!$0}
+                .drive(addressInputView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isEnteringDriver
+                .drive(addressView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isEnteringDriver.map {!$0}
+                .drive(collectionView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            isEnteringDriver
+                .drive(networkView.rx.isHidden)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Actions
