@@ -44,6 +44,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         // MARK: - Layout
         private func layout() {
+            scrollView.contentInset.modify(dTop: -.defaultPadding)
             stackView.addArrangedSubviews {
                 UIView.floatingPanel {
                     titleView
