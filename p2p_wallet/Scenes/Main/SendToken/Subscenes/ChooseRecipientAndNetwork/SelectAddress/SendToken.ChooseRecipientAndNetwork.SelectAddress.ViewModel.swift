@@ -12,7 +12,9 @@ import RxCocoa
 protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?> {get}
     var inputStateDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState> {get}
+    
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
+    func userDidEnterAddress(_ address: String?)
 }
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
@@ -39,5 +41,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     // MARK: - Actions
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene) {
         navigationSubject.accept(scene)
+    }
+    
+    func userDidEnterAddress(_ address: String?) {
+        inputStateSubject.accept(.entering(address))
     }
 }

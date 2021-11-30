@@ -7,15 +7,18 @@
 
 import Foundation
 import UIKit
+import RxSwift
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     final class AddressInputView: UIStackView {
         // MARK: - Dependencies
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
+        private let disposeBag = DisposeBag()
         
         // MARK: - Subviews
         lazy var textField = createTextField()
         lazy var clearButton = UIImageView(width: 17, height: 17, image: .crossIcon)
+            .onTap(self, action: #selector(clearButtonDidTouch))
         
         // MARK: - Initializers
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
@@ -42,15 +45,32 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         
         private func bind() {
+            textField.rx.text
+                .map {$0 == nil || $0?.isEmpty == true}
+                .asDriver(onErrorJustReturn: true)
+                .drive(clearButton.rx.isHidden)
+                .disposed(by: disposeBag)
             
+            textField.rx.text
+                .subscribe(onNext: {[weak self] address in
+                    self?.viewModel.userDidEnterAddress(address)
+                })
+                .disposed(by: disposeBag)
+        }
+        
+        // MARK: - Actions
+        @objc private func clearButtonDidTouch() {
+            textField.text = nil
+            textField.sendActions(for: .editingChanged)
         }
         
         // MARK: - Helpers
         private func createTextField() -> UITextField {
             let textField = UITextField(
                 backgroundColor: .clear,
+                font: .systemFont(ofSize: 15, weight: .medium),
                 placeholder: nil,
-                autocorrectionType: .none,
+                autocorrectionType: .no,
                 autocapitalizationType: UITextAutocapitalizationType.none,
                 spellCheckingType: .no
             )
@@ -61,7 +81,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     .font: UIFont.systemFont(ofSize: 15, weight: .medium)
                 ]
             )
-            textField.font = .systemFont(ofSize: 15, weight: .medium)
             return textField
         }
     }
