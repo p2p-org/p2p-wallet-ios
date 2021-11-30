@@ -128,13 +128,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             
             // address
             viewModel.inputStateDriver
-                .drive(onNext: {[weak self] state in
-                    switch state {
-                    case .entering(let key):
-                        break
-                    case .selected(let recipient):
-                        self?.recipientView.setRecipient(recipient)
-                    }
+                .map {$0.recipient}
+                .drive(onNext: {[weak self] recipient in
+                    guard let recipient = recipient else {return}
+                    self?.recipientView.setRecipient(recipient)
                 })
                 .disposed(by: disposeBag)
         }
@@ -145,7 +142,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         
         @objc private func clearRecipientButtonDidTouch() {
-            viewModel.userDidEnterAddress(addressInputView.textField.text)
+            viewModel.userDidEnterAddress(nil)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                 self?.addressInputView.textField.becomeFirstResponder()
             }
@@ -157,5 +154,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView: BECollecti
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let recipient = item as? SendToken.Recipient else {return}
         viewModel.selectRecipient(recipient)
+        endEditing(true)
     }
 }
