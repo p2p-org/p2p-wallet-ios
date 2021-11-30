@@ -65,47 +65,41 @@ extension SendToken.ChooseTokenAndAmount {
         
         // MARK: - Layout
         private func layout() {
-            // panel
-            let panel = WLFloatingPanelView(contentInset: .init(all: 18))
-            panel.stackView.axis = .vertical
-            panel.stackView.alignment = .fill
-            panel.stackView.addArrangedSubviews {
-                UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
-                    UILabel(text: L10n.from, textSize: 15, weight: .medium)
-                    UIView.spacer
-                    walletImageView
-                        .onTap(self, action: #selector(useAllBalance))
-                    balanceLabel
-                        .onTap(self, action: #selector(useAllBalance))
-                    UILabel(text: L10n.max.uppercased(), textSize: 15, weight: .medium, textColor: .h5887ff)
-                        .onTap(self, action: #selector(useAllBalance))
-                }
-                UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
-                    UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
-                        coinLogoImageView
-                            .withContentHuggingPriority(.required, for: .horizontal)
-                        coinSymbolLabel
-                            .withContentHuggingPriority(.required, for: .horizontal)
-                        UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
-                            .withContentHuggingPriority(.required, for: .horizontal)
-                    }
-                        .onTap(self, action: #selector(chooseWallet))
-                    amountTextField
-                }
-                UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
-                    UIView.spacer
-                    UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
-                        equityValueLabel
-                        UIImageView(width: 20, height: 20, image: .arrowUpDown)
-                    }
-                        .padding(.init(x: 18, y: 8), cornerRadius: 12)
-                        .border(width: 1, color: .defaultBorder)
-                        .onTap(self, action: #selector(toggleCurrencyMode))
-                }
-            }
-            
             let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
-                panel
+                UIView.floatingPanel {
+                    UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
+                        UILabel(text: L10n.from, textSize: 15, weight: .medium)
+                        UIView.spacer
+                        walletImageView
+                            .onTap(self, action: #selector(useAllBalance))
+                        balanceLabel
+                            .onTap(self, action: #selector(useAllBalance))
+                        UILabel(text: L10n.max.uppercased(), textSize: 15, weight: .medium, textColor: .h5887ff)
+                            .onTap(self, action: #selector(useAllBalance))
+                    }
+                    UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
+                        UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
+                            coinLogoImageView
+                                .withContentHuggingPriority(.required, for: .horizontal)
+                            coinSymbolLabel
+                                .withContentHuggingPriority(.required, for: .horizontal)
+                            UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
+                                .withContentHuggingPriority(.required, for: .horizontal)
+                        }
+                            .onTap(self, action: #selector(chooseWallet))
+                        amountTextField
+                    }
+                    UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
+                        UIView.spacer
+                        UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
+                            equityValueLabel
+                            UIImageView(width: 20, height: 20, image: .arrowUpDown)
+                        }
+                            .padding(.init(x: 18, y: 8), cornerRadius: 12)
+                            .border(width: 1, color: .defaultBorder)
+                            .onTap(self, action: #selector(toggleCurrencyMode))
+                    }
+                }
                 UIView.spacer
                 actionButton
             }
