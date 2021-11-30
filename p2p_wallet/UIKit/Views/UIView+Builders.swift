@@ -76,6 +76,7 @@ extension UIView {
     /// Floating panel
     static func floatingPanel(
         contentInset: UIEdgeInsets = .init(all: 18),
+        cornerRadius: CGFloat = 12,
         axis: NSLayoutConstraint.Axis = .vertical,
         spacing: CGFloat = 8,
         alignment: UIStackView.Alignment = .fill,
@@ -83,6 +84,7 @@ extension UIView {
         @BEStackViewBuilder builder: () -> [BEStackViewElement]
     ) -> UIView {
         let panel = WLFloatingPanelView(contentInset: contentInset)
+        panel.layer.cornerRadius = cornerRadius
         panel.stackView.axis = axis
         panel.stackView.spacing = spacing
         panel.stackView.alignment = alignment
