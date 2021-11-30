@@ -80,7 +80,7 @@ class WLSegmentedPagesVC: BEPagesVC {
     }
     
     func hideSegmentedControl() {
-        segmentedControl.isHidden = true
+        segmentedControl.superview?.isHidden = true
     }
     
     func disableScrolling() {
