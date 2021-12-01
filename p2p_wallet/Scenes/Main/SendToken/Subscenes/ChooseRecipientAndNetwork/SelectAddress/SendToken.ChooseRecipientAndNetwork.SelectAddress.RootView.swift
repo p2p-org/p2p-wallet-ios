@@ -35,12 +35,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             collectionView.delegate = self
             return collectionView
         }()
-        private lazy var networkView: NetworkView = {
-            let view = NetworkView(viewModel: viewModel)
-            view.stackView.addArrangedSubview(UIView.defaultNextArrow())
-            return view
-                .onTap(self, action: #selector(networkViewDidTouch))
-        }()
+        private lazy var networkView = _NetworkView(viewModel: viewModel)
+            .onTap(self, action: #selector(networkViewDidTouch))
         private lazy var errorView = UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
             UIImageView(width: 44, height: 44, image: .errorUserAvatar)
             errorLabel
@@ -146,14 +142,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     self?.recipientView.setHighlighted()
                 })
                 .disposed(by: disposeBag)
-            
-            // network
-            viewModel.networkDriver
-                .withLatestFrom(viewModel.feeDriver) {($0, $1)}
-                .drive(onNext: {[weak self] network, fee in
-                    self?.networkView.setUp(network: network, fee: fee)
-                })
-                .disposed(by: disposeBag)
         }
         
         // MARK: - Actions
@@ -166,6 +154,29 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         @objc private func networkViewDidTouch() {
             viewModel.navigate(to: .chooseNetwork)
+        }
+    }
+    
+    private class _NetworkView: WLFloatingPanelView {
+        private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
+        private let _networkView = NetworkView()
+        private let disposeBag = DisposeBag()
+        
+        init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
+            self.viewModel = viewModel
+            super.init(contentInset: .init(all: 18))
+            _networkView.addArrangedSubview(UIView.defaultNextArrow())
+            stackView.addArrangedSubview(_networkView)
+            bind()
+        }
+        
+        private func bind() {
+            viewModel.networkDriver
+                .withLatestFrom(viewModel.feeDriver) {($0, $1)}
+                .drive(onNext: {[weak self] network, fee in
+                    self?._networkView.setUp(network: network, fee: fee, renBTCPrice: self?.viewModel.getRenBTCPrice() ?? 0)
+                })
+                .disposed(by: disposeBag)
         }
     }
 }
