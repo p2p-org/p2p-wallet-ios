@@ -51,7 +51,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         private func findRecipientBy(address: String) -> Single<[SendToken.Recipient]> {
-            nameService
+            if NSRegularExpression.bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()).matches(address) {
+                return .just([.init(address: address, shortAddress: addressFormatter.shortAddress(of: address), name: nil, hasNoFunds: false)])
+            }
+            return nameService
                 .getName(address)
                 .flatMap {[weak self] name -> Single<(String?, Bool)> in
                     guard let self = self, name == nil else {return .just((name, false))}
