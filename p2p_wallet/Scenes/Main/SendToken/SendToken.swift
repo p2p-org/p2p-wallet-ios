@@ -22,4 +22,21 @@ struct SendToken {
         let name: String?
         let hasNoFunds: Bool
     }
+    
+    enum Network {
+        case solana, bitcoin
+        var icon: UIImage {
+            switch self {
+            case .solana:
+                return .squircleSolanaIcon
+            case .bitcoin:
+                return .squircleBitcoinIcon
+            }
+        }
+    }
+    
+    struct Fee {
+        let amount: Double
+        let unit: String
+    }
 }
