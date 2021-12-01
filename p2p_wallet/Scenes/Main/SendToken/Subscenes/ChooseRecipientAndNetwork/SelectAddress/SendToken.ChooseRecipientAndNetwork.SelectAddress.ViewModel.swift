@@ -13,10 +13,22 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var recipientsListViewModel: SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel {get}
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?> {get}
     var inputStateDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState> {get}
+    var searchTextDriver: Driver<String?> {get}
+    var recipientDriver: Driver<SendToken.Recipient?> {get}
     
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
-    func userDidEnterAddress(_ address: String?)
+    
+    func userDidTapPaste()
+    func search(_ address: String?)
+    
     func selectRecipient(_ recipient: SendToken.Recipient)
+    func clearRecipient()
+}
+
+extension SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
+    func clearSearching() {
+        search(nil)
+    }
 }
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
@@ -33,7 +45,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let inputStateSubject = BehaviorRelay<InputState>(value: .entering(nil))
+        private let inputStateSubject = BehaviorRelay<InputState>(value: .searching)
+        private let searchTextSubject = BehaviorRelay<String?>(value: nil)
+        private let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
     }
 }
 
@@ -46,13 +60,25 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         inputStateSubject.asDriver()
     }
     
+    var searchTextDriver: Driver<String?> {
+        searchTextSubject.asDriver()
+    }
+    
+    var recipientDriver: Driver<SendToken.Recipient?> {
+        recipientSubject.asDriver()
+    }
+    
     // MARK: - Actions
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene) {
         navigationSubject.accept(scene)
     }
     
-    func userDidEnterAddress(_ address: String?) {
-        inputStateSubject.accept(.entering(address))
+    func userDidTapPaste() {
+        search(UIPasteboard.general.string)
+    }
+    
+    func search(_ address: String?) {
+        searchTextSubject.accept(address)
         if recipientsListViewModel.searchString != address {
             recipientsListViewModel.searchString = address
             recipientsListViewModel.reload()
@@ -60,6 +86,12 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     func selectRecipient(_ recipient: SendToken.Recipient) {
-        inputStateSubject.accept(.selected(recipient))
+        recipientSubject.accept(recipient)
+        inputStateSubject.accept(.recipientSelected)
+    }
+    
+    func clearRecipient() {
+        inputStateSubject.accept(.searching)
+        recipientSubject.accept(nil)
     }
 }

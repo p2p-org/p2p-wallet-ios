@@ -46,24 +46,29 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         private func bind() {
             textField.rx.text
-                .map {$0 == nil || $0?.isEmpty == true}
-                .asDriver(onErrorJustReturn: true)
-                .drive(clearButton.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            textField.rx.text
                 .distinctUntilChanged()
                 .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
                 .subscribe(onNext: {[weak self] address in
-                    self?.viewModel.userDidEnterAddress(address)
+                    self?.viewModel.search(address)
                 })
+                .disposed(by: disposeBag)
+            
+            viewModel.searchTextDriver
+                .distinctUntilChanged()
+                .drive(textField.rx.text)
+                .disposed(by: disposeBag)
+            
+            viewModel.searchTextDriver
+                .distinctUntilChanged()
+                .map {$0 == nil || $0?.isEmpty == true}
+                .asDriver(onErrorJustReturn: true)
+                .drive(clearButton.rx.isHidden)
                 .disposed(by: disposeBag)
         }
         
         // MARK: - Actions
         @objc func clearButtonDidTouch() {
-            textField.text = nil
-            textField.sendActions(for: .editingChanged)
+            viewModel.clearSearching()
         }
         
         // MARK: - Helpers
