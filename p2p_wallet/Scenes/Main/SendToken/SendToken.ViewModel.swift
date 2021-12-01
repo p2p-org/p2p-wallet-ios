@@ -73,6 +73,9 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     func createChooseRecipientAndNetworkViewModel() -> SendTokenChooseRecipientAndNetworkViewModelType {
         let vm = SendToken.ChooseRecipientAndNetwork.ViewModel()
         vm.solanaAPIClient = solanaAPIClient
+        vm.repository = walletsRepository
+        vm.selectedWalletPubkey = selectedWalletPubkey
+        vm.selectedAmount = selectedAmount
         return vm
     }
     

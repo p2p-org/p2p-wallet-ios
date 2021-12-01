@@ -40,6 +40,13 @@ extension SendToken.ChooseRecipientAndNetwork {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
+            // navigation bar
+            let amount = viewModel.getSelectedAmount() ?? 0
+            let symbol = viewModel.getSelectedWallet()?.token.symbol ?? ""
+            let title = L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
+            navigationBar.titleLabel.text = title
+            
+            // container
             let containerView = UIView(forAutoLayout: ())
             view.addSubview(containerView)
             containerView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)

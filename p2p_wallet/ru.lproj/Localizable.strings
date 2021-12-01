@@ -628,3 +628,4 @@
 "This address has no funds" = "На этом адресе нет средств";
 "Caution: this address has no funds" = "Внимание: на этом адресе нет средств";
 "There is an error occurred, please try again" = "Произошла ошибка, попробуйте еще раз";
+"Send %@ %@" = "Отправить %@ %@";
