@@ -33,6 +33,7 @@ extension CreateOrRestoreReserveName {
             textColor: .h8e8e93
         )
         private let usernameHintLabel = TopAlignLabel(textSize: 13, weight: .regular, numberOfLines: 0)
+        private let usernameLoadingView = LoadingView()
         private lazy var nextButton = WLStepButton.main(text: L10n.resetAndTryAgain)
             .onTap(self, action: #selector(buttonNextDidTouch))
         private let descriptionLabel = UILabel()
@@ -139,6 +140,7 @@ extension CreateOrRestoreReserveName {
                 separatorView
                 BEStackViewSpacing(8)
                 usernameHintLabel
+                usernameLoadingView
                 BEStackViewSpacing(12)
                 UIView.greyBannerView {
                     descriptionLabel
@@ -179,6 +181,17 @@ extension CreateOrRestoreReserveName {
                     isPosting ? self?.showIndetermineHud(): self?.hideHud()
                 }
                 .disposed(by: disposeBag)
+
+            viewModel.usernameValidationLoadingDriver
+                .drive { [weak self] isLoading in
+                    self?.setHintIsLoading(isLoading)
+                }
+                .disposed(by: disposeBag)
+        }
+
+        private func setHintIsLoading(_ isLoading: Bool) {
+            usernameLoadingView.isHidden = !isLoading
+            usernameHintLabel.isHidden = isLoading
         }
 
         private func setHintContent(for state: TextFieldState) {

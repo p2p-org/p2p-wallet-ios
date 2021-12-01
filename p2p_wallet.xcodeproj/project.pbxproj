@@ -40,6 +40,7 @@
 		417DC9172725A45F0048106B /* SelectRecipient.RecipientCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417DC9162725A45F0048106B /* SelectRecipient.RecipientCell.swift */; };
 		417DC9192726F2780048106B /* RecipientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417DC9182726F2780048106B /* RecipientView.swift */; };
 		417EB68927480FA700856C6E /* AgreeTermsAndConditionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417EB68827480FA700856C6E /* AgreeTermsAndConditionsView.swift */; };
+		4183007827576450007BBEBF /* CreateOrRestoreReserveName.LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4183007727576450007BBEBF /* CreateOrRestoreReserveName.LoadingView.swift */; };
 		41CA05752754725200953322 /* CreateOrRestoreReserveName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05712754725200953322 /* CreateOrRestoreReserveName.swift */; };
 		41CA05762754725200953322 /* CreateOrRestoreReserveName.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05722754725200953322 /* CreateOrRestoreReserveName.ViewController.swift */; };
 		41CA05772754725200953322 /* CreateOrRestoreReserveName.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05732754725200953322 /* CreateOrRestoreReserveName.ViewModel.swift */; };
@@ -482,6 +483,7 @@
 		417DC9162725A45F0048106B /* SelectRecipient.RecipientCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRecipient.RecipientCell.swift; sourceTree = "<group>"; };
 		417DC9182726F2780048106B /* RecipientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipientView.swift; sourceTree = "<group>"; };
 		417EB68827480FA700856C6E /* AgreeTermsAndConditionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgreeTermsAndConditionsView.swift; sourceTree = "<group>"; };
+		4183007727576450007BBEBF /* CreateOrRestoreReserveName.LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreReserveName.LoadingView.swift; sourceTree = "<group>"; };
 		41CA05712754725200953322 /* CreateOrRestoreReserveName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreReserveName.swift; sourceTree = "<group>"; };
 		41CA05722754725200953322 /* CreateOrRestoreReserveName.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreReserveName.ViewController.swift; sourceTree = "<group>"; };
 		41CA05732754725200953322 /* CreateOrRestoreReserveName.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreReserveName.ViewModel.swift; sourceTree = "<group>"; };
@@ -1008,6 +1010,7 @@
 				41CA05792754800D00953322 /* CreateOrRestoreReserveName.NavigationBar.swift */,
 				41CA057D2754A77500953322 /* CreateOrRestoreReserveName.TextFieldState.swift */,
 				41CA05812754BDD700953322 /* CreateOrRestoreReserveName.MainButtonState.swift */,
+				4183007727576450007BBEBF /* CreateOrRestoreReserveName.LoadingView.swift */,
 			);
 			path = ReserveName;
 			sourceTree = "<group>";
@@ -2496,6 +2499,7 @@
 				BC185EFC26E4BF3300280FE6 /* UIFont+Extensions.swift in Sources */,
 				BCCF23C826FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift in Sources */,
 				BC38555E26AE9A2B00BD8BF7 /* ChooseWallet.CollectionView.swift in Sources */,
+				4183007827576450007BBEBF /* CreateOrRestoreReserveName.LoadingView.swift in Sources */,
 				412DBFDD273D7B81000F514E /* EnterSeed.ViewController.swift in Sources */,
 				BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */,
 				86A90D18273D306400D180EF /* VerifySecurityKeys.ViewController.swift in Sources */,

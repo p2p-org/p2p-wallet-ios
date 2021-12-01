@@ -16,6 +16,7 @@ protocol NewReserveNameViewModelType: AnyObject {
     var textFieldStateDriver: Driver<CreateOrRestoreReserveName.TextFieldState> { get }
     var mainButtonStateDriver: Driver<CreateOrRestoreReserveName.MainButtonState> { get }
     var textFieldTextSubject: BehaviorRelay<String?> { get }
+    var usernameValidationLoadingDriver: Driver<Bool> { get }
     var isLoadingDriver: Driver<Bool> { get }
 
     func showTermsOfUse()
@@ -51,6 +52,7 @@ extension CreateOrRestoreReserveName {
         private let textFieldStateSubject = BehaviorRelay<TextFieldState>(value: .empty)
         private let mainButtonStateSubject = BehaviorRelay<CreateOrRestoreReserveName.MainButtonState>(value: .empty)
         let textFieldTextSubject = BehaviorRelay<String?>(value: nil)
+        private let usernameValidationLoadingSubject = BehaviorRelay<Bool>(value: false)
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
 
         init(
@@ -83,12 +85,17 @@ extension CreateOrRestoreReserveName {
                 return setEmptyState()
             }
 
+            usernameValidationLoadingSubject.accept(true)
+
             nameAvailabilityDisposable = nameService.isNameAvailable(string)
-                .subscribe(onSuccess: {  [weak self] in
-                    let state: TextFieldState = $0 ? .available(name: string) : .unavailable(name: string)
-                    self?.textFieldStateSubject.accept(state)
-                    self?.mainButtonStateSubject.accept($0 ? .canContinue : .unavailableUsername)
-                })
+                .subscribe(
+                    onSuccess: { [weak self] in
+                        let state: TextFieldState = $0 ? .available(name: string) : .unavailable(name: string)
+                        self?.textFieldStateSubject.accept(state)
+                        self?.mainButtonStateSubject.accept($0 ? .canContinue : .unavailableUsername)
+                        self?.usernameValidationLoadingSubject.accept(false)
+                    }
+                )
         }
 
         private func setEmptyState() {
@@ -151,6 +158,10 @@ extension CreateOrRestoreReserveName {
 }
 
 extension CreateOrRestoreReserveName.ViewModel: NewReserveNameViewModelType {
+    var usernameValidationLoadingDriver: Driver<Bool> {
+        usernameValidationLoadingSubject.asDriver()
+    }
+
     func skipButtonPressed() {
         navigationSubject.accept(
             .skipAlert({ [weak self] in
