@@ -22,6 +22,7 @@ extension CreateOrRestoreReserveName {
 
             axis = .horizontal
             spacing = 8
+            alignment = .top
 
             addArrangedSubview(indicatorView)
             addArrangedSubview(label)

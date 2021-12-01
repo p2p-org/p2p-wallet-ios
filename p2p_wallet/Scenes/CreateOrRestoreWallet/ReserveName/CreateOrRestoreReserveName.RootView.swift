@@ -109,6 +109,12 @@ extension CreateOrRestoreReserveName {
                 }
             )
 
+            let textFieldStackView = UIStackView(axis: .horizontal) {
+                textView
+                usernameSuffixLabel
+                BEStackViewSpacing(12)
+            }
+
             addSubview(navigationBar)
             addSubview(scrollView)
             addSubview(nextButton)
@@ -125,21 +131,14 @@ extension CreateOrRestoreReserveName {
             usernameSuffixLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
             usernameSuffixLabel.setContentHuggingPriority(.required, for: .horizontal)
             usernameHintLabel.autoSetDimension(.height, toSize: 32)
-
-            // arranged subviews
             separatorView.autoSetDimension(.height, toSize: 1)
-
-            let textFieldStackView = UIStackView(axis: .horizontal) {
-                textView
-                usernameSuffixLabel
-                BEStackViewSpacing(12)
-            }
 
             stackView.addArrangedSubviews {
                 textFieldStackView
                 separatorView
                 BEStackViewSpacing(8)
                 usernameHintLabel
+                BEStackViewSpacing(12)
                 usernameLoadingView
                 BEStackViewSpacing(12)
                 UIView.greyBannerView {
@@ -148,6 +147,8 @@ extension CreateOrRestoreReserveName {
                 BEStackViewSpacing(18)
                 agreeTermsAndPolicyView
             }
+
+            usernameLoadingView.autoMatch(.height, to: .height, of: usernameHintLabel)
 
             stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 0))
 
