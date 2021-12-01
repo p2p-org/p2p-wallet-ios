@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
-    final class NetworkView: UIStackView {
+    class NetworkView: UIStackView {
         // MARK: - Dependencies
         private let disposeBag = DisposeBag()
         
