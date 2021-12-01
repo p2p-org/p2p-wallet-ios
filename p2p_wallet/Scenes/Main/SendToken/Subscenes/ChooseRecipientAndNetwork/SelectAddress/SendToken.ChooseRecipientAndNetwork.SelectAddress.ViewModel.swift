@@ -15,6 +15,8 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var inputStateDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState> {get}
     var searchTextDriver: Driver<String?> {get}
     var recipientDriver: Driver<SendToken.Recipient?> {get}
+    var networkDriver: Driver<SendToken.Network> {get}
+    var feeDriver: Driver<SendToken.Fee> {get}
     
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
     
@@ -41,6 +43,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         
         // MARK: - Properties
+        private let disposeBag = DisposeBag()
         let recipientsListViewModel = RecipientsListViewModel()
         
         // MARK: - Subject
@@ -48,6 +51,26 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private let inputStateSubject = BehaviorRelay<InputState>(value: .searching)
         private let searchTextSubject = BehaviorRelay<String?>(value: nil)
         private let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
+        private let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
+        private let feeSubject = BehaviorRelay<SendToken.Fee>(value: .init(amount: 0, unit: "$"))
+        
+        init() {
+            bind()
+        }
+        
+        private func bind() {
+            networkSubject
+                .skip(1)
+                .subscribe(onNext: {[weak self] network in
+                    switch network {
+                    case .solana:
+                        self?.feeSubject.accept(.init(amount: 0, unit: "$"))
+                    case .bitcoin:
+                        self?.feeSubject.accept(.init(amount: 0.0002, unit: "renBTC"))
+                    }
+                })
+                .disposed(by: disposeBag)
+        }
     }
 }
 
@@ -66,6 +89,14 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     var recipientDriver: Driver<SendToken.Recipient?> {
         recipientSubject.asDriver()
+    }
+    
+    var networkDriver: Driver<SendToken.Network> {
+        networkSubject.asDriver()
+    }
+    
+    var feeDriver: Driver<SendToken.Fee> {
+        feeSubject.asDriver()
     }
     
     // MARK: - Actions
