@@ -41,10 +41,17 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else {return}
             switch scene {
-            case .detail:
-//                let vc = Detail.ViewController()
-//                present(vc, completion: nil)
-                break
+            case .scanQrCode:
+                let vc = QrCodeScannerVC()
+                vc.callback = { [weak self] code in
+                    if NSRegularExpression.publicKey.matches(code) {
+                        self?.viewModel.search(code)
+                        return true
+                    }
+                    return false
+                }
+                vc.modalPresentationStyle = .custom
+                self.present(vc, animated: true, completion: nil)
             }
         }
     }

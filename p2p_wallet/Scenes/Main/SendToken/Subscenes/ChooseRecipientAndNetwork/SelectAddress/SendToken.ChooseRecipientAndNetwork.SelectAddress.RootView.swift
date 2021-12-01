@@ -20,7 +20,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
         
         // MARK: - Subviews
-        private lazy var titleView = TitleView(forConvenience: ())
+        private lazy var titleView = TitleView(viewModel: viewModel)
         private lazy var addressInputView = AddressInputView(viewModel: viewModel)
         private lazy var recipientView: RecipientView = {
             let view = RecipientView()
@@ -80,30 +80,23 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         private func bind() {
             // input state
-            let isEnteringDriver = viewModel.inputStateDriver.map {$0.isEntering}
+            let isSearchingDriver = viewModel.inputStateDriver
+                .map {$0 == .searching}
                 .distinctUntilChanged()
             
-            isEnteringDriver.map {!$0}
-                .drive(titleView.scanQrCodeButton.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            isEnteringDriver.map {!$0}
-                .drive(titleView.pasteQrCodeButton.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            isEnteringDriver.map {!$0}
+            isSearchingDriver.map {!$0}
                 .drive(addressInputView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            isEnteringDriver
+            isSearchingDriver
                 .drive(recipientView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            isEnteringDriver.map {!$0}
+            isSearchingDriver.map {!$0}
                 .drive(recipientCollectionView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            isEnteringDriver
+            isSearchingDriver
                 .drive(networkView.rx.isHidden)
                 .disposed(by: disposeBag)
             
@@ -117,7 +110,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .drive(noAddressView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            isEnteringDriver
+            isSearchingDriver
                 .skip(1)
                 .drive(onNext: {[weak self] _ in
                     UIView.animate(withDuration: 0.3) {
@@ -127,8 +120,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .disposed(by: disposeBag)
             
             // address
-            viewModel.inputStateDriver
-                .map {$0.recipient}
+            viewModel.recipientDriver
                 .drive(onNext: {[weak self] recipient in
                     guard let recipient = recipient else {return}
                     self?.recipientView.setRecipient(recipient)
@@ -137,12 +129,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         
         // MARK: - Actions
-        @objc private func showDetail() {
-            viewModel.navigate(to: .detail)
-        }
-        
         @objc private func clearRecipientButtonDidTouch() {
-            addressInputView.clearButtonDidTouch()
+            viewModel.clearRecipient()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                 self?.addressInputView.textField.becomeFirstResponder()
             }

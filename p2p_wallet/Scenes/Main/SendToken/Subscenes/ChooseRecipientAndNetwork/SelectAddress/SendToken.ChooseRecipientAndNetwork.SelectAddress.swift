@@ -11,30 +11,12 @@ import RxCocoa
 extension SendToken.ChooseRecipientAndNetwork {
     struct SelectAddress {
         enum NavigatableScene {
-            case detail
+            case scanQrCode
         }
         
         enum InputState: Equatable {
-            case entering(String?)
-            case selected(SendToken.Recipient)
-            
-            var isEntering: Bool {
-                switch self {
-                case .entering:
-                    return true
-                default:
-                    return false
-                }
-            }
-            
-            var recipient: SendToken.Recipient? {
-                switch self {
-                case .selected(let recipient):
-                    return recipient
-                default:
-                    return nil
-                }
-            }
+            case searching
+            case recipientSelected
         }
     }
 }
