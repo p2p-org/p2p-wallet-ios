@@ -13,6 +13,18 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Dependencies
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
         
+        // MARK: - Subviews
+        private lazy var networkViews: [NetworkView] = {
+            var networkViews = viewModel.getSelectableNetwork()
+                .map {network -> NetworkView in
+                    let view = NetworkView(viewModel: viewModel)
+                    view.setUp(network: network, fee: network.defaultFee)
+                    return view
+                }
+            
+            return networkViews
+        }()
+        
         // MARK: - Initializer
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
             self.viewModel = viewModel
@@ -30,21 +42,19 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             view.addSubview(rootView)
             rootView.autoPinEdge(.top, to: .bottom, of: navigationBar)
             rootView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-            
+            rootView.stackView.spacing = 0
             rootView.stackView.addArrangedSubviews {
                 UIView.greyBannerView {
                     UILabel(text: L10n.P2PWaletWillAutomaticallyMatchYourWithdrawalTargetAddressToTheCorrectNetworkForMostWithdrawals.howeverBeforeSendingYourFundsMakeSureToDoubleCheckTheSelectedNetwork, textSize: 15, numberOfLines: 0)
                 }
                 
-                BEStackViewSpacing(35)
+                BEStackViewSpacing(10)
             }
             
             // networks
-            let selectableNetworks = viewModel.getSelectableNetwork()
-//            for network in selectableNetworks {
-//                let view = SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView()
-//                view.setUp(network: <#T##SendToken.Network#>, fee: <#T##SendToken.Fee#>)
-//            }
+            rootView.stackView.addArrangedSubviews(
+                networkViews.map {$0.padding(.init(x: 0, y: 26))}
+            )
         }
     }
 }

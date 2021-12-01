@@ -58,7 +58,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private let searchTextSubject = BehaviorRelay<String?>(value: nil)
         private let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
         private let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
-        private let feeSubject = BehaviorRelay<SendToken.Fee>(value: .init(amount: 0, unit: "$"))
+        private let feeSubject = BehaviorRelay<SendToken.Fee>(value: SendToken.Network.solana.defaultFee)
         
         init() {
             bind()

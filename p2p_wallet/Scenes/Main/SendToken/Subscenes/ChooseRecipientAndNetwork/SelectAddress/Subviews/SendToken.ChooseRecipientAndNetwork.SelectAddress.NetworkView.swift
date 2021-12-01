@@ -30,7 +30,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     networkNameLabel
                     descriptionLabel
                 }
-                UIView.defaultNextArrow()
             }
         }
         
