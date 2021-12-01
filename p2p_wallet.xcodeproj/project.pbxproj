@@ -320,7 +320,6 @@
 		BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */; };
 		BCA7D83727290F33007B070A /* SelectRecipient.RecipientsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA7D83627290F33007B070A /* SelectRecipient.RecipientsListViewModel.swift */; };
 		BCA7D83927291BCE007B070A /* SelectRecipient.RecipientsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA7D83827291BCE007B070A /* SelectRecipient.RecipientsCollectionView.swift */; };
-		BCA7D83B272A6F89007B070A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BCA7D83A272A6F89007B070A /* GoogleService-Info.plist */; };
 		BCA93F5325E77C240081DDF6 /* TokenSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5025E77C240081DDF6 /* TokenSettingsViewModel.swift */; };
 		BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5125E77C240081DDF6 /* TokenSettingsRootView.swift */; };
 		BCA93F5525E77C240081DDF6 /* TokenSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA93F5225E77C240081DDF6 /* TokenSettingsViewController.swift */; };
@@ -442,6 +441,7 @@
 		BCFEDBFE2727B3D7008AE4AD /* Privacy_policy.txt in Resources */ = {isa = PBXBuildFile; fileRef = BCFEDBFD2727B3D7008AE4AD /* Privacy_policy.txt */; };
 		BCFEDC002727B43C008AE4AD /* WLMarkdownVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFEDBFF2727B43C008AE4AD /* WLMarkdownVC.swift */; };
 		BCFEDC032727F860008AE4AD /* OrcaSwapV2ViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFEDC022727F860008AE4AD /* OrcaSwapV2ViewModelType.swift */; };
+		FD67C51627571EC400AB4E14 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FD67C51527571EC400AB4E14 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -908,6 +908,7 @@
 		CCD9F8F81880F7B23634EBE4 /* Pods-p2p_wallet-p2p_walletUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.release.xcconfig"; sourceTree = "<group>"; };
 		E65B1C647C0DE910BEFF2221 /* Pods-p2p wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p wallet/Pods-p2p wallet.debug.xcconfig"; sourceTree = "<group>"; };
 		FBFCA911E1A96478DD7C04ED /* Pods-p2p_walletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_walletTests.debug.xcconfig"; path = "Target Support Files/Pods-p2p_walletTests/Pods-p2p_walletTests.debug.xcconfig"; sourceTree = "<group>"; };
+		FD67C51527571EC400AB4E14 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "p2p_wallet/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1730,6 +1731,7 @@
 		BCB2230C25412AF8002D997F = {
 			isa = PBXGroup;
 			children = (
+				FD67C51527571EC400AB4E14 /* GoogleService-Info.plist */,
 				BCB2231725412AF8002D997F /* p2p_wallet */,
 				BCB2231625412AF8002D997F /* Products */,
 				14A0B50387D380623394B692 /* Pods */,
@@ -2206,8 +2208,10 @@
 		BCB2230D25412AF8002D997F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = "";
 				LastSwiftUpdateCheck = 1200;
 				LastUpgradeCheck = 1200;
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					BCB2231425412AF8002D997F = {
 						CreatedOnToolsVersion = 12.0.1;
@@ -2251,7 +2255,7 @@
 				BCA9946825AE94D7005BD8FB /* Montserrat-Light.ttf in Resources */,
 				BCA9947425AE94D7005BD8FB /* Montserrat-Italic.ttf in Resources */,
 				BCA9947625AE94D7005BD8FB /* Montserrat-ExtraBoldItalic.ttf in Resources */,
-				BCA7D83B272A6F89007B070A /* GoogleService-Info.plist in Resources */,
+				FD67C51627571EC400AB4E14 /* GoogleService-Info.plist in Resources */,
 				BCA9946C25AE94D7005BD8FB /* Montserrat-Bold.ttf in Resources */,
 				BCA9947125AE94D7005BD8FB /* Montserrat-ExtraBold.ttf in Resources */,
 				BCA9947325AE94D7005BD8FB /* Montserrat-Regular.ttf in Resources */,
