@@ -36,6 +36,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             return collectionView
         }()
         private lazy var networkView = NetworkView(viewModel: viewModel)
+            .onTap(self, action: #selector(networkViewDidTouch))
         private lazy var errorView = UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
             UIImageView(width: 44, height: 44, image: .errorUserAvatar)
             errorLabel
@@ -157,6 +158,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                 self?.addressInputView.textField.becomeFirstResponder()
             }
+        }
+        
+        @objc private func networkViewDidTouch() {
+            viewModel.navigate(to: .chooseNetwork)
         }
     }
 }

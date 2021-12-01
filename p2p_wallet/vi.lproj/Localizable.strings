@@ -630,3 +630,5 @@
 "There is an error occurred, please try again" = "Đã xảy ra lỗi, vui lòng thử lại";
 "Send %@ %@" = "Gửi %@ %@";
 "%@ Network" = "Mạng %@";
+"Choose the network" = "Chọn mạng";
+"P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet sẽ tự động khớp địa chỉ mục tiêu rút tiền của bạn với mạng chính xác cho hầu hết các lần rút tiền.\n\nTuy nhiên, trước khi gửi tiền, hãy đảm bảo kiểm tra kỹ mạng đã chọn.";
