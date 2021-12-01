@@ -629,3 +629,4 @@
 "Caution: this address has no funds" = "Thận trọng: địa chỉ này không có tiền";
 "There is an error occurred, please try again" = "Đã xảy ra lỗi, vui lòng thử lại";
 "Send %@ %@" = "Gửi %@ %@";
+"%@ Network" = "Mạng %@";

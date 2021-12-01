@@ -629,3 +629,4 @@
 "Caution: this address has no funds" = "Attention : cette adresse n'a pas de fonds";
 "There is an error occurred, please try again" = "Une erreur s'est produite, veuillez réessayer";
 "Send %@ %@" = "Envoyer %@ %@";
+"%@ Network" = "%@ Réseau";

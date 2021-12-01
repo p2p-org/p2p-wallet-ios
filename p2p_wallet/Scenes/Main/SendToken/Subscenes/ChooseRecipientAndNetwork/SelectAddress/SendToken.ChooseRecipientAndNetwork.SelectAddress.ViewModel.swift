@@ -25,6 +25,9 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     
     func selectRecipient(_ recipient: SendToken.Recipient)
     func clearRecipient()
+    
+    func selectNetwork(_ network: SendToken.Network)
+    func getRenBTCPrice() -> Double
 }
 
 extension SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
@@ -41,6 +44,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 recipientsListViewModel.solanaAPIClient = solanaAPIClient
             }
         }
+        var pricesService: PricesServiceType!
+        var wallet: SolanaSDK.Wallet!
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -124,5 +129,16 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     func clearRecipient() {
         inputStateSubject.accept(.searching)
         recipientSubject.accept(nil)
+    }
+    
+    func selectNetwork(_ network: SendToken.Network) {
+        if !wallet.token.isRenBTC {
+            networkSubject.accept(.solana)
+        }
+        networkSubject.accept(network)
+    }
+    
+    func getRenBTCPrice() -> Double {
+        pricesService.currentPrice(for: "renBTC")?.value ?? 0
     }
 }

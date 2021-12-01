@@ -141,6 +141,14 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     self?.recipientView.setHighlighted()
                 })
                 .disposed(by: disposeBag)
+            
+            // network
+            viewModel.networkDriver
+                .withLatestFrom(viewModel.feeDriver) {($0, $1)}
+                .drive(onNext: {[weak self] network, fee in
+                    self?.networkView.setUp(network: network, fee: fee)
+                })
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Actions
