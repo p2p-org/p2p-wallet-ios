@@ -17,8 +17,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private lazy var networkViews: [NetworkView] = {
             var networkViews = viewModel.getSelectableNetwork()
                 .map {network -> NetworkView in
-                    let view = NetworkView(viewModel: viewModel)
-                    view.setUp(network: network, fee: network.defaultFee)
+                    let view = NetworkView()
+                    view.setUp(network: network, fee: network.defaultFee, renBTCPrice: viewModel.getRenBTCPrice())
                     return view
                 }
             
