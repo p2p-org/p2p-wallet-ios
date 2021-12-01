@@ -36,11 +36,12 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             return collectionView
         }()
         private lazy var networkView = NetworkView(forConvenience: ())
-        private lazy var noAddressView = UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
+        private lazy var errorView = UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
             UIImageView(width: 44, height: 44, image: .errorUserAvatar)
-            UILabel(text: L10n.thereSNoAddressLikeThis, textSize: 17, textColor: .ff3b30, numberOfLines: 0)
+            errorLabel
         }
             .padding(.init(x: 20, y: 0))
+        private lazy var errorLabel = UILabel(text: L10n.thereSNoAddressLikeThis, textSize: 17, textColor: .ff3b30, numberOfLines: 0)
         
         // MARK: - Initializer
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
@@ -71,7 +72,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
                 BEStackViewSpacing(18)
                 networkView
-                noAddressView
+                errorView
                 recipientCollectionView
             }
             
@@ -103,11 +104,24 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             viewModel.recipientsListViewModel
                 .stateObservable
                 .asDriver(onErrorJustReturn: .initializing)
-                .map {[weak self] in
-                    $0 == .loaded && self?.viewModel.recipientsListViewModel.getData(type: SendToken.Recipient.self).count == 0 && self?.addressInputView.textField.text?.isEmpty == false
-                }
-                .map {!$0}
-                .drive(noAddressView.rx.isHidden)
+                .drive(onNext: {[weak self] state in
+                    var shouldHideErrorView = true
+                    var errorText = L10n.thereIsAnErrorOccurredPleaseTryAgain
+                    switch state {
+                    case .initializing, .loading:
+                        break
+                    case .loaded:
+                        if self?.viewModel.recipientsListViewModel.getData(type: SendToken.Recipient.self).count == 0 && self?.addressInputView.textField.text?.isEmpty == false
+                        {
+                            shouldHideErrorView = false
+                            errorText = L10n.thereSNoAddressLikeThis
+                        }
+                    case .error:
+                        shouldHideErrorView = false
+                    }
+                    self?.errorView.isHidden = shouldHideErrorView
+                    self?.errorLabel.text = errorText
+                })
                 .disposed(by: disposeBag)
             
             isSearchingDriver
