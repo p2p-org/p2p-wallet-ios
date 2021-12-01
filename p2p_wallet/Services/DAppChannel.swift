@@ -15,14 +15,13 @@ protocol DAppChannelDelegate: AnyObject {
     func signTransactions() -> Single<[String]>
 }
 
-protocol DAppChannelType: WKScriptMessageHandlerWithReply, WKScriptMessageHandler {
+protocol DAppChannelType {
     func getWebviewConfiguration() -> WKWebViewConfiguration
     func setDelegate(_ delegate: DAppChannelDelegate)
 }
 
 // await window.webkit.messageHandlers.P2PWalletApi.postMessage({method: "connect"})
 
-@available(iOS 14.0, *)
 class DAppChannel: NSObject {
     // MARK: - Properties
     private weak var delegate: DAppChannelDelegate?
@@ -37,41 +36,64 @@ extension DAppChannel: DAppChannelType {
         // set config
         let config = WKWebViewConfiguration()
         config.userContentController.addUserScript(targetInjection)
-        config.userContentController.addScriptMessageHandler(self, contentWorld: .page, name: "P2PWalletApi")
+        config.userContentController.add(self, contentWorld: .page, name: "P2PWalletIncomingChannel")
         return config
     }
     
     func setDelegate(_ delegate: DAppChannelDelegate) {
         self.delegate = delegate
     }
-}
-
-extension DAppChannel: WKScriptMessageHandlerWithReply, WKScriptMessageHandler {
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
     
+    func call(webView: WKWebView, id: String, args: Any) {
+        do {
+            let message = try createMessage(id: id, method: nil, args: args)
+            print("window.P2PWalletOutgoingChannel(\"\(message)\")")
+            webView.evaluateJavaScript("window.P2PWalletOutgoingChannel.accept(\"\(message)\")", completionHandler: { result, error in
+                print(result)
+                print(error)
+            })
+        } catch let error {
+            call(webView: webView, id: id, error: "Can not encode arguments.")
+        }
     }
     
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage, replyHandler: @escaping (Any?, String?) -> Void) {
+    func call(webView: WKWebView, id: String, error: String) {
+        let message = try? createMessage(id: id, method: "error", args: error) ?? "{}"
+        webView.evaluateJavaScript("window.P2PWalletOutgoingChannel.accept(\"\(message)\")")
+    }
+    
+    func createMessage(id: String, method: String?, args: Any) throws -> String {
+        let message = [
+            "id": id,
+            "method": method,
+            "args": args
+        ]
+        return (try JSONSerialization.data(withJSONObject: message)).base64EncodedString(options: .endLineWithLineFeed)
+    }
+}
+
+extension DAppChannel: WKScriptMessageHandler {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard let webView = message.webView,
+              let body = message.body as? [String: Any],
+              let id = body["id"] as? String else { return }
+        
         guard let delegate = delegate else {
-            replyHandler(nil, "Platform is not ready")
+            call(webView: webView, id: id, error: "Platform is not ready")
             return
         }
         
-        guard let body = message.body as? [String: Any],
-              let method = body["method"] as? String else {
-            replyHandler(nil, "Invalid method call")
-            return
-        }
+        let method = body["method"] as? String
         
         switch method {
         case "connect":
-            delegate.connect().subscribe(onSuccess: { value in replyHandler(value, nil) }).disposed(by: disposeBag)
+            delegate.connect().subscribe(onSuccess: { [weak self] value in self?.call(webView: webView, id: id, args: value) }).disposed(by: disposeBag)
         case "signTransaction":
-            delegate.signTransaction().subscribe(onSuccess: { value in replyHandler(value, nil) }).disposed(by: disposeBag)
+            delegate.signTransaction().subscribe(onSuccess: { [weak self] value in self?.call(webView: webView, id: id, args: value) }).disposed(by: disposeBag)
         case "signTransactions":
-            delegate.signTransactions().subscribe(onSuccess: { value in replyHandler(value, nil) }).disposed(by: disposeBag)
+            delegate.signTransactions().subscribe(onSuccess: { [weak self]value in self?.call(webView: webView, id: id, args: value) }).disposed(by: disposeBag)
         default:
-            replyHandler(nil, "Invalid method call")
+            call(webView: webView, id: id, error: "Invalid method call")
         }
     }
 }
