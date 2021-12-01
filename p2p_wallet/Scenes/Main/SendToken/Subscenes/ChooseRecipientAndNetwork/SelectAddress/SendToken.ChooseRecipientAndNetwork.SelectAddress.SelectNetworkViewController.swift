@@ -22,12 +22,13 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     view.network = network
                     view.setUp(network: network, fee: network.defaultFee, renBTCPrice: viewModel.getRenBTCPrice())
                     if network == .solana {
-                        view.addArrangedSubview(
+                        view.insertArrangedSubview(
                             UILabel(text: L10n.paidByP2p, textSize: 13, textColor: .h34c759)
                                 .withContentHuggingPriority(.required, for: .horizontal)
                                 .padding(.init(x: 12, y: 8), backgroundColor: .f5fcf7, cornerRadius: 12)
                                 .border(width: 1, color: .h34c759)
-                                .withContentHuggingPriority(.required, for: .horizontal)
+                                .withContentHuggingPriority(.required, for: .horizontal),
+                            at: 2
                         )
                     }
                     return view.onTap(self, action: #selector(networkViewDidTouch(_:)))

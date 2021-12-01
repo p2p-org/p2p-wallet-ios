@@ -41,7 +41,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Methods
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            textField.becomeFirstResponder()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.textField.becomeFirstResponder()
+            }
         }
         
         private func bind() {
