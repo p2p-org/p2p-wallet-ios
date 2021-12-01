@@ -54,6 +54,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 descriptionLabel.text = recipient.address
             }
         }
+        
+        func setHighlighted() {
+            recipientIcon.image = .emptyUserAvatarHighlighted
+        }
 
         private func configureSelf() {
             axis = .horizontal

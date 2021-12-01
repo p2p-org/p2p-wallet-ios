@@ -124,7 +124,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 })
                 .disposed(by: disposeBag)
             
-            isSearchingDriver
+            viewModel.inputStateDriver
                 .skip(1)
                 .drive(onNext: {[weak self] _ in
                     UIView.animate(withDuration: 0.3) {
@@ -138,6 +138,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .drive(onNext: {[weak self] recipient in
                     guard let recipient = recipient else {return}
                     self?.recipientView.setRecipient(recipient)
+                    self?.recipientView.setHighlighted()
                 })
                 .disposed(by: disposeBag)
         }
