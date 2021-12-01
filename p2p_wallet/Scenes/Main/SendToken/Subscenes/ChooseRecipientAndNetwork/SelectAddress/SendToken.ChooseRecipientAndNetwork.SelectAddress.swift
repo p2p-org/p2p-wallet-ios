@@ -12,6 +12,7 @@ extension SendToken.ChooseRecipientAndNetwork {
     struct SelectAddress {
         enum NavigatableScene {
             case scanQrCode
+            case chooseNetwork
         }
         
         enum InputState: Equatable {
