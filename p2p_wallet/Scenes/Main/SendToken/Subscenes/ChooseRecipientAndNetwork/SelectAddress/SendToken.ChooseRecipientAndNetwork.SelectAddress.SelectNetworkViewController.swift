@@ -52,9 +52,12 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             }
             
             // networks
-            rootView.stackView.addArrangedSubviews(
-                networkViews.map {$0.padding(.init(x: 0, y: 26))}
-            )
+            for index, view in networkViews.enumerated() {
+                rootView.stackView.addArrangedSubview(view.padding(.init(x: 0, y: 26)))
+                if index < networkViews.count - 1 {
+                    rootView.stackView.addArrangedSubview(.separator(height: 1, color: .separator))
+                }
+            }
         }
     }
 }
