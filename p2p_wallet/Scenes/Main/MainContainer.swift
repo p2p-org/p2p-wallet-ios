@@ -158,6 +158,7 @@ class MainContainer {
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController {
         let vm = SendToken.ViewModel(
             repository: walletsViewModel,
+            pricesService: pricesService,
             walletPubkey: walletPubkey,
             destinationAddress: destinationAddress,
             apiClient: solanaSDK,

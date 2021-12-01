@@ -24,6 +24,7 @@ extension SendToken {
         @Injected private var addressFormatter: AddressFormatterType
         private let walletsRepository: WalletsRepository
         var solanaAPIClient: SendTokenAPIClient
+        let pricesService: PricesServiceType
         
         // MARK: - Properties
         private let initialWalletPubkey: String?
@@ -38,12 +39,14 @@ extension SendToken {
         // MARK: - Initializers
         init(
             repository: WalletsRepository,
+            pricesService: PricesServiceType,
             walletPubkey: String?,
             destinationAddress: String?,
             apiClient: SendTokenAPIClient,
             renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         ) {
             self.walletsRepository = repository
+            self.pricesService = pricesService
             self.initialWalletPubkey = walletPubkey
             self.initialDestinationWalletPubkey = destinationAddress
             self.solanaAPIClient = apiClient
@@ -76,6 +79,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         vm.repository = walletsRepository
         vm.selectedWalletPubkey = selectedWalletPubkey
         vm.selectedAmount = selectedAmount
+        vm.pricesService = pricesService
         return vm
     }
     

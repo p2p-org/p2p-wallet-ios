@@ -22,6 +22,7 @@ extension SendToken.ChooseRecipientAndNetwork {
         // MARK: - Dependencies
         var solanaAPIClient: SendTokenAPIClient!
         var repository: WalletsRepository!
+        var pricesService: PricesServiceType!
         
         // MARK: - Properties
         var selectedWalletPubkey: String!
@@ -45,6 +46,8 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
         let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel()
         vm.solanaAPIClient = solanaAPIClient
+        vm.pricesService = pricesService
+        vm.wallet = getSelectedWallet()
         return vm
     }
     
