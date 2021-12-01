@@ -33,6 +33,14 @@ struct SendToken {
                 return .squircleBitcoinIcon
             }
         }
+        var defaultFee: Fee {
+            switch self {
+            case .solana:
+                return .init(amount: 0, unit: "$")
+            case .bitcoin:
+                return .init(amount: 0.0002, unit: "renBTC")
+            }
+        }
     }
     
     struct Fee {

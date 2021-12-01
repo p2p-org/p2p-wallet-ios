@@ -35,8 +35,12 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             collectionView.delegate = self
             return collectionView
         }()
-        private lazy var networkView = NetworkView(viewModel: viewModel)
-            .onTap(self, action: #selector(networkViewDidTouch))
+        private lazy var networkView: NetworkView = {
+            let view = NetworkView(viewModel: viewModel)
+            view.stackView.addArrangedSubview(UIView.defaultNextArrow())
+            return view
+                .onTap(self, action: #selector(networkViewDidTouch))
+        }()
         private lazy var errorView = UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
             UIImageView(width: 44, height: 44, image: .errorUserAvatar)
             errorLabel
