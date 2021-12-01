@@ -17,7 +17,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Subviews
         private lazy var coinImageView = UIImageView(width: 44, height: 44, image: nil)
         private lazy var networkNameLabel = UILabel(text: "<network>", textSize: 17, weight: .semibold)
-        private lazy var descriptionLabel = UILabel(text: "<transfer fee:>", textSize: 13)
+        private lazy var descriptionLabel = UILabel(text: "<transfer fee:>", textSize: 13, numberOfLines: 0)
         
         init() {
             super.init(frame: .zero)
