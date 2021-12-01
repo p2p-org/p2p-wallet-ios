@@ -168,7 +168,7 @@ class MainContainer {
         return vc
     }
     
-    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> CustomPresentableViewController
+    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
     {
         switch provider {
         case .orca:
@@ -178,7 +178,7 @@ class MainContainer {
                 walletsRepository: walletsViewModel,
                 initialWallet: wallet ?? walletsViewModel.nativeWallet
             )
-            return OrcaSwapV2.ViewController(viewModel: vm, scenesFactory: self)
+            return NewOrcaSwap.ViewController(viewModel: vm, scenesFactory: self)
         case .serum:
             let provider = SerumSwap(
                 client: solanaSDK,

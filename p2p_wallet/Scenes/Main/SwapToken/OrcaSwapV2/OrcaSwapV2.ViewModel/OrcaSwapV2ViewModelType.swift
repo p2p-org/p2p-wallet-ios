@@ -8,7 +8,9 @@
 import Foundation
 import RxCocoa
 
-protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewModelType, SwapTokenSwapFeesViewModelType {
+protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewModelType,
+    AnyObject, SwapTokenSwapFeesViewModelType
+{
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {get}
     var loadingStateDriver: Driver<LoadableState> {get}
     var sourceWalletDriver: Driver<Wallet?> {get}
