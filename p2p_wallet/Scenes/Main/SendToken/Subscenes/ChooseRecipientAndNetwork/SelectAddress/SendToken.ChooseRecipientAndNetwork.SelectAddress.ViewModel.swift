@@ -125,6 +125,12 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     func selectRecipient(_ recipient: SendToken.Recipient) {
         recipientSubject.accept(recipient)
         inputStateSubject.accept(.recipientSelected)
+        
+        if isRecipientBTCAddress() {
+            networkSubject.accept(.bitcoin)
+        } else {
+            networkSubject.accept(.solana)
+        }
     }
     
     func clearRecipient() {
@@ -134,7 +140,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     func getSelectableNetwork() -> [SendToken.Network] {
         var networks: [SendToken.Network] = [.solana]
-        if wallet.token.isRenBTC {
+        if isRecipientBTCAddress() {
             networks.append(.bitcoin)
         }
         return networks
@@ -149,5 +155,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     func getRenBTCPrice() -> Double {
         pricesService.currentPrice(for: "renBTC")?.value ?? 0
+    }
+    
+    private func isRecipientBTCAddress() -> Bool {
+        guard let recipient = recipientSubject.value else {return false}
+        return recipient.name == nil && NSRegularExpression.bitcoinAddress(isTestnet: solanaAPIClient.isTestNet())
+            .matches(recipient.address)
     }
 }

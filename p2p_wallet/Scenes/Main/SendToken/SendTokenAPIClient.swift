@@ -27,6 +27,7 @@ protocol SendTokenAPIClient {
         withoutFee: Bool,
         isSimulation: Bool
     ) -> Single<SolanaSDK.TransactionID>
+    func isTestNet() -> Bool
 }
 
 extension SolanaSDK: SendTokenAPIClient {
@@ -53,5 +54,9 @@ extension SolanaSDK: SendTokenAPIClient {
     
     func getFees() -> Single<Fee> {
         getFees(commitment: nil)
+    }
+    
+    func isTestNet() -> Bool {
+        endpoint.network.isTestnet
     }
 }
