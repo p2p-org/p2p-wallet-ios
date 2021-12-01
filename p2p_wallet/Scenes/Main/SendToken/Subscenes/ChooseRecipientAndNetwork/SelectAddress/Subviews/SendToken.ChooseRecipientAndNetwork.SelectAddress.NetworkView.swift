@@ -10,12 +10,17 @@ import UIKit
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     final class NetworkView: WLFloatingPanelView {
-        lazy var coinImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
-        lazy var networkNameLabel = UILabel(text: "<network>", textSize: 17, weight: .semibold)
-        lazy var descriptionLabel = UILabel(text: "<transfer fee:>", textSize: 13)
+        // MARK: - Dependencies
+        private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
         
-        convenience init(forConvenience: Void) {
-            self.init(contentInset: .init(all: 18))
+        // MARK: - Subviews
+        private lazy var coinImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
+        private lazy var networkNameLabel = UILabel(text: "<network>", textSize: 17, weight: .semibold)
+        private lazy var descriptionLabel = UILabel(text: "<transfer fee:>", textSize: 13)
+        
+        init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
+            self.viewModel = viewModel
+            super.init(contentInset: .init(all: 18))
             stackView.axis = .horizontal
             stackView.spacing = 12
             stackView.alignment = .center

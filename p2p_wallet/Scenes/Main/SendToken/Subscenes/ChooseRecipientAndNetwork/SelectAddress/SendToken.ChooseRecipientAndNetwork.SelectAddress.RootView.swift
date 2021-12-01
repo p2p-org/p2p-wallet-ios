@@ -35,7 +35,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             collectionView.delegate = self
             return collectionView
         }()
-        private lazy var networkView = NetworkView(forConvenience: ())
+        private lazy var networkView = NetworkView(viewModel: viewModel)
         private lazy var errorView = UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
             UIImageView(width: 44, height: 44, image: .errorUserAvatar)
             errorLabel
