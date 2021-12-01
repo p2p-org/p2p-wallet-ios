@@ -21,12 +21,20 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     let view = _NetworkView()
                     view.network = network
                     view.setUp(network: network, fee: network.defaultFee, renBTCPrice: viewModel.getRenBTCPrice())
+                    if network == .solana {
+                        view.addArrangedSubview(
+                            UILabel(text: L10n.paidByP2p, textSize: 13, textColor: .h34c759)
+                                .withContentHuggingPriority(.required, for: .horizontal)
+                                .padding(.init(x: 12, y: 8), backgroundColor: .f5fcf7, cornerRadius: 12)
+                                .border(width: 1, color: .h34c759)
+                                .withContentHuggingPriority(.required, for: .horizontal)
+                        )
+                    }
                     return view.onTap(self, action: #selector(networkViewDidTouch(_:)))
                 }
             
             return networkViews
         }()
-        private lazy var tickView = UIImageView(width: 14.3, height: 14.19, image: .tick, tintColor: .h5887ff)
         
         // MARK: - Initializer
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
@@ -68,8 +76,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             viewModel.networkDriver
                 .drive(onNext: {[weak self] network in
                     guard let self = self else {return}
-                    self.tickView.removeFromSuperview()
-                    self.networkViews.first(where: {$0.network == network})?.addArrangedSubview(self.tickView)
+                    for view in self.networkViews {
+                        view.tickView.alpha = view.network == network ? 1: 0
+                    }
                 })
                 .disposed(by: disposeBag)
         }
@@ -84,5 +93,14 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     
     private class _NetworkView: NetworkView {
         fileprivate var network: SendToken.Network?
+        fileprivate lazy var tickView = UIImageView(width: 14.3, height: 14.19, image: .tick, tintColor: .h5887ff)
+        override init() {
+            super.init()
+            addArrangedSubview(tickView)
+        }
+        
+        required init(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
     }
 }

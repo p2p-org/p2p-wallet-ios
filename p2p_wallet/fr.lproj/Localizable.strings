@@ -632,3 +632,4 @@
 "%@ Network" = "%@ Réseau";
 "Choose the network" = "Choisissez le réseau";
 "P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet fera automatiquement correspondre votre adresse cible de retrait au bon réseau pour la plupart des retraits.\n\nCependant, avant d'envoyer vos fonds, assurez-vous de revérifier le réseau sélectionné.";
+"Paid by p2p" = "Payé par p2p";
