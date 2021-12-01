@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 extension OrcaSwapV2 {
-    class WalletView: BEView {
+    final class WalletView: BEView {
         enum WalletType {
             case source, destination
         }
@@ -23,22 +23,11 @@ extension OrcaSwapV2 {
         @Injected private var analyticsManager: AnalyticsManagerType
         
         private lazy var balanceView = BalanceView(forAutoLayout: ())
-        private lazy var iconImageView = CoinLogoImageView(size: 32, cornerRadius: 16)
-        private lazy var downArrow = UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
+        private lazy var iconImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
+        private lazy var downArrow = UIImageView(width: 10, height: 8, image: .downArrow, tintColor: .a3a5ba)
         
         private lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
-        
-        private lazy var maxButton = UILabel(
-            text: L10n.max.uppercased(),
-            textSize: 13,
-            weight: .semibold,
-            textColor: .textSecondary.onDarkMode(.white)
-        )
-            .withContentHuggingPriority(.required, for: .horizontal)
-            .padding(.init(x: 13.5, y: 8), backgroundColor: .f6f6f8.onDarkMode(.h404040), cornerRadius: 12)
-            .withContentHuggingPriority(.required, for: .horizontal)
-            .onTap(self, action: #selector(useAllBalance))
-        
+
         private lazy var amountTextField = TokenAmountTextField(
             font: .systemFont(ofSize: 27, weight: .bold),
             textColor: .textBlack,
@@ -47,9 +36,7 @@ extension OrcaSwapV2 {
             placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
             autocorrectionType: .no/*, rightView: useAllBalanceButton, rightViewMode: .always*/
         )
-        
-        private lazy var equityValueLabel = UILabel(text: "≈ 0.00 \(Defaults.fiat.symbol)", textSize: 13, weight: .medium, textColor: .textSecondary.onDarkMode(.white), textAlignment: .right)
-        
+
         init(viewModel: OrcaSwapV2ViewModelType, type: WalletType) {
             self.viewModel = viewModel
             self.type = type
@@ -58,11 +45,6 @@ extension OrcaSwapV2 {
             
             bind()
             amountTextField.delegate = self
-            
-            layer.cornerRadius = 12
-            layer.masksToBounds = true
-            layer.borderWidth = 1
-            layer.borderColor = UIColor.separator.cgColor
         }
         
         override func commonInit() {
@@ -72,9 +54,9 @@ extension OrcaSwapV2 {
                 .onTap(self, action: #selector(useAllBalance))
             balanceView.tintColor = type == .source ? .h5887ff: .textSecondary.onDarkMode(.white)
             
-            let stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill) {
+            let stackView = UIStackView(axis: .vertical, spacing: 13, alignment: .fill, distribution: .fill) {
                 UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .equalCentering) {
-                    UILabel(text: type == .source ? L10n.from: L10n.to, textSize: 15, weight: .semibold)
+                    UILabel(text: type == .source ? L10n.from : L10n.to, textSize: 15, weight: .medium)
                     balanceView
                 }
                 
@@ -92,22 +74,13 @@ extension OrcaSwapV2 {
                         .onTap(self, action: action)
                     
                     BEStackViewSpacing(12)
-                    maxButton
-                    
+
                     amountTextField
                 }
-                
-                BEStackViewSpacing(0)
-                
-                equityValueLabel
             }
-            
-            if type == .destination {
-                maxButton.isHidden = true
-            }
-            
+
             addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 16))
+            stackView.autoPinEdgesToSuperviewEdges()
             
             // for increasing touchable area
             let chooseWalletView = UIView(forAutoLayout: ())
@@ -123,7 +96,7 @@ extension OrcaSwapV2 {
             // subjects
             let walletDriver: Driver<Wallet?>
             let textFieldKeydownEvent: (Double) -> AnalyticsEvent
-            let equityValueLabelDriver: Driver<String?>
+//            let equityValueLabelDriver: Driver<String?>
             let balanceTextDriver: Driver<String?>
             let outputDriver: Driver<Double?>
             
@@ -135,18 +108,18 @@ extension OrcaSwapV2 {
                     .swapTokenAAmountKeydown(sum: amount)
                 }
                 
-                equityValueLabelDriver = Driver.combineLatest(
-                    viewModel.inputAmountDriver,
-                    viewModel.sourceWalletDriver
-                )
-                    .map {amount, wallet in
-                        if let wallet = wallet {
-                            let value = amount * wallet.priceInCurrentFiat
-                            return "≈ \(value.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
-                        } else {
-                            return L10n.selectCurrency
-                        }
-                    }
+//                equityValueLabelDriver = Driver.combineLatest(
+//                    viewModel.inputAmountDriver,
+//                    viewModel.sourceWalletDriver
+//                )
+//                    .map {amount, wallet in
+//                        if let wallet = wallet {
+//                            let value = amount * wallet.priceInCurrentFiat
+//                            return "≈ \(value.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
+//                        } else {
+//                            return L10n.selectCurrency
+//                        }
+//                    }
                 
                 outputDriver = viewModel.inputAmountDriver
                 
@@ -163,12 +136,7 @@ extension OrcaSwapV2 {
                     .map {$0 ? UIColor.alert: UIColor.h5887ff}
                     .drive(balanceView.rx.tintColor)
                     .disposed(by: disposeBag)
-                
-                viewModel.inputAmountDriver
-                    .map {$0 != nil}
-                    .drive(maxButton.rx.isHidden)
-                    .disposed(by: disposeBag)
-                
+                                
             case .destination:
                 walletDriver = viewModel.destinationWalletDriver
                 
@@ -176,12 +144,12 @@ extension OrcaSwapV2 {
                     .swapTokenBAmountKeydown(sum: amount)
                 }
                 
-                equityValueLabelDriver = viewModel.minimumReceiveAmountDriver
-                    .withLatestFrom(viewModel.destinationWalletDriver, resultSelector: {($0, $1)})
-                    .map {minReceiveAmount, wallet -> String? in
-                        guard let symbol = wallet?.token.symbol else {return nil}
-                        return L10n.receiveAtLeast + ": " + minReceiveAmount?.toString(maximumFractionDigits: 9) + " " + symbol
-                    }
+//                equityValueLabelDriver = viewModel.minimumReceiveAmountDriver
+//                    .withLatestFrom(viewModel.destinationWalletDriver, resultSelector: {($0, $1)})
+//                    .map {minReceiveAmount, wallet -> String? in
+//                        guard let symbol = wallet?.token.symbol else {return nil}
+//                        return L10n.receiveAtLeast + ": " + minReceiveAmount?.toString(maximumFractionDigits: 9) + " " + symbol
+//                    }
                 
                 outputDriver = viewModel.estimatedAmountDriver
                 
@@ -221,9 +189,9 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
             
             // equity value label
-            equityValueLabelDriver
-                .drive(equityValueLabel.rx.text)
-                .disposed(by: disposeBag)
+//            equityValueLabelDriver
+//                .drive(equityValueLabel.rx.text)
+//                .disposed(by: disposeBag)
             
             amountTextField.rx.text
                 .filter {[weak self] _ in self?.amountTextField.isFirstResponder == true}

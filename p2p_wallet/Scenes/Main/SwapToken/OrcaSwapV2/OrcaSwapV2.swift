@@ -17,6 +17,7 @@ struct OrcaSwapV2 {
         case chooseSlippage
         case swapFees
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
+        case back
     }
     
     enum VerificationError: String {
