@@ -178,6 +178,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         @objc private func networkViewDidTouch() {
             viewModel.navigate(to: .chooseNetwork)
         }
+        
+        @objc private func actionButtonDidTouch() {
+            viewModel.next()
+        }
     }
     
     private class _NetworkView: WLFloatingPanelView {

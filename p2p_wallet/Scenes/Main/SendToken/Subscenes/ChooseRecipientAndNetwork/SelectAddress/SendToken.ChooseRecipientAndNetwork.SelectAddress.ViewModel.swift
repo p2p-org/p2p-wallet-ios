@@ -30,6 +30,8 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     func getSelectableNetwork() -> [SendToken.Network]
     func selectNetwork(_ network: SendToken.Network)
     func getRenBTCPrice() -> Double
+    
+    func next()
 }
 
 extension SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
@@ -168,5 +170,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         guard let recipient = recipientSubject.value else {return false}
         return recipient.name == nil && NSRegularExpression.bitcoinAddress(isTestnet: solanaAPIClient.isTestNet())
             .matches(recipient.address)
+    }
+    
+    func next() {
+        let network = networkSubject.value
+        guard let recipient = recipientSubject.value else {return}
+        completion?(recipient, network)
     }
 }
