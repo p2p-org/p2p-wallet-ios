@@ -619,6 +619,11 @@
 "Derivation path" = "Đường dẫn xuất phát";
 "History" = "Lịch sử";
 "Show wallet address" = "Hiển thị địa chỉ ví";
+"%@ is unavailable" = "%@ không khả dụng";
+"No more than 15 alphanumerical latin lowercase characters and dashes" = "Không có nhiều hơn 15 ký tự chữ và số chữ thường latin và dấu gạch ngang";
+"P2P username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it." = "Tên người dùng P2P là địa chỉ công khai của bạn, cho phép bạn nhận bất kỳ token nào ngay cả khi bạn không có mã đó trong danh sách ví.\n\nĐiều quan trọng là bạn phải chọn tên người dùng chính xác mà bạn muốn, vì sau khi đã đặt, bạn không thể thay đổi nó.";
+"Enter username or skip" = "Nhập tên người dùng hoặc bỏ qua";
+"Choose available username" = "Chọn tên người dùng có sẵn";
 "Enter the amount to proceed" = "Nhập số tiền để tiếp tục";
 "Choose the recipient" = "Chọn người nhận";
 "Address" = "Địa chỉ";

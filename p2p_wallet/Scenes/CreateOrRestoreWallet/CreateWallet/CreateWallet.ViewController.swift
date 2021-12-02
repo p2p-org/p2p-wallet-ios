@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import Resolver
 
 extension CreateWallet {
     class ViewController: BaseVC {
@@ -55,9 +56,13 @@ extension CreateWallet {
                 let vc = CreateSecurityKeys.ViewController()
                 childNavigationController.pushViewController(vc, animated: true)
             case .reserveName(let owner):
-                let vm = ReserveName.ViewModel(owner: owner, handler: viewModel)
-                let vc = ReserveName.ViewController(viewModel: vm)
-                childNavigationController.pushViewController(vc, animated: true)
+                let viewModel = CreateOrRestoreReserveName.ViewModel(
+                    owner: owner,
+                    nameService: Resolver.resolve(),
+                    reserveNameHandler: viewModel
+                )
+                let viewController = CreateOrRestoreReserveName.ViewController(viewModel: viewModel)
+                childNavigationController.pushViewController(viewController, animated: true)
             case .verifyPhrase(let phrase):
                 let vm = VerifySecurityKeys.ViewModel(keyPhrase: phrase)
                 let vc = VerifySecurityKeys.ViewController(viewModel: vm)
