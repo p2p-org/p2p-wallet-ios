@@ -74,6 +74,7 @@ extension Root {
             Defaults.renVMSession = nil
             Defaults.renVMProcessingTxs = []
             Defaults.forceCloseNameServiceBanner = false
+            Defaults.shouldShowConfirmAlert = true
             reload()
         }
         
