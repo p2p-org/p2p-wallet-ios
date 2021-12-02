@@ -45,6 +45,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private lazy var errorLabel = UILabel(text: L10n.thereSNoAddressLikeThis, textSize: 17, textColor: .ff3b30, numberOfLines: 0)
         
         private lazy var actionButton = WLStepButton.main(text: L10n.chooseTheRecipientToProceed)
+            .onTap(self, action: #selector(actionButtonDidTouch))
         
         // MARK: - Initializer
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {

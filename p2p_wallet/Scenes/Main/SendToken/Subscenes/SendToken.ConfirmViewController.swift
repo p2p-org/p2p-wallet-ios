@@ -18,8 +18,11 @@ extension SendToken {
         
         // MARK: - Subviews
         private lazy var networkView = NetworkView()
-        private lazy var nameLabel = UILabel(text: viewModel.getSelectedRecipient()?.name, textSize: 15, textColor: .textSecondary, textAlignment: .right)
-        private lazy var actionButton = WLStepButton.main(image: .buttonSend, text: L10n.send(amount, tokenSymbol))
+        private lazy var nameSection = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fill) {
+            UIView.spacer
+            UILabel(text: viewModel.getSelectedRecipient()?.name, textSize: 15, textColor: .textSecondary, textAlignment: .right)
+        }
+        private lazy var actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.send(amount, tokenSymbol))
         
         // MARK: - Initializer
         init(viewModel: SendTokenViewModelType) {
@@ -46,18 +49,18 @@ extension SendToken {
                 UIView.floatingPanel {
                     networkView
                 }
+                BEStackViewSpacing(26)
                 UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .equalSpacing) {
                     createHeaderLabel(text: L10n.recipientSAddress, numberOfLines: 2)
                     
-                    UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
-                        createContentLabel(
-                            text: viewModel.getSelectedRecipient()?.address,
-                            numberOfLines: 2
-                        )
-                            .lineBreakMode(.byCharWrapping)
-                        nameLabel
-                    }
+                    createContentLabel(
+                        text: viewModel.getSelectedRecipient()?.address,
+                        numberOfLines: 2
+                    )
+                        .lineBreakMode(.byCharWrapping)
                 }
+                
+                nameSection
                 
                 UIView.separator(height: 1, color: .separator)
                 
@@ -82,7 +85,7 @@ extension SendToken {
                         contentAttributedString: NSMutableAttributedString()
                             .text("\(amount) \(tokenSymbol)", size: 15, color: .textBlack)
                             .text(" ")
-                            .text("(~\(fiatCode)\(amountEquityValue))", size: 15, color: .textSecondary)
+                            .text("(~\(fiatSymbol)\(amountEquityValue))", size: 15, color: .textSecondary)
                     )
                     
                     createSection(
@@ -100,7 +103,7 @@ extension SendToken {
                         contentAttributedString: NSMutableAttributedString()
                             .text("\(total) \(tokenSymbol)", size: 15, color: .textBlack)
                             .text(" ")
-                            .text("(~\(fiatCode)\(totalEquityValue)", size: 15, color: .textSecondary)
+                            .text("(~\(fiatSymbol)\(totalEquityValue))", size: 15, color: .textSecondary)
                     )
                 }
             }
@@ -110,15 +113,17 @@ extension SendToken {
             stackView.autoPinEdgesToSuperviewEdges()
             
             view.addSubview(scrollView)
-            scrollView.autoPinEdgesToSuperviewEdges(with: .init(all: 18), excludingEdge: .bottom)
+            scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
+            scrollView.autoPinEdge(toSuperviewEdge: .leading)
+            scrollView.autoPinEdge(toSuperviewEdge: .trailing)
             
             view.addSubview(actionButton)
             actionButton.autoPinEdge(.top, to: .bottom, of: scrollView, withOffset: 8)
-            actionButton.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
+            actionButton.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
             
             // setup
             if viewModel.getSelectedRecipient()?.name == nil {
-                nameLabel.isHidden = true
+                nameSection.isHidden = true
             }
         }
         
@@ -179,7 +184,7 @@ extension SendToken {
         
         private var amountEquityValue: String {
             ((viewModel.getSelectedAmount() ?? 0) * viewModel.getSelectedTokenPrice())
-                .toString(maximumFractionDigits: 9)
+                .toString(maximumFractionDigits: 2)
         }
         
         private var fee: String {
@@ -198,7 +203,7 @@ extension SendToken {
             case .solana:
                 return L10n.paidByP2p
             case .bitcoin:
-                return "\(fiatSymbol)\((network.defaultFee.amount * viewModel.getSelectedTokenPrice()).toString(maximumFractionDigits: 9))"
+                return "\(fiatSymbol)\((network.defaultFee.amount * viewModel.getSelectedTokenPrice()).toString(maximumFractionDigits: 2))"
             }
         }
         
@@ -209,7 +214,7 @@ extension SendToken {
         
         private var totalEquityValue: String {
             ((viewModel.getSelectedAmount() + (viewModel.getSelectedNetwork()?.defaultFee.amount ?? 0)) * viewModel.getSelectedTokenPrice())
-                .toString(maximumFractionDigits: 9)
+                .toString(maximumFractionDigits: 2)
         }
     }
 }
