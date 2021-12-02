@@ -23,6 +23,9 @@ protocol SendTokenViewModelType {
     func getRenBTCPrice() -> Double
     func getSelectedTokenPrice() -> Double
     
+    func shouldShowConfirmAlert() -> Bool
+    func closeConfirmAlert()
+    
     func authenticateAndSend()
 }
 
@@ -198,6 +201,14 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func getSelectedTokenPrice() -> Double {
         pricesService.currentPrice(for: getSelectedWallet()?.token.symbol ?? "USDC")?.value ?? 0
+    }
+    
+    func shouldShowConfirmAlert() -> Bool {
+        Defaults.shouldShowConfirmAlert
+    }
+    
+    func closeConfirmAlert() {
+        Defaults.shouldShowConfirmAlert = false
     }
     
     func authenticateAndSend() {
