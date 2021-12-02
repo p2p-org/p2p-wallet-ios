@@ -80,6 +80,9 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         vm.selectedWalletPubkey = selectedWalletPubkey
         vm.selectedAmount = selectedAmount
         vm.pricesService = pricesService
+        vm.completion = {[weak self] recipient, network in
+            
+        }
         return vm
     }
     

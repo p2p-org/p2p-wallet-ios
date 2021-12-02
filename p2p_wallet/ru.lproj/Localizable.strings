@@ -633,3 +633,5 @@
 "Choose the network" = "Выберите сеть";
 "P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet автоматически сопоставит ваш целевой адрес вывода с правильной сетью для большинства случаев вывода средств.\n\nОднако перед отправкой средств обязательно перепроверьте выбранную сеть.";
 "Paid by p2p" = "Оплачивается p2p";
+"Choose the recipient to proceed" = "Выберите получателя, чтобы продолжить";
+"Review and confirm" = "Просмотрите & подтвердите";
