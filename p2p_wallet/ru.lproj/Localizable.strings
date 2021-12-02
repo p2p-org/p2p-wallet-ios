@@ -635,3 +635,7 @@
 "Paid by p2p" = "Оплачивается p2p";
 "Choose the recipient to proceed" = "Выберите получателя, чтобы продолжить";
 "Review and confirm" = "Просмотрите & подтвердите";
+"Confirm sending %@" = "Подтвердите отправку %@";
+"Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Перед подтверждением транзакции убедитесь, что все данные верны. После подтверждения его нельзя отменить.";
+"Recipient’s\naddress" = "Адрес\nполучателя";
+"Total" = "Общий";

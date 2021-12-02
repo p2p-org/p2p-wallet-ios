@@ -35,7 +35,7 @@ extension SendToken.ChooseTokenAndAmount {
             tf.delegate = self
             return tf
         }()
-        private lazy var equityValueLabel = UILabel(text: "$ 0", textSize: 13)
+        private lazy var equityValueLabel = UILabel(text: "\(Defaults.fiat.symbol) 0", textSize: 13)
         private lazy var actionButton = WLStepButton.main(text: L10n.chooseDestinationWallet)
             .onTap(self, action: #selector(actionButtonDidTouch))
         

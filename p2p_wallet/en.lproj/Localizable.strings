@@ -635,3 +635,7 @@
 "Paid by p2p" = "Paid by p2p";
 "Choose the recipient to proceed" = "Choose the recipient to proceed";
 "Review and confirm" = "Review & confirm";
+"Confirm sending %@" = "Confirm sending %@";
+"Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed.";
+"Recipient’s\naddress" = "Recipient’s\naddress";
+"Total" = "Total";

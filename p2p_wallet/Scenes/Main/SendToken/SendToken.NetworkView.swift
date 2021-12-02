@@ -1,5 +1,5 @@
 //
-//  SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift
+//  SendToken.NetworkView.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 30/11/2021.
@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import RxSwift
 
-extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
+extension SendToken {
     class NetworkView: UIStackView {
         // MARK: - Dependencies
         private let disposeBag = DisposeBag()
@@ -45,7 +45,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             
             if fee.amount == 0 {
                 attributedText
-                    .text("$0", size: 13, weight: .semibold, color: .attentionGreen)
+                    .text("\(Defaults.fiat.symbol)0", size: 13, weight: .semibold, color: .attentionGreen)
             } else {
                 let amountInUSD = fee.amount * renBTCPrice
                 attributedText

@@ -370,7 +370,7 @@
 		BCB286F92754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286F52754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView.swift */; };
 		BCB286FB2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB286FA2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift */; };
 		BCB287022755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB287012755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift */; };
-		BCB287042755DD940074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB287032755DD940074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift */; };
+		BCB287042755DD940074E1D5 /* SendToken.NetworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB287032755DD940074E1D5 /* SendToken.NetworkView.swift */; };
 		BCB2870B27560F1D0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2870827560F1B0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientCell.swift */; };
 		BCB2870C27560F1D0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2870727560F1B0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsCollectionView.swift */; };
 		BCB2870D27560F1D0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2870927560F1C0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel.swift */; };
@@ -392,6 +392,7 @@
 		BCC1F212269ED30A003DD648 /* PrimitiveSequence+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */; };
 		BCCF23C526FAED6800D08724 /* RenVM.BurnAndRelease.TransactionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCCF23C426FAED6800D08724 /* RenVM.BurnAndRelease.TransactionStorage.swift */; };
 		BCCF23C826FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCCF23C726FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift */; };
+		BCD3CB5A27586C31002F3C06 /* SendToken.ConfirmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD3CB5927586C31002F3C06 /* SendToken.ConfirmViewController.swift */; };
 		BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74825512D2500F51299 /* SectionHeaderView.swift */; };
 		BCD5E76525512EDC00F51299 /* NewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E76425512EDC00F51299 /* NewsCell.swift */; };
 		BCD5E770255130DD00F51299 /* News.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E76F255130DD00F51299 /* News.swift */; };
@@ -830,7 +831,7 @@
 		BCB286F52754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView.swift; sourceTree = "<group>"; };
 		BCB286FA2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift; sourceTree = "<group>"; };
 		BCB287012755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift; sourceTree = "<group>"; };
-		BCB287032755DD940074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift; sourceTree = "<group>"; };
+		BCB287032755DD940074E1D5 /* SendToken.NetworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.NetworkView.swift; sourceTree = "<group>"; };
 		BCB2870727560F1B0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsCollectionView.swift; sourceTree = "<group>"; };
 		BCB2870827560F1B0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientCell.swift; sourceTree = "<group>"; };
 		BCB2870927560F1C0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel.swift; sourceTree = "<group>"; };
@@ -852,6 +853,7 @@
 		BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PrimitiveSequence+Extensions.swift"; sourceTree = "<group>"; };
 		BCCF23C426FAED6800D08724 /* RenVM.BurnAndRelease.TransactionStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenVM.BurnAndRelease.TransactionStorage.swift; sourceTree = "<group>"; };
 		BCCF23C726FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenVM.BurnAndRelease.Service.swift; sourceTree = "<group>"; };
+		BCD3CB5927586C31002F3C06 /* SendToken.ConfirmViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ConfirmViewController.swift; sourceTree = "<group>"; };
 		BCD5E74825512D2500F51299 /* SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		BCD5E76425512EDC00F51299 /* NewsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsCell.swift; sourceTree = "<group>"; };
 		BCD5E76F255130DD00F51299 /* News.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = News.swift; sourceTree = "<group>"; };
@@ -1089,6 +1091,7 @@
 				BCB286B5274CC2590074E1D5 /* SendToken.swift */,
 				BCB286B7274CC2590074E1D5 /* SendToken.ViewModel.swift */,
 				BCB286B6274CC2590074E1D5 /* SendToken.ViewController.swift */,
+				BCB287032755DD940074E1D5 /* SendToken.NetworkView.swift */,
 				BCB286BD274CC4200074E1D5 /* Subscenes */,
 			);
 			path = SendToken;
@@ -1768,6 +1771,7 @@
 				BCB286C9274CCABC0074E1D5 /* SendToken.BaseViewController.swift */,
 				BCB286C0274CCA800074E1D5 /* ChooseTokenAndAmount */,
 				BCB286D72754B4DA0074E1D5 /* ChooseRecipientAndNetwork */,
+				BCD3CB5927586C31002F3C06 /* SendToken.ConfirmViewController.swift */,
 			);
 			path = Subscenes;
 			sourceTree = "<group>";
@@ -1821,7 +1825,6 @@
 			children = (
 				BCB287012755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift */,
 				BCB286FA2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift */,
-				BCB287032755DD940074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift */,
 				BCB2870E275631C40074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientView.swift */,
 				BCB2870527560F1A0074E1D5 /* RecipientsCollectionView */,
 			);
@@ -2721,7 +2724,7 @@
 				BCAF1A7026F44CE8001851F6 /* RenVM.LockAndMint.Service.swift in Sources */,
 				BC65E17F261EA0AC00E436C7 /* DefisViewModel.swift in Sources */,
 				BCE04C69268D901400CE131A /* ModalPresentationController.swift in Sources */,
-				BCB287042755DD940074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.NetworkView.swift in Sources */,
+				BCB287042755DD940074E1D5 /* SendToken.NetworkView.swift in Sources */,
 				BC4B9E86271425B9005B9ECA /* Settings.ViewController.swift in Sources */,
 				BC4B9EBC27191843005B9ECA /* OrcaSwapV2.swift in Sources */,
 				41D7F6AD2739109D00453B61 /* HorizontalFlowLayout.swift in Sources */,
@@ -2769,6 +2772,7 @@
 				BC2EC93A2705C1E9005FC432 /* PayingFee.swift in Sources */,
 				BC1BEBFE26CDFE290049A44C /* SwapToken.WalletView.swift in Sources */,
 				BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */,
+				BCD3CB5A27586C31002F3C06 /* SendToken.ConfirmViewController.swift in Sources */,
 				BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */,
 				BCB286C5274CCAA30074E1D5 /* SendToken.ChooseTokenAndAmount.swift in Sources */,
 				BC80203B26F1DD5D00C109C2 /* ReceiveToken.RootView.swift in Sources */,

@@ -67,7 +67,8 @@ extension SendToken {
                 let vc = ChooseRecipientAndNetwork.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)
             case .confirmation:
-                break
+                let vc = ConfirmViewController(viewModel: viewModel)
+                childNavigationController.pushViewController(vc, animated: true)
             }
         }
     }
