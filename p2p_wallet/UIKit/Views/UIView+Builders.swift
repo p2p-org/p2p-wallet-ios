@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import SwiftUI
+import BEPureLayout
 
 extension UIView {
     /// Create a stackview that have an image (or a custom view) followed by a title and a description
@@ -70,5 +71,25 @@ extension UIView {
     ) -> UIView {
         UIStackView(axis: axis, spacing: spacing, alignment: alignment, distribution: distribution, builder: builder)
             .padding(contentInset, backgroundColor: .a3a5ba.withAlphaComponent(0.05), cornerRadius: 12)
+    }
+    
+    /// Floating panel
+    static func floatingPanel(
+        contentInset: UIEdgeInsets = .init(all: 18),
+        cornerRadius: CGFloat = 12,
+        axis: NSLayoutConstraint.Axis = .vertical,
+        spacing: CGFloat = 8,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill,
+        @BEStackViewBuilder builder: () -> [BEStackViewElement]
+    ) -> UIView {
+        let panel = WLFloatingPanelView(contentInset: contentInset)
+        panel.layer.cornerRadius = cornerRadius
+        panel.stackView.axis = axis
+        panel.stackView.spacing = spacing
+        panel.stackView.alignment = alignment
+        panel.stackView.distribution = distribution
+        panel.stackView.addArrangedSubviews(builder: builder)
+        return panel
     }
 }
