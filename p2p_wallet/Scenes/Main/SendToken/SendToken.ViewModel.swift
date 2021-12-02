@@ -1,253 +1,96 @@
 //
-//  SendViewModel.swift
+//  SendToken.ViewModel.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 01/06/2021.
+//  Created by Chung Tran on 23/11/2021.
 //
 
 import Foundation
 import RxSwift
 import RxCocoa
-import LazySubject
 
-protocol SendTokenViewModelType: AnyObject, WalletDidSelectHandler {
-    var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {get}
-    var currentWalletDriver: Driver<Wallet?> {get}
-    var currentAddressContentDriver: Driver<Recipient?> { get }
-    var isSolanaTransactionDriver: Driver<Bool> { get }
-    var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {get}
-    var useAllBalanceSignal: Signal<Double?> {get}
-    var feeDriver: Driver<Loadable<Double>> {get}
-    var amountDriver: Driver<Double?> {get}
-    var availableAmountDriver: Driver<Double?> {get}
-    var isValidDriver: Driver<Bool> {get}
-    var errorDriver: Driver<String?> {get}
-    var receiverAddressDriver: Driver<String?> {get}
-    var addressValidationStatusDriver: Driver<SendToken.AddressValidationStatus> {get}
-    var renBTCInfoDriver: Driver<SendToken.SendRenBTCInfo?> {get}
+protocol SendTokenViewModelType {
+    var navigationDriver: Driver<SendToken.NavigatableScene> {get}
     
-    func reload()
+    func createChooseTokenAndAmountViewModel() -> SendTokenChooseTokenAndAmountViewModelType
+    func createChooseRecipientAndNetworkViewModel() -> SendTokenChooseRecipientAndNetworkViewModelType
+    
     func navigate(to scene: SendToken.NavigatableScene)
-    func navigateToSelectBTCNetwork()
-    func chooseWallet(_ wallet: Wallet)
-    func enterAmount(_ amount: Double?)
-    func switchCurrencyMode()
-    func useAllBalance()
+    func getSelectedWallet() -> SolanaSDK.Wallet?
+    func getSelectedAmount() -> Double?
+    func getSelectedRecipient() -> SendToken.Recipient?
+    func getSelectedNetwork() -> SendToken.Network?
+    func getRenBTCPrice() -> Double
+    func getSelectedTokenPrice() -> Double
     
-    func enterWalletAddress(_ address: String?)
-    func recipientChanged(_ recipient: Recipient)
-    func clearDestinationAddress()
-    func scanQRCode()
-    func ignoreEmptyBalance(_ isIgnored: Bool)
-    
-    func changeRenBTCNetwork(to network: SendToken.SendRenBTCInfo.Network)
-    
-    func isTestNet() -> Bool
+    func shouldShowConfirmAlert() -> Bool
+    func closeConfirmAlert()
     
     func authenticateAndSend()
-}
-
-extension SendTokenViewModelType {
-    func walletDidSelect(_ wallet: Wallet) {
-        chooseWallet(wallet)
-    }
 }
 
 extension SendToken {
     class ViewModel {
         // MARK: - Dependencies
-        private let repository: WalletsRepository
-        private let apiClient: SendTokenAPIClient
+        @Injected private var addressFormatter: AddressFormatterType
         @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var nameService: NameServiceType
+        private let walletsRepository: WalletsRepository
+        var solanaAPIClient: SendTokenAPIClient
+        let pricesService: PricesServiceType
         private let renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
-        private let addressFormatter: AddressFormatterType
         
         // MARK: - Properties
-        private let disposeBag = DisposeBag()
+        private let initialWalletPubkey: String?
+        private let initialDestinationWalletPubkey: String?
+        
+        private var selectedWalletPubkey: String?
+        private var selectedAmount: SolanaSDK.Lamports?
+        private var selectedRecipient: SendToken.Recipient?
+        private var selectedNetwork: SendToken.Network?
         
         // MARK: - Subject
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
-        private let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
-        private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
-        private let amountSubject = BehaviorRelay<Double?>(value: nil)
-        private let useAllBalanceSubject = PublishRelay<Double?>()
-        private let feeSubject: LoadableRelay<Double>
-        private let errorSubject = BehaviorRelay<String?>(value: nil)
-        private let addressValidationStatusSubject = BehaviorRelay<AddressValidationStatus>(value: .fetching)
-        private let renBTCInfoSubject = BehaviorRelay<SendRenBTCInfo?>(value: nil)
-        private let burnAndReleaseFeeSubject: LoadableRelay<Double>
+        private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount)
         
-        // MARK: - Initializer
+        // MARK: - Initializers
         init(
             repository: WalletsRepository,
+            pricesService: PricesServiceType,
             walletPubkey: String?,
             destinationAddress: String?,
             apiClient: SendTokenAPIClient,
-            renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType,
-            addressFormatter: AddressFormatterType
+            renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         ) {
-            self.addressFormatter = addressFormatter
-            self.repository = repository
-            self.apiClient = apiClient
+            self.walletsRepository = repository
+            self.pricesService = pricesService
+            self.initialWalletPubkey = walletPubkey
+            self.initialDestinationWalletPubkey = destinationAddress
+            self.solanaAPIClient = apiClient
             self.renVMBurnAndReleaseService = renVMBurnAndReleaseService
-            
-            self.feeSubject = .init(request: .just(0)) // placeholder
-            self.burnAndReleaseFeeSubject = .init(request: renVMBurnAndReleaseService.getFee())
-            
-            // accept initial values
-            if let pubkey = walletPubkey {
-                walletSubject.accept(repository.getWallets().first(where: {$0.pubkey == pubkey}))
-            } else {
-                walletSubject.accept(repository.nativeWallet)
-            }
-
-            acceptAddressToRecipient(address: destinationAddress)
-
-            bind()
-            reload()
-        }
-        
-        private func bind() {
-            // detect if price isn't available
-            walletSubject.distinctUntilChanged()
-                .filter {$0 != nil && $0?.priceInCurrentFiat == nil}
-                .map {_ in CurrencyMode.token}
-                .bind(to: currencyModeSubject)
-                .disposed(by: disposeBag)
-            
-            // detect renBTC
-            walletSubject.distinctUntilChanged()
-                .map {wallet -> SendRenBTCInfo? in
-                    if wallet?.token.address.isRenBTCMint == true {
-                        return .init(
-                            network: .solana,
-                            receiveAtLeast: nil
-                        )
-                    }
-                    return nil
-                }
-                .bind(to: renBTCInfoSubject)
-                .disposed(by: disposeBag)
-
-            // receive at least
-            Observable.combineLatest(
-                amountSubject.distinctUntilChanged(),
-                burnAndReleaseFeeSubject.valueObservable
-            )
-                .withLatestFrom(renBTCInfoSubject, resultSelector: {($1, $0.0, $0.1)})
-                .subscribe(onNext: {[weak self] info, amount, fee in
-                    guard var info = info else {return}
-                    var receiveAtLeast = amount
-                    if let amount = amount, let fee = fee {
-                        receiveAtLeast = amount - fee
-                        if receiveAtLeast! < 0 {receiveAtLeast = 0}
-                    }
-                    info.receiveAtLeast = receiveAtLeast
-                    self?.renBTCInfoSubject.accept(info)
-                })
-                .disposed(by: disposeBag)
-            
-            // verify
-            Observable.combineLatest(
-                walletSubject.distinctUntilChanged().asObservable(),
-                currencyModeSubject.distinctUntilChanged().asObservable(),
-                amountSubject.distinctUntilChanged(),
-                feeSubject.valueObservable.distinctUntilChanged(),
-                renBTCInfoSubject.distinctUntilChanged()
-            )
-                .map { [weak self] wallet, currencyMode, amount, fee, renBTCInfo in
-                    verifyError(
-                        wallet: wallet,
-                        nativeWallet: self?.repository.nativeWallet,
-                        currencyMode: currencyMode,
-                        amount: amount,
-                        fee: fee,
-                        renBTCInfo: renBTCInfo
-                    )
-                }
-                .bind(to: errorSubject)
-                .disposed(by: disposeBag)
-            
-            // destination address
-            Observable.combineLatest(
-                recipientSubject.map{$0?.address}.distinctUntilChanged(),
-                renBTCInfoSubject
-            )
-                .do(onNext: { [weak self] _ in
-                    self?.addressValidationStatusSubject.accept(.fetching)
-                })
-                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-                .flatMap {[weak self] address, renBTCInfo -> Single<AddressValidationStatus> in
-                    guard let self = self, let address = address, !address.isEmpty else {
-                        return .just(.uncheck)
-                    }
-                    self.addressValidationStatusSubject.accept(.fetching)
-                    let request: Single<Bool>
-                    if renBTCInfo?.network == .bitcoin {
-                        request = .just(false)
-                    } else {
-                        request = self.apiClient.checkNameOrAccountValidation(nameOrAccount: address, nameService: self.nameService)
-                    }
-                    return request.map {$0 ? .valid: .invalid}
-                        .catchAndReturn(.fetchingError)
-                }
-                
-                .bind(to: addressValidationStatusSubject)
-                .disposed(by: disposeBag)
         }
         
         private func send() {
-            // verify
-            guard errorSubject.value == nil,
-                  let wallet = walletSubject.value,
-                  let sender = wallet.pubkey,
-                  let receiver = recipientSubject.value?.address,
-                  var amount = amountSubject.value
-            else {
-                return
-            }
-            
-            // get decimal
-            let decimals = wallet.token.decimals
-            
-            // convert
-            if currencyModeSubject.value == .fiat,
-               let price = wallet.priceInCurrentFiat,
-               price > 0
-            {
-                amount = amount / price
-            }
+            guard let wallet = getSelectedWallet(),
+                  let sender = selectedWalletPubkey,
+                  let amount = selectedAmount,
+                  let receiver = selectedRecipient?.address,
+                  let network = selectedNetwork
+            else {return}
             
             // form request
-            // prepare amount
-            let lamport = amount.toLamport(decimals: decimals)
-            
-            // define token
             var request: Single<String>!
-            
-            // BTC network
-            if wallet.token.address.isRenBTCMint && renBTCInfoSubject.value?.network == .bitcoin
-            {
-                request = renVMBurnAndReleaseService.burn(
-                    recipient: receiver,
-                    amount: amount.toLamport(decimals: 8)
-                )
+            if receiver == sender {
+                request = .error(SolanaSDK.Error.other(L10n.youCanNotSendTokensToYourself))
             }
             
-            // solana network
-            else {
-                if receiver == sender {
-                    request = .error(SolanaSDK.Error.other(L10n.youCanNotSendTokensToYourself))
-                }
-                
-                // native solana
-                else if wallet.isNativeSOL {
-                    request = apiClient.sendNativeSOL(
+            // detect network
+            let fee: SolanaSDK.Lamports
+            switch network {
+            case .solana:
+                if wallet.isNativeSOL {
+                    request = solanaAPIClient.sendNativeSOL(
                         to: receiver,
-                        amount: lamport,
+                        amount: amount,
                         withoutFee: Defaults.useFreeTransaction,
                         isSimulation: false
                     )
@@ -255,23 +98,30 @@ extension SendToken {
                 
                 // other tokens
                 else {
-                    request = apiClient.sendSPLTokens(
+                    request = solanaAPIClient.sendSPLTokens(
                         mintAddress: wallet.mintAddress,
                         decimals: wallet.token.decimals,
                         from: sender,
                         to: receiver,
-                        amount: lamport,
+                        amount: amount,
                         withoutFee: Defaults.useFreeTransaction,
                         isSimulation: false
                     )
                 }
+                fee = 0
+            case .bitcoin:
+                request = renVMBurnAndReleaseService.burn(
+                    recipient: receiver,
+                    amount: amount
+                )
+                fee = network.defaultFee.amount.toLamport(decimals: 8)
             }
             
             // log
             analyticsManager.log(
                 event: .sendSendClick(
                     tokenTicker: wallet.token.symbol,
-                    sum: lamport.convertToBalance(decimals: wallet.token.decimals)
+                    sum: amount.convertToBalance(decimals: wallet.token.decimals)
                 )
             )
             
@@ -282,224 +132,83 @@ extension SendToken {
                     transactionType: .send(
                         from: wallet,
                         to: receiver,
-                        lamport: lamport,
-                        feeInLamports: feeSubject.value?.toLamport(decimals: wallet.token.decimals) ?? 0
+                        lamport: amount,
+                        feeInLamports: fee
                     )
                 )
             )
-        }
-        
-        private func reloadFee() {
-            feeSubject.request = feeRequest(network: renBTCInfoSubject.value?.network)
-            feeSubject.reload()
-        }
-        
-        private func feeRequest(network: SendRenBTCInfo.Network?) -> Single<Double> {
-            switch network {
-            case .none, .solana:
-                return solanaFee()
-            case .bitcoin:
-                return btcFee()
-            }
-        }
-
-        private func btcFee() -> Single<Double> {
-            .just(0.001571)
-        }
-
-        private func solanaFee() -> Single<Double> {
-            Defaults.useFreeTransaction ? .just(0) : apiClient.getFees()
-                .map {$0.feeCalculator?.lamportsPerSignature ?? 0}
-                .map { [weak self] in
-                    let decimals = self?.repository.nativeWallet?.token.decimals
-                    return $0.convertToBalance(decimals: decimals)
-                }
         }
     }
 }
 
 extension SendToken.ViewModel: SendTokenViewModelType {
-    var isSolanaTransactionDriver: Driver<Bool> {
-        let tokenIsRen = walletSubject.map {
-            $0?.token.address.isRenBTCMint == true
-        }
-
-        let isBtcNetwork = renBTCInfoSubject.map {
-            $0?.network == .bitcoin
-        }
-
-        return Observable.combineLatest(tokenIsRen, isBtcNetwork)
-            .map { isRen, isBtcNetwork in
-                isRen && isBtcNetwork
-            }
-            .map {
-                !$0
-            }
-            .asDriver(onErrorJustReturn: false)
-    }
-
-    func recipientChanged(_ recipient: Recipient) {
-        recipientSubject.accept(recipient)
-    }
-
-    func scanQRCode() {
-        analyticsManager.log(event: .sendScanQrClick)
-        analyticsManager.log(event: .scanQrOpen(fromPage: "send"))
-        navigate(to: .scanQrCode)
-    }
-
-    var navigatableSceneDriver: Driver<SendToken.NavigatableScene?> {
+    var navigationDriver: Driver<SendToken.NavigatableScene> {
         navigationSubject.asDriver()
     }
     
-    var currentWalletDriver: Driver<Wallet?> {
-        walletSubject.asDriver()
-    }
-
-    var currentAddressContentDriver: Driver<Recipient?> {
-        recipientSubject.asDriver()
-    }
-
-    var currentCurrencyModeDriver: Driver<SendToken.CurrencyMode> {
-        currencyModeSubject.asDriver()
-    }
-    
-    var useAllBalanceSignal: Signal<Double?> {
-        useAllBalanceSubject.asSignal()
-    }
-    
-    var feeDriver: Driver<Loadable<Double>> {
-        feeSubject.asDriver()
-    }
-    
-    var amountDriver: Driver<Double?> {
-        amountSubject.asDriver()
-    }
-    
-    var availableAmountDriver: Driver<Double?> {
-        Driver.combineLatest(
-            currentWalletDriver,
-            currentCurrencyModeDriver,
-            feeDriver
-        )
-            .map {wallet, currencyMode, fee -> Double? in
-                calculateAvailableAmount(
-                    wallet: wallet,
-                    currencyMode: currencyMode,
-                    fee: fee.value
-                )
-            }
-    }
-    
-    var isValidDriver: Driver<Bool> {
-        Driver.combineLatest([
-            errorDriver.map {$0 == nil},
-            currentWalletDriver.map {$0 != nil},
-            receiverAddressDriver.map {$0 != nil && !$0!.isEmpty},
-            amountSubject.asDriver().map {$0 != nil},
-            addressValidationStatusDriver.map {$0 == .valid || $0 == .invalidIgnored}
-        ])
-            .map {$0.allSatisfy {$0}}
-    }
-    
-    var errorDriver: Driver<String?> {
-        errorSubject.asDriver()
-    }
-    
-    var receiverAddressDriver: Driver<String?> {
-        recipientSubject.map{$0?.address}.asDriver(onErrorJustReturn: nil)
-    }
-    
-    var addressValidationStatusDriver: Driver<SendToken.AddressValidationStatus> {
-        addressValidationStatusSubject.asDriver()
-    }
-    
-    var renBTCInfoDriver: Driver<SendToken.SendRenBTCInfo?> {
-        renBTCInfoSubject.asDriver()
-    }
-    
     // MARK: - Actions
-    func reload() {
-        reloadFee()
-        burnAndReleaseFeeSubject.reload()
+    func createChooseTokenAndAmountViewModel() -> SendTokenChooseTokenAndAmountViewModelType {
+        let vm = SendToken.ChooseTokenAndAmount.ViewModel(repository: walletsRepository, walletPubkey: initialWalletPubkey)
+        vm.onGoBack = {[weak self] in
+            self?.navigate(to: .back)
+        }
+        vm.onSelect = {[weak self] pubkey, lamports in
+            self?.selectedWalletPubkey = pubkey
+            self?.selectedAmount = lamports
+            self?.navigate(to: .chooseRecipientAndNetwork)
+        }
+        return vm
+    }
+    
+    func createChooseRecipientAndNetworkViewModel() -> SendTokenChooseRecipientAndNetworkViewModelType {
+        let vm = SendToken.ChooseRecipientAndNetwork.ViewModel()
+        vm.solanaAPIClient = solanaAPIClient
+        vm.repository = walletsRepository
+        vm.selectedWalletPubkey = selectedWalletPubkey
+        vm.selectedAmount = selectedAmount
+        vm.pricesService = pricesService
+        vm.completion = {[weak self] recipient, network in
+            self?.selectedRecipient = recipient
+            self?.selectedNetwork = network
+            self?.navigate(to: .confirmation)
+        }
+        return vm
     }
     
     func navigate(to scene: SendToken.NavigatableScene) {
         navigationSubject.accept(scene)
     }
     
-    func navigateToSelectBTCNetwork() {
-        guard let selectedNetwork = renBTCInfoSubject.value?.network else {return}
-        navigationSubject.accept(.chooseBTCNetwork(selectedNetwork: selectedNetwork))
+    func getSelectedWallet() -> SolanaSDK.Wallet? {
+        walletsRepository.getWallets().first(where: {$0.pubkey == selectedWalletPubkey})
     }
     
-    func chooseWallet(_ wallet: Wallet) {
-        analyticsManager.log(
-            event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
-        )
-        walletSubject.accept(wallet)
+    func getSelectedAmount() -> Double? {
+        selectedAmount?.convertToBalance(decimals: getSelectedWallet()?.token.decimals)
     }
     
-    func enterAmount(_ amount: Double?) {
-        amountSubject.accept(amount)
+    func getSelectedRecipient() -> SendToken.Recipient? {
+        selectedRecipient
     }
     
-    func switchCurrencyMode() {
-        if walletSubject.value?.priceInCurrentFiat == nil {
-            if currencyModeSubject.value == .fiat {
-                currencyModeSubject.accept(.token)
-            }
-        } else {
-            if currencyModeSubject.value == .fiat {
-                currencyModeSubject.accept(.token)
-            } else {
-                currencyModeSubject.accept(.fiat)
-            }
-        }
-        
-        analyticsManager.log(event: .sendChangeInputMode(selectedValue: currencyModeSubject.value == .token ? "token": "fiat"))
+    func getSelectedNetwork() -> SendToken.Network? {
+        selectedNetwork
     }
     
-    func useAllBalance() {
-        let amount = calculateAvailableAmount(
-            wallet: walletSubject.value,
-            currencyMode: currencyModeSubject.value,
-            fee: feeSubject.value
-        )
-        if let amount = amount {
-            analyticsManager.log(event: .sendAvailableClick(sum: amount))
-        }
-        useAllBalanceSubject.accept(amount)
-        amountSubject.accept(amount)
+    func getRenBTCPrice() -> Double {
+        pricesService.currentPrice(for: "renBTC")?.value ?? 0
     }
     
-    func enterWalletAddress(_ address: String?) {
-        acceptAddressToRecipient(address: address)
+    func getSelectedTokenPrice() -> Double {
+        pricesService.currentPrice(for: getSelectedWallet()?.token.symbol ?? "USDC")?.value ?? 0
     }
     
-    func clearDestinationAddress() {
-        acceptAddressToRecipient(address: nil)
+    func shouldShowConfirmAlert() -> Bool {
+        Defaults.shouldShowConfirmAlert
     }
     
-    func ignoreEmptyBalance(_ isIgnored: Bool) {
-        if isIgnored {
-            addressValidationStatusSubject.accept(.invalidIgnored)
-        } else {
-            addressValidationStatusSubject.accept(.invalid)
-        }
-    }
-    
-    func changeRenBTCNetwork(to network: SendToken.SendRenBTCInfo.Network) {
-        guard var info = renBTCInfoSubject.value else {return}
-        info.network = network
-        renBTCInfoSubject.accept(info)
-        
-        // re-calculate fee
-        reloadFee()
-    }
-    
-    func isTestNet() -> Bool {
-        renVMBurnAndReleaseService.isTestNet()
+    func closeConfirmAlert() {
+        Defaults.shouldShowConfirmAlert = false
     }
     
     func authenticateAndSend() {
@@ -513,96 +222,5 @@ extension SendToken.ViewModel: SendTokenViewModelType {
                     }
                 )
         )
-    }
-
-    private func acceptAddressToRecipient(address: String?) {
-        let recipient = address
-            .flatMap { $0.isEmpty ? nil : $0 }
-            .map {
-                Recipient(
-                    address: $0,
-                    shortAddress: addressFormatter.shortAddress(of: $0),
-                    name: nil
-                )
-            }
-
-        recipientSubject.accept(recipient)
-    }
-}
-
-// MARK: - Helpers
-private func calculateAvailableAmount(
-    wallet: Wallet?,
-    currencyMode: SendToken.CurrencyMode,
-    fee: Double?
-) -> Double? {
-    guard let wallet = wallet else {return nil}
-    // all amount
-    var availableAmount = wallet.amount ?? 0
-    
-    // minus fee if wallet is native sol
-    if wallet.isNativeSOL == true {
-        guard let fee = fee else {return nil}
-        availableAmount = availableAmount - fee
-    }
-    
-    // convert to fiat in fiat mode
-    if currencyMode == .fiat {
-        availableAmount = availableAmount * wallet.priceInCurrentFiat
-    }
-    
-    // return
-    return availableAmount > 0 ? availableAmount: 0
-}
-
-/// Verify current context
-/// - Returns: Error string, nil if no error appear
-private func verifyError(
-    wallet: Wallet?,
-    nativeWallet: Wallet?,
-    currencyMode: SendToken.CurrencyMode,
-    amount: Double?,
-    fee: Double?,
-    renBTCInfo: SendToken.SendRenBTCInfo?
-) -> String? {
-    // Verify wallet
-    guard wallet != nil else {
-        return L10n.youMustSelectAWalletToSend
-    }
-    
-    // Verify amount if it has been entered
-    if let amount = amount {
-        // Amount is not valid
-        if amount <= 0 {
-            return L10n.amountIsNotValid
-        }
-        
-        // Verify with fee
-        if let info = renBTCInfo, info.network == .bitcoin {
-            if let receiveAtLeast = info.receiveAtLeast, receiveAtLeast <= 0 {
-                return L10n.amountIsTooSmall
-            }
-        } else if let fee = fee,
-                let solAmount = nativeWallet?.amount,
-                fee > solAmount
-        {
-            return L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
-        }
-        
-        // Verify amount
-        let amountToCompare = calculateAvailableAmount(wallet: wallet, currencyMode: currencyMode, fee: fee)
-        if amount.rounded(decimals: Int(wallet?.token.decimals ?? 0)) > amountToCompare?.rounded(decimals: Int(wallet?.token.decimals ?? 0))
-        {
-            return L10n.insufficientFunds
-        }
-    }
-    
-    return nil
-}
-
-private extension String {
-    var isRenBTCMint: Bool {
-        self == SolanaSDK.PublicKey.renBTCMint.base58EncodedString ||
-            self == SolanaSDK.PublicKey.renBTCMintDevnet.base58EncodedString
     }
 }
