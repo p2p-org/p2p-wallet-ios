@@ -17,6 +17,11 @@ extension SendToken {
         // MARK: - Properties
         
         // MARK: - Subviews
+        private lazy var alertBannerView = UIView.greyBannerView(axis: .horizontal, spacing: 18, alignment: .top) {
+            UILabel(text: L10n.BeSureAllDetailsAreCorrectBeforeConfirmingTheTransaction.onceConfirmedItCannotBeReversed, textSize: 15, numberOfLines: 0)
+            UIImageView(width: 24, height: 24, image: .closeBannerButton)
+                .onTap(self, action: #selector(closeBannerButtonDidTouch))
+        }
         private lazy var networkView = NetworkView()
         private lazy var nameLabel = UILabel(text: viewModel.getSelectedRecipient()?.name, textSize: 15, textColor: .textSecondary, textAlignment: .right)
         private lazy var actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.send(amount, tokenSymbol))
@@ -40,10 +45,6 @@ extension SendToken {
             
             // layout
             let stackView = UIStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill) {
-                UIView.greyBannerView {
-                    UILabel(text: L10n.BeSureAllDetailsAreCorrectBeforeConfirmingTheTransaction.onceConfirmedItCannotBeReversed, textSize: 15, numberOfLines: 0)
-                }
-                BEStackViewSpacing(8)
                 UIView.floatingPanel {
                     networkView
                 }
@@ -124,6 +125,14 @@ extension SendToken {
             actionButton.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
             
             // setup
+            if viewModel.shouldShowConfirmAlert() {
+                var index = 0
+                stackView.insertArrangedSubviews(at: &index) {
+                    alertBannerView
+                    BEStackViewSpacing(8)
+                }
+            }
+            
             if viewModel.getSelectedRecipient()?.name == nil {
                 nameLabel.isHidden = true
             }
@@ -135,6 +144,13 @@ extension SendToken {
         }
         
         // MARK: - Actions
+        @objc private func closeBannerButtonDidTouch() {
+            viewModel.closeConfirmAlert()
+            UIView.animate(withDuration: 0.3) {
+                self.alertBannerView.isHidden = true
+            }
+        }
+        
         @objc private func actionButtonDidTouch() {
             viewModel.authenticateAndSend()
         }
