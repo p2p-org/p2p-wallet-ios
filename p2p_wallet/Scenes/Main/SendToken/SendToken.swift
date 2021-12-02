@@ -1,43 +1,52 @@
 //
-//  Send.swift
+//  SendToken.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 01/06/2021.
+//  Created by Chung Tran on 23/11/2021.
 //
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 struct SendToken {
     enum NavigatableScene {
-        case chooseWallet
-        case chooseAddress
-        case scanQrCode
-        case selectRecipient
-        case chooseBTCNetwork(selectedNetwork: SendRenBTCInfo.Network)
+        case back
+        case chooseTokenAndAmount
+        case chooseRecipientAndNetwork
+        case confirmation
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
-        case feeInfo
     }
     
-    enum CurrencyMode {
-        case token, fiat
+    struct Recipient: Hashable {
+        let address: String
+        let shortAddress: String
+        let name: String?
+        let hasNoFunds: Bool
     }
     
-    enum AddressValidationStatus {
-        case uncheck
-        case fetching
-        case valid
-        case invalid
-        case fetchingError
-        case invalidIgnored
-    }
-    
-    struct SendRenBTCInfo: Equatable {
-        enum Network: String {
-            case solana
-            case bitcoin
+    enum Network: String {
+        case solana, bitcoin
+        var icon: UIImage {
+            switch self {
+            case .solana:
+                return .squircleSolanaIcon
+            case .bitcoin:
+                return .squircleBitcoinIcon
+            }
         }
-        var network: Network
-        var receiveAtLeast: Double?
+        var defaultFee: Fee {
+            switch self {
+            case .solana:
+                return .init(amount: 0, unit: Defaults.fiat.symbol)
+            case .bitcoin:
+                return .init(amount: 0.0002, unit: "renBTC")
+            }
+        }
+    }
+    
+    struct Fee {
+        let amount: Double
+        let unit: String
     }
 }

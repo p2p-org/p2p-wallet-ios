@@ -102,9 +102,13 @@ extension RestoreWallet {
                 let vc = DerivableAccounts.ViewController(viewModel: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
             case .reserveName(let owner):
-                let viewModel = ReserveName.ViewModel(owner: owner, handler: viewModel)
-                let vc = ReserveNameVC(viewModel: viewModel)
-                navigationController?.pushViewController(vc, animated: true)
+                let viewModel = CreateOrRestoreReserveName.ViewModel(
+                    owner: owner,
+                    nameService: Resolver.resolve(),
+                    reserveNameHandler: viewModel
+                )
+                let viewController = CreateOrRestoreReserveName.ViewController(viewModel: viewModel)
+                navigationController?.pushViewController(viewController, animated: true)
             }
         }
 
