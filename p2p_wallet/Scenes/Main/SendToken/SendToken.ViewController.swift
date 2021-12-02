@@ -71,8 +71,17 @@ extension SendToken {
                 childNavigationController.pushViewController(vc, animated: true)
             case .processTransaction(let request, let transactionType):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
+                vc.delegate = self
                 self.present(vc, animated: true, completion: nil)
             }
+        }
+    }
+}
+
+extension SendToken.ViewController: ProcessTransactionViewControllerDelegate {
+    func processTransactionViewControllerDidComplete(_ vc: UIViewController) {
+        vc.dismiss(animated: true) { [weak self] in
+            self?.back()
         }
     }
 }
