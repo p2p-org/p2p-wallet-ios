@@ -57,4 +57,5 @@ extension DefaultsKeys {
     var renVMSubmitedBurnTxDetails: DefaultsKey<[RenVM.BurnAndRelease.BurnDetails]> {.init(#function, defaultValue: [])}
     var forceCloseNameServiceBanner: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
     var authenticationBlockingTime: DefaultsKey<Date?> {.init(#function, defaultValue: nil)}
+    var shouldShowConfirmAlert: DefaultsKey<Bool> {.init(#function, defaultValue: true)}
 }

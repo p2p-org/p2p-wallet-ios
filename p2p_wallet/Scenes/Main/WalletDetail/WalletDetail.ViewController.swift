@@ -107,7 +107,7 @@ extension WalletDetail {
                 self.present(vc, animated: true, completion: nil)
             case .send(let wallet):
                 let vc = scenesFactory.makeSendTokenViewController(walletPubkey: wallet.pubkey, destinationAddress: nil)
-                present(vc, interactiveDismissalType: .standard, completion: nil)
+                show(vc, sender: nil)
             case .receive(let pubkey):
                 if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: pubkey)
                 {

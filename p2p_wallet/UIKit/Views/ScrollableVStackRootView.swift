@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import UIKit
 
 class ScrollableVStackRootView: BEView {
     lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: UIEdgeInsets(top: .defaultPadding, left: .defaultPadding, bottom: .defaultPadding + safeAreaInsets.bottom, right: .defaultPadding))
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
+    var scrollViewBottomConstraint: NSLayoutConstraint!
     
     override func commonInit() {
         super.commonInit()
