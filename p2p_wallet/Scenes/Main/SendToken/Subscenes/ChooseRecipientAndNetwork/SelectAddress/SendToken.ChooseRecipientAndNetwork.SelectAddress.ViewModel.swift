@@ -72,7 +72,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .subscribe(onNext: {[weak self] network in
                     switch network {
                     case .solana:
-                        self?.feeSubject.accept(.init(amount: 0, unit: "$"))
+                        self?.feeSubject.accept(.init(amount: 0, unit: Defaults.fiat.symbol))
                     case .bitcoin:
                         self?.feeSubject.accept(.init(amount: 0.0002, unit: "renBTC"))
                     }

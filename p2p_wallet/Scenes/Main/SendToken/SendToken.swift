@@ -36,7 +36,7 @@ struct SendToken {
         var defaultFee: Fee {
             switch self {
             case .solana:
-                return .init(amount: 0, unit: "$")
+                return .init(amount: 0, unit: Defaults.fiat.symbol)
             case .bitcoin:
                 return .init(amount: 0.0002, unit: "renBTC")
             }

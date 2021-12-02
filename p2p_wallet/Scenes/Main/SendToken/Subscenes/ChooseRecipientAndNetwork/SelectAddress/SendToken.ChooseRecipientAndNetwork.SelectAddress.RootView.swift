@@ -182,7 +182,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     
     private class _NetworkView: WLFloatingPanelView {
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
-        private let _networkView = NetworkView()
+        private let _networkView = SendToken.NetworkView()
         private let disposeBag = DisposeBag()
         
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {

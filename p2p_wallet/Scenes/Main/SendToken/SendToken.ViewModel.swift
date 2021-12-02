@@ -16,6 +16,12 @@ protocol SendTokenViewModelType {
     func createChooseRecipientAndNetworkViewModel() -> SendTokenChooseRecipientAndNetworkViewModelType
     
     func navigate(to scene: SendToken.NavigatableScene)
+    func getSelectedWallet() -> SolanaSDK.Wallet?
+    func getSelectedAmount() -> Double?
+    func getSelectedRecipient() -> SendToken.Recipient?
+    func getSelectedNetwork() -> SendToken.Network?
+    func getRenBTCPrice() -> Double
+    func getSelectedTokenPrice() -> Double
 }
 
 extension SendToken {
@@ -32,6 +38,8 @@ extension SendToken {
         
         private var selectedWalletPubkey: String?
         private var selectedAmount: SolanaSDK.Lamports?
+        private var selectedRecipient: SendToken.Recipient?
+        private var selectedNetwork: SendToken.Network?
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount)
@@ -81,12 +89,38 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         vm.selectedAmount = selectedAmount
         vm.pricesService = pricesService
         vm.completion = {[weak self] recipient, network in
-            
+            self?.selectedRecipient = recipient
+            self?.selectedNetwork = network
+            self?.navigate(to: .confirmation)
         }
         return vm
     }
     
     func navigate(to scene: SendToken.NavigatableScene) {
         navigationSubject.accept(scene)
+    }
+    
+    func getSelectedWallet() -> SolanaSDK.Wallet? {
+        walletsRepository.getWallets().first(where: {$0.pubkey == selectedWalletPubkey})
+    }
+    
+    func getSelectedAmount() -> Double? {
+        selectedAmount?.convertToBalance(decimals: getSelectedWallet()?.token.decimals)
+    }
+    
+    func getSelectedRecipient() -> SendToken.Recipient? {
+        selectedRecipient
+    }
+    
+    func getSelectedNetwork() -> SendToken.Network? {
+        selectedNetwork
+    }
+    
+    func getRenBTCPrice() -> Double {
+        pricesService.currentPrice(for: "renBTC")?.value ?? 0
+    }
+    
+    func getSelectedTokenPrice() -> Double {
+        pricesService.currentPrice(for: getSelectedWallet()?.token.symbol ?? "USDC")?.value ?? 0
     }
 }

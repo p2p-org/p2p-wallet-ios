@@ -635,3 +635,7 @@
 "Paid by p2p" = "Thanh toán bởi p2p";
 "Choose the recipient to proceed" = "Chọn người nhận để tiếp tục";
 "Review and confirm" = "Xem lại & xác nhận";
+"Confirm sending %@" = "Xác nhận gửi %@";
+"Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Hãy chắc chắn rằng tất cả các chi tiết là chính xác trước khi xác nhận giao dịch. Sau khi xác nhận, nó không thể được đảo ngược.";
+"Recipient’s\naddress" = "Địa chỉ\nngười nhận";
+"Total" = "Toàn bộ";
