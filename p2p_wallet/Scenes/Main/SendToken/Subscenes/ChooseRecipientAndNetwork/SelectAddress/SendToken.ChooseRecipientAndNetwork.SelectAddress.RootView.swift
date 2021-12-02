@@ -44,6 +44,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             .padding(.init(x: 20, y: 0))
         private lazy var errorLabel = UILabel(text: L10n.thereSNoAddressLikeThis, textSize: 17, textColor: .ff3b30, numberOfLines: 0)
         
+        private lazy var actionButton = WLStepButton.main(text: L10n.chooseTheRecipientToProceed)
+        
         // MARK: - Initializer
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
             self.viewModel = viewModel
@@ -63,7 +65,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         // MARK: - Layout
         private func layout() {
-            scrollView.contentInset.modify(dTop: -.defaultPadding)
+            scrollView.contentInset.modify(dTop: -.defaultPadding, dBottom: 56 + 18)
             stackView.addArrangedSubviews {
                 UIView.floatingPanel {
                     titleView
@@ -77,7 +79,12 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 recipientCollectionView
             }
             
-            recipientCollectionView.autoPinEdge(.bottom, to: .bottom, of: self)
+            addSubview(actionButton)
+            actionButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 18)
+            actionButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
+            actionButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 18)
+            
+            recipientCollectionView.autoPinEdge(.bottom, to: .bottom, of: self, withOffset: -(56 + 18))
         }
         
         private func bind() {
@@ -141,6 +148,21 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     self?.recipientView.setRecipient(recipient)
                     self?.recipientView.setHighlighted()
                 })
+                .disposed(by: disposeBag)
+            
+            // action button
+            viewModel.isValidDriver
+                .drive(actionButton.rx.isEnabled)
+                .disposed(by: disposeBag)
+            
+            viewModel.isValidDriver
+                .map {$0 ? UIImage.tick: nil}
+                .drive(actionButton.rx.image)
+                .disposed(by: disposeBag)
+            
+            viewModel.isValidDriver
+                .map {$0 ? L10n.reviewAndConfirm: L10n.chooseTheRecipientToProceed}
+                .drive(actionButton.rx.text)
                 .disposed(by: disposeBag)
         }
         

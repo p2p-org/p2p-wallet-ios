@@ -633,3 +633,5 @@
 "Choose the network" = "Choose the network";
 "P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals.\n\nHowever, before sending your funds, make sure to double-check the selected network.";
 "Paid by p2p" = "Paid by p2p";
+"Choose the recipient to proceed" = "Choose the recipient to proceed";
+"Review and confirm" = "Review & confirm";

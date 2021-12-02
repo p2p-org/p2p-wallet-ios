@@ -17,6 +17,7 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
     var feeDriver: Driver<SendToken.Fee> {get}
+    var isValidDriver: Driver<Bool> {get}
     
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
     
@@ -47,6 +48,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         var pricesService: PricesServiceType!
         var wallet: SolanaSDK.Wallet!
+        var completion: ((SendToken.Recipient, SendToken.Network) -> Void)?
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -103,6 +105,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     var feeDriver: Driver<SendToken.Fee> {
         feeSubject.asDriver()
+    }
+    
+    var isValidDriver: Driver<Bool> {
+        recipientSubject.map {$0 != nil}
+            .asDriver(onErrorJustReturn: false)
     }
     
     // MARK: - Actions
