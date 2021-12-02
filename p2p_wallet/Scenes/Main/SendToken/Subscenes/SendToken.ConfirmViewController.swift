@@ -18,10 +18,7 @@ extension SendToken {
         
         // MARK: - Subviews
         private lazy var networkView = NetworkView()
-        private lazy var nameSection = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fill) {
-            UIView.spacer
-            UILabel(text: viewModel.getSelectedRecipient()?.name, textSize: 15, textColor: .textSecondary, textAlignment: .right)
-        }
+        private lazy var nameLabel = UILabel(text: viewModel.getSelectedRecipient()?.name, textSize: 15, textColor: .textSecondary, textAlignment: .right)
         private lazy var actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.send(amount, tokenSymbol))
         
         // MARK: - Initializer
@@ -61,7 +58,10 @@ extension SendToken {
                 }
                 
                 BEStackViewSpacing(8)
-                nameSection
+                UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fill) {
+                    UIView.spacer
+                    nameLabel
+                }
                 
                 UIView.separator(height: 1, color: .separator)
                 
@@ -124,7 +124,7 @@ extension SendToken {
             
             // setup
             if viewModel.getSelectedRecipient()?.name == nil {
-                nameSection.isHidden = true
+                nameLabel.isHidden = true
             }
         }
         
