@@ -60,6 +60,7 @@ extension SendToken {
                         .lineBreakMode(.byCharWrapping)
                 }
                 
+                BEStackViewSpacing(8)
                 nameSection
                 
                 UIView.separator(height: 1, color: .separator)
