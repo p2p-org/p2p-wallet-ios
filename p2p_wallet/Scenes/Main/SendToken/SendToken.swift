@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 import RxCocoa
 
 struct SendToken {
@@ -14,6 +15,7 @@ struct SendToken {
         case chooseTokenAndAmount
         case chooseRecipientAndNetwork
         case confirmation
+        case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
     }
     
     struct Recipient: Hashable {
