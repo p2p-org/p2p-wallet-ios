@@ -20,6 +20,7 @@ extension SendToken {
         private lazy var networkView = NetworkView()
         private lazy var nameLabel = UILabel(text: viewModel.getSelectedRecipient()?.name, textSize: 15, textColor: .textSecondary, textAlignment: .right)
         private lazy var actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.send(amount, tokenSymbol))
+            .onTap(self, action: #selector(actionButtonDidTouch))
         
         // MARK: - Initializer
         init(viewModel: SendTokenViewModelType) {
@@ -131,6 +132,11 @@ extension SendToken {
         override func bind() {
             super.bind()
             
+        }
+        
+        // MARK: - Actions
+        @objc private func actionButtonDidTouch() {
+            viewModel.authenticateAndSend()
         }
         
         // MARK: - Helpers
