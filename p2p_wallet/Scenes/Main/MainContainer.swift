@@ -158,14 +158,13 @@ class MainContainer {
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController {
         let vm = SendToken.ViewModel(
             repository: walletsViewModel,
+            pricesService: pricesService,
             walletPubkey: walletPubkey,
             destinationAddress: destinationAddress,
             apiClient: solanaSDK,
-            renVMBurnAndReleaseService: renVMBurnAndReleaseService,
-            addressFormatter: Resolver.resolve()
+            renVMBurnAndReleaseService: renVMBurnAndReleaseService
         )
-        let vc = SendToken.ViewController(viewModel: vm, scenesFactory: self)
-        return vc
+        return .init(viewModel: vm, scenesFactory: self)
     }
     
     func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
@@ -220,15 +219,6 @@ class MainContainer {
             apiClient: solanaSDK
         )
         return ProcessTransaction.ViewController(viewModel: viewModel)
-    }
-
-    func makeSelectRecipientViewController(handler: @escaping (Recipient) -> Void) -> SelectRecipient.ViewController {
-        let viewModel = SelectRecipient.ViewModel(
-            nameService: Resolver.resolve(),
-            addressFormatter: Resolver.resolve(),
-            recipientSelectedHandler: handler
-        )
-        return SelectRecipient.ViewController(viewModel: viewModel)
     }
     
     // MARK: - Profile VCs

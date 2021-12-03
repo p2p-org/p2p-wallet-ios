@@ -17,16 +17,16 @@ extension EnterSeed {
         private let viewModel: EnterSeedViewModelType
 
         // MARK: - Subviews
-        lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
-        lazy var stackView = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill)
+        private let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
+        private let stackView = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill)
         private let textView = ExpandableTextView()
         private let agreeTermsAndConditionsView = AgreeTermsAndConditionsView()
 
-        lazy var errorLabel = UILabel(textSize: 13, textColor: .alert, numberOfLines: 0, textAlignment: .center)
+        private let errorLabel = UILabel(textSize: 13, textColor: .alert, numberOfLines: 0, textAlignment: .center)
 
-        lazy var nextButton = WLStepButton.main(text: L10n.resetAndTryAgain)
+        private lazy var nextButton = WLStepButton.main(text: L10n.resetAndTryAgain)
             .onTap(self, action: #selector(buttonNextDidTouch))
-        lazy var pasteButton = UIButton(
+        private let pasteButton = UIButton(
             label: L10n.paste,
             labelFont: .systemFont(ofSize: 17, weight: .medium),
             textColor: .h5887ff
