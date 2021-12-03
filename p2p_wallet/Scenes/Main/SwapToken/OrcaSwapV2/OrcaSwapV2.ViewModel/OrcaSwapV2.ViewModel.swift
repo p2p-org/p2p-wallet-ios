@@ -38,6 +38,8 @@ extension OrcaSwapV2 {
         private let isExchangeRateReversedSubject = BehaviorRelay<Bool>(value: false)
         private let payingTokenSubject = BehaviorRelay<PayingToken>(value: .nativeSOL) // FIXME
         private let errorSubject = BehaviorRelay<VerificationError?>(value: nil)
+        let showHideDetailsButtonTapSubject = PublishRelay<Void>()
+        private let isShowingDetailsSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializer
         init(
@@ -49,7 +51,8 @@ extension OrcaSwapV2 {
             self.feeAPIClient = feeAPIClient
             self.orcaSwap = orcaSwap
             self.walletsRepository = walletsRepository
-            
+
+            reload()
             bind(initialWallet: initialWallet)
         }
         
@@ -130,6 +133,14 @@ extension OrcaSwapV2 {
             )
                 .map {[weak self] _ in self?.verify() }
                 .bind(to: errorSubject)
+                .disposed(by: disposeBag)
+
+            showHideDetailsButtonTapSubject
+                .subscribe(onNext: { [weak self] in
+                    guard let self = self else { return }
+
+                    self.isShowingDetailsSubject.accept(!self.isShowingDetailsSubject.value)
+                })
                 .disposed(by: disposeBag)
         }
         
@@ -294,6 +305,17 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {
         errorSubject.asDriver()
+    }
+
+    var isSendingMaxAmountDriver: Driver<Bool> {
+        Driver.combineLatest(availableAmountDriver, inputAmountDriver)
+            .map { availableAmount, currentAmount in
+                availableAmount == currentAmount
+            }
+    }
+
+    var isShowingDetailsDriver: Driver<Bool> {
+        isShowingDetailsSubject.asDriver()
     }
     
     // MARK: - Actions
@@ -542,15 +564,17 @@ private extension OrcaSwapV2.ViewModel {
     }
     
     private func calculateAvailableAmount() -> Double? {
-        guard let sourceWallet = sourceWalletSubject.value,
-              let fees = feesSubject.value?.totalFee?.lamports
-        else {return sourceWalletSubject.value?.amount}
-        
+        guard
+            let sourceWallet = sourceWalletSubject.value,
+            let fees = feesSubject.value?.totalFee?.lamports
+        else {
+            return sourceWalletSubject.value?.amount
+        }
+
         // paying with native wallet
         if payingTokenSubject.value == .nativeSOL && !sourceWallet.isNativeSOL {
             return sourceWallet.amount
         }
-        
         // paying with wallet itself
         else {
             let availableAmount = (sourceWallet.amount ?? 0) - fees.convertToBalance(decimals: sourceWallet.token.decimals)

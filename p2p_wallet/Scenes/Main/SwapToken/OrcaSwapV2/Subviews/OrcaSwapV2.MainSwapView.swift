@@ -77,11 +77,34 @@ extension OrcaSwapV2 {
         }
 
         private func bind() {
-            viewModel.minimumReceiveAmountDriver
-                .withLatestFrom(viewModel.destinationWalletDriver, resultSelector: { ($0, $1) })
+            //                equityValueLabelDriver = Driver.combineLatest(
+            //                    viewModel.inputAmountDriver,
+            //                    viewModel.sourceWalletDriver
+            //                )
+            //                    .map {amount, wallet in
+            //                        if let wallet = wallet {
+            //                            let value = amount * wallet.priceInCurrentFiat
+            //                            return "≈ \(value.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
+            //                        } else {
+            //                            return L10n.selectCurrency
+            //                        }
+            //                    }
+
+            Driver.combineLatest(
+                viewModel.minimumReceiveAmountDriver,
+                viewModel.destinationWalletDriver
+            )
                 .map { minReceiveAmount, wallet -> String? in
-                    guard let symbol = wallet?.token.symbol else { return nil }
-                    return minReceiveAmount?.toString(maximumFractionDigits: 9) + " " + symbol
+                    guard
+                        let minReceiveAmount = minReceiveAmount,
+                        let fiatPrice = wallet?.priceInCurrentFiat
+                    else {
+                        return nil
+                    }
+
+                    let receiveFiatPrice = (minReceiveAmount * fiatPrice).toString(maximumFractionDigits: 2)
+                    let formattedReceiveFiatAmount = "(~\(Defaults.fiat.symbol)\(receiveFiatPrice))"
+                    return minReceiveAmount.toString(maximumFractionDigits: 9) + " " + formattedReceiveFiatAmount
                 }
                 .drive { [weak self] in
                     self?.setAtLeastText(string: $0)

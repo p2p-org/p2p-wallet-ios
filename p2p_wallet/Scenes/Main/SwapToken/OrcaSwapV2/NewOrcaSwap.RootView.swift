@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 extension NewOrcaSwap {
     final class RootView: BEView {
@@ -26,6 +27,7 @@ extension NewOrcaSwap {
             }
         )
         private let mainView: OrcaSwapV2.MainSwapView
+        private let showDetailsButton = OrcaSwapV2.ShowDetailsButton()
         
         // MARK: - Methods
         init(viewModel: OrcaSwapV2ViewModelType) {
@@ -51,15 +53,37 @@ extension NewOrcaSwap {
             mainView.autoPinEdge(toSuperviewEdge: .leading, withInset: 18)
             mainView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
 
+            showDetailsButton.autoSetDimension(.height, toSize: 40)
+            showDetailsButton.autoPinEdge(.top, to: .bottom, of: mainView, withOffset: 8)
+            showDetailsButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 18)
+            showDetailsButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
         }
 
         private func addSubviews() {
             addSubview(navigationBar)
             addSubview(mainView)
+            addSubview(showDetailsButton)
         }
         
         private func bind() {
-            
+            viewModel.loadingStateDriver
+                .drive(onNext: {[weak self] state in
+                    self?.setUp(state, reloadAction: { [weak self] in
+                        self?.viewModel.reload()
+                    })
+                })
+                .disposed(by: disposeBag)
+
+            viewModel.isShowingDetailsDriver
+                .drive(onNext: {[weak self] state in
+                    self?.showDetailsButton.setState(isShown: state)
+                })
+                .disposed(by: disposeBag)
+
+            showDetailsButton.rx.tap
+                .bind(to: viewModel.showHideDetailsButtonTapSubject)
+                .disposed(by: disposeBag)
+
         }
     }
 }
