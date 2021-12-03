@@ -19,7 +19,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         var searchString: String?
 
         var isSearchingByAddress: Bool {
-            searchString?.matches(oneOf: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()), .publicKey) == true
+            searchString?.matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()), .publicKey) == true
         }
 
         // MARK: - Methods
@@ -47,7 +47,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         private func findRecipientBy(address: String) -> Single<[SendToken.Recipient]> {
-            if NSRegularExpression.bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()).matches(address) {
+            if address.matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet())) {
                 return .just([.init(address: address, name: nil, hasNoFunds: false)])
             }
             return nameService
