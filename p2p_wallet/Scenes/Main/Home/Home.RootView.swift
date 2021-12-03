@@ -49,7 +49,7 @@ extension Home {
                 self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
                 return .just(())
             }
-            collectionView.contentInset.modify(dTop: 50, dBottom: 50)
+            collectionView.contentInset.modify(dTop: 10, dBottom: 50)
             return collectionView
         }()
         
@@ -118,17 +118,22 @@ extension Home {
                 bannersCollectionView
                 BEStackViewSpacing(15)
                 pricesLoadingIndicatorView
-                BEStackViewSpacing(8)
-                balancesOverviewView
-                    .padding(.init(x: 20, y: 0))
             }
 
             addSubview(collectionView)
             addSubview(stackView)
+            addSubview(balancesOverviewView)
 
             stackView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-            collectionView.autoPinEdge(.top, to: .bottom, of: stackView, withOffset: -10)
+            balancesOverviewView.autoPinEdge(.top, to: .bottom, of: stackView, withOffset: 8)
+            balancesOverviewView.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
+            balancesOverviewView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
+
+            collectionView.autoPinEdge(.top, to: .bottom, of: stackView, withOffset: 20)
             collectionView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
+            let balancesViewHeight = balancesOverviewView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+            collectionView.contentInset.modify(dTop: balancesViewHeight)
+
             bannersCollectionView.autoSetDimension(.height, toSize: 105)
         }
         
