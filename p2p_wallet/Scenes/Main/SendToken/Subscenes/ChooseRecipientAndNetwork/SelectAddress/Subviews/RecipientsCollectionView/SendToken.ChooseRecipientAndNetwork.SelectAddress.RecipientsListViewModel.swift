@@ -63,7 +63,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     [
                         .init(
                             address: address,
-                            name: $0.0,
+                            name: $0.0?.withNameServiceDomain(),
                             hasNoFunds: $0.1
                         )
                     ]
