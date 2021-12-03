@@ -23,7 +23,7 @@ extension SendToken.ChooseRecipientAndNetwork {
         var solanaAPIClient: SendTokenAPIClient!
         var repository: WalletsRepository!
         var pricesService: PricesServiceType!
-        var completion: ((SendToken.Recipient, SendToken.Network) -> Void)?
+        var completion: ((SendToken.Recipient, SendToken.Network, [SendToken.Network]) -> Void)?
         
         // MARK: - Properties
         var selectedWalletPubkey: String!

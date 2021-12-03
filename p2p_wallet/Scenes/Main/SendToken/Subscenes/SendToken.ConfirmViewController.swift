@@ -40,7 +40,7 @@ extension SendToken {
             
             if let network = viewModel.getSelectedNetwork() {
                 networkView.setUp(network: network, fee: network.defaultFee, renBTCPrice: viewModel.getRenBTCPrice())
-//                networkView.addArrangedSubview(UIView.defaultNextArrow())
+                networkView.addArrangedSubview(UIView.defaultNextArrow())
             }
             
             // layout
@@ -153,6 +153,18 @@ extension SendToken {
         
         @objc private func actionButtonDidTouch() {
             viewModel.authenticateAndSend()
+        }
+        
+        @objc private func networkViewDidTouch() {
+            let vc = SelectNetworkViewController(
+                selectableNetworks: viewModel.getSelectableNetworks(),
+                renBTCPrice: viewModel.getRenBTCPrice(),
+                selectedNetwork: viewModel.getSelectedNetwork() ?? .solana
+            )
+                {[weak self] network in
+                    
+                }
+            show(vc, sender: nil)
         }
         
         // MARK: - Helpers
