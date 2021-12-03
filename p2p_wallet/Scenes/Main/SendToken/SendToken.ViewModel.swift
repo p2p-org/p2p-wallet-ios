@@ -20,8 +20,10 @@ protocol SendTokenViewModelType {
     func getSelectedAmount() -> Double?
     func getSelectedRecipient() -> SendToken.Recipient?
     func getSelectedNetwork() -> SendToken.Network?
+    func getSelectableNetworks() -> [SendToken.Network]
     func getRenBTCPrice() -> Double
     func getSelectedTokenPrice() -> Double
+    func setSelectedNetwork(_ network: SendToken.Network)
     
     func shouldShowConfirmAlert() -> Bool
     func closeConfirmAlert()
@@ -48,6 +50,7 @@ extension SendToken {
         private var selectedAmount: SolanaSDK.Lamports?
         private var selectedRecipient: SendToken.Recipient?
         private var selectedNetwork: SendToken.Network?
+        private var selectableNetworks: [SendToken.Network]?
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount)
@@ -167,9 +170,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         vm.selectedWalletPubkey = selectedWalletPubkey
         vm.selectedAmount = selectedAmount
         vm.pricesService = pricesService
-        vm.completion = {[weak self] recipient, network in
+        vm.completion = {[weak self] recipient, network, selectableNetworks in
             self?.selectedRecipient = recipient
             self?.selectedNetwork = network
+            self?.selectableNetworks = selectableNetworks
             self?.navigate(to: .confirmation)
         }
         return vm
@@ -195,12 +199,20 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         selectedNetwork
     }
     
+    func getSelectableNetworks() -> [SendToken.Network] {
+        selectableNetworks ?? []
+    }
+    
     func getRenBTCPrice() -> Double {
         pricesService.currentPrice(for: "renBTC")?.value ?? 0
     }
     
     func getSelectedTokenPrice() -> Double {
         pricesService.currentPrice(for: getSelectedWallet()?.token.symbol ?? "USDC")?.value ?? 0
+    }
+    
+    func setSelectedNetwork(_ network: SendToken.Network) {
+        selectedNetwork = network
     }
     
     func shouldShowConfirmAlert() -> Bool {

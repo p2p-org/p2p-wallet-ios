@@ -51,7 +51,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         var pricesService: PricesServiceType!
         var wallet: SolanaSDK.Wallet!
-        var completion: ((SendToken.Recipient, SendToken.Network) -> Void)?
+        var completion: ((_ recipient: SendToken.Recipient, _ selectedNetwork: SendToken.Network, _ selectableNetworks: [SendToken.Network]) -> Void)?
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -181,6 +181,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     func next() {
         let network = networkSubject.value
         guard let recipient = recipientSubject.value else {return}
-        completion?(recipient, network)
+        completion?(recipient, network, getSelectableNetwork())
     }
 }
