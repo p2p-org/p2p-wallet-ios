@@ -117,6 +117,7 @@ extension SendToken.ChooseTokenAndAmount {
                 .drive(onNext: {[weak self] wallet in
                     self?.coinLogoImageView.setUp(wallet: wallet)
                     self?.coinSymbolLabel.text = wallet?.token.symbol
+                    self?.amountTextField.setUp(decimals: wallet?.token.decimals)
                 })
                 .disposed(by: disposeBag)
             
