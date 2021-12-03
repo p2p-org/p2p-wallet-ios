@@ -14,11 +14,11 @@ extension NSRegularExpression {
 }
 
 extension String {
-    func matches(oneOf regexes: NSRegularExpression...) -> Bool {
+    func matches(oneOfRegexes regexes: NSRegularExpression...) -> Bool {
         regexes.contains(where: {$0.matches(self)})
     }
     
-    func matches(allOf regexes: NSRegularExpression...) -> Bool {
+    func matches(allOfRegexes regexes: NSRegularExpression...) -> Bool {
         regexes.allSatisfy {$0.matches(self)}
     }
 }

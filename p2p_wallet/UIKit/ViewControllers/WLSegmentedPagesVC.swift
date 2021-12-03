@@ -44,8 +44,7 @@ class WLSegmentedPagesVC: BEPagesVC {
         view.backgroundColor = .background
         
         view.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
-        stackView.autoPinBottomToSuperViewAvoidKeyboard()
+        stackView.autoPinEdgesToSuperviewEdges(with: .zero)
         
         stackView.insertArrangedSubview(segmentedControl.centered(.horizontal), at: 0)
         
@@ -80,7 +79,7 @@ class WLSegmentedPagesVC: BEPagesVC {
     }
     
     func hideSegmentedControl() {
-        segmentedControl.isHidden = true
+        segmentedControl.superview?.isHidden = true
     }
     
     func disableScrolling() {

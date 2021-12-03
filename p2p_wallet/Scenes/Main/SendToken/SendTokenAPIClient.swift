@@ -11,7 +11,7 @@ import FeeRelayerSwift
 
 protocol SendTokenAPIClient {
     func getFees() -> Single<SolanaSDK.Fee>
-    func checkNameOrAccountValidation(nameOrAccount: String, nameService: NameServiceType) -> Single<Bool>
+    func checkAccountValidation(account: String) -> Single<Bool>
     func sendNativeSOL(
         to destination: String,
         amount: UInt64,
@@ -27,22 +27,10 @@ protocol SendTokenAPIClient {
         withoutFee: Bool,
         isSimulation: Bool
     ) -> Single<SolanaSDK.TransactionID>
+    func isTestNet() -> Bool
 }
 
 extension SolanaSDK: SendTokenAPIClient {
-    func checkNameOrAccountValidation(nameOrAccount: String, nameService: NameServiceType) -> Single<Bool> {
-        if nameOrAccount.hasSuffix(.nameServiceDomain) {
-            return nameService.getOwnerAddress(
-                nameOrAccount.replacingOccurrences(
-                    of: String.nameServiceDomain,
-                    with: ""
-                )
-            ).map {$0 != nil}
-        } else {
-            return checkAccountValidation(account: nameOrAccount)
-        }
-    }
-    
     func sendNativeSOL(to destination: String, amount: UInt64, withoutFee: Bool, isSimulation: Bool) -> Single<TransactionID> {
         sendNativeSOL(
             to: destination,
@@ -66,5 +54,9 @@ extension SolanaSDK: SendTokenAPIClient {
     
     func getFees() -> Single<Fee> {
         getFees(commitment: nil)
+    }
+    
+    func isTestNet() -> Bool {
+        endpoint.network.isTestnet
     }
 }
