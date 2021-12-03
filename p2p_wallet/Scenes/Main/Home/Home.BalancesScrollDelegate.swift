@@ -17,7 +17,7 @@ extension Home {
         }
 
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
-            balancesView.topStackConstraint.constant = -scrollView.contentOffset.y
+            balancesView.topStackConstraint.constant = -(scrollView.contentOffset.y + scrollView.contentInset.top)
         }
     }
 }
