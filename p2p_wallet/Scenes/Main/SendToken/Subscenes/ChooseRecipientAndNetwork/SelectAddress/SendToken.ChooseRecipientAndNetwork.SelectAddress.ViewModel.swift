@@ -28,6 +28,7 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     func clearRecipient()
     
     func getSelectableNetwork() -> [SendToken.Network]
+    func getSelectedNetwork() -> SendToken.Network
     func selectNetwork(_ network: SendToken.Network)
     func getRenBTCPrice() -> Double
     
@@ -153,6 +154,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
             networks.append(.bitcoin)
         }
         return networks
+    }
+    
+    func getSelectedNetwork() -> SendToken.Network {
+        networkSubject.value
     }
     
     func selectNetwork(_ network: SendToken.Network) {

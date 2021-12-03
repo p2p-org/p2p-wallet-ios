@@ -1,5 +1,5 @@
 //
-//  SendToken.ChooseRecipientAndNetwork.SelectAddress.SelectNetworkViewController.swift
+//  SendToken.SelectNetworkViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 01/12/2021.
@@ -9,18 +9,25 @@ import Foundation
 import BEPureLayout
 import UIKit
 
-extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
-    final class SelectNetworkViewController: SendToken.BaseViewController {
-        // MARK: - Dependencies
-        private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
+extension SendToken {
+    final class SelectNetworkViewController: BaseViewController {
+        // MARK: - Properties
+        private let selectableNetworks: [Network]
+        private let renBTCPrice: Double
+        private var selectedNetwork: Network {
+            didSet {
+                reloadData()
+            }
+        }
+        private var selectNetworkCompletion: ((Network) -> Void)?
         
         // MARK: - Subviews
         private lazy var networkViews: [_NetworkView] = {
-            var networkViews = viewModel.getSelectableNetwork()
+            var networkViews = selectableNetworks
                 .map {network -> _NetworkView in
                     let view = _NetworkView()
                     view.network = network
-                    view.setUp(network: network, fee: network.defaultFee, renBTCPrice: viewModel.getRenBTCPrice())
+                    view.setUp(network: network, fee: network.defaultFee, renBTCPrice: renBTCPrice)
                     if network == .solana {
                         view.insertArrangedSubview(
                             UILabel(text: L10n.paidByP2p, textSize: 13, textColor: .h34c759)
@@ -38,8 +45,12 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }()
         
         // MARK: - Initializer
-        init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
-            self.viewModel = viewModel
+        init(selectableNetworks: [Network], renBTCPrice: Double, selectedNetwork: Network, selectNetworkCompletion: ((Network) -> Void)?)
+        {
+            self.selectableNetworks = selectableNetworks
+            self.renBTCPrice = renBTCPrice
+            self.selectedNetwork = selectedNetwork
+            self.selectNetworkCompletion = selectNetworkCompletion
             super.init()
         }
         
@@ -70,25 +81,23 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     rootView.stackView.addArrangedSubview(.separator(height: 1, color: .separator))
                 }
             }
+            
+            reloadData()
         }
         
-        override func bind() {
-            super.bind()
-            viewModel.networkDriver
-                .drive(onNext: {[weak self] network in
-                    guard let self = self else {return}
-                    for view in self.networkViews {
-                        view.tickView.alpha = view.network == network ? 1: 0
-                    }
-                })
-                .disposed(by: disposeBag)
+        private func reloadData() {
+            for view in self.networkViews {
+                view.tickView.alpha = view.network == selectedNetwork ? 1: 0
+            }
         }
         
+        // MARK: - Actions
         @objc private func networkViewDidTouch(_ gesture: UITapGestureRecognizer) {
             guard let view = gesture.view as? _NetworkView, let network = view.network else {
                 return
             }
-            viewModel.selectNetwork(network)
+            selectedNetwork = network
+            selectNetworkCompletion?(selectedNetwork)
         }
     }
     
