@@ -42,10 +42,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             recipientIcon.image = .emptyUserAvatar
             descriptionLabel.textColor = .textSecondary
             if recipient.name == nil {
-                descriptionLabel.isHidden = !recipient.hasNoFunds
-                descriptionLabel.text = L10n.cautionThisAddressHasNoFunds
-                
-                if recipient.hasNoFunds {
+                let shouldShowDescriptionLabel = recipient.hasNoFunds || recipient.hasNoInfo
+                descriptionLabel.isHidden = !shouldShowDescriptionLabel
+                if shouldShowDescriptionLabel {
+                    descriptionLabel.text = recipient.hasNoFunds ? L10n.cautionThisAddressHasNoFunds: L10n.couldNotRetrieveAccountInfo
                     recipientIcon.image = .warningUserAvatar
                     descriptionLabel.textColor = .ff9500
                 }
