@@ -9,6 +9,7 @@ import Foundation
 import Action
 import RxSwift
 import RxCocoa
+import UIKit
 
 extension OrcaSwapV2 {
     final class WalletView: BEView {
@@ -26,7 +27,7 @@ extension OrcaSwapV2 {
         private lazy var iconImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
         private lazy var downArrow = UIImageView(width: 10, height: 8, image: .downArrow, tintColor: .a3a5ba)
         
-        private lazy var tokenSymbolLabel = UILabel(text: "TOK", weight: .semibold, textAlignment: .center)
+        private lazy var tokenSymbolLabel = UILabel(text: "TOK", textSize: 20, weight: .semibold, textAlignment: .center)
 
         private lazy var amountTextField = TokenAmountTextField(
             font: .systemFont(ofSize: 27, weight: .bold),
@@ -50,9 +51,15 @@ extension OrcaSwapV2 {
         override func commonInit() {
             super.commonInit()
             let action: Selector = type == .source ? #selector(chooseSourceWallet): #selector(chooseDestinationWallet)
-            let balanceView = type == .destination ? balanceView: balanceView
-                .onTap(self, action: #selector(useAllBalance))
-            balanceView.tintColor = type == .source ? .h5887ff: .textSecondary.onDarkMode(.white)
+
+            switch type {
+            case .source:
+                balanceView.maxButton.addTarget(self, action: #selector(useAllBalance), for: .touchUpInside)
+            case .destination:
+                balanceView.maxButton.isHidden = true
+            }
+
+            balanceView.tintColor = .h8e8e93
             
             let stackView = UIStackView(axis: .vertical, spacing: 13, alignment: .fill, distribution: .fill) {
                 UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .equalCentering) {
@@ -107,58 +114,48 @@ extension OrcaSwapV2 {
                 textFieldKeydownEvent = {amount in
                     .swapTokenAAmountKeydown(sum: amount)
                 }
-                
-//                equityValueLabelDriver = Driver.combineLatest(
-//                    viewModel.inputAmountDriver,
-//                    viewModel.sourceWalletDriver
-//                )
-//                    .map {amount, wallet in
-//                        if let wallet = wallet {
-//                            let value = amount * wallet.priceInCurrentFiat
-//                            return "≈ \(value.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
-//                        } else {
-//                            return L10n.selectCurrency
-//                        }
-//                    }
-                
+
                 outputDriver = viewModel.inputAmountDriver
                 
                 // available amount
                 balanceTextDriver = viewModel.availableAmountDriver
-                    .withLatestFrom(viewModel.sourceWalletDriver, resultSelector: { ($0, $1) })
-                    .map {amount, wallet -> String? in
-                        guard let amount = amount else {return nil}
-                        return amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
+                    .map { amount -> String? in
+                        amount.map { $0.toString(maximumFractionDigits: 9)
+                        }
                     }
-                
-                viewModel.errorDriver
-                    .map {$0 == .insufficientFunds || $0 == .inputAmountIsNotValid}
-                    .map {$0 ? UIColor.alert: UIColor.h5887ff}
+
+                Driver.combineLatest(
+                    viewModel.errorDriver
+                        .map { $0 == .insufficientFunds || $0 == .inputAmountIsNotValid },
+                    viewModel.isSendingMaxAmountDriver
+                )
+                    .map { isErrorState, isSendingMax -> UIColor in
+                        if isErrorState {
+                            return .alert
+                        } else if isSendingMax {
+                            return .h34c759
+                        } else {
+                            return .h8e8e93
+                        }
+                    }
                     .drive(balanceView.rx.tintColor)
                     .disposed(by: disposeBag)
-                                
+                viewModel.isSendingMaxAmountDriver
+                    .drive(balanceView.maxButton.rx.isHidden)
+                    .disposed(by: disposeBag)
+
             case .destination:
                 walletDriver = viewModel.destinationWalletDriver
                 
                 textFieldKeydownEvent = {amount in
                     .swapTokenBAmountKeydown(sum: amount)
                 }
-                
-//                equityValueLabelDriver = viewModel.minimumReceiveAmountDriver
-//                    .withLatestFrom(viewModel.destinationWalletDriver, resultSelector: {($0, $1)})
-//                    .map {minReceiveAmount, wallet -> String? in
-//                        guard let symbol = wallet?.token.symbol else {return nil}
-//                        return L10n.receiveAtLeast + ": " + minReceiveAmount?.toString(maximumFractionDigits: 9) + " " + symbol
-//                    }
-                
+
                 outputDriver = viewModel.estimatedAmountDriver
                 
                 balanceTextDriver = viewModel.destinationWalletDriver
                     .map { wallet -> String? in
-                        if let amount = wallet?.amount?.toString(maximumFractionDigits: 9) {
-                            return amount + " " + "\(wallet?.token.symbol ?? "")"
-                        }
-                        return nil
+                        wallet?.amount?.toString(maximumFractionDigits: 9)
                     }
             }
             
@@ -181,9 +178,11 @@ extension OrcaSwapV2 {
             // analytics
             amountTextField.rx.controlEvent([.editingDidEnd])
                 .asObservable()
-                .subscribe(onNext: { [weak self] _ in
-                    guard let amount = self?.amountTextField.text?.double else {return}
-                    let event = textFieldKeydownEvent(amount)
+                .compactMap { [weak self] in
+                    self?.amountTextField.text?.double
+                }
+                .map(textFieldKeydownEvent)
+                .subscribe(onNext: { [weak self] event in
                     self?.analyticsManager.log(event: event)
                 })
                 .disposed(by: disposeBag)
@@ -248,9 +247,14 @@ extension OrcaSwapV2.WalletView: UITextFieldDelegate {
 
 private extension OrcaSwapV2.WalletView {
     class BalanceView: BEView {
-        private let disposeBag = DisposeBag()
-        lazy var walletView = UIImageView(width: 16, height: 16, image: .walletIcon)
-        lazy var balanceLabel = UILabel(textSize: 13, weight: .medium)
+        let walletView = UIImageView(width: 20, height: 20, image: .newWalletIcon)
+        let balanceLabel = UILabel(textSize: 15, weight: .medium)
+        let maxButton = UIButton(
+            height: 20,
+            label: L10n.max.uppercased(),
+            labelFont: .systemFont(ofSize: 15, weight: .medium),
+            textColor: .h5887ff
+        )
         
         override var tintColor: UIColor! {
             didSet {
@@ -264,6 +268,7 @@ private extension OrcaSwapV2.WalletView {
             let stackView = UIStackView(axis: .horizontal, spacing: 5.33, alignment: .center, distribution: .fill) {
                 walletView
                 balanceLabel
+                maxButton
             }
             addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges()

@@ -27,7 +27,10 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
     var isExchangeRateReversed: Driver<Bool> {get}
     var payingTokenDriver: Driver<PayingToken> {get}
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}
-    
+    var isSendingMaxAmountDriver: Driver<Bool> { get }
+    var isShowingDetailsDriver: Driver<Bool> { get }
+    var showHideDetailsButtonTapSubject: PublishRelay<Void> { get }
+
     func reload()
     func log(_ event: AnalyticsEvent)
     func navigate(to scene: OrcaSwapV2.NavigatableScene)

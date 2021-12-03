@@ -620,3 +620,5 @@
 "History" = "Histoire";
 "Show wallet address" = "Afficher l'adresse du portefeuille";
 "Colon Receive at least" = "Recevez au moins :";
+"Show details" = "Afficher les détails";
+"Hide details" = "Cacher les détails";
