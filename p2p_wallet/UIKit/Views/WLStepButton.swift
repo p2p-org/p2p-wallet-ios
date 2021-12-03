@@ -46,6 +46,8 @@ extension WLStepButton {
 // MARK: - Main class
 class WLStepButton: BEView {
     // MARK: - Properties
+    fileprivate let imageSize: CGSize
+    
     var enabledBgColor: UIColor {
         didSet {
             setUp()
@@ -105,6 +107,7 @@ class WLStepButton: BEView {
     ) {
         self.enabledBgColor = enabledBgColor
         self.enabledTintColor = enabledTintColor
+        self.imageSize = imageSize
         super.init(frame: .zero)
         self.disabledBgColor = disabledBgColor
         self.disabledTintColor = disabledTintColor
@@ -181,8 +184,7 @@ extension Reactive where Base: WLStepButton {
     
     var image: Binder<UIImage?> {
         Binder(base) { view, image in
-            view.imageView.image = image
-            view.imageView.isHidden = image == nil
+            view.setImage(image: image, imageSize: view.imageSize)
         }
     }
 
