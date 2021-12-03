@@ -19,7 +19,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         var searchString: String?
 
         var isSearchingByAddress: Bool {
-            searchString?.count ?? 0 > 40
+            searchString?.matches(oneOf: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()), .publicKey) == true
         }
 
         // MARK: - Methods
