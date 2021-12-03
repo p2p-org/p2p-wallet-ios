@@ -157,7 +157,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .disposed(by: disposeBag)
             
             viewModel.isValidDriver
-                .map {$0 ? UIImage.tick: nil}
+                .map {$0 ? UIImage.buttonCheckSmall: nil}
                 .drive(actionButton.rx.image)
                 .disposed(by: disposeBag)
             
