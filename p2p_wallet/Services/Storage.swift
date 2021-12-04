@@ -133,7 +133,7 @@ extension KeychainStorage: ICloudStorageType {
         
         // save
         if let data = try? JSONEncoder().encode(accountsToSave) {
-            return keychain.set(data, forKey: iCloudAccountsKey)
+            return keychain.set(data, forKey: iCloudAccountsKey, withAccess: .accessibleAfterFirstUnlock)
         }
         return false
     }
