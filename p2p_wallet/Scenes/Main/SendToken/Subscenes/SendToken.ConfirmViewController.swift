@@ -9,6 +9,7 @@ import Foundation
 import BEPureLayout
 import UIKit
 import RxSwift
+import RxCocoa
 
 extension SendToken {
     final class ConfirmViewController: BaseViewController {
@@ -38,7 +39,19 @@ extension SendToken {
             networkView.addArrangedSubview(.defaultNextArrow())
             return networkView
         }()
-        private lazy var receiveSection = createSection(title: L10n.recipient, content: nil)
+        
+        private lazy var receiveSection = SectionView(title: L10n.receive)
+        private lazy var transferFeeSection: SectionView = {
+            let transferFeeSection = SectionView(title: L10n.transferFee)
+            transferFeeSection.addArrangedSubview(freeFeeInfoButton)
+            return transferFeeSection
+        }()
+        private lazy var freeFeeInfoButton = UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
+        private lazy var totalSection = SectionView(title: L10n.total)
+        
+        private lazy var tokenToFiatSection = SectionView(title: "<1 renBTC>")
+        private lazy var fiatToTokenSection = SectionView(title: "<1 USD>")
+        
         private lazy var actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.send(amount, tokenSymbol))
             .onTap(self, action: #selector(actionButtonDidTouch))
         
@@ -53,6 +66,8 @@ extension SendToken {
             
             // layout
             let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
+                alertBannerView
+                
                 UIView.floatingPanel {
                     amountView
                 }
@@ -68,58 +83,23 @@ extension SendToken {
                 BEStackViewSpacing(26)
                 
                 UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
-                    createSection(
-                        title: L10n.receive,
-                        content: "\(fiatSymbol)\(tokenPrice)"
-                    )
-                    
-                    createSection(
-                        title: "1 \(fiatCode)",
-                        content: "\(tokenPriceReversed) \(tokenSymbol)"
-                    )
+                    receiveSection
+                    transferFeeSection
+                    UIStackView(axis: .horizontal) {
+                        UIView.spacer
+                        UIView.defaultSeparator()
+                            .frame(width: 246, height: 1)
+                    }
+                    totalSection
                 }
                 
-                UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
-                    createSection(
-                        title: "1 \(tokenSymbol)",
-                        content: "\(fiatSymbol)\(tokenPrice)"
-                    )
-                    
-                    createSection(
-                        title: "1 \(fiatCode)",
-                        content: "\(tokenPriceReversed) \(tokenSymbol)"
-                    )
-                }
+                BEStackViewSpacing(18)
                 
-                UIView.separator(height: 1, color: .separator)
+                UIView.defaultSeparator()
                 
                 UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
-                    createSection(
-                        title: L10n.receive,
-                        content: nil,
-                        contentAttributedString: NSMutableAttributedString()
-                            .text("\(amount) \(tokenSymbol)", size: 15, color: .textBlack)
-                            .text(" ")
-                            .text("(~\(fiatSymbol)\(amountEquityValue))", size: 15, color: .textSecondary)
-                    )
-                    
-                    createSection(
-                        title: L10n.transferFee,
-                        content: nil,
-                        contentAttributedString: NSMutableAttributedString()
-                            .text("\(fee)", size: 15, color: .textBlack)
-                            .text(" ")
-                            .text("(\(feeEquityValue))", size: 15, color: .textSecondary)
-                    )
-                    
-                    createSection(
-                        title: L10n.total,
-                        content: nil,
-                        contentAttributedString: NSMutableAttributedString()
-                            .text("\(total) \(tokenSymbol)", size: 15, color: .textBlack)
-                            .text(" ")
-                            .text("(~\(fiatSymbol)\(totalEquityValue))", size: 15, color: .textSecondary)
-                    )
+                    fiatToTokenSection
+                    tokenToFiatSection
                 }
             }
             
@@ -135,43 +115,98 @@ extension SendToken {
             view.addSubview(actionButton)
             actionButton.autoPinEdge(.top, to: .bottom, of: scrollView, withOffset: 8)
             actionButton.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
-            
-            // setup
-            if viewModel.shouldShowConfirmAlert() {
-                var index = 0
-                stackView.insertArrangedSubviews(at: &index) {
-                    alertBannerView
-                    BEStackViewSpacing(8)
-                }
-            }
-            
-            if viewModel.getSelectedRecipient()?.name == nil {
-                nameLabel.isHidden = true
-            }
         }
         
         override func bind() {
             super.bind()
+            let walletAndAmountDriver = Driver.combineLatest(
+                viewModel.walletDriver,
+                viewModel.amountDriver
+            )
+            
             // title
             viewModel.walletDriver
                 .map {L10n.confirmSending($0?.token.symbol ?? "")}
                 .drive(navigationBar.titleLabel.rx.text)
                 .disposed(by: disposeBag)
             
-            // recipient
-            viewModel.recipientDriver
-                .map {$0?.name}
-                .drive(nameLabel.rx.text)
+            // amount
+            walletAndAmountDriver
+                .drive(with: self, onNext: {`self`, param in
+                    self.amountView.setUp(wallet: param.0, amount: param.1 ?? 0)
+                })
                 .disposed(by: disposeBag)
             
-            // network
+            // recipient
+            viewModel.recipientDriver
+                .drive(with: self, onNext: { `self`, recipient in
+                    self.recipientView.setUp(recipient: recipient)
+                })
+                .disposed(by: disposeBag)
+            
+            // network view
             viewModel.networkDriver
-                .drive(
-                    with: self,
-                    onNext: {`self`, network in
-                        self.networkView.setUp(network: network, fee: network.defaultFee, renBTCPrice: self.viewModel.getRenBTCPrice())
+                .drive(with: self, onNext: { `self`, network in
+                    self.networkView.setUp(network: network, fee: network.defaultFee, renBTCPrice: self.viewModel.getRenBTCPrice())
+                })
+                .disposed(by: disposeBag)
+            
+            // receive
+            walletAndAmountDriver
+                .map {wallet, amount in
+                    let amount = amount?.convertToBalance(decimals: wallet?.token.decimals ?? 0)
+                    let amountInFiat = amount * wallet?.priceInCurrentFiat.orZero
+                    
+                    return NSMutableAttributedString()
+                        .text(
+                            "\(amount.toString(maximumFractionDigits: 9)) \(wallet?.token.symbol ?? "") ",
+                            size: 15
+                        )
+                        .text("(~\(Defaults.fiat.symbol)\(amountInFiat.toString(maximumFractionDigits: 2)))", size: 15, color: .textSecondary)
+                }
+                .drive(receiveSection.rightLabel.rx.attributedText)
+                .disposed(by: disposeBag)
+            
+            // transfer fee
+            viewModel.networkDriver
+                .map {[weak self] network in
+                    switch network {
+                    case .solana:
+                        return NSMutableAttributedString()
+                            .text(L10n.free + " ", size: 15, weight: .semibold)
+                            .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
+                    case .bitcoin:
+                        return NSMutableAttributedString()
+                            .text(network.defaultFee.amount.toString(maximumFractionDigits: 9), size: 15)
+                            .text(" ")
+                            .text(network.defaultFee.unit, size: 15)
+                            .text(" ("
+                                  + Defaults.fiat.symbol
+                                  + (network.defaultFee.amount * self?.viewModel.getRenBTCPrice())
+                                    .toString(maximumFractionDigits: 2)
+                                  + ")",
+                                  size: 15,
+                                  color: .textSecondary
+                            )
+                            .text("\n")
+                            .text("0.0002 SOL", size: 15)
+                            .text(" ("
+                                + Defaults.fiat.symbol
+                                + (0.0002 * self?.viewModel.getSOLPrice())
+                                    .toString(maximumFractionDigits: 2)
+                                + ")",
+                                size: 15,
+                                color: .textSecondary
+                            )
+                            
                     }
-                )
+                }
+                .drive(transferFeeSection.rightLabel.rx.attributedText)
+                .disposed(by: disposeBag)
+            
+            viewModel.networkDriver
+                .map {$0 != .solana}
+                .drive(freeFeeInfoButton.rx.isHidden)
                 .disposed(by: disposeBag)
         }
         
@@ -197,91 +232,6 @@ extension SendToken {
                     
                 }
             show(vc, sender: nil)
-        }
-        
-        // MARK: - Helpers
-        private func createSection(title: String?, content: String?, contentAttributedString: NSAttributedString? = nil, contentNumberOfLines: Int? = nil) -> UIStackView {
-            let stackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .equalSpacing) {
-                createHeaderLabel(text: title)
-            }
-            
-            let contentLabel = createContentLabel(text: content, numberOfLines: contentNumberOfLines)
-            if let contentAttributedString = contentAttributedString {
-                contentLabel
-                    .withAttributedText(contentAttributedString)
-            }
-            
-            stackView.addArrangedSubview(contentLabel)
-            
-            return stackView
-        }
-        
-        private func createHeaderLabel(text: String?, numberOfLines: Int? = nil) -> UILabel {
-            UILabel(text: text, textSize: 15, textColor: .textSecondary, numberOfLines: numberOfLines)
-        }
-        
-        private func createContentLabel(text: String?, numberOfLines: Int? = nil) -> UILabel {
-            UILabel(text: text, textSize: 15, numberOfLines: numberOfLines, textAlignment: .right)
-        }
-        
-        // MARK: - Getters
-        private var tokenSymbol: String {
-            viewModel.getSelectedWallet()?.token.symbol ?? ""
-        }
-        
-        private var tokenPrice: String {
-            viewModel.getSelectedTokenPrice().toString(maximumFractionDigits: 9)
-        }
-        
-        private var tokenPriceReversed: String {
-            viewModel.getSelectedTokenPrice() == 0 ? "0": (1/viewModel.getSelectedTokenPrice()).toString(maximumFractionDigits: 9)
-        }
-        
-        private var fiatSymbol: String {
-            Defaults.fiat.symbol
-        }
-        
-        private var fiatCode: String {
-            Defaults.fiat.code
-        }
-        
-        private var amount: String {
-            viewModel.getSelectedAmount()?.toString(maximumFractionDigits: 9) ?? ""
-        }
-        
-        private var amountEquityValue: String {
-            ((viewModel.getSelectedAmount() ?? 0) * viewModel.getSelectedTokenPrice())
-                .toString(maximumFractionDigits: 2)
-        }
-        
-        private var fee: String {
-            guard let network = viewModel.getSelectedNetwork() else {return ""}
-            switch network {
-            case .solana:
-                return L10n.free
-            case .bitcoin:
-                return "\(network.defaultFee.amount.toString(maximumFractionDigits: 9)) \(tokenSymbol)"
-            }
-        }
-        
-        private var feeEquityValue: String {
-            guard let network = viewModel.getSelectedNetwork() else {return ""}
-            switch network {
-            case .solana:
-                return L10n.paidByP2p
-            case .bitcoin:
-                return "\(fiatSymbol)\((network.defaultFee.amount * viewModel.getSelectedTokenPrice()).toString(maximumFractionDigits: 2))"
-            }
-        }
-        
-        private var total: String {
-            (viewModel.getSelectedAmount() + (viewModel.getSelectedNetwork()?.defaultFee.amount ?? 0))
-                .toString(maximumFractionDigits: 9)
-        }
-        
-        private var totalEquityValue: String {
-            ((viewModel.getSelectedAmount() + (viewModel.getSelectedNetwork()?.defaultFee.amount ?? 0)) * viewModel.getSelectedTokenPrice())
-                .toString(maximumFractionDigits: 2)
         }
     }
 }
@@ -321,7 +271,7 @@ private extension SendToken {
             
             equityValueLabel.attributedText = NSMutableAttributedString()
                 .text(L10n.amount.uppercaseFirst + ": ", size: 13, color: .textSecondary)
-                .text(amountInFiat.toString(maximumFractionDigits: 2), size: 13, weight: .medium)
+                .text(Defaults.fiat.symbol + amountInFiat.toString(maximumFractionDigits: 2), size: 13, weight: .medium)
             
             amountLabel.text = amount.toString(maximumFractionDigits: 9)
         }
@@ -369,10 +319,10 @@ private extension SendToken {
         private let disposeBag = DisposeBag()
         
         // MARK: - Subviews
-        lazy var leftLabel = UILabel(text: "<Receive>", textSize: 15, textColor: .textSecondary)
+        private lazy var leftLabel = UILabel(text: "<Receive>", textSize: 15, textColor: .textSecondary)
         lazy var rightLabel = UILabel(text: "<0.00227631 renBTC (~$150)>", textSize: 15, numberOfLines: 0, textAlignment: .right)
         
-        init() {
+        init(title: String) {
             super.init(frame: .zero)
             
             set(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .equalSpacing)
@@ -380,6 +330,7 @@ private extension SendToken {
                 leftLabel
                 rightLabel
             }
+            leftLabel.text = title
         }
         
         required init(coder: NSCoder) {
