@@ -8,6 +8,7 @@
 import Foundation
 import BEPureLayout
 import UIKit
+import RxSwift
 
 extension SendToken {
     final class ConfirmViewController: BaseViewController {
@@ -22,8 +23,22 @@ extension SendToken {
             UIImageView(width: 24, height: 24, image: .closeBannerButton)
                 .onTap(self, action: #selector(closeBannerButtonDidTouch))
         }
-        private lazy var networkView = NetworkView()
-        private lazy var nameLabel = UILabel(text: viewModel.getSelectedRecipient()?.name, textSize: 15, textColor: .textSecondary, textAlignment: .right)
+        private lazy var amountView: AmountSummaryView = {
+            let amountView = AmountSummaryView()
+            amountView.addArrangedSubview(.defaultNextArrow())
+            return amountView
+        }()
+        private lazy var recipientView: RecipientView = {
+            let recipientView = RecipientView()
+            recipientView.addArrangedSubview(.defaultNextArrow())
+            return recipientView
+        }()
+        private lazy var networkView: NetworkView = {
+            let networkView = NetworkView()
+            networkView.addArrangedSubview(.defaultNextArrow())
+            return networkView
+        }()
+        private lazy var receiveSection = createSection(title: L10n.recipient, content: nil)
         private lazy var actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.send(amount, tokenSymbol))
             .onTap(self, action: #selector(actionButtonDidTouch))
         
@@ -35,37 +50,34 @@ extension SendToken {
         
         override func setUp() {
             super.setUp()
-            // set up views
-            navigationBar.titleLabel.text = L10n.confirmSending(viewModel.getSelectedWallet()?.token.symbol ?? "")
-            
-            if let network = viewModel.getSelectedNetwork() {
-                networkView.setUp(network: network, fee: network.defaultFee, renBTCPrice: viewModel.getRenBTCPrice())
-                networkView.addArrangedSubview(UIView.defaultNextArrow())
-            }
             
             // layout
-            let stackView = UIStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill) {
+            let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
+                UIView.floatingPanel {
+                    amountView
+                }
+                
+                UIView.floatingPanel {
+                    recipientView
+                }
+                
                 UIView.floatingPanel {
                     networkView
                 }
+                
                 BEStackViewSpacing(26)
-                UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .equalSpacing) {
-                    createHeaderLabel(text: L10n.recipientSAddress, numberOfLines: 2)
-                    
-                    createContentLabel(
-                        text: viewModel.getSelectedRecipient()?.address,
-                        numberOfLines: 2
+                
+                UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
+                    createSection(
+                        title: L10n.receive,
+                        content: "\(fiatSymbol)\(tokenPrice)"
                     )
-                        .lineBreakMode(.byCharWrapping)
+                    
+                    createSection(
+                        title: "1 \(fiatCode)",
+                        content: "\(tokenPriceReversed) \(tokenSymbol)"
+                    )
                 }
-                
-                BEStackViewSpacing(8)
-                UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fill) {
-                    UIView.spacer
-                    nameLabel
-                }
-                
-                UIView.separator(height: 1, color: .separator)
                 
                 UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
                     createSection(
@@ -140,7 +152,27 @@ extension SendToken {
         
         override func bind() {
             super.bind()
+            // title
+            viewModel.walletDriver
+                .map {L10n.confirmSending($0?.token.symbol ?? "")}
+                .drive(navigationBar.titleLabel.rx.text)
+                .disposed(by: disposeBag)
             
+            // recipient
+            viewModel.recipientDriver
+                .map {$0?.name}
+                .drive(nameLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // network
+            viewModel.networkDriver
+                .drive(
+                    with: self,
+                    onNext: {`self`, network in
+                        self.networkView.setUp(network: network, fee: network.defaultFee, renBTCPrice: self.viewModel.getRenBTCPrice())
+                    }
+                )
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Actions
@@ -250,6 +282,108 @@ extension SendToken {
         private var totalEquityValue: String {
             ((viewModel.getSelectedAmount() + (viewModel.getSelectedNetwork()?.defaultFee.amount ?? 0)) * viewModel.getSelectedTokenPrice())
                 .toString(maximumFractionDigits: 2)
+        }
+    }
+}
+
+private extension SendToken {
+    class AmountSummaryView: UIStackView {
+        // MARK: - Dependencies
+        private let disposeBag = DisposeBag()
+        
+        // MARK: - Subviews
+        private lazy var coinImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
+        private lazy var equityValueLabel = UILabel(text: "<Amount: ~$150>")
+        private lazy var amountLabel = UILabel(text: "<1 BTC>", textSize: 17, weight: .semibold)
+        
+        init() {
+            super.init(frame: .zero)
+            
+            set(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill)
+            addArrangedSubviews {
+                coinImageView
+                UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
+                    equityValueLabel
+                    amountLabel
+                }
+            }
+        }
+        
+        required init(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        func setUp(wallet: Wallet?, amount: SolanaSDK.Lamports) {
+            coinImageView.setUp(wallet: wallet)
+            
+            let amount = amount.convertToBalance(decimals: wallet?.token.decimals ?? 0)
+            let amountInFiat = amount * wallet?.priceInCurrentFiat.orZero
+            
+            equityValueLabel.attributedText = NSMutableAttributedString()
+                .text(L10n.amount.uppercaseFirst + ": ", size: 13, color: .textSecondary)
+                .text(amountInFiat.toString(maximumFractionDigits: 2), size: 13, weight: .medium)
+            
+            amountLabel.text = amount.toString(maximumFractionDigits: 9)
+        }
+    }
+    
+    class RecipientView: UIStackView {
+        // MARK: - Dependencies
+        private let disposeBag = DisposeBag()
+        
+        // MARK: - Subviews
+        private lazy var nameLabel = UILabel(text: "<Recipient: a.p2p.sol>")
+        private lazy var addressLabel = UILabel(text: "<DkmTQHutnUn9xWmismkm2zSvLQfiEkPQCq6rAXZKJnBw>", textSize: 17, weight: .semibold, numberOfLines: 0)
+        
+        init() {
+            super.init(frame: .zero)
+            
+            set(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill)
+            addArrangedSubviews {
+                UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
+                    nameLabel
+                    addressLabel
+                }
+            }
+        }
+        
+        required init(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        func setUp(recipient: Recipient?) {
+            nameLabel.isHidden = false
+            if let recipientName = recipient?.name {
+                nameLabel.attributedText = NSMutableAttributedString()
+                    .text(L10n.recipient.uppercaseFirst + ": ", size: 13, color: .textSecondary)
+                    .text(recipientName, size: 13, weight: .medium)
+            } else {
+                nameLabel.isHidden = true
+            }
+            addressLabel.text = recipient?.address
+        }
+    }
+    
+    class SectionView: UIStackView {
+        // MARK: - Dependencies
+        private let disposeBag = DisposeBag()
+        
+        // MARK: - Subviews
+        lazy var leftLabel = UILabel(text: "<Receive>", textSize: 15, textColor: .textSecondary)
+        lazy var rightLabel = UILabel(text: "<0.00227631 renBTC (~$150)>", textSize: 15, numberOfLines: 0, textAlignment: .right)
+        
+        init() {
+            super.init(frame: .zero)
+            
+            set(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .equalSpacing)
+            addArrangedSubviews {
+                leftLabel
+                rightLabel
+            }
+        }
+        
+        required init(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
         }
     }
 }
