@@ -24,6 +24,7 @@ extension SendToken.ChooseRecipientAndNetwork {
         var repository: WalletsRepository!
         var pricesService: PricesServiceType!
         var completion: ((SendToken.Recipient, SendToken.Network, [SendToken.Network]) -> Void)?
+        var getSelectableNetworks: (() -> [SendToken.Network])?
         
         // MARK: - Properties
         var selectedWalletPubkey: String!

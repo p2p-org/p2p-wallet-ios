@@ -8,9 +8,9 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import SolanaSwift
 
 protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler {
-    var isLoadingDriver: Driver<Bool> {get}
     var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {get}
@@ -38,10 +38,8 @@ extension SendToken.ChooseTokenAndAmount {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var analyticsManager: AnalyticsManagerType
-        private let repository: WalletsRepository
         
         // MARK: - Properties
-        private let initialWalletPubkey: String?
         private let disposeBag = DisposeBag()
         
         // MARK: - Callback
@@ -49,28 +47,18 @@ extension SendToken.ChooseTokenAndAmount {
         var onSelect: ((String, SolanaSDK.Lamports) -> Void)?
         
         // MARK: - Subject
-        private let isLoadingSubject = BehaviorRelay<Bool>(value: true)
+        // Subjects from parent
+        private let walletSubject: BehaviorRelay<Wallet?>
+        
+        // Own subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         
         // MARK: - Initializer
-        init(
-            repository: WalletsRepository,
-            walletPubkey: String?
-        ) {
-            self.repository = repository
-            self.initialWalletPubkey = walletPubkey
-            
+        init(walletSubject: BehaviorRelay<Wallet?>) {
+            self.walletSubject = walletSubject
             bind()
-            
-            // accept initial values
-            if let pubkey = initialWalletPubkey {
-                walletSubject.accept(repository.getWallets().first(where: {$0.pubkey == pubkey}))
-            } else {
-                walletSubject.accept(repository.nativeWallet)
-            }
         }
         
         private func bind() {
@@ -82,10 +70,6 @@ extension SendToken.ChooseTokenAndAmount {
 }
 
 extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmountViewModelType {
-    var isLoadingDriver: Driver<Bool> {
-        isLoadingSubject.asDriver()
-    }
-    
     var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> {
         navigationSubject.asDriver()
     }
