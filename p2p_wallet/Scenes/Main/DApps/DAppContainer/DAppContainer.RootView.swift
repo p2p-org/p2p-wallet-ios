@@ -56,7 +56,17 @@ extension DAppContainer {
         }
         
         private func load() {
-            webView.load(URLRequest(url: URL(string: viewModel.getDAppURL())!))
+            HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+            print("[WebCacheCleaner] All cookies deleted")
+    
+            WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+                records.forEach { record in
+                    WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
+                    print("[WebCacheCleaner] Record \(record) deleted")
+                }
+            }
+            
+            webView.load(URLRequest(url: URL(string: viewModel.getDAppURL())!, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData))
         }
     }
 }

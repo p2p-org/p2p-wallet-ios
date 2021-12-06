@@ -24,6 +24,7 @@ extension DAppContainer {
     class ViewModel: NSObject {
         // MARK: - Dependencies
         @Injected private var dAppChannel: DAppChannel
+        @Injected private var accountStorage: SolanaSDKAccountStorage
         
         // MARK: - Properties
         private var walletsRepository: WalletsRepository!
@@ -76,11 +77,33 @@ extension DAppContainer.ViewModel: DAppChannelDelegate {
         return .just(pubKey)
     }
     
-    func signTransaction() -> Single<String> {
-        fatalError("signTransaction() has not been implemented")
+    func signTransaction(transaction: SolanaSDK.Transaction) -> Single<SolanaSDK.Transaction> {
+        do {
+            var transaction = transaction
+            guard let signer = accountStorage.account
+                else { throw DAppChannelError.unauthorized }
+            
+            try transaction.sign(signers: [signer])
+            return .just(transaction)
+        } catch let e {
+            return .error(e)
+        }
     }
     
-    func signTransactions() -> Single<[String]> {
-        fatalError("signTransactions() has not been implemented")
+    func signTransactions(transactions: [SolanaSDK.Transaction]) -> Single<[SolanaSDK.Transaction]> {
+        do {
+            return .just(try transactions.map { transaction in
+                var transaction = transaction
+                guard let signer = accountStorage.account
+                    else { throw DAppChannelError.unauthorized }
+                
+                try transaction.sign(signers: [signer])
+                try transaction.serialize(verifySignatures: true)
+                return transaction
+            })
+        } catch let e {
+            return .error(e)
+        }
     }
+    
 }

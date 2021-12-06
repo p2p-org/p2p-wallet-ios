@@ -11,8 +11,8 @@ import RxSwift
 
 protocol DAppChannelDelegate: AnyObject {
     func connect() -> Single<String>
-    func signTransaction() -> Single<String>
-    func signTransactions() -> Single<[String]>
+    func signTransaction(transaction: SolanaSDK.Transaction) -> Single<SolanaSDK.Transaction>
+    func signTransactions(transactions: [SolanaSDK.Transaction]) -> Single<[SolanaSDK.Transaction]>
 }
 
 protocol DAppChannelType {
@@ -47,7 +47,7 @@ extension DAppChannel: DAppChannelType {
     func call(webView: WKWebView, id: String, args: Any) {
         do {
             let message = try createMessage(id: id, method: nil, args: args)
-            print("window.P2PWalletOutgoingChannel(\"\(message)\")")
+            print("window.P2PWalletOutgoingChannel.accept(\"\(message)\")")
             webView.evaluateJavaScript("window.P2PWalletOutgoingChannel.accept(\"\(message)\")", completionHandler: { result, error in
                 print(result)
                 print(error)
@@ -89,11 +89,56 @@ extension DAppChannel: WKScriptMessageHandler {
         case "connect":
             delegate.connect().subscribe(onSuccess: { [weak self] value in self?.call(webView: webView, id: id, args: value) }).disposed(by: disposeBag)
         case "signTransaction":
-            delegate.signTransaction().subscribe(onSuccess: { [weak self] value in self?.call(webView: webView, id: id, args: value) }).disposed(by: disposeBag)
+            do {
+                guard let rawData = body["args"] as? String,
+                      let data = Data(base64urlEncoded: rawData) else {
+                    call(webView: webView, id: id, error: DAppChannelError.invalidTransaction.localizedDescription)
+                    return
+                }
+                
+                let transaction = try SolanaSDK.Transaction.from(data: data)
+                delegate.signTransaction(transaction: transaction).subscribe(onSuccess: { [weak self] trx in
+                    do {
+                        var trx = trx
+                        self?.call(webView: webView, id: id, args: try trx.serialize().base64urlEncodedString())
+                    } catch let e {
+                        print(e)
+                        self?.call(webView: webView, id: id, error: e.localizedDescription)
+                    }
+                }).disposed(by: disposeBag)
+            } catch let error {
+                call(webView: webView, id: id, error: error.localizedDescription)
+            }
         case "signTransactions":
-            delegate.signTransactions().subscribe(onSuccess: { [weak self]value in self?.call(webView: webView, id: id, args: value) }).disposed(by: disposeBag)
+            guard let data = body["args"] as? [String] else {
+                call(webView: webView, id: id, error: DAppChannelError.invalidTransaction.localizedDescription)
+                return
+            }
+            
+            do {
+                var transactions = try data.map { try SolanaSDK.Transaction.from(data: Data(base64urlEncoded: $0)!) }
+                delegate.signTransactions(transactions: transactions).subscribe(onSuccess: { [weak self] values in
+                    do {
+                        self?.call(webView: webView, id: id, args: try values.map { trx in
+                            var trx = trx
+                            try trx.serialize().base64urlEncodedString()
+                        })
+                    } catch let e {
+                        self?.call(webView: webView, id: id, error: e.localizedDescription)
+                    }
+                }).disposed(by: disposeBag)
+            } catch let e {
+                call(webView: webView, id: id, error: e.localizedDescription)
+            }
+        
         default:
             call(webView: webView, id: id, error: "Invalid method call")
         }
+    }
+}
+
+extension Encodable {
+    func encoded(encoder: JSONEncoder = JSONEncoder()) throws -> Data {
+        try encoder.encode(self) // encodable is used here as self conforming protocol, concrete type isn't known
     }
 }

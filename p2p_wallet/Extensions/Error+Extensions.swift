@@ -42,6 +42,9 @@ extension SolanaSDK.Error: LocalizedError {
             return string.localized()
         case .unknown:
             return L10n.unknownError
+        case .assertionFailed:
+            // TODO: pick correct name
+            return L10n.error
         }
     }
 }
