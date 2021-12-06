@@ -20,6 +20,7 @@ protocol SendTokenViewModelType {
     func createChooseRecipientAndNetworkViewModel() -> SendTokenChooseRecipientAndNetworkViewModelType
     
     func getRenBTCPrice() -> Double
+    func getSOLPrice() -> Double
     
     func navigate(to scene: SendToken.NavigatableScene)
     
@@ -207,6 +208,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func getRenBTCPrice() -> Double {
         pricesService.currentPrice(for: "renBTC")?.value ?? 0
+    }
+    
+    func getSOLPrice() -> Double {
+        pricesService.currentPrice(for: "SOL")?.value ?? 0
     }
     
     func navigate(to scene: SendToken.NavigatableScene) {
