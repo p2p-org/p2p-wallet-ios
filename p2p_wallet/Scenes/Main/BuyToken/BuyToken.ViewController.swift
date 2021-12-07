@@ -11,7 +11,7 @@ import UIKit
 extension BuyToken {
     class ViewController: WLIndicatorModalVC {
         // MARK: - Properties
-        private let transakVC: BuyTokenWidgetViewController
+        private let widgetVC: BuyTokenWidgetViewController
         private lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
             UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .white)
                     .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
@@ -21,8 +21,8 @@ extension BuyToken {
 
         // MARK: - Methods
         init(token: CryptoCurrency, repository: WalletsRepository) throws {
-            let provider = try getEnvironmentAndParams(type: .moonpay, token: token, repository: repository)
-            transakVC = .init(provider: provider, loadingView: WLSpinnerView(size: 65, endColor: .h5887ff))
+            let provider = try getEnvironmentAndParams(type: .default, token: token, repository: repository)
+            widgetVC = .init(provider: provider, loadingView: WLSpinnerView(size: 65, endColor: .h5887ff))
             super.init()
         }
 
@@ -39,14 +39,27 @@ extension BuyToken {
             containerView.addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges()
 
-            add(child: transakVC, to: rootView)
+            add(child: widgetVC, to: rootView)
         }
     }
 }
 
-enum BuyProviderType {
+enum BuyProviderType: Equatable {
     case transak
     case moonpay
+    
+    static var `default`: Self {
+        .moonpay
+    }
+    
+    func isSupported(symbol: String) -> Bool {
+        switch self {
+        case .moonpay:
+            return symbol == "USDT"
+        case .transak:
+            return symbol == "SOL" || symbol == "USDT"
+        }
+    }
 }
 
 private func getEnvironmentAndParams(type: BuyProviderType, token: BuyToken.CryptoCurrency, repository: WalletsRepository) throws -> BuyProvider {

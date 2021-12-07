@@ -11,7 +11,7 @@ import Action
 
 extension UIViewController {
     @discardableResult
-    func showAlert(title: String?, message: String?, buttonTitles: [String]? = nil, highlightedButtonIndex: Int? = nil, completion: ((Int) -> Void)? = nil) -> UIAlertController {
+    func showAlert(title: String?, message: String?, buttonTitles: [String]? = nil, highlightedButtonIndex: Int? = nil, destroingIndex: Int? = nil, completion: ((Int) -> Void)? = nil) -> UIAlertController {
         view.layer.removeAllAnimations()
         
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -21,7 +21,8 @@ extension UIViewController {
         }
 
         allButtons.enumerated().forEach { index, buttonTitle in
-            let action = UIAlertAction(title: buttonTitle, style: .default, handler: { (_) in
+            let style: UIAlertAction.Style = index == destroingIndex ? .destructive : .default
+            let action = UIAlertAction(title: buttonTitle, style: style, handler: { (_) in
                 completion?(index)
             })
             alertController.addAction(action)
