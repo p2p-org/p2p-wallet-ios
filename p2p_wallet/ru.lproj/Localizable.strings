@@ -647,3 +647,6 @@
 "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Перед подтверждением транзакции убедитесь, что все данные верны. После подтверждения его нельзя отменить.";
 "Recipient’s\naddress" = "Адрес\nполучателя";
 "Total" = "Общий";
+"1 %@ Price" = "1 %@ Цена";
+"Pay swap fees with" = "Оплачивайте комиссию за своп с помощью";
+"Total fee" = "Общая комиссия";

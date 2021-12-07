@@ -647,3 +647,6 @@
 "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed.";
 "Recipient’s\naddress" = "Recipient’s\naddress";
 "Total" = "Total";
+"1 %@ Price" = "1 %@ Price";
+"Pay swap fees with" = "Pay swap fees with";
+"Total fee" = "Total fee";

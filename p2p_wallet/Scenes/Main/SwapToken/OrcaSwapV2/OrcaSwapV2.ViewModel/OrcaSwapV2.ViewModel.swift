@@ -21,6 +21,7 @@ extension OrcaSwapV2 {
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         private var isSelectingSourceWallet = false // indicate if selecting source wallet or destination wallet
+        private var transactionTokensName: String?
         
         // MARK: - Subject
         private let lamportsPerSignatureSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
@@ -40,7 +41,24 @@ extension OrcaSwapV2 {
         private let errorSubject = BehaviorRelay<VerificationError?>(value: nil)
         let showHideDetailsButtonTapSubject = PublishRelay<Void>()
         private let isShowingDetailsSubject = BehaviorRelay<Bool>(value: false)
-        
+
+        private var reversedExchangeRateDriver: Driver<Double?> {
+            Observable.combineLatest(
+                inputAmountSubject,
+                estimatedAmountSubject
+            )
+                .map { inputAmount, estimatedAmount in
+                    guard let inputAmount = inputAmount,
+                          let estimatedAmount = estimatedAmount,
+                          inputAmount > 0,
+                          estimatedAmount > 0
+                    else { return nil }
+
+                    return inputAmount / estimatedAmount
+                }
+                .asDriver(onErrorJustReturn: nil)
+        }
+
         // MARK: - Initializer
         init(
             feeAPIClient: FeeAPIClient,
@@ -142,6 +160,19 @@ extension OrcaSwapV2 {
                     self.isShowingDetailsSubject.accept(!self.isShowingDetailsSubject.value)
                 })
                 .disposed(by: disposeBag)
+
+            Observable.combineLatest(
+                sourceWalletSubject,
+                destinationWalletSubject,
+                payingTokenSubject
+            )
+                .subscribe(onNext: { [weak self] source, destination, payingToken in
+                    var symbols = [String]()
+                    if let source = source { symbols.append(source.token.symbol) }
+                    if let destination = destination { symbols.append(destination.token.symbol) }
+                    self?.transactionTokensName = symbols.isEmpty ? nil: symbols.joined(separator: "+")
+                })
+                .disposed(by: disposeBag)
         }
         
         func authenticateAndSwap() {
@@ -205,6 +236,101 @@ extension OrcaSwapV2 {
 }
 
 extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
+    func choosePayFee() {
+        navigationSubject.accept(.choosePayFeeToken(tokenName: transactionTokensName))
+    }
+
+    var feePayingTokenDriver: Driver<String?> {
+        Driver.combineLatest(
+            sourceWalletDriver,
+            destinationWalletDriver,
+            payingTokenDriver
+        )
+            .map { source, destination, payingToken in
+                var symbols = [String]()
+                if let source = source {symbols.append(source.token.symbol)}
+                if let destination = destination {symbols.append(destination.token.symbol)}
+
+                let transactionTokensName = symbols.isEmpty ? nil: symbols.joined(separator: "+")
+
+                let text: String
+                // if source or destination is native wallet
+                if source == nil && destination == nil {
+                    text = payingToken == .nativeSOL ? "SOL": L10n.transactionToken
+                } else if
+                    source?.isNativeSOL == true
+                    || destination?.isNativeSOL == true
+                    || payingToken == .nativeSOL
+                {
+                    text = "SOL"
+                } else {
+                    text = transactionTokensName ?? L10n.transactionToken
+                }
+
+                return text
+            }
+    }
+
+    var fromExchangeRate: Driver<OrcaSwapV2.RateRowContent?> {
+        Driver.combineLatest(
+            exchangeRateDriver,
+            sourceWalletDriver,
+            destinationWalletDriver
+        )
+            .map { rate, source, destination in
+                guard
+                    let rate = rate,
+                    let source = source,
+                    let destination = destination
+                else {
+                    return nil
+                }
+
+                let sourceSymbol = source.token.symbol
+                let destinationSymbol = destination.token.symbol
+
+                let fiatPrice = source.priceInCurrentFiat
+                    .toString(maximumFractionDigits: 2)
+                let formattedFiatPrice = "(~\(Defaults.fiat.symbol)\(fiatPrice))"
+
+                return .init(
+                    token: sourceSymbol,
+                    price: "\(rate.toString(maximumFractionDigits: 9)) \(destinationSymbol)",
+                    fiatPrice: formattedFiatPrice
+                )
+            }
+    }
+
+    var toExchangeRate: Driver<OrcaSwapV2.RateRowContent?> {
+        Driver.combineLatest(
+            reversedExchangeRateDriver,
+            sourceWalletDriver,
+            destinationWalletDriver
+        )
+            .map { rate, source, destination in
+                guard
+                    let rate = rate,
+                    let source = source,
+                    let destination = destination
+                else {
+                    return nil
+                }
+
+                let sourceSymbol = source.token.symbol
+                let destinationSymbol = destination.token.symbol
+
+                let fiatPrice = destination.priceInCurrentFiat
+                    .toString(maximumFractionDigits: 2)
+                let formattedFiatPrice = "(~\(Defaults.fiat.symbol)\(fiatPrice))"
+
+                return .init(
+                    token: destinationSymbol,
+                    price: "\(rate.toString(maximumFractionDigits: 9)) \(sourceSymbol)",
+                    fiatPrice: formattedFiatPrice
+                )
+            }
+    }
+
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {
         navigationSubject.asDriver()
     }
@@ -239,7 +365,20 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     var estimatedAmountDriver: Driver<Double?> {
         estimatedAmountSubject.asDriver()
     }
-    
+
+    var feesContentDriver: Driver<Loadable<OrcaSwapV2.DetailedFeesContent>> {
+        feesSubject.asDriver()
+            .map { [weak self] value, state, reload in
+                (
+                    value: value.flatMap {
+                        self?.createFeesDetailedContent(fees: $0)
+                    },
+                    state: state,
+                    reloadAction: reload
+                )
+            }
+    }
+
     var feesDriver: Driver<Loadable<[PayingFee]>> {
         feesSubject.asDriver()
     }
@@ -289,7 +428,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                       let estimatedAmount = estimatedAmount,
                       inputAmount > 0,
                       estimatedAmount > 0
-                else {return nil}
+                else { return nil }
                 return isReversed ? inputAmount / estimatedAmount: estimatedAmount / inputAmount
             }
             .asDriver(onErrorJustReturn: nil)
@@ -584,6 +723,37 @@ private extension OrcaSwapV2.ViewModel {
     
     private func isSlippageValid() -> Bool {
         slippageSubject.value <= .maxSlippage && slippageSubject.value > 0
+    }
+
+    private func createFeesDetailedContent(fees: [PayingFee]) -> OrcaSwapV2.DetailedFeesContent {
+        let totalFeeString: String? = fees.totalFee.map { totalFee in
+            let totalDouble = totalFee.lamports.convertToBalance(decimals: totalFee.token.decimals)
+            return totalDouble.toString(maximumFractionDigits: 9) + " " + totalFee.token.symbol
+        }
+
+        return .init(
+            parts: fees.compactMap(feeToString),
+            total: totalFeeString
+        )
+    }
+
+    private func feeToString(fee: PayingFee) -> OrcaSwapV2.DetailedFeeContent? {
+        if let toString = fee.toString {
+            return toString().map {
+                OrcaSwapV2.DetailedFeeContent(
+                    amount: $0,
+                    reason: fee.headerString
+                )
+            }
+        }
+
+        let amount = fee.lamports.convertToBalance(decimals: fee.token.decimals)
+        let symbol = fee.token.symbol
+
+        return .init(
+            amount: amount.toString(maximumFractionDigits: 9) + " " + symbol,
+            reason: fee.headerString
+        )
     }
     
     private func calculateFees() -> [PayingFee] {

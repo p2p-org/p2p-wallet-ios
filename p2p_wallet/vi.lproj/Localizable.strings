@@ -647,3 +647,6 @@
 "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Hãy chắc chắn rằng tất cả các chi tiết là chính xác trước khi xác nhận giao dịch. Sau khi xác nhận, nó không thể được đảo ngược.";
 "Recipient’s\naddress" = "Địa chỉ\nngười nhận";
 "Total" = "Toàn bộ";
+"1 %@ Price" = "1 %@ Giá";
+"Pay swap fees with" = "Thanh toán phí hoán đổi với";
+"Total fee" = "Tổng phí";
