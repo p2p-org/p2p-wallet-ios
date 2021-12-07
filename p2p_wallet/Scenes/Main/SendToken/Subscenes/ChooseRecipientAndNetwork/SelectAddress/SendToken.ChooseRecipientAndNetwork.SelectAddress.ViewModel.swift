@@ -168,8 +168,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     private func isRecipientBTCAddress() -> Bool {
         guard let recipient = recipientSubject.value else {return false}
-        return recipient.name == nil && NSRegularExpression.bitcoinAddress(isTestnet: solanaAPIClient.isTestNet())
-            .matches(recipient.address)
+        return recipient.name == nil &&
+            recipient.address
+                .matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()))
     }
     
     func next() {
