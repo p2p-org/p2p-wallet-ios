@@ -10,6 +10,10 @@ import UIKit
 
 extension NewOrcaSwap {
     class ViewController: BaseVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+
         // MARK: - Dependencies
         private let viewModel: OrcaSwapV2ViewModelType
         private let scenesFactory: OrcaSwapV2ScenesFactory
@@ -74,6 +78,14 @@ extension NewOrcaSwap {
                 vc.completion = {[weak self] slippage in
                     self?.viewModel.changeSlippage(to: slippage / 100)
                 }
+                present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+            case let .choosePayFeeToken(tokenName):
+                let vc = OrcaSwapV2.NetworkFeePayerSettingsViewController(transactionTokenName: tokenName ?? "")
+                vc.completion = { [weak self] method in
+                    Defaults.payingToken = method
+                    self?.viewModel.changePayingToken(to: method)
+                }
+
                 present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .swapFees:
                 let vc = OrcaSwapV2.SwapFeesViewController(viewModel: viewModel)
