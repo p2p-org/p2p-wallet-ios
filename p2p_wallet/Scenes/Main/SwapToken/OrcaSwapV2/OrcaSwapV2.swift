@@ -15,8 +15,10 @@ struct OrcaSwapV2 {
         case chooseDestinationWallet(validMints: Set<String>, excludedSourceWalletPubkey: String?)
         case settings
         case chooseSlippage
+        case choosePayFeeToken(tokenName: String?)
         case swapFees
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
+        case back
     }
     
     enum VerificationError: String {
