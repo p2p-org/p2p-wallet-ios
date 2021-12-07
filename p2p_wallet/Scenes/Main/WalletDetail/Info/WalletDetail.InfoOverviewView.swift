@@ -22,6 +22,8 @@ extension WalletDetail {
         private lazy var equityValueLabel = UILabel(text: "<equity value>", textSize: 13, weight: .semibold)
         private lazy var change24hLabel = UILabel(text: "<change 24h>", textSize: 13, weight: .semibold, textColor: .h5887ff)
         
+        private lazy var buyButton = createButton(image: .buttonBuy, title: L10n.buy.uppercaseFirst)
+            .onTap(self, action: #selector(buttonBuyDidTouch))
         private lazy var sendButton = createButton(image: .buttonSend, title: L10n.send)
             .onTap(self, action: #selector(buttonSendDidTouch))
         private lazy var swapButton = createButton(image: .buttonSwap, title: L10n.swap)
@@ -52,10 +54,13 @@ extension WalletDetail {
         }
         
         override func createButtonsView() -> UIView {
-            UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fillEqually) {
-                sendButton
-                swapButton
+            let stackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fillEqually)
+            var arrangedSubviews = [sendButton, swapButton]
+            if viewModel.canBuyToken {
+                arrangedSubviews.insert(buyButton, at: 0)
             }
+            stackView.addArrangedSubviews(arrangedSubviews)
+            return stackView
         }
         
         func bind() {
@@ -103,6 +108,10 @@ extension WalletDetail {
         
         @objc private func buttonSwapDidTouch() {
             viewModel.swapTokens()
+        }
+        
+        @objc private func buttonBuyDidTouch() {
+            viewModel.buyTokens()
         }
     }
 }

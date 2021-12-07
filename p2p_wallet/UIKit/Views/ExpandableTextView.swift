@@ -20,6 +20,9 @@ final class ExpandableTextView: UIView {
     private let clearButtonSize: CGFloat = 27
     private let yMargin: CGFloat = 11
 
+    private let hasClearButton: Bool
+    private let maxSymbols: Int?
+
     var rxText: Observable<String?> {
         textView.rx.text.asObservable()
     }
@@ -35,11 +38,18 @@ final class ExpandableTextView: UIView {
         }
     }
 
-    init() {
+    init(
+        hasClearButton: Bool = true,
+        limitOfLines: Int? = nil,
+        maxSymbols: Int? = nil
+    ) {
+        self.hasClearButton = hasClearButton
+        self.maxSymbols = maxSymbols
+
         super.init(frame: .zero)
 
         configureSelf()
-        configureSubviews()
+        configureSubviews(limitOfLines: limitOfLines)
         addSubviews()
         setConstraints()
 
@@ -59,6 +69,10 @@ final class ExpandableTextView: UIView {
     }
 
     func set(text: String?) {
+        if let maxSymbols = maxSymbols, text?.count ?? 0 > maxSymbols {
+            return
+        }
+
         let textIsEmpty = text?.isEmpty ?? true
         changeTextViewText(to: text)
         animatePlaceholder(reversed: textIsEmpty, force: !textIsEmpty)
@@ -83,21 +97,26 @@ private extension ExpandableTextView {
         self.addGestureRecognizer(gestureRecognizer)
     }
 
-    func configureSubviews() {
-        configureTextView()
+    func configureSubviews(limitOfLines: Int?) {
+        configureTextView(limitOfLines: limitOfLines)
         configurePlaceholderLabel()
         configureClearButton()
     }
 
-    func configureTextView() {
+    func configureTextView(limitOfLines: Int?) {
         textView.delegate = self
-        textView.font = .systemFont(ofSize: 17)
+        textView.font = .systemFont(ofSize: 17, weight: .regular)
         textView.textColor = .textBlack
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
         textView.textContainer.lineFragmentPadding = 0
         textView.autocapitalizationType = .none
         textView.autocorrectionType = .no
+
+        if let limitOfLines = limitOfLines {
+            textView.textContainer.maximumNumberOfLines = limitOfLines
+            textView.textContainer.lineBreakMode = .byTruncatingMiddle
+        }
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.58
@@ -163,7 +182,8 @@ private extension ExpandableTextView {
     }
 
     func textViewTextDidChange(to newString: String?) {
-        clearButton.isHidden = newString?.isEmpty ?? true
+        let stringIsEmpty = newString?.isEmpty ?? true
+        clearButton.isHidden = stringIsEmpty || !hasClearButton
     }
 
     @objc
@@ -199,12 +219,14 @@ extension ExpandableTextView: UITextViewDelegate {
         shouldChangeTextIn range: NSRange,
         replacementText text: String
     ) -> Bool {
-        let viewText = textView.text
-
-        let updatedText: String? = viewText.flatMap {
+        let updatedText: String? = textView.text.flatMap {
             guard let textRange = Range(range, in: $0) else { return nil }
 
             return $0.replacingCharacters(in: textRange, with: text)
+        }
+
+        if let maxSymbols = maxSymbols, updatedText?.count ?? 0 > maxSymbols {
+            return false
         }
 
         textViewTextDidChange(to: updatedText)

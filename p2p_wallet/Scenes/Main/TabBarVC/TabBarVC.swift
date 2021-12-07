@@ -50,15 +50,18 @@ class TabBarVC: BEPagesVC {
         configureTabBar()
         
         // fix constraint
-        containerView.constraintToSuperviewWithAttribute(.bottom)?
-            .isActive = false
-        containerView.autoPinEdge(.bottom, to: .top, of: tabBar, withOffset: 20)
+        containerView.autoPinEdge(.bottom, to: .top, of: tabBar)
         
         pageControl.isHidden = true
         
         // action
         currentPage = -1
         moveToPage(0)
+    }
+    
+    override func setUpContainerView() {
+        view.addSubview(containerView)
+        containerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
     }
     
     // MARK: - Helpers

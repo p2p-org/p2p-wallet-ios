@@ -144,7 +144,7 @@ extension Home {
                     .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
                 analyticsManager.log(event: .mainScreenSendOpen)
                 analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
-                present(vc, interactiveDismissalType: .standard, completion: nil)
+                show(vc, sender: nil)
             case .swapToken:
                 let vc = scenesFactory.makeSwapTokenViewController(provider: .orca, fromWallet: nil)
                 analyticsManager.log(event: .mainScreenSwapOpen)
