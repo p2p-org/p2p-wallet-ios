@@ -167,7 +167,7 @@ class MainContainer {
         return .init(viewModel: vm, scenesFactory: self)
     }
     
-    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> CustomPresentableViewController
+    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
     {
         switch provider {
         case .orca:
@@ -176,8 +176,9 @@ class MainContainer {
                 orcaSwap: orcaSwap,
                 walletsRepository: walletsViewModel,
                 initialWallet: wallet ?? walletsViewModel.nativeWallet
-            )
-            return OrcaSwapV2.ViewController(viewModel: vm, scenesFactory: self)
+                )
+//            return OrcaSwapV2.ViewController(viewModel: vm, scenesFactory: self)
+            return NewOrcaSwap.ViewController(viewModel: vm, scenesFactory: self)
         case .serum:
             let provider = SerumSwap(
                 client: solanaSDK,
@@ -233,6 +234,10 @@ class MainContainer {
     func makeSettingsVC(reserveNameHandler: ReserveNameHandler) -> Settings.ViewController {
         let vm = Settings.ViewModel(reserveNameHandler: reserveNameHandler, changeFiatResponder: self, renVMService: renVMLockAndMintService)
         return .init(viewModel: vm)
+    }
+    
+    func makeDAppContainerViewController(dapp: DApp) -> DAppContainer.ViewController {
+        .init(walletsRepository: walletsViewModel, dapp: dapp)
     }
     
     // MARK: - Reserve name

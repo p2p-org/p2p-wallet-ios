@@ -117,6 +117,7 @@ extension SendToken.ChooseTokenAndAmount {
                 .drive(onNext: {[weak self] wallet in
                     self?.coinLogoImageView.setUp(wallet: wallet)
                     self?.coinSymbolLabel.text = wallet?.token.symbol
+                    self?.amountTextField.setUp(decimals: wallet?.token.decimals)
                 })
                 .disposed(by: disposeBag)
             
@@ -190,8 +191,14 @@ extension SendToken.ChooseTokenAndAmount {
             
             // error
             let balanceTintColorDriver = viewModel.errorDriver
-                .skip(1)
-                .map {$0 == nil ? UIColor.textSecondary: UIColor.alert}
+                .withLatestFrom(viewModel.amountDriver.map {$0.isNilOrZero}) {($0, $1)}
+                .map {error, amountIsNilOrZero -> UIColor in
+                    var color = UIColor.textSecondary
+                    if error != nil && !amountIsNilOrZero {
+                        color = .alert
+                    }
+                    return color
+                }
             
             balanceTintColorDriver
                 .drive(walletImageView.rx.tintColor)
