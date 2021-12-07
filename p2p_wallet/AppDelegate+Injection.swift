@@ -65,6 +65,9 @@ extension Resolver: ResolverRegistering {
             .implements(BannerKindTransformerType.self)
             .scope(.unique)
         
+        register { DAppChannel() }
+            .implements(DAppChannelType.self)
+        
         // MARK: - Root
         register {Root.ViewModel()}
             .implements(RootViewModelType.self)
@@ -130,6 +133,11 @@ extension Resolver: ResolverRegistering {
         register { EnterSeedInfo.ViewModel() }
             .implements(EnterSeedInfoViewModelType.self)
             .scope(.unique)
+    
+        // MARK: - DAppContainer
+        register {DAppContainer.ViewModel()}
+            .implements(DAppContainerViewModelType.self)
+            .scope(.shared)
     }
 }
 
