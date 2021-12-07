@@ -36,8 +36,9 @@ extension DerivableAccounts {
                 .padding(.init(x: 18, y: 14), backgroundColor: .grayPanel, cornerRadius: 12)
                 .onTap(self, action: #selector(chooseDerivationPath))
             
-            UILabel(text: L10n.ThisIsTheThingYouUseToGetAllYourAccountsFromYourMnemonicPhrase.byDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet, textColor: .textSecondary, numberOfLines: 0)
-                .padding(.init(all: 18), backgroundColor: .fafafc, cornerRadius: 12)
+            UIView.greyBannerView {
+                UILabel(text: L10n.ThisIsTheThingYouUseToGetAllYourAccountsFromYourMnemonicPhrase.byDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet, numberOfLines: 0)
+            }
         }
         
         private lazy var derivationPathLabel = UILabel(textSize: 13, weight: .regular, textColor: .h8e8e93)
