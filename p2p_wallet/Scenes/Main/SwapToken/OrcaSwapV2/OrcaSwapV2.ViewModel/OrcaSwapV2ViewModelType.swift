@@ -8,7 +8,9 @@
 import Foundation
 import RxCocoa
 
-protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewModelType, SwapTokenSwapFeesViewModelType {
+protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewModelType,
+    AnyObject, SwapTokenSwapFeesViewModelType
+{
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {get}
     var loadingStateDriver: Driver<LoadableState> {get}
     var sourceWalletDriver: Driver<Wallet?> {get}
@@ -17,15 +19,22 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
     var bestPoolsPairDriver: Driver<OrcaSwap.PoolsPair?> {get}
     var inputAmountDriver: Driver<Double?> {get}
     var estimatedAmountDriver: Driver<Double?> {get}
+    var feesContentDriver: Driver<Loadable<OrcaSwapV2.DetailedFeesContent>> { get }
     var feesDriver: Driver<Loadable<[PayingFee]>> {get}
     var availableAmountDriver: Driver<Double?> {get}
     var slippageDriver: Driver<Double> {get}
     var minimumReceiveAmountDriver: Driver<Double?> {get}
     var exchangeRateDriver: Driver<Double?> {get}
+    var fromExchangeRate: Driver<OrcaSwapV2.RateRowContent?> { get }
+    var toExchangeRate: Driver<OrcaSwapV2.RateRowContent?> { get }
+    var feePayingTokenDriver: Driver<String?> { get }
     var isExchangeRateReversed: Driver<Bool> {get}
     var payingTokenDriver: Driver<PayingToken> {get}
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}
-    
+    var isSendingMaxAmountDriver: Driver<Bool> { get }
+    var isShowingDetailsDriver: Driver<Bool> { get }
+    var showHideDetailsButtonTapSubject: PublishRelay<Void> { get }
+
     func reload()
     func log(_ event: AnalyticsEvent)
     func navigate(to scene: OrcaSwapV2.NavigatableScene)
@@ -39,6 +48,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
     func changeSlippage(to slippage: Double)
     func reverseExchangeRate()
     func changePayingToken(to payingToken: PayingToken)
+    func choosePayFee()
     
     func authenticateAndSwap()
 }
