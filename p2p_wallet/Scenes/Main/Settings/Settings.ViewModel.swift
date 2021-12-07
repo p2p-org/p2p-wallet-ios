@@ -180,14 +180,6 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func backupUsingICloud() {
-        authenticationHandler.requiredOwner { [weak self] in
-            self?._backupUsingICloud()
-        } onFailure: { error in
-            UIApplication.shared.showToast(message: error?.localizedDescription ?? L10n.error)
-        }
-    }
-    
-    private func _backupUsingICloud() {
         guard let account = storage.account?.phrase else { return }
         authenticationHandler.authenticate(
             presentationStyle: .init(
@@ -325,7 +317,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func shareUsername() {
-        guard let username = storage.getName()?.withNameServiceDomain() else {return}
+        guard let username = storage.getName()?.withNameServiceDomain() else { return }
         navigate(to: .share(item: username))
     }
     
