@@ -89,7 +89,7 @@ extension OrcaSwapV2 {
 
             viewModel.slippageDriver
                 .drive { [weak slippageView] in
-                    slippageView?.setValue(text: String($0))
+                    slippageView?.setValue(text: "\($0 * 100)%")
                 }
                 .disposed(by: disposeBag)
 
