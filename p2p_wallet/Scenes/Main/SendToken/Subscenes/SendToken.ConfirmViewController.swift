@@ -183,8 +183,8 @@ extension SendToken {
                             .text(L10n.free + " ", size: 15, weight: .semibold)
                             .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
                     case .bitcoin:
-                        return network.defaultFees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices(), alignment: .right)
-                            
+                        return network.defaultFees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+                            .withParagraphStyle(lineSpacing: 8, alignment: .right)
                     }
                 }
                 .drive(transferFeeSection.rightLabel.rx.attributedText)
@@ -221,7 +221,8 @@ extension SendToken {
                     
                     fees.removeAll(where: {$0.amount == 0})
                     
-                    return fees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices(), alignment: .right)
+                    return fees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+                        .withParagraphStyle(lineSpacing: 8, alignment: .right)
                 }
                 .drive(totalSection.rightLabel.rx.attributedText)
                 .disposed(by: disposeBag)

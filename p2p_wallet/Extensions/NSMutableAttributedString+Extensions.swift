@@ -24,11 +24,17 @@ extension NSMutableAttributedString {
     }
     
     @discardableResult
-    func withParagraphStyle(lineSpacing: CGFloat, alignment: NSTextAlignment? = nil) -> NSMutableAttributedString {
+    func withParagraphStyle(lineSpacing: CGFloat, alignment: NSTextAlignment? = nil, firstLineHeadIndent: CGFloat? = nil, baseWritingDirection: NSWritingDirection? = nil) -> NSMutableAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = lineSpacing
         if let alignment = alignment {
             paragraphStyle.alignment = alignment
+        }
+        if let firstLineHeadIndent = firstLineHeadIndent {
+            paragraphStyle.firstLineHeadIndent = firstLineHeadIndent
+        }
+        if let baseWritingDirection = baseWritingDirection {
+            paragraphStyle.baseWritingDirection = baseWritingDirection
         }
         addAttributes([.paragraphStyle: paragraphStyle], range: .init(location: 0, length: length))
         return self
