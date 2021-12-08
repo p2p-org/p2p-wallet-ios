@@ -73,6 +73,16 @@ extension SendToken {
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
                 vc.delegate = self
                 self.present(vc, animated: true, completion: nil)
+            case .chooseNetwork:
+                let vc = SendToken.SelectNetworkViewController(
+                    selectableNetworks: viewModel.getSelectableNetworks(),
+                    renBTCPrice: viewModel.getRenBTCPrice(),
+                    selectedNetwork: viewModel.getSelectedNetwork(),
+                    selectNetworkCompletion: {[weak self] network in
+                        self?.viewModel.selectNetwork(network)
+                    }
+                )
+                show(vc, sender: nil)
             }
         }
     }
