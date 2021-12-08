@@ -109,9 +109,8 @@ extension WalletDetail {
                 let vc = scenesFactory.makeSendTokenViewController(walletPubkey: wallet.pubkey, destinationAddress: nil)
                 show(vc, sender: nil)
             case .receive(let pubkey):
-                if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: pubkey)
-                {
-                    present(vc, interactiveDismissalType: .standard, completion: nil)
+                if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: pubkey) {
+                    show(vc, sender: true)
                 }
             case .swap(let wallet):
                 let vc = scenesFactory.makeSwapTokenViewController(provider: .orca, fromWallet: wallet)
