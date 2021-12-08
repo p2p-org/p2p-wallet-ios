@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension NSMutableAttributedString {
     @discardableResult
@@ -19,6 +20,17 @@ extension NSMutableAttributedString {
         }
         let normal = NSAttributedString(string: text, attributes: attrs)
         append(normal)
+        return self
+    }
+    
+    @discardableResult
+    func withParagraphStyle(lineSpacing: CGFloat, alignment: NSTextAlignment? = nil) -> NSMutableAttributedString {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = lineSpacing
+        if let alignment = alignment {
+            paragraphStyle.alignment = alignment
+        }
+        addAttributes([.paragraphStyle: paragraphStyle], range: .init(location: 0, length: length))
         return self
     }
 }

@@ -41,10 +41,7 @@ extension SendToken {
         }()
         
         private lazy var receiveSection = SectionView(title: L10n.receive)
-        private lazy var transferFeeSection: SectionView = {
-            let transferFeeSection = SectionView(title: L10n.transferFee, additionalView: freeFeeInfoButton)
-            return transferFeeSection
-        }()
+        private lazy var transferFeeSection = SectionView(title: L10n.transferFee)
         private lazy var freeFeeInfoButton = UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
         private lazy var totalSection = SectionView(title: L10n.total)
         
@@ -83,7 +80,10 @@ extension SendToken {
                 
                 UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
                     receiveSection
-                    transferFeeSection
+                    UIStackView(axis: .horizontal, spacing: 4, alignment: .top, distribution: .fill) {
+                        transferFeeSection
+                        freeFeeInfoButton
+                    }
                     UIStackView(axis: .horizontal) {
                         UIView.spacer
                         UIView.defaultSeparator()
@@ -179,7 +179,7 @@ extension SendToken {
                             .text(L10n.free + " ", size: 15, weight: .semibold)
                             .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
                     case .bitcoin:
-                        return network.defaultFees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+                        return network.defaultFees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices(), alignment: .right)
                             
                     }
                 }
@@ -213,7 +213,7 @@ extension SendToken {
                         fees[index].amount += amount
                     }
                     
-                    return fees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+                    return fees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices(), alignment: .right)
                 }
                 .drive(totalSection.rightLabel.rx.attributedText)
                 .disposed(by: disposeBag)
@@ -333,24 +333,15 @@ private extension SendToken {
         // MARK: - Subviews
         private lazy var leftLabel = UILabel(text: "<Receive>", textSize: 15, textColor: .textSecondary)
         lazy var rightLabel = UILabel(text: "<0.00227631 renBTC (~$150)>", textSize: 15, numberOfLines: 0, textAlignment: .right)
-            .withContentHuggingPriority(.required, for: .horizontal)
+            .withContentHuggingPriority(.required, for: .vertical)
         
-        init(title: String, additionalView: UIView? = nil) {
+        init(title: String) {
             super.init(frame: .zero)
             
-            set(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .equalSpacing)
+            set(axis: .horizontal, spacing: 0, alignment: .top, distribution: .equalSpacing)
             addArrangedSubviews {
                 leftLabel
-            }
-            if let additionalView = additionalView {
-                addArrangedSubview(
-                    UIStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill) {
-                        rightLabel
-                        additionalView
-                    }
-                )
-            } else {
-                addArrangedSubview(rightLabel)
+                rightLabel
             }
             leftLabel.text = title
         }
