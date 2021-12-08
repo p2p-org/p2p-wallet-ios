@@ -10,24 +10,19 @@ import RxSwift
 import RxCocoa
 
 protocol ReceiveTokenSolanaViewModelType {
-    var isShowingDetailDriver: Driver<Bool> {get}
-    var pubkey: String {get}
-    var tokenWallet: Wallet? {get}
-    var tokensCountDriver: Driver<Int> {get}
+    var pubkey: String { get }
+    var tokenWallet: Wallet? { get }
     
     func getUsername() -> String?
+    
     func showSOLAddressInExplorer()
-    func showTokenMintAddressInExplorer()
-    func showTokenPubkeyAddressInExplorer()
-    func shareName()
-    func sharePubkey()
-    func showHelp()
-    func toggleIsShowingDetail()
-    func copyToClipboard(address: String, logEvent: AnalyticsEvent)
+    func copyAction()
+    func shareAction(image: UIImage)
+    func saveAction(image: UIImage)
 }
 
 extension ReceiveToken {
-    class ReceiveSolanaViewModel {
+    class ReceiveSolanaViewModel: NSObject {
         // MARK: - Dependencies
         @Injected private var nameStorage: NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
@@ -40,7 +35,6 @@ extension ReceiveToken {
         private let disposeBag = DisposeBag()
         
         // MARK: - Subjects
-        private let isShowingDetailSubject = BehaviorRelay<Bool>(value: false)
         
         // MARK: - Initializers
         init(
@@ -62,57 +56,36 @@ extension ReceiveToken {
 }
 
 extension ReceiveToken.ReceiveSolanaViewModel: ReceiveTokenSolanaViewModelType {
-    var isShowingDetailDriver: Driver<Bool> {
-        isShowingDetailSubject.asDriver()
-    }
-    
-    var tokensCountDriver: Driver<Int> {
-        tokensRepository.getTokensList()
-            .map {$0.count}
-            .asDriver(onErrorJustReturn: 554)
-    }
-    
     func getUsername() -> String? {
         nameStorage.getName()
+    }
+    
+    func copyAction() {
+        analyticsManager.log(event: .receiveWalletAddressCopy)
+        UIApplication.shared.copyToClipboard(pubkey, alertMessage: "✅ " + L10n.addressCopiedToClipboard)
+    }
+    
+    func shareAction(image: UIImage) {
+        analyticsManager.log(event: .receiveQrcodeShare)
+        navigationSubject.accept(.share(qrCode: image))
+    }
+    
+    func saveAction(image: UIImage) {
+        analyticsManager.log(event: .receiveQrcodeSave)
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveImageCallback), nil)
+    }
+    
+    @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            UIApplication.shared.showToast(message: "\(error.localizedDescription)")
+        } else {
+            UIApplication.shared.showToast(message: "✅ \(L10n.savedToPhotoLibrary)")
+        }
     }
     
     func showSOLAddressInExplorer() {
         analyticsManager.log(event: .receiveViewExplorerOpen)
         navigationSubject.accept(.showInExplorer(address: pubkey))
     }
-    
-    func showTokenMintAddressInExplorer() {
-        guard let mintAddress = tokenWallet?.token.address else {return}
-        analyticsManager.log(event: .receiveViewExplorerOpen)
-        navigationSubject.accept(.showInExplorer(address: mintAddress))
-    }
-    
-    func showTokenPubkeyAddressInExplorer() {
-        guard let pubkey = tokenWallet?.pubkey else {return}
-        analyticsManager.log(event: .receiveViewExplorerOpen)
-        navigationSubject.accept(.showInExplorer(address: pubkey))
-    }
-    
-    func shareName() {
-        analyticsManager.log(event: .receiveNameShare)
-        navigationSubject.accept(.share(address: getUsername()?.withNameServiceDomain() ?? ""))
-    }
-    
-    func sharePubkey() {
-        analyticsManager.log(event: .receiveAddressShare)
-        navigationSubject.accept(.share(address: pubkey))
-    }
-    
-    func showHelp() {
-        navigationSubject.accept(.help)
-    }
-    
-    func toggleIsShowingDetail() {
-        isShowingDetailSubject.accept(!isShowingDetailSubject.value)
-    }
-    
-    func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
-        UIApplication.shared.copyToClipboard(address, alert: false)
-        analyticsManager.log(event: logEvent)
-    }
 }
+

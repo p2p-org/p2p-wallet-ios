@@ -80,9 +80,14 @@ extension ReceiveToken {
                 let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
                 let nc = FlexibleHeightNavigationController(rootViewController: vc)
                 present(nc, interactiveDismissalType: .standard)
-            case .share(let address):
-                let vc = UIActivityViewController(activityItems: [address], applicationActivities: nil)
-                present(vc, animated: true, completion: nil)
+            case .share(let address, let qrCode):
+                if let qrCode = qrCode {
+                    let vc = UIActivityViewController(activityItems: [qrCode], applicationActivities: nil)
+                    present(vc, animated: true, completion: nil)
+                } else if let address = address{
+                    let vc = UIActivityViewController(activityItems: [address], applicationActivities: nil)
+                    present(vc, animated: true, completion: nil)
+                }
             case .help:
                 let vc = HelpViewController()
                 present(vc, animated: true, completion: nil)
