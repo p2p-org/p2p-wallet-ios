@@ -34,7 +34,7 @@ extension SendToken {
             self.scenesFactory = scenesFactory
             
             // init with ChooseTokenAndAmountVC
-            let vm = viewModel.createChooseTokenAndAmountViewModel()
+            let vm = SendToken.ChooseTokenAndAmount.ViewModel(sendTokenViewModel: viewModel)
             let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
             self.childNavigationController = BENavigationController(rootViewController: vc)
             

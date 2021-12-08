@@ -38,27 +38,19 @@ extension SendToken.ChooseTokenAndAmount {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var analyticsManager: AnalyticsManagerType
+        private let sendTokenViewModel: SendTokenViewModelType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         
-        // MARK: - Callback
-        var onGoBack: (() -> Void)?
-        
         // MARK: - Subject
-        // Subjects from parent
-        private let walletSubject: BehaviorRelay<Wallet?>
-        private let amountInLamportsSubject: BehaviorRelay<SolanaSDK.Lamports?>
-        
-        // Own subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         
         // MARK: - Initializer
-        init(walletSubject: BehaviorRelay<Wallet?>, amountInLamportsSubject: BehaviorRelay<SolanaSDK.Lamports?>) {
-            self.walletSubject = walletSubject
-            self.amountInLamportsSubject = amountInLamportsSubject
+        init(sendTokenViewModel: SendTokenViewModelType) {
+            self.sendTokenViewModel = sendTokenViewModel
             bind()
         }
         
@@ -76,7 +68,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     }
     
     var walletDriver: Driver<Wallet?> {
-        walletSubject.asDriver()
+        sendTokenViewModel.walletDriver
     }
     
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {
@@ -107,7 +99,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     }
     
     func back() {
-        onGoBack?()
+        sendTokenViewModel.navigate(to: .back)
     }
     
     func toggleCurrencyMode() {
@@ -123,14 +115,11 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     }
     
     func chooseWallet(_ wallet: Wallet) {
-        analyticsManager.log(
-            event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
-        )
-        walletSubject.accept(wallet)
+        sendTokenViewModel.chooseWallet(wallet)
     }
     
     func calculateAvailableAmount() -> Double? {
-        guard let wallet = walletSubject.value else {return nil}
+        guard let wallet = sendTokenViewModel.getSelectedWallet() else {return nil}
         // all amount
         var availableAmount = wallet.amount ?? 0
         
@@ -148,7 +137,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     }
     
     func next() {
-        guard let wallet = walletSubject.value,
+        guard let wallet = sendTokenViewModel.getSelectedWallet(),
               let totalLamports = wallet.lamports,
               var amount = amountSubject.value
         else {return}
@@ -164,6 +153,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
             lamports = totalLamports
         }
         
-        amountInLamportsSubject.accept(lamports)
+        sendTokenViewModel.enterAmount(lamports)
+        sendTokenViewModel.navigate(to: .chooseRecipientAndNetwork)
     }
 }
