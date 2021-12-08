@@ -20,9 +20,19 @@ extension ReceiveToken {
         
         // MARK: - Subviews
         private lazy var tokenCountLabel = UILabel(text: "+", textSize: 12, weight: .semibold, textColor: .white)
-        private lazy var nameLabel = UILabel(text: viewModel.getUsername()?.withNameServiceDomain(), textSize: 15, weight: .semibold, textAlignment: .center)
         private lazy var addressLabel = UILabel(text: viewModel.pubkey, textSize: 15, weight: .semibold, textAlignment: .center)
             .lineBreakMode(.byTruncatingMiddle)
+        private lazy var nameLabel: UIView = {
+            guard let username = viewModel.getUsername(),
+                  let nameWithDomain = viewModel.getUsername()?.withNameServiceDomain() else { return UIView() }
+            
+            let text = NSMutableAttributedString(string: nameWithDomain)
+            text.addAttribute(.foregroundColor, value: UIColor.gray, range: NSRange(location: username.count, length: text.length - username.count))
+            
+            let label = UILabel(textSize: 20, weight: .semibold, textAlignment: .center)
+            label.attributedText = text
+            return label
+        }()
         
         private lazy var detailView = createDetailView()
         private lazy var showHideDetailButton = WLButton.stepButton(type: .gray, label: nil, labelColor: .a3a5baStatic.onDarkMode(.white))
@@ -30,6 +40,10 @@ extension ReceiveToken {
         
         private lazy var directAddressHeaderLabel = UILabel(text: L10n.directAddress(viewModel.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
         private lazy var mintAddressHeaderLabel = UILabel(text: L10n.mintAddress(viewModel.tokenWallet?.token.symbol ?? ""), textSize: 13, weight: .medium, textColor: .textSecondary)
+        
+        fileprivate let copyButton: UIButton = UIButton.text(text: L10n.copy, image: .copyIcon, tintColor: .h5887ff)
+        fileprivate let shareButton: UIButton = UIButton.text(text: L10n.share, image: .share2, tintColor: .h5887ff)
+        fileprivate let saveButton: UIButton = UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
         
         // MARK: - Initializers
         init(viewModel: ReceiveTokenSolanaViewModelType) {
@@ -52,7 +66,7 @@ extension ReceiveToken {
                 alignment: .fill,
                 distribution: .fill
             ) {
-                UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
+                UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
                     UILabel(text: L10n.whichCryptocurrenciesCanIUse, textSize: 15, weight: .semibold, numberOfLines: 0)
                     UIImageView(width: 24, height: 24, image: .questionMarkCircle, tintColor: .a3a5ba)
                         .onTap(self, action: #selector(showHelp))
@@ -60,9 +74,25 @@ extension ReceiveToken {
                     .padding(.init(x: 20, y: 22.5), cornerRadius: 12)
                     .border(width: 1, color: .defaultBorder)
                 
-                QrCodeView.withFrame(string: viewModel.pubkey, token: viewModel.tokenWallet?.token)
-                    .0
-                    .centeredHorizontallyView
+                UIStackView(axis: .vertical, alignment: .fill) {
+                    nameLabel.padding(.init(only: .top, inset: 26))
+                    
+                    QrCodeView(size: 190, coinLogoSize: 32)
+                        .with(string: viewModel.pubkey, token: viewModel.tokenWallet?.token)
+                        .autoAdjustWidthHeightRatio(1)
+                        .padding(.init(x: 50, y: 33))
+                    
+                    UIView.defaultSeparator()
+                    
+                    UIStackView(axis: .horizontal, alignment: .fill, distribution: .fillEqually) {
+                        copyButton
+                        shareButton
+                        saveButton
+                    }.padding(.init(x: 0, y: 4))
+                }.border(width: 1, color: .f2f2f7)
+                    .box(cornerRadius: 12)
+                    .shadow(color: .black, alpha: 0.05, y: 1, blur: 8)
+                    .margin(.init(x: 0, y: 18))
                 
                 ReceiveToken.copyAndShareableField(
                     label: addressLabel,
@@ -72,21 +102,21 @@ extension ReceiveToken {
                     shareSelector: #selector(sharePubkey)
                 )
             }
-            
-            if viewModel.getUsername() != nil {
-                var index = 2
-                stackView.insertArrangedSubviews(at: &index) {
-                    ReceiveToken.copyAndShareableField(
-                        label: nameLabel,
-                        copyTarget: self,
-                        copySelector: #selector(copyNameToClipboard),
-                        shareTarget: self,
-                        shareSelector: #selector(shareName)
-                    )
-                    
-                    BEStackViewSpacing(8)
-                }
-            }
+
+//            if viewModel.getUsername() != nil {
+//                var index = 2
+//                stackView.insertArrangedSubviews(at: &index) {
+//                    ReceiveToken.copyAndShareableField(
+//                        label: nameLabel,
+//                        copyTarget: self,
+//                        copySelector: #selector(copyNameToClipboard),
+//                        shareTarget: self,
+//                        shareSelector: #selector(shareName)
+//                    )
+//
+//                    BEStackViewSpacing(8)
+//                }
+//            }
             
             if viewModel.tokenWallet != nil {
                 stackView.addArrangedSubviews {
@@ -111,12 +141,12 @@ extension ReceiveToken {
         
         private func bind() {
             viewModel.tokensCountDriver
-                .map {"+\($0 - 4)"}
+                .map { "+\($0 - 4)" }
                 .drive(tokenCountLabel.rx.text)
                 .disposed(by: disposeBag)
             
             viewModel.isShowingDetailDriver
-                .map {!$0}
+                .map { !$0 }
                 .drive(detailView.rx.isHidden)
                 .disposed(by: disposeBag)
             
@@ -131,7 +161,7 @@ extension ReceiveToken {
         private func createDetailView() -> UIStackView {
             UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
                 UIView.defaultSeparator()
-            
+                
                 UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
                     directAddressHeaderLabel
                     
@@ -193,7 +223,7 @@ extension ReceiveToken {
         }
         
         @objc private func copyTokenPubKeyToClipboard() {
-            guard !isCopying, let pubkey = viewModel.tokenWallet?.pubkey else {return}
+            guard !isCopying, let pubkey = viewModel.tokenWallet?.pubkey else { return }
             isCopying = true
             
             viewModel.copyToClipboard(address: pubkey, logEvent: .receiveAddressCopy)
@@ -207,7 +237,7 @@ extension ReceiveToken {
         }
         
         @objc private func copyTokenMintToClipboard() {
-            guard !isCopying, let mint = viewModel.tokenWallet?.token.address else {return}
+            guard !isCopying, let mint = viewModel.tokenWallet?.token.address else { return }
             isCopying = true
             
             viewModel.copyToClipboard(address: mint, logEvent: .receiveAddressCopy)
@@ -221,7 +251,7 @@ extension ReceiveToken {
         }
         
         @objc private func copyNameToClipboard() {
-            copyToClipboard(viewModel.getUsername()?.withNameServiceDomain() ?? "", event: .receiveNameCopy, onLabel: nameLabel, message: L10n.nameCopiedToClipboard)
+//            copyToClipboard(viewModel.getUsername()?.withNameServiceDomain() ?? "", event: .receiveNameCopy, onLabel: nameLabel, message: L10n.nameCopiedToClipboard)
         }
         
         @objc private func copyMainPubkeyToClipboard() {
@@ -229,7 +259,7 @@ extension ReceiveToken {
         }
         
         private func copyToClipboard(_ textToCopy: String, event: AnalyticsEvent, onLabel label: UILabel, message: String) {
-            guard !isCopying else {return}
+            guard !isCopying else { return }
             isCopying = true
             
             viewModel.copyToClipboard(address: textToCopy, logEvent: event)

@@ -9,9 +9,22 @@ import Foundation
 import UIKit
 
 extension ReceiveToken {
-    class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
+    class ViewController: BaseVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+        
         // MARK: - Properties
         let viewModel: ReceiveTokenViewModelType
+        
+        // MARK: - Views
+        lazy var navigationBar: WLNavigationBar = {
+            let navigationBar = WLNavigationBar(forAutoLayout: ())
+            navigationBar.backgroundColor = .clear
+            navigationBar.titleLabel.text = L10n.receive
+            return navigationBar
+        }()
+        
         lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill) {
             UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
                 .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
@@ -19,11 +32,9 @@ extension ReceiveToken {
         }
             .padding(.init(all: 20))
         lazy var rootView = RootView(viewModel: viewModel)
-        var transitionManager: UIViewControllerTransitioningDelegate?
         
         // MARK: - Initializer
-        init(viewModel: ReceiveTokenViewModelType)
-        {
+        init(viewModel: ReceiveTokenViewModelType) {
             self.viewModel = viewModel
             super.init()
             modalPresentationStyle = .custom
@@ -32,14 +43,15 @@ extension ReceiveToken {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
+            
             let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
-                headerView
+                navigationBar
                 UIView.defaultSeparator()
                 rootView
             }
             
-            containerView.addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges()
+            view.addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewSafeArea()
         }
         
         override func bind() {
@@ -48,9 +60,7 @@ extension ReceiveToken {
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
             
-            viewModel.updateLayoutDriver
-                .drive(onNext: {[weak self] _ in self?.updatePresentationLayout(animated: true)})
-                .disposed(by: disposeBag)
+            navigationBar.backButton.onTap(self, action: #selector(back))
         }
         
         // MARK: - Navigation
@@ -79,18 +89,6 @@ extension ReceiveToken {
             case .none:
                 break
             }
-        }
-        
-        // MARK: - Transition
-        override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
-            super.calculateFittingHeightForPresentedView(targetWidth: targetWidth)
-                + headerView.fittingHeight(targetWidth: targetWidth)
-                + 1 // separator
-                + rootView.fittingHeight(targetWidth: targetWidth)
-        }
-        
-        var dismissalHandlingScrollView: UIScrollView? {
-            rootView.scrollView
         }
     }
 }
