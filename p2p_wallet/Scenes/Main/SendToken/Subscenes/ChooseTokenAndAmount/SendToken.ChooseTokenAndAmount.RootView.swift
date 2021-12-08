@@ -60,6 +60,10 @@ extension SendToken.ChooseTokenAndAmount {
             super.didMoveToWindow()
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { [weak self] in
                 self?.amountTextField.becomeFirstResponder()
+                #if DEBUG
+                self?.amountTextField.text = 0.0001.toString(maximumFractionDigits: 9, groupingSeparator: "")
+                self?.amountTextField.sendActions(for: .valueChanged)
+                #endif
             }
         }
         
