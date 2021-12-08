@@ -62,7 +62,7 @@ struct SendToken {
 }
 
 extension Array where Element == SendToken.Fee {
-    func attributedString(prices: [String: Double], textSize: CGFloat = 15, tokenColor: UIColor = .textBlack, fiatColor: UIColor = .textSecondary) -> NSAttributedString {
+    func attributedString(prices: [String: Double], textSize: CGFloat = 15, tokenColor: UIColor = .textBlack, fiatColor: UIColor = .textSecondary, separator: String = "\n", lineSpacing: CGFloat = 8, alignment: NSTextAlignment) -> NSAttributedString {
         let attributedText = NSMutableAttributedString()
         
         for (index, fee) in self.enumerated() {
@@ -72,9 +72,10 @@ extension Array where Element == SendToken.Fee {
                 .text(" (~\(Defaults.fiat.symbol)\(amountInUSD.toString(maximumFractionDigits: 2)))", size: textSize, color: fiatColor)
             if index < count - 1 {
                 attributedText
-                    .text("\n", size: 15)
+                    .text(separator, size: 15, color: tokenColor)
             }
         }
         return attributedText
+            .withParagraphStyle(lineSpacing: lineSpacing, alignment: alignment)
     }
 }

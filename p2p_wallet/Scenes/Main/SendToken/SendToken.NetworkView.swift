@@ -29,6 +29,7 @@ extension SendToken {
                     networkNameLabel
                     UIStackView(axis: .horizontal, spacing: 0, alignment: .top, distribution: .fill) {
                         UILabel(text: L10n.transferFee + ": ", textSize: 13, textColor: .textSecondary)
+                            .padding(.init(x: 0, y: 2))
                         feeLabel
                     }
                 }
@@ -52,7 +53,7 @@ extension SendToken {
                     .text("\(Defaults.fiat.symbol)0", size: 13, weight: .semibold, color: .attentionGreen)
             } else {
                 attributedText
-                    .append(network.defaultFees.attributedString(prices: prices, textSize: 13, tokenColor: .textSecondary))
+                    .append(network.defaultFees.attributedString(prices: prices, textSize: 13, tokenColor: .textSecondary, separator: ",\n", lineSpacing: 2, alignment: .left))
             }
             feeLabel.attributedText = attributedText
         }
