@@ -60,7 +60,13 @@ extension SendToken {
             switch scene {
             case .back:
                 back()
-            case .chooseTokenAndAmount:
+            case .chooseTokenAndAmount(let goBackOnCompletion):
+                if goBackOnCompletion {
+                    let vm = ChooseTokenAndAmount.ViewModel(sendTokenViewModel: viewModel)
+                    vm.goBackOnCompletion = goBackOnCompletion
+                    let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
+                    childNavigationController.pushViewController(vc, animated: true)
+                }
                 break
             case .chooseRecipientAndNetwork:
                 let vm = ChooseRecipientAndNetwork.ViewModel(sendTokenViewModel: viewModel)
