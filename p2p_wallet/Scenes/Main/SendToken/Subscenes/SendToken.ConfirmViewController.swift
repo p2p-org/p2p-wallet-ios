@@ -38,6 +38,7 @@ extension SendToken {
             let networkView = NetworkView()
             networkView.addArrangedSubview(.defaultNextArrow())
             return networkView
+                .onTap(self, action: #selector(networkViewDidTouch))
         }()
         
         private lazy var receiveSection = SectionView(title: L10n.receive)
@@ -251,7 +252,7 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             priceDriver
-                .map {price, symbol in
+                .map {price, _ in
                     return price?.toString(maximumFractionDigits: 9) + " " + Defaults.fiat.code
                 }
                 .drive(tokenToFiatSection.rightLabel.rx.text)
