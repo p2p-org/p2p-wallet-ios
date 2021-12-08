@@ -62,8 +62,6 @@ extension SendToken {
             
             // layout
             let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
-                alertBannerView
-                
                 UIView.floatingPanel {
                     amountView
                 }
@@ -114,6 +112,11 @@ extension SendToken {
             view.addSubview(actionButton)
             actionButton.autoPinEdge(.top, to: .bottom, of: scrollView, withOffset: 8)
             actionButton.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
+            
+            // alert
+            if viewModel.shouldShowConfirmAlert() {
+                stackView.insertArrangedSubview(alertBannerView, at: 0)
+            }
         }
         
         override func bind() {
@@ -220,6 +223,38 @@ extension SendToken {
                     return fees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices(), alignment: .right)
                 }
                 .drive(totalSection.rightLabel.rx.attributedText)
+                .disposed(by: disposeBag)
+            
+            // prices
+            let priceDriver = viewModel.walletDriver
+                .map {[weak self] in
+                    (self?.viewModel.getPrice(for: $0?.token.symbol ?? ""),
+                     $0?.token.symbol ?? "")
+                }
+            
+            // fiat to token
+            fiatToTokenSection.leftLabel.text = "1 \(Defaults.fiat.code)"
+            
+            priceDriver
+                .map { price, symbol in
+                    let price: Double = price == 0 ? 0: 1/price
+                    return price.toString(maximumFractionDigits: 9) + " " + symbol
+                }
+                .drive(fiatToTokenSection.rightLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            // token to fiat
+            viewModel.walletDriver
+                .map {$0?.token.symbol ?? ""}
+                .map {"1 \($0)"}
+                .drive(tokenToFiatSection.leftLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            priceDriver
+                .map {price, symbol in
+                    return price?.toString(maximumFractionDigits: 9) + " " + Defaults.fiat.code
+                }
+                .drive(tokenToFiatSection.rightLabel.rx.text)
                 .disposed(by: disposeBag)
             
             // action button
@@ -335,7 +370,7 @@ private extension SendToken {
         private let disposeBag = DisposeBag()
         
         // MARK: - Subviews
-        private lazy var leftLabel = UILabel(text: "<Receive>", textSize: 15, textColor: .textSecondary)
+        lazy var leftLabel = UILabel(text: "<Receive>", textSize: 15, textColor: .textSecondary)
         lazy var rightLabel = UILabel(text: "<0.00227631 renBTC (~$150)>", textSize: 15, numberOfLines: 0, textAlignment: .right)
             .withContentHuggingPriority(.required, for: .vertical)
         
