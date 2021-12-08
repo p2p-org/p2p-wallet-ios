@@ -75,6 +75,14 @@ extension SendToken {
             self.initialDestinationWalletPubkey = destinationAddress
             self.solanaAPIClient = apiClient
             self.renVMBurnAndReleaseService = renVMBurnAndReleaseService
+            
+            // accept initial values
+            if let pubkey = walletPubkey {
+                walletSubject.accept(repository.getWallets().first(where: {$0.pubkey == pubkey}))
+            } else {
+                walletSubject.accept(repository.nativeWallet)
+            }
+
         }
         
         private func send() {
