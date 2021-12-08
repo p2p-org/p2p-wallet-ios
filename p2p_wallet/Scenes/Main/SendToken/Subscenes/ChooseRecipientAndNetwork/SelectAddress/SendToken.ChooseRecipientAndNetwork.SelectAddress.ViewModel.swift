@@ -20,19 +20,15 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var feeDriver: Driver<SendToken.Fee> {get}
     var isValidDriver: Driver<Bool> {get}
     
-    func getSelectableNetworks() -> [SendToken.Network]
     func getRenBTCPrice() -> Double
-    
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
+    func navigateToChoosingNetworkScene()
     
     func userDidTapPaste()
     func search(_ address: String?)
     
     func selectRecipient(_ recipient: SendToken.Recipient)
     func clearRecipient()
-    
-    func getSelectedNetwork() -> SendToken.Network
-    func selectNetwork(_ network: SendToken.Network)
     
     func next()
 }
@@ -97,21 +93,17 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         sendTokenViewModel.recipientDriver.map {$0 != nil}
     }
     
-    func getSelectableNetworks() -> [SendToken.Network] {
-        sendTokenViewModel.getSelectableNetworks()
-    }
-    
-    func getSelectedNetwork() -> SendToken.Network {
-        sendTokenViewModel.getSelectedNetwork()
-    }
-    
     func getRenBTCPrice() -> Double {
         sendTokenViewModel.getRenBTCPrice()
     }
-    
     // MARK: - Actions
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene) {
         navigationSubject.accept(scene)
+    }
+    
+    func navigateToChoosingNetworkScene() {
+        // forward request to sendTokenViewModel
+        sendTokenViewModel.navigate(to: .chooseNetwork)
     }
     
     func userDidTapPaste() {
@@ -134,10 +126,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     func clearRecipient() {
         inputStateSubject.accept(.searching)
         sendTokenViewModel.selectRecipient(nil)
-    }
-    
-    func selectNetwork(_ network: SendToken.Network) {
-        sendTokenViewModel.selectNetwork(network)
     }
     
     func next() {

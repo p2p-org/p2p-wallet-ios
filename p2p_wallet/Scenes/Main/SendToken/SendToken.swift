@@ -13,7 +13,10 @@ struct SendToken {
     enum NavigatableScene {
         case back
         case chooseTokenAndAmount
+        
         case chooseRecipientAndNetwork
+        case chooseNetwork
+        
         case confirmation
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
     }
