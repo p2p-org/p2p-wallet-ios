@@ -42,8 +42,7 @@ extension SendToken {
         
         private lazy var receiveSection = SectionView(title: L10n.receive)
         private lazy var transferFeeSection: SectionView = {
-            let transferFeeSection = SectionView(title: L10n.transferFee)
-            transferFeeSection.addArrangedSubview(freeFeeInfoButton)
+            let transferFeeSection = SectionView(title: L10n.transferFee, additionalView: freeFeeInfoButton)
             return transferFeeSection
         }()
         private lazy var freeFeeInfoButton = UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
@@ -206,6 +205,10 @@ extension SendToken {
             
             viewModel.networkDriver
                 .map {$0 != .solana}
+                .do(afterNext: {[weak self] _ in
+                    self?.transferFeeSection.rightLabel.setNeedsLayout()
+                    self?.transferFeeSection.layoutIfNeeded()
+                })
                 .drive(freeFeeInfoButton.rx.isHidden)
                 .disposed(by: disposeBag)
             
@@ -332,14 +335,24 @@ private extension SendToken {
         // MARK: - Subviews
         private lazy var leftLabel = UILabel(text: "<Receive>", textSize: 15, textColor: .textSecondary)
         lazy var rightLabel = UILabel(text: "<0.00227631 renBTC (~$150)>", textSize: 15, numberOfLines: 0, textAlignment: .right)
+            .withContentHuggingPriority(.required, for: .horizontal)
         
-        init(title: String) {
+        init(title: String, additionalView: UIView? = nil) {
             super.init(frame: .zero)
             
             set(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .equalSpacing)
             addArrangedSubviews {
                 leftLabel
-                rightLabel
+            }
+            if let additionalView = additionalView {
+                addArrangedSubview(
+                    UIStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill) {
+                        rightLabel
+                        additionalView
+                    }
+                )
+            } else {
+                addArrangedSubview(rightLabel)
             }
             leftLabel.text = title
         }
