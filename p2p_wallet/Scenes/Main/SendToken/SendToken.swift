@@ -12,7 +12,7 @@ import RxCocoa
 struct SendToken {
     enum NavigatableScene {
         case back
-        case chooseTokenAndAmount
+        case chooseTokenAndAmount(goBackOnCompletion: Bool)
         
         case chooseRecipientAndNetwork
         case chooseNetwork

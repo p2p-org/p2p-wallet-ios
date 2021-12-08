@@ -54,7 +54,7 @@ extension SendToken {
         private var selectableNetworks: [SendToken.Network]?
         
         // MARK: - Subject
-        private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount)
+        private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount(goBackOnCompletion: false))
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let amountSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
         private let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
