@@ -17,7 +17,7 @@ extension SendToken {
         // MARK: - Subviews
         private lazy var coinImageView = UIImageView(width: 44, height: 44, image: nil)
         private lazy var networkNameLabel = UILabel(text: "<network>", textSize: 17, weight: .semibold)
-        private lazy var descriptionLabel = UILabel(text: "<transfer fee:>", textSize: 13, numberOfLines: 0)
+        private lazy var feeLabel = UILabel(text: "<transfer fee:>", textSize: 13, numberOfLines: 0, textAlignment: .right)
         
         init() {
             super.init(frame: .zero)
@@ -27,7 +27,10 @@ extension SendToken {
                 coinImageView
                 UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
                     networkNameLabel
-                    descriptionLabel
+                    UIStackView(axis: .horizontal, spacing: 0, alignment: .top, distribution: .fill) {
+                        UILabel(text: L10n.transferFee + ": ", textSize: 13, textColor: .textSecondary)
+                        feeLabel
+                    }
                 }
             }
         }
@@ -41,7 +44,6 @@ extension SendToken {
             networkNameLabel.text = L10n.network(network.rawValue.uppercaseFirst)
             
             let attributedText = NSMutableAttributedString()
-                .text(L10n.transferFee + ": ", size: 13, color: .textSecondary)
             
             let fees = network.defaultFees
             
@@ -52,7 +54,7 @@ extension SendToken {
                 attributedText
                     .append(network.defaultFees.attributedString(prices: prices, textSize: 13, tokenColor: .textSecondary))
             }
-            descriptionLabel.attributedText = attributedText
+            feeLabel.attributedText = attributedText
         }
     }
 }

@@ -82,7 +82,6 @@ extension SendToken {
             } else {
                 walletSubject.accept(repository.nativeWallet)
             }
-
         }
         
         private func send() {
