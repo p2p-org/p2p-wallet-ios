@@ -16,8 +16,6 @@ protocol SendTokenViewModelType {
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
     
-    func createChooseRecipientAndNetworkViewModel() -> SendTokenChooseRecipientAndNetworkViewModelType
-    
     func getSelectedWallet() -> Wallet?
     func getRenBTCPrice() -> Double
     func getSOLPrice() -> Double
@@ -171,30 +169,6 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     var networkDriver: Driver<SendToken.Network> {
         networkSubject.asDriver()
-    }
-    
-    func createChooseRecipientAndNetworkViewModel() -> SendTokenChooseRecipientAndNetworkViewModelType {
-        let vm = SendToken.ChooseRecipientAndNetwork.ViewModel(
-            solanaAPIClient: solanaAPIClient,
-            walletDriver: walletDriver,
-            amountDriver: amountDriver,
-            recipientSubject: recipientSubject,
-            networkSubject: networkSubject
-        )
-        
-        vm.getSelectableNetworks = {[weak self] in
-            self?.getSelectableNetworks() ?? []
-        }
-        
-        vm.getRenBTCPrice = {[weak self] in
-            self?.getRenBTCPrice() ?? 0
-        }
-        
-        vm.onNext = {[weak self] in
-            self?.navigate(to: .confirmation)
-        }
-        
-        return vm
     }
     
     func getSelectedWallet() -> Wallet? {
