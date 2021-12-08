@@ -160,12 +160,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         networkSubject.value
     }
     
-    func selectNetwork(_ network: SendToken.Network) {
-        if !wallet.token.isRenBTC {
-            networkSubject.accept(.solana)
-        }
-        networkSubject.accept(network)
-    }
+    
     
     func getRenBTCPrice() -> Double {
         pricesService.currentPrice(for: "renBTC")?.value ?? 0

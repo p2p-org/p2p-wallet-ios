@@ -52,7 +52,7 @@ extension SendToken {
         private lazy var tokenToFiatSection = SectionView(title: "<1 renBTC>")
         private lazy var fiatToTokenSection = SectionView(title: "<1 USD>")
         
-        private lazy var actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.send(amount, tokenSymbol))
+        private lazy var actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.sendNow)
             .onTap(self, action: #selector(actionButtonDidTouch))
         
         // MARK: - Initializer
@@ -208,6 +208,17 @@ extension SendToken {
                 .map {$0 != .solana}
                 .drive(freeFeeInfoButton.rx.isHidden)
                 .disposed(by: disposeBag)
+            
+            // action button
+            walletAndAmountDriver
+                .map { wallet, amount in
+                    let amount = amount?.convertToBalance(decimals: wallet?.token.decimals) ?? 0
+                    let symbol = wallet?.token.symbol ?? ""
+                    return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
+                }
+                .drive(actionButton.rx.text)
+                .disposed(by: disposeBag)
+                
         }
         
         // MARK: - Actions
@@ -226,10 +237,10 @@ extension SendToken {
             let vc = SelectNetworkViewController(
                 selectableNetworks: viewModel.getSelectableNetworks(),
                 renBTCPrice: viewModel.getRenBTCPrice(),
-                selectedNetwork: viewModel.getSelectedNetwork() ?? .solana
+                selectedNetwork: viewModel.getSelectedNetwork()
             )
                 {[weak self] network in
-                    
+                    self?.viewModel.selectNetwork(network)
                 }
             show(vc, sender: nil)
         }

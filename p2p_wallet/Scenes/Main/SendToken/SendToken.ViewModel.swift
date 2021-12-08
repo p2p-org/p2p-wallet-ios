@@ -21,8 +21,11 @@ protocol SendTokenViewModelType {
     
     func getRenBTCPrice() -> Double
     func getSOLPrice() -> Double
+    func getSelectableNetworks() -> [SendToken.Network]
+    func getSelectedNetwork() -> SendToken.Network
     
     func navigate(to scene: SendToken.NavigatableScene)
+    func selectNetwork(_ network: SendToken.Network)
     
     func shouldShowConfirmAlert() -> Bool
     func closeConfirmAlert()
@@ -168,15 +171,11 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func createChooseTokenAndAmountViewModel() -> SendTokenChooseTokenAndAmountViewModelType {
         let vm = SendToken.ChooseTokenAndAmount.ViewModel(
-            walletSubject: walletSubject
+            walletSubject: walletSubject,
+            amountInLamportsSubject: amountSubject
         )
         vm.onGoBack = {[weak self] in
             self?.navigate(to: .back)
-        }
-        vm.onSelect = {[weak self] pubkey, lamports in
-            self?.walletSubject.accept(self?.walletsRepository.getWallets().first(where: {$0.pubkey == pubkey}))
-            self?.amountSubject.accept(lamports)
-            self?.navigate(to: .chooseRecipientAndNetwork)
         }
         return vm
     }
@@ -185,11 +184,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         let vm = SendToken.ChooseRecipientAndNetwork.ViewModel()
         
         vm.getSelectableNetworks = {[weak self] in
-            var networks: [SendToken.Network] = [.solana]
-            if self?.isRecipientBTCAddress() == true {
-                networks.append(.bitcoin)
-            }
-            return networks
+            self?.getSelectableNetworks() ?? []
         }
         
         vm.solanaAPIClient = solanaAPIClient
@@ -214,8 +209,27 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         pricesService.currentPrice(for: "SOL")?.value ?? 0
     }
     
+    func getSelectableNetworks() -> [SendToken.Network] {
+        var networks: [SendToken.Network] = [.solana]
+        if isRecipientBTCAddress() {
+            networks.append(.bitcoin)
+        }
+        return networks
+    }
+    
+    func getSelectedNetwork() -> SendToken.Network {
+        networkSubject.value
+    }
+    
     func navigate(to scene: SendToken.NavigatableScene) {
         navigationSubject.accept(scene)
+    }
+    
+    func selectNetwork(_ network: SendToken.Network) {
+        if walletSubject.value?.token.isRenBTC == false {
+            networkSubject.accept(.solana)
+        }
+        networkSubject.accept(network)
     }
     
     func shouldShowConfirmAlert() -> Bool {

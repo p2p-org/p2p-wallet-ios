@@ -44,11 +44,11 @@ extension SendToken.ChooseTokenAndAmount {
         
         // MARK: - Callback
         var onGoBack: (() -> Void)?
-        var onSelect: ((String, SolanaSDK.Lamports) -> Void)?
         
         // MARK: - Subject
         // Subjects from parent
         private let walletSubject: BehaviorRelay<Wallet?>
+        private let amountInLamportsSubject: BehaviorRelay<SolanaSDK.Lamports?>
         
         // Own subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -56,8 +56,9 @@ extension SendToken.ChooseTokenAndAmount {
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         
         // MARK: - Initializer
-        init(walletSubject: BehaviorRelay<Wallet?>) {
+        init(walletSubject: BehaviorRelay<Wallet?>, amountInLamportsSubject: BehaviorRelay<SolanaSDK.Lamports?>) {
             self.walletSubject = walletSubject
+            self.amountInLamportsSubject = amountInLamportsSubject
             bind()
         }
         
@@ -149,7 +150,6 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     func next() {
         guard let wallet = walletSubject.value,
               let totalLamports = wallet.lamports,
-              let pubkey = walletSubject.value?.pubkey,
               var amount = amountSubject.value
         else {return}
         
@@ -164,6 +164,6 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
             lamports = totalLamports
         }
         
-        onSelect?(pubkey, lamports)
+        amountInLamportsSubject.accept(lamports)
     }
 }
