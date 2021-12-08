@@ -16,15 +16,19 @@ protocol SendTokenViewModelType {
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
     
-    func createChooseTokenAndAmountViewModel() -> SendTokenChooseTokenAndAmountViewModelType
     func createChooseRecipientAndNetworkViewModel() -> SendTokenChooseRecipientAndNetworkViewModelType
     
+    func getSelectedWallet() -> Wallet?
     func getRenBTCPrice() -> Double
     func getSOLPrice() -> Double
+    func getAPIClient() -> SendTokenAPIClient
     func getSelectableNetworks() -> [SendToken.Network]
     func getSelectedNetwork() -> SendToken.Network
     
     func navigate(to scene: SendToken.NavigatableScene)
+    func chooseWallet(_ wallet: Wallet)
+    func enterAmount(_ amount: SolanaSDK.Lamports)
+    func selectRecipient(_ recipient: SendToken.Recipient?)
     func selectNetwork(_ network: SendToken.Network)
     
     func shouldShowConfirmAlert() -> Bool
@@ -169,36 +173,32 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         networkSubject.asDriver()
     }
     
-    func createChooseTokenAndAmountViewModel() -> SendTokenChooseTokenAndAmountViewModelType {
-        let vm = SendToken.ChooseTokenAndAmount.ViewModel(
-            walletSubject: walletSubject,
-            amountInLamportsSubject: amountSubject
-        )
-        vm.onGoBack = {[weak self] in
-            self?.navigate(to: .back)
-        }
-        return vm
-    }
-    
     func createChooseRecipientAndNetworkViewModel() -> SendTokenChooseRecipientAndNetworkViewModelType {
-        let vm = SendToken.ChooseRecipientAndNetwork.ViewModel()
+        let vm = SendToken.ChooseRecipientAndNetwork.ViewModel(
+            solanaAPIClient: solanaAPIClient,
+            walletDriver: walletDriver,
+            amountDriver: amountDriver,
+            recipientSubject: recipientSubject,
+            networkSubject: networkSubject
+        )
         
         vm.getSelectableNetworks = {[weak self] in
             self?.getSelectableNetworks() ?? []
         }
         
-        vm.solanaAPIClient = solanaAPIClient
-        vm.repository = walletsRepository
-        vm.selectedWalletPubkey = selectedWalletPubkey
-        vm.selectedAmount = selectedAmount
-        vm.pricesService = pricesService
-        vm.completion = {[weak self] recipient, network, selectableNetworks in
-            self?.selectedRecipient = recipient
-            self?.selectedNetwork = network
-            self?.selectableNetworks = selectableNetworks
+        vm.getRenBTCPrice = {[weak self] in
+            self?.getRenBTCPrice() ?? 0
+        }
+        
+        vm.onNext = {[weak self] in
             self?.navigate(to: .confirmation)
         }
+        
         return vm
+    }
+    
+    func getSelectedWallet() -> Wallet? {
+        walletSubject.value
     }
     
     func getRenBTCPrice() -> Double {
@@ -207,6 +207,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func getSOLPrice() -> Double {
         pricesService.currentPrice(for: "SOL")?.value ?? 0
+    }
+    
+    func getAPIClient() -> SendTokenAPIClient {
+        solanaAPIClient
     }
     
     func getSelectableNetworks() -> [SendToken.Network] {
@@ -223,6 +227,27 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func navigate(to scene: SendToken.NavigatableScene) {
         navigationSubject.accept(scene)
+    }
+    
+    func chooseWallet(_ wallet: Wallet) {
+        analyticsManager.log(
+            event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
+        )
+        walletSubject.accept(wallet)
+    }
+    
+    func enterAmount(_ amount: SolanaSDK.Lamports) {
+        amountSubject.accept(amount)
+    }
+    
+    func selectRecipient(_ recipient: SendToken.Recipient?) {
+        recipientSubject.accept(recipient)
+        
+        if isRecipientBTCAddress() {
+            networkSubject.accept(.bitcoin)
+        } else {
+            networkSubject.accept(.solana)
+        }
     }
     
     func selectNetwork(_ network: SendToken.Network) {

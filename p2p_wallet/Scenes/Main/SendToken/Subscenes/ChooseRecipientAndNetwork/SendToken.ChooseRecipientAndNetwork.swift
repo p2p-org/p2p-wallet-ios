@@ -10,8 +10,6 @@ import RxCocoa
 
 extension SendToken {
     struct ChooseRecipientAndNetwork {
-        enum NavigatableScene {
-            
-        }
+        
     }
 }
