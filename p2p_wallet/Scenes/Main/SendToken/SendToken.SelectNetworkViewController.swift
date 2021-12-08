@@ -13,7 +13,7 @@ extension SendToken {
     final class SelectNetworkViewController: BaseViewController {
         // MARK: - Properties
         private let selectableNetworks: [Network]
-        private let renBTCPrice: Double
+        private let prices: [String: Double]
         private var selectedNetwork: Network {
             didSet {
                 reloadData()
@@ -27,7 +27,7 @@ extension SendToken {
                 .map {network -> _NetworkView in
                     let view = _NetworkView()
                     view.network = network
-                    view.setUp(network: network, fee: network.defaultFee, renBTCPrice: renBTCPrice)
+                    view.setUp(network: network, prices: prices)
                     if network == .solana {
                         view.insertArrangedSubview(
                             UILabel(text: L10n.paidByP2p, textSize: 13, textColor: .h34c759)
@@ -45,10 +45,10 @@ extension SendToken {
         }()
         
         // MARK: - Initializer
-        init(selectableNetworks: [Network], renBTCPrice: Double, selectedNetwork: Network, selectNetworkCompletion: ((Network) -> Void)?)
+        init(selectableNetworks: [Network], prices: [String: Double], selectedNetwork: Network, selectNetworkCompletion: ((Network) -> Void)?)
         {
             self.selectableNetworks = selectableNetworks
-            self.renBTCPrice = renBTCPrice
+            self.prices = prices
             self.selectedNetwork = selectedNetwork
             self.selectNetworkCompletion = selectNetworkCompletion
             super.init()

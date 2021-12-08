@@ -17,10 +17,10 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var walletDriver: Driver<Wallet?> {get}
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
-    var feeDriver: Driver<SendToken.Fee> {get}
     var isValidDriver: Driver<Bool> {get}
     
-    func getRenBTCPrice() -> Double
+    func getPrice(for symbol: String) -> Double
+    func getSOLAndRenBTCPrices() -> [String: Double]
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
     func navigateToChoosingNetworkScene()
     
@@ -85,17 +85,18 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         sendTokenViewModel.networkDriver
     }
     
-    var feeDriver: Driver<SendToken.Fee> {
-        networkDriver.map {$0.defaultFee}
-    }
-    
     var isValidDriver: Driver<Bool> {
         sendTokenViewModel.recipientDriver.map {$0 != nil}
     }
     
-    func getRenBTCPrice() -> Double {
-        sendTokenViewModel.getRenBTCPrice()
+    func getPrice(for symbol: String) -> Double {
+        sendTokenViewModel.getPrice(for: symbol)
     }
+    
+    func getSOLAndRenBTCPrices() -> [String: Double] {
+        sendTokenViewModel.getSOLAndRenBTCPrices()
+    }
+    
     // MARK: - Actions
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene) {
         navigationSubject.accept(scene)
