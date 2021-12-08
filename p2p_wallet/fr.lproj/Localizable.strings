@@ -650,3 +650,5 @@
 "1 %@ Price" = "1 %@ Prix";
 "Pay swap fees with" = "Payez les frais de swap avec";
 "Total fee" = "Montant total";
+"Reserve P2P username" = "Réserver le nom d'utilisateur P2P";
+"Enter username" = "Saisissez votre nom d'utilisateur";

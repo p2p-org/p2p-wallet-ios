@@ -48,9 +48,13 @@ extension Settings {
                 let vc = UsernameViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .reserveUsername(owner: let owner, handler: let handler):
-                let vm = ReserveName.ViewModel(owner: owner, handler: handler)
+                let vm = ReserveName.ViewModel(
+                    canSkip: false,
+                    owner: owner,
+                    nameService: Resolver.resolve(),
+                    reserveNameHandler: handler
+                )
                 let vc = ReserveName.ViewController(viewModel: vm)
-                vc.rootView.hideSkipButtons()
                 show(vc, sender: nil)
             case .backup:
                 let vc = BackupViewController(viewModel: viewModel)
