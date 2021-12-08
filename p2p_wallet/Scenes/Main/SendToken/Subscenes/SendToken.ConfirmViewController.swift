@@ -211,7 +211,11 @@ extension SendToken {
                     
                     if let index = fees.firstIndex(where: {$0.unit == symbol}) {
                         fees[index].amount += amount
+                    } else {
+                        fees.append(.init(amount: amount, unit: symbol))
                     }
+                    
+                    fees.removeAll(where: {$0.amount == 0})
                     
                     return fees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices(), alignment: .right)
                 }

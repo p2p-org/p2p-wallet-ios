@@ -29,6 +29,7 @@ extension SendToken {
                     networkNameLabel
                     UIStackView(axis: .horizontal, spacing: 0, alignment: .top, distribution: .fill) {
                         UILabel(text: L10n.transferFee + ": ", textSize: 13, textColor: .textSecondary)
+                            .withContentHuggingPriority(.required, for: .horizontal)
                             .padding(.init(x: 0, y: 2))
                         feeLabel
                     }
