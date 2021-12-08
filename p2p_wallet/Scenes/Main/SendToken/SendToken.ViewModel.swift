@@ -17,8 +17,8 @@ protocol SendTokenViewModelType {
     var networkDriver: Driver<SendToken.Network> {get}
     
     func getSelectedWallet() -> Wallet?
-    func getRenBTCPrice() -> Double
-    func getSOLPrice() -> Double
+    func getPrice(for symbol: String) -> Double
+    func getSOLAndRenBTCPrices() -> [String: Double]
     func getAPIClient() -> SendTokenAPIClient
     func getSelectableNetworks() -> [SendToken.Network]
     func getSelectedNetwork() -> SendToken.Network
@@ -131,7 +131,7 @@ extension SendToken {
                     recipient: receiver,
                     amount: amount
                 )
-                fee = network.defaultFee.amount.toLamport(decimals: 8)
+                fee = network.defaultFees.first(where: {$0.unit == "renBTC"})?.amount.toLamport(decimals: 8) ?? 0 // TODO: solana fee
             }
             
             // log
@@ -183,12 +183,15 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         walletSubject.value
     }
     
-    func getRenBTCPrice() -> Double {
-        pricesService.currentPrice(for: "renBTC")?.value ?? 0
+    func getPrice(for symbol: String) -> Double {
+        pricesService.currentPrice(for: symbol)?.value ?? 0
     }
     
-    func getSOLPrice() -> Double {
-        pricesService.currentPrice(for: "SOL")?.value ?? 0
+    func getSOLAndRenBTCPrices() -> [String: Double] {
+        [
+            "SOL": getPrice(for: "SOL"),
+            "renBTC": getPrice(for: "renBTC")
+        ]
     }
     
     func getAPIClient() -> SendTokenAPIClient {

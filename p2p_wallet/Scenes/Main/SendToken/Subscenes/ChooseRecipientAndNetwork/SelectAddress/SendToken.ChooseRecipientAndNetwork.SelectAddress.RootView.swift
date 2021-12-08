@@ -200,9 +200,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         private func bind() {
             viewModel.networkDriver
-                .withLatestFrom(viewModel.feeDriver) {($0, $1)}
-                .drive(onNext: {[weak self] network, fee in
-                    self?._networkView.setUp(network: network, fee: fee, renBTCPrice: self?.viewModel.getRenBTCPrice() ?? 0)
+                .drive(onNext: {[weak self] network in
+                    self?._networkView.setUp(
+                        network: network,
+                        prices: self?.viewModel.getSOLAndRenBTCPrices() ?? [:]
+                    )
                 })
                 .disposed(by: disposeBag)
         }

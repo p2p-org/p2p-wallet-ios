@@ -146,7 +146,10 @@ extension SendToken {
             // network view
             viewModel.networkDriver
                 .drive(with: self, onNext: { `self`, network in
-                    self.networkView.setUp(network: network, fee: network.defaultFee, renBTCPrice: self.viewModel.getRenBTCPrice())
+                    self.networkView.setUp(
+                        network: network,
+                        prices: self.viewModel.getSOLAndRenBTCPrices()
+                    )
                 })
                 .disposed(by: disposeBag)
             
@@ -169,34 +172,14 @@ extension SendToken {
             // transfer fee
             viewModel.networkDriver
                 .map {[weak self] network in
+                    guard let self = self else {return NSAttributedString()}
                     switch network {
                     case .solana:
                         return NSMutableAttributedString()
                             .text(L10n.free + " ", size: 15, weight: .semibold)
                             .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
                     case .bitcoin:
-                        return NSMutableAttributedString()
-                            .text(network.defaultFee.amount.toString(maximumFractionDigits: 9), size: 15)
-                            .text(" ")
-                            .text(network.defaultFee.unit, size: 15)
-                            .text(" ("
-                                  + Defaults.fiat.symbol
-                                  + (network.defaultFee.amount * self?.viewModel.getRenBTCPrice())
-                                    .toString(maximumFractionDigits: 2)
-                                  + ")",
-                                  size: 15,
-                                  color: .textSecondary
-                            )
-                            .text("\n")
-                            .text("0.0002 SOL", size: 15)
-                            .text(" ("
-                                + Defaults.fiat.symbol
-                                + (0.0002 * self?.viewModel.getSOLPrice())
-                                    .toString(maximumFractionDigits: 2)
-                                + ")",
-                                size: 15,
-                                color: .textSecondary
-                            )
+                        return network.defaultFees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
                             
                     }
                 }
@@ -210,6 +193,29 @@ extension SendToken {
                     self?.transferFeeSection.layoutIfNeeded()
                 })
                 .drive(freeFeeInfoButton.rx.isHidden)
+                .disposed(by: disposeBag)
+                    
+            // total
+            Driver.combineLatest(
+                walletAndAmountDriver,
+                viewModel.networkDriver
+            )
+                .map {[weak self] walletAndAmount, network -> NSAttributedString in
+                    guard let self = self else {return NSAttributedString()}
+                    let lamports = walletAndAmount.1
+                    let wallet = walletAndAmount.0
+                    let amount = lamports?.convertToBalance(decimals: wallet?.token.decimals) ?? 0
+                    let symbol = wallet?.token.symbol ?? ""
+                    
+                    var fees = network.defaultFees
+                    
+                    if let index = fees.firstIndex(where: {$0.unit == symbol}) {
+                        fees[index].amount += amount
+                    }
+                    
+                    return fees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+                }
+                .drive(totalSection.rightLabel.rx.attributedText)
                 .disposed(by: disposeBag)
             
             // action button
@@ -237,15 +243,7 @@ extension SendToken {
         }
         
         @objc private func networkViewDidTouch() {
-            let vc = SelectNetworkViewController(
-                selectableNetworks: viewModel.getSelectableNetworks(),
-                renBTCPrice: viewModel.getRenBTCPrice(),
-                selectedNetwork: viewModel.getSelectedNetwork()
-            )
-                {[weak self] network in
-                    self?.viewModel.selectNetwork(network)
-                }
-            show(vc, sender: nil)
+            viewModel.navigate(to: .chooseNetwork)
         }
     }
 }

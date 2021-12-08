@@ -22,7 +22,7 @@ extension SendToken {
         init() {
             super.init(frame: .zero)
             
-            set(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill)
+            set(axis: .horizontal, spacing: 12, alignment: .top, distribution: .fill)
             addArrangedSubviews {
                 coinImageView
                 UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
@@ -36,21 +36,21 @@ extension SendToken {
             fatalError("init(coder:) has not been implemented")
         }
         
-        func setUp(network: SendToken.Network, fee: SendToken.Fee, renBTCPrice: Double) {
+        func setUp(network: SendToken.Network, prices: [String: Double]) {
             coinImageView.image = network.icon
             networkNameLabel.text = L10n.network(network.rawValue.uppercaseFirst)
             
             let attributedText = NSMutableAttributedString()
                 .text(L10n.transferFee + ": ", size: 13, color: .textSecondary)
             
-            if fee.amount == 0 {
+            let fees = network.defaultFees
+            
+            if fees.map(\.amount).reduce(0.0, +) == 0 {
                 attributedText
                     .text("\(Defaults.fiat.symbol)0", size: 13, weight: .semibold, color: .attentionGreen)
             } else {
-                let amountInUSD = fee.amount * renBTCPrice
                 attributedText
-                    .text("\(fee.amount.toString(maximumFractionDigits: 9)) \(fee.unit)", size: 13, color: .textSecondary)
-                    .text(" (~$\(amountInUSD.toString(maximumFractionDigits: 9)))", size: 13, color: .textSecondary)
+                    .append(network.defaultFees.attributedString(prices: prices, textSize: 13, tokenColor: .textSecondary))
             }
             descriptionLabel.attributedText = attributedText
         }
