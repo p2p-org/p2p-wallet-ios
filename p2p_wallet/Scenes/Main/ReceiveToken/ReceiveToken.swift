@@ -13,7 +13,7 @@ struct ReceiveToken {
         case showBTCExplorer(address: String)
         case chooseBTCOption(selectedOption: BTCTypeOption)
         case showRenBTCReceivingStatus
-        case share(address: String)
+        case share(address: String? = nil, qrCode: UIImage? = nil)
         case help
     }
     
