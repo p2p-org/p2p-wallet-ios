@@ -34,7 +34,7 @@ extension SendToken {
             self.scenesFactory = scenesFactory
             
             // init with ChooseTokenAndAmountVC
-            let vm = SendToken.ChooseTokenAndAmount.ViewModel(sendTokenViewModel: viewModel)
+            let vm = ChooseTokenAndAmount.ViewModel(sendTokenViewModel: viewModel)
             let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
             self.childNavigationController = BENavigationController(rootViewController: vc)
             
@@ -63,7 +63,7 @@ extension SendToken {
             case .chooseTokenAndAmount:
                 break
             case .chooseRecipientAndNetwork:
-                let vm = viewModel.createChooseRecipientAndNetworkViewModel()
+                let vm = ChooseRecipientAndNetwork.ViewModel(sendTokenViewModel: viewModel)
                 let vc = ChooseRecipientAndNetwork.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)
             case .confirmation:

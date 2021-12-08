@@ -54,7 +54,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 present(vc, animated: true, completion: nil)
             case .chooseNetwork:
                 let vc = SendToken.SelectNetworkViewController(
-                    selectableNetworks: viewModel.getSelectableNetwork(),
+                    selectableNetworks: viewModel.getSelectableNetworks(),
                     renBTCPrice: viewModel.getRenBTCPrice(),
                     selectedNetwork: viewModel.getSelectedNetwork(),
                     selectNetworkCompletion: {[weak self] network in

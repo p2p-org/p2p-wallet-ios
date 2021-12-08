@@ -40,11 +40,6 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     
     // MARK: - Actions
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
-        let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel()
-        vm.solanaAPIClient = solanaAPIClient
-        vm.getSelectableNetworks = getSelectableNetworks
-        vm.getRenBTCPrice = getRenBTCPrice
-        vm.onNext = onNext
-        return vm
+        SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel(sendTokenViewModel: sendTokenViewModel)
     }
 }
