@@ -372,7 +372,7 @@ private extension SendToken {
             } else {
                 nameLabel.isHidden = true
             }
-            addressLabel.text = recipient?.address
+            addressLabel.text = recipient?.address ?? L10n.chooseTheRecipient
         }
     }
     
