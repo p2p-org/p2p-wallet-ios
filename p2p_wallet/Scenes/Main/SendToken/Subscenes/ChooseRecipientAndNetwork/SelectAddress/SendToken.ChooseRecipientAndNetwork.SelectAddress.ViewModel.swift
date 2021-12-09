@@ -68,16 +68,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
             }
         }
-        
-        func bind() {
-            chooseRecipientAndNetworkViewModel
-                .selectRestrictedNetworkSignal
-                .emit(onNext: {[weak self] network in
-                    guard network == .bitcoin else {return}
-                    self?.clearRecipient()
-                })
-                .disposed(by: disposeBag)
-        }
     }
 }
 

@@ -35,7 +35,7 @@ struct SendToken {
         let hasNoInfo: Bool
     }
     
-    enum Network: String, CaseIterable {
+    enum Network: String {
         case solana, bitcoin
         var icon: UIImage {
             switch self {

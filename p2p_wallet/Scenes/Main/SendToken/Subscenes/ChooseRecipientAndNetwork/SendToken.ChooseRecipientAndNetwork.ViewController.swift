@@ -84,10 +84,6 @@ extension SendToken.ChooseRecipientAndNetwork {
                     selectedNetwork: viewModel.getSelectedNetwork(),
                     selectNetworkCompletion: {[weak self] network in
                         self?.viewModel.selectNetwork(network)
-                    },
-                    selectRestrictedNetworkCompletion: {[weak self] network in
-                        self?.viewModel.userDidSelectRestrictedNetwork(network)
-                        self?.navigationController?.popViewController(animated: true)
                     }
                 )
                 show(vc, sender: nil)
