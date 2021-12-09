@@ -35,7 +35,7 @@ extension SendTokenRecipientAndNetworkHandler {
     
     func getSelectableNetworks() -> [SendToken.Network] {
         var networks: [SendToken.Network] = [.solana]
-        if isRecipientBTCAddress() {
+        if getSelectedWallet()?.token.isRenBTC == true {
             networks.append(.bitcoin)
         }
         return networks
