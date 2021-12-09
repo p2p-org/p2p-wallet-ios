@@ -69,7 +69,7 @@ class CoinLogoImageView: BEView {
         // with token
         let jazzicon: Jazzicon
         if let token = token {
-            let key = token.symbol.isEmpty ? token.address: token.symbol
+            let key = token.symbol.isEmpty ? token.address : token.symbol
             var seed = Self.cachedJazziconSeeds[key]
             if seed == nil {
                 seed = UInt64.random(in: 0..<10000000)

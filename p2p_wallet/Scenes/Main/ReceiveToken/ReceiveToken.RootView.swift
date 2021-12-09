@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 
 extension ReceiveToken {
-    class RootView: ScrollableVStackRootView, SwitcherDelegate {
+    class RootView: BECompositionView {
         // MARK: - Constants
         private let disposeBag = DisposeBag()
         private let allTokenTypes = TokenType.allCases
@@ -17,138 +17,32 @@ extension ReceiveToken {
         // MARK: - Properties
         private let viewModel: ReceiveTokenViewModelType
         
-        // MARK: - Subviews
-        private lazy var switcher = Switcher()
-        private lazy var receiveSolanaView = ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
-        private lazy var receiveBTCView = ReceiveBitcoinView(
-            viewModel: viewModel.receiveBitcoinViewModel,
-            receiveSolanaViewModel: viewModel.receiveSolanaViewModel
-        )
-        
-        // MARK: - Initializers
         init(viewModel: ReceiveTokenViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
         
-        // MARK: - Methods
-        override func commonInit() {
-            super.commonInit()
-            layout()
-            bind()
-        }
-        
-        func layout() {
-            switcher.labels = allTokenTypes.map {$0.localizedName}
-            switcher.delegate = self
-            
-            scrollView.contentInset.modify(dLeft: -.defaultPadding, dRight: -.defaultPadding)
-            
-            stackView.spacing = 20
-            stackView.addArrangedSubviews {
-                receiveSolanaView
-                receiveBTCView
-            }
-            
-            if viewModel.shouldShowChainsSwitcher {
-                stackView.insertArrangedSubview(switcher.centeredHorizontallyView, at: 0)
-            }
-        }
-        
-        func bind() {
-            viewModel.tokenTypeDriver
-                .drive(onNext: {[weak self] token in
-                    switch token {
-                    case .solana:
-                        self?.receiveSolanaView.isHidden = false
-                        self?.receiveBTCView.isHidden = true
-                    case .btc:
-                        self?.receiveSolanaView.isHidden = true
-                        self?.receiveBTCView.isHidden = false
+        override func build() -> UIView {
+            BEScrollView(contentInsets: .init(x: .defaultPadding, y: .defaultPadding), spacing: 16) {
+                if viewModel.shouldShowChainsSwitcher {
+                    WLLargeButton {
+                        UIStackView(axis: .horizontal) {
+                            UIImageView(width: 22, height: 22, image: .walletEdit)
+                            UIStackView(axis: .vertical, alignment: .leading) {
+                                UILabel(text: L10n.showingMyAddressFor, textSize: 13, textColor: .secondaryLabel)
+                                UILabel(text: "Solana network", textSize: 17)
+                            }.padding(.init(x: 12, y: 0))
+                        }.padding(.init(x: 15, y: 15))
                     }
-                })
-                .disposed(by: disposeBag)
-        }
-        
-        // MARK: - Actions
-        fileprivate func switcher(_ switcher: Switcher, didChangeIndexTo index: Int) {
-            guard let token = allTokenTypes[safe: index] else {return}
-            viewModel.switchToken(token)
-        }
-    }
-}
-
-private protocol SwitcherDelegate: AnyObject {
-    func switcher(_ switcher: Switcher, didChangeIndexTo index: Int)
-}
-
-private class Switcher: BEView {
-    private let disabledColor: UIColor = .f6f6f8Static.onDarkMode(.white.withAlphaComponent(0.1))
-    private let disabledTextColor: UIColor = .a3a5baStatic.onDarkMode(.white)
-    private let enabledColor: UIColor = .h5887ff
-    private let enabledTextColor: UIColor = .white
-    
-    private lazy var stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill)
-    weak var delegate: SwitcherDelegate?
-    
-    var labels: [String] = [] {
-        didSet {
-            reloadData()
-            selectedIndex = 0
-        }
-    }
-    
-    var selectedIndex: Int = 0 {
-        didSet { changeSelectedIndex() }
-    }
-    
-    override func commonInit() {
-        super.commonInit()
-        // add stackView
-        addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges()
-    }
-    
-    private func reloadData() {
-        stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
-        stackView.addArrangedSubviews(
-            labels.enumerated().map {index, label -> UIView in
-                let view = UILabel(text: label, textSize: 15, weight: .medium, textColor: disabledTextColor)
-                    .withContentHuggingPriority(.required, for: .horizontal)
-                    .padding(.init(x: 12, y: 14), backgroundColor: disabledColor, cornerRadius: 12)
-                
-                let gesture = TapGesture(target: self, action: #selector(viewDidTap(gesture:)))
-                gesture.index = index
-                view.addGestureRecognizer(gesture)
-                
-                return view
-            }
-        )
-    }
-    
-    private func changeSelectedIndex() {
-        for (index, view) in stackView.arrangedSubviews.enumerated() {
-            if index != selectedIndex && view.backgroundColor == enabledColor {
-                view.backgroundColor = disabledColor
-                (view.subviews.first as? UILabel)?.textColor = disabledTextColor
-            }
-            
-            if index == selectedIndex && view.backgroundColor == disabledColor {
-                view.backgroundColor = enabledColor
-                (view.subviews.first as? UILabel)?.textColor = enabledTextColor
+                }
+                // Children
+                ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel).setup { view in
+                    viewModel.tokenTypeDriver.map { token in token == .solana ? false : true }.drive(view.rx.isHidden).disposed(by: disposeBag)
+                }
+                ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel, receiveSolanaViewModel: viewModel.receiveSolanaViewModel).setup { view in
+                    viewModel.tokenTypeDriver.map { token in token == .solana ? true : false }.drive(view.rx.isHidden).disposed(by: disposeBag)
+                }
             }
         }
-        
-        // Animation:
-    }
-    
-    @objc private func viewDidTap(gesture: TapGesture) {
-        guard selectedIndex != gesture.index else {return}
-        selectedIndex = gesture.index
-        delegate?.switcher(self, didChangeIndexTo: selectedIndex)
-    }
-    
-    private class TapGesture: UITapGestureRecognizer {
-        var index: Int!
     }
 }
