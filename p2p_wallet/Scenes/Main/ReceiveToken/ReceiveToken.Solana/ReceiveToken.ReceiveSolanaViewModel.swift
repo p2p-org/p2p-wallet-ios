@@ -85,7 +85,7 @@ extension ReceiveToken.ReceiveSolanaViewModel: ReceiveTokenSolanaViewModelType {
     
     func showSOLAddressInExplorer() {
         analyticsManager.log(event: .receiveViewExplorerOpen)
-        navigationSubject.accept(.showInExplorer(address: pubkey))
+        navigationSubject.accept(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
     }
 }
 

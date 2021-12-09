@@ -26,15 +26,15 @@ extension DerivableAccounts {
         }()
         
         private lazy var headerView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
-            UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
-                UIStackView(axis: .vertical, spacing: 8, alignment: .leading) {
-                    UILabel(text: L10n.derivationPath, textSize: 17, weight: .semibold)
-                    derivationPathLabel
-                }
-                UIImageView(width: 14, height: 21, image: .nextArrow, tintColor: .h8e8e93)
-            }
-                .padding(.init(x: 18, y: 14), backgroundColor: .grayPanel, cornerRadius: 12)
-                .onTap(self, action: #selector(chooseDerivationPath))
+            WLLargeButton {
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
+                    UIStackView(axis: .vertical, spacing: 8, alignment: .leading) {
+                        UILabel(text: L10n.derivationPath, textSize: 17, weight: .semibold)
+                        derivationPathLabel
+                    }
+                    UIImageView(width: 14, height: 21, image: .nextArrow, tintColor: .h8e8e93)
+                }.padding(.init(x: 18, y: 14))
+            }.onTap(self, action: #selector(chooseDerivationPath))
             
             UIView.greyBannerView {
                 UILabel(text: L10n.ThisIsTheThingYouUseToGetAllYourAccountsFromYourMnemonicPhrase.byDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet, numberOfLines: 0)
