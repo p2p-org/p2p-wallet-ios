@@ -56,7 +56,11 @@ extension SendToken {
             case .back:
                 back()
             case .chooseTokenAndAmount(let showAfterConfirmation):
-                let vm = ChooseTokenAndAmount.ViewModel(sendTokenViewModel: viewModel, initialAmount: viewModel.getSelectedAmount(), showAfterConfirmation: showAfterConfirmation)
+                let vm = ChooseTokenAndAmount.ViewModel(
+                    sendTokenViewModel: viewModel,
+                    initialAmount: viewModel.getSelectedAmount(),
+                    showAfterConfirmation: showAfterConfirmation
+                )
                 let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
                 
                 if showAfterConfirmation {

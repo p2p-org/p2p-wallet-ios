@@ -12,7 +12,7 @@ extension SendToken {
     struct ChooseTokenAndAmount {
         enum NavigatableScene {
             case chooseWallet
-            case back
+            case backToConfirmation // available only when viewModel.showAfterConfirmation = true
         }
         
         enum CurrencyMode {

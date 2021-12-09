@@ -28,7 +28,6 @@ extension SendToken {
             let amountView = AmountSummaryView()
             amountView.addArrangedSubview(.defaultNextArrow())
             return amountView
-                .onTap(self, action: #selector(amountViewDidTouch))
         }()
         private lazy var recipientView: RecipientView = {
             let recipientView = RecipientView()
@@ -39,7 +38,6 @@ extension SendToken {
             let networkView = NetworkView()
             networkView.addArrangedSubview(.defaultNextArrow())
             return networkView
-                .onTap(self, action: #selector(networkViewDidTouch))
         }()
         
         private lazy var receiveSection = SectionView(title: L10n.receive)
@@ -67,6 +65,7 @@ extension SendToken {
                 UIView.floatingPanel {
                     amountView
                 }
+                    .onTap(self, action: #selector(amountViewDidTouch))
                 
                 UIView.floatingPanel {
                     recipientView
@@ -75,6 +74,7 @@ extension SendToken {
                 UIView.floatingPanel {
                     networkView
                 }
+                    .onTap(self, action: #selector(networkViewDidTouch))
                 
                 BEStackViewSpacing(26)
                 

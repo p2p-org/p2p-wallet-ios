@@ -56,14 +56,13 @@ extension SendToken.ChooseTokenAndAmount {
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)
-            case .back:
-                back()
+            case .backToConfirmation:
+                navigationController?.popToViewController(ofClass: SendToken.ConfirmViewController.self, animated: true)
             }
         }
         
         @objc private func _back() {
             if viewModel.showAfterConfirmation {
-                viewModel.acceptTokenAndAmount()
                 back()
             } else {
                 viewModel.cancelSending()
