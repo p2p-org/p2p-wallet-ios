@@ -9,17 +9,15 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol SendTokenViewModelType {
+protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler {
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
     var walletDriver: Driver<Wallet?> {get}
     var amountDriver: Driver<SolanaSDK.Lamports?> {get}
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
     
-    func getSelectedWallet() -> Wallet?
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
-    func getAPIClient() -> SendTokenAPIClient
     func getSelectableNetworks() -> [SendToken.Network]
     func getSelectedRecipient() -> SendToken.Recipient?
     func getSelectedNetwork() -> SendToken.Network
@@ -59,8 +57,8 @@ extension SendToken {
         private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount(showAfterConfirmation: false))
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let amountSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
-        private let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
-        private let networkSubject = BehaviorRelay<Network>(value: .solana)
+        let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
+        let networkSubject = BehaviorRelay<Network>(value: .solana)
         
         // MARK: - Initializers
         init(
@@ -172,14 +170,6 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         amountSubject.asDriver()
     }
     
-    var recipientDriver: Driver<SendToken.Recipient?> {
-        recipientSubject.asDriver()
-    }
-    
-    var networkDriver: Driver<SendToken.Network> {
-        networkSubject.asDriver()
-    }
-    
     func getSelectedWallet() -> Wallet? {
         walletSubject.value
     }
@@ -197,22 +187,6 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func getAPIClient() -> SendTokenAPIClient {
         solanaAPIClient
-    }
-    
-    func getSelectableNetworks() -> [SendToken.Network] {
-        var networks: [SendToken.Network] = [.solana]
-        if isRecipientBTCAddress() {
-            networks.append(.bitcoin)
-        }
-        return networks
-    }
-    
-    func getSelectedRecipient() -> SendToken.Recipient? {
-        recipientSubject.value
-    }
-    
-    func getSelectedNetwork() -> SendToken.Network {
-        networkSubject.value
     }
     
     func getSelectedAmount() -> Double? {
@@ -236,23 +210,6 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func enterAmount(_ amount: SolanaSDK.Lamports) {
         amountSubject.accept(amount)
-    }
-    
-    func selectRecipient(_ recipient: SendToken.Recipient?) {
-        recipientSubject.accept(recipient)
-        
-        if isRecipientBTCAddress() {
-            networkSubject.accept(.bitcoin)
-        } else {
-            networkSubject.accept(.solana)
-        }
-    }
-    
-    func selectNetwork(_ network: SendToken.Network) {
-        if walletSubject.value?.token.isRenBTC == false {
-            networkSubject.accept(.solana)
-        }
-        networkSubject.accept(network)
     }
     
     func shouldShowConfirmAlert() -> Bool {
