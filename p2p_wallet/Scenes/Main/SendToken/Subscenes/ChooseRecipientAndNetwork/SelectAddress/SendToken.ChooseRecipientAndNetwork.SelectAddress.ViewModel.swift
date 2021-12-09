@@ -48,7 +48,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         let recipientsListViewModel = RecipientsListViewModel()
-        var nextHandler: (() -> Void)?
         let showAfterConfirmation: Bool
         
         // MARK: - Subject
@@ -138,6 +137,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     func next() {
-        nextHandler?()
+        chooseRecipientAndNetworkViewModel.next()
     }
 }

@@ -27,6 +27,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType {
     func getSelectedNetwork() -> SendToken.Network
     func selectRecipient(_ recipient: SendToken.Recipient?)
     func selectNetwork(_ network: SendToken.Network)
+    func next()
 }
 
 extension SendToken.ChooseRecipientAndNetwork {
@@ -49,44 +50,44 @@ extension SendToken.ChooseRecipientAndNetwork {
 }
 
 extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipientAndNetworkViewModelType {
-    var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> {
-        navigationSubject.asDriver()
-    }
-    
-    var walletDriver: Driver<Wallet?> {
-        sendTokenViewModel.walletDriver
-    }
-    
-    var amountDriver: Driver<SolanaSDK.Lamports?> {
-        sendTokenViewModel.amountDriver
-    }
-    
-    var recipientDriver: Driver<SendToken.Recipient?> {
-        
-    }
-    
-    // MARK: - Actions
-    func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
-        let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel(
-            chooseRecipientAndNetworkViewModel: self,
-            showAfterConfirmation: showAfterConfirmation
-        )
-        vm.nextHandler = { [weak self] in
-            guard let self = self else {return}
-            if self.showAfterConfirmation {
-                self.navigationSubject.accept(.backToConfirmation)
-            } else {
-                self.sendTokenViewModel.navigate(to: .confirmation)
-            }
-        }
-        return vm
-    }
-    
-    func getAPIClient() -> SendTokenAPIClient {
-        sendTokenViewModel.getAPIClient()
-    }
-    
-    func getSelectedRecipient() -> SendToken.Recipient? {
-        
-    }
+//    var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> {
+//        navigationSubject.asDriver()
+//    }
+//    
+//    var walletDriver: Driver<Wallet?> {
+//        sendTokenViewModel.walletDriver
+//    }
+//    
+//    var amountDriver: Driver<SolanaSDK.Lamports?> {
+//        sendTokenViewModel.amountDriver
+//    }
+//    
+//    var recipientDriver: Driver<SendToken.Recipient?> {
+//        
+//    }
+//    
+//    // MARK: - Actions
+//    func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
+//        let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel(
+//            chooseRecipientAndNetworkViewModel: self,
+//            showAfterConfirmation: showAfterConfirmation
+//        )
+//        vm.nextHandler = { [weak self] in
+//            guard let self = self else {return}
+//            if self.showAfterConfirmation {
+//                self.navigationSubject.accept(.backToConfirmation)
+//            } else {
+//                self.sendTokenViewModel.navigate(to: .confirmation)
+//            }
+//        }
+//        return vm
+//    }
+//    
+//    func getAPIClient() -> SendTokenAPIClient {
+//        sendTokenViewModel.getAPIClient()
+//    }
+//    
+//    func getSelectedRecipient() -> SendToken.Recipient? {
+//        
+//    }
 }
