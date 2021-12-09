@@ -14,7 +14,19 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType {
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
     var amountDriver: Driver<SolanaSDK.Lamports?> {get}
+    var recipientDriver: Driver<SendToken.Recipient?> {get}
+    var networkDriver: Driver<SendToken.Network> {get}
+    
+    func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene)
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
+    func getAPIClient() -> SendTokenAPIClient
+    func getSelectedRecipient() -> SendToken.Recipient?
+    func getPrice(for symbol: String) -> Double
+    func getSOLAndRenBTCPrices() -> [String: Double]
+    func getSelectableNetworks() -> [SendToken.Network]
+    func getSelectedNetwork() -> SendToken.Network
+    func selectRecipient(_ recipient: SendToken.Recipient?)
+    func selectNetwork(_ network: SendToken.Network)
 }
 
 extension SendToken.ChooseRecipientAndNetwork {
@@ -49,10 +61,14 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         sendTokenViewModel.amountDriver
     }
     
+    var recipientDriver: Driver<SendToken.Recipient?> {
+        
+    }
+    
     // MARK: - Actions
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
         let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel(
-            sendTokenViewModel: sendTokenViewModel,
+            chooseRecipientAndNetworkViewModel: self,
             showAfterConfirmation: showAfterConfirmation
         )
         vm.nextHandler = { [weak self] in
@@ -64,5 +80,13 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
             }
         }
         return vm
+    }
+    
+    func getAPIClient() -> SendTokenAPIClient {
+        sendTokenViewModel.getAPIClient()
+    }
+    
+    func getSelectedRecipient() -> SendToken.Recipient? {
+        
     }
 }

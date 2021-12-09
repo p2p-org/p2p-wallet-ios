@@ -77,6 +77,16 @@ extension SendToken.ChooseRecipientAndNetwork {
         private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else {return}
             switch scene {
+            case .chooseNetwork:
+                let vc = SendToken.SelectNetworkViewController(
+                    selectableNetworks: viewModel.getSelectableNetworks(),
+                    prices: viewModel.getSOLAndRenBTCPrices(),
+                    selectedNetwork: viewModel.getSelectedNetwork(),
+                    selectNetworkCompletion: {[weak self] network in
+                        self?.viewModel.selectNetwork(network)
+                    }
+                )
+                show(vc, sender: nil)
             case .backToConfirmation:
                 navigationController?.popToViewController(ofClass: SendToken.ConfirmViewController.self, animated: true)
             }
