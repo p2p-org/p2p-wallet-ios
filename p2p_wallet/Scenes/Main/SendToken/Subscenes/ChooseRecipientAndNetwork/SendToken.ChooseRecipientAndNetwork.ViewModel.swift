@@ -13,7 +13,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
     var showAfterConfirmation: Bool {get}
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
-    var amountDriver: Driver<SolanaSDK.Lamports?> {get}
+    var amountDriver: Driver<Double?> {get}
     
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene)
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
@@ -70,7 +70,7 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         sendTokenViewModel.walletDriver
     }
     
-    var amountDriver: Driver<SolanaSDK.Lamports?> {
+    var amountDriver: Driver<Double?> {
         sendTokenViewModel.amountDriver
     }
     

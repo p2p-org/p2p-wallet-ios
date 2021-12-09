@@ -62,7 +62,7 @@ extension SendToken.ChooseRecipientAndNetwork {
                 viewModel.amountDriver
             )
                 .map { wallet, amount -> String in
-                    let amount = amount?.convertToBalance(decimals: wallet?.token.decimals) ?? 0
+                    let amount = amount ?? 0
                     let symbol = wallet?.token.symbol ?? ""
                     return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
                 }

@@ -9,12 +9,8 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler {
+protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler {
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
-    var walletDriver: Driver<Wallet?> {get}
-    var amountDriver: Driver<SolanaSDK.Lamports?> {get}
-    var recipientDriver: Driver<SendToken.Recipient?> {get}
-    var networkDriver: Driver<SendToken.Network> {get}
     
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
@@ -25,9 +21,6 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler {
     
     func navigate(to scene: SendToken.NavigatableScene)
     func chooseWallet(_ wallet: Wallet)
-    func enterAmount(_ amount: SolanaSDK.Lamports)
-    func selectRecipient(_ recipient: SendToken.Recipient?)
-    func selectNetwork(_ network: SendToken.Network)
     
     func shouldShowConfirmAlert() -> Bool
     func closeConfirmAlert()
@@ -55,8 +48,8 @@ extension SendToken {
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount(showAfterConfirmation: false))
-        private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
-        private let amountSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
+        let walletSubject = BehaviorRelay<Wallet?>(value: nil)
+        let amountSubject = BehaviorRelay<Double?>(value: nil)
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<Network>(value: .solana)
         
@@ -87,7 +80,7 @@ extension SendToken {
         private func send() {
             guard let wallet = walletSubject.value,
                   let sender = wallet.pubkey,
-                  let amount = amountSubject.value,
+                  let amount = amountSubject.value?.toLamport(decimals: wallet.token.decimals),
                   let receiver = recipientSubject.value?.address
             else {return}
             
@@ -162,14 +155,6 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         navigationSubject.asDriver()
     }
     
-    var walletDriver: Driver<Wallet?> {
-        walletSubject.asDriver()
-    }
-    
-    var amountDriver: Driver<SolanaSDK.Lamports?> {
-        amountSubject.asDriver()
-    }
-    
     func getSelectedWallet() -> Wallet? {
         walletSubject.value
     }
@@ -189,10 +174,6 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         solanaAPIClient
     }
     
-    func getSelectedAmount() -> Double? {
-        amountSubject.value?.convertToBalance(decimals: walletSubject.value?.token.decimals)
-    }
-    
     func navigate(to scene: SendToken.NavigatableScene) {
         navigationSubject.accept(scene)
     }
@@ -205,11 +186,8 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         
         if !wallet.token.isRenBTC && networkSubject.value == .bitcoin {
             networkSubject.accept(.solana)
+            recipientSubject.accept(nil)
         }
-    }
-    
-    func enterAmount(_ amount: SolanaSDK.Lamports) {
-        amountSubject.accept(amount)
     }
     
     func shouldShowConfirmAlert() -> Bool {

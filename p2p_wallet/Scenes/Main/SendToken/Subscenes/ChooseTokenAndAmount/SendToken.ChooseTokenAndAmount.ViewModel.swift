@@ -10,21 +10,17 @@ import RxSwift
 import RxCocoa
 import SolanaSwift
 
-protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler {
+protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, SendTokenTokenAndAmountHandler {
     var initialAmount: Double? {get}
     
     var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> {get}
-    var walletDriver: Driver<Wallet?> {get}
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {get}
-    var amountDriver: Driver<Double?> {get}
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> {get}
     var showAfterConfirmation: Bool {get}
     
     func navigate(to scene: SendToken.ChooseTokenAndAmount.NavigatableScene)
     func cancelSending()
     func toggleCurrencyMode()
-    func enterAmount(_ amount: Double?)
-    func chooseWallet(_ wallet: Wallet)
     
     func calculateAvailableAmount() -> Double?
     
@@ -52,8 +48,8 @@ extension SendToken.ChooseTokenAndAmount {
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
-        private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
-        private let amountSubject = BehaviorRelay<Double?>(value: nil)
+        let walletSubject = BehaviorRelay<Wallet?>(value: nil)
+        let amountSubject = BehaviorRelay<Double?>(value: nil)
         
         // MARK: - Initializer
         init(sendTokenViewModel: SendTokenViewModelType, initialAmount: Double? = nil, showAfterConfirmation: Bool = false) {
@@ -73,8 +69,6 @@ extension SendToken.ChooseTokenAndAmount {
                 .disposed(by: disposeBag)
             
             sendTokenViewModel.amountDriver
-                .withLatestFrom(sendTokenViewModel.walletDriver, resultSelector: {($0, $1)})
-                .map {$0.0?.convertToBalance(decimals: $0.1?.token.decimals)}
                 .drive(amountSubject)
                 .disposed(by: disposeBag)
         }
@@ -86,16 +80,8 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         navigationSubject.asDriver()
     }
     
-    var walletDriver: Driver<Wallet?> {
-        walletSubject.asDriver()
-    }
-    
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {
         currencyModeSubject.asDriver()
-    }
-    
-    var amountDriver: Driver<Double?> {
-        amountSubject.asDriver()
     }
     
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> {
@@ -127,14 +113,6 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         } else {
             currencyModeSubject.accept(.token)
         }
-    }
-    
-    func enterAmount(_ amount: Double?) {
-        amountSubject.accept(amount)
-    }
-    
-    func chooseWallet(_ wallet: Wallet) {
-        walletSubject.accept(wallet)
     }
     
     func calculateAvailableAmount() -> Double? {
@@ -173,7 +151,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         }
         
         sendTokenViewModel.chooseWallet(wallet)
-        sendTokenViewModel.enterAmount(lamports)
+        sendTokenViewModel.enterAmount(lamports.convertToBalance(decimals: wallet.token.decimals))
     }
     
     func navigateNext() {

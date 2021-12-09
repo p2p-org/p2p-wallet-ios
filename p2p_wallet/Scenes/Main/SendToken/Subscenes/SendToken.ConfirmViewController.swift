@@ -162,7 +162,7 @@ extension SendToken {
             // receive
             walletAndAmountDriver
                 .map {wallet, amount in
-                    let amount = amount?.convertToBalance(decimals: wallet?.token.decimals ?? 0)
+                    let amount = amount
                     let amountInFiat = amount * wallet?.priceInCurrentFiat.orZero
                     
                     return NSMutableAttributedString()
@@ -208,9 +208,8 @@ extension SendToken {
             )
                 .map {[weak self] walletAndAmount, network -> NSAttributedString in
                     guard let self = self else {return NSAttributedString()}
-                    let lamports = walletAndAmount.1
+                    let amount = walletAndAmount.1 ?? 0
                     let wallet = walletAndAmount.0
-                    let amount = lamports?.convertToBalance(decimals: wallet?.token.decimals) ?? 0
                     let symbol = wallet?.token.symbol ?? ""
                     
                     var fees = network.defaultFees
@@ -264,7 +263,7 @@ extension SendToken {
             // action button
             walletAndAmountDriver
                 .map { wallet, amount in
-                    let amount = amount?.convertToBalance(decimals: wallet?.token.decimals) ?? 0
+                    let amount = amount ?? 0
                     let symbol = wallet?.token.symbol ?? ""
                     return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
                 }
@@ -326,10 +325,10 @@ private extension SendToken {
             fatalError("init(coder:) has not been implemented")
         }
         
-        func setUp(wallet: Wallet?, amount: SolanaSDK.Lamports) {
+        func setUp(wallet: Wallet?, amount: Double) {
             coinImageView.setUp(wallet: wallet)
             
-            let amount = amount.convertToBalance(decimals: wallet?.token.decimals ?? 0)
+            let amount = amount
             let amountInFiat = amount * wallet?.priceInCurrentFiat.orZero
             
             equityValueLabel.attributedText = NSMutableAttributedString()
