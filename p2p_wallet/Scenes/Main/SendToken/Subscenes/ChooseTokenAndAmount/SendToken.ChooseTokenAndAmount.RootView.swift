@@ -62,10 +62,7 @@ extension SendToken.ChooseTokenAndAmount {
                 amountTextField.text = initalAmount.toString(maximumFractionDigits: 9, groupingSeparator: "")
                 amountTextField.sendActions(for: .valueChanged)
             }
-        }
-        
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { [weak self] in
                 self?.amountTextField.becomeFirstResponder()
                 #if DEBUG
@@ -75,6 +72,11 @@ extension SendToken.ChooseTokenAndAmount {
                 }
                 #endif
             }
+        }
+        
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            
         }
         
         // MARK: - Layout
@@ -182,6 +184,13 @@ extension SendToken.ChooseTokenAndAmount {
                 })
                 .disposed(by: disposeBag)
             
+            viewModel.amountDriver
+                .distinctUntilChanged()
+                .withLatestFrom(viewModel.walletDriver, resultSelector: {($0, $1)})
+                .map {$0.0?.toString(maximumFractionDigits: Int($0.1?.token.decimals ?? 0), groupingSeparator: "")}
+                .drive(amountTextField.rx.text)
+                .disposed(by: disposeBag)
+            
             // available amount
             let balanceTextDriver = Driver.combineLatest(
                 viewModel.walletDriver,
@@ -279,7 +288,7 @@ extension SendToken.ChooseTokenAndAmount {
         @objc private func actionButtonDidTouch() {
             viewModel.acceptTokenAndAmount()
             if viewModel.showAfterConfirmation {
-                viewModel.navigate(to: .back)
+                viewModel.navigate(to: .backToConfirmation)
             } else {
                 viewModel.navigateNext()
             }

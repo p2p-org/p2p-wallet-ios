@@ -52,6 +52,7 @@ extension SendToken.ChooseTokenAndAmount {
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
+        private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         
         // MARK: - Initializer
@@ -66,6 +67,16 @@ extension SendToken.ChooseTokenAndAmount {
             #if DEBUG
             amountSubject.subscribe(onNext: {print($0 ?? 0)}).disposed(by: disposeBag)
             #endif
+            
+            sendTokenViewModel.walletDriver
+                .drive(walletSubject)
+                .disposed(by: disposeBag)
+            
+            sendTokenViewModel.amountDriver
+                .withLatestFrom(sendTokenViewModel.walletDriver, resultSelector: {($0, $1)})
+                .map {$0.0?.convertToBalance(decimals: $0.1?.token.decimals)}
+                .drive(amountSubject)
+                .disposed(by: disposeBag)
         }
     }
 }
@@ -76,7 +87,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     }
     
     var walletDriver: Driver<Wallet?> {
-        sendTokenViewModel.walletDriver
+        walletSubject.asDriver()
     }
     
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {
@@ -123,11 +134,11 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     }
     
     func chooseWallet(_ wallet: Wallet) {
-        sendTokenViewModel.chooseWallet(wallet)
+        walletSubject.accept(wallet)
     }
     
     func calculateAvailableAmount() -> Double? {
-        guard let wallet = sendTokenViewModel.getSelectedWallet() else {return nil}
+        guard let wallet = walletSubject.value else {return nil}
         // all amount
         var availableAmount = wallet.amount ?? 0
         
@@ -145,7 +156,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     }
     
     func acceptTokenAndAmount() {
-        guard let wallet = sendTokenViewModel.getSelectedWallet(),
+        guard let wallet = walletSubject.value,
               let totalLamports = wallet.lamports,
               var amount = amountSubject.value
         else {return}
@@ -161,6 +172,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
             lamports = totalLamports
         }
         
+        sendTokenViewModel.chooseWallet(wallet)
         sendTokenViewModel.enterAmount(lamports)
     }
     
