@@ -61,7 +61,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getAPIClient()
             
             if chooseRecipientAndNetworkViewModel.getSelectedRecipient() != nil {
-                inputStateSubject.accept(.recipientSelected)
+                if showAfterConfirmation {
+                    inputStateSubject.accept(.recipientSelected)
+                } else {
+                    clearRecipient()
+                }
             }
         }
     }
