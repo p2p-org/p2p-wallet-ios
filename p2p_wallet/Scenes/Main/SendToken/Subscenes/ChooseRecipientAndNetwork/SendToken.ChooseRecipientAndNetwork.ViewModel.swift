@@ -14,12 +14,16 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
     var amountDriver: Driver<Double?> {get}
+    var selectRestrictedNetworkSignal: Signal<SendToken.Network> {get}
     
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene)
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
     func getAPIClient() -> SendTokenAPIClient
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
+    
+    func userDidSelectRestrictedNetwork(_ network: SendToken.Network)
+    
     func save()
     func navigateNext()
 }
@@ -37,6 +41,7 @@ extension SendToken.ChooseRecipientAndNetwork {
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
+        private let selectRestrictedNetworkSubject = PublishRelay<SendToken.Network>()
         
         // MARK: - Initializers
         init(sendTokenViewModel: SendTokenViewModelType, showAfterConfirmation: Bool) {
@@ -75,6 +80,10 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         sendTokenViewModel.amountDriver
     }
     
+    var selectRestrictedNetworkSignal: Signal<SendToken.Network> {
+        selectRestrictedNetworkSubject.asSignal()
+    }
+    
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene) {
         navigationSubject.accept(scene)
     }
@@ -97,6 +106,10 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     
     func getSOLAndRenBTCPrices() -> [String: Double] {
         sendTokenViewModel.getSOLAndRenBTCPrices()
+    }
+    
+    func userDidSelectRestrictedNetwork(_ network: SendToken.Network) {
+        selectRestrictedNetworkSubject.accept(network)
     }
     
     func save() {

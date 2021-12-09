@@ -90,6 +90,9 @@ extension SendToken {
                     selectedNetwork: viewModel.getSelectedNetwork(),
                     selectNetworkCompletion: {[weak self] network in
                         self?.viewModel.selectNetwork(network)
+                    },
+                    selectRestrictedNetworkCompletion: {[weak self] network in
+                        
                     }
                 )
                 show(vc, sender: nil)

@@ -20,10 +20,11 @@ extension SendToken {
             }
         }
         private var selectNetworkCompletion: ((Network) -> Void)?
+        private var selectRestrictedNetworkCompletion: ((Network) -> Void)?
         
         // MARK: - Subviews
         private lazy var networkViews: [_NetworkView] = {
-            var networkViews = selectableNetworks
+            var networkViews = Network.allCases
                 .map {network -> _NetworkView in
                     let view = _NetworkView()
                     view.network = network
@@ -45,12 +46,18 @@ extension SendToken {
         }()
         
         // MARK: - Initializer
-        init(selectableNetworks: [Network], prices: [String: Double], selectedNetwork: Network, selectNetworkCompletion: ((Network) -> Void)?)
-        {
+        init(
+            selectableNetworks: [Network],
+            prices: [String: Double],
+            selectedNetwork: Network,
+            selectNetworkCompletion: ((Network) -> Void)?,
+            selectRestrictedNetworkCompletion: ((Network) -> Void)?
+        ) {
             self.selectableNetworks = selectableNetworks
             self.prices = prices
             self.selectedNetwork = selectedNetwork
             self.selectNetworkCompletion = selectNetworkCompletion
+            self.selectRestrictedNetworkCompletion = selectRestrictedNetworkCompletion
             super.init()
         }
         
@@ -96,8 +103,27 @@ extension SendToken {
             guard let view = gesture.view as? _NetworkView, let network = view.network else {
                 return
             }
-            selectedNetwork = network
-            selectNetworkCompletion?(selectedNetwork)
+            let originalSelectedNetwork = selectedNetwork
+            
+            if selectableNetworks.contains(network) {
+                selectedNetwork = network
+                selectNetworkCompletion?(selectedNetwork)
+            } else {
+                selectedNetwork = network
+                showAlert(
+                    title: L10n.changeTheNetwork,
+                    message: L10n.ifTheNetworkIsChangedToBitcoinTheAddressFieldMustBeFilledInWithABitcoinCompatibleAddress,
+                    buttonTitles: [L10n.discard, L10n.change],
+                    highlightedButtonIndex: 1,
+                    destroingIndex: 0
+                ) { [weak self] index in
+                    if index == 0 {
+                        self?.selectedNetwork = originalSelectedNetwork
+                    } else {
+                        self?.selectRestrictedNetworkCompletion?(network)
+                    }
+                }
+            }
         }
     }
     

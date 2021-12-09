@@ -650,3 +650,7 @@
 "1 %@ Price" = "1 %@ Цена";
 "Pay swap fees with" = "Оплачивайте комиссию за своп с помощью";
 "Total fee" = "Общая комиссия";
+"Change the network?" = "Сменить сеть?";
+"If the network is changed to Bitcoin, the address field must be filled in with a Bitcoin-compatible address." = "Если сеть изменена на биткойн, поле адреса должно быть заполнено биткойн-совместимым адресом.";
+"Change" = "Изменять";
+"Discard" = "Отказаться";
