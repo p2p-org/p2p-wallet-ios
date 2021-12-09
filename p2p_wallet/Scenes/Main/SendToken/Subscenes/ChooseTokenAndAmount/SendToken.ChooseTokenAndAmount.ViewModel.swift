@@ -16,16 +16,18 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler {
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {get}
     var amountDriver: Driver<Double?> {get}
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> {get}
+    var goBackOnCompletion: Bool {get}
     
     func navigate(to scene: SendToken.ChooseTokenAndAmount.NavigatableScene)
-    func back()
+    func cancelSending()
     func toggleCurrencyMode()
     func enterAmount(_ amount: Double?)
     func chooseWallet(_ wallet: Wallet)
     
     func calculateAvailableAmount() -> Double?
     
-    func next()
+    func acceptTokenAndAmount()
+    func navigateNext()
 }
 
 extension SendTokenChooseTokenAndAmountViewModelType {
@@ -42,6 +44,7 @@ extension SendToken.ChooseTokenAndAmount {
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
+        var goBackOnCompletion: Bool = false
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -98,7 +101,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         navigationSubject.accept(scene)
     }
     
-    func back() {
+    func cancelSending() {
         sendTokenViewModel.navigate(to: .back)
     }
     
@@ -136,7 +139,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         return availableAmount > 0 ? availableAmount: 0
     }
     
-    func next() {
+    func acceptTokenAndAmount() {
         guard let wallet = sendTokenViewModel.getSelectedWallet(),
               let totalLamports = wallet.lamports,
               var amount = amountSubject.value
@@ -154,6 +157,9 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         }
         
         sendTokenViewModel.enterAmount(lamports)
+    }
+    
+    func navigateNext() {
         sendTokenViewModel.navigate(to: .chooseRecipientAndNetwork)
     }
 }

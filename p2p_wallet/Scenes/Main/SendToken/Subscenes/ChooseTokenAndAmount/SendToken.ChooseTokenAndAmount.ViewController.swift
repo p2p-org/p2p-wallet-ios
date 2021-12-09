@@ -60,7 +60,12 @@ extension SendToken.ChooseTokenAndAmount {
         }
         
         @objc private func _back() {
-            viewModel.back()
+            if viewModel.goBackOnCompletion {
+                viewModel.acceptTokenAndAmount()
+                back()
+            } else {
+                viewModel.cancelSending()
+            }
         }
     }
 }

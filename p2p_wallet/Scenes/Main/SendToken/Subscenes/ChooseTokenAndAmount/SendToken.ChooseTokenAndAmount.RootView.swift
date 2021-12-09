@@ -105,11 +105,14 @@ extension SendToken.ChooseTokenAndAmount {
                     }
                 }
                 UIView.spacer
-                actionButton
             }
             addSubview(stackView)
             stackView.autoPinEdgesToSuperviewSafeArea(with: .init(top: 8, left: 18, bottom: 18, right: 18), excludingEdge: .bottom)
             stackView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
+            
+            if !viewModel.goBackOnCompletion {
+                stackView.addArrangedSubview(actionButton)
+            }
             
             #if DEBUG
             stackView.addArrangedSubview(errorLabel)
@@ -253,7 +256,10 @@ extension SendToken.ChooseTokenAndAmount {
         }
         
         @objc private func actionButtonDidTouch() {
-            viewModel.next()
+            viewModel.acceptTokenAndAmount()
+            if !viewModel.goBackOnCompletion {
+                viewModel.navigateNext()
+            }
         }
     }
 }
