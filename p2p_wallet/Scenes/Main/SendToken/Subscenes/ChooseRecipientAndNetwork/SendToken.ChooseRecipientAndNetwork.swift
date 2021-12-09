@@ -11,6 +11,7 @@ import RxCocoa
 extension SendToken {
     struct ChooseRecipientAndNetwork {
         enum NavigatableScene {
+            case chooseNetwork
             case backToConfirmation // available only when viewModel.showAfterConfirmation = true
         }
     }

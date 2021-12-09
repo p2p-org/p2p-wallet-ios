@@ -43,7 +43,7 @@ extension SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class ViewModel {
         // MARK: - Dependencies
-        private let sendTokenViewModel: SendTokenViewModelType
+        private let chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -56,12 +56,12 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private let inputStateSubject = BehaviorRelay<InputState>(value: .searching)
         private let searchTextSubject = BehaviorRelay<String?>(value: nil)
         
-        init(sendTokenViewModel: SendTokenViewModelType, showAfterConfirmation: Bool) {
-            self.sendTokenViewModel = sendTokenViewModel
+        init(chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType, showAfterConfirmation: Bool) {
+            self.chooseRecipientAndNetworkViewModel = chooseRecipientAndNetworkViewModel
             self.showAfterConfirmation = showAfterConfirmation
-            recipientsListViewModel.solanaAPIClient = sendTokenViewModel.getAPIClient()
+            recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getAPIClient()
             
-            if sendTokenViewModel.getSelectedRecipient() != nil {
+            if chooseRecipientAndNetworkViewModel.getSelectedRecipient() != nil {
                 inputStateSubject.accept(.recipientSelected)
             }
         }
@@ -82,27 +82,27 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     var walletDriver: Driver<Wallet?> {
-        sendTokenViewModel.walletDriver
+        chooseRecipientAndNetworkViewModel.walletDriver
     }
     
     var recipientDriver: Driver<SendToken.Recipient?> {
-        sendTokenViewModel.recipientDriver
+        chooseRecipientAndNetworkViewModel.recipientDriver
     }
     
     var networkDriver: Driver<SendToken.Network> {
-        sendTokenViewModel.networkDriver
+        chooseRecipientAndNetworkViewModel.networkDriver
     }
     
     var isValidDriver: Driver<Bool> {
-        sendTokenViewModel.recipientDriver.map {$0 != nil}
+        chooseRecipientAndNetworkViewModel.recipientDriver.map {$0 != nil}
     }
     
     func getPrice(for symbol: String) -> Double {
-        sendTokenViewModel.getPrice(for: symbol)
+        chooseRecipientAndNetworkViewModel.getPrice(for: symbol)
     }
     
     func getSOLAndRenBTCPrices() -> [String: Double] {
-        sendTokenViewModel.getSOLAndRenBTCPrices()
+        chooseRecipientAndNetworkViewModel.getSOLAndRenBTCPrices()
     }
     
     // MARK: - Actions
@@ -111,8 +111,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     func navigateToChoosingNetworkScene() {
-        // forward request to sendTokenViewModel
-        sendTokenViewModel.navigate(to: .chooseNetwork)
+        // forward request to chooseRecipientAndNetworkViewModel
+        chooseRecipientAndNetworkViewModel.navigate(to: .chooseNetwork)
     }
     
     func userDidTapPaste() {
@@ -128,13 +128,13 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     func selectRecipient(_ recipient: SendToken.Recipient) {
-        sendTokenViewModel.selectRecipient(recipient)
+        chooseRecipientAndNetworkViewModel.selectRecipient(recipient)
         inputStateSubject.accept(.recipientSelected)
     }
     
     func clearRecipient() {
         inputStateSubject.accept(.searching)
-        sendTokenViewModel.selectRecipient(nil)
+        chooseRecipientAndNetworkViewModel.selectRecipient(nil)
     }
     
     func next() {
