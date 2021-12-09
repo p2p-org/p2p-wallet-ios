@@ -80,13 +80,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .asDriver(onErrorJustReturn: true)
                 .drive(clearButton.rx.isHidden)
                 .disposed(by: disposeBag)
-            
-            viewModel.startEditingSignal
-                .throttle(.microseconds(500))
-                .emit(onNext: { [weak self] in
-                    self?.textField.becomeFirstResponder()
-                })
-                .disposed(by: disposeBag)
         }
         
         // MARK: - Actions
