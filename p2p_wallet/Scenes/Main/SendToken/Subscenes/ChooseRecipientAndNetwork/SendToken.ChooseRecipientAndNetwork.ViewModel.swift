@@ -20,7 +20,8 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
     func getAPIClient() -> SendTokenAPIClient
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
-    func next()
+    func save()
+    func navigateNext()
 }
 
 extension SendToken.ChooseRecipientAndNetwork {
@@ -98,12 +99,12 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         sendTokenViewModel.getSOLAndRenBTCPrices()
     }
     
-    func next() {
-        // save
+    func save() {
         sendTokenViewModel.selectRecipient(recipientSubject.value)
         sendTokenViewModel.selectNetwork(networkSubject.value)
-        
-        // navigate
+    }
+    
+    func navigateNext() {
         if showAfterConfirmation {
             navigationSubject.accept(.backToConfirmation)
         } else {

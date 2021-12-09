@@ -24,7 +24,7 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, Sen
     
     func calculateAvailableAmount() -> Double?
     
-    func acceptTokenAndAmount()
+    func save()
     func navigateNext()
 }
 
@@ -133,7 +133,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         return availableAmount > 0 ? availableAmount: 0
     }
     
-    func acceptTokenAndAmount() {
+    func save() {
         guard let wallet = walletSubject.value,
               let totalLamports = wallet.lamports,
               var amount = amountSubject.value

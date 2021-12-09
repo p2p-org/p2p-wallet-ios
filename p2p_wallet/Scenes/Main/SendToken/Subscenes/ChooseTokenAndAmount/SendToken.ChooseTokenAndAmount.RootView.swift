@@ -286,7 +286,7 @@ extension SendToken.ChooseTokenAndAmount {
         }
         
         @objc private func actionButtonDidTouch() {
-            viewModel.acceptTokenAndAmount()
+            viewModel.save()
             if viewModel.showAfterConfirmation {
                 viewModel.navigate(to: .backToConfirmation)
             } else {

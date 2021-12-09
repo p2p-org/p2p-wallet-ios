@@ -141,6 +141,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     func next() {
-        chooseRecipientAndNetworkViewModel.next()
+        chooseRecipientAndNetworkViewModel.save()
+        chooseRecipientAndNetworkViewModel.navigateNext()
     }
 }
