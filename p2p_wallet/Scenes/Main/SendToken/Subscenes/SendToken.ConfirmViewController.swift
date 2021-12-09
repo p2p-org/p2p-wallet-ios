@@ -70,6 +70,7 @@ extension SendToken {
                 UIView.floatingPanel {
                     recipientView
                 }
+                    .onTap(self, action: #selector(recipientViewDidTouch))
                 
                 UIView.floatingPanel {
                     networkView
@@ -282,6 +283,10 @@ extension SendToken {
         
         @objc private func amountViewDidTouch() {
             viewModel.navigate(to: .chooseTokenAndAmount(showAfterConfirmation: true))
+        }
+        
+        @objc private func recipientViewDidTouch() {
+            viewModel.navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true))
         }
         
         @objc private func networkViewDidTouch() {

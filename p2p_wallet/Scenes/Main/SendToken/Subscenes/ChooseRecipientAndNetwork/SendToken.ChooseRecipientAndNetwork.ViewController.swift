@@ -68,6 +68,18 @@ extension SendToken.ChooseRecipientAndNetwork {
                 }
                 .drive(navigationBar.titleLabel.rx.text)
                 .disposed(by: disposeBag)
+            
+            viewModel.navigationDriver
+                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .disposed(by: disposeBag)
+        }
+        
+        private func navigate(to scene: NavigatableScene?) {
+            guard let scene = scene else {return}
+            switch scene {
+            case .backToConfirmation:
+                navigationController?.popToViewController(ofClass: SendToken.ConfirmViewController.self, animated: true)
+            }
         }
     }
 }
