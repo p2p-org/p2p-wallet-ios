@@ -21,6 +21,7 @@ protocol SendTokenViewModelType {
     func getSOLAndRenBTCPrices() -> [String: Double]
     func getAPIClient() -> SendTokenAPIClient
     func getSelectableNetworks() -> [SendToken.Network]
+    func getSelectedRecipient() -> SendToken.Recipient?
     func getSelectedNetwork() -> SendToken.Network
     func getSelectedAmount() -> Double?
     
@@ -204,6 +205,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
             networks.append(.bitcoin)
         }
         return networks
+    }
+    
+    func getSelectedRecipient() -> SendToken.Recipient? {
+        recipientSubject.value
     }
     
     func getSelectedNetwork() -> SendToken.Network {

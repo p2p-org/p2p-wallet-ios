@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
+    var showAfterConfirmation: Bool {get}
     var recipientsListViewModel: SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel {get}
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?> {get}
     var inputStateDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState> {get}
@@ -47,15 +48,22 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         let recipientsListViewModel = RecipientsListViewModel()
+        var nextHandler: (() -> Void)?
+        let showAfterConfirmation: Bool
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let inputStateSubject = BehaviorRelay<InputState>(value: .searching)
         private let searchTextSubject = BehaviorRelay<String?>(value: nil)
         
-        init(sendTokenViewModel: SendTokenViewModelType) {
+        init(sendTokenViewModel: SendTokenViewModelType, showAfterConfirmation: Bool) {
             self.sendTokenViewModel = sendTokenViewModel
+            self.showAfterConfirmation = showAfterConfirmation
             recipientsListViewModel.solanaAPIClient = sendTokenViewModel.getAPIClient()
+            
+            if sendTokenViewModel.getSelectedRecipient() != nil {
+                inputStateSubject.accept(.recipientSelected)
+            }
         }
     }
 }
@@ -130,6 +138,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     func next() {
-        sendTokenViewModel.navigate(to: .confirmation)
+        nextHandler?()
     }
 }
