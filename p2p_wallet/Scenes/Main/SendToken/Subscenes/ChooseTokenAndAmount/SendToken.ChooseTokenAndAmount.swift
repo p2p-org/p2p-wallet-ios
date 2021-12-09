@@ -12,6 +12,7 @@ extension SendToken {
     struct ChooseTokenAndAmount {
         enum NavigatableScene {
             case chooseWallet
+            case back
         }
         
         enum CurrencyMode {

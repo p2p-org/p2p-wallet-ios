@@ -22,6 +22,7 @@ protocol SendTokenViewModelType {
     func getAPIClient() -> SendTokenAPIClient
     func getSelectableNetworks() -> [SendToken.Network]
     func getSelectedNetwork() -> SendToken.Network
+    func getSelectedAmount() -> Double?
     
     func navigate(to scene: SendToken.NavigatableScene)
     func chooseWallet(_ wallet: Wallet)
@@ -54,7 +55,7 @@ extension SendToken {
         private var selectableNetworks: [SendToken.Network]?
         
         // MARK: - Subject
-        private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount(goBackOnCompletion: false))
+        private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount(showAfterConfirmation: false))
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let amountSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
         private let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
@@ -207,6 +208,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func getSelectedNetwork() -> SendToken.Network {
         networkSubject.value
+    }
+    
+    func getSelectedAmount() -> Double? {
+        amountSubject.value?.convertToBalance(decimals: walletSubject.value?.token.decimals)
     }
     
     func navigate(to scene: SendToken.NavigatableScene) {
