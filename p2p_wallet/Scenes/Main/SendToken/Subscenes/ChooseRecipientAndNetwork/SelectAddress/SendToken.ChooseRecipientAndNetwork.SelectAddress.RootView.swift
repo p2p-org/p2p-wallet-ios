@@ -102,11 +102,17 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .drive(recipientView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            isSearchingDriver.map {!$0}
+            let searchingEmptyDriver = Driver.combineLatest(
+                isSearchingDriver.map {!$0},
+                viewModel.searchTextDriver.map {$0 == nil || $0?.isEmpty == true}
+            )
+                .map {$0.1 || $0.0}
+            
+            searchingEmptyDriver
                 .drive(recipientCollectionView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            isSearchingDriver
+            searchingEmptyDriver.map {!$0}
                 .drive(networkView.rx.isHidden)
                 .disposed(by: disposeBag)
             
