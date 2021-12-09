@@ -223,6 +223,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
             event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
         )
         walletSubject.accept(wallet)
+        
+        if !wallet.token.isRenBTC && networkSubject.value == .bitcoin {
+            networkSubject.accept(.solana)
+        }
     }
     
     func enterAmount(_ amount: SolanaSDK.Lamports) {
