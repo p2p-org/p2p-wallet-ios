@@ -28,6 +28,7 @@ extension SendToken {
             let amountView = AmountSummaryView()
             amountView.addArrangedSubview(.defaultNextArrow())
             return amountView
+                .onTap(self, action: #selector(amountViewDidTouch))
         }()
         private lazy var recipientView: RecipientView = {
             let recipientView = RecipientView()
@@ -279,12 +280,16 @@ extension SendToken {
             }
         }
         
-        @objc private func actionButtonDidTouch() {
-            viewModel.authenticateAndSend()
+        @objc private func amountViewDidTouch() {
+            viewModel.navigate(to: .chooseTokenAndAmount(goBackOnCompletion: true))
         }
         
         @objc private func networkViewDidTouch() {
             viewModel.navigate(to: .chooseNetwork)
+        }
+        
+        @objc private func actionButtonDidTouch() {
+            viewModel.authenticateAndSend()
         }
     }
 }
