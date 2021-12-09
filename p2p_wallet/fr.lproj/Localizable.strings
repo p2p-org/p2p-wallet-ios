@@ -650,3 +650,7 @@
 "1 %@ Price" = "1 %@ Prix";
 "Pay swap fees with" = "Payez les frais de swap avec";
 "Total fee" = "Montant total";
+"Change the network?" = "Changer de réseau ?";
+"If the network is changed to Bitcoin, the address field must be filled in with a Bitcoin-compatible address." = "Si le réseau est changé en Bitcoin, le champ d'adresse doit être rempli avec une adresse compatible Bitcoin.";
+"Change" = "Changer";
+"Discard" = "Jeter";

@@ -650,3 +650,7 @@
 "1 %@ Price" = "1 %@ Giá";
 "Pay swap fees with" = "Thanh toán phí hoán đổi với";
 "Total fee" = "Tổng phí";
+"Change the network?" = "Thay đổi mạng?";
+"If the network is changed to Bitcoin, the address field must be filled in with a Bitcoin-compatible address." = "Nếu mạng được thay đổi thành Bitcoin, trường địa chỉ phải được điền bằng địa chỉ tương thích với Bitcoin.";
+"Change" = "Thay đổi";
+"Discard" = "Huỷ bỏ";
