@@ -67,7 +67,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     clearRecipient()
                 }
             }
-            bind()
         }
         
         func bind() {
@@ -76,7 +75,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .emit(onNext: {[weak self] network in
                     guard network == .bitcoin else {return}
                     self?.clearRecipient()
-                    self?.clearSearching()
                 })
                 .disposed(by: disposeBag)
         }
