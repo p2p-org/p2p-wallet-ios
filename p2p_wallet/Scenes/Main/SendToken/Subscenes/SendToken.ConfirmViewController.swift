@@ -281,7 +281,7 @@ extension SendToken {
         }
         
         @objc private func amountViewDidTouch() {
-            viewModel.navigate(to: .chooseTokenAndAmount(goBackOnCompletion: true))
+            viewModel.navigate(to: .chooseTokenAndAmount(showAfterConfirmation: true))
         }
         
         @objc private func networkViewDidTouch() {

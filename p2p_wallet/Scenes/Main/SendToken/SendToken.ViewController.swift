@@ -26,17 +26,12 @@ extension SendToken {
         private let scenesFactory: SendTokenScenesFactory
         
         // MARK: - Properties
-        private let childNavigationController: BENavigationController
+        private var childNavigationController: BENavigationController!
         
         // MARK: - Initializer
         init(viewModel: SendTokenViewModelType, scenesFactory: SendTokenScenesFactory) {
             self.viewModel = viewModel
             self.scenesFactory = scenesFactory
-            
-            // init with ChooseTokenAndAmountVC
-            let vm = ChooseTokenAndAmount.ViewModel(sendTokenViewModel: viewModel)
-            let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
-            self.childNavigationController = BENavigationController(rootViewController: vc)
             
             super.init()
         }
@@ -44,7 +39,7 @@ extension SendToken {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            add(child: childNavigationController)
+            
         }
         
         override func bind() {
@@ -60,14 +55,16 @@ extension SendToken {
             switch scene {
             case .back:
                 back()
-            case .chooseTokenAndAmount(let goBackOnCompletion):
-                if goBackOnCompletion {
-                    let vm = ChooseTokenAndAmount.ViewModel(sendTokenViewModel: viewModel)
-                    vm.goBackOnCompletion = goBackOnCompletion
-                    let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
+            case .chooseTokenAndAmount(let showAfterConfirmation):
+                let vm = ChooseTokenAndAmount.ViewModel(sendTokenViewModel: viewModel, initialAmount: viewModel.getSelectedAmount(), showAfterConfirmation: showAfterConfirmation)
+                let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
+                
+                if showAfterConfirmation {
                     childNavigationController.pushViewController(vc, animated: true)
+                } else {
+                    childNavigationController = BENavigationController(rootViewController: vc)
+                    add(child: childNavigationController)
                 }
-                break
             case .chooseRecipientAndNetwork:
                 let vm = ChooseRecipientAndNetwork.ViewModel(sendTokenViewModel: viewModel)
                 let vc = ChooseRecipientAndNetwork.ViewController(viewModel: vm)

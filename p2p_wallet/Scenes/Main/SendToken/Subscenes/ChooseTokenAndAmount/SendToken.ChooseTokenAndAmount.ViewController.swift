@@ -55,12 +55,14 @@ extension SendToken.ChooseTokenAndAmount {
                     showOtherWallets: false,
                     handler: viewModel
                 )
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
+            case .back:
+                back()
             }
         }
         
         @objc private func _back() {
-            if viewModel.goBackOnCompletion {
+            if viewModel.showAfterConfirmation {
                 viewModel.acceptTokenAndAmount()
                 back()
             } else {

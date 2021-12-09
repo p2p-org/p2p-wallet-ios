@@ -11,12 +11,14 @@ import RxCocoa
 import SolanaSwift
 
 protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler {
+    var initialAmount: Double? {get}
+    
     var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {get}
     var amountDriver: Driver<Double?> {get}
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> {get}
-    var goBackOnCompletion: Bool {get}
+    var showAfterConfirmation: Bool {get}
     
     func navigate(to scene: SendToken.ChooseTokenAndAmount.NavigatableScene)
     func cancelSending()
@@ -44,7 +46,8 @@ extension SendToken.ChooseTokenAndAmount {
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
-        var goBackOnCompletion: Bool = false
+        let showAfterConfirmation: Bool
+        let initialAmount: Double?
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -52,8 +55,10 @@ extension SendToken.ChooseTokenAndAmount {
         private let amountSubject = BehaviorRelay<Double?>(value: nil)
         
         // MARK: - Initializer
-        init(sendTokenViewModel: SendTokenViewModelType) {
+        init(sendTokenViewModel: SendTokenViewModelType, initialAmount: Double? = nil, showAfterConfirmation: Bool = false) {
             self.sendTokenViewModel = sendTokenViewModel
+            self.initialAmount = initialAmount
+            self.showAfterConfirmation = showAfterConfirmation
             bind()
         }
         
