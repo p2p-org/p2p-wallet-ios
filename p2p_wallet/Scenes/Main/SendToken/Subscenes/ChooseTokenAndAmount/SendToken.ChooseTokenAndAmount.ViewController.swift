@@ -31,6 +31,10 @@ extension SendToken.ChooseTokenAndAmount {
             super.setUp()
             navigationBar.titleLabel.text = L10n.send
             navigationBar.backButton.onTap(self, action: #selector(_back))
+            navigationBar.rightItems.addArrangedSubview(
+                UILabel(text: L10n.next.uppercaseFirst, textSize: 17, textColor: .h5887ff)
+                    .onTap(self, action: #selector(buttonNextDidTouch))
+            )
             
             let rootView = RootView(viewModel: viewModel)
             view.addSubview(rootView)
@@ -67,6 +71,11 @@ extension SendToken.ChooseTokenAndAmount {
             } else {
                 viewModel.cancelSending()
             }
+        }
+        
+        @objc private func buttonNextDidTouch() {
+            viewModel.save()
+            viewModel.navigateNext()
         }
     }
 }
