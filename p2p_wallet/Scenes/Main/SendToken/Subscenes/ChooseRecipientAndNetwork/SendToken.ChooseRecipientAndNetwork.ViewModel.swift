@@ -146,6 +146,13 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         // save
         sendTokenViewModel.selectRecipient(recipientSubject.value)
         sendTokenViewModel.selectNetwork(networkSubject.value)
+        
+        // navigate
+        if showAfterConfirmation {
+            navigationSubject.accept(.backToConfirmation)
+        } else {
+            sendTokenViewModel.navigate(to: .confirmation)
+        }
     }
     
     // MARK: - Helpers
