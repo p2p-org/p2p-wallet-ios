@@ -19,7 +19,6 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
     var isValidDriver: Driver<Bool> {get}
-    var startEditingSignal: Signal<Void> {get}
     
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
@@ -55,7 +54,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let inputStateSubject = BehaviorRelay<InputState>(value: .searching)
         private let searchTextSubject = BehaviorRelay<String?>(value: nil)
-        private let startEditingSubject = PublishRelay<Void>()
         
         init(chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType, showAfterConfirmation: Bool) {
             self.chooseRecipientAndNetworkViewModel = chooseRecipientAndNetworkViewModel
@@ -79,7 +77,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     guard network == .bitcoin else {return}
                     self?.clearRecipient()
                     self?.clearSearching()
-                    self?.startEditingSubject.accept(())
                 })
                 .disposed(by: disposeBag)
         }
@@ -113,10 +110,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     var isValidDriver: Driver<Bool> {
         chooseRecipientAndNetworkViewModel.recipientDriver.map {$0 != nil}
-    }
-    
-    var startEditingSignal: Signal<Void> {
-        startEditingSubject.asSignal()
     }
     
     func getPrice(for symbol: String) -> Double {
