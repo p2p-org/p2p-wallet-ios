@@ -78,16 +78,7 @@ extension SendToken.ChooseRecipientAndNetwork {
             guard let scene = scene else {return}
             switch scene {
             case .chooseNetwork:
-                let vc = SendToken.SelectNetworkViewController(
-                    selectableNetworks: viewModel.getSelectableNetworks(),
-                    recipientAddress: viewModel.getSelectedRecipient()?.address,
-                    isTestnet: viewModel.getAPIClient().isTestNet(),
-                    prices: viewModel.getSOLAndRenBTCPrices(),
-                    selectedNetwork: viewModel.getSelectedNetwork(),
-                    selectNetworkCompletion: {[weak self] network in
-                        self?.viewModel.selectNetwork(network)
-                    }
-                )
+                let vc = SendToken.SelectNetwork.ViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .backToConfirmation:
                 navigationController?.popToViewController(ofClass: SendToken.ConfirmViewController.self, animated: true)
