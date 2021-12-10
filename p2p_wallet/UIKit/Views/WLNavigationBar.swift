@@ -11,7 +11,7 @@ class WLNavigationBar: BEView {
     lazy var stackView = UIStackView(axis: .horizontal, alignment: .center, distribution: .equalCentering, arrangedSubviews: [
         leftItems,
         centerItems,
-        rightItems
+        rightItemsWrapper
     ])
     
     lazy var leftItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
@@ -21,6 +21,8 @@ class WLNavigationBar: BEView {
     lazy var centerItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
         titleLabel
     ])
+    
+    private lazy var rightItemsWrapper = rightItems.padding(.zero.modifying(dRight: 6))
     lazy var rightItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
         UIView.spacer
     ])
@@ -35,7 +37,7 @@ class WLNavigationBar: BEView {
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 12, y: 8))
         
-        leftItems.widthAnchor.constraint(equalTo: rightItems.widthAnchor).isActive = true
+        leftItems.widthAnchor.constraint(equalTo: rightItemsWrapper.widthAnchor).isActive = true
         
         backgroundColor = .background
     }

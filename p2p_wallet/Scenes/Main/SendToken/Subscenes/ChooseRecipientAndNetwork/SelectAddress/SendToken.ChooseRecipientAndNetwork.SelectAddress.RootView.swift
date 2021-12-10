@@ -94,19 +94,37 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .map {$0 == .searching}
                 .distinctUntilChanged()
             
+            // address input view
             isSearchingDriver.map {!$0}
                 .drive(addressInputView.rx.isHidden)
                 .disposed(by: disposeBag)
             
+            // recipient view
             isSearchingDriver
                 .drive(recipientView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            isSearchingDriver.map {!$0}
+            // searching empty state
+            let shouldHideNetworkDriver: Driver<Bool>
+            if viewModel.preSelectedNetwork == nil {
+                shouldHideNetworkDriver = isSearchingDriver
+            } else {
+                // show preselected network when search is empty
+                shouldHideNetworkDriver = Driver.combineLatest(
+                    isSearchingDriver.map {!$0},
+                    viewModel.searchTextDriver.map {$0 == nil || $0?.isEmpty == true}
+                )
+                .map {$0.1 || $0.0}
+                .map {!$0}
+            }
+            
+            // collection view
+            shouldHideNetworkDriver.map {!$0}
                 .drive(recipientCollectionView.rx.isHidden)
                 .disposed(by: disposeBag)
             
-            isSearchingDriver
+            // net work view
+            shouldHideNetworkDriver
                 .drive(networkView.rx.isHidden)
                 .disposed(by: disposeBag)
             
@@ -177,7 +195,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         
         @objc private func networkViewDidTouch() {
-            viewModel.navigate(to: .chooseNetwork)
+            guard viewModel.preSelectedNetwork == nil else {return}
+            viewModel.navigateToChoosingNetworkScene()
         }
         
         @objc private func actionButtonDidTouch() {
@@ -200,9 +219,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         private func bind() {
             viewModel.networkDriver
-                .withLatestFrom(viewModel.feeDriver) {($0, $1)}
-                .drive(onNext: {[weak self] network, fee in
-                    self?._networkView.setUp(network: network, fee: fee, renBTCPrice: self?.viewModel.getRenBTCPrice() ?? 0)
+                .drive(onNext: {[weak self] network in
+                    self?._networkView.setUp(
+                        network: network,
+                        prices: self?.viewModel.getSOLAndRenBTCPrices() ?? [:]
+                    )
                 })
                 .disposed(by: disposeBag)
         }
