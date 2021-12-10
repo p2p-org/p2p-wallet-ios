@@ -52,7 +52,7 @@
 "Wallets" = "Wallets";
 "Savings" = "Savings";
 "Make your crypto working on you" = "Make your crypto working on you";
-"Explore  DeFi" = "Explore  DeFi";
+"Explore DeFi" = "Explore DeFi";
 "Activities" = "Activities";
 "Scan QR Code" = "Scan QR Code";
 "Scan an P2P address" = "Scan an P2P address";
@@ -147,7 +147,7 @@
 "Switch network?" = "Switch network?";
 "Do you really want to switch to" = "Do you really want to switch to";
 "Switching to" = "Switching to";
-"Will be  as a primary secure check" = "Will be  as a primary secure check";
+"Will be as a primary secure check" = "Will be as a primary secure check";
 "PIN-code" = "PIN-code";
 "Default secure check" = "Default secure check";
 "Change PIN-code" = "Change PIN-code";
@@ -370,7 +370,7 @@
 "Settings" = "Settings";
 "One unified address to receive SOL or SPL Tokens" = "One unified address to receive SOL or SPL Tokens";
 "SOL and SPL Tokens" = "SOL and SPL Tokens";
-"The Solana Program Library  (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications. SPL Tokens can be traded on Serum, a Solana based decentralized exchange and FTX." = "The Solana Program Library  (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications. SPL Tokens can be traded on Serum, a Solana based decentralized exchange and FTX.";
+"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications. SPL Tokens can be traded on Serum, a Solana based decentralized exchange and FTX." = "The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications. SPL Tokens can be traded on Serum, a Solana based decentralized exchange and FTX.";
 "Send SOL or any SPL Tokens on one address" = "Send SOL or any SPL Tokens on one address";
 "Backing up" = "Backing up";
 "The phrases you has entered is not correct" = "The phrases you has entered is not correct";
@@ -648,3 +648,15 @@
 "1 %@ Price" = "1 %@ Price";
 "Pay swap fees with" = "Pay swap fees with";
 "Total fee" = "Total fee";
+"Reserve P2P username" = "Reserve P2P username";
+"Enter username" = "Enter username";
+"Change the token?" = "Change the token?";
+"If the token is changed to %@, the address field must be filled in with a %@." = "If the token is changed to %@, the address field must be filled in with a %@.";
+"%@-compatible address" = "%@-compatible address";
+"Discard" = "Discard";
+"Change" = "Change";
+"username or address" = "username / address";
+"Change the network?" = "Change the network?";
+"If the network is changed to %@, the address field must be filled in with a %@." = "If the network is changed to %@, the address field must be filled in with a %@.";
+"There are %@ free transactions left for today" = "There are %@ free transactions left for today";
+"On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee.";

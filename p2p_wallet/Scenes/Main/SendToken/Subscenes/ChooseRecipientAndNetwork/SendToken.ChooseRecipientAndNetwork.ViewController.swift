@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import RxSwift
+import RxCocoa
 
 extension SendToken.ChooseRecipientAndNetwork {
     class ViewController: SendToken.BaseViewController {
@@ -40,12 +41,6 @@ extension SendToken.ChooseRecipientAndNetwork {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            // navigation bar
-            let amount = viewModel.getSelectedAmount() ?? 0
-            let symbol = viewModel.getSelectedWallet()?.token.symbol ?? ""
-            let title = L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
-            navigationBar.titleLabel.text = title
-            
             // container
             let containerView = UIView(forAutoLayout: ())
             view.addSubview(containerView)
@@ -61,18 +56,32 @@ extension SendToken.ChooseRecipientAndNetwork {
         
         override func bind() {
             super.bind()
+            // navigation bar title
+            Driver.combineLatest(
+                viewModel.walletDriver,
+                viewModel.amountDriver
+            )
+                .map { wallet, amount -> String in
+                    let amount = amount ?? 0
+                    let symbol = wallet?.token.symbol ?? ""
+                    return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
+                }
+                .drive(navigationBar.titleLabel.rx.text)
+                .disposed(by: disposeBag)
+            
             viewModel.navigationDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
         }
         
-        // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
-            guard let scene = scene else {
-                return
-            }
-
+            guard let scene = scene else {return}
             switch scene {
+            case .chooseNetwork:
+                let vc = SendToken.SelectNetwork.ViewController(viewModel: viewModel)
+                show(vc, sender: nil)
+            case .backToConfirmation:
+                navigationController?.popToViewController(ofClass: SendToken.ConfirmViewController.self, animated: true)
             }
         }
     }

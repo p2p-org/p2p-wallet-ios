@@ -33,6 +33,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}
     var isSendingMaxAmountDriver: Driver<Bool> { get }
     var isShowingDetailsDriver: Driver<Bool> { get }
+    var isShowingShowDetailsButtonDriver: Driver<Bool> { get }
     var showHideDetailsButtonTapSubject: PublishRelay<Void> { get }
 
     func reload()

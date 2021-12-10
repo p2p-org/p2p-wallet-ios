@@ -20,8 +20,8 @@ final class ExpandableTextView: UIView {
     private let clearButtonSize: CGFloat = 27
     private let yMargin: CGFloat = 11
 
+    private let changesFilter: TextChangesFilter?
     private let hasClearButton: Bool
-    private let maxSymbols: Int?
 
     var rxText: Observable<String?> {
         textView.rx.text.asObservable()
@@ -39,12 +39,12 @@ final class ExpandableTextView: UIView {
     }
 
     init(
+        changesFilter: TextChangesFilter? = nil,
         hasClearButton: Bool = true,
-        limitOfLines: Int? = nil,
-        maxSymbols: Int? = nil
+        limitOfLines: Int? = nil
     ) {
+        self.changesFilter = changesFilter
         self.hasClearButton = hasClearButton
-        self.maxSymbols = maxSymbols
 
         super.init(frame: .zero)
 
@@ -69,7 +69,11 @@ final class ExpandableTextView: UIView {
     }
 
     func set(text: String?) {
-        if let maxSymbols = maxSymbols, text?.count ?? 0 > maxSymbols {
+        if
+            let changesFilter = changesFilter,
+            let text = text,
+            !changesFilter.isValid(string: text)
+        {
             return
         }
 
@@ -225,7 +229,12 @@ extension ExpandableTextView: UITextViewDelegate {
             return $0.replacingCharacters(in: textRange, with: text)
         }
 
-        if let maxSymbols = maxSymbols, updatedText?.count ?? 0 > maxSymbols {
+        let isFilterValid = changesFilter
+            .map {
+                $0.isValid(textContainer: textView, string: text, range: range)
+            } ?? true
+
+        guard isFilterValid else {
             return false
         }
 
