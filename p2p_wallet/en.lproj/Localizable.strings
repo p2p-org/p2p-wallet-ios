@@ -650,3 +650,9 @@
 "1 %@ Price" = "1 %@ Price";
 "Pay swap fees with" = "Pay swap fees with";
 "Total fee" = "Total fee";
+"Change the token?" = "Change the token?";
+"If the token is changed to %@, the address field must be filled in with a %@." = "If the token is changed to %@, the address field must be filled in with a %@.";
+"%@-compatible address" = "%@-compatible address";
+"Discard" = "Discard";
+"Change" = "Change";
+"username or address" = "username / address";

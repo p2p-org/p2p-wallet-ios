@@ -286,11 +286,13 @@ extension SendToken.ChooseTokenAndAmount {
         }
         
         @objc private func actionButtonDidTouch() {
-            viewModel.save()
-            if viewModel.showAfterConfirmation {
-                viewModel.navigate(to: .backToConfirmation)
-            } else {
-                viewModel.navigateNext()
+            if viewModel.isTokenValidForSelectedNetwork() {
+                viewModel.save()
+                if viewModel.showAfterConfirmation {
+                    viewModel.navigate(to: .backToConfirmation)
+                } else {
+                    viewModel.navigateNext()
+                }
             }
         }
     }

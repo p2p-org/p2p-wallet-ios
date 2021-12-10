@@ -650,3 +650,9 @@
 "1 %@ Price" = "1 %@ Giá";
 "Pay swap fees with" = "Thanh toán phí hoán đổi với";
 "Total fee" = "Tổng phí";
+"Change the token?" = "Thay đổi mã thông báo?";
+"If the token is changed to %@, the address field must be filled in with a %@." = "Nếu đổi token thành %@, địa chỉ phải được điền bằng %@.";
+"%@-compatible address" = "một địa chỉ tương thích với %@";
+"Discard" = "Bỏ qua";
+"Change" = "Thay đổi";
+"username or address" = "tên người dùng / địa chỉ";

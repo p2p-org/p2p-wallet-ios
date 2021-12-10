@@ -17,6 +17,7 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, Sen
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {get}
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> {get}
     var showAfterConfirmation: Bool {get}
+    var selectedNetwork: SendToken.Network? {get}
     
     func navigate(to scene: SendToken.ChooseTokenAndAmount.NavigatableScene)
     func cancelSending()
@@ -24,6 +25,7 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, Sen
     
     func calculateAvailableAmount() -> Double?
     
+    func isTokenValidForSelectedNetwork() -> Bool
     func save()
     func navigateNext()
 }
@@ -44,6 +46,7 @@ extension SendToken.ChooseTokenAndAmount {
         private let disposeBag = DisposeBag()
         let showAfterConfirmation: Bool
         let initialAmount: Double?
+        let selectedNetwork: SendToken.Network?
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -52,10 +55,16 @@ extension SendToken.ChooseTokenAndAmount {
         let amountSubject = BehaviorRelay<Double?>(value: nil)
         
         // MARK: - Initializer
-        init(sendTokenViewModel: SendTokenViewModelType, initialAmount: Double? = nil, showAfterConfirmation: Bool = false) {
+        init(
+            sendTokenViewModel: SendTokenViewModelType,
+            initialAmount: Double? = nil,
+            showAfterConfirmation: Bool = false,
+            selectedNetwork: SendToken.Network?
+        ) {
             self.sendTokenViewModel = sendTokenViewModel
             self.initialAmount = initialAmount
             self.showAfterConfirmation = showAfterConfirmation
+            self.selectedNetwork = selectedNetwork
             bind()
         }
         
@@ -131,6 +140,14 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         
         // return
         return availableAmount > 0 ? availableAmount: 0
+    }
+    
+    func isTokenValidForSelectedNetwork() -> Bool {
+        let isValid = selectedNetwork != .bitcoin || walletSubject.value?.token.isRenBTC == true
+        if !isValid && showAfterConfirmation {
+            navigationSubject.accept(.invalidTokenForSelectedNetworkAlert)
+        }
+        return isValid
     }
     
     func save() {

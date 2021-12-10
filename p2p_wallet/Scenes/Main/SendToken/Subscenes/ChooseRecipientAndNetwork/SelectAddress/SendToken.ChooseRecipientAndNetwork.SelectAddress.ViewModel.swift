@@ -20,6 +20,8 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var networkDriver: Driver<SendToken.Network> {get}
     var isValidDriver: Driver<Bool> {get}
     
+    func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState
+    func getCurrentSearchKey() -> String?
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
@@ -98,6 +100,14 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     var isValidDriver: Driver<Bool> {
         chooseRecipientAndNetworkViewModel.recipientDriver.map {$0 != nil}
+    }
+    
+    func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState {
+        inputStateSubject.value
+    }
+    
+    func getCurrentSearchKey() -> String? {
+        searchTextSubject.value
     }
     
     func getPrice(for symbol: String) -> Double {
