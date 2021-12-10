@@ -656,3 +656,5 @@
 "Discard" = "Discard";
 "Change" = "Change";
 "username or address" = "username / address";
+"Change the network?" = "Change the network?";
+"If the network is changed to %@, the address field must be filled in with a %@." = "If the network is changed to %@, the address field must be filled in with a %@.";

@@ -1,31 +1,26 @@
 //
-//  SendToken.SelectNetworkViewController.swift
+//  SendToken.SelectNetwork.ViewController.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 01/12/2021.
+//  Created by Chung Tran on 10/12/2021.
 //
 
 import Foundation
-import BEPureLayout
-import UIKit
 
-extension SendToken {
-    final class SelectNetworkViewController: BaseViewController {
+extension SendToken.SelectNetwork {
+    final class SelectNetworkViewController: SendToken.BaseViewController {
         // MARK: - Properties
-        private let selectableNetworks: [Network]
-        private let recipientAddress: String?
-        private let isTestnet: Bool
-        private let prices: [String: Double]
-        private var selectedNetwork: Network {
+        private let viewModel: SendTokenSelectNetworkViewModelType
+        private var selectedNetwork: SendToken.Network {
             didSet {
                 reloadData()
             }
         }
-        private var selectNetworkCompletion: ((Network) -> Void)?
         
         // MARK: - Subviews
         private lazy var networkViews: [_NetworkView] = {
-            var networkViews = selectableNetworks
+            let prices = viewModel.getSOLAndRenBTCPrices()
+            var networkViews = viewModel.getSelectableNetworks()
                 .map {network -> _NetworkView in
                     let view = _NetworkView()
                     view.network = network
@@ -46,21 +41,10 @@ extension SendToken {
             return networkViews
         }()
         
-        // MARK: - Initializer
-        init(
-            selectableNetworks: [Network],
-            recipientAddress: String?,
-            isTestnet: Bool,
-            prices: [String: Double],
-            selectedNetwork: Network,
-            selectNetworkCompletion: ((Network) -> Void)?
-        ) {
-            self.selectableNetworks = selectableNetworks
-            self.recipientAddress = recipientAddress
-            self.isTestnet = isTestnet
-            self.prices = prices
-            self.selectedNetwork = selectedNetwork
-            self.selectNetworkCompletion = selectNetworkCompletion
+        // MARK: - Initializers
+        init(viewModel: SendTokenSelectNetworkViewModelType) {
+            self.viewModel = viewModel
+            self.selectedNetwork = viewModel.getSelectedNetwork()
             super.init()
         }
         
@@ -106,8 +90,49 @@ extension SendToken {
             guard let view = gesture.view as? _NetworkView, let network = view.network else {
                 return
             }
+            // save previous state and assign new one
+            let originalSelectedNetwork = selectedNetwork
             selectedNetwork = network
-            selectNetworkCompletion?(selectedNetwork)
+            
+            // alert if needed
+            if !isAddressValidForNetwork() {
+                let networkName = viewModel.getSelectedNetwork().rawValue.uppercaseFirst
+                showAlert(
+                    title: L10n.changeTheNetwork,
+                    message: L10n.ifTheNetworkIsChangedToTheAddressFieldMustBeFilledInWithA(networkName, L10n.compatibleAddress(networkName)),
+                    buttonTitles: [L10n.discard, L10n.change],
+                    highlightedButtonIndex: 1,
+                    destroingIndex: 0
+                ) { [weak self] index in
+                    if index == 0 {
+                        self?.selectedNetwork = originalSelectedNetwork
+                        self?._back()
+                    } else {
+                        self?.save()
+                        self?.viewModel.navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(network)
+                    }
+                }
+            }
+        }
+        
+        // MARK: - Helpers
+        override func _back() {
+            save()
+            super._back()
+        }
+        
+        private func isAddressValidForNetwork() -> Bool {
+            guard let address = viewModel.getSelectedRecipient()?.address else {return true}
+            switch viewModel.getSelectedNetwork() {
+            case .bitcoin:
+                return address.matches(allOfRegexes: .bitcoinAddress(isTestnet: viewModel.getAPIClient().isTestNet()))
+            case .solana:
+                return address.matches(oneOfRegexes: .publicKey)
+            }
+        }
+        
+        private func save() {
+            viewModel.selectNetwork(selectedNetwork)
         }
     }
     

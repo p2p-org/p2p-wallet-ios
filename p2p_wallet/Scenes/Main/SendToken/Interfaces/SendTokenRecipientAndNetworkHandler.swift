@@ -44,10 +44,12 @@ extension SendTokenRecipientAndNetworkHandler {
     func selectRecipient(_ recipient: SendToken.Recipient?) {
         recipientSubject.accept(recipient)
         
-        if isRecipientBTCAddress() {
-            networkSubject.accept(.bitcoin)
-        } else {
-            networkSubject.accept(.solana)
+        if recipient != nil {
+            if isRecipientBTCAddress() {
+                networkSubject.accept(.bitcoin)
+            } else {
+                networkSubject.accept(.solana)
+            }
         }
     }
     

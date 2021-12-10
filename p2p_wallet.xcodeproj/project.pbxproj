@@ -10,6 +10,9 @@
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		3B2BAFA62761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */; };
 		3B2BAFA82761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */; };
+		3B87A1512762FCAA00F09883 /* SendToken.SelectNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A1502762FCAA00F09883 /* SendToken.SelectNetwork.swift */; };
+		3B87A1532762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A1522762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift */; };
+		3B87A1552762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A1542762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift */; };
 		3B9CCC3E275F6B9A00B2A5E2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B9CCC3D275F6B9A00B2A5E2 /* GoogleService-Info.plist */; };
 		4114D16A2746272400352CDF /* EnterSeedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1662746272400352CDF /* EnterSeedInfo.swift */; };
 		4114D16B2746272400352CDF /* EnterSeedInfo.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1672746272400352CDF /* EnterSeedInfo.ViewController.swift */; };
@@ -479,6 +482,9 @@
 		2AFD2F1D2405B9F7006F36C3 /* Pods-p2p walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p walletTests/Pods-p2p walletTests.release.xcconfig"; sourceTree = "<group>"; };
 		3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenRecipientAndNetworkHandler.swift; sourceTree = "<group>"; };
 		3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenTokenAndAmountHandler.swift; sourceTree = "<group>"; };
+		3B87A1502762FCAA00F09883 /* SendToken.SelectNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.swift; sourceTree = "<group>"; };
+		3B87A1522762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.ViewModel.swift; sourceTree = "<group>"; };
+		3B87A1542762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.ViewController.swift; sourceTree = "<group>"; };
 		3B9CCC3D275F6B9A00B2A5E2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3F4012EDABF9EA99EA5E792B /* Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		4114D1662746272400352CDF /* EnterSeedInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedInfo.swift; sourceTree = "<group>"; };
@@ -1020,6 +1026,16 @@
 				3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */,
 			);
 			path = Interfaces;
+			sourceTree = "<group>";
+		};
+		3B87A14F2762FC6B00F09883 /* SelectNetwork */ = {
+			isa = PBXGroup;
+			children = (
+				3B87A1502762FCAA00F09883 /* SendToken.SelectNetwork.swift */,
+				3B87A1522762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift */,
+				3B87A1542762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift */,
+			);
+			path = SelectNetwork;
 			sourceTree = "<group>";
 		};
 		4114D15D274626B400352CDF /* EnterSeedInfo */ = {
@@ -1901,6 +1917,7 @@
 			children = (
 				BCB286C0274CCA800074E1D5 /* ChooseTokenAndAmount */,
 				BCB286D72754B4DA0074E1D5 /* ChooseRecipientAndNetwork */,
+				3B87A14F2762FC6B00F09883 /* SelectNetwork */,
 				BCD3CB5927586C31002F3C06 /* SendToken.ConfirmViewController.swift */,
 			);
 			path = Subscenes;
@@ -2657,6 +2674,7 @@
 				BC1255092653A2E400695A2B /* DerivablePaths.ViewController.swift in Sources */,
 				BCB2870B27560F1D0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientCell.swift in Sources */,
 				412DBFDC273D7B81000F514E /* EnterSeed.swift in Sources */,
+				3B87A1532762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift in Sources */,
 				BC1BEBF926CDF6520049A44C /* SerumSwapV1.swift in Sources */,
 				BC4B9E9527153EBB005B9ECA /* Settings.BackupViewController.swift in Sources */,
 				BC6D01FB265DF8220001B841 /* FreeTransactionInfoVC.swift in Sources */,
@@ -2924,6 +2942,7 @@
 				418A5DA12755E57E00C2D387 /* NewOrcaSwap.RootView.swift in Sources */,
 				BC80204026F1EBDA00C109C2 /* ReceiveToken.ReceiveBitcoinViewModel.swift in Sources */,
 				BC65E2772620058700E436C7 /* TransactionInfoRootView+Subviews.swift in Sources */,
+				3B87A1552762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift in Sources */,
 				BC65E037261D72B200E436C7 /* TransactionsRepository.swift in Sources */,
 				418A5DA32755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift in Sources */,
 				BC2EC1D12553ED1B006EEDA5 /* FittingSizePresentationController.swift in Sources */,
@@ -2933,6 +2952,7 @@
 				BC036C162692C070005C1BEC /* Collection+Extensions.swift in Sources */,
 				BC2EC1802553B1F7006EEDA5 /* SectionFooterView.swift in Sources */,
 				BCA93F6A25E78D8A0081DDF6 /* WLNavigationBar.swift in Sources */,
+				3B87A1512762FCAA00F09883 /* SendToken.SelectNetwork.swift in Sources */,
 				BCDCAE1D267C69D1001ED7B4 /* UIUserInterfaceStyle+Extensions.swift in Sources */,
 				BCB7C7D32667336800FEC68E /* ProcessTransaction.RootView.swift in Sources */,
 				BC4B9EBE27191843005B9ECA /* OrcaSwapV2.ViewModel.swift in Sources */,

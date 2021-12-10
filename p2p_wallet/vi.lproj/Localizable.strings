@@ -656,3 +656,5 @@
 "Discard" = "Bỏ qua";
 "Change" = "Thay đổi";
 "username or address" = "tên người dùng / địa chỉ";
+"Change the network?" = "Thay đổi mạng?";
+"If the network is changed to %@, the address field must be filled in with a %@." = "Nếu mạng được thay đổi thành %@, trường địa chỉ phải được điền bằng %@.";

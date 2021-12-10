@@ -87,6 +87,8 @@ extension SendToken {
             case .chooseNetwork:
                 let vc = SendToken.SelectNetworkViewController(
                     selectableNetworks: viewModel.getSelectableNetworks(),
+                    recipientAddress: viewModel.getSelectedRecipient()?.address,
+                    isTestnet: viewModel.getAPIClient().isTestNet(),
                     prices: viewModel.getSOLAndRenBTCPrices(),
                     selectedNetwork: viewModel.getSelectedNetwork(),
                     selectNetworkCompletion: {[weak self] network in
