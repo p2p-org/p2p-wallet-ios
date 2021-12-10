@@ -179,6 +179,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     }
     
     func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
+        recipientSubject.accept(nil)
         navigationSubject.accept(.chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: network))
     }
     

@@ -123,7 +123,7 @@ extension SendToken.SelectNetwork {
         
         private func isAddressValidForNetwork() -> Bool {
             guard let address = viewModel.getSelectedRecipient()?.address else {return true}
-            switch viewModel.getSelectedNetwork() {
+            switch selectedNetwork {
             case .bitcoin:
                 return address.matches(allOfRegexes: .bitcoinAddress(isTestnet: viewModel.getAPIClient().isTestNet()))
             case .solana:

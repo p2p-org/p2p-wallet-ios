@@ -84,10 +84,10 @@ extension SendToken {
             case .processTransaction(let request, let transactionType):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
                 vc.delegate = self
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
             case .chooseNetwork:
                 let vc = SelectNetwork.ViewController(viewModel: viewModel)
-                show(vc, sender: nil)
+                childNavigationController.pushViewController(vc, animated: true)
             }
         }
     }
