@@ -650,3 +650,13 @@
 "1 %@ Price" = "1 %@ Цена";
 "Pay swap fees with" = "Оплачивайте комиссию за своп с помощью";
 "Total fee" = "Общая комиссия";
+"Change the token?" = "Сменить токен?";
+"If the token is changed to %@, the address field must be filled in with a %@." = "Если токен изменен на %@, поле адреса должно быть заполнено %@.";
+"%@-compatible address" = "%@ -совместимый адрес";
+"Discard" = "Отказаться";
+"Change" = "Изменять";
+"username or address" = "имя пользователя / адрес";
+"Change the network?" = "Сменить сеть?";
+"If the network is changed to %@, the address field must be filled in with a %@." = "Если сеть изменена на %@, поле адреса должно быть заполнено %@.";
+"There are %@ free transactions left for today" = "На сегодня осталось %@ бесплатных транзакций";
+"On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "В сети Solana первые 100 транзакций в день оплачиваются P2P.org. Последующие транзакции будут взиматься на основе платы за газ блокчейна Solana.";

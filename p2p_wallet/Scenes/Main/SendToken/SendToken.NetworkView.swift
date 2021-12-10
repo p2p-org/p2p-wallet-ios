@@ -17,7 +17,7 @@ extension SendToken {
         // MARK: - Subviews
         private lazy var coinImageView = UIImageView(width: 44, height: 44, image: nil)
         private lazy var networkNameLabel = UILabel(text: "<network>", textSize: 17, weight: .semibold)
-        private lazy var descriptionLabel = UILabel(text: "<transfer fee:>", textSize: 13, numberOfLines: 0)
+        private lazy var feeLabel = UILabel(text: "<transfer fee:>", textSize: 13, numberOfLines: 2)
         
         init() {
             super.init(frame: .zero)
@@ -27,7 +27,7 @@ extension SendToken {
                 coinImageView
                 UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
                     networkNameLabel
-                    descriptionLabel
+                    feeLabel
                 }
             }
         }
@@ -36,23 +36,33 @@ extension SendToken {
             fatalError("init(coder:) has not been implemented")
         }
         
-        func setUp(network: SendToken.Network, fee: SendToken.Fee, renBTCPrice: Double) {
+        func setUp(network: SendToken.Network, prices: [String: Double]) {
             coinImageView.image = network.icon
             networkNameLabel.text = L10n.network(network.rawValue.uppercaseFirst)
             
             let attributedText = NSMutableAttributedString()
                 .text(L10n.transferFee + ": ", size: 13, color: .textSecondary)
             
-            if fee.amount == 0 {
+            let fees = network.defaultFees
+            
+            if fees.map(\.amount).reduce(0.0, +) == 0 {
                 attributedText
                     .text("\(Defaults.fiat.symbol)0", size: 13, weight: .semibold, color: .attentionGreen)
             } else {
-                let amountInUSD = fee.amount * renBTCPrice
                 attributedText
-                    .text("\(fee.amount.toString(maximumFractionDigits: 9)) \(fee.unit)", size: 13, color: .textSecondary)
-                    .text(" (~$\(amountInUSD.toString(maximumFractionDigits: 9)))", size: 13, color: .textSecondary)
+                    .append(
+                        network.defaultFees
+                            .attributedString(
+                                prices: prices,
+                                textSize: 13,
+                                tokenColor: .textSecondary,
+                                attributedSeparator: NSMutableAttributedString()
+                                    .text(",\n", size: 13, color: .textSecondary)
+                                    .text(L10n.transferFee + ": ", size: 13, color: .clear)
+                            )
+                    )
             }
-            descriptionLabel.attributedText = attributedText
+            feeLabel.attributedText = attributedText
         }
     }
 }
