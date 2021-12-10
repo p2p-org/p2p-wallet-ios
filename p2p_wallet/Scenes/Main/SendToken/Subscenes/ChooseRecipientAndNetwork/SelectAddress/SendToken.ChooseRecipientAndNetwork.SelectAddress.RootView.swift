@@ -105,25 +105,26 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .disposed(by: disposeBag)
             
             // searching empty state
-            let searchingEmptyDriver: Driver<Bool>
+            let shouldHideNetworkDriver: Driver<Bool>
             if viewModel.preSelectedNetwork == nil {
-                searchingEmptyDriver = isSearchingDriver
+                shouldHideNetworkDriver = isSearchingDriver
             } else {
                 // show preselected network when search is empty
-                searchingEmptyDriver = Driver.combineLatest(
+                shouldHideNetworkDriver = Driver.combineLatest(
                     isSearchingDriver.map {!$0},
                     viewModel.searchTextDriver.map {$0 == nil || $0?.isEmpty == true}
                 )
                 .map {$0.1 || $0.0}
+                .map {!$0}
             }
             
             // collection view
-            searchingEmptyDriver.map {!$0}
+            shouldHideNetworkDriver.map {!$0}
                 .drive(recipientCollectionView.rx.isHidden)
                 .disposed(by: disposeBag)
             
             // net work view
-            searchingEmptyDriver
+            shouldHideNetworkDriver
                 .drive(networkView.rx.isHidden)
                 .disposed(by: disposeBag)
             
