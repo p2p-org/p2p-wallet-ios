@@ -1,5 +1,5 @@
 //
-//  CreateOrRestoreReserveName.LoadingView.swift
+//  ReserveName.LoadingView.swift
 //  p2p_wallet
 //
 //  Created by Andrew Vasiliev on 01.12.2021.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension CreateOrRestoreReserveName {
+extension ReserveName {
     final class LoadingView: UIStackView {
         private let indicatorView = UIActivityIndicatorView()
             .withContentHuggingPriority(.required, for: .horizontal)

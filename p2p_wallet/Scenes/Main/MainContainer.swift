@@ -242,9 +242,14 @@ class MainContainer {
     
     // MARK: - Reserve name
     func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController {
-        let vm = ReserveName.ViewModel(owner: owner, handler: handler)
+        let vm = ReserveName.ViewModel(
+            canSkip: false,
+            owner: owner,
+            nameService: Resolver.resolve(),
+            reserveNameHandler: handler
+        )
         let vc = ReserveName.ViewController(viewModel: vm)
-        vc.rootView.hideSkipButtons()
+
         return vc
     }
     

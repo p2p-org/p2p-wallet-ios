@@ -36,7 +36,10 @@ extension SendToken.ChooseTokenAndAmount {
             return tf
         }()
         private lazy var equityValueLabel = UILabel(text: "\(Defaults.fiat.symbol) 0", textSize: 13)
-        private lazy var actionButton = WLStepButton.main(text: L10n.chooseDestinationWallet)
+        private lazy var actionButton = WLStepButton.main(
+            image: viewModel.showAfterConfirmation ? .tick: nil,
+            text: viewModel.showAfterConfirmation ? L10n.reviewAndConfirm: L10n.chooseDestinationWallet
+        )
             .onTap(self, action: #selector(actionButtonDidTouch))
         
         #if DEBUG
@@ -54,13 +57,26 @@ extension SendToken.ChooseTokenAndAmount {
             super.commonInit()
             layout()
             bind()
+            
+            if let initalAmount = viewModel.initialAmount {
+                amountTextField.text = initalAmount.toString(maximumFractionDigits: 9, groupingSeparator: "")
+                amountTextField.sendActions(for: .valueChanged)
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { [weak self] in
+                self?.amountTextField.becomeFirstResponder()
+                #if DEBUG
+                if self?.viewModel.showAfterConfirmation == false {
+                    self?.amountTextField.text = 0.0001.toString(maximumFractionDigits: 9, groupingSeparator: "")
+                    self?.amountTextField.sendActions(for: .valueChanged)
+                }
+                #endif
+            }
         }
         
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { [weak self] in
-                self?.amountTextField.becomeFirstResponder()
-            }
+            
         }
         
         // MARK: - Layout
@@ -168,6 +184,13 @@ extension SendToken.ChooseTokenAndAmount {
                 })
                 .disposed(by: disposeBag)
             
+            viewModel.amountDriver
+                .distinctUntilChanged()
+                .withLatestFrom(viewModel.walletDriver, resultSelector: {($0, $1)})
+                .map {$0.0?.toString(maximumFractionDigits: Int($0.1?.token.decimals ?? 0), groupingSeparator: "")}
+                .drive(amountTextField.rx.text)
+                .disposed(by: disposeBag)
+            
             // available amount
             let balanceTextDriver = Driver.combineLatest(
                 viewModel.walletDriver,
@@ -208,13 +231,27 @@ extension SendToken.ChooseTokenAndAmount {
                 .drive(balanceLabel.rx.textColor)
                 .disposed(by: disposeBag)
             
+            // action button
             viewModel.errorDriver
-                .map {$0?.buttonSuggestion ?? L10n.chooseTheRecipient}
+                .map {[weak self] in
+                    $0?.buttonSuggestion ??
+                        (
+                            self?.viewModel.showAfterConfirmation == true ?
+                                L10n.reviewAndConfirm:
+                                L10n.chooseTheRecipient
+                        )
+                }
                 .drive(actionButton.rx.text)
                 .disposed(by: disposeBag)
             
             viewModel.errorDriver
-                .map {$0 == nil ? UIImage.buttonChooseTheRecipient: nil}
+                .map {[weak self] in
+                    $0 != nil ? nil: (
+                        self?.viewModel.showAfterConfirmation == true ?
+                            .buttonCheckSmall:
+                            .buttonChooseTheRecipient
+                    )
+                }
                 .drive(actionButton.rx.image)
                 .disposed(by: disposeBag)
             
@@ -249,7 +286,14 @@ extension SendToken.ChooseTokenAndAmount {
         }
         
         @objc private func actionButtonDidTouch() {
-            viewModel.next()
+            if viewModel.isTokenValidForSelectedNetwork() {
+                viewModel.save()
+                if viewModel.showAfterConfirmation {
+                    viewModel.navigate(to: .backToConfirmation)
+                } else {
+                    viewModel.navigateNext()
+                }
+            }
         }
     }
 }

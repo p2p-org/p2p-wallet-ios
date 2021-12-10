@@ -1,5 +1,5 @@
 //
-//  CreateOrRestoreReserveName.ViewController.swift
+//  ReserveName.ViewController.swift
 //  p2p_wallet
 //
 //  Created by Andrew Vasiliev on 26.11.2021.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-extension CreateOrRestoreReserveName {
+extension ReserveName {
     class ViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden

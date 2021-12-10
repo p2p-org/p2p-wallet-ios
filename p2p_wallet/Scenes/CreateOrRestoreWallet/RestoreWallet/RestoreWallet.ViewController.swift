@@ -102,12 +102,13 @@ extension RestoreWallet {
                 let vc = DerivableAccounts.ViewController(viewModel: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
             case .reserveName(let owner):
-                let viewModel = CreateOrRestoreReserveName.ViewModel(
+                let viewModel = ReserveName.ViewModel(
+                    canSkip: true,
                     owner: owner,
                     nameService: Resolver.resolve(),
                     reserveNameHandler: viewModel
                 )
-                let viewController = CreateOrRestoreReserveName.ViewController(viewModel: viewModel)
+                let viewController = ReserveName.ViewController(viewModel: viewModel)
                 navigationController?.pushViewController(viewController, animated: true)
             }
         }
@@ -120,16 +121,5 @@ extension RestoreWallet {
         @objc func restoreManually() {
             viewModel.restoreManually()
         }
-    }
-}
-
-private class ReserveNameVC: ReserveName.ViewController {
-    override func bind() {
-        super.bind()
-        viewModel.isPostingDriver
-            .drive(onNext: { [weak self] isPosting in
-                self?.navigationController?.parent?.isModalInPresentation = isPosting
-            })
-            .disposed(by: disposeBag)
     }
 }
