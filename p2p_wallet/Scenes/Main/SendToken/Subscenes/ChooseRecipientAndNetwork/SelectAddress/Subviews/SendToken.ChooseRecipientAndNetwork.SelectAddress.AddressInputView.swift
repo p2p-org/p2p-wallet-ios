@@ -33,7 +33,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             }
             bind()
             
-            if !self.viewModel.showAfterConfirmation {
+            if viewModel.getCurrentInputState() == .searching {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                     guard let self = self else {return}
                     self.textField.becomeFirstResponder()
@@ -98,7 +98,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 spellCheckingType: .no
             )
             textField.attributedPlaceholder = NSAttributedString(
-                string: L10n.p2PUsernameSOLAddress,
+                string: L10n.usernameOrAddress,
                 attributes: [
                     .foregroundColor: UIColor.a3a5ba.onDarkMode(.h5887ff),
                     .font: UIFont.systemFont(ofSize: 15, weight: .medium)

@@ -650,3 +650,9 @@
 "1 %@ Price" = "1 %@ Цена";
 "Pay swap fees with" = "Оплачивайте комиссию за своп с помощью";
 "Total fee" = "Общая комиссия";
+"Change the token?" = "Сменить токен?";
+"If the token is changed to %@, the address field must be filled in with a %@." = "Если токен изменен на %@, поле адреса должно быть заполнено %@.";
+"%@-compatible address" = "%@ -совместимый адрес";
+"Discard" = "Отказаться";
+"Change" = "Изменять";
+"username or address" = "имя пользователя / адрес";

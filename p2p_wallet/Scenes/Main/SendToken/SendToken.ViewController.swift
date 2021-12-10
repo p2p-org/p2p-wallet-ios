@@ -59,7 +59,8 @@ extension SendToken {
                 let vm = ChooseTokenAndAmount.ViewModel(
                     sendTokenViewModel: viewModel,
                     initialAmount: viewModel.getSelectedAmount(),
-                    showAfterConfirmation: showAfterConfirmation
+                    showAfterConfirmation: showAfterConfirmation,
+                    selectedNetwork: viewModel.getSelectedNetwork()
                 )
                 let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
                 

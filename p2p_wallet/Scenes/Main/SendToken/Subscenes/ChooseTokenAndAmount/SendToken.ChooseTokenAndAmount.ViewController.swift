@@ -62,6 +62,21 @@ extension SendToken.ChooseTokenAndAmount {
                 present(vc, animated: true, completion: nil)
             case .backToConfirmation:
                 navigationController?.popToViewController(ofClass: SendToken.ConfirmViewController.self, animated: true)
+            case .invalidTokenForSelectedNetworkAlert:
+                showAlert(
+                    title: L10n.changeTheToken,
+                    message: L10n.ifTheTokenIsChangedToTheAddressFieldMustBeFilledInWithA(
+                        viewModel.getSelectedWallet()?.token.symbol ?? "",
+                        L10n.compatibleAddress(L10n.solana)
+                    ),
+                    buttonTitles: [L10n.discard, L10n.change],
+                    highlightedButtonIndex: 1,
+                    destroingIndex: 0
+                ) {[weak self] selectedIndex in
+                    guard selectedIndex == 1 else {return}
+                    self?.viewModel.save()
+                    self?.viewModel.navigateNext()
+                }
             }
         }
         
@@ -74,8 +89,10 @@ extension SendToken.ChooseTokenAndAmount {
         }
         
         @objc private func buttonNextDidTouch() {
-            viewModel.save()
-            viewModel.navigateNext()
+            if viewModel.isTokenValidForSelectedNetwork() {
+                viewModel.save()
+                viewModel.navigateNext()
+            }
         }
     }
 }

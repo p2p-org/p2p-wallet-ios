@@ -33,4 +33,8 @@ extension SendTokenTokenAndAmountHandler {
     func getSelectedAmount() -> Double? {
         amountSubject.value
     }
+    
+    func getSelectedWallet() -> Wallet? {
+        walletSubject.value
+    }
 }

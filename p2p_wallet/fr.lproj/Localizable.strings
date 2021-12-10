@@ -650,3 +650,9 @@
 "1 %@ Price" = "1 %@ Prix";
 "Pay swap fees with" = "Payez les frais de swap avec";
 "Total fee" = "Montant total";
+"Change the token?" = "Changer le jeton ?";
+"If the token is changed to %@, the address field must be filled in with a %@." = "Si le jeton est changé en %@, le champ d'adresse doit être rempli avec un %@.";
+"%@-compatible address" = "Adresse compatible %@";
+"Discard" = "Jeter";
+"Change" = "Changer";
+"username or address" = "nom d'utilisateur / adresse";
