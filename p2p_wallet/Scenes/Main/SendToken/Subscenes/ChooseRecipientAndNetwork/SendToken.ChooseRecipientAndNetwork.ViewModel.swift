@@ -11,6 +11,7 @@ import RxCocoa
 
 protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndNetworkHandler {
     var showAfterConfirmation: Bool {get}
+    var preSelectedNetwork: SendToken.Network? {get}
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
     var amountDriver: Driver<Double?> {get}
@@ -29,6 +30,7 @@ extension SendToken.ChooseRecipientAndNetwork {
         // MARK: - Dependencies
         private let sendTokenViewModel: SendTokenViewModelType
         let showAfterConfirmation: Bool
+        let preSelectedNetwork: SendToken.Network?
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -39,11 +41,19 @@ extension SendToken.ChooseRecipientAndNetwork {
         let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
         
         // MARK: - Initializers
-        init(sendTokenViewModel: SendTokenViewModelType, showAfterConfirmation: Bool) {
+        init(
+            sendTokenViewModel: SendTokenViewModelType,
+            showAfterConfirmation: Bool,
+            preSelectedNetwork: SendToken.Network?
+        ) {
             self.sendTokenViewModel = sendTokenViewModel
             self.showAfterConfirmation = showAfterConfirmation
-            
+            self.preSelectedNetwork = preSelectedNetwork
             bind()
+            
+            if let preSelectedNetwork = preSelectedNetwork {
+                networkSubject.accept(preSelectedNetwork)
+            }
         }
         
         func bind() {

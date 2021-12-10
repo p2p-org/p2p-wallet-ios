@@ -11,6 +11,7 @@ import RxCocoa
 
 protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var showAfterConfirmation: Bool {get}
+    var preSelectedNetwork: SendToken.Network? {get}
     var recipientsListViewModel: SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel {get}
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?> {get}
     var inputStateDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState> {get}
@@ -74,6 +75,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 }
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
+    var preSelectedNetwork: SendToken.Network? {
+        chooseRecipientAndNetworkViewModel.preSelectedNetwork
+    }
+    
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?> {
         navigationSubject.asDriver()
     }
