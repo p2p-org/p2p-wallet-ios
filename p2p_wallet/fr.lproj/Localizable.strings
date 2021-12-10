@@ -650,6 +650,8 @@
 "1 %@ Price" = "1 %@ Prix";
 "Pay swap fees with" = "Payez les frais de swap avec";
 "Total fee" = "Montant total";
+"Reserve P2P username" = "Réserver le nom d'utilisateur P2P";
+"Enter username" = "Saisissez votre nom d'utilisateur";
 "Change the token?" = "Changer le jeton ?";
 "If the token is changed to %@, the address field must be filled in with a %@." = "Si le jeton est changé en %@, le champ d'adresse doit être rempli avec un %@.";
 "%@-compatible address" = "Adresse compatible %@";
