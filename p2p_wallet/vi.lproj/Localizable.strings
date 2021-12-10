@@ -650,6 +650,8 @@
 "1 %@ Price" = "1 %@ Giá";
 "Pay swap fees with" = "Thanh toán phí hoán đổi với";
 "Total fee" = "Tổng phí";
+"Reserve P2P username" = "Đặt trước tên người dùng P2P";
+"Enter username" = "Điền tên đăng nhập";
 "Change the token?" = "Thay đổi mã thông báo?";
 "If the token is changed to %@, the address field must be filled in with a %@." = "Nếu đổi token thành %@, địa chỉ phải được điền bằng %@.";
 "%@-compatible address" = "một địa chỉ tương thích với %@";
