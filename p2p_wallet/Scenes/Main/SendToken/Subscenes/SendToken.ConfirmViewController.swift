@@ -269,6 +269,15 @@ extension SendToken {
                 }
                 .drive(actionButton.rx.text)
                 .disposed(by: disposeBag)
+            
+            Driver.combineLatest([
+                viewModel.walletDriver.map {$0 != nil},
+                viewModel.amountDriver.map {$0 != nil},
+                viewModel.recipientDriver.map {$0 != nil}
+            ])
+                .map {$0.allSatisfy {$0}}
+                .drive(actionButton.rx.isEnabled)
+                .disposed(by: disposeBag)
                 
         }
         
