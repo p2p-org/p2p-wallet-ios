@@ -8,7 +8,7 @@
 import Foundation
 
 extension SendToken.SelectNetwork {
-    final class SelectNetworkViewController: SendToken.BaseViewController {
+    final class ViewController: SendToken.BaseViewController {
         // MARK: - Properties
         private let viewModel: SendTokenSelectNetworkViewModelType
         private var selectedNetwork: SendToken.Network {

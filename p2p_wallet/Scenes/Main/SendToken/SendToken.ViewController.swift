@@ -86,16 +86,7 @@ extension SendToken {
                 vc.delegate = self
                 self.present(vc, animated: true, completion: nil)
             case .chooseNetwork:
-                let vc = SendToken.SelectNetworkViewController(
-                    selectableNetworks: viewModel.getSelectableNetworks(),
-                    recipientAddress: viewModel.getSelectedRecipient()?.address,
-                    isTestnet: viewModel.getAPIClient().isTestNet(),
-                    prices: viewModel.getSOLAndRenBTCPrices(),
-                    selectedNetwork: viewModel.getSelectedNetwork(),
-                    selectNetworkCompletion: {[weak self] network in
-                        self?.viewModel.selectNetwork(network)
-                    }
-                )
+                let vc = SelectNetwork.ViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             }
         }
