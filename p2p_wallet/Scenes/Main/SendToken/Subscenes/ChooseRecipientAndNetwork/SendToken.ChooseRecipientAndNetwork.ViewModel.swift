@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndNetworkHandler {
+protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenSelectNetworkViewModelType {
     var showAfterConfirmation: Bool {get}
     var preSelectedNetwork: SendToken.Network? {get}
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> {get}
@@ -107,6 +107,10 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     
     func getSOLAndRenBTCPrices() -> [String: Double] {
         sendTokenViewModel.getSOLAndRenBTCPrices()
+    }
+    
+    func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
+        sendTokenViewModel.navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(network)
     }
     
     func save() {
