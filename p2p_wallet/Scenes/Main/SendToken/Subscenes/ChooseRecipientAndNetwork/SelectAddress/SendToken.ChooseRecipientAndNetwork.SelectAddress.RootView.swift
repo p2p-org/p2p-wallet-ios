@@ -118,12 +118,12 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             }
             
             // collection view
-            searchingEmptyDriver
+            searchingEmptyDriver.map {!$0}
                 .drive(recipientCollectionView.rx.isHidden)
                 .disposed(by: disposeBag)
             
             // net work view
-            searchingEmptyDriver.map {!$0}
+            searchingEmptyDriver
                 .drive(networkView.rx.isHidden)
                 .disposed(by: disposeBag)
             
