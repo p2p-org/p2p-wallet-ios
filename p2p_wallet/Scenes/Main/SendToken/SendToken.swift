@@ -14,7 +14,7 @@ struct SendToken {
         case back
         case chooseTokenAndAmount(showAfterConfirmation: Bool)
         
-        case chooseRecipientAndNetwork(showAfterConfirmation: Bool)
+        case chooseRecipientAndNetwork(showAfterConfirmation: Bool, preSelectedNetwork: Network?)
         case chooseNetwork
         
         case confirmation

@@ -285,7 +285,7 @@ extension SendToken {
         }
         
         @objc private func recipientViewDidTouch() {
-            viewModel.navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true))
+            viewModel.navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: nil))
         }
         
         @objc private func networkViewDidTouch() {

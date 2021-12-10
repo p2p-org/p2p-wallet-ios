@@ -177,6 +177,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         
         @objc private func networkViewDidTouch() {
+            guard viewModel.preSelectedNetwork == nil else {return}
             viewModel.navigateToChoosingNetworkScene()
         }
         

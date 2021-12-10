@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler {
+protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler, SendTokenSelectNetworkViewModelType {
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
     
     func getPrice(for symbol: String) -> Double
@@ -176,6 +176,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func navigate(to scene: SendToken.NavigatableScene) {
         navigationSubject.accept(scene)
+    }
+    
+    func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
+        navigationSubject.accept(.chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: network))
     }
     
     func chooseWallet(_ wallet: Wallet) {

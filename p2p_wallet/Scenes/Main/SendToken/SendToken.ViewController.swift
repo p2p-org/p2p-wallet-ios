@@ -70,10 +70,11 @@ extension SendToken {
                     childNavigationController = BENavigationController(rootViewController: vc)
                     add(child: childNavigationController)
                 }
-            case .chooseRecipientAndNetwork(let showAfterConfirmation):
+            case .chooseRecipientAndNetwork(let showAfterConfirmation, let preSelectedNetwork):
                 let vm = ChooseRecipientAndNetwork.ViewModel(
                     sendTokenViewModel: viewModel,
-                    showAfterConfirmation: showAfterConfirmation
+                    showAfterConfirmation: showAfterConfirmation,
+                    preSelectedNetwork: preSelectedNetwork
                 )
                 let vc = ChooseRecipientAndNetwork.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)

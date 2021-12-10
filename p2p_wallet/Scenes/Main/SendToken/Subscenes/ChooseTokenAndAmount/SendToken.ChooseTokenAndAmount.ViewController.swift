@@ -80,7 +80,7 @@ extension SendToken.ChooseTokenAndAmount {
             }
         }
         
-        @objc private func _back() {
+        @objc override func _back() {
             if viewModel.showAfterConfirmation {
                 back()
             } else {
