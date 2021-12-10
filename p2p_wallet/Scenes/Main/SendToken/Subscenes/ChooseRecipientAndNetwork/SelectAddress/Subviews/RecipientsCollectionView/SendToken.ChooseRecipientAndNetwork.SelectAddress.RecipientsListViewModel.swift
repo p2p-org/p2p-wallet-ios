@@ -14,6 +14,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Dependencies
         @Injected private var nameService: NameServiceType
         var solanaAPIClient: SendTokenAPIClient!
+        var preSelectedNetwork: SendToken.Network!
         
         // MARK: - Properties
         var searchString: String?
@@ -27,7 +28,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         override func createRequest() -> Single<[SendToken.Recipient]> {
             guard let searchString = searchString, !searchString.isEmpty else { return .just([]) }
 
-            return isSearchingByAddress
+            // force find by address when network is bitcoin
+            return preSelectedNetwork == .bitcoin || isSearchingByAddress
                 ? findRecipientBy(address: searchString)
                 : findRecipientsBy(name: searchString)
         }
@@ -47,9 +49,13 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         private func findRecipientBy(address: String) -> Single<[SendToken.Recipient]> {
-            if address.matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet())) {
-                return .just([.init(address: address, name: nil, hasNoFunds: false)])
+            if preSelectedNetwork == .bitcoin {
+                if address.matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet())) {
+                    return .just([.init(address: address, name: nil, hasNoFunds: false)])
+                }
+                return .just([])
             }
+            
             return nameService
                 .getName(address)
                 .flatMap {[weak self] name -> Single<(String?, Bool)> in
