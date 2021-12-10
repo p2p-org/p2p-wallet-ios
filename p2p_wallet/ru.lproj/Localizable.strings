@@ -656,3 +656,5 @@
 "Discard" = "Отказаться";
 "Change" = "Изменять";
 "username or address" = "имя пользователя / адрес";
+"Change the network?" = "Сменить сеть?";
+"If the network is changed to %@, the address field must be filled in with a %@." = "Если сеть изменена на %@, поле адреса должно быть заполнено %@.";
