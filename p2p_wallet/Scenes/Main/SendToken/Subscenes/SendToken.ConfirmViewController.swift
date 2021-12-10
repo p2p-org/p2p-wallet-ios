@@ -43,6 +43,7 @@ extension SendToken {
         private lazy var receiveSection = SectionView(title: L10n.receive)
         private lazy var transferFeeSection = SectionView(title: L10n.transferFee)
         private lazy var freeFeeInfoButton = UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
+            .onTap(self, action: #selector(freeFeeInfoButtonDidTouch))
         private lazy var totalSection = SectionView(title: L10n.total)
         
         private lazy var tokenToFiatSection = SectionView(title: "<1 renBTC>")
@@ -299,6 +300,16 @@ extension SendToken {
         
         @objc private func networkViewDidTouch() {
             viewModel.navigate(to: .chooseNetwork)
+        }
+        
+        @objc private func freeFeeInfoButtonDidTouch() {
+            showAlert(
+                title: L10n.thereAreFreeTransactionsLeftForToday(100),
+                message: L10n.OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee,
+                buttonTitles: [L10n.ok],
+                highlightedButtonIndex: 0,
+                completion: nil
+            )
         }
         
         @objc private func actionButtonDidTouch() {
