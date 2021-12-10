@@ -26,7 +26,7 @@ extension NewOrcaSwap {
 
         private func configureSelf() {
             backButton.onTap(self, action: #selector(back))
-            titleLabel.text = L10n.enterYourSecurityKey
+            titleLabel.text = L10n.swap
             let settingsButton = UIButton(width: 24, height: 24)
             settingsButton.setImage(.settings, for: .normal)
             settingsButton.addTarget(self, action: #selector(settings), for: .touchUpInside)

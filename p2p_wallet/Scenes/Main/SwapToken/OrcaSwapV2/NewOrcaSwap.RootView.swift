@@ -107,9 +107,15 @@ extension NewOrcaSwap {
                 .disposed(by: disposeBag)
 
             viewModel.isShowingDetailsDriver
-                .drive(onNext: { [weak self] isShowing in
+                .drive { [weak self] isShowing in
                     self?.detailsView.isHidden = !isShowing
-                })
+                }
+                .disposed(by: disposeBag)
+
+            viewModel.isShowingShowDetailsButtonDriver
+                .drive { [weak self] isShowing in
+                    self?.showDetailsButton.isHidden = !isShowing
+                }
                 .disposed(by: disposeBag)
 
             showDetailsButton.rx.tap
@@ -119,8 +125,84 @@ extension NewOrcaSwap {
             viewModel.errorDriver.map {$0 == nil}
                 .drive(nextButton.rx.isEnabled)
                 .disposed(by: disposeBag)
+
+            Driver.combineLatest(
+                viewModel.errorDriver,
+                viewModel.sourceWalletDriver.map { $0?.token.symbol }
+            )
+                .drive { [weak self] in
+                    self?.setError(error: $0, sourceSymbol: $1)
+                }
+                .disposed(by: disposeBag)
         }
 
+        private func setError(error: OrcaSwapV2.VerificationError?, sourceSymbol: String?) {
+            let text: String
+            let image: UIImage?
+
+            switch error {
+            case .swappingIsNotAvailable:
+                text = L10n.swappingIsCurrentlyUnavailable
+                image = nil
+            case .sourceWalletIsEmpty:
+                text = L10n.chooseSourceWallet
+                image = nil
+            case .destinationWalletIsEmpty:
+                text = L10n.chooseDestinationWallet
+                image = nil
+            case .canNotSwapToItSelf:
+                text = L10n.chooseAnotherDestinationWallet
+                image = nil
+            case .tradablePoolsPairsNotLoaded:
+                text = L10n.loading
+                image = nil
+            case .tradingPairNotSupported:
+                text = L10n.thisTradingPairIsNotSupported
+                image = nil
+            case .feesIsBeingCalculated:
+                text = L10n.calculatingFees
+                image = nil
+            case .couldNotCalculatingFees:
+                text = L10n.couldNotCalculatingFees
+                image = nil
+            case .inputAmountIsEmpty:
+                text = L10n.enterTheAmount
+                image = nil
+            case .inputAmountIsNotValid:
+                text = L10n.inputAmountIsNotValid
+                image = nil
+            case .insufficientFunds:
+                text = L10n.insufficientFunds
+                image = nil
+            case .estimatedAmountIsNotValid:
+                text = L10n.amountIsTooSmall
+                image = nil
+            case .bestPoolsPairsIsEmpty:
+                text = L10n.thisTradingPairIsNotSupported
+                image = nil
+            case .slippageIsNotValid:
+                text = L10n.chooseAnotherSlippage
+                image = nil
+            case .nativeWalletNotFound:
+                text = L10n.couldNotConnectToWallet
+                image = nil
+            case .notEnoughSOLToCoverFees:
+                text = L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
+                image = nil
+            case .notEnoughBalanceToCoverFees:
+                text = L10n.yourAccountDoesNotHaveEnoughToCoverFees(sourceSymbol ?? "")
+                image = nil
+            case .unknown:
+                text = L10n.unknownError
+                image = nil
+            case .none:
+                text = L10n.reviewAndConfirm
+                image = .check
+            }
+
+            nextButton.setTitle(text: text)
+            nextButton.setImage(image: image, imageSize: CGSize(width: 15, height: 10))
+        }
         @objc
         private func buttonNextDidTouch() {
             viewModel.authenticateAndSwap()

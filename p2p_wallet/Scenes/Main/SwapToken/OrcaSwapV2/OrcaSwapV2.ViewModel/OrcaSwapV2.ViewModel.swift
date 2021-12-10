@@ -163,10 +163,9 @@ extension OrcaSwapV2 {
 
             Observable.combineLatest(
                 sourceWalletSubject,
-                destinationWalletSubject,
-                payingTokenSubject
+                destinationWalletSubject
             )
-                .subscribe(onNext: { [weak self] source, destination, payingToken in
+                .subscribe(onNext: { [weak self] source, destination in
                     var symbols = [String]()
                     if let source = source { symbols.append(source.token.symbol) }
                     if let destination = destination { symbols.append(destination.token.symbol) }
@@ -454,7 +453,23 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     var isShowingDetailsDriver: Driver<Bool> {
-        isShowingDetailsSubject.asDriver()
+        Driver.combineLatest(
+            isShowingDetailsSubject.asDriver(),
+            isShowingShowDetailsButtonDriver
+        )
+            .map {
+                $0 && $1
+            }
+    }
+
+    var isShowingShowDetailsButtonDriver: Driver<Bool> {
+        Driver.combineLatest(
+            sourceWalletDriver,
+            destinationWalletDriver
+        )
+            .map {
+                $0 != nil && $1 != nil
+            }
     }
     
     // MARK: - Actions

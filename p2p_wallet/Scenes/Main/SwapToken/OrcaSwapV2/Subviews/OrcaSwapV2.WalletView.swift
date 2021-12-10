@@ -214,7 +214,7 @@ extension OrcaSwapV2 {
         
         private func setUp(wallet: Wallet?) {
             amountTextField.setUp(decimals: wallet?.token.decimals)
-            iconImageView.setUp(token: wallet?.token, placeholder: .walletPlaceholder)
+            iconImageView.setUp(token: wallet?.token, placeholder: .tokenIconPlaceholder)
             tokenSymbolLabel.text = wallet?.token.symbol ?? L10n.select
             
             self.wallet = wallet
