@@ -32,6 +32,27 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 clearButton
             }
             bind()
+            
+            if viewModel.getCurrentInputState() == .searching {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    guard let self = self else {return}
+                    self.textField.becomeFirstResponder()
+                    #if DEBUG
+                    var didTake = false
+                    self.viewModel.walletDriver
+                        .drive(onNext: { [weak self] in
+                            guard !didTake else {return}
+                            didTake = true
+                            if $0?.token.isRenBTC == true {
+                                self?.viewModel.search("tb1ql7w62elx9ucw4pj5lgw4l028hmuw80sndtntxt")
+                            } else {
+                                self?.viewModel.search("chu")
+                            }
+                        })
+                        .disposed(by: self.disposeBag)
+                    #endif
+                }
+            }
         }
         
         required init(coder: NSCoder) {
@@ -39,13 +60,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         
         // MARK: - Methods
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                self?.textField.becomeFirstResponder()
-            }
-        }
-        
         private func bind() {
             textField.rx.text
                 .distinctUntilChanged()
@@ -84,7 +98,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 spellCheckingType: .no
             )
             textField.attributedPlaceholder = NSAttributedString(
-                string: L10n.p2PUsernameSOLAddress,
+                string: L10n.usernameOrAddress,
                 attributes: [
                     .foregroundColor: UIColor.a3a5ba.onDarkMode(.h5887ff),
                     .font: UIFont.systemFont(ofSize: 15, weight: .medium)

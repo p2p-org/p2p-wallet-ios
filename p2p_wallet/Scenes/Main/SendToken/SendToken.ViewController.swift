@@ -26,17 +26,12 @@ extension SendToken {
         private let scenesFactory: SendTokenScenesFactory
         
         // MARK: - Properties
-        private let childNavigationController: BENavigationController
+        private var childNavigationController: BENavigationController!
         
         // MARK: - Initializer
         init(viewModel: SendTokenViewModelType, scenesFactory: SendTokenScenesFactory) {
             self.viewModel = viewModel
             self.scenesFactory = scenesFactory
-            
-            // init with ChooseTokenAndAmountVC
-            let vm = viewModel.createChooseTokenAndAmountViewModel()
-            let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
-            self.childNavigationController = BENavigationController(rootViewController: vc)
             
             super.init()
         }
@@ -44,7 +39,7 @@ extension SendToken {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            add(child: childNavigationController)
+            
         }
         
         override func bind() {
@@ -60,10 +55,27 @@ extension SendToken {
             switch scene {
             case .back:
                 back()
-            case .chooseTokenAndAmount:
-                break
-            case .chooseRecipientAndNetwork:
-                let vm = viewModel.createChooseRecipientAndNetworkViewModel()
+            case .chooseTokenAndAmount(let showAfterConfirmation):
+                let vm = ChooseTokenAndAmount.ViewModel(
+                    sendTokenViewModel: viewModel,
+                    initialAmount: viewModel.getSelectedAmount(),
+                    showAfterConfirmation: showAfterConfirmation,
+                    selectedNetwork: viewModel.getSelectedNetwork()
+                )
+                let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
+                
+                if showAfterConfirmation {
+                    childNavigationController.pushViewController(vc, animated: true)
+                } else {
+                    childNavigationController = BENavigationController(rootViewController: vc)
+                    add(child: childNavigationController)
+                }
+            case .chooseRecipientAndNetwork(let showAfterConfirmation, let preSelectedNetwork):
+                let vm = ChooseRecipientAndNetwork.ViewModel(
+                    sendTokenViewModel: viewModel,
+                    showAfterConfirmation: showAfterConfirmation,
+                    preSelectedNetwork: preSelectedNetwork
+                )
                 let vc = ChooseRecipientAndNetwork.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)
             case .confirmation:
@@ -72,7 +84,10 @@ extension SendToken {
             case .processTransaction(let request, let transactionType):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
                 vc.delegate = self
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
+            case .chooseNetwork:
+                let vc = SelectNetwork.ViewController(viewModel: viewModel)
+                childNavigationController.pushViewController(vc, animated: true)
             }
         }
     }
