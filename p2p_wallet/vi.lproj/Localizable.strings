@@ -350,7 +350,7 @@
 "deprecated" = "đã lỗi thời";
 "Will be paid by p2p.org\nWe take care of all transfers costs." = "Sẽ do p2p.org thanh toán\nChúng tôi sẽ lo mọi chi phí chuyển tiền.";
 "Great!" = "Tuyệt quá!";
-"Paid by p2p.org" = "Đã thanh toán bởi p2p.org";
+"Paid by p2p.org" = "Thanh toán bởi p2p.org";
 "Connection rate limits exceeded" = "Vượt quá giới hạn tốc độ kết nối";
 "Could not retrieve balances for this tokens pair. Please try selecting again!" = "Không thể truy xuất số dư cho cặp tokens này. Vui lòng thử chọn lại!";
 "Scan or copy QR code" = "Quét hoặc sao chép mã QR";
@@ -639,7 +639,7 @@
 "Send %@ %@" = "Gửi %@ %@";
 "%@ Network" = "Mạng %@";
 "Choose the network" = "Chọn mạng";
-"P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet sẽ tự động khớp địa chỉ mục tiêu rút tiền của bạn với mạng chính xác cho hầu hết các lần rút tiền.\n\nTuy nhiên, trước khi gửi tiền, hãy đảm bảo kiểm tra kỹ mạng đã chọn.";
+"P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet sẽ tự động khớp địa chỉ gửi token của bạn với đúng mạng cho hầu hết các lần gửi tiền.\n\nTuy nhiên, trước khi gửi token, hãy đảm bảo kiểm tra kỹ mạng đã chọn.";
 "Paid by p2p" = "Thanh toán bởi p2p";
 "Choose the recipient to proceed" = "Chọn người nhận để tiếp tục";
 "Review and confirm" = "Xem lại & xác nhận";
@@ -650,3 +650,13 @@
 "1 %@ Price" = "1 %@ Giá";
 "Pay swap fees with" = "Thanh toán phí hoán đổi với";
 "Total fee" = "Tổng phí";
+"Change the token?" = "Thay đổi mã thông báo?";
+"If the token is changed to %@, the address field must be filled in with a %@." = "Nếu đổi token thành %@, địa chỉ phải được điền bằng %@.";
+"%@-compatible address" = "một địa chỉ tương thích với %@";
+"Discard" = "Bỏ qua";
+"Change" = "Thay đổi";
+"username or address" = "tên người dùng / địa chỉ";
+"Change the network?" = "Thay đổi mạng?";
+"If the network is changed to %@, the address field must be filled in with a %@." = "Nếu mạng được thay đổi thành %@, trường địa chỉ phải được điền bằng %@.";
+"There are %@ free transactions left for today" = "Còn lại %@ giao dịch miễn phí cho ngày hôm nay";
+"On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "Trên mạng Solana, 100 giao dịch đầu tiên trong ngày được thanh toán bởi P2P.org. Các giao dịch tiếp theo sẽ được tính phí dựa trên phí gas của Solana blockchain.";

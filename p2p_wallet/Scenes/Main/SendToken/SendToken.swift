@@ -12,8 +12,11 @@ import RxCocoa
 struct SendToken {
     enum NavigatableScene {
         case back
-        case chooseTokenAndAmount
-        case chooseRecipientAndNetwork
+        case chooseTokenAndAmount(showAfterConfirmation: Bool)
+        
+        case chooseRecipientAndNetwork(showAfterConfirmation: Bool, preSelectedNetwork: Network?)
+        case chooseNetwork
+        
         case confirmation
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
     }
@@ -42,18 +45,42 @@ struct SendToken {
                 return .squircleBitcoinIcon
             }
         }
-        var defaultFee: Fee {
+        var defaultFees: [Fee] {
             switch self {
             case .solana:
-                return .init(amount: 0, unit: Defaults.fiat.symbol)
+                return [.init(amount: 0, unit: Defaults.fiat.symbol)]
             case .bitcoin:
-                return .init(amount: 0.0002, unit: "renBTC")
+                return [.init(amount: 0.0002, unit: "renBTC"), .init(amount: 0.0002, unit: "SOL")]
             }
         }
     }
     
     struct Fee {
-        let amount: Double
+        var amount: Double
         let unit: String
+    }
+}
+
+extension Array where Element == SendToken.Fee {
+    func attributedString(
+        prices: [String: Double],
+        textSize: CGFloat = 15,
+        tokenColor: UIColor = .textBlack,
+        fiatColor: UIColor = .textSecondary,
+        attributedSeparator: NSAttributedString = NSAttributedString(string: "\n")
+    ) -> NSMutableAttributedString {
+        let attributedText = NSMutableAttributedString()
+        
+        for (index, fee) in self.enumerated() {
+            let amountInUSD = fee.amount * prices[fee.unit]
+            attributedText
+                .text("\(fee.amount.toString(maximumFractionDigits: 9)) \(fee.unit)", size: textSize, color: tokenColor)
+                .text(" (~\(Defaults.fiat.symbol)\(amountInUSD.toString(maximumFractionDigits: 2)))", size: textSize, color: fiatColor)
+            if index < count - 1 {
+                attributedText
+                    .append(attributedSeparator)
+            }
+        }
+        return attributedText
     }
 }

@@ -650,3 +650,13 @@
 "1 %@ Price" = "1 %@ Prix";
 "Pay swap fees with" = "Payez les frais de swap avec";
 "Total fee" = "Montant total";
+"Change the token?" = "Changer le jeton ?";
+"If the token is changed to %@, the address field must be filled in with a %@." = "Si le jeton est changé en %@, le champ d'adresse doit être rempli avec un %@.";
+"%@-compatible address" = "Adresse compatible %@";
+"Discard" = "Jeter";
+"Change" = "Changer";
+"username or address" = "nom d'utilisateur / adresse";
+"Change the network?" = "Changer de réseau ?";
+"If the network is changed to %@, the address field must be filled in with a %@." = "Si le réseau est changé en %@, le champ d'adresse doit être rempli avec un %@.";
+"There are %@ free transactions left for today" = "Il reste %@ transactions gratuites pour aujourd'hui";
+"On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "Sur le réseau Solana, les 100 premières transactions d'une journée sont payées par P2P.org. Les transactions ultérieures seront facturées sur la base des frais de gaz de la blockchain Solana.";

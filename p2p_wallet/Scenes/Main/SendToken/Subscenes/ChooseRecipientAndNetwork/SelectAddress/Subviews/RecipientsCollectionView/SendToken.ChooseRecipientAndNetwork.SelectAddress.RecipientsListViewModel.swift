@@ -14,6 +14,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Dependencies
         @Injected private var nameService: NameServiceType
         var solanaAPIClient: SendTokenAPIClient!
+        var preSelectedNetwork: SendToken.Network!
         
         // MARK: - Properties
         var searchString: String?
@@ -27,7 +28,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         override func createRequest() -> Single<[SendToken.Recipient]> {
             guard let searchString = searchString, !searchString.isEmpty else { return .just([]) }
 
-            return isSearchingByAddress
+            // force find by address when network is bitcoin
+            return preSelectedNetwork == .bitcoin || isSearchingByAddress
                 ? findRecipientBy(address: searchString)
                 : findRecipientsBy(name: searchString)
         }
@@ -47,10 +49,31 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         private func findRecipientBy(address: String) -> Single<[SendToken.Recipient]> {
+            switch preSelectedNetwork {
+            case .bitcoin:
+                return findAddressInBitcoinNetwork(address: address)
+            case .solana:
+                return findAddressInSolanaNetwork(address: address)
+            case .none:
+                if address.matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()))
+                {
+                    return findAddressInBitcoinNetwork(address: address)
+                } else {
+                    return findAddressInSolanaNetwork(address: address)
+                }
+            }
+        }
+        
+        private func findAddressInBitcoinNetwork(address: String) -> Single<[SendToken.Recipient]> {
             if address.matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet())) {
                 return .just([.init(address: address, name: nil, hasNoFunds: false)])
+            } else {
+                return .just([])
             }
-            return nameService
+        }
+        
+        private func findAddressInSolanaNetwork(address: String) -> Single<[SendToken.Recipient]> {
+            nameService
                 .getName(address)
                 .flatMap {[weak self] name -> Single<(String?, Bool)> in
                     guard let self = self, name == nil else {return .just((name, false))}

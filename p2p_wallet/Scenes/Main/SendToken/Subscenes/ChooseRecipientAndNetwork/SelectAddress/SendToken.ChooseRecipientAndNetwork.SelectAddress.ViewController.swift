@@ -52,9 +52,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
                 vc.modalPresentationStyle = .custom
                 present(vc, animated: true, completion: nil)
-            case .chooseNetwork:
-                let vc = SelectNetworkViewController(viewModel: viewModel)
-                show(vc, sender: nil)
             }
         }
     }

@@ -10,26 +10,29 @@ import RxSwift
 import RxCocoa
 
 protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
+    var showAfterConfirmation: Bool {get}
+    var preSelectedNetwork: SendToken.Network? {get}
     var recipientsListViewModel: SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel {get}
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?> {get}
     var inputStateDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState> {get}
     var searchTextDriver: Driver<String?> {get}
+    var walletDriver: Driver<Wallet?> {get}
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
-    var feeDriver: Driver<SendToken.Fee> {get}
     var isValidDriver: Driver<Bool> {get}
     
+    func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState
+    func getCurrentSearchKey() -> String?
+    func getPrice(for symbol: String) -> Double
+    func getSOLAndRenBTCPrices() -> [String: Double]
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
+    func navigateToChoosingNetworkScene()
     
     func userDidTapPaste()
     func search(_ address: String?)
     
     func selectRecipient(_ recipient: SendToken.Recipient)
     func clearRecipient()
-    
-    func getSelectableNetwork() -> [SendToken.Network]
-    func selectNetwork(_ network: SendToken.Network)
-    func getRenBTCPrice() -> Double
     
     func next()
 }
@@ -43,48 +46,40 @@ extension SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class ViewModel {
         // MARK: - Dependencies
-        var solanaAPIClient: SendTokenAPIClient! {
-            didSet {
-                recipientsListViewModel.solanaAPIClient = solanaAPIClient
-            }
-        }
-        var pricesService: PricesServiceType!
-        var wallet: SolanaSDK.Wallet!
-        var completion: ((SendToken.Recipient, SendToken.Network) -> Void)?
+        private let chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         let recipientsListViewModel = RecipientsListViewModel()
+        let showAfterConfirmation: Bool
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let inputStateSubject = BehaviorRelay<InputState>(value: .searching)
         private let searchTextSubject = BehaviorRelay<String?>(value: nil)
-        private let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
-        private let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
-        private let feeSubject = BehaviorRelay<SendToken.Fee>(value: SendToken.Network.solana.defaultFee)
         
-        init() {
-            bind()
-        }
-        
-        private func bind() {
-            networkSubject
-                .skip(1)
-                .subscribe(onNext: {[weak self] network in
-                    switch network {
-                    case .solana:
-                        self?.feeSubject.accept(.init(amount: 0, unit: Defaults.fiat.symbol))
-                    case .bitcoin:
-                        self?.feeSubject.accept(.init(amount: 0.0002, unit: "renBTC"))
-                    }
-                })
-                .disposed(by: disposeBag)
+        init(chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType, showAfterConfirmation: Bool) {
+            self.chooseRecipientAndNetworkViewModel = chooseRecipientAndNetworkViewModel
+            self.showAfterConfirmation = showAfterConfirmation
+            recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getAPIClient()
+            recipientsListViewModel.preSelectedNetwork = preSelectedNetwork
+            
+            if chooseRecipientAndNetworkViewModel.getSelectedRecipient() != nil {
+                if showAfterConfirmation {
+                    inputStateSubject.accept(.recipientSelected)
+                } else {
+                    clearRecipient()
+                }
+            }
         }
     }
 }
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
+    var preSelectedNetwork: SendToken.Network? {
+        chooseRecipientAndNetworkViewModel.preSelectedNetwork
+    }
+    
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?> {
         navigationSubject.asDriver()
     }
@@ -97,26 +92,46 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         searchTextSubject.asDriver()
     }
     
+    var walletDriver: Driver<Wallet?> {
+        chooseRecipientAndNetworkViewModel.walletDriver
+    }
+    
     var recipientDriver: Driver<SendToken.Recipient?> {
-        recipientSubject.asDriver()
+        chooseRecipientAndNetworkViewModel.recipientDriver
     }
     
     var networkDriver: Driver<SendToken.Network> {
-        networkSubject.asDriver()
-    }
-    
-    var feeDriver: Driver<SendToken.Fee> {
-        feeSubject.asDriver()
+        chooseRecipientAndNetworkViewModel.networkDriver
     }
     
     var isValidDriver: Driver<Bool> {
-        recipientSubject.map {$0 != nil}
-            .asDriver(onErrorJustReturn: false)
+        chooseRecipientAndNetworkViewModel.recipientDriver.map {$0 != nil}
+    }
+    
+    func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState {
+        inputStateSubject.value
+    }
+    
+    func getCurrentSearchKey() -> String? {
+        searchTextSubject.value
+    }
+    
+    func getPrice(for symbol: String) -> Double {
+        chooseRecipientAndNetworkViewModel.getPrice(for: symbol)
+    }
+    
+    func getSOLAndRenBTCPrices() -> [String: Double] {
+        chooseRecipientAndNetworkViewModel.getSOLAndRenBTCPrices()
     }
     
     // MARK: - Actions
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene) {
         navigationSubject.accept(scene)
+    }
+    
+    func navigateToChoosingNetworkScene() {
+        // forward request to chooseRecipientAndNetworkViewModel
+        chooseRecipientAndNetworkViewModel.navigate(to: .chooseNetwork)
     }
     
     func userDidTapPaste() {
@@ -132,50 +147,17 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     func selectRecipient(_ recipient: SendToken.Recipient) {
-        recipientSubject.accept(recipient)
+        chooseRecipientAndNetworkViewModel.selectRecipient(recipient)
         inputStateSubject.accept(.recipientSelected)
-        
-        if isRecipientBTCAddress() {
-            networkSubject.accept(.bitcoin)
-        } else {
-            networkSubject.accept(.solana)
-        }
     }
     
     func clearRecipient() {
         inputStateSubject.accept(.searching)
-        recipientSubject.accept(nil)
-    }
-    
-    func getSelectableNetwork() -> [SendToken.Network] {
-        var networks: [SendToken.Network] = [.solana]
-        if isRecipientBTCAddress() {
-            networks.append(.bitcoin)
-        }
-        return networks
-    }
-    
-    func selectNetwork(_ network: SendToken.Network) {
-        if !wallet.token.isRenBTC {
-            networkSubject.accept(.solana)
-        }
-        networkSubject.accept(network)
-    }
-    
-    func getRenBTCPrice() -> Double {
-        pricesService.currentPrice(for: "renBTC")?.value ?? 0
-    }
-    
-    private func isRecipientBTCAddress() -> Bool {
-        guard let recipient = recipientSubject.value else {return false}
-        return recipient.name == nil &&
-            recipient.address
-                .matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()))
+        chooseRecipientAndNetworkViewModel.selectRecipient(nil)
     }
     
     func next() {
-        let network = networkSubject.value
-        guard let recipient = recipientSubject.value else {return}
-        completion?(recipient, network)
+        chooseRecipientAndNetworkViewModel.save()
+        chooseRecipientAndNetworkViewModel.navigateNext()
     }
 }

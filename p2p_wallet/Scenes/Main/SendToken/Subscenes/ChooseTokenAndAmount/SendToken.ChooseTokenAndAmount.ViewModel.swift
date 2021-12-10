@@ -8,24 +8,26 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import SolanaSwift
 
-protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler {
-    var isLoadingDriver: Driver<Bool> {get}
+protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, SendTokenTokenAndAmountHandler {
+    var initialAmount: Double? {get}
+    
     var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> {get}
-    var walletDriver: Driver<Wallet?> {get}
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {get}
-    var amountDriver: Driver<Double?> {get}
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> {get}
+    var showAfterConfirmation: Bool {get}
+    var selectedNetwork: SendToken.Network? {get}
     
     func navigate(to scene: SendToken.ChooseTokenAndAmount.NavigatableScene)
-    func back()
+    func cancelSending()
     func toggleCurrencyMode()
-    func enterAmount(_ amount: Double?)
-    func chooseWallet(_ wallet: Wallet)
     
     func calculateAvailableAmount() -> Double?
     
-    func next()
+    func isTokenValidForSelectedNetwork() -> Bool
+    func save()
+    func navigateNext()
 }
 
 extension SendTokenChooseTokenAndAmountViewModelType {
@@ -38,68 +40,57 @@ extension SendToken.ChooseTokenAndAmount {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var analyticsManager: AnalyticsManagerType
-        private let repository: WalletsRepository
+        private let sendTokenViewModel: SendTokenViewModelType
         
         // MARK: - Properties
-        private let initialWalletPubkey: String?
         private let disposeBag = DisposeBag()
-        
-        // MARK: - Callback
-        var onGoBack: (() -> Void)?
-        var onSelect: ((String, SolanaSDK.Lamports) -> Void)?
+        let showAfterConfirmation: Bool
+        let initialAmount: Double?
+        let selectedNetwork: SendToken.Network?
         
         // MARK: - Subject
-        private let isLoadingSubject = BehaviorRelay<Bool>(value: true)
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
-        private let amountSubject = BehaviorRelay<Double?>(value: nil)
+        let walletSubject = BehaviorRelay<Wallet?>(value: nil)
+        let amountSubject = BehaviorRelay<Double?>(value: nil)
         
         // MARK: - Initializer
         init(
-            repository: WalletsRepository,
-            walletPubkey: String?
+            sendTokenViewModel: SendTokenViewModelType,
+            initialAmount: Double? = nil,
+            showAfterConfirmation: Bool = false,
+            selectedNetwork: SendToken.Network?
         ) {
-            self.repository = repository
-            self.initialWalletPubkey = walletPubkey
-            
+            self.sendTokenViewModel = sendTokenViewModel
+            self.initialAmount = initialAmount
+            self.showAfterConfirmation = showAfterConfirmation
+            self.selectedNetwork = selectedNetwork
             bind()
-            
-            // accept initial values
-            if let pubkey = initialWalletPubkey {
-                walletSubject.accept(repository.getWallets().first(where: {$0.pubkey == pubkey}))
-            } else {
-                walletSubject.accept(repository.nativeWallet)
-            }
         }
         
         private func bind() {
             #if DEBUG
             amountSubject.subscribe(onNext: {print($0 ?? 0)}).disposed(by: disposeBag)
             #endif
+            
+            sendTokenViewModel.walletDriver
+                .drive(walletSubject)
+                .disposed(by: disposeBag)
+            
+            sendTokenViewModel.amountDriver
+                .drive(amountSubject)
+                .disposed(by: disposeBag)
         }
     }
 }
 
 extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmountViewModelType {
-    var isLoadingDriver: Driver<Bool> {
-        isLoadingSubject.asDriver()
-    }
-    
     var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> {
         navigationSubject.asDriver()
     }
     
-    var walletDriver: Driver<Wallet?> {
-        walletSubject.asDriver()
-    }
-    
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {
         currencyModeSubject.asDriver()
-    }
-    
-    var amountDriver: Driver<Double?> {
-        amountSubject.asDriver()
     }
     
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> {
@@ -121,8 +112,8 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         navigationSubject.accept(scene)
     }
     
-    func back() {
-        onGoBack?()
+    func cancelSending() {
+        sendTokenViewModel.navigate(to: .back)
     }
     
     func toggleCurrencyMode() {
@@ -131,17 +122,6 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         } else {
             currencyModeSubject.accept(.token)
         }
-    }
-    
-    func enterAmount(_ amount: Double?) {
-        amountSubject.accept(amount)
-    }
-    
-    func chooseWallet(_ wallet: Wallet) {
-        analyticsManager.log(
-            event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
-        )
-        walletSubject.accept(wallet)
     }
     
     func calculateAvailableAmount() -> Double? {
@@ -162,10 +142,17 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         return availableAmount > 0 ? availableAmount: 0
     }
     
-    func next() {
+    func isTokenValidForSelectedNetwork() -> Bool {
+        let isValid = selectedNetwork != .bitcoin || walletSubject.value?.token.isRenBTC == true
+        if !isValid && showAfterConfirmation {
+            navigationSubject.accept(.invalidTokenForSelectedNetworkAlert)
+        }
+        return isValid
+    }
+    
+    func save() {
         guard let wallet = walletSubject.value,
               let totalLamports = wallet.lamports,
-              let pubkey = walletSubject.value?.pubkey,
               var amount = amountSubject.value
         else {return}
         
@@ -180,6 +167,11 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
             lamports = totalLamports
         }
         
-        onSelect?(pubkey, lamports)
+        sendTokenViewModel.chooseWallet(wallet)
+        sendTokenViewModel.enterAmount(lamports.convertToBalance(decimals: wallet.token.decimals))
+    }
+    
+    func navigateNext() {
+        sendTokenViewModel.navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: showAfterConfirmation, preSelectedNetwork: nil))
     }
 }
