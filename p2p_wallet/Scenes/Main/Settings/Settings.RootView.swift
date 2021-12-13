@@ -238,7 +238,7 @@ private func createCell(image: UIImage?, text: String, descriptionView: UIView? 
     }
     if showRightArrow {
         stackView.addArrangedSubview(
-            UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .black.onDarkMode(.h8d8d8d))
+            UIView.defaultNextArrow()
         )
     }
     return stackView

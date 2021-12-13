@@ -62,3 +62,8 @@ custom_rules:
     regex: 'NSLocalizedString'
     message: "Use L10n.key instead"
     severity: error
+  next_arrow:
+    name: "Next arrow"
+    regex: 'image: \.nextArrow'
+    message: "Use UIView.defaultNextArrow() instead"
+    severity: warning

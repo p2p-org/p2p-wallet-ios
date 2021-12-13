@@ -98,9 +98,7 @@ extension UIView {
         title: String? = nil,
         label: UIView? = nil,
         contentView: UIView,
-        rightView: UIView? = UIImageView(width: 6, height: 12, image: .nextArrow, tintColor: .h8b94a9.onDarkMode(.white)
-        )
-            .padding(.init(x: 9, y: 6)),
+        rightView: UIView? = .defaultNextArrow().padding(.init(x: 9 - 2.5, y: 6 - 2.5)),
         addSeparatorOnTop: Bool = true
     ) -> UIStackView {
         let stackView = UIStackView(axis: .horizontal, spacing: 5, alignment: .center, distribution: .fill) {
@@ -146,7 +144,15 @@ extension UIView {
     }
     
     static func defaultNextArrow() -> UIView {
-        UIImageView(width: 6, height: 12, image: .nextArrow, tintColor: .h8b94a9.onDarkMode(.white))
+        // swiftlint:disable next_arrow
+        UIImageView(
+            width: 9,
+            height: 16,
+            image: .nextArrow,
+            tintColor: .h8b94a9.onDarkMode(.white)
+        )
+            .padding(.init(all: 2.5))
+        // swiftlint:enable next_arrow
     }
 }
 
