@@ -202,7 +202,7 @@ extension NewOrcaSwap {
             }
 
             nextButton.setTitle(text: text)
-            nextButton.setImage(image: image, imageSize: CGSize(width: 15, height: 10))
+            nextButton.setImage(image: image)
         }
         @objc
         private func buttonNextDidTouch() {
