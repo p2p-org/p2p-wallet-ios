@@ -36,6 +36,12 @@ extension VerifySecurityKeys {
             super.commonInit()
             layout()
             bind()
+            
+            #if DEBUG
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
+                self?.viewModel.autoAnswerToAllQuestions()
+            }
+            #endif
         }
         
         override func didMoveToWindow() {

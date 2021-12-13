@@ -18,6 +18,10 @@ protocol VerifySecurityKeysViewModelType {
     func answer(question: VerifySecurityKeys.Question, answer: String)
     func back()
     func verify()
+    
+    #if DEBUG
+    func autoAnswerToAllQuestions()
+    #endif
 }
 
 extension VerifySecurityKeys {
@@ -93,6 +97,14 @@ extension VerifySecurityKeys.ViewModel: VerifySecurityKeysViewModelType {
     func back() {
         createWalletViewModel.back()
     }
+    
+    #if DEBUG
+    func autoAnswerToAllQuestions() {
+        for question in questionsSubject.value {
+            answer(question: question, answer: keyPhrase[question.index])
+        }
+    }
+    #endif
 }
 
 private extension Array where Element: Equatable {
