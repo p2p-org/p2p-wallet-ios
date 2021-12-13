@@ -126,7 +126,7 @@ extension VerifySecurityKeys {
         private func update() {
             guard let question = question else { return }
             
-            title.text = "Select word #\(question.index + 1)"
+            title.text = L10n.selectWord(question.index + 1)
             
             questionsRow.removeAllArrangedSubviews()
             questionsRow.addArrangedSubviews {
