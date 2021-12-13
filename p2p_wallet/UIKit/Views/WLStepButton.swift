@@ -140,10 +140,12 @@ class WLStepButton: BEView {
     
     // MARK: - Methods
 
-    func setImage(image: UIImage?, imageSize: CGSize) {
+    func setImage(image: UIImage?, imageSize: CGSize? = nil) {
         if let image = image {
             imageView.isHidden = false
-            imageView.autoSetDimensions(to: imageSize)
+            if let imageSize = imageSize {
+                imageView.autoSetDimensions(to: imageSize)
+            }
             imageView.image = image
         } else {
             imageView.isHidden = true
