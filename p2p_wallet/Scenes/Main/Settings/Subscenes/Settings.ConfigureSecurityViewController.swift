@@ -29,7 +29,7 @@ extension Settings {
                         UILabel(text: L10n.pinCode, weight: .medium)
                         UILabel(text: L10n.defaultSecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0)
                     }
-                    UIImageView(width: 8, height: 13, image: .nextArrow, tintColor: .textBlack)
+                    UIView.defaultNextArrow()
                 }
                     .padding(.init(x: 20, y: 14), backgroundColor: .contentBackground)
                     .onTap(self, action: #selector(buttonChangePinCodeDidTouch))
