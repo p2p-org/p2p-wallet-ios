@@ -1,5 +1,5 @@
 //
-//  NewOrcaSwap.NavigationBar.swift
+//  OrcaSwapV2.NavigationBar.swift
 //  p2p_wallet
 //
 //  Created by Andrew Vasiliev on 30.11.2021.
