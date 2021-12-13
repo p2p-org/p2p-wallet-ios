@@ -50,6 +50,15 @@ extension EnterSeed {
             textView.placeholder = L10n.yourSecurityKey
             layout()
             bind()
+            
+            #if DEBUG
+            if let testAccount = String.secretConfig("TEST_ACCOUNT_SEED_PHRASE")?
+                .replacingOccurrences(of: "-", with: " ")
+            {
+                textView.set(text: testAccount)
+                viewModel.seedTextSubject.accept(testAccount)
+            }
+            #endif
         }
 
         func startTyping() {

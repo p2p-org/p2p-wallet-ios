@@ -37,7 +37,7 @@ extension SendToken.ChooseTokenAndAmount {
         }()
         private lazy var equityValueLabel = UILabel(text: "\(Defaults.fiat.symbol) 0", textSize: 13)
         private lazy var actionButton = WLStepButton.main(
-            image: viewModel.showAfterConfirmation ? .tick: nil,
+            image: viewModel.showAfterConfirmation ? .buttonCheckSmall: nil,
             text: viewModel.showAfterConfirmation ? L10n.reviewAndConfirm: L10n.chooseDestinationWallet
         )
             .onTap(self, action: #selector(actionButtonDidTouch))

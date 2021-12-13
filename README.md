@@ -34,6 +34,7 @@ AMPLITUDE_API_KEY = fake_api_key
 
 // MARK: - FeeRelayer
 FEE_RELAYER_ENDPOINT = fee-relayer.solana.p2p.org
+TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 ```
 
 #### Install dependencies (cocoapods)

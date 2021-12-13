@@ -660,3 +660,4 @@
 "If the network is changed to %@, the address field must be filled in with a %@." = "Nếu mạng được thay đổi thành %@, trường địa chỉ phải được điền bằng %@.";
 "There are %@ free transactions left for today" = "Còn lại %@ giao dịch miễn phí cho ngày hôm nay";
 "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "Trên mạng Solana, 100 giao dịch đầu tiên trong ngày được thanh toán bởi P2P.org. Các giao dịch tiếp theo sẽ được tính phí dựa trên phí gas của Solana blockchain.";
+"Select word #%@" = "Chọn từ #%@";

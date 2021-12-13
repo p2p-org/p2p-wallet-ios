@@ -3,7 +3,7 @@
 	url = git@github.com:p2p-org/solana-swift.git
 [submodule "BEPureLayout"]
 	path = BEPureLayout
-	url = https://github.com/bigearsenal/BEPureLayout.git
+	url = git@github.com:bigearsenal/BEPureLayout.git
 [submodule "LazySubject"]
 	path = LazySubject
 	url = git@github.com:bigearsenal/LazySubject.git
