@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension NewOrcaSwap {
+extension OrcaSwapV2 {
     final class NavigationBar: WLNavigationBar {
         private let backHandler: () -> Void
         private let settingsHandler: () -> Void
