@@ -59,9 +59,7 @@ extension OrcaSwapV2 {
         title: String? = nil,
         label: UIView? = nil,
         contentView: UIView?,
-        rightView: UIView? = UIImageView(width: 6, height: 12, image: .nextArrow, tintColor: .h8b94a9.onDarkMode(.white)
-        )
-            .padding(.init(x: 9, y: 6)),
+        rightView: UIView? = .defaultNextArrow(),
         addSeparatorOnTop: Bool = true
     ) -> UIStackView {
         let innerStackView = UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
