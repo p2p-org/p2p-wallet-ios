@@ -56,8 +56,7 @@ extension OrcaSwapV2 {
         }
 
         private func layout() {
-            axis = .horizontal
-            alignment = .top
+            set(axis: .horizontal, spacing: 8, alignment: .top)
 
             title.autoSetDimension(.height, toSize: 21)
             title.setContentHuggingPriority(.required, for: .horizontal)
@@ -69,40 +68,12 @@ extension OrcaSwapV2 {
         }
 
         private func createFeeLine(content: DetailedFeeContent) -> UIView {
-            let label = UILabel()
-
-            label.autoSetDimension(.height, toSize: 21)
-
-            let font: UIFont = .systemFont(ofSize: 15, weight: .regular)
-            let paragraph = NSMutableParagraphStyle()
-            paragraph.alignment = .right
-
-            let resultString = NSMutableAttributedString()
-            let priceString = NSAttributedString(
-                string: content.amount,
-                attributes: [
-                    .font: font,
-                    .foregroundColor: UIColor.darkText
-                ]
-            )
-
-            resultString.append(priceString)
-
-            let reasonString = NSAttributedString(
-                string: " (\(content.reason))",
-                attributes: [
-                    .font: font,
-                    .foregroundColor: UIColor.h8e8e93
-                ]
-            )
-
-            resultString.append(reasonString)
-            resultString.addAttributes(
-                [.paragraphStyle: paragraph],
-                range: .init(location: 0, length: resultString.length)
-            )
-
-            label.attributedText = resultString
+            let label = UILabel(text: nil, textSize: 15, numberOfLines: 0, textAlignment: .right)
+            
+            label.attributedText = NSMutableAttributedString()
+                .text(content.amount, size: 15, color: .textBlack)
+                .text(" (\(content.reason))", size: 15, color: .h8e8e93)
+                .withParagraphStyle(minimumLineHeight: 21, lineSpacing: 4, alignment: .right)
 
             return label
         }
