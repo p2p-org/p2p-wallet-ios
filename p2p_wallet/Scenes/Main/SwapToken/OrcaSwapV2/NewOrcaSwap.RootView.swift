@@ -34,7 +34,7 @@ extension NewOrcaSwap {
         // MARK: - Subviews
         private let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
         private let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill)
-        private lazy var nextButton = WLStepButton.main(image: .tick, text: L10n.reviewAndConfirm)
+        private lazy var nextButton = WLStepButton.main(image: .buttonCheckSmall, text: L10n.reviewAndConfirm)
             .onTap(self, action: #selector(buttonNextDidTouch))
 
         private let mainView: OrcaSwapV2.MainSwapView
@@ -198,7 +198,7 @@ extension NewOrcaSwap {
                 image = nil
             case .none:
                 text = L10n.reviewAndConfirm
-                image = .tick
+                image = .buttonCheckSmall
             }
 
             nextButton.setTitle(text: text)
