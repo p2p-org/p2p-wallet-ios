@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-struct ___VARIABLE_scene___ {
+enum ___VARIABLE_scene___ {
     enum NavigatableScene {
         case detail
     }
