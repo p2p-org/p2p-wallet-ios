@@ -15,45 +15,33 @@ protocol OrcaSwapV2ScenesFactory {
 }
 
 extension OrcaSwapV2 {
-    class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
+    class ViewController: BaseVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+
+        // MARK: - Dependencies
+        private let viewModel: OrcaSwapV2ViewModelType
+        private let scenesFactory: OrcaSwapV2ScenesFactory
+
         // MARK: - Properties
-        var transitionManager: UIViewControllerTransitioningDelegate?
-        let viewModel: OrcaSwapV2ViewModelType
-        let scenesFactory: OrcaSwapV2ScenesFactory
         
-        // MARK: - Subviews
-        lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
-            UIImageView(width: 24, height: 24, image: .walletSend, tintColor: .white)
-                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
-            UILabel(text: L10n.swap, textSize: 17, weight: .semibold),
-            UIImageView(width: 36, height: 36, image: .slippageSettings, tintColor: .iconSecondary)
-                .onTap(self, action: #selector(showSettings))
-        ])
-            .padding(.init(all: 20))
-        lazy var rootView = RootView(viewModel: viewModel)
-        
-        // MARK: - Initializer
+        // MARK: - Methods
         init(
             viewModel: OrcaSwapV2ViewModelType,
             scenesFactory: OrcaSwapV2ScenesFactory
         ) {
-            self.viewModel = viewModel
             self.scenesFactory = scenesFactory
-            super.init()
-            modalPresentationStyle = .custom
+            self.viewModel = viewModel
+        }
+
+        override func loadView() {
+            view = RootView(viewModel: viewModel)
         }
         
-        // MARK: - Methods
         override func setUp() {
             super.setUp()
-            let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
-                headerView
-                UIView.defaultSeparator()
-                rootView
-            }
             
-            containerView.addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges()
         }
         
         override func bind() {
@@ -61,71 +49,64 @@ extension OrcaSwapV2 {
             viewModel.navigationDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
-            
-            viewModel.isTokenPairValidDriver
-                .drive(onNext: {[weak self] _ in
-                    self?.updatePresentationLayout(animated: true)
-                })
-                .disposed(by: disposeBag)
         }
         
         // MARK: - Navigation
-        private func navigate(to scene: NavigatableScene?) {
+        private func navigate(to scene: OrcaSwapV2.NavigatableScene?) {
             switch scene {
+            case .settings:
+                let vc = OrcaSwapV2.SettingsViewController(viewModel: viewModel)
+                let nc = OrcaSwapV2.SettingsNavigationController(rootViewController: vc)
+                nc.modalPresentationStyle = .custom
+                present(nc, interactiveDismissalType: .standard)
             case .chooseSourceWallet:
                 let vc = scenesFactory.makeChooseWalletViewController(
-                    customFilter: {$0.amount > 0},
+                    customFilter: { $0.amount > 0 },
                     showOtherWallets: false,
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)
-            case .chooseDestinationWallet(let validMints, let sourceWalletPubkey):
+            case let .chooseDestinationWallet(
+                validMints: validMints,
+                excludedSourceWalletPubkey: excludedSourceWalletPubkey
+            ):
                 let vc = scenesFactory.makeChooseWalletViewController(
                     customFilter: {
-                        $0.pubkey != sourceWalletPubkey &&
+                        $0.pubkey != excludedSourceWalletPubkey &&
                             validMints.contains($0.mintAddress)
                     },
                     showOtherWallets: true,
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)
-            case .settings:
-                let vc = SettingsViewController(viewModel: viewModel)
-                let nc = SettingsNavigationController(rootViewController: vc)
-                nc.modalPresentationStyle = .custom
-                present(nc, interactiveDismissalType: .standard)
             case .chooseSlippage:
-                let vc = SlippageSettingsViewController()
+                let vc = OrcaSwapV2.SlippageSettingsViewController()
                 vc.completion = {[weak self] slippage in
                     self?.viewModel.changeSlippage(to: slippage / 100)
                 }
-                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+                present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+            case let .choosePayFeeToken(tokenName):
+                let vc = OrcaSwapV2.NetworkFeePayerSettingsViewController(transactionTokenName: tokenName ?? "")
+                vc.completion = { [weak self] method in
+                    Defaults.payingToken = method
+                    self?.viewModel.changePayingToken(to: method)
+                }
+
+                present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .swapFees:
-                let vc = SwapFeesViewController(viewModel: viewModel)
-                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
-            case .processTransaction(let request, let transactionType):
+                let vc = OrcaSwapV2.SwapFeesViewController(viewModel: viewModel)
+                present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+            case let .processTransaction(
+                request: request,
+                transactionType: transactionType
+            ):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
                 self.present(vc, animated: true, completion: nil)
-            default:
+            case .back:
+                navigationController?.popViewController(animated: true)
+            case .none:
                 break
             }
-        }
-        
-        // MARK: - Actions
-        @objc func showSettings() {
-            viewModel.navigate(to: .settings)
-        }
-        
-        // MARK: - Transitions
-        override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
-            super.calculateFittingHeightForPresentedView(targetWidth: targetWidth)
-                + headerView.fittingHeight(targetWidth: targetWidth)
-                + 1 // separator
-                + rootView.fittingHeight(targetWidth: targetWidth)
-        }
-        
-        override var scrollViewAvoidingTabBar: UIScrollView? {
-            rootView.scrollView
         }
     }
 }
