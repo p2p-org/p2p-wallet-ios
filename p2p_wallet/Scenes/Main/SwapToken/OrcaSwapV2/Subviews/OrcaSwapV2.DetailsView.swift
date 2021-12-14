@@ -157,15 +157,16 @@ extension OrcaSwapV2 {
                     payFeesWithView?.setValue(text: $0)
                 }
                 .disposed(by: disposeBag)
-
-            viewModel.feesContentDriver
-                .drive { [weak feesView] loadable in
-                    feesView?.isHidden = loadable.value == nil
-
-                    if let content = loadable.value {
-                        feesView?.setData(content: content)
-                    }
-                }
+            
+            viewModel.feesDriver
+                .map {$0.value == nil}
+                .drive(feesView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            viewModel.feesDriver
+                .filter {$0.value != nil}
+                .map {$0.value!}
+                .drive(feesView.rx.fees)
                 .disposed(by: disposeBag)
 
             slippageView.clickHandler = { [weak viewModel] in

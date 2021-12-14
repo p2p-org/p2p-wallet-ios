@@ -45,8 +45,6 @@
 		418A5D982755E0CE00C2D387 /* OrcaSwapV2.NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418A5D972755E0CE00C2D387 /* OrcaSwapV2.NavigationBar.swift */; };
 		418A5DA32755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418A5DA22755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift */; };
 		41B351F5275F131C0027328E /* OrcaSwapV2.ClickableRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B351F4275F131C0027328E /* OrcaSwapV2.ClickableRow.swift */; };
-		41B351F7275F231E0027328E /* OrcaSwapV2.DetailedFeeContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B351F6275F231E0027328E /* OrcaSwapV2.DetailedFeeContent.swift */; };
-		41B351F9275F2F7C0027328E /* OrcaSwapV2.DetailedFeesContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B351F8275F2F7C0027328E /* OrcaSwapV2.DetailedFeesContent.swift */; };
 		41CA05752754725200953322 /* ReserveName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05712754725200953322 /* ReserveName.swift */; };
 		41CA05762754725200953322 /* ReserveName.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05722754725200953322 /* ReserveName.ViewController.swift */; };
 		41CA05772754725200953322 /* ReserveName.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05732754725200953322 /* ReserveName.ViewModel.swift */; };
@@ -517,8 +515,6 @@
 		418A5D972755E0CE00C2D387 /* OrcaSwapV2.NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.NavigationBar.swift; sourceTree = "<group>"; };
 		418A5DA22755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.MainSwapView.swift; sourceTree = "<group>"; };
 		41B351F4275F131C0027328E /* OrcaSwapV2.ClickableRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ClickableRow.swift; sourceTree = "<group>"; };
-		41B351F6275F231E0027328E /* OrcaSwapV2.DetailedFeeContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.DetailedFeeContent.swift; sourceTree = "<group>"; };
-		41B351F8275F2F7C0027328E /* OrcaSwapV2.DetailedFeesContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.DetailedFeesContent.swift; sourceTree = "<group>"; };
 		41CA05712754725200953322 /* ReserveName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.swift; sourceTree = "<group>"; };
 		41CA05722754725200953322 /* ReserveName.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.ViewController.swift; sourceTree = "<group>"; };
 		41CA05732754725200953322 /* ReserveName.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.ViewModel.swift; sourceTree = "<group>"; };
@@ -1081,8 +1077,6 @@
 			isa = PBXGroup;
 			children = (
 				41D83B26275A04A300B4344F /* OrcaSwapV2.RateRowContent.swift */,
-				41B351F6275F231E0027328E /* OrcaSwapV2.DetailedFeeContent.swift */,
-				41B351F8275F2F7C0027328E /* OrcaSwapV2.DetailedFeesContent.swift */,
 			);
 			path = ContentModels;
 			sourceTree = "<group>";
@@ -2828,7 +2822,6 @@
 				41D7F6BD2739339400453B61 /* BannerTypeTransformer.swift in Sources */,
 				BC4B9EBF27191843005B9ECA /* OrcaSwapV2.RootView.swift in Sources */,
 				86A90D17273D306400D180EF /* VerifySecurityKeys.RootView.swift in Sources */,
-				41B351F9275F2F7C0027328E /* OrcaSwapV2.DetailedFeesContent.swift in Sources */,
 				BCE04C6B268D901400CE131A /* UIViewController+Transitions.swift in Sources */,
 				BCA93F8125E883A50081DDF6 /* Array+Extensions.swift in Sources */,
 				BC4B9E9927153F49005B9ECA /* Settings.SelectFiatViewController.swift in Sources */,
@@ -2955,7 +2948,6 @@
 				BC19DF572701B7A100A3A8D8 /* SingleSelectionViewController.swift in Sources */,
 				BC2EC1CF2553ED1B006EEDA5 /* HalfSizePresentationController.swift in Sources */,
 				BC460763266F40F400A12E07 /* Root.ViewController.swift in Sources */,
-				41B351F7275F231E0027328E /* OrcaSwapV2.DetailedFeeContent.swift in Sources */,
 				BCB7C7E22669E50B00FEC68E /* TransactionSummaryView.swift in Sources */,
 				41DD026F2760B57C00545A73 /* BottomFixedView.swift in Sources */,
 				BCD5E76525512EDC00F51299 /* NewsCell.swift in Sources */,
