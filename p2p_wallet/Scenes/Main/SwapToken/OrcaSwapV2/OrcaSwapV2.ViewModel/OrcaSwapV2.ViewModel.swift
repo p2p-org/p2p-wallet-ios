@@ -34,28 +34,10 @@ extension OrcaSwapV2 {
         private let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
         private let feesSubject = LoadableRelay<[PayingFee]>(request: .just([]))
         private let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
-        private let isExchangeRateReversedSubject = BehaviorRelay<Bool>(value: false)
         private let payingTokenSubject = BehaviorRelay<PayingToken>(value: .nativeSOL) // FIXME
         private let errorSubject = BehaviorRelay<VerificationError?>(value: nil)
         let showHideDetailsButtonTapSubject = PublishRelay<Void>()
         private let isShowingDetailsSubject = BehaviorRelay<Bool>(value: false)
-
-        private var reversedExchangeRateDriver: Driver<Double?> {
-            Observable.combineLatest(
-                inputAmountSubject,
-                estimatedAmountSubject
-            )
-                .map { inputAmount, estimatedAmount in
-                    guard let inputAmount = inputAmount,
-                          let estimatedAmount = estimatedAmount,
-                          inputAmount > 0,
-                          estimatedAmount > 0
-                    else { return nil }
-
-                    return inputAmount / estimatedAmount
-                }
-                .asDriver(onErrorJustReturn: nil)
-        }
 
         // MARK: - Initializer
         init(
@@ -268,66 +250,6 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             }
     }
 
-    var fromExchangeRate: Driver<OrcaSwapV2.RateRowContent?> {
-        Driver.combineLatest(
-            exchangeRateDriver,
-            sourceWalletDriver,
-            destinationWalletDriver
-        )
-            .map { rate, source, destination in
-                guard
-                    let rate = rate,
-                    let source = source,
-                    let destination = destination
-                else {
-                    return nil
-                }
-
-                let sourceSymbol = source.token.symbol
-                let destinationSymbol = destination.token.symbol
-
-                let fiatPrice = source.priceInCurrentFiat
-                    .toString(maximumFractionDigits: 2)
-                let formattedFiatPrice = "(~\(Defaults.fiat.symbol)\(fiatPrice))"
-
-                return .init(
-                    token: sourceSymbol,
-                    price: "\(rate.toString(maximumFractionDigits: 9)) \(destinationSymbol)",
-                    fiatPrice: formattedFiatPrice
-                )
-            }
-    }
-
-    var toExchangeRate: Driver<OrcaSwapV2.RateRowContent?> {
-        Driver.combineLatest(
-            reversedExchangeRateDriver,
-            sourceWalletDriver,
-            destinationWalletDriver
-        )
-            .map { rate, source, destination in
-                guard
-                    let rate = rate,
-                    let source = source,
-                    let destination = destination
-                else {
-                    return nil
-                }
-
-                let sourceSymbol = source.token.symbol
-                let destinationSymbol = destination.token.symbol
-
-                let fiatPrice = destination.priceInCurrentFiat
-                    .toString(maximumFractionDigits: 2)
-                let formattedFiatPrice = "(~\(Defaults.fiat.symbol)\(fiatPrice))"
-
-                return .init(
-                    token: destinationSymbol,
-                    price: "\(rate.toString(maximumFractionDigits: 9)) \(sourceSymbol)",
-                    fiatPrice: formattedFiatPrice
-                )
-            }
-    }
-
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {
         navigationSubject.asDriver()
     }
@@ -417,22 +339,17 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     var exchangeRateDriver: Driver<Double?> {
         Observable.combineLatest(
             inputAmountSubject,
-            estimatedAmountSubject,
-            isExchangeRateReversedSubject
+            estimatedAmountSubject
         )
-            .map { inputAmount, estimatedAmount, isReversed in
+            .map { inputAmount, estimatedAmount in
                 guard let inputAmount = inputAmount,
                       let estimatedAmount = estimatedAmount,
                       inputAmount > 0,
                       estimatedAmount > 0
                 else { return nil }
-                return isReversed ? inputAmount / estimatedAmount: estimatedAmount / inputAmount
+                return estimatedAmount / inputAmount
             }
             .asDriver(onErrorJustReturn: nil)
-    }
-    
-    var isExchangeRateReversed: Driver<Bool> {
-        isExchangeRateReversedSubject.asDriver()
     }
     
     var payingTokenDriver: Driver<PayingToken> {
@@ -580,10 +497,6 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func changeSlippage(to slippage: Double) {
         Defaults.slippage = slippage
         slippageSubject.accept(slippage)
-    }
-    
-    func reverseExchangeRate() {
-        isExchangeRateReversedSubject.accept(!isExchangeRateReversedSubject.value)
     }
     
     func changePayingToken(to payingToken: PayingToken) {

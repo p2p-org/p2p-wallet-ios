@@ -67,7 +67,36 @@ extension OrcaSwapV2 {
         }
 
         private func bind() {
-            viewModel.fromExchangeRate
+            viewModel.exchangeRateDriver
+                .withLatestFrom(
+                    Driver.combineLatest(
+                        viewModel.sourceWalletDriver,
+                        viewModel.destinationWalletDriver
+                    ),
+                    resultSelector: {($0, $1.0, $1.1)}
+                )
+                .map { rate, source, destination -> RateRowContent? in
+                    guard let rate = rate,
+                        let source = source,
+                        let destination = destination
+                    else {
+                        return nil
+                    }
+
+                    let sourceSymbol = source.token.symbol
+                    let destinationSymbol = destination.token.symbol
+
+                    let fiatPrice = source.priceInCurrentFiat
+                        .toString(maximumFractionDigits: 2)
+                    let formattedFiatPrice = "(~\(Defaults.fiat.symbol)\(fiatPrice))"
+
+                    return .init(
+                        token: sourceSymbol,
+                        price: "\(rate.toString(maximumFractionDigits: 9)) \(destinationSymbol)",
+                        fiatPrice: formattedFiatPrice
+                    )
+
+                }
                 .drive { [weak fromRatesView] in
                     fromRatesView?.isHidden = $0 == nil
 
@@ -76,8 +105,38 @@ extension OrcaSwapV2 {
                     }
                 }
                 .disposed(by: disposeBag)
+            
+            viewModel.exchangeRateDriver
+                .map {$0.isNilOrZero ? nil: 1 / $0}
+                .withLatestFrom(
+                    Driver.combineLatest(
+                        viewModel.sourceWalletDriver,
+                        viewModel.destinationWalletDriver
+                    ),
+                    resultSelector: {($0, $1.0, $1.1)}
+                )
+                .map { rate, source, destination -> RateRowContent? in
+                    guard let rate = rate,
+                        let source = source,
+                        let destination = destination
+                    else {
+                        return nil
+                    }
 
-            viewModel.toExchangeRate
+                    let sourceSymbol = source.token.symbol
+                    let destinationSymbol = destination.token.symbol
+
+                    let fiatPrice = destination.priceInCurrentFiat
+                        .toString(maximumFractionDigits: 2)
+                    let formattedFiatPrice = "(~\(Defaults.fiat.symbol)\(fiatPrice))"
+
+                    return .init(
+                        token: destinationSymbol,
+                        price: "\(rate.toString(maximumFractionDigits: 9)) \(sourceSymbol)",
+                        fiatPrice: formattedFiatPrice
+                    )
+
+                }
                 .drive { [weak toRatesView] in
                     toRatesView?.isHidden = $0 == nil
 
