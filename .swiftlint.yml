@@ -36,7 +36,8 @@ function_parameter_count:
   error: 20
 
 file_length:
-  warning: 700
+  warning: 500
+  error: 700
 
 type_body_length:
   warning: 400
