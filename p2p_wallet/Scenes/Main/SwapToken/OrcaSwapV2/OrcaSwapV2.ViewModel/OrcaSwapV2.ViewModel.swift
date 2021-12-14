@@ -417,7 +417,7 @@ extension OrcaSwapV2.ViewModel {
                     allFees.append(
                         .init(
                             type: .liquidityProviderFee,
-                            lamports: fees.liquidityProviderFees.first!,
+                            lamports: fees.liquidityProviderFees.last!,
                             token: destinationWallet.token
                         )
                     )
