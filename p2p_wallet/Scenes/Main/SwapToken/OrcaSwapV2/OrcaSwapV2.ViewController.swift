@@ -26,6 +26,18 @@ extension OrcaSwapV2 {
 
         // MARK: - Properties
         
+        // MARK: - Subviews
+        private lazy var navigationBar = NavigationBar(
+            backHandler: { [weak viewModel] in
+                viewModel?.navigate(to: .back)
+            },
+            settingsHandler: { [weak viewModel] in
+                viewModel?.navigate(to: .settings)
+            }
+        )
+        private lazy var rootView = RootView(viewModel: viewModel)
+            .onTap(self, action: #selector(hideKeyboard))
+        
         // MARK: - Methods
         init(
             viewModel: OrcaSwapV2ViewModelType,
@@ -34,14 +46,15 @@ extension OrcaSwapV2 {
             self.scenesFactory = scenesFactory
             self.viewModel = viewModel
         }
-
-        override func loadView() {
-            view = RootView(viewModel: viewModel)
-        }
         
         override func setUp() {
             super.setUp()
+            view.addSubview(navigationBar)
+            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
             
+            view.addSubview(rootView)
+            rootView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
+            rootView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
         }
         
         override func bind() {
