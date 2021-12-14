@@ -21,6 +21,10 @@ extension ReceiveToken {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
+    
+        deinit {
+            print("Deinit \(type(of: self))")
+        }
         
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {

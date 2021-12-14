@@ -12,7 +12,7 @@ import UIKit
 
 protocol WalletDetailScenesFactory {
     func makeBuyTokenViewController(token: BuyToken.CryptoCurrency) throws -> UIViewController
-    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
+    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.Scene?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
@@ -82,12 +82,12 @@ extension WalletDetail {
         
         override func bind() {
             super.bind()
-            viewModel.walletDriver.map {$0?.name}
+            viewModel.walletDriver.map { $0?.name }
                 .drive(navigationBar.titleLabel.rx.text)
                 .disposed(by: disposeBag)
             
             viewModel.navigatableSceneDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
         }
         
