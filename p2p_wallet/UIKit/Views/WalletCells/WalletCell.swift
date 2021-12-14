@@ -7,12 +7,19 @@
 
 import Foundation
 import ListPlaceholder
+import QuartzCore
 
 class WalletCell: BaseCollectionViewCell {
     override var padding: UIEdgeInsets {.zero}
     
     lazy var coinLogoImageView = CoinLogoImageView(size: 45)
     lazy var coinSymbolLabel = UILabel(text: "<Coin name>", weight: .semibold, numberOfLines: 0)
+    let coinCheckMark = UIImageView(
+        width: 28,
+        height: 28,
+        image: UIImage.check.withRenderingMode(.alwaysTemplate),
+        tintColor: .black
+    )
     lazy var coinPriceLabel = UILabel(text: "<12>", textSize: 13)
     lazy var tokenCountLabel = UILabel(text: "<0,00344 Tkns>", textSize: 13, textColor: .textSecondary)
     lazy var equityValueLabel = UILabel(text: "<44,33>", textSize: 13)
@@ -30,6 +37,12 @@ class WalletCell: BaseCollectionViewCell {
         super.prepareForReuse()
         coinLogoImageView.tokenIcon.cancelPreviousTask()
         coinLogoImageView.tokenIcon.image = nil
+    }
+
+    func setIsSelected(isSelected: Bool) {
+        coinLogoImageView.alpha = isSelected ? 0.2 : 1
+        coinCheckMark.isHidden = !isSelected
+        contentView.backgroundColor = isSelected ? .h5887ff.withAlphaComponent(0.1) : .white
     }
     
     func setUp(with item: Wallet) {

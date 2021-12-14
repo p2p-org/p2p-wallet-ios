@@ -10,7 +10,13 @@ import UIKit
 import RxSwift
 
 protocol OrcaSwapV2ScenesFactory {
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
+    func makeChooseWalletViewController(
+        title: String?,
+        customFilter: ((Wallet) -> Bool)?,
+        showOtherWallets: Bool,
+        selectedWallet: Wallet?,
+        handler: WalletDidSelectHandler
+    ) -> ChooseWallet.ViewController
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
 
@@ -46,7 +52,7 @@ extension OrcaSwapV2 {
             self.scenesFactory = scenesFactory
             self.viewModel = viewModel
         }
-        
+
         override func setUp() {
             super.setUp()
             view.addSubview(navigationBar)
@@ -74,21 +80,26 @@ extension OrcaSwapV2 {
                 present(nc, interactiveDismissalType: .standard)
             case .chooseSourceWallet:
                 let vc = scenesFactory.makeChooseWalletViewController(
+                    title: nil,
                     customFilter: { $0.amount > 0 },
                     showOtherWallets: false,
+                    selectedWallet: nil,
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)
             case let .chooseDestinationWallet(
+                currentlySelectedWallet: currentlySelectedWallet,
                 validMints: validMints,
                 excludedSourceWalletPubkey: excludedSourceWalletPubkey
             ):
                 let vc = scenesFactory.makeChooseWalletViewController(
+                    title: nil,
                     customFilter: {
                         $0.pubkey != excludedSourceWalletPubkey &&
                             validMints.contains($0.mintAddress)
                     },
                     showOtherWallets: true,
+                    selectedWallet: nil,
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)
