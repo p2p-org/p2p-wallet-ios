@@ -54,19 +54,18 @@ extension OrcaSwapV2 {
             }
             
             // total fees
-            let totalFeesSymbol = fees.first(where: {$0.type != .liquidityProviderFee})?.token.symbol
+            let totalFeesSymbol = fees.first(where: {$0.type == .transactionFee})?.token.symbol
             if let totalFeesSymbol = totalFeesSymbol {
                 let totalFees = fees.filter {$0.token.symbol == totalFeesSymbol}
                 let decimals = totalFees.first?.token.decimals ?? 0
                 let amount = totalFees
-                    .reduce(UInt64(0)) { partialResult, fee in
-                        partialResult + fee.lamports
-                    }
+                    .reduce(UInt64(0)) { $0 + $1.lamports }
                     .convertToBalance(decimals: decimals)
-                    .toString(maximumFractionDigits: Int(decimals))
-                feesDescriptionView.addArrangedSubview(
+                    .toString(maximumFractionDigits: Int(decimals)) + " \(totalFeesSymbol)"
+                feesDescriptionView.addArrangedSubviews {
+                    UIView.defaultSeparator()
                     createFeeLine(amount: amount, type: L10n.totalFees)
-                )
+                }
             }
             
             setNeedsLayout()
@@ -87,7 +86,8 @@ extension OrcaSwapV2 {
         private func createFeeLine(fee: PayingFee) -> UIView {
             createFeeLine(
                 amount: fee.lamports.convertToBalance(decimals: fee.token.decimals)
-                    .toString(maximumFractionDigits: Int(fee.token.decimals)),
+                    .toString(maximumFractionDigits: Int(fee.token.decimals)) +
+                    " \(fee.token.symbol)",
                 type: fee.type.headerString
             )
         }
