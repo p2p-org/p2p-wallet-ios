@@ -169,10 +169,11 @@ class MainContainer {
     
     func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
     {
+        let feeService = FeeService(apiClient: solanaSDK)
         switch provider {
         case .orca:
             let vm = OrcaSwapV2.ViewModel(
-                feeAPIClient: solanaSDK,
+                feeService: feeService,
                 orcaSwap: orcaSwap,
                 walletsRepository: walletsViewModel,
                 initialWallet: wallet ?? walletsViewModel.nativeWallet
