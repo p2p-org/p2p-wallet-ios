@@ -11,6 +11,7 @@ import RxSwift
 enum NavigationType {
     case push(_ vc: UIViewController)
     case modal(_ vc: UIViewController)
+    case pop
     case none
 }
 
@@ -28,6 +29,8 @@ extension BESceneNavigationModel {
                 vc.show(vc, sender: nil)
             case .modal(let newVc):
                 vc.present(newVc, animated: true)
+            case .pop:
+                vc.close()
             default:
                 return
             }
@@ -51,11 +54,9 @@ struct BENavigationBinding<Value> {
         storage storageKeyPath: ReferenceWritableKeyPath<T, Self>
     ) -> Value {
         get {
-            print("GETTTTT")
-            return viewController[keyPath: storageKeyPath].value!
+            viewController[keyPath: storageKeyPath].value!
         }
         set {
-            print("SERTTTT")
             if let newValue = newValue as? BESceneNavigationModel {
                 newValue.listenNavigation(vc: viewController).disposed(by: viewController.disposeBag)
             }
