@@ -26,36 +26,12 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         destinationWalletSubject.asDriver().distinctUntilChanged()
     }
     
-    var isTokenPairValidDriver: Driver<Loadable<Bool>> {
-        tradablePoolsPairsSubject.asDriver()
-            .map { value, state, reloadAction in
-                (value?.isEmpty == false, state, reloadAction)
-            }
-    }
-    
-    var bestPoolsPairDriver: Driver<OrcaSwap.PoolsPair?> {
-        bestPoolsPairSubject.asDriver()
-    }
-    
     var inputAmountDriver: Driver<Double?> {
         inputAmountSubject.asDriver()
     }
     
     var estimatedAmountDriver: Driver<Double?> {
         estimatedAmountSubject.asDriver()
-    }
-    
-    var feesContentDriver: Driver<Loadable<OrcaSwapV2.DetailedFeesContent>> {
-        feesSubject.asDriver()
-            .map { [weak self] value, state, reload in
-                (
-                    value: value.flatMap {
-                        self?.createFeesDetailedContent(fees: $0)
-                    },
-                    state: state,
-                    reloadAction: reload
-                )
-            }
     }
 
     var feesDriver: Driver<Loadable<[PayingFee]>> {
@@ -297,38 +273,5 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             analyticsManager.log(event: .swapTokenBSelectClick(tokenTicker: wallet.token.symbol))
             destinationWalletSubject.accept(wallet)
         }
-    }
-}
-
-extension OrcaSwapV2.ViewModel {
-    private func createFeesDetailedContent(fees: [PayingFee]) -> OrcaSwapV2.DetailedFeesContent {
-        let totalFeeString: String? = fees.totalFee.map { totalFee in
-            let totalDouble = totalFee.lamports.convertToBalance(decimals: totalFee.token.decimals)
-            return totalDouble.toString(maximumFractionDigits: 9) + " " + totalFee.token.symbol
-        }
-
-        return .init(
-            parts: fees.compactMap(feeToString),
-            total: totalFeeString
-        )
-    }
-    
-    private func feeToString(fee: PayingFee) -> OrcaSwapV2.DetailedFeeContent? {
-        if let toString = fee.toString {
-            return toString().map {
-                OrcaSwapV2.DetailedFeeContent(
-                    amount: $0,
-                    reason: fee.headerString
-                )
-            }
-        }
-
-        let amount = fee.lamports.convertToBalance(decimals: fee.token.decimals)
-        let symbol = fee.token.symbol
-
-        return .init(
-            amount: amount.toString(maximumFractionDigits: 9) + " " + symbol,
-            reason: fee.headerString
-        )
     }
 }

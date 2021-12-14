@@ -13,18 +13,18 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
 {
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {get}
     var loadingStateDriver: Driver<LoadableState> {get}
+    
     var sourceWalletDriver: Driver<Wallet?> {get}
     var destinationWalletDriver: Driver<Wallet?> {get}
-    var isTokenPairValidDriver: Driver<Loadable<Bool>> {get}
-    var bestPoolsPairDriver: Driver<OrcaSwap.PoolsPair?> {get}
     var inputAmountDriver: Driver<Double?> {get}
     var estimatedAmountDriver: Driver<Double?> {get}
-    var feesContentDriver: Driver<Loadable<OrcaSwapV2.DetailedFeesContent>> { get }
-    var feesDriver: Driver<Loadable<[PayingFee]>> {get}
     var availableAmountDriver: Driver<Double?> {get}
-    var slippageDriver: Driver<Double> {get}
     var minimumReceiveAmountDriver: Driver<Double?> {get}
+    var slippageDriver: Driver<Double> {get}
     var exchangeRateDriver: Driver<Double?> {get}
+    
+//    var feesContentDriver: Driver<Loadable<OrcaSwapV2.DetailedFeesContent>> { get }
+    var feesDriver: Driver<Loadable<[PayingFee]>> {get}
     var feePayingTokenDriver: Driver<String?> { get }
     var payingTokenDriver: Driver<PayingToken> {get}
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}

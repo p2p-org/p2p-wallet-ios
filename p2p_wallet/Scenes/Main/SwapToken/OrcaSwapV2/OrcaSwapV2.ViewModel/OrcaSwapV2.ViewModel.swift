@@ -111,10 +111,10 @@ extension OrcaSwapV2 {
                 inputAmountSubject,
                 slippageSubject
             )
-                .map {[weak self] _ in self?.calculateFees() ?? []}
-                .subscribe(onNext: {[weak self] fees in
-                    self?.feesSubject.request = .just(fees)
-                    self?.feesSubject.reload()
+                .subscribe(onNext: {[weak self] _ in
+                    guard let self = self else {return}
+                    self.feesSubject.request = self.feesRequest()
+                    self.feesSubject.reload()
                 })
                 .disposed(by: disposeBag)
             
@@ -296,7 +296,7 @@ extension OrcaSwapV2.ViewModel {
             return .couldNotCalculatingFees
         }
         
-        guard let fees = feesSubject.value?.totalFee?.lamports else {
+        guard feesSubject.state == .loaded else {
             return .feesIsBeingCalculated
         }
         
@@ -306,7 +306,9 @@ extension OrcaSwapV2.ViewModel {
                 return .nativeWalletNotFound
             }
             
-            if fees > (wallet.lamports ?? 0) {
+            let feeInSOL = feesSubject.value?.all(ofToken: "SOL") ?? 0
+            
+            if feeInSOL > (wallet.lamports ?? 0) {
                 return .notEnoughSOLToCoverFees
             }
         }
@@ -317,7 +319,8 @@ extension OrcaSwapV2.ViewModel {
             //                if feeCompensationPool == nil {
             //                    return L10n.feeCompensationPoolNotFound
             //                }
-            if fees > (sourceWallet.lamports ?? 0) {
+            let feeInToken = feesSubject.value?.all(ofToken: sourceWallet.token.symbol) ?? 0
+            if feeInToken > (sourceWallet.lamports ?? 0) {
                 return .notEnoughBalanceToCoverFees
             }
         }
@@ -331,9 +334,8 @@ extension OrcaSwapV2.ViewModel {
     }
     
     func calculateAvailableAmount() -> Double? {
-        guard
-            let sourceWallet = sourceWalletSubject.value,
-            let fees = feesSubject.value?.totalFee?.lamports
+        guard let sourceWallet = sourceWalletSubject.value,
+            let fees = feesSubject.value?.all(ofToken: sourceWallet.token.symbol)
         else {
             return sourceWalletSubject.value?.amount
         }
@@ -353,58 +355,86 @@ extension OrcaSwapV2.ViewModel {
         slippageSubject.value <= .maxSlippage && slippageSubject.value > 0
     }
     
-    private func calculateFees() -> [PayingFee] {
-        guard let sourceWallet = sourceWalletSubject.value,
-              let sourceWalletPubkey = sourceWallet.pubkey,
-              let lamportsPerSignature = feeService.lamportsPerSignature,
-              let minRenExempt = feeService.minimumBalanceForRenExemption
-        else {return []}
-        
-        let destinationWallet = destinationWalletSubject.value
-        let bestPoolsPair = bestPoolsPairSubject.value
-        let inputAmount = inputAmountSubject.value
-        let myWalletsMints = walletsRepository.getWallets().compactMap {$0.token.address}
-        let slippage = slippageSubject.value
-        
-        guard let fees = try? orcaSwap.getFees(
-            myWalletsMints: myWalletsMints,
-            fromWalletPubkey: sourceWalletPubkey,
-            toWalletPubkey: destinationWallet?.pubkey,
-            feeRelayerFeePayerPubkey: nil, // TODO: - Fee relayer
-            bestPoolsPair: bestPoolsPair,
-            inputAmount: inputAmount,
-            slippage: slippage,
-            lamportsPerSignature: lamportsPerSignature,
-            minRentExempt: minRenExempt
-        ) else {return []}
-        
-        let liquidityProviderFees: [PayingFee]
-        
-        if let destinationWallet = destinationWallet {
-            if fees.liquidityProviderFees.count == 1 {
-                liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.first!, token: destinationWallet.token)
-                ]
-            } else if fees.liquidityProviderFees.count == 2 {
-                liquidityProviderFees = [.init(type: .liquidityProviderFee, lamports: fees.liquidityProviderFees.last!, token: destinationWallet.token, toString: {
-                    var strings = [String]()
+    private func feesRequest() -> Single<[PayingFee]> {
+        Single.create { [weak self] observer in
+            guard let self = self else {
+                observer(.success([]))
+                return Disposables.create()
+            }
+            
+            guard let sourceWallet = self.sourceWalletSubject.value,
+                  let sourceWalletPubkey = sourceWallet.pubkey,
+                  let lamportsPerSignature = self.feeService.lamportsPerSignature,
+                  let minRenExempt = self.feeService.minimumBalanceForRenExemption
+            else {
+                observer(.success([]))
+                return Disposables.create()
+            }
+            
+            let destinationWallet = self.destinationWalletSubject.value
+            let bestPoolsPair = self.bestPoolsPairSubject.value
+            let inputAmount = self.inputAmountSubject.value
+            let myWalletsMints = self.walletsRepository.getWallets().compactMap {$0.token.address}
+            let slippage = self.slippageSubject.value
+            
+            guard let fees = try? self.orcaSwap.getFees(
+                myWalletsMints: myWalletsMints,
+                fromWalletPubkey: sourceWalletPubkey,
+                toWalletPubkey: destinationWallet?.pubkey,
+                feeRelayerFeePayerPubkey: nil, // TODO: - Fee relayer
+                bestPoolsPair: bestPoolsPair,
+                inputAmount: inputAmount,
+                slippage: slippage,
+                lamportsPerSignature: lamportsPerSignature,
+                minRentExempt: minRenExempt
+            ) else {
+                observer(.success([]))
+                return Disposables.create()
+            }
+            
+            var allFees = [PayingFee]()
+            
+            if let destinationWallet = destinationWallet {
+                if fees.liquidityProviderFees.count == 1 {
+                    allFees.append(
+                        .init(
+                            type: .liquidityProviderFee,
+                            lamports: fees.liquidityProviderFees.first!,
+                            token: destinationWallet.token
+                        )
+                    )
+                } else if fees.liquidityProviderFees.count == 2 {
                     if let intermediaryTokenName = bestPoolsPair?[0].tokenBName, let decimals = bestPoolsPair?[0].getTokenBDecimals() {
-                        let value = fees.liquidityProviderFees.first!.convertToBalance(decimals: decimals)
-                        strings.append("\(value.toString(maximumFractionDigits: 9)) \(intermediaryTokenName)")
+                        allFees.append(
+                            .init(
+                                type: .liquidityProviderFee,
+                                lamports: fees.liquidityProviderFees.first!,
+                                token: .unsupported(mint: nil, decimals: decimals, symbol: intermediaryTokenName)
+                            )
+                        )
                     }
                     
-                    let value = fees.liquidityProviderFees.last!.convertToBalance(decimals: destinationWallet.token.decimals)
-                    strings.append("\(value.toString(maximumFractionDigits: 9)) \(destinationWallet.token.symbol)")
-                    
-                    return strings.joined(separator: " + ")
-                })
-                ]
-            } else {
-                liquidityProviderFees = []
+                    allFees.append(
+                        .init(
+                            type: .liquidityProviderFee,
+                            lamports: fees.liquidityProviderFees.first!,
+                            token: destinationWallet.token
+                        )
+                    )
+                }
             }
-        } else {
-            liquidityProviderFees = []
+            
+            allFees.append(
+                .init(
+                    type: .transactionFee,
+                    lamports: fees.transactionFees,
+                    token: .nativeSolana
+                )
+            )
+            
+            observer(.success(allFees))
+            return Disposables.create()
         }
-        
-        return liquidityProviderFees + [.init(type: .transactionFee, lamports: fees.transactionFees, token: .nativeSolana)]
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
     }
 }
