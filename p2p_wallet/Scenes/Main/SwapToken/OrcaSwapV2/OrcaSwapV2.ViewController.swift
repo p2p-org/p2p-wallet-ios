@@ -93,15 +93,12 @@ extension OrcaSwapV2 {
                 }
 
                 present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
-            case .swapFees:
-                let vc = OrcaSwapV2.SwapFeesViewController(viewModel: viewModel)
-                present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case let .processTransaction(
                 request: request,
                 transactionType: transactionType
             ):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
             case .back:
                 navigationController?.popViewController(animated: true)
             case .none:
