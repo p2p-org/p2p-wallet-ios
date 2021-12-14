@@ -14,14 +14,18 @@ protocol TabBarScenesFactory {
 }
 
 class TabBarVC: BEPagesVC {
+    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+        .hidden
+    }
+
     lazy var tabBar = NewTabBar()
-    
+
     let scenesFactory: TabBarScenesFactory
     init(scenesFactory: TabBarScenesFactory) {
         self.scenesFactory = scenesFactory
         super.init()
     }
-    
+
     override func setUp() {
         super.setUp()
         // pages

@@ -20,6 +20,8 @@ class MainContainer {
     
     let renVMLockAndMintService: RenVMLockAndMintServiceType
     let renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+
+    private var globalNavigationController: UINavigationController?
     
     private lazy var orcaSwap: OrcaSwapType = OrcaSwap(
         apiClient: OrcaSwap.APIClient(
@@ -88,13 +90,23 @@ class MainContainer {
         MainViewController(scenesFactory: self, authenticateWhenAppears: authenticateWhenAppears)
     }
     
-    func makeTabBarVC() -> TabBarVC {
-        TabBarVC(scenesFactory: self)
+    func makeTabBarVC() -> UIViewController {
+        let tabBarController = TabBarVC(scenesFactory: self)
+        let navigationController = UINavigationController(rootViewController: tabBarController)
+        globalNavigationController = navigationController
+
+        return navigationController
     }
     
     func makeHomeViewController() -> Home.ViewController {
         let vm = Home.ViewModel(walletsRepository: walletsViewModel, pricesService: pricesService)
-        return .init(viewModel: vm, scenesFactory: self)
+        return .init(
+            viewModel: vm,
+            scenesFactory: self,
+            showGlobally: { [weak self] in
+                self?.globalNavigationController?.pushViewController($0, animated: true)
+            }
+        )
     }
     
     func makeInvestmentsViewController() -> InvestmentsViewController {

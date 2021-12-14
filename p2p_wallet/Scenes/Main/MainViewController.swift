@@ -10,7 +10,7 @@ import UIKit
 import Action
 
 protocol _MainScenesFactory {
-    func makeTabBarVC() -> TabBarVC
+    func makeTabBarVC() -> UIViewController
 }
 
 class MainViewController: BaseVC {
@@ -47,7 +47,8 @@ class MainViewController: BaseVC {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        add(child: scenesFactory.makeTabBarVC())
+        let tabBarController = scenesFactory.makeTabBarVC()
+        add(child: tabBarController)
         view.addSubview(blurEffectView)
         blurEffectView.autoPinEdgesToSuperviewEdges()
     }

@@ -29,15 +29,22 @@ extension Home {
         // MARK: - Dependencies
         private let viewModel: HomeViewModelType
         private let scenesFactory: HomeScenesFactory
+        private let showGlobally: ((UIViewController) -> Void)?
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         fileprivate let interactor = MenuInteractor()
         
         // MARK: - Initializer
-        init(viewModel: HomeViewModelType, scenesFactory: HomeScenesFactory) {
+        init(
+            viewModel: HomeViewModelType,
+            scenesFactory: HomeScenesFactory,
+            showGlobally: ((UIViewController) -> Void)?
+        ) {
             self.viewModel = viewModel
             self.scenesFactory = scenesFactory
+            self.showGlobally = showGlobally
+
             super.init()
         }
         
@@ -149,7 +156,7 @@ extension Home {
                 let vc = scenesFactory.makeSwapTokenViewController(provider: .orca, fromWallet: nil)
                 analyticsManager.log(event: .mainScreenSwapOpen)
                 analyticsManager.log(event: .swapOpen(fromPage: "main_screen"))
-                self.show(vc, sender: nil)
+                showGlobally?(vc)
             case .settings:
                 analyticsManager.log(event: .mainScreenSettingsOpen)
                 analyticsManager.log(event: .settingsOpen(fromPage: "main_screen"))
@@ -165,7 +172,7 @@ extension Home {
                 )
                 let vc = ReserveName.ViewController(viewModel: vm)
 
-                show(vc, sender: nil)
+                showGlobally?(vc)
 
                 viewModel.nameDidReserveSignal
                     .emit(onNext: { [weak vc] in
