@@ -2045,13 +2045,13 @@
 			isa = PBXGroup;
 			children = (
 				BC85EA62266E1324005006D5 /* ReceiveToken.swift */,
+				846991CEF8AFD01A61E2FAE8 /* ReceiveToken.Scene.swift */,
 				BC85EA64266E1324005006D5 /* ReceiveToken.SceneModel.swift */,
 				BC80203726F1DA3100C109C2 /* ReceiveToken.Solana */,
 				BC80203C26F1EB6900C109C2 /* ReceiveToken.Bitcoin */,
 				BC8F682F260989F8002FDCCD /* ReceiveToken.QrCodeView.swift */,
 				BCDCAE202682E41B001ED7B4 /* ReceiveToken.HelpViewController.swift */,
 				BC7D078226F86700005F777F /* ReceiveToken.ViewBuilders.swift */,
-				846991CEF8AFD01A61E2FAE8 /* ReceiveToken.Scene.swift */,
 			);
 			path = ReceiveToken;
 			sourceTree = "<group>";

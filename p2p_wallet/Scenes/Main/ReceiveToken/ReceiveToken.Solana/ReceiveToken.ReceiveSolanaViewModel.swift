@@ -12,8 +12,7 @@ import RxCocoa
 protocol ReceiveTokenSolanaViewModelType: BESceneModel {
     var pubkey: String { get }
     var tokenWallet: Wallet? { get }
-    
-    func getUsername() -> String?
+    var username: String? { get }
     
     func showSOLAddressInExplorer()
     func copyAction()
@@ -22,7 +21,7 @@ protocol ReceiveTokenSolanaViewModelType: BESceneModel {
 }
 
 extension ReceiveToken {
-    class SolanaViewModel: BESceneModel {
+    class SolanaViewModel: NSObject, ReceiveTokenSolanaViewModelType {
         @Injected private var nameStorage: NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         private let tokensRepository: TokensRepository
@@ -47,40 +46,37 @@ extension ReceiveToken {
             self.tokenWallet = tokenWallet
             self.navigationSubject = navigationSubject
         }
-    }
-}
-
-extension ReceiveToken.SolanaViewModel: ReceiveTokenSolanaViewModelType {
-    func getUsername() -> String? {
-        nameStorage.getName()
-    }
-    
-    func copyAction() {
-        analyticsManager.log(event: .receiveWalletAddressCopy)
-        UIApplication.shared.copyToClipboard(pubkey, alertMessage: "✅ " + L10n.addressCopiedToClipboard)
-    }
-    
-    func shareAction(image: UIImage) {
-        analyticsManager.log(event: .receiveQrcodeShare)
-        navigationSubject.onNext(.share(qrCode: image))
-    }
-    
-    func saveAction(image: UIImage) {
-        analyticsManager.log(event: .receiveQrcodeSave)
-        UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveImageCallback), nil)
-    }
-    
-    @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        if let error = error {
-            UIApplication.shared.showToast(message: "\(error.localizedDescription)")
-        } else {
-            UIApplication.shared.showToast(message: "✅ \(L10n.savedToPhotoLibrary)")
+        
+        private(set) var username: String? {
+            nameStorage.getName()
+        }
+        
+        func copyAction() {
+            analyticsManager.log(event: .receiveWalletAddressCopy)
+            UIApplication.shared.copyToClipboard(pubkey, alertMessage: "✅ " + L10n.addressCopiedToClipboard)
+        }
+        
+        func shareAction(image: UIImage) {
+            analyticsManager.log(event: .receiveQrcodeShare)
+            navigationSubject.onNext(.share(qrCode: image))
+        }
+        
+        func saveAction(image: UIImage) {
+            analyticsManager.log(event: .receiveQrcodeSave)
+            UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveImageCallback), nil)
+        }
+        
+        @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+            if let error = error {
+                UIApplication.shared.showToast(message: "\(error.localizedDescription)")
+            } else {
+                UIApplication.shared.showToast(message: "✅ \(L10n.savedToPhotoLibrary)")
+            }
+        }
+        
+        func showSOLAddressInExplorer() {
+            analyticsManager.log(event: .receiveViewExplorerOpen)
+            navigationSubject.onNext(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
         }
     }
-    
-    func showSOLAddressInExplorer() {
-        analyticsManager.log(event: .receiveViewExplorerOpen)
-        navigationSubject.onNext(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
-    }
 }
-

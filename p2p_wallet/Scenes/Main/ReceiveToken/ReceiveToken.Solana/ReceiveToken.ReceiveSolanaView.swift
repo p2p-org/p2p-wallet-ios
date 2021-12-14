@@ -21,10 +21,6 @@ extension ReceiveToken {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
-    
-        deinit {
-            print("Deinit \(type(of: self))")
-        }
         
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
@@ -38,8 +34,8 @@ extension ReceiveToken {
                         UILabel(textSize: 20, weight: .semibold, numberOfLines: 3, textAlignment: .center)
                             .setup { label in
                                 guard let label = label as? UILabel else { return }
-                                guard let username = viewModel.getUsername(),
-                                      let nameWithDomain = viewModel.getUsername()?.withNameServiceDomain() else { return }
+                                guard let username = viewModel.username,
+                                      let nameWithDomain = viewModel.username?.withNameServiceDomain() else { return }
                                 let text = NSMutableAttributedString(string: nameWithDomain)
                                 text.addAttribute(.foregroundColor, value: UIColor.gray, range: NSRange(location: username.count, length: text.length - username.count))
                                 label.attributedText = text

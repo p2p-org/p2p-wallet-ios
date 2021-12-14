@@ -61,10 +61,6 @@ extension ReceiveToken {
                 tokenTypeSubject.accept(.btc)
             }
         }
-    
-        deinit {
-            print("Deinit \(type(of: self))")
-        }
         
         var tokenTypeDriver: Driver<ReceiveToken.TokenType> {
             tokenTypeSubject.asDriver()
