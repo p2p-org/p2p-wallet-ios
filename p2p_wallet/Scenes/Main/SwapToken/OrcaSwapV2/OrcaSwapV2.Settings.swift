@@ -15,5 +15,4 @@ extension OrcaSwapV2 {
     typealias SettingsViewController = SerumSwapV1.SettingsViewController
     typealias SlippageSettingsViewController = SerumSwapV1.SlippageSettingsViewController
     typealias NetworkFeePayerSettingsViewController = SerumSwapV1.NetworkFeePayerSettingsViewController
-    typealias SwapFeesViewController = SerumSwapV1.SwapFeesViewController
 }

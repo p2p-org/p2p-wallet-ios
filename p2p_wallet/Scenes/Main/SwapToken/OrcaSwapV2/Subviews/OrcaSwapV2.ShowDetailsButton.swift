@@ -7,11 +7,12 @@
 
 import UIKit
 import PureLayout
+import RxSwift
 
 extension OrcaSwapV2 {
     final class ShowDetailsButton: UIButton {
         private let textLabel = UILabel(textSize: 15, weight: .regular)
-        private let arrowView = UIImageView(width: 16, height: 16)
+        private let arrowView = UIImageView(width: 16, height: 16, tintColor: .textBlack)
 
         init() {
             super.init(frame: .zero)
@@ -24,7 +25,7 @@ extension OrcaSwapV2 {
             fatalError("init(coder:) has not been implemented")
         }
 
-        func setState(isShown: Bool) {
+        fileprivate func setState(isShown: Bool) {
             textLabel.text = isShown ? L10n.hideDetails : L10n.showDetails
             arrowView.image = isShown ? .chevronUp : .chevronDown
         }
@@ -41,6 +42,14 @@ extension OrcaSwapV2 {
 
             stackView.autoAlignAxis(toSuperviewAxis: .vertical)
             stackView.autoAlignAxis(toSuperviewAxis: .horizontal)
+        }
+    }
+}
+
+extension Reactive where Base == OrcaSwapV2.ShowDetailsButton {
+    var isShown: Binder<Bool> {
+        Binder(base) { view, isShown in
+            view.setState(isShown: isShown)
         }
     }
 }
