@@ -157,10 +157,16 @@ extension Home {
                 let vc = scenesFactory.makeSettingsVC(reserveNameHandler: viewModel)
                 self.show(vc, sender: nil)
             case .reserveName(let owner):
-                let vm = ReserveName.ViewModel(owner: owner, handler: viewModel)
-                let vc = CustomReserveNameVC(viewModel: vm)
-                self.present(vc, interactiveDismissalType: .standard)
-                
+                let vm = ReserveName.ViewModel(
+                    canSkip: false,
+                    owner: owner,
+                    nameService: Resolver.resolve(),
+                    reserveNameHandler: viewModel
+                )
+                let vc = ReserveName.ViewController(viewModel: vm)
+
+                show(vc, sender: nil)
+
                 viewModel.nameDidReserveSignal
                     .emit(onNext: { [weak vc] in
                         vc?.back()
@@ -220,59 +226,5 @@ extension Home.ViewController: UIViewControllerTransitioningDelegate {
     
     func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         return interactor.hasStarted ? interactor : nil
-    }
-}
-
-private class CustomReserveNameVC: WLIndicatorModalVC, CustomPresentableViewController {
-    var transitionManager: UIViewControllerTransitioningDelegate?
-    
-    // MARK: - Dependencies
-    private var viewModel: ReserveNameViewModelType
-    
-    private lazy var headerView: UIView = {
-        let view = UIView(forAutoLayout: ())
-        let label = UILabel(text: L10n.reserveYourP2PUsername, textSize: 17, weight: .semibold)
-        view.addSubview(label)
-        label.autoPinEdgesToSuperviewEdges(with: .init(all: 20))
-        let separator = UIView.defaultSeparator()
-        view.addSubview(separator)
-        separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-        return view
-    }()
-    private lazy var childReserveNameVC = ReserveName.ViewController(viewModel: viewModel)
-    
-    // MARK: - Initializer
-    init(viewModel: ReserveNameViewModelType) {
-        self.viewModel = viewModel
-        super.init()
-    }
-    
-    // MARK: - Methods
-    override func setUp() {
-        super.setUp()
-        // add header
-        containerView.addSubview(headerView)
-        headerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
-        
-        // add childReserveNameVC to container
-        let childContainerView = UIView(forAutoLayout: ())
-        containerView.addSubview(childContainerView)
-        childContainerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-        childContainerView.autoPinEdge(.top, to: .bottom, of: headerView)
-        
-        // add child vc
-        add(child: childReserveNameVC, to: childContainerView)
-        
-        // relayout ReserveNameVC (replace header)
-        childReserveNameVC.view.subviews.forEach {$0.removeFromSuperview()}
-        childReserveNameVC.view.addSubview(childReserveNameVC.rootView)
-        childReserveNameVC.rootView.autoPinEdgesToSuperviewEdges()
-        childReserveNameVC.rootView.hideSkipButtons()
-    }
-    
-    override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
-        super.calculateFittingHeightForPresentedView(targetWidth: targetWidth)
-            + headerView.fittingHeight(targetWidth: targetWidth)
-            + childReserveNameVC.rootView.fittingHeight(targetWidth: targetWidth)
     }
 }

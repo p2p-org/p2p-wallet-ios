@@ -11,7 +11,6 @@ import UIKit
 extension OrcaSwapV2 {
     final class ClickableRow: UIStackView {
         private let horizontalLabelsWithSpacer = HorizontalLabelsWithSpacer()
-        private let chevronImage = UIImageView(width: 14, height: 21, image: UIImage.chevronRight)
         var clickHandler: (() -> Void)?
 
         init(title: String) {
@@ -24,7 +23,7 @@ extension OrcaSwapV2 {
             }
 
             horizontalLabelsWithSpacer.configureRightLabel { label in
-                label.textColor = .darkText
+                label.textColor = .textBlack
                 label.font = .systemFont(ofSize: 15, weight: .regular)
             }
 
@@ -50,7 +49,7 @@ extension OrcaSwapV2 {
 
             addArrangedSubviews {
                 horizontalLabelsWithSpacer
-                chevronImage
+                UIView.defaultNextArrow()
             }
         }
 

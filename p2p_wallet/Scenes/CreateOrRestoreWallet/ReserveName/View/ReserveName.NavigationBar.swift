@@ -1,16 +1,17 @@
 //
-//  CreateOrRestoreReserveName.NavigationBar.swift
+//  ReserveName.NavigationBar.swift
 //  p2p_wallet
 //
 //  Created by Andrew Vasiliev on 27.11.2021.
 //
 
-extension CreateOrRestoreReserveName {
+extension ReserveName {
     final class NavigationBar: WLNavigationBar {
         private let backHandler: () -> Void
         private let skipHandler: () -> Void
 
         init(
+            canSkip: Bool,
             backHandler: @escaping () -> Void,
             skipHandler: @escaping () -> Void
         ) {
@@ -19,16 +20,18 @@ extension CreateOrRestoreReserveName {
 
             super.init(frame: .zero)
 
-            configureSelf()
+            configureSelf(canSkip: canSkip)
         }
 
-        private func configureSelf() {
+        private func configureSelf(canSkip: Bool) {
             backButton.onTap(self, action: #selector(back))
-            titleLabel.text = L10n.enterYourSecurityKey
+            titleLabel.text = L10n.reserveP2PUsername
 
-            let skipButton = UIButton(label: L10n.skip.capitalized, textColor: .h5887ff)
-            skipButton.addTarget(self, action: #selector(skip), for: .touchUpInside)
-            rightItems.addArrangedSubview(skipButton)
+            if canSkip {
+                let skipButton = UIButton(label: L10n.skip.capitalized, textColor: .h5887ff)
+                skipButton.addTarget(self, action: #selector(skip), for: .touchUpInside)
+                rightItems.addArrangedSubview(skipButton)
+            }
         }
 
         @objc

@@ -61,6 +61,14 @@ extension UIView {
     }
 }
 
+extension Reactive where Base: UIView {
+    func loadableState(reloadAction: @escaping (() -> Void)) -> Binder<LoadableState> {
+        Binder(base) {view, loadableState in
+            view.setUp(loadableState, reloadAction: reloadAction)
+        }
+    }
+}
+
 extension Collection where Element == LoadableState {
     var combined: Element {
         // if there is some error, return error

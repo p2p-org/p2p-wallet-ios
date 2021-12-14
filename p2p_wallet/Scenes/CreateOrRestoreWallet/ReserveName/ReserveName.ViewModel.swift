@@ -1,5 +1,5 @@
 //
-//  CreateOrRestoreReserveName.ViewModel.swift
+//  ReserveName.ViewModel.swift
 //  p2p_wallet
 //
 //  Created by Andrew Vasiliev on 26.11.2021.
@@ -12,13 +12,14 @@ import GT3Captcha
 import UIKit
 
 protocol NewReserveNameViewModelType: AnyObject {
-    var navigationDriver: Driver<CreateOrRestoreReserveName.NavigatableScene?> { get }
-    var textFieldStateDriver: Driver<CreateOrRestoreReserveName.TextFieldState> { get }
-    var mainButtonStateDriver: Driver<CreateOrRestoreReserveName.MainButtonState> { get }
+    var navigationDriver: Driver<ReserveName.NavigatableScene?> { get }
+    var textFieldStateDriver: Driver<ReserveName.TextFieldState> { get }
+    var mainButtonStateDriver: Driver<ReserveName.MainButtonState> { get }
     var textFieldTextSubject: BehaviorRelay<String?> { get }
     var usernameValidationLoadingDriver: Driver<Bool> { get }
     var isLoadingDriver: Driver<Bool> { get }
-
+    var canSkip: Bool { get }
+    
     func showTermsOfUse()
     func showPrivacyPolicy()
     func skipButtonPressed()
@@ -26,7 +27,7 @@ protocol NewReserveNameViewModelType: AnyObject {
     func goForth()
 }
 
-extension CreateOrRestoreReserveName {
+extension ReserveName {
     class ViewModel: NSObject {
         // MARK: - Dependencies
         private let nameService: NameServiceType
@@ -43,6 +44,8 @@ extension CreateOrRestoreReserveName {
         }()
 
         // MARK: - Properties
+        let canSkip: Bool
+
         private let disposeBag = DisposeBag()
 
         private var nameAvailabilityDisposable: Disposable?
@@ -50,16 +53,18 @@ extension CreateOrRestoreReserveName {
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let textFieldStateSubject = BehaviorRelay<TextFieldState>(value: .empty)
-        private let mainButtonStateSubject = BehaviorRelay<CreateOrRestoreReserveName.MainButtonState>(value: .empty)
+        private let mainButtonStateSubject = BehaviorRelay<ReserveName.MainButtonState>(value: .empty)
         let textFieldTextSubject = BehaviorRelay<String?>(value: nil)
         private let usernameValidationLoadingSubject = BehaviorRelay<Bool>(value: false)
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
 
         init(
+            canSkip: Bool,
             owner: String,
             nameService: NameServiceType,
             reserveNameHandler: ReserveNameHandler
         ) {
+            self.canSkip = canSkip
             self.nameService = nameService
             self.owner = owner
             self.reserveNameHandler = reserveNameHandler
@@ -157,7 +162,7 @@ extension CreateOrRestoreReserveName {
     }
 }
 
-extension CreateOrRestoreReserveName.ViewModel: NewReserveNameViewModelType {
+extension ReserveName.ViewModel: NewReserveNameViewModelType {
     var usernameValidationLoadingDriver: Driver<Bool> {
         usernameValidationLoadingSubject.asDriver()
     }
@@ -170,15 +175,15 @@ extension CreateOrRestoreReserveName.ViewModel: NewReserveNameViewModelType {
         )
     }
 
-    var navigationDriver: Driver<CreateOrRestoreReserveName.NavigatableScene?> {
+    var navigationDriver: Driver<ReserveName.NavigatableScene?> {
         navigationSubject.asDriver()
     }
 
-    var textFieldStateDriver: Driver<CreateOrRestoreReserveName.TextFieldState> {
+    var textFieldStateDriver: Driver<ReserveName.TextFieldState> {
         textFieldStateSubject.asDriver()
     }
 
-    var mainButtonStateDriver: Driver<CreateOrRestoreReserveName.MainButtonState> {
+    var mainButtonStateDriver: Driver<ReserveName.MainButtonState> {
         mainButtonStateSubject.asDriver()
     }
 
@@ -203,7 +208,7 @@ extension CreateOrRestoreReserveName.ViewModel: NewReserveNameViewModelType {
     }
 }
 
-extension CreateOrRestoreReserveName.ViewModel: GT3CaptchaManagerDelegate {
+extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
     func gtCaptcha(_ manager: GT3CaptchaManager, errorHandler error: GT3Error) {
         UIApplication.shared.showToast(message: "❌ \(error.readableDescription)")
     }
