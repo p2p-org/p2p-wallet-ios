@@ -21,12 +21,11 @@ extension ChooseWallet {
             let searchBar = BESearchBar(fixedHeight: 36, cornerRadius: 12)
             
             searchBar.textFieldBgColor = .grayPanel
-            searchBar.placeholder = L10n.searchToken
-            
-            searchBar.leftViewWidth = 20.57 + 12 + 12
-            searchBar.magnifyingIconImageView.image = .search
-            searchBar.magnifyingIconImageView.tintColor = .a3a5ba
-            searchBar.magnifyingIconSize = 20.57
+            searchBar.setUpTextField(placeholderTextColor: .h8e8e93)
+            searchBar.leftViewWidth = 20 + 12 + 12
+            searchBar.magnifyingIconImageView.image = .standardSearch.withRenderingMode(.alwaysTemplate)
+            searchBar.magnifyingIconImageView.tintColor = .h8e8e93
+            searchBar.magnifyingIconSize = 20
             
             searchBar.tintColor = .h5887ff
             searchBar.cancelButton.titleLabel?.font = .systemFont(ofSize: 17)
@@ -67,8 +66,8 @@ extension ChooseWallet {
             searchBar.autoPinEdgesToSuperviewEdges(with: .init(top: .defaultPadding, left: 16, bottom: 0, right: 16), excludingEdge: .bottom)
             
             addSubview(collectionView)
-            collectionView.autoPinEdgesToSuperviewEdges(with: .init(x: .defaultPadding, y: 0), excludingEdge: .top)
-            collectionView.autoPinEdge(.top, to: .bottom, of: searchBar, withOffset: 10)
+            collectionView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            collectionView.autoPinEdge(.top, to: .bottom, of: searchBar, withOffset: 18)
         }
         
         private func bind() {

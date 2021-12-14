@@ -11,8 +11,12 @@ import RxSwift
 
 enum OrcaSwapV2 {
     enum NavigatableScene {
-        case chooseSourceWallet
-        case chooseDestinationWallet(validMints: Set<String>, excludedSourceWalletPubkey: String?)
+        case chooseSourceWallet(currentlySelectedWallet: Wallet?)
+        case chooseDestinationWallet(
+            currentlySelectedWallet: Wallet?,
+            validMints: Set<String>,
+            excludedSourceWalletPubkey: String?
+        )
         case settings
         case chooseSlippage
         case choosePayFeeToken(tokenName: String?)

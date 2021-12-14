@@ -11,7 +11,7 @@ import Action
 import RxSwift
 import RxCocoa
 
-class TransactionsCollectionView: BEDynamicSectionsCollectionView {
+class TransactionsCollectionView: BEDynamicSectionsCollectionView<TransactionsViewModel> {
     let graphViewModel: WalletGraphViewModel
     @Injected private var analyticsManager: AnalyticsManagerType
     let wallet: Driver<Wallet?>
@@ -19,7 +19,7 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let disposeBag = DisposeBag()
     
     init(
-        transactionViewModel: BEListViewModelType,
+        transactionViewModel: TransactionsViewModel,
         graphViewModel: WalletGraphViewModel,
         wallet: Driver<Wallet?>,
         nativePubkey: Driver<String?>
