@@ -169,16 +169,16 @@ class MainContainer {
     
     func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
     {
+        let feeService = FeeService(apiClient: solanaSDK)
         switch provider {
         case .orca:
             let vm = OrcaSwapV2.ViewModel(
-                feeAPIClient: solanaSDK,
+                feeService: feeService,
                 orcaSwap: orcaSwap,
                 walletsRepository: walletsViewModel,
                 initialWallet: wallet ?? walletsViewModel.nativeWallet
                 )
-//            return OrcaSwapV2.ViewController(viewModel: vm, scenesFactory: self)
-            return NewOrcaSwap.ViewController(viewModel: vm, scenesFactory: self)
+            return OrcaSwapV2.ViewController(viewModel: vm, scenesFactory: self)
         case .serum:
             let provider = SerumSwap(
                 client: solanaSDK,
@@ -242,9 +242,14 @@ class MainContainer {
     
     // MARK: - Reserve name
     func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController {
-        let vm = ReserveName.ViewModel(owner: owner, handler: handler)
+        let vm = ReserveName.ViewModel(
+            canSkip: false,
+            owner: owner,
+            nameService: Resolver.resolve(),
+            reserveNameHandler: handler
+        )
         let vc = ReserveName.ViewController(viewModel: vm)
-        vc.rootView.hideSkipButtons()
+
         return vc
     }
     

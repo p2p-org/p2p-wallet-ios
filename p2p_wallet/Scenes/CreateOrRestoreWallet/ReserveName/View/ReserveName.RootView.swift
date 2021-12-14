@@ -1,5 +1,5 @@
 //
-//  CreateOrRestoreReserveName.RootView.swift
+//  ReserveName.RootView.swift
 //  p2p_wallet
 //
 //  Created by Andrew Vasiliev on 26.11.2021.
@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-extension CreateOrRestoreReserveName {
+extension ReserveName {
     class RootView: BEView {
         // MARK: - Constants
         private let disposeBag = DisposeBag()
@@ -22,9 +22,9 @@ extension CreateOrRestoreReserveName {
         private let stackView = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill)
 
         private let textView = ExpandableTextView(
+            changesFilter: ReserveTextViewChangesFilter(),
             hasClearButton: false,
-            limitOfLines: 1,
-            maxSymbols: 15
+            limitOfLines: 1
         )
         private let usernameSuffixLabel = UILabel(
             text: .nameServiceDomain,
@@ -101,6 +101,7 @@ extension CreateOrRestoreReserveName {
             separatorView.backgroundColor = .c7c7cc
 
             let navigationBar = NavigationBar(
+                canSkip: viewModel.canSkip,
                 backHandler: { [weak viewModel] in
                     viewModel?.goBack()
                 },
@@ -115,18 +116,21 @@ extension CreateOrRestoreReserveName {
                 BEStackViewSpacing(12)
             }
 
+            let mainButtonView = BottomFixedView(content: nextButton)
+
             addSubview(navigationBar)
             addSubview(scrollView)
-            addSubview(nextButton)
+            addSubview(mainButtonView)
             scrollView.contentView.addSubview(stackView)
 
+            mainButtonView.setConstraints()
             navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
 
             // scroll view for flexible height
             scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 18)
             scrollView.autoPinEdge(toSuperviewEdge: .leading)
             scrollView.autoPinEdge(toSuperviewEdge: .trailing)
-            scrollView.autoPinEdge(.bottom, to: .top, of: nextButton)
+            scrollView.autoPinEdge(.bottom, to: .top, of: mainButtonView)
 
             usernameSuffixLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
             usernameSuffixLabel.setContentHuggingPriority(.required, for: .horizontal)
@@ -151,10 +155,6 @@ extension CreateOrRestoreReserveName {
             usernameLoadingView.autoMatch(.height, to: .height, of: usernameHintLabel)
 
             stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 0))
-
-            nextButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
-            nextButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-            nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
         }
         
         private func bind() {
@@ -224,7 +224,9 @@ extension CreateOrRestoreReserveName {
             case .empty:
                 image = nil
                 isEnabled = false
-                title = L10n.enterUsernameOrSkip
+                title = viewModel.canSkip
+                    ? L10n.enterUsernameOrSkip
+                    : L10n.enterUsername
             case .unavailableUsername:
                 image = nil
                 isEnabled = false

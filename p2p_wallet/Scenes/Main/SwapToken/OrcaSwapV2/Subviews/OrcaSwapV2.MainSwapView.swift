@@ -57,6 +57,7 @@ extension OrcaSwapV2 {
         }
 
         private func setAtLeastText(string: String?) {
+            receiveAtLeastView.isHidden = string == nil
             receiveAtLeastView.configureRightLabel { label in
                 label.text = string
             }
@@ -77,18 +78,6 @@ extension OrcaSwapV2 {
         }
 
         private func bind() {
-            //                equityValueLabelDriver = Driver.combineLatest(
-            //                    viewModel.inputAmountDriver,
-            //                    viewModel.sourceWalletDriver
-            //                )
-            //                    .map {amount, wallet in
-            //                        if let wallet = wallet {
-            //                            let value = amount * wallet.priceInCurrentFiat
-            //                            return "≈ \(value.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
-            //                        } else {
-            //                            return L10n.selectCurrency
-            //                        }
-            //                    }
 
             Driver.combineLatest(
                 viewModel.minimumReceiveAmountDriver,

@@ -115,9 +115,9 @@ extension Home {
                         .onTap(self, action: #selector(buttonSettingsDidTouch))
                 }
                     .padding(.init(x: 24, y: 16))
+                pricesLoadingIndicatorView
                 bannersCollectionView
                 BEStackViewSpacing(15)
-                pricesLoadingIndicatorView
             }
 
             addSubview(collectionView)
@@ -168,6 +168,8 @@ extension Home {
         private func setBannersCollectionViewIsHidden(_ isHidden: Bool) {
             UIView.animate(withDuration: 0.3) {
                 self.bannersCollectionView.isHidden = isHidden
+            } completion: { [weak self] _ in
+                self?.bannersCollectionView.alpha = isHidden ? 0: 1 // workaround: ios13
             }
         }
 

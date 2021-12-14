@@ -24,6 +24,8 @@
 	<string>$(CRYPTO_COMPARE_API_KEY)</string>
 	<key>FEE_RELAYER_ENDPOINT</key>
 	<string>$(FEE_RELAYER_ENDPOINT)</string>
+	<key>TEST_ACCOUNT_SEED_PHRASE</key>
+	<string>$(TEST_ACCOUNT_SEED_PHRASE)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MOONPAY_PRODUCTION_API_KEY</key>

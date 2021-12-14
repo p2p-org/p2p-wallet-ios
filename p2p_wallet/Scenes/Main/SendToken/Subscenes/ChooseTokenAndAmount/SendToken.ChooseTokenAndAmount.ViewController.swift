@@ -31,6 +31,10 @@ extension SendToken.ChooseTokenAndAmount {
             super.setUp()
             navigationBar.titleLabel.text = L10n.send
             navigationBar.backButton.onTap(self, action: #selector(_back))
+            navigationBar.rightItems.addArrangedSubview(
+                UILabel(text: L10n.next.uppercaseFirst, textSize: 17, textColor: .h5887ff)
+                    .onTap(self, action: #selector(buttonNextDidTouch))
+            )
             
             let rootView = RootView(viewModel: viewModel)
             view.addSubview(rootView)
@@ -55,12 +59,40 @@ extension SendToken.ChooseTokenAndAmount {
                     showOtherWallets: false,
                     handler: viewModel
                 )
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
+            case .backToConfirmation:
+                navigationController?.popToViewController(ofClass: SendToken.ConfirmViewController.self, animated: true)
+            case .invalidTokenForSelectedNetworkAlert:
+                showAlert(
+                    title: L10n.changeTheToken,
+                    message: L10n.ifTheTokenIsChangedToTheAddressFieldMustBeFilledInWithA(
+                        viewModel.getSelectedWallet()?.token.symbol ?? "",
+                        L10n.compatibleAddress(L10n.solana)
+                    ),
+                    buttonTitles: [L10n.discard, L10n.change],
+                    highlightedButtonIndex: 1,
+                    destroingIndex: 0
+                ) {[weak self] selectedIndex in
+                    guard selectedIndex == 1 else {return}
+                    self?.viewModel.save()
+                    self?.viewModel.navigateNext()
+                }
             }
         }
         
-        @objc private func _back() {
-            viewModel.back()
+        @objc override func _back() {
+            if viewModel.showAfterConfirmation {
+                back()
+            } else {
+                viewModel.cancelSending()
+            }
+        }
+        
+        @objc private func buttonNextDidTouch() {
+            if viewModel.isTokenValidForSelectedNetwork() {
+                viewModel.save()
+                viewModel.navigateNext()
+            }
         }
     }
 }

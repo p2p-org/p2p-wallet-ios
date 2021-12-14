@@ -7,6 +7,8 @@
 
 import BEPureLayout
 import UIKit
+import RxSwift
+import RxCocoa
 
 extension OrcaSwapV2 {
     final class DetailFeesView: UIStackView {
@@ -32,32 +34,45 @@ extension OrcaSwapV2 {
         required init(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-
-        func setData(content: DetailedFeesContent) {
+        
+        fileprivate func setUp(fees: [PayingFee]) {
+            // clear
             feesDescriptionView.arrangedSubviews.forEach {
                 $0.removeFromSuperview()
             }
-
-            content.parts.forEach {
-                feesDescriptionView.addArrangedSubview(createFeeLine(content: $0))
+            
+            // liquidity
+            let liquidityProviderFees = fees.filter {$0.type == .liquidityProviderFee}
+            if liquidityProviderFees.count > 0 {
+                let view = createLiquidityProviderFeesLine(fees: liquidityProviderFees)
+                feesDescriptionView.addArrangedSubview(view)
             }
-
-            if let total = content.total {
+            
+            // another fees
+            fees.filter {$0.type != .liquidityProviderFee}.forEach {
+                feesDescriptionView.addArrangedSubview(createFeeLine(fee: $0))
+            }
+            
+            // total fees
+            let totalFeesSymbol = fees.first(where: {$0.type == .transactionFee})?.token.symbol
+            if let totalFeesSymbol = totalFeesSymbol {
+                let totalFees = fees.filter {$0.token.symbol == totalFeesSymbol}
+                let decimals = totalFees.first?.token.decimals ?? 0
+                let amount = totalFees
+                    .reduce(UInt64(0)) { $0 + $1.lamports }
+                    .convertToBalance(decimals: decimals)
+                    .toString(maximumFractionDigits: Int(decimals)) + " \(totalFeesSymbol)"
                 feesDescriptionView.addArrangedSubviews {
                     UIView.defaultSeparator()
-                    createFeeLine(
-                        content: .init(
-                            amount: total,
-                            reason: L10n.totalFee
-                        )
-                    )
+                    createFeeLine(amount: amount, type: L10n.totalFees)
                 }
             }
+            
+            setNeedsLayout()
         }
 
         private func layout() {
-            axis = .horizontal
-            alignment = .top
+            set(axis: .horizontal, spacing: 8, alignment: .top)
 
             title.autoSetDimension(.height, toSize: 21)
             title.setContentHuggingPriority(.required, for: .horizontal)
@@ -68,43 +83,55 @@ extension OrcaSwapV2 {
             }
         }
 
-        private func createFeeLine(content: DetailedFeeContent) -> UIView {
-            let label = UILabel()
-
-            label.autoSetDimension(.height, toSize: 21)
-
-            let font: UIFont = .systemFont(ofSize: 15, weight: .regular)
-            let paragraph = NSMutableParagraphStyle()
-            paragraph.alignment = .right
-
-            let resultString = NSMutableAttributedString()
-            let priceString = NSAttributedString(
-                string: content.amount,
-                attributes: [
-                    .font: font,
-                    .foregroundColor: UIColor.darkText
-                ]
+        private func createFeeLine(fee: PayingFee) -> UIView {
+            createFeeLine(
+                amount: fee.lamports.convertToBalance(decimals: fee.token.decimals)
+                    .toString(maximumFractionDigits: Int(fee.token.decimals)) +
+                    " \(fee.token.symbol)",
+                type: fee.type.headerString
             )
-
-            resultString.append(priceString)
-
-            let reasonString = NSAttributedString(
-                string: " (\(content.reason))",
-                attributes: [
-                    .font: font,
-                    .foregroundColor: UIColor.h8e8e93
-                ]
+        }
+        
+        private func createFeeLine(amount: String, type: String) -> UIView {
+            UILabel(text: nil, textSize: 15, numberOfLines: 0, textAlignment: .right)
+                .withAttributedText(
+                    NSMutableAttributedString()
+                        .text(amount, size: 15, color: .textBlack)
+                        .text(" (\(type))", size: 15, color: .h8e8e93)
+                        .withParagraphStyle(lineSpacing: 4, alignment: .right)
+                )
+        }
+        
+        private func createLiquidityProviderFeesLine(fees: [PayingFee]) -> UIView {
+            UILabel(
+                text: nil,
+                textSize: 15,
+                numberOfLines: 0,
+                textAlignment: .right
             )
+                .withAttributedText(
+                    NSMutableAttributedString()
+                        .text(
+                            fees.map { fee in
+                                let amount = fee.lamports.convertToBalance(decimals: fee.token.decimals)
+                                    .toString(maximumFractionDigits: Int(fee.token.decimals))
+                                return amount + " " + fee.token.symbol
+                            }
+                            .joined(separator: " + "),
+                            size: 15,
+                            color: .textBlack
+                        )
+                        .text(" (\(PayingFee.FeeType.liquidityProviderFee.headerString))", size: 15, color: .h8e8e93)
+                        .withParagraphStyle(lineSpacing: 4, alignment: .right)
+                )
+        }
+    }
+}
 
-            resultString.append(reasonString)
-            resultString.addAttributes(
-                [.paragraphStyle: paragraph],
-                range: .init(location: 0, length: resultString.length)
-            )
-
-            label.attributedText = resultString
-
-            return label
+extension Reactive where Base == OrcaSwapV2.DetailFeesView {
+    var fees: Binder<[PayingFee]> {
+        Binder(base) {view, value in
+            view.setUp(fees: value)
         }
     }
 }

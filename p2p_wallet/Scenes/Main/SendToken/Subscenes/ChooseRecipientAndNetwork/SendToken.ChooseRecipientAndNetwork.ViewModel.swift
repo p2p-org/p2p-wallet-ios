@@ -9,55 +9,120 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol SendTokenChooseRecipientAndNetworkViewModelType {
+protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenSelectNetworkViewModelType {
+    var showAfterConfirmation: Bool {get}
+    var preSelectedNetwork: SendToken.Network? {get}
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> {get}
+    var walletDriver: Driver<Wallet?> {get}
+    var amountDriver: Driver<Double?> {get}
+    
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene)
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
-    func getSelectedWallet() -> SolanaSDK.Wallet?
-    func getSelectedAmount() -> Double?
+    func getAPIClient() -> SendTokenAPIClient
+    func getPrice(for symbol: String) -> Double
+    func getSOLAndRenBTCPrices() -> [String: Double]
+    func save()
+    func navigateNext()
 }
 
 extension SendToken.ChooseRecipientAndNetwork {
     class ViewModel {
         // MARK: - Dependencies
-        var solanaAPIClient: SendTokenAPIClient!
-        var repository: WalletsRepository!
-        var pricesService: PricesServiceType!
-        var completion: ((SendToken.Recipient, SendToken.Network) -> Void)?
+        private let sendTokenViewModel: SendTokenViewModelType
+        let showAfterConfirmation: Bool
+        let preSelectedNetwork: SendToken.Network?
         
         // MARK: - Properties
-        var selectedWalletPubkey: String!
-        var selectedAmount: SolanaSDK.Lamports!
+        private let disposeBag = DisposeBag()
         
-        // MARK: - Subject
+        // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
+        let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
+        
+        // MARK: - Initializers
+        init(
+            sendTokenViewModel: SendTokenViewModelType,
+            showAfterConfirmation: Bool,
+            preSelectedNetwork: SendToken.Network?
+        ) {
+            self.sendTokenViewModel = sendTokenViewModel
+            self.showAfterConfirmation = showAfterConfirmation
+            self.preSelectedNetwork = preSelectedNetwork
+            bind()
+            
+            if let preSelectedNetwork = preSelectedNetwork {
+                networkSubject.accept(preSelectedNetwork)
+            }
+        }
+        
+        func bind() {
+            sendTokenViewModel.recipientDriver
+                .drive(recipientSubject)
+                .disposed(by: disposeBag)
+            
+            sendTokenViewModel.networkDriver
+                .drive(networkSubject)
+                .disposed(by: disposeBag)
+        }
     }
 }
 
 extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipientAndNetworkViewModelType {
+    func getSelectedWallet() -> Wallet? {
+        sendTokenViewModel.getSelectedWallet()
+    }
+    
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> {
         navigationSubject.asDriver()
     }
     
-    // MARK: - Actions
+    var walletDriver: Driver<Wallet?> {
+        sendTokenViewModel.walletDriver
+    }
+    
+    var amountDriver: Driver<Double?> {
+        sendTokenViewModel.amountDriver
+    }
+    
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene) {
         navigationSubject.accept(scene)
     }
     
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
-        let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel()
-        vm.solanaAPIClient = solanaAPIClient
-        vm.pricesService = pricesService
-        vm.wallet = getSelectedWallet()
-        vm.completion = completion
+        let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel(
+            chooseRecipientAndNetworkViewModel: self,
+            showAfterConfirmation: showAfterConfirmation
+        )
         return vm
     }
     
-    func getSelectedWallet() -> SolanaSDK.Wallet? {
-        repository.getWallets().first(where: {$0.pubkey == selectedWalletPubkey})
+    func getAPIClient() -> SendTokenAPIClient {
+        sendTokenViewModel.getAPIClient()
     }
     
-    func getSelectedAmount() -> Double? {
-        selectedAmount.convertToBalance(decimals: getSelectedWallet()?.token.decimals)
+    func getPrice(for symbol: String) -> Double {
+        sendTokenViewModel.getPrice(for: symbol)
+    }
+    
+    func getSOLAndRenBTCPrices() -> [String: Double] {
+        sendTokenViewModel.getSOLAndRenBTCPrices()
+    }
+    
+    func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
+        sendTokenViewModel.navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(network)
+    }
+    
+    func save() {
+        sendTokenViewModel.selectRecipient(recipientSubject.value)
+        sendTokenViewModel.selectNetwork(networkSubject.value)
+    }
+    
+    func navigateNext() {
+        if showAfterConfirmation {
+            navigationSubject.accept(.backToConfirmation)
+        } else {
+            sendTokenViewModel.navigate(to: .confirmation)
+        }
     }
 }

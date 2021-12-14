@@ -1,11 +1,11 @@
 //
-//  CreateOrRestoreReserveName.TextFieldState.swift
+//  ReserveName.TextFieldState.swift
 //  p2p_wallet
 //
 //  Created by Andrew Vasiliev on 29.11.2021.
 //
 
-extension CreateOrRestoreReserveName {
+extension ReserveName {
     enum TextFieldState {
         case available(name: String)
         case unavailable(name: String)

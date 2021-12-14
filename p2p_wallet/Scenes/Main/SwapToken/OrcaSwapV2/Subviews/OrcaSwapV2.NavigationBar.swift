@@ -1,5 +1,5 @@
 //
-//  NewOrcaSwap.NavigationBar.swift
+//  OrcaSwapV2.NavigationBar.swift
 //  p2p_wallet
 //
 //  Created by Andrew Vasiliev on 30.11.2021.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension NewOrcaSwap {
+extension OrcaSwapV2 {
     final class NavigationBar: WLNavigationBar {
         private let backHandler: () -> Void
         private let settingsHandler: () -> Void
@@ -26,11 +26,11 @@ extension NewOrcaSwap {
 
         private func configureSelf() {
             backButton.onTap(self, action: #selector(back))
-            titleLabel.text = L10n.enterYourSecurityKey
-            let settingsButton = UIButton(width: 24, height: 24)
-            settingsButton.setImage(.settings, for: .normal)
-            settingsButton.addTarget(self, action: #selector(settings), for: .touchUpInside)
-            rightItems.addArrangedSubview(settingsButton)
+            titleLabel.text = L10n.swap
+            rightItems.addArrangedSubview(
+                UIImageView(width: 24, height: 24, image: .settings, tintColor: .h5887ff)
+                    .onTap(self, action: #selector(settings))
+            )
         }
 
         @objc
