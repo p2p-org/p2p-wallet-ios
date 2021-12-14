@@ -133,7 +133,7 @@ class MainContainer {
         try BuyToken.ViewController(token: token, repository: walletsViewModel)
     }
     
-    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController? {
+    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.Scene? {
         guard let pubkey = try? SolanaSDK.PublicKey(string: walletsViewModel.nativeWallet?.pubkey) else {return nil}
         let tokenWallet = walletsViewModel.getWallets().first(where: {$0.pubkey == tokenWalletPubkey})
         
@@ -144,7 +144,7 @@ class MainContainer {
             $0.token.address == renBTCMint.base58EncodedString
         })
         
-        let viewModel = ReceiveToken.ViewModel(
+        let viewModel = ReceiveToken.SceneModel(
             solanaPubkey: pubkey,
             solanaTokenWallet: tokenWallet,
             tokensRepository: solanaSDK,
@@ -152,7 +152,7 @@ class MainContainer {
             isRenBTCWalletCreated: isRenBTCWalletCreated,
             associatedTokenAccountHandler: solanaSDK
         )
-        return ReceiveToken.ViewController(viewModel: viewModel)
+        return ReceiveToken.Scene(viewModel: viewModel)
     }
     
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController {

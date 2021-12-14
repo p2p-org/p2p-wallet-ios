@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol ReceiveTokenSolanaViewModelType {
+protocol ReceiveTokenSolanaViewModelType: BESceneModel {
     var pubkey: String { get }
     var tokenWallet: Wallet? { get }
     
@@ -22,26 +22,21 @@ protocol ReceiveTokenSolanaViewModelType {
 }
 
 extension ReceiveToken {
-    class ReceiveSolanaViewModel: NSObject {
-        // MARK: - Dependencies
+    class SolanaViewModel: BESceneModel {
         @Injected private var nameStorage: NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         private let tokensRepository: TokensRepository
-        private let navigationSubject: BehaviorRelay<NavigatableScene?>
+        private let navigationSubject: PublishSubject<NavigatableScene>
         
-        // MARK: - Properties
         let pubkey: String
         let tokenWallet: Wallet?
         private let disposeBag = DisposeBag()
         
-        // MARK: - Subjects
-        
-        // MARK: - Initializers
         init(
             solanaPubkey: String,
             solanaTokenWallet: Wallet? = nil,
             tokensRepository: TokensRepository,
-            navigationSubject: BehaviorRelay<NavigatableScene?>
+            navigationSubject: PublishSubject<NavigatableScene>
         ) {
             self.pubkey = solanaPubkey
             self.tokensRepository = tokensRepository
@@ -55,7 +50,7 @@ extension ReceiveToken {
     }
 }
 
-extension ReceiveToken.ReceiveSolanaViewModel: ReceiveTokenSolanaViewModelType {
+extension ReceiveToken.SolanaViewModel: ReceiveTokenSolanaViewModelType {
     func getUsername() -> String? {
         nameStorage.getName()
     }
@@ -67,7 +62,7 @@ extension ReceiveToken.ReceiveSolanaViewModel: ReceiveTokenSolanaViewModelType {
     
     func shareAction(image: UIImage) {
         analyticsManager.log(event: .receiveQrcodeShare)
-        navigationSubject.accept(.share(qrCode: image))
+        navigationSubject.onNext(.share(qrCode: image))
     }
     
     func saveAction(image: UIImage) {
@@ -85,7 +80,7 @@ extension ReceiveToken.ReceiveSolanaViewModel: ReceiveTokenSolanaViewModelType {
     
     func showSOLAddressInExplorer() {
         analyticsManager.log(event: .receiveViewExplorerOpen)
-        navigationSubject.accept(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
+        navigationSubject.onNext(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
     }
 }
 
