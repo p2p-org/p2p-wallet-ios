@@ -374,7 +374,7 @@
 		BCB28688274748D50074E1D5 /* UITapGestureRecognizer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB28687274748D50074E1D5 /* UITapGestureRecognizer+Extensions.swift */; };
 		BCB2868A27474B140074E1D5 /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2868927474B140074E1D5 /* UILabel+Extensions.swift */; };
 		BCB2868C274763BA0074E1D5 /* MirrorableEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2868B274763BA0074E1D5 /* MirrorableEnum.swift */; };
-		BCB28693274B62920074E1D5 /* FeeApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB28692274B62920074E1D5 /* FeeApiClient.swift */; };
+		BCB28693274B62920074E1D5 /* FeeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB28692274B62920074E1D5 /* FeeService.swift */; };
 		BCB28695274B81FD0074E1D5 /* WalletDetail.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB28694274B81FD0074E1D5 /* WalletDetail.ViewController.swift */; };
 		BCB28697274B88FB0074E1D5 /* WalletDetail.InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB28696274B88FA0074E1D5 /* WalletDetail.InfoViewController.swift */; };
 		BCB28699274B89670074E1D5 /* WalletDetail.HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB28698274B89670074E1D5 /* WalletDetail.HistoryViewController.swift */; };
@@ -868,7 +868,7 @@
 		BCB28687274748D50074E1D5 /* UITapGestureRecognizer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITapGestureRecognizer+Extensions.swift"; sourceTree = "<group>"; };
 		BCB2868927474B140074E1D5 /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
 		BCB2868B274763BA0074E1D5 /* MirrorableEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirrorableEnum.swift; sourceTree = "<group>"; };
-		BCB28692274B62920074E1D5 /* FeeApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeeApiClient.swift; sourceTree = "<group>"; };
+		BCB28692274B62920074E1D5 /* FeeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeeService.swift; sourceTree = "<group>"; };
 		BCB28694274B81FD0074E1D5 /* WalletDetail.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.ViewController.swift; sourceTree = "<group>"; };
 		BCB28696274B88FA0074E1D5 /* WalletDetail.InfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.InfoViewController.swift; sourceTree = "<group>"; };
 		BCB28698274B89670074E1D5 /* WalletDetail.HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.HistoryViewController.swift; sourceTree = "<group>"; };
@@ -1871,7 +1871,7 @@
 				BC6FEDA2270D57D1002B6255 /* NameService.swift */,
 				84699C98681FF7B583A45CA9 /* BuyProvider */,
 				41446332272A84560099B327 /* LocalizationManager.swift */,
-				BCB28692274B62920074E1D5 /* FeeApiClient.swift */,
+				BCB28692274B62920074E1D5 /* FeeService.swift */,
 				BCB286CD275084A10074E1D5 /* DAppChannel.swift */,
 			);
 			path = Services;
@@ -2702,7 +2702,7 @@
 				BC7DD92127327872000F50D0 /* UIView+Builders.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WelcomeViewController.swift in Sources */,
 				BC35082F273FFC08009D4441 /* Authentication.PincodeViewController.swift in Sources */,
-				BCB28693274B62920074E1D5 /* FeeApiClient.swift in Sources */,
+				BCB28693274B62920074E1D5 /* FeeService.swift in Sources */,
 				41D7F6BB27392AA700453B61 /* Home.BannersManager.swift in Sources */,
 				4114D16A2746272400352CDF /* EnterSeedInfo.swift in Sources */,
 				BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */,
