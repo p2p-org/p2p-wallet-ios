@@ -67,3 +67,8 @@ custom_rules:
     regex: 'image: \.nextArrow'
     message: "Use UIView.defaultNextArrow() instead"
     severity: warning
+  paragraph_style:
+    name: "Pragraph style"
+    regex: 'NSParagraphStyle\(\)'
+    message: "Don't construct NSParagraphStyle directly, use withParagraphStyle() method on NSMutableAttributedString instead"
+    severity: warning
