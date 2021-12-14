@@ -14,7 +14,7 @@ extension OrcaSwapV2 {
         // MARK: - Dependencies
         @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var analyticsManager: AnalyticsManagerType
-        private let feeAPIClient: FeeAPIClient
+        private let feeService: FeeServiceType
         private let orcaSwap: OrcaSwapType
         private let walletsRepository: WalletsRepository
         
@@ -24,8 +24,6 @@ extension OrcaSwapV2 {
         private var transactionTokensName: String?
         
         // MARK: - Subject
-        private let lamportsPerSignatureSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
-        private let minimumBalanceForRenExemptionSubject = BehaviorRelay<SolanaSDK.Lamports?>(value: nil)
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         private let sourceWalletSubject = BehaviorRelay<Wallet?>(value: nil)
@@ -61,12 +59,12 @@ extension OrcaSwapV2 {
 
         // MARK: - Initializer
         init(
-            feeAPIClient: FeeAPIClient,
+            feeService: FeeServiceType,
             orcaSwap: OrcaSwapType,
             walletsRepository: WalletsRepository,
             initialWallet: Wallet?
         ) {
-            self.feeAPIClient = feeAPIClient
+            self.feeService = feeService
             self.orcaSwap = orcaSwap
             self.walletsRepository = walletsRepository
 
@@ -476,20 +474,13 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func reload() {
         loadingStateSubject.accept(.loading)
         
-        Single.zip(
-            orcaSwap.load().andThen(Single.just(())),
-            feeAPIClient.getLamportsPerSignature(),
-            feeAPIClient.getCreatingTokenAccountFee()
+        Completable.zip(
+            orcaSwap.load(),
+            feeService.load()
         )
-            .subscribe(onSuccess: {[weak self] _, lps, mbr in
-                self?.lamportsPerSignatureSubject.accept(lps)
-                self?.minimumBalanceForRenExemptionSubject.accept(mbr)
-                
+            .subscribe(onCompleted: {[weak self] in
                 self?.loadingStateSubject.accept(.loaded)
-            }, onFailure: {[weak self] error in
-                self?.lamportsPerSignatureSubject.accept(nil)
-                self?.minimumBalanceForRenExemptionSubject.accept(nil)
-                
+            }, onError: {[weak self] error in
                 self?.loadingStateSubject.accept(.error(error.readableDescription))
             })
             .disposed(by: disposeBag)
@@ -774,8 +765,8 @@ private extension OrcaSwapV2.ViewModel {
     private func calculateFees() -> [PayingFee] {
         guard let sourceWallet = sourceWalletSubject.value,
               let sourceWalletPubkey = sourceWallet.pubkey,
-              let lamportsPerSignature = lamportsPerSignatureSubject.value,
-              let minRenExempt = minimumBalanceForRenExemptionSubject.value
+              let lamportsPerSignature = feeService.lamportsPerSignature,
+              let minRenExempt = feeService.minimumBalanceForRenExemption
         else {return []}
         
         let destinationWallet = destinationWalletSubject.value
