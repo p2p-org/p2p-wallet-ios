@@ -10,26 +10,14 @@ import RxSwift
 import RxCocoa
 
 extension OrcaSwapV2 {
-    class RootView: BEView {
+    class RootView: ScrollableVStackRootView {
         // MARK: - Constants
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
         private let viewModel: OrcaSwapV2ViewModelType
-        
-        // MARK: - Subviews
-        private lazy var navigationBar = NavigationBar(
-            backHandler: { [weak viewModel] in
-                viewModel?.navigate(to: .back)
-            },
-            settingsHandler: { [weak viewModel] in
-                viewModel?.navigate(to: .settings)
-            }
-        )
 
         // MARK: - Subviews
-        private let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
-        private let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill)
         private lazy var nextButton = WLStepButton.main(image: .buttonCheckSmall, text: L10n.reviewAndConfirm)
             .onTap(self, action: #selector(buttonNextDidTouch))
 
@@ -49,7 +37,6 @@ extension OrcaSwapV2 {
 
         override func commonInit() {
             super.commonInit()
-
             scrollView.showsVerticalScrollIndicator = false
             layout()
             bind()
@@ -57,49 +44,30 @@ extension OrcaSwapV2 {
 
         // MARK: - Layout
         private func layout() {
-            addSubviews()
-
-            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-
-            scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
-            scrollView.autoPinEdge(toSuperviewEdge: .leading)
-            scrollView.autoPinEdge(toSuperviewEdge: .trailing)
-            scrollView.autoPinEdge(.bottom, to: .top, of: nextButton)
-
-            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 18, y: 0))
-
             stackView.addArrangedSubviews {
                 mainView
                 showDetailsButton
                 detailsView
             }
-
+            
+            addSubview(nextButton)
             nextButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 18)
             nextButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
             nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
-        }
-
-        private func addSubviews() {
-            addSubview(navigationBar)
-            addSubview(scrollView)
-            addSubview(nextButton)
-
-            scrollView.contentView.addSubview(stackView)
+            
+            scrollViewBottomConstraint.isActive = false
+            scrollView.autoPinEdge(.bottom, to: .top, of: nextButton, withOffset: 8)
         }
         
         private func bind() {
             viewModel.loadingStateDriver
-                .drive(onNext: {[weak self] state in
-                    self?.setUp(state, reloadAction: { [weak self] in
-                        self?.viewModel.reload()
-                    })
+                .drive(rx.loadableState {[weak self] in
+                    self?.viewModel.reload()
                 })
                 .disposed(by: disposeBag)
 
             viewModel.isShowingDetailsDriver
-                .drive(onNext: {[weak self] state in
-                    self?.showDetailsButton.setState(isShown: state)
-                })
+                .drive(showDetailsButton.rx.isShown)
                 .disposed(by: disposeBag)
 
             viewModel.isShowingDetailsDriver
