@@ -29,30 +29,9 @@ extension OrcaSwapV2 {
             }
 
             horizontalLabelsWithSpacer.configureRightLabel { label in
-                let font: UIFont = .systemFont(ofSize: 15, weight: .regular)
-
-                let resultString = NSMutableAttributedString()
-                let priceString = NSAttributedString(
-                    string: content.price,
-                    attributes: [
-                        .font: font,
-                        .foregroundColor: UIColor.darkText
-                    ]
-                )
-
-                resultString.append(priceString)
-
-                let fiatPriceString = NSAttributedString(
-                    string: " \(content.fiatPrice)",
-                    attributes: [
-                        .font: font,
-                        .foregroundColor: UIColor.h8e8e93
-                    ]
-                )
-
-                resultString.append(fiatPriceString)
-
-                label.attributedText = resultString
+                label.attributedText = NSMutableAttributedString()
+                    .text(content.price, size: 15, color: .textBlack)
+                    .text(" \(content.fiatPrice)", size: 15, color: .h8e8e93)
             }
         }
 
