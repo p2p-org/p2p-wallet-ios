@@ -71,6 +71,7 @@ extension OrcaSwapV2 {
                 sourceWalletSubject.distinctUntilChanged(),
                 destinationWalletSubject.distinctUntilChanged()
             )
+                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
                 .subscribe(onNext: {[weak self] sourceWallet, destinationWallet in
                     guard let self = self,
                           let sourceWallet = sourceWallet,
@@ -111,6 +112,7 @@ extension OrcaSwapV2 {
                 inputAmountSubject,
                 slippageSubject
             )
+                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
                 .subscribe(onNext: {[weak self] _ in
                     guard let self = self else {return}
                     self.feesSubject.request = self.feesRequest()
@@ -142,9 +144,10 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
 
             Observable.combineLatest(
-                sourceWalletSubject,
-                destinationWalletSubject
+                sourceWalletSubject.distinctUntilChanged(),
+                destinationWalletSubject.distinctUntilChanged()
             )
+                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
                 .subscribe(onNext: { [weak self] source, destination in
                     var symbols = [String]()
                     if let source = source { symbols.append(source.token.symbol) }
