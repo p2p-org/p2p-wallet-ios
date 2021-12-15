@@ -67,13 +67,25 @@ class NewWLNavigationBar: BECompositionView {
         super.init()
     }
     
+    @discardableResult
+    func onBack(_ callback: @escaping () -> Void) -> Self {
+        backButton.onTap {
+            print("Back")
+            callback()
+        }
+        return self
+    }
+    
     override func build() -> UIView {
         UIStackView(axis: .vertical, alignment: .fill) {
             UIStackView(axis: .horizontal, alignment: .center, distribution: .equalCentering) {
                 // Back button
                 UIImageView(width: 14, height: 24, image: UIImage(systemName: "chevron.left"), tintColor: .h5887ff)
-                    .setup({ view in self.backButton = view })
                     .padding(.init(x: 6, y: 4))
+                    .setup({ view in
+                        self.backButton = view
+                        self.backButton.isUserInteractionEnabled = true
+                    })
                 
                 // Title
                 UILabel(text: initialTitle, textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
@@ -81,8 +93,13 @@ class NewWLNavigationBar: BECompositionView {
                 
                 // Actions
                 actions
-            }
+            }.padding(.init(x: 12, y: 8))
             UIView.defaultSeparator()
-        }.frame(height: 44)
+        }.frame(height: 50)
     }
+    
+    override func layout() {
+        backButton.widthAnchor.constraint(equalTo: actions.widthAnchor).isActive = true
+    }
+    
 }

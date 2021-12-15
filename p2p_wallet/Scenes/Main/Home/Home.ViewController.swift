@@ -106,7 +106,7 @@ extension Home {
                 do {
                     let vc = try scenesFactory.makeBuyTokenViewController(token: .all)
                     analyticsManager.log(event: .mainScreenBuyOpen)
-                    present(vc, animated: true, completion: nil)
+                    show(vc, sender: nil)
                 } catch {
                     showAlert(title: L10n.error, message: error.readableDescription)
                 }
