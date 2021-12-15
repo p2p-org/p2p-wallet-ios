@@ -666,3 +666,7 @@
 "Select word #%@" = "Select word #%@";
 "Receive any token within the Solana network even if it is not included in your wallet list" = "Receive any token within the Solana network even if it is not included in your wallet list";
 "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address.";
+"You pay" = "You pay";
+"You get" = "You get";
+"Processing fee" = "Processing fee";
+"SOL Price" = "SOL Price";
