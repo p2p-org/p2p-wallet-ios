@@ -663,3 +663,6 @@
 "There are %@ free transactions left for today" = "На сегодня осталось %@ бесплатных транзакций";
 "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "В сети Solana первые 100 транзакций в день оплачиваются P2P.org. Последующие транзакции будут взиматься на основе платы за газ блокчейна Solana.";
 "Select word #%@" = "Выберите слово №%@";
+"Confirm swapping %@ → %@" = "Подтвердите замену %@ → %@";
+"Spend" = "Тратить";
+"Swap %@ → %@" = "Обменять %@ → %@";

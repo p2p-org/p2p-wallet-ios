@@ -16,6 +16,7 @@ enum OrcaSwapV2 {
         case settings
         case chooseSlippage
         case choosePayFeeToken(tokenName: String?)
+        case confirmation
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
         case back
     }
