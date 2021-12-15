@@ -39,6 +39,8 @@ extension OrcaSwapV2.ConfirmSwapping {
             destinationWalletDriver: viewModel.destinationWalletDriver
         )
         private lazy var feesView = OrcaSwapV2.DetailFeesView(feesDriver: viewModel.feesDriver)
+        private lazy var actionButton = WLStepButton.main(image: .buttonSwapSmall, text: nil)
+            .onTap(self, action: #selector(actionButtonDidTouch))
         
         // MARK: - Initializers
         init(viewModel: OrcaSwapV2ConfirmSwappingViewModelType) {
@@ -85,6 +87,12 @@ extension OrcaSwapV2.ConfirmSwapping {
             if !viewModel.isBannerForceClosed() {
                 stackView.insertArrangedSubview(bannerView, at: 0)
             }
+            
+            addSubview(actionButton)
+            actionButton.autoPinEdgesToSuperviewEdges(with: .init(all: 18), excludingEdge: .top)
+            
+            scrollViewBottomConstraint.isActive = false
+            actionButton.autoPinEdge(.top, to: .bottom, of: scrollView, withOffset: 18)
         }
         
         private func bind() {
@@ -100,6 +108,14 @@ extension OrcaSwapV2.ConfirmSwapping {
                 .map {($0 * 100).toString(maximumFractionDigits: 2) + "%"}
                 .drive(slippageLabel.rx.text)
                 .disposed(by: disposeBag)
+            
+            Driver.combineLatest(
+                viewModel.sourceWalletDriver.map {$0?.token.symbol},
+                viewModel.destinationWalletDriver.map {$0?.token.symbol}
+            )
+                .map {L10n.swap($0.0 ?? "", $0.1 ?? "")}
+                .drive(actionButton.rx.text)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Action
@@ -108,6 +124,10 @@ extension OrcaSwapV2.ConfirmSwapping {
                 self.bannerView.isHidden = true
             }
             viewModel.closeBanner()
+        }
+        
+        @objc private func actionButtonDidTouch() {
+            viewModel.authenticateAndSwap()
         }
         
         // MARK: - Helpers

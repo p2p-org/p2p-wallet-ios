@@ -60,4 +60,8 @@ extension OrcaSwapV2.ConfirmSwapping.ViewModel: OrcaSwapV2ConfirmSwappingViewMod
     func closeBanner() {
         Defaults.shouldShowConfirmAlertOnSwap = false
     }
+    
+    func authenticateAndSwap() {
+        swapViewModel.authenticateAndSwap()
+    }
 }
