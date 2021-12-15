@@ -16,7 +16,19 @@ protocol TabBarScenesFactory {
 class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
     
+    private var heightConstraint: NSLayoutConstraint!
+    
+    var _isEnabled: Bool = true {
+        didSet {
+            heightConstraint.constant = _isEnabled ? 50 : 0
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+    
     let scenesFactory: TabBarScenesFactory
+    
     init(scenesFactory: TabBarScenesFactory) {
         self.scenesFactory = scenesFactory
         super.init()
@@ -45,6 +57,8 @@ class TabBarVC: BEPagesVC {
         // tabBar
         view.addSubview(tabBar)
         tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        heightConstraint = tabBar.heightAnchor.constraint(equalToConstant: 120)
+        heightConstraint.isActive = true
         
         // configure tabBar
         configureTabBar()
@@ -103,12 +117,12 @@ class TabBarVC: BEPagesVC {
         
         let items = tabBar.stackView.arrangedSubviews[1..<tabBar.stackView.arrangedSubviews.count - 1]
         
-        guard index < items.count else {return}
+        guard index < items.count else { return }
         
         // change tabs' color
-        items.first {$0.tag == currentPage}?.subviews.first?.tintColor = .tabbarSelected
+        items.first { $0.tag == currentPage }?.subviews.first?.tintColor = .tabbarSelected
         
-        items.filter {$0.tag != currentPage}.forEach {$0.subviews.first?.tintColor = .tabbarUnselected}
+        items.filter { $0.tag != currentPage }.forEach { $0.subviews.first?.tintColor = .tabbarUnselected }
         
         setNeedsStatusBarAppearanceUpdate()
     }

@@ -31,11 +31,23 @@ extension SolanaBuyToken {
             }
         }
         
-        override func layout() {
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+    
             var v: UIViewController? = parent
             while (v != nil) {
                 if let v = v as? TabBarVC {
-                    v.tabBar.isHidden = true
+                    v._isEnabled = false
+                }
+                v = v?.parent
+            }
+        }
+    
+        override func viewWillDisappear(_ animated: Bool) { super.viewWillDisappear(animated)
+            var v: UIViewController? = parent
+            while (v != nil) {
+                if let v = v as? TabBarVC {
+                    v._isEnabled = true
                 }
                 v = v?.parent
             }
