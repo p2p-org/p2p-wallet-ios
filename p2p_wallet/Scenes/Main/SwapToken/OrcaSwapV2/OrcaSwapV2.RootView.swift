@@ -152,7 +152,7 @@ extension OrcaSwapV2 {
         }
         @objc
         private func buttonNextDidTouch() {
-            viewModel.authenticateAndSwap()
+            viewModel.navigate(to: .confirmation)
         }
     }
 }

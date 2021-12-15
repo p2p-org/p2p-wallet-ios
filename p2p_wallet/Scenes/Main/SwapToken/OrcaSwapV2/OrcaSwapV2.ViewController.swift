@@ -106,6 +106,10 @@ extension OrcaSwapV2 {
                 }
 
                 present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+            case .confirmation:
+                let vm = ConfirmSwapping.ViewModel()
+                let vc = ConfirmSwapping.ViewController(viewModel: vm)
+                show(vc, sender: nil)
             case let .processTransaction(
                 request: request,
                 transactionType: transactionType
