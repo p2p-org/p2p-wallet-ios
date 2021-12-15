@@ -100,8 +100,9 @@ extension OrcaSwapV2.ConfirmSwapping {
         private func layout() {
             addArrangedSubviews {
                 coinLogoImageView
-                BEStackViewSpacing(8)
+                BEStackViewSpacing(12)
                 amountLabel
+                BEStackViewSpacing(3)
                 equityAmountLabel
             }
         }
