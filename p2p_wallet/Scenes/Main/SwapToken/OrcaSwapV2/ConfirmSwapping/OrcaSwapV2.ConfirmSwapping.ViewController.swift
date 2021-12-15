@@ -7,14 +7,14 @@
 
 import Foundation
 
-extension OrcaSwapV2 {
-    final class ConfirmViewController: BaseVC {
+extension OrcaSwapV2.ConfirmSwapping {
+    final class ViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
         
         // MARK: - Properties
-        private let viewModel: OrcaSwapV2ViewModelType
+        private let viewModel: OrcaSwapV2ConfirmSwappingViewModelType
         
         // MARK: - Subviews
         private lazy var navigationBar: WLNavigationBar = {
@@ -23,10 +23,10 @@ extension OrcaSwapV2 {
             return navigationBar
         }()
         
-        private lazy var rootView = ConfirmRootView(viewModel: viewModel)
+        private lazy var rootView = RootView(viewModel: viewModel)
         
         // MARK: - Methods
-        init(viewModel: OrcaSwapV2ViewModelType) {
+        init(viewModel: OrcaSwapV2ConfirmSwappingViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
@@ -43,13 +43,25 @@ extension OrcaSwapV2 {
     }
 }
 
-extension OrcaSwapV2 {
-    final class ConfirmRootView: ScrollableVStackRootView {
+extension OrcaSwapV2.ConfirmSwapping {
+    final class RootView: ScrollableVStackRootView {
         // MARK: - Properties
-        private let viewModel: OrcaSwapV2ViewModelType
+        private let viewModel: OrcaSwapV2ConfirmSwappingViewModelType
+        
+        // MARK: - Subviews
+        private lazy var bannerView = UIView.greyBannerView(axis: .horizontal, spacing: 12, alignment: .top) {
+            UILabel(
+                text: L10n.BeSureAllDetailsAreCorrectBeforeConfirmingTheTransaction
+                    .onceConfirmedItCannotBeReversed,
+                textSize: 15,
+                numberOfLines: 0
+            )
+            UIView.closeBannerButton()
+                .onTap(self, action: #selector(closeBannerButtonDidTouch))
+        }
         
         // MARK: - Initializers
-        init(viewModel: OrcaSwapV2ViewModelType) {
+        init(viewModel: OrcaSwapV2ConfirmSwappingViewModelType) {
             self.viewModel = viewModel
             super.init()
             scrollView.contentInset = .init(top: 8, left: 18, bottom: 18, right: 18)
@@ -58,22 +70,20 @@ extension OrcaSwapV2 {
         
         func setUp() {
             stackView.addArrangedSubviews {
-                UIView.greyBannerView(axis: .horizontal, spacing: 12, alignment: .top) {
-                    UILabel(
-                        text: L10n.BeSureAllDetailsAreCorrectBeforeConfirmingTheTransaction
-                            .onceConfirmedItCannotBeReversed,
-                        textSize: 15,
-                        numberOfLines: 0
-                    )
-                    UIView.closeBannerButton()
-                        .onTap(self, action: #selector(closeBannerButtonDidTouch))
-                }
+                
+            }
+            
+            if !viewModel.isBannerForceClosed() {
+                stackView.insertArrangedSubview(bannerView, at: 0)
             }
         }
         
         // MARK: - Action
         @objc private func closeBannerButtonDidTouch() {
-            
+            UIView.animate(withDuration: 0.3) {
+                self.bannerView.isHidden = true
+            }
+            viewModel.closeBanner()
         }
     }
 }

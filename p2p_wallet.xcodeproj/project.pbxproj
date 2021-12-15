@@ -8,7 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
-		3B16154A2769A05C0080DE42 /* OrcaSwapV2.ConfirmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1615492769A05C0080DE42 /* OrcaSwapV2.ConfirmViewController.swift */; };
+		3B16154A2769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1615492769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift */; };
+		3B16154D2769A6840080DE42 /* OrcaSwapV2.ConfirmSwapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B16154C2769A6840080DE42 /* OrcaSwapV2.ConfirmSwapping.swift */; };
+		3B16154F2769A6B40080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B16154E2769A6B40080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewModel.swift */; };
 		3B2BAFA62761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */; };
 		3B2BAFA82761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */; };
 		3B87A1512762FCAA00F09883 /* SendToken.SelectNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A1502762FCAA00F09883 /* SendToken.SelectNetwork.swift */; };
@@ -478,7 +480,9 @@
 /* Begin PBXFileReference section */
 		1B5A5C216DC945B1D5206FAB /* Pods-p2p walletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p walletTests.debug.xcconfig"; path = "Target Support Files/Pods-p2p walletTests/Pods-p2p walletTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2AFD2F1D2405B9F7006F36C3 /* Pods-p2p walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p walletTests/Pods-p2p walletTests.release.xcconfig"; sourceTree = "<group>"; };
-		3B1615492769A05C0080DE42 /* OrcaSwapV2.ConfirmViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ConfirmViewController.swift; sourceTree = "<group>"; };
+		3B1615492769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ConfirmSwapping.ViewController.swift; sourceTree = "<group>"; };
+		3B16154C2769A6840080DE42 /* OrcaSwapV2.ConfirmSwapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ConfirmSwapping.swift; sourceTree = "<group>"; };
+		3B16154E2769A6B40080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ConfirmSwapping.ViewModel.swift; sourceTree = "<group>"; };
 		3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenRecipientAndNetworkHandler.swift; sourceTree = "<group>"; };
 		3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenTokenAndAmountHandler.swift; sourceTree = "<group>"; };
 		3B87A1502762FCAA00F09883 /* SendToken.SelectNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.swift; sourceTree = "<group>"; };
@@ -1014,12 +1018,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		3B16154B2769A10B0080DE42 /* ConfirmViewController */ = {
+		3B16154B2769A10B0080DE42 /* ConfirmSwapping */ = {
 			isa = PBXGroup;
 			children = (
-				3B1615492769A05C0080DE42 /* OrcaSwapV2.ConfirmViewController.swift */,
+				3B16154C2769A6840080DE42 /* OrcaSwapV2.ConfirmSwapping.swift */,
+				3B16154E2769A6B40080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewModel.swift */,
+				3B1615492769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift */,
 			);
-			path = ConfirmViewController;
+			path = ConfirmSwapping;
 			sourceTree = "<group>";
 		};
 		3B2BAFA42761E0020008DA0A /* Interfaces */ = {
@@ -1367,7 +1373,7 @@
 				BC4B9EC027197DF5005B9ECA /* OrcaSwapV2.Settings.swift */,
 				41B351F1275E48040027328E /* ContentModels */,
 				418A5D992755E0D300C2D387 /* Subviews */,
-				3B16154B2769A10B0080DE42 /* ConfirmViewController */,
+				3B16154B2769A10B0080DE42 /* ConfirmSwapping */,
 			);
 			path = OrcaSwapV2;
 			sourceTree = "<group>";
@@ -2744,7 +2750,7 @@
 				BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */,
 				BCB286E32754B9680074E1D5 /* SendToken.ChooseRecipientAndNetwork.ContactViewController.swift in Sources */,
 				BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */,
-				3B16154A2769A05C0080DE42 /* OrcaSwapV2.ConfirmViewController.swift in Sources */,
+				3B16154A2769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift in Sources */,
 				BCE04C68268D901400CE131A /* CustomPresentableViewController.swift in Sources */,
 				BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
@@ -2804,6 +2810,7 @@
 				BC4593A326423F0100E11A52 /* ConnectionErrorVC.swift in Sources */,
 				BC4B9EC5271A791A005B9ECA /* SolanaSDK+Extensions.swift in Sources */,
 				41D7F6AE2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift in Sources */,
+				3B16154D2769A6840080DE42 /* OrcaSwapV2.ConfirmSwapping.swift in Sources */,
 				41446333272A84560099B327 /* LocalizationManager.swift in Sources */,
 				BC3ADE822570B005002B3B16 /* FlexibleHeightVC.swift in Sources */,
 				86A90D19273D306400D180EF /* VerifySecurityKeys.swift in Sources */,
@@ -3009,6 +3016,7 @@
 				8469991B25D5A9AF775E714B /* CALayer+Extensions.swift in Sources */,
 				846994C5A78A76EC59DD3F5B /* NewTabBar.swift in Sources */,
 				84699E4EC4356224948E529A /* DAppContainer.swift in Sources */,
+				3B16154F2769A6B40080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewModel.swift in Sources */,
 				8469928B2607C3CDDA2B1A4C /* DAppContainer.ViewController.swift in Sources */,
 				8469926908C12A54B0D0850E /* DAppContainer.ViewModel.swift in Sources */,
 				846995ACEC50F650033C707E /* DAppContainer.RootView.swift in Sources */,
