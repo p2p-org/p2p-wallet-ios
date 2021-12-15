@@ -21,8 +21,8 @@ class MainContainer {
     let renVMLockAndMintService: RenVMLockAndMintServiceType
     let renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
 
-    private var globalNavigationController: UINavigationController?
-    
+    @Injected private var globalNavigationControllerStorage: NavigationControllerStorageType
+
     private lazy var orcaSwap: OrcaSwapType = OrcaSwap(
         apiClient: OrcaSwap.APIClient(
             network: Defaults.apiEndPoint.network.cluster
@@ -93,7 +93,7 @@ class MainContainer {
     func makeTabBarVC() -> UIViewController {
         let tabBarController = TabBarVC(scenesFactory: self)
         let navigationController = UINavigationController(rootViewController: tabBarController)
-        globalNavigationController = navigationController
+        globalNavigationControllerStorage.navigationController = navigationController
 
         return navigationController
     }
@@ -103,9 +103,7 @@ class MainContainer {
         return .init(
             viewModel: vm,
             scenesFactory: self,
-            showGlobally: { [weak self] in
-                self?.globalNavigationController?.pushViewController($0, animated: true)
-            }
+            globalNavigator: Resolver.resolve()
         )
     }
     

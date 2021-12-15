@@ -43,6 +43,14 @@ extension Resolver: ResolverRegistering {
         register { CryptoComparePricesFetcher() }
             .implements(PricesFetcher.self)
             .scope(.application)
+
+        register { GlobalNavigationControllerStorage() }
+            .implements(NavigationControllerStorageType.self)
+            .scope(.application)
+
+        register { GlobalNavigator(storage: resolve()) }
+            .implements(GlobalNavigatorType.self)
+            .scope(.application)
         
         // MARK: - Others
         register { SessionBannersAvailabilityState() }

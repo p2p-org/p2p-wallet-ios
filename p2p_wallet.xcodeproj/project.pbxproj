@@ -33,6 +33,7 @@
 		412DBFE3273E999E000F514E /* ClearableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFE2273E999E000F514E /* ClearableButton.swift */; };
 		412DBFE527460014000F514E /* EnterSeed.MainButtonContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DBFE427460014000F514E /* EnterSeed.MainButtonContent.swift */; };
 		41446333272A84560099B327 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41446332272A84560099B327 /* LocalizationManager.swift */; };
+		4146399A2769C70200EEE1DE /* GlobalNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414639992769C70200EEE1DE /* GlobalNavigator.swift */; };
 		4158ADC5274F1B75001C57CE /* Home.BalancesScrollDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4158ADC4274F1B75001C57CE /* Home.BalancesScrollDelegate.swift */; };
 		417BB3542727FCDD00EDE6AE /* AddressFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417BB3532727FCDD00EDE6AE /* AddressFormatter.swift */; };
 		417EB68927480FA700856C6E /* AgreeTermsAndConditionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417EB68827480FA700856C6E /* AgreeTermsAndConditionsView.swift */; };
@@ -503,6 +504,7 @@
 		412DBFE2273E999E000F514E /* ClearableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearableButton.swift; sourceTree = "<group>"; };
 		412DBFE427460014000F514E /* EnterSeed.MainButtonContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeed.MainButtonContent.swift; sourceTree = "<group>"; };
 		41446332272A84560099B327 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
+		414639992769C70200EEE1DE /* GlobalNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalNavigator.swift; sourceTree = "<group>"; };
 		4158ADC4274F1B75001C57CE /* Home.BalancesScrollDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.BalancesScrollDelegate.swift; sourceTree = "<group>"; };
 		417BB3532727FCDD00EDE6AE /* AddressFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressFormatter.swift; sourceTree = "<group>"; };
 		417EB68827480FA700856C6E /* AgreeTermsAndConditionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgreeTermsAndConditionsView.swift; sourceTree = "<group>"; };
@@ -2245,6 +2247,7 @@
 				BC4B9E762713F940005B9ECA /* MainContainer.swift */,
 				BCF241202676548200C9F158 /* MainViewModel.swift */,
 				BCFC768525E2EAB800FBE148 /* MainViewController.swift */,
+				414639992769C70200EEE1DE /* GlobalNavigator.swift */,
 				BC09B99D273ECAE0009CAF4E /* Authentication */,
 				BCEB206925E1561200B54FEF /* TabBarVC */,
 				BCBE148B25EF3D100014BCE5 /* Home */,
@@ -2919,6 +2922,7 @@
 				BCB286CA274CCABC0074E1D5 /* SendToken.BaseViewController.swift in Sources */,
 				BCD5E82425525C6E00F51299 /* WalletsViewModel.swift in Sources */,
 				BCB2868127460FD90074E1D5 /* WLStatusIndicatorView.swift in Sources */,
+				4146399A2769C70200EEE1DE /* GlobalNavigator.swift in Sources */,
 				41DD02712760D59500545A73 /* ReserveNameHandler.swift in Sources */,
 				BC2EC1D52553ED1B006EEDA5 /* CustomHeightPresentationController.swift in Sources */,
 				BCEE020B273E688600205982 /* WLCreatePincodeVC.swift in Sources */,
