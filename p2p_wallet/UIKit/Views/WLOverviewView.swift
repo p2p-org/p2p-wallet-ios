@@ -37,7 +37,7 @@ class WLOverviewView: WLFloatingPanelView {
         
         let stackView = UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill)
             {
-                UIImageView(width: 24, height: 24, image: image, tintColor: .h5887ff)
+                //UIImageView(width: 24, height: 24, image: image, tintColor: .h5887ff)
                 UILabel(text: title, textSize: 15, weight: .medium, textColor: .h5887ff)
             }
         

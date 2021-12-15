@@ -130,7 +130,7 @@ class MainContainer {
     
     func makeBuyTokenViewController(token: BuyToken.CryptoCurrency) throws -> UIViewController
     {
-        try BuyToken.ViewController(token: token, repository: walletsViewModel)
+        SolanaBuyToken.Scene()
     }
     
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.Scene? {
