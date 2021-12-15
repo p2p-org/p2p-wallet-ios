@@ -138,6 +138,12 @@ extension Resolver: ResolverRegistering {
         register {DAppContainer.ViewModel()}
             .implements(DAppContainerViewModelType.self)
             .scope(.shared)
+        
+        // MARK: - Moonpay
+        register{Moonpay.MoonpayServiceImpl(api: Moonpay.API.fromEnvironment())}
+            .implements(MoonpayService.self)
+            .scope(.shared)
+        
     }
 }
 

@@ -69,10 +69,7 @@ class NewWLNavigationBar: BECompositionView {
     
     @discardableResult
     func onBack(_ callback: @escaping () -> Void) -> Self {
-        backButton.onTap {
-            print("Back")
-            callback()
-        }
+        backButton.onTap(callback)
         return self
     }
     
