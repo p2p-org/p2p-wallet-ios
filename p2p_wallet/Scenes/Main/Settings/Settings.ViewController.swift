@@ -62,7 +62,7 @@ extension Settings {
             case .backupManually:
                 let vc = BackupManuallyVC()
                 vc.delegate = self
-                let nc = BENavigationController(rootViewController: vc)
+                let nc = UINavigationController(rootViewController: vc)
             
                 let modalVC = WLIndicatorModalVC()
                 modalVC.add(child: nc, to: modalVC.containerView)

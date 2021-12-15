@@ -80,7 +80,7 @@ extension SerumSwapV1 {
                     let sections = fees.map {fee -> [UIView] in
                         [
                             .createSectionView(
-                                title: fee.headerString,
+                                title: fee.type.headerString,
                                 contentView: feeToLabel(fee),
                                 rightView: nil,
                                 addSeparatorOnTop: false

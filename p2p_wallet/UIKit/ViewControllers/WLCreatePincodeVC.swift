@@ -18,7 +18,7 @@ class WLCreatePincodeVC: BaseVC {
     private let confirmPincodeTitle: String?
     
     // MARK: - Subviews
-    private lazy var childNC = BENavigationController(rootViewController: createPincodeVC)
+    private lazy var childNC = UINavigationController(rootViewController: createPincodeVC)
     private lazy var createPincodeVC = WLPincodeVC()
     
     // MARK: - Callback

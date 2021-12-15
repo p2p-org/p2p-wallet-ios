@@ -16,6 +16,7 @@
 		3B87A157276357AC00F09883 /* OrcaSwapV2.WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A156276357AC00F09883 /* OrcaSwapV2.WalletView.swift */; };
 		3B9CCC3E275F6B9A00B2A5E2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B9CCC3D275F6B9A00B2A5E2 /* GoogleService-Info.plist */; };
 		3BAC28B927670178007900E2 /* UIView+Rx+Builders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */; };
+		3BF088262768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */; };
 		4114D16A2746272400352CDF /* EnterSeedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1662746272400352CDF /* EnterSeedInfo.swift */; };
 		4114D16B2746272400352CDF /* EnterSeedInfo.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1672746272400352CDF /* EnterSeedInfo.ViewController.swift */; };
 		4114D16C2746272400352CDF /* EnterSeedInfo.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1682746272400352CDF /* EnterSeedInfo.ViewModel.swift */; };
@@ -44,8 +45,6 @@
 		418A5D982755E0CE00C2D387 /* OrcaSwapV2.NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418A5D972755E0CE00C2D387 /* OrcaSwapV2.NavigationBar.swift */; };
 		418A5DA32755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418A5DA22755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift */; };
 		41B351F5275F131C0027328E /* OrcaSwapV2.ClickableRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B351F4275F131C0027328E /* OrcaSwapV2.ClickableRow.swift */; };
-		41B351F7275F231E0027328E /* OrcaSwapV2.DetailedFeeContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B351F6275F231E0027328E /* OrcaSwapV2.DetailedFeeContent.swift */; };
-		41B351F9275F2F7C0027328E /* OrcaSwapV2.DetailedFeesContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B351F8275F2F7C0027328E /* OrcaSwapV2.DetailedFeesContent.swift */; };
 		41CA05752754725200953322 /* ReserveName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05712754725200953322 /* ReserveName.swift */; };
 		41CA05762754725200953322 /* ReserveName.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05722754725200953322 /* ReserveName.ViewController.swift */; };
 		41CA05772754725200953322 /* ReserveName.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05732754725200953322 /* ReserveName.ViewModel.swift */; };
@@ -375,7 +374,7 @@
 		BCB28688274748D50074E1D5 /* UITapGestureRecognizer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB28687274748D50074E1D5 /* UITapGestureRecognizer+Extensions.swift */; };
 		BCB2868A27474B140074E1D5 /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2868927474B140074E1D5 /* UILabel+Extensions.swift */; };
 		BCB2868C274763BA0074E1D5 /* MirrorableEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2868B274763BA0074E1D5 /* MirrorableEnum.swift */; };
-		BCB28693274B62920074E1D5 /* FeeApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB28692274B62920074E1D5 /* FeeApiClient.swift */; };
+		BCB28693274B62920074E1D5 /* FeeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB28692274B62920074E1D5 /* FeeService.swift */; };
 		BCB28695274B81FD0074E1D5 /* WalletDetail.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB28694274B81FD0074E1D5 /* WalletDetail.ViewController.swift */; };
 		BCB28697274B88FB0074E1D5 /* WalletDetail.InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB28696274B88FA0074E1D5 /* WalletDetail.InfoViewController.swift */; };
 		BCB28699274B89670074E1D5 /* WalletDetail.HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB28698274B89670074E1D5 /* WalletDetail.HistoryViewController.swift */; };
@@ -487,6 +486,7 @@
 		3B87A156276357AC00F09883 /* OrcaSwapV2.WalletView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.WalletView.swift; sourceTree = "<group>"; };
 		3B9CCC3D275F6B9A00B2A5E2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Rx+Builders.swift"; sourceTree = "<group>"; };
+		3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrcaSwapV2.ViewModel+Extensions.swift"; sourceTree = "<group>"; };
 		3F4012EDABF9EA99EA5E792B /* Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		4114D1662746272400352CDF /* EnterSeedInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedInfo.swift; sourceTree = "<group>"; };
 		4114D1672746272400352CDF /* EnterSeedInfo.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedInfo.ViewController.swift; sourceTree = "<group>"; };
@@ -516,8 +516,6 @@
 		418A5D972755E0CE00C2D387 /* OrcaSwapV2.NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.NavigationBar.swift; sourceTree = "<group>"; };
 		418A5DA22755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.MainSwapView.swift; sourceTree = "<group>"; };
 		41B351F4275F131C0027328E /* OrcaSwapV2.ClickableRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ClickableRow.swift; sourceTree = "<group>"; };
-		41B351F6275F231E0027328E /* OrcaSwapV2.DetailedFeeContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.DetailedFeeContent.swift; sourceTree = "<group>"; };
-		41B351F8275F2F7C0027328E /* OrcaSwapV2.DetailedFeesContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.DetailedFeesContent.swift; sourceTree = "<group>"; };
 		41CA05712754725200953322 /* ReserveName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.swift; sourceTree = "<group>"; };
 		41CA05722754725200953322 /* ReserveName.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.ViewController.swift; sourceTree = "<group>"; };
 		41CA05732754725200953322 /* ReserveName.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.ViewModel.swift; sourceTree = "<group>"; };
@@ -870,7 +868,7 @@
 		BCB28687274748D50074E1D5 /* UITapGestureRecognizer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITapGestureRecognizer+Extensions.swift"; sourceTree = "<group>"; };
 		BCB2868927474B140074E1D5 /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
 		BCB2868B274763BA0074E1D5 /* MirrorableEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirrorableEnum.swift; sourceTree = "<group>"; };
-		BCB28692274B62920074E1D5 /* FeeApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeeApiClient.swift; sourceTree = "<group>"; };
+		BCB28692274B62920074E1D5 /* FeeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeeService.swift; sourceTree = "<group>"; };
 		BCB28694274B81FD0074E1D5 /* WalletDetail.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.ViewController.swift; sourceTree = "<group>"; };
 		BCB28696274B88FA0074E1D5 /* WalletDetail.InfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.InfoViewController.swift; sourceTree = "<group>"; };
 		BCB28698274B89670074E1D5 /* WalletDetail.HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.HistoryViewController.swift; sourceTree = "<group>"; };
@@ -1082,8 +1080,6 @@
 			isa = PBXGroup;
 			children = (
 				41D83B26275A04A300B4344F /* OrcaSwapV2.RateRowContent.swift */,
-				41B351F6275F231E0027328E /* OrcaSwapV2.DetailedFeeContent.swift */,
-				41B351F8275F2F7C0027328E /* OrcaSwapV2.DetailedFeesContent.swift */,
 			);
 			path = ContentModels;
 			sourceTree = "<group>";
@@ -1875,7 +1871,7 @@
 				BC6FEDA2270D57D1002B6255 /* NameService.swift */,
 				84699C98681FF7B583A45CA9 /* BuyProvider */,
 				41446332272A84560099B327 /* LocalizationManager.swift */,
-				BCB28692274B62920074E1D5 /* FeeApiClient.swift */,
+				BCB28692274B62920074E1D5 /* FeeService.swift */,
 				BCB286CD275084A10074E1D5 /* DAppChannel.swift */,
 			);
 			path = Services;
@@ -2349,6 +2345,7 @@
 			children = (
 				BCFEDC022727F860008AE4AD /* OrcaSwapV2ViewModelType.swift */,
 				BC4B9EBA27191843005B9ECA /* OrcaSwapV2.ViewModel.swift */,
+				3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */,
 			);
 			path = OrcaSwapV2.ViewModel;
 			sourceTree = "<group>";
@@ -2707,7 +2704,7 @@
 				BC7DD92127327872000F50D0 /* UIView+Builders.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WelcomeViewController.swift in Sources */,
 				BC35082F273FFC08009D4441 /* Authentication.PincodeViewController.swift in Sources */,
-				BCB28693274B62920074E1D5 /* FeeApiClient.swift in Sources */,
+				BCB28693274B62920074E1D5 /* FeeService.swift in Sources */,
 				41D7F6BB27392AA700453B61 /* Home.BannersManager.swift in Sources */,
 				4114D16A2746272400352CDF /* EnterSeedInfo.swift in Sources */,
 				BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */,
@@ -2727,6 +2724,7 @@
 				BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */,
 				BC5140C2272ABC0800DB84BD /* Home.ViewModel.swift in Sources */,
 				4114D16C2746272400352CDF /* EnterSeedInfo.ViewModel.swift in Sources */,
+				3BF088262768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift in Sources */,
 				BC65E170261E9FB600E436C7 /* Defi.swift in Sources */,
 				41CA05752754725200953322 /* ReserveName.swift in Sources */,
 				BCD5E770255130DD00F51299 /* News.swift in Sources */,
@@ -2829,7 +2827,6 @@
 				41D7F6BD2739339400453B61 /* BannerTypeTransformer.swift in Sources */,
 				BC4B9EBF27191843005B9ECA /* OrcaSwapV2.RootView.swift in Sources */,
 				86A90D17273D306400D180EF /* VerifySecurityKeys.RootView.swift in Sources */,
-				41B351F9275F2F7C0027328E /* OrcaSwapV2.DetailedFeesContent.swift in Sources */,
 				BCE04C6B268D901400CE131A /* UIViewController+Transitions.swift in Sources */,
 				BCA93F8125E883A50081DDF6 /* Array+Extensions.swift in Sources */,
 				BC4B9E9927153F49005B9ECA /* Settings.SelectFiatViewController.swift in Sources */,
@@ -2956,7 +2953,6 @@
 				BC19DF572701B7A100A3A8D8 /* SingleSelectionViewController.swift in Sources */,
 				BC2EC1CF2553ED1B006EEDA5 /* HalfSizePresentationController.swift in Sources */,
 				BC460763266F40F400A12E07 /* Root.ViewController.swift in Sources */,
-				41B351F7275F231E0027328E /* OrcaSwapV2.DetailedFeeContent.swift in Sources */,
 				BCB7C7E22669E50B00FEC68E /* TransactionSummaryView.swift in Sources */,
 				41DD026F2760B57C00545A73 /* BottomFixedView.swift in Sources */,
 				BCD5E76525512EDC00F51299 /* NewsCell.swift in Sources */,
