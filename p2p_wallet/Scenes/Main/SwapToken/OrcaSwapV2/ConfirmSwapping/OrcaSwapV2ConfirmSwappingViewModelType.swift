@@ -21,6 +21,7 @@ protocol OrcaSwapV2ConfirmSwappingViewModelType {
     func isBannerForceClosed() -> Bool
     
     func closeBanner()
+    func authenticateAndSwap()
 }
 
 extension OrcaSwapV2ConfirmSwappingViewModelType {
