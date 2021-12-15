@@ -78,12 +78,12 @@ extension OrcaSwapV2 {
                 let nc = OrcaSwapV2.SettingsNavigationController(rootViewController: vc)
                 nc.modalPresentationStyle = .custom
                 present(nc, interactiveDismissalType: .standard)
-            case .chooseSourceWallet:
+            case let .chooseSourceWallet(currentlySelectedWallet: currentlySelectedWallet):
                 let vc = scenesFactory.makeChooseWalletViewController(
                     title: nil,
                     customFilter: { $0.amount > 0 },
                     showOtherWallets: false,
-                    selectedWallet: nil,
+                    selectedWallet: currentlySelectedWallet,
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)
@@ -99,7 +99,7 @@ extension OrcaSwapV2 {
                             validMints.contains($0.mintAddress)
                     },
                     showOtherWallets: true,
-                    selectedWallet: nil,
+                    selectedWallet: currentlySelectedWallet,
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)
