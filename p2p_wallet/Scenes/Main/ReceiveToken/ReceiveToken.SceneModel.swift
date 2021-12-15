@@ -18,11 +18,11 @@ protocol ReceiveSceneModel: BESceneModel {
     
     func switchToken(_ tokenType: ReceiveToken.TokenType)
     func copyToClipboard(address: String, logEvent: AnalyticsEvent)
+    func showSelectionNetwork()
 }
 
 extension ReceiveToken {
     class SceneModel: NSObject, ReceiveSceneModel {
-        
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
@@ -90,6 +90,10 @@ extension ReceiveToken {
         var shouldShowChainsSwitcher: Bool {
             receiveSolanaViewModel.tokenWallet == nil
         }
+        
+        func showSelectionNetwork() {
+            navigationSubject.onNext(.networkSelection)
+        }
     }
 }
 
@@ -125,9 +129,10 @@ extension ReceiveToken.SceneModel: BESceneNavigationModel {
                 }
             case .help:
                 return .modal(ReceiveToken.HelpViewController())
+            case .networkSelection:
+                return .push(ReceiveToken.NetworkSelectionScene(viewModel: self))
             }
             return .none
         }.asDriver(onErrorJustReturn: .none)
     }
 }
-

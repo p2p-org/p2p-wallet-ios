@@ -5,16 +5,16 @@
 import Foundation
 
 class BEEnvironmentContainer: BECompositionView {
-    let values: [BESceneModel]
+    let values: [Any]
     let child: UIView
     
-    init(value: BESceneModel, @BEViewBuilder child: Builder) {
+    init(value: Any, @BEViewBuilder child: Builder) {
         self.values = [value]
         self.child = child().build()
         super.init()
     }
     
-    func resolve<SceneModel>(_ _type: SceneModel.Type) -> BESceneModel? {
+    func resolve<AnyObject>(_ _type: AnyObject.Type) -> Any? {
         for value in values {
             if type(of: value) == _type { return value }
         }
@@ -27,32 +27,34 @@ class BEEnvironmentContainer: BECompositionView {
 }
 
 extension UIView {
-    func withEnvironment(_ value: BESceneModel) -> UIView {
+    func withEnvironment(_ value: AnyObject) -> UIView {
         BEEnvironmentContainer(value: value) { self }
     }
 }
 
 @propertyWrapper
-struct EnvironmentVariable<Value: BESceneModel> {
+struct EnvironmentVariable<Value> {
     private var value: Value?
     
+    @available(*, unavailable, message: "This property wrapper can only be applied to classes")
     var wrappedValue: Value {
-        get { value! }
-        set { value = newValue }
+        get { fatalError() }
+        // swiftlint:disable unused_setter_value
+        set { fatalError() }
     }
     
     static subscript<OuterSelf: UIView>(
-        instanceSelf view: OuterSelf,
+        _enclosingInstance view: OuterSelf,
         wrapped wrappedKeyPath: ReferenceWritableKeyPath<OuterSelf, Value>,
         storage storageKeyPath: ReferenceWritableKeyPath<OuterSelf, Self>
     ) -> Value {
         get {
             if view[keyPath: storageKeyPath].value == nil {
                 var currentView: UIView? = view
-                while (currentView != nil) {
+                while currentView != nil {
                     if let currentView = currentView as? BEEnvironmentContainer {
                         if let result = currentView.resolve(Value.self) {
-                            view[keyPath: storageKeyPath].value = result as! Value
+                            view[keyPath: storageKeyPath].value = result as? Value
                         }
                     }
                     currentView = currentView!.superview

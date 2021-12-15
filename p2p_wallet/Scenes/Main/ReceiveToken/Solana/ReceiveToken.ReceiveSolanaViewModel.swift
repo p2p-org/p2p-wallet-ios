@@ -47,9 +47,7 @@ extension ReceiveToken {
             self.navigationSubject = navigationSubject
         }
         
-        private(set) var username: String? {
-            nameStorage.getName()
-        }
+        var username: String? { nameStorage.getName() }
         
         func copyAction() {
             analyticsManager.log(event: .receiveWalletAddressCopy)

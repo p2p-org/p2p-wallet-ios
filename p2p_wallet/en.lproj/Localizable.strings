@@ -664,3 +664,5 @@
 "There are %@ free transactions left for today" = "There are %@ free transactions left for today";
 "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee.";
 "Select word #%@" = "Select word #%@";
+"Receive any token within the Solana network even if it is not included in your wallet list" = "Receive any token within the Solana network even if it is not included in your wallet list";
+"When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address.";

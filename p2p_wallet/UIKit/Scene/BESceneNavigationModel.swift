@@ -26,7 +26,7 @@ extension BESceneNavigationModel {
             guard let vc = vc else { return }
             switch event {
             case .push(let newVc):
-                vc.show(vc, sender: nil)
+                vc.show(newVc, sender: nil)
             case .modal(let newVc):
                 vc.present(newVc, animated: true)
             case .pop:
@@ -45,6 +45,7 @@ struct BENavigationBinding<Value> {
     @available(*, unavailable, message: "This property wrapper can only be applied to classes")
     var wrappedValue: Value {
         get { fatalError() }
+        // swiftlint:disable unused_setter_value
         set { fatalError() }
     }
     
