@@ -11,6 +11,9 @@ import RxCocoa
 protocol OrcaSwapV2ConfirmSwappingViewModelType {
     var sourceWalletDriver: Driver<Wallet?> {get}
     var destinationWalletDriver: Driver<Wallet?> {get}
+    var inputAmountDriver: Driver<Double?> {get}
+    var estimatedAmountDriver: Driver<Double?> {get}
+    var minimumReceiveAmountDriver: Driver<Double?> {get}
     
     func isBannerForceClosed() -> Bool
     
@@ -36,6 +39,18 @@ extension OrcaSwapV2.ConfirmSwapping.ViewModel: OrcaSwapV2ConfirmSwappingViewMod
     
     var destinationWalletDriver: Driver<Wallet?> {
         swapViewModel.destinationWalletDriver
+    }
+    
+    var inputAmountDriver: Driver<Double?> {
+        swapViewModel.inputAmountDriver
+    }
+    
+    var estimatedAmountDriver: Driver<Double?> {
+        swapViewModel.estimatedAmountDriver
+    }
+    
+    var minimumReceiveAmountDriver: Driver<Double?> {
+        swapViewModel.minimumReceiveAmountDriver
     }
     
     func isBannerForceClosed() -> Bool {
