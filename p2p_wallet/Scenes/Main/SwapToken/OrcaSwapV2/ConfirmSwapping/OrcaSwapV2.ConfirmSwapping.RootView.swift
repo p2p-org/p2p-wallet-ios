@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension OrcaSwapV2.ConfirmSwapping {
     final class RootView: ScrollableVStackRootView {
@@ -34,7 +35,12 @@ extension OrcaSwapV2.ConfirmSwapping {
         
         private func setUp() {
             stackView.addArrangedSubviews {
-                
+                UIView.floatingPanel(contentInset: .init(x: 8, y: 16), axis: .horizontal, spacing: 8, alignment: .center, distribution: .equalCentering) {
+                    UIImageView(width: 11.88, height: 9.74, image: .arrowForward, tintColor: .h8e8e93)
+                        .withContentHuggingPriority(.required, for: .horizontal)
+                        .padding(.init(all: 10), backgroundColor: .fafafc, cornerRadius: 12)
+                        .withContentHuggingPriority(.required, for: .horizontal)
+                }
             }
             
             if !viewModel.isBannerForceClosed() {
