@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxCocoa
 
 extension OrcaSwapV2.ConfirmSwapping {
     final class ViewController: BaseVC {
@@ -40,6 +41,20 @@ extension OrcaSwapV2.ConfirmSwapping {
             rootView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
             rootView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
         }
+        
+        override func bind() {
+            super.bind()
+            // navigation bar
+            Driver.combineLatest(
+                viewModel.sourceWalletDriver,
+                viewModel.destinationWalletDriver
+            )
+                .map {source, destination in
+                    L10n.confirmSwapping(source?.token.symbol ?? "", destination?.token.symbol ?? "")
+                }
+                .drive(navigationBar.titleLabel.rx.text)
+                .disposed(by: disposeBag)
+        }
     }
 }
 
@@ -63,7 +78,7 @@ extension OrcaSwapV2.ConfirmSwapping {
         // MARK: - Initializers
         init(viewModel: OrcaSwapV2ConfirmSwappingViewModelType) {
             self.viewModel = viewModel
-            super.init()
+            super.init(frame: .zero)
             scrollView.contentInset = .init(top: 8, left: 18, bottom: 18, right: 18)
             setUp()
         }
