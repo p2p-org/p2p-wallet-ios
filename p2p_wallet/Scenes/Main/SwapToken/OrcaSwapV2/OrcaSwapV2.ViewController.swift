@@ -115,12 +115,21 @@ extension OrcaSwapV2 {
                 transactionType: transactionType
             ):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
+                vc.delegate = self
                 present(vc, animated: true, completion: nil)
             case .back:
                 navigationController?.popViewController(animated: true)
             case .none:
                 break
             }
+        }
+    }
+}
+
+extension OrcaSwapV2.ViewController: ProcessTransactionViewControllerDelegate {
+    func processTransactionViewControllerDidComplete(_ vc: UIViewController) {
+        vc.dismiss(animated: true) { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
         }
     }
 }
