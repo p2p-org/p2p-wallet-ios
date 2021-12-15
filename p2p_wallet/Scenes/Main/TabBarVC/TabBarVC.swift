@@ -20,7 +20,7 @@ class TabBarVC: BEPagesVC {
     
     var _isEnabled: Bool = true {
         didSet {
-            heightConstraint.constant = _isEnabled ? 50 : 0
+            heightConstraint.constant = _isEnabled ? 120 : 0
             UIView.animate(withDuration: 0.3) {
                 self.view.layoutIfNeeded()
             }
