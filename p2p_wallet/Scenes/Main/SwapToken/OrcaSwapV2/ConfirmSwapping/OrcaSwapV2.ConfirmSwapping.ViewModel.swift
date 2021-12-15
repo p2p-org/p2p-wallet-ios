@@ -14,6 +14,8 @@ protocol OrcaSwapV2ConfirmSwappingViewModelType {
     var inputAmountDriver: Driver<Double?> {get}
     var estimatedAmountDriver: Driver<Double?> {get}
     var minimumReceiveAmountDriver: Driver<Double?> {get}
+    var exchangeRatesDriver: Driver<Double?> {get}
+    var feesDriver: Driver<Loadable<[PayingFee]>> {get}
     
     func isBannerForceClosed() -> Bool
     
@@ -51,6 +53,14 @@ extension OrcaSwapV2.ConfirmSwapping.ViewModel: OrcaSwapV2ConfirmSwappingViewMod
     
     var minimumReceiveAmountDriver: Driver<Double?> {
         swapViewModel.minimumReceiveAmountDriver
+    }
+    
+    var exchangeRatesDriver: Driver<Double?> {
+        swapViewModel.exchangeRateDriver
+    }
+    
+    var feesDriver: Driver<Loadable<[PayingFee]>> {
+        swapViewModel.feesDriver
     }
     
     func isBannerForceClosed() -> Bool {

@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import RxSwift
 import RxCocoa
+import BEPureLayout
 
 extension OrcaSwapV2.ConfirmSwapping {
     final class RootView: ScrollableVStackRootView {
@@ -26,6 +27,12 @@ extension OrcaSwapV2.ConfirmSwapping {
             UIView.closeBannerButton()
                 .onTap(self, action: #selector(closeBannerButtonDidTouch))
         }
+        private lazy var ratesView = OrcaSwapV2.RatesStackView(
+            exchangeRateDriver: viewModel.exchangeRatesDriver,
+            sourceWalletDriver: viewModel.sourceWalletDriver,
+            destinationWalletDriver: viewModel.destinationWalletDriver
+        )
+        private lazy var feesView = OrcaSwapV2.DetailFeesView(feesDriver: viewModel.feesDriver)
         
         // MARK: - Initializers
         init(viewModel: OrcaSwapV2ConfirmSwappingViewModelType) {
@@ -49,6 +56,16 @@ extension OrcaSwapV2.ConfirmSwapping {
                     WalletView(viewModel: viewModel, type: .destination)
                         .centered(.horizontal)
                 }
+                BEStackViewSpacing(26)
+                
+                UIView.defaultSeparator()
+                BEStackViewSpacing(18)
+                ratesView
+                BEStackViewSpacing(18)
+                
+                UIView.defaultSeparator()
+                BEStackViewSpacing(18)
+                feesView
             }
             
             if !viewModel.isBannerForceClosed() {
