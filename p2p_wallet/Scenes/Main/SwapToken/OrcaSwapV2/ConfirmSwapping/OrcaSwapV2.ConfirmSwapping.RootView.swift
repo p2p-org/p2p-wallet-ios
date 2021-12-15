@@ -15,6 +15,7 @@ extension OrcaSwapV2.ConfirmSwapping {
     final class RootView: ScrollableVStackRootView {
         // MARK: - Properties
         private let viewModel: OrcaSwapV2ConfirmSwappingViewModelType
+        private let disposeBag = DisposeBag()
         
         // MARK: - Subviews
         private lazy var bannerView = UIView.greyBannerView(axis: .horizontal, spacing: 12, alignment: .top) {
@@ -27,6 +28,11 @@ extension OrcaSwapV2.ConfirmSwapping {
             UIView.closeBannerButton()
                 .onTap(self, action: #selector(closeBannerButtonDidTouch))
         }
+        private lazy var inputAmountLabel = UILabel(text: nil, textSize: 15, numberOfLines: 0, textAlignment: .right)
+            .withContentHuggingPriority(.required, for: .horizontal)
+        private lazy var minimumAmountLabel = UILabel(text: nil, textSize: 15, numberOfLines: 0, textAlignment: .right)
+            .withContentHuggingPriority(.required, for: .horizontal)
+        private lazy var slippageLabel = UILabel(text: nil, textSize: 15, textAlignment: .right)
         private lazy var ratesView = OrcaSwapV2.RatesStackView(
             exchangeRateDriver: viewModel.exchangeRatesDriver,
             sourceWalletDriver: viewModel.sourceWalletDriver,
@@ -40,9 +46,11 @@ extension OrcaSwapV2.ConfirmSwapping {
             super.init(frame: .zero)
             scrollView.contentInset = .init(top: 8, left: 18, bottom: 18, right: 18)
             setUp()
+            bind()
         }
         
         private func setUp() {
+            stackView.spacing = 12
             stackView.addArrangedSubviews {
                 UIView.floatingPanel(contentInset: .init(x: 8, y: 16), axis: .horizontal, spacing: 8, alignment: .center, distribution: .equalCentering) {
                     WalletView(viewModel: viewModel, type: .source)
@@ -57,6 +65,12 @@ extension OrcaSwapV2.ConfirmSwapping {
                         .centered(.horizontal)
                 }
                 BEStackViewSpacing(26)
+                
+                createRow(title: L10n.spend, label: inputAmountLabel)
+                createRow(title: L10n.receiveAtLeast, label: minimumAmountLabel)
+                createRow(title: L10n.maxPriceSlippage, label: slippageLabel)
+                
+                BEStackViewSpacing(18)
                 
                 UIView.defaultSeparator()
                 BEStackViewSpacing(18)
@@ -73,12 +87,47 @@ extension OrcaSwapV2.ConfirmSwapping {
             }
         }
         
+        private func bind() {
+            combinedAmountDriver(amountDriver: viewModel.inputAmountStringDriver, amountInFiatDriver: viewModel.inputAmountInFiatStringDriver)
+                .drive(inputAmountLabel.rx.attributedText)
+                .disposed(by: disposeBag)
+            
+            combinedAmountDriver(amountDriver: viewModel.receiveAtLeastStringDriver, amountInFiatDriver: viewModel.receiveAtLeastInFiatStringDriver)
+                .drive(minimumAmountLabel.rx.attributedText)
+                .disposed(by: disposeBag)
+            
+            viewModel.slippageDriver
+                .map {($0 * 100).toString(maximumFractionDigits: 2) + "%"}
+                .drive(slippageLabel.rx.text)
+                .disposed(by: disposeBag)
+        }
+        
         // MARK: - Action
         @objc private func closeBannerButtonDidTouch() {
             UIView.animate(withDuration: 0.3) {
                 self.bannerView.isHidden = true
             }
             viewModel.closeBanner()
+        }
+        
+        // MARK: - Helpers
+        private func createRow(title: String, label: UILabel) -> UIStackView {
+            .init(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
+                UILabel(text: title, textSize: 15, textColor: .textSecondary, numberOfLines: 0)
+                label
+            }
+        }
+        
+        private func combinedAmountDriver(amountDriver: Driver<String?>, amountInFiatDriver: Driver<String?>) -> Driver<NSAttributedString> {
+            Driver.combineLatest(
+                amountDriver,
+                amountInFiatDriver
+            )
+                .map {
+                    NSMutableAttributedString()
+                        .text($0.0 ?? "0", size: 15)
+                        .text(" (~" + ($0.1 ?? "") + ")", size: 15, color: .textSecondary)
+                }
         }
     }
 }
@@ -131,42 +180,23 @@ extension OrcaSwapV2.ConfirmSwapping {
                 .drive(coinLogoImageView.rx.wallet)
                 .disposed(by: disposeBag)
             
-            let tokenAmountDriver = type == .source ? viewModel.inputAmountDriver: viewModel.estimatedAmountDriver
-            
-            Driver.combineLatest(
-                walletDriver,
-                tokenAmountDriver
-            )
-                .map {wallet, amount in
-                    amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
-                }
-                .drive(amountLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            if type == .source {
-                Driver.combineLatest(
-                    walletDriver,
-                    tokenAmountDriver
-                )
-                    .map {wallet, amount in
-                        "~ " +
-                            (amount * wallet?.priceInCurrentFiat).toString(maximumFractionDigits: 2) +
-                            " " +
-                            Defaults.fiat.code
-                    }
+            switch type {
+            case .source:
+                viewModel.inputAmountStringDriver
+                    .drive(amountLabel.rx.text)
+                    .disposed(by: disposeBag)
+                
+                viewModel.inputAmountInFiatStringDriver
+                    .map {"~ " + $0}
                     .drive(equityAmountLabel.rx.text)
                     .disposed(by: disposeBag)
-            } else if type == .destination {
-                Driver.combineLatest(
-                    walletDriver,
-                    viewModel.minimumReceiveAmountDriver
-                )
-                    .map {wallet, amount in
-                        "≥ " +
-                        amount?.toString(maximumFractionDigits: 9) +
-                        " " +
-                        (wallet?.token.symbol ?? "")
-                    }
+            case .destination:
+                viewModel.estimatedAmountStringDriver
+                    .drive(amountLabel.rx.text)
+                    .disposed(by: disposeBag)
+                
+                viewModel.receiveAtLeastStringDriver
+                    .map {"≥ " + $0}
                     .drive(equityAmountLabel.rx.text)
                     .disposed(by: disposeBag)
             }
