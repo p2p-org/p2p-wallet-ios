@@ -30,11 +30,11 @@ class TabBarVC: BEPagesVC {
         let dAppContainerVC = scenesFactory.makeDAppContainerViewController(dapp: .fake)
         
         viewControllers = [
-            BENavigationController(rootViewController: mainVC),
-            BENavigationController(rootViewController: investmentsVC),
-            BENavigationController(rootViewController: BaseVC()),
-            BENavigationController(rootViewController: dAppContainerVC),
-            BENavigationController(rootViewController: BaseVC())
+            UINavigationController(rootViewController: mainVC),
+            UINavigationController(rootViewController: investmentsVC),
+            UINavigationController(rootViewController: BaseVC()),
+            UINavigationController(rootViewController: dAppContainerVC),
+            UINavigationController(rootViewController: BaseVC())
         ]
         
         // disable scrolling
