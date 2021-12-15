@@ -6,9 +6,9 @@ import Foundation
 
 extension ReceiveToken {
     class Scene: BEScene {
-        @BENavigationBinding private var viewModel: SceneModel!
+        @BENavigationBinding private var viewModel: ReceiveSceneModel!
         
-        init(viewModel: SceneModel) {
+        init(viewModel: ReceiveSceneModel) {
             super.init()
             
             self.viewModel = viewModel
@@ -29,24 +29,34 @@ extension ReceiveToken {
                     UIView.defaultSeparator()
                     
                     BEScrollView(contentInsets: .init(x: .defaultPadding, y: .defaultPadding), spacing: 16) {
-                        // Receive type button
+                        // Network button
                         if viewModel.shouldShowChainsSwitcher {
                             WLLargeButton {
                                 UIStackView(axis: .horizontal) {
-                                    UIImageView(width: 22, height: 22, image: .walletEdit)
+                                    // Wallet Icon
+                                    UIImageView(width: 44, height: 44)
+                                        .with(.image, drivenBy: viewModel.tokenTypeDriver.map({ type in type.icon }), disposedBy: disposeBag)
+                                    // Text
                                     UIStackView(axis: .vertical, alignment: .leading) {
                                         UILabel(text: L10n.showingMyAddressFor, textSize: 13, textColor: .secondaryLabel)
-                                        UILabel(text: "Solana network", textSize: 17)
+                                        UILabel(text: L10n.network("Solana"), textSize: 17)
                                     }.padding(.init(x: 12, y: 0))
+                                    // Next icon
+                                    UIView.defaultNextArrow()
                                 }.padding(.init(x: 15, y: 15))
+                            }.onTap {
+                                self.viewModel.showSelectionNetwork()
                             }
                         }
                         // Children
                         ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
-                        
-                        ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel, receiveSolanaViewModel: viewModel.receiveSolanaViewModel).setup { view in
-                            viewModel.tokenTypeDriver.map { token in token == .solana ? true : false }.drive(view.rx.isHidden).disposed(by: disposeBag)
-                        }
+                            .setup { view in
+                                viewModel.tokenTypeDriver.map { token in token != .solana }.drive(view.rx.isHidden).disposed(by: disposeBag)
+                            }
+                        ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel, receiveSolanaViewModel: viewModel.receiveSolanaViewModel)
+                            .setup { view in
+                                viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden).disposed(by: disposeBag)
+                            }
                     }
                 }
             }

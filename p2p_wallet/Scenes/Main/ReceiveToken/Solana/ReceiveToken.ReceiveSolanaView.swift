@@ -19,7 +19,7 @@ extension ReceiveToken {
         
         init(viewModel: ReceiveTokenSolanaViewModelType) {
             self.viewModel = viewModel
-            super.init(frame: .zero)
+            super.init()
         }
         
         override func build() -> UIView {
@@ -44,7 +44,7 @@ extension ReceiveToken {
                         // QR code
                         QrCodeView(size: 190, coinLogoSize: 32)
                             .setup { view in
-                                qrView = view as! UIView
+                                qrView = view
                             }
                             .with(string: viewModel.pubkey, token: viewModel.tokenWallet?.token)
                             .autoAdjustWidthHeightRatio(1)

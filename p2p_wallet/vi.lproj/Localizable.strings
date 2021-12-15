@@ -664,3 +664,5 @@
 "There are %@ free transactions left for today" = "Còn lại %@ giao dịch miễn phí cho ngày hôm nay";
 "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "Trên mạng Solana, 100 giao dịch đầu tiên trong ngày được thanh toán bởi P2P.org. Các giao dịch tiếp theo sẽ được tính phí dựa trên phí gas của Solana blockchain.";
 "Select word #%@" = "Chọn từ #%@";
+"Receive any token within the Solana network even if it is not included in your wallet list" = "Nhận bất kỳ mã thông báo nào trong mạng Solana ngay cả khi nó không có trong danh sách ví của bạn";
+"When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "Khi bạn chọn mạng Bitcoin, địa chỉ của bạn chỉ chấp nhận Bitcoin.  Bạn có thể mất tài sản khi gửi một đồng xu khác. \n 0,000112 BTC là số tiền giao dịch tối thiểu và bạn có 36 giờ để hoàn tất giao dịch sau khi nhận được địa chỉ.";

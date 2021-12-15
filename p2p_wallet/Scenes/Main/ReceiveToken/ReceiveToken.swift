@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 07/06/2021.
 //
 
-import Foundation
+import UIKit
 
 struct ReceiveToken {
     enum NavigatableScene {
@@ -14,11 +14,22 @@ struct ReceiveToken {
         case chooseBTCOption(selectedOption: BTCTypeOption)
         case showRenBTCReceivingStatus
         case share(address: String? = nil, qrCode: UIImage? = nil)
+        case networkSelection
         case help
     }
     
     enum TokenType: CaseIterable {
         case solana, btc
+        
+        var icon: UIImage {
+            switch self {
+            case .btc:
+                return .squircleBitcoinIcon
+            case .solana:
+                return .squircleSolanaIcon
+            }
+        }
+        
         var localizedName: String {
             switch self {
             case .solana:

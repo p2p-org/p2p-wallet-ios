@@ -32,7 +32,7 @@ extension DerivableAccounts {
                         UILabel(text: L10n.derivationPath, textSize: 17, weight: .semibold)
                         derivationPathLabel
                     }
-                    UIImageView(width: 14, height: 21, image: .nextArrow, tintColor: .h8e8e93)
+                    UIView.defaultNextArrow()
                 }.padding(.init(x: 18, y: 14))
             }.onTap(self, action: #selector(chooseDerivationPath))
             
