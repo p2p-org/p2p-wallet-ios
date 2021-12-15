@@ -41,7 +41,7 @@ extension Root {
             switch scene {
             case .createOrRestoreWallet:
                 let vc = CreateOrRestoreWallet.ViewController()
-                let nc = BENavigationController(rootViewController: vc)
+                let nc = UINavigationController(rootViewController: vc)
                 transition(to: nc)
             case .onboarding:
                 let vc = Onboarding.ViewController()

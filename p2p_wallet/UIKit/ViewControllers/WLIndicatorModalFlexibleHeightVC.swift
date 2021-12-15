@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class FlexibleHeightNavigationController: BENavigationController, CustomPresentableViewController {
+class FlexibleHeightNavigationController: UINavigationController, CustomPresentableViewController {
     var transitionManager: UIViewControllerTransitioningDelegate?
     
     func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
