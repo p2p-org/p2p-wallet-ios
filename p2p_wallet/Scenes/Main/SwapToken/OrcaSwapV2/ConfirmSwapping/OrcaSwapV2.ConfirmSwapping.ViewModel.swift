@@ -8,20 +8,6 @@
 import Foundation
 import RxCocoa
 
-protocol OrcaSwapV2ConfirmSwappingViewModelType {
-    var sourceWalletDriver: Driver<Wallet?> {get}
-    var destinationWalletDriver: Driver<Wallet?> {get}
-    var inputAmountDriver: Driver<Double?> {get}
-    var estimatedAmountDriver: Driver<Double?> {get}
-    var minimumReceiveAmountDriver: Driver<Double?> {get}
-    var exchangeRatesDriver: Driver<Double?> {get}
-    var feesDriver: Driver<Loadable<[PayingFee]>> {get}
-    
-    func isBannerForceClosed() -> Bool
-    
-    func closeBanner()
-}
-
 extension OrcaSwapV2.ConfirmSwapping {
     final class ViewModel {
         // MARK: - Properties
@@ -61,6 +47,10 @@ extension OrcaSwapV2.ConfirmSwapping.ViewModel: OrcaSwapV2ConfirmSwappingViewMod
     
     var feesDriver: Driver<Loadable<[PayingFee]>> {
         swapViewModel.feesDriver
+    }
+    
+    var slippageDriver: Driver<Double> {
+        swapViewModel.slippageDriver
     }
     
     func isBannerForceClosed() -> Bool {

@@ -664,3 +664,4 @@
 "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee.";
 "Select word #%@" = "Select word #%@";
 "Confirm swapping %@ → %@" = "Confirm swapping %@ → %@";
+"Spend" = "Spend";
