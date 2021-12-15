@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import Resolver
 
 extension ReceiveToken {
     class Scene: BEScene {
@@ -10,7 +11,6 @@ extension ReceiveToken {
         
         init(viewModel: ReceiveSceneModel) {
             super.init()
-            
             self.viewModel = viewModel
         }
         

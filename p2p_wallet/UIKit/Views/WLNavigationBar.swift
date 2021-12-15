@@ -46,3 +46,43 @@ class WLNavigationBar: BEView {
         titleLabel.text = title
     }
 }
+
+class NewWLNavigationBar: BECompositionView {
+    private var backButton: UIView!
+    private var title: UILabel!
+    
+    private let actions: UIView
+    
+    let initialTitle: String?
+    
+    init(title: String? = nil) {
+        self.initialTitle = title
+        self.actions = BEContainer()
+        super.init()
+    }
+    
+    init(title: String? = nil, @BEViewBuilder actions: Builder) {
+        self.initialTitle = title
+        self.actions = actions().build()
+        super.init()
+    }
+    
+    override func build() -> UIView {
+        UIStackView(axis: .vertical, alignment: .fill) {
+            UIStackView(axis: .horizontal, alignment: .center, distribution: .equalCentering) {
+                // Back button
+                UIImageView(width: 14, height: 24, image: UIImage(systemName: "chevron.left"), tintColor: .h5887ff)
+                    .setup({ view in self.backButton = view })
+                    .padding(.init(x: 6, y: 4))
+                
+                // Title
+                UILabel(text: initialTitle, textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
+                    .setup({ view in self.title = view as! UILabel })
+                
+                // Actions
+                actions
+            }
+            UIView.defaultSeparator()
+        }.frame(height: 44)
+    }
+}
