@@ -73,3 +73,8 @@ custom_rules:
     regex: 'NSParagraphStyle\(\)'
     message: "Don't construct NSParagraphStyle directly, use withParagraphStyle() method on NSMutableAttributedString instead"
     severity: warning
+  close_banner_button:
+    name: "Close banner button"
+    regex: 'image: (UIImage)?\.closeBannerButton'
+    message: "Use UIView.closeBannerButton instead"
+    severity: warning
