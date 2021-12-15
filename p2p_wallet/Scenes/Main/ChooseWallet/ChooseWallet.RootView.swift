@@ -63,9 +63,10 @@ extension ChooseWallet {
         // MARK: - Layout
         private func layout() {
             addSubview(searchBar)
+            addSubview(collectionView)
+
             searchBar.autoPinEdgesToSuperviewEdges(with: .init(top: .defaultPadding, left: 16, bottom: 0, right: 16), excludingEdge: .bottom)
             
-            addSubview(collectionView)
             collectionView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
             collectionView.autoPinEdge(.top, to: .bottom, of: searchBar, withOffset: 18)
         }

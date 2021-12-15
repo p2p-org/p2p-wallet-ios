@@ -27,14 +27,14 @@ extension ChooseWallet {
         }
 
         private func configureSelf() {
-            backgroundColor = .fafafc
+            backgroundColor = .fafafc.onDarkMode(.clear)
             addSubview(navigationBar)
             navigationBar.autoPinEdgesToSuperviewSafeArea(with: .init(only: .top, inset: 14))
         }
 
         private func configureNavigationBar(title: String?) {
             navigationBar.backButton.isHidden = true
-            navigationBar.backgroundColor = .fafafc
+            navigationBar.backgroundColor = .fafafc.onDarkMode(.clear)
             navigationBar.titleLabel.text = title
             let closeButton = UIButton(
                 label: L10n.close,

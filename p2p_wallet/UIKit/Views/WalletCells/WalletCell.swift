@@ -42,7 +42,7 @@ class WalletCell: BaseCollectionViewCell {
     func setIsSelected(isSelected: Bool) {
         coinLogoImageView.alpha = isSelected ? 0.2 : 1
         coinCheckMark.isHidden = !isSelected
-        contentView.backgroundColor = isSelected ? .h5887ff.withAlphaComponent(0.1) : .white
+        contentView.backgroundColor = isSelected ? .h5887ff.withAlphaComponent(0.2) : .clear
     }
     
     func setUp(with item: Wallet) {

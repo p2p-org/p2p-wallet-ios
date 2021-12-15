@@ -80,7 +80,7 @@ extension OrcaSwapV2 {
                 present(nc, interactiveDismissalType: .standard)
             case let .chooseSourceWallet(currentlySelectedWallet: currentlySelectedWallet):
                 let vc = scenesFactory.makeChooseWalletViewController(
-                    title: nil,
+                    title: L10n.selectTheFirstToken,
                     customFilter: { $0.amount > 0 },
                     showOtherWallets: false,
                     selectedWallet: currentlySelectedWallet,
@@ -93,7 +93,7 @@ extension OrcaSwapV2 {
                 excludedSourceWalletPubkey: excludedSourceWalletPubkey
             ):
                 let vc = scenesFactory.makeChooseWalletViewController(
-                    title: nil,
+                    title: L10n.selectTheSecondToken,
                     customFilter: {
                         $0.pubkey != excludedSourceWalletPubkey &&
                             validMints.contains($0.mintAddress)
