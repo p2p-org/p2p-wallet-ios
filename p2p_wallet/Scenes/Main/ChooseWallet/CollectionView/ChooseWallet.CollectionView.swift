@@ -9,8 +9,12 @@ import Foundation
 import BECollectionView
 
 extension ChooseWallet {
-    class CollectionView: BEDynamicSectionsCollectionView<ViewModel> {
+    class CollectionView: BEDynamicSectionsCollectionView {
+        private let specificViewModel: ViewModel
+
         init(viewModel: ViewModel) {
+            self.specificViewModel = viewModel
+
             super.init(
                 viewModel: viewModel,
                 mapDataToSections: { viewModel in
@@ -51,7 +55,7 @@ extension ChooseWallet {
                 let cell = cell as? WalletCell,
                 let wallet = dataSource.itemIdentifier(for: indexPath)?.value as? Wallet
             {
-                let isSelected = wallet.token == viewModel.selectedWallet?.token
+                let isSelected = wallet.token == specificViewModel.selectedWallet?.token
                 cell.setIsSelected(isSelected: isSelected)
             }
 

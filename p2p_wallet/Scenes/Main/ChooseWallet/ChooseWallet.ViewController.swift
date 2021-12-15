@@ -11,7 +11,7 @@ import BECollectionView
 import BEPureLayout
 
 extension ChooseWallet {
-    final class ViewController: BEViewController {
+    final class ViewController: BaseVC {
         
         // MARK: - Properties
         private let viewModel: ViewModel

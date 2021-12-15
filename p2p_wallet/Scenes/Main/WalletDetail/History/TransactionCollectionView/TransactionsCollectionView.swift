@@ -11,7 +11,7 @@ import Action
 import RxSwift
 import RxCocoa
 
-class TransactionsCollectionView: BEDynamicSectionsCollectionView<TransactionsViewModel> {
+class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let graphViewModel: WalletGraphViewModel
     @Injected private var analyticsManager: AnalyticsManagerType
     let wallet: Driver<Wallet?>
