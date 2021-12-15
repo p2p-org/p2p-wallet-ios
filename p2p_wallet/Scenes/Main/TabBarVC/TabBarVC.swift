@@ -20,7 +20,7 @@ class TabBarVC: BEPagesVC {
     
     var _isEnabled: Bool = true {
         didSet {
-            heightConstraint.constant = _isEnabled ? 120 : 0
+            heightConstraint.constant = _isEnabled ? 100 : 0
             UIView.animate(withDuration: 0.3) {
                 self.view.layoutIfNeeded()
             }
@@ -57,7 +57,7 @@ class TabBarVC: BEPagesVC {
         // tabBar
         view.addSubview(tabBar)
         tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-        heightConstraint = tabBar.heightAnchor.constraint(equalToConstant: 120)
+        heightConstraint = tabBar.heightAnchor.constraint(equalToConstant: 100)
         heightConstraint.isActive = true
         
         // configure tabBar
