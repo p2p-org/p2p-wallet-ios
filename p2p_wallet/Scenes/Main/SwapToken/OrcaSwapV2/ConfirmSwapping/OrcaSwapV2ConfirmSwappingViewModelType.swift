@@ -61,7 +61,7 @@ extension OrcaSwapV2ConfirmSwappingViewModelType {
             minimumReceiveAmountDriver
         )
             .map {wallet, amount in
-                amount.toString(maximumFractionDigits: 9) + (wallet?.token.symbol ?? "")
+                amount.toString(maximumFractionDigits: 9) + " " + (wallet?.token.symbol ?? "")
             }
     }
     
