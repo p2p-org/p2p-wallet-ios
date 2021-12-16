@@ -665,3 +665,6 @@
 "Select word #%@" = "Select word #%@";
 "Select the second token" = "Select the second token";
 "Select the first token" = "Select the first token";
+"Confirm swapping %@ → %@" = "Confirm swapping %@ → %@";
+"Spend" = "Spend";
+"Swap %@ → %@" = "Swap %@ → %@";
