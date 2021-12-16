@@ -55,8 +55,10 @@ extension SendToken.ChooseTokenAndAmount {
             switch scene {
             case .chooseWallet:
                 let vc = scenesFactory.makeChooseWalletViewController(
+                    title: nil,
                     customFilter: { $0.amount > 0},
                     showOtherWallets: false,
+                    selectedWallet: nil,
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)

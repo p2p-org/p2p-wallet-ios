@@ -180,7 +180,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     
     func chooseSourceWallet() {
         isSelectingSourceWallet = true
-        navigationSubject.accept(.chooseSourceWallet)
+        navigationSubject.accept(.chooseSourceWallet(currentlySelectedWallet: sourceWalletSubject.value))
     }
     
     func chooseDestinationWallet() {
@@ -191,7 +191,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             destinationMints = validMints
         }
         isSelectingSourceWallet = false
-        navigationSubject.accept(.chooseDestinationWallet(validMints: Set(destinationMints), excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey))
+        navigationSubject.accept(.chooseDestinationWallet(currentlySelectedWallet: destinationWalletSubject.value, validMints: Set(destinationMints), excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey))
     }
     
     func retryLoadingRoutes() {
