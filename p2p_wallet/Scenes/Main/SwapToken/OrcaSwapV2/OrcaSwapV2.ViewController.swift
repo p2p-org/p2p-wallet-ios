@@ -25,8 +25,6 @@ extension OrcaSwapV2 {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
-        
-        override var preferredTabBarHidden: Bool? {true}
 
         // MARK: - Dependencies
         private let viewModel: OrcaSwapV2ViewModelType

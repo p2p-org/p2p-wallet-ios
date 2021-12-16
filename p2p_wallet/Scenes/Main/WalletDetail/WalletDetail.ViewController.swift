@@ -25,8 +25,6 @@ extension WalletDetail {
             .hidden
         }
         
-        override var preferredTabBarHidden: Bool? {true}
-        
         // MARK: - Dependencies
         private let viewModel: WalletDetailViewModelType
         private let scenesFactory: WalletDetailScenesFactory

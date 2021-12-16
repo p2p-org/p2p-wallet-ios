@@ -13,8 +13,6 @@ extension SendToken {
             .hidden
         }
         
-        override var preferredTabBarHidden: Bool? {true}
-        
         // MARK: - Subviews
         lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
