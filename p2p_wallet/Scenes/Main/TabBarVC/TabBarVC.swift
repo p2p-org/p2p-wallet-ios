@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import UIKit
-import RxSwift
 
 protocol TabBarScenesFactory {
     func makeHomeViewController() -> Home.ViewController
@@ -17,7 +15,6 @@ protocol TabBarScenesFactory {
 
 class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
-    private let disposeBag = DisposeBag()
     private var tabBarTopConstraint: NSLayoutConstraint!
     
     let scenesFactory: TabBarScenesFactory
