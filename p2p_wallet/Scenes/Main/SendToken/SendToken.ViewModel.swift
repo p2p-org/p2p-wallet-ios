@@ -196,11 +196,11 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     }
     
     func shouldShowConfirmAlert() -> Bool {
-        Defaults.shouldShowConfirmAlert
+        Defaults.shouldShowConfirmAlertOnSend
     }
     
     func closeConfirmAlert() {
-        Defaults.shouldShowConfirmAlert = false
+        Defaults.shouldShowConfirmAlertOnSend = false
     }
     
     func authenticateAndSend() {

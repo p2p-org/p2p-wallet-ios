@@ -116,6 +116,7 @@ extension Home {
                 }
                     .padding(.init(x: 24, y: 16))
                 pricesLoadingIndicatorView
+                BEStackViewSpacing(8)
                 bannersCollectionView
                 BEStackViewSpacing(15)
             }

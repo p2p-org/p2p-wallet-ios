@@ -665,3 +665,6 @@
 "Select word #%@" = "Chọn từ #%@";
 "Select the second token" = "Chọn token thứ hai";
 "Select the first token" = "Chọn token đầu tiên";
+"Confirm swapping %@ → %@" = "Xác nhận hoán đổi %@ → %@";
+"Spend" = "Dùng";
+"Swap %@ → %@" = "Hoán đổi %@ → %@";
