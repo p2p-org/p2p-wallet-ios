@@ -27,8 +27,6 @@ extension SendToken {
             .hidden
         }
         
-        override var preferredTabBarHidden: Bool? {true}
-        
         // MARK: - Dependencies
         private let viewModel: SendTokenViewModelType
         private let scenesFactory: SendTokenScenesFactory
