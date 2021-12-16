@@ -57,14 +57,19 @@ extension OrcaSwapV2 {
         }
 
         private func setAtLeastText(string: String?) {
-            receiveAtLeastView.isHidden = string == nil
             receiveAtLeastView.configureRightLabel { label in
                 label.text = string
+                label.isHidden = string == nil
+            }
+
+            receiveAtLeastView.configureLeftLabel { label in
+                label.isHidden = string == nil
             }
         }
 
         private func layout() {
             stackView.spacing = 16
+            receiveAtLeastView.autoSetDimension(.height, toSize: 18)
             stackView.addArrangedSubviews {
                 fromWalletView
                 UIStackView(axis: .horizontal) {
