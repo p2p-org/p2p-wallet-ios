@@ -90,8 +90,10 @@ extension SerumSwapV1 {
             switch scene {
             case .chooseSourceWallet:
                 let vc = scenesFactory.makeChooseWalletViewController(
+                    title: L10n.selectTheFirstToken,
                     customFilter: {$0.amount > 0},
                     showOtherWallets: false,
+                    selectedWallet: nil,
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)
@@ -103,8 +105,10 @@ extension SerumSwapV1 {
                     }
                 }
                 let vc = scenesFactory.makeChooseWalletViewController(
+                    title: L10n.selectTheSecondToken,
                     customFilter: filter,
                     showOtherWallets: true,
+                    selectedWallet: nil,
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)

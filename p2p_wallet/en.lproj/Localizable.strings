@@ -663,6 +663,8 @@
 "There are %@ free transactions left for today" = "There are %@ free transactions left for today";
 "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee.";
 "Select word #%@" = "Select word #%@";
+"Select the second token" = "Select the second token";
+"Select the first token" = "Select the first token";
 "Confirm swapping %@ → %@" = "Confirm swapping %@ → %@";
 "Spend" = "Spend";
 "Swap %@ → %@" = "Swap %@ → %@";
