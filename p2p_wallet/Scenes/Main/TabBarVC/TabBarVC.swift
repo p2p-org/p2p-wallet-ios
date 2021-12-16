@@ -18,8 +18,7 @@ protocol TabBarScenesFactory {
 class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
     private let disposeBag = DisposeBag()
-    private var tabBarHeightConstraint: NSLayoutConstraint!
-    private var tabBarCompressedHeight: CGFloat!
+    private var tabBarTopConstraint: NSLayoutConstraint!
     
     let scenesFactory: TabBarScenesFactory
     init(scenesFactory: TabBarScenesFactory) {
@@ -37,11 +36,11 @@ class TabBarVC: BEPagesVC {
         let dAppContainerVC = scenesFactory.makeDAppContainerViewController(dapp: .fake)
         
         viewControllers = [
-            UINavigationController(rootViewController: mainVC),
-            UINavigationController(rootViewController: investmentsVC),
-            UINavigationController(rootViewController: BaseVC()),
-            UINavigationController(rootViewController: dAppContainerVC),
-            UINavigationController(rootViewController: BaseVC())
+            createNavigationController(rootVC: mainVC),
+            createNavigationController(rootVC: investmentsVC),
+            createNavigationController(rootVC: BaseVC()),
+            createNavigationController(rootVC: dAppContainerVC),
+            createNavigationController(rootVC: BaseVC())
         ]
         
         // disable scrolling
@@ -51,6 +50,8 @@ class TabBarVC: BEPagesVC {
         
         // tabBar
         view.addSubview(tabBar)
+        tabBarTopConstraint = tabBar.autoPinEdge(.top, to: .bottom, of: view)
+        tabBarTopConstraint.isActive = false
         tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         
         // configure tabBar
@@ -64,24 +65,6 @@ class TabBarVC: BEPagesVC {
         // action
         currentPage = -1
         moveToPage(0)
-        
-        // layout and set height
-        tabBarCompressedHeight = tabBar.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
-        tabBarHeightConstraint = tabBar.autoSetDimension(.height, toSize: 100)
-    }
-    
-    override func bind() {
-        super.bind()
-        NotificationCenter.default.rx.notification(.shouldHideTabBar)
-            .subscribe(onNext: {[weak self] notification in
-                guard let self = self, let shouldHide = notification.object as? Bool else {return}
-                self.tabBarHeightConstraint.constant = shouldHide ? 0: 100
-                self.containerView.setNeedsLayout()
-                UIView.animate(withDuration: 0.3) {
-                    self.view.layoutIfNeeded()
-                }
-            })
-            .disposed(by: disposeBag)
     }
     
     override func setUpContainerView() {
@@ -90,6 +73,22 @@ class TabBarVC: BEPagesVC {
     }
     
     // MARK: - Helpers
+    private func createNavigationController(rootVC: UIViewController) -> UINavigationController {
+        let nc = NavigationController(rootViewController: rootVC)
+        nc.hideTabBarCompletion = {[weak self] shouldHide in
+            self?.hideTabBar(shouldHide)
+        }
+        return nc
+    }
+    
+    private func hideTabBar(_ shouldHide: Bool) {
+        tabBarTopConstraint.isActive = shouldHide
+        containerView.setNeedsLayout()
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
     private func configureTabBar() {
         tabBar.stackView.addArrangedSubviews([
             .spacer,
@@ -136,5 +135,23 @@ class TabBarVC: BEPagesVC {
         items.filter {$0.tag != currentPage}.forEach {$0.subviews.first?.tintColor = .tabbarUnselected}
         
         setNeedsStatusBarAppearanceUpdate()
+    }
+}
+
+private class NavigationController: UINavigationController {
+    var hideTabBarCompletion: ((Bool) -> Void)?
+    
+    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
+        if viewControllers.count > 0 {
+            hideTabBarCompletion?(true)
+        }
+        super.pushViewController(viewController, animated: animated)
+    }
+    
+    override func popViewController(animated: Bool) -> UIViewController? {
+        if viewControllers.count == 2 {
+            hideTabBarCompletion?(false)
+        }
+        return super.popViewController(animated: animated)
     }
 }
