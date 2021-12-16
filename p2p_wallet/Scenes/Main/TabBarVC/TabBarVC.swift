@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import UIKit
+import RxSwift
 
 protocol TabBarScenesFactory {
     func makeHomeViewController() -> Home.ViewController
@@ -15,6 +17,9 @@ protocol TabBarScenesFactory {
 
 class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
+    private let disposeBag = DisposeBag()
+    private var tabBarHeightConstraint: NSLayoutConstraint!
+    private var tabBarCompressedHeight: CGFloat!
     
     let scenesFactory: TabBarScenesFactory
     init(scenesFactory: TabBarScenesFactory) {
@@ -24,6 +29,8 @@ class TabBarVC: BEPagesVC {
     
     override func setUp() {
         super.setUp()
+        view.backgroundColor = .background
+        
         // pages
         let mainVC = scenesFactory.makeHomeViewController()
         let investmentsVC = scenesFactory.makeInvestmentsViewController()
@@ -57,6 +64,24 @@ class TabBarVC: BEPagesVC {
         // action
         currentPage = -1
         moveToPage(0)
+        
+        // layout and set height
+        tabBarCompressedHeight = tabBar.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+        tabBarHeightConstraint = tabBar.autoSetDimension(.height, toSize: 100)
+    }
+    
+    override func bind() {
+        super.bind()
+        NotificationCenter.default.rx.notification(.shouldHideTabBar)
+            .subscribe(onNext: {[weak self] notification in
+                guard let self = self, let shouldHide = notification.object as? Bool else {return}
+                self.tabBarHeightConstraint.constant = shouldHide ? 0: 100
+                self.containerView.setNeedsLayout()
+                UIView.animate(withDuration: 0.3) {
+                    self.view.layoutIfNeeded()
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     override func setUpContainerView() {
