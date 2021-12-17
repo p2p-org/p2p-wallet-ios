@@ -77,6 +77,14 @@ extension OrcaSwapV2 {
                 }
                 .disposed(by: disposeBag)
 
+            viewModel.isShowingDetailsDriver
+                .drive { [weak self] isShowing in
+                    if isShowing {
+                        self?.endEditing(true)
+                    }
+                }
+                .disposed(by: disposeBag)
+
             viewModel.isShowingShowDetailsButtonDriver
                 .drive { [weak self] isShowing in
                     self?.showDetailsButton.isHidden = !isShowing
