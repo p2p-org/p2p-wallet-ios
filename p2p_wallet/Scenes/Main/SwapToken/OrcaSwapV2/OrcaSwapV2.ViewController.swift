@@ -53,6 +53,12 @@ extension OrcaSwapV2 {
             self.viewModel = viewModel
         }
 
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+
+            rootView.makeFromFirstResponder()
+        }
+
         override func setUp() {
             super.setUp()
             view.addSubview(navigationBar)

@@ -98,6 +98,10 @@ extension OrcaSwapV2 {
             chooseWalletView.autoPinEdge(.top, to: .top, of: iconImageView, withOffset: -10)
             chooseWalletView.autoPinEdge(.bottom, to: .bottom, of: iconImageView, withOffset: 10)
         }
+
+        override func becomeFirstResponder() -> Bool {
+            amountTextField.becomeFirstResponder()
+        }
         
         private func bind() {
             // subjects
