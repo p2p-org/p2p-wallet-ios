@@ -42,6 +42,10 @@ extension OrcaSwapV2 {
             bind()
         }
 
+        func makeFromFirstResponder() {
+            mainView.makeFromFirstResponder()
+        }
+
         // MARK: - Layout
         private func layout() {
             stackView.addArrangedSubviews {
