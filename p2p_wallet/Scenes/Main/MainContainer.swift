@@ -43,7 +43,7 @@ class MainContainer {
         )
         
         self.processingTransactionsManager = ProcessingTransactionsManager(handler: socket, walletsRepository: walletsViewModel, pricesService: pricesService)
-        walletsViewModel.processingTransactionRepository  = self.processingTransactionsManager
+        walletsViewModel.processingTransactionRepository = self.processingTransactionsManager
         self.walletsViewModel = walletsViewModel
         
         // RenVM
@@ -122,23 +122,21 @@ class MainContainer {
         return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)
     }
     
-    func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController
-    {
+    func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController {
         let viewModel = TransactionInfoViewModel(transaction: transaction)
         return TransactionInfoViewController(viewModel: viewModel)
     }
     
-    func makeBuyTokenViewController(token: BuyToken.CryptoCurrency) throws -> UIViewController
-    {
-        SolanaBuyToken.Scene()
+    func makeBuyTokenViewController(token: Set<BuyProviders.Crypto>) throws -> UIViewController {
+        BuyRoot.ViewController(crypto: token, walletRepository: walletsViewModel)
     }
     
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.Scene? {
-        guard let pubkey = try? SolanaSDK.PublicKey(string: walletsViewModel.nativeWallet?.pubkey) else {return nil}
-        let tokenWallet = walletsViewModel.getWallets().first(where: {$0.pubkey == tokenWalletPubkey})
+        guard let pubkey = try? SolanaSDK.PublicKey(string: walletsViewModel.nativeWallet?.pubkey) else { return nil }
+        let tokenWallet = walletsViewModel.getWallets().first(where: { $0.pubkey == tokenWalletPubkey })
         
         let isDevnet = solanaSDK.endpoint.network == .devnet
-        let renBTCMint = isDevnet ? SolanaSDK.PublicKey.renBTCMintDevnet: SolanaSDK.PublicKey.renBTCMint
+        let renBTCMint = isDevnet ? SolanaSDK.PublicKey.renBTCMintDevnet : SolanaSDK.PublicKey.renBTCMint
         
         let isRenBTCWalletCreated = walletsViewModel.getWallets().contains(where: {
             $0.token.address == renBTCMint.base58EncodedString
@@ -167,8 +165,7 @@ class MainContainer {
         return .init(viewModel: vm, scenesFactory: self)
     }
     
-    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
-    {
+    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController {
         let feeService = FeeService(apiClient: solanaSDK)
         switch provider {
         case .orca:
@@ -177,7 +174,7 @@ class MainContainer {
                 orcaSwap: orcaSwap,
                 walletsRepository: walletsViewModel,
                 initialWallet: wallet ?? walletsViewModel.nativeWallet
-                )
+            )
             return OrcaSwapV2.ViewController(viewModel: vm, scenesFactory: self)
         case .serum:
             let provider = SerumSwap(
@@ -197,8 +194,7 @@ class MainContainer {
         }
     }
     
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
-    {
+    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController {
         let viewModel = ChooseWallet.ViewModel(
             myWallets: walletsViewModel.getWallets(),
             handler: handler,
@@ -249,7 +245,7 @@ class MainContainer {
             reserveNameHandler: handler
         )
         let vc = ReserveName.ViewController(viewModel: vm)
-
+        
         return vc
     }
     
@@ -275,11 +271,12 @@ class MainContainer {
 }
 
 extension MainContainer: TabBarScenesFactory,
-                         OrcaSwapV2ScenesFactory,
-                         SwapTokenScenesFactory,
-                         WalletDetailScenesFactory,
-                         SendTokenScenesFactory,
-                         HomeScenesFactory,
-                         ChangeFiatResponder,
-                         TokenSettingsScenesFactory,
-                         _MainScenesFactory {}
+    OrcaSwapV2ScenesFactory,
+    SwapTokenScenesFactory,
+    WalletDetailScenesFactory,
+    SendTokenScenesFactory,
+    HomeScenesFactory,
+    ChangeFiatResponder,
+    TokenSettingsScenesFactory,
+    _MainScenesFactory {
+}

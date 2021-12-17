@@ -7,10 +7,26 @@ import RxSwift
 import RxAlamofire
 
 protocol MoonpayService {
+    func getPrice(for crypto: String, as currency: Moonpay.Currency) -> Single<Double>
     func getBuyQuote(baseCurrencyCode: String, quoteCurrencyCode: String, baseCurrencyAmount: Double) -> Single<Moonpay.BuyQuote>
 }
 
 extension Moonpay {
+    enum Currency {
+        case usd
+        case eur
+        case gbp
+        
+        func toString() -> String {
+            switch self {
+            case .usd: return "USD"
+            case .eur: return "EUR"
+            case .gbp: return "GBP"
+            }
+        }
+    }
+    
+    
     class MoonpayServiceImpl: MoonpayService {
         private let api: API
         
@@ -33,6 +49,17 @@ extension Moonpay {
                 .take(1)
                 .asSingle()
                 .map { (_, data) in try JSONDecoder().decode(BuyQuote.self, from: data) }
+        }
+        
+        func getPrice(for crypto: String, as currency: Currency) -> Single<Double> {
+            request(.get, api.endpoint + "/currencies/\(crypto)/ask_price", parameters: ["apiKey": api.apiKey])
+                .responseJSON()
+                .take(1)
+                .asSingle()
+                .map { response-> Double in
+                    guard let json = response.value as? [String: Double] else { return 0 }
+                    return json[currency.toString()] ?? 0
+                }
         }
     }
 }

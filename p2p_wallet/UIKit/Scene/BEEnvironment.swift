@@ -14,7 +14,7 @@ class BEEnvironmentContainer: BECompositionView {
         super.init()
     }
     
-    func resolve<AnyObject>(_ _type: AnyObject.Type) -> Any? {
+    func resolve<T>(_ _type: T.Type) -> Any? {
         for value in values {
             if type(of: value) == _type { return value }
         }
@@ -27,7 +27,7 @@ class BEEnvironmentContainer: BECompositionView {
 }
 
 extension UIView {
-    func withEnvironment(_ value: AnyObject) -> UIView {
+    func withEnvironment(_ value: Any) -> UIView {
         BEEnvironmentContainer(value: value) { self }
     }
 }
@@ -43,28 +43,28 @@ struct EnvironmentVariable<Value> {
         set { fatalError() }
     }
     
-    static subscript<OuterSelf: UIView>(
-        _enclosingInstance view: OuterSelf,
+    static subscript<OuterSelf: UIViewController>(
+        _enclosingInstance vc: OuterSelf,
         wrapped wrappedKeyPath: ReferenceWritableKeyPath<OuterSelf, Value>,
         storage storageKeyPath: ReferenceWritableKeyPath<OuterSelf, Self>
     ) -> Value {
         get {
-            if view[keyPath: storageKeyPath].value == nil {
-                var currentView: UIView? = view
+            if vc[keyPath: storageKeyPath].value == nil {
+                var currentView: UIView? = vc.view
                 while currentView != nil {
                     if let currentView = currentView as? BEEnvironmentContainer {
                         if let result = currentView.resolve(Value.self) {
-                            view[keyPath: storageKeyPath].value = result as? Value
+                            vc[keyPath: storageKeyPath].value = result as? Value
                         }
                     }
                     currentView = currentView!.superview
                 }
             }
             
-            return view[keyPath: storageKeyPath].value!
+            return vc[keyPath: storageKeyPath].value!
         }
         set {
-            view[keyPath: storageKeyPath].value = newValue
+            vc[keyPath: storageKeyPath].value = newValue
         }
     }
 }
