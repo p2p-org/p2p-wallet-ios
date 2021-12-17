@@ -35,9 +35,7 @@ extension ChooseWallet {
             return searchBar
         }()
         private lazy var collectionView: CollectionView = {
-            let collectionView = CollectionView(
-                viewModel: viewModel
-            )
+            let collectionView = CollectionView(viewModel: viewModel)
             collectionView.keyboardDismissMode = .onDrag
             return collectionView
         }()
