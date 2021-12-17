@@ -12,8 +12,11 @@ import RxCocoa
 
 protocol SolanaBuyTokenSceneModel: BESceneModel {
     func setAmount(value: Double)
+    func back()
+    func next()
     
     var quoteAmount: Driver<Double> { get }
+    var solanaPrice: Driver<Double> { get }
     var feeAmount: Driver<Double> { get }
     var networkFee: Driver<Double> { get }
     var total: Driver<Double> { get }
@@ -24,12 +27,25 @@ extension SolanaBuyToken {
         private let navigationSubject = PublishSubject<NavigatableScene>()
         @Injected private var moonpayService: MoonpayService
         
-        init() {}
+        let rootViewModel: BuyViewModelType
+        let disposeBag = DisposeBag()
+        
+        init(rootViewModel: BuyViewModelType) {
+            self.rootViewModel = rootViewModel
+            
+            moonpayService.getPrice(for: "eth", as: .usd)
+                .catchError { error in
+                    print(error)
+                    return .just(0)
+                }
+                .asObservable()
+                .bind(to: exchangePrice)
+                .disposed(by: disposeBag)
+        }
         
         private let input = BehaviorSubject<Double>(value: 0)
         private var quote: Observable<Moonpay.BuyQuote> {
             input.flatMapLatest { [weak self]  value -> Single<Moonpay.BuyQuote> in
-                print(value)
                 guard let self = self else { return .just(Moonpay.BuyQuote.empty()) }
                 if value == 0 { return .just(Moonpay.BuyQuote.empty()) }
                 return self.moonpayService.getBuyQuote(
@@ -43,25 +59,18 @@ extension SolanaBuyToken {
             }
         }
         
+        private let exchangePrice = BehaviorSubject<Double>(value: 0)
         
         func setAmount(value: Double) { input.onNext(value) }
+        
+        func next() { rootViewModel.navigate(to: .buyToken(crypto: .eth, amount: (try? input.value()) ?? 0)) }
+        
+        func back() { rootViewModel.navigate(to: .back) }
         
         var quoteAmount: Driver<Double> { quote.map { $0.quoteCurrencyAmount }.asDriver(onErrorJustReturn: 0) }
         var feeAmount: Driver<Double> { quote.map { $0.feeAmount }.asDriver(onErrorJustReturn: 0) }
         var networkFee: Driver<Double> { quote.map { $0.networkFeeAmount }.asDriver(onErrorJustReturn: 0) }
         var total: Driver<Double> { quote.map { $0.totalAmount }.asDriver(onErrorJustReturn: 0) }
-    }
-}
-
-extension SolanaBuyToken.SceneModel: BESceneNavigationModel {
-    var navigationDriver: Driver<NavigationType> {
-        navigationSubject.map { [weak self] scene in
-            guard let self = self else { return .none }
-            switch scene {
-            case .back:
-                return .pop
-            }
-            return .none
-        }.asDriver(onErrorJustReturn: .none)
+        var solanaPrice: Driver<Double> { exchangePrice.asDriver(onErrorJustReturn: 0) }
     }
 }

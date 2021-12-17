@@ -11,41 +11,56 @@ public struct MoonpayProvider: BuyProvider {
         case production
     }
     
+    // Properties
     let environment: Environment
     let apiKey: String
     let showOnlyCurrencies: String?
+    let currencyCode: String?
     let defaultCurrencyCode: String?
     let walletAddress: String?
+    
     let walletAddresses: String?
+    let baseCurrencyAmount: Double?
+    let quoteCurrencyAmount: Double?
     
     public init(
         environment: Environment,
         apiKey: String,
-        showOnlyCurrencies: String?,
-        defaultCurrencyCode: String?,
-        walletAddress: String?,
-        walletAddresses: String?
-    ) {
+        showOnlyCurrencies: String? = nil,
+        currencyCode: String? = nil,
+        defaultCurrencyCode: String? = nil,
+        walletAddress: String? = nil,
+        walletAddresses: String? = nil,
+        baseCurrencyAmount: Double? = nil,
+        quoteCurrencyAmount: Double? = nil) {
         self.environment = environment
         self.apiKey = apiKey
         self.showOnlyCurrencies = showOnlyCurrencies
+        self.currencyCode = currencyCode
         self.defaultCurrencyCode = defaultCurrencyCode
         self.walletAddress = walletAddress
         self.walletAddresses = walletAddresses
+        self.baseCurrencyAmount = baseCurrencyAmount
+        self.quoteCurrencyAmount = quoteCurrencyAmount
     }
     
     public func getUrl() -> String {
-        let params: BuyProviderUtils.Params = [
+        var params: BuyProviderUtils.Params = [
             "apiKey": apiKey,
             "showOnlyCurrencies": showOnlyCurrencies,
             "defaultCurrencyCode": defaultCurrencyCode,
+            "currencyCode": currencyCode,
             "walletAddress": walletAddress,
-            "walletAddresses": walletAddresses
+            "walletAddresses": walletAddresses,
+            "baseCurrencyAmount": baseCurrencyAmount != nil ? "\(baseCurrencyAmount!)" : nil,
+            "quoteCurrencyAmount": quoteCurrencyAmount != nil ? "\(quoteCurrencyAmount!)" : nil
         ]
         
         let paramStr = params.query
         let originalUrl = environment.endpoint + "?" + paramStr
         
+        
+        debugPrint(originalUrl + "&signature=\(sign(originalUrl: originalUrl))")
         return originalUrl + "&signature=\(sign(originalUrl: originalUrl))"
     }
     
@@ -65,7 +80,7 @@ extension MoonpayProvider.Environment {
     }
 }
 
-func hmacWithSHA256(message: String, with key: String) -> String {
+private func hmacWithSHA256(message: String, with key: String) -> String {
     let keyData = SymmetricKey(data: key.data(using: .utf8)!)
     let messageData = message.data(using: .utf8)!
     

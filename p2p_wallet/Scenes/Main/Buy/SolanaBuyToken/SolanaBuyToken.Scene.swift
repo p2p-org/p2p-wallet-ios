@@ -11,19 +11,19 @@ import RxCocoa
 
 extension SolanaBuyToken {
     class Scene: BEScene {
-        @BENavigationBinding private var viewModel: SolanaBuyTokenSceneModel
-        
+        private var viewModel: SolanaBuyTokenSceneModel
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         
-        override init() {
+        init(buyViewModel: BuyViewModelType) {
+            viewModel = SceneModel(rootViewModel: buyViewModel)
             super.init()
-            viewModel = SceneModel()
         }
         
         override func build() -> UIView {
             BEZStack {
                 content().withTag(1)
                 WLStepButton.main(text: L10n.continue)
+                    .onTap { [unowned self] in viewModel.next() }
                     .padding(.init(all: 18))
                     .withTag(2)
             }.setup { view in
@@ -38,8 +38,8 @@ extension SolanaBuyToken {
         
         private func content() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
-                NewWLNavigationBar(title: "\(L10n.buy) Solana")
-                    .onBack { [unowned self] in self.back() }
+                NewWLNavigationBar(title: "\(L10n.buy) ETH")
+                    .onBack { [unowned self] in self.viewModel.back() }
                 
                 BEScrollView(contentInsets: .init(top: 18, left: 18, bottom: 90, right: 18), spacing: 18) {
                     // Exchange
@@ -105,21 +105,21 @@ extension SolanaBuyToken {
                         UILabel(text: "Moonpay", weight: .bold)
                         UIView.defaultSeparator()
                         
-                        descriptionRow(leading: L10n.solPrice, trailing: "$ 0.0")
-                        descriptionRow(leading: L10n.processingFee, trailing: "$ 0.00", trailingDriver: viewModel.feeAmount.map { "$ \($0)" })
-                        descriptionRow(leading: L10n.networkFee, trailing: "$ 0.00", trailingDriver: viewModel.networkFee.map { "$ \($0)" })
-                        descriptionRow(leading: L10n.total, trailing: "$ 150", trailingDriver: viewModel.total.map { "$ \($0)" })
+                        descriptionRow(label: "ETH Price", initial: "$ 0.0", viewModel.solanaPrice.map { "$ \($0)" })
+                        descriptionRow(label: L10n.processingFee, initial: "$ 0.00", viewModel.feeAmount.map { "$ \($0)" })
+                        descriptionRow(label: L10n.networkFee, initial: "$ 0.00", viewModel.networkFee.map { "$ \($0)" })
+                        descriptionRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0)" })
                     }.padding(.init(all: 18))
                 }
                 
             }
         }
         
-        private func descriptionRow(leading: String, trailing: String, trailingDriver: Driver<String>? = nil) -> UIView {
+        private func descriptionRow(label: String, initial: String, _ trailingDriver: Driver<String>? = nil) -> UIView {
             UIStackView(axis: .horizontal, alignment: .fill) {
-                UILabel(text: leading, textColor: .secondaryLabel)
+                UILabel(text: label, textColor: .secondaryLabel)
                 UIView.spacer
-                UILabel(text: trailing).setup { view in
+                UILabel(text: initial).setup { view in
                     guard let view = view as? UILabel else { return }
                     trailingDriver?.drive(view.rx.text)
                 }

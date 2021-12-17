@@ -11,5 +11,6 @@ import Foundation
 struct SolanaBuyToken {
     enum NavigatableScene {
         case back
+        case buy
     }
 }
