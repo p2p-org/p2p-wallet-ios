@@ -11,14 +11,14 @@ import RxCocoa
 import GT3Captcha
 import UIKit
 
-protocol NewReserveNameViewModelType: AnyObject {
+protocol ReserveNameViewModelType: AnyObject {
     var navigationDriver: Driver<ReserveName.NavigatableScene?> { get }
     var textFieldStateDriver: Driver<ReserveName.TextFieldState> { get }
     var mainButtonStateDriver: Driver<ReserveName.MainButtonState> { get }
     var textFieldTextSubject: BehaviorRelay<String?> { get }
     var usernameValidationLoadingDriver: Driver<Bool> { get }
     var isLoadingDriver: Driver<Bool> { get }
-    var canSkip: Bool { get }
+    var kind: ReserveNameKind { get }
     
     func showTermsOfUse()
     func showPrivacyPolicy()
@@ -44,7 +44,7 @@ extension ReserveName {
         }()
 
         // MARK: - Properties
-        let canSkip: Bool
+        let kind: ReserveNameKind
 
         private let disposeBag = DisposeBag()
 
@@ -59,12 +59,12 @@ extension ReserveName {
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
 
         init(
-            canSkip: Bool,
+            kind: ReserveNameKind,
             owner: String,
             nameService: NameServiceType,
             reserveNameHandler: ReserveNameHandler
         ) {
-            self.canSkip = canSkip
+            self.kind = kind
             self.nameService = nameService
             self.owner = owner
             self.reserveNameHandler = reserveNameHandler
@@ -162,7 +162,7 @@ extension ReserveName {
     }
 }
 
-extension ReserveName.ViewModel: NewReserveNameViewModelType {
+extension ReserveName.ViewModel: ReserveNameViewModelType {
     var usernameValidationLoadingDriver: Driver<Bool> {
         usernameValidationLoadingSubject.asDriver()
     }
