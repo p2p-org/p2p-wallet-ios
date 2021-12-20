@@ -40,7 +40,7 @@ extension SolanaBuyToken {
             self.rootViewModel = rootViewModel
             
             moonpayService.getPrice(for: "eth", as: .usd)
-                .catchError { error in
+                .catch { error in
                     print(error)
                     return .just(0)
                 }
@@ -62,7 +62,7 @@ extension SolanaBuyToken {
                     .result(quote: quote)
                 }.catch { error in
                     if let error = error as? Moonpay.Error {
-                        switch (error) {
+                        switch error {
                         case .default(let message): return .just(.error(message))
                         }
                     }
@@ -96,11 +96,11 @@ extension SolanaBuyToken {
         var nextStatus: Driver<NextStatus> {
             state.map { state in
                 switch state {
-                case .result(let quote): return .init(text: L10n.continue, isEnable: true)
+                case .result(_): return .init(text: L10n.continue, isEnable: true)
                 case .error(let message): return .init(text: message, isEnable: false)
                 default: return .init(text: L10n.continue, isEnable: false)
                 }
-            }.asDriver() { error in
+            }.asDriver { error in
                 .just(NextStatus(text: error.localizedDescription, isEnable: false))
             }
         }

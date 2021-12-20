@@ -25,8 +25,7 @@ extension Moonpay {
             }
         }
     }
-    
-    
+        
     class MoonpayServiceImpl: MoonpayService {
         private let api: API
         
@@ -71,4 +70,3 @@ extension Moonpay {
         }
     }
 }
-
