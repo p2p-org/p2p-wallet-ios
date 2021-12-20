@@ -666,3 +666,6 @@
 "Select word #%@" = "Выберите слово №%@";
 "Receive any token within the Solana network even if it is not included in your wallet list" = "Получите любой токен в сети Solana, даже если он не включен в список вашего кошелька";
 "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "Когда вы выбираете сеть Биткойн, ваш адрес принимает только Биткойн.  Вы можете потерять активы, отправив еще одну монету. \n 0,000112 BTC - это минимальная сумма транзакции, и у вас есть 36 часов, чтобы завершить транзакцию после получения адреса.";
+"I understand" = "я понимаю";
+"Receiving via Bitcoin network" = "Получение через сеть Биткойн";
+"Make sure you understand the aspects" = "Убедитесь, что вы понимаете аспекты";

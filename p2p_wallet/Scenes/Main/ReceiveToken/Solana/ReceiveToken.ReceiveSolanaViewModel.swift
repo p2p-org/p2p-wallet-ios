@@ -25,7 +25,7 @@ extension ReceiveToken {
         @Injected private var nameStorage: NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         private let tokensRepository: TokensRepository
-        private let navigationSubject: PublishSubject<NavigatableScene>
+        private let navigationSubject: PublishRelay<NavigatableScene?>
         
         let pubkey: String
         let tokenWallet: Wallet?
@@ -35,7 +35,7 @@ extension ReceiveToken {
             solanaPubkey: String,
             solanaTokenWallet: Wallet? = nil,
             tokensRepository: TokensRepository,
-            navigationSubject: PublishSubject<NavigatableScene>
+            navigationSubject: PublishRelay<NavigatableScene?>
         ) {
             self.pubkey = solanaPubkey
             self.tokensRepository = tokensRepository
@@ -56,7 +56,7 @@ extension ReceiveToken {
         
         func shareAction(image: UIImage) {
             analyticsManager.log(event: .receiveQrcodeShare)
-            navigationSubject.onNext(.share(qrCode: image))
+            navigationSubject.accept(.share(qrCode: image))
         }
         
         func saveAction(image: UIImage) {
@@ -74,7 +74,7 @@ extension ReceiveToken {
         
         func showSOLAddressInExplorer() {
             analyticsManager.log(event: .receiveViewExplorerOpen)
-            navigationSubject.onNext(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
+            navigationSubject.accept(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
         }
     }
 }

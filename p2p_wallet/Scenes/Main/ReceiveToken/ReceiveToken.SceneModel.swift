@@ -15,6 +15,7 @@ protocol ReceiveSceneModel: BESceneModel {
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
     var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType { get }
     var shouldShowChainsSwitcher: Bool { get }
+    var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
     
     func switchToken(_ tokenType: ReceiveToken.TokenType)
     func copyToClipboard(address: String, logEvent: AnalyticsEvent)
@@ -31,7 +32,7 @@ extension ReceiveToken {
         let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         
         // MARK: - Subjects
-        private let navigationSubject = PublishSubject<NavigatableScene>()
+        private let navigationSubject = PublishRelay<NavigatableScene?>()
         private let tokenTypeSubject = BehaviorRelay<TokenType>(value: .solana)
         
         init(
@@ -62,9 +63,7 @@ extension ReceiveToken {
             }
         }
         
-        var tokenTypeDriver: Driver<ReceiveToken.TokenType> {
-            tokenTypeSubject.asDriver()
-        }
+        var tokenTypeDriver: Driver<ReceiveToken.TokenType> { tokenTypeSubject.asDriver() }
         
         var updateLayoutDriver: Driver<Void> {
             Driver.combineLatest(
@@ -92,47 +91,9 @@ extension ReceiveToken {
         }
         
         func showSelectionNetwork() {
-            navigationSubject.onNext(.networkSelection)
+            navigationSubject.accept(.networkSelection)
         }
-    }
-}
-
-extension ReceiveToken.SceneModel: BESceneNavigationModel {
-    // MARK: - Navigation
-    var navigationDriver: Driver<NavigationType> {
-        navigationSubject.map { [weak self] scene in
-            guard let self = self else { return .none }
-            switch scene {
-            case .showInExplorer(let mintAddress):
-                let url = "https://explorer.solana.com/address/\(mintAddress)"
-                guard let vc = WebViewController.inReaderMode(url: url) else { return .none }
-                return .modal(vc)
-            case .showBTCExplorer(let address):
-                let url = "https://btc.com/btc/address/\(address)"
-                guard let vc = WebViewController.inReaderMode(url: url) else { return .none }
-                return .modal(vc)
-            case .chooseBTCOption(let selectedOption):
-                let vc = ReceiveToken.SelectBTCTypeViewController(viewModel: self.receiveBitcoinViewModel, selectedOption: selectedOption)
-                return .modal(vc)
-            case .showRenBTCReceivingStatus:
-                let vm = RenBTCReceivingStatuses.ViewModel(receiveBitcoinViewModel: self.receiveBitcoinViewModel)
-                let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
-                let nc = FlexibleHeightNavigationController(rootViewController: vc)
-                return .modal(nc)
-            case .share(let address, let qrCode):
-                if let qrCode = qrCode {
-                    let vc = UIActivityViewController(activityItems: [qrCode], applicationActivities: nil)
-                    return .modal(vc)
-                } else if let address = address {
-                    let vc = UIActivityViewController(activityItems: [address], applicationActivities: nil)
-                    return .modal(vc)
-                }
-            case .help:
-                return .modal(ReceiveToken.HelpViewController())
-            case .networkSelection:
-                return .push(ReceiveToken.NetworkSelectionScene(viewModel: self))
-            }
-            return .none
-        }.asDriver(onErrorJustReturn: .none)
+        
+        var navigation: Driver<NavigatableScene?> { navigationSubject.asDriver(onErrorDriveWith: Driver.empty()) }
     }
 }
