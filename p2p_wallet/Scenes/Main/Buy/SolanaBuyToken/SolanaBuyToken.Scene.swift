@@ -23,6 +23,11 @@ extension SolanaBuyToken {
             BEZStack {
                 content().withTag(1)
                 WLStepButton.main(text: L10n.continue)
+                    .setup { view in
+                        guard let view = view as? WLStepButton else { return }
+                        viewModel.nextStatus.map { $0.text }.drive(view.rx.text).disposed(by: disposeBag)
+                        viewModel.nextStatus.map { $0.isEnable }.drive(view.rx.isEnabled).disposed(by: disposeBag)
+                    }
                     .onTap { [unowned self] in viewModel.next() }
                     .padding(.init(all: 18))
                     .withTag(2)
@@ -32,13 +37,15 @@ extension SolanaBuyToken {
                 view.viewWithTag(2)?.autoPinBottomToSuperViewAvoidKeyboard()
                 view.viewWithTag(2)?.autoPinEdge(toSuperviewEdge: .leading)
                 view.viewWithTag(2)?.autoPinEdge(toSuperviewEdge: .trailing)
+            }.onTap { [unowned self] in
+                // dismiss keyboard
+                view.endEditing(true)
             }
-            
         }
         
         private func content() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
-                NewWLNavigationBar(title: "\(L10n.buy) ETH")
+                NewWLNavigationBar(title: L10n.buyOnMoonpay("ETH"))
                     .onBack { [unowned self] in self.viewModel.back() }
                 
                 BEScrollView(contentInsets: .init(top: 18, left: 18, bottom: 90, right: 18), spacing: 18) {

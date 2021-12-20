@@ -46,9 +46,17 @@ extension Moonpay {
                     "baseCurrencyAmount": baseCurrencyAmount
                 ]
             ).responseData()
+                .map { response, data in
+                    switch response.statusCode {
+                    case 200...299:
+                        return try JSONDecoder().decode(BuyQuote.self, from: data)
+                    default:
+                        let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)
+                        throw Error.default(message: data.message)
+                    }
+                }
                 .take(1)
                 .asSingle()
-                .map { (_, data) in try JSONDecoder().decode(BuyQuote.self, from: data) }
         }
         
         func getPrice(for crypto: String, as currency: Currency) -> Single<Double> {
@@ -56,7 +64,7 @@ extension Moonpay {
                 .responseJSON()
                 .take(1)
                 .asSingle()
-                .map { response-> Double in
+                .map { response -> Double in
                     guard let json = response.value as? [String: Double] else { return 0 }
                     return json[currency.toString()] ?? 0
                 }

@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 protocol SolanaBuyTokenSceneModel: BESceneModel {
-    func setAmount(value: Double)
+    func setAmount(value: Double?)
     func back()
     func next()
     
@@ -20,9 +20,15 @@ protocol SolanaBuyTokenSceneModel: BESceneModel {
     var feeAmount: Driver<Double> { get }
     var networkFee: Driver<Double> { get }
     var total: Driver<Double> { get }
+    var nextStatus: Driver<SolanaBuyToken.NextStatus> { get }
 }
 
 extension SolanaBuyToken {
+    struct NextStatus {
+        let text: String
+        let isEnable: Bool
+    }
+    
     class SceneModel: SolanaBuyTokenSceneModel {
         private let navigationSubject = PublishSubject<NavigatableScene>()
         @Injected private var moonpayService: MoonpayService
@@ -43,34 +49,61 @@ extension SolanaBuyToken {
                 .disposed(by: disposeBag)
         }
         
-        private let input = BehaviorSubject<Double>(value: 0)
-        private var quote: Observable<Moonpay.BuyQuote> {
-            input.flatMapLatest { [weak self]  value -> Single<Moonpay.BuyQuote> in
-                guard let self = self else { return .just(Moonpay.BuyQuote.empty()) }
-                if value == 0 { return .just(Moonpay.BuyQuote.empty()) }
+        private let input = BehaviorRelay<Double?>(value: nil)
+        private var state: Observable<State> {
+            input.flatMap { [weak self] value -> Single<State> in
+                guard let self = self,
+                      let value = value else { return .just(.none) }
                 return self.moonpayService.getBuyQuote(
-                        baseCurrencyCode: "usd",
-                        quoteCurrencyCode: "eth",
-                        baseCurrencyAmount: value)
-                    .catchError { error in
-                        print(error)
-                        return .just(Moonpay.BuyQuote.empty())
+                    baseCurrencyCode: "usd",
+                    quoteCurrencyCode: "eth",
+                    baseCurrencyAmount: value
+                ).map { quote in
+                    .result(quote: quote)
+                }.catch { error in
+                    if let error = error as? Moonpay.Error {
+                        switch (error) {
+                        case .default(let message): return .just(.error(message))
+                        }
                     }
+                    return .just(.error(error.localizedDescription))
+                }
             }
         }
         
         private let exchangePrice = BehaviorSubject<Double>(value: 0)
         
-        func setAmount(value: Double) { input.onNext(value) }
+        func setAmount(value: Double?) { input.accept(value) }
         
-        func next() { rootViewModel.navigate(to: .buyToken(crypto: .eth, amount: (try? input.value()) ?? 0)) }
+        func next() { rootViewModel.navigate(to: .buyToken(crypto: .eth, amount: (try? input.value) ?? 0)) }
         
         func back() { rootViewModel.navigate(to: .back) }
         
-        var quoteAmount: Driver<Double> { quote.map { $0.quoteCurrencyAmount }.asDriver(onErrorJustReturn: 0) }
-        var feeAmount: Driver<Double> { quote.map { $0.feeAmount }.asDriver(onErrorJustReturn: 0) }
-        var networkFee: Driver<Double> { quote.map { $0.networkFeeAmount }.asDriver(onErrorJustReturn: 0) }
-        var total: Driver<Double> { quote.map { $0.totalAmount }.asDriver(onErrorJustReturn: 0) }
+        var quoteAmount: Driver<Double> {
+            state.map {
+                switch $0 {
+                case .result(let quote): return quote.quoteCurrencyAmount
+                default: return 0
+                }
+            }.asDriver(onErrorJustReturn: 0)
+        }
+        
+        var feeAmount: Driver<Double> { state.map { $0.asResult()?.feeAmount ?? 0 }.asDriver(onErrorJustReturn: 0) }
+        var networkFee: Driver<Double> { state.map { $0.asResult()?.networkFeeAmount ?? 0 }.asDriver(onErrorJustReturn: 0) }
+        var total: Driver<Double> { state.map { $0.asResult()?.totalAmount ?? 0 }.asDriver(onErrorJustReturn: 0) }
         var solanaPrice: Driver<Double> { exchangePrice.asDriver(onErrorJustReturn: 0) }
+        
+        var nextStatus: Driver<NextStatus> {
+            state.map { state in
+                switch state {
+                case .result(let quote): return .init(text: L10n.continue, isEnable: true)
+                case .error(let message): return .init(text: message, isEnable: false)
+                default: return .init(text: L10n.continue, isEnable: false)
+                }
+            }.asDriver() { error in
+                .just(NextStatus(text: error.localizedDescription, isEnable: false))
+            }
+        }
     }
+    
 }
