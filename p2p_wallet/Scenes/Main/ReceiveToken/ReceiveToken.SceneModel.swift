@@ -62,6 +62,10 @@ extension ReceiveToken {
             }
         }
         
+        deinit {
+            debugPrint("ReceiveToken.SceneModel deinited")
+        }
+        
         var tokenTypeDriver: Driver<ReceiveToken.TokenType> {
             tokenTypeSubject.asDriver()
         }

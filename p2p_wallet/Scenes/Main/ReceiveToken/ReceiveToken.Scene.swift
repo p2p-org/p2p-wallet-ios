@@ -44,8 +44,9 @@ extension ReceiveToken {
                                     // Next icon
                                     UIView.defaultNextArrow()
                                 }.padding(.init(x: 15, y: 15))
-                            }.onTap {
-                                self.viewModel.showSelectionNetwork()
+                            }
+                            .onTap { [weak viewModel] in
+                                viewModel?.showSelectionNetwork()
                             }
                         }
                         // Children
