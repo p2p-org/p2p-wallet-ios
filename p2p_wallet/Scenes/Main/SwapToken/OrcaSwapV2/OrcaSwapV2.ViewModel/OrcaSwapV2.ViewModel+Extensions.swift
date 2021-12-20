@@ -180,7 +180,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     
     func chooseSourceWallet() {
         isSelectingSourceWallet = true
-        navigationSubject.accept(.chooseSourceWallet)
+        navigationSubject.accept(.chooseSourceWallet(currentlySelectedWallet: sourceWalletSubject.value))
     }
     
     func chooseDestinationWallet() {
@@ -191,7 +191,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             destinationMints = validMints
         }
         isSelectingSourceWallet = false
-        navigationSubject.accept(.chooseDestinationWallet(validMints: Set(destinationMints), excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey))
+        navigationSubject.accept(.chooseDestinationWallet(currentlySelectedWallet: destinationWalletSubject.value, validMints: Set(destinationMints), excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey))
     }
     
     func retryLoadingRoutes() {
@@ -208,9 +208,12 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         let availableAmount = calculateAvailableAmount()
         enterInputAmount(availableAmount)
 
-        // fees depends on input amount, so after entering availableAmount, fees has changed, so needed to calculate availableAmount again
-        let availableAmountUpdated = calculateAvailableAmount()
-        enterInputAmount(availableAmountUpdated)
+        // fees depends on input amount, so after entering availableAmount, fees has changed, so needed to calculate availableAmount again with 300 milliseconds of debouncing
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
+            guard let self = self else {return}
+            let availableAmountUpdated = self.calculateAvailableAmount()
+            self.enterInputAmount(availableAmountUpdated)
+        }
     }
     
     func enterInputAmount(_ amount: Double?) {

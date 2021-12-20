@@ -21,6 +21,12 @@ struct SerumSwapV1 {
 }
 
 protocol SwapTokenScenesFactory {
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
+    func makeChooseWalletViewController(
+        title: String?,
+        customFilter: ((Wallet) -> Bool)?, 
+        showOtherWallets: Bool,
+        selectedWallet: Wallet?,
+        handler: WalletDidSelectHandler
+    ) -> ChooseWallet.ViewController
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
