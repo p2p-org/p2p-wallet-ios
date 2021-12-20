@@ -1,5 +1,5 @@
 //
-//  NetworkSelection.Scene.swift
+//  NetworkSelection.ViewController.swift
 //  p2p_wallet
 //
 //  Created by Giang Long Tran on 14.12.21.
