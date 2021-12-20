@@ -49,7 +49,7 @@ extension Settings {
                 show(vc, sender: nil)
             case .reserveUsername(owner: let owner, handler: let handler):
                 let vm = ReserveName.ViewModel(
-                    canSkip: false,
+                    kind: .independent,
                     owner: owner,
                     nameService: Resolver.resolve(),
                     reserveNameHandler: handler

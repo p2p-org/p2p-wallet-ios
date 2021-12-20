@@ -15,14 +15,14 @@ extension ReserveName {
         }
 
         // MARK: - Dependencies
-        private let viewModel: NewReserveNameViewModelType
+        private let viewModel: ReserveNameViewModelType
         
         // MARK: - Properties
         private lazy var rootView = RootView(viewModel: viewModel)
 
         // MARK: - Methods
 
-        init(viewModel: NewReserveNameViewModelType) {
+        init(viewModel: ReserveNameViewModelType) {
             self.viewModel = viewModel
 
             super.init()

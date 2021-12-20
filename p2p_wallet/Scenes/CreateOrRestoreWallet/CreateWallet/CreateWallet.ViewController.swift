@@ -57,7 +57,7 @@ extension CreateWallet {
                 childNavigationController.pushViewController(vc, animated: true)
             case .reserveName(let owner):
                 let viewModel = ReserveName.ViewModel(
-                    canSkip: true,
+                    kind: .reserveCreateWalletPart,
                     owner: owner,
                     nameService: Resolver.resolve(),
                     reserveNameHandler: viewModel

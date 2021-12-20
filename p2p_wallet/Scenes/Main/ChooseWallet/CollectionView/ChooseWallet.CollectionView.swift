@@ -10,7 +10,11 @@ import BECollectionView
 
 extension ChooseWallet {
     class CollectionView: BEDynamicSectionsCollectionView {
+        private let specificViewModel: ViewModel
+
         init(viewModel: ViewModel) {
+            self.specificViewModel = viewModel
+
             super.init(
                 viewModel: viewModel,
                 mapDataToSections: { viewModel in
@@ -29,25 +33,32 @@ extension ChooseWallet {
                             userInfo: 1,
                             items: otherWallets,
                             customLayout: BECollectionViewSectionLayout(
-                                header: .init(viewClass: SecondSectionHeaderView.self),
                                 cellType: OtherTokenCell.self,
-                                interGroupSpacing: 16
+                                interGroupSpacing: 8
                             )
                         ))
                     }
                     return sections
                 },
                 layout: BECollectionViewSectionLayout(
-                    header: .init(viewClass: FirstSectionHeaderView.self),
                     cellType: Cell.self,
                     emptyCellType: WLEmptyCell.self,
-                    interGroupSpacing: 16
+                    interGroupSpacing: 8
                 )
             )
         }
         
         override func configureCell(indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell? {
             let cell = super.configureCell(indexPath: indexPath, item: item)
+
+            if
+                let cell = cell as? WalletCell,
+                let wallet = dataSource.itemIdentifier(for: indexPath)?.value as? Wallet
+            {
+                let isSelected = wallet.token == specificViewModel.selectedWallet?.token
+                cell.setIsSelected(isSelected: isSelected)
+            }
+
             if let cell = cell as? WLEmptyCell {
                 cell.titleLabel.text = L10n.nothingFound
                 cell.subtitleLabel.text = L10n.changeYourSearchPhrase

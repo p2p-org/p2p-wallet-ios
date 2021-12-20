@@ -661,6 +661,8 @@
 "There are %@ free transactions left for today" = "Il reste %@ transactions gratuites pour aujourd'hui";
 "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "Sur le réseau Solana, les 100 premières transactions d'une journée sont payées par P2P.org. Les transactions ultérieures seront facturées sur la base des frais de gaz de la blockchain Solana.";
 "Select word #%@" = "Sélectionnez le mot #%@";
+"Select the second token" = "Sélectionnez le deuxième jeton";
+"Select the first token" = "Sélectionnez le premier jeton";
 "Confirm swapping %@ → %@" = "Confirmer l'échange %@ → %@";
 "Spend" = "Passer";
 "Swap %@ → %@" = "Échanger %@ → %@";

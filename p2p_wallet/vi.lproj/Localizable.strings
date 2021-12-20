@@ -661,6 +661,8 @@
 "There are %@ free transactions left for today" = "Còn lại %@ giao dịch miễn phí cho ngày hôm nay";
 "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "Trên mạng Solana, 100 giao dịch đầu tiên trong ngày được thanh toán bởi P2P.org. Các giao dịch tiếp theo sẽ được tính phí dựa trên phí gas của Solana blockchain.";
 "Select word #%@" = "Chọn từ #%@";
+"Select the second token" = "Chọn token thứ hai";
+"Select the first token" = "Chọn token đầu tiên";
 "Confirm swapping %@ → %@" = "Xác nhận hoán đổi %@ → %@";
 "Spend" = "Dùng";
 "Swap %@ → %@" = "Hoán đổi %@ → %@";

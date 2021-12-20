@@ -12,16 +12,23 @@ import RxSwift
 final class ExpandableTextView: UIView {
     private let placeholderLabel = UILabel()
     private let textView = UITextView()
+    private let horizontalStackView = UIStackView(
+        axis: .horizontal,
+        spacing: 4,
+        alignment: .bottom,
+        distribution: .fill
+    )
+    private let postfixLabel = UILabel()
     private let clearButton = ClearButton()
 
     private var topDynamicPlaceholderConstraint: NSLayoutConstraint?
     private var leftDynamicPlaceholderConstraint: NSLayoutConstraint?
 
-    private let clearButtonSize: CGFloat = 27
+    private let clearButtonWidth: CGFloat = 27
+    private let clearButtonHeight: CGFloat = 36
     private let yMargin: CGFloat = 11
 
     private let changesFilter: TextChangesFilter?
-    private let hasClearButton: Bool
 
     var rxText: Observable<String?> {
         textView.rx.text.asObservable()
@@ -40,11 +47,9 @@ final class ExpandableTextView: UIView {
 
     init(
         changesFilter: TextChangesFilter? = nil,
-        hasClearButton: Bool = true,
         limitOfLines: Int? = nil
     ) {
         self.changesFilter = changesFilter
-        self.hasClearButton = hasClearButton
 
         super.init(frame: .zero)
 
@@ -66,6 +71,11 @@ final class ExpandableTextView: UIView {
     @discardableResult
     override func becomeFirstResponder() -> Bool {
         textView.becomeFirstResponder()
+    }
+
+    func setPostfix(text: String?) {
+        postfixLabel.text = text
+        postfixLabel.isHidden = text == nil
     }
 
     func set(text: String?) {
@@ -93,7 +103,7 @@ final class ExpandableTextView: UIView {
 
 private extension ExpandableTextView {
     var allSubviews: [UIView] {
-        return [placeholderLabel, textView, clearButton]
+        return [horizontalStackView, placeholderLabel]
     }
 
     func configureSelf() {
@@ -105,6 +115,7 @@ private extension ExpandableTextView {
         configureTextView(limitOfLines: limitOfLines)
         configurePlaceholderLabel()
         configureClearButton()
+        configurePostfixLabel()
     }
 
     func configureTextView(limitOfLines: Int?) {
@@ -140,21 +151,32 @@ private extension ExpandableTextView {
         clearButton.addTarget(self, action: #selector(didTouchClearButton), for: .touchUpInside)
     }
 
+    func configurePostfixLabel() {
+        postfixLabel.isHidden = true
+        postfixLabel.textColor = .h8e8e93
+        postfixLabel.font = .systemFont(ofSize: 17)
+    }
+
     func addSubviews() {
         allSubviews.forEach(addSubview)
+
+        horizontalStackView.addArrangedSubviews(
+            [
+                textView.padding(.init(only: .top, inset: yMargin)),
+                postfixLabel,
+                clearButton
+            ]
+        )
     }
 
     func setConstraints() {
         textView.setContentHuggingPriority(.required, for: .vertical)
+        postfixLabel.setContentHuggingPriority(.required, for: .horizontal)
         placeholderLabel.setContentHuggingPriority(.required, for: .horizontal)
 
-        textView.autoPinEdge(toSuperviewEdge: .top, withInset: yMargin)
-        textView.autoPinEdge(toSuperviewEdge: .leading)
-        textView.autoPinEdge(toSuperviewEdge: .bottom, withInset: yMargin)
-        clearButton.autoPinEdge(.leading, to: .trailing, of: textView, withOffset: -5)
-        clearButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 8)
-        clearButton.autoPinEdge(.bottom, to: .bottom, of: textView)
-        clearButton.autoSetDimensions(to: .init(width: clearButtonSize, height: clearButtonSize))
+        horizontalStackView.autoPinEdgesToSuperviewEdges()
+        postfixLabel.autoSetDimension(.height, toSize: clearButtonHeight)
+        clearButton.autoSetDimensions(to: .init(width: clearButtonWidth, height: clearButtonHeight))
         topDynamicPlaceholderConstraint = placeholderLabel.autoPinEdge(toSuperviewEdge: .top, withInset: yMargin)
         leftDynamicPlaceholderConstraint =  placeholderLabel.autoPinEdge(toSuperviewEdge: .leading)
     }
@@ -187,7 +209,7 @@ private extension ExpandableTextView {
 
     func textViewTextDidChange(to newString: String?) {
         let stringIsEmpty = newString?.isEmpty ?? true
-        clearButton.isHidden = stringIsEmpty || !hasClearButton
+        clearButton.isHidden = stringIsEmpty
     }
 
     @objc
