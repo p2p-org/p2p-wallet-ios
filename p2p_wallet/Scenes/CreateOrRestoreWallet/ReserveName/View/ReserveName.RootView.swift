@@ -15,7 +15,7 @@ extension ReserveName {
         private let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        private let viewModel: NewReserveNameViewModelType
+        private let viewModel: ReserveNameViewModelType
 
         // MARK: - Subviews
         private let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
@@ -23,14 +23,7 @@ extension ReserveName {
 
         private let textView = ExpandableTextView(
             changesFilter: ReserveTextViewChangesFilter(),
-            hasClearButton: false,
             limitOfLines: 1
-        )
-        private let usernameSuffixLabel = UILabel(
-            text: .nameServiceDomain,
-            textSize: 17,
-            weight: .regular,
-            textColor: .h8e8e93
         )
         private let usernameHintLabel = TopAlignLabel(textSize: 13, weight: .regular, numberOfLines: 0)
         private let usernameLoadingView = LoadingView()
@@ -40,7 +33,7 @@ extension ReserveName {
         private let agreeTermsAndPolicyView = AgreeTermsAndPolicyView()
 
         // MARK: - Methods
-        init(viewModel: NewReserveNameViewModelType) {
+        init(viewModel: ReserveNameViewModelType) {
             self.viewModel = viewModel
 
             super.init(frame: .zero)
@@ -59,15 +52,10 @@ extension ReserveName {
         }
 
         private func configureSubviews() {
-            agreeTermsAndPolicyView.didTouchTermsOfUse = { [weak viewModel] in
-                viewModel?.showTermsOfUse()
-            }
-            agreeTermsAndPolicyView.didTouchPrivacyPolicy = { [weak viewModel] in
-                viewModel?.showPrivacyPolicy()
-            }
-
             textView.placeholder = L10n.username
+            textView.setPostfix(text: .nameServiceDomain)
             configureDescription()
+            configureAgreeTermsAndPolicyView()
         }
 
         @objc
@@ -75,7 +63,19 @@ extension ReserveName {
             viewModel.goForth()
         }
 
-        // MARK: - Layout
+        private func configureAgreeTermsAndPolicyView() {
+            switch viewModel.kind {
+            case .reserveCreateWalletPart:
+                agreeTermsAndPolicyView.didTouchTermsOfUse = { [weak viewModel] in
+                    viewModel?.showTermsOfUse()
+                }
+                agreeTermsAndPolicyView.didTouchPrivacyPolicy = { [weak viewModel] in
+                    viewModel?.showPrivacyPolicy()
+                }
+            case .independent:
+                agreeTermsAndPolicyView.isHidden = true
+            }
+        }
 
         private func configureDescription() {
             descriptionLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
@@ -100,8 +100,17 @@ extension ReserveName {
             let separatorView = UIView()
             separatorView.backgroundColor = .c7c7cc
 
+            let canSkip: Bool
+
+            switch viewModel.kind {
+            case .reserveCreateWalletPart:
+                canSkip = true
+            case .independent:
+                canSkip = false
+            }
+
             let navigationBar = NavigationBar(
-                canSkip: viewModel.canSkip,
+                canSkip: canSkip,
                 backHandler: { [weak viewModel] in
                     viewModel?.goBack()
                 },
@@ -109,12 +118,6 @@ extension ReserveName {
                     viewModel?.skipButtonPressed()
                 }
             )
-
-            let textFieldStackView = UIStackView(axis: .horizontal) {
-                textView
-                usernameSuffixLabel
-                BEStackViewSpacing(12)
-            }
 
             let mainButtonView = BottomFixedView(content: nextButton)
 
@@ -132,13 +135,12 @@ extension ReserveName {
             scrollView.autoPinEdge(toSuperviewEdge: .trailing)
             scrollView.autoPinEdge(.bottom, to: .top, of: mainButtonView)
 
-            usernameSuffixLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-            usernameSuffixLabel.setContentHuggingPriority(.required, for: .horizontal)
             usernameHintLabel.autoSetDimension(.height, toSize: 32)
             separatorView.autoSetDimension(.height, toSize: 1)
 
             stackView.addArrangedSubviews {
-                textFieldStackView
+                textView
+                BEStackViewSpacing(8)
                 separatorView
                 BEStackViewSpacing(8)
                 usernameHintLabel
@@ -224,9 +226,13 @@ extension ReserveName {
             case .empty:
                 image = nil
                 isEnabled = false
-                title = viewModel.canSkip
-                    ? L10n.enterUsernameOrSkip
-                    : L10n.enterUsername
+
+                switch viewModel.kind {
+                case .reserveCreateWalletPart:
+                    title = L10n.enterUsernameOrSkip
+                case .independent:
+                    title = L10n.enterUsername
+                }
             case .unavailableUsername:
                 image = nil
                 isEnabled = false

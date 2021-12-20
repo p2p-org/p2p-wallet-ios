@@ -249,7 +249,7 @@ class MainContainer {
     // MARK: - Reserve name
     func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController {
         let vm = ReserveName.ViewModel(
-            canSkip: false,
+            kind: .independent,
             owner: owner,
             nameService: Resolver.resolve(),
             reserveNameHandler: handler
