@@ -5,7 +5,7 @@
 import Foundation
 
 extension ReceiveToken {
-    class Scene: BEScene {
+    class ViewController: BEScene {
         private var viewModel: ReceiveSceneModel!
         
         init(viewModel: ReceiveSceneModel) {
@@ -65,7 +65,7 @@ extension ReceiveToken {
     }
 }
 
-extension ReceiveToken.Scene {
+extension ReceiveToken.ViewController {
     func navigate(to scene: ReceiveToken.NavigatableScene?) {
         switch scene {
         case .showInExplorer(let mintAddress):

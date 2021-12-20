@@ -70,8 +70,8 @@
 		41DD026D2760A9B300545A73 /* TextChangesFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DD026C2760A9B300545A73 /* TextChangesFilter.swift */; };
 		41DD026F2760B57C00545A73 /* BottomFixedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DD026E2760B57C00545A73 /* BottomFixedView.swift */; };
 		41DD02712760D59500545A73 /* ReserveNameHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DD02702760D59500545A73 /* ReserveNameHandler.swift */; };
-		84699079946496609D51B833 /* ReceiveToken.Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991CEF8AFD01A61E2FAE8 /* ReceiveToken.Scene.swift */; };
-		846991CD8786E160F2D18E67 /* NetworkSelection.Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.Scene.swift */; };
+		84699079946496609D51B833 /* ReceiveToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991CEF8AFD01A61E2FAE8 /* ReceiveToken.ViewController.swift */; };
+		846991CD8786E160F2D18E67 /* NetworkSelection.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.ViewController.swift */; };
 		84699260E4D199A70FC4ED2A /* VerifySecurityKeys.Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699BB5204C753606EBF829 /* VerifySecurityKeys.Button.swift */; };
 		8469926908C12A54B0D0850E /* DAppContainer.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846992B55E29D7DA05ED2F4C /* DAppContainer.ViewModel.swift */; };
 		8469928B2607C3CDDA2B1A4C /* DAppContainer.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699360187D203C37C9FFEB /* DAppContainer.ViewController.swift */; };
@@ -94,7 +94,7 @@
 		84699AFDE6821C43A4F93FC7 /* WLWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D5BC06C25591CFA36D /* WLWebView.swift */; };
 		84699B6058901C761662F138 /* TransakProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C355CE538F8E06A9A33 /* TransakProvider.swift */; };
 		84699D43B0BAEA149C81B17D /* ColumnFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C929DA7046907362DFE /* ColumnFlowLayout.swift */; };
-		84699D9D35BB1C10A7427A9B /* NetworkSelection.BitcoinConfirm.Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.Scene.swift */; };
+		84699D9D35BB1C10A7427A9B /* NetworkSelection.BitcoinConfirm.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */; };
 		84699E4EC4356224948E529A /* DAppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991A1202889DFF6E4671A /* DAppContainer.swift */; };
 		84699EB808181B89DFF647E9 /* BESceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699CFE43666FACF9062699 /* BESceneModel.swift */; };
 		84699F38A20F24A0D2281DE8 /* CreateSecurityKeys.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699CB4D013E8D2ECC9D2DA /* CreateSecurityKeys.RootView.swift */; };
@@ -552,7 +552,7 @@
 		7EF7143B121F6324037B556D /* Pods-p2p wallet-p2p walletUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet-p2p walletUITests.debug.xcconfig"; path = "Target Support Files/Pods-p2p wallet-p2p walletUITests/Pods-p2p wallet-p2p walletUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		8469907019755990A0585C61 /* KeyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyView.swift; sourceTree = "<group>"; };
 		846991A1202889DFF6E4671A /* DAppContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.swift; sourceTree = "<group>"; };
-		846991CEF8AFD01A61E2FAE8 /* ReceiveToken.Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.Scene.swift; sourceTree = "<group>"; };
+		846991CEF8AFD01A61E2FAE8 /* ReceiveToken.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ViewController.swift; sourceTree = "<group>"; };
 		846991D5BC06C25591CFA36D /* WLWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WLWebView.swift; sourceTree = "<group>"; };
 		846992B55E29D7DA05ED2F4C /* DAppContainer.ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.ViewModel.swift; sourceTree = "<group>"; };
 		846992CDA843C0A10ABB2B6C /* NewTabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewTabBar.swift; sourceTree = "<group>"; };
@@ -563,9 +563,9 @@
 		846994C1EE7DDD16BD91B4FD /* CreateSecurityKeys.KeysView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.KeysView.swift; sourceTree = "<group>"; };
 		8469955789FEB4DC7C8A9697 /* CreateWallet.ExplanationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateWallet.ExplanationVC.swift; sourceTree = "<group>"; };
 		84699587C4376EAA8208663D /* MoonpayProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoonpayProvider.swift; sourceTree = "<group>"; };
-		846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSelection.Scene.swift; sourceTree = "<group>"; };
+		846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSelection.ViewController.swift; sourceTree = "<group>"; };
 		8469964AD773095EEFA52701 /* CALayer+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CALayer+Extensions.swift"; sourceTree = "<group>"; };
-		84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSelection.BitcoinConfirm.Scene.swift; sourceTree = "<group>"; };
+		84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSelection.BitcoinConfirm.ViewController.swift; sourceTree = "<group>"; };
 		8469967326CA93BB243D75A9 /* BuyProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyProvider.swift; sourceTree = "<group>"; };
 		84699683F51C51791FD590A0 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Question.swift; sourceTree = "<group>"; };
@@ -1169,8 +1169,8 @@
 		846999988BEEA5BD03EDDF11 /* NetworkSelection */ = {
 			isa = PBXGroup;
 			children = (
-				846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.Scene.swift */,
-				84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.Scene.swift */,
+				846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.ViewController.swift */,
+				84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */,
 			);
 			path = NetworkSelection;
 			sourceTree = "<group>";
@@ -2073,7 +2073,7 @@
 			isa = PBXGroup;
 			children = (
 				BC85EA62266E1324005006D5 /* ReceiveToken.swift */,
-				846991CEF8AFD01A61E2FAE8 /* ReceiveToken.Scene.swift */,
+				846991CEF8AFD01A61E2FAE8 /* ReceiveToken.ViewController.swift */,
 				BC85EA64266E1324005006D5 /* ReceiveToken.SceneModel.swift */,
 				BC80203726F1DA3100C109C2 /* Solana */,
 				BC80203C26F1EB6900C109C2 /* Bitcoin */,
@@ -3041,11 +3041,11 @@
 				846995027222B9BE2C4B0698 /* WLLargeButton.swift in Sources */,
 				846995A6F31CA183C1D3A133 /* BEScene.swift in Sources */,
 				84699EB808181B89DFF647E9 /* BESceneModel.swift in Sources */,
-				84699079946496609D51B833 /* ReceiveToken.Scene.swift in Sources */,
+				84699079946496609D51B833 /* ReceiveToken.ViewController.swift in Sources */,
 				84699AFDE6821C43A4F93FC7 /* WLWebView.swift in Sources */,
 				846996465818387C8B28FC1F /* ReceiveToken.HelpViewController.swift in Sources */,
-				846991CD8786E160F2D18E67 /* NetworkSelection.Scene.swift in Sources */,
-				84699D9D35BB1C10A7427A9B /* NetworkSelection.BitcoinConfirm.Scene.swift in Sources */,
+				846991CD8786E160F2D18E67 /* NetworkSelection.ViewController.swift in Sources */,
+				84699D9D35BB1C10A7427A9B /* NetworkSelection.BitcoinConfirm.ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

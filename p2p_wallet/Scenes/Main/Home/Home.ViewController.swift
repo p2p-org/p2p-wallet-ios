@@ -13,7 +13,7 @@ import RxCocoa
 protocol HomeScenesFactory {
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController
     func makeBuyTokenViewController(token: BuyToken.CryptoCurrency) throws -> UIViewController
-    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.Scene?
+    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
     func makeSettingsVC(reserveNameHandler: ReserveNameHandler) -> Settings.ViewController
