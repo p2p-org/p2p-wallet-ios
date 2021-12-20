@@ -123,6 +123,7 @@ private extension ExpandableTextView {
         textView.font = .systemFont(ofSize: 17, weight: .regular)
         textView.textColor = .textBlack
         textView.isScrollEnabled = false
+        textView.spellCheckingType = .no
         textView.backgroundColor = .clear
         textView.textContainer.lineFragmentPadding = 0
         textView.autocapitalizationType = .none
