@@ -24,7 +24,7 @@ final class BottomFixedView: BEView {
     }
 
     private func addShadow() {
-        backgroundColor = .white
+        backgroundColor = .background
         layer.shadowColor = UIColor(red: 0.221, green: 0.234, blue: 0.279, alpha: 0.05).cgColor
         layer.shadowOpacity = 1
         layer.shadowRadius = 8
