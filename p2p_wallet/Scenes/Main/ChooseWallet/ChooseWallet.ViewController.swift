@@ -30,9 +30,11 @@ extension ChooseWallet {
 
             self.title = title ?? L10n.selectToken
         }
+        // MARK: - Methods
+        override func setUp() {
+            super.setUp()
 
-        override func loadView() {
-            view = UIStackView(
+            let stackView = UIStackView(
                 axis: .vertical,
                 spacing: 0,
                 alignment: .fill,
@@ -48,6 +50,9 @@ extension ChooseWallet {
                     rootView
                 ]
             )
+
+            view.addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewEdges()
         }
     }
 }

@@ -5,9 +5,7 @@
 //  Created by Chung Tran on 24/11/2020.
 //
 
-import Foundation
 import ListPlaceholder
-import QuartzCore
 
 class WalletCell: BaseCollectionViewCell {
     override var padding: UIEdgeInsets {.zero}
