@@ -4,7 +4,14 @@
 
 import Foundation
 
+private typealias _Error = Error
+
 extension Moonpay {
+    
+    enum Error: _Error {
+        case `default`(message: String)
+    }
+    
     struct BuyQuote: Codable {
         let baseCurrencyCode: String
         let quoteCurrencyCode: String
@@ -16,18 +23,5 @@ extension Moonpay {
         let totalAmount: Double
         let baseCurrencyAmount: Double
         let quoteCurrencyAmount: Double
-        
-        static func empty() -> BuyQuote {
-            BuyQuote(
-                baseCurrencyCode: "",
-                quoteCurrencyCode: "",
-                paymentMethod: "",
-                feeAmount: 0,
-                extraFeeAmount: 0,
-                networkFeeAmount: 0,
-                totalAmount: 0,
-                baseCurrencyAmount: 0,
-                quoteCurrencyAmount: 0)
-        }
     }
 }

@@ -13,4 +13,18 @@ struct SolanaBuyToken {
         case back
         case buy
     }
+    
+    enum State {
+        case result(quote: Moonpay.BuyQuote)
+        case requiredMinimalAmount
+        case error(_ description: String)
+        case none
+        
+        func asResult() -> Moonpay.BuyQuote? {
+            switch self {
+            case .result(let quote): return quote
+            default: return nil
+            }
+        }
+    }
 }

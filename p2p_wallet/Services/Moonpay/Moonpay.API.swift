@@ -6,6 +6,11 @@ import Foundation
 
 extension Moonpay {
     struct API {
+        struct ErrorResponse: Codable {
+            let message: String
+            let type: String
+        }
+        
         let endpoint: String
         let apiKey: String
         
