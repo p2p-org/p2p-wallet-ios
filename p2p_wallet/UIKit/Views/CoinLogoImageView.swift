@@ -7,6 +7,7 @@
 
 import Foundation
 import JazziconSwift
+import RxSwift
 
 class CoinLogoImageView: BEView {
     // MARK: - Properties
@@ -100,5 +101,13 @@ class CoinLogoImageView: BEView {
     func with(token: SolanaSDK.Token?) -> Self {
         setUp(token: token)
         return self
+    }
+}
+
+extension Reactive where Base: CoinLogoImageView {
+    var wallet: Binder<Wallet?> {
+        Binder(base) {view, wallet in
+            view.setUp(wallet: wallet)
+        }
     }
 }

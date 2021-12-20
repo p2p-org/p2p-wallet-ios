@@ -21,7 +21,7 @@ extension SendToken {
         // MARK: - Subviews
         private lazy var alertBannerView = UIView.greyBannerView(axis: .horizontal, spacing: 18, alignment: .top) {
             UILabel(text: L10n.BeSureAllDetailsAreCorrectBeforeConfirmingTheTransaction.onceConfirmedItCannotBeReversed, textSize: 15, numberOfLines: 0)
-            UIImageView(width: 24, height: 24, image: .closeBannerButton)
+            UIView.closeBannerButton()
                 .onTap(self, action: #selector(closeBannerButtonDidTouch))
         }
         private lazy var amountView: AmountSummaryView = {

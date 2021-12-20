@@ -669,3 +669,8 @@
 "I understand" = "je comprend";
 "Receiving via Bitcoin network" = "Réception via le réseau Bitcoin";
 "Make sure you understand the aspects" = "Assurez-vous de bien comprendre les aspects";
+"Select the second token" = "Sélectionnez le deuxième jeton";
+"Select the first token" = "Sélectionnez le premier jeton";
+"Confirm swapping %@ → %@" = "Confirmer l'échange %@ → %@";
+"Spend" = "Passer";
+"Swap %@ → %@" = "Échanger %@ → %@";

@@ -116,6 +116,7 @@ extension EnterSeed {
                     textView
                     pasteButton
                 }
+                BEStackViewSpacing(8)
                 separatorView
                 BEStackViewSpacing(8)
                 errorLabel

@@ -669,3 +669,8 @@
 "I understand" = "I understand";
 "Receiving via Bitcoin network" = "Receiving via Bitcoin network";
 "Make sure you understand the aspects" = "Make sure you understand the aspects";
+"Select the second token" = "Select the second token";
+"Select the first token" = "Select the first token";
+"Confirm swapping %@ → %@" = "Confirm swapping %@ → %@";
+"Spend" = "Spend";
+"Swap %@ → %@" = "Swap %@ → %@";
