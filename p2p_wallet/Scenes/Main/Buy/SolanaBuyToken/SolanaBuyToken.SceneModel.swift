@@ -96,7 +96,7 @@ extension SolanaBuyToken {
         var nextStatus: Driver<NextStatus> {
             state.map { state in
                 switch state {
-                case .result(_): return .init(text: L10n.continue, isEnable: true)
+                case .result: return .init(text: L10n.continue, isEnable: true)
                 case .error(let message): return .init(text: message, isEnable: false)
                 default: return .init(text: L10n.continue, isEnable: false)
                 }
