@@ -21,7 +21,9 @@ extension SolanaBuyToken {
         
         override func build() -> UIView {
             BEZStack {
+                // Content
                 content().withTag(1)
+                // Bottom Button
                 WLStepButton.main(text: L10n.continue)
                     .setup { view in
                         guard let view = view as? WLStepButton else { return }
@@ -58,12 +60,17 @@ extension SolanaBuyToken {
                                 UILabel(text: L10n.youPay, textSize: 17)
                                 UIView.spacer
                                 // Amount
+                                UILabel(
+                                    text: "$",
+                                    font: .systemFont(ofSize: 27, weight: .semibold),
+                                    textColor: .textBlack
+                                ).padding(.init(x: 4, y: 0))
                                 TokenAmountTextField(
                                     font: .systemFont(ofSize: 27, weight: .semibold),
                                     textColor: .textBlack,
                                     textAlignment: .right,
                                     keyboardType: .decimalPad,
-                                    placeholder: "$ 0\(Locale.current.decimalSeparator ?? ".")0",
+                                    placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
                                     autocorrectionType: .no
                                 ).setup { [weak self] view in
                                     guard let view = view as? TokenAmountTextField else { return }
