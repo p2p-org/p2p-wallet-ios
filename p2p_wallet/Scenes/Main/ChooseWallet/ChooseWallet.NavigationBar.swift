@@ -16,6 +16,7 @@ extension ChooseWallet {
 
         init(
             title: String?,
+            rightButtonTitle: String,
             closeHandler: @escaping () -> Void
         ) {
             self.closeHandler = closeHandler
@@ -23,7 +24,7 @@ extension ChooseWallet {
             super.init(frame: .zero)
 
             configureSelf()
-            configureNavigationBar(title: title)
+            configureNavigationBar(title: title, rightButtonTitle: rightButtonTitle)
         }
 
         private func configureSelf() {
@@ -32,12 +33,12 @@ extension ChooseWallet {
             navigationBar.autoPinEdgesToSuperviewSafeArea(with: .init(only: .top, inset: 14))
         }
 
-        private func configureNavigationBar(title: String?) {
+        private func configureNavigationBar(title: String?, rightButtonTitle: String) {
             navigationBar.backButton.isHidden = true
             navigationBar.backgroundColor = .fafafc.onDarkMode(.clear)
             navigationBar.titleLabel.text = title
             let closeButton = UIButton(
-                label: L10n.close,
+                label: rightButtonTitle,
                 labelFont: .systemFont(ofSize: 17, weight: .bold),
                 textColor: .h5887ff
             )
