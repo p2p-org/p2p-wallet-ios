@@ -15,7 +15,7 @@ extension Onboarding {
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
-        private lazy var childNavigationController = BENavigationController()
+        private lazy var childNavigationController = UINavigationController()
         
         // MARK: - Methods
         override func setUp() {

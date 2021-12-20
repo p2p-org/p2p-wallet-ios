@@ -1,5 +1,5 @@
 //
-//  NetworkSelection.Scene.swift
+//  NetworkSelection.ViewController.swift
 //  p2p_wallet
 //
 //  Created by Giang Long Tran on 14.12.21.
@@ -17,6 +17,10 @@ extension ReceiveToken {
         init(viewModel: ReceiveSceneModel) {
             self.viewModel = viewModel
             super.init()
+        }
+        
+        deinit {
+            print("Deinit")
         }
         
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
@@ -65,8 +69,23 @@ extension ReceiveToken {
                                 .drive(view.rx.isSelected)
                                 .disposed(by: disposeBag)
                         }.onTap { [unowned self] in
-                            self.viewModel.switchToken(.btc)
-                            self.back()
+                            Driver.combineLatest(
+                                self.viewModel.receiveBitcoinViewModel.isReceivingRenBTCDriver,
+                                self.viewModel.receiveBitcoinViewModel.conditionAcceptedDriver
+                            ).drive { [weak self] (isRenBTCCreated, conditionalAccepted) in
+                                if isRenBTCCreated && conditionalAccepted {
+                                    self?.viewModel.switchToken(.btc)
+                                    self?.back()
+                                } else {
+                                    let vc = BitcoinConfirmScene { [weak self] in
+                                        self?.viewModel.receiveBitcoinViewModel.acceptConditionAndLoadAddress()
+                                        self?.viewModel.switchToken(.btc)
+                                        self?.back()
+                                    }
+                                    self?.present(vc, animated: true)
+                                }
+                            }.disposed(by: disposeBag)
+                            
                         }
                         
                         // Description

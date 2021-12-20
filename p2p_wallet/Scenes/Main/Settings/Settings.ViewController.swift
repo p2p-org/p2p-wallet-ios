@@ -49,7 +49,7 @@ extension Settings {
                 show(vc, sender: nil)
             case .reserveUsername(owner: let owner, handler: let handler):
                 let vm = ReserveName.ViewModel(
-                    canSkip: false,
+                    kind: .independent,
                     owner: owner,
                     nameService: Resolver.resolve(),
                     reserveNameHandler: handler
@@ -62,7 +62,7 @@ extension Settings {
             case .backupManually:
                 let vc = BackupManuallyVC()
                 vc.delegate = self
-                let nc = BENavigationController(rootViewController: vc)
+                let nc = UINavigationController(rootViewController: vc)
             
                 let modalVC = WLIndicatorModalVC()
                 modalVC.add(child: nc, to: modalVC.containerView)

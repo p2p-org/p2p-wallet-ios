@@ -11,7 +11,13 @@ import BEPureLayout
 import RxSwift
 
 protocol SendTokenScenesFactory {
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
+    func makeChooseWalletViewController(
+        title: String?,
+        customFilter: ((Wallet) -> Bool)?,
+        showOtherWallets: Bool,         
+        selectedWallet: Wallet?,
+        handler: WalletDidSelectHandler
+    ) -> ChooseWallet.ViewController
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
 
@@ -26,7 +32,7 @@ extension SendToken {
         private let scenesFactory: SendTokenScenesFactory
         
         // MARK: - Properties
-        private var childNavigationController: BENavigationController!
+        private var childNavigationController: UINavigationController!
         
         // MARK: - Initializer
         init(viewModel: SendTokenViewModelType, scenesFactory: SendTokenScenesFactory) {
@@ -67,7 +73,7 @@ extension SendToken {
                 if showAfterConfirmation {
                     childNavigationController.pushViewController(vc, animated: true)
                 } else {
-                    childNavigationController = BENavigationController(rootViewController: vc)
+                    childNavigationController = .init(rootViewController: vc)
                     add(child: childNavigationController)
                 }
             case .chooseRecipientAndNetwork(let showAfterConfirmation, let preSelectedNetwork):

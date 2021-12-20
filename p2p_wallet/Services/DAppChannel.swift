@@ -75,7 +75,7 @@ extension DAppChannel: DAppChannelType {
         // set config
         let config = WKWebViewConfiguration()
         config.userContentController.addUserScript(targetInjection)
-        config.userContentController.add(self, contentWorld: .page, name: "P2PWalletIncomingChannel")
+        config.userContentController.add(self, name: "P2PWalletIncomingChannel")
         return config
     }
 }

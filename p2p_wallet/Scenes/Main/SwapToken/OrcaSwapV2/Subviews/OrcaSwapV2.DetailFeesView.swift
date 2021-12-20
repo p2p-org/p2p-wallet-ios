@@ -23,11 +23,16 @@ extension OrcaSwapV2 {
             spacing: 8,
             alignment: .fill
         )
+        
+        private let feesDriver: Driver<Loadable<[PayingFee]>>
+        private let disposeBag = DisposeBag()
 
-        init() {
+        init(feesDriver: Driver<Loadable<[PayingFee]>>) {
+            self.feesDriver = feesDriver
             super.init(frame: .zero)
 
             layout()
+            bind()
         }
 
         @available(*, unavailable)
@@ -81,6 +86,19 @@ extension OrcaSwapV2 {
                 title
                 feesDescriptionView
             }
+        }
+        
+        private func bind() {
+            feesDriver
+                .map {$0.value == nil}
+                .drive(rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            feesDriver
+                .filter {$0.value != nil}
+                .map {$0.value!}
+                .drive(rx.fees)
+                .disposed(by: disposeBag)
         }
 
         private func createFeeLine(fee: PayingFee) -> UIView {
