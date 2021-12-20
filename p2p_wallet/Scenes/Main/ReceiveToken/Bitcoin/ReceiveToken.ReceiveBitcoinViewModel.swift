@@ -41,7 +41,7 @@ extension ReceiveToken {
         // MARK: - Dependencies
         private let renVMService: RenVMLockAndMintServiceType
         @Injected private var analyticsManager: AnalyticsManagerType
-        private let navigationSubject: PublishSubject<NavigatableScene>
+        private let navigationSubject: PublishRelay<NavigatableScene?>
         private let associatedTokenAccountHandler: AssociatedTokenAccountHandler
         
         // MARK: - Subjects
@@ -52,7 +52,7 @@ extension ReceiveToken {
         // MARK: - Initializers
         init(
             renVMService: RenVMLockAndMintServiceType,
-            navigationSubject: PublishSubject<NavigatableScene>,
+            navigationSubject: PublishRelay<NavigatableScene?>,
             isRenBTCWalletCreated: Bool,
             associatedTokenAccountHandler: AssociatedTokenAccountHandler
         ) {
@@ -110,7 +110,7 @@ extension ReceiveToken {
         }
         
         func showBTCTypeOptions() {
-            navigationSubject.onNext(.chooseBTCOption(selectedOption: isReceivingRenBTCSubject.value ? .renBTC: .splBTC))
+            navigationSubject.accept(.chooseBTCOption(selectedOption: isReceivingRenBTCSubject.value ? .renBTC: .splBTC))
         }
     }
 }
@@ -164,13 +164,13 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     func share() {
         guard let address = renVMService.getCurrentAddress() else {return}
         analyticsManager.log(event: .receiveAddressShare)
-        navigationSubject.onNext(.share(address: address))
+        navigationSubject.accept(.share(address: address))
     }
     
     func showBTCAddressInExplorer() {
         guard let address = renVMService.getCurrentAddress() else {return}
         analyticsManager.log(event: .receiveViewExplorerOpen)
-        navigationSubject.onNext(.showBTCExplorer(address: address))
+        navigationSubject.accept(.showBTCExplorer(address: address))
     }
     
     func reloadMinimumTransactionAmount() {
@@ -178,6 +178,6 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
     
     func showReceivingStatuses() {
-        navigationSubject.onNext(.showRenBTCReceivingStatus)
+        navigationSubject.accept(.showRenBTCReceivingStatus)
     }
 }

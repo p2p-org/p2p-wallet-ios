@@ -20,7 +20,7 @@ extension CreateWallet {
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
-        var childNavigationController: BENavigationController!
+        var childNavigationController: UINavigationController!
         
         // MARK: - Methods
         override func viewDidLoad() {
@@ -31,7 +31,7 @@ extension CreateWallet {
         
         override func setUp() {
             super.setUp()
-            childNavigationController = BENavigationController()
+            childNavigationController = .init()
             childNavigationController.setNavigationBarHidden(true, animated: false)
             view.addSubview(childNavigationController.view)
         }
@@ -57,7 +57,7 @@ extension CreateWallet {
                 childNavigationController.pushViewController(vc, animated: true)
             case .reserveName(let owner):
                 let viewModel = ReserveName.ViewModel(
-                    canSkip: true,
+                    kind: .reserveCreateWalletPart,
                     owner: owner,
                     nameService: Resolver.resolve(),
                     reserveNameHandler: viewModel

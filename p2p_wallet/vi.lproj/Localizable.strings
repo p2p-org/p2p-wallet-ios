@@ -671,3 +671,11 @@
 "Processing fee" = "Phí xử lý";
 "SOL Price" = "Giá SOL";
 "Buy %@ on Moonpay" = "Mua %@ trên Moonpay";
+"I understand" = "Tôi hiểu";
+"Receiving via Bitcoin network" = "Nhận qua mạng Bitcoin";
+"Make sure you understand the aspects" = "Đảm bảo rằng bạn hiểu các khía cạnh";
+"Select the second token" = "Chọn token thứ hai";
+"Select the first token" = "Chọn token đầu tiên";
+"Confirm swapping %@ → %@" = "Xác nhận hoán đổi %@ → %@";
+"Spend" = "Dùng";
+"Swap %@ → %@" = "Hoán đổi %@ → %@";

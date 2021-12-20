@@ -8,7 +8,7 @@
 import Foundation
 
 extension SerumSwapV1 {
-    class SettingsNavigationController: BENavigationController, CustomPresentableViewController {
+    class SettingsNavigationController: UINavigationController, CustomPresentableViewController {
         var transitionManager: UIViewControllerTransitioningDelegate?
         
         func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {

@@ -19,7 +19,7 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let disposeBag = DisposeBag()
     
     init(
-        transactionViewModel: BEListViewModelType,
+        transactionViewModel: TransactionsViewModel,
         graphViewModel: WalletGraphViewModel,
         wallet: Driver<Wallet?>,
         nativePubkey: Driver<String?>

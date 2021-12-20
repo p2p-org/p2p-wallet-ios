@@ -12,7 +12,7 @@ import UIKit
 
 protocol WalletDetailScenesFactory {
     func makeBuyTokenViewController(token: Set<BuyProviders.Crypto>) throws -> UIViewController
-    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.Scene?
+    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController

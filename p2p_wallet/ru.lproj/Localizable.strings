@@ -671,3 +671,11 @@
 "Processing fee" = "Разовая комиссия";
 "SOL Price" = "Цена SOL";
 "Buy %@ on Moonpay" = "Купить %@ на Moonpay";
+"I understand" = "я понимаю";
+"Receiving via Bitcoin network" = "Получение через сеть Биткойн";
+"Make sure you understand the aspects" = "Убедитесь, что вы понимаете аспекты";
+"Select the second token" = "Выберите второй токен";
+"Select the first token" = "Выберите первый токен";
+"Confirm swapping %@ → %@" = "Подтвердите замену %@ → %@";
+"Spend" = "Тратить";
+"Swap %@ → %@" = "Обменять %@ → %@";

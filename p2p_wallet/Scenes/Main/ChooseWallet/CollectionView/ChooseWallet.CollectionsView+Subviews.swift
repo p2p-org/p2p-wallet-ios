@@ -9,41 +9,60 @@ import Foundation
 import BECollectionView
 
 extension ChooseWallet.CollectionView {
-    class FirstSectionHeaderView: WLSectionHeaderView {
-        override func commonInit() {
-            super.commonInit()
-            setUp(headerTitle: L10n.yourTokens, headerFont: .systemFont(ofSize: 15), headerColor: .a3a5ba)
-        }
-    }
-    
-    class SecondSectionHeaderView: WLSectionHeaderView {
-        override func commonInit() {
-            super.commonInit()
-            setUp(headerTitle: L10n.allTokens, headerFont: .systemFont(ofSize: 15), headerColor: .a3a5ba)
-        }
-    }
-    
     class Cell: WalletCell, BECollectionViewCell {
         lazy var addressLabel = UILabel(textSize: 13, textColor: .textSecondary)
         
         override func commonInit() {
             super.commonInit()
+            stackView.addSubview(coinCheckMark)
+
             stackView.alignment = .center
-            stackView.constraintToSuperviewWithAttribute(.bottom)?
-                .constant = -16
+            stackView.spacing = 12
             
-            coinSymbolLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+            stackView.constraintToSuperviewWithAttribute(.trailing)?
+                .constant = -18
+            stackView.constraintToSuperviewWithAttribute(.leading)?
+                .constant = 18
+            stackView.constraintToSuperviewWithAttribute(.bottom)?
+                .constant = -12
+            stackView.constraintToSuperviewWithAttribute(.top)?
+                .constant = 12
+            
+            coinSymbolLabel.font = .systemFont(ofSize: 17, weight: .medium)
             coinSymbolLabel.numberOfLines = 1
-            equityValueLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+            equityValueLabel.font = .systemFont(ofSize: 17, weight: .medium)
             tokenCountLabel.font = .systemFont(ofSize: 13)
             
-            stackView.addArrangedSubviews([
-                coinLogoImageView,
-                UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [coinSymbolLabel, equityValueLabel]),
-                    UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing, arrangedSubviews: [addressLabel, tokenCountLabel])
-                ])
-            ])
+            stackView.addArrangedSubviews(
+                [
+                    coinLogoImageView,
+                    UIStackView(
+                        axis: .vertical,
+                        spacing: 5,
+                        alignment: .fill,
+                        distribution: .fill,
+                        arrangedSubviews: [
+                            UIStackView(
+                                axis: .horizontal,
+                                spacing: 10,
+                                alignment: .fill,
+                                distribution: .equalSpacing,
+                                arrangedSubviews: [coinSymbolLabel, equityValueLabel]
+                            ),
+                            UIStackView(
+                                axis: .horizontal,
+                                spacing: 10,
+                                alignment: .fill,
+                                distribution: .equalSpacing,
+                                arrangedSubviews: [addressLabel, tokenCountLabel]
+                            )
+                        ]
+                    )
+                ]
+            )
+
+            coinCheckMark.autoAlignAxis(.horizontal, toSameAxisOf: coinLogoImageView)
+            coinCheckMark.autoAlignAxis(.vertical, toSameAxisOf: coinLogoImageView)
         }
         
         override func setUp(with item: Wallet) {

@@ -131,9 +131,9 @@ class MainContainer {
         BuyRoot.ViewController(crypto: token, walletRepository: walletsViewModel)
     }
     
-    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.Scene? {
-        guard let pubkey = try? SolanaSDK.PublicKey(string: walletsViewModel.nativeWallet?.pubkey) else { return nil }
-        let tokenWallet = walletsViewModel.getWallets().first(where: { $0.pubkey == tokenWalletPubkey })
+    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController? {
+        guard let pubkey = try? SolanaSDK.PublicKey(string: walletsViewModel.nativeWallet?.pubkey) else {return nil}
+        let tokenWallet = walletsViewModel.getWallets().first(where: {$0.pubkey == tokenWalletPubkey})
         
         let isDevnet = solanaSDK.endpoint.network == .devnet
         let renBTCMint = isDevnet ? SolanaSDK.PublicKey.renBTCMintDevnet : SolanaSDK.PublicKey.renBTCMint
@@ -150,7 +150,7 @@ class MainContainer {
             isRenBTCWalletCreated: isRenBTCWalletCreated,
             associatedTokenAccountHandler: solanaSDK
         )
-        return ReceiveToken.Scene(viewModel: viewModel)
+        return ReceiveToken.ViewController(viewModel: viewModel)
     }
     
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController {
@@ -194,16 +194,23 @@ class MainContainer {
         }
     }
     
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController {
+    func makeChooseWalletViewController(
+        title: String?,
+        customFilter: ((Wallet) -> Bool)?,
+        showOtherWallets: Bool,
+        selectedWallet: Wallet?,
+        handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
+    {
         let viewModel = ChooseWallet.ViewModel(
             myWallets: walletsViewModel.getWallets(),
+            selectedWallet: selectedWallet,
             handler: handler,
             tokensRepository: solanaSDK,
             showOtherWallets: showOtherWallets
         )
         
         viewModel.customFilter = customFilter
-        return ChooseWallet.ViewController(viewModel: viewModel)
+        return ChooseWallet.ViewController(title: title, viewModel: viewModel)
     }
     
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController {
@@ -239,7 +246,7 @@ class MainContainer {
     // MARK: - Reserve name
     func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController {
         let vm = ReserveName.ViewModel(
-            canSkip: false,
+            kind: .independent,
             owner: owner,
             nameService: Resolver.resolve(),
             reserveNameHandler: handler
