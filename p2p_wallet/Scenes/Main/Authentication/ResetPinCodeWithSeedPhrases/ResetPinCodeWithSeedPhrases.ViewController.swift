@@ -14,7 +14,7 @@ extension ResetPinCodeWithSeedPhrases {
         @Injected private var viewModel: ResetPinCodeWithSeedPhrasesViewModelType
         
         // MARK: - Properties
-        var childNavigationController: BENavigationController!
+        var childNavigationController: UINavigationController!
         var completion: (() -> Void)?
         
         // MARK: - ChildVC
@@ -30,7 +30,7 @@ extension ResetPinCodeWithSeedPhrases {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            childNavigationController = BENavigationController()
+            childNavigationController = .init()
             add(child: childNavigationController, to: containerView)
         }
         

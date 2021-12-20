@@ -42,6 +42,10 @@ extension OrcaSwapV2 {
             bind()
         }
 
+        func makeFromFirstResponder() {
+            mainView.makeFromFirstResponder()
+        }
+
         // MARK: - Layout
         private func layout() {
             stackView.addArrangedSubviews {
@@ -74,6 +78,14 @@ extension OrcaSwapV2 {
                 .drive { [weak self] isShowing in
                     guard let self = self else {return}
                     self.stackView.setIsHidden(!isShowing, on: self.detailsView, animated: true)
+                }
+                .disposed(by: disposeBag)
+
+            viewModel.isShowingDetailsDriver
+                .drive { [weak self] isShowing in
+                    if isShowing {
+                        self?.endEditing(true)
+                    }
                 }
                 .disposed(by: disposeBag)
 
@@ -152,7 +164,7 @@ extension OrcaSwapV2 {
         }
         @objc
         private func buttonNextDidTouch() {
-            viewModel.authenticateAndSwap()
+            viewModel.navigate(to: .confirmation)
         }
     }
 }

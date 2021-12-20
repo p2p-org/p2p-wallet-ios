@@ -158,7 +158,7 @@ extension Home {
                 self.show(vc, sender: nil)
             case .reserveName(let owner):
                 let vm = ReserveName.ViewModel(
-                    canSkip: false,
+                    kind: .independent,
                     owner: owner,
                     nameService: Resolver.resolve(),
                     reserveNameHandler: viewModel

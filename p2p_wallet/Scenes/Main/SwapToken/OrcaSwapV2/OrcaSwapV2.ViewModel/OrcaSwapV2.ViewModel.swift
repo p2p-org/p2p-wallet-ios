@@ -66,6 +66,24 @@ extension OrcaSwapV2 {
                     .disposed(by: disposeBag)
             }
             
+            // update wallet after swapping
+            walletsRepository.dataObservable
+                .skip(1)
+                .subscribe(onNext: {[weak self] wallets in
+                    if self?.sourceWalletSubject.value?.pubkey != nil,
+                       let wallet = wallets?.first(where: {$0.pubkey == self?.sourceWalletSubject.value?.pubkey})
+                    {
+                        self?.sourceWalletSubject.accept(wallet)
+                    }
+                    
+                    if self?.destinationWalletSubject.value?.pubkey != nil,
+                        let wallet = wallets?.first(where: {$0.pubkey == self?.destinationWalletSubject.value?.pubkey})
+                    {
+                        self?.destinationWalletSubject.accept(wallet)
+                    }
+                })
+                .disposed(by: disposeBag)
+            
             // get tradable pools pair for each token pair
             Observable.combineLatest(
                 sourceWalletSubject.distinctUntilChanged(),
@@ -309,7 +327,7 @@ extension OrcaSwapV2.ViewModel {
                 return .nativeWalletNotFound
             }
             
-            let feeInSOL = feesSubject.value?.all(ofToken: "SOL") ?? 0
+            let feeInSOL = feesSubject.value?.transactionFees(of: "SOL") ?? 0
             
             if feeInSOL > (wallet.lamports ?? 0) {
                 return .notEnoughSOLToCoverFees
@@ -322,7 +340,7 @@ extension OrcaSwapV2.ViewModel {
             //                if feeCompensationPool == nil {
             //                    return L10n.feeCompensationPoolNotFound
             //                }
-            let feeInToken = feesSubject.value?.all(ofToken: sourceWallet.token.symbol) ?? 0
+            let feeInToken = feesSubject.value?.transactionFees(of: sourceWallet.token.symbol) ?? 0
             if feeInToken > (sourceWallet.lamports ?? 0) {
                 return .notEnoughBalanceToCoverFees
             }
@@ -338,7 +356,7 @@ extension OrcaSwapV2.ViewModel {
     
     func calculateAvailableAmount() -> Double? {
         guard let sourceWallet = sourceWalletSubject.value,
-            let fees = feesSubject.value?.all(ofToken: sourceWallet.token.symbol)
+              let fees = feesSubject.value?.transactionFees(of: sourceWallet.token.symbol)
         else {
             return sourceWalletSubject.value?.amount
         }

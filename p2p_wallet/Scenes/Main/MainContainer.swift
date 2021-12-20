@@ -197,17 +197,23 @@ class MainContainer {
         }
     }
     
-    func makeChooseWalletViewController(customFilter: ((Wallet) -> Bool)?, showOtherWallets: Bool, handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
+    func makeChooseWalletViewController(
+        title: String?,
+        customFilter: ((Wallet) -> Bool)?,
+        showOtherWallets: Bool,
+        selectedWallet: Wallet?,
+        handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
     {
         let viewModel = ChooseWallet.ViewModel(
             myWallets: walletsViewModel.getWallets(),
+            selectedWallet: selectedWallet,
             handler: handler,
             tokensRepository: solanaSDK,
             showOtherWallets: showOtherWallets
         )
         
         viewModel.customFilter = customFilter
-        return ChooseWallet.ViewController(viewModel: viewModel)
+        return ChooseWallet.ViewController(title: title, viewModel: viewModel)
     }
     
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController {
@@ -243,7 +249,7 @@ class MainContainer {
     // MARK: - Reserve name
     func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController {
         let vm = ReserveName.ViewModel(
-            canSkip: false,
+            kind: .independent,
             owner: owner,
             nameService: Resolver.resolve(),
             reserveNameHandler: handler
