@@ -18,7 +18,7 @@ extension ReceiveToken {
             self.viewModel = viewModel
             super.init()
         }
-    
+        
         deinit {
             print("Deinit")
         }
@@ -77,7 +77,7 @@ extension ReceiveToken {
                                     self?.viewModel.switchToken(.btc)
                                     self?.back()
                                 } else {
-                                    let vc = BitcoinConfirmScene() { [weak self] in
+                                    let vc = BitcoinConfirmScene { [weak self] in
                                         self?.viewModel.receiveBitcoinViewModel.acceptConditionAndLoadAddress()
                                         self?.viewModel.switchToken(.btc)
                                         self?.back()
