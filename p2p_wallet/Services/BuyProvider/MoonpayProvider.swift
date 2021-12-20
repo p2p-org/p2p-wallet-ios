@@ -45,7 +45,7 @@ public struct MoonpayProvider: BuyProvider {
     }
     
     public func getUrl() -> String {
-        var params: BuyProviderUtils.Params = [
+        let params: BuyProviderUtils.Params = [
             "apiKey": apiKey,
             "showOnlyCurrencies": showOnlyCurrencies,
             "defaultCurrencyCode": defaultCurrencyCode,
@@ -58,7 +58,6 @@ public struct MoonpayProvider: BuyProvider {
         
         let paramStr = params.query
         let originalUrl = environment.endpoint + "?" + paramStr
-        
         
         debugPrint(originalUrl + "&signature=\(sign(originalUrl: originalUrl))")
         return originalUrl + "&signature=\(sign(originalUrl: originalUrl))"

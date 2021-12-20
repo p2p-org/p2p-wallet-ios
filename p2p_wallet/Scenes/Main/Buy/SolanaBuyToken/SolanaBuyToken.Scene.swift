@@ -128,7 +128,7 @@ extension SolanaBuyToken {
                 UIView.spacer
                 UILabel(text: initial).setup { view in
                     guard let view = view as? UILabel else { return }
-                    trailingDriver?.drive(view.rx.text)
+                    trailingDriver?.drive(view.rx.text).disposed(by: disposeBag)
                 }
             }
         }

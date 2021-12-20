@@ -25,7 +25,7 @@ struct BuyProviders {
         static let all: Set<Crypto> = [.eth, .sol, .usdt]
         
         func toWallet() -> String {
-            switch (self) {
+            switch self {
             case .eth: return "ETH"
             case .sol: return "SOL"
             case .usdt: return "USDT"
