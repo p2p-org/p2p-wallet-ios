@@ -75,7 +75,6 @@ extension DerivableAccounts {
             
             // navigation bar
             view.addSubview(navigationBar)
-            navigationBar.titleLabel.text = L10n.createANewWallet
             navigationBar.backButton.onTap(self, action: #selector(back))
             navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
             navigationBar.autoPinEdge(toSuperviewEdge: .leading)
