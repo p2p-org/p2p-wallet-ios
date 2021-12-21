@@ -56,7 +56,7 @@ enum BuyProviderType: Equatable {
     func isSupported(symbol: String) -> Bool {
         switch self {
         case .moonpay:
-            return symbol == "USDT"
+            return symbol == "ETH"
         case .transak:
             return symbol == "SOL" || symbol == "USDT"
         }
