@@ -648,6 +648,7 @@
 "1 %@ Price" = "1 %@ Prix";
 "Pay swap fees with" = "Payez les frais de swap avec";
 "Total fee" = "Montant total";
+"Showing my address for" = "Affichage de mon adresse pour";
 "Reserve P2P username" = "Réserver le nom d'utilisateur P2P";
 "Enter username" = "Saisissez votre nom d'utilisateur";
 "Change the token?" = "Changer le jeton ?";
@@ -661,6 +662,16 @@
 "There are %@ free transactions left for today" = "Il reste %@ transactions gratuites pour aujourd'hui";
 "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "Sur le réseau Solana, les 100 premières transactions d'une journée sont payées par P2P.org. Les transactions ultérieures seront facturées sur la base des frais de gaz de la blockchain Solana.";
 "Select word #%@" = "Sélectionnez le mot #%@";
+"Receive any token within the Solana network even if it is not included in your wallet list" = "Recevez n'importe quel jeton au sein du réseau Solana même s'il n'est pas inclus dans votre liste de portefeuille";
+"When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "Lorsque vous choisissez le réseau Bitcoin, votre adresse n'accepte que Bitcoin.  Vous pouvez perdre des actifs en envoyant une autre pièce.\n0,000112 BTC est le montant minimum de la transaction, et vous avez 36 heures pour terminer la transaction après avoir reçu l'adresse.";
+"You pay" = "Tu payes";
+"You get" = "Vous obtenez";
+"Processing fee" = "Frais de traitement";
+"SOL Price" = "Prix ​​SOL";
+"Buy %@ on Moonpay" = "Achetez %@ sur Moonpay";
+"I understand" = "je comprend";
+"Receiving via Bitcoin network" = "Réception via le réseau Bitcoin";
+"Make sure you understand the aspects" = "Assurez-vous de bien comprendre les aspects";
 "Select the second token" = "Sélectionnez le deuxième jeton";
 "Select the first token" = "Sélectionnez le premier jeton";
 "Confirm swapping %@ → %@" = "Confirmer l'échange %@ → %@";
