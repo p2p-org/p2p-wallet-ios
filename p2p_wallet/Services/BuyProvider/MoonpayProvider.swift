@@ -20,6 +20,7 @@ public struct MoonpayProvider: BuyProvider {
     let walletAddress: String?
     
     let walletAddresses: String?
+    let baseCurrencyCode: String?
     let baseCurrencyAmount: Double?
     let quoteCurrencyAmount: Double?
     
@@ -31,6 +32,7 @@ public struct MoonpayProvider: BuyProvider {
         defaultCurrencyCode: String? = nil,
         walletAddress: String? = nil,
         walletAddresses: String? = nil,
+        baseCurrencyCode: String? = nil,
         baseCurrencyAmount: Double? = nil,
         quoteCurrencyAmount: Double? = nil) {
         self.environment = environment
@@ -40,6 +42,7 @@ public struct MoonpayProvider: BuyProvider {
         self.defaultCurrencyCode = defaultCurrencyCode
         self.walletAddress = walletAddress
         self.walletAddresses = walletAddresses
+        self.baseCurrencyCode = baseCurrencyCode
         self.baseCurrencyAmount = baseCurrencyAmount
         self.quoteCurrencyAmount = quoteCurrencyAmount
     }
@@ -52,6 +55,7 @@ public struct MoonpayProvider: BuyProvider {
             "currencyCode": currencyCode,
             "walletAddress": walletAddress,
             "walletAddresses": walletAddresses,
+            "baseCurrencyCode": baseCurrencyCode,
             "baseCurrencyAmount": baseCurrencyAmount != nil ? "\(baseCurrencyAmount!)" : nil,
             "quoteCurrencyAmount": quoteCurrencyAmount != nil ? "\(quoteCurrencyAmount!)" : nil
         ]

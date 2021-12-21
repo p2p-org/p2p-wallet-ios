@@ -12,11 +12,16 @@ protocol BuyProviderFactory {
     func create(
         walletRepository: WalletsRepository,
         crypto: BuyProviders.Crypto,
-        initialAmount: Double
+        initialAmount: Double,
+        currency: BuyProviders.Currency
     ) throws -> BuyProvider
 }
 
 struct BuyProviders {
+    enum Currency: String {
+        case usd = "usd"
+    }
+    
     enum Crypto: String {
         case eth = "eth"
         case sol = "sol"
@@ -34,7 +39,7 @@ struct BuyProviders {
     }
     
     class MoonpayFactory: BuyProviderFactory {
-        func create(walletRepository: WalletsRepository, crypto: Crypto, initialAmount: Double) throws -> BuyProvider {
+        func create(walletRepository: WalletsRepository, crypto: Crypto, initialAmount: Double, currency: Currency) throws -> BuyProvider {
 //            guard let walletAddress = walletRepository.getWallets().first(where: { $0.token.symbol == crypto.toWallet() })?.pubkey else {
 //                throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("ETH"))
 //            }
@@ -48,6 +53,7 @@ struct BuyProviders {
                     .secretConfig("MOONPAY_STAGING_API_KEY")!,
                 currencyCode: crypto.rawValue,
 //                walletAddress: walletAddress,
+                baseCurrencyCode: currency.rawValue,
                 baseCurrencyAmount: initialAmount
             )
         }
