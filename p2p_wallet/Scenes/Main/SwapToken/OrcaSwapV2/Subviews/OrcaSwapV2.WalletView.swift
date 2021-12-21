@@ -251,10 +251,12 @@ extension OrcaSwapV2.WalletView: UITextFieldDelegate {
 
 private extension OrcaSwapV2.WalletView {
     class BalanceView: BEView {
-        let walletView = UIImageView(width: 20, height: 20, image: .newWalletIcon)
+        private static let subviewsHeight: CGFloat = 20
+
+        let walletView = UIImageView(width: subviewsHeight, height: subviewsHeight, image: .newWalletIcon)
         let balanceLabel = UILabel(textSize: 15, weight: .medium)
         let maxButton = UIButton(
-            height: 20,
+            height: subviewsHeight,
             label: L10n.max.uppercased(),
             labelFont: .systemFont(ofSize: 15, weight: .medium),
             textColor: .h5887ff
@@ -269,6 +271,8 @@ private extension OrcaSwapV2.WalletView {
         
         override func commonInit() {
             super.commonInit()
+
+            balanceLabel.autoSetDimension(.height, toSize: Self.subviewsHeight)
             let stackView = UIStackView(axis: .horizontal, spacing: 5.33, alignment: .center, distribution: .fill) {
                 walletView
                 balanceLabel
