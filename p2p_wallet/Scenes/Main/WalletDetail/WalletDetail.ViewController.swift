@@ -11,7 +11,7 @@ import RxSwift
 import UIKit
 
 protocol WalletDetailScenesFactory {
-    func makeBuyTokenViewController(token: BuyToken.CryptoCurrency) throws -> UIViewController
+    func makeBuyTokenViewController(token: Set<BuyProviders.Crypto>) throws -> UIViewController
     func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
     func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
     func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
@@ -96,7 +96,7 @@ extension WalletDetail {
             switch scene {
             case .buy(let tokens):
                 do {
-                    let vc = try scenesFactory.makeBuyTokenViewController(token: tokens)
+                    let vc = try scenesFactory.makeBuyTokenViewController(token: [tokens])
                     present(vc, animated: true, completion: nil)
                 } catch {
                     showAlert(title: L10n.error, message: error.readableDescription)
