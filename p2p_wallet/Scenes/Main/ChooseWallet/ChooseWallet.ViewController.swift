@@ -42,6 +42,7 @@ extension ChooseWallet {
                 arrangedSubviews: [
                     NavigationBar(
                         title: title,
+                        rightButtonTitle: viewModel.selectedWallet == nil ? L10n.close : L10n.done,
                         closeHandler: { [weak self] in
                             self?.dismiss(animated: true)
                         }
