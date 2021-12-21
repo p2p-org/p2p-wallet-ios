@@ -16,6 +16,7 @@ extension UIView {
         case backgroundColor
         case text
         case textColor
+        case image
     }
     
     func with<T>(

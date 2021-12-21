@@ -144,7 +144,7 @@ class MainContainer {
             $0.token.address == renBTCMint.base58EncodedString
         })
         
-        let viewModel = ReceiveToken.ViewModel(
+        let viewModel = ReceiveToken.SceneModel(
             solanaPubkey: pubkey,
             solanaTokenWallet: tokenWallet,
             tokensRepository: solanaSDK,

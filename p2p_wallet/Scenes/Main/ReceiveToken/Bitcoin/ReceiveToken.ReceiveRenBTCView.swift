@@ -18,7 +18,6 @@ extension ReceiveToken {
         
         // MARK: - Subviews
         private lazy var createWalletView = CreateWalletView(viewModel: viewModel)
-        private lazy var conditionView = ConditionView(viewModel: viewModel)
         private lazy var addressView = AddressView(viewModel: viewModel)
         
         // MARK: - Initializer
@@ -36,7 +35,6 @@ extension ReceiveToken {
         private func layout() {
             let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
                 createWalletView
-                conditionView
                 addressView
             }
             
@@ -58,25 +56,10 @@ extension ReceiveToken {
             )
                 .map { isRenBTCCreated, conditionalAccepted -> Bool in
                     if !isRenBTCCreated {return true}
-                    return conditionalAccepted
-                }
-                .drive(conditionView.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            Driver.combineLatest(
-                isRenBTCWalletCreatedDriver,
-                viewModel.conditionAcceptedDriver
-            )
-                .map { isRenBTCCreated, conditionalAccepted -> Bool in
-                    if !isRenBTCCreated {return true}
                     return !conditionalAccepted
                 }
                 .drive(addressView.rx.isHidden)
                 .disposed(by: disposeBag)
-        }
-        
-        fileprivate func conditionViewButtonConfirmDidTouch(_ conditionView: ConditionView) {
-            viewModel.acceptConditionAndLoadAddress()
         }
     }
 }
@@ -149,72 +132,6 @@ private class CreateWalletView: BEView {
     }
 }
 
-private class ConditionView: BEView {
-    private let viewModel: ReceiveTokenBitcoinViewModelType
-    private let disposeBag = DisposeBag()
-    private lazy var completeTxWithinTimeSwitcher = UISwitch()
-    private lazy var confirmButton = WLButton.stepButton(type: .blue, label: L10n.showAddress)
-        .onTap(self, action: #selector(buttonConfirmDidTouch))
-    
-    init(viewModel: ReceiveTokenBitcoinViewModelType) {
-        self.viewModel = viewModel
-        super.init(frame: .zero)
-    }
-    
-    override func commonInit() {
-        super.commonInit()
-        let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
-            
-            warningView(
-                attributedText:
-                    NSMutableAttributedString()
-                        .text(L10n.bitcoinDepositAddress, size: 15)
-                        .text(" ", size: 15)
-                        .text(L10n.isOnlyOpenFor36Hours, size: 15, weight: .semibold)
-                        .text(", ", size: 15)
-                        .text(L10n.butYouCanSendToItMultipleTimesWithinThisSession, size: 15)
-                        .text(".", size: 15)
-            )
-            
-            ReceiveToken.textBuilder(text: L10n.EachTransactionToThisDepositAddressTakesAbout60MinutesToComplete.forSecurityReasonsYouWillNeedToWaitFor6BlockConfirmationsBeforeYouCanMintRenBTCOnSolana)
-            
-            ReceiveToken.textBuilder(text: L10n.ifYouCannotCompleteThisTransactionWithinTheRequiredTimePleaseReturnAtALaterDate)
-            
-            ReceiveToken.textBuilder(text: L10n.ifYouDoNotFinishYourTransactionWithinThisPeriodSessionTimeFrameYouRiskLosingTheDeposits)
-            
-            UIView.switchField(
-                text: L10n.iCanCompleteThisTransactionWithinTime,
-                switch: completeTxWithinTimeSwitcher
-            )
-            
-            BEStackViewSpacing(20)
-            
-            confirmButton
-        }
-        addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges()
-        
-        bind()
-    }
-    
-    private func bind() {
-        completeTxWithinTimeSwitcher.rx.isOn
-            .asDriver()
-            .drive(confirmButton.rx.isEnabled)
-            .disposed(by: disposeBag)
-        
-        completeTxWithinTimeSwitcher.rx.isOn
-            .asDriver()
-            .map {$0 ? L10n.showAddress: L10n.beSureYouCanCompleteThisTransaction}
-            .drive(confirmButton.rx.title())
-            .disposed(by: disposeBag)
-    }
-    
-    @objc private func buttonConfirmDidTouch() {
-        viewModel.acceptConditionAndLoadAddress()
-    }
-}
-
 private class AddressView: BEView {
     private let disposeBag = DisposeBag()
     private let viewModel: ReceiveTokenBitcoinViewModelType
@@ -255,7 +172,7 @@ private class AddressView: BEView {
         label3 = line3.arrangedSubviews.last as? UILabel
         
         let qrCodeViewAndFrame = ReceiveToken.QrCodeView.withFrame()
-            
+        
         let frame = qrCodeViewAndFrame.0
         qrCodeView = qrCodeViewAndFrame.1
         

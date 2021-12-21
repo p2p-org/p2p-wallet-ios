@@ -125,12 +125,12 @@ extension DAppChannel: WKScriptMessageHandler {
             }
             
             do {
-                var transactions = try data.map { try SolanaSDK.Transaction.from(data: Data(base64urlEncoded: $0)!) }
+                let transactions = try data.map { try SolanaSDK.Transaction.from(data: Data(base64urlEncoded: $0)!) }
                 delegate.signTransactions(transactions: transactions).subscribe(onSuccess: { [weak self] values in
                     do {
-                        self?.call(webView: webView, id: id, args: try values.map { trx in
+                        self?.call(webView: webView, id: id, args: try values.map { trx -> String in
                             var trx = trx
-                            try trx.serialize().base64EncodedString()
+                            return try trx.serialize().base64EncodedString()
                         })
                     } catch let e {
                         self?.call(webView: webView, id: id, error: e.localizedDescription)
