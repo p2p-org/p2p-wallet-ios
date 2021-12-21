@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import Resolver
 
 extension ReceiveToken {
     class ViewController: BEScene {
@@ -61,6 +62,16 @@ extension ReceiveToken {
                     }
                 }
             }
+        }
+        
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            self.tabBarController?.tabBar.isHidden = false
+        }
+    
+        override func viewWillDisappear(_ animated: Bool) { // As soon as vc disappears
+            super.viewWillDisappear(true)
+            self.tabBarController?.tabBar.isHidden = true
         }
     }
 }

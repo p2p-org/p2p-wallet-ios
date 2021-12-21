@@ -666,6 +666,11 @@
 "Select word #%@" = "Sélectionnez le mot #%@";
 "Receive any token within the Solana network even if it is not included in your wallet list" = "Recevez n'importe quel jeton au sein du réseau Solana même s'il n'est pas inclus dans votre liste de portefeuille";
 "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "Lorsque vous choisissez le réseau Bitcoin, votre adresse n'accepte que Bitcoin.  Vous pouvez perdre des actifs en envoyant une autre pièce.\n0,000112 BTC est le montant minimum de la transaction, et vous avez 36 heures pour terminer la transaction après avoir reçu l'adresse.";
+"You pay" = "Tu payes";
+"You get" = "Vous obtenez";
+"Processing fee" = "Frais de traitement";
+"SOL Price" = "Prix ​​SOL";
+"Buy %@ on Moonpay" = "Achetez %@ sur Moonpay";
 "I understand" = "je comprend";
 "Receiving via Bitcoin network" = "Réception via le réseau Bitcoin";
 "Make sure you understand the aspects" = "Assurez-vous de bien comprendre les aspects";

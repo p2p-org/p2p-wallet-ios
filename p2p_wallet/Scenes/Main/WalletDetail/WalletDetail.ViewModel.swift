@@ -156,7 +156,7 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
     }
     
     func buyTokens() {
-        var tokens = BuyToken.CryptoCurrency.all
+        var tokens = BuyProviders.Crypto.eth
         if symbol == "SOL" {
             tokens = .sol
         }

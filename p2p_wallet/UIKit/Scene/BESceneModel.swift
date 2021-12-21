@@ -4,5 +4,8 @@
 
 import Foundation
 
-protocol BESceneModel: AnyObject {
+protocol BESceneModel: AnyObject {}
+
+protocol BEClosabeSceneModel: AnyObject {
+    func close()
 }
