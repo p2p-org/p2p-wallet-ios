@@ -23,4 +23,14 @@ class WLBottomSheet: FlexibleHeightVC {
         pc.cornerRadius = 25
         return pc
     }
+    
+    override func setUp() {
+        super.setUp()
+        
+        if let child = build() {
+            stackView.addArrangedSubview(child)
+        }
+    }
+    
+    func build() -> UIView? { nil }
 }

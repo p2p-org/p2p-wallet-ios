@@ -82,12 +82,12 @@ extension WalletDetail {
         
         override func bind() {
             super.bind()
-            viewModel.walletDriver.map {$0?.name}
+            viewModel.walletDriver.map { $0?.name }
                 .drive(navigationBar.titleLabel.rx.text)
                 .disposed(by: disposeBag)
             
             viewModel.navigatableSceneDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
         }
         
@@ -109,9 +109,8 @@ extension WalletDetail {
                 let vc = scenesFactory.makeSendTokenViewController(walletPubkey: wallet.pubkey, destinationAddress: nil)
                 show(vc, sender: nil)
             case .receive(let pubkey):
-                if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: pubkey)
-                {
-                    present(vc, interactiveDismissalType: .standard, completion: nil)
+                if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: pubkey) {
+                    show(vc, sender: true)
                 }
             case .swap(let wallet):
                 let vc = scenesFactory.makeSwapTokenViewController(provider: .orca, fromWallet: wallet)

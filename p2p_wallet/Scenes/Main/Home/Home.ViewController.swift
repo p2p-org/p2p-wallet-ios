@@ -115,7 +115,7 @@ extension Home {
                 {
                     analyticsManager.log(event: .mainScreenReceiveOpen)
                     analyticsManager.log(event: .receiveOpen(fromPage: "main_screen"))
-                    present(vc, interactiveDismissalType: .standard, completion: nil)
+                    show(vc, sender: true)
                 }
             case .scanQr:
                 analyticsManager.log(event: .mainScreenQrOpen)

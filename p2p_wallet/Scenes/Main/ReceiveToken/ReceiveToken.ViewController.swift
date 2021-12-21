@@ -1,96 +1,105 @@
 //
-//  ReceiveToken.ViewController.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 07/06/2021.
+// Created by Giang Long Tran on 13.12.21.
 //
 
 import Foundation
-import UIKit
 
 extension ReceiveToken {
-    class ViewController: WLIndicatorModalVC, CustomPresentableViewController {
-        // MARK: - Properties
-        let viewModel: ReceiveTokenViewModelType
-        lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill) {
-            UIImageView(width: 24, height: 24, image: .walletReceive, tintColor: .white)
-                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12)
-            UILabel(text: L10n.receive, textSize: 17, weight: .semibold)
-        }
-            .padding(.init(all: 20))
-        lazy var rootView = RootView(viewModel: viewModel)
-        var transitionManager: UIViewControllerTransitioningDelegate?
+    class ViewController: BEScene {
+        private var viewModel: ReceiveSceneModel!
         
-        // MARK: - Initializer
-        init(viewModel: ReceiveTokenViewModelType)
-        {
+        init(viewModel: ReceiveSceneModel) {
             self.viewModel = viewModel
             super.init()
-            modalPresentationStyle = .custom
+            
+            self.viewModel.navigation.drive(onNext: { [weak self] in self?.navigate(to: $0) }).disposed(by: disposeBag)
         }
         
-        // MARK: - Methods
-        override func setUp() {
-            super.setUp()
-            let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
-                headerView
-                UIView.defaultSeparator()
-                rootView
+        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
+        
+        override func build() -> UIView {
+            BESafeArea {
+                UIStackView(axis: .vertical, alignment: .fill) {
+                    // Navbar
+                    WLNavigationBar(forAutoLayout: ()).setup { view in
+                        guard let navigationBar = view as? WLNavigationBar else { return }
+                        navigationBar.backgroundColor = .clear
+                        navigationBar.titleLabel.text = L10n.receive
+                        navigationBar.backButton.onTap { [unowned self] in self.back() }
+                    }
+                    UIView.defaultSeparator()
+                    
+                    BEScrollView(contentInsets: .init(x: .defaultPadding, y: .defaultPadding), spacing: 16) {
+                        // Network button
+                        if viewModel.shouldShowChainsSwitcher {
+                            WLLargeButton {
+                                UIStackView(axis: .horizontal) {
+                                    // Wallet Icon
+                                    UIImageView(width: 44, height: 44)
+                                        .with(.image, drivenBy: viewModel.tokenTypeDriver.map({ type in type.icon }), disposedBy: disposeBag)
+                                    // Text
+                                    UIStackView(axis: .vertical, alignment: .leading) {
+                                        UILabel(text: L10n.showingMyAddressFor, textSize: 13, textColor: .secondaryLabel)
+                                        UILabel(text: L10n.network("Solana"), textSize: 17)
+                                    }.padding(.init(x: 12, y: 0))
+                                    // Next icon
+                                    UIView.defaultNextArrow()
+                                }.padding(.init(x: 15, y: 15))
+                            }.onTap { [unowned self] in
+                                self.viewModel.showSelectionNetwork()
+                            }
+                        }
+                        // Children
+                        ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
+                            .setup { view in
+                                viewModel.tokenTypeDriver.map { token in token != .solana }.drive(view.rx.isHidden).disposed(by: disposeBag)
+                            }
+                        ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel, receiveSolanaViewModel: viewModel.receiveSolanaViewModel)
+                            .setup { view in
+                                viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden).disposed(by: disposeBag)
+                            }
+                    }
+                }
             }
-            
-            containerView.addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges()
         }
-        
-        override func bind() {
-            super.bind()
-            viewModel.navigationSceneDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
-                .disposed(by: disposeBag)
-            
-            viewModel.updateLayoutDriver
-                .drive(onNext: {[weak self] _ in self?.updatePresentationLayout(animated: true)})
-                .disposed(by: disposeBag)
-        }
-        
-        // MARK: - Navigation
-        private func navigate(to scene: NavigatableScene?) {
-            switch scene {
-            case .showInExplorer(let mintAddress):
-                let url = "https://explorer.solana.com/address/\(mintAddress)"
-                showWebsite(url: url)
-            case .showBTCExplorer(let address):
-                let url = "https://btc.com/btc/address/\(address)"
-                showWebsite(url: url)
-            case .chooseBTCOption(let selectedOption):
-                let vc = SelectBTCTypeViewController(viewModel: viewModel.receiveBitcoinViewModel, selectedOption: selectedOption)
-                present(vc, interactiveDismissalType: .standard)
-            case .showRenBTCReceivingStatus:
-                let vm = RenBTCReceivingStatuses.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel)
-                let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
-                let nc = FlexibleHeightNavigationController(rootViewController: vc)
-                present(nc, interactiveDismissalType: .standard)
-            case .share(let address):
+    }
+}
+
+extension ReceiveToken.ViewController {
+    func navigate(to scene: ReceiveToken.NavigatableScene?) {
+        switch scene {
+        case .showInExplorer(let mintAddress):
+            let url = "https://explorer.solana.com/address/\(mintAddress)"
+            guard let vc = WebViewController.inReaderMode(url: url) else { return }
+            present(vc, animated: true)
+        case .showBTCExplorer(let address):
+            let url = "https://btc.com/btc/address/\(address)"
+            guard let vc = WebViewController.inReaderMode(url: url) else { return }
+            present(vc, animated: true)
+        case .chooseBTCOption(let selectedOption):
+            let vc = ReceiveToken.SelectBTCTypeViewController(viewModel: viewModel.receiveBitcoinViewModel, selectedOption: selectedOption)
+            present(vc, animated: true)
+        case .showRenBTCReceivingStatus:
+            let vm = RenBTCReceivingStatuses.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel)
+            let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
+            let nc = FlexibleHeightNavigationController(rootViewController: vc)
+            present(vc, animated: true)
+        case .share(let address, let qrCode):
+            if let qrCode = qrCode {
+                let vc = UIActivityViewController(activityItems: [qrCode], applicationActivities: nil)
+                present(vc, animated: true)
+            } else if let address = address {
                 let vc = UIActivityViewController(activityItems: [address], applicationActivities: nil)
-                present(vc, animated: true, completion: nil)
-            case .help:
-                let vc = HelpViewController()
-                present(vc, animated: true, completion: nil)
-            case .none:
-                break
+                present(vc, animated: true)
             }
-        }
-        
-        // MARK: - Transition
-        override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
-            super.calculateFittingHeightForPresentedView(targetWidth: targetWidth)
-                + headerView.fittingHeight(targetWidth: targetWidth)
-                + 1 // separator
-                + rootView.fittingHeight(targetWidth: targetWidth)
-        }
-        
-        var dismissalHandlingScrollView: UIScrollView? {
-            rootView.scrollView
+        case .help:
+            let vc = ReceiveToken.HelpViewController()
+            present(vc, animated: true)
+        case .networkSelection:
+            let vc = ReceiveToken.NetworkSelectionScene(viewModel: viewModel)
+            show(vc, sender: nil)
+        default:
+            return
         }
     }
 }
