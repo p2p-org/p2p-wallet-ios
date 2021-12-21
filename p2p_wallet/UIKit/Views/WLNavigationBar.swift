@@ -46,3 +46,57 @@ class WLNavigationBar: BEView {
         titleLabel.text = title
     }
 }
+
+class NewWLNavigationBar: BECompositionView {
+    private var backButton: UIView!
+    private var title: UILabel!
+    
+    private let actions: UIView
+    
+    let initialTitle: String?
+    
+    init(title: String? = nil) {
+        self.initialTitle = title
+        self.actions = BEContainer()
+        super.init()
+    }
+    
+    init(title: String? = nil, @BEViewBuilder actions: Builder) {
+        self.initialTitle = title
+        self.actions = actions().build()
+        super.init()
+    }
+    
+    @discardableResult
+    func onBack(_ callback: @escaping () -> Void) -> Self {
+        backButton.onTap(callback)
+        return self
+    }
+    
+    override func build() -> UIView {
+        UIStackView(axis: .vertical, alignment: .fill) {
+            UIStackView(axis: .horizontal, alignment: .center, distribution: .equalCentering) {
+                // Back button
+                UIImageView(width: 14, height: 24, image: UIImage(systemName: "chevron.left"), tintColor: .h5887ff)
+                    .padding(.init(x: 6, y: 4))
+                    .setup({ view in
+                        self.backButton = view
+                        self.backButton.isUserInteractionEnabled = true
+                    })
+                
+                // Title
+                UILabel(text: initialTitle, textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
+                    .setup({ view in self.title = view as! UILabel })
+                
+                // Actions
+                actions
+            }.padding(.init(x: 12, y: 8))
+            UIView.defaultSeparator()
+        }.frame(height: 50)
+    }
+    
+    override func layout() {
+        backButton.widthAnchor.constraint(equalTo: actions.widthAnchor).isActive = true
+    }
+    
+}

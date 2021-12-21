@@ -68,6 +68,9 @@ enum AnalyticsEvent: MirrorableEnum {
     case receiveAddressCopy
     case receiveNameShare
     case receiveAddressShare
+    case receiveWalletAddressCopy
+    case receiveQrcodeShare
+    case receiveQrcodeSave
     case receiveViewExplorerOpen
     // send
     case sendOpen(fromPage: String)

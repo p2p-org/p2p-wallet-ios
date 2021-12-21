@@ -55,6 +55,10 @@ extension Home {
         
         private lazy var balancesOverviewView: BalancesOverviewView = {
             let view = BalancesOverviewView()
+            
+            view.didTapBuy = { [weak self] in
+                self?.viewModel.navigate(to: .buyToken)
+            }
             view.didTapSend = { [weak self] in
                 self?.viewModel.navigate(to: .sendToken(address: nil))
             }
