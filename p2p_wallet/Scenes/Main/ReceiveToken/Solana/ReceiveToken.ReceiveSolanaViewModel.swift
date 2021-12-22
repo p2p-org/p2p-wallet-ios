@@ -25,6 +25,7 @@ extension ReceiveToken {
         @Injected private var nameStorage: NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManger: ClipboardManagerType
+        @Injected private var notificationsService: NotificationsServiceType
         private let tokensRepository: TokensRepository
         private let navigationSubject: PublishRelay<NavigatableScene?>
         
@@ -67,9 +68,9 @@ extension ReceiveToken {
         
         @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
             if let error = error {
-                UIApplication.shared.showToast(message: "\(error.localizedDescription)")
+                notificationsService.showInAppNotification(.error(error))
             } else {
-                UIApplication.shared.showToast(message: "✅ \(L10n.savedToPhotoLibrary)")
+                notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
             }
         }
         
