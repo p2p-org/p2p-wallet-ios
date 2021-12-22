@@ -88,7 +88,7 @@ extension Home.ViewModel: HomeViewModelType {
         if let name = name {
             storage.save(name: name)
             Defaults.forceCloseNameServiceBanner = true
-            notificationsService.showToast(
+            notificationsService.showInAppNotification(
                 .done(
                     L10n.usernameIsSuccessfullyReserved(name.withNameServiceDomain())
                 )

@@ -313,7 +313,7 @@ private class AddressView: BEView {
         let addressLabelOriginalColor = addressLabel.textColor
         addressLabel.textColor = .h5887ff
         
-        viewModel.notificationsService.showToast(.done(L10n.addressCopiedToClipboard)) {
+        viewModel.notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard)) {
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
                 self?.addressLabel.textColor = addressLabelOriginalColor
                 self?.isCopying = false

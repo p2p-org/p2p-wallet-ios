@@ -134,7 +134,7 @@ extension ReserveName {
                     self?.nameDidReserve(name)
                 }, onFailure: { [weak self] error in
                     self?.stopLoading()
-                    self?.notificationsService.showToast(.error(error))
+                    self?.notificationsService.showInAppNotification(.error(error))
                 })
                 .disposed(by: disposeBag)
         }
@@ -211,7 +211,7 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
 
 extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
     func gtCaptcha(_ manager: GT3CaptchaManager, errorHandler error: GT3Error) {
-        notificationsService.showToast(.error(error))
+        notificationsService.showInAppNotification(.error(error))
     }
 
     func gtCaptcha(_ manager: GT3CaptchaManager, didReceiveCaptchaCode code: String, result: [AnyHashable: Any]?, message: String?) {

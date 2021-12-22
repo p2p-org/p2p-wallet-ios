@@ -94,7 +94,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                 self?.updateRepository(transactionIndex: index, fees: fees, isReversed: true)
                 
                 // show alert
-                self?.notificationsService.showToast(.error(L10n.errorSendingTransaction + ": " + error.readableDescription))
+                self?.notificationsService.showInAppNotification(.error(L10n.errorSendingTransaction + ": " + error.readableDescription))
             })
             .disposed(by: disposeBag)
         

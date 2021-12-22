@@ -109,7 +109,7 @@ extension Settings {
             if let error = error {
                 showError(error)
             } else {
-                viewModel.notificationsService.showToast(.done(L10n.savedToPhotoLibrary))
+                viewModel.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
             }
         }
         

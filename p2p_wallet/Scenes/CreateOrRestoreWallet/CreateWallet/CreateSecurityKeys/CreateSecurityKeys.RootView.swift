@@ -117,7 +117,7 @@ extension CreateSecurityKeys {
             if let error = error {
                 showErrorView(error: error)
             } else {
-                viewModel.notificationsService.showToast(.done(L10n.savedToPhotoLibrary))
+                viewModel.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
             }
         }
     }
