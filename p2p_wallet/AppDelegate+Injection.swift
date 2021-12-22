@@ -44,6 +44,10 @@ extension Resolver: ResolverRegistering {
             .implements(PricesFetcher.self)
             .scope(.application)
         
+        register { ClipboardManager() }
+            .implements(ClipboardManagerType.self)
+            .scope(.application)
+        
         // MARK: - Others
         register { SessionBannersAvailabilityState() }
             .scope(.session)
