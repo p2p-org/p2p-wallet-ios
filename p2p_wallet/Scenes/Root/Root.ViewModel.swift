@@ -30,6 +30,7 @@ extension Root {
         // MARK: - Dependencies
         @Injected private var storage: AccountStorageType & PincodeStorageType & NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var notificationsService: NotificationsServiceType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -103,8 +104,8 @@ extension Root.ViewModel: ChangeNetworkResponder {
         showAuthenticationOnMainOnAppear = false
         reload()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            UIApplication.shared.showToast(message: "✅ " + L10n.networkChanged)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.notificationsService.showToast(.done(L10n.networkChanged))
         }
     }
 }
@@ -117,10 +118,9 @@ extension Root.ViewModel: ChangeLanguageResponder {
         showAuthenticationOnMainOnAppear = false
         reload()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             let languageChangedText = language.originalName.map(L10n.changedLanguageTo) ?? L10n.interfaceLanguageChanged
-
-            UIApplication.shared.showToast(message: "✅ " + languageChangedText)
+            self?.notificationsService.showToast(.done(languageChangedText))
         }
     }
 }
@@ -168,8 +168,8 @@ extension Root.ViewModel: CreateOrRestoreWalletHandler {
                 }
             } catch {
                 self?.isLoadingSubject.accept(false)
-                DispatchQueue.main.async {
-                    UIApplication.shared.showToast(message: (error as? SolanaSDK.Error)?.errorDescription ?? error.localizedDescription)
+                DispatchQueue.main.async { [weak self] in
+                    self?.notificationsService.showToast(.error(error))
                     self?.creatingOrRestoringWalletDidCancel()
                 }
             }

@@ -11,6 +11,7 @@ import RxCocoa
 
 class ProcessingTransactionsManager: ProcessingTransactionsRepository {
     // MARK: - Dependencies
+    @Injected private var notificationsService: NotificationsServiceType
     private let handler: TransactionHandler
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
@@ -93,7 +94,7 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                 self?.updateRepository(transactionIndex: index, fees: fees, isReversed: true)
                 
                 // show alert
-                UIApplication.shared.showToast(message: "❌ " + L10n.errorSendingTransaction + ": " + error.readableDescription)
+                self?.notificationsService.showToast(.error(L10n.errorSendingTransaction + ": " + error.readableDescription))
             })
             .disposed(by: disposeBag)
         

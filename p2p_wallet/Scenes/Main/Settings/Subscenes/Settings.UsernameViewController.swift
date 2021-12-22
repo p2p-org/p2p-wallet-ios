@@ -109,7 +109,7 @@ extension Settings {
             if let error = error {
                 showError(error)
             } else {
-                UIApplication.shared.showToast(message: "✅ \(L10n.savedToPhotoLibrary)")
+                viewModel.notificationsService.showToast(.done(L10n.savedToPhotoLibrary))
             }
         }
         

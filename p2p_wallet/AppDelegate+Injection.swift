@@ -43,6 +43,9 @@ extension Resolver: ResolverRegistering {
         register { CryptoComparePricesFetcher() }
             .implements(PricesFetcher.self)
             .scope(.application)
+        register { NotificationsService() }
+            .implements(NotificationsServiceType.self)
+            .scope(.application)
         
         // MARK: - Others
         register { SessionBannersAvailabilityState() }

@@ -28,6 +28,7 @@ extension Home {
         @Injected var storage: AccountStorageType & NameStorageType
         @Injected var bannersManager: BannersManagerType
         @Injected var bannersKindTransformer: BannerKindTransformerType
+        @Injected var notificationsService: NotificationsServiceType
         
         // MARK: - Properties
         let walletsRepository: WalletsRepository
@@ -87,7 +88,11 @@ extension Home.ViewModel: HomeViewModelType {
         if let name = name {
             storage.save(name: name)
             Defaults.forceCloseNameServiceBanner = true
-            UIApplication.shared.showToast(message: "✅ \(L10n.usernameIsSuccessfullyReserved(name.withNameServiceDomain()))")
+            notificationsService.showToast(
+                .done(
+                    L10n.usernameIsSuccessfullyReserved(name.withNameServiceDomain())
+                )
+            )
         }
         nameDidReserveSubject.accept(())
     }
