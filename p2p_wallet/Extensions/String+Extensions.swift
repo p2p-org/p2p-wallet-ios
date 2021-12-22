@@ -94,7 +94,6 @@ extension String {
             body: textColor ?? UIColor.textBlack
         )
         
-        
         var paragraph = StaticParagraphStyleCollection()
         paragraph.body = {
             let p = NSMutableParagraphStyle()
