@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol ReceiveTokenBitcoinViewModelType {
+    var notificationsService: NotificationsServiceType {get}
     var isReceivingRenBTCDriver: Driver<Bool> {get}
     var isLoadingDriver: Driver<Bool> {get}
     var errorDriver: Driver<String?> {get}
@@ -41,6 +42,7 @@ extension ReceiveToken {
         // MARK: - Dependencies
         private let renVMService: RenVMLockAndMintServiceType
         @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected var notificationsService: NotificationsServiceType
         private let navigationSubject: PublishRelay<NavigatableScene?>
         private let associatedTokenAccountHandler: AssociatedTokenAccountHandler
         

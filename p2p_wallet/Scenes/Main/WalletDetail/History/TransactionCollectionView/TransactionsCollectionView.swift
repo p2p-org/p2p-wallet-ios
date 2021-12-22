@@ -92,8 +92,8 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
 //        (viewModel as! TransactionsViewModel).isFetchingReceiptDriver
 //            .drive(onNext: {isFetching in
 //                if isFetching {
-//                    UIApplication.shared.showToast(
-//                        message: "✅ " +  L10n.ReceivedNewTokens.downloadingReceipt
+//                    notificationsService.showToast(
+//                        .done(message: L10n.ReceivedNewTokens.downloadingReceipt)
 //                    )
 //                }
 //            })
