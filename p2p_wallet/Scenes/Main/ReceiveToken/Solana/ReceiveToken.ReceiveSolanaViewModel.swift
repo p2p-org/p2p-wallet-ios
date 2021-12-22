@@ -53,7 +53,8 @@ extension ReceiveToken {
         
         func copyAction() {
             analyticsManager.log(event: .receiveWalletAddressCopy)
-            UIApplication.shared.copyToClipboard(pubkey, alertMessage: "✅ " + L10n.addressCopiedToClipboard)
+            clipboardManger.copyToClipboard(pubkey)
+            notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
         }
         
         func shareAction(image: UIImage) {
