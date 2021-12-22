@@ -24,6 +24,7 @@ extension ReceiveToken {
     class SolanaViewModel: NSObject, ReceiveTokenSolanaViewModelType {
         @Injected private var nameStorage: NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var clipboardManger: ClipboardManagerType
         private let tokensRepository: TokensRepository
         private let navigationSubject: PublishRelay<NavigatableScene?>
         

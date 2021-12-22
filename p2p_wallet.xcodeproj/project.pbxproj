@@ -15,6 +15,7 @@
 		3B2BAFA62761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */; };
 		3B2BAFA82761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */; };
 		3B35734C2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B35734B2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift */; };
+		3B78CB572773147F00FB3C4C /* ClipboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB562773147F00FB3C4C /* ClipboardManager.swift */; };
 		3B87A1512762FCAA00F09883 /* SendToken.SelectNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A1502762FCAA00F09883 /* SendToken.SelectNetwork.swift */; };
 		3B87A1532762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A1522762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift */; };
 		3B87A1552762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A1542762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift */; };
@@ -506,6 +507,7 @@
 		3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenRecipientAndNetworkHandler.swift; sourceTree = "<group>"; };
 		3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenTokenAndAmountHandler.swift; sourceTree = "<group>"; };
 		3B35734B2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2ConfirmSwappingViewModelType.swift; sourceTree = "<group>"; };
+		3B78CB562773147F00FB3C4C /* ClipboardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardManager.swift; sourceTree = "<group>"; };
 		3B87A1502762FCAA00F09883 /* SendToken.SelectNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.swift; sourceTree = "<group>"; };
 		3B87A1522762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.ViewModel.swift; sourceTree = "<group>"; };
 		3B87A1542762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.ViewController.swift; sourceTree = "<group>"; };
@@ -1992,6 +1994,7 @@
 				BCB28692274B62920074E1D5 /* FeeService.swift */,
 				BCB286CD275084A10074E1D5 /* DAppChannel.swift */,
 				84699FA4ED2E68B9123A4952 /* Moonpay */,
+				3B78CB562773147F00FB3C4C /* ClipboardManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -3140,6 +3143,7 @@
 				84699E6257F040107D97BA94 /* SolanaBuyToken.SceneModel.swift in Sources */,
 				84699FB6CA3886D764B9B4D1 /* SolanaBuyToken.swift in Sources */,
 				84699019D2C5C5E05EC8466A /* BuyToken.WidgetViewController.swift in Sources */,
+				3B78CB572773147F00FB3C4C /* ClipboardManager.swift in Sources */,
 				8469996FB7AC9BB16D283B3B /* BuyToken.ViewController.swift in Sources */,
 				84699496D82FBB9BD9FB9660 /* BuyToken.swift in Sources */,
 				846993C005071DBC7474F46B /* BuyRoot.swift in Sources */,
