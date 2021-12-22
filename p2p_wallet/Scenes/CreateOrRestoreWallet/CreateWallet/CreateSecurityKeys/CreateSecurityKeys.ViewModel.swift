@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol CreateSecurityKeysViewModelType: AnyObject {
+    var notificationsService: NotificationsServiceType { get }
     var showTermsAndConditionsSignal: Signal<Void> { get }
     var phrasesDriver: Driver<[String]> { get }
     var errorSignal: Signal<String> { get }
@@ -31,6 +32,7 @@ extension CreateSecurityKeys {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var createWalletViewModel: CreateWalletViewModelType
         @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected var notificationsService: NotificationsServiceType
 
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -100,7 +102,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         )
         
         if result {
-            UIApplication.shared.showToast(message: "✅ " + L10n.savedToICloud)
+            notificationsService.showInAppNotification(.done(L10n.savedToICloud))
             createWalletViewModel.handlePhrases(phrasesSubject.value)
         } else {
             errorSubject.accept(L10n.SecurityKeyCanTBeSavedIntoIcloud.pleaseTryAgain)

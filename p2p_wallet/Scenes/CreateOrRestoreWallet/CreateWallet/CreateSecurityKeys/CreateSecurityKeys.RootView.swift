@@ -117,7 +117,7 @@ extension CreateSecurityKeys {
             if let error = error {
                 showErrorView(error: error)
             } else {
-                UIApplication.shared.showToast(message: "✅ \(L10n.savedToPhotoLibrary)")
+                viewModel.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
             }
         }
     }
