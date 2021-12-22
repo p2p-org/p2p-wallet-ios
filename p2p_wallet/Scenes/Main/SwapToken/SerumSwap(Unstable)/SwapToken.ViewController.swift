@@ -142,9 +142,5 @@ extension SerumSwapV1 {
                 + 1 // separator
                 + rootView.fittingHeight(targetWidth: targetWidth)
         }
-        
-        override var scrollViewAvoidingTabBar: UIScrollView? {
-            rootView.scrollView
-        }
     }
 }

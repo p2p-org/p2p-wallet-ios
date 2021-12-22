@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import Resolver
 import SafariServices
+import WebKit
 
 extension BuyRoot {
     class ViewController: BaseVC {
@@ -46,11 +47,21 @@ extension BuyRoot {
                 switch scene {
                 case .buyToken(let crypto, let amount):
                     let factory: BuyProviderFactory = Resolver.resolve()
-                    let provider = try factory.create(walletRepository: viewModel.walletRepository, crypto: crypto, initialAmount: amount)
-//                    let vc = try BuyToken.ViewController(provider: provider)
-                    let vc = SFSafariViewController(url: URL(string: provider.getUrl())!)
-                    vc.modalPresentationStyle = .automatic
-                    present(vc, animated: true)
+                    let provider = try factory.create(
+                        walletRepository: viewModel.walletRepository,
+                        crypto: crypto,
+                        initialAmount: amount,
+                        currency: .usd
+                    )
+                    // let vc = try BuyToken.ViewController(provider: provider)
+                    let dataTypes = Set([WKWebsiteDataTypeCookies,
+                                         WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeSessionStorage,
+                                         WKWebsiteDataTypeWebSQLDatabases, WKWebsiteDataTypeIndexedDBDatabases])
+                    WKWebsiteDataStore.default().removeData(ofTypes: dataTypes, modifiedSince: Date.distantPast) { [weak self] in
+                        let vc = SFSafariViewController(url: URL(string: provider.getUrl())!)
+                        vc.modalPresentationStyle = .automatic
+                        self?.present(vc, animated: true)
+                    }
                 case .back:
                     if navigation.children.count > 1 {
                         navigation.popViewController(animated: true)
