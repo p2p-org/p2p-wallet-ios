@@ -20,17 +20,17 @@ class BaseVC: BEViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if preferredTabBarHidden == true {
+        if let preferredTabBarHidden = preferredTabBarHidden {
             // hide tab bar
-            NotificationCenter.default.post(name: .shouldHideTabBar, object: true)
+            NotificationCenter.default.post(name: .shouldHideTabBar, object: preferredTabBarHidden)
         }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if preferredTabBarHidden == true {
-            // show tab bar
-            NotificationCenter.default.post(name: .shouldHideTabBar, object: false)
+        if let preferredTabBarHidden = preferredTabBarHidden {
+            // hide tab bar
+            NotificationCenter.default.post(name: .shouldHideTabBar, object: !preferredTabBarHidden)
         }
     }
     

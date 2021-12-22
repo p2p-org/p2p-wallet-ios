@@ -36,11 +36,11 @@ class TabBarVC: BEPagesVC {
         let dAppContainerVC = scenesFactory.makeDAppContainerViewController(dapp: .fake)
         
         viewControllers = [
-            createNavigationController(rootVC: mainVC),
-            createNavigationController(rootVC: investmentsVC),
-            createNavigationController(rootVC: BaseVC()),
-            createNavigationController(rootVC: dAppContainerVC),
-            createNavigationController(rootVC: BaseVC())
+            UINavigationController(rootViewController: mainVC),
+            UINavigationController(rootViewController: investmentsVC),
+            UINavigationController(rootViewController: BaseVC()),
+            UINavigationController(rootViewController: dAppContainerVC),
+            UINavigationController(rootViewController: BaseVC())
         ]
         
         // disable scrolling
@@ -67,20 +67,24 @@ class TabBarVC: BEPagesVC {
         moveToPage(0)
     }
     
+    override func bind() {
+        super.bind()
+        NotificationCenter.default.rx.notification(.shouldHideTabBar)
+            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .subscribe(onNext: {[weak self] notification in
+                guard let self = self, let shouldHide = notification.object as? Bool else {return}
+                self.hideTabBar(shouldHide)
+            })
+            .disposed(by: disposeBag)
+    }
+    
     override func setUpContainerView() {
         view.addSubview(containerView)
         containerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
     }
     
     // MARK: - Helpers
-    private func createNavigationController(rootVC: UIViewController) -> UINavigationController {
-        let nc = NavigationController(rootViewController: rootVC)
-        nc.hideTabBarCompletion = {[weak self] shouldHide in
-            self?.hideTabBar(shouldHide)
-        }
-        return nc
-    }
-    
     private func hideTabBar(_ shouldHide: Bool) {
         tabBarTopConstraint.isActive = shouldHide
         containerView.setNeedsLayout()
@@ -135,23 +139,5 @@ class TabBarVC: BEPagesVC {
         items.filter {$0.tag != currentPage}.forEach {$0.subviews.first?.tintColor = .tabbarUnselected}
         
         setNeedsStatusBarAppearanceUpdate()
-    }
-}
-
-private class NavigationController: UINavigationController {
-    var hideTabBarCompletion: ((Bool) -> Void)?
-    
-    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
-        if viewControllers.count > 0 {
-            hideTabBarCompletion?(true)
-        }
-        super.pushViewController(viewController, animated: animated)
-    }
-    
-    override func popViewController(animated: Bool) -> UIViewController? {
-        if viewControllers.count == 2 {
-            hideTabBarCompletion?(false)
-        }
-        return super.popViewController(animated: animated)
     }
 }
