@@ -83,12 +83,4 @@ extension UIApplication {
             }
         }
     }
-    
-    // TODO: - Replace by ClipboardManager
-    func copyToClipboard(_ text: String?, alert: Bool = true, alertMessage: String? = nil) {
-        UIPasteboard.general.string = text
-        if alert {
-            showToast(message: alertMessage ?? "✅ " + L10n.copiedToClipboard)
-        }
-    }
 }

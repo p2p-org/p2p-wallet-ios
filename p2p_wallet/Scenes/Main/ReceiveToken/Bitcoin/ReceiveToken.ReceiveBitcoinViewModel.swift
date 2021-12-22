@@ -42,6 +42,7 @@ extension ReceiveToken {
         // MARK: - Dependencies
         private let renVMService: RenVMLockAndMintServiceType
         @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationsServiceType
         private let navigationSubject: PublishRelay<NavigatableScene?>
         private let associatedTokenAccountHandler: AssociatedTokenAccountHandler
@@ -159,7 +160,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
     
     func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
-        UIApplication.shared.copyToClipboard(address, alert: false)
+        clipboardManager.copyToClipboard(address)
         analyticsManager.log(event: logEvent)
     }
     
