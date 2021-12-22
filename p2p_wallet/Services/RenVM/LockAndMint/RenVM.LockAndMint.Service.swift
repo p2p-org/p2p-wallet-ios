@@ -9,6 +9,7 @@ import Foundation
 import RxAlamofire
 import RxSwift
 import RxCocoa
+import Resolver
 
 protocol RenVMLockAndMintServiceType {
     var isLoadingDriver: Driver<Bool> {get}
@@ -41,6 +42,7 @@ extension RenVM.LockAndMint {
         private let account: SolanaSDK.Account
         private let sessionStorage: RenVMLockAndMintSessionStorageType
         private let transactionHandler: TransactionHandler
+        @Injected private var notificationsService: NotificationsServiceType
         
         // MARK: - Properties
         private var loadingDisposable: Disposable?
@@ -250,11 +252,11 @@ extension RenVM.LockAndMint {
                         .andThen(.just(response))
                 }
                 .observe(on: MainScheduler.instance)
-                .subscribe(onSuccess: { response in
+                .subscribe(onSuccess: { [weak self] response in
                     let amount = UInt64(response.amountOut ?? "")
                     let value = (amount ?? tx.tx.value).convertToBalance(decimals: 8)
                         .toString(maximumFractionDigits: 8)
-                    UIApplication.shared.showToast(message: L10n.receivedRenBTC(value))
+                    self?.notificationsService.showToast(.message(L10n.receivedRenBTC(value)))
                     
                     // remove minted after 1 minute
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(60)) { [weak self] in

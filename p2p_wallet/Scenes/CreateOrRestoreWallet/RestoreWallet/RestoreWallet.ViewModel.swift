@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Resolver
 
 protocol RestoreWalletViewModelType: ReserveNameHandler {
     var navigatableSceneDriver: Driver<RestoreWallet.NavigatableScene?> { get }
@@ -30,6 +31,7 @@ extension RestoreWallet {
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var nameService: NameServiceType
         @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var notificationsService: NotificationsServiceType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -78,9 +80,9 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     
     private func _restoreFromIcloud() {
         guard let accounts = iCloudStorage.accountFromICloud(), accounts.count > 0
-            else {
+        else {
             isRestorableUsingIcloudSubject.accept(false)
-            UIApplication.shared.showToast(message: L10n.thereIsNoP2PWalletSavedInYourICloud)
+            notificationsService.showToast(.message(L10n.thereIsNoP2PWalletSavedInYourICloud))
             return
         }
         analyticsManager.log(event: .recoveryRestoreIcloudClick)
