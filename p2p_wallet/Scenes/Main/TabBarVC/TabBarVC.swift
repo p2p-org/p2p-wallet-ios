@@ -138,7 +138,7 @@ class TabBarVC: BEPagesVC {
     }
 }
 
-private final class NavigationController: UINavigationController {
+private class NavigationController: UINavigationController {
     var hideTabBarCompletion: ((Bool) -> Void)?
     
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
