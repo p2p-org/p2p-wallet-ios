@@ -370,7 +370,7 @@
 "Settings" = "Настройки";
 "One unified address to receive SOL or SPL Tokens" = "Единый адрес для получения SOL и SPL токенов";
 "SOL and SPL Tokens" = "Токены SOL и SPL";
-"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications. SPL Tokens can be traded on Serum, a Solana based decentralized exchange and FTX." = "Библиотека программ Solana (SPL) - это стандарт токенов блокчейна Solana.\n\nПо аналогии с токенами ERC20 в сети Ethereum, токены SPL предназначены для приложений DeFi. Токенами SPL можно торговать на FTX и децентрализованной бирже Serum, основанной на Solana.";
+"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications." = "Библиотека программ Solana (SPL) - это стандарт токенов блокчейна Solana.\n\nПо аналогии с токенами ERC20 в сети Ethereum, токены SPL предназначены для приложений DeFi. Токенами SPL можно торговать на FTX и децентрализованной бирже Serum, основанной на Solana.";
 "Send SOL or any SPL Tokens on one address" = "Отправляйте SOL или любые токены SPL на один адрес";
 "Backing up" = "Резервное копирование";
 "The phrases you has entered is not correct" = "Вы ввели неправильные фразы";
@@ -679,3 +679,4 @@
 "Confirm swapping %@ → %@" = "Подтвердите замену %@ → %@";
 "Spend" = "Тратить";
 "Swap %@ → %@" = "Обменять %@ → %@";
+"This address accepts only %@. You may lose assets by sending another coin." = "Этот адрес принимает только %@.  Вы можете потерять активы, отправив еще одну монету.";
