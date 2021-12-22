@@ -233,7 +233,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         analyticsManager.log(event: .settingsСurrencySelected(сurrency: fiat.code))
         changeFiatResponder.changeFiat(to: fiat)
         fiatSubject.accept(fiat)
-        notificationsService.showToast(.done(L10n.currencyChanged))
+        notificationsService.showInAppNotification(.done(L10n.currencyChanged))
     }
     
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint) {

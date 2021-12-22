@@ -9,20 +9,20 @@ import Foundation
 import UIKit
 
 protocol NotificationsServiceType {
-    func showToast(_ toast: Toast)
-    func showToast(_ toast: Toast, completion: (() -> Void)?)
+    func showInAppNotification(_ toast: InAppNotification)
+    func showInAppNotification(_ toast: InAppNotification, completion: (() -> Void)?)
 }
 
 class NotificationsService: NotificationsServiceType {
-    func showToast(_ toast: Toast) {
+    func showInAppNotification(_ toast: InAppNotification) {
         UIApplication.shared.showToast(message: createTextFromToast(toast))
     }
     
-    func showToast(_ toast: Toast, completion: (() -> Void)?) {
+    func showInAppNotification(_ toast: InAppNotification, completion: (() -> Void)?) {
         UIApplication.shared.showToast(message: createTextFromToast(toast), completion: completion)
     }
     
-    private func createTextFromToast(_ toast: Toast) -> String {
+    private func createTextFromToast(_ toast: InAppNotification) -> String {
         var array = [String]()
         if let emoji = toast.emoji {
             array.append(emoji)

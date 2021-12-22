@@ -105,7 +105,7 @@ extension Root.ViewModel: ChangeNetworkResponder {
         reload()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            self?.notificationsService.showToast(.done(L10n.networkChanged))
+            self?.notificationsService.showInAppNotification(.done(L10n.networkChanged))
         }
     }
 }
@@ -120,7 +120,7 @@ extension Root.ViewModel: ChangeLanguageResponder {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             let languageChangedText = language.originalName.map(L10n.changedLanguageTo) ?? L10n.interfaceLanguageChanged
-            self?.notificationsService.showToast(.done(languageChangedText))
+            self?.notificationsService.showInAppNotification(.done(languageChangedText))
         }
     }
 }
@@ -169,7 +169,7 @@ extension Root.ViewModel: CreateOrRestoreWalletHandler {
             } catch {
                 self?.isLoadingSubject.accept(false)
                 DispatchQueue.main.async { [weak self] in
-                    self?.notificationsService.showToast(.error(error))
+                    self?.notificationsService.showInAppNotification(.error(error))
                     self?.creatingOrRestoringWalletDidCancel()
                 }
             }

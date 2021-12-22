@@ -70,7 +70,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
             } catch {
                 DispatchQueue.main.async { [weak self] in
                     UIApplication.shared.hideHud()
-                    self?.notificationsService.showToast(.error(error))
+                    self?.notificationsService.showInAppNotification(.error(error))
                 }
             }
         }

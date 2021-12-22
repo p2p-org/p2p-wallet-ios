@@ -102,7 +102,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         )
         
         if result {
-            notificationsService.showToast(.done(L10n.savedToICloud))
+            notificationsService.showInAppNotification(.done(L10n.savedToICloud))
             createWalletViewModel.handlePhrases(phrasesSubject.value)
         } else {
             errorSubject.accept(L10n.SecurityKeyCanTBeSavedIntoIcloud.pleaseTryAgain)

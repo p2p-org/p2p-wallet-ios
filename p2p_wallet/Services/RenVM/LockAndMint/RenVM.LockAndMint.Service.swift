@@ -256,7 +256,7 @@ extension RenVM.LockAndMint {
                     let amount = UInt64(response.amountOut ?? "")
                     let value = (amount ?? tx.tx.value).convertToBalance(decimals: 8)
                         .toString(maximumFractionDigits: 8)
-                    self?.notificationsService.showToast(.message(L10n.receivedRenBTC(value)))
+                    self?.notificationsService.showInAppNotification(.message(L10n.receivedRenBTC(value)))
                     
                     // remove minted after 1 minute
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(60)) { [weak self] in

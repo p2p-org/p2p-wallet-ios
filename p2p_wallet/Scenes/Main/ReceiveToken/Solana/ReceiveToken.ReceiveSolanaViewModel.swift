@@ -67,9 +67,9 @@ extension ReceiveToken {
         
         @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
             if let error = error {
-                notificationsService.showToast(.error(error))
+                notificationsService.showInAppNotification(.error(error))
             } else {
-                notificationsService.showToast(.done(L10n.savedToPhotoLibrary))
+                notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
             }
         }
         

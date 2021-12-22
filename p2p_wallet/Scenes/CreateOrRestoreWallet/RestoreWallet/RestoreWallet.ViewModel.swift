@@ -82,7 +82,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         guard let accounts = iCloudStorage.accountFromICloud(), accounts.count > 0
         else {
             isRestorableUsingIcloudSubject.accept(false)
-            notificationsService.showToast(.message(L10n.thereIsNoP2PWalletSavedInYourICloud))
+            notificationsService.showInAppNotification(.message(L10n.thereIsNoP2PWalletSavedInYourICloud))
             return
         }
         analyticsManager.log(event: .recoveryRestoreIcloudClick)
