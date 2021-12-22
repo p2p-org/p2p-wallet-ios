@@ -16,7 +16,6 @@ extension SendToken.ChooseRecipientAndNetwork {
         private let viewModel: SendTokenChooseRecipientAndNetworkViewModelType
         
         // MARK: - Properties
-        override var preferredTabBarHidden: Bool? {false}
         
         // MARK: - Subviews
         private lazy var pagesVC = WLSegmentedPagesVC(items: [
