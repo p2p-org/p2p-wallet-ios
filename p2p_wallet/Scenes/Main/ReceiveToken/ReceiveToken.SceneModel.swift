@@ -25,6 +25,7 @@ protocol ReceiveSceneModel: BESceneModel {
 extension ReceiveToken {
     class SceneModel: NSObject, ReceiveSceneModel {
         @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var clipboardManager: ClipboardManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -82,7 +83,7 @@ extension ReceiveToken {
         }
         
         func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
-            UIApplication.shared.copyToClipboard(address, alert: false)
+            clipboardManager.copyToClipboard(address)
             analyticsManager.log(event: logEvent)
         }
         

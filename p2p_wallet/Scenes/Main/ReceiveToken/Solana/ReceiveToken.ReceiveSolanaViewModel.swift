@@ -24,6 +24,7 @@ extension ReceiveToken {
     class SolanaViewModel: NSObject, ReceiveTokenSolanaViewModelType {
         @Injected private var nameStorage: NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var clipboardManger: ClipboardManagerType
         @Injected private var notificationsService: NotificationsServiceType
         private let tokensRepository: TokensRepository
         private let navigationSubject: PublishRelay<NavigatableScene?>
@@ -52,7 +53,8 @@ extension ReceiveToken {
         
         func copyAction() {
             analyticsManager.log(event: .receiveWalletAddressCopy)
-            UIApplication.shared.copyToClipboard(pubkey, alertMessage: "✅ " + L10n.addressCopiedToClipboard)
+            clipboardManger.copyToClipboard(pubkey)
+            notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
         }
         
         func shareAction(image: UIImage) {

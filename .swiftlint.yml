@@ -79,3 +79,8 @@ custom_rules:
     regex: 'image: (UIImage)?\.closeBannerButton'
     message: "Use UIView.closeBannerButton instead"
     severity: warning
+  clipboard_direct_api:
+    name: "UIPasteboard"
+    regex: 'UIPasteboard.general'
+    message: "Use ClipboardManager instead"
+    severity: warning

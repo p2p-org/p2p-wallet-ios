@@ -70,6 +70,7 @@ extension Settings {
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
         @Injected private var changeLanguageResponder: ChangeLanguageResponder
         @Injected private var localizationManager: LocalizationManagerType
+        @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationsServiceType
         let changeFiatResponder: ChangeFiatResponder
         let renVMService: RenVMLockAndMintServiceType
@@ -315,7 +316,8 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func copyUsernameToClipboard() {
         guard let username = storage.getName()?.withNameServiceDomain() else { return }
-        UIApplication.shared.copyToClipboard(username, alert: true, alertMessage: L10n.copiedToClipboard)
+        clipboardManager.copyToClipboard(username)
+        notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
     
     func shareUsername() {

@@ -7,6 +7,7 @@
 
 import RxSwift
 import RxCocoa
+import Resolver
 
 enum TransactionInfoNavigatableScene {
     case explorer
@@ -17,6 +18,10 @@ class TransactionInfoViewModel {
     
     // MARK: - Properties
     let disposeBag = DisposeBag()
+    
+    // MARK: - Dependencies
+    @Injected private var clipboardManager: ClipboardManagerType
+    @Injected private var notificationsService: NotificationsServiceType
     
     // MARK: - Subjects
     let navigationSubject = PublishSubject<TransactionInfoNavigatableScene>()
@@ -41,13 +46,13 @@ class TransactionInfoViewModel {
     }
     
     @objc func copySignatureToClipboard() {
-        UIApplication.shared.copyToClipboard(transaction.value.signature)
+        copyToClipboardAndShowNotification(transaction.value.signature)
     }
     
     @objc func copySourceAddressToClipboard() {
         switch transaction.value.value {
         case let transferTransaction as SolanaSDK.TransferTransaction:
-            UIApplication.shared.copyToClipboard(transferTransaction.authority ?? transferTransaction.source?.pubkey)
+            copyToClipboardAndShowNotification(transferTransaction.authority ?? transferTransaction.source?.pubkey)
         default:
             return
         }
@@ -56,11 +61,18 @@ class TransactionInfoViewModel {
     @objc func copyDestinationAddressToClipboard() {
         switch transaction.value.value {
         case let transferTransaction as SolanaSDK.TransferTransaction:
-            UIApplication.shared.copyToClipboard(transferTransaction.destinationAuthority ?? transferTransaction.destination?.pubkey)
+            copyToClipboardAndShowNotification(transferTransaction.destinationAuthority ?? transferTransaction.destination?.pubkey)
         case let createAccountTransaction as SolanaSDK.CreateAccountTransaction:
-            UIApplication.shared.copyToClipboard(createAccountTransaction.newWallet?.pubkey)
+            copyToClipboardAndShowNotification(createAccountTransaction.newWallet?.pubkey)
         default:
             return
         }
+    }
+    
+    private func copyToClipboardAndShowNotification(_ text: String?) {
+        guard let text = text else { return }
+
+        clipboardManager.copyToClipboard(text)
+        notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
 }

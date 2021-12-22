@@ -46,6 +46,9 @@ extension Resolver: ResolverRegistering {
         register { NotificationsService() }
             .implements(NotificationsServiceType.self)
             .scope(.application)
+        register { ClipboardManager() }
+            .implements(ClipboardManagerType.self)
+            .scope(.application)
         
         // MARK: - Others
         register { SessionBannersAvailabilityState() }
