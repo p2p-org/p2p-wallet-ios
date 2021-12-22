@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class InvestmentsViewController: BaseVC {
+class InvestmentsViewController: BaseVC, TabBarNeededViewController {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {.hidden}
     
     // MARK: - Properties

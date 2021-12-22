@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import UIKit
+import RxSwift
 
 protocol TabBarScenesFactory {
     func makeHomeViewController() -> Home.ViewController
@@ -13,8 +15,12 @@ protocol TabBarScenesFactory {
     func makeDAppContainerViewController(dapp: DApp) -> DAppContainer.ViewController // TODO: - Replace by DAppsCollection.ViewController later
 }
 
+protocol TabBarNeededViewController: UIViewController {}
+
 class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
+    private let disposeBag = DisposeBag()
+    private var tabBarTopConstraint: NSLayoutConstraint!
     
     let scenesFactory: TabBarScenesFactory
     init(scenesFactory: TabBarScenesFactory) {
@@ -24,17 +30,19 @@ class TabBarVC: BEPagesVC {
     
     override func setUp() {
         super.setUp()
+        view.backgroundColor = .background
+        
         // pages
         let mainVC = scenesFactory.makeHomeViewController()
         let investmentsVC = scenesFactory.makeInvestmentsViewController()
         let dAppContainerVC = scenesFactory.makeDAppContainerViewController(dapp: .fake)
         
         viewControllers = [
-            UINavigationController(rootViewController: mainVC),
-            UINavigationController(rootViewController: investmentsVC),
-            UINavigationController(rootViewController: BaseVC()),
-            UINavigationController(rootViewController: dAppContainerVC),
-            UINavigationController(rootViewController: BaseVC())
+            createNavigationController(rootVC: mainVC),
+            createNavigationController(rootVC: investmentsVC),
+            createNavigationController(rootVC: _PlaceholderVC()),
+            createNavigationController(rootVC: dAppContainerVC),
+            createNavigationController(rootVC: _PlaceholderVC())
         ]
         
         // disable scrolling
@@ -44,6 +52,8 @@ class TabBarVC: BEPagesVC {
         
         // tabBar
         view.addSubview(tabBar)
+        tabBarTopConstraint = tabBar.autoPinEdge(.top, to: .bottom, of: view)
+        tabBarTopConstraint.isActive = false
         tabBar.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         
         // configure tabBar
@@ -65,6 +75,22 @@ class TabBarVC: BEPagesVC {
     }
     
     // MARK: - Helpers
+    private func createNavigationController(rootVC: UIViewController) -> UINavigationController {
+        let nc = NavigationController(rootViewController: rootVC)
+        nc.hideTabBarHandler = {[weak self] shouldHide in
+            self?.hideTabBar(shouldHide)
+        }
+        return nc
+    }
+    
+    private func hideTabBar(_ shouldHide: Bool) {
+        tabBarTopConstraint.isActive = shouldHide
+        containerView.setNeedsLayout()
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
     private func configureTabBar() {
         tabBar.stackView.addArrangedSubviews([
             .spacer,
@@ -113,3 +139,56 @@ class TabBarVC: BEPagesVC {
         setNeedsStatusBarAppearanceUpdate()
     }
 }
+
+private final class NavigationController: UINavigationController {
+    var hideTabBarHandler: ((Bool) -> Void)?
+    
+    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
+        guard viewControllers.count >= 1 else {
+            super.pushViewController(viewController, animated: animated)
+            return
+        }
+        
+        // check current view controller and pushing view controller
+        let currentVC = viewControllers.last!
+        let pushingVC = viewController
+        
+        handleShowHideTabBar(previousVC: currentVC, nextVC: pushingVC)
+        
+        super.pushViewController(viewController, animated: animated)
+    }
+    
+    override func popViewController(animated: Bool) -> UIViewController? {
+        guard viewControllers.count >= 2 else {
+            return super.popViewController(animated: animated)
+        }
+        // check previous view controller and popping view controller
+        let poppingVC = viewControllers.last!
+        let parentVC = viewControllers[viewControllers.count - 2]
+        
+        handleShowHideTabBar(previousVC: poppingVC, nextVC: parentVC)
+        
+        return super.popViewController(animated: animated)
+    }
+    
+    private func handleShowHideTabBar(previousVC: UIViewController, nextVC: UIViewController) {
+        // if previous view controller is already TabBarNeededViewController
+        if previousVC is TabBarNeededViewController {
+            // if next VC is not TabBarNeededViewController, hide the tabBar
+            if !(nextVC is TabBarNeededViewController) {
+                hideTabBarHandler?(true)
+            }
+            // else (next VC is also TabBarNeededViewController) do nothing, as showing has already been done in previous step
+        }
+        // if current view controller is not TabBarNeededViewController
+        else {
+            // if next VC is TabBarNeededViewController, show the tabBar
+            if nextVC is TabBarNeededViewController {
+                hideTabBarHandler?(false)
+            }
+            // else (next VC is also not TabBarNeededViewController) do nothing, as hiding has already been done in previous step
+        }
+    }
+}
+
+private class _PlaceholderVC: BaseVC, TabBarNeededViewController {}

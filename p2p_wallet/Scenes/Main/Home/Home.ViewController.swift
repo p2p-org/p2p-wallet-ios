@@ -21,7 +21,7 @@ protocol HomeScenesFactory {
 }
 
 extension Home {
-    class ViewController: BaseVC {
+    class ViewController: BaseVC, TabBarNeededViewController {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
