@@ -6,9 +6,7 @@ import Foundation
 import RxSwift
 import BEPureLayout
 
-class BEScene: BEViewController {
-    let disposeBag = DisposeBag()
-    
+class BEScene: BaseVC {
     override func setUp() {
         super.setUp()
         
