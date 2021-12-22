@@ -7,6 +7,7 @@
 
 import Foundation
 import Action
+import Resolver
 
 class BackupManuallyBaseVC: BaseVC {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
@@ -52,6 +53,8 @@ class BackupManuallyBaseVC: BaseVC {
         storage.account?.phrase ?? []
     }
     @Injected var storage: ICloudStorageType & AccountStorageType & NameStorageType
+    @Injected private var clipboardManager: ClipboardManagerType
+    @Injected private var notificationsManager: NotificationsServiceType
     
     override func setUp() {
         super.setUp()
@@ -61,6 +64,7 @@ class BackupManuallyBaseVC: BaseVC {
     }
     
     func buttonCopyToClipboardDidTouch() {
-        UIApplication.shared.copyToClipboard(phrases.joined(separator: " "))
+        clipboardManager.copyToClipboard(phrases.joined(separator: " "))
+        notificationsManager.showInAppNotification(.done(L10n.copiedToClipboard))
     }
 }

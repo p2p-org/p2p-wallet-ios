@@ -32,6 +32,7 @@ extension CreateSecurityKeys {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var createWalletViewModel: CreateWalletViewModelType
         @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationsServiceType
 
         // MARK: - Properties
@@ -80,7 +81,8 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     
     func copyToClipboard() {
         analyticsManager.log(event: .createWalletCopySeedClick)
-        UIApplication.shared.copyToClipboard(phrasesSubject.value.joined(separator: " "), alertMessage: L10n.seedPhraseCopiedToClipboard)
+        clipboardManager.copyToClipboard(phrasesSubject.value.joined(separator: " "))
+        notificationsService.showInAppNotification(.message(L10n.seedPhraseCopiedToClipboard))
     }
     
     @objc func saveToICloud() {
