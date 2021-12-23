@@ -13,11 +13,17 @@ import UIKit
 }
 
 extension ProcessTransaction {
-    class ViewController: WLModalViewController, CustomPresentableViewController {
+    class ViewController: WLModalViewController {
         // MARK: - Properties
         private let viewModel: ProcessTransactionViewModelType
         weak var delegate: ProcessTransactionViewControllerDelegate?
-        var transitionManager: UIViewControllerTransitioningDelegate?
+        private lazy var rootView: RootView = {
+            let rootView = RootView(viewModel: viewModel)
+            rootView.transactionStatusDidChange = {[weak self] in
+                self?.updatePresentationLayout(animated: true)
+            }
+            return rootView
+        }()
         
         // MARK: - Initializer
         init(viewModel: ProcessTransactionViewModelType)
@@ -28,7 +34,7 @@ extension ProcessTransaction {
         
         // MARK: - Methods
         override func build() -> UIView {
-            RootView(viewModel: viewModel)
+            rootView
         }
         
         override func bind() {
