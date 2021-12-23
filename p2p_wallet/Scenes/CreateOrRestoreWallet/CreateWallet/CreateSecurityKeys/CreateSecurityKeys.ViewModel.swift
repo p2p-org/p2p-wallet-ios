@@ -89,7 +89,8 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         authenticationHandler.requiredOwner { [weak self] in
             self?._saveToIcloud()
         } onFailure: { [weak self] error in
-            self?.errorSubject.accept(error?.localizedDescription ?? L10n.error)
+            guard let error = error else {return}
+            self?.errorSubject.accept(error)
         }
     }
 
