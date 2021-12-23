@@ -679,3 +679,4 @@
 "Confirm swapping %@ → %@" = "Xác nhận hoán đổi %@ → %@";
 "Spend" = "Dùng";
 "Swap %@ → %@" = "Hoán đổi %@ → %@";
+"Passcode not set. So we can’t verify you as the device’s owner." = "Mật mã chưa được đặt. Vì vậy, chúng tôi không thể xác minh bạn là chủ sở hữu của thiết bị.";
