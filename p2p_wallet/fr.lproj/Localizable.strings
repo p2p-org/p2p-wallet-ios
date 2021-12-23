@@ -680,3 +680,6 @@
 "Spend" = "Passer";
 "Swap %@ → %@" = "Échanger %@ → %@";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Code d'accès non défini. Nous ne pouvons donc pas vérifier que vous êtes le propriétaire de l'appareil.";
+"The transaction is being processed" = "La transaction est en cours de traitement";
+"Make another transaction" = "Faire une autre opération";
+"Show swap details" = "Afficher les détails de l'échange";

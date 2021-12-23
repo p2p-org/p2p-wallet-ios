@@ -10,39 +10,6 @@ import Foundation
 extension ProcessTransaction.RootView {
     // MARK: - Main layout function
     func layout(transaction: SolanaSDK.ParsedTransaction) {
-        // summary view
-        summaryView?.removeFromSuperview()
-        
-        switch viewModel.transactionType {
-        case .orcaSwap(let from, let to, let inputAmount, let estimatedAmount, _):
-            let sv = SwapTransactionSummaryView(forAutoLayout: ())
-            sv.setUp(from: from.token, to: to.token, inputAmount: inputAmount, estimatedAmount: estimatedAmount)
-            summaryView = sv
-        case .swap(_, let from, let to, let inputAmount, let estimatedAmount, _, _, _):
-            let sv = SwapTransactionSummaryView(forAutoLayout: ())
-            sv.setUp(from: from.token, to: to.token, inputAmount: inputAmount.toLamport(decimals: from.token.decimals), estimatedAmount: estimatedAmount.toLamport(decimals: to.token.decimals))
-            summaryView = sv
-        case .send(let fromWallet, _, let sentAmount, _):
-            let sentAmount = -(sentAmount.convertToBalance(decimals: fromWallet.token.decimals))
-            let symbol = fromWallet.token.symbol
-            
-            let sv = DefaultTransactionSummaryView(forAutoLayout: ())
-            let equityValue = sentAmount * viewModel.pricesService.currentPrice(for: symbol)?.value
-            sv.amountInTokenLabel.text = "\(sentAmount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
-            sv.amountInFiatLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
-            
-            summaryView = sv
-        case .closeAccount:
-            let amount = viewModel.reimbursedAmount ?? 0
-            let symbol = "SOL"
-            
-            let sv = DefaultTransactionSummaryView(forAutoLayout: ())
-            let equityValue = amount * viewModel.pricesService.currentPrice(for: symbol)?.value
-            sv.amountInTokenLabel.text = "\(amount.toString(maximumFractionDigits: 9, showPlus: true)) \(symbol)"
-            sv.amountInFiatLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
-            
-            summaryView = sv
-        }
         transactionIDStackView.isHidden = false
         
         // default layout
@@ -71,24 +38,19 @@ extension ProcessTransaction.RootView {
     // MARK: - Helpers
     private func layoutByDefault() {
         stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
-        buttonStackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
         stackView.addArrangedSubviews([
             titleLabel
-                .padding(.init(x: 20, y: 0)),
-            BEStackViewSpacing(5),
+                .padding(.init(x: 18, y: 0)),
+            BEStackViewSpacing(4),
             subtitleLabel
-                .padding(.init(x: 20, y: 0)),
-            BEStackViewSpacing(20),
+                .padding(.init(x: 18, y: 0)),
+            BEStackViewSpacing(18),
             createTransactionStatusView(),
-            BEStackViewSpacing(15),
-            summaryView,
-            BEStackViewSpacing(30),
-            UIView.defaultSeparator(),
-            BEStackViewSpacing(20),
+            BEStackViewSpacing(18),
             transactionIDStackView,
-            BEStackViewSpacing(20),
+            BEStackViewSpacing(36),
             buttonStackView
-                .padding(.init(x: 20, y: 0))
+                .padding(.init(x: 18, y: 0))
         ])
     }
     
@@ -103,20 +65,25 @@ extension ProcessTransaction.RootView {
         }
         
         self.transactionStatusImageView.image = .transactionProcessing
-        self.buttonStackView.addArrangedSubview(
-            WLButton.stepButton(type: .blue, label: L10n.done)
-                .onTap(self, action: #selector(doneButtonDidTouch))
-        )
+        
+        primaryButton.setTitle(text: L10n.done)
+        primaryButton.setImage(image: nil)
+        primaryButton.onTap(self, action: #selector(doneButtonDidTouch))
+        secondaryButton.setTitle(text: L10n.makeAnotherTransaction)
+        secondaryButton.onTap(self, action: #selector(makeAnotherTransaction))
     }
     
     private func layoutConfirmedTransaction() {
         self.titleLabel.text = L10n.success
         self.subtitleLabel.text = L10n.transactionHasBeenConfirmed
         self.transactionStatusImageView.image = .transactionSuccess
-        self.buttonStackView.addArrangedSubview(
-            WLButton.stepButton(type: .blue, label: L10n.done)
-                .onTap(self, action: #selector(doneButtonDidTouch))
-        )
+        
+        primaryButton.setTitle(text: viewModel.transactionType.isSwap ? L10n.showSwapDetails: L10n.showTransactionDetails)
+        primaryButton.setImage(image: .info)
+        primaryButton.onTap(self, action: #selector(doneButtonDidTouch))
+        
+        secondaryButton.setTitle(text: L10n.makeAnotherTransaction)
+        secondaryButton.onTap(self, action: #selector(makeAnotherTransaction))
     }
     
     private func layoutTransactionError(_ error: String) {
@@ -197,22 +164,20 @@ extension ProcessTransaction.RootView {
             self.titleLabel.text = L10n.somethingWentWrong
             self.subtitleLabel.text = error
             self.transactionStatusImageView.image = .transactionError
-            self.buttonStackView.addArrangedSubviews([
-                WLButton.stepButton(type: .blue, label: L10n.tryAgain)
-                    .onTap(self, action: #selector(tryAgain)),
-                createSecondaryButton(
-                    label: L10n.cancel,
-                    action: #selector(cancel)
-                )
-            ])
         }
+        
+        primaryButton.setTitle(text: L10n.tryAgain)
+        primaryButton.setImage(image: nil)
+        primaryButton.onTap(self, action: #selector(tryAgain))
+        
+        secondaryButton.setTitle(text: L10n.cancel)
+        secondaryButton.onTap(self, action: #selector(cancel))
     }
     
     private func layoutWithSpecificError(
         image: UIImage
     ) {
         stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
-        buttonStackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
         stackView.addArrangedSubviews([
             createTransactionStatusView(image: image),
             BEStackViewSpacing(30),
@@ -226,12 +191,12 @@ extension ProcessTransaction.RootView {
                 .padding(.init(x: 20, y: 0))
         ])
         
-        buttonStackView.addArrangedSubview(
-            createSecondaryButton(
-                label: L10n.ok,
-                action: #selector(cancel)
-            )
-        )
+        primaryButton.setTitle(text: L10n.ok)
+        primaryButton.setImage(image: nil)
+        primaryButton.onTap(self, action: #selector(cancel))
+        
+        secondaryButton.setTitle(text: L10n.makeAnotherTransaction)
+        secondaryButton.onTap(self, action: #selector(makeAnotherTransaction))
     }
     
     private func createTransactionStatusView(image: UIImage = .transactionProcessing) -> UIView {
@@ -246,14 +211,5 @@ extension ProcessTransaction.RootView {
         transactionStatusImageView.autoPinEdge(toSuperviewEdge: .bottom)
         transactionStatusImageView.autoAlignAxis(toSuperviewAxis: .vertical)
         return view
-    }
-    
-    private func createSecondaryButton(label: String, action: Selector) -> WLButton {
-        WLButton.stepButton(
-            enabledColor: .eff3ff.onDarkMode(.h404040),
-            textColor: .h5887ff.onDarkMode(.white),
-            label: label
-        )
-            .onTap(self, action: action)
     }
 }

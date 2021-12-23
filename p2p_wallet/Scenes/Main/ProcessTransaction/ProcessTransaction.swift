@@ -20,6 +20,13 @@ struct ProcessTransaction {
         case orcaSwap(from: Wallet, to: Wallet, inputAmount: SolanaSDK.Lamports, estimatedAmount: SolanaSDK.Lamports, fees: [PayingFee])
         case swap(provider: SwapProviderType, from: Wallet, to: Wallet, inputAmount: Double, estimatedAmount: Double, fees: [PayingFee], slippage: Double, isSimulation: Bool)
         case closeAccount(Wallet)
+        
+        var isSwap: Bool {
+            switch self {
+            case .swap: return true
+            default: return false
+            }
+        }
     }
 }
 
