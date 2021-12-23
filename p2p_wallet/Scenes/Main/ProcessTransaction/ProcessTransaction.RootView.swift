@@ -170,6 +170,7 @@ private extension ProcessTransaction {
 private extension ProcessTransaction.RootView {
     func setUp(transaction: SolanaSDK.ParsedTransaction) {
         transactionIDStackView.isHidden = false
+        errorLabel.isHidden = true
         
         // title, subtitle, image, button
         switch transaction.status {
@@ -226,6 +227,8 @@ private extension ProcessTransaction.RootView {
     }
     
     func setUpWithTransactionError(_ error: String) {
+        errorLabel.isHidden = false
+        
         let transactionType = viewModel.transactionType
         // specific errors
         
@@ -239,6 +242,7 @@ private extension ProcessTransaction.RootView {
             
             titleLabel.text = L10n.invalidAccountInfo
             subtitleLabel.text = L10n.CheckEnteredAccountInfoForSending.itShouldBeAccountInSolanaNetwork
+            errorLabel.text =  L10n.CheckEnteredAccountInfoForSending.itShouldBeAccountInSolanaNetwork
         }
         
         // When trying to send a wrapped token to another wrapped token
@@ -258,6 +262,7 @@ private extension ProcessTransaction.RootView {
             }
             
             subtitleLabel.text = L10n.itMustBeAnWalletAddress(symbol)
+            errorLabel.text = L10n.itMustBeAnWalletAddress(symbol)
         }
         
         // When a user entered an incorrect recipient address
@@ -269,6 +274,7 @@ private extension ProcessTransaction.RootView {
             
             titleLabel.text = L10n.wrongWalletAddress
             subtitleLabel.text = L10n.checkEnterredWalletAddressAndTryAgain
+            errorLabel.text = L10n.checkEnterredWalletAddressAndTryAgain
         }
         
         // When the user needs to correct the slippage value
@@ -280,6 +286,7 @@ private extension ProcessTransaction.RootView {
             
             titleLabel.text = L10n.slippageError
             subtitleLabel.text = L10n.SwapInstructionExceedsDesiredSlippageLimit.setAnotherSlippageAndTryAgain
+            errorLabel.text = L10n.SwapInstructionExceedsDesiredSlippageLimit.setAnotherSlippageAndTryAgain
         }
         
         // System error
@@ -296,21 +303,23 @@ private extension ProcessTransaction.RootView {
             
             titleLabel.text = L10n.systemError
             subtitleLabel.text = error
+            errorLabel.text = error
         }
         
         // generic errors
         else {
-            self.titleLabel.text = L10n.somethingWentWrong
-            self.subtitleLabel.text = error
+            titleLabel.text = L10n.somethingWentWrong
+            subtitleLabel.text = error
+            errorLabel.text = error
             transactionStatusView.setImage(.transactionError)
+            
+            primaryButton.setTitle(text: L10n.tryAgain)
+            primaryButton.setImage(image: nil)
+            primaryButton.onTap(self, action: #selector(tryAgain))
+            
+            secondaryButton.setTitle(text: L10n.cancel)
+            secondaryButton.onTap(self, action: #selector(cancel))
         }
-        
-        primaryButton.setTitle(text: L10n.tryAgain)
-        primaryButton.setImage(image: nil)
-        primaryButton.onTap(self, action: #selector(tryAgain))
-        
-        secondaryButton.setTitle(text: L10n.cancel)
-        secondaryButton.onTap(self, action: #selector(cancel))
     }
     
     func setUpWithSpecificError(
