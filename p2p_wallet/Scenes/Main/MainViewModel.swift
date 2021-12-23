@@ -59,15 +59,19 @@ extension MainViewModel: MainViewModelType {
     func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((Error?) -> Void)?) {
         let myContext = LAContext()
         
-        if !myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil) {
-            DispatchQueue.main.sync {
-                onSuccess?()
+        var error: NSError?
+        guard myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
+            DispatchQueue.main.async {
+                onFailure?(error)
             }
+            return
         }
         
         myContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: L10n.confirmItSYou) { (success, error) in
             guard success else {
-                onFailure?(error)
+                DispatchQueue.main.async {
+                    onFailure?(error)
+                }
                 return
             }
             DispatchQueue.main.sync {
