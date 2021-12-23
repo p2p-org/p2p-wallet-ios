@@ -56,6 +56,8 @@ extension ProcessTransaction.RootView {
             layoutConfirmedTransaction()
         case .error(let error):
             layoutTransactionError(error ?? L10n.somethingWentWrong)
+        @unknown default:
+            fatalError()
         }
         
         // transaction id

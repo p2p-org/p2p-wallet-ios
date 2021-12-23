@@ -70,7 +70,7 @@ extension ProcessTransaction {
         // MARK: - Layout
         private func layout() {
             addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 0, y: 30))
+            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 0, y: 18))
             
             stackView.spacing = 0
         }
