@@ -19,10 +19,6 @@ class BEScene: BaseVC {
     
     func layout() {}
     
-    deinit {
-        print("Deinit \(type(of: self))")
-    }
-    
     func build() -> UIView {
         fatalError("build method is not implemented")
     }
