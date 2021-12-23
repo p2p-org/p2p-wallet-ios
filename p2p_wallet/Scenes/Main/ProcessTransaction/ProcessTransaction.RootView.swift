@@ -229,107 +229,82 @@ private extension ProcessTransaction.RootView {
     func setUpWithTransactionError(_ error: String) {
         errorLabel.isHidden = false
         
-        let transactionType = viewModel.transactionType
-        // specific errors
+        let titleText: String
+        let subtitleText: String
+        let image: UIImage
+        let errorText: String
         
+        var primaryButtonLabel = L10n.ok
+        var primaryButtonImage: UIImage?
+        var primaryButtonAction = #selector(cancel)
+        
+        var secondaryButtonTitle = L10n.makeAnotherTransaction
+        var secondaryButtonAction = #selector(makeAnotherTransaction)
+        switch error {
         // When trying to send a wrapped token to a new SOL wallet (which is not yet in the blockchain)
-        if error == L10n.invalidAccountInfo ||
-            error == L10n.couldNotRetrieveAccountInfo
-        {
-            setUpWithSpecificError(
-                image: .transactionErrorInvalidAccountInfo
-            )
-            
-            titleLabel.text = L10n.invalidAccountInfo
-            subtitleLabel.text = L10n.CheckEnteredAccountInfoForSending.itShouldBeAccountInSolanaNetwork
-            errorLabel.text =  L10n.CheckEnteredAccountInfoForSending.itShouldBeAccountInSolanaNetwork
-        }
-        
+        case L10n.invalidAccountInfo, L10n.couldNotRetrieveAccountInfo:
+            titleText = error
+            subtitleText = L10n.CheckEnteredAccountInfoForSending.itShouldBeAccountInSolanaNetwork
+            image = .transactionErrorInvalidAccountInfo
+            errorText = L10n.CheckEnteredAccountInfoForSending.itShouldBeAccountInSolanaNetwork
         // When trying to send a wrapped token to another wrapped token
-        else if error == L10n.walletAddressIsNotValid {
-            setUpWithSpecificError(
-                image: .transactionErrorWrongWallet
-            )
-            
-            titleLabel.text = L10n.walletAddressIsNotValid
-            
+        case L10n.walletAddressIsNotValid:
+            titleText = L10n.walletAddressIsNotValid
             var symbol = ""
-            switch transactionType {
+            switch viewModel.transactionType {
             case .send(let fromWallet, _, _, _):
                 symbol = fromWallet.token.symbol
             case .orcaSwap, .swap, .closeAccount:
                 break
             }
-            
-            subtitleLabel.text = L10n.itMustBeAnWalletAddress(symbol)
-            errorLabel.text = L10n.itMustBeAnWalletAddress(symbol)
-        }
-        
+            subtitleText = L10n.itMustBeAnWalletAddress(symbol)
+            image = .transactionErrorWrongWallet
+            errorText = L10n.itMustBeAnWalletAddress(symbol)
         // When a user entered an incorrect recipient address
-        else if error == L10n.wrongWalletAddress
-        {
-            setUpWithSpecificError(
-                image: .transactionErrorWrongWallet
-            )
-            
-            titleLabel.text = L10n.wrongWalletAddress
-            subtitleLabel.text = L10n.checkEnterredWalletAddressAndTryAgain
-            errorLabel.text = L10n.checkEnterredWalletAddressAndTryAgain
-        }
-        
+        case L10n.wrongWalletAddress:
+            titleText = L10n.wrongWalletAddress
+            subtitleText = L10n.checkEnterredWalletAddressAndTryAgain
+            image = .transactionErrorWrongWallet
+            errorText = L10n.checkEnterredWalletAddressAndTryAgain
         // When the user needs to correct the slippage value
-        else if error == L10n.swapInstructionExceedsDesiredSlippageLimit
-        {
-            setUpWithSpecificError(
-                image: .transactionErrorSlippageExceeded
-            )
-            
-            titleLabel.text = L10n.slippageError
-            subtitleLabel.text = L10n.SwapInstructionExceedsDesiredSlippageLimit.setAnotherSlippageAndTryAgain
-            errorLabel.text = L10n.SwapInstructionExceedsDesiredSlippageLimit.setAnotherSlippageAndTryAgain
-        }
-        
+        case L10n.swapInstructionExceedsDesiredSlippageLimit:
+            titleText = L10n.slippageError
+            subtitleText = L10n.SwapInstructionExceedsDesiredSlippageLimit.setAnotherSlippageAndTryAgain
+            image = .transactionErrorSlippageExceeded
+            errorText = L10n.SwapInstructionExceedsDesiredSlippageLimit.setAnotherSlippageAndTryAgain
         // System error
-        else if [
-            L10n.theFeeCalculationFailedDueToOverflowUnderflowOrUnexpected0,
+        case L10n.theFeeCalculationFailedDueToOverflowUnderflowOrUnexpected0,
             L10n.errorProcessingInstruction0CustomProgramError0x1,
-            L10n.blockhashNotFound
-        ]
-            .contains(error)
-        {
-            setUpWithSpecificError(
-                image: .transactionErrorSystem
-            )
+            L10n.blockhashNotFound:
+            titleText = L10n.systemError
+            subtitleText = error
+            image = .transactionErrorSystem
+            errorText = error
+        // Generic error
+        default:
+            titleText = L10n.somethingWentWrong
+            subtitleText = error
+            image = .transactionError
+            errorText = error
             
-            titleLabel.text = L10n.systemError
-            subtitleLabel.text = error
-            errorLabel.text = error
+            primaryButtonLabel = L10n.tryAgain
+            primaryButtonImage = nil
+            primaryButtonAction = #selector(tryAgain)
+            
+            secondaryButtonTitle = L10n.cancel
+            secondaryButtonAction = #selector(cancel)
         }
         
-        // generic errors
-        else {
-            titleLabel.text = L10n.somethingWentWrong
-            subtitleLabel.text = error
-            errorLabel.text = error
-            transactionStatusView.setImage(.transactionError)
-            
-            primaryButton.setTitle(text: L10n.tryAgain)
-            primaryButton.setImage(image: nil)
-            primaryButton.onTap(self, action: #selector(tryAgain))
-            
-            secondaryButton.setTitle(text: L10n.cancel)
-            secondaryButton.onTap(self, action: #selector(cancel))
-        }
-    }
-    
-    func setUpWithSpecificError(
-        image: UIImage
-    ) {
-        primaryButton.setTitle(text: L10n.ok)
-        primaryButton.setImage(image: nil)
-        primaryButton.onTap(self, action: #selector(cancel))
+        titleLabel.text = titleText
+        subtitleLabel.text = subtitleText
+        transactionStatusView.setImage(image)
+        errorLabel.text = errorText
         
-        secondaryButton.setTitle(text: L10n.makeAnotherTransaction)
-        secondaryButton.onTap(self, action: #selector(makeAnotherTransaction))
+        primaryButton.setTitle(text: primaryButtonLabel)
+        primaryButton.setImage(image: primaryButtonImage)
+        primaryButton.onTap(self, action: primaryButtonAction)
+        
+        secondaryButton.setTitle(text: secondaryButtonTitle)
+        secondaryButton.onTap(self, action: secondaryButtonAction)
     }
 }
