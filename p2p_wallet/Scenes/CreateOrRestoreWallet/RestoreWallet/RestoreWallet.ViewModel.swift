@@ -74,15 +74,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         authenticationHandler.requiredOwner { [weak self] in
             self?._restoreFromIcloud()
         } onFailure: { [weak self] error in
-            var error = error?.localizedDescription ?? L10n.error
-            switch error {
-            case "Passcode not set.":
-                error = L10n.PasscodeNotSet.soWeCanTVerifyYouAsTheDeviceSOwner
-            case "Canceled by user.":
-                return
-            default:
-                break
-            }
+            guard let error = error else {return}
             self?.errorSubject.accept(error)
         }
     }
