@@ -679,3 +679,4 @@
 "Confirm swapping %@ → %@" = "Confirm swapping %@ → %@";
 "Spend" = "Spend";
 "Swap %@ → %@" = "Swap %@ → %@";
+"Passcode not set. So we can’t verify you as the device’s owner." = "Passcode not set. So we can’t verify you as the device’s owner.";

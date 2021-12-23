@@ -679,3 +679,4 @@
 "Confirm swapping %@ → %@" = "Confirmer l'échange %@ → %@";
 "Spend" = "Passer";
 "Swap %@ → %@" = "Échanger %@ → %@";
+"Passcode not set. So we can’t verify you as the device’s owner." = "Code d'accès non défini. Nous ne pouvons donc pas vérifier que vous êtes le propriétaire de l'appareil.";
