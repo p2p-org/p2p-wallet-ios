@@ -17,13 +17,6 @@ extension ProcessTransaction {
         // MARK: - Properties
         private let viewModel: ProcessTransactionViewModelType
         weak var delegate: ProcessTransactionViewControllerDelegate?
-        private lazy var rootView: RootView = {
-            let rootView = RootView(viewModel: viewModel)
-            rootView.transactionStatusDidChange = {[weak self] in
-                self?.updatePresentationLayout(animated: true)
-            }
-            return rootView
-        }()
         
         // MARK: - Initializer
         init(viewModel: ProcessTransactionViewModelType)
@@ -34,13 +27,19 @@ extension ProcessTransaction {
         
         // MARK: - Methods
         override func build() -> UIView {
-            rootView
+            RootView(viewModel: viewModel)
         }
         
         override func bind() {
             super.bind()
             viewModel.navigatableSceneDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .disposed(by: disposeBag)
+            
+            viewModel.transactionDriver
+                .drive(onNext: {[weak self] _ in
+                    self?.updatePresentationLayout(animated: true)
+                })
                 .disposed(by: disposeBag)
         }
         
