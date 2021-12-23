@@ -128,7 +128,6 @@
 		BC036C1B269449A7005C1BEC /* AccountNotificationsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC036C1A269449A7005C1BEC /* AccountNotificationsRepository.swift */; };
 		BC036C3126959F6C005C1BEC /* BaseCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC036C3026959F6C005C1BEC /* BaseCollectionReusableView.swift */; };
 		BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */; };
-		BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */; };
 		BC0978E825AEDEE200DB02E9 /* ResizablePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */; };
 		BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */; };
 		BC09B9A2273ECB03009CAF4E /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC09B99E273ECB03009CAF4E /* Authentication.swift */; };
@@ -633,7 +632,6 @@
 		BC036C1A269449A7005C1BEC /* AccountNotificationsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountNotificationsRepository.swift; sourceTree = "<group>"; };
 		BC036C3026959F6C005C1BEC /* BaseCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionReusableView.swift; sourceTree = "<group>"; };
 		BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LABiometryType+Extensions.swift"; sourceTree = "<group>"; };
-		BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLResizableModalVC.swift; sourceTree = "<group>"; };
 		BC0978E725AEDEE200DB02E9 /* ResizablePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizablePresentationController.swift; sourceTree = "<group>"; };
 		BC0978F825AEEA1D00DB02E9 /* CoinLogoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinLogoImageView.swift; sourceTree = "<group>"; };
 		BC09B99E273ECB03009CAF4E /* Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
@@ -2140,7 +2138,6 @@
 				BC3ADE8C2570B832002B3B16 /* WLCenterSheet.swift */,
 				BC22ABE52552A5E10071C69F /* QrCodeScannerVC.swift */,
 				BC3B3DA9258C653000C6117E /* WLIndicatorModalVC.swift */,
-				BC0978DF25AEC9E700DB02E9 /* WLResizableModalVC.swift */,
 				BC1FFEE7262977940014F027 /* WLEnterPhrasesVC.swift */,
 				BC19DF562701B7A100A3A8D8 /* SingleSelectionViewController.swift */,
 				BCFEDBFF2727B43C008AE4AD /* WLMarkdownVC.swift */,
@@ -2741,7 +2738,6 @@
 				BCB2869D274B8EF10074E1D5 /* WalletDetail.InfoOverviewView.swift in Sources */,
 				BC65E27F2620341B00E436C7 /* SolanaSDK.ParsedTransaction+Extensions.swift in Sources */,
 				BCF241212676548200C9F158 /* MainViewModel.swift in Sources */,
-				BC0978E025AEC9E700DB02E9 /* WLResizableModalVC.swift in Sources */,
 				BCE04C6D268D901400CE131A /* StandardInteractionController.swift in Sources */,
 				BC4B9E772713F940005B9ECA /* MainContainer.swift in Sources */,
 				BC54DD062587098800A65566 /* LazyView.swift in Sources */,
