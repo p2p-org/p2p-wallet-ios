@@ -27,24 +27,24 @@ extension ProcessTransaction {
             indicatorView.tintColor = .h5887ff
             return indicatorView
         }()
-        lazy var transactionIDLabel = UILabel(weight: .semibold, numberOfLines: 2)
+        lazy var transactionIDLabel = UILabel(textSize: 15, textAlignment: .right)
         
         // MARK: - Substackviews
-        lazy var transactionIDStackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            UILabel(text: L10n.transactionID, textSize: 13, weight: .medium, textColor: .textSecondary)
-                .padding(.init(x: 20, y: 0)),
-            BEStackViewSpacing(8),
-            UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
-                transactionIDLabel
+        lazy var transactionIDStackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .top, distribution: .fill) {
+            UILabel(text: L10n.transactionID, textSize: 15, textColor: .textSecondary)
+            BEStackViewSpacing(4)
+            UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
+                UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
+                    transactionIDLabel
+                    UIImageView(width: 16, height: 16, image: .transactionShowInExplorer, tintColor: .textSecondary)
+                }
                 
-                UIImageView(width: 16, height: 16, image: .link, tintColor: .a3a5ba)
-                    .padding(.init(all: 10), backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12)
-                    .onTap(self, action: #selector(showExplorer))
+                UILabel(text: L10n.tapToViewInExplorer, textSize: 15, textColor: .textSecondary, numberOfLines: 0, textAlignment: .right)
+                    
             }
-                .padding(.init(x: 20, y: 0)),
-            BEStackViewSpacing(20),
-            UIView.defaultSeparator()
-        ])
+                .onTap(self, action: #selector(showExplorer))
+        }
+            .padding(.init(x: 20, y: 0))
         lazy var buttonStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
             primaryButton
             secondaryButton
