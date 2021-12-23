@@ -19,15 +19,14 @@ extension ProcessTransaction {
         
         // MARK: - Subviews
         lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
-        lazy var titleLabel = UILabel(textSize: 21, weight: .semibold, numberOfLines: 0, textAlignment: .center)
-        lazy var subtitleLabel = UILabel(weight: .medium, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
-        lazy var transactionStatusImageView = UIImageView(width: 65, height: 65, image: .transactionProcessing)
+        lazy var titleLabel = UILabel(textSize: 20, weight: .semibold, numberOfLines: 0, textAlignment: .center)
+        lazy var subtitleLabel = UILabel(textColor: .textSecondary, numberOfLines: 1, textAlignment: .center)
+        lazy var transactionStatusImageView = UIImageView(width: 44, height: 44, image: .transactionProcessing)
         lazy var transactionIndicatorView: TransactionIndicatorView = {
             let indicatorView = TransactionIndicatorView(height: 1, backgroundColor: .separator)
             indicatorView.tintColor = .h5887ff
             return indicatorView
         }()
-        var summaryView: TransactionSummaryView!
         lazy var transactionIDLabel = UILabel(weight: .semibold, numberOfLines: 2)
         
         // MARK: - Substackviews
@@ -46,7 +45,12 @@ extension ProcessTransaction {
             BEStackViewSpacing(20),
             UIView.defaultSeparator()
         ])
-        lazy var buttonStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
+        lazy var buttonStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
+            primaryButton
+            secondaryButton
+        }
+        lazy var primaryButton = WLStepButton.main(image: .info, text: L10n.showTransactionDetails)
+        lazy var secondaryButton = WLStepButton.sub(text: L10n.makeAnotherTransaction)
         
         // MARK: - Initializers
         init(viewModel: ProcessTransactionViewModelType) {
@@ -111,6 +115,10 @@ extension ProcessTransaction {
         
         @objc func cancel() {
             viewModel.cancel()
+        }
+        
+        @objc func makeAnotherTransaction() {
+            fatalError()
         }
     }
 }

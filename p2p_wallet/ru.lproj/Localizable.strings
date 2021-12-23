@@ -680,3 +680,6 @@
 "Spend" = "Тратить";
 "Swap %@ → %@" = "Обменять %@ → %@";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Пароль не установлен. Поэтому мы не можем подтвердить, что вы являетесь владельцем устройства.";
+"The transaction is being processed" = "Транзакция обрабатывается";
+"Make another transaction" = "Сделайте еще одну транзакцию";
+"Show swap details" = "Показать сведения о свопе";

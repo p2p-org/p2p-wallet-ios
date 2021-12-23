@@ -680,3 +680,6 @@
 "Spend" = "Spend";
 "Swap %@ → %@" = "Swap %@ → %@";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Passcode not set. So we can’t verify you as the device’s owner.";
+"The transaction is being processed" = "The transaction is being processed";
+"Make another transaction" = "Make another transaction";
+"Show swap details" = "Show swap details";
