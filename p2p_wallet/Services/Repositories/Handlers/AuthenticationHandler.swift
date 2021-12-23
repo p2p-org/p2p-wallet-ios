@@ -26,5 +26,5 @@ struct AuthenticationPresentationStyle {
 protocol AuthenticationHandler {
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)
     func pauseAuthentication(_ isPaused: Bool)
-    func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((Error?) -> Void)?)
+    func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((String?) -> Void)?)
 }
