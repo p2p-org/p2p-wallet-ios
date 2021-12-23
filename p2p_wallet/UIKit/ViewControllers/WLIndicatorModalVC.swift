@@ -55,27 +55,3 @@ class WLIndicatorModalVC: BaseVC {
         5 + 8 // indicatorHeight + space
     }
 }
-
-class WLModalVC: WLIndicatorModalVC {
-    var padding: UIEdgeInsets {.init(x: 0, y: 20)}
-    lazy var stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
-    
-    override func setUp() {
-        super.setUp()
-        containerView.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges(with: padding)
-    }
-}
-
-class WLModalWrapperVC: WLIndicatorModalVC {
-    var vc: UIViewController
-    init(wrapped: UIViewController) {
-        vc = wrapped
-        super.init()
-    }
-
-    override func setUp() {
-        super.setUp()
-        add(child: vc, to: containerView)
-    }
-}
