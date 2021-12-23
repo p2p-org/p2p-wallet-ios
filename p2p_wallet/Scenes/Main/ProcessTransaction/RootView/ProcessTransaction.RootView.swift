@@ -92,6 +92,7 @@ extension ProcessTransaction {
             viewModel.transactionDriver
                 .drive(onNext: { [weak self] transaction in
                     self?.layout(transaction: transaction)
+                    self?.stackView.layoutIfNeeded()
                     self?.transactionStatusDidChange?()
                 })
                 .disposed(by: disposeBag)
