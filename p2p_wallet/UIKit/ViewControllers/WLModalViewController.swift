@@ -7,7 +7,9 @@
 
 import Foundation
 
-class WLModalViewController: BaseVC {
+class WLModalViewController: BaseVC, CustomPresentableViewController {
+    var transitionManager: UIViewControllerTransitioningDelegate?
+    
     private var child: UIView!
     
     override func viewDidLayoutSubviews() {
@@ -27,7 +29,7 @@ class WLModalViewController: BaseVC {
         // child
         child = build()
         view.addSubview(child)
-        child.autoPinEdge(.top, to: .bottom, of: indicator, withOffset: 24)
+        child.autoPinEdge(.top, to: .bottom, of: indicator, withOffset: 6)
         child.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
         
         layout()
