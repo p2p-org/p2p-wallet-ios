@@ -56,13 +56,13 @@ class MainViewModel {
 }
 
 extension MainViewModel: MainViewModelType {
-    func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((Error?) -> Void)?) {
+    func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((String?) -> Void)?) {
         let myContext = LAContext()
         
         var error: NSError?
         guard myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
             DispatchQueue.main.async {
-                onFailure?(error)
+                onFailure?(errorToString(error))
             }
             return
         }
@@ -70,7 +70,7 @@ extension MainViewModel: MainViewModelType {
         myContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: L10n.confirmItSYou) { (success, error) in
             guard success else {
                 DispatchQueue.main.async {
-                    onFailure?(error)
+                    onFailure?(errorToString(error))
                 }
                 return
             }
@@ -121,4 +121,17 @@ extension MainViewModel: MainViewModelType {
     private func canPerformAuthentication() -> Bool {
         !isAuthenticationPaused
     }
+}
+
+private func errorToString(_ error: Error?) -> String? {
+    var error = error?.localizedDescription ?? L10n.unknownError
+    switch error {
+    case "Passcode not set.":
+        error = L10n.PasscodeNotSet.soWeCanTVerifyYouAsTheDeviceSOwner
+    case "Canceled by user.":
+        return nil
+    default:
+        break
+    }
+    return error
 }
