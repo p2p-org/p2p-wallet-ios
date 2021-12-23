@@ -16,7 +16,6 @@ extension ProcessTransaction {
         
         // MARK: - Properties
         let viewModel: ProcessTransactionViewModelType
-        var transactionStatusDidChange: (() -> Void)?
         
         // MARK: - Subviews
         lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
@@ -93,7 +92,6 @@ extension ProcessTransaction {
                 .drive(onNext: { [weak self] transaction in
                     self?.layout(transaction: transaction)
                     self?.stackView.layoutIfNeeded()
-                    self?.transactionStatusDidChange?()
                 })
                 .disposed(by: disposeBag)
         }
