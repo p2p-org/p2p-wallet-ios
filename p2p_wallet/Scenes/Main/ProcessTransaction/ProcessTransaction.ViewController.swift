@@ -13,34 +13,22 @@ import UIKit
 }
 
 extension ProcessTransaction {
-    class ViewController: WLIndicatorModalVC {
-        
+    class ViewController: WLModalViewController, CustomPresentableViewController {
         // MARK: - Properties
         private let viewModel: ProcessTransactionViewModelType
         weak var delegate: ProcessTransactionViewControllerDelegate?
+        var transitionManager: UIViewControllerTransitioningDelegate?
         
         // MARK: - Initializer
         init(viewModel: ProcessTransactionViewModelType)
         {
             self.viewModel = viewModel
             super.init()
-            modalPresentationStyle = .custom
-            transitioningDelegate = self
         }
         
         // MARK: - Methods
-        override func setUp() {
-            super.setUp()
-            let rootView = RootView(viewModel: viewModel)
-            rootView.transactionStatusDidChange = { [weak self] in
-                self?.forceResizeModal()
-            }
-            containerView.addSubview(rootView)
-            rootView.autoPinEdgesToSuperviewEdges()
-            
-            if let gesture = swipeGesture {
-                view.removeGestureRecognizer(gesture)
-            }
+        override func build() -> UIView {
+            RootView(viewModel: viewModel)
         }
         
         override func bind() {
@@ -70,14 +58,5 @@ extension ProcessTransaction {
                 break
             }
         }
-    }
-}
-
-extension ProcessTransaction.ViewController: UIViewControllerTransitioningDelegate {
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        let pc = FlexibleHeightPresentationController(position: .bottom, presentedViewController: presented, presenting: presenting)
-        // disable dismissing on dimmingView
-        pc.dimmingView.gestureRecognizers?.forEach {pc.dimmingView.removeGestureRecognizer($0)}
-        return pc
     }
 }
