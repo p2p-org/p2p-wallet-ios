@@ -110,7 +110,7 @@ extension ReceiveToken.ViewController {
             let vc = ReceiveToken.HelpViewController()
             present(vc, animated: true)
         case .networkSelection:
-            let vc = ReceiveToken.NetworkSelectionScene(viewModel: viewModel)
+            let vc = ReceiveToken.NetworkSelectionScene()
             show(vc, sender: nil)
         default:
             return
