@@ -267,6 +267,10 @@ extension Resolver: ResolverRegistering {
         register { OrcaSwapV2.ViewModel() }
             .implements(OrcaSwapV2ViewModelType.self)
             .scope(.shared)
+        
+        // MARK: - Choose wallet
+        register { ChooseWallet.ViewModel() }
+            .scope(.shared)
     }
 }
 
