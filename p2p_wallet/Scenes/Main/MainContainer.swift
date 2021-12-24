@@ -33,34 +33,9 @@ class MainContainer {
 //        return ReceiveToken.ViewController(viewModel: viewModel)
 //    }
     
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController {
-        let viewModel = ProcessTransaction.ViewModel(
-            transactionType: transactionType,
-            request: request,
-            transactionHandler: processingTransactionsManager,
-            walletsRepository: walletsViewModel,
-            pricesService: pricesService,
-            apiClient: solanaSDK
-        )
-        return ProcessTransaction.ViewController(viewModel: viewModel)
-    }
-    
-    // MARK: - Profile VCs
-    func makeBackupManuallyVC() -> BackupManuallyVC {
-        BackupManuallyVC()
-    }
-    
-    func makeBackupShowPhrasesVC() -> BackupShowPhrasesVC {
-        BackupShowPhrasesVC()
-    }
-    
     func makeSettingsVC(reserveNameHandler: ReserveNameHandler) -> Settings.ViewController {
         let vm = Settings.ViewModel(reserveNameHandler: reserveNameHandler, changeFiatResponder: self, renVMService: renVMLockAndMintService)
         return .init(viewModel: vm)
-    }
-    
-    func makeDAppContainerViewController(dapp: DApp) -> DAppContainer.ViewController {
-        .init(walletsRepository: walletsViewModel, dapp: dapp)
     }
     
     // MARK: - Reserve name
@@ -97,13 +72,4 @@ class MainContainer {
     }
 }
 
-extension MainContainer: TabBarScenesFactory,
-    OrcaSwapV2ScenesFactory,
-    SwapTokenScenesFactory,
-    WalletDetailScenesFactory,
-    SendTokenScenesFactory,
-    HomeScenesFactory,
-    ChangeFiatResponder,
-    TokenSettingsScenesFactory,
-    _MainScenesFactory {
-}
+extension MainContainer: ChangeFiatResponder {}
