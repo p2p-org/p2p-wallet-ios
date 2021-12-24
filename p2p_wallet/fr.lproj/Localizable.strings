@@ -685,3 +685,5 @@
 "Show swap details" = "Afficher les détails de l'échange";
 "Tap to view in explorer" = "Appuyez pour afficher dans l'explorateur";
 "%@ is successfully sent" = "%@ est envoyé avec succès";
+"The swap is being processed" = "L'échange est en cours de traitement";
+"%@ is successfully swapped to %@" = "%@ est remplacé avec succès par %@";

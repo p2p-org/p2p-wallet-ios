@@ -212,12 +212,7 @@ private extension ProcessTransaction.RootView {
     }
     
     func setUpWithProcessingTransaction() {
-        switch viewModel.transactionType {
-        case .send, .closeAccount:
-            titleLabel.text = L10n.sending + "..."
-        case .orcaSwap, .swap:
-            titleLabel.text = L10n.swapping + "..."
-        }
+        titleLabel.text = viewModel.transactionType.isSwap ? L10n.theSwapIsBeingProcessed: L10n.theTransactionIsBeingProcessed
         
         transactionStatusView.setImage(.transactionProcessing)
         transactionIDStackView.isHidden = true
@@ -230,7 +225,16 @@ private extension ProcessTransaction.RootView {
     }
     
     func setUpWithConfirmedTransaction() {
-        titleLabel.text = L10n.success
+        switch viewModel.transactionType {
+        case .send(let from, _, _, _):
+            titleLabel.text = L10n.isSuccessfullySent(from.token.symbol)
+        case .orcaSwap(let from, to: let to, _, _, _):
+            titleLabel.text = L10n.isSuccessfullySwappedTo(from.token.symbol, to.token.symbol)
+        case .swap(_, from: let from, let to, _, _, _, _, _):
+            titleLabel.text = L10n.isSuccessfullySwappedTo(from.token.symbol, to.token.symbol)
+        case .closeAccount(let wallet):
+            titleLabel.text = L10n.closed(wallet.token.symbol)
+        }
         
         transactionStatusView.setImage(.transactionSuccess)
         

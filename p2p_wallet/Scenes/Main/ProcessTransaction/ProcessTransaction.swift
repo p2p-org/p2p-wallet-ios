@@ -23,7 +23,7 @@ struct ProcessTransaction {
         
         var isSwap: Bool {
             switch self {
-            case .swap: return true
+            case .swap, .orcaSwap: return true
             default: return false
             }
         }
