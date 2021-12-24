@@ -14,15 +14,14 @@ import WebKit
 extension BuyRoot {
     class ViewController: BaseVC {
         // MARK: - Dependencies
-        private var viewModel: BuyViewModelType
-        let navigation: UINavigationController
+        @Injected private var viewModel: BuyViewModelType
+        var navigation: UINavigationController!
         
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         
-        init(crypto: Set<BuyProviders.Crypto>, walletRepository: WalletsRepository) {
-            viewModel = ViewModel(walletRepository: walletRepository)
-            navigation = UINavigationController(rootViewController: SolanaBuyToken.Scene(buyViewModel: viewModel))
+        init(crypto: Set<BuyProviders.Crypto>) {
             super.init()
+            navigation = UINavigationController(rootViewController: SolanaBuyToken.Scene())
         }
         
         // MARK: - Properties
@@ -48,7 +47,7 @@ extension BuyRoot {
                 case .buyToken(let crypto, let amount):
                     let factory: BuyProviderFactory = Resolver.resolve()
                     let provider = try factory.create(
-                        walletRepository: viewModel.walletRepository,
+                        walletRepository: viewModel.walletsRepository,
                         crypto: crypto,
                         initialAmount: amount,
                         currency: .usd
