@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol BuyViewModelType {
-    var walletRepository: WalletsRepository { get }
+    var walletsRepository: WalletsRepository { get }
     var navigationDriver: Driver<BuyRoot.NavigatableScene> { get }
     
     func navigate(to scene: BuyRoot.NavigatableScene)
@@ -19,13 +19,7 @@ protocol BuyViewModelType {
 extension BuyRoot {
     class ViewModel: NSObject {
         // MARK: - Dependencies
-        
-        // MARK: - Properties
-        let walletRepository: WalletsRepository
-        
-        init(walletRepository: WalletsRepository) {
-            self.walletRepository = walletRepository
-        }
+        @Injected var walletsRepository: WalletsRepository
         
         // MARK: - Subject
         private let navigationSubject = PublishSubject<NavigatableScene>()
