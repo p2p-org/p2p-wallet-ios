@@ -14,10 +14,6 @@ import RxSwift
     @objc optional func tokenSettingsViewControllerDidCloseToken(_ vc: TokenSettingsViewController)
 }
 
-protocol TokenSettingsScenesFactory {
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
-}
-
 class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties

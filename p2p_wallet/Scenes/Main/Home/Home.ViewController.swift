@@ -10,16 +10,6 @@ import UIKit
 import Action
 import RxCocoa
 
-protocol HomeScenesFactory {
-    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController
-    func makeBuyTokenViewController(token: Set<BuyProviders.Crypto>) throws -> UIViewController
-    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
-    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
-    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
-    func makeSettingsVC(reserveNameHandler: ReserveNameHandler) -> Settings.ViewController
-    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
-}
-
 extension Home {
     class ViewController: BaseVC, TabBarNeededViewController {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
