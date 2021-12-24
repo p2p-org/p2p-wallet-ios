@@ -12,10 +12,16 @@ import RxCocoa
 protocol ReceiveSceneModel: BESceneModel {
     var tokenTypeDriver: Driver<ReceiveToken.TokenType> { get }
     var updateLayoutDriver: Driver<Void> { get }
-    var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
-    var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType { get }
+    var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType! { get }
+    var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType! { get }
     var shouldShowChainsSwitcher: Bool { get }
     var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
+    
+    func set(
+        solanaPubkey: SolanaSDK.PublicKey,
+        solanaTokenWallet: Wallet?,
+        isRenBTCWalletCreated: Bool
+    )
     
     func switchToken(_ tokenType: ReceiveToken.TokenType)
     func copyToClipboard(address: String, logEvent: AnalyticsEvent)
@@ -26,23 +32,23 @@ extension ReceiveToken {
     class SceneModel: NSObject, ReceiveSceneModel {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
+        @Injected private var tokensRepository: TokensRepository
+        @Injected private var renVMService: RenVMLockAndMintServiceType
+        @Injected private var associatedTokenAccountHandler: AssociatedTokenAccountHandler
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
-        let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
-        let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
+        var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType!
+        var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType!
         
         // MARK: - Subjects
         private let navigationSubject = PublishRelay<NavigatableScene?>()
         private let tokenTypeSubject = BehaviorRelay<TokenType>(value: .solana)
         
-        init(
+        func set(
             solanaPubkey: SolanaSDK.PublicKey,
             solanaTokenWallet: Wallet? = nil,
-            tokensRepository: TokensRepository,
-            renVMService: RenVMLockAndMintServiceType,
-            isRenBTCWalletCreated: Bool,
-            associatedTokenAccountHandler: AssociatedTokenAccountHandler
+            isRenBTCWalletCreated: Bool
         ) {
             receiveSolanaViewModel = ReceiveToken.SolanaViewModel(
                 solanaPubkey: solanaPubkey.base58EncodedString,

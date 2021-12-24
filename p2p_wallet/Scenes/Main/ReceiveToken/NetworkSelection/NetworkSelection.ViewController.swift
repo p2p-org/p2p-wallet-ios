@@ -12,16 +12,7 @@ import RxCocoa
 
 extension ReceiveToken {
     class NetworkSelectionScene: BEScene {
-        let viewModel: ReceiveSceneModel
-        
-        init(viewModel: ReceiveSceneModel) {
-            self.viewModel = viewModel
-            super.init()
-        }
-        
-        deinit {
-            print("Deinit")
-        }
+        @Injected private var viewModel: ReceiveSceneModel
         
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         
