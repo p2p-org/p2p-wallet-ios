@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol ProcessTransactionViewModelType {
+protocol ProcessTransactionViewModelType: AnyObject {
     var transactionType: ProcessTransaction.TransactionType {get}
     var pricesService: PricesServiceType {get}
     var reimbursedAmount: Double? {get}
@@ -71,7 +71,7 @@ extension ProcessTransaction {
                 // form transaction
                 let transaction = SolanaSDK.TransferTransaction(
                     source: fromWallet,
-                    destination: Wallet(pubkey: receiver, lamports: 0, token: fromWallet.token),
+                    destination: Wallet(pubkey: receiver.address, lamports: 0, token: fromWallet.token),
                     authority: walletsRepository.nativeWallet?.pubkey,
                     destinationAuthority: nil,
                     amount: lamports.convertToBalance(decimals: fromWallet.token.decimals),
@@ -79,7 +79,7 @@ extension ProcessTransaction {
                 )
                 
                 // Verify address
-                if !NSRegularExpression.publicKey.matches(receiver) && !fromWallet.token.isRenBTC && !receiver.hasSuffix(.nameServiceDomain) {
+                if !NSRegularExpression.publicKey.matches(receiver.address) && !fromWallet.token.isRenBTC {
                     var tx = transactionSubject.value
                     tx.value = transaction
                     tx.status = .error(L10n.wrongWalletAddress)
