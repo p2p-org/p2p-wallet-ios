@@ -7,13 +7,16 @@ import Resolver
 
 extension ReceiveToken {
     class ViewController: BEScene {
-        private var viewModel: ReceiveSceneModel!
+        @Injected private var viewModel: ReceiveSceneModel
         
-        init(viewModel: ReceiveSceneModel) {
-            self.viewModel = viewModel
+        init(
+            solanaPubkey: SolanaSDK.PublicKey,
+            solanaTokenWallet: Wallet?,
+            isRenBTCWalletCreated: Bool
+        ) {
             super.init()
-            
-            self.viewModel.navigation.drive(onNext: { [weak self] in self?.navigate(to: $0) }).disposed(by: disposeBag)
+            viewModel.set(solanaPubkey: solanaPubkey, solanaTokenWallet: solanaTokenWallet, isRenBTCWalletCreated: isRenBTCWalletCreated)
+            viewModel.navigation.drive(onNext: { [weak self] in self?.navigate(to: $0) }).disposed(by: disposeBag)
         }
         
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }

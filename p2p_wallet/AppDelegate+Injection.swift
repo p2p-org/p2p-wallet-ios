@@ -55,6 +55,7 @@ extension Resolver: ResolverRegistering {
         register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
             .implements(TokensRepository.self)
             .implements(TransactionsRepository.self)
+            .implements(AssociatedTokenAccountHandler.self)
             .implements(OrcaSwapSolanaClient.self)
             .implements(OrcaSwapAccountProvider.self)
             .implements(OrcaSwapSignatureConfirmationHandler.self)
@@ -243,6 +244,11 @@ extension Resolver: ResolverRegistering {
         
         register { SolanaBuyToken.SceneModel() }
             .implements(SolanaBuyTokenSceneModel.self)
+            .scope(.shared)
+        
+        // MARK: - Receive
+        register { ReceiveToken.SceneModel() }
+            .implements(ReceiveSceneModel.self)
             .scope(.shared)
     }
 }
