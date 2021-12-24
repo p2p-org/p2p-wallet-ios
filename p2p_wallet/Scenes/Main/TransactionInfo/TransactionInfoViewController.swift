@@ -13,7 +13,7 @@ class TransactionInfoViewController: WLIndicatorModalVC, CustomPresentableViewCo
     
     // MARK: - Properties
     @Injected private var viewModel: TransactionInfoViewModel
-    lazy var rootView = TransactionInfoRootView(viewModel: viewModel)
+    lazy var rootView = TransactionInfoRootView()
     var viewTranslation = CGPoint(x: 0, y: 0)
     var transitionManager: UIViewControllerTransitioningDelegate?
     
