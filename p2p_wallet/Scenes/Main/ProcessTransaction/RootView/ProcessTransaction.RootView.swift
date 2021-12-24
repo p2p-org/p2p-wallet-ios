@@ -15,7 +15,7 @@ extension ProcessTransaction {
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        let viewModel: ProcessTransactionViewModelType
+        @Injected var viewModel: ProcessTransactionViewModelType
         var transactionStatusDidChange: (() -> Void)?
         
         // MARK: - Subviews
@@ -50,10 +50,6 @@ extension ProcessTransaction {
         lazy var buttonStackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
         
         // MARK: - Initializers
-        init(viewModel: ProcessTransactionViewModelType) {
-            self.viewModel = viewModel
-            super.init(frame: .zero)
-        }
         
         // MARK: - Methods
         override func commonInit() {

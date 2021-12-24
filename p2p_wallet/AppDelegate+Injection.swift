@@ -61,6 +61,7 @@ extension Resolver: ResolverRegistering {
             .implements(OrcaSwapSolanaClient.self)
             .implements(OrcaSwapAccountProvider.self)
             .implements(OrcaSwapSignatureConfirmationHandler.self)
+            .implements(ProcessTransactionAPIClient.self)
             .scope(.session)
         
         // MARK: - Fee service
@@ -270,6 +271,11 @@ extension Resolver: ResolverRegistering {
         
         // MARK: - Choose wallet
         register { ChooseWallet.ViewModel() }
+            .scope(.shared)
+        
+        // MARK: - ProcessTransaction
+        register { ProcessTransaction.ViewModel() }
+            .implements(ProcessTransactionViewModelType.self)
             .scope(.shared)
     }
 }

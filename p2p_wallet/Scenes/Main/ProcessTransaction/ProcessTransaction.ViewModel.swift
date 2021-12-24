@@ -10,12 +10,17 @@ import RxSwift
 import RxCocoa
 
 protocol ProcessTransactionViewModelType {
-    var transactionType: ProcessTransaction.TransactionType {get}
+    var transactionType: ProcessTransaction.TransactionType! {get}
     var pricesService: PricesServiceType {get}
     var reimbursedAmount: Double? {get}
     
     var navigatableSceneDriver: Driver<ProcessTransaction.NavigatableScene?> {get}
     var transactionDriver: Driver<SolanaSDK.ParsedTransaction> {get}
+    
+    func set(
+        transactionType: ProcessTransaction.TransactionType,
+        request: Single<ProcessTransactionResponseType>
+    )
     
     func fetchReimbursedAmountForClosingTransaction() -> Single<Double>
     func showExplorer()
@@ -28,38 +33,29 @@ extension ProcessTransaction {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var analyticsManager: AnalyticsManagerType
-        private let transactionHandler: ProcessingTransactionsRepository
-        private let walletsRepository: WalletsRepository
-        private let apiClient: ProcessTransactionAPIClient
+        @Injected private var transactionHandler: ProcessingTransactionsRepository
+        @Injected private var walletsRepository: WalletsRepository
+        @Injected private var apiClient: ProcessTransactionAPIClient
+        @Injected var pricesService: PricesServiceType
         
         // MARK: - Properties
-        let transactionType: TransactionType
-        let pricesService: PricesServiceType
+        private(set) var transactionType: TransactionType!
         
         private let disposeBag = DisposeBag()
         private(set) var reimbursedAmount: Double?
-        private let request: Single<ProcessTransactionResponseType>
+        private var request: Single<ProcessTransactionResponseType>!
         
         // MARK: - Subject
         private let navigatableSceneSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let transactionSubject = BehaviorRelay<SolanaSDK.ParsedTransaction>(value: .init(status: .requesting, signature: nil, value: nil, slot: nil, blockTime: nil, fee: nil, blockhash: nil))
         
         // MARK: - Initializer
-        init(
+        func set(
             transactionType: TransactionType,
-            request: Single<ProcessTransactionResponseType>,
-            transactionHandler: ProcessingTransactionsRepository,
-            walletsRepository: WalletsRepository,
-            pricesService: PricesServiceType,
-            apiClient: ProcessTransactionAPIClient
+            request: Single<ProcessTransactionResponseType>
         ) {
             self.transactionType = transactionType
             self.request = request
-            self.transactionHandler = transactionHandler
-            self.walletsRepository = walletsRepository
-            self.apiClient = apiClient
-            self.pricesService = pricesService
-            
             execute()
         }
         
@@ -147,6 +143,8 @@ extension ProcessTransaction {
                     transaction: transaction,
                     fees: [.init(type: .transactionFee, lamports: 0, token: .nativeSolana, toString: nil)]
                 )
+            default:
+                return
             }
             
             // observe
@@ -217,6 +215,8 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             analyticsManager.log(event: .swapExplorerClick(txStatus: transactionStatus))
         case .closeAccount:
             break
+        default:
+            break
         }
         
         // navigate
@@ -232,6 +232,8 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
         case .orcaSwap, .swap:
             analyticsManager.log(event: .swapDoneClick(txStatus: transactionStatus))
         case .closeAccount:
+            break
+        default:
             break
         }
         
@@ -251,6 +253,8 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             case .orcaSwap, .swap:
                 event = .swapTryAgainClick(error: error)
             case .closeAccount:
+                break
+            default:
                 break
             }
         }
@@ -275,6 +279,8 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             case .orcaSwap, .swap:
                 event = .swapCancelClick(error: error)
             case .closeAccount:
+                break
+            default:
                 break
             }
         }
