@@ -33,25 +33,6 @@ class MainContainer {
 //        return ReceiveToken.ViewController(viewModel: viewModel)
 //    }
     
-    func makeChooseWalletViewController(
-        title: String?,
-        customFilter: ((Wallet) -> Bool)?,
-        showOtherWallets: Bool,
-        selectedWallet: Wallet?,
-        handler: WalletDidSelectHandler) -> ChooseWallet.ViewController
-    {
-        let viewModel = ChooseWallet.ViewModel(
-            myWallets: walletsViewModel.getWallets(),
-            selectedWallet: selectedWallet,
-            handler: handler,
-            tokensRepository: solanaSDK,
-            showOtherWallets: showOtherWallets
-        )
-        
-        viewModel.customFilter = customFilter
-        return ChooseWallet.ViewController(title: title, viewModel: viewModel)
-    }
-    
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController {
         let viewModel = ProcessTransaction.ViewModel(
             transactionType: transactionType,

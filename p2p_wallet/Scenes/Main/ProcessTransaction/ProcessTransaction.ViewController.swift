@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import RxSwift
 
 @objc protocol ProcessTransactionViewControllerDelegate: AnyObject {
     func processTransactionViewControllerDidComplete(_ vc: UIViewController)
@@ -15,15 +16,19 @@ import UIKit
 extension ProcessTransaction {
     class ViewController: WLIndicatorModalVC {
         
+        // MARK: - Dependencies
+        @Injected private var viewModel: ProcessTransactionViewModelType
+        
         // MARK: - Properties
-        private let viewModel: ProcessTransactionViewModelType
         weak var delegate: ProcessTransactionViewControllerDelegate?
         
         // MARK: - Initializer
-        init(viewModel: ProcessTransactionViewModelType)
-        {
-            self.viewModel = viewModel
+        init(
+            transactionType: ProcessTransaction.TransactionType,
+            request: Single<ProcessTransactionResponseType>
+        ) {
             super.init()
+            viewModel.set(transactionType: transactionType, request: request)
             modalPresentationStyle = .custom
             transitioningDelegate = self
         }
@@ -31,7 +36,7 @@ extension ProcessTransaction {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            let rootView = RootView(viewModel: viewModel)
+            let rootView = RootView()
             rootView.transactionStatusDidChange = { [weak self] in
                 self?.forceResizeModal()
             }

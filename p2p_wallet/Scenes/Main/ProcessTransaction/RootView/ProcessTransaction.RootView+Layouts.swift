@@ -42,6 +42,8 @@ extension ProcessTransaction.RootView {
             sv.amountInFiatLabel.text = "\(equityValue.toString(maximumFractionDigits: 9, showPlus: true)) \(Defaults.fiat.symbol)"
             
             summaryView = sv
+        default:
+            break
         }
         transactionIDStackView.isHidden = false
         
@@ -98,6 +100,8 @@ extension ProcessTransaction.RootView {
         case .orcaSwap, .swap:
             self.titleLabel.text = L10n.swapping + "..."
             self.subtitleLabel.text = L10n.transactionProcessing
+        default:
+            break
         }
         
         self.transactionStatusImageView.image = .transactionProcessing
@@ -146,6 +150,8 @@ extension ProcessTransaction.RootView {
             case .send(let fromWallet, _, _, _):
                 symbol = fromWallet.token.symbol
             case .orcaSwap, .swap, .closeAccount:
+                break
+            default:
                 break
             }
             
