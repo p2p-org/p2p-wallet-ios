@@ -9,17 +9,6 @@ import Foundation
 import UIKit
 import RxSwift
 
-protocol OrcaSwapV2ScenesFactory {
-    func makeChooseWalletViewController(
-        title: String?,
-        customFilter: ((Wallet) -> Bool)?,
-        showOtherWallets: Bool,
-        selectedWallet: Wallet?,
-        handler: WalletDidSelectHandler
-    ) -> ChooseWallet.ViewController
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
-}
-
 extension OrcaSwapV2 {
     class ViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
@@ -27,8 +16,7 @@ extension OrcaSwapV2 {
         }
 
         // MARK: - Dependencies
-        private let viewModel: OrcaSwapV2ViewModelType
-        private let scenesFactory: OrcaSwapV2ScenesFactory
+        @Injected private var viewModel: OrcaSwapV2ViewModelType
 
         // MARK: - Properties
         
@@ -41,16 +29,13 @@ extension OrcaSwapV2 {
                 viewModel?.navigate(to: .settings)
             }
         )
-        private lazy var rootView = RootView(viewModel: viewModel)
+        private lazy var rootView = RootView()
             .onTap(self, action: #selector(hideKeyboard))
         
         // MARK: - Methods
-        init(
-            viewModel: OrcaSwapV2ViewModelType,
-            scenesFactory: OrcaSwapV2ScenesFactory
-        ) {
-            self.scenesFactory = scenesFactory
-            self.viewModel = viewModel
+        init(initialWallet: Wallet?) {
+            super.setUp()
+            viewModel.set(initialWallet: initialWallet)
         }
 
         override func viewWillAppear(_ animated: Bool) {
@@ -124,7 +109,7 @@ extension OrcaSwapV2 {
 
                 present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .confirmation:
-                let vm = ConfirmSwapping.ViewModel(swapViewModel: viewModel)
+                let vm = ConfirmSwapping.ViewModel()
                 let vc = ConfirmSwapping.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case let .processTransaction(

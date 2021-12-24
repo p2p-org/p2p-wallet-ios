@@ -21,12 +21,10 @@ extension OrcaSwapV2 {
         private let payFeesWithView = ClickableRow(title: L10n.paySwapFeesWith)
         private lazy var feesView = DetailFeesView(feesDriver: viewModel.feesDriver)
 
-        private let viewModel: OrcaSwapV2ViewModelType
+        @Injected private var viewModel: OrcaSwapV2ViewModelType
         private let disposeBag = DisposeBag()
 
-        init(viewModel: OrcaSwapV2ViewModelType) {
-            self.viewModel = viewModel
-
+        init() {
             super.init(frame: .zero)
 
             layout()

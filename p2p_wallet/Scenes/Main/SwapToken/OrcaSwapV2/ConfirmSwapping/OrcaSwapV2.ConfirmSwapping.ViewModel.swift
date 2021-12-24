@@ -11,12 +11,7 @@ import RxCocoa
 extension OrcaSwapV2.ConfirmSwapping {
     final class ViewModel {
         // MARK: - Properties
-        private let swapViewModel: OrcaSwapV2ViewModelType
-        
-        // MARK: - Initializers
-        init(swapViewModel: OrcaSwapV2ViewModelType) {
-            self.swapViewModel = swapViewModel
-        }
+        @Injected private var swapViewModel: OrcaSwapV2ViewModelType
     }
 }
 
