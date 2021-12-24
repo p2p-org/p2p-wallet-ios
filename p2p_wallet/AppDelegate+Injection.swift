@@ -232,6 +232,10 @@ extension Resolver: ResolverRegistering {
             .implements(BuyProviderFactory.self)
             .scope(.application)
         
+        // MARK: - TransactionInfo
+        register { TransactionInfoViewModel() }
+            .scope(.shared)
+        
     }
 }
 
