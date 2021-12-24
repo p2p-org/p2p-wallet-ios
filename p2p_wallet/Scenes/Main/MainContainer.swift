@@ -12,11 +12,6 @@ import Resolver
 
 class MainContainer {
     // MARK: - Properties
-    func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController {
-        let viewModel = TransactionInfoViewModel(transaction: transaction)
-        return TransactionInfoViewController(viewModel: viewModel)
-    }
-    
     func makeBuyTokenViewController(token: Set<BuyProviders.Crypto>) throws -> UIViewController {
         BuyRoot.ViewController(crypto: token, walletRepository: walletsViewModel)
     }
