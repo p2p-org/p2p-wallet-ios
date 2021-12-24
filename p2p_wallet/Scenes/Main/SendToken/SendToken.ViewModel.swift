@@ -140,7 +140,7 @@ extension SendToken {
                     request: request.map {$0 as ProcessTransactionResponseType},
                     transactionType: .send(
                         from: wallet,
-                        to: receiver,
+                        to: recipientSubject.value!,
                         lamport: amount,
                         feeInLamports: fee
                     )

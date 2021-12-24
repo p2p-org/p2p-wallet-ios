@@ -96,16 +96,35 @@ extension ProcessTransaction {
         }
         
         private func bind() {
+            let subtitleText: String?
             switch viewModel.transactionType {
-            case .closeAccount:
+            case .send(let from, let to, let lamport, _):
+                let amount = lamport.convertToBalance(decimals: from.token.decimals)
+                    .toString(maximumFractionDigits: Int(from.token.decimals))
+                let recipient = to.name ?? to.address.truncatingMiddle()
+                subtitleText = amount + " " + from.token.symbol + " → " + recipient
+                bindLayout()
+            case .orcaSwap(let from, let to, let inputAmount, let estimatedAmount, _):
+                let fromAmount = inputAmount.convertToBalance(decimals: from.token.decimals)
+                    .toString(maximumFractionDigits: Int(from.token.decimals))
+                let toAmount = estimatedAmount.convertToBalance(decimals: to.token.decimals)
+                    .toString(maximumFractionDigits: Int(to.token.decimals))
+                subtitleText = fromAmount + " " + from.token.symbol + " → " + toAmount + " " + to.token.symbol
+                bindLayout()
+            case .swap(_, let from, let to, let inputAmount, let estimatedAmount, _, _, _):
+                let fromAmount = inputAmount.toString(maximumFractionDigits: 9)
+                let toAmount = estimatedAmount.toString(maximumFractionDigits: 9)
+                subtitleText = fromAmount + " " + from.token.symbol + " → " + toAmount + " " + to.token.symbol
+                bindLayout()
+            case .closeAccount(let wallet):
+                subtitleText = L10n.closeAccount(wallet.token.symbol)
                 viewModel.fetchReimbursedAmountForClosingTransaction()
                     .subscribe(onSuccess: {[weak self] _ in
                         self?.bindLayout()
                     })
                     .disposed(by: disposeBag)
-            default:
-                bindLayout()
             }
+            subtitleLabel.text = subtitleText
         }
         
         private func bindLayout() {
@@ -172,7 +191,7 @@ private extension ProcessTransaction.RootView {
         transactionIDStackView.isHidden = false
         errorLabel.isHidden = true
         
-        // title, subtitle, image, button
+        // title, image, button
         switch transaction.status {
         case .requesting, .processing:
             setUpWithProcessingTransaction()
@@ -196,10 +215,8 @@ private extension ProcessTransaction.RootView {
         switch viewModel.transactionType {
         case .send, .closeAccount:
             titleLabel.text = L10n.sending + "..."
-            subtitleLabel.text = L10n.transactionProcessing
         case .orcaSwap, .swap:
             titleLabel.text = L10n.swapping + "..."
-            subtitleLabel.text = L10n.transactionProcessing
         }
         
         transactionStatusView.setImage(.transactionProcessing)
@@ -214,7 +231,6 @@ private extension ProcessTransaction.RootView {
     
     func setUpWithConfirmedTransaction() {
         titleLabel.text = L10n.success
-        subtitleLabel.text = L10n.transactionHasBeenConfirmed
         
         transactionStatusView.setImage(.transactionSuccess)
         
@@ -230,7 +246,6 @@ private extension ProcessTransaction.RootView {
         errorLabel.isHidden = false
         
         let titleText: String
-        let subtitleText: String
         let image: UIImage
         let errorText: String
         
@@ -244,7 +259,6 @@ private extension ProcessTransaction.RootView {
         // When trying to send a wrapped token to a new SOL wallet (which is not yet in the blockchain)
         case L10n.invalidAccountInfo, L10n.couldNotRetrieveAccountInfo:
             titleText = error
-            subtitleText = L10n.CheckEnteredAccountInfoForSending.itShouldBeAccountInSolanaNetwork
             image = .transactionErrorInvalidAccountInfo
             errorText = L10n.CheckEnteredAccountInfoForSending.itShouldBeAccountInSolanaNetwork
         // When trying to send a wrapped token to another wrapped token
@@ -257,19 +271,16 @@ private extension ProcessTransaction.RootView {
             case .orcaSwap, .swap, .closeAccount:
                 break
             }
-            subtitleText = L10n.itMustBeAnWalletAddress(symbol)
             image = .transactionErrorWrongWallet
             errorText = L10n.itMustBeAnWalletAddress(symbol)
         // When a user entered an incorrect recipient address
         case L10n.wrongWalletAddress:
             titleText = L10n.wrongWalletAddress
-            subtitleText = L10n.checkEnterredWalletAddressAndTryAgain
             image = .transactionErrorWrongWallet
             errorText = L10n.checkEnterredWalletAddressAndTryAgain
         // When the user needs to correct the slippage value
         case L10n.swapInstructionExceedsDesiredSlippageLimit:
             titleText = L10n.slippageError
-            subtitleText = L10n.SwapInstructionExceedsDesiredSlippageLimit.setAnotherSlippageAndTryAgain
             image = .transactionErrorSlippageExceeded
             errorText = L10n.SwapInstructionExceedsDesiredSlippageLimit.setAnotherSlippageAndTryAgain
         // System error
@@ -277,13 +288,11 @@ private extension ProcessTransaction.RootView {
             L10n.errorProcessingInstruction0CustomProgramError0x1,
             L10n.blockhashNotFound:
             titleText = L10n.systemError
-            subtitleText = error
             image = .transactionErrorSystem
             errorText = error
         // Generic error
         default:
             titleText = L10n.somethingWentWrong
-            subtitleText = error
             image = .transactionError
             errorText = error
             
@@ -296,7 +305,6 @@ private extension ProcessTransaction.RootView {
         }
         
         titleLabel.text = titleText
-        subtitleLabel.text = subtitleText
         transactionStatusView.setImage(image)
         errorLabel.text = errorText
         
