@@ -42,6 +42,6 @@ class WLModalViewController: BaseVC, CustomPresentableViewController {
     }
     
     func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
-        6 + 4 + 24 + child.fittingHeight(targetWidth: targetWidth)
+        6 + 4 + 6 + child.fittingHeight(targetWidth: targetWidth)
     }
 }
