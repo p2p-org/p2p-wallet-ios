@@ -6,6 +6,7 @@
 //
 
 import SolanaSwift
+import FeeRelayerSwift
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -53,6 +54,7 @@ extension Resolver: ResolverRegistering {
         // MARK: - SolanaSDK
         register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
             .implements(TokensRepository.self)
+            .implements(TransactionsRepository.self)
             .implements(OrcaSwapSolanaClient.self)
             .implements(OrcaSwapAccountProvider.self)
             .implements(OrcaSwapSignatureConfirmationHandler.self)
@@ -64,6 +66,10 @@ extension Resolver: ResolverRegistering {
             .implements(TransactionHandler.self)
             .scope(.session)
         
+        register { FeeRelayer() }
+            .implements(FeeRelayerType.self)
+            .scope(.session)
+        
         // MARK: - PricesService
         register { PricesService() }
             .implements(PricesServiceType.self)
@@ -72,6 +78,7 @@ extension Resolver: ResolverRegistering {
         // MARK: - WalletsViewModel
         register { WalletsViewModel() }
             .implements(WalletsRepository.self)
+            .implements(WLNotificationsRepository.self)
             .scope(.session)
         
         // MARK: - OrcaSwap

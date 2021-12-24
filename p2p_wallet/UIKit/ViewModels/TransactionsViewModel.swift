@@ -18,7 +18,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     private let repository: TransactionsRepository
     private let pricesService: PricesServiceType
     private let processingTransactionRepository: ProcessingTransactionsRepository
-    private let feeRelayer: FeeRelayerType
+    @Injected private var feeRelayer: FeeRelayerType
     private let notificationsRepository: WLNotificationsRepository
     
     // MARK: - Properties
@@ -36,7 +36,6 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         repository: TransactionsRepository,
         pricesService: PricesServiceType,
         processingTransactionRepository: ProcessingTransactionsRepository,
-        feeRelayer: FeeRelayerType,
         notificationsRepository: WLNotificationsRepository
     ) {
         self.account = account
@@ -44,7 +43,6 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         self.repository = repository
         self.pricesService = pricesService
         self.processingTransactionRepository = processingTransactionRepository
-        self.feeRelayer = feeRelayer
         self.notificationsRepository = notificationsRepository
         super.init(isPaginationEnabled: true, limit: 10)
     }

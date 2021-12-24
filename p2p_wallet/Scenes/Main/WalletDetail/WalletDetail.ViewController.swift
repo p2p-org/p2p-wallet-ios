@@ -10,15 +10,6 @@ import BEPureLayout
 import RxSwift
 import UIKit
 
-protocol WalletDetailScenesFactory {
-    func makeBuyTokenViewController(token: Set<BuyProviders.Crypto>) throws -> UIViewController
-    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
-    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
-    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
-    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
-    func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController
-}
-
 extension WalletDetail {
     class ViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
@@ -26,8 +17,7 @@ extension WalletDetail {
         }
         
         // MARK: - Dependencies
-        private let viewModel: WalletDetailViewModelType
-        private let scenesFactory: WalletDetailScenesFactory
+        @Injected private var viewModel: WalletDetailViewModelType
         
         // MARK: - Properties
         
@@ -53,13 +43,9 @@ extension WalletDetail {
         }()
         
         // MARK: - Initializer
-        init(
-            viewModel: WalletDetailViewModelType,
-            scenesFactory: WalletDetailScenesFactory
-        ) {
-            self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
+        init(pubkey: String, symbol: String) {
             super.init()
+            viewModel.set(pubkey: pubkey, symbol: symbol)
         }
         
         // MARK: - Methods

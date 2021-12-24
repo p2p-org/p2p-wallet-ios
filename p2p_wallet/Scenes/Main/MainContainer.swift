@@ -12,36 +12,6 @@ import Resolver
 
 class MainContainer {
     // MARK: - Properties
-    @Injected private var socket: SolanaSDK.Socket
-    @Injected private var pricesService: PricesServiceType
-    
-    init() {
-        defer {
-            socket.connect()
-            pricesService.startObserving()
-        }
-    }
-    
-    deinit {
-        socket.disconnect()
-        pricesService.stopObserving()
-    }
-    
-    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController {
-        let viewModel = WalletDetail.ViewModel(
-            pubkey: pubkey,
-            symbol: symbol,
-            walletsRepository: walletsViewModel,
-            processingTransactionRepository: processingTransactionsManager,
-            pricesService: pricesService,
-            transactionsRepository: solanaSDK,
-            feeRelayer: FeeRelayer(),
-            notificationsRepository: walletsViewModel
-        )
-        
-        return WalletDetail.ViewController(viewModel: viewModel, scenesFactory: self)
-    }
-    
     func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController {
         let viewModel = TransactionInfoViewModel(transaction: transaction)
         return TransactionInfoViewController(viewModel: viewModel)

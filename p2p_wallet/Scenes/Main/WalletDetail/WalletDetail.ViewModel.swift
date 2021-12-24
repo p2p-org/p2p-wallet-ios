@@ -17,6 +17,7 @@ protocol WalletDetailViewModelType {
     var transactionsViewModel: TransactionsViewModel {get}
     var canBuyToken: Bool {get}
     
+    func set(pubkey: String, symbol: String)
     func renameWallet(to newName: String)
     func showWalletSettings()
     func sendTokens()
@@ -30,14 +31,13 @@ protocol WalletDetailViewModelType {
 extension WalletDetail {
     class ViewModel {
         // MARK: - Dependencies
-        private let walletsRepository: WalletsRepository
-        private let pricesService: PricesServiceType
-        private let processingTransactionRepository: ProcessingTransactionsRepository
-        private let transactionsRepository: TransactionsRepository
-        private let notificationsRepository: WLNotificationsRepository
-        private let feeRelayer: FeeRelayerType
-        private let pubkey: String
-        private let symbol: String
+        @Injected private var walletsRepository: WalletsRepository
+        @Injected private var pricesService: PricesServiceType
+        @Injected private var processingTransactionRepository: ProcessingTransactionsRepository
+        @Injected private var transactionsRepository: TransactionsRepository
+        @Injected private var notificationsRepository: WLNotificationsRepository
+        private var pubkey: String!
+        private var symbol: String!
         @Injected var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
@@ -55,7 +55,6 @@ extension WalletDetail {
             repository: transactionsRepository,
             pricesService: pricesService,
             processingTransactionRepository: processingTransactionRepository,
-            feeRelayer: feeRelayer,
             notificationsRepository: notificationsRepository
         )
         
@@ -64,26 +63,13 @@ extension WalletDetail {
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         
         // MARK: - Initializer
-        init(
-            pubkey: String,
-            symbol: String,
-            walletsRepository: WalletsRepository,
-            processingTransactionRepository: ProcessingTransactionsRepository,
-            pricesService: PricesServiceType,
-            transactionsRepository: TransactionsRepository,
-            feeRelayer: FeeRelayerType,
-            notificationsRepository: WLNotificationsRepository
-        ) {
+        init() {
+            bind()
+        }
+        
+        func set(pubkey: String, symbol: String) {
             self.pubkey = pubkey
             self.symbol = symbol
-            self.walletsRepository = walletsRepository
-            self.pricesService = pricesService
-            self.processingTransactionRepository = processingTransactionRepository
-            self.transactionsRepository = transactionsRepository
-            self.feeRelayer = feeRelayer
-            self.notificationsRepository = notificationsRepository
-            
-            bind()
         }
         
         /// Bind subjects

@@ -15,6 +15,10 @@ protocol MainViewModelType: AuthenticationHandler {
 }
 
 class MainViewModel {
+    // MARK: - Dependencies
+    @Injected private var socket: SolanaSDK.Socket
+    @Injected private var pricesService: PricesServiceType
+    
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private var timeRequiredForAuthentication = 10 // in seconds
@@ -27,6 +31,13 @@ class MainViewModel {
     // MARK: - Initializer
     init() {
         bind()
+        socket.connect()
+        pricesService.startObserving()
+    }
+    
+    deinit {
+        socket.disconnect()
+        pricesService.stopObserving()
     }
     
     /// Bind subjects
