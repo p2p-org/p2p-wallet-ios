@@ -69,10 +69,9 @@ extension ProcessTransaction {
         
         // MARK: - Layout
         private func layout() {
-            let stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
+            let stackView = UIStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
             addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 0, y: 18))
-            stackView.spacing = 0
             
             stackView.addArrangedSubviews {
                 titleLabel
@@ -80,9 +79,7 @@ extension ProcessTransaction {
                 BEStackViewSpacing(4)
                 subtitleLabel
                     .padding(.init(x: 18, y: 0))
-                BEStackViewSpacing(18)
                 transactionStatusView
-                BEStackViewSpacing(18)
                 transactionIDStackView
                 BEStackViewSpacing(36)
                 errorLabel
@@ -205,7 +202,7 @@ private extension ProcessTransaction.RootView {
         
         // transaction id
         if let signature = transaction.signature {
-            self.transactionIDLabel.text = signature
+            self.transactionIDLabel.text = signature.truncatingMiddle(numOfSymbolsRevealed: 9)
         } else {
             self.transactionIDStackView.isHidden = true
         }
