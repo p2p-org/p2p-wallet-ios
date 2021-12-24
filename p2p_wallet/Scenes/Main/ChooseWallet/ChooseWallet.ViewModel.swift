@@ -13,26 +13,23 @@ import BECollectionView
 extension ChooseWallet {
     class ViewModel: BEListViewModel<Wallet> {
         // MARK: - Dependencies
-        let selectedWallet: Wallet?
-        private let myWallets: [Wallet]
-        private let handler: WalletDidSelectHandler
-        private let tokensRepository: TokensRepository
-        private let showOtherWallets: Bool
+        private(set) var selectedWallet: Wallet?
+        private var myWallets: [Wallet]!
+        private(set) var handler: WalletDidSelectHandler!
+        @Injected private var walletsRepository: WalletsRepository
+        @Injected private var tokensRepository: TokensRepository
+        private(set) var showOtherWallets: Bool!
         private var keyword: String?
         
-        init(
-            myWallets: [Wallet],
+        func set(
             selectedWallet: Wallet?,
             handler: WalletDidSelectHandler,
-            tokensRepository: TokensRepository,
             showOtherWallets: Bool
         ) {
-            self.myWallets = myWallets
             self.selectedWallet = selectedWallet
             self.handler = handler
-            self.tokensRepository = tokensRepository
             self.showOtherWallets = showOtherWallets
-            super.init()
+            self.myWallets = walletsRepository.getWallets()
         }
         
         // MARK: - Request
