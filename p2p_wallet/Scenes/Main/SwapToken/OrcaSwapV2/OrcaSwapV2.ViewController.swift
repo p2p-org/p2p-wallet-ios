@@ -133,7 +133,7 @@ extension OrcaSwapV2 {
             ):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
                 vc.delegate = self
-                present(vc, animated: true, completion: nil)
+                present(vc, interactiveDismissalType: .none, completion: nil)
             case .back:
                 navigationController?.popViewController(animated: true)
             case .none:
