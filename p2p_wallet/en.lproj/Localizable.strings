@@ -685,3 +685,5 @@
 "Show swap details" = "Show swap details";
 "Tap to view in explorer" = "Tap to view in explorer";
 "%@ is successfully sent" = "%@ is successfully sent";
+"The swap is being processed" = "The swap is being processed";
+"%@ is successfully swapped to %@" = "%@ is successfully swapped to %@";

@@ -685,3 +685,5 @@
 "Show swap details" = "Показать сведения о свопе";
 "Tap to view in explorer" = "Нажмите, чтобы просмотреть в explorer";
 "%@ is successfully sent" = "%@ успешно отправлено";
+"The swap is being processed" = "Своп обрабатывается";
+"%@ is successfully swapped to %@" = "%@ успешно заменен на %@";

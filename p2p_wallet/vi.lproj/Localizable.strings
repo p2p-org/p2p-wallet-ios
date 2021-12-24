@@ -685,3 +685,5 @@
 "Show swap details" = "Hiển thị chi tiết hoán đổi";
 "Tap to view in explorer" = "Nhấn để xem trong explorer";
 "%@ is successfully sent" = "%@ được gửi thành công";
+"The swap is being processed" = "Giao dịch hoán đổi đang được xử lý";
+"%@ is successfully swapped to %@" = "%@ được hoán đổi thành công thành %@";
