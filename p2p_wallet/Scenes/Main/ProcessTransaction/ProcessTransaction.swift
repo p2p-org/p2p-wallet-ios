@@ -30,15 +30,6 @@ struct ProcessTransaction {
     }
 }
 
-protocol ProcessTransactionAPIClient {
-    func getReimbursedAmountForClosingToken() -> Single<Double>
-}
-extension SolanaSDK: ProcessTransactionAPIClient {
-    func getReimbursedAmountForClosingToken() -> Single<Double> {
-        getCreatingTokenAccountFee().map {$0.convertToBalance(decimals: 9)}
-    }
-}
-
 protocol ProcessTransactionResponseType {}
 extension SolanaSDK.TransactionID: ProcessTransactionResponseType {}
 extension SolanaSDK.SwapResponse: ProcessTransactionResponseType {}
