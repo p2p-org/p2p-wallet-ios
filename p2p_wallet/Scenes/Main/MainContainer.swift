@@ -12,67 +12,10 @@ import Resolver
 
 class MainContainer {
     // MARK: - Properties
-    var solanaSDK: SolanaSDK
-    var socket: SolanaSDK.Socket
-    let processingTransactionsManager: ProcessingTransactionsManager
-    let pricesService: PricesServiceType
-    private(set) var walletsViewModel: WalletsViewModel
-    
-    let renVMLockAndMintService: RenVMLockAndMintServiceType
-    let renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
-    
-    private lazy var orcaSwap: OrcaSwapType = OrcaSwap(
-        apiClient: OrcaSwap.APIClient(
-            network: Defaults.apiEndPoint.network.cluster
-        ),
-        solanaClient: solanaSDK,
-        accountProvider: solanaSDK,
-        notificationHandler: solanaSDK
-    )
+    @Injected private var socket: SolanaSDK.Socket
+    @Injected private var pricesService: PricesServiceType
     
     init() {
-        self.solanaSDK = SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve())
-        self.socket = SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl)
-        
-        self.pricesService = PricesService(tokensRepository: solanaSDK)
-        
-        let walletsViewModel = WalletsViewModel(
-            solanaSDK: solanaSDK,
-            accountNotificationsRepository: socket,
-            pricesService: pricesService
-        )
-        
-        self.processingTransactionsManager = ProcessingTransactionsManager(handler: socket, walletsRepository: walletsViewModel, pricesService: pricesService)
-        walletsViewModel.processingTransactionRepository = self.processingTransactionsManager
-        self.walletsViewModel = walletsViewModel
-        
-        // RenVM
-        let network: RenVM.Network
-        switch solanaSDK.endpoint.network {
-        case .mainnetBeta:
-            network = .mainnet
-        case .testnet, .devnet:
-            network = .testnet
-        }
-        
-        let rpcClient = RenVM.RpcClient(network: network)
-        
-        self.renVMLockAndMintService = RenVM.LockAndMint.Service(
-            rpcClient: rpcClient,
-            solanaClient: solanaSDK,
-            account: solanaSDK.accountStorage.account!,
-            sessionStorage: RenVM.LockAndMint.SessionStorage(),
-            transactionHandler: socket
-        )
-        
-        self.renVMBurnAndReleaseService = RenVM.BurnAndRelease.Service(
-            rpcClient: rpcClient,
-            solanaClient: solanaSDK,
-            account: solanaSDK.accountStorage.account!,
-            transactionStorage: RenVM.BurnAndRelease.TransactionStorage(),
-            transactionHandler: socket
-        )
-        
         defer {
             socket.connect()
             pricesService.startObserving()

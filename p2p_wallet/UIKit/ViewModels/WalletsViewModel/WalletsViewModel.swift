@@ -10,13 +10,14 @@ import RxSwift
 import RxCocoa
 import BECollectionView
 import RxAppState
+import Resolver
 
 class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Dependencies
-    private let solanaSDK: SolanaSDK
-    let accountNotificationsRepository: AccountNotificationsRepository
-    weak var processingTransactionRepository: ProcessingTransactionsRepository?
-    private let pricesService: PricesServiceType
+    @Injected private var solanaSDK: SolanaSDK
+    @Injected private var pricesService: PricesServiceType
+    @Injected private var accountNotificationsRepository: AccountNotificationsRepository
+    @WeakLazyInjected private var processingTransactionRepository: ProcessingTransactionsRepository?
     
     // MARK: - Properties
     private var defaultsDisposables = [DefaultsDisposable]()
@@ -32,14 +33,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     let isHiddenWalletsShown = BehaviorRelay<Bool>(value: false)
     
     // MARK: - Initializer
-    init(
-        solanaSDK: SolanaSDK,
-        accountNotificationsRepository: AccountNotificationsRepository,
-        pricesService: PricesServiceType
-    ) {
-        self.solanaSDK = solanaSDK
-        self.accountNotificationsRepository = accountNotificationsRepository
-        self.pricesService = pricesService
+    init() {
         super.init()
         bind()
         startObserving()
