@@ -28,7 +28,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
 extension SendToken.ChooseRecipientAndNetwork {
     class ViewModel {
         // MARK: - Dependencies
-        private let sendTokenViewModel: SendTokenViewModelType
+        @Injected private var sendTokenViewModel: SendTokenViewModelType
         let showAfterConfirmation: Bool
         let preSelectedNetwork: SendToken.Network?
         
@@ -42,11 +42,9 @@ extension SendToken.ChooseRecipientAndNetwork {
         
         // MARK: - Initializers
         init(
-            sendTokenViewModel: SendTokenViewModelType,
             showAfterConfirmation: Bool,
             preSelectedNetwork: SendToken.Network?
         ) {
-            self.sendTokenViewModel = sendTokenViewModel
             self.showAfterConfirmation = showAfterConfirmation
             self.preSelectedNetwork = preSelectedNetwork
             bind()

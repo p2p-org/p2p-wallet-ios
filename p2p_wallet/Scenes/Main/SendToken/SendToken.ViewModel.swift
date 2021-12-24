@@ -12,6 +12,11 @@ import RxCocoa
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler, SendTokenSelectNetworkViewModelType {
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
     
+    func set(
+        walletPubkey: String?,
+        destinationAddress: String?
+    )
+    
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
     func getSelectableNetworks() -> [SendToken.Network]
@@ -34,14 +39,14 @@ extension SendToken {
         @Injected private var addressFormatter: AddressFormatterType
         @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var analyticsManager: AnalyticsManagerType
-        private let walletsRepository: WalletsRepository
-        var solanaAPIClient: SendTokenAPIClient
-        let pricesService: PricesServiceType
-        private let renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+        @Injected private var pricesService: PricesServiceType
+        @Injected private var walletsRepository: WalletsRepository
+        @Injected var solanaAPIClient: SendTokenAPIClient
+        @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         
         // MARK: - Properties
-        private let initialWalletPubkey: String?
-        private let initialDestinationWalletPubkey: String?
+        private var initialWalletPubkey: String?
+        private var initialDestinationWalletPubkey: String?
         
         private var selectedNetwork: SendToken.Network?
         private var selectableNetworks: [SendToken.Network]?
@@ -54,26 +59,18 @@ extension SendToken {
         let networkSubject = BehaviorRelay<Network>(value: .solana)
         
         // MARK: - Initializers
-        init(
-            repository: WalletsRepository,
-            pricesService: PricesServiceType,
+        func set(
             walletPubkey: String?,
-            destinationAddress: String?,
-            apiClient: SendTokenAPIClient,
-            renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+            destinationAddress: String?
         ) {
-            self.walletsRepository = repository
-            self.pricesService = pricesService
             self.initialWalletPubkey = walletPubkey
             self.initialDestinationWalletPubkey = destinationAddress
-            self.solanaAPIClient = apiClient
-            self.renVMBurnAndReleaseService = renVMBurnAndReleaseService
             
             // accept initial values
             if let pubkey = walletPubkey {
-                walletSubject.accept(repository.getWallets().first(where: {$0.pubkey == pubkey}))
+                walletSubject.accept(walletsRepository.getWallets().first(where: {$0.pubkey == pubkey}))
             } else {
-                walletSubject.accept(repository.nativeWallet)
+                walletSubject.accept(walletsRepository.nativeWallet)
             }
         }
         
