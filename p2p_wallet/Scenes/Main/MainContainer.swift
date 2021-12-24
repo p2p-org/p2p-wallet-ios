@@ -33,35 +33,6 @@ class MainContainer {
 //        return ReceiveToken.ViewController(viewModel: viewModel)
 //    }
     
-    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController {
-        let feeService = FeeService(apiClient: solanaSDK)
-        switch provider {
-        case .orca:
-            let vm = OrcaSwapV2.ViewModel(
-                feeService: feeService,
-                orcaSwap: orcaSwap,
-                walletsRepository: walletsViewModel,
-                initialWallet: wallet ?? walletsViewModel.nativeWallet
-            )
-            return OrcaSwapV2.ViewController(viewModel: vm, scenesFactory: self)
-        case .serum:
-            let provider = SerumSwap(
-                client: solanaSDK,
-                accountProvider: solanaSDK,
-                tokenListContainer: solanaSDK,
-                signatureNotificationHandler: solanaSDK
-            )
-            let vm = SerumSwapV1.ViewModel(
-                provider: provider,
-                feeAPIClient: solanaSDK,
-                walletsRepository: walletsViewModel,
-                sourceWallet: wallet ?? walletsViewModel.nativeWallet
-            )
-            let vc = SerumSwapV1.ViewController(viewModel: vm, scenesFactory: self)
-            return vc
-        }
-    }
-    
     func makeChooseWalletViewController(
         title: String?,
         customFilter: ((Wallet) -> Bool)?,

@@ -14,9 +14,9 @@ extension OrcaSwapV2 {
         // MARK: - Dependencies
         @Injected var authenticationHandler: AuthenticationHandler
         @Injected var analyticsManager: AnalyticsManagerType
-        let feeService: FeeServiceType
-        let orcaSwap: OrcaSwapType
-        let walletsRepository: WalletsRepository
+        @Injected var feeService: FeeServiceType
+        @Injected var orcaSwap: OrcaSwapType
+        @Injected var walletsRepository: WalletsRepository
         
         // MARK: - Properties
         let disposeBag = DisposeBag()
@@ -39,17 +39,10 @@ extension OrcaSwapV2 {
         let showHideDetailsButtonTapSubject = PublishRelay<Void>()
         let isShowingDetailsSubject = BehaviorRelay<Bool>(value: false)
 
-        // MARK: - Initializer
-        init(
-            feeService: FeeServiceType,
-            orcaSwap: OrcaSwapType,
-            walletsRepository: WalletsRepository,
+        // MARK: - setter
+        func set(
             initialWallet: Wallet?
         ) {
-            self.feeService = feeService
-            self.orcaSwap = orcaSwap
-            self.walletsRepository = walletsRepository
-
             reload()
             bind(initialWallet: initialWallet)
         }

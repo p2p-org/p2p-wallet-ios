@@ -57,9 +57,15 @@ extension Resolver: ResolverRegistering {
             .implements(TransactionsRepository.self)
             .implements(AssociatedTokenAccountHandler.self)
             .implements(SendTokenAPIClient.self)
+            .implements(FeeAPIClient.self)
             .implements(OrcaSwapSolanaClient.self)
             .implements(OrcaSwapAccountProvider.self)
             .implements(OrcaSwapSignatureConfirmationHandler.self)
+            .scope(.session)
+        
+        // MARK: - Fee service
+        register { FeeService() }
+            .implements(FeeServiceType.self)
             .scope(.session)
         
         // MARK: - Socket
@@ -255,6 +261,11 @@ extension Resolver: ResolverRegistering {
         // MARK: - Send
         register { SendToken.ViewModel() }
             .implements(SendTokenViewModelType.self)
+            .scope(.shared)
+        
+        // MARK: - OrcaSwap
+        register { OrcaSwapV2.ViewModel() }
+            .implements(OrcaSwapV2ViewModelType.self)
             .scope(.shared)
     }
 }
