@@ -102,6 +102,7 @@ extension Root.ViewModel: ChangeNetworkResponder {
         Defaults.apiEndPoint = endpoint
         
         showAuthenticationOnMainOnAppear = false
+        ResolverScope.session.reset()
         reload()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in

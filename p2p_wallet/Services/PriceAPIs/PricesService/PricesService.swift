@@ -43,16 +43,14 @@ class PricesService {
     // MARK: - Dependencies
     @Injected private var storage: PricesStorage
     @Injected private var fetcher: PricesFetcher
+    @Injected private var tokensRepository: TokensRepository
     
     // MARK: - Properties
-    private let tokensRepository: TokensRepository
     private var timer: Timer?
     private lazy var currentPricesSubject = LoadableRelay<[String: CurrentPrice]>(request: .just(storage.retrievePrices()))
     
     // MARK: - Initializer
-    init(tokensRepository: TokensRepository) {
-        self.tokensRepository = tokensRepository
-        
+    init() {
         // reload to get cached prices
         self.currentPricesSubject.reload()
         

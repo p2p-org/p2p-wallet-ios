@@ -50,6 +50,76 @@ extension Resolver: ResolverRegistering {
             .implements(ClipboardManagerType.self)
             .scope(.application)
         
+        // MARK: - SolanaSDK
+        register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
+            .implements(TokensRepository.self)
+            .implements(OrcaSwapSolanaClient.self)
+            .implements(OrcaSwapAccountProvider.self)
+            .implements(OrcaSwapSignatureConfirmationHandler.self)
+            .scope(.session)
+        
+        // MARK: - Socket
+        register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
+            .implements(AccountNotificationsRepository.self)
+            .implements(TransactionHandler.self)
+            .scope(.session)
+        
+        // MARK: - PricesService
+        register { PricesService() }
+            .implements(PricesServiceType.self)
+            .scope(.session)
+        
+        // MARK: - WalletsViewModel
+        register { WalletsViewModel() }
+            .implements(WalletsRepository.self)
+            .scope(.session)
+        
+        // MARK: - OrcaSwap
+        register { OrcaSwap(
+            apiClient: OrcaSwap.APIClient(
+                network: Defaults.apiEndPoint.network.cluster
+            ),
+            solanaClient: resolve(),
+            accountProvider: resolve(),
+            notificationHandler: resolve())
+        }
+            .implements(OrcaSwapType.self)
+            .scope(.session)
+        
+        // MARK: - RenVM
+        register { RenVM.RpcClient(network: Defaults.apiEndPoint.network == .mainnetBeta ? .mainnet: .testnet) }
+            .implements(RenVMRpcClientType.self)
+            .scope(.session)
+        
+        register {
+            RenVM.LockAndMint.Service(
+                rpcClient: resolve(),
+                solanaClient: resolve(),
+                account: resolve(SolanaSDK.self).accountStorage.account!,
+                sessionStorage: RenVM.LockAndMint.SessionStorage(),
+                transactionHandler: resolve()
+            )
+        }
+            .implements(RenVMLockAndMintServiceType.self)
+            .scope(.session)
+        
+        register {
+            RenVM.BurnAndRelease.Service(
+                rpcClient: resolve(),
+                solanaClient: resolve(),
+                account: resolve(SolanaSDK.self).accountStorage.account!,
+                transactionStorage: RenVM.BurnAndRelease.TransactionStorage(),
+                transactionHandler: resolve()
+            )
+        }
+            .implements(RenVMBurnAndReleaseServiceType.self)
+            .scope(.session)
+        
+        // MARK: - ProcessingTransactionsManager
+        register { ProcessingTransactionsManager() }
+            .implements(ProcessingTransactionsRepository.self)
+            .scope(.session)
+        
         // MARK: - Others
         register { SessionBannersAvailabilityState() }
             .scope(.session)
