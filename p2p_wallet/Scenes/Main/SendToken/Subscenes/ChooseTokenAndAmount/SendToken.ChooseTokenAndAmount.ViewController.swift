@@ -12,14 +12,12 @@ extension SendToken.ChooseTokenAndAmount {
     class ViewController: SendToken.BaseViewController {
         // MARK: - Dependencies
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
-        private let scenesFactory: SendTokenScenesFactory
         
         // MARK: - Properties
         
         // MARK: - Initializer
         init(
-            viewModel: SendTokenChooseTokenAndAmountViewModelType,
-            scenesFactory: SendTokenScenesFactory
+            viewModel: SendTokenChooseTokenAndAmountViewModelType
         ) {
             self.viewModel = viewModel
             self.scenesFactory = scenesFactory

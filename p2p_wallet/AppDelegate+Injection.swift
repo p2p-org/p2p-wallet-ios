@@ -56,6 +56,7 @@ extension Resolver: ResolverRegistering {
             .implements(TokensRepository.self)
             .implements(TransactionsRepository.self)
             .implements(AssociatedTokenAccountHandler.self)
+            .implements(SendTokenAPIClient.self)
             .implements(OrcaSwapSolanaClient.self)
             .implements(OrcaSwapAccountProvider.self)
             .implements(OrcaSwapSignatureConfirmationHandler.self)
@@ -249,6 +250,11 @@ extension Resolver: ResolverRegistering {
         // MARK: - Receive
         register { ReceiveToken.SceneModel() }
             .implements(ReceiveSceneModel.self)
+            .scope(.shared)
+        
+        // MARK: - Send
+        register { SendToken.ViewModel() }
+            .implements(SendTokenViewModelType.self)
             .scope(.shared)
     }
 }
