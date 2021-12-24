@@ -14,14 +14,14 @@ class MainContainer {
 //    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController? {
 //        guard let pubkey = try? SolanaSDK.PublicKey(string: walletsViewModel.nativeWallet?.pubkey) else {return nil}
 //        let tokenWallet = walletsViewModel.getWallets().first(where: {$0.pubkey == tokenWalletPubkey})
-//        
+//
 //        let isDevnet = solanaSDK.endpoint.network == .devnet
 //        let renBTCMint = isDevnet ? SolanaSDK.PublicKey.renBTCMintDevnet : SolanaSDK.PublicKey.renBTCMint
-//        
+//
 //        let isRenBTCWalletCreated = walletsViewModel.getWallets().contains(where: {
 //            $0.token.address == renBTCMint.base58EncodedString
 //        })
-//        
+//
 //        let viewModel = ReceiveToken.SceneModel(
 //            solanaPubkey: pubkey,
 //            solanaTokenWallet: tokenWallet,
@@ -32,18 +32,6 @@ class MainContainer {
 //        )
 //        return ReceiveToken.ViewController(viewModel: viewModel)
 //    }
-    
-    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController {
-        let vm = SendToken.ViewModel(
-            repository: walletsViewModel,
-            pricesService: pricesService,
-            walletPubkey: walletPubkey,
-            destinationAddress: destinationAddress,
-            apiClient: solanaSDK,
-            renVMBurnAndReleaseService: renVMBurnAndReleaseService
-        )
-        return .init(viewModel: vm, scenesFactory: self)
-    }
     
     func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController {
         let feeService = FeeService(apiClient: solanaSDK)

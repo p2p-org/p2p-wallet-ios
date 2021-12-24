@@ -35,7 +35,7 @@ class MainViewController: BaseVC {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        add(child: scenesFactory.makeTabBarVC())
+        add(child: TabBarVC())
         view.addSubview(blurEffectView)
         blurEffectView.autoPinEdgesToSuperviewEdges()
     }
