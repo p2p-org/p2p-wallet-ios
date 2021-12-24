@@ -27,19 +27,13 @@ extension Home {
         }
         
         // MARK: - Dependencies
-        private let viewModel: HomeViewModelType
-        private let scenesFactory: HomeScenesFactory
         @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var viewModel: HomeViewModelType
         
         // MARK: - Properties
         fileprivate let interactor = MenuInteractor()
         
         // MARK: - Initializer
-        init(viewModel: HomeViewModelType, scenesFactory: HomeScenesFactory) {
-            self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
-            super.init()
-        }
         
         // MARK: - Methods
         override func loadView() {

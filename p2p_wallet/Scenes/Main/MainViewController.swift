@@ -9,17 +9,12 @@ import Foundation
 import UIKit
 import Action
 
-protocol _MainScenesFactory {
-    func makeTabBarVC() -> TabBarVC
-}
-
 class MainViewController: BaseVC {
     // MARK: - Dependencies
     @Injected private var viewModel: MainViewModelType
     
     // MARK: - Properties
-    private let scenesFactory: _MainScenesFactory
-    private let authenticateWhenAppears: Bool
+    var authenticateWhenAppears: Bool!
     
     // MARK: - Subviews
     private lazy var blurEffectView: UIVisualEffectView = {
@@ -30,13 +25,6 @@ class MainViewController: BaseVC {
     private var localAuthVC: Authentication.ViewController?
     
     // MARK: - Initializer
-    init(scenesFactory: _MainScenesFactory, authenticateWhenAppears: Bool)
-    {
-        self.scenesFactory = scenesFactory
-        self.authenticateWhenAppears = authenticateWhenAppears
-        super.init()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         if authenticateWhenAppears {

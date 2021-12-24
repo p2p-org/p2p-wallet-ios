@@ -51,8 +51,8 @@ extension Root {
                 transition(to: vc)
             case .main(let showAuthenticationWhenAppears):
                 // MainViewController
-                let container = MainContainer()
-                let vc = container.makeMainViewController(authenticateWhenAppears: showAuthenticationWhenAppears)
+                let vc = MainViewController()
+                vc.authenticateWhenAppears = showAuthenticationWhenAppears
                 transition(to: vc)
             default:
                 break

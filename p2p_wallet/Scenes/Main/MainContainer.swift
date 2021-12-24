@@ -27,29 +27,6 @@ class MainContainer {
         pricesService.stopObserving()
     }
     
-    func makeMainViewController(authenticateWhenAppears: Bool) -> MainViewController {
-        MainViewController(scenesFactory: self, authenticateWhenAppears: authenticateWhenAppears)
-    }
-    
-    func makeTabBarVC() -> TabBarVC {
-        TabBarVC(scenesFactory: self)
-    }
-    
-    func makeHomeViewController() -> Home.ViewController {
-        let vm = Home.ViewModel(walletsRepository: walletsViewModel, pricesService: pricesService)
-        return .init(viewModel: vm, scenesFactory: self)
-    }
-    
-    func makeInvestmentsViewController() -> InvestmentsViewController {
-        let newsViewModel = NewsViewModel()
-        let defisViewModel = DefisViewModel()
-        let investmentsViewModel = InvestmentsViewModel(
-            newsViewModel: newsViewModel,
-            defisViewModel: defisViewModel
-        )
-        return InvestmentsViewController(viewModel: investmentsViewModel)
-    }
-    
     func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController {
         let viewModel = WalletDetail.ViewModel(
             pubkey: pubkey,
