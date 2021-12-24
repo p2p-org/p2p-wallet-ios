@@ -20,9 +20,6 @@ class TabBarVC: BEPagesVC {
         super.setUp()
         view.backgroundColor = .background
         
-        let dAppContainerVC = DAppContainer.ViewController()
-        dAppContainerVC.setDApp(.fake)
-        
         viewControllers = [
             createNavigationController(rootVC: Home.ViewController()),
             createNavigationController(rootVC: InvestmentsViewController(
@@ -32,7 +29,7 @@ class TabBarVC: BEPagesVC {
                 )
             )),
             createNavigationController(rootVC: _PlaceholderVC()),
-            createNavigationController(rootVC: dAppContainerVC),
+            createNavigationController(rootVC: DAppContainer.ViewController(dApp: .fake)),
             createNavigationController(rootVC: _PlaceholderVC())
         ]
         

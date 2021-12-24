@@ -13,7 +13,11 @@ extension DAppContainer {
         // MARK: - Dependencies
         @Injected private var viewModel: DAppContainerViewModelType
         
-        // MARK: - Properties
+        // MARK: - Initializers
+        init(dApp: DApp) {
+            super.init()
+            viewModel.set(dapp: dApp)
+        }
         
         // MARK: - Methods
         override func loadView() {
@@ -29,10 +33,6 @@ extension DAppContainer {
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
-        }
-        
-        func setDApp(_ dapp: DApp) {
-            viewModel.set(dapp: dapp)
         }
         
         // MARK: - Navigation
