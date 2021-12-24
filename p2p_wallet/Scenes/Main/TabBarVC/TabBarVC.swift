@@ -9,12 +9,6 @@ import Foundation
 import UIKit
 import RxSwift
 
-protocol TabBarScenesFactory {
-    func makeHomeViewController() -> Home.ViewController
-    func makeInvestmentsViewController() -> InvestmentsViewController
-    func makeDAppContainerViewController(dapp: DApp) -> DAppContainer.ViewController // TODO: - Replace by DAppsCollection.ViewController later
-}
-
 protocol TabBarNeededViewController: UIViewController {}
 
 class TabBarVC: BEPagesVC {
@@ -22,24 +16,21 @@ class TabBarVC: BEPagesVC {
     private let disposeBag = DisposeBag()
     private var tabBarTopConstraint: NSLayoutConstraint!
     
-    let scenesFactory: TabBarScenesFactory
-    init(scenesFactory: TabBarScenesFactory) {
-        self.scenesFactory = scenesFactory
-        super.init()
-    }
-    
     override func setUp() {
         super.setUp()
         view.backgroundColor = .background
         
-        // pages
-        let mainVC = scenesFactory.makeHomeViewController()
-        let investmentsVC = scenesFactory.makeInvestmentsViewController()
-        let dAppContainerVC = scenesFactory.makeDAppContainerViewController(dapp: .fake)
+        let dAppContainerVC = DAppContainer.ViewController()
+        dAppContainerVC.setDApp(.fake)
         
         viewControllers = [
-            createNavigationController(rootVC: mainVC),
-            createNavigationController(rootVC: investmentsVC),
+            createNavigationController(rootVC: Home.ViewController()),
+            createNavigationController(rootVC: InvestmentsViewController(
+                viewModel: InvestmentsViewModel(
+                    newsViewModel: NewsViewModel(),
+                    defisViewModel: DefisViewModel()
+                )
+            )),
             createNavigationController(rootVC: _PlaceholderVC()),
             createNavigationController(rootVC: dAppContainerVC),
             createNavigationController(rootVC: _PlaceholderVC())

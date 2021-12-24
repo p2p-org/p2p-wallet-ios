@@ -13,11 +13,6 @@ extension DAppContainer {
         // MARK: - Dependencies
         @Injected private var viewModel: DAppContainerViewModelType
         
-        init(walletsRepository: WalletsRepository, dapp: DApp) {
-            super.init()
-            self.viewModel.inject(walletsRepository: walletsRepository, dapp: dapp)
-        }
-        
         // MARK: - Properties
         
         // MARK: - Methods
@@ -34,6 +29,10 @@ extension DAppContainer {
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
+        }
+        
+        func setDApp(_ dapp: DApp) {
+            viewModel.set(dapp: dapp)
         }
         
         // MARK: - Navigation

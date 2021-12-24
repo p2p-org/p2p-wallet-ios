@@ -29,20 +29,12 @@ extension Home {
         @Injected var bannersManager: BannersManagerType
         @Injected var bannersKindTransformer: BannerKindTransformerType
         @Injected var notificationsService: NotificationsServiceType
-        
-        // MARK: - Properties
-        let walletsRepository: WalletsRepository
-        let pricesService: PricesServiceType
+        @Injected var walletsRepository: WalletsRepository
+        @Injected var pricesService: PricesServiceType
         
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let nameDidReserveSubject = PublishRelay<Void>()
-        
-        // MARK: - Initializers
-        init(walletsRepository: WalletsRepository, pricesService: PricesServiceType) {
-            self.walletsRepository = walletsRepository
-            self.pricesService = pricesService
-        }
     }
 }
 

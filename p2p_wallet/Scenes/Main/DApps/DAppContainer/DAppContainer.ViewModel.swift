@@ -15,7 +15,7 @@ protocol DAppContainerViewModelType {
     var navigationDriver: Driver<DAppContainer.NavigatableScene?> { get }
     func navigate(to scene: DAppContainer.NavigatableScene)
     
-    func inject(walletsRepository: WalletsRepository, dapp: DApp)
+    func set(dapp: DApp)
     func getWebviewConfiguration() -> WKWebViewConfiguration
     func getDAppURL() -> String
 }
@@ -25,9 +25,9 @@ extension DAppContainer {
         // MARK: - Dependencies
         @Injected private var dAppChannel: DAppChannel
         @Injected private var accountStorage: SolanaSDKAccountStorage
+        @Injected private var walletsRepository: WalletsRepository
         
         // MARK: - Properties
-        private var walletsRepository: WalletsRepository!
         private var dapp: DApp!
         
         // MARK: - Subject
@@ -50,8 +50,7 @@ extension DAppContainer.ViewModel: DAppContainerViewModelType {
         navigationSubject.accept(scene)
     }
     
-    func inject(walletsRepository: WalletsRepository, dapp: DApp) {
-        self.walletsRepository = walletsRepository
+    func set(dapp: DApp) {
         self.dapp = dapp
     }
     
@@ -66,11 +65,7 @@ extension DAppContainer.ViewModel: DAppContainerViewModelType {
 
 extension DAppContainer.ViewModel: DAppChannelDelegate {
     func connect() -> Single<String> {
-        guard let repository = walletsRepository else {
-            return .error(DAppChannelError.platformIsNotReady)
-        }
-        
-        guard let pubKey = repository.getWallets().first(where: { $0.isNativeSOL })?.pubkey else {
+        guard let pubKey = walletsRepository.getWallets().first(where: { $0.isNativeSOL })?.pubkey else {
             return .error(DAppChannelError.canNotFindWalletAddress)
         }
         
