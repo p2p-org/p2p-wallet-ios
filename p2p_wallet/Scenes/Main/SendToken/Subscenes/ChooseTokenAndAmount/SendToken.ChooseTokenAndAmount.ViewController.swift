@@ -20,7 +20,6 @@ extension SendToken.ChooseTokenAndAmount {
             viewModel: SendTokenChooseTokenAndAmountViewModelType
         ) {
             self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
             super.init()
         }
         
@@ -52,12 +51,11 @@ extension SendToken.ChooseTokenAndAmount {
             guard let scene = scene else {return}
             switch scene {
             case .chooseWallet:
-                let vc = scenesFactory.makeChooseWalletViewController(
+                let vc = ChooseWallet.ViewController(
                     title: nil,
-                    customFilter: { $0.amount > 0},
+                    handler: viewModel,
                     showOtherWallets: false,
-                    selectedWallet: nil,
-                    handler: viewModel
+                    customFilter: { $0.amount > 0}
                 )
                 present(vc, animated: true, completion: nil)
             case .backToConfirmation:

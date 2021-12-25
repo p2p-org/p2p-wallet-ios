@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol WalletDetailViewModelType {
+    var walletsRepository: WalletsRepository {get}
     var navigatableSceneDriver: Driver<WalletDetail.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
     var nativePubkey: Driver<String?> {get}
@@ -31,7 +32,7 @@ protocol WalletDetailViewModelType {
 extension WalletDetail {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var walletsRepository: WalletsRepository
+        @Injected var walletsRepository: WalletsRepository
         @Injected private var pricesService: PricesServiceType
         @Injected private var processingTransactionRepository: ProcessingTransactionsRepository
         @Injected private var transactionsRepository: TransactionsRepository

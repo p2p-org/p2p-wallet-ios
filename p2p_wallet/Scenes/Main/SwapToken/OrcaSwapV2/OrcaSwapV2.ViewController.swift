@@ -34,7 +34,7 @@ extension OrcaSwapV2 {
         
         // MARK: - Methods
         init(initialWallet: Wallet?) {
-            super.setUp()
+            super.init()
             viewModel.set(initialWallet: initialWallet)
         }
 
@@ -70,12 +70,12 @@ extension OrcaSwapV2 {
                 nc.modalPresentationStyle = .custom
                 present(nc, interactiveDismissalType: .standard)
             case let .chooseSourceWallet(currentlySelectedWallet: currentlySelectedWallet):
-                let vc = scenesFactory.makeChooseWalletViewController(
+                let vc = ChooseWallet.ViewController(
                     title: L10n.selectTheFirstToken,
-                    customFilter: { $0.amount > 0 },
-                    showOtherWallets: false,
                     selectedWallet: currentlySelectedWallet,
-                    handler: viewModel
+                    handler: viewModel,
+                    showOtherWallets: false,
+                    customFilter: { $0.amount > 0 }
                 )
                 present(vc, animated: true, completion: nil)
             case let .chooseDestinationWallet(
@@ -83,15 +83,15 @@ extension OrcaSwapV2 {
                 validMints: validMints,
                 excludedSourceWalletPubkey: excludedSourceWalletPubkey
             ):
-                let vc = scenesFactory.makeChooseWalletViewController(
+                let vc = ChooseWallet.ViewController(
                     title: L10n.selectTheSecondToken,
+                    selectedWallet: currentlySelectedWallet,
+                    handler: viewModel,
+                    showOtherWallets: true,
                     customFilter: {
                         $0.pubkey != excludedSourceWalletPubkey &&
                             validMints.contains($0.mintAddress)
-                    },
-                    showOtherWallets: true,
-                    selectedWallet: currentlySelectedWallet,
-                    handler: viewModel
+                    }
                 )
                 present(vc, animated: true, completion: nil)
             case .chooseSlippage:
@@ -116,7 +116,7 @@ extension OrcaSwapV2 {
                 request: request,
                 transactionType: transactionType
             ):
-                let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
+                let vc = ProcessTransaction.ViewController(transactionType: transactionType, request: request)
                 vc.delegate = self
                 present(vc, animated: true, completion: nil)
             case .back:

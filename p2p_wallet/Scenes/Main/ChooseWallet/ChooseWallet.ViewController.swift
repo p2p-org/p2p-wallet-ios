@@ -25,7 +25,7 @@ extension ChooseWallet {
         // MARK: - Initializer
         init(
             title: String?,
-            selectedWallet: Wallet?,
+            selectedWallet: Wallet? = nil,
             handler: WalletDidSelectHandler,
             showOtherWallets: Bool,
             customFilter: ((Wallet) -> Bool)? = nil
