@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import Resolver
+import LocalAuthentication
 
 protocol RootViewModelType {
     var navigationSceneDriver: Driver<Root.NavigatableScene?> {get}
@@ -94,6 +95,32 @@ extension Root.ViewModel: RootViewModelType {
     
     var isLoadingDriver: Driver<Bool> {
         isLoadingSubject.asDriver()
+    }
+}
+
+extension Root.ViewModel: DeviceOwnerAuthenticationHandler {
+    func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((String?) -> Void)?) {
+        let myContext = LAContext()
+        
+        var error: NSError?
+        guard myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
+            DispatchQueue.main.async {
+                onFailure?(errorToString(error))
+            }
+            return
+        }
+        
+        myContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: L10n.confirmItSYou) { (success, error) in
+            guard success else {
+                DispatchQueue.main.async {
+                    onFailure?(errorToString(error))
+                }
+                return
+            }
+            DispatchQueue.main.sync {
+                onSuccess?()
+            }
+        }
     }
 }
 
@@ -188,4 +215,17 @@ extension Root.ViewModel: OnboardingHandler {
         analyticsManager.log(event: event)
         navigationSubject.accept(.onboardingDone(isRestoration: isRestoration, name: resolvedName))
     }
+}
+
+private func errorToString(_ error: Error?) -> String? {
+    var error = error?.localizedDescription ?? L10n.unknownError
+    switch error {
+    case "Passcode not set.":
+        error = L10n.PasscodeNotSet.soWeCanTVerifyYouAsTheDeviceSOwner
+    case "Canceled by user.":
+        return nil
+    default:
+        break
+    }
+    return error
 }

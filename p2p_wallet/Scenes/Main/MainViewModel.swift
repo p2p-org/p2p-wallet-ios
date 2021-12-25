@@ -8,7 +8,6 @@
 import Foundation
 import RxSwift
 import RxCocoa
-import LocalAuthentication
 
 protocol MainViewModelType: AuthenticationHandler {
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get } // nil if non authentication process is processing
@@ -67,30 +66,6 @@ class MainViewModel {
 }
 
 extension MainViewModel: MainViewModelType {
-    func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((String?) -> Void)?) {
-        let myContext = LAContext()
-        
-        var error: NSError?
-        guard myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
-            DispatchQueue.main.async {
-                onFailure?(errorToString(error))
-            }
-            return
-        }
-        
-        myContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: L10n.confirmItSYou) { (success, error) in
-            guard success else {
-                DispatchQueue.main.async {
-                    onFailure?(errorToString(error))
-                }
-                return
-            }
-            DispatchQueue.main.sync {
-                onSuccess?()
-            }
-        }
-    }
-    
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {
         authenticationStatusSubject.asDriver()
     }
@@ -132,17 +107,4 @@ extension MainViewModel: MainViewModelType {
     private func canPerformAuthentication() -> Bool {
         !isAuthenticationPaused
     }
-}
-
-private func errorToString(_ error: Error?) -> String? {
-    var error = error?.localizedDescription ?? L10n.unknownError
-    switch error {
-    case "Passcode not set.":
-        error = L10n.PasscodeNotSet.soWeCanTVerifyYouAsTheDeviceSOwner
-    case "Canceled by user.":
-        return nil
-    default:
-        break
-    }
-    return error
 }

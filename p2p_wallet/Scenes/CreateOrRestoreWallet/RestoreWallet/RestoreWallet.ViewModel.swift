@@ -30,7 +30,7 @@ extension RestoreWallet {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var nameService: NameServiceType
-        @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var notificationsService: NotificationsServiceType
         
         // MARK: - Properties
@@ -71,7 +71,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     
     // MARK: - Actions
     func restoreFromICloud() {
-        authenticationHandler.requiredOwner { [weak self] in
+        deviceOwnerAuthenticationHandler.requiredOwner { [weak self] in
             self?._restoreFromIcloud()
         } onFailure: { [weak self] error in
             guard let error = error else {return}
