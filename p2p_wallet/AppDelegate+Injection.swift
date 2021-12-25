@@ -224,6 +224,11 @@ extension Resolver: ResolverRegistering {
         register { Home.ViewModel() }
             .implements(HomeViewModelType.self)
             .scope(.shared)
+        
+        // MARK: - WalletDetail
+        register { WalletDetail.ViewModel() }
+            .implements(WalletDetailViewModelType.self)
+            .scope(.shared)
 
         // MARK: - EnterSeedPhrase
         register { EnterSeed.ViewModel() }

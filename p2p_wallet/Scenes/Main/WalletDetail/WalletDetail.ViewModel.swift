@@ -43,20 +43,11 @@ extension WalletDetail {
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
-        lazy var graphViewModel: WalletGraphViewModel = {
-            WalletGraphViewModel(
-                symbol: symbol,
-                pricesService: pricesService
-            )
-        }()
+        lazy var graphViewModel = WalletGraphViewModel(symbol: symbol)
         
         lazy var transactionsViewModel = TransactionsViewModel(
             account: pubkey,
-            accountSymbol: symbol,
-            repository: transactionsRepository,
-            pricesService: pricesService,
-            processingTransactionRepository: processingTransactionRepository,
-            notificationsRepository: notificationsRepository
+            accountSymbol: symbol
         )
         
         // MARK: - Subject
@@ -64,13 +55,10 @@ extension WalletDetail {
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         
         // MARK: - Initializer
-        init() {
-            bind()
-        }
-        
         func set(pubkey: String, symbol: String) {
             self.pubkey = pubkey
             self.symbol = symbol
+            bind()
         }
         
         /// Bind subjects
