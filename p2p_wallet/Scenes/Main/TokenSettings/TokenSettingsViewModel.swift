@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 import Action
 import BECollectionView
+import Resolver
 
 enum TokenSettingsNavigatableScene {
     case alert(title: String?, description: String)
@@ -18,12 +19,14 @@ enum TokenSettingsNavigatableScene {
 }
 
 class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
+    // MARK: - Dependencies
+    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var solanaSDK: SolanaSDK
+    @Injected private var pricesService: PricesServiceType
+    
     // MARK: - Properties
     let disposeBag = DisposeBag()
-    let walletsRepository: WalletsRepository
-    let pubkey: String
-    let solanaSDK: SolanaSDK
-    let pricesService: PricesServiceType
+    var pubkey: String!
     var wallet: Wallet? {walletsRepository.getWallets().first(where: {$0.pubkey == pubkey})}
     
     // MARK: - Subject
@@ -32,17 +35,8 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
-    init(
-        walletsRepository: WalletsRepository,
-        pubkey: String,
-        solanaSDK: SolanaSDK,
-        pricesService: PricesServiceType
-    ) {
-        self.walletsRepository = walletsRepository
+    func set(pubkey: String) {
         self.pubkey = pubkey
-        self.solanaSDK = solanaSDK
-        self.pricesService = pricesService
-        super.init()
     }
     
     override func bind() {

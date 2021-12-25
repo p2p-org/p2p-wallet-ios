@@ -17,9 +17,8 @@ import RxSwift
 class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
-    let viewModel: TokenSettingsViewModel
+    @Injected private var viewModel: TokenSettingsViewModel
     @Injected private var authenticationHandler: AuthenticationHandler
-    let scenesFactory: TokenSettingsScenesFactory
     weak var delegate: TokenSettingsViewControllerDelegate?
     
     // MARK: - Subviews
@@ -32,13 +31,9 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     }()
     
     // MARK: - Initializer
-    init(
-        viewModel: TokenSettingsViewModel,
-        scenesFactory: TokenSettingsScenesFactory
-    ) {
-        self.viewModel = viewModel
-        self.scenesFactory = scenesFactory
+    init(pubkey: String) {
         super.init()
+        viewModel.set(pubkey: pubkey)
     }
     
     // MARK: - Methods
@@ -55,7 +50,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
         separator.autoPinEdge(toSuperviewEdge: .leading)
         separator.autoPinEdge(toSuperviewEdge: .trailing)
         
-        let rootView = TokenSettingsRootView(viewModel: viewModel)
+        let rootView = TokenSettingsRootView()
         containerView.addSubview(rootView)
         rootView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         rootView.autoPinEdge(.top, to: .bottom, of: separator)

@@ -287,6 +287,10 @@ extension Resolver: ResolverRegistering {
         register { ReserveName.ViewModel() }
             .implements(ReserveNameViewModelType.self)
             .scope(.shared)
+        
+        // MARK: - Token settings
+        register { TokenSettingsViewModel() }
+            .scope(.shared)
     }
 }
 
