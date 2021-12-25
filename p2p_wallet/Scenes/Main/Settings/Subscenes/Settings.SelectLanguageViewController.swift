@@ -8,8 +8,8 @@
 extension Settings {
     class SelectLanguageViewController: SingleSelectionViewController<LocalizedLanguage> {
 
-        override init(viewModel: SettingsViewModelType) {
-            super.init(viewModel: viewModel)
+        override init(reserveNameHandler: ReserveNameHandler) {
+            super.init(reserveNameHandler: reserveNameHandler)
 
             setSelectableLanguages()
         }

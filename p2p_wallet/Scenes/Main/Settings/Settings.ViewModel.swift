@@ -18,10 +18,6 @@ protocol ChangeNetworkResponder {
     func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint)
 }
 
-protocol ChangeFiatResponder {
-    func changeFiat(to fiat: Fiat)
-}
-
 protocol SettingsViewModelType {
     var notificationsService: NotificationsServiceType { get }
     var selectableLanguages: [LocalizedLanguage: Bool] { get }
@@ -36,6 +32,7 @@ protocol SettingsViewModelType {
     var hideZeroBalancesDriver: Driver<Bool> { get }
     var logoutAlertSignal: Signal<Void> { get }
     
+    func set(reserveNameHandler: ReserveNameHandler)
     func getUserAddress() -> String?
     
     func navigate(to scene: Settings.NavigatableScene)
@@ -65,15 +62,15 @@ extension Settings {
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var rootViewModel: RootViewModelType
-        private var reserveNameHandler: ReserveNameHandler
+        private var reserveNameHandler: ReserveNameHandler!
         @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
         @Injected private var changeLanguageResponder: ChangeLanguageResponder
         @Injected private var localizationManager: LocalizationManagerType
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationsServiceType
-        let changeFiatResponder: ChangeFiatResponder
-        let renVMService: RenVMLockAndMintServiceType
+        @Injected private var pricesService: PricesServiceType
+        @Injected private var renVMService: RenVMLockAndMintServiceType
         
         // MARK: - Properties
         private var disposables = [DefaultsDisposable]()
@@ -91,14 +88,8 @@ extension Settings {
         private let logoutAlertSubject = PublishRelay<Void>()
         
         // MARK: - Initializer
-        init(
-            reserveNameHandler: ReserveNameHandler,
-            changeFiatResponder: ChangeFiatResponder,
-            renVMService: RenVMLockAndMintServiceType
-        ) {
+        func set(reserveNameHandler: ReserveNameHandler) {
             self.reserveNameHandler = reserveNameHandler
-            self.changeFiatResponder = changeFiatResponder
-            self.renVMService = renVMService
             bind()
         }
         
@@ -232,7 +223,12 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func setFiat(_ fiat: Fiat) {
         analyticsManager.log(event: .settingsСurrencySelected(сurrency: fiat.code))
-        changeFiatResponder.changeFiat(to: fiat)
+        // set default fiat
+        Defaults.fiat = fiat
+        pricesService.clearCurrentPrices()
+        pricesService.fetchAllTokensPrice()
+        
+        // accept new value
         fiatSubject.accept(fiat)
         notificationsService.showInAppNotification(.done(L10n.currencyChanged))
     }

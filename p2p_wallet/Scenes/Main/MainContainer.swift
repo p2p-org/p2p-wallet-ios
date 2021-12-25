@@ -33,11 +33,6 @@ class MainContainer {
 //        return ReceiveToken.ViewController(viewModel: viewModel)
 //    }
     
-    func makeSettingsVC(reserveNameHandler: ReserveNameHandler) -> Settings.ViewController {
-        let vm = Settings.ViewModel(reserveNameHandler: reserveNameHandler, changeFiatResponder: self, renVMService: renVMLockAndMintService)
-        return .init(viewModel: vm)
-    }
-    
     // MARK: - Reserve name
     func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController {
         let vm = ReserveName.ViewModel(
@@ -63,13 +58,4 @@ class MainContainer {
             scenesFactory: self
         )
     }
-    
-    // MARK: - Helpers
-    func changeFiat(to fiat: Fiat) {
-        Defaults.fiat = fiat
-        pricesService.clearCurrentPrices()
-        pricesService.fetchAllTokensPrice()
-    }
 }
-
-extension MainContainer: ChangeFiatResponder {}

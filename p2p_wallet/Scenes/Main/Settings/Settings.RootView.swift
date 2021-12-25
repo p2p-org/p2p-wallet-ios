@@ -14,7 +14,7 @@ extension Settings {
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        let viewModel: SettingsViewModelType
+        @Injected private var viewModel: SettingsViewModelType
         
         // MARK: - Subviews
         private lazy var usernameLabel = UILabel(weight: .medium, textColor: .textSecondary)
@@ -29,12 +29,6 @@ extension Settings {
             switcher.addTarget(self, action: #selector(hideZeroBalancesSwitcherDidSwitch(sender:)), for: .valueChanged)
             return switcher
         }()
-        
-        // MARK: - Initializer
-        init(viewModel: SettingsViewModelType) {
-            self.viewModel = viewModel
-            super.init(frame: .zero)
-        }
         
         // MARK: - Methods
         override func commonInit() {
