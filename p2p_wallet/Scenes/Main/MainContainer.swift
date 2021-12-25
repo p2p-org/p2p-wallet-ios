@@ -32,17 +32,4 @@ class MainContainer {
 //        )
 //        return ReceiveToken.ViewController(viewModel: viewModel)
 //    }
-    
-    // MARK: - Token edit
-    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController {
-        TokenSettingsViewController(
-            viewModel: TokenSettingsViewModel(
-                walletsRepository: walletsViewModel,
-                pubkey: pubkey,
-                solanaSDK: solanaSDK,
-                pricesService: pricesService
-            ),
-            scenesFactory: self
-        )
-    }
 }
