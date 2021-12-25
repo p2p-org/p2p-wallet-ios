@@ -17,7 +17,7 @@ extension Home {
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        private let viewModel: HomeViewModelType
+        @Injected private var viewModel: HomeViewModelType
         
         // MARK: - Subviews
 
@@ -76,9 +76,7 @@ extension Home {
         private let bannersDataSource: BannersCollectionViewDataSource
         
         // MARK: - Initializer
-        init(viewModel: HomeViewModelType) {
-            self.viewModel = viewModel
-
+        init() {
             let layout = HorizontalFlowLayout(
                 horisontalInset: 20,
                 verticalInset: 0,

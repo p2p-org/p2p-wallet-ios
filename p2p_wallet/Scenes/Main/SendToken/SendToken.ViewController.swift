@@ -56,7 +56,7 @@ extension SendToken {
                     showAfterConfirmation: showAfterConfirmation,
                     selectedNetwork: viewModel.getSelectedNetwork()
                 )
-                let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
+                let vc = ChooseTokenAndAmount.ViewController(viewModel: vm)
                 
                 if showAfterConfirmation {
                     childNavigationController.pushViewController(vc, animated: true)
@@ -75,7 +75,7 @@ extension SendToken {
                 let vc = ConfirmViewController()
                 childNavigationController.pushViewController(vc, animated: true)
             case .processTransaction(let request, let transactionType):
-                let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
+                let vc = ProcessTransaction.ViewController(transactionType: transactionType, request: request)
                 vc.delegate = self
                 present(vc, animated: true, completion: nil)
             case .chooseNetwork:

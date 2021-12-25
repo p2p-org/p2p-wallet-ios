@@ -27,7 +27,7 @@ extension Home {
         
         // MARK: - Methods
         override func loadView() {
-            view = RootView(viewModel: viewModel)
+            view = RootView()
         }
         
         override func viewDidLoad() {
@@ -87,16 +87,17 @@ extension Home {
             guard let scene = scene else {return}
             switch scene {
             case .buyToken:
-                do {
-                    let vc = try scenesFactory.makeBuyTokenViewController(token: [])
-                    analyticsManager.log(event: .mainScreenBuyOpen)
-                    show(vc, sender: nil)
-                } catch {
-                    showAlert(title: L10n.error, message: error.readableDescription)
-                }
+                let vc = BuyRoot.ViewController()
+                show(vc, sender: nil)
             case .receiveToken:
-                if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: nil)
-                {
+                if let pubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
+                    let isDevnet = Defaults.apiEndPoint.network == .devnet
+                    let renBTCMint: SolanaSDK.PublicKey = isDevnet ? .renBTCMintDevnet : .renBTCMint
+                    
+                    let isRenBTCWalletCreated = viewModel.walletsRepository.getWallets().contains(where: {
+                        $0.token.address == renBTCMint.base58EncodedString
+                    })
+                    let vc = ReceiveToken.ViewController(solanaPubkey: pubkey, solanaTokenWallet: nil, isRenBTCWalletCreated: isRenBTCWalletCreated)
                     analyticsManager.log(event: .mainScreenReceiveOpen)
                     analyticsManager.log(event: .receiveOpen(fromPage: "main_screen"))
                     show(vc, sender: true)
@@ -124,13 +125,12 @@ extension Home {
                     self.present(vc, animated: true, completion: nil)
                 }
             case .sendToken(let address):
-                let vc = scenesFactory
-                    .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
+                let vc = SendToken.ViewController(walletPubkey: nil, destinationAddress: address)
                 analyticsManager.log(event: .mainScreenSendOpen)
                 analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
                 show(vc, sender: nil)
             case .swapToken:
-                let vc = scenesFactory.makeSwapTokenViewController(provider: .orca, fromWallet: nil)
+                let vc = OrcaSwapV2.ViewController(initialWallet: nil)
                 analyticsManager.log(event: .mainScreenSwapOpen)
                 analyticsManager.log(event: .swapOpen(fromPage: "main_screen"))
                 self.show(vc, sender: nil)
@@ -138,17 +138,10 @@ extension Home {
                 analyticsManager.log(event: .mainScreenSettingsOpen)
                 analyticsManager.log(event: .settingsOpen(fromPage: "main_screen"))
                 
-                let vc = scenesFactory.makeSettingsVC(reserveNameHandler: viewModel)
+                let vc = Settings.ViewController(reserveNameHandler: viewModel)
                 self.show(vc, sender: nil)
             case .reserveName(let owner):
-                let vm = ReserveName.ViewModel(
-                    kind: .independent,
-                    owner: owner,
-                    nameService: Resolver.resolve(),
-                    reserveNameHandler: viewModel
-                )
-                let vc = ReserveName.ViewController(viewModel: vm)
-
+                let vc = ReserveName.ViewController(kind: .independent, owner: owner, reserveNameHandler: viewModel)
                 show(vc, sender: nil)
 
                 viewModel.nameDidReserveSignal
@@ -161,12 +154,12 @@ extension Home {
                 
                 analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: wallet.token.symbol))
                 
-                let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey, symbol: wallet.token.symbol)
+                let vc = WalletDetail.ViewController(pubkey: pubkey, symbol: wallet.token.symbol)
                 show(vc, sender: nil)
             case .walletSettings(let wallet):
                 guard let pubkey = wallet.pubkey else {return}
-                let vc = scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
-                self.present(vc, animated: true, completion: nil)
+                let vc = TokenSettingsViewController(pubkey: pubkey)
+                present(vc, animated: true, completion: nil)
             case let .closeReserveNameAlert(handler):
                 showAlert(
                     title: L10n.proceedWithoutAUsername,

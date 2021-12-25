@@ -16,12 +16,6 @@ extension Settings {
         // MARK: - Dependencies
         @Injected var viewModel: SettingsViewModelType
         
-        // MARK: - Initializers
-        init(reserveNameHandler: ReserveNameHandler) {
-            super.init()
-            viewModel.set(reserveNameHandler: reserveNameHandler)
-        }
-        
         // MARK: - Subviews
         lazy var stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
             navigationBar

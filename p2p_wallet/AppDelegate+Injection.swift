@@ -56,6 +56,7 @@ extension Resolver: ResolverRegistering {
             .implements(TokensRepository.self)
             .implements(TransactionsRepository.self)
             .implements(AssociatedTokenAccountHandler.self)
+            .implements(RenVMSolanaAPIClientType.self)
             .implements(SendTokenAPIClient.self)
             .implements(FeeAPIClient.self)
             .implements(OrcaSwapSolanaClient.self)
@@ -216,6 +217,11 @@ extension Resolver: ResolverRegistering {
         register {MainViewModel()}
             .implements(MainViewModelType.self)
             .implements(AuthenticationHandler.self)
+            .scope(.shared)
+        
+        // MARK: - Home
+        register { Home.ViewModel() }
+            .implements(HomeViewModelType.self)
             .scope(.shared)
 
         // MARK: - EnterSeedPhrase

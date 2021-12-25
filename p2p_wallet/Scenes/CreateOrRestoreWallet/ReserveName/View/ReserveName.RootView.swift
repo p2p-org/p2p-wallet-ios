@@ -103,6 +103,8 @@ extension ReserveName {
                 canSkip = true
             case .independent:
                 canSkip = false
+            default:
+                canSkip = true
             }
 
             let navigationBar = NavigationBar(
@@ -228,6 +230,8 @@ extension ReserveName {
                     title = L10n.enterUsernameOrSkip
                 case .independent:
                     title = L10n.enterUsername
+                default:
+                    title = nil
                 }
             case .unavailableUsername:
                 image = nil
