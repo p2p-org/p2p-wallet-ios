@@ -26,5 +26,9 @@ struct AuthenticationPresentationStyle {
 protocol AuthenticationHandler {
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)
     func pauseAuthentication(_ isPaused: Bool)
+}
+
+// IMPORTANT: DeviceOwnerAuthenticationHandler must be separated from AuthenticationHandler and has to be perform on Root, because at RestoreWallet, there is no passcode.
+protocol DeviceOwnerAuthenticationHandler {
     func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((String?) -> Void)?)
 }
