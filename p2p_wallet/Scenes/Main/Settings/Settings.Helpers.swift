@@ -14,12 +14,12 @@ extension Settings {
         }
         
         // MARK: - Dependencies
-        let viewModel: SettingsViewModelType
+        @Injected var viewModel: SettingsViewModelType
         
         // MARK: - Initializers
-        init(viewModel: SettingsViewModelType) {
-            self.viewModel = viewModel
+        init(reserveNameHandler: ReserveNameHandler) {
             super.init()
+            viewModel.set(reserveNameHandler: reserveNameHandler)
         }
         
         // MARK: - Subviews

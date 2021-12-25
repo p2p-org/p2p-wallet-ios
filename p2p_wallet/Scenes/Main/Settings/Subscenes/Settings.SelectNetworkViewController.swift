@@ -9,8 +9,8 @@ import Foundation
 
 extension Settings {
     class SelectNetworkViewController: SingleSelectionViewController<SolanaSDK.APIEndPoint> {
-        override init(viewModel: SettingsViewModelType) {
-            super.init(viewModel: viewModel)
+        override init(reserveNameHandler: ReserveNameHandler) {
+            super.init(reserveNameHandler: reserveNameHandler)
             // initial data
             SolanaSDK.APIEndPoint.definedEndpoints
                 .forEach {

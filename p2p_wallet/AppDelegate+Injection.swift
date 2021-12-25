@@ -277,6 +277,11 @@ extension Resolver: ResolverRegistering {
         register { ProcessTransaction.ViewModel() }
             .implements(ProcessTransactionViewModelType.self)
             .scope(.shared)
+        
+        // MARK: - Settings
+        register { Settings.ViewModel() }
+            .implements(SettingsViewModelType.self)
+            .scope(.shared)
     }
 }
 
