@@ -84,3 +84,8 @@ custom_rules:
     regex: 'UIPasteboard.general'
     message: "Use ClipboardManager instead"
     severity: warning
+  timer_memory_leak:
+    name: "Timer with target causes memory leak, you block instead"
+    regex: 'Timer.scheduledTimer\(.+selector'
+    message: "Use block instead"
+    serverity: error
