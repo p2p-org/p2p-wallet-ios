@@ -33,19 +33,6 @@ class MainContainer {
 //        return ReceiveToken.ViewController(viewModel: viewModel)
 //    }
     
-    // MARK: - Reserve name
-    func makeReserveNameVC(owner: String, handler: ReserveNameHandler) -> ReserveName.ViewController {
-        let vm = ReserveName.ViewModel(
-            kind: .independent,
-            owner: owner,
-            nameService: Resolver.resolve(),
-            reserveNameHandler: handler
-        )
-        let vc = ReserveName.ViewController(viewModel: vm)
-        
-        return vc
-    }
-    
     // MARK: - Token edit
     func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController {
         TokenSettingsViewController(

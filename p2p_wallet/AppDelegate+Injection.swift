@@ -282,6 +282,11 @@ extension Resolver: ResolverRegistering {
         register { Settings.ViewModel() }
             .implements(SettingsViewModelType.self)
             .scope(.shared)
+        
+        // MARK: - Reserve name
+        register { ReserveName.ViewModel() }
+            .implements(ReserveNameViewModelType.self)
+            .scope(.shared)
     }
 }
 
