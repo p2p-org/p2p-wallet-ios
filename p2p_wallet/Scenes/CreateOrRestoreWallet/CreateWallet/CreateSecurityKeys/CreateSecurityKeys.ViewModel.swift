@@ -31,7 +31,7 @@ extension CreateSecurityKeys {
         @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var createWalletViewModel: CreateWalletViewModelType
-        @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationsServiceType
 
@@ -86,7 +86,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
     
     @objc func saveToICloud() {
-        authenticationHandler.requiredOwner { [weak self] in
+        deviceOwnerAuthenticationHandler.requiredOwner { [weak self] in
             self?._saveToIcloud()
         } onFailure: { [weak self] error in
             guard let error = error else {return}

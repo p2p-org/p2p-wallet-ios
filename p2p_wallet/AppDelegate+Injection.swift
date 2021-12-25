@@ -81,6 +81,7 @@ extension Resolver: ResolverRegistering {
             .implements(ChangeLanguageResponder.self)
             .implements(CreateOrRestoreWalletHandler.self)
             .implements(OnboardingHandler.self)
+            .implements(DeviceOwnerAuthenticationHandler.self)
             .scope(.shared)
         
         // MARK: - CreateOrRestoreWallet
