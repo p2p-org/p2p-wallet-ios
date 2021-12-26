@@ -32,9 +32,6 @@ extension ReceiveToken {
     class SceneModel: NSObject, ReceiveSceneModel {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
-        @Injected private var tokensRepository: TokensRepository
-        @Injected private var renVMService: RenVMLockAndMintServiceType
-        @Injected private var associatedTokenAccountHandler: AssociatedTokenAccountHandler
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -53,15 +50,12 @@ extension ReceiveToken {
             receiveSolanaViewModel = ReceiveToken.SolanaViewModel(
                 solanaPubkey: solanaPubkey.base58EncodedString,
                 solanaTokenWallet: solanaTokenWallet,
-                tokensRepository: tokensRepository,
                 navigationSubject: navigationSubject
             )
             
             receiveBitcoinViewModel = ReceiveToken.ReceiveBitcoinViewModel(
-                renVMService: renVMService,
                 navigationSubject: navigationSubject,
-                isRenBTCWalletCreated: isRenBTCWalletCreated,
-                associatedTokenAccountHandler: associatedTokenAccountHandler
+                isRenBTCWalletCreated: isRenBTCWalletCreated
             )
             
             if let token = solanaTokenWallet?.token,
