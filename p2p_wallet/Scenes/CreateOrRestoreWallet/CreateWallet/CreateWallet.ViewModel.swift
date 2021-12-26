@@ -37,6 +37,10 @@ extension CreateWallet {
         
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<CreateWallet.NavigatableScene?>(value: nil)
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 
