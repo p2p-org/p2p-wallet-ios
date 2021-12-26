@@ -124,7 +124,6 @@ extension PricesService: PricesServiceType {
     
     func clearCurrentPrices() {
         currentPricesSubject.flush()
-        currentPricesSubject.accept(storage.retrievePrices(), state: .notRequested)
         storage.savePrices([:])
     }
     

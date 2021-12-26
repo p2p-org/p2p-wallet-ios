@@ -23,6 +23,11 @@ extension Root {
         
         override func bind() {
             super.bind()
+            // remove all childs
+            viewModel.resetSignal
+                .emit(onNext: {[weak self] in self?.removeAllChilds()})
+                .disposed(by: disposeBag)
+            
             // navigation scene
             viewModel.navigationSceneDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
