@@ -21,6 +21,10 @@ extension BuyRoot {
         // MARK: - Dependencies
         @Injected var walletsRepository: WalletsRepository
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         // MARK: - Subject
         private let navigationSubject = PublishSubject<NavigatableScene>()
     }

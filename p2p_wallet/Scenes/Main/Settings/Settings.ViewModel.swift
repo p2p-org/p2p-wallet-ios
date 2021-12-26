@@ -93,6 +93,10 @@ extension Settings {
             bind()
         }
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         func bind() {
             disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) { [weak self] _ in
                 self?.usernameSubject.accept(self?.storage.getName()?.withNameServiceDomain())

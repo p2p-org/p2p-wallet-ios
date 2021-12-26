@@ -74,6 +74,10 @@ extension SendToken {
             }
         }
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         private func send() {
             guard let wallet = walletSubject.value,
                   let sender = wallet.pubkey,

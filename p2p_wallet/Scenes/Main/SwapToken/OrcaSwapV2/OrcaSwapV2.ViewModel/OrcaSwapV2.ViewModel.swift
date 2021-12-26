@@ -47,6 +47,10 @@ extension OrcaSwapV2 {
             bind(initialWallet: initialWallet)
         }
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         func bind(initialWallet: Wallet?) {
             // wait until loaded and choose initial wallet
             if let initialWallet = initialWallet {

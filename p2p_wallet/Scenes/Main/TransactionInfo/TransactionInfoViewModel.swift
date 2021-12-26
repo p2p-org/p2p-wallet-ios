@@ -38,6 +38,10 @@ class TransactionInfoViewModel {
         self.transaction = .init(value: transaction)
     }
     
+    deinit {
+        debugPrint("\(String(describing: self)) deinited")
+    }
+    
     // MARK: - Actions
     @objc func showExplorer() {
         navigationSubject.onNext(.explorer)

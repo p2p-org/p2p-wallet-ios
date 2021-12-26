@@ -39,10 +39,14 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
         self.pubkey = pubkey
     }
     
+    deinit {
+        debugPrint("\(String(describing: self)) deinited")
+    }
+    
     override func bind() {
         super.bind()
         walletsRepository.dataObservable
-            .map {$0?.first(where: {$0.pubkey == self.pubkey})}
+            .map {[weak self] in $0?.first(where: {$0.pubkey == self?.pubkey})}
             .map {wallet -> [TokenSettings] in
                 let isWalletVisible = !(wallet?.isHidden ?? true)
                 let isAmountEmpty = wallet?.amount == 0

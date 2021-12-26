@@ -35,6 +35,11 @@ extension Home {
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let nameDidReserveSubject = PublishRelay<Void>()
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
     }
 }
 
