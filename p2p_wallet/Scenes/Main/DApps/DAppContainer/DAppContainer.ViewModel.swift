@@ -37,6 +37,10 @@ extension DAppContainer {
             super.init()
             dAppChannel.setDelegate(self)
         }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 

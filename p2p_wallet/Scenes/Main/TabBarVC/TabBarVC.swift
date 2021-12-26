@@ -16,6 +16,10 @@ class TabBarVC: BEPagesVC {
     private let disposeBag = DisposeBag()
     private var tabBarTopConstraint: NSLayoutConstraint!
     
+    deinit {
+        debugPrint("\(String(describing: self)) deinited")
+    }
+    
     override func setUp() {
         super.setUp()
         view.backgroundColor = .background

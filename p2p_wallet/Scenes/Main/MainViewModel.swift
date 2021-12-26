@@ -39,6 +39,10 @@ class MainViewModel {
         pricesService.stopObserving()
     }
     
+    deinit {
+        debugPrint("\(String(describing: self)) deinited")
+    }
+    
     /// Bind subjects
     private func bind() {
         authenticationStatusSubject
