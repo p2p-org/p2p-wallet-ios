@@ -37,9 +37,6 @@ class MainViewModel {
     deinit {
         socket.disconnect()
         pricesService.stopObserving()
-    }
-    
-    deinit {
         debugPrint("\(String(describing: self)) deinited")
     }
     
