@@ -22,6 +22,10 @@ protocol ChangeFiatResponder {
     func changeFiat(to fiat: Fiat)
 }
 
+protocol LogoutResponder {
+    func logout()
+}
+
 protocol SettingsViewModelType {
     var notificationsService: NotificationsServiceType { get }
     var selectableLanguages: [LocalizedLanguage: Bool] { get }
@@ -64,8 +68,8 @@ extension Settings {
         // MARK: - Dependencies
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var rootViewModel: RootViewModelType
         private var reserveNameHandler: ReserveNameHandler
+        @Injected private var logoutResponder: LogoutResponder
         @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
         @Injected private var changeLanguageResponder: ChangeLanguageResponder
@@ -299,6 +303,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func setLanguage(_ language: LocalizedLanguage) {
         localizationManager.changeCurrentLanguage(language)
+        analyticsManager.log(event: .settingsLanguageSelected(language: language.code))
         changeLanguageResponder.languageDidChange(to: language)
     }
     
@@ -331,6 +336,6 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func logout() {
         analyticsManager.log(event: .settingsLogoutClick)
-        rootViewModel.logout()
+        logoutResponder.logout()
     }
 }
