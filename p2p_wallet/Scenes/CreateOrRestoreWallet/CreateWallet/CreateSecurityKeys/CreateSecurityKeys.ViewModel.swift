@@ -47,6 +47,10 @@ extension CreateSecurityKeys {
         init() {
             createPhrases()
         }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
 
         private func createPhrases() {
             let mnemonic = Mnemonic()
