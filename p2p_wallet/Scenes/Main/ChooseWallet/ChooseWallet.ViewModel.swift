@@ -53,8 +53,9 @@ extension ChooseWallet {
                                 Wallet(pubkey: nil, lamports: nil, token: $0)
                             }
                     }
-                    .map {
-                        self.myWallets + $0.filter {otherWallet in !self.myWallets.contains(where: {$0.token.symbol == otherWallet.token.symbol})}
+                    .map { [weak self] in
+                        guard let self = self else {return []}
+                        return self.myWallets + $0.filter {otherWallet in !self.myWallets.contains(where: {$0.token.symbol == otherWallet.token.symbol})}
                     }
             }
             return .just(myWallets)
