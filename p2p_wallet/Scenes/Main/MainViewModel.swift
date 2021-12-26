@@ -18,6 +18,7 @@ class MainViewModel {
     @Injected private var socket: SolanaSDK.Socket
     @Injected private var pricesService: PricesServiceType
     @Injected private var lockAndMint: RenVMLockAndMintServiceType // start service right here by triggering resolver
+    @Injected private var burnAndRelease: RenVMBurnAndReleaseServiceType // start service right here by triggering resolver
     
     // MARK: - Properties
     private let disposeBag = DisposeBag()
