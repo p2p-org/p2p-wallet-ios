@@ -14,7 +14,7 @@ extension WalletDetail {
     class InfoOverviewView: WLOverviewView {
         // MARK: - Properties
         private let disposeBag = DisposeBag()
-        private let viewModel: WalletDetailViewModelType
+        @Injected private var viewModel: WalletDetailViewModelType
         
         // MARK: - Subviews
         private lazy var coinImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
@@ -30,8 +30,7 @@ extension WalletDetail {
             .onTap(self, action: #selector(buttonSwapDidTouch))
         
         // MARK: - Initializer
-        init(viewModel: WalletDetailViewModelType) {
-            self.viewModel = viewModel
+        init() {
             super.init()
             bind()
             change24hLabel.isHidden = true // TODO: - Remove later

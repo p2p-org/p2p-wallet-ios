@@ -15,7 +15,7 @@ extension WalletDetail {
         }
         
         // MARK: - Dependencies
-        private let viewModel: WalletDetailViewModelType
+        @Injected private var viewModel: WalletDetailViewModelType
         
         // MARK: - Subviews
         private lazy var collectionView: TransactionsCollectionView = {
@@ -30,11 +30,6 @@ extension WalletDetail {
         }()
         
         // MARK: - Initializers
-        init(viewModel: WalletDetailViewModelType) {
-            self.viewModel = viewModel
-            super.init()
-        }
-        
         override func setUp() {
             super.setUp()
             view.addSubview(collectionView)
