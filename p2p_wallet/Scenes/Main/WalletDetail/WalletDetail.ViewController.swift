@@ -32,15 +32,8 @@ extension WalletDetail {
         }()
         
         // MARK: - Subscene
-        private lazy var infoVC: InfoViewController = {
-            let vc = InfoViewController(viewModel: viewModel)
-            return vc
-        }()
-        
-        private lazy var historyVC: HistoryViewController = {
-            let vc = HistoryViewController(viewModel: viewModel)
-            return vc
-        }()
+        private lazy var infoVC = InfoViewController()
+        private lazy var historyVC = HistoryViewController()
         
         // MARK: - Initializer
         init(pubkey: String, symbol: String) {
