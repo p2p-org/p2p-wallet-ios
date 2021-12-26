@@ -35,6 +35,10 @@ extension ChooseWallet {
             super.init()
         }
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         // MARK: - Request
         override func createRequest() -> Single<[Wallet]> {
             if showOtherWallets {

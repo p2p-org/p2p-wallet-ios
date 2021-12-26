@@ -45,6 +45,10 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
         super.init()
     }
     
+    deinit {
+        debugPrint("\(String(describing: self)) deinited")
+    }
+    
     override func bind() {
         super.bind()
         walletsRepository.dataObservable

@@ -23,7 +23,11 @@ extension ___VARIABLE_scene___ {
     class ViewModel {
         // MARK: - Dependencies
         
-        // MARK: - Properties
+        // MARK: - Initializers
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)

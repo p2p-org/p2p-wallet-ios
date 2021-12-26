@@ -36,6 +36,10 @@ class TransactionInfoViewModel {
         self.transaction = BehaviorRelay<SolanaSDK.ParsedTransaction>(value: transaction)
     }
     
+    deinit {
+        debugPrint("\(String(describing: self)) deinited")
+    }
+    
     // MARK: - Actions
     @objc func showExplorer() {
         navigationSubject.onNext(.explorer)

@@ -86,6 +86,10 @@ extension WalletDetail {
             bind()
         }
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         /// Bind subjects
         private func bind() {
             bindSubjectsIntoSubjects()

@@ -26,7 +26,10 @@ extension Authentication {
         // MARK: - Dependencies
         @Injected private var pincodeStorage: PincodeStorageType
         
-        // MARK: - Properties
+        // MARK: - Initializers
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
