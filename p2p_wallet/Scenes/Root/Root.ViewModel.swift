@@ -39,6 +39,10 @@ extension Root {
         private var showAuthenticationOnMainOnAppear = true
         private var resolvedName: String?
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)

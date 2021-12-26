@@ -40,6 +40,10 @@ extension VerifySecurityKeys {
         init(keyPhrase: [String]) {
             self.keyPhrase = keyPhrase
         }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 

@@ -36,6 +36,11 @@ extension DerivableAccounts {
             self.phrases = phrases
             super.init(initialData: [])
         }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         override func createRequest() -> Single<[DerivableAccount]> {
             Single.zip(Array(0..<5)
                 .map { index in

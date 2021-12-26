@@ -45,6 +45,10 @@ extension RestoreWallet {
         private let isRestorableUsingIcloudSubject = BehaviorRelay<Bool>(value: true)
         private let errorSubject = PublishRelay<String>()
         private let finishedSubject = PublishRelay<Void>()
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 
