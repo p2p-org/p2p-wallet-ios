@@ -16,6 +16,10 @@ extension DerivablePaths {
             self.currentPath = currentPath
         }
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         override func createRequest() -> Single<[SelectableDerivablePath]> {
             let paths = SolanaSDK.DerivablePath.DerivableType
                 .allCases

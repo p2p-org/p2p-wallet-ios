@@ -51,6 +51,10 @@ extension Onboarding {
         init() {
             navigateNext()
         }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 

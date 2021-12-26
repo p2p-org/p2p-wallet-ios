@@ -77,6 +77,10 @@ extension ReserveName {
             bind()
             manager.registerCaptcha(nil)
         }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
 
         private func bind() {
             textFieldTextSubject
