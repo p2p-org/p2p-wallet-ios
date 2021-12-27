@@ -34,7 +34,7 @@ extension ReceiveToken {
                 }.padding(.init(all: 18, excludingEdge: .bottom))
                 
                 // Icon
-                BEZStack() {
+                BEZStack {
                     UIView.defaultSeparator().withTag(1)
                     UIImageView(width: 44, height: 44, image: .squircleAlert)
                         .centered(.horizontal)
