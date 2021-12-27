@@ -9,6 +9,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Down
 
 extension ReceiveToken {
     class NetworkSelectionScene: BEScene {
@@ -19,13 +20,8 @@ extension ReceiveToken {
         override func build() -> UIView {
             BESafeArea {
                 UIStackView(axis: .vertical, alignment: .fill) {
-                    WLNavigationBar(forAutoLayout: ()).setup { view in
-                        guard let navigationBar = view as? WLNavigationBar else { return }
-                        navigationBar.backgroundColor = .clear
-                        navigationBar.titleLabel.text = L10n.chooseTheNetwork
-                        navigationBar.backButton.onTap { [unowned self] in self.back() }
-                    }
-                    UIView.defaultSeparator()
+                    NewWLNavigationBar(title: L10n.chooseTheNetwork, separatorEnable: false)
+                        .onBack { [unowned self] in self.back() }
                     
                     BEScrollView(contentInsets: .init(all: 18)) {
                         // Solana network
@@ -50,7 +46,7 @@ extension ReceiveToken {
                         // Bitcoin network
                         NetworkCell(
                             networkName: "Bitcoin",
-                            networkDescription: L10n.ThisAddressAccepts.youMayLoseAssetsBySendingAnotherCoin("Bitcoin"),
+                            networkDescription: L10n.ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin("Bitcoin"),
                             icon: .squircleBitcoinIcon
                         ).setup { [unowned self] view in
                             let view = view as! NetworkCell
@@ -80,17 +76,15 @@ extension ReceiveToken {
                         }
                         
                         // Description
-                        UIStackView(axis: .vertical, spacing: 12, alignment: .leading) {
+                        UIView.greyBannerView(alignment: .fill) {
                             UILabel(text: "Solana", textSize: 17, weight: .semibold)
                             UILabel(
                                 text: L10n
                                     .TheSolanaProgramLibrarySPLIsACollectionOfOnChainProgramsMaintainedByTheSolanaTeam
                                     .TheSPLTokenProgramIsTheTokenStandardOfTheSolanaBlockchain
-                                    .SimilarToERC20TokensOnTheEthereumNetworkSPLTokensAreDesignedForDeFiApplications
-                                    .splTokensCanBeTradedOnSerumASolanaBasedDecentralizedExchangeAndFTX,
+                                    .similarToERC20TokensOnTheEthereumNetworkSPLTokensAreDesignedForDeFiApplications,
                                 numberOfLines: 0
                             )
-                            
                             UILabel(text: "Bitcoin", textSize: 17, weight: .semibold)
                             UILabel(
                                 text: L10n
@@ -100,8 +94,7 @@ extension ReceiveToken {
                                     ._000112BTCIsTheMinimumTransactionAmountAndYouHave36HoursToCompleteTheTransactionAfterReceivingTheAddress,
                                 numberOfLines: 0
                             )
-                        }.padding(.init(x: 18, y: 18), backgroundColor: .fafafc)
-                            .padding(.init(only: .top, inset: 35))
+                        }.padding(.init(only: .top, inset: 35))
                     }
                 }
             }
@@ -133,12 +126,13 @@ extension ReceiveToken {
             UIStackView(axis: .horizontal, alignment: .top) {
                 UIImageView(width: 44, height: 44, image: icon)
                 UIStackView(axis: .vertical, alignment: .leading) {
-                    UILabel(text: L10n.network(networkName), textSize: 17, weight: .semibold)
+                    UILabel(text: L10n.network(networkName).onlyUppercaseFirst(), textSize: 17, weight: .semibold)
                     UILabel(
-                        text: networkDescription,
                         textColor: .secondaryLabel,
                         numberOfLines: 3
-                    )
+                    ).setAttributeString(networkDescription.asMarkdown(
+                        textColor: .secondaryLabel
+                    ))
                 }.padding(.init(only: .left, inset: 12))
                 UIImageView(width: 22, height: 22, image: .checkBoxIOS)
                     .setup { view in self.selectionView = view }
