@@ -370,7 +370,7 @@
 "Settings" = "Paramètres";
 "One unified address to receive SOL or SPL Tokens" = "Une adresse unifiée pour recevoir des jetons SOL ou SPL";
 "SOL and SPL Tokens" = "Jetons SOL et SPL";
-"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications. SPL Tokens can be traded on Serum, a Solana based decentralized exchange and FTX." = "La bibliothèque de programmes Solana (SPL) est une collection de programmes en chaîne maintenue par l'équipe Solana. Le programme SPL Token est la norme de jeton de la blockchain Solana.\n\nSimilaire aux jetons ERC20 sur le réseau Ethereum, les jetons SPL sont conçus pour les applications DeFi. Les jetons SPL peuvent être échangés sur Serum, un échange décentralisé basé sur Solana et FTX.";
+"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications." = "La bibliothèque de programmes Solana (SPL) est une collection de programmes en chaîne maintenue par l'équipe Solana. Le programme SPL Token est la norme de jeton de la blockchain Solana.\n\nSimilaire aux jetons ERC20 sur le réseau Ethereum, les jetons SPL sont conçus pour les applications DeFi. Les jetons SPL peuvent être échangés sur Serum, un échange décentralisé basé sur Solana et FTX.";
 "Send SOL or any SPL Tokens on one address" = "Envoyez SOL ou n'importe quel jeton SPL sur une seule adresse";
 "Backing up" = "Sauvegarde";
 "The phrases you has entered is not correct" = "Les phrases que vous avez saisies ne sont pas correctes";
@@ -679,4 +679,5 @@
 "Confirm swapping %@ → %@" = "Confirmer l'échange %@ → %@";
 "Spend" = "Passer";
 "Swap %@ → %@" = "Échanger %@ → %@";
+"This address accepts only %@. You may lose assets by sending another coin." = "Cette adresse accepte uniquement %@.  Vous pouvez perdre des actifs en envoyant une autre pièce.";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Code d'accès non défini. Nous ne pouvons donc pas vérifier que vous êtes le propriétaire de l'appareil.";
