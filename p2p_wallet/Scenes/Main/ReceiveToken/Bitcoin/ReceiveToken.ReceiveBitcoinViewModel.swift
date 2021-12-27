@@ -27,7 +27,6 @@ protocol ReceiveTokenBitcoinViewModelType {
     func createRenBTCWallet()
     func acceptConditionAndLoadAddress()
     func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool)
-    func showBTCTypeOptions()
     func showReceivingStatuses()
     func copyToClipboard(address: String, logEvent: AnalyticsEvent)
     func share()
@@ -114,10 +113,6 @@ extension ReceiveToken {
         
         func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool) {
             isReceivingRenBTCSubject.accept(isReceivingRenBTC)
-        }
-        
-        func showBTCTypeOptions() {
-            navigationSubject.accept(.chooseBTCOption(selectedOption: isReceivingRenBTCSubject.value ? .renBTC: .splBTC))
         }
     }
 }

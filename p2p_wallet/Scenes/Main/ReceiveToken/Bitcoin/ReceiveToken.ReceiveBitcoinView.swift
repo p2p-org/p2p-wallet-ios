@@ -48,14 +48,6 @@ extension ReceiveToken {
                 alignment: .fill,
                 distribution: .fill
             ) {
-//                UIView.createSectionView(
-//                    title: L10n.iWantToReceive,
-//                    contentView: btcTypeLabel,
-//                    addSeparatorOnTop: false
-//                )
-//                    .padding(.init(x: 20, y: 0))
-//                    .onTap(self, action: #selector(buttonSelectBTCTypeDidTouch))
-//                    .padding(.init(only: .left, inset: 20))
                 receiveNormalBTCView
                 receiveRenBTCView
             }
@@ -70,12 +62,6 @@ extension ReceiveToken {
         
         private func bind() {
             viewModel.isReceivingRenBTCDriver
-                .map {isRenBTC -> BTCTypeOption in  isRenBTC ? .renBTC: .splBTC}
-                .map {$0.stringValue}
-                .drive(btcTypeLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            viewModel.isReceivingRenBTCDriver
                 .drive(receiveNormalBTCView.rx.isHidden)
                 .disposed(by: disposeBag)
             
@@ -83,10 +69,6 @@ extension ReceiveToken {
                 .map {!$0}
                 .drive(receiveRenBTCView.rx.isHidden)
                 .disposed(by: disposeBag)
-        }
-        
-        @objc private func buttonSelectBTCTypeDidTouch() {
-            viewModel.showBTCTypeOptions()
         }
     }
 }
