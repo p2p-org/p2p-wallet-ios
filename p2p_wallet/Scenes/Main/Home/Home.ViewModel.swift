@@ -43,6 +43,10 @@ extension Home {
             self.walletsRepository = walletsRepository
             self.pricesService = pricesService
         }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 

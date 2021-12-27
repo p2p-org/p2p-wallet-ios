@@ -75,7 +75,7 @@ extension RestoreWallet {
                 .disposed(by: disposeBag)
             
             viewModel.errorSignal
-                .emit(with: self) { $0.showAlert(title: L10n.error, message: $1) }
+                .emit(with: self) { $0.showAlert(title: L10n.error.uppercaseFirst, message: $1) }
                 .disposed(by: disposeBag)
             
             viewModel.isRestorableUsingIcloud.map({ !$0 }).drive(iCloudRestoreButton.rx.isHidden)

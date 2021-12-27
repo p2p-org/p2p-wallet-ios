@@ -100,7 +100,9 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     
     // MARK: - Observing
     func startObserving() {
-        timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(getNewWallet), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true, block: {[weak self] _ in
+            self?.getNewWallet()
+        })
     }
     
     func stopObserving() {

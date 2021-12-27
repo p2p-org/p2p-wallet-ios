@@ -26,7 +26,7 @@ extension RenVM.BurnAndRelease {
         private let rpcClient: RenVMRpcClientType
         private let solanaClient: RenVMSolanaAPIClientType
         private let account: SolanaSDK.Account
-        private let transactionStorage: RenVMBurnAndReleaseTransactionStorageType
+        private var transactionStorage: RenVMBurnAndReleaseTransactionStorageType
         private let transactionHandler: TransactionHandler
         
         // MARK: - Properties
@@ -74,15 +74,12 @@ extension RenVM.BurnAndRelease {
                     )
                 }
             
-            transactionStorage.burnTransactionObservable()
-                .observe(on: scheduler)
-                .map {$0.filter {[weak self] in self?.releasingTxs.contains($0) == false}}
-                .subscribe(onNext: {[weak self] burnDetails in
-                    for detail in burnDetails {
-                        self?.release(detail)
-                    }
-                })
-                .disposed(by: disposeBag)
+            transactionStorage.newSubmittedBurnTxDetailsHandler = {[weak self] burnDetails in
+                let burnDetails = burnDetails.filter {self?.releasingTxs.contains($0) == false}
+                for detail in burnDetails {
+                    self?.release(detail)
+                }
+            }
         }
         
         func reload() {

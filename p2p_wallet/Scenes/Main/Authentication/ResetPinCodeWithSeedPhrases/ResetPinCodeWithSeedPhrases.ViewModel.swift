@@ -25,6 +25,10 @@ extension ResetPinCodeWithSeedPhrases {
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .enterSeedPhrases)
         private let errorSubject = BehaviorRelay<Error?>(value: nil)

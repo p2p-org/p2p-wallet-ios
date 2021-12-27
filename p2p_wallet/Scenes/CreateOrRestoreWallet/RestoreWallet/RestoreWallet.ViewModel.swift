@@ -30,7 +30,7 @@ extension RestoreWallet {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var nameService: NameServiceType
-        @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var notificationsService: NotificationsServiceType
         
         // MARK: - Properties
@@ -45,6 +45,10 @@ extension RestoreWallet {
         private let isRestorableUsingIcloudSubject = BehaviorRelay<Bool>(value: true)
         private let errorSubject = PublishRelay<String>()
         private let finishedSubject = PublishRelay<Void>()
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 
@@ -71,10 +75,11 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     
     // MARK: - Actions
     func restoreFromICloud() {
-        authenticationHandler.requiredOwner { [weak self] in
+        deviceOwnerAuthenticationHandler.requiredOwner { [weak self] in
             self?._restoreFromIcloud()
         } onFailure: { [weak self] error in
-            self?.errorSubject.accept(error?.localizedDescription ?? L10n.error)
+            guard let error = error else {return}
+            self?.errorSubject.accept(error)
         }
     }
     

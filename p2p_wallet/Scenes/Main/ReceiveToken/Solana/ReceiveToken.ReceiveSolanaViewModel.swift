@@ -49,6 +49,10 @@ extension ReceiveToken {
             self.navigationSubject = navigationSubject
         }
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         var username: String? { nameStorage.getName() }
         
         func copyAction() {
