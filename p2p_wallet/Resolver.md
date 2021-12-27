@@ -1,6 +1,7 @@
 #  Using Resolver with ViewModels
 
 Resolver is an ultralight Dependency Injection / Service Locator framework for Swift 5.x on iOS, which is understood simply as a tool that **gives objects the things it needs to do its job**
+
 This project use `MVVM` as the architecture pattern, `Resolver` as the `Service Locator`.
 
 ## What we need from Resolver
@@ -114,6 +115,7 @@ register { WalletsViewModel() }
 ```
 
 Scope `session` has been added by [Andrew Vasiliev](https://github.com/OldCrab) to handle services that live from its creation time to `logout` function (the time when `ResolverScope.session.reset()` is being called). So when you need to create new Service of this type, use scope `.session`.
+
 By using right scope, we can get rid of `MainContainer.swift` because we can now control the lifecycle of Service using `Resolver`'s scope directly.
 
 - Result: The cost of creating and injecting MyScene.ViewModel has been reduced by using `Annotation Injection`
