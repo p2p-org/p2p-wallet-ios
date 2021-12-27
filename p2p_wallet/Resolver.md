@@ -149,8 +149,11 @@ extension MyScene {
 ### Sometimes we need to "inject" data (not service) to the ViewModel, but in facts, data **isn't supposed to be injected**
 - Problem: [(Source)](https://github.com/hmlongco/Resolver/blob/609908e0b67911ebf7386609552a48d4ec07958e/Documentation/Arguments.md#inject-services-not-data)
 > One of the things that many people miss is that dependency injection’s concern lies in constructing the service graph.
+> 
 > To put that into English, it means the dependency-injection system creates and connects the services and the components that manage and process the application’s data. Data is information that's created and manipulated at runtime and passed from object to dependent object using an object’s methods and functions.
+> 
 > Data is never injected.
+> 
 > If an object requires data or values created or manipulated during runtime I'd do something like the following....
 
 ```swift
@@ -173,7 +176,9 @@ class DummyViewController: UIViewController {
 }
 ```
 > Our DummyViewModel service is automatically injected when DummyViewController is instantiated, but it's load method is called with the needed parameters during viewDidLoad.
+> 
 > Note that type information is now preserved. Argument order is maintained. And explicit unwrapping of arguments is not required.
+> 
 > Plus I now have the added benefit of being able to control exactly when and where in the code I call my configuration function. Consequently I can ensure that any initialization needed by my view controller is performed prior to doing so.
 
 In our project, there is some places that data was "injected" using `Constructor Injection` in `ViewModel`. Example:
@@ -247,4 +252,5 @@ show(vc, sender: nil)
 
 ## What needs to be done before merging this PR:
 [x] Fully detecting memory leaks (memory leaks prevent makes strange behaviour when using scope .shared on ViewModel)
-[] Fully testing application, especially some services like RenVM.LockAndMint.Service and RenVM.BurnAndRelease.Service, and fix possible broken functions.
+
+[ ] Fully testing application, especially some services like RenVM.LockAndMint.Service and RenVM.BurnAndRelease.Service, and fix possible broken functions.
