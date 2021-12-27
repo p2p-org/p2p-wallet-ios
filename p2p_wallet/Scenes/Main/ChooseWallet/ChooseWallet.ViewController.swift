@@ -32,6 +32,7 @@ extension ChooseWallet {
         ) {
             super.init()
             viewModel.set(selectedWallet: selectedWallet, handler: handler, showOtherWallets: showOtherWallets)
+            viewModel.customFilter = customFilter
             self.title = title ?? L10n.selectToken
         }
         // MARK: - Methods
