@@ -64,6 +64,10 @@ extension ReceiveToken {
             }
         }
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         var tokenTypeDriver: Driver<ReceiveToken.TokenType> { tokenTypeSubject.asDriver() }
         
         var updateLayoutDriver: Driver<Void> {

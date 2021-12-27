@@ -81,6 +81,10 @@ extension ReceiveToken {
             bind()
         }
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         func reload() {
             renVMService.reload()
         }

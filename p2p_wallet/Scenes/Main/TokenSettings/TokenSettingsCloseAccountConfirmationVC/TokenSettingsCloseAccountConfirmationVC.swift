@@ -7,7 +7,7 @@
 
 import Foundation
 
-class TokenSettingsCloseAccountConfirmationVC: WLModalVC {
+class TokenSettingsCloseAccountConfirmationVC: WLIndicatorModalVC {
     let symbol: String
     var completion: (() -> Void)?
     init(symbol: String) {
@@ -19,6 +19,10 @@ class TokenSettingsCloseAccountConfirmationVC: WLModalVC {
     
     override func setUp() {
         super.setUp()
+        let stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
+        containerView.addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 0, y: 20))
+        
         stackView.addArrangedSubviews([
             UILabel(text: L10n.closeAccount(symbol) + "?", textSize: 17, weight: .semibold)
                 .padding(.init(x: 20, y: 0)),

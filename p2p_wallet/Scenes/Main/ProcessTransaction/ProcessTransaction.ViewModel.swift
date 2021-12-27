@@ -63,6 +63,10 @@ extension ProcessTransaction {
             execute()
         }
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         @objc func execute() {
             var requestIndex: Int
             

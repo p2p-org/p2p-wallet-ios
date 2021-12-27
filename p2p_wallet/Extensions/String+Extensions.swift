@@ -6,16 +6,19 @@
 //
 
 import Foundation
+import Down
 
 extension Optional where Wrapped == String {
     public var orEmpty: String {
         self ?? ""
     }
+    
     static func + (left: String?, right: String?) -> String {
         left.orEmpty + right.orEmpty
     }
+    
     var double: Double? {
-        guard let string = self else {return nil}
+        guard let string = self else { return nil }
         return string.double
     }
 }
@@ -27,13 +30,18 @@ extension String {
     public var uppercaseFirst: String {
         firstCharacter.uppercased() + String(dropFirst())
     }
-    subscript (bounds: CountableClosedRange<Int>) -> String {
+    
+    public func onlyUppercaseFirst() -> String {
+        lowercased().uppercaseFirst
+    }
+    
+    subscript(bounds: CountableClosedRange<Int>) -> String {
         let start = index(startIndex, offsetBy: bounds.lowerBound)
         let end = index(startIndex, offsetBy: bounds.upperBound)
         return String(self[start...end])
     }
-
-    subscript (bounds: CountableRange<Int>) -> String {
+    
+    subscript(bounds: CountableRange<Int>) -> String {
         let start = index(startIndex, offsetBy: bounds.lowerBound)
         let end = index(startIndex, offsetBy: bounds.upperBound)
         return String(self[start..<end])
@@ -43,10 +51,11 @@ extension String {
     func localized() -> String {
         NSLocalizedString(self, comment: "")
     }
+    
     // swiftlint:enable swiftgen_strings
     
     func truncatingMiddle(numOfSymbolsRevealed: Int = 4, numOfSymbolsRevealedInSuffix: Int? = nil) -> String {
-        if count <= numOfSymbolsRevealed + (numOfSymbolsRevealedInSuffix ?? numOfSymbolsRevealed) {return self}
+        if count <= numOfSymbolsRevealed + (numOfSymbolsRevealedInSuffix ?? numOfSymbolsRevealed) { return self }
         return prefix(numOfSymbolsRevealed) + "..." + suffix(numOfSymbolsRevealedInSuffix ?? numOfSymbolsRevealed)
     }
     
@@ -70,5 +79,34 @@ extension String {
         formatter.numberStyle = .decimal
         formatter.locale = Locale.current
         return formatter.number(from: self)?.doubleValue
+    }
+}
+
+extension String {
+    func asMarkdown(textSize: CGFloat? = nil, textColor: UIColor? = nil) -> NSAttributedString {
+        let down = Down(markdownString: self)
+        
+        let fonts = StaticFontCollection(
+            body: UIFont.systemFont(ofSize: textSize ?? 15)
+        )
+        
+        let colors = StaticColorCollection(
+            body: textColor ?? UIColor.textBlack
+        )
+        
+        var paragraph = StaticParagraphStyleCollection()
+        paragraph.body = {
+            let p = NSMutableParagraphStyle()
+            p.lineSpacing = 0
+            return p
+        }()
+        
+        return (try? down.toAttributedString(styler: DownStyler(
+            configuration: DownStylerConfiguration(
+                fonts: fonts,
+                colors: colors,
+                paragraphStyles: paragraph
+            ))
+        )) ?? NSAttributedString()
     }
 }

@@ -8,6 +8,11 @@
 import Foundation
 
 extension UILabel {
+    func setAttributeString(_ text: NSAttributedString) -> Self {
+        self.attributedText = text
+        return self
+    }
+ 
     func semiboldTexts(_ texts: [String]) {
         let aStr = NSMutableAttributedString(string: text!)
         for text in texts {

@@ -79,8 +79,10 @@ extension Resolver: ResolverRegistering {
             .implements(RootViewModelType.self)
             .implements(ChangeNetworkResponder.self)
             .implements(ChangeLanguageResponder.self)
+            .implements(LogoutResponder.self)
             .implements(CreateOrRestoreWalletHandler.self)
             .implements(OnboardingHandler.self)
+            .implements(DeviceOwnerAuthenticationHandler.self)
             .scope(.shared)
         
         // MARK: - CreateOrRestoreWallet
