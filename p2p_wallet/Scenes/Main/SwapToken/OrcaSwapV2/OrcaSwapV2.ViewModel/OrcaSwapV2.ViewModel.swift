@@ -44,7 +44,7 @@ extension OrcaSwapV2 {
             initialWallet: Wallet?
         ) {
             reload()
-            bind(initialWallet: initialWallet)
+            bind(initialWallet: initialWallet ?? walletsRepository.nativeWallet)
         }
         
         deinit {
