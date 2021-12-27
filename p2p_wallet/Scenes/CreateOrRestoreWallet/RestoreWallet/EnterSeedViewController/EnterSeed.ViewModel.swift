@@ -41,6 +41,10 @@ extension EnterSeed {
         init() {
             bind()
         }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
 
         private func bind() {
             seedTextSubject
