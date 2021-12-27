@@ -251,6 +251,6 @@ show(vc, sender: nil)
 ```
 
 ## What needs to be done before merging this PR:
-[x] Fully detecting memory leaks (memory leaks prevent makes strange behaviour when using scope .shared on ViewModel)
+- [x] Fully detecting memory leaks (memory leaks prevent makes strange behaviour when using scope .shared on ViewModel)
 
-[ ] Fully testing application, especially some services like RenVM.LockAndMint.Service and RenVM.BurnAndRelease.Service, and fix possible broken functions.
+- [ ] Fully testing application, especially some services like RenVM.LockAndMint.Service and RenVM.BurnAndRelease.Service, and fix possible broken functions.
