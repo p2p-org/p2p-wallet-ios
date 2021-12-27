@@ -31,8 +31,7 @@ extension ReceiveToken {
                     text: L10n
                         .TheSolanaProgramLibrarySPLIsACollectionOfOnChainProgramsMaintainedByTheSolanaTeam
                         .TheSPLTokenProgramIsTheTokenStandardOfTheSolanaBlockchain
-                        .SimilarToERC20TokensOnTheEthereumNetworkSPLTokensAreDesignedForDeFiApplications
-                        .splTokensCanBeTradedOnSerumASolanaBasedDecentralizedExchangeAndFTX,
+                        .similarToERC20TokensOnTheEthereumNetworkSPLTokensAreDesignedForDeFiApplications,
                     textSize: 15,
                     numberOfLines: 0
                 )
