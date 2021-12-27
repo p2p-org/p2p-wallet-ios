@@ -28,6 +28,10 @@ class TabBarVC: BEPagesVC {
         super.init()
     }
     
+    deinit {
+        debugPrint("\(String(describing: self)) deinited")
+    }
+    
     override func setUp() {
         super.setUp()
         view.backgroundColor = .background

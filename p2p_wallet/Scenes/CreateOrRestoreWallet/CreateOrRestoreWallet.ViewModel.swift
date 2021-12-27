@@ -24,6 +24,10 @@ extension CreateOrRestoreWallet {
         // MARK: - Properties
         private let bag = DisposeBag()
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         // MARK: - Subjects
         private let navigatableSceneSubject = BehaviorRelay<CreateOrRestoreWallet.NavigatableScene?>(value: nil)
     }
