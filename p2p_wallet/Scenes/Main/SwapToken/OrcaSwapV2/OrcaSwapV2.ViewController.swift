@@ -83,7 +83,7 @@ extension OrcaSwapV2 {
             case .settings:
                 let viewController = scenesFactory.makeSwapSettingsViewController(swapViewModel: viewModel)
 
-                present(viewController, animated: true)
+                show(viewController, sender: nil)
             case let .chooseSourceWallet(currentlySelectedWallet: currentlySelectedWallet):
                 let vc = scenesFactory.makeChooseWalletViewController(
                     title: L10n.selectTheFirstToken,

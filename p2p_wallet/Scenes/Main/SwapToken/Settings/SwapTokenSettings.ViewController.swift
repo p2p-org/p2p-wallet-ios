@@ -10,6 +10,10 @@ import UIKit
 
 extension SwapTokenSettings {
     class ViewController: BaseVC {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+
         // MARK: - Dependencies
         private let viewModel: NewSwapTokenSettingsViewModelType
         
