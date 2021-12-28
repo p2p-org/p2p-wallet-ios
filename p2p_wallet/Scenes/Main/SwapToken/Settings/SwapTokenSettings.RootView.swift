@@ -10,18 +10,12 @@ import RxSwift
 
 extension SwapTokenSettings {
     final class RootView: BEView {
-        // MARK: - Constants
-        let disposeBag = DisposeBag()
-
         // MARK: - Properties
         private let viewModel: NewSwapTokenSettingsViewModelType
 
         // MARK: - Subviews
         private let navigationBar: NavigationBar
-        private let slippageView: SlippageView
-        private let feesView: FeesView
-        private let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
-        private let stackView = UIStackView(axis: .vertical, spacing: 36, alignment: .fill)
+        private let significantView: SignificantView
 
         init(viewModel: NewSwapTokenSettingsViewModelType) {
             self.viewModel = viewModel
@@ -31,12 +25,9 @@ extension SwapTokenSettings {
                     viewModel?.goBack()
                 }
             )
-            slippageView = SlippageView(viewModel: viewModel)
-            feesView = FeesView(viewModel: viewModel)
+            significantView = SignificantView(viewModel: viewModel)
 
             super.init(frame: .zero)
-
-            scrollView.showsVerticalScrollIndicator = false
         }
         // MARK: - Methods
         override func commonInit() {
@@ -48,21 +39,12 @@ extension SwapTokenSettings {
         // MARK: - Layout
         private func layout() {
             addSubview(navigationBar)
-            addSubview(scrollView)
-            stackView.addArrangedSubviews {
-                slippageView
-                feesView
-            }
-            scrollView.addSubview(stackView)
+            addSubview(significantView)
 
             navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
 
-            scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 18)
-            scrollView.autoPinEdge(toSuperviewEdge: .leading)
-            scrollView.autoPinEdge(toSuperviewEdge: .trailing)
-            scrollView.autoPinBottomToSuperViewAvoidKeyboard()
-
-            stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 18, y: 0))
+            significantView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            significantView.autoPinEdge(.top, to: .bottom, of: navigationBar)
         }
     }
 }

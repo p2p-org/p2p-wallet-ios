@@ -97,6 +97,7 @@
 		41EA3B0D2777448000832109 /* SwapTokenSettings.FeeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EA3B0C2777448000832109 /* SwapTokenSettings.FeeCell.swift */; };
 		41F4476E2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F4476D2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift */; };
 		41F447702779B7FE00BFC46D /* SwapTokenSettings.SeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F4476F2779B7FE00BFC46D /* SwapTokenSettings.SeparatorView.swift */; };
+		41F44775277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */; };
 		84699019D2C5C5E05EC8466A /* BuyToken.WidgetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699FF3E0F973EDC052ED23 /* BuyToken.WidgetViewController.swift */; };
 		84699079946496609D51B833 /* ReceiveToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991CEF8AFD01A61E2FAE8 /* ReceiveToken.ViewController.swift */; };
 		84699154DB17DE5EB2D0DF08 /* BuyRoot.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469996FE57E1A717BD82B85 /* BuyRoot.ViewModel.swift */; };
@@ -600,6 +601,7 @@
 		41EA3B0C2777448000832109 /* SwapTokenSettings.FeeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.FeeCell.swift; sourceTree = "<group>"; };
 		41F4476D2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.FeeCellContent.swift; sourceTree = "<group>"; };
 		41F4476F2779B7FE00BFC46D /* SwapTokenSettings.SeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.SeparatorView.swift; sourceTree = "<group>"; };
+		41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.SignificantView.swift; sourceTree = "<group>"; };
 		5957576EA41ADB179D52B4C5 /* Pods-p2p_wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.debug.xcconfig"; sourceTree = "<group>"; };
 		653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_wallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7053CD2D5518767674E98C06 /* Pods-p2p wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p wallet/Pods-p2p wallet.release.xcconfig"; sourceTree = "<group>"; };
@@ -1163,6 +1165,7 @@
 		41C460242771CEDB009C12D9 /* Subviews */ = {
 			isa = PBXGroup;
 			children = (
+				41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */,
 				41C460272771CF5A009C12D9 /* SwapTokenSettings.NavigationBar.swift */,
 				41C460252771CF4D009C12D9 /* SwapTokenSettings.SlippageView.swift */,
 				41EA3B082777389000832109 /* SwapTokenSettings.FeesView.swift */,
@@ -1244,6 +1247,15 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		41F447712779F26100BFC46D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				41F4476D2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift */,
+				41C460222771CA30009C12D9 /* SwapTokenSettings.SlippageType.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		84699276F4D3C02500CB14B9 /* BuyToken */ = {
 			isa = PBXGroup;
 			children = (
@@ -1252,15 +1264,6 @@
 				846995031B01D0F8C08F3F79 /* BuyToken.swift */,
 			);
 			path = BuyToken;
-			sourceTree = "<group>";
-		};
-		41F447712779F26100BFC46D /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				41F4476D2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift */,
-				41C460222771CA30009C12D9 /* SwapTokenSettings.SlippageType.swift */,
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		846995CF506696ABD99A7488 /* DApps */ = {
@@ -2734,6 +2737,7 @@
 				BC620D7426C6739C002186ED /* SwapToken.NetworkFeePayerSettingsViewController.swift in Sources */,
 				BCE42DF725DF9C7A0021540E /* Onboarding.ViewController.swift in Sources */,
 				41CA057A2754800D00953322 /* ReserveName.NavigationBar.swift in Sources */,
+				41F44775277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift in Sources */,
 				BCC1F20D269EC712003DD648 /* WLNotificationsRepository.swift in Sources */,
 				BCB286DC2754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.swift in Sources */,
 				BC6FED91270BF47E002B6255 /* RenBTCReceivingStatuses.ViewController.swift in Sources */,
