@@ -109,20 +109,6 @@ extension OrcaSwapV2 {
                     handler: viewModel
                 )
                 present(vc, animated: true, completion: nil)
-            case .chooseSlippage:
-                let vc = OrcaSwapV2.SlippageSettingsViewController()
-                vc.completion = {[weak self] slippage in
-                    self?.viewModel.changeSlippage(to: slippage / 100)
-                }
-                present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
-            case let .choosePayFeeToken(tokenName):
-                let vc = OrcaSwapV2.NetworkFeePayerSettingsViewController(transactionTokenName: tokenName ?? "")
-                vc.completion = { [weak self] method in
-                    Defaults.payingToken = method
-                    self?.viewModel.changePayingToken(to: method)
-                }
-
-                present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .confirmation:
                 let vm = ConfirmSwapping.ViewModel(swapViewModel: viewModel)
                 let vc = ConfirmSwapping.ViewController(viewModel: vm)

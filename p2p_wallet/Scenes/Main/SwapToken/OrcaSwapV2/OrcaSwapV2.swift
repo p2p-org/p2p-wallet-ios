@@ -18,8 +18,6 @@ enum OrcaSwapV2 {
             excludedSourceWalletPubkey: String?
         )
         case settings
-        case chooseSlippage
-        case choosePayFeeToken(tokenName: String?)
         case confirmation
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
         case back
