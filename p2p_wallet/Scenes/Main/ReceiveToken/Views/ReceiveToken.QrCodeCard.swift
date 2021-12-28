@@ -23,7 +23,7 @@ extension ReceiveToken {
         let onShare: BECallback<UIImage>?
         let onSave: BECallback<UIImage>?
         
-        fileprivate var pubKeyView: UILabel? = nil
+        fileprivate var pubKeyView: UILabel?
         fileprivate var qrView: QrCodeView!
         
         fileprivate func updatePubKey(_ pubKey: String?) {
@@ -106,7 +106,6 @@ extension ReceiveToken {
             }.border(width: 1, color: .f2f2f7)
                 .box(cornerRadius: 12)
                 .shadow(color: .black, alpha: 0.05, y: 1, blur: 8)
-                .margin(.init(x: 0, y: 18))
         }
     }
 }
