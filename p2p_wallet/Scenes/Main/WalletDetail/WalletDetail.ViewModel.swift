@@ -86,6 +86,10 @@ extension WalletDetail {
             bind()
         }
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         /// Bind subjects
         private func bind() {
             bindSubjectsIntoSubjects()
@@ -94,7 +98,7 @@ extension WalletDetail {
         private func bindSubjectsIntoSubjects() {
             walletsRepository
                 .dataObservable
-                .map {$0?.first(where: {$0.pubkey == self.pubkey})}
+                .map {[weak self] in $0?.first(where: {$0.pubkey == self?.pubkey})}
                 .filter {$0 != nil}
                 .bind(to: walletSubject)
                 .disposed(by: disposeBag)
@@ -156,7 +160,7 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
     }
     
     func buyTokens() {
-        var tokens = BuyToken.CryptoCurrency.all
+        var tokens = BuyProviders.Crypto.eth
         if symbol == "SOL" {
             tokens = .sol
         }

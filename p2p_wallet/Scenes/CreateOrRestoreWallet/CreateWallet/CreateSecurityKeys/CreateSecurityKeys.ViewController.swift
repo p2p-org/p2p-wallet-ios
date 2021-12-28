@@ -37,7 +37,7 @@ extension CreateSecurityKeys {
             
             viewModel.errorSignal
                 .emit(onNext: {[weak self] error in
-                    self?.showAlert(title: L10n.error, message: error)
+                    self?.showAlert(title: L10n.error.uppercaseFirst, message: error)
                 })
                 .disposed(by: disposeBag)
         }

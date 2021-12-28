@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 extension OrcaSwapV2 {
-    class RootView: ScrollableVStackRootView {
+    final class RootView: ScrollableVStackRootView {
         // MARK: - Constants
         let disposeBag = DisposeBag()
         

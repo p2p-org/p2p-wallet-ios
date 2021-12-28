@@ -37,6 +37,10 @@ extension DAppContainer {
             super.init()
             dAppChannel.setDelegate(self)
         }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 
@@ -98,7 +102,6 @@ extension DAppContainer.ViewModel: DAppChannelDelegate {
                     else { throw DAppChannelError.unauthorized }
                 
                 try transaction.sign(signers: [signer])
-                try transaction.serialize(verifySignatures: true)
                 return transaction
             })
         } catch let e {

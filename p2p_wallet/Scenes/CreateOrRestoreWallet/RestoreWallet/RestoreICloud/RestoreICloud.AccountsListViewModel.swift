@@ -18,6 +18,10 @@ extension RestoreICloud {
         @Injected private var nameService: NameServiceType
         
         // MARK: - Methods
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         override func createRequest() -> Single<[ParsedAccount]> {
             let accountsRequest = Single<[Account]>.just(iCloudStorage.accountFromICloud() ?? [])
             

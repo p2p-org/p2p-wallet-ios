@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 extension DAppContainer {
-    class ViewController: BaseVC {
+    class ViewController: BaseVC, TabBarNeededViewController {
         // MARK: - Dependencies
         @Injected private var viewModel: DAppContainerViewModelType
         

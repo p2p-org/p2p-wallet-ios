@@ -47,6 +47,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class ViewModel {
         // MARK: - Dependencies
         private let chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType
+        @Injected private var clipboardManager: ClipboardManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -135,7 +136,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     func userDidTapPaste() {
-        search(UIPasteboard.general.string)
+        search(clipboardManager.stringFromClipboard())
     }
     
     func search(_ address: String?) {

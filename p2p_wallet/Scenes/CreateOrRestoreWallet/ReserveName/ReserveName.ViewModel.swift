@@ -30,6 +30,7 @@ protocol ReserveNameViewModelType: AnyObject {
 extension ReserveName {
     class ViewModel: NSObject {
         // MARK: - Dependencies
+        @Injected private var notificationsService: NotificationsServiceType
         private let nameService: NameServiceType
         private let owner: String
         private let reserveNameHandler: ReserveNameHandler
@@ -73,6 +74,10 @@ extension ReserveName {
 
             bind()
             manager.registerCaptcha(nil)
+        }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
         }
 
         private func bind() {
@@ -133,7 +138,7 @@ extension ReserveName {
                     self?.nameDidReserve(name)
                 }, onFailure: { [weak self] error in
                     self?.stopLoading()
-                    UIApplication.shared.showToast(message: "❌ \(error.readableDescription)")
+                    self?.notificationsService.showInAppNotification(.error(error))
                 })
                 .disposed(by: disposeBag)
         }
@@ -210,7 +215,7 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
 
 extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
     func gtCaptcha(_ manager: GT3CaptchaManager, errorHandler error: GT3Error) {
-        UIApplication.shared.showToast(message: "❌ \(error.readableDescription)")
+        notificationsService.showInAppNotification(.error(error))
     }
 
     func gtCaptcha(_ manager: GT3CaptchaManager, didReceiveCaptchaCode code: String, result: [AnyHashable: Any]?, message: String?) {

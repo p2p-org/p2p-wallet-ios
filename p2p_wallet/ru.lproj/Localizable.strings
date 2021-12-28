@@ -370,7 +370,7 @@
 "Settings" = "Настройки";
 "One unified address to receive SOL or SPL Tokens" = "Единый адрес для получения SOL и SPL токенов";
 "SOL and SPL Tokens" = "Токены SOL и SPL";
-"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications. SPL Tokens can be traded on Serum, a Solana based decentralized exchange and FTX." = "Библиотека программ Solana (SPL) - это стандарт токенов блокчейна Solana.\n\nПо аналогии с токенами ERC20 в сети Ethereum, токены SPL предназначены для приложений DeFi. Токенами SPL можно торговать на FTX и децентрализованной бирже Serum, основанной на Solana.";
+"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications." = "Библиотека программ Solana (SPL) - это стандарт токенов блокчейна Solana.\n\nПо аналогии с токенами ERC20 в сети Ethereum, токены SPL предназначены для приложений DeFi. Токенами SPL можно торговать на FTX и децентрализованной бирже Serum, основанной на Solana.";
 "Send SOL or any SPL Tokens on one address" = "Отправляйте SOL или любые токены SPL на один адрес";
 "Backing up" = "Резервное копирование";
 "The phrases you has entered is not correct" = "Вы ввели неправильные фразы";
@@ -650,6 +650,7 @@
 "1 %@ Price" = "1 %@ Цена";
 "Pay swap fees with" = "Оплачивайте комиссию за своп с помощью";
 "Total fee" = "Общая комиссия";
+"Showing my address for" = "Показывает мой адрес для";
 "Reserve P2P username" = "Зарезервировать имя пользователя P2P";
 "Enter username" = "Введите имя пользователя";
 "Change the token?" = "Сменить токен?";
@@ -663,6 +664,16 @@
 "There are %@ free transactions left for today" = "На сегодня осталось %@ бесплатных транзакций";
 "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "В сети Solana первые 100 транзакций в день оплачиваются P2P.org. Последующие транзакции будут взиматься на основе платы за газ блокчейна Solana.";
 "Select word #%@" = "Выберите слово №%@";
+"Receive any token within the Solana network even if it is not included in your wallet list" = "Получите любой токен в сети Solana, даже если он не включен в список вашего кошелька";
+"When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "Когда вы выбираете сеть Биткойн, ваш адрес принимает только Биткойн.  Вы можете потерять активы, отправив еще одну монету. \n 0,000112 BTC - это минимальная сумма транзакции, и у вас есть 36 часов, чтобы завершить транзакцию после получения адреса.";
+"You pay" = "Ты платишь";
+"You get" = "Ты получаешь";
+"Processing fee" = "Разовая комиссия";
+"SOL Price" = "Цена SOL";
+"Buy %@ on Moonpay" = "Купить %@ на Moonpay";
+"I understand" = "я понимаю";
+"Receiving via Bitcoin network" = "Получение через сеть Биткойн";
+"Make sure you understand the aspects" = "Убедитесь, что вы понимаете аспекты";
 "Select the second token" = "Выберите второй токен";
 "Select the first token" = "Выберите первый токен";
 "Confirm swapping %@ → %@" = "Подтвердите замену %@ → %@";
@@ -677,3 +688,5 @@
 "cannot exceed 50%" = "не может превышать 50%%";
 "frontrun" = "впереди";
 "higher volatility" = "более высокая волатильность";
+"This address accepts only %@. You may lose assets by sending another coin." = "Этот адрес принимает только %@.  Вы можете потерять активы, отправив еще одну монету.";
+"Passcode not set. So we can’t verify you as the device’s owner." = "Пароль не установлен. Поэтому мы не можем подтвердить, что вы являетесь владельцем устройства.";

@@ -370,7 +370,7 @@
 "Settings" = "Cài đặt";
 "One unified address to receive SOL or SPL Tokens" = "Một địa chỉ hợp nhất để nhận SOL hoặc SPL Tokens";
 "SOL and SPL Tokens" = "SOL và SPL Tokens";
-"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications. SPL Tokens can be traded on Serum, a Solana based decentralized exchange and FTX." = "Thư viện Chương trình Solana (SPL) là một tập hợp các chương trình trên blockchain do Solana duy trì. Chương trình SPL Token là tiêu chuẩn token của Solana blockchain.\n\nTương tự như ERC20 tokens trên mạng Ethereum, SPL tokens được thiết kế cho các ứng dụng DeFi. SPL Tokens có thể được giao dịch trên Serum, một sàn giao dịch phi tập trung dựa trên Solana và FTX.";
+"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications." = "Thư viện Chương trình Solana (SPL) là một tập hợp các chương trình trên blockchain do Solana duy trì. Chương trình SPL Token là tiêu chuẩn token của Solana blockchain.\n\nTương tự như ERC20 tokens trên mạng Ethereum, SPL tokens được thiết kế cho các ứng dụng DeFi. SPL Tokens có thể được giao dịch trên Serum, một sàn giao dịch phi tập trung dựa trên Solana và FTX.";
 "Send SOL or any SPL Tokens on one address" = "Gửi SOL hoặc bất kỳ SPL token khác trên một địa chỉ duy nhất";
 "Backing up" = "Sao lưu";
 "The phrases you has entered is not correct" = "Các cụm từ bạn đã nhập không chính xác";
@@ -650,6 +650,7 @@
 "1 %@ Price" = "1 %@ Giá";
 "Pay swap fees with" = "Thanh toán phí hoán đổi với";
 "Total fee" = "Tổng phí";
+"Showing my address for" = "Hiển thị địa chỉ của tôi cho";
 "Reserve P2P username" = "Đặt trước tên người dùng P2P";
 "Enter username" = "Điền tên đăng nhập";
 "Change the token?" = "Thay đổi mã thông báo?";
@@ -663,6 +664,16 @@
 "There are %@ free transactions left for today" = "Còn lại %@ giao dịch miễn phí cho ngày hôm nay";
 "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "Trên mạng Solana, 100 giao dịch đầu tiên trong ngày được thanh toán bởi P2P.org. Các giao dịch tiếp theo sẽ được tính phí dựa trên phí gas của Solana blockchain.";
 "Select word #%@" = "Chọn từ #%@";
+"Receive any token within the Solana network even if it is not included in your wallet list" = "Nhận bất kỳ mã thông báo nào trong mạng Solana ngay cả khi nó không có trong danh sách ví của bạn";
+"When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "Khi bạn chọn mạng Bitcoin, địa chỉ của bạn chỉ chấp nhận Bitcoin.  Bạn có thể mất tài sản khi gửi một đồng xu khác. \n 0,000112 BTC là số tiền giao dịch tối thiểu và bạn có 36 giờ để hoàn tất giao dịch sau khi nhận được địa chỉ.";
+"You pay" = "Bạn trả tiền";
+"You get" = "Bạn lấy";
+"Processing fee" = "Phí xử lý";
+"SOL Price" = "Giá SOL";
+"Buy %@ on Moonpay" = "Mua %@ trên Moonpay";
+"I understand" = "Tôi hiểu";
+"Receiving via Bitcoin network" = "Nhận qua mạng Bitcoin";
+"Make sure you understand the aspects" = "Đảm bảo rằng bạn hiểu các khía cạnh";
 "Select the second token" = "Chọn token thứ hai";
 "Select the first token" = "Chọn token đầu tiên";
 "Confirm swapping %@ → %@" = "Xác nhận hoán đổi %@ → %@";
@@ -677,3 +688,5 @@
 "cannot exceed 50%" = "không thể vượt quá 50%%";
 "frontrun" = "frontrun";
 "higher volatility" = "biến động cao hơn";
+"This address accepts only %@. You may lose assets by sending another coin." = "Địa chỉ này chỉ chấp nhận %@.  Bạn có thể mất tài sản khi gửi một đồng xu khác.";
+"Passcode not set. So we can’t verify you as the device’s owner." = "Mật mã chưa được đặt. Vì vậy, chúng tôi không thể xác minh bạn là chủ sở hữu của thiết bị.";

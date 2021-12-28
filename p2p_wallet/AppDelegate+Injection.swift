@@ -43,6 +43,12 @@ extension Resolver: ResolverRegistering {
         register { CryptoComparePricesFetcher() }
             .implements(PricesFetcher.self)
             .scope(.application)
+        register { NotificationsService() }
+            .implements(NotificationsServiceType.self)
+            .scope(.application)
+        register { ClipboardManager() }
+            .implements(ClipboardManagerType.self)
+            .scope(.application)
         
         // MARK: - Others
         register { SessionBannersAvailabilityState() }
@@ -73,8 +79,10 @@ extension Resolver: ResolverRegistering {
             .implements(RootViewModelType.self)
             .implements(ChangeNetworkResponder.self)
             .implements(ChangeLanguageResponder.self)
+            .implements(LogoutResponder.self)
             .implements(CreateOrRestoreWalletHandler.self)
             .implements(OnboardingHandler.self)
+            .implements(DeviceOwnerAuthenticationHandler.self)
             .scope(.shared)
         
         // MARK: - CreateOrRestoreWallet
@@ -138,6 +146,17 @@ extension Resolver: ResolverRegistering {
         register {DAppContainer.ViewModel()}
             .implements(DAppContainerViewModelType.self)
             .scope(.shared)
+        
+        // MARK: - Moonpay
+        register{Moonpay.MoonpayServiceImpl(api: Moonpay.API.fromEnvironment())}
+            .implements(MoonpayService.self)
+            .scope(.shared)
+    
+        // MARK: - BuyProvider
+        register{BuyProviders.MoonpayFactory()}
+            .implements(BuyProviderFactory.self)
+            .scope(.application)
+        
     }
 }
 

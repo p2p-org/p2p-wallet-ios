@@ -370,7 +370,7 @@
 "Settings" = "Settings";
 "One unified address to receive SOL or SPL Tokens" = "One unified address to receive SOL or SPL Tokens";
 "SOL and SPL Tokens" = "SOL and SPL Tokens";
-"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications. SPL Tokens can be traded on Serum, a Solana based decentralized exchange and FTX." = "The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications. SPL Tokens can be traded on Serum, a Solana based decentralized exchange and FTX.";
+"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications." = "The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC-20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications.";
 "Send SOL or any SPL Tokens on one address" = "Send SOL or any SPL Tokens on one address";
 "Backing up" = "Backing up";
 "The phrases you has entered is not correct" = "The phrases you has entered is not correct";
@@ -463,8 +463,8 @@
 "Be sure you can complete this transaction" = "Be sure you can complete this transaction";
 "This address accepts %@. You may lose assets by sending another coin." = "This address accepts %@. You may lose assets by sending another coin.";
 "only Bitcoin" = "only Bitcoin";
-"Minimum transaction amount of %@" = "Minimum transaction amount of %@";
-"%@ is the remaining time to safely send the assets." = "%@ is the remaining time to safely send the assets.";
+"Minimum transaction amount of %@" = "Minimum transaction amount of **%@**";
+"%@ is the remaining time to safely send the assets." = "**%@** is the remaining time to safely send the assets.";
 "Received %@ renBTC" = "Received %@ renBTC";
 "Receiving %@ renBTC: Pending" = "Receiving %@ renBTC: Pending";
 "Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL." = "Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL.";
@@ -650,6 +650,7 @@
 "1 %@ Price" = "1 %@ Price";
 "Pay swap fees with" = "Pay swap fees with";
 "Total fee" = "Total fee";
+"Showing my address for" = "Showing my address for";
 "Reserve P2P username" = "Reserve P2P username";
 "Enter username" = "Enter username";
 "Change the token?" = "Change the token?";
@@ -663,6 +664,16 @@
 "There are %@ free transactions left for today" = "There are %@ free transactions left for today";
 "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee.";
 "Select word #%@" = "Select word #%@";
+"Receive any token within the Solana network even if it is not included in your wallet list" = "Receive **any token** within the Solana network even if it is not included in your wallet list";
+"When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address.";
+"You pay" = "You pay";
+"You get" = "You get";
+"Processing fee" = "Processing fee";
+"SOL Price" = "SOL Price";
+"Buy %@ on Moonpay" = "Buy %@ on Moonpay";
+"I understand" = "I understand";
+"Receiving via Bitcoin network" = "Receiving via Bitcoin network";
+"Make sure you understand the aspects" = "Make sure you understand the aspects";
 "Select the second token" = "Select the second token";
 "Select the first token" = "Select the first token";
 "Confirm swapping %@ → %@" = "Confirm swapping %@ → %@";
@@ -677,3 +688,5 @@
 "cannot exceed 50%" = "cannot exceed 50%%";
 "frontrun" = "frontrun";
 "higher volatility" = "higher volatility";
+"This address accepts only %@. You may lose assets by sending another coin." = "This address accepts **only %@**. You may lose assets by sending another coin.";
+"Passcode not set. So we can’t verify you as the device’s owner." = "Passcode not set. So we can’t verify you as the device’s owner.";

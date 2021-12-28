@@ -126,7 +126,6 @@ extension PricesService: PricesServiceType {
     
     func clearCurrentPrices() {
         currentPricesSubject.flush()
-        currentPricesSubject.accept(storage.retrievePrices(), state: .notRequested)
         storage.savePrices([:])
     }
     
@@ -158,7 +157,9 @@ extension PricesService: PricesServiceType {
     
     func startObserving() {
         fetchAllTokensPrice()
-        timer = Timer.scheduledTimer(timeInterval: refreshInterval, target: self, selector: #selector(fetchAllTokensPrice), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true, block: {[weak self] _ in
+            self?.fetchAllTokensPrice()
+        })
     }
     
     func stopObserving() {

@@ -22,7 +22,12 @@ protocol ChangeFiatResponder {
     func changeFiat(to fiat: Fiat)
 }
 
+protocol LogoutResponder {
+    func logout()
+}
+
 protocol SettingsViewModelType {
+    var notificationsService: NotificationsServiceType { get }
     var selectableLanguages: [LocalizedLanguage: Bool] { get }
     var navigationDriver: Driver<Settings.NavigatableScene?> { get }
     var usernameDriver: Driver<String?> { get }
@@ -63,12 +68,14 @@ extension Settings {
         // MARK: - Dependencies
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var rootViewModel: RootViewModelType
         private var reserveNameHandler: ReserveNameHandler
+        @Injected private var logoutResponder: LogoutResponder
         @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
         @Injected private var changeLanguageResponder: ChangeLanguageResponder
         @Injected private var localizationManager: LocalizationManagerType
+        @Injected private var clipboardManager: ClipboardManagerType
+        @Injected var notificationsService: NotificationsServiceType
         let changeFiatResponder: ChangeFiatResponder
         let renVMService: RenVMLockAndMintServiceType
         
@@ -97,6 +104,10 @@ extension Settings {
             self.changeFiatResponder = changeFiatResponder
             self.renVMService = renVMService
             bind()
+        }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
         }
         
         func bind() {
@@ -231,7 +242,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         analyticsManager.log(event: .settingsСurrencySelected(сurrency: fiat.code))
         changeFiatResponder.changeFiat(to: fiat)
         fiatSubject.accept(fiat)
-        UIApplication.shared.showToast(message: "✅ " + L10n.currencyChanged)
+        notificationsService.showInAppNotification(.done(L10n.currencyChanged))
     }
     
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint) {
@@ -292,6 +303,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func setLanguage(_ language: LocalizedLanguage) {
         localizationManager.changeCurrentLanguage(language)
+        analyticsManager.log(event: .settingsLanguageSelected(language: language.code))
         changeLanguageResponder.languageDidChange(to: language)
     }
     
@@ -313,7 +325,8 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func copyUsernameToClipboard() {
         guard let username = storage.getName()?.withNameServiceDomain() else { return }
-        UIApplication.shared.copyToClipboard(username, alert: true, alertMessage: L10n.copiedToClipboard)
+        clipboardManager.copyToClipboard(username)
+        notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
     
     func shareUsername() {
@@ -323,6 +336,6 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func logout() {
         analyticsManager.log(event: .settingsLogoutClick)
-        rootViewModel.logout()
+        logoutResponder.logout()
     }
 }
