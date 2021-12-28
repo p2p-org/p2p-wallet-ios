@@ -97,7 +97,6 @@ extension DAppContainer.ViewModel: DAppChannelDelegate {
                     else { throw DAppChannelError.unauthorized }
                 
                 try transaction.sign(signers: [signer])
-                try transaction.serialize(verifySignatures: true)
                 return transaction
             })
         } catch let e {

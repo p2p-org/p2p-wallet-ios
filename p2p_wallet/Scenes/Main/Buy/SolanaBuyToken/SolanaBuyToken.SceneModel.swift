@@ -72,7 +72,7 @@ extension SolanaBuyToken {
         
         func setAmount(value: Double?) { input.accept(value) }
         
-        func next() { rootViewModel.navigate(to: .buyToken(crypto: .eth, amount: (try? input.value) ?? 0)) }
+        func next() { rootViewModel.navigate(to: .buyToken(crypto: .eth, amount: input.value ?? 0)) }
         
         func back() { rootViewModel.navigate(to: .back) }
         
