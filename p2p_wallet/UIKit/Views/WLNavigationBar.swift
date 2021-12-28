@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class WLNavigationBar: BEView {
     lazy var stackView = UIStackView(axis: .horizontal, alignment: .center, distribution: .equalCentering, arrangedSubviews: [
@@ -89,7 +90,11 @@ class NewWLNavigationBar: BECompositionView {
                 
                 // Title
                 UILabel(text: initialTitle, textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
-                    .setup({ view in self.title = view as! UILabel })
+                    .setup { view in
+                        if let title = view as? UILabel {
+                            self.title = title
+                        }
+                    }
                 
                 // Actions
                 actions
