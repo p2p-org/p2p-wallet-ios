@@ -308,7 +308,7 @@ private class AddressView: BEView {
         guard !isCopying, let pubkey = currentAddress else {return}
         isCopying = true
         
-        viewModel.copyToClipboard(address: pubkey, logEvent: .receiveAddressCopy)
+//        viewModel.copyToClipboard(address: pubkey, logEvent: .receiveAddressCopy)
         
         let addressLabelOriginalColor = addressLabel.textColor
         addressLabel.textColor = .h5887ff
