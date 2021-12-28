@@ -215,6 +215,15 @@ class MainContainer {
         viewModel.customFilter = customFilter
         return ChooseWallet.ViewController(title: title, viewModel: viewModel)
     }
+
+    func makeSwapSettingsViewController(swapViewModel: OrcaSwapV2ViewModelType) -> UIViewController {
+        let viewModel = SwapTokenSettings.ViewModel(
+            nativeWallet: walletsViewModel.nativeWallet,
+            swapViewModel: swapViewModel
+        )
+
+        return SwapTokenSettings.ViewController(viewModel: viewModel)
+    }
     
     func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController {
         let viewModel = ProcessTransaction.ViewModel(
