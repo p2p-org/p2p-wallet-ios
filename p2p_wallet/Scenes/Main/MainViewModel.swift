@@ -8,7 +8,6 @@
 import Foundation
 import RxSwift
 import RxCocoa
-import LocalAuthentication
 
 protocol MainViewModelType: AuthenticationHandler {
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get } // nil if non authentication process is processing
@@ -27,6 +26,10 @@ class MainViewModel {
     // MARK: - Initializer
     init() {
         bind()
+    }
+    
+    deinit {
+        debugPrint("\(String(describing: self)) deinited")
     }
     
     /// Bind subjects
@@ -56,26 +59,6 @@ class MainViewModel {
 }
 
 extension MainViewModel: MainViewModelType {
-    func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((Error?) -> Void)?) {
-        let myContext = LAContext()
-        
-        if !myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil) {
-            DispatchQueue.main.sync {
-                onSuccess?()
-            }
-        }
-        
-        myContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: L10n.confirmItSYou) { (success, error) in
-            guard success else {
-                onFailure?(error)
-                return
-            }
-            DispatchQueue.main.sync {
-                onSuccess?()
-            }
-        }
-    }
-    
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {
         authenticationStatusSubject.asDriver()
     }

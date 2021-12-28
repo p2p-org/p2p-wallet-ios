@@ -46,6 +46,10 @@ extension DerivableAccounts {
             self.phrases = phrases
             self.accountsListViewModel = ListViewModel(phrases: phrases)
         }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 

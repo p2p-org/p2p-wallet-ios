@@ -28,6 +28,7 @@ extension CreateWallet {
         // MARK: - Dependencies
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var notificationsService: NotificationsServiceType
         
         // MARK: - Properties
         private let bag = DisposeBag()
@@ -36,6 +37,10 @@ extension CreateWallet {
         
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<CreateWallet.NavigatableScene?>(value: nil)
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 
@@ -67,9 +72,9 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
                     self?.navigateToReserveName(owner: account.publicKey.base58EncodedString)
                 }
             } catch {
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
                     UIApplication.shared.hideHud()
-                    UIApplication.shared.showToast(message: (error as? SolanaSDK.Error)?.errorDescription ?? error.localizedDescription)
+                    self?.notificationsService.showInAppNotification(.error(error))
                 }
             }
         }

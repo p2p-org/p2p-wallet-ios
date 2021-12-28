@@ -26,15 +26,15 @@ extension DerivableAccounts {
         }()
         
         private lazy var headerView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
-            UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
-                UIStackView(axis: .vertical, spacing: 8, alignment: .leading) {
-                    UILabel(text: L10n.derivationPath, textSize: 17, weight: .semibold)
-                    derivationPathLabel
-                }
-                UIView.defaultNextArrow()
-            }
-                .padding(.init(x: 18, y: 14), backgroundColor: .grayPanel, cornerRadius: 12)
-                .onTap(self, action: #selector(chooseDerivationPath))
+            WLLargeButton {
+                UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
+                    UIStackView(axis: .vertical, spacing: 8, alignment: .leading) {
+                        UILabel(text: L10n.derivationPath, textSize: 17, weight: .semibold)
+                        derivationPathLabel
+                    }
+                    UIView.defaultNextArrow()
+                }.padding(.init(x: 18, y: 14))
+            }.onTap(self, action: #selector(chooseDerivationPath))
             
             UIView.greyBannerView {
                 UILabel(text: L10n.ThisIsTheThingYouUseToGetAllYourAccountsFromYourMnemonicPhrase.byDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet, numberOfLines: 0)
@@ -75,7 +75,6 @@ extension DerivableAccounts {
             
             // navigation bar
             view.addSubview(navigationBar)
-            navigationBar.titleLabel.text = L10n.createANewWallet
             navigationBar.backButton.onTap(self, action: #selector(back))
             navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
             navigationBar.autoPinEdge(toSuperviewEdge: .leading)

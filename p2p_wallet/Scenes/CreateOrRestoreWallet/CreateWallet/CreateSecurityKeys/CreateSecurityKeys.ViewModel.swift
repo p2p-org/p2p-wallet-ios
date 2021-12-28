@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol CreateSecurityKeysViewModelType: AnyObject {
+    var notificationsService: NotificationsServiceType { get }
     var showTermsAndConditionsSignal: Signal<Void> { get }
     var phrasesDriver: Driver<[String]> { get }
     var errorSignal: Signal<String> { get }
@@ -30,7 +31,9 @@ extension CreateSecurityKeys {
         @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var createWalletViewModel: CreateWalletViewModelType
-        @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
+        @Injected private var clipboardManager: ClipboardManagerType
+        @Injected var notificationsService: NotificationsServiceType
 
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -43,6 +46,10 @@ extension CreateSecurityKeys {
         // MARK: - Initializer
         init() {
             createPhrases()
+        }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
         }
 
         private func createPhrases() {
@@ -78,14 +85,16 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     
     func copyToClipboard() {
         analyticsManager.log(event: .createWalletCopySeedClick)
-        UIApplication.shared.copyToClipboard(phrasesSubject.value.joined(separator: " "), alertMessage: L10n.seedPhraseCopiedToClipboard)
+        clipboardManager.copyToClipboard(phrasesSubject.value.joined(separator: " "))
+        notificationsService.showInAppNotification(.message(L10n.seedPhraseCopiedToClipboard))
     }
     
     @objc func saveToICloud() {
-        authenticationHandler.requiredOwner { [weak self] in
+        deviceOwnerAuthenticationHandler.requiredOwner { [weak self] in
             self?._saveToIcloud()
         } onFailure: { [weak self] error in
-            self?.errorSubject.accept(error?.localizedDescription ?? L10n.error)
+            guard let error = error else {return}
+            self?.errorSubject.accept(error)
         }
     }
 
@@ -100,7 +109,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         )
         
         if result {
-            UIApplication.shared.showToast(message: "✅ " + L10n.savedToICloud)
+            notificationsService.showInAppNotification(.done(L10n.savedToICloud))
             createWalletViewModel.handlePhrases(phrasesSubject.value)
         } else {
             errorSubject.accept(L10n.SecurityKeyCanTBeSavedIntoIcloud.pleaseTryAgain)

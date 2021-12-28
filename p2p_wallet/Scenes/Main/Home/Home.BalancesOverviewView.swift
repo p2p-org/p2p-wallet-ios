@@ -25,16 +25,20 @@ extension Home {
             chartView.noDataText = L10n.noChartDataAvailable
             return chartView
         }()
-        private lazy var sendButton = createButton(image: .buttonSend, title: L10n.send)
-            .onTap(self, action: #selector(buttonSendDidTouch))
-        private lazy var receiveButton = createButton(image: .buttonReceive, title: L10n.receive)
-            .onTap(self, action: #selector(buttonReceiveDidTouch))
-        private lazy var swapButton = createButton(image: .buttonSwap, title: L10n.swap)
-            .onTap(self, action: #selector(buttonSwapDidTouch))
 
+        private lazy var buyButton = createButton(image: .buttonSend, title: L10n.buy)
+            .onTap { [unowned self] in self.didTapBuy?() }
+        private lazy var sendButton = createButton(image: .buttonSend, title: L10n.send)
+            .onTap { [unowned self] in self.didTapSend?() }
+        private lazy var receiveButton = createButton(image: .buttonReceive, title: L10n.receive)
+            .onTap { [unowned self] in self.didTapReceive?() }
+        private lazy var swapButton = createButton(image: .buttonSwap, title: L10n.swap)
+            .onTap { [unowned self] in self.didTapSwap?() }
+        
         public lazy var topStackConstraint = stackView.autoPinEdge(toSuperviewEdge: .top)
         
         // MARK: - Callbacks
+        var didTapBuy: (() -> Void)?
         var didTapSend: (() -> Void)?
         var didTapReceive: (() -> Void)?
         var didTapSwap: (() -> Void)?
@@ -58,6 +62,7 @@ extension Home {
         
         override func createButtonsView() -> UIView {
             UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fillEqually) {
+                buyButton
                 sendButton
                 receiveButton
                 swapButton

@@ -9,10 +9,12 @@ import Foundation
 import RxSwift
 import RxCocoa
 import Resolver
+import LocalAuthentication
 
 protocol RootViewModelType {
     var navigationSceneDriver: Driver<Root.NavigatableScene?> {get}
     var isLoadingDriver: Driver<Bool> {get}
+    var resetSignal: Signal<Void> {get}
     
     func reload()
     func logout()
@@ -30,6 +32,7 @@ extension Root {
         // MARK: - Dependencies
         @Injected private var storage: AccountStorageType & PincodeStorageType & NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var notificationsService: NotificationsServiceType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -37,14 +40,27 @@ extension Root {
         private var showAuthenticationOnMainOnAppear = true
         private var resolvedName: String?
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
+        private let resetSubject = PublishRelay<Void>()
         
         // MARK: - Actions
         func reload() {
+            // signal VC to prepare for reseting
+            resetSubject.accept(())
+            
+            // reload session
+            ResolverScope.session.reset()
+            
+            // mark as loading
             isLoadingSubject.accept(true)
             
+            // try to retrieve account from seed
             DispatchQueue.global(qos: .userInteractive).async { [weak self] in
                 let account = self?.storage.account
                 DispatchQueue.main.async { [weak self] in
@@ -64,21 +80,6 @@ extension Root {
             }
         }
         
-        func logout() {
-            ResolverScope.session.reset()
-            storage.clearAccount()
-            Defaults.walletName = [:]
-            Defaults.didSetEnableBiometry = false
-            Defaults.didSetEnableNotifications = false
-            Defaults.didBackupOffline = false
-            Defaults.renVMSession = nil
-            Defaults.renVMProcessingTxs = []
-            Defaults.forceCloseNameServiceBanner = false
-            Defaults.shouldShowConfirmAlertOnSend = true
-            Defaults.shouldShowConfirmAlertOnSwap = true
-            reload()
-        }
-        
         @objc func finishSetup() {
             analyticsManager.log(event: .setupFinishClick)
             reload()
@@ -94,6 +95,36 @@ extension Root.ViewModel: RootViewModelType {
     var isLoadingDriver: Driver<Bool> {
         isLoadingSubject.asDriver()
     }
+    
+    var resetSignal: Signal<Void> {
+        resetSubject.asSignal()
+    }
+}
+
+extension Root.ViewModel: DeviceOwnerAuthenticationHandler {
+    func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((String?) -> Void)?) {
+        let myContext = LAContext()
+        
+        var error: NSError?
+        guard myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
+            DispatchQueue.main.async {
+                onFailure?(errorToString(error))
+            }
+            return
+        }
+        
+        myContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: L10n.confirmItSYou) { (success, error) in
+            guard success else {
+                DispatchQueue.main.async {
+                    onFailure?(errorToString(error))
+                }
+                return
+            }
+            DispatchQueue.main.sync {
+                onSuccess?()
+            }
+        }
+    }
 }
 
 extension Root.ViewModel: ChangeNetworkResponder {
@@ -103,8 +134,8 @@ extension Root.ViewModel: ChangeNetworkResponder {
         showAuthenticationOnMainOnAppear = false
         reload()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            UIApplication.shared.showToast(message: "✅ " + L10n.networkChanged)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.notificationsService.showInAppNotification(.done(L10n.networkChanged))
         }
     }
 }
@@ -112,16 +143,30 @@ extension Root.ViewModel: ChangeNetworkResponder {
 extension Root.ViewModel: ChangeLanguageResponder {
     func languageDidChange(to language: LocalizedLanguage) {
         UIApplication.languageChanged()
-        analyticsManager.log(event: .settingsLanguageSelected(language: language.code))
         
         showAuthenticationOnMainOnAppear = false
         reload()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             let languageChangedText = language.originalName.map(L10n.changedLanguageTo) ?? L10n.interfaceLanguageChanged
-
-            UIApplication.shared.showToast(message: "✅ " + languageChangedText)
+            self?.notificationsService.showInAppNotification(.done(languageChangedText))
         }
+    }
+}
+
+extension Root.ViewModel: LogoutResponder {
+    func logout() {
+        storage.clearAccount()
+        Defaults.walletName = [:]
+        Defaults.didSetEnableBiometry = false
+        Defaults.didSetEnableNotifications = false
+        Defaults.didBackupOffline = false
+        Defaults.renVMSession = nil
+        Defaults.renVMProcessingTxs = []
+        Defaults.forceCloseNameServiceBanner = false
+        Defaults.shouldShowConfirmAlertOnSend = true
+        Defaults.shouldShowConfirmAlertOnSwap = true
+        reload()
     }
 }
 
@@ -168,8 +213,8 @@ extension Root.ViewModel: CreateOrRestoreWalletHandler {
                 }
             } catch {
                 self?.isLoadingSubject.accept(false)
-                DispatchQueue.main.async {
-                    UIApplication.shared.showToast(message: (error as? SolanaSDK.Error)?.errorDescription ?? error.localizedDescription)
+                DispatchQueue.main.async { [weak self] in
+                    self?.notificationsService.showInAppNotification(.error(error))
                     self?.creatingOrRestoringWalletDidCancel()
                 }
             }
@@ -187,4 +232,17 @@ extension Root.ViewModel: OnboardingHandler {
         analyticsManager.log(event: event)
         navigationSubject.accept(.onboardingDone(isRestoration: isRestoration, name: resolvedName))
     }
+}
+
+private func errorToString(_ error: Error?) -> String? {
+    var error = error?.localizedDescription ?? L10n.unknownError
+    switch error {
+    case "Passcode not set.":
+        error = L10n.PasscodeNotSet.soWeCanTVerifyYouAsTheDeviceSOwner
+    case "Canceled by user.":
+        return nil
+    default:
+        break
+    }
+    return error
 }
