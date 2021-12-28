@@ -265,7 +265,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
     
     func choosePayFee() {
-        navigationSubject.accept(.choosePayFeeToken(tokenName: transactionTokensName))
+        navigationSubject.accept(.settings)
     }
 
     func openSettings() {
