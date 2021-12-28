@@ -668,3 +668,12 @@
 "Confirm swapping %@ → %@" = "Подтвердите замену %@ → %@";
 "Spend" = "Тратить";
 "Swap %@ → %@" = "Обменять %@ → %@";
+"Custom" = "Обычай";
+"Custom slippage" = "Пользовательское проскальзывание";
+"A %@ is a difference between the expected price and the actual price at which a trade is executed" = "%@ - это разница между ожидаемой ценой и фактической ценой, по которой совершается сделка.";
+"Slippage can occur at any time, but it is most prevalent during periods of %@" = "Проскальзывание может произойти в любое время, но наиболее часто оно встречается в периоды %@";
+"Transactions that exceed 20% slippage tolerance may be %@" = "Транзакции, превышающие допуск по проскальзыванию 20%%, могут быть %@";
+"Slippage tolerance %@" = "Допуск по проскальзыванию %@";
+"cannot exceed 50%" = "не может превышать 50%%";
+"frontrun" = "впереди";
+"higher volatility" = "более высокая волатильность";

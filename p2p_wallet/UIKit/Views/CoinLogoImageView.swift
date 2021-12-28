@@ -8,6 +8,7 @@
 import Foundation
 import JazziconSwift
 import RxSwift
+import UIKit
 
 class CoinLogoImageView: BEView {
     // MARK: - Properties
@@ -34,7 +35,7 @@ class CoinLogoImageView: BEView {
     }()
     
     // MARK: - Initializer
-    init(size: CGFloat, cornerRadius: CGFloat = 12) {
+    init(size: CGFloat, cornerRadius: CGFloat = 12, backgroundColor: UIColor? = nil) {
         self.size = size
         super.init(frame: .zero)
         configureForAutoLayout()
@@ -42,11 +43,12 @@ class CoinLogoImageView: BEView {
         
         tokenIcon.layer.cornerRadius = cornerRadius
         tokenIcon.layer.masksToBounds = true
+
+        self.backgroundColor = backgroundColor ?? .gray
     }
     
     override func commonInit() {
         super.commonInit()
-        backgroundColor = .gray
         
         addSubview(tokenIcon)
         tokenIcon.autoPinEdgesToSuperviewEdges()

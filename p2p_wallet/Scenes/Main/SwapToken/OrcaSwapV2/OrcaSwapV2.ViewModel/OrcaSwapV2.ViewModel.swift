@@ -22,7 +22,7 @@ extension OrcaSwapV2 {
         let disposeBag = DisposeBag()
         var isSelectingSourceWallet = false // indicate if selecting source wallet or destination wallet
         var transactionTokensName: String?
-        
+
         // MARK: - Subject
         let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
@@ -239,16 +239,16 @@ extension OrcaSwapV2 {
 extension OrcaSwapV2.ViewModel {
     func fixPayingToken() {
         // TODO: - Later
-//        var payingToken = Defaults.payingToken
-//
-//        // Force using native sol when source or destination is nativeSOL
-//        if sourceWalletSubject.value?.isNativeSOL == true ||
-//            destinationWalletSubject.value?.isNativeSOL == true // FIXME: - Fee relayer will support case where destination is native sol
-//        {
-//            payingToken = .nativeSOL
-//        }
-//
-//        payingTokenSubject.accept(payingToken)
+        var payingToken = Defaults.payingToken
+
+        // Force using native sol when source or destination is nativeSOL
+        if sourceWalletSubject.value?.isNativeSOL == true ||
+            destinationWalletSubject.value?.isNativeSOL == true // FIXME: - Fee relayer will support case where destination is native sol
+        {
+            payingToken = .nativeSOL
+        }
+
+        payingTokenSubject.accept(payingToken)
     }
     
     /// Verify error in current context IN ORDER
