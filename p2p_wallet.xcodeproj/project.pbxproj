@@ -335,7 +335,6 @@
 		BC7B2C7225E384F700833656 /* CreateSecurityKeys.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2C6F25E384F700833656 /* CreateSecurityKeys.ViewController.swift */; };
 		BC7BCB6525626F550018DECA /* BonfidaPricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */; };
 		BC7BCB7B2562807E0018DECA /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */; };
-		BC7D078126F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7D078026F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift */; };
 		BC7D078526F87344005F777F /* AssociatedTokenAccountHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7D078426F87344005F777F /* AssociatedTokenAccountHandler.swift */; };
 		BC7DD92127327872000F50D0 /* UIView+Builders.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7DD92027327872000F50D0 /* UIView+Builders.swift */; };
 		BC80203926F1DA7000C109C2 /* ReceiveToken.ReceiveSolanaViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC80203826F1DA7000C109C2 /* ReceiveToken.ReceiveSolanaViewModel.swift */; };
@@ -843,7 +842,6 @@
 		BC7B2C6F25E384F700833656 /* CreateSecurityKeys.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.ViewController.swift; sourceTree = "<group>"; };
 		BC7BCB6425626F550018DECA /* BonfidaPricesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonfidaPricesFetcher.swift; sourceTree = "<group>"; };
 		BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
-		BC7D078026F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ReceiveRenBTCView.swift; sourceTree = "<group>"; };
 		BC7D078426F87344005F777F /* AssociatedTokenAccountHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssociatedTokenAccountHandler.swift; sourceTree = "<group>"; };
 		BC7DD92027327872000F50D0 /* UIView+Builders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Builders.swift"; sourceTree = "<group>"; };
 		BC80203826F1DA7000C109C2 /* ReceiveToken.ReceiveSolanaViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ReceiveSolanaViewModel.swift; sourceTree = "<group>"; };
@@ -1769,7 +1767,6 @@
 			children = (
 				BC80203F26F1EBDA00C109C2 /* ReceiveToken.ReceiveBitcoinViewModel.swift */,
 				BC80203D26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift */,
-				BC7D078026F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift */,
 				BC6FED89270BF246002B6255 /* RenBTCReceivingStatuses */,
 			);
 			path = Bitcoin;
@@ -2870,7 +2867,6 @@
 				BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */,
 				BCA93F6225E77EF50081DDF6 /* TokenSettingsCell.swift in Sources */,
 				BC423D8C26E0D6A0000F6318 /* SolanaSDK.Socket+Extensions.swift in Sources */,
-				BC7D078126F866A2005F777F /* ReceiveToken.ReceiveRenBTCView.swift in Sources */,
 				BC5257E725CBACEA0076317E /* Fiat.swift in Sources */,
 				41CA05772754725200953322 /* ReserveName.ViewModel.swift in Sources */,
 				BCB286C7274CCAA30074E1D5 /* SendToken.ChooseTokenAndAmount.ViewModel.swift in Sources */,
