@@ -463,8 +463,8 @@
 "Be sure you can complete this transaction" = "Be sure you can complete this transaction";
 "This address accepts %@. You may lose assets by sending another coin." = "This address accepts %@. You may lose assets by sending another coin.";
 "only Bitcoin" = "only Bitcoin";
-"Minimum transaction amount of %@" = "Minimum transaction amount of %@";
-"%@ is the remaining time to safely send the assets." = "%@ is the remaining time to safely send the assets.";
+"Minimum transaction amount of %@" = "Minimum transaction amount of **%@**";
+"%@ is the remaining time to safely send the assets." = "**%@** is the remaining time to safely send the assets.";
 "Received %@ renBTC" = "Received %@ renBTC";
 "Receiving %@ renBTC: Pending" = "Receiving %@ renBTC: Pending";
 "Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL." = "Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL.";
