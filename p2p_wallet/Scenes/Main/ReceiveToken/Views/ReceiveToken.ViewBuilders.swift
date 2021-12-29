@@ -29,7 +29,7 @@ extension ReceiveToken {
                 .withAttributedText(
                     text,
                     lineSpacing: 8
-                )
+                ).withTag(1)
         }
     }
     
