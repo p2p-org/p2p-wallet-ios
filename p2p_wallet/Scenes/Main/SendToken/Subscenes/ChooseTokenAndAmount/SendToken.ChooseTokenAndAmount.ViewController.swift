@@ -7,11 +7,13 @@
 
 import Foundation
 import UIKit
+import Resolver
 
 extension SendToken.ChooseTokenAndAmount {
     class ViewController: SendToken.BaseViewController {
         // MARK: - Dependencies
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
+        @Injected var chooseWalletViewModelFactory: ChooseWalletViewModelFactoryType
         
         // MARK: - Properties
         
@@ -51,12 +53,13 @@ extension SendToken.ChooseTokenAndAmount {
             guard let scene = scene else {return}
             switch scene {
             case .chooseWallet:
-                let vc = ChooseWallet.ViewController(
-                    title: nil,
+                let viewModel = chooseWalletViewModelFactory.create(
+                    selectedWallet: nil,
                     handler: viewModel,
                     showOtherWallets: false,
-                    customFilter: { $0.amount > 0}
+                    customFilter: { $0.amount > 0 }
                 )
+                let vc = ChooseWallet.ViewController(title: nil, viewModel: viewModel)
                 present(vc, animated: true, completion: nil)
             case .backToConfirmation:
                 navigationController?.popToViewController(ofClass: SendToken.ConfirmViewController.self, animated: true)

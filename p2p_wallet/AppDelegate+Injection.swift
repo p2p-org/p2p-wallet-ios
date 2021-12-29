@@ -283,9 +283,10 @@ extension Resolver: ResolverRegistering {
             .scope(.shared)
         
         // MARK: - Choose wallet
-        register { ChooseWallet.ViewModel() }
+        register { ChooseWallet.ViewModelFactory() }
+            .implements(ChooseWalletViewModelFactoryType.self)
             .scope(.shared)
-        
+
         // MARK: - ProcessTransaction
         register { ProcessTransaction.ViewModel() }
             .implements(ProcessTransactionViewModelType.self)

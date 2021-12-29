@@ -16,6 +16,7 @@ extension OrcaSwapV2 {
         }
 
         // MARK: - Dependencies
+        @Injected var chooseWalletViewModelFactory: ChooseWalletViewModelFactoryType
         @Injected private var viewModel: OrcaSwapV2ViewModelType
 
         // MARK: - Properties
@@ -70,12 +71,15 @@ extension OrcaSwapV2 {
                 nc.modalPresentationStyle = .custom
                 present(nc, interactiveDismissalType: .standard)
             case let .chooseSourceWallet(currentlySelectedWallet: currentlySelectedWallet):
-                let vc = ChooseWallet.ViewController(
-                    title: L10n.selectTheFirstToken,
+                let viewModel = chooseWalletViewModelFactory.create(
                     selectedWallet: currentlySelectedWallet,
                     handler: viewModel,
                     showOtherWallets: false,
                     customFilter: { $0.amount > 0 }
+                )
+                let vc = ChooseWallet.ViewController(
+                    title: L10n.selectTheFirstToken,
+                    viewModel: viewModel
                 )
                 present(vc, animated: true, completion: nil)
             case let .chooseDestinationWallet(
@@ -83,8 +87,7 @@ extension OrcaSwapV2 {
                 validMints: validMints,
                 excludedSourceWalletPubkey: excludedSourceWalletPubkey
             ):
-                let vc = ChooseWallet.ViewController(
-                    title: L10n.selectTheSecondToken,
+                let viewModel = chooseWalletViewModelFactory.create(
                     selectedWallet: currentlySelectedWallet,
                     handler: viewModel,
                     showOtherWallets: true,
@@ -93,6 +96,11 @@ extension OrcaSwapV2 {
                             validMints.contains($0.mintAddress)
                     }
                 )
+                let vc = ChooseWallet.ViewController(
+                    title: L10n.selectTheSecondToken,
+                    viewModel: viewModel
+                )
+
                 present(vc, animated: true, completion: nil)
             case .chooseSlippage:
                 let vc = OrcaSwapV2.SlippageSettingsViewController()

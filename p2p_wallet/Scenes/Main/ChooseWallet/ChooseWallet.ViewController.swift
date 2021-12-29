@@ -14,7 +14,7 @@ extension ChooseWallet {
     final class ViewController: BaseVC {
         
         // MARK: - Properties
-        @Injected private var viewModel: ViewModel
+        private let viewModel: ViewModel
 
         private lazy var rootView: RootView = {
             let rootView = RootView(viewModel: viewModel)
@@ -23,16 +23,11 @@ extension ChooseWallet {
         }()
 
         // MARK: - Initializer
-        init(
-            title: String?,
-            selectedWallet: Wallet? = nil,
-            handler: WalletDidSelectHandler,
-            showOtherWallets: Bool,
-            customFilter: ((Wallet) -> Bool)? = nil
-        ) {
+        init(title: String?, viewModel: ViewModel) {
+            self.viewModel = viewModel
+
             super.init()
-            viewModel.set(selectedWallet: selectedWallet, handler: handler, showOtherWallets: showOtherWallets)
-            viewModel.customFilter = customFilter
+
             self.title = title ?? L10n.selectToken
         }
         // MARK: - Methods

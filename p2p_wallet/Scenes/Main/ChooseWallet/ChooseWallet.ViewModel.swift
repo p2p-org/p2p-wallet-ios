@@ -16,20 +16,24 @@ extension ChooseWallet {
         private(set) var selectedWallet: Wallet?
         private var myWallets: [Wallet]!
         private(set) var handler: WalletDidSelectHandler!
-        @Injected private var walletsRepository: WalletsRepository
-        @Injected private var tokensRepository: TokensRepository
+        private var tokensRepository: TokensRepository
         private(set) var showOtherWallets: Bool!
         private var keyword: String?
         
-        func set(
+        init(
+            walletsRepository: WalletsRepository,
+            tokensRepository: TokensRepository,
             selectedWallet: Wallet?,
             handler: WalletDidSelectHandler,
             showOtherWallets: Bool
         ) {
+            self.tokensRepository = tokensRepository
             self.selectedWallet = selectedWallet
             self.handler = handler
             self.showOtherWallets = showOtherWallets
             self.myWallets = walletsRepository.getWallets()
+
+            super.init()
         }
         
         deinit {
