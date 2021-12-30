@@ -30,15 +30,16 @@ extension ReceiveToken {
             UIStackView(axis: .vertical, spacing: 18, alignment: .fill) {
                 
                 // Qr code
-                QrCodeCard(token: .renBTC) { [unowned self] _ in
-                    self.viewModel.copyToClipboard()
-                } onShare: { [unowned self] _ in
-                    self.viewModel.share()
-                } onSave: { image in
-                    self.viewModel.saveAction(image: image)
-                }.setupWithType(QrCodeCard.self) { card in
-                    viewModel.addressDriver.drive(card.rx.pubKey).disposed(by: disposeBag)
-                }
+                QrCodeCard(token: .renBTC)
+                    .onCopy { [unowned self] _ in
+                        self.viewModel.copyToClipboard()
+                    }.onShare { [unowned self] _ in
+                        self.viewModel.share()
+                    }.onSave { image in
+                        self.viewModel.saveAction(image: image)
+                    }.setupWithType(QrCodeCard.self) { card in
+                        viewModel.addressDriver.drive(card.rx.pubKey).disposed(by: disposeBag)
+                    }
                 
                 // Status
                 WLCard {
