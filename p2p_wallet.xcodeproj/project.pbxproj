@@ -269,7 +269,6 @@
 		BC4B9EBD27191843005B9ECA /* OrcaSwapV2.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EB927191843005B9ECA /* OrcaSwapV2.ViewController.swift */; };
 		BC4B9EBE27191843005B9ECA /* OrcaSwapV2.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EBA27191843005B9ECA /* OrcaSwapV2.ViewModel.swift */; };
 		BC4B9EBF27191843005B9ECA /* OrcaSwapV2.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EBB27191843005B9ECA /* OrcaSwapV2.RootView.swift */; };
-		BC4B9EC127197DF5005B9ECA /* OrcaSwapV2.Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EC027197DF5005B9ECA /* OrcaSwapV2.Settings.swift */; };
 		BC4B9EC5271A791A005B9ECA /* SolanaSDK+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9EC4271A791A005B9ECA /* SolanaSDK+Extensions.swift */; };
 		BC4B9ED7272428A0005B9ECA /* Terms_of_service.txt in Resources */ = {isa = PBXBuildFile; fileRef = BC4B9ED6272428A0005B9ECA /* Terms_of_service.txt */; };
 		BC5140C0272ABC0800DB84BD /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5140BC272ABC0800DB84BD /* Home.swift */; };
@@ -789,7 +788,6 @@
 		BC4B9EB927191843005B9ECA /* OrcaSwapV2.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ViewController.swift; sourceTree = "<group>"; };
 		BC4B9EBA27191843005B9ECA /* OrcaSwapV2.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ViewModel.swift; sourceTree = "<group>"; };
 		BC4B9EBB27191843005B9ECA /* OrcaSwapV2.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.RootView.swift; sourceTree = "<group>"; };
-		BC4B9EC027197DF5005B9ECA /* OrcaSwapV2.Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.Settings.swift; sourceTree = "<group>"; };
 		BC4B9EC4271A791A005B9ECA /* SolanaSDK+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK+Extensions.swift"; sourceTree = "<group>"; };
 		BC4B9ED6272428A0005B9ECA /* Terms_of_service.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Terms_of_service.txt; sourceTree = "<group>"; };
 		BC5140BC272ABC0800DB84BD /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
@@ -1515,7 +1513,6 @@
 				BCFEDC012727F843008AE4AD /* OrcaSwapV2.ViewModel */,
 				BC4B9EB927191843005B9ECA /* OrcaSwapV2.ViewController.swift */,
 				BC4B9EBB27191843005B9ECA /* OrcaSwapV2.RootView.swift */,
-				BC4B9EC027197DF5005B9ECA /* OrcaSwapV2.Settings.swift */,
 				41B351F1275E48040027328E /* ContentModels */,
 				418A5D992755E0D300C2D387 /* Subviews */,
 				3B16154B2769A10B0080DE42 /* ConfirmSwapping */,
@@ -2927,7 +2924,6 @@
 				BC699AB425F9DE3400F57209 /* WLRadioButton.swift in Sources */,
 				BC65E17A261EA0A300E436C7 /* NewsViewModel.swift in Sources */,
 				BCB7C7D22667336800FEC68E /* ProcessTransaction.ViewModel.swift in Sources */,
-				BC4B9EC127197DF5005B9ECA /* OrcaSwapV2.Settings.swift in Sources */,
 				BCE77E6326536817000B68BB /* DerivableAccounts.ViewController.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				414C365D277502C1007B2194 /* SwapTokenSettings.DescriptionView.swift in Sources */,
