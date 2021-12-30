@@ -11,18 +11,10 @@ import RxCocoa
 import UIKit
 
 extension ReceiveToken {
-    class ReceiveBitcoinView: BEView {
-        // MARK: - Constants
+    class ReceiveBitcoinView: BECompositionView {
         private let disposeBag = DisposeBag()
-        
-        // MARK: - Properties
         private let viewModel: ReceiveTokenBitcoinViewModelType
         private let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
-        
-        // MARK: - Subviews
-        private lazy var btcTypeLabel = UILabel(textSize: 15, weight: .medium)
-        private lazy var receiveNormalBTCView = ReceiveSolanaView(viewModel: receiveSolanaViewModel)
-        private lazy var receiveRenBTCView = ReceiveRenBTCView(viewModel: viewModel)
         
         // MARK: - Initializers
         init(
@@ -34,59 +26,63 @@ extension ReceiveToken {
             super.init(frame: .zero)
         }
         
-        // MARK: - Methods
-        override func commonInit() {
-            super.commonInit()
-            layout()
-            bind()
-        }
-        
-        private func layout() {
-            let stackView = UIStackView(
-                axis: .vertical,
-                spacing: 20,
-                alignment: .fill,
-                distribution: .fill
-            ) {
-//                UIView.createSectionView(
-//                    title: L10n.iWantToReceive,
-//                    contentView: btcTypeLabel,
-//                    addSeparatorOnTop: false
-//                )
-//                    .padding(.init(x: 20, y: 0))
-//                    .onTap(self, action: #selector(buttonSelectBTCTypeDidTouch))
-//                    .padding(.init(only: .left, inset: 20))
-                receiveNormalBTCView
-                receiveRenBTCView
+        override func build() -> UIView {
+            UIStackView(axis: .vertical, spacing: 18, alignment: .fill) {
+                
+                // Qr code
+                QrCodeCard(token: .renBTC) { [unowned self] _ in
+                    self.viewModel.copyToClipboard()
+                } onShare: { [unowned self] _ in
+                    self.viewModel.share()
+                } onSave: { image in
+                    self.viewModel.saveAction(image: image)
+                }.setupWithType(QrCodeCard.self) { card in
+                    viewModel.addressDriver.drive(card.rx.pubKey).disposed(by: disposeBag)
+                }
+                
+                // Status
+                WLCard {
+                    UIStackView(axis: .horizontal) {
+                        UIImageView(image: .receiveSquircle)
+                            .frame(width: 44, height: 44)
+                        UIStackView(axis: .vertical, alignment: .fill) {
+                            UILabel(text: L10n.statusesReceived, textSize: 17)
+                            UILabel(text: "The last one: 2m ago", textSize: 13, textColor: .secondaryLabel)
+                        }
+                        UIView.spacer
+                        UILabel(text: "0").padding(.init(only: .right, inset: 8))
+                        UIView.defaultNextArrow()
+                    }.padding(.init(x: 18, y: 14))
+                }.onTap { [unowned self] in
+                    self.viewModel.showReceivingStatuses()
+                }
+                
+                // Description
+                UIView.greyBannerView {
+                    ReceiveToken.textBuilder(text: L10n.ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin(L10n.onlyBitcoin).asMarkdown())
+                    ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC").asMarkdown())
+                    ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
+                        .setup { view in
+                            guard let textLabel = view.viewWithTag(1) as? UILabel else { return }
+                            viewModel.timerSignal.map { [weak self] in
+                                guard let self = self else { return L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown() }
+                                guard let endAt = self.viewModel.getSessionEndDate()
+                                    else { return L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown() }
+                                let currentDate = Date()
+                                let calendar = Calendar.current
+                                
+                                let d = calendar.dateComponents([.hour, .minute, .second], from: currentDate, to: endAt)
+                                let countdown = String(format: "%02d:%02d:%02d", d.hour ?? 0, d.minute ?? 0, d.second ?? 0)
+                                
+                                return L10n.isTheRemainingTimeToSafelySendTheAssets(countdown).asMarkdown()
+                            }.emit(to: textLabel.rx.attributedText).disposed(by: disposeBag)
+                        }
+                }
+                
+                WLStepButton.main(image: .external, imageSize: .init(width: 14, height: 14), text: L10n.viewInExplorer("Solana"))
+                    .padding(.init(only: .top, inset: 18))
+                    .onTap { [unowned self] in self.viewModel.showBTCAddressInExplorer() }
             }
-            
-            // add stackView
-            addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges()
-            
-            // set min height to 200
-            autoSetDimension(.height, toSize: 200, relation: .greaterThanOrEqual)
-        }
-        
-        private func bind() {
-            viewModel.isReceivingRenBTCDriver
-                .map {isRenBTC -> BTCTypeOption in  isRenBTC ? .renBTC: .splBTC}
-                .map {$0.stringValue}
-                .drive(btcTypeLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            viewModel.isReceivingRenBTCDriver
-                .drive(receiveNormalBTCView.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            viewModel.isReceivingRenBTCDriver
-                .map {!$0}
-                .drive(receiveRenBTCView.rx.isHidden)
-                .disposed(by: disposeBag)
-        }
-        
-        @objc private func buttonSelectBTCTypeDidTouch() {
-            viewModel.showBTCTypeOptions()
         }
     }
 }
