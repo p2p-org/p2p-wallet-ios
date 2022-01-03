@@ -36,7 +36,7 @@ extension ReceiveToken {
                     BEScrollView(contentInsets: .init(x: .defaultPadding, y: .defaultPadding), spacing: 16) {
                         // Network button
                         if viewModel.shouldShowChainsSwitcher {
-                            WLLargeButton {
+                            WLCard {
                                 UIStackView(axis: .horizontal) {
                                     // Wallet Icon
                                     UIImageView(width: 44, height: 44)
@@ -45,6 +45,13 @@ extension ReceiveToken {
                                     UIStackView(axis: .vertical, alignment: .leading) {
                                         UILabel(text: L10n.showingMyAddressFor, textSize: 13, textColor: .secondaryLabel)
                                         UILabel(text: L10n.network("Solana"), textSize: 17)
+                                            .setup { view in
+                                                guard let view = view as? UILabel else { return }
+                                                viewModel.tokenTypeDriver
+                                                    .map { L10n.network($0.localizedName).onlyUppercaseFirst() }
+                                                    .drive(view.rx.text)
+                                                    .disposed(by: disposeBag)
+                                            }
                                     }.padding(.init(x: 12, y: 0))
                                     // Next icon
                                     UIView.defaultNextArrow()
@@ -71,7 +78,7 @@ extension ReceiveToken {
             super.viewWillAppear(animated)
             self.tabBarController?.tabBar.isHidden = false
         }
-    
+        
         override func viewWillDisappear(_ animated: Bool) { // As soon as vc disappears
             super.viewWillDisappear(true)
             self.tabBarController?.tabBar.isHidden = true
@@ -89,9 +96,6 @@ extension ReceiveToken.ViewController {
         case .showBTCExplorer(let address):
             let url = "https://btc.com/btc/address/\(address)"
             guard let vc = WebViewController.inReaderMode(url: url) else { return }
-            present(vc, animated: true)
-        case .chooseBTCOption(let selectedOption):
-            let vc = ReceiveToken.SelectBTCTypeViewController(viewModel: viewModel.receiveBitcoinViewModel, selectedOption: selectedOption)
             present(vc, animated: true)
         case .showRenBTCReceivingStatus:
             let vm = RenBTCReceivingStatuses.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel)

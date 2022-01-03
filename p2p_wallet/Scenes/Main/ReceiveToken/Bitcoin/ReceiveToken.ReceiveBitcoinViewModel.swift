@@ -10,16 +10,16 @@ import RxSwift
 import RxCocoa
 
 protocol ReceiveTokenBitcoinViewModelType {
-    var notificationsService: NotificationsServiceType {get}
-    var isReceivingRenBTCDriver: Driver<Bool> {get}
-    var isLoadingDriver: Driver<Bool> {get}
-    var errorDriver: Driver<String?> {get}
-    var renBTCWalletCreatingDriver: Driver<Loadable<String>> {get}
-    var conditionAcceptedDriver: Driver<Bool> {get}
-    var addressDriver: Driver<String?> {get}
-    var timerSignal: Signal<Void> {get}
-    var minimumTransactionAmountDriver: Driver<Loadable<Double>> {get}
-    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {get}
+    var notificationsService: NotificationsServiceType { get }
+    var isReceivingRenBTCDriver: Driver<Bool> { get }
+    var isLoadingDriver: Driver<Bool> { get }
+    var errorDriver: Driver<String?> { get }
+    var renBTCWalletCreatingDriver: Driver<Loadable<String>> { get }
+    var conditionAcceptedDriver: Driver<Bool> { get }
+    var addressDriver: Driver<String?> { get }
+    var timerSignal: Signal<Void> { get }
+    var minimumTransactionAmountDriver: Driver<Loadable<Double>> { get }
+    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> { get }
     
     func reload()
     func reloadMinimumTransactionAmount()
@@ -27,15 +27,15 @@ protocol ReceiveTokenBitcoinViewModelType {
     func createRenBTCWallet()
     func acceptConditionAndLoadAddress()
     func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool)
-    func showBTCTypeOptions()
     func showReceivingStatuses()
-    func copyToClipboard(address: String, logEvent: AnalyticsEvent)
+    func copyToClipboard()
     func share()
+    func saveAction(image: UIImage)
     func showBTCAddressInExplorer()
 }
 
 extension ReceiveToken {
-    class ReceiveBitcoinViewModel {
+    class ReceiveBitcoinViewModel: NSObject {
         // MARK: - Constants
         private let disposeBag = DisposeBag()
         
@@ -67,6 +67,8 @@ extension ReceiveToken {
             isRenBTCWalletCreated: Bool
         ) {
             self.navigationSubject = navigationSubject
+
+            super.init()
             
             if isRenBTCWalletCreated {
                 createRenBTCSubject.accept(nil, state: .loaded)
@@ -98,7 +100,7 @@ extension ReceiveToken {
             
             timerSubject
                 .subscribe(onNext: { [weak self] in
-                    guard let endAt = self?.getSessionEndDate() else {return}
+                    guard let endAt = self?.getSessionEndDate() else { return }
                     if Date() >= endAt {
                         self?.renVMService.expireCurrentSession()
                     }
@@ -108,10 +110,6 @@ extension ReceiveToken {
         
         func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool) {
             isReceivingRenBTCSubject.accept(isReceivingRenBTC)
-        }
-        
-        func showBTCTypeOptions() {
-            navigationSubject.accept(.chooseBTCOption(selectedOption: isReceivingRenBTCSubject.value ? .renBTC: .splBTC))
         }
     }
 }
@@ -157,19 +155,35 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         renVMService.getSessionEndDate()
     }
     
-    func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
-        clipboardManager.copyToClipboard(address)
-        analyticsManager.log(event: logEvent)
+    func copyToClipboard() {
+        renVMService.addressDriver.drive(onNext: { [weak self] value in
+            guard let value = value else { return }
+            self?.clipboardManager.copyToClipboard(value)
+        })
+        analyticsManager.log(event: .receiveAddressCopy)
     }
     
     func share() {
-        guard let address = renVMService.getCurrentAddress() else {return}
+        guard let address = renVMService.getCurrentAddress() else { return }
         analyticsManager.log(event: .receiveAddressShare)
         navigationSubject.accept(.share(address: address))
     }
     
+    func saveAction(image: UIImage) {
+        analyticsManager.log(event: .receiveQrcodeSave)
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveImageCallback), nil)
+    }
+    
+    @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            notificationsService.showInAppNotification(.error(error))
+        } else {
+            notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+        }
+    }
+    
     func showBTCAddressInExplorer() {
-        guard let address = renVMService.getCurrentAddress() else {return}
+        guard let address = renVMService.getCurrentAddress() else { return }
         analyticsManager.log(event: .receiveViewExplorerOpen)
         navigationSubject.accept(.showBTCExplorer(address: address))
     }
