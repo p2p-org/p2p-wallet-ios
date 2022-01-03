@@ -5,7 +5,7 @@
 import Foundation
 import BEPureLayout
 
-class WLLargeButton: BECompositionView {
+class WLCard: BECompositionView {
     let child: UIView
     
     required init(@BEViewBuilder builder: Builder) {
