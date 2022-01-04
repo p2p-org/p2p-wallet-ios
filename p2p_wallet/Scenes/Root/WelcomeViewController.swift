@@ -10,7 +10,7 @@ import SwiftUI
 
 class WelcomeViewController: BaseVC {
     // MARK: - Dependencies
-    @Injected private var viewModel: RootViewModelType
+    private let viewModel: RootViewModelType = Resolver.resolve()
     private let name: String?
     private let isReturned: Bool
     
