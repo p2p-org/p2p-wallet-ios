@@ -13,7 +13,7 @@ extension Root {
         private var statusBarStyle: UIStatusBarStyle = .default
         
         // MARK: - Dependencies
-        @Injected private var viewModel: RootViewModelType
+        private let viewModel: RootViewModelType = Resolver.resolve()
         
         // MARK: - Methods
         override func setUp() {

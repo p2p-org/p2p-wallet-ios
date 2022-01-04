@@ -30,9 +30,9 @@ protocol CreateOrRestoreWalletHandler {
 extension Root {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var storage: AccountStorageType & PincodeStorageType & NameStorageType
-        @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var notificationsService: NotificationsServiceType
+        private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
+        private let analyticsManager: AnalyticsManagerType = Resolver.resolve()
+        private let notificationsService: NotificationsServiceType = Resolver.resolve()
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
