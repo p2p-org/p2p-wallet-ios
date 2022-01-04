@@ -10,6 +10,40 @@ import UIKit
 import BECollectionView
 
 extension RenBTCReceivingStatuses {
+    class NewViewController: BEScene {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+        
+        // MARK: - Dependencies
+        private var viewModel: RenBTCReceivingStatusesViewModelType
+        
+        init(viewModel: RenBTCReceivingStatusesViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
+        
+        override func build() -> UIView {
+            BESafeArea {
+                UIStackView(axis: .vertical, alignment: .fill) {
+                    NewWLNavigationBar(title: L10n.receivingStatuses, separatorEnable: false)
+                        .onBack { [unowned self] in self.back() }
+                    BEStaticSectionsCollectionView(
+                        sections: [
+                            .init(
+                                index: 0,
+                                layout: .init(cellType: TxCell.self),
+                                viewModel: viewModel
+                            )
+                        ]
+                    ).setupWithType(BEStaticSectionsCollectionView.self) { view in
+                        view.delegate = self
+                    }
+                }
+            }
+        }
+    }
+    
     class ViewController: WLIndicatorModalFlexibleHeightVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
@@ -48,11 +82,11 @@ extension RenBTCReceivingStatuses {
         override func bind() {
             super.bind()
             viewModel.navigationDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
             
             viewModel.processingTxsDriver
-                .drive(onNext: {[weak self] txs in
+                .drive(onNext: { [weak self] txs in
                     self?.cellsHeight = CGFloat(txs.count) * 72
                     self?.updatePresentationLayout(animated: true)
                 })
@@ -77,9 +111,17 @@ extension RenBTCReceivingStatuses {
     }
 }
 
+extension RenBTCReceivingStatuses.NewViewController: BECollectionViewDelegate {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
+        guard let tx = item as? RenVM.LockAndMint.ProcessingTx else { return }
+        viewModel.showDetail(txid: tx.tx.txid)
+    }
+}
+
+
 extension RenBTCReceivingStatuses.ViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
-        guard let tx = item as? RenVM.LockAndMint.ProcessingTx else {return}
+        guard let tx = item as? RenVM.LockAndMint.ProcessingTx else { return }
         viewModel.showDetail(txid: tx.tx.txid)
     }
 }

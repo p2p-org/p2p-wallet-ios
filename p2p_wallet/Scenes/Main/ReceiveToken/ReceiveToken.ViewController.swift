@@ -96,9 +96,8 @@ extension ReceiveToken.ViewController {
             present(vc, animated: true)
         case .showRenBTCReceivingStatus:
             let vm = RenBTCReceivingStatuses.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel)
-            let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
-            let nc = FlexibleHeightNavigationController(rootViewController: vc)
-            present(nc, interactiveDismissalType: .standard, completion: nil)
+            let vc = RenBTCReceivingStatuses.NewViewController(viewModel: vm)
+            show(vc, sender: nil)
         case .share(let address, let qrCode):
             if let qrCode = qrCode {
                 let vc = UIActivityViewController(activityItems: [qrCode], applicationActivities: nil)
