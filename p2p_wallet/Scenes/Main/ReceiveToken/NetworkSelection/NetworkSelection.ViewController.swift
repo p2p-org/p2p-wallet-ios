@@ -25,7 +25,7 @@ extension ReceiveToken {
         override func build() -> UIView {
             BESafeArea {
                 UIStackView(axis: .vertical, alignment: .fill) {
-                    NewWLNavigationBar(title: L10n.chooseTheNetwork, separatorEnable: false)
+                    NewWLNavigationBar(initialTitle: L10n.chooseTheNetwork, separatorEnable: false)
                         .onBack { [unowned self] in self.back() }
                     
                     BEScrollView(contentInsets: .init(all: 18)) {
