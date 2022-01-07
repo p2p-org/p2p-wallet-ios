@@ -28,7 +28,7 @@ struct CollectionViewMappingStrategy {
         return dateFormatter(dictionary: dictionary)
     }
     
-    private static func dateFormatter<T: Hashable>(dictionary: Dictionary<Date, [T]>) -> [BEDynamicSectionsCollectionView.SectionInfo] {
+    private static func dateFormatter<T: Hashable>(dictionary: [Date: [T]]) -> [BEDynamicSectionsCollectionView.SectionInfo] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let dateFormatter = DateFormatter()

@@ -163,7 +163,6 @@ extension RenBTCReceivingStatuses.NewViewController: BECollectionViewDelegate {
     }
 }
 
-
 extension RenBTCReceivingStatuses.ViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let tx = item as? RenVM.LockAndMint.ProcessingTx else { return }

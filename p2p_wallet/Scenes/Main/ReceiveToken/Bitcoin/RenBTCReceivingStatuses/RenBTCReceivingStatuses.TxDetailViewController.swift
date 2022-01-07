@@ -32,7 +32,7 @@ extension RenBTCReceivingStatuses {
                             viewModel.currentTx
                                 .map { tx in
                                     guard let value = tx?.value else { return L10n.receivingStatus }
-                                    L10n.receivingRenBTC(tx?.value)
+                                    return L10n.receivingRenBTC(tx?.value)
                                 }
                                 .drive(view.titleLabel.rx.text)
                                 .disposed(by: disposeBag)
@@ -93,9 +93,7 @@ extension RenBTCReceivingStatuses {
         }
         
         var currentTx: Driver<RenVM.LockAndMint.ProcessingTx?> {
-            get {
-                processingTxsDriver.map { [weak self] in $0.first { tx in tx.tx.txid == self?.txid } }
-            }
+            processingTxsDriver.map { [weak self] in $0.first { tx in tx.tx.txid == self?.txid } }
         }
         
         func bind() {
