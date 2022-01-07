@@ -682,3 +682,4 @@
 "This address accepts only %@. You may lose assets by sending another coin." = "This address accepts **only %@**. You may lose assets by sending another coin.";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Passcode not set. So we can’t verify you as the device’s owner.";
 "Statuses received" = "Statuses received";
+"Statuses received (%@)" = "Statuses received (%@)";
