@@ -53,7 +53,7 @@ extension RenBTCReceivingStatuses {
             UIStackView(axis: .vertical, alignment: .fill) {
                 UIStackView(axis: .horizontal, alignment: .top, distribution: .fill) {
                     UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
-                        UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium, numberOfLines: 2)
+                        UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium, numberOfLines: 8)
                             .setupWithType(UILabel.self) { view in titleLabel = view }
                         UILabel(text: "<Minting>", textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0)
                             .setupWithType(UILabel.self) { view in descriptionLabel = view }

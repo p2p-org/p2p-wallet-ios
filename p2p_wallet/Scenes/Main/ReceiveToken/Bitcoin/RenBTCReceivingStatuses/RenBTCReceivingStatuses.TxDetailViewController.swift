@@ -37,7 +37,7 @@ extension RenBTCReceivingStatuses {
                                 .drive(view.titleLabel.rx.text)
                                 .disposed(by: disposeBag)
                         }
-                    BENewDynamicSectionsCollectionView(
+                    NBENewDynamicSectionsCollectionView(
                         viewModel: viewModel,
                         mapDataToSections: { viewModel in
                             CollectionViewMappingStrategy.byData(
