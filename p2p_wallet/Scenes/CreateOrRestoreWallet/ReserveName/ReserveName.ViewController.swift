@@ -15,20 +15,17 @@ extension ReserveName {
         }
 
         // MARK: - Dependencies
-        @Injected private var viewModel: ReserveNameViewModelType
+        private let viewModel: ReserveNameViewModelType
         
         // MARK: - Properties
-        private lazy var rootView = RootView()
+        private lazy var rootView = RootView(viewModel: viewModel)
 
         // MARK: - Methods
 
-        init(
-            kind: ReserveNameKind,
-            owner: String,
-            reserveNameHandler: ReserveNameHandler
-        ) {
+        init(viewModel: ReserveNameViewModelType) {
+            self.viewModel = viewModel
+
             super.init()
-            viewModel.set(kind: kind, owner: owner, reserveNameHandler: reserveNameHandler)
         }
 
         override func loadView() {
