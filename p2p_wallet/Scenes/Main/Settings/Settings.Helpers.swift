@@ -14,7 +14,13 @@ extension Settings {
         }
         
         // MARK: - Dependencies
-        @Injected var viewModel: SettingsViewModelType
+        let viewModel: SettingsViewModelType
+        
+        // MARK: - Initializers
+        init(viewModel: SettingsViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Subviews
         lazy var stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {

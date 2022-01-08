@@ -36,7 +36,6 @@ protocol SettingsViewModelType {
     var hideZeroBalancesDriver: Driver<Bool> { get }
     var logoutAlertSignal: Signal<Void> { get }
     
-    func set(reserveNameHandler: ReserveNameHandler)
     func getUserAddress() -> String?
     
     func navigate(to scene: Settings.NavigatableScene)
@@ -92,7 +91,7 @@ extension Settings {
         private let logoutAlertSubject = PublishRelay<Void>()
         
         // MARK: - Initializer
-        func set(reserveNameHandler: ReserveNameHandler) {
+        init(reserveNameHandler: ReserveNameHandler) {
             self.reserveNameHandler = reserveNameHandler
             bind()
         }
