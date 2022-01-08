@@ -11,8 +11,8 @@ extension Settings {
     class SelectAppearanceViewController: SingleSelectionViewController<UIUserInterfaceStyle> {
         var interfaceStyle: UIUserInterfaceStyle { AppDelegate.shared.window?.overrideUserInterfaceStyle ?? .unspecified }
         
-        override init() {
-            super.init()
+        override init(viewModel: SettingsViewModelType) {
+            super.init(viewModel: viewModel)
             data = [
                 .dark: interfaceStyle == .dark,
                 .light: interfaceStyle == .light,

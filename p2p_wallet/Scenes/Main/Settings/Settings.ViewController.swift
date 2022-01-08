@@ -13,13 +13,7 @@ extension Settings {
         // MARK: - Properties
         
         // MARK: - Subviews
-        private lazy var rootView = RootView()
-        
-        // MARK: - Initializer
-        init(reserveNameHandler: ReserveNameHandler) {
-            super.init()
-            viewModel.set(reserveNameHandler: reserveNameHandler)
-        }
+        private lazy var rootView = RootView(viewModel: viewModel)
         
         // MARK: - Methods
         override func setUp() {
@@ -51,7 +45,7 @@ extension Settings {
             guard let scene = scene else {return}
             switch scene {
             case .username:
-                let vc = UsernameViewController()
+                let vc = UsernameViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .reserveUsername(owner: let owner, handler: let handler):
                 let vm = ReserveName.ViewModel(
@@ -62,7 +56,7 @@ extension Settings {
                 let vc = ReserveName.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .backup:
-                let vc = BackupViewController()
+                let vc = BackupViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .backupManually:
                 let vc = BackupManuallyVC()
@@ -77,13 +71,13 @@ extension Settings {
                 let vc = BackupShowPhrasesVC()
                 present(vc, interactiveDismissalType: .standard, completion: nil)
             case .currency:
-                let vc = SelectFiatViewController()
+                let vc = SelectFiatViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .network:
-                let vc = SelectNetworkViewController()
+                let vc = SelectNetworkViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .security:
-                let vc = ConfigureSecurityViewController()
+                let vc = ConfigureSecurityViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .changePincode:
                 let createPincodeVC = WLCreatePincodeVC(
@@ -107,10 +101,10 @@ extension Settings {
 
                 present(modalVC, animated: true, completion: nil)
             case .language:
-                let vc = SelectLanguageViewController()
+                let vc = SelectLanguageViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .appearance:
-                let vc = SelectAppearanceViewController()
+                let vc = SelectAppearanceViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .share(let item):
                 let vc = UIActivityViewController(activityItems: [item], applicationActivities: nil)

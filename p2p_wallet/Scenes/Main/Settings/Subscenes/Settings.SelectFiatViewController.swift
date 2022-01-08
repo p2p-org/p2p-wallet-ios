@@ -9,8 +9,9 @@ import Foundation
 
 extension Settings {
     class SelectFiatViewController: SingleSelectionViewController<Fiat> {
-        override init() {
-            super.init()
+        override init(viewModel: SettingsViewModelType) {
+            super.init(viewModel: viewModel)
+            
             // init data
             Fiat.allCases
                 .forEach {
