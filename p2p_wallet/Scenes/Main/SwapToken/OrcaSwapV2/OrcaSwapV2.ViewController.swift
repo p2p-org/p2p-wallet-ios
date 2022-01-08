@@ -70,12 +70,11 @@ extension OrcaSwapV2 {
                 nc.modalPresentationStyle = .custom
                 present(nc, interactiveDismissalType: .standard)
             case let .chooseSourceWallet(currentlySelectedWallet: currentlySelectedWallet):
+                let vm = ChooseWallet.ViewModel(selectedWallet: currentlySelectedWallet, handler: viewModel, showOtherWallets: false)
+                vm.customFilter = { $0.amount > 0 }
                 let vc = ChooseWallet.ViewController(
                     title: L10n.selectTheFirstToken,
-                    selectedWallet: currentlySelectedWallet,
-                    handler: viewModel,
-                    showOtherWallets: false,
-                    customFilter: { $0.amount > 0 }
+                    viewModel: vm
                 )
                 present(vc, animated: true, completion: nil)
             case let .chooseDestinationWallet(
@@ -83,15 +82,14 @@ extension OrcaSwapV2 {
                 validMints: validMints,
                 excludedSourceWalletPubkey: excludedSourceWalletPubkey
             ):
+                let vm = ChooseWallet.ViewModel(selectedWallet: currentlySelectedWallet, handler: viewModel, showOtherWallets: true)
+                vm.customFilter = {
+                    $0.pubkey != excludedSourceWalletPubkey &&
+                        validMints.contains($0.mintAddress)
+                }
                 let vc = ChooseWallet.ViewController(
                     title: L10n.selectTheSecondToken,
-                    selectedWallet: currentlySelectedWallet,
-                    handler: viewModel,
-                    showOtherWallets: true,
-                    customFilter: {
-                        $0.pubkey != excludedSourceWalletPubkey &&
-                            validMints.contains($0.mintAddress)
-                    }
+                    viewModel: vm
                 )
                 present(vc, animated: true, completion: nil)
             case .chooseSlippage:
