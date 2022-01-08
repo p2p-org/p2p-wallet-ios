@@ -168,7 +168,8 @@ extension Home {
                 show(vc, sender: nil)
             case .walletSettings(let wallet):
                 guard let pubkey = wallet.pubkey else {return}
-                let vc = TokenSettingsViewController(pubkey: pubkey)
+                let vm = TokenSettingsViewModel(pubkey: pubkey)
+                let vc = TokenSettingsViewController(viewModel: vm)
                 present(vc, animated: true, completion: nil)
             case let .closeReserveNameAlert(handler):
                 showAlert(

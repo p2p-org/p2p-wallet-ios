@@ -261,10 +261,6 @@ extension Resolver: ResolverRegistering {
         register { ProcessTransaction.ViewModel() }
             .implements(ProcessTransactionViewModelType.self)
             .scope(.shared)
-        
-        // MARK: - Token settings
-        register { TokenSettingsViewModel() }
-            .scope(.shared)
     }
 }
 

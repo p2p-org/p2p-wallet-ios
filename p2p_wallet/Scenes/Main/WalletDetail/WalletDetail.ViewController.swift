@@ -77,7 +77,8 @@ extension WalletDetail {
                 let vc = BuyRoot.ViewController()
                 present(vc, animated: true, completion: nil)
             case .settings(let pubkey):
-                let vc = TokenSettingsViewController(pubkey: pubkey)
+                let vm = TokenSettingsViewModel(pubkey: pubkey)
+                let vc = TokenSettingsViewController(viewModel: vm)
                 vc.delegate = self
                 self.present(vc, animated: true, completion: nil)
             case .send(let wallet):
