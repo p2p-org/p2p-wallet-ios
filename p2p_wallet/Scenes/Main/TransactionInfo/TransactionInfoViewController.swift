@@ -12,16 +12,16 @@ import RxCocoa
 class TransactionInfoViewController: WLIndicatorModalVC, CustomPresentableViewController {
     
     // MARK: - Properties
-    @Injected private var viewModel: TransactionInfoViewModel
-    lazy var rootView = TransactionInfoRootView()
+    private let viewModel: TransactionInfoViewModel
+    lazy var rootView = TransactionInfoRootView(viewModel: viewModel)
     var viewTranslation = CGPoint(x: 0, y: 0)
     var transitionManager: UIViewControllerTransitioningDelegate?
     
     // MARK: - Initializer
-    init(transaction: SolanaSDK.ParsedTransaction)
+    init(viewModel: TransactionInfoViewModel)
     {
+        self.viewModel = viewModel
         super.init()
-        viewModel.set(transaction: transaction)
         modalPresentationStyle = .custom
     }
     

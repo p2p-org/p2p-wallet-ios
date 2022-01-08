@@ -244,10 +244,6 @@ extension Resolver: ResolverRegistering {
             .implements(BuyProviderFactory.self)
             .scope(.application)
         
-        // MARK: - TransactionInfo
-        register { TransactionInfoViewModel() }
-            .scope(.shared)
-        
         // MARK: - BuyRoot
         register { BuyRoot.ViewModel() }
             .implements(BuyViewModelType.self)

@@ -12,7 +12,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     // MARK: - Constants
     
     // MARK: - Properties
-    @Injected private var viewModel: TransactionInfoViewModel
+    private let viewModel: TransactionInfoViewModel
     let disposeBag = DisposeBag()
     
     // MARK: - Headers
@@ -53,6 +53,10 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     private lazy var toggleShowHideTransactionDetailsButton = WLButton.stepButton(enabledColor: .grayPanel, textColor: .a3a5baStatic.onDarkMode(.white), label: L10n.showTransactionDetails)
     
     // MARK: - Initializers
+    init(viewModel: TransactionInfoViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
+    }
     
     // MARK: - Methods
     override func commonInit() {

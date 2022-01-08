@@ -26,15 +26,13 @@ class TransactionInfoViewModel {
     // MARK: - Subjects
     let navigationSubject = PublishSubject<TransactionInfoNavigatableScene>()
     let showDetailTransaction = BehaviorRelay<Bool>(value: false)
-    var transaction: BehaviorRelay<SolanaSDK.ParsedTransaction>!
+    let transaction: BehaviorRelay<SolanaSDK.ParsedTransaction>
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     
     // MARK: - Initializers
-    
-    // MARK: - Methods
-    func set(transaction: SolanaSDK.ParsedTransaction) {
+    init(transaction: SolanaSDK.ParsedTransaction) {
         self.transaction = .init(value: transaction)
     }
     
