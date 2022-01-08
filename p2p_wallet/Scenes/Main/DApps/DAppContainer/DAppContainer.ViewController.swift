@@ -11,17 +11,18 @@ import UIKit
 extension DAppContainer {
     class ViewController: BaseVC, TabBarNeededViewController {
         // MARK: - Dependencies
-        @Injected private var viewModel: DAppContainerViewModelType
+        private let viewModel: DAppContainerViewModelType
         
-        // MARK: - Initializers
-        init(dApp: DApp) {
+        init(viewModel: DAppContainerViewModelType) {
+            self.viewModel = viewModel
             super.init()
-            viewModel.set(dapp: dApp)
         }
+        
+        // MARK: - Properties
         
         // MARK: - Methods
         override func loadView() {
-            view = RootView()
+            view = RootView(viewModel: viewModel)
         }
         
         override func setUp() {
