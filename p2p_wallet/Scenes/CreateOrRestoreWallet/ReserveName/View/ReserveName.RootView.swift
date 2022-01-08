@@ -15,7 +15,7 @@ extension ReserveName {
         private let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        @Injected private var viewModel: ReserveNameViewModelType
+        private let viewModel: ReserveNameViewModelType
 
         // MARK: - Subviews
         private let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
@@ -33,6 +33,12 @@ extension ReserveName {
         private let agreeTermsAndPolicyView = AgreeTermsAndPolicyView()
 
         // MARK: - Methods
+        init(viewModel: ReserveNameViewModelType) {
+            self.viewModel = viewModel
+
+            super.init(frame: .zero)
+        }
+
         override func commonInit() {
             super.commonInit()
 
@@ -68,8 +74,6 @@ extension ReserveName {
                 }
             case .independent:
                 agreeTermsAndPolicyView.isHidden = true
-            default:
-                return
             }
         }
 
@@ -103,8 +107,6 @@ extension ReserveName {
                 canSkip = true
             case .independent:
                 canSkip = false
-            default:
-                canSkip = true
             }
 
             let navigationBar = NavigationBar(
@@ -230,8 +232,6 @@ extension ReserveName {
                     title = L10n.enterUsernameOrSkip
                 case .independent:
                     title = L10n.enterUsername
-                default:
-                    title = nil
                 }
             case .unavailableUsername:
                 image = nil

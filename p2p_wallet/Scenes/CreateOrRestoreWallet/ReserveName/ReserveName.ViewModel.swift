@@ -10,21 +10,16 @@ import RxSwift
 import RxCocoa
 import GT3Captcha
 import UIKit
+import Resolver
 
 protocol ReserveNameViewModelType: AnyObject {
-    func set(
-        kind: ReserveNameKind,
-        owner: String,
-        reserveNameHandler: ReserveNameHandler
-    )
-    
     var navigationDriver: Driver<ReserveName.NavigatableScene?> { get }
     var textFieldStateDriver: Driver<ReserveName.TextFieldState> { get }
     var mainButtonStateDriver: Driver<ReserveName.MainButtonState> { get }
     var textFieldTextSubject: BehaviorRelay<String?> { get }
     var usernameValidationLoadingDriver: Driver<Bool> { get }
     var isLoadingDriver: Driver<Bool> { get }
-    var kind: ReserveNameKind! { get }
+    var kind: ReserveNameKind { get }
     
     func showTermsOfUse()
     func showPrivacyPolicy()
@@ -37,9 +32,9 @@ extension ReserveName {
     class ViewModel: NSObject {
         // MARK: - Dependencies
         @Injected private var notificationsService: NotificationsServiceType
-        @Injected private var nameService: NameServiceType
-        private var owner: String!
-        private var reserveNameHandler: ReserveNameHandler!
+        private let nameService: NameServiceType = Resolver.resolve()
+        private let owner: String
+        private let reserveNameHandler: ReserveNameHandler
         private lazy var manager: GT3CaptchaManager = {
             let manager = GT3CaptchaManager(
                 api1: nameService.captchaAPI1Url,
@@ -51,7 +46,7 @@ extension ReserveName {
         }()
 
         // MARK: - Properties
-        var kind: ReserveNameKind!
+        let kind: ReserveNameKind
 
         private let disposeBag = DisposeBag()
 
@@ -65,7 +60,7 @@ extension ReserveName {
         private let usernameValidationLoadingSubject = BehaviorRelay<Bool>(value: false)
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
 
-        func set(
+        init(
             kind: ReserveNameKind,
             owner: String,
             reserveNameHandler: ReserveNameHandler
@@ -74,6 +69,8 @@ extension ReserveName {
             self.owner = owner
             self.reserveNameHandler = reserveNameHandler
             
+            super.init()
+
             bind()
             manager.registerCaptcha(nil)
         }

@@ -141,7 +141,13 @@ extension Home {
                 let vc = Settings.ViewController(reserveNameHandler: viewModel)
                 self.show(vc, sender: nil)
             case .reserveName(let owner):
-                let vc = ReserveName.ViewController(kind: .independent, owner: owner, reserveNameHandler: viewModel)
+                let vm = ReserveName.ViewModel(
+                    kind: .independent,
+                    owner: owner,
+                    reserveNameHandler: viewModel
+                )
+                let vc = ReserveName.ViewController(viewModel: vm)
+
                 show(vc, sender: nil)
 
                 viewModel.nameDidReserveSignal

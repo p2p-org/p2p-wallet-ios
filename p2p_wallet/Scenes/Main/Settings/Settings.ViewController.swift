@@ -54,7 +54,12 @@ extension Settings {
                 let vc = UsernameViewController()
                 show(vc, sender: nil)
             case .reserveUsername(owner: let owner, handler: let handler):
-                let vc = ReserveName.ViewController(kind: .independent, owner: owner, reserveNameHandler: handler)
+                let vm = ReserveName.ViewModel(
+                    kind: .independent,
+                    owner: owner,
+                    reserveNameHandler: handler
+                )
+                let vc = ReserveName.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .backup:
                 let vc = BackupViewController()
