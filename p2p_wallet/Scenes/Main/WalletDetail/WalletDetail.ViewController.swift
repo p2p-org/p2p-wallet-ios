@@ -15,9 +15,9 @@ extension WalletDetail {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
-        
+    
         // MARK: - Dependencies
-        @Injected private var viewModel: WalletDetailViewModelType
+        private let viewModel: WalletDetailViewModelType
         
         // MARK: - Properties
         
@@ -32,13 +32,13 @@ extension WalletDetail {
         }()
         
         // MARK: - Subscene
-        private lazy var infoVC = InfoViewController()
-        private lazy var historyVC = HistoryViewController()
+        private lazy var infoVC = InfoViewController(viewModel: viewModel)
+        private lazy var historyVC = HistoryViewController(viewModel: viewModel)
         
         // MARK: - Initializer
-        init(pubkey: String, symbol: String) {
+        init(viewModel: WalletDetailViewModelType) {
+            self.viewModel = viewModel
             super.init()
-            viewModel.set(pubkey: pubkey, symbol: symbol)
         }
         
         // MARK: - Methods

@@ -15,10 +15,10 @@ extension WalletDetail {
         }
         
         // MARK: - Dependencies
-        @Injected private var viewModel: WalletDetailViewModelType
+        private let viewModel: WalletDetailViewModelType
         
         // MARK: - Subviews
-        private lazy var overviewView = InfoOverviewView()
+        private lazy var overviewView = InfoOverviewView(viewModel: viewModel)
         private lazy var lineChartView = ChartView()
         private lazy var chartPicker: HorizontalPicker = {
             let chartPicker = HorizontalPicker(forAutoLayout: ())
@@ -31,6 +31,10 @@ extension WalletDetail {
             .onTap(self, action: #selector(showAddressButtonDidTouch))
         
         // MARK: - Initializers
+        init(viewModel: WalletDetailViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {
