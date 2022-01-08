@@ -17,7 +17,7 @@ import RxSwift
 class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
-    @Injected private var viewModel: TokenSettingsViewModel
+    private let viewModel: TokenSettingsViewModel
     @Injected private var authenticationHandler: AuthenticationHandler
     weak var delegate: TokenSettingsViewControllerDelegate?
     
@@ -31,9 +31,9 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     }()
     
     // MARK: - Initializer
-    init(pubkey: String) {
+    init(viewModel: TokenSettingsViewModel) {
+        self.viewModel = viewModel
         super.init()
-        viewModel.set(pubkey: pubkey)
     }
     
     // MARK: - Methods

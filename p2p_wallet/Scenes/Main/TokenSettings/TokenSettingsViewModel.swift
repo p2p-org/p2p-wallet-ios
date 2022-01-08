@@ -26,7 +26,7 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     
     // MARK: - Properties
     let disposeBag = DisposeBag()
-    var pubkey: String!
+    let pubkey: String
     var wallet: Wallet? {walletsRepository.getWallets().first(where: {$0.pubkey == pubkey})}
     
     // MARK: - Subject
@@ -35,8 +35,9 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
-    func set(pubkey: String) {
+    init(pubkey: String) {
         self.pubkey = pubkey
+        super.init()
     }
     
     deinit {
