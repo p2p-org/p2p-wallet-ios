@@ -18,7 +18,6 @@ protocol WalletDetailViewModelType {
     var transactionsViewModel: TransactionsViewModel {get}
     var canBuyToken: Bool {get}
     
-    func set(pubkey: String, symbol: String)
     func renameWallet(to newName: String)
     func showWalletSettings()
     func sendTokens()
@@ -37,8 +36,8 @@ extension WalletDetail {
         @Injected private var processingTransactionRepository: ProcessingTransactionsRepository
         @Injected private var transactionsRepository: TransactionsRepository
         @Injected private var notificationsRepository: WLNotificationsRepository
-        private var pubkey: String!
-        private var symbol: String!
+        private let pubkey: String
+        private let symbol: String
         @Injected var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
@@ -55,7 +54,7 @@ extension WalletDetail {
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         
         // MARK: - Initializer
-        func set(pubkey: String, symbol: String) {
+        init(pubkey: String, symbol: String) {
             self.pubkey = pubkey
             self.symbol = symbol
             bind()

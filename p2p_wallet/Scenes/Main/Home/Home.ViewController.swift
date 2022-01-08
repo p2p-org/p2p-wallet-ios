@@ -160,8 +160,8 @@ extension Home {
                 guard let pubkey = wallet.pubkey else {return}
                 
                 analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: wallet.token.symbol))
-                
-                let vc = WalletDetail.ViewController(pubkey: pubkey, symbol: wallet.token.symbol)
+                let vm = WalletDetail.ViewModel(pubkey: pubkey, symbol: wallet.token.symbol)
+                let vc = WalletDetail.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .walletSettings(let wallet):
                 guard let pubkey = wallet.pubkey else {return}
