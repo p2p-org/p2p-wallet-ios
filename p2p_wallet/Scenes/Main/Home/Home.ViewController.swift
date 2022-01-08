@@ -97,7 +97,8 @@ extension Home {
                     let isRenBTCWalletCreated = viewModel.walletsRepository.getWallets().contains(where: {
                         $0.token.address == renBTCMint.base58EncodedString
                     })
-                    let vc = ReceiveToken.ViewController(solanaPubkey: pubkey, solanaTokenWallet: nil, isRenBTCWalletCreated: isRenBTCWalletCreated)
+                    let vm = ReceiveToken.SceneModel(solanaPubkey: pubkey, solanaTokenWallet: nil, isRenBTCWalletCreated: isRenBTCWalletCreated)
+                    let vc = ReceiveToken.ViewController(viewModel: vm)
                     analyticsManager.log(event: .mainScreenReceiveOpen)
                     analyticsManager.log(event: .receiveOpen(fromPage: "main_screen"))
                     show(vc, sender: true)

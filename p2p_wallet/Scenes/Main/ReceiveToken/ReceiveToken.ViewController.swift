@@ -7,15 +7,11 @@ import Resolver
 
 extension ReceiveToken {
     class ViewController: BEScene {
-        @Injected private var viewModel: ReceiveSceneModel
+        private var viewModel: ReceiveSceneModel
         
-        init(
-            solanaPubkey: SolanaSDK.PublicKey,
-            solanaTokenWallet: Wallet?,
-            isRenBTCWalletCreated: Bool
-        ) {
+        init(viewModel: ReceiveSceneModel) {
+            self.viewModel = viewModel
             super.init()
-            viewModel.set(solanaPubkey: solanaPubkey, solanaTokenWallet: solanaTokenWallet, isRenBTCWalletCreated: isRenBTCWalletCreated)
             viewModel.navigation.drive(onNext: { [weak self] in self?.navigate(to: $0) }).disposed(by: disposeBag)
         }
         
@@ -114,7 +110,7 @@ extension ReceiveToken.ViewController {
             let vc = ReceiveToken.HelpViewController()
             present(vc, animated: true)
         case .networkSelection:
-            let vc = ReceiveToken.NetworkSelectionScene()
+            let vc = ReceiveToken.NetworkSelectionScene(viewModel: viewModel)
             show(vc, sender: nil)
         default:
             return
