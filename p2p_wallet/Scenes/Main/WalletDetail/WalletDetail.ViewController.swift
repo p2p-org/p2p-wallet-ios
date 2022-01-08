@@ -99,7 +99,8 @@ extension WalletDetail {
                     show(vc, sender: true)
                 }
             case .swap(let wallet):
-                let vc = OrcaSwapV2.ViewController(initialWallet: wallet)
+                let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
+                let vc = OrcaSwapV2.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .transactionInfo(let transaction):
                 let vc = TransactionInfoViewController(transaction: transaction)

@@ -11,10 +11,6 @@ import RxCocoa
 protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewModelType,
     AnyObject
 {
-    func set(
-        initialWallet: Wallet?
-    )
-    
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {get}
     var loadingStateDriver: Driver<LoadableState> {get}
     

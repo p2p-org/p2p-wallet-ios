@@ -15,15 +15,21 @@ extension OrcaSwapV2 {
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        @Injected private var viewModel: OrcaSwapV2ViewModelType
+        private let viewModel: OrcaSwapV2ViewModelType
 
         // MARK: - Subviews
         private lazy var nextButton = WLStepButton.main(image: .buttonCheckSmall, text: L10n.reviewAndConfirm)
             .onTap(self, action: #selector(buttonNextDidTouch))
 
-        private lazy var mainView = OrcaSwapV2.MainSwapView()
+        private lazy var mainView = OrcaSwapV2.MainSwapView(viewModel: viewModel)
         private let showDetailsButton = OrcaSwapV2.ShowDetailsButton()
-        private lazy var detailsView = OrcaSwapV2.DetailsView()
+        private lazy var detailsView = OrcaSwapV2.DetailsView(viewModel: viewModel)
+        
+        // MARK: - Initializer
+        init(viewModel: OrcaSwapV2ViewModelType) {
+            self.viewModel = viewModel
+            super.init(frame: .zero)
+        }
         
         // MARK: - Methods
         override func commonInit() {
