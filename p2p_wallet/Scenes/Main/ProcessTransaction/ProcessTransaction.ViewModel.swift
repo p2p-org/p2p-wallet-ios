@@ -10,17 +10,12 @@ import RxSwift
 import RxCocoa
 
 protocol ProcessTransactionViewModelType {
-    var transactionType: ProcessTransaction.TransactionType! {get}
+    var transactionType: ProcessTransaction.TransactionType {get}
     var pricesService: PricesServiceType {get}
     var reimbursedAmount: Double? {get}
     
     var navigatableSceneDriver: Driver<ProcessTransaction.NavigatableScene?> {get}
     var transactionDriver: Driver<SolanaSDK.ParsedTransaction> {get}
-    
-    func set(
-        transactionType: ProcessTransaction.TransactionType,
-        request: Single<ProcessTransactionResponseType>
-    )
     
     func fetchReimbursedAmountForClosingTransaction() -> Single<Double>
     func showExplorer()
@@ -39,18 +34,18 @@ extension ProcessTransaction {
         @Injected var pricesService: PricesServiceType
         
         // MARK: - Properties
-        private(set) var transactionType: TransactionType!
+        let transactionType: TransactionType
         
         private let disposeBag = DisposeBag()
         private(set) var reimbursedAmount: Double?
-        private var request: Single<ProcessTransactionResponseType>!
+        private let request: Single<ProcessTransactionResponseType>
         
         // MARK: - Subject
         private let navigatableSceneSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let transactionSubject = BehaviorRelay<SolanaSDK.ParsedTransaction>(value: .init(status: .requesting, signature: nil, value: nil, slot: nil, blockTime: nil, fee: nil, blockhash: nil))
         
         // MARK: - Initializer
-        func set(
+        init(
             transactionType: TransactionType,
             request: Single<ProcessTransactionResponseType>
         ) {

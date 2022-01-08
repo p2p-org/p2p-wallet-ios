@@ -87,7 +87,8 @@ class TokenSettingsViewController: WLIndicatorModalVC {
             }
             self.present(vc, animated: true, completion: nil)
         case .processTransaction(let request, let transactionType):
-            let vc = ProcessTransaction.ViewController(transactionType: transactionType, request: request)
+            let vm = ProcessTransaction.ViewModel(transactionType: transactionType, request: request)
+            let vc = ProcessTransaction.ViewController(viewModel: vm)
             vc.delegate = self
             self.present(vc, animated: true, completion: nil)
         }
