@@ -19,7 +19,7 @@ extension OrcaSwapV2 {
         
         var wallet: Wallet?
         private let disposeBag = DisposeBag()
-        @Injected private var viewModel: OrcaSwapV2ViewModelType
+        private let viewModel: OrcaSwapV2ViewModelType
         private let type: WalletType
         @Injected private var analyticsManager: AnalyticsManagerType
         
@@ -38,8 +38,9 @@ extension OrcaSwapV2 {
             autocorrectionType: .no/*, rightView: useAllBalanceButton, rightViewMode: .always*/
         )
 
-        init(type: WalletType) {
+        init(type: WalletType, viewModel: OrcaSwapV2ViewModelType) {
             self.type = type
+            self.viewModel = viewModel
             super.init(frame: .zero)
             configureForAutoLayout()
             

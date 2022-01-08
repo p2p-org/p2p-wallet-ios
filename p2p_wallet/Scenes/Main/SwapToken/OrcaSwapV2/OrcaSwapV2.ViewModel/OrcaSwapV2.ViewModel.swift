@@ -40,7 +40,7 @@ extension OrcaSwapV2 {
         let isShowingDetailsSubject = BehaviorRelay<Bool>(value: false)
 
         // MARK: - setter
-        func set(
+        init(
             initialWallet: Wallet?
         ) {
             reload()

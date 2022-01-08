@@ -12,15 +12,16 @@ import RxCocoa
 
 extension OrcaSwapV2 {
     final class MainSwapView: WLFloatingPanelView {
-        private lazy var fromWalletView = WalletView(type: .source)
+        private lazy var fromWalletView = WalletView(type: .source, viewModel: viewModel)
         private let switchButton = UIButton(width: 32, height: 32)
-        private lazy var toWalletView = WalletView(type: .destination)
+        private lazy var toWalletView = WalletView(type: .destination, viewModel: viewModel)
         private let receiveAtLeastView = HorizontalLabelsWithSpacer()
 
-        @Injected private var viewModel: OrcaSwapV2ViewModelType
+        private let viewModel: OrcaSwapV2ViewModelType
         private let disposeBag = DisposeBag()
 
-        init() {
+        init(viewModel: OrcaSwapV2ViewModelType) {
+            self.viewModel = viewModel
             super.init(contentInset: .init(all: 18))
         }
 

@@ -16,7 +16,7 @@ extension OrcaSwapV2 {
         }
 
         // MARK: - Dependencies
-        @Injected private var viewModel: OrcaSwapV2ViewModelType
+        private let viewModel: OrcaSwapV2ViewModelType
 
         // MARK: - Properties
         
@@ -29,13 +29,13 @@ extension OrcaSwapV2 {
                 viewModel?.navigate(to: .settings)
             }
         )
-        private lazy var rootView = RootView()
+        private lazy var rootView = RootView(viewModel: viewModel)
             .onTap(self, action: #selector(hideKeyboard))
         
         // MARK: - Methods
-        init(initialWallet: Wallet?) {
+        init(viewModel: OrcaSwapV2ViewModelType) {
+            self.viewModel = viewModel
             super.init()
-            viewModel.set(initialWallet: initialWallet)
         }
 
         override func viewWillAppear(_ animated: Bool) {
@@ -109,7 +109,7 @@ extension OrcaSwapV2 {
 
                 present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .confirmation:
-                let vm = ConfirmSwapping.ViewModel()
+                let vm = ConfirmSwapping.ViewModel(swapViewModel: viewModel)
                 let vc = ConfirmSwapping.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case let .processTransaction(

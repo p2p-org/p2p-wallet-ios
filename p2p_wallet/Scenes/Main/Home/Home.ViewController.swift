@@ -132,7 +132,8 @@ extension Home {
                 analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
                 show(vc, sender: nil)
             case .swapToken:
-                let vc = OrcaSwapV2.ViewController(initialWallet: nil)
+                let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
+                let vc = OrcaSwapV2.ViewController(viewModel: vm)
                 analyticsManager.log(event: .mainScreenSwapOpen)
                 analyticsManager.log(event: .swapOpen(fromPage: "main_screen"))
                 self.show(vc, sender: nil)
