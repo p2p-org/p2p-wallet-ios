@@ -51,11 +51,11 @@ extension SendToken.ChooseTokenAndAmount {
             guard let scene = scene else {return}
             switch scene {
             case .chooseWallet:
+                let vm = ChooseWallet.ViewModel(selectedWallet: nil, handler: viewModel, showOtherWallets: false)
+                vm.customFilter = { $0.amount > 0}
                 let vc = ChooseWallet.ViewController(
                     title: nil,
-                    handler: viewModel,
-                    showOtherWallets: false,
-                    customFilter: { $0.amount > 0}
+                    viewModel: vm
                 )
                 present(vc, animated: true, completion: nil)
             case .backToConfirmation:

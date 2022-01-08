@@ -257,10 +257,6 @@ extension Resolver: ResolverRegistering {
             .implements(SolanaBuyTokenSceneModel.self)
             .scope(.shared)
         
-        // MARK: - Choose wallet
-        register { ChooseWallet.ViewModel() }
-            .scope(.shared)
-        
         // MARK: - ProcessTransaction
         register { ProcessTransaction.ViewModel() }
             .implements(ProcessTransactionViewModelType.self)
