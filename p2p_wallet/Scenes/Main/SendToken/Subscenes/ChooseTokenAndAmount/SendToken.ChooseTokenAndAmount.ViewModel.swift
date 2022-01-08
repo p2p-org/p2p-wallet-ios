@@ -40,7 +40,7 @@ extension SendToken.ChooseTokenAndAmount {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var sendTokenViewModel: SendTokenViewModelType
+        private let sendTokenViewModel: SendTokenViewModelType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -58,11 +58,13 @@ extension SendToken.ChooseTokenAndAmount {
         init(
             initialAmount: Double? = nil,
             showAfterConfirmation: Bool = false,
-            selectedNetwork: SendToken.Network?
+            selectedNetwork: SendToken.Network?,
+            sendTokenViewModel: SendTokenViewModelType
         ) {
             self.initialAmount = initialAmount
             self.showAfterConfirmation = showAfterConfirmation
             self.selectedNetwork = selectedNetwork
+            self.sendTokenViewModel = sendTokenViewModel
             bind()
         }
         

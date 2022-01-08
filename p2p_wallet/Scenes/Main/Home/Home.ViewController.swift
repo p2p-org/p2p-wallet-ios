@@ -125,7 +125,8 @@ extension Home {
                     self.present(vc, animated: true, completion: nil)
                 }
             case .sendToken(let address):
-                let vc = SendToken.ViewController(walletPubkey: nil, destinationAddress: address)
+                let vm = SendToken.ViewModel(walletPubkey: nil, destinationAddress: address)
+                let vc = SendToken.ViewController(viewModel: vm)
                 analyticsManager.log(event: .mainScreenSendOpen)
                 analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
                 show(vc, sender: nil)

@@ -262,11 +262,6 @@ extension Resolver: ResolverRegistering {
             .implements(ReceiveSceneModel.self)
             .scope(.shared)
         
-        // MARK: - Send
-        register { SendToken.ViewModel() }
-            .implements(SendTokenViewModelType.self)
-            .scope(.shared)
-        
         // MARK: - OrcaSwap
         register { OrcaSwapV2.ViewModel() }
             .implements(OrcaSwapV2ViewModelType.self)

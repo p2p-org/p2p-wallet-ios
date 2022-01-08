@@ -14,7 +14,7 @@ import RxCocoa
 extension SendToken {
     final class ConfirmViewController: BaseViewController {
         // MARK: - Dependencies
-        @Injected private var viewModel: SendTokenViewModelType
+        private let viewModel: SendTokenViewModelType
         
         // MARK: - Properties
         
@@ -53,6 +53,11 @@ extension SendToken {
             .onTap(self, action: #selector(actionButtonDidTouch))
         
         // MARK: - Initializer
+        init(viewModel: SendTokenViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
+        
         override func setUp() {
             super.setUp()
             
