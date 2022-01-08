@@ -142,8 +142,6 @@ extension ProcessTransaction {
                     transaction: transaction,
                     fees: [.init(type: .transactionFee, lamports: 0, token: .nativeSolana, toString: nil)]
                 )
-            default:
-                return
             }
             
             // observe
@@ -214,8 +212,6 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             analyticsManager.log(event: .swapExplorerClick(txStatus: transactionStatus))
         case .closeAccount:
             break
-        default:
-            break
         }
         
         // navigate
@@ -231,8 +227,6 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
         case .orcaSwap, .swap:
             analyticsManager.log(event: .swapDoneClick(txStatus: transactionStatus))
         case .closeAccount:
-            break
-        default:
             break
         }
         
@@ -252,8 +246,6 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             case .orcaSwap, .swap:
                 event = .swapTryAgainClick(error: error)
             case .closeAccount:
-                break
-            default:
                 break
             }
         }
@@ -278,8 +270,6 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             case .orcaSwap, .swap:
                 event = .swapCancelClick(error: error)
             case .closeAccount:
-                break
-            default:
                 break
             }
         }
