@@ -12,11 +12,6 @@ import RxCocoa
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler, SendTokenSelectNetworkViewModelType {
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
     
-    func set(
-        walletPubkey: String?,
-        destinationAddress: String?
-    )
-    
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
     func getSelectableNetworks() -> [SendToken.Network]
@@ -45,8 +40,8 @@ extension SendToken {
         @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         
         // MARK: - Properties
-        private var initialWalletPubkey: String?
-        private var initialDestinationWalletPubkey: String?
+        private let initialWalletPubkey: String?
+        private let initialDestinationWalletPubkey: String?
         
         private var selectedNetwork: SendToken.Network?
         private var selectableNetworks: [SendToken.Network]?
@@ -59,7 +54,7 @@ extension SendToken {
         let networkSubject = BehaviorRelay<Network>(value: .solana)
         
         // MARK: - Initializers
-        func set(
+        init(
             walletPubkey: String?,
             destinationAddress: String?
         ) {

@@ -17,18 +17,15 @@ extension SendToken {
         }
         
         // MARK: - Dependencies
-        @Injected private var viewModel: SendTokenViewModelType
+        private let viewModel: SendTokenViewModelType
         
         // MARK: - Properties
         private var childNavigationController: UINavigationController!
         
         // MARK: - Initializer
-        init(
-            walletPubkey: String?,
-            destinationAddress: String?
-        ) {
+        init(viewModel: SendTokenViewModelType) {
+            self.viewModel = viewModel
             super.init()
-            viewModel.set(walletPubkey: walletPubkey, destinationAddress: destinationAddress)
         }
         
         // MARK: - Methods
@@ -54,7 +51,8 @@ extension SendToken {
                 let vm = ChooseTokenAndAmount.ViewModel(
                     initialAmount: viewModel.getSelectedAmount(),
                     showAfterConfirmation: showAfterConfirmation,
-                    selectedNetwork: viewModel.getSelectedNetwork()
+                    selectedNetwork: viewModel.getSelectedNetwork(),
+                    sendTokenViewModel: viewModel
                 )
                 let vc = ChooseTokenAndAmount.ViewController(viewModel: vm)
                 
@@ -67,12 +65,13 @@ extension SendToken {
             case .chooseRecipientAndNetwork(let showAfterConfirmation, let preSelectedNetwork):
                 let vm = ChooseRecipientAndNetwork.ViewModel(
                     showAfterConfirmation: showAfterConfirmation,
-                    preSelectedNetwork: preSelectedNetwork
+                    preSelectedNetwork: preSelectedNetwork,
+                    sendTokenViewModel: viewModel
                 )
                 let vc = ChooseRecipientAndNetwork.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)
             case .confirmation:
-                let vc = ConfirmViewController()
+                let vc = ConfirmViewController(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
             case .processTransaction(let request, let transactionType):
                 let vc = ProcessTransaction.ViewController(transactionType: transactionType, request: request)

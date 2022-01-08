@@ -81,7 +81,8 @@ extension WalletDetail {
                 vc.delegate = self
                 self.present(vc, animated: true, completion: nil)
             case .send(let wallet):
-                let vc = SendToken.ViewController(walletPubkey: wallet.pubkey, destinationAddress: nil)
+                let vm = SendToken.ViewModel(walletPubkey: wallet.pubkey, destinationAddress: nil)
+                let vc = SendToken.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .receive(let pubkey):
                 if let solanaPubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
