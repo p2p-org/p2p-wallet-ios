@@ -257,11 +257,6 @@ extension Resolver: ResolverRegistering {
             .implements(SolanaBuyTokenSceneModel.self)
             .scope(.shared)
         
-        // MARK: - Receive
-        register { ReceiveToken.SceneModel() }
-            .implements(ReceiveSceneModel.self)
-            .scope(.shared)
-        
         // MARK: - OrcaSwap
         register { OrcaSwapV2.ViewModel() }
             .implements(OrcaSwapV2ViewModelType.self)

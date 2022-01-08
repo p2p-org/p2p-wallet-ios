@@ -12,16 +12,10 @@ import RxCocoa
 protocol ReceiveSceneModel: BESceneModel {
     var tokenTypeDriver: Driver<ReceiveToken.TokenType> { get }
     var updateLayoutDriver: Driver<Void> { get }
-    var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType! { get }
-    var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType! { get }
+    var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
+    var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType { get }
     var shouldShowChainsSwitcher: Bool { get }
     var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
-    
-    func set(
-        solanaPubkey: SolanaSDK.PublicKey,
-        solanaTokenWallet: Wallet?,
-        isRenBTCWalletCreated: Bool
-    )
     
     func switchToken(_ tokenType: ReceiveToken.TokenType)
     func copyToClipboard(address: String, logEvent: AnalyticsEvent)
@@ -35,14 +29,14 @@ extension ReceiveToken {
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
-        var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType!
-        var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType!
+        let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
+        let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         
         // MARK: - Subjects
         private let navigationSubject = PublishRelay<NavigatableScene?>()
         private let tokenTypeSubject = BehaviorRelay<TokenType>(value: .solana)
         
-        func set(
+        init(
             solanaPubkey: SolanaSDK.PublicKey,
             solanaTokenWallet: Wallet? = nil,
             isRenBTCWalletCreated: Bool
@@ -57,6 +51,8 @@ extension ReceiveToken {
                 navigationSubject: navigationSubject,
                 isRenBTCWalletCreated: isRenBTCWalletCreated
             )
+            
+            super.init()
             
             if let token = solanaTokenWallet?.token,
                token.isRenBTC {
