@@ -33,7 +33,9 @@ class TabBarVC: BEPagesVC {
                 )
             )),
             createNavigationController(rootVC: _PlaceholderVC()),
-            createNavigationController(rootVC: DAppContainer.ViewController(dApp: .fake)),
+            createNavigationController(rootVC: DAppContainer.ViewController(
+                viewModel: DAppContainer.ViewModel(dapp: .fake)
+            )),
             createNavigationController(rootVC: _PlaceholderVC())
         ]
         
