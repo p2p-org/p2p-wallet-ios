@@ -38,7 +38,7 @@ extension RenBTCReceivingStatuses {
                                 .drive(view.titleLabel.rx.text)
                                 .disposed(by: disposeBag)
                         }
-                    BENewDynamicSectionsCollectionView(
+                    NBENewDynamicSectionsCollectionView(
                         viewModel: viewModel,
                         mapDataToSections: { viewModel in
                             CollectionViewMappingStrategy.byData(
@@ -71,9 +71,7 @@ extension RenBTCReceivingStatuses {
                                 textColor: .secondaryLabel
                             )
                         }
-                    ).setupWithType(BENewDynamicSectionsCollectionView.self) { view in
-                        view.delegate = self
-                    }
+                    ).withDelegate(self)
                 }
             }
         }
