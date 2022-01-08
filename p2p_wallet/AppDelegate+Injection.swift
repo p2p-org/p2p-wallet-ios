@@ -256,11 +256,6 @@ extension Resolver: ResolverRegistering {
         register { SolanaBuyToken.SceneModel() }
             .implements(SolanaBuyTokenSceneModel.self)
             .scope(.shared)
-        
-        // MARK: - ProcessTransaction
-        register { ProcessTransaction.ViewModel() }
-            .implements(ProcessTransactionViewModelType.self)
-            .scope(.shared)
     }
 }
 

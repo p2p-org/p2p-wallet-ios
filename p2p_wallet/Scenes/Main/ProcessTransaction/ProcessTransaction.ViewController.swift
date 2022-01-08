@@ -17,18 +17,15 @@ extension ProcessTransaction {
     class ViewController: WLIndicatorModalVC {
         
         // MARK: - Dependencies
-        @Injected private var viewModel: ProcessTransactionViewModelType
+        private let viewModel: ProcessTransactionViewModelType
         
         // MARK: - Properties
         weak var delegate: ProcessTransactionViewControllerDelegate?
         
         // MARK: - Initializer
-        init(
-            transactionType: ProcessTransaction.TransactionType,
-            request: Single<ProcessTransactionResponseType>
-        ) {
+        init(viewModel: ProcessTransactionViewModelType) {
+            self.viewModel = viewModel
             super.init()
-            viewModel.set(transactionType: transactionType, request: request)
             modalPresentationStyle = .custom
             transitioningDelegate = self
         }
@@ -36,7 +33,7 @@ extension ProcessTransaction {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            let rootView = RootView()
+            let rootView = RootView(viewModel: viewModel)
             rootView.transactionStatusDidChange = { [weak self] in
                 self?.forceResizeModal()
             }
