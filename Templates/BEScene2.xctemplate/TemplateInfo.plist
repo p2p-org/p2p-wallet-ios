@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Description</key>
+	<string>P2P Pattern</string>
+	<key>Kind</key>
+	<string>Xcode.IDEKit.TextSubstitutionFileTemplateKind</string>
+	<key>Options</key>
+	<array>
+                <dict>
+                        <key>Description</key>
+                        <string>Namespace</string>
+                        <key>Identifier</key>
+                        <string>NAME_SPACE</string>
+                        <key>Name</key>
+                        <string>Namespace:</string>
+                        <key>Required</key>
+                        <string>YES</string>
+                        <key>Type</key>
+                        <string>text</string>
+                        <key>NotPersisted</key>
+                        <true/>
+                </dict>
+	</array>
+	<key>Platforms</key>
+	<array>
+		<string>com.apple.platform.iphoneos</string>
+	</array>
+	<key>SortOrder</key>
+	<string>1</string>
+	<key>Summary</key>
+	<string>Create a composition view</string>
+</dict>
+</plist>

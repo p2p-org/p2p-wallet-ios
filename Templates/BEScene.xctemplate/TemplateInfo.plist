@@ -3,25 +3,67 @@
 <plist version="1.0">
 <dict>
 	<key>Description</key>
-	<string>P2P Pattern</string>
+	<string>MVVM pattern with &quot;scene-oriented&quot; programming in iOS</string>
 	<key>Kind</key>
 	<string>Xcode.IDEKit.TextSubstitutionFileTemplateKind</string>
 	<key>Options</key>
 	<array>
-                <dict>
-                        <key>Description</key>
-                        <string>Namespace</string>
-                        <key>Identifier</key>
-                        <string>NAME_SPACE</string>
-                        <key>Name</key>
-                        <string>Namespace:</string>
-                        <key>Required</key>
-                        <string>YES</string>
-                        <key>Type</key>
-                        <string>text</string>
-                        <key>NotPersisted</key>
-                        <true/>
-                </dict>
+		<dict>
+			<key>Description</key>
+			<string>The scene name</string>
+			<key>Identifier</key>
+			<string>scene</string>
+			<key>Name</key>
+			<string>Scene name:</string>
+			<key>NotPersisted</key>
+			<true/>
+			<key>Required</key>
+			<true/>
+			<key>Type</key>
+			<string>text</string>
+		</dict>
+		<dict>
+			<key>Default</key>
+			<string>___VARIABLE_scene:identifier___.ViewController</string>
+			<key>Description</key>
+			<string>The ViewController&apos;s name</string>
+			<key>Identifier</key>
+			<string>viewControllerName</string>
+			<key>Name</key>
+			<string>ViewController name:</string>
+			<key>Required</key>
+			<true/>
+			<key>Type</key>
+			<string>static</string>
+		</dict>
+		<dict>
+			<key>Default</key>
+			<string>___VARIABLE_scene:identifier___.ViewModel</string>
+			<key>Description</key>
+			<string>The ViewModel&apos;s name</string>
+			<key>Identifier</key>
+			<string>viewModelName</string>
+			<key>Name</key>
+			<string>viewModelName</string>
+			<key>Required</key>
+			<true/>
+			<key>Type</key>
+			<string>static</string>
+		</dict>
+		<dict>
+			<key>Default</key>
+			<string>___VARIABLE_scene:identifier___.RootView</string>
+			<key>Description</key>
+			<string>The RootView&apos;s name</string>
+			<key>Identifier</key>
+			<string>rootViewName</string>
+			<key>Name</key>
+			<string>rootViewName</string>
+			<key>Required</key>
+			<true/>
+			<key>Type</key>
+			<string>static</string>
+		</dict>
 	</array>
 	<key>Platforms</key>
 	<array>
@@ -30,6 +72,6 @@
 	<key>SortOrder</key>
 	<string>1</string>
 	<key>Summary</key>
-	<string>Create a composition view</string>
+	<string>A scene with view controller, view model</string>
 </dict>
 </plist>
