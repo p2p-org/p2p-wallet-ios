@@ -11,8 +11,13 @@ import RxCocoa
 
 extension SolanaBuyToken {
     class Scene: BEScene {
-        @Injected private var viewModel: SolanaBuyTokenSceneModel
+        private let viewModel: SolanaBuyTokenSceneModel
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
+        
+        init(viewModel: SolanaBuyTokenSceneModel) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         override func build() -> UIView {
             BEZStack {
