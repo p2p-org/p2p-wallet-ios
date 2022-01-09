@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ResetPinCodeWithSeedPhrases {
+enum ResetPinCodeWithSeedPhrases {
     enum NavigatableScene {
         case enterSeedPhrases
         case createNewPasscode
