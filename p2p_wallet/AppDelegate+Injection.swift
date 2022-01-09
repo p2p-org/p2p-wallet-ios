@@ -161,6 +161,16 @@ extension Resolver: ResolverRegistering {
         register { DAppChannel() }
             .implements(DAppChannelType.self)
         
+        // MARK: - Moonpay
+        register{Moonpay.MoonpayServiceImpl(api: Moonpay.API.fromEnvironment())}
+            .implements(MoonpayService.self)
+            .scope(.shared)
+    
+        // MARK: - BuyProvider
+        register{BuyProviders.MoonpayFactory()}
+            .implements(BuyProviderFactory.self)
+            .scope(.application)
+        
         // MARK: - Root
         register {Root.ViewModel()}
             .implements(RootViewModelType.self)
@@ -198,16 +208,6 @@ extension Resolver: ResolverRegistering {
         register { EnterSeedInfo.ViewModel() }
             .implements(EnterSeedInfoViewModelType.self)
             .scope(.unique)
-        
-        // MARK: - Moonpay
-        register{Moonpay.MoonpayServiceImpl(api: Moonpay.API.fromEnvironment())}
-            .implements(MoonpayService.self)
-            .scope(.shared)
-    
-        // MARK: - BuyProvider
-        register{BuyProviders.MoonpayFactory()}
-            .implements(BuyProviderFactory.self)
-            .scope(.application)
     }
 }
 
