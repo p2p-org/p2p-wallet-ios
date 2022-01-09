@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DerivableAccounts {
+enum DerivableAccounts {
     enum NavigatableScene {
         case selectDerivationPath
     }

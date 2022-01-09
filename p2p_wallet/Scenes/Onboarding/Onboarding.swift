@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Onboarding {
+enum Onboarding {
     enum NavigatableScene {
         case createPincode
         case setUpBiometryAuthentication

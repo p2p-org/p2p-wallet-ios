@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-struct ReserveName {
+enum ReserveName {
     enum NavigatableScene {
         case termsOfUse
         case privacyPolicy
