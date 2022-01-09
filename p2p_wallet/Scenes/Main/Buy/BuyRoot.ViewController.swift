@@ -15,7 +15,11 @@ extension BuyRoot {
     class ViewController: BaseVC {
         // MARK: - Dependencies
         @Injected private var viewModel: BuyViewModelType
-        let navigation = UINavigationController(rootViewController: SolanaBuyToken.Scene())
+        let navigation = UINavigationController(
+            rootViewController: SolanaBuyToken.Scene(
+                viewModel: SolanaBuyToken.SceneModel()
+            )
+        )
         
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         

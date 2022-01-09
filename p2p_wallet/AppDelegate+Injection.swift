@@ -213,10 +213,6 @@ extension Resolver: ResolverRegistering {
         register { BuyRoot.ViewModel() }
             .implements(BuyViewModelType.self)
             .scope(.shared)
-        
-        register { SolanaBuyToken.SceneModel() }
-            .implements(SolanaBuyTokenSceneModel.self)
-            .scope(.shared)
     }
 }
 
