@@ -91,7 +91,6 @@
 		84699260E4D199A70FC4ED2A /* VerifySecurityKeys.Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699BB5204C753606EBF829 /* VerifySecurityKeys.Button.swift */; };
 		8469926908C12A54B0D0850E /* DAppContainer.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846992B55E29D7DA05ED2F4C /* DAppContainer.ViewModel.swift */; };
 		8469928B2607C3CDDA2B1A4C /* DAppContainer.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699360187D203C37C9FFEB /* DAppContainer.ViewController.swift */; };
-		846992A8BA0847B9C2278A57 /* ReceiveHistory.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699A61069D33C74432F782 /* ReceiveHistory.ViewController.swift */; };
 		846993316E60603167DE5520 /* LockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D31FA9B8B77AD4DAD1 /* LockView.swift */; };
 		846993C005071DBC7474F46B /* BuyRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846990E0164D14FE11A72F13 /* BuyRoot.swift */; };
 		846993CA42DD22FB3BA39BB1 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699683F51C51791FD590A0 /* Utils.swift */; };
@@ -114,10 +113,8 @@
 		846999D7A0F0B2DC6E8C8A9B /* UIStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699D3DBA0FA60C1B1CCD70 /* UIStackView.swift */; };
 		84699AFDE6821C43A4F93FC7 /* WLWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D5BC06C25591CFA36D /* WLWebView.swift */; };
 		84699B6058901C761662F138 /* TransakProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C355CE538F8E06A9A33 /* TransakProvider.swift */; };
-		84699B7BCFB0A77156830193 /* ReceiveHistory.SceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C4996E2BA5E351A554A /* ReceiveHistory.SceneModel.swift */; };
 		84699D16FF2505EBC817719F /* Moonpay.Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C4EC5492AD6214BAD3D /* Moonpay.Service.swift */; };
 		84699D43B0BAEA149C81B17D /* ColumnFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C929DA7046907362DFE /* ColumnFlowLayout.swift */; };
-		84699D9A16AAC0F0D2466451 /* ReceiveHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699386BC3ED2388F510D9B /* ReceiveHistory.swift */; };
 		84699D9D35BB1C10A7427A9B /* NetworkSelection.BitcoinConfirm.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */; };
 		84699DBA47203BDF184D7907 /* Moonpay.API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699DE92661FB71D4AFE677 /* Moonpay.API.swift */; };
 		84699E4EC4356224948E529A /* DAppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991A1202889DFF6E4671A /* DAppContainer.swift */; };
@@ -587,7 +584,6 @@
 		84699316063819943F883274 /* BEContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BEContainer.swift; path = Sources/BEPureLayout/BEContainer.swift; sourceTree = "<group>"; };
 		846993534B18B8841213679D /* BuyRoot.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyRoot.ViewController.swift; sourceTree = "<group>"; };
 		84699360187D203C37C9FFEB /* DAppContainer.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.ViewController.swift; sourceTree = "<group>"; };
-		84699386BC3ED2388F510D9B /* ReceiveHistory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveHistory.swift; sourceTree = "<group>"; };
 		846993C80C502EDC0FBF1067 /* SolanaBuyToken.Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SolanaBuyToken.Scene.swift; sourceTree = "<group>"; };
 		84699455C34FBC56A4B9E122 /* DAppContainer.RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.RootView.swift; sourceTree = "<group>"; };
 		846994BA772A5F92F29C172E /* WLCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WLCard.swift; sourceTree = "<group>"; };
@@ -610,10 +606,8 @@
 		846999B04075AE392A600C35 /* ReceiveToken.QrCodeCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeCard.swift; sourceTree = "<group>"; };
 		846999ECE924BFEFC88F9F71 /* SolanaBuyToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SolanaBuyToken.swift; sourceTree = "<group>"; };
 		84699A1D9765DC3DFB275A4E /* ReceiveToken.HelpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.HelpViewController.swift; sourceTree = "<group>"; };
-		84699A61069D33C74432F782 /* ReceiveHistory.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveHistory.ViewController.swift; sourceTree = "<group>"; };
 		84699BB5204C753606EBF829 /* VerifySecurityKeys.Button.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Button.swift; sourceTree = "<group>"; };
 		84699C355CE538F8E06A9A33 /* TransakProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransakProvider.swift; sourceTree = "<group>"; };
-		84699C4996E2BA5E351A554A /* ReceiveHistory.SceneModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveHistory.SceneModel.swift; sourceTree = "<group>"; };
 		84699C4EC5492AD6214BAD3D /* Moonpay.Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Service.swift; sourceTree = "<group>"; };
 		84699C86FA5FC79DB0199B0B /* BEScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BEScene.swift; sourceTree = "<group>"; };
 		84699C929DA7046907362DFE /* ColumnFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColumnFlowLayout.swift; sourceTree = "<group>"; };
@@ -1227,16 +1221,6 @@
 				846999ECE924BFEFC88F9F71 /* SolanaBuyToken.swift */,
 			);
 			path = SolanaBuyToken;
-			sourceTree = "<group>";
-		};
-		846998751D681381C1745060 /* History */ = {
-			isa = PBXGroup;
-			children = (
-				84699A61069D33C74432F782 /* ReceiveHistory.ViewController.swift */,
-				84699C4996E2BA5E351A554A /* ReceiveHistory.SceneModel.swift */,
-				84699386BC3ED2388F510D9B /* ReceiveHistory.swift */,
-			);
-			path = History;
 			sourceTree = "<group>";
 		};
 		846999988BEEA5BD03EDDF11 /* NetworkSelection */ = {
@@ -2163,7 +2147,6 @@
 				BC80203C26F1EB6900C109C2 /* Bitcoin */,
 				846999988BEEA5BD03EDDF11 /* NetworkSelection */,
 				84699D6074F3B4957DBEB23A /* Views */,
-				846998751D681381C1745060 /* History */,
 			);
 			path = ReceiveToken;
 			sourceTree = "<group>";
@@ -3142,9 +3125,6 @@
 				84699F599B47C30D251B657D /* ReceiveToken.ViewBuilders.swift in Sources */,
 				84699FAFF6F54DA93EE08CD8 /* ReceiveToken.QrCodeView.swift in Sources */,
 				8469923A8BD54C585185546C /* ReceiveToken.QrCodeCard.swift in Sources */,
-				846992A8BA0847B9C2278A57 /* ReceiveHistory.ViewController.swift in Sources */,
-				84699B7BCFB0A77156830193 /* ReceiveHistory.SceneModel.swift in Sources */,
-				84699D9A16AAC0F0D2466451 /* ReceiveHistory.swift in Sources */,
 				846993316E60603167DE5520 /* LockView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
