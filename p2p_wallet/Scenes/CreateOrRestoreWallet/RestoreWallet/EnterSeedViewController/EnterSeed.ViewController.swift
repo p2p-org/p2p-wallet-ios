@@ -53,7 +53,8 @@ extension EnterSeed {
             case .none:
                 break
             case .info:
-                let vc = EnterSeedInfo.ViewController(viewModel: Resolver.resolve())
+                let vm = EnterSeedInfo.ViewModel()
+                let vc = EnterSeedInfo.ViewController(viewModel: vm)
                 present(vc, animated: true)
             case .back:
                 navigationController?.popViewController(animated: true)
