@@ -13,7 +13,7 @@ import BEPureLayout
 extension Authentication {
     class ViewController: BaseVC {
         // MARK: - Dependencies
-        @Injected private var viewModel: AuthenticationViewModelType
+        private let viewModel: AuthenticationViewModelType
         
         // MARK: - Properties
         override var title: String? { didSet { pincodeVC.title = title } }
@@ -26,7 +26,7 @@ extension Authentication {
         
         // MARK: - Subscenes
         private lazy var pincodeVC: PincodeViewController = {
-            let pincodeVC = PincodeViewController()
+            let pincodeVC = PincodeViewController(viewModel: viewModel)
             pincodeVC.onSuccess = {[weak self] in
                 self?.authenticationDidComplete()
             }
@@ -38,6 +38,12 @@ extension Authentication {
             }
             return pincodeVC
         }()
+        
+        // MARK: - Initializer
+        init(viewModel: AuthenticationViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {

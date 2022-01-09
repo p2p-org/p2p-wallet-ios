@@ -66,7 +66,8 @@ class MainViewController: BaseVC {
         
         // clean
         localAuthVC?.dismiss(animated: false, completion: nil)
-        localAuthVC = Authentication.ViewController()
+        let vm = Authentication.ViewModel()
+        localAuthVC = Authentication.ViewController(viewModel: vm)
         localAuthVC?.title = authStyle.title
         localAuthVC?.isIgnorable = !authStyle.isRequired
         localAuthVC?.useBiometry = authStyle.useBiometry
