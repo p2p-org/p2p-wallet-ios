@@ -17,10 +17,9 @@ extension Home {
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        @Injected private var viewModel: HomeViewModelType
+        private let viewModel: HomeViewModelType
         
         // MARK: - Subviews
-
         private let bannersCollectionView: UICollectionView
         // swiftlint:disable weak_delegate
         private lazy var balancesScrollDelegate = BalancesScrollDelegate(balancesView: balancesOverviewView)
@@ -76,7 +75,8 @@ extension Home {
         private let bannersDataSource: BannersCollectionViewDataSource
         
         // MARK: - Initializer
-        init() {
+        init(viewModel: HomeViewModelType) {
+            self.viewModel = viewModel
             let layout = HorizontalFlowLayout(
                 horisontalInset: 20,
                 verticalInset: 0,

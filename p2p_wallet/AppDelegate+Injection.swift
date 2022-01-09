@@ -190,11 +190,6 @@ extension Resolver: ResolverRegistering {
             .implements(MainViewModelType.self)
             .implements(AuthenticationHandler.self)
             .scope(.shared)
-        
-        // MARK: - Home
-        register { Home.ViewModel() }
-            .implements(HomeViewModelType.self)
-            .scope(.shared)
 
         // MARK: - EnterSeedPhrase
         register { EnterSeed.ViewModel() }

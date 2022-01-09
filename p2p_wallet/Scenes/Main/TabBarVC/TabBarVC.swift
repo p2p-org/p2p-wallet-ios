@@ -25,7 +25,9 @@ class TabBarVC: BEPagesVC {
         view.backgroundColor = .background
         
         viewControllers = [
-            createNavigationController(rootVC: Home.ViewController()),
+            createNavigationController(rootVC: Home.ViewController(
+                viewModel: Home.ViewModel()
+            )),
             createNavigationController(rootVC: InvestmentsViewController(
                 viewModel: InvestmentsViewModel(
                     newsViewModel: NewsViewModel(),
