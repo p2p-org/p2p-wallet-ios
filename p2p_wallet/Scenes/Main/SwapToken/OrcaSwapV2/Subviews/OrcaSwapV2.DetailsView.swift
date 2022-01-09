@@ -71,7 +71,7 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
 
             slippageView.clickHandler = { [weak viewModel] in
-                viewModel?.navigate(to: .chooseSlippage)
+                viewModel?.navigate(to: .settings)
             }
 
             payFeesWithView.clickHandler = { [weak viewModel] in

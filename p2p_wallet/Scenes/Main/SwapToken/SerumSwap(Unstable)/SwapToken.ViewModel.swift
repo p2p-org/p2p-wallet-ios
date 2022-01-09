@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol SwapTokenViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewModelType, SwapTokenSwapFeesViewModelType {
+protocol SwapTokenViewModelType: WalletDidSelectHandler {
     // Input
     var inputAmountSubject: PublishRelay<String?> {get}
     var estimatedAmountSubject: PublishRelay<String?> {get}

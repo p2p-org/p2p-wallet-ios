@@ -50,7 +50,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     var slippageDriver: Driver<Double> {
         slippageSubject.asDriver()
     }
-    
+
     var minimumReceiveAmountDriver: Driver<Double?> {
         bestPoolsPairSubject
             .withLatestFrom(
@@ -265,7 +265,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
     
     func choosePayFee() {
-        navigationSubject.accept(.choosePayFeeToken(tokenName: transactionTokensName))
+        navigationSubject.accept(.settings)
+    }
+
+    func openSettings() {
+        navigate(to: .settings)
     }
     
     func walletDidSelect(_ wallet: Wallet) {
