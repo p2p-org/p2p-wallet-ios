@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct DerivablePaths {
+enum DerivablePaths {
     
 }

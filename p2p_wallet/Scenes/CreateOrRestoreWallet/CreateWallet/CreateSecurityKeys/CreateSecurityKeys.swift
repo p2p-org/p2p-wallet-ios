@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CreateSecurityKeys {
+enum CreateSecurityKeys {
     enum NavigatableScene {
         case termsAndConditions
     }
