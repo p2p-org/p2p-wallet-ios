@@ -18,16 +18,20 @@ extension Home {
         
         // MARK: - Dependencies
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var viewModel: HomeViewModelType
+        private let viewModel: HomeViewModelType
         
         // MARK: - Properties
         fileprivate let interactor = MenuInteractor()
         
         // MARK: - Initializer
+        init(viewModel: HomeViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func loadView() {
-            view = RootView()
+            view = RootView(viewModel: viewModel)
         }
         
         override func viewDidLoad() {
