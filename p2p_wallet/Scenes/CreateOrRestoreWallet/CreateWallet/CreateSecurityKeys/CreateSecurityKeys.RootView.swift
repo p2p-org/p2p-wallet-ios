@@ -14,7 +14,7 @@ import Action
 extension CreateSecurityKeys {
     class RootView: ScrollableVStackRootView {
         // MARK: - Dependencies
-        @Injected private var viewModel: CreateSecurityKeysViewModelType
+        private let viewModel: CreateSecurityKeysViewModelType
         @Injected private var analyticsManager: AnalyticsManagerType
 
         // MARK: - Properties
@@ -36,6 +36,11 @@ extension CreateSecurityKeys {
         private let agreeTermsAndConditions = AgreeTermsAndConditionsView()
         
         // MARK: - Initializers
+        init(viewModel: CreateSecurityKeysViewModelType) {
+            self.viewModel = viewModel
+            super.init(frame: .zero)
+        }
+        
         override func commonInit() {
             super.commonInit()
 

@@ -16,11 +16,17 @@ extension CreateWallet {
         }
         
         // MARK: - Dependencies
-        @Injected private var viewModel: CreateWalletViewModelType
+        private let viewModel: CreateWalletViewModelType
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         var childNavigationController: UINavigationController!
+        
+        // MARK: - Initializer
+        init(viewModel: CreateWalletViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func viewDidLoad() {
@@ -50,10 +56,11 @@ extension CreateWallet {
             }
             switch scene {
             case .explanation:
-                let vc = ExplanationVC()
+                let vc = ExplanationVC(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
             case .createPhrases:
-                let vc = CreateSecurityKeys.ViewController()
+                let vm = CreateSecurityKeys.ViewModel(createWalletViewModel: viewModel)
+                let vc = CreateSecurityKeys.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)
             case .reserveName(let owner):
                 let viewModel = ReserveName.ViewModel(
@@ -64,7 +71,7 @@ extension CreateWallet {
                 let viewController = ReserveName.ViewController(viewModel: viewModel)
                 childNavigationController.pushViewController(viewController, animated: true)
             case .verifyPhrase(let phrase):
-                let vm = VerifySecurityKeys.ViewModel(keyPhrase: phrase)
+                let vm = VerifySecurityKeys.ViewModel(keyPhrase: phrase, createWalletViewModel: viewModel)
                 let vc = VerifySecurityKeys.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)
             case .dismiss:

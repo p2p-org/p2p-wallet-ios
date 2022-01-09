@@ -172,16 +172,6 @@ extension Resolver: ResolverRegistering {
             .implements(DeviceOwnerAuthenticationHandler.self)
             .scope(.shared)
         
-        // CreateWallet
-        register {CreateWallet.ViewModel()}
-            .implements(CreateWalletViewModelType.self)
-            .scope(.shared)
-        
-        // CreateSecurityKeys
-        register {CreateSecurityKeys.ViewModel()}
-            .implements(CreateSecurityKeysViewModelType.self)
-            .scope(.shared)
-        
         // RestoreWallet
         register {RestoreWallet.ViewModel()}
             .implements(RestoreWalletViewModelType.self)

@@ -22,7 +22,13 @@ extension CreateWallet {
         private let createWalletButton: WLStepButton = WLStepButton.main(image: .key, imageSize: CGSize(width: 16, height: 15), text: L10n.showYourSecurityKey)
         
         // MARK: - Dependencies
-        @Injected private var viewModel: CreateWalletViewModelType
+        private let viewModel: CreateWalletViewModelType
+        
+        // MARK: - Initializer
+        init(viewModel: CreateWalletViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {

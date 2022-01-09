@@ -79,7 +79,8 @@ extension CreateOrRestoreWallet {
             guard let scene = scene else {return}
             switch scene {
             case .createWallet:
-                let vc = CreateWallet.ViewController()
+                let vm = CreateWallet.ViewModel()
+                let vc = CreateWallet.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .restoreWallet:
                 let vc = RestoreWallet.ViewController()
