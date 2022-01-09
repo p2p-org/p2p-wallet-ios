@@ -92,7 +92,8 @@ extension RestoreWallet {
             
             switch scene {
             case .enterPhrases:
-                let vc = EnterSeed.ViewController(viewModel: Resolver.resolve())
+                let vm = EnterSeed.ViewModel()
+                let vc = EnterSeed.ViewController(viewModel: vm)
                 navigationController?.pushViewController(vc, animated: true)
             case .restoreFromICloud:
                 let vc = RestoreICloud.ViewController()
