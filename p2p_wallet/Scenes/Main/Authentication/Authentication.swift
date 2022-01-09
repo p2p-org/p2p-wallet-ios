@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-struct Authentication {
+enum Authentication {
     enum NavigatableScene {
         case resetPincodeWithASeedPhrase
     }

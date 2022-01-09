@@ -8,7 +8,7 @@
 import Foundation
 
 extension SendToken {
-    struct SelectNetwork {
+    enum SelectNetwork {
         
     }
 }
