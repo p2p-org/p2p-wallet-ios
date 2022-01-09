@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-struct EnterSeed {
+enum EnterSeed {
     enum NavigatableScene {
         case info
         case back
