@@ -10,7 +10,7 @@ import BECollectionView
 
 class TokenSettingsRootView: BEView {
     // MARK: - Dependencies
-    @Injected private var viewModel: TokenSettingsViewModel
+    private let viewModel: TokenSettingsViewModel
     
     // MARK: - Subviews
     lazy var collectionView: BEStaticSectionsCollectionView = {
@@ -31,6 +31,12 @@ class TokenSettingsRootView: BEView {
         collectionView.delegate = self
         return collectionView
     }()
+    
+    // MARK: - Initializer
+    init(viewModel: TokenSettingsViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
+    }
     
     // MARK: - Methods
     override func commonInit() {
