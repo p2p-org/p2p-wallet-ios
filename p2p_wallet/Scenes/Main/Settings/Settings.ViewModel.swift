@@ -55,7 +55,7 @@ protocol SettingsViewModelType {
     
     func showLogoutAlert()
     func copyUsernameToClipboard()
-    func shareUsername()
+    func share(image: UIImage)
     func logout()
 }
 
@@ -324,9 +324,8 @@ extension Settings.ViewModel: SettingsViewModelType {
         notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
     
-    func shareUsername() {
-        guard let username = storage.getName()?.withNameServiceDomain() else { return }
-        navigate(to: .share(item: username))
+    func share(image: UIImage) {
+        navigate(to: .share(item: image))
     }
     
     func logout() {
