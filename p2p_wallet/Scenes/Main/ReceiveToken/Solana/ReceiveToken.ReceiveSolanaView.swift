@@ -29,13 +29,14 @@ extension ReceiveToken {
                     username: viewModel.username,
                     pubKey: viewModel.pubkey,
                     token: viewModel.tokenWallet?.token
-                ) { [unowned self] _ in
-                    self.viewModel.copyAction()
-                } onShare: { image in
-                    self.viewModel.shareAction(image: image)
-                } onSave: { image in
-                    self.viewModel.saveAction(image: image)
-                }
+                )
+                    .onCopy { [unowned self] _ in
+                        self.viewModel.copyAction()
+                    }.onShare { image in
+                        self.viewModel.shareAction(image: image)
+                    }.onSave { image in
+                        self.viewModel.saveAction(image: image)
+                    }
                 
                 // Explore button
                 WLStepButton.main(image: .external, imageSize: .init(width: 14, height: 14), text: L10n.viewInExplorer("Solana"))
