@@ -74,7 +74,8 @@ extension WalletDetail {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .buy:
-                let vc = BuyRoot.ViewController()
+                let vm = BuyRoot.ViewModel()
+                let vc = BuyRoot.ViewController(viewModel: vm)
                 present(vc, animated: true, completion: nil)
             case .settings(let pubkey):
                 let vm = TokenSettingsViewModel(pubkey: pubkey)

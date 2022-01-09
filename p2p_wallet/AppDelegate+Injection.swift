@@ -208,11 +208,6 @@ extension Resolver: ResolverRegistering {
         register{BuyProviders.MoonpayFactory()}
             .implements(BuyProviderFactory.self)
             .scope(.application)
-        
-        // MARK: - BuyRoot
-        register { BuyRoot.ViewModel() }
-            .implements(BuyViewModelType.self)
-            .scope(.shared)
     }
 }
 

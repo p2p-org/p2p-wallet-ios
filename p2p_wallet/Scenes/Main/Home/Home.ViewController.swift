@@ -91,7 +91,8 @@ extension Home {
             guard let scene = scene else {return}
             switch scene {
             case .buyToken:
-                let vc = BuyRoot.ViewController()
+                let vm = BuyRoot.ViewModel()
+                let vc = BuyRoot.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .receiveToken:
                 if let pubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
