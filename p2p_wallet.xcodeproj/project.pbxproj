@@ -504,7 +504,6 @@
 		3B78CB502773067100FB3C4C /* NotificationsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsService.swift; sourceTree = "<group>"; };
 		3B78CB52277306BA00FB3C4C /* InAppNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppNotification.swift; sourceTree = "<group>"; };
 		3B78CB562773147F00FB3C4C /* ClipboardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardManager.swift; sourceTree = "<group>"; };
-		3B7DE7F527795CC100A92429 /* Resolver.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Resolver.md; sourceTree = "<group>"; };
 		3B87A1502762FCAA00F09883 /* SendToken.SelectNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.swift; sourceTree = "<group>"; };
 		3B87A1522762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.ViewModel.swift; sourceTree = "<group>"; };
 		3B87A1542762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.ViewController.swift; sourceTree = "<group>"; };
@@ -1677,7 +1676,6 @@
 			isa = PBXGroup;
 			children = (
 				BCA7D83327290A29007B070A /* BECollectionView.md */,
-				3B7DE7F527795CC100A92429 /* Resolver.md */,
 				BC4B9ED6272428A0005B9ECA /* Terms_of_service.txt */,
 				BCFEDBFD2727B3D7008AE4AD /* Privacy_policy.txt */,
 				BCEA06BD2542FD3E0006E4C3 /* Asset+Generated.swift */,
