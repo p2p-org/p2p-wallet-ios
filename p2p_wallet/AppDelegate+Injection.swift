@@ -185,11 +185,6 @@ extension Resolver: ResolverRegistering {
             .implements(DerivableAccountsListViewModelType.self)
             .scope(.shared)
         
-        // MARK: - Onboarding
-        register {Onboarding.ViewModel()}
-            .implements(OnboardingViewModelType.self)
-            .scope(.shared)
-        
         // MARK: - Authentication
         register {Authentication.ViewModel()}
             .implements(AuthenticationViewModelType.self)
