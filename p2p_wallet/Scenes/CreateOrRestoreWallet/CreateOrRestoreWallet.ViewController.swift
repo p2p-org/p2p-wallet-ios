@@ -83,7 +83,8 @@ extension CreateOrRestoreWallet {
                 let vc = CreateWallet.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .restoreWallet:
-                let vc = RestoreWallet.ViewController()
+                let vm = RestoreWallet.ViewModel()
+                let vc = RestoreWallet.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             }
         }

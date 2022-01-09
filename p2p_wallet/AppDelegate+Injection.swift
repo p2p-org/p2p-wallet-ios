@@ -182,12 +182,6 @@ extension Resolver: ResolverRegistering {
             .implements(OnboardingHandler.self)
             .scope(.application)
         
-        // RestoreWallet
-        register {RestoreWallet.ViewModel()}
-            .implements(RestoreWalletViewModelType.self)
-            .implements(AccountRestorationHandler.self)
-            .scope(.shared)
-        
         // MARK: - Main
         register {MainViewModel()}
             .implements(MainViewModelType.self)
