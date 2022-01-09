@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RestoreWallet {
+enum RestoreWallet {
     enum NavigatableScene {
         case enterPhrases
         case restoreFromICloud

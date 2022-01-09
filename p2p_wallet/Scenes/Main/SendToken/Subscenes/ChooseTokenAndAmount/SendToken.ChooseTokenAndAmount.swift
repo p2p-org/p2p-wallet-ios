@@ -9,7 +9,7 @@ import Foundation
 import RxCocoa
 
 extension SendToken {
-    struct ChooseTokenAndAmount {
+    enum ChooseTokenAndAmount {
         enum NavigatableScene {
             case chooseWallet
             case backToConfirmation // available only when viewModel.showAfterConfirmation = true

@@ -17,11 +17,7 @@ class MainViewController: BaseVC {
     var authenticateWhenAppears: Bool!
     
     // MARK: - Subviews
-    private lazy var blurEffectView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.dark)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        return blurEffectView
-    }()
+    private lazy var blurEffectView: UIView = LockView()
     private var localAuthVC: Authentication.ViewController?
     
     // MARK: - Initializer
