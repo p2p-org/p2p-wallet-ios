@@ -32,7 +32,7 @@ extension SendToken {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var addressFormatter: AddressFormatterType
-        @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository

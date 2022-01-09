@@ -11,7 +11,7 @@ import Action
 
 class MainViewController: BaseVC {
     // MARK: - Dependencies
-    @Injected private var viewModel: MainViewModelType
+    private let viewModel: MainViewModelType
     
     // MARK: - Properties
     var authenticateWhenAppears: Bool!
@@ -21,6 +21,11 @@ class MainViewController: BaseVC {
     private var localAuthVC: Authentication.ViewController?
     
     // MARK: - Initializer
+    init(viewModel: MainViewModelType) {
+        self.viewModel = viewModel
+        super.init()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if authenticateWhenAppears {

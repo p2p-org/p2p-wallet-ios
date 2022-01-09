@@ -18,7 +18,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
     private let viewModel: TokenSettingsViewModel
-    @Injected private var authenticationHandler: AuthenticationHandler
+    @Injected private var authenticationHandler: AuthenticationHandlerType
     weak var delegate: TokenSettingsViewControllerDelegate?
     
     // MARK: - Subviews

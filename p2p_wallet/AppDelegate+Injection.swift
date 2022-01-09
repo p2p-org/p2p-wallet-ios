@@ -182,11 +182,10 @@ extension Resolver: ResolverRegistering {
             .implements(OnboardingHandler.self)
             .scope(.application)
         
-        // MARK: - Main
-        register {MainViewModel()}
-            .implements(MainViewModelType.self)
-            .implements(AuthenticationHandler.self)
-            .scope(.shared)
+        // MARK: - AuthenticationHandler
+        register {AuthenticationHandler()}
+            .implements(AuthenticationHandlerType.self)
+            .scope(.session)
     }
 }
 
