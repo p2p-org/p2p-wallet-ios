@@ -161,10 +161,8 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
     
     func copyToClipboard() {
-        renVMService.addressDriver.drive(onNext: { [weak self] value in
-            guard let value = value else { return }
-            self?.clipboardManager.copyToClipboard(value)
-        })
+        guard let address = renVMService.getCurrentAddress() else {return}
+        clipboardManager.copyToClipboard(address)
         analyticsManager.log(event: .receiveAddressCopy)
     }
     
