@@ -63,7 +63,8 @@ extension Authentication {
             guard let scene = scene else {return}
             switch scene {
             case .resetPincodeWithASeedPhrase:
-                let vc = ResetPinCodeWithSeedPhrases.ViewController()
+                let vm = ResetPinCodeWithSeedPhrases.ViewModel()
+                let vc = ResetPinCodeWithSeedPhrases.ViewController(viewModel: vm)
                 vc.completion = {[weak self] in
                     self?.viewModel.setBlockedTime(nil)
                     self?.authenticationDidComplete()

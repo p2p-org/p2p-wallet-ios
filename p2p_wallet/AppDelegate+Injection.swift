@@ -185,11 +185,6 @@ extension Resolver: ResolverRegistering {
             .implements(DerivableAccountsListViewModelType.self)
             .scope(.shared)
         
-        // MARK: - ResetPinCodeWithSeedPhrases
-        register {ResetPinCodeWithSeedPhrases.ViewModel()}
-            .implements(ResetPinCodeWithSeedPhrasesViewModelType.self)
-            .scope(.shared)
-        
         // MARK: - Main
         register {MainViewModel()}
             .implements(MainViewModelType.self)
