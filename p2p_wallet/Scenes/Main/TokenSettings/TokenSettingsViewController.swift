@@ -50,7 +50,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
         separator.autoPinEdge(toSuperviewEdge: .leading)
         separator.autoPinEdge(toSuperviewEdge: .trailing)
         
-        let rootView = TokenSettingsRootView()
+        let rootView = TokenSettingsRootView(viewModel: viewModel)
         containerView.addSubview(rootView)
         rootView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         rootView.autoPinEdge(.top, to: .bottom, of: separator)
