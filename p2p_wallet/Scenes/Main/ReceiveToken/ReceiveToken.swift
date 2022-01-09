@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct ReceiveToken {
+enum ReceiveToken {
     enum NavigatableScene {
         case showInExplorer(address: String)
         case showBTCExplorer(address: String)
