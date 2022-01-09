@@ -10,13 +10,14 @@ import SwiftUI
 
 class WelcomeViewController: BaseVC {
     // MARK: - Dependencies
-    private let viewModel: RootViewModelType = Resolver.resolve()
+    private let viewModel: RootViewModelType
     private let name: String?
     private let isReturned: Bool
     
-    init(isReturned: Bool, name: String?) {
+    init(isReturned: Bool, name: String?, viewModel: RootViewModelType) {
         self.isReturned = isReturned
         self.name = name
+        self.viewModel = viewModel
         super.init()
     }
     

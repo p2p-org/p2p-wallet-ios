@@ -13,7 +13,13 @@ extension Root {
         private var statusBarStyle: UIStatusBarStyle = .default
         
         // MARK: - Dependencies
-        private let viewModel: RootViewModelType = Resolver.resolve()
+        private let viewModel: RootViewModelType
+        
+        // MARK: - Initializer
+        init(viewModel: RootViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {
@@ -54,7 +60,7 @@ extension Root {
                 let vc = Onboarding.ViewController(viewModel: vm)
                 transition(to: vc)
             case .onboardingDone(let isRestoration, let name):
-                let vc = WelcomeViewController(isReturned: isRestoration, name: name)
+                let vc = WelcomeViewController(isReturned: isRestoration, name: name, viewModel: viewModel)
                 transition(to: vc)
             case .main(let showAuthenticationWhenAppears):
                 // MainViewController

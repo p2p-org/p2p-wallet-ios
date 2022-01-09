@@ -171,16 +171,16 @@ extension Resolver: ResolverRegistering {
             .implements(BuyProviderFactory.self)
             .scope(.application)
         
-        // MARK: - Root
-        register {Root.ViewModel()}
-            .implements(RootViewModelType.self)
+        // MARK: - AppEventHandler
+        register {AppEventHandler()}
+            .implements(AppEventHandlerType.self)
+            .implements(DeviceOwnerAuthenticationHandler.self)
             .implements(ChangeNetworkResponder.self)
             .implements(ChangeLanguageResponder.self)
             .implements(LogoutResponder.self)
             .implements(CreateOrRestoreWalletHandler.self)
             .implements(OnboardingHandler.self)
-            .implements(DeviceOwnerAuthenticationHandler.self)
-            .scope(.shared)
+            .scope(.application)
         
         // RestoreWallet
         register {RestoreWallet.ViewModel()}
