@@ -32,10 +32,11 @@ extension SolanaBuyToken {
     class SceneModel: SolanaBuyTokenSceneModel {
         private let navigationSubject = PublishSubject<NavigatableScene>()
         @Injected private var moonpayService: MoonpayService
-        @Injected private var rootViewModel: BuyViewModelType
+        private let rootViewModel: BuyViewModelType
         let disposeBag = DisposeBag()
         
-        init() {
+        init(buyViewModel: BuyViewModelType) {
+            self.rootViewModel = buyViewModel
             moonpayService.getPrice(for: "eth", as: .usd)
                 .catch { error in
                     print(error)

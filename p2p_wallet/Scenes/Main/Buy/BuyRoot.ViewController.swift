@@ -14,16 +14,22 @@ import WebKit
 extension BuyRoot {
     class ViewController: BaseVC {
         // MARK: - Dependencies
-        @Injected private var viewModel: BuyViewModelType
-        let navigation = UINavigationController(
+        private let viewModel: BuyViewModelType
+        lazy var navigation = UINavigationController(
             rootViewController: SolanaBuyToken.Scene(
-                viewModel: SolanaBuyToken.SceneModel()
+                viewModel: SolanaBuyToken.SceneModel(buyViewModel: viewModel)
             )
         )
         
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         
         // MARK: - Properties
+        
+        // MARK: - Initializer
+        init(viewModel: BuyViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {
