@@ -15,7 +15,7 @@ extension CreateOrRestoreWallet {
         }
         
         // MARK: - Dependencies
-        @Injected private var viewModel: CreateOrRestoreWalletViewModelType
+        private let viewModel: CreateOrRestoreWalletViewModelType
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Subviews
@@ -28,6 +28,12 @@ extension CreateOrRestoreWallet {
             text: L10n.iVeAlreadyHadAWallet.uppercaseFirst
         )
             .onTap(self, action: #selector(navigateToRestoreWalletScene))
+        
+        // MARK: - Initializer
+        init(viewModel: CreateOrRestoreWalletViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {

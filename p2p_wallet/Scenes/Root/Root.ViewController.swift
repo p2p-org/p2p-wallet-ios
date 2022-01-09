@@ -45,7 +45,8 @@ extension Root {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .createOrRestoreWallet:
-                let vc = CreateOrRestoreWallet.ViewController()
+                let vm = CreateOrRestoreWallet.ViewModel()
+                let vc = CreateOrRestoreWallet.ViewController(viewModel: vm)
                 let nc = UINavigationController(rootViewController: vc)
                 transition(to: nc)
             case .onboarding:
