@@ -12,7 +12,7 @@ import RxCocoa
 extension OrcaSwapV2 {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected var authenticationHandler: AuthenticationHandler
+        @Injected var authenticationHandler: AuthenticationHandlerType
         @Injected var analyticsManager: AnalyticsManagerType
         @Injected var feeService: FeeServiceType
         @Injected var orcaSwap: OrcaSwapType

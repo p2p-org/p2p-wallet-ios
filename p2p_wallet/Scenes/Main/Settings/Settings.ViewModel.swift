@@ -66,7 +66,7 @@ extension Settings {
         @Injected private var analyticsManager: AnalyticsManagerType
         private var reserveNameHandler: ReserveNameHandler!
         @Injected private var logoutResponder: LogoutResponder
-        @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
         @Injected private var changeLanguageResponder: ChangeLanguageResponder
         @Injected private var localizationManager: LocalizationManagerType
