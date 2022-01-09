@@ -50,7 +50,8 @@ extension Root {
                 let nc = UINavigationController(rootViewController: vc)
                 transition(to: nc)
             case .onboarding:
-                let vc = Onboarding.ViewController()
+                let vm = Onboarding.ViewModel()
+                let vc = Onboarding.ViewController(viewModel: vm)
                 transition(to: vc)
             case .onboardingDone(let isRestoration, let name):
                 let vc = WelcomeViewController(isReturned: isRestoration, name: name)
