@@ -68,6 +68,12 @@ extension UIView {
     // (like on `UIImageView`)
     func asImage() -> UIImage {
         let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        if superview != nil {
+            return renderer.image { ctx in
+                drawHierarchy(in: bounds, afterScreenUpdates: true)
+            }
+        }
+        
         return renderer.image { rendererContext in
             layer.render(in: rendererContext.cgContext)
         }
