@@ -679,7 +679,17 @@
 "Confirm swapping %@ → %@" = "Confirm swapping %@ → %@";
 "Spend" = "Spend";
 "Swap %@ → %@" = "Swap %@ → %@";
+"Custom" = "Custom";
+"Custom slippage" = "Custom slippage";
+"A %@ is a difference between the expected price and the actual price at which a trade is executed" = "A %@ is a difference between the expected price and the actual price at which a trade is executed";
+"Slippage can occur at any time, but it is most prevalent during periods of %@" = "Slippage can occur at any time, but it is most prevalent during periods of %@";
+"Transactions that exceed 20% slippage tolerance may be %@" = "Transactions that exceed 20%% slippage tolerance may be %@";
+"Slippage tolerance %@" = "Slippage tolerance %@";
+"cannot exceed 50%" = "cannot exceed 50%%";
+"frontrun" = "frontrun";
+"higher volatility" = "higher volatility";
 "This address accepts only %@. You may lose assets by sending another coin." = "This address accepts **only %@**. You may lose assets by sending another coin.";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Passcode not set. So we can’t verify you as the device’s owner.";
 "Statuses received" = "Statuses received";
 "Statuses received (%@)" = "Statuses received (%@)";
+"The last one: " = "The last one:";

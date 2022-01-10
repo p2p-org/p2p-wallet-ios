@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-struct Settings {
+enum Settings {
     enum NavigatableScene {
         case username
         case reserveUsername(owner: String, handler: ReserveNameHandler)

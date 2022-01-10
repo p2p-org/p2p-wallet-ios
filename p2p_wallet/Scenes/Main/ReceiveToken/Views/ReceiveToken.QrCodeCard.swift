@@ -8,50 +8,42 @@ import RxCocoa
 
 extension ReceiveToken {
     class QrCodeCard: BECompositionView {
-        let username: String?
+        @Injected var qrImageRender: QrCodeImageRender
+        let disposeBag = DisposeBag()
+        
+        var username: String? {
+            didSet {
+                guard let username = username else { return }
+                updateUsername(username)
+            }
+        }
         var pubKey: String? {
             didSet {
                 updatePubKey(pubKey)
                 qrView.with(string: pubKey, token: token)
             }
         }
+        
         var token: SolanaSDK.Token? {
             didSet { qrView.with(string: pubKey, token: token) }
         }
         
-        let onCopy: BECallback<String?>?
-        let onShare: BECallback<UIImage>?
-        let onSave: BECallback<UIImage>?
+        private var onCopy: BECallback<String?>?
+        private var onShare: BECallback<UIImage>?
+        private var onSave: BECallback<UIImage>?
         
-        fileprivate var pubKeyView: UILabel?
-        fileprivate var qrView: QrCodeView!
-        
-        fileprivate func updatePubKey(_ pubKey: String?) {
-            guard let pubKey = pubKey else {
-                pubKeyView?.text = ""
-                return
-            }
-            
-            let address = NSMutableAttributedString(string: pubKey)
-            address.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: NSRange(location: 0, length: 4))
-            address.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: NSRange(location: address.length - 4, length: 4))
-            pubKeyView?.attributedText = address
-        }
+        private var pubKeyView: UILabel?
+        private var usernameLabel: UILabel!
+        private var qrView: QrCodeView!
         
         init(
             username: String? = nil,
             pubKey: String? = nil,
-            token: SolanaSDK.Token? = nil,
-            onCopy: BECallback<String?>? = nil,
-            onShare: BECallback<UIImage>? = nil,
-            onSave: BECallback<UIImage>? = nil
+            token: SolanaSDK.Token? = nil
         ) {
             self.username = username
             self.pubKey = pubKey
             self.token = token
-            self.onCopy = onCopy
-            self.onShare = onShare
-            self.onSave = onSave
             
             super.init()
         }
@@ -62,18 +54,12 @@ extension ReceiveToken {
                 // QR Code
                 UIStackView(axis: .vertical, alignment: .fill) {
                     // Username
-                    if username != nil {
-                        UILabel(textSize: 20, weight: .semibold, numberOfLines: 3, textAlignment: .center)
-                            .setup { label in
-                                guard let label = label as? UILabel else { return }
-                                guard let username = username else { return }
-                                let text = NSMutableAttributedString(string: username.withNameServiceDomain())
-                                text.addAttribute(.foregroundColor, value: UIColor.gray, range: NSRange(location: username.count, length: text.length - username.count))
-                                label.attributedText = text
-                            }.padding(.init(x: 50, y: 26))
-                    } else {
-                        UIView().frame(height: 33)
-                    }
+                    UILabel(textSize: 20, weight: .semibold, numberOfLines: 3, textAlignment: .center)
+                        .setupWithType(UILabel.self) { label in
+                            usernameLabel = label
+                            guard let username = username else { return }
+                            updateUsername(username)
+                        }.padding(.init(x: 50, y: 26))
                     
                     // QR code
                     QrCodeView(size: 190, coinLogoSize: 32)
@@ -98,19 +84,67 @@ extension ReceiveToken {
                     UIButton.text(text: L10n.copy, image: .copyIcon, tintColor: .h5887ff)
                         .onTap { [unowned self] in self.onCopy?(pubKey) }
                     UIButton.text(text: L10n.share, image: .share2, tintColor: .h5887ff)
-                        .onTap { [unowned self] in self.onShare?(qrView.asImage()) }
+                        .onTap { [unowned self] in
+                            qrImageRender.render(username: username, address: pubKey, token: token).subscribe(onSuccess: { image in
+                                self.onShare?(image)
+                            })
+                                .disposed(by: disposeBag)
+                        }
                     UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
-                        .onTap { [unowned self] in self.onSave?(qrView.asImage()) }
+                        .onTap { [unowned self] in
+                            qrImageRender.render(username: username, address: pubKey, token: token).subscribe(onSuccess: { image in
+                                self.onSave?(image)
+                            })
+                                .disposed(by: disposeBag)
+                        }
                 }.padding(.init(x: 0, y: 4))
                 
             }.border(width: 1, color: .f2f2f7)
                 .box(cornerRadius: 12)
                 .shadow(color: .black, alpha: 0.05, y: 1, blur: 8)
         }
+        
+        private func updateUsername(_ username: String) {
+            let text = NSMutableAttributedString(string: username.withNameServiceDomain())
+            text.addAttribute(.foregroundColor, value: UIColor.gray, range: NSRange(location: username.count, length: text.length - username.count))
+            usernameLabel.attributedText = text
+            usernameLabel.isHidden = username.isEmpty
+        }
+        
+        private func updatePubKey(_ pubKey: String?) {
+            guard let pubKey = pubKey else {
+                pubKeyView?.text = ""
+                return
+            }
+            
+            let address = NSMutableAttributedString(string: pubKey)
+            address.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: NSRange(location: 0, length: 4))
+            address.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: NSRange(location: address.length - 4, length: 4))
+            pubKeyView?.attributedText = address
+        }
+        
+        func onCopy(callback: @escaping BECallback<String?>) -> Self {
+            onCopy = callback
+            return self
+        }
+        
+        func onShare(callback: @escaping BECallback<UIImage>) -> Self {
+            onShare = callback
+            return self
+        }
+        
+        func onSave(callback: @escaping BECallback<UIImage>) -> Self {
+            onSave = callback
+            return self
+        }
     }
 }
 
 extension Reactive where Base: ReceiveToken.QrCodeCard {
+    var username: Binder<String?> {
+        Binder(base) { view, username in view.username = username }
+    }
+    
     var pubKey: Binder<String?> {
         Binder(base) { view, pubKey in view.pubKey = pubKey }
     }

@@ -30,15 +30,16 @@ extension ReceiveToken {
             UIStackView(axis: .vertical, spacing: 18, alignment: .fill) {
                 
                 // Qr code
-                QrCodeCard(token: .renBTC) { [unowned self] _ in
-                    self.viewModel.copyToClipboard()
-                } onShare: { [unowned self] _ in
-                    self.viewModel.share()
-                } onSave: { image in
-                    self.viewModel.saveAction(image: image)
-                }.setupWithType(QrCodeCard.self) { card in
-                    viewModel.addressDriver.drive(card.rx.pubKey).disposed(by: disposeBag)
-                }
+                QrCodeCard(token: .renBTC)
+                    .onCopy { [unowned self] _ in
+                        self.viewModel.copyToClipboard()
+                    }.onShare { [unowned self] _ in
+                        self.viewModel.share()
+                    }.onSave { image in
+                        self.viewModel.saveAction(image: image)
+                    }.setupWithType(QrCodeCard.self) { card in
+                        viewModel.addressDriver.drive(card.rx.pubKey).disposed(by: disposeBag)
+                    }
                 
                 // Status
                 WLCard {
@@ -47,10 +48,37 @@ extension ReceiveToken {
                             .frame(width: 44, height: 44)
                         UIStackView(axis: .vertical, alignment: .fill) {
                             UILabel(text: L10n.statusesReceived, textSize: 17)
-                            UILabel(text: "The last one: 2m ago", textSize: 13, textColor: .secondaryLabel)
+                            UILabel(text: "\(L10n.theLastOne) 0m ago", textSize: 13, textColor: .secondaryLabel)
+                                .setupWithType(UILabel.self) { view in
+                                    viewModel.processingTxsDriver
+                                        .map { $0.count == 0 }
+                                        .drive(view.rx.isHidden)
+                                        .disposed(by: disposeBag)
+                                    viewModel.processingTxsDriver
+                                        .map { trx in
+                                            guard let lastTrx = trx.first,
+                                                  let receiveAt = lastTrx.receivedAt else { return "" }
+                                            
+                                            // Time formatter
+                                            let formatter = RelativeDateTimeFormatter()
+                                            formatter.unitsStyle = .short
+                                            let time = formatter.localizedString(for: Date(), relativeTo: receiveAt)
+                                            
+                                            return "\(L10n.theLastOne) \(time)"
+                                        }
+                                        .drive(view.rx.text)
+                                        .disposed(by: disposeBag)
+                                }
                         }
                         UIView.spacer
-                        UILabel(text: "0").padding(.init(only: .right, inset: 8))
+                        UILabel(text: "0")
+                            .setupWithType(UILabel.self) { view in
+                                viewModel.processingTxsDriver
+                                    .map { trx in "\(trx.count)" }
+                                    .drive(view.rx.text)
+                                    .disposed(by: disposeBag)
+                            }
+                            .padding(.init(only: .right, inset: 8))
                         UIView.defaultNextArrow()
                     }.padding(.init(x: 18, y: 14))
                 }.onTap { [unowned self] in

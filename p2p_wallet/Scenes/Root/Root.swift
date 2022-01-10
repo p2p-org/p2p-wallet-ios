@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Root {
+enum Root {
     enum NavigatableScene: Equatable {
         case createOrRestoreWallet
         case onboarding

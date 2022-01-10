@@ -29,6 +29,9 @@ extension OrcaSwapV2 {
 
         init(feesDriver: Driver<Loadable<[PayingFee]>>) {
             self.feesDriver = feesDriver
+            feesDriver.drive {
+                print($0)
+            }.disposed(by: disposeBag)
             super.init(frame: .zero)
 
             layout()

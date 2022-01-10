@@ -72,6 +72,14 @@ extension UIView {
             layer.render(in: rendererContext.cgContext)
         }
     }
+    
+    func asImageInBackground() -> UIImage {
+        layoutIfNeeded()
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
+        }
+    }
 }
 
 extension UIView {
