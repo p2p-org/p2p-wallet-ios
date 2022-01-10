@@ -26,7 +26,7 @@ extension DerivableAccounts {
         }()
         
         private lazy var headerView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
-            WLLargeButton {
+            WLCard {
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
                     UIStackView(axis: .vertical, spacing: 8, alignment: .leading) {
                         UILabel(text: L10n.derivationPath, textSize: 17, weight: .semibold)

@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-struct RenBTCReceivingStatuses {
+enum RenBTCReceivingStatuses {
     enum NavigatableScene {
         case detail(txid: String)
     }

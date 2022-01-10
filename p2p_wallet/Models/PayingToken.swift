@@ -5,8 +5,6 @@
 //  Created by Chung Tran on 13/08/2021.
 //
 
-import Foundation
-
 enum PayingToken: String, CaseIterable {
     case nativeSOL
     case transactionToken

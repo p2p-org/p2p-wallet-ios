@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct WalletDetail {
+enum WalletDetail {
     enum NavigatableScene {
         case settings(walletPubkey: String)
         case buy(tokens: BuyProviders.Crypto)

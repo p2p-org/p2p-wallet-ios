@@ -113,20 +113,23 @@ extension SerumSwapV1 {
                 )
                 present(vc, animated: true, completion: nil)
             case .settings:
-                let vc = SettingsViewController(viewModel: viewModel)
-                let nc = SettingsNavigationController(rootViewController: vc)
-                nc.modalPresentationStyle = .custom
-                present(nc, interactiveDismissalType: .standard)
+                assertionFailure("not implemented")
+//                let vc = SettingsViewController(viewModel: viewModel)
+//                let nc = SettingsNavigationController(rootViewController: vc)
+//                nc.modalPresentationStyle = .custom
+//                present(nc, interactiveDismissalType: .standard)
             case .chooseSlippage:
-                let vc = SlippageSettingsViewController()
-                vc.completion = {[weak self] slippage in
-                    Defaults.slippage = slippage / 100
-                    self?.viewModel.changeSlippage(to: Defaults.slippage)
-                }
-                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+                assertionFailure("not implemented")
+//                let vc = SlippageSettingsViewController()
+//                vc.completion = {[weak self] slippage in
+//                    Defaults.slippage = slippage / 100
+//                    self?.viewModel.changeSlippage(to: Defaults.slippage)
+//                }
+//                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .swapFees:
-                let vc = SwapFeesViewController(viewModel: viewModel)
-                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
+                assertionFailure("not implemented")
+//                let vc = SwapFeesViewController(viewModel: viewModel)
+//                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .processTransaction(let request, let transactionType):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
                 self.present(vc, animated: true, completion: nil)
