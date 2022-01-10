@@ -32,7 +32,7 @@ extension RenBTCReceivingStatuses {
                             viewModel.currentTx
                                 .map { tx in
                                     guard let value = tx?.value else { return L10n.receivingStatus }
-                                    return L10n.receivingRenBTC(tx?.value)
+                                    return L10n.receivingRenBTC(value.toString(maximumFractionDigits: 10))
                                 }
                                 .drive(view.titleLabel.rx.text)
                                 .disposed(by: disposeBag)
