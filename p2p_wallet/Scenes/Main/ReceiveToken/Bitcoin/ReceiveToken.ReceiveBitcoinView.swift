@@ -57,12 +57,12 @@ extension ReceiveToken {
                                     viewModel.processingTxsDriver
                                         .map { trx in
                                             guard let lastTrx = trx.first,
-                                                  let receiveAt = lastTrx.receivedAt else { return "" }
+                                                  let receiveAt = lastTrx.submittedAt else { return "" }
                                             
                                             // Time formatter
                                             let formatter = RelativeDateTimeFormatter()
                                             formatter.unitsStyle = .short
-                                            let time = formatter.localizedString(for: Date(), relativeTo: receiveAt)
+                                            let time = formatter.localizedString(for: receiveAt, relativeTo: Date())
                                             
                                             return "\(L10n.theLastOne) \(time)"
                                         }

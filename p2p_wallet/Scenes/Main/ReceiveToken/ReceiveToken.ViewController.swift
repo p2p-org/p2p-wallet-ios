@@ -21,7 +21,7 @@ extension ReceiveToken {
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
                 // Navbar
-                NewWLNavigationBar(title: L10n.receive, separatorEnable: false)
+                NewWLNavigationBar(initialTitle: L10n.receive, separatorEnable: false)
                     .onBack { [unowned self] in self.back() }
                 
                 BEScrollView(contentInsets: .init(x: .defaultPadding, y: .defaultPadding), spacing: 16) {
