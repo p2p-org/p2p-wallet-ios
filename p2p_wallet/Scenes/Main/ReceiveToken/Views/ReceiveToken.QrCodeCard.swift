@@ -88,12 +88,14 @@ extension ReceiveToken {
                             qrImageRender.render(username: username, address: pubKey, token: token).subscribe(onSuccess: { image in
                                 self.onShare?(image)
                             })
+                                .disposed(by: disposeBag)
                         }
                     UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
                         .onTap { [unowned self] in
                             qrImageRender.render(username: username, address: pubKey, token: token).subscribe(onSuccess: { image in
                                 self.onSave?(image)
                             })
+                                .disposed(by: disposeBag)
                         }
                 }.padding(.init(x: 0, y: 4))
                 
