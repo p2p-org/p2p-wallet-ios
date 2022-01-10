@@ -8,13 +8,15 @@ import RxCocoa
 
 extension ReceiveToken {
     class QrCodeCard: BECompositionView {
+        @Injected var qrImageRender: QrCodeImageRender
+        let disposeBag = DisposeBag()
+        
         var username: String? {
             didSet {
                 guard let username = username else { return }
                 updateUsername(username)
             }
         }
-        
         var pubKey: String? {
             didSet {
                 updatePubKey(pubKey)
@@ -82,9 +84,17 @@ extension ReceiveToken {
                     UIButton.text(text: L10n.copy, image: .copyIcon, tintColor: .h5887ff)
                         .onTap { [unowned self] in self.onCopy?(pubKey) }
                     UIButton.text(text: L10n.share, image: .share2, tintColor: .h5887ff)
-                        .onTap { [unowned self] in self.onShare?(qrView.asImage()) }
+                        .onTap { [unowned self] in
+                            qrImageRender.render(username: username, address: pubKey, token: token).subscribe(onSuccess: { image in
+                                self.onShare?(image)
+                            })
+                        }
                     UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
-                        .onTap { [unowned self] in self.onSave?(qrView.asImage()) }
+                        .onTap { [unowned self] in
+                            qrImageRender.render(username: username, address: pubKey, token: token).subscribe(onSuccess: { image in
+                                self.onSave?(image)
+                            })
+                        }
                 }.padding(.init(x: 0, y: 4))
                 
             }.border(width: 1, color: .f2f2f7)
