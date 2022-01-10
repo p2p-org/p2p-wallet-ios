@@ -677,5 +677,16 @@
 "Confirm swapping %@ → %@" = "Xác nhận hoán đổi %@ → %@";
 "Spend" = "Dùng";
 "Swap %@ → %@" = "Hoán đổi %@ → %@";
+"Custom" = "Tuỳ chỉnh";
+"Custom slippage" = "Slippage tùy chỉnh";
+"A %@ is a difference between the expected price and the actual price at which a trade is executed" = "%@ là sự khác biệt giữa giá dự kiến ​​và giá thực tế mà giao dịch được thực hiện";
+"Slippage can occur at any time, but it is most prevalent during periods of %@" = "Sự trượt giá có thể xảy ra bất cứ lúc nào, nhưng nó phổ biến nhất trong khoảng thời gian của %@";
+"Transactions that exceed 20% slippage tolerance may be %@" = "Các giao dịch vượt quá khả năng chịu trượt 20%% có thể là %@";
+"Slippage tolerance %@" = "Khả năng chịu trượt %@";
+"cannot exceed 50%" = "không thể vượt quá 50%%";
+"frontrun" = "frontrun";
+"higher volatility" = "biến động cao hơn";
 "This address accepts only %@. You may lose assets by sending another coin." = "Địa chỉ này chỉ chấp nhận %@.  Bạn có thể mất tài sản khi gửi một đồng xu khác.";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Mật mã chưa được đặt. Vì vậy, chúng tôi không thể xác minh bạn là chủ sở hữu của thiết bị.";
+"Statuses received" = "Các trạng thái đã nhận";
+"The last one: " = "Cái cuối cùng:";

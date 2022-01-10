@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class WLNavigationBar: BEView {
     lazy var stackView = UIStackView(axis: .horizontal, alignment: .center, distribution: .equalCentering, arrangedSubviews: [
@@ -77,25 +78,31 @@ class NewWLNavigationBar: BECompositionView {
     }
     
     override func build() -> UIView {
-        UIStackView(axis: .vertical, alignment: .fill) {
-            UIStackView(axis: .horizontal, alignment: .center, distribution: .equalCentering) {
-                // Back button
-                UIImageView(width: 14, height: 24, image: UIImage(systemName: "chevron.left"), tintColor: .h5887ff)
-                    .padding(.init(x: 6, y: 4))
-                    .setup({ view in
-                        self.backButton = view
-                        self.backButton.isUserInteractionEnabled = true
-                    })
-                
-                // Title
-                UILabel(text: initialTitle, textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
-                    .setup({ view in self.title = view as! UILabel })
-                
-                // Actions
-                actions
-            }.padding(.init(x: 12, y: 8))
-            if separatorEnable { UIView.defaultSeparator() }
-        }.frame(height: 50)
+        BESafeArea {
+            UIStackView(axis: .vertical, alignment: .fill) {
+                UIStackView(axis: .horizontal, alignment: .fill, distribution: .equalCentering) {
+                    // Back button
+                    UIImageView(width: 14, height: 24, image: UIImage(systemName: "chevron.left"), tintColor: .h5887ff)
+                        .padding(.init(x: 6, y: 4))
+                        .setup({ view in
+                            self.backButton = view
+                            self.backButton.isUserInteractionEnabled = true
+                        })
+                    
+                    // Title
+                    UILabel(text: initialTitle, textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
+                        .setup { view in
+                            if let title = view as? UILabel {
+                                self.title = title
+                            }
+                        }
+                    
+                    // Actions
+                    actions
+                }.padding(.init(x: 12, y: 8))
+                if separatorEnable { UIView.defaultSeparator() }
+            }.frame(height: 50)
+        }
     }
     
     override func layout() {

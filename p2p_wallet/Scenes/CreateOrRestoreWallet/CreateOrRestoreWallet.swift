@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CreateOrRestoreWallet {
+enum CreateOrRestoreWallet {
     enum NavigatableScene {
         case createWallet
         case restoreWallet
