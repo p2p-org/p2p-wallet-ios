@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-struct SendToken {
+enum SendToken {
     enum NavigatableScene {
         case back
         case chooseTokenAndAmount(showAfterConfirmation: Bool)

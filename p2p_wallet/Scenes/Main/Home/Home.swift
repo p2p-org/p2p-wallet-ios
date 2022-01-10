@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-struct Home {
+enum Home {
     enum NavigatableScene {
         case buyToken
         case receiveToken

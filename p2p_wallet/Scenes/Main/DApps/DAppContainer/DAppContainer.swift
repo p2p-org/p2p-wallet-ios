@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-struct DAppContainer {
+enum DAppContainer {
     enum NavigatableScene {
 //        case detail
     }

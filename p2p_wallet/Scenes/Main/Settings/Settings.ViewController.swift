@@ -45,7 +45,7 @@ extension Settings {
             guard let scene = scene else {return}
             switch scene {
             case .username:
-                let vc = UsernameViewController(viewModel: viewModel)
+                let vc = NewUsernameViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .reserveUsername(owner: let owner, handler: let handler):
                 let vm = ReserveName.ViewModel(

@@ -8,9 +8,7 @@
 import Foundation
 import RxCocoa
 
-protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewModelType,
-    AnyObject
-{
+protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {get}
     var loadingStateDriver: Driver<LoadableState> {get}
     
@@ -25,6 +23,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
     
 //    var feesContentDriver: Driver<Loadable<OrcaSwapV2.DetailedFeesContent>> { get }
     var feesDriver: Driver<Loadable<[PayingFee]>> {get}
+    var payingTokenSubject: BehaviorRelay<PayingToken> { get }
     var feePayingTokenDriver: Driver<String?> { get }
     var payingTokenDriver: Driver<PayingToken> {get}
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}
@@ -32,6 +31,8 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
     var isShowingDetailsDriver: Driver<Bool> { get }
     var isShowingShowDetailsButtonDriver: Driver<Bool> { get }
     var showHideDetailsButtonTapSubject: PublishRelay<Void> { get }
+    var slippageSubject: BehaviorRelay<Double> { get }
+    var transactionTokensName: String? { get }
 
     func reload()
     func log(_ event: AnalyticsEvent)
@@ -46,6 +47,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, SwapTokenSettingsViewM
     func changeSlippage(to slippage: Double)
     func changePayingToken(to payingToken: PayingToken)
     func choosePayFee()
+    func openSettings()
     
     func authenticateAndSwap()
 }
