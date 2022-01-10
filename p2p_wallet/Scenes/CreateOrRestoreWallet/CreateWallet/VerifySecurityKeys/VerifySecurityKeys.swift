@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-struct VerifySecurityKeys {
+enum VerifySecurityKeys {
     enum NavigatableScene {
         case onMistake
     }

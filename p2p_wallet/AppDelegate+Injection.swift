@@ -157,6 +157,9 @@ extension Resolver: ResolverRegistering {
             .implements(BuyProviderFactory.self)
             .scope(.application)
         
+        register{ReceiveToken.QrCodeImageRenderImpl()}
+            .implements(QrCodeImageRender.self)
+            .scope(.application)
     }
 }
 
