@@ -186,6 +186,10 @@ extension Resolver: ResolverRegistering {
         register {AuthenticationHandler()}
             .implements(AuthenticationHandlerType.self)
             .scope(.session)
+        
+        register{ReceiveToken.QrCodeImageRenderImpl()}
+            .implements(QrCodeImageRender.self)
+            .scope(.application)
     }
 }
 

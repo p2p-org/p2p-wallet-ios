@@ -81,7 +81,7 @@ extension ReceiveToken {
                         }
                         
                         // Description
-                        UIView.greyBannerView(alignment: .fill) {
+                        UIView.greyBannerView(spacing: 12, alignment: .fill) {
                             UILabel(text: "Solana", textSize: 17, weight: .semibold)
                             UILabel(
                                 text: L10n
@@ -130,7 +130,7 @@ extension ReceiveToken {
         override func build() -> UIView {
             UIStackView(axis: .horizontal, alignment: .top) {
                 UIImageView(width: 44, height: 44, image: icon)
-                UIStackView(axis: .vertical, alignment: .leading) {
+                UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
                     UILabel(text: L10n.network(networkName).onlyUppercaseFirst(), textSize: 17, weight: .semibold)
                     UILabel(
                         textColor: .secondaryLabel,
