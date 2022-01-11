@@ -28,7 +28,7 @@ extension ReceiveToken {
             UILabel(text: nil, textSize: 15, numberOfLines: 0)
                 .withAttributedText(
                     text,
-                    lineSpacing: 8
+                    lineSpacing: 0
                 ).withTag(1)
         }
     }
