@@ -139,7 +139,7 @@ PODS:
     - RxSwift (= 6.2.0)
   - RxSwift (6.2.0)
   - secp256k1.swift (0.1.4)
-  - SolanaSwift (1.0.0):
+  - SolanaSwift (1.1.0):
     - BufferLayoutSwift (~> 0.9.0)
     - CryptoSwift (~> 1.4.1)
     - RxAlamofire (~> 6.1.1)
@@ -297,7 +297,7 @@ SPEC CHECKSUMS:
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
-  SolanaSwift: cee21155c8aafe91d9e533fe485a69e998fa803d
+  SolanaSwift: 0881b7d7cd30634354417b40e5c39a44bdabc1f8
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SVGKit: 3c8468aab0026048532a3b27a0c81cdd939f0649
