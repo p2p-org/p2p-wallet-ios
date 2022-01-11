@@ -692,3 +692,14 @@
 "Passcode not set. So we can’t verify you as the device’s owner." = "Пароль не установлен. Поэтому мы не можем подтвердить, что вы являетесь владельцем устройства.";
 "Statuses received" = "Статусы получены";
 "The last one: " = "Последний:";
+"Backup required" = "Требуется резервная копия";
+"Backup is ready" = "Резервная копия готова";
+"Your PIN" = "Ваш PIN-код";
+"PIN is set" = "PIN-код установлен";
+"Notifications" = "Уведомления";
+"classic" = "классический";
+"Ask a question / Request a feature" = "Задать вопрос / Запросить функцию";
+"App version" = "Версия приложения";
+"Confirm transactions" = "Подтвердить транзакции";
+"Pay fees with" = "Оплатить комиссию с";
+"App icon" = "Значок приложения";
