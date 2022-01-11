@@ -37,6 +37,7 @@ protocol SettingsViewModelType {
     var logoutAlertSignal: Signal<Void> { get }
     
     func getUserAddress() -> String?
+    func getUsername() -> String?
     
     func navigate(to scene: Settings.NavigatableScene)
     func showOrReserveUsername()
@@ -165,6 +166,10 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func getUserAddress() -> String? {
         storage.account?.publicKey.base58EncodedString
+    }
+    
+    func getUsername() -> String? {
+        storage.getName()
     }
     
     // MARK: - Actions
