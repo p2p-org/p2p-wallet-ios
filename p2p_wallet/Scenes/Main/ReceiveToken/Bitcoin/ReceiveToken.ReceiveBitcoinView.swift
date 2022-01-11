@@ -86,7 +86,7 @@ extension ReceiveToken {
                 }
                 
                 // Description
-                UIView.greyBannerView {
+                UIView.greyBannerView(spacing: 12) {
                     ReceiveToken.textBuilder(text: L10n.ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin(L10n.onlyBitcoin).asMarkdown())
                     ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC").asMarkdown())
                     ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
