@@ -30,7 +30,7 @@ class WLNavigationBar: BEView {
     
     lazy var backButton = UIImageView(width: 14, height: 24, image: UIImage(systemName: "chevron.left"), tintColor: .h5887ff)
         .padding(.init(x: 6, y: 4))
-    lazy var titleLabel = UILabel(textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
+    lazy var titleLabel = UILabel(textSize: 17, weight: .semibold, numberOfLines: 1, textAlignment: .center)
     
     override func commonInit() {
         super.commonInit()
@@ -90,7 +90,7 @@ class NewWLNavigationBar: BECompositionView {
                         })
                     
                     // Title
-                    UILabel(text: initialTitle, textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
+                    UILabel(text: initialTitle, textSize: 17, weight: .semibold, numberOfLines: 1, textAlignment: .center)
                         .setup { view in
                             if let title = view as? UILabel {
                                 self.title = title
