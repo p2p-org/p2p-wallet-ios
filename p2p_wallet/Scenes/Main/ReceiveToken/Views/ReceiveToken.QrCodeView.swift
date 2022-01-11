@@ -11,6 +11,7 @@ extension ReceiveToken {
     class QrCodeView: BEView {
         private let size: CGFloat
         private let coinLogoSize: CGFloat
+        private let showCoinLogo: Bool
         
         private lazy var qrCodeImageView = QrCodeImageView(backgroundColor: .clear)
         private lazy var logoImageView: CoinLogoImageView = {
@@ -22,9 +23,10 @@ extension ReceiveToken {
             return imageView
         }()
         
-        init(size: CGFloat, coinLogoSize: CGFloat) {
+        init(size: CGFloat, coinLogoSize: CGFloat, showCoinLogo: Bool = true) {
             self.size = size
             self.coinLogoSize = coinLogoSize
+            self.showCoinLogo = showCoinLogo
             super.init(frame: .zero)
         }
         
@@ -37,8 +39,10 @@ extension ReceiveToken {
             addSubview(qrCodeImageView)
             qrCodeImageView.autoPinEdgesToSuperviewEdges()
             
-            addSubview(logoImageView)
-            logoImageView.autoCenterInSuperview()
+            if showCoinLogo {
+                addSubview(logoImageView)
+                logoImageView.autoCenterInSuperview()
+            }
         }
         
         func setUp(wallet: Wallet?) {
@@ -89,13 +93,13 @@ extension ReceiveToken {
             }
             
             let data = string.data(using: String.Encoding.ascii)
-
+            
             DispatchQueue.global().async {
                 var image: UIImage?
                 if let filter = CIFilter(name: "CIQRCodeGenerator") {
                     filter.setValue(data, forKey: "inputMessage")
                     let transform = CGAffineTransform(scaleX: 10, y: 10)
-
+                    
                     if let output = filter.outputImage?.transformed(by: transform) {
                         let qrCode = UIImage(ciImage: output)
                         image = qrCode

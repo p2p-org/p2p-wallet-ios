@@ -28,6 +28,8 @@ extension ReceiveToken {
             didSet { qrView.with(string: pubKey, token: token) }
         }
         
+        private let showCoinLogo: Bool
+        
         private var onCopy: BECallback<String?>?
         private var onShare: BECallback<UIImage>?
         private var onSave: BECallback<UIImage>?
@@ -39,11 +41,13 @@ extension ReceiveToken {
         init(
             username: String? = nil,
             pubKey: String? = nil,
-            token: SolanaSDK.Token? = nil
+            token: SolanaSDK.Token? = nil,
+            showCoinLogo: Bool = true
         ) {
             self.username = username
             self.pubKey = pubKey
             self.token = token
+            self.showCoinLogo = showCoinLogo
             
             super.init()
         }
@@ -62,7 +66,7 @@ extension ReceiveToken {
                         }.padding(.init(x: 50, y: 26))
                     
                     // QR code
-                    QrCodeView(size: 190, coinLogoSize: 32)
+                    QrCodeView(size: 190, coinLogoSize: 32, showCoinLogo: showCoinLogo)
                         .setupWithType(QrCodeView.self) { view in qrView = view }
                         .with(string: pubKey, token: token)
                         .autoAdjustWidthHeightRatio(1)
@@ -86,15 +90,15 @@ extension ReceiveToken {
                     UIButton.text(text: L10n.share, image: .share2, tintColor: .h5887ff)
                         .onTap { [unowned self] in
                             qrImageRender.render(username: username, address: pubKey, token: token).subscribe(onSuccess: { image in
-                                self.onShare?(image)
-                            })
+                                    self.onShare?(image)
+                                })
                                 .disposed(by: disposeBag)
                         }
                     UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
                         .onTap { [unowned self] in
                             qrImageRender.render(username: username, address: pubKey, token: token).subscribe(onSuccess: { image in
-                                self.onSave?(image)
-                            })
+                                    self.onSave?(image)
+                                })
                                 .disposed(by: disposeBag)
                         }
                 }.padding(.init(x: 0, y: 4))
