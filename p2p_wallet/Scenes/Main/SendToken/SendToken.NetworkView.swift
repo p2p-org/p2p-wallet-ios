@@ -36,7 +36,8 @@ extension SendToken {
             fatalError("init(coder:) has not been implemented")
         }
         
-        func setUp(network: SendToken.Network, prices: [String: Double]) {
+        @discardableResult
+        func setUp(network: SendToken.Network, prices: [String: Double]) -> Self {
             coinImageView.image = network.icon
             networkNameLabel.text = L10n.network(network.rawValue.uppercaseFirst)
             
@@ -63,6 +64,8 @@ extension SendToken {
                     )
             }
             feeLabel.attributedText = attributedText
+            
+            return self
         }
     }
 }
