@@ -3,7 +3,5 @@
 import Foundation
 
 struct ___FILEBASENAME___ {
-    enum NavigatableScene {
-        case back
-    }
+    enum NavigatableScene {}
 }

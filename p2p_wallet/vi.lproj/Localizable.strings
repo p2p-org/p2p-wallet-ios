@@ -692,3 +692,14 @@
 "Passcode not set. So we can’t verify you as the device’s owner." = "Mật mã chưa được đặt. Vì vậy, chúng tôi không thể xác minh bạn là chủ sở hữu của thiết bị.";
 "Statuses received" = "Các trạng thái đã nhận";
 "The last one: " = "Cái cuối cùng:";
+"Backup required" = "Yêu cầu sao lưu";
+"Backup is ready" = "Sao lưu đã sẵn sàng";
+"Your PIN" = "Ghim của bạn";
+"PIN is set" = "Mã PIN đã được đặt";
+"Notifications" = "Thông báo";
+"classic" = "kinh điển";
+"Ask a question / Request a feature" = "Đặt câu hỏi / Yêu cầu một tính năng";
+"App version" = "Phiên bản ứng dụng";
+"Confirm transactions" = "Xác nhận giao dịch";
+"Pay fees with" = "Thanh toán phí bằng";
+"App icon" = "Biểu tượng ứng dụng";
