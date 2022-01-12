@@ -261,7 +261,6 @@
 		BC4B9E85271425B9005B9ECA /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E81271425B9005B9ECA /* Settings.swift */; };
 		BC4B9E86271425B9005B9ECA /* Settings.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E82271425B9005B9ECA /* Settings.ViewController.swift */; };
 		BC4B9E87271425B9005B9ECA /* Settings.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E83271425B9005B9ECA /* Settings.ViewModel.swift */; };
-		BC4B9E88271425B9005B9ECA /* Settings.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E84271425B9005B9ECA /* Settings.RootView.swift */; };
 		BC4B9E8A27142AF5005B9ECA /* Settings.Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */; };
 		BC4B9E8C27153430005B9ECA /* Settings.UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E8B27153430005B9ECA /* Settings.UsernameViewController.swift */; };
 		BC4B9E9527153EBB005B9ECA /* Settings.BackupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9127153EBB005B9ECA /* Settings.BackupViewController.swift */; };
@@ -781,7 +780,6 @@
 		BC4B9E81271425B9005B9ECA /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		BC4B9E82271425B9005B9ECA /* Settings.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.ViewController.swift; sourceTree = "<group>"; };
 		BC4B9E83271425B9005B9ECA /* Settings.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.ViewModel.swift; sourceTree = "<group>"; };
-		BC4B9E84271425B9005B9ECA /* Settings.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.RootView.swift; sourceTree = "<group>"; };
 		BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.Helpers.swift; sourceTree = "<group>"; };
 		BC4B9E8B27153430005B9ECA /* Settings.UsernameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.UsernameViewController.swift; sourceTree = "<group>"; };
 		BC4B9E9127153EBB005B9ECA /* Settings.BackupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.BackupViewController.swift; sourceTree = "<group>"; };
@@ -1498,7 +1496,6 @@
 				BC4B9E83271425B9005B9ECA /* Settings.ViewModel.swift */,
 				BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */,
 				BC4B9E82271425B9005B9ECA /* Settings.ViewController.swift */,
-				BC4B9E84271425B9005B9ECA /* Settings.RootView.swift */,
 				BC4B9EA227154088005B9ECA /* Subscenes */,
 				846998220F2414FAD758943C /* View */,
 			);
@@ -2947,7 +2944,6 @@
 				BC2297912700A274003F7118 /* RestoreICloud.swift in Sources */,
 				86A90D1A273D306400D180EF /* VerifySecurityKeys.ViewModel.swift in Sources */,
 				BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */,
-				BC4B9E88271425B9005B9ECA /* Settings.RootView.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
 				BC85EA69266E1324005006D5 /* ReceiveToken.ReceiveSolanaView.swift in Sources */,
 				41CA05762754725200953322 /* ReserveName.ViewController.swift in Sources */,
