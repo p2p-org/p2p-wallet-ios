@@ -20,7 +20,7 @@ extension ReceiveToken {
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
                 // Navbar
-                NewWLNavigationBar(title: L10n.receive, separatorEnable: false)
+                NewWLNavigationBar(initialTitle: L10n.receive, separatorEnable: false)
                     .onBack { [unowned self] in self.back() }
                 
                 BEScrollView(contentInsets: .init(x: .defaultPadding, y: .defaultPadding), spacing: 16) {
@@ -88,9 +88,8 @@ extension ReceiveToken.ViewController {
             present(vc, animated: true)
         case .showRenBTCReceivingStatus:
             let vm = RenBTCReceivingStatuses.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel)
-            let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
-            let nc = FlexibleHeightNavigationController(rootViewController: vc)
-            present(nc, interactiveDismissalType: .standard, completion: nil)
+            let vc = RenBTCReceivingStatuses.NewViewController(viewModel: vm)
+            show(vc, sender: nil)
         case .share(let address, let qrCode):
             if let qrCode = qrCode {
                 let vc = UIActivityViewController(activityItems: [qrCode], applicationActivities: nil)

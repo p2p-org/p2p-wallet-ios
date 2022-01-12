@@ -50,22 +50,22 @@ class WLNavigationBar: BEView {
 
 class NewWLNavigationBar: BECompositionView {
     private var backButton: UIView!
-    private var title: UILabel!
+    private(set) var titleLabel: UILabel!
     private var separatorEnable: Bool
     
     private let actions: UIView
     
     let initialTitle: String?
     
-    init(title: String? = nil, separatorEnable: Bool = true) {
-        self.initialTitle = title
+    init(initialTitle: String? = nil, separatorEnable: Bool = true) {
+        self.initialTitle = initialTitle
         self.separatorEnable = separatorEnable
         self.actions = BEContainer()
         super.init()
     }
     
-    init(title: String? = nil, separatorEnable: Bool = true, @BEViewBuilder actions: Builder) {
-        self.initialTitle = title
+    init(initialTitle: String? = nil, separatorEnable: Bool = true, @BEViewBuilder actions: Builder) {
+        self.initialTitle = initialTitle
         self.separatorEnable = separatorEnable
         self.actions = actions().build()
         super.init()
@@ -92,8 +92,8 @@ class NewWLNavigationBar: BECompositionView {
                     // Title
                     UILabel(text: initialTitle, textSize: 17, weight: .semibold, numberOfLines: 0, textAlignment: .center)
                         .setup { view in
-                            if let title = view as? UILabel {
-                                self.title = title
+                            if let titleLabel = view as? UILabel {
+                                self.titleLabel = titleLabel
                             }
                         }
                     
