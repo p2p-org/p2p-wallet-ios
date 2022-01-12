@@ -448,6 +448,16 @@ extension OrcaSwapV2.ViewModel {
                     )
                 }
             }
+
+            if let creationFee = fees.accountCreationFee {
+                allFees.append(
+                    .init(
+                        type: .accountCreationFee,
+                        lamports: creationFee,
+                        token: .nativeSolana
+                    )
+                )
+            }
             
             allFees.append(
                 .init(
@@ -456,7 +466,7 @@ extension OrcaSwapV2.ViewModel {
                     token: .nativeSolana
                 )
             )
-            
+
             observer(.success(allFees))
             return Disposables.create()
         }
