@@ -59,7 +59,7 @@ extension DerivablePaths {
                 // Actions
                 UIStackView(axis: .vertical, alignment: .fill, distribution: .fill) {
                     // Header
-                    UILabel(text: L10n.selectDerivablePath, textSize: 13, weight: .semibold, textColor: .textSecondary, textAlignment: .center)
+                    UILabel(text: L10n.derivationPath, textSize: 13, weight: .semibold, textColor: .textSecondary, textAlignment: .center)
                         .padding(.init(x: 0, y: 15))
                     UIView.defaultSeparator()
                     
@@ -73,7 +73,7 @@ extension DerivablePaths {
                             
                             return UIStackView(axis: .vertical, alignment: .fill, distribution: .fill) {
                                 UIStackView(axis: .horizontal, alignment: .center) {
-                                    UILabel(text: path.title, textSize: 17)
+                                    UILabel(text: path.title, textSize: 17, weight: selected ? .semibold : .regular)
                                     UIView.spacer
                                     selected ? UIImageView(width: 22, height: 22, image: .checkBoxIOS) : UIView()
                                 }.padding(.init(top: 0, left: 20, bottom: 0, right: 24))
