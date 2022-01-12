@@ -20,7 +20,7 @@ extension Settings {
         
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
-                NewWLNavigationBar(title: L10n.yourP2pUsername, separatorEnable: false)
+                NewWLNavigationBar(initialTitle: L10n.yourP2pUsername, separatorEnable: false)
                     .onBack { [unowned self] in back() }
                 
                 BEScrollView(contentInsets: .init(x: 0, y: 8), spacing: 18) {

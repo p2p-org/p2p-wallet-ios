@@ -11,52 +11,68 @@ import RxSwift
 import RxCocoa
 
 extension RenBTCReceivingStatuses {
-    class TxDetailViewController: WLIndicatorModalFlexibleHeightVC {
+    class TxDetailViewController: BEScene {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
         
-        // MARK: - Dependencies
         private var viewModel: TxDetailViewModel
         
-        // MARK: - Properties
-        private lazy var collectionView: BEStaticSectionsCollectionView = .init(
-            sections: [
-                .init(
-                    index: 0,
-                    layout: .init(cellType: RecordCell.self),
-                    viewModel: viewModel
-                )
-            ]
-        )
-        
-        // MARK: - Initializer
         init(viewModel: TxDetailViewModel) {
             self.viewModel = viewModel
             super.init()
         }
         
-        // MARK: - Methods
-        override func setUp() {
-            super.setUp()
-            title = L10n.receivingStatus
-            
-            stackView.addArrangedSubview(collectionView)
-        }
-        
-        override func bind() {
-            super.bind()
-            viewModel.processingTxsDriver
-                .drive(onNext: {[weak self] txs in
-                    self?.title = L10n.receivingRenBTC(txs.first(where: {$0.tx.txid == self?.viewModel.txid})?.value.toString(maximumFractionDigits: 9) ?? "") 
-                    self?.updatePresentationLayout(animated: true)
-                })
-                .disposed(by: disposeBag)
-        }
-        
-        override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
-            super.calculateFittingHeightForPresentedView(targetWidth: targetWidth) +
-                CGFloat(viewModel.data.count) * 72
+        override func build() -> UIView {
+            BESafeArea {
+                UIStackView(axis: .vertical, alignment: .fill) {
+                    NewWLNavigationBar(initialTitle: L10n.receivingStatus, separatorEnable: false)
+                        .onBack { [unowned self] in self.back() }
+                        .setupWithType(NewWLNavigationBar.self) { view in
+                            viewModel.currentTx
+                                .map { tx in
+                                    guard let value = tx?.value else { return L10n.receivingStatus }
+                                    return L10n.receivingRenBTC(value.toString(maximumFractionDigits: 10))
+                                }
+                                .drive(view.titleLabel.rx.text)
+                                .disposed(by: disposeBag)
+                        }
+                    NBENewDynamicSectionsCollectionView(
+                        viewModel: viewModel,
+                        mapDataToSections: { viewModel in
+                            CollectionViewMappingStrategy.byData(
+                                viewModel: viewModel,
+                                forType: Record.self,
+                                where: \Record.time
+                            )
+                        },
+                        layout: .init(
+                            header: .init(
+                                viewClass: SectionHeaderView.self,
+                                heightDimension: .estimated(15)
+                            ),
+                            cellType: RecordCell.self,
+                            emptyCellType: WLEmptyCell.self,
+                            interGroupSpacing: 1,
+                            itemHeight: .estimated(85)
+                        ),
+                        headerBuilder: { (view, section) in
+                            guard let view = view as? SectionHeaderView else { return }
+                            let date = section.userInfo as? Date ?? Date()
+                            let dateFormatter = DateFormatter()
+                            dateFormatter.dateStyle = .medium
+                            dateFormatter.timeStyle = .none
+                            dateFormatter.locale = Locale.shared
+                            
+                            view.setUp(
+                                headerTitle: dateFormatter.string(from: date),
+                                headerFont: UIFont.systemFont(ofSize: 12),
+                                textColor: .secondaryLabel
+                            )
+                        }
+                    )
+                }
+            }
         }
     }
     
@@ -76,6 +92,10 @@ extension RenBTCReceivingStatuses {
             bind()
         }
         
+        var currentTx: Driver<RenVM.LockAndMint.ProcessingTx?> {
+            processingTxsDriver.map { [weak self] in $0.first { tx in tx.tx.txid == self?.txid } }
+        }
+        
         func bind() {
             processingTxsDriver
                 .drive(onNext: { [weak self] in
@@ -84,7 +104,7 @@ extension RenBTCReceivingStatuses {
                     let processingTxs = new
                     var records = [Record]()
                     
-                    guard let tx = processingTxs.first(where: {$0.tx.txid == self?.txid}) else {return}
+                    guard let tx = processingTxs.first(where: { $0.tx.txid == self?.txid }) else { return }
                     if let mintedAt = tx.mintedAt {
                         records.append(.init(txid: tx.tx.txid, status: .minted, time: mintedAt, amount: tx.tx.value))
                     }
@@ -127,7 +147,7 @@ extension RenBTCReceivingStatuses {
         }
         
         var dataDidChange: Observable<Void> {
-            processingTxsDriver.map {_ in ()}.asObservable()
+            processingTxsDriver.map { _ in () }.asObservable()
         }
         
         var currentState: BEFetcherState {
