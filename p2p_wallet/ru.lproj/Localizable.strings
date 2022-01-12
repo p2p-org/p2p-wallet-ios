@@ -691,6 +691,7 @@
 "This address accepts only %@. You may lose assets by sending another coin." = "Этот адрес принимает только %@.  Вы можете потерять активы, отправив еще одну монету.";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Пароль не установлен. Поэтому мы не можем подтвердить, что вы являетесь владельцем устройства.";
 "Statuses received" = "Статусы получены";
+"Statuses received (%@)" = "Полученные статусы (%@)";
 "The last one: " = "Последний:";
 "Backup required" = "Требуется резервная копия";
 "Backup is ready" = "Резервная копия готова";
