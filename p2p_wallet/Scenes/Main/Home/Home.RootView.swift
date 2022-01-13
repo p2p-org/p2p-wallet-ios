@@ -135,7 +135,9 @@ extension Home {
             balancesOverviewView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
 
             collectionView.autoPinEdge(.top, to: .bottom, of: stackView, withOffset: 20)
-            collectionView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
+            collectionView.autoPinEdge(toSuperviewSafeArea: .leading)
+            collectionView.autoPinEdge(toSuperviewSafeArea: .trailing)
+            collectionView.autoPinEdge(toSuperviewEdge: .bottom)
             let balancesViewHeight = balancesOverviewView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
             collectionView.contentInset.modify(dTop: balancesViewHeight)
 
