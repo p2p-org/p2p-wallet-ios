@@ -15,6 +15,10 @@ extension Root {
         // MARK: - Dependencies
         @Injected private var viewModel: RootViewModelType
         
+        override func loadView() {
+            view = LockView()
+        }
+        
         // MARK: - Methods
         override func setUp() {
             super.setUp()
