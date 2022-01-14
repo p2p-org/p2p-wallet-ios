@@ -91,11 +91,11 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
     
     @objc func saveToICloud() {
-        deviceOwnerAuthenticationHandler.requiredOwner { [weak self] in
-            self?._saveToIcloud()
-        } onFailure: { [weak self] error in
+        deviceOwnerAuthenticationHandler.requiredOwner {
+            self._saveToIcloud()
+        } onFailure: { error in
             guard let error = error else {return}
-            self?.errorSubject.accept(error)
+            self.errorSubject.accept(error)
         }
     }
 

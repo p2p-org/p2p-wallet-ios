@@ -75,11 +75,11 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     
     // MARK: - Actions
     func restoreFromICloud() {
-        deviceOwnerAuthenticationHandler.requiredOwner { [weak self] in
-            self?._restoreFromIcloud()
-        } onFailure: { [weak self] error in
+        deviceOwnerAuthenticationHandler.requiredOwner {
+            self._restoreFromIcloud()
+        } onFailure: { error in
             guard let error = error else {return}
-            self?.errorSubject.accept(error)
+            self.errorSubject.accept(error)
         }
     }
     
