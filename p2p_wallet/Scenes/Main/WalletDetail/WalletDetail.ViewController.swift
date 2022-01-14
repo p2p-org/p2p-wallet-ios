@@ -10,24 +10,14 @@ import BEPureLayout
 import RxSwift
 import UIKit
 
-protocol WalletDetailScenesFactory {
-    func makeBuyTokenViewController(token: Set<BuyProviders.Crypto>) throws -> UIViewController
-    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
-    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
-    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
-    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
-    func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController
-}
-
 extension WalletDetail {
     class ViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
-        
+    
         // MARK: - Dependencies
         private let viewModel: WalletDetailViewModelType
-        private let scenesFactory: WalletDetailScenesFactory
         
         // MARK: - Properties
         
@@ -42,23 +32,12 @@ extension WalletDetail {
         }()
         
         // MARK: - Subscene
-        private lazy var infoVC: InfoViewController = {
-            let vc = InfoViewController(viewModel: viewModel)
-            return vc
-        }()
-        
-        private lazy var historyVC: HistoryViewController = {
-            let vc = HistoryViewController(viewModel: viewModel)
-            return vc
-        }()
+        private lazy var infoVC = InfoViewController(viewModel: viewModel)
+        private lazy var historyVC = HistoryViewController(viewModel: viewModel)
         
         // MARK: - Initializer
-        init(
-            viewModel: WalletDetailViewModelType,
-            scenesFactory: WalletDetailScenesFactory
-        ) {
+        init(viewModel: WalletDetailViewModelType) {
             self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
             super.init()
         }
         
@@ -94,29 +73,40 @@ extension WalletDetail {
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
-            case .buy(let tokens):
-                do {
-                    let vc = try scenesFactory.makeBuyTokenViewController(token: [tokens])
-                    present(vc, animated: true, completion: nil)
-                } catch {
-                    showAlert(title: L10n.error, message: error.readableDescription)
-                }
+            case .buy:
+                let vm = BuyRoot.ViewModel()
+                let vc = BuyRoot.ViewController(viewModel: vm)
+                present(vc, animated: true, completion: nil)
             case .settings(let pubkey):
-                let vc = scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
+                let vm = TokenSettingsViewModel(pubkey: pubkey)
+                let vc = TokenSettingsViewController(viewModel: vm)
                 vc.delegate = self
                 self.present(vc, animated: true, completion: nil)
             case .send(let wallet):
-                let vc = scenesFactory.makeSendTokenViewController(walletPubkey: wallet.pubkey, destinationAddress: nil)
+                let vm = SendToken.ViewModel(walletPubkey: wallet.pubkey, destinationAddress: nil)
+                let vc = SendToken.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .receive(let pubkey):
-                if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: pubkey) {
+                if let solanaPubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
+                    let tokenWallet = viewModel.walletsRepository.getWallets().first(where: {$0.pubkey == pubkey})
+                    
+                    let isDevnet = Defaults.apiEndPoint.network == .devnet
+                    let renBTCMint: SolanaSDK.PublicKey = isDevnet ? .renBTCMintDevnet : .renBTCMint
+                    
+                    let isRenBTCWalletCreated = viewModel.walletsRepository.getWallets().contains(where: {
+                        $0.token.address == renBTCMint.base58EncodedString
+                    })
+                    let vm = ReceiveToken.SceneModel(solanaPubkey: solanaPubkey, solanaTokenWallet: tokenWallet, isRenBTCWalletCreated: isRenBTCWalletCreated)
+                    let vc = ReceiveToken.ViewController(viewModel: vm)
                     show(vc, sender: true)
                 }
             case .swap(let wallet):
-                let vc = scenesFactory.makeSwapTokenViewController(provider: .orca, fromWallet: wallet)
+                let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
+                let vc = OrcaSwapV2.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .transactionInfo(let transaction):
-                let vc = scenesFactory.makeTransactionInfoViewController(transaction: transaction)
+                let vm = TransactionInfoViewModel(transaction: transaction)
+                let vc = TransactionInfoViewController(viewModel: vm)
                 present(vc, interactiveDismissalType: .standard, completion: nil)
             default:
                 break

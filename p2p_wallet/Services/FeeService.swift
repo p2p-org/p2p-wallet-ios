@@ -45,10 +45,7 @@ extension FeeServiceType {
 }
 
 class FeeService: FeeServiceType {
-    let apiClient: FeeAPIClient
+    @Injected var apiClient: FeeAPIClient
     var lamportsPerSignature: SolanaSDK.Lamports?
     var minimumBalanceForRenExemption: SolanaSDK.Lamports?
-    init(apiClient: FeeAPIClient) {
-        self.apiClient = apiClient
-    }
 }

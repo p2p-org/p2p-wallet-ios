@@ -10,27 +10,20 @@ import UIKit
 import Action
 import BEPureLayout
 
-protocol _MainScenesFactory {
-    func makeHomeViewController() -> Home.ViewController // FIXME: - Remove later
-}
-
 class MainViewController: BaseVC {
     // MARK: - Dependencies
-    @Injected private var viewModel: MainViewModelType
+    private let viewModel: MainViewModelType
     
     // MARK: - Properties
-    private let scenesFactory: _MainScenesFactory
-    private let authenticateWhenAppears: Bool
+    var authenticateWhenAppears: Bool!
     
     // MARK: - Subviews
     private lazy var blurEffectView: UIView = LockView()
     private var localAuthVC: Authentication.ViewController?
     
     // MARK: - Initializer
-    init(scenesFactory: _MainScenesFactory, authenticateWhenAppears: Bool)
-    {
-        self.scenesFactory = scenesFactory
-        self.authenticateWhenAppears = authenticateWhenAppears
+    init(viewModel: MainViewModelType) {
+        self.viewModel = viewModel
         super.init()
     }
     
@@ -44,7 +37,9 @@ class MainViewController: BaseVC {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        add(child: UINavigationController(rootViewController: scenesFactory.makeHomeViewController())) // FIXME: - makeTabBarVC
+        let vm = Home.ViewModel()
+        let vc = Home.ViewController(viewModel: vm)
+        add(child: UINavigationController(rootViewController: vc)) // FIXME: - TabBarVC
         view.addSubview(blurEffectView)
         blurEffectView.autoPinEdgesToSuperviewEdges()
     }
@@ -75,7 +70,8 @@ class MainViewController: BaseVC {
         
         // clean
         localAuthVC?.dismiss(animated: false, completion: nil)
-        localAuthVC = Authentication.ViewController()
+        let vm = Authentication.ViewModel()
+        localAuthVC = Authentication.ViewController(viewModel: vm)
         localAuthVC?.title = authStyle.title
         localAuthVC?.isIgnorable = !authStyle.isRequired
         localAuthVC?.useBiometry = authStyle.useBiometry

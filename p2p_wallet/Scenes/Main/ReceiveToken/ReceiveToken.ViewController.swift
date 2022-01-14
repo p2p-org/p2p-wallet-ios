@@ -7,13 +7,12 @@ import Resolver
 
 extension ReceiveToken {
     class ViewController: BEScene {
-        private var viewModel: ReceiveSceneModel!
+        private var viewModel: ReceiveSceneModel
         
         init(viewModel: ReceiveSceneModel) {
             self.viewModel = viewModel
             super.init()
-            
-            self.viewModel.navigation.drive(onNext: { [weak self] in self?.navigate(to: $0) }).disposed(by: disposeBag)
+            viewModel.navigation.drive(onNext: { [weak self] in self?.navigate(to: $0) }).disposed(by: disposeBag)
         }
         
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
