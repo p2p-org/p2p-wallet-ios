@@ -29,7 +29,7 @@ protocol ReceiveTokenBitcoinViewModelType {
     func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool)
     func showReceivingStatuses()
     func copyToClipboard()
-    func share()
+    func share(image: UIImage)
     func saveAction(image: UIImage)
     func showBTCAddressInExplorer()
 }
@@ -161,10 +161,10 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         analyticsManager.log(event: .receiveAddressCopy)
     }
     
-    func share() {
+    func share(image: UIImage) {
         guard let address = renVMService.getCurrentAddress() else { return }
         analyticsManager.log(event: .receiveAddressShare)
-        navigationSubject.accept(.share(address: address))
+        navigationSubject.accept(.share(qrCode: image))
     }
     
     func saveAction(image: UIImage) {
